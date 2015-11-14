@@ -33,6 +33,8 @@ CREATE TABLE SecurityUser
 	CONSTRAINT CK_SecurityUserObsoletedBy CHECK(ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletedBy IS NULL AND ObsoletionTime IS NULL)
 );
 
+CREATE INDEX SecurityUserUserNameIdx ON SecurityUser(UserName);
+
 -- CONCEPT TABLES
 CREATE TABLE Concept
 (
@@ -48,6 +50,8 @@ CREATE TABLE ConceptClass
 	Mnemonic VARCHAR(16) NOT NULL, -- THE MNEMONIC USED BY THE SYSTEM TO LOCATE CONCEPTS
 	CONSTRAINT PK_ConceptClass PRIMARY KEY (ConceptClassId)
 );
+
+CREATE INDEX ConceptClassMnemonicIdx ON ConceptClass(Mnemonic);
 
 CREATE TABLE ConceptVersion
 (
@@ -67,6 +71,8 @@ CREATE TABLE ConceptVersion
 	CONSTRAINT CK_ConceptVersionObsoletedBy CHECK(ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletedBy IS NULL AND ObsoletionTime IS NULL)
 );
 
+CREATE INDEX ConceptVersionConceptId ON ConceptVersion(ConceptId);
+
 CREATE TABLE ConceptName
 (
 	ConceptNameId NUMERIC(10) IDENTITY NOT NULL, -- UNIQUE IDENTIFIER FOR THE CONCEPT NAME ID
@@ -81,6 +87,10 @@ CREATE TABLE ConceptName
 	CONSTRAINT FK_ConceptNameObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES ConceptVersion(ConceptVersionId),
 	CONSTRAINT FK_ConceptNamePhoneticAlgorithmId FOREIGN KEY (PhoneticAlgorithmId) REFERENCES PhoneticAlgorithm(PhoneticAlgorithmId)
 );
+
+CREATE INDEX ConceptNameVersionIdx ON ConceptName(EffectiveVersionId, ObsoleteVersionId);
+CREATE INDEX ConceptNameNameIdx ON ConceptName(Name);
+CREATE INDEX ConceptNamePhoneticCodeIdx ON ConceptName(PhoneticCode, PhoneticAlgorithmId);
 
 CREATE TABLE CodeSystem
 (
@@ -102,6 +112,9 @@ CREATE TABLE CodeSystem
 	CONSTRAINT CK_CodeSystemObsoletionReason CHECK(ObsoletionReason IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletionTime IS NULL AND ObsoletionReason IS NULL)
 );
 
+CREATE INDEX CodeSystemOidIdx ON CodeSystem(Oid);
+CREATE INDEX CodeSystemUrlIdx ON CodeSystem(Url);
+
 CREATE TABLE RelationshipType
 (
 	RelationshipTypeId NUMERIC(2) IDENTITY NOT NULL, -- THE UNIQUE IDENTIFIER OF THE RELATIONSHIP
@@ -109,6 +122,8 @@ CREATE TABLE RelationshipType
 	Mnemonic VARCHAR(20) NOT NULL UNIQUE, -- THE UNCHANGING MNEMONIC OF THE RELATIONSHIP TYPE
 	CONSTRAINT PK_RelationshipType PRIMARY KEY (RelationshipTypeId)
 );
+
+CREATE INDEX RelationshipTypeMnemonicIdx ON RelationshipType(Mnemonic);
 
 CREATE TABLE ReferenceTerm
 (
@@ -118,6 +133,9 @@ CREATE TABLE ReferenceTerm
 	CONSTRAINT PK_ReferenceTerm PRIMARY KEY (ReferenceTermId),
 	CONSTRAINT FK_ReferenceTermCodeSystemId FOREIGN KEY (CodeSystemId) REFERENCES CodeSystem(CodeSystemId)
 );
+
+CREATE INDEX ReferenceTermMnemonicIdx ON ReferenceTerm(Mnemonic);
+CREATE INDEX ReferenceTermCodeSystemMnemonicIdx ON ReferenceTerm(CodeSystemId, Mnemonic);
 
 CREATE TABLE ConceptReferenceTerm
 (
@@ -153,4 +171,26 @@ CREATE TABLE ReferenceTermDisplayName
 	CONSTRAINT FK_ReferenceTermPhoneticAlgorithmId FOREIGN KEY (PhoneticAlgorithmId) REFERENCES PhoneticAlgorithm(PhoneticAlgorithmId),
 	CONSTRAINT CK_ReferenceTermObsoletedBy CHECK(ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletedBy IS NULL AND ObsoletionTime IS NULL),
 	CONSTRAINT CK_ReferenceTermObsoletionReason  CHECK(ObsoletionReason IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletionTime IS NULL AND ObsoletionReason IS NULL)
-)
+);
+
+CREATE INDEX ReferenceTermDisplayNamePhoneticIdx ON ReferenceTermDisplayName(PhoneticCode, PhoneticAlgorithmId);
+CREATE INDEX ReferenceTermDisplayNameNameIdx ON ReferenceTermDisplayName(Name);
+
+CREATE TABLE ConceptRelationship
+(
+	ConceptRelationshipId NUMERIC(10) IDENTITY NOT NULL, -- THE UNIQUE IDENTIFIER FOR THE CONCEPT RELATIONSHIP
+	SourceConceptId NUMERIC(10) NOT NULL, -- THE SOURCE OF THE CONCEPT RELATIONSHIP
+	TargetConceptId NUMERIC(10) NOT NULL, -- THE TARGET OF THE RELATIONSHIP
+	RelationshipTypeId NUMERIC(2) NOT NULL, -- THE TYPE OF RELATIONSHIP
+	EffectiveVersionId NUMERIC(10) NOT NULL, -- THE VERSION OF THE CONCEPT TO WHICH THE SOURCE RELATION APPLIES
+	ObsoleteVersionId NUMERIC(10) NOT NULL, -- THE VERSION OF THE CONCEPT WHEN THE RELATION IS NO LONGER VALID
+	CONSTRAINT PK_ConceptRelationship PRIMARY KEY (ConceptRelationshipId),
+	CONSTRAINT FK_ConceptRelationshipSourceConceptId FOREIGN KEY (SourceConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT FK_ConceptRelationshipTargetConceptId FOREIGN KEY (TargetConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT FK_ConceptRelationshipRelationshipTypeId FOREIGN KEY (RelationshipTypeId) REFERENCES ConceptRelationshipType(ConceptRelationshipTypeId),
+	CONSTRAINT FK_ConceptRelationshipEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES ConceptVersion(ConceptVersionId),
+	CONSTRAINT FK_ConceptRelationshpObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES ConceptVersion(ConceptVersionId)
+);
+
+CREATE ConceptRelationshipSourceIdx ON ConceptRelationship(SourceConceptId);
+CREATE ConceptRelationshipTargetIdx ON ConceptRelationship(TargetConceptId);
