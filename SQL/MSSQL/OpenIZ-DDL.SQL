@@ -494,14 +494,14 @@ CREATE VIEW ConceptCurrentVersion AS
 		WHERE ConceptVersion.ObsoletionTime IS NULL;
 GO
 
-CREATE FUNCTION fn_AssertConceptClass (@ConceptId NUMERIC, @AssertClassMnemonic NVARCHAR)
+CREATE FUNCTION fn_AssertConceptClass (@ConceptId NUMERIC, @AssertClassMnemonic NVARCHAR(32))
 RETURNS BIT BEGIN
 	RETURN (SELECT COUNT(*) FROM ConceptCurrentVersion WHERE ConceptId = @ConceptId AND ConceptClassMnemonic = @AssertClassMnemonic);
 END;
 
 GO
 
-CREATE FUNCTION fn_IsConceptSetMember (@ConceptId NUMERIC, @ConceptSetMnemonic NVARCHAR)
+CREATE FUNCTION fn_IsConceptSetMember (@ConceptId NUMERIC, @ConceptSetMnemonic NVARCHAR(32))
 RETURNS BIT BEGIN
 	RETURN (SELECT COUNT(*) FROM ConceptSetMember INNER JOIN ConceptSet ON (ConceptSetMember.ConceptSetId = ConceptSet.ConceptSetId)
 		WHERE ConceptSet.Mnemonic = @ConceptSetMnemonic AND ConceptId = @ConceptId);
@@ -559,12 +559,29 @@ CREATE TABLE EntityNameUse
 	CONSTRAINT FK_EntityNameUseEntityClassScopeConceptId FOREIGN KEY (EntityClassScopeConceptId) REFERENCES Concept(ConceptId)
 );
 
-CREATE TABLE EntityIdentifierType
+CREATE TABLE AssigningAuthority
 (
-	EntityIdentifierTypeId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE IDENTITIFER TYPE
+	AssigningAuthorityId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- UNIQUEIDENTIFIER FOR THE ASSIGING AUTHORITY
+	Name NVARCHAR(50) NOT NULL, -- THE NAME OF THE ASSIGNING AUTHORITY
+	Oid NVARCHAR(256) NOT NULL, -- THE OID OF THE ASSINGING AUTHORITY
+	HL7CX4 NVARCHAR(32) NOT NULL, -- THE HL7 v2 CX4 VALUE OF THE AUTHORITY
+	[Description] NVARCHAR(MAX), -- HUMAN DESCRIPTION FOR THE VALUE
+	CreationTime DATETIMEOFFSET NOT NULL DEFAULT CURRENT_TIMESTAMP, -- THE TIME THE AUTHORITY WAS CREATED
+	CreatedBy UNIQUEIDENTIFIER NOT NULL, -- THE USER WHO CREATED THE AA
+	ObsoleteTime DATETIMEOFFSET, -- THE TIME WHEN THE ASSINGING AUTHORITY IS OBSOLETE
+	ObsoletedBy UNIQUEIDENTIFIER, -- THE USER WHO OBSOLETED THE AA
+	CONSTRAINT PK_AssigningAuthority PRIMARY KEY (AssigningAuthorityId),
+	CONSTRAINT FK_AssigningAuthorityCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT FK_AssigningAuthorityObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT CK_AssigningAuthorityObsoletedBy CHECK (ObsoleteTime IS NOT NULL AND ObsoletedBy IS NOT NULL OR ObsoleteTime IS NULL AND ObsoletedBy IS NULL)
+);
+
+CREATE TABLE IdentifierType
+(
+	IdentifierTypeId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE IDENTITIFER TYPE
 	IdentifierTypeConceptId NUMERIC(15) NOT NULL, -- THE CONCEPT WHICH REPRESENTS THE TYPE
 	EntityClassScopeConceptId NUMERIC(15) NOT NULL, -- THE SCOPE IN WHICH THE ENTITY IDENTIFIER TYPE CAN BE USED
-	CONSTRAINT PK_EntityIdentifierType PRIMARY KEY (EntityIdentifierTypeId),
+	CONSTRAINT PK_EntityIdentifierType PRIMARY KEY (IdentifierTypeId),
 	CONSTRAINT FK_EntityIdentifierTypeIdentifierTypeConceptId FOREIGN KEY (IdentifierTypeConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_EntityIdentifierTypeEntityClassScopeConceptId FOREIGN KEY (EntityClassScopeConceptId) REFERENCES Concept(ConceptId)
 );
@@ -575,7 +592,7 @@ CREATE TABLE Act
 	ClassConceptId NUMERIC(15) NOT NULL, -- CLASSIFIES THE TYPE OF ACT REPRESENTED
 	CONSTRAINT PK_Act PRIMARY KEY (ActId),
 	CONSTRAINT FK_ActClassConceptId FOREIGN KEY (ClassConceptId) REFERENCES Concept(ConceptId),
-	CONSTRAINT CK_ActClassConceptIdConceptClass CHECK (dbo.fn_AssertConceptClass(ClassConceptId, 'ActClass') = 1)
+	CONSTRAINT CK_ActClassConceptIdConceptClass CHECK (dbo.fn_IsConceptSetMember(ClassConceptId, 'ActClass') = 1)
 );
 
 CREATE TABLE ActVersion
@@ -602,9 +619,25 @@ CREATE TABLE ActVersion
 	CONSTRAINT FK_ActVersionTypeConceptId FOREIGN KEY (TypeConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_ActVersionStatusConceptId FOREIGN KEY (StatusConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_ActVersionMoodConceptId FOREIGN KEY (MoodConceptId) REFERENCES Concept(ConceptId),
-	CONSTRAINT CK_ActVersionActClassStatusConceptIdConceptClass CHECK (dbo.fn_AssertConceptClass(StatusConceptId, 'ActStatus') = 1),
-	CONSTRAINT CK_ActVersionActMoodConceptIdConceptClass CHECK (dbo.fn_AssertConceptClass(MoodConceptId, 'ActMood') = 1),
+	CONSTRAINT CK_ActVersionActClassStatusConceptIdConceptClass CHECK (dbo.fn_IsConceptSetMember(StatusConceptId, 'ActStatus') = 1),
+	CONSTRAINT CK_ActVersionActMoodConceptIdConceptClass CHECK (dbo.fn_IsConceptSetMember(MoodConceptId, 'ActMood') = 1),
 	CONSTRAINT CK_ActVersionObsoletedBy CHECK(ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletedBy IS NULL AND ObsoletionTime IS NULL)
+);
+
+CREATE TABLE ActIdentifier
+(
+	ActIdentifierId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE ACT IDENTIFIER 
+	IdentifierTypeId UNIQUEIDENTIFIER NOT NULL, -- THE TYPE OF IDENTIFIER
+	EffectiveVersionId NUMERIC(15) NOT NULL, -- THE VERSION WHERE THE IDENTIFIER BECAME ACTIVE
+	ObsoleteVersionId NUMERIC(15), -- THE OBSOLETION VERSION IDENTIFIER
+	AssigningAuthorityId UNIQUEIDENTIFIER NOT NULL, -- THE ASSIGNING AUTHORITY OF THE IDENTIFIER
+	IdentifierValue NVARCHAR(50) NOT NULL, -- THE VALUE OF THE IDENTIFIER
+	CONSTRAINT PK_ActIdentifier PRIMARY KEY (ActIdentifierId),
+	CONSTRAINT FK_ActIdentifierIdentifierTypeId FOREIGN KEY (IdentifierTypeId) REFERENCES IdentifierType(IdentifierTypeId),
+	CONSTRAINT FK_ActIdentifierEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES ActVersion(ActVersionId),
+	CONSTRAINT FK_ActIdentifierObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES ActVersion(ActVersionId),
+	CONSTRAINT FK_ActIdentifierAssigningAuthorityId FOREIGN KEY (AssigningAuthorityId) REFERENCES AssigningAuthority(AssigningAuthorityId)
+	-- TODO: CHECK IDENTIFIER TYPE SCOPE
 );
 
 CREATE TABLE ActRelationship
@@ -621,7 +654,7 @@ CREATE TABLE ActRelationship
 	CONSTRAINT FK_ActRelationshipEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES ActVersion(ActVersionId),
 	CONSTRAINT FK_ActRelationshipObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES ActVersion(ActVersionId),
 	CONSTRAINT FK_ActRelationshipRelationshipTypeConceptId FOREIGN KEY (RelationshipTypeConceptId) REFERENCES Concept(ConceptId),
-	CONSTRAINT CK_ActRelationshipRelationshipTypeConceptConceptClass CHECK (dbo.fn_AssertConceptClass(RelationshipTypeConceptId, 'ActRelationship') = 1)
+	CONSTRAINT CK_ActRelationshipRelationshipTypeConceptConceptClass CHECK (dbo.fn_IsConceptSetMember(RelationshipTypeConceptId, 'ActRelationshipType') = 1)
 );
 
 CREATE TABLE ActExtension
@@ -645,7 +678,7 @@ CREATE TABLE Observation
 	CONSTRAINT PK_Observation PRIMARY KEY (ActVersionId),
 	CONSTRAINT FK_ObservationActVersionId FOREIGN KEY (ActVersionId) REFERENCES ActVersion(ActVersionId),
 	CONSTRAINT FK_ObservationInterpretationConceptId FOREIGN KEY (InterpretationConceptId) REFERENCES Concept(ConceptId),
-	CONSTRAINT CK_ObservationInterpretationConceptClass CHECK (dbo.fn_AssertConceptClass(InterpretationConceptId, 'ActInterpretation') = 1)
+	CONSTRAINT CK_ObservationInterpretationConceptClass CHECK (dbo.fn_IsConceptSetMember(InterpretationConceptId, 'ActInterpretation') = 1)
 );
 
 CREATE TABLE QuantityObservation
@@ -696,7 +729,7 @@ CREATE TABLE SubstanceAdministration
 	CONSTRAINT PK_SubstanceAdministration PRIMARY KEY (ActVersionId),
 	CONSTRAINT FK_SubstanceAdministrationActVersionId FOREIGN KEY (ActVersionId) REFERENCES ActVersion(ActVersionId),
 	CONSTRAINT FK_SubstanceAdministrationRouteConceptId FOREIGN KEY (RouteConceptId) REFERENCES Concept(ConceptId),
-	CONSTRAINT CK_SubstanceAdministrationRouteConceptClassCode CHECK (dbo.fn_AssertConceptClass(RouteConceptId, 'RouteOfAdminsitration') = 1),
+	CONSTRAINT CK_SubstanceAdministrationRouteConceptClassCode CHECK (dbo.fn_AssertConceptClass(RouteConceptId, 'Route') = 1),
 	CONSTRAINT FK_SubstanceAdministrationDoseUnitConceptId FOREIGN KEY (DoseUnitConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT CK_SubstanceAdministrationDoseUnitConceptClassCode CHECK (dbo.fn_AssertConceptClass(DoseUnitConceptId, 'UnitOfMeasure') = 1)
 );
@@ -728,4 +761,286 @@ CREATE TABLE ActPolicy
 	CONSTRAINT FK_ActPolicyEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES ActVersion(ActVersionId),
 	CONSTRAINT FK_ActPolicyObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES ActVersion(ActVersionId),
 	CONSTRAINT FK_ActPolicyPolicyId FOREIGN KEY (PolicyId) REFERENCES Policy(PolicyId)
+);
+
+CREATE TABLE Entity
+(
+	EntityId NUMERIC(15) IDENTITY NOT NULL, -- THE UNIQUE IDENTIFIER FOR THE ENTITY
+	ClassConceptId NUMERIC(15) NOT NULL, -- THE CLASSIFICATION OF THE ENTITY (EX: Person, Patient, Material, Drug, etc.)
+	DeterminerConceptId NUMERIC(15) NOT NULL, -- IDENTIFIES WHETHER THE ENTITY IS A CLASS OF THING OR AN ACTUAL THING
+	CONSTRAINT PK_Entity PRIMARY KEY (EntityId),
+	CONSTRAINT FK_EntityClassConceptId FOREIGN KEY (ClassConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT FK_EntityDeterminerConceptId FOREIGN KEY (DeterminerConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT CK_EntityClassConceptSet CHECK (dbo.fn_IsConceptSetMember(ClassConceptId, 'EntityClass') = 1)
+);
+
+CREATE TABLE EntityTag
+(
+	EntityTagId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- UNIQUE IDENTIFIER FOR THE TAG INSTANCE
+	EntityId NUMERIC(15) NOT NULL, -- THE ENTITY TO WHICH THE TAG IS AFFIXED
+	Name NVARCHAR(64) NOT NULL, -- THE NAME OF THE TAG
+	Value NVARCHAR(MAX), -- THE VALUE OF THE TAG
+	CreationTime DATETIMEOFFSET NOT NULL DEFAULT CURRENT_TIMESTAMP, -- THE TIME THAT THE TAG WAS ATTACHED
+	CreatedBy UNIQUEIDENTIFIER, -- THE USER THAT CREATED THE TAG
+	ObsoletionTime DATETIMEOFFSET, -- THE TIME WHEN THE TAG WAS OBSOLETED
+	ObsoletedBy UNIQUEIDENTIFIER, -- THE USER WHO OBSOLETED THE TAG
+	CONSTRAINT PK_EntityTag PRIMARY KEY (EntityTagId),
+	CONSTRAINT FK_EntityTagEntityId FOREIGN KEY (EntityId) REFERENCES Entity(EntityId),
+	CONSTRAINT FK_EntityTagCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT FK_EntityTagObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT CK_EntityTagObsoletedBy CHECK(ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletedBy IS NULL AND ObsoletionTime IS NULL)
+);
+
+CREATE TABLE EntityVersion
+(
+	EntityVersionId NUMERIC(15) IDENTITY NOT NULL, -- THE UNIQUE IDENTIFIER FOR THE ENTITY
+	EntityId NUMERIC(15) NOT NULL, -- THE ENTITY TO WHICH THE VERSION APPLIES
+	ReplacesVersionId NUMERIC(15), -- THE VERSION OF THE ENTITY THAT THIS VERSION REPLACES
+	StatusConceptId NUMERIC(15) NOT NULL, -- THE STATUS OF THE ENTITY AT THIS VERSION
+	CreatedBy UNIQUEIDENTIFIER, -- THE USER THAT CREATED THE TAG
+	CreationTimestamp DATETIMEOFFSET NOT NULL DEFAULT CURRENT_TIMESTAMP, -- A TIMESTAMP WHEN THE ENTITY WAS CREATED
+	ObsoletionTimestamp DATETIMEOFFSET, -- THE TIME WHEN THE ENTITY VERSION WAS OBSOLETED
+	ObsoletedBy UNIQUEIDENTIFIER, -- THE USER WHO OBSOLETED THE TAG
+	TypeConceptId NUMERIC(15) NOT NULL, -- THE CONCEPT ID REPRESENTING THE TYPE OF ENTITY (EX: DRUG CODE, PHYSICIAN TYPE, ETC)
+	CONSTRAINT PK_EntityVersion PRIMARY KEY (EntityVersionId),
+	CONSTRAINT FK_EntityVersionEntityId FOREIGN KEY (EntityId) REFERENCES Entity(EntityId),
+	CONSTRAINT FK_EntityVersionReplacesVersionId FOREIGN KEY (ReplacesVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_EntityVersionStatusConceptId FOREIGN KEY (StatusConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT FK_EntityVersionCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT FK_EntityVersionObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT FK_EntityVersionTypeConceptId FOREIGN KEY (TypeConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT CK_EntityVersionStatusConceptSet CHECK (dbo.fn_IsConceptSetMember(StatusConceptId, 'EntityStatus') = 1)
+);
+
+CREATE TABLE EntityAssociation
+(
+	EntityAssociationId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- A UNIQUE IDENTIFIER FOR THE ASSOCIATION
+	SourceEntityId NUMERIC(15) NOT NULL, -- THE SOURCE OF THE RELATIONSHIP
+	TargetEntityId NUMERIC(15) NOT NULL, -- THE TARGET OF THE RELATIONSHIP
+	EffectiveVersionId NUMERIC(15) NOT NULL, -- THE VERSION WHERE THE ASSOCIATION BECAME ACTIVE
+	ObsoleteVersionId NUMERIC(15), -- THE VERSION WHERE THE ASSOCIATION IS NO LONGER ACTIVE
+	AssociationTypeConceptId NUMERIC(15) NOT NULL, -- THE TYPE OF ASSOCIATION (EX: MOTHER, COMPONENT, ETC)
+	CONSTRAINT PK_EntityAssociation PRIMARY KEY (EntityAssociationId),
+	CONSTRAINT FK_EntityAssociationSourceEntityId FOREIGN KEY (SourceEntityId) REFERENCES Entity(EntityId),
+	CONSTRAINT FK_EntityAssociationTargetEntityId FOREIGN KEY (TargetEntityId) REFERENCES Entity(EntityId),
+	CONSTRAINT FK_EntityAssociationEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_EntityAssociationObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_EntityAssociationAssociationConceptId FOREIGN KEY (AssociationTypeConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT CK_EntityAssociationAssociationConcept CHECK (dbo.fn_IsConceptSetMember(AssociationTypeConceptId, 'EntityRelationshipType') = 1)
+);
+
+CREATE TABLE QuantifiedEntityAssociation
+(
+	EntityAssociationId UNIQUEIDENTIFIER NOT NULL, -- THE UNIQUE IDENTIFIER FOR THE ASSOCIATION
+	Quantity FLOAT NOT NULL CHECK (Quantity > 0), -- THE QUANTITY OF THE SOURCE IN THE TARGET
+	CONSTRAINT PK_QuantifiedEntityAssociation PRIMARY KEY (EntityAssociationId),
+	CONSTRAINT FK_QuantifiedEntityAssociationEntityAssociationId FOREIGN KEY (EntityAssociationId) REFERENCES EntityAssociation(EntityAssociationId)
+);
+
+CREATE TABLE EntityAddress
+(
+	EntityAddressId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE ADDRESS INSTANCE
+	EffectiveVersionId NUMERIC(15) NOT NULL, -- THE EFFECTIVE VERSION OF THE ENTITY
+	ObsoleteVersionId NUMERIC(15), -- THE VERSION WHERE THE ENTITY ADDRESS IS NO LONGER ACTIVE
+	AddressUseConceptId NUMERIC(15) NOT NULL, -- INDICATES THE USE OF THE ADDRESS
+	CONSTRAINT PK_EntityAddress PRIMARY KEY (EntityAddressId),
+	CONSTRAINT FK_EntityAddressEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_EntityAddressObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_EntityAddressAddressUseConceptId FOREIGN KEY (AddressUseConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT FK_EntityAddressAddressUseConceptConceptSet CHECK (dbo.fn_IsConceptSetMember(AddressUseConceptId, 'AddressUse') = 1)
+);
+
+CREATE TABLE EntityAddressComponentValue
+(
+	ValueId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- UNIQUE IDENTIFIER FOR THE COMPONENT VALUE CODE
+	Value NVARCHAR(256) NOT NULL, -- THE VALUE OF THE COMPONENT
+	CONSTRAINT PK_EntityAddressComponentValue PRIMARY KEY (ValueId)
+);
+
+CREATE UNIQUE INDEX IX_EntityAddressComponentValueValue ON EntityAddressComponentValue(Value);
+
+CREATE TABLE EntityAddressComponent
+(
+	EntityAddressComponentId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE ADDRESS COMPONENT
+	ComponentTypeConceptId NUMERIC(15), -- THE TYPE OF CONCEPT
+	ValueId UNIQUEIDENTIFIER NOT NULL, -- THE VALUE OF THE ADDRESS PART
+	EntityAddressId UNIQUEIDENTIFIER NOT NULL, -- THE ENTITY ADDRESS ID
+	CONSTRAINT PK_EntityAddressComponent PRIMARY KEY (EntityAddressComponentId),
+	CONSTRAINT FK_EntityAddressComponentTypeConceptId FOREIGN KEY (ComponentTypeConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT FK_EntityAddressComponentValueId FOREIGN KEY (ValueId) REFERENCES EntityAddressComponentValue(ValueId),
+	CONSTRAINT FK_EntityAddressComponentEntityAddressId FOREIGN KEY (EntityAddressId) REFERENCES EntityAddress(EntityAddressId),
+	CONSTRAINT CK_EntityAddressComponentTypeConceptId CHECK (dbo.fn_IsConceptSetMember(ComponentTypeConceptId, 'AddressComponentType') = 1)
+);
+
+CREATE TABLE EntityName
+(
+	EntityNameId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE NAME INSTANCE
+	EffectiveVersionId NUMERIC(15) NOT NULL, -- THE EFFECTIVE VERSION OF THE ENTITY
+	ObsoleteVersionId NUMERIC(15), -- THE VERSION WHERE THE ENTITY NAME IS NO LONGER ACTIVE
+	NameUseConceptId NUMERIC(15) NOT NULL, -- INDICATES THE USE OF THE NAME (LEGAL, MAIDEN, ARTIST, ETC)
+	CONSTRAINT PK_EntityName PRIMARY KEY (EntityNameId),
+	CONSTRAINT FK_EntityNameEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_EntityNameObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_EntityNameAddressUseConceptId FOREIGN KEY (NameUseConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT FK_EntityNameAddressUseConceptConceptSet CHECK (dbo.fn_IsConceptSetMember(NameUseConceptId, 'NameUse') = 1)
+);
+
+CREATE TABLE EntityNameComponent
+(
+	EntityNameComponentId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE NAME COMPONENT
+	ComponentTypeConceptId NUMERIC(15), -- THE TYPE OF NAME COMPONENT
+	PhoneticValueId UNIQUEIDENTIFIER NOT NULL, -- THE VALUE OF THE NAME PART
+	EntityNameId UNIQUEIDENTIFIER NOT NULL, -- THE ENTITY NAME ID
+	CONSTRAINT PK_EntityNameComponent PRIMARY KEY (EntityNameComponentId),
+	CONSTRAINT FK_EntityNameComponentTypeConceptId FOREIGN KEY (ComponentTypeConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT FK_EntityNameComponentValueId FOREIGN KEY (PhoneticValueId) REFERENCES PhoneticValues(PhoneticValueId),
+	CONSTRAINT FK_EntityNameComponentEntityNameId FOREIGN KEY (EntityNameId) REFERENCES EntityName(EntityNameId),
+	CONSTRAINT CK_EntityNameComponentTypeConceptId CHECK (dbo.fn_IsConceptSetMember(ComponentTypeConceptId, 'NamecomponentType') = 1)
+);
+
+
+CREATE TABLE EntityExtension
+(
+	EntityExtensionId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE ENTITY EXTENSION
+	ExtensionTypeId UNIQUEIDENTIFIER NOT NULL, -- THE TYPE OF EXTENSION
+	ExtensionValue VARBINARY(MAX), -- THE SERIALIZED EXTENSION VALUE
+	ExtensionDisplay NVARCHAR(64), -- A DISPLAY VERSION OF THE EXTENSION VALUE
+	EffectiveVersionId NUMERIC(15) NOT NULL, -- THE VERSION WHERE THE EXTENSION BECOMES ACTIVE
+	ObsoleteVersionId NUMERIC(15), -- THE VERSION WHERE THE EXTENSION IS NO LONGER VALID
+	CONSTRAINT PK_EntityExtension PRIMARY KEY (EntityExtensionId),
+	CONSTRAINT FK_EntityExtensionExtensionTypeId FOREIGN KEY (ExtensionTypeId) REFERENCES ExtensionType(ExtensionTypeId),
+	CONSTRAINT FK_EntityExtensionEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_EntityExtensionObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES EntityVersion(EntityVersionId)
+);
+
+CREATE TABLE EntityIdentifier
+(
+	EntityIdentifierId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE ENTITY IDENTIFIER 
+	IdentifierTypeId UNIQUEIDENTIFIER NOT NULL, -- THE TYPE OF IDENTIFIER
+	EffectiveVersionId NUMERIC(15) NOT NULL, -- THE VERSION WHERE THE IDENTIFIER BECAME ACTIVE
+	ObsoleteVersionId NUMERIC(15), -- THE OBSOLETION VERSION IDENTIFIER
+	AssigningAuthorityId UNIQUEIDENTIFIER NOT NULL, -- THE ASSIGNING AUTHORITY OF THE IDENTIFIER
+	IdentifierValue NVARCHAR(50) NOT NULL, -- THE VALUE OF THE IDENTIFIER
+	CONSTRAINT PK_EntityIdentifier PRIMARY KEY (EntityIdentifierId),
+	CONSTRAINT FK_EntityIdentifierIdentifierTypeId FOREIGN KEY (IdentifierTypeId) REFERENCES IdentifierType(IdentifierTypeId),
+	CONSTRAINT FK_EntityIdentifierEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_EntityIdentifierObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_EntityIdentifierAssigningAuthorityId FOREIGN KEY (AssigningAuthorityId) REFERENCES AssigningAuthority(AssigningAuthorityId)
+	-- TODO: CHECK IDENTIFIER TYPE SCOPE
+);
+
+CREATE TABLE EntityTelecomAddress
+(
+	EntityTelecomAddressId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE ADDRESS
+	TelecomAddressTypeConceptId NUMERIC(15) NOT NULL, -- THE TYPE OF TELECOM ADDRESS (EMAIL, PHONE, FAX, ETC)
+	TelecomAddress NVARCHAR(256) NOT NULL, -- THE VALUE OF THE TELECOM ADDRESS
+	TelecomUseConceptId NUMERIC(15) NOT NULL, -- THE USE OF THE TELECOM (HOME, VACATION, WORK)
+	EffectiveVersionId NUMERIC(15) NOT NULL, -- THE TIME WHEN THE ADDRESS BECAME ACTIVE
+	ObsoleteVersionId NUMERIC(15), -- THE TIME WHEN THE ADDRESS IS NOT ACTIVE
+	CONSTRAINT PK_EntityTelecomAddress PRIMARY KEY (EntityTelecomAddressId),
+	CONSTRAINT FK_EntityTelecomAddressTelecomAddressTypeConceptId FOREIGN KEY (TelecomAddressTypeConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT FK_EntityTelecomAddressUseConceptId FOREIGN KEY (TelecomUseConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT FK_EntityTelecomAddressEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_EntityTelecomAddressObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT CK_EntityTelecomAddressTelecomAddressTypeConceptId CHECK (dbo.fn_IsConceptSetMember(TelecomAddressTypeConceptId, 'TelecomAddressType') = 1),
+	CONSTRAINT CK_EntityTelecomAddressTelecomAddressUseConceptId CHECK (dbo.fn_IsConceptSetMember(TelecomUseConceptId, 'TelecomAddressUse') = 1)
+);
+
+CREATE TABLE Place
+(
+	EntityVersionId NUMERIC(15) NOT NULL, -- THE IDENTIFIER FOR THE PLACE
+	MobileInd BIT NOT NULL DEFAULT 0, -- AN INDICATOR WHETHER THE PLACE IS MOBILE (LIKE AN OUTREACH CLINIC)
+	Lat FLOAT, -- THE LATITUDE OF THE PLACE
+	Lng FLOAT, -- THE LONGITUDE OF THE PLACE
+	CONSTRAINT PK_Place PRIMARY KEY (EntityVersionId),
+	CONSTRAINT FK_PlaceEntityVersionId FOREIGN KEY (EntityVersionId) REFERENCES EntityVersion(EntityVersionId)
+);
+
+CREATE TABLE PlaceService
+(
+	PlaceServiceId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE PLACE SERVICE ASSOCIATION
+	EffectiveVersionId NUMERIC(15) NOT NULL, -- THE VERSION WHEN THE ASSOCIATION IS ACTIVE
+	ObsoleteVersionId NUMERIC(15), -- THE VERSION WHERE THE ASSOCIATION IS NO LONGER ACTIVE
+	ServiceConceptId NUMERIC(15) NOT NULL, -- THE SERVICE PERFORMED
+	ServiceSchedule XML NOT NULL, -- THE SCHEDULE WHEN THE SERVICE IS PERFORMED (A GTS)
+	CONSTRAINT PK_PlaceService PRIMARY KEY (PlaceServiceId),
+	CONSTRAINT FK_PlaceServiceEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_PlaceServiceObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_PlaceServiceServiceConceptId FOREIGN KEY (ServiceConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT CK_PlaceServiceServiceConceptConceptSet CHECK (dbo.fn_IsConceptSetMember(ServiceConceptId, 'ServiceCode') = 1)
+);
+
+CREATE TABLE Organization
+(
+	EntityVersionId NUMERIC(15) NOT NULL, -- THE VERSION OF THE ENTITY THE ORGANIZATION DATA APPLIES TO
+	IndustryConceptId NUMERIC(15) NOT NULL, -- THE INDUSTRY IN WHICH THE ORGANIZATION PARTICIPATES
+	CONSTRAINT PK_Organization PRIMARY KEY (EntityVersionId),
+	CONSTRAINT FK_OrganizationEntityVersionId FOREIGN KEY (EntityVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_OrganizationIndustryConceptId FOREIGN KEY (IndustryConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT CK_OrganizationIndustryConceptConceptSet CHECK (dbo.fn_IsConceptSetMember(IndustryConceptId, 'IndustryCode') = 1)
+);
+
+CREATE TABLE [Application]
+(
+	EntityVersionId NUMERIC(15) NOT NULL, -- THE VERSION OF THE ENTITY TO WHICH THE APPLICATION ROLE DAT APPLIES
+	SoftwareName NVARCHAR(64) NOT NULL, -- THE NAME OF THE SOFTWARE PRODUCT THE APPLICATION REPRESENTS
+	VersionName NVARCHAR(64), -- THE VERSION OF THE SOFTWARE PRODUCT
+	VendorName NVARCHAR(64), -- THE VENDOR OF THE SOFTWARE PRODUCT
+	CONSTRAINT PK_Application PRIMARY KEY (EntityVersionId),
+	CONSTRAINT FK_ApplicationEntityVersionId FOREIGN KEY (EntityVersionId) REFERENCES EntityVersion(EntityVersionId)
+);
+
+CREATE TABLE DeviceEntity
+(
+	EntityVersionId NUMERIC(15) NOT NULL, -- THE ENTITY VERSION TO WHICH THE ASSOCIATIN APPLIES
+	DeviceId UNIQUEIDENTIFIER NOT NULL, -- THE DEVICE TO WHICH THE ASSOCIATION APPLIES
+	ManufacturedModelName NVARCHAR(64) NOT NULL, -- THE MANUFACTURER
+	OperatingSystemName NVARCHAR(64), -- THE NAME OF THE OPERATING SYSTEM ON THE DEVICE
+	CONSTRAINT PK_DeviceEntity PRIMARY KEY (EntityVersionId),
+	CONSTRAINT FK_DeviceEntityEntityVersionId FOREIGN KEY (EntityVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_DeviceEntityDeviceId FOREIGN KEY (DeviceId) REFERENCES SecurityDevice(DeviceId)
+);
+
+CREATE TABLE Material
+(
+	EntityVersionId NUMERIC(15) NOT NULL, -- THE ENTITY VERSION TO WHICH THE MATERIAL DATA APPLIES
+	ExpiryDate DATE, -- THE DATE WHEN THE MATERIAL EXPIRES
+	FormConceptId NUMERIC(15), -- THE FORM THE MATERIAL TAKES (BOX, CAPSULE, INJECTION, ETC.)
+	QuantityConceptId NUMERIC(15), -- THE QUANTITY CONCEPT REPRESENTING HOW THE MATERIAL IS MEASURED (PILL, PUFF, ML, etc.)
+	IsAdministrative BIT NOT NULL DEFAULT 0, -- WHEN TRUE THE MATERIAL REPRESENTS AN ADMINISTRATIVE MATERIAL IN THAT IT DOESN"T ACTUALLY EXIST BUT IS PRESENT FOR ADMINISTRATIVE PURPOSES SUCH AS ORDER BUNDLING
+	CONSTRAINT PK_Material PRIMARY KEY (EntityVersionId),
+	CONSTRAINT FK_MaterialEntityVersionId FOREIGN KEY (EntityVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_MaterialFormConceptId FOREIGN KEY (FormConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT FK_MaterialQuantityConceptId FOREIGN KEY (QuantityConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT CK_MaterialFormConceptClass CHECK (dbo.fn_AssertConceptClass(FormConceptId, 'FormCode') = 1),
+	CONSTRAINT CK_MaterialQuantityConceptClass CHECK (dbo.fn_AssertConceptClass(FormConceptId, 'UnitOfMeasure') = 1)
+);
+
+CREATE TABLE ManufacturedMaterial
+(
+	EntityVersionId NUMERIC(15) NOT NULL, -- THE VERSION TO WHICH THE MANUFACTURED MATERIAL DATA APPLIES
+	LotNumber NVARCHAR(32), -- THE LOT NUMBER OF THE MATERIAL FROM THE MANUFACTURER
+	CONSTRAINT PK_ManufacturedMaterial PRIMARY KEY (EntityVersionId),
+	CONSTRAINT FK_ManufacturedMaterialEntityVersionId FOREIGN KEY (EntityVersionId) REFERENCES Material(EntityVersionId)
+);
+
+CREATE TABLE Person
+(
+	EntityVersionId NUMERIC(15) NOT NULL, -- THE VERSION TO WHICH THE PERSON DATA APPLIES
+	DateOfBirth DATE, -- THE DATE OF BIRTH OF THE PERSON
+	DateOfBirthPrecision CHAR(1) CHECK (DateOfBirthPrecision IN ('Y','M','D')),
+	CONSTRAINT PK_Person PRIMARY KEY (EntityVersionId),
+	CONSTRAINT FK_PersonEntityVersionId FOREIGN KEY (EntityVersionId) REFERENCES EntityVersion(EntityVersionId)
+);
+
+CREATE TABLE PersonLanguageCommunication
+(
+	PersonLanguageCommunicationId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE LANGUAGE COMMUNICATION ID 
+	EffectiveVersionId NUMERIC(15) NOT NULL, -- THE VERSION WHERE THE LANGUAGE OF COMMUNICATION BECOMES ACTIVE
+	ObsoleteVersionId NUMERIC(15), -- THE VERSION WHERE THE LANGUAGE IS NO LONGER ACTIVE
+	LanguageCommunication CHAR(2), -- THE 2 CHARACTER ISO 639 CODE
+	PreferenceIndicator BIT NOT NULL DEFAULT 0, -- WHETHER THE LANGUAGE IS PREFERRED
+	CONSTRAINT PK_PersonLanguageCommunication PRIMARY KEY (PersonLanguageCommunicationId),
+	CONSTRAINT FK_PersonLanguageCommunicationEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_PersonLanguageCommunciationObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES EntityVersion(EntityVersionId)
 );
