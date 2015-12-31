@@ -208,6 +208,23 @@ CREATE TABLE SecurityDevice
 
 CREATE INDEX IX_SecurityDeviceSecret ON SecurityDevice(DeviceSecret);
 
+CREATE TABLE SecurityApplication
+(
+	ApplicationId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE APPLICATION ID
+	ApplicationSecret NVARCHAR(64) NOT NULL, -- THE SECRET USED TO AUTHENTICATE THE DEVICE
+	CreationTime DATETIMEOFFSET NOT NULL DEFAULT CURRENT_TIMESTAMP, -- THE CREATION TIME OF THE APPLICATION
+	CreatedBy UNIQUEIDENTIFIER NOT NULL, -- THE USER THAT CREATED THE APPLICATION
+	ObsoletionTime DATETIMEOFFSET, -- THE TIME THE APPLICATION IS OBSOLETED
+	ObsoletedBy UNIQUEIDENTIFIER, -- THE USER WHICH WAS RESPONSIBLE FOR THE OBSOLETION OF THE APPLICATION
+	ReplacesApplicationId UNIQUEIDENTIFIER, -- THE APPLICATION THAT IS REPLACED
+	CONSTRAINT PK_SecurityApplication PRIMARY KEY (ApplicationId),
+	CONSTRAINT FK_SecurityApplicationCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT FK_SecurityApplicationObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT CK_SecurityApplicationObsoletedBy CHECK (ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletedBy IS NULL AND ObsoletionTime IS NULL)
+);
+
+CREATE INDEX IX_SecurityApplicationSecret ON SecurityApplication(ApplicationId);
+
 /*
  ASSOCIATIVE ENTITY TABLE BETWEEN SECURITY DEVICE AND POLICY
 */
@@ -219,6 +236,19 @@ CREATE TABLE SecurityDevicePolicy
 	CONSTRAINT PK_SecurityDevicePolicy PRIMARY KEY (DeviceId, PolicyId),
 	CONSTRAINT FK_SecurityDevicePolicyDeviceId FOREIGN KEY (DeviceId) REFERENCES SecurityDevice(DeviceId),
 	CONSTRAINT FK_SecurityDevicePolicyPolicyId FOREIGN KEY (PolicyId) REFERENCES Policy(PolicyId)
+);
+
+/*
+ ASSOCIATIVE ENTITY TABLE BETWEEN SECURITY APLICATION AND POLICY
+*/
+CREATE TABLE SecurityApplicationPolicy
+(
+	ApplicationId UNIQUEIDENTIFIER NOT NULL, -- THE Application TO WHICH THE POLICY ASSOCIATION APPLIES 
+	PolicyId UNIQUEIDENTIFIER NOT NULL, -- THE POLICY IDENTIFIER TO WHICH THE POLICY ASSOCIATION APPLIES
+	IsDeny BIT NOT NULL DEFAULT 0, -- WHEN TRUE INDICATES THE ACTS WITH POLICY APPLIED IS A DENY
+	CONSTRAINT PK_SecurityApplicationPolicy PRIMARY KEY (ApplicationId, PolicyId),
+	CONSTRAINT FK_SecurityApplicationPolicyApplicationId FOREIGN KEY (ApplicationId) REFERENCES SecurityApplication(ApplicationId),
+	CONSTRAINT FK_SecurityApplicationPolicyPolicyId FOREIGN KEY (PolicyId) REFERENCES Policy(PolicyId)
 );
 
 /* 
@@ -982,9 +1012,10 @@ CREATE TABLE Organization
 	CONSTRAINT CK_OrganizationIndustryConceptConceptSet CHECK (dbo.fn_IsConceptSetMember(IndustryConceptId, 'IndustryCode') = 1)
 );
 
-CREATE TABLE [Application]
+CREATE TABLE ApplicationEntity
 (
 	EntityVersionId NUMERIC(15) NOT NULL, -- THE VERSION OF THE ENTITY TO WHICH THE APPLICATION ROLE DAT APPLIES
+	ApplicationId UNIQUEIDENTIFIER NOT NULL, -- THE SECURITY DEVICE ASSOCIATED WITH THIS
 	SoftwareName NVARCHAR(64) NOT NULL, -- THE NAME OF THE SOFTWARE PRODUCT THE APPLICATION REPRESENTS
 	VersionName NVARCHAR(64), -- THE VERSION OF THE SOFTWARE PRODUCT
 	VendorName NVARCHAR(64), -- THE VENDOR OF THE SOFTWARE PRODUCT
@@ -1014,7 +1045,7 @@ CREATE TABLE Material
 	CONSTRAINT FK_MaterialEntityVersionId FOREIGN KEY (EntityVersionId) REFERENCES EntityVersion(EntityVersionId),
 	CONSTRAINT FK_MaterialFormConceptId FOREIGN KEY (FormConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_MaterialQuantityConceptId FOREIGN KEY (QuantityConceptId) REFERENCES Concept(ConceptId),
-	CONSTRAINT CK_MaterialFormConceptClass CHECK (dbo.fn_AssertConceptClass(FormConceptId, 'FormCode') = 1),
+	CONSTRAINT CK_MaterialFormConceptClass CHECK (dbo.fn_AssertConceptClass(FormConceptId, 'Form') = 1),
 	CONSTRAINT CK_MaterialQuantityConceptClass CHECK (dbo.fn_AssertConceptClass(FormConceptId, 'UnitOfMeasure') = 1)
 );
 
@@ -1026,6 +1057,17 @@ CREATE TABLE ManufacturedMaterial
 	CONSTRAINT FK_ManufacturedMaterialEntityVersionId FOREIGN KEY (EntityVersionId) REFERENCES Material(EntityVersionId)
 );
 
+/*
+CREATE TABLE DrugMaterial
+(
+	EntityVersionId NUMERIC(15) NOT NULL, -- THE MANUFACTURED MATERIAL
+	RouteConceptId NUMERIC(15), -- THE DEFAULT ROUTE IN WHICH THE DRUG IS CONSUMED
+	CONSTRAINT PK_DrugMaterial PRIMARY KEY (EntityVersionId),
+	CONSTRAINT FK_DrugMaterialEntityVersionId FOREIGN KEY (EntityVersionId) REFERENCES Material(EntityVersionId),
+	CONSTRAINT FK_DrugMaterialRouteConceptId FOREIGN KEY (RouteConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT CK_MaterialQuantityConceptClass CHECK (dbo.fn_AssertConceptClass(FormConceptId, 'Route') = 1)
+);
+*/
 CREATE TABLE Person
 (
 	EntityVersionId NUMERIC(15) NOT NULL, -- THE VERSION TO WHICH THE PERSON DATA APPLIES
@@ -1135,4 +1177,30 @@ CREATE TABLE ActProtocol
 	CONSTRAINT PK_ActProtocol PRIMARY KEY (ProtocolId, ActId),
 	CONSTRAINT FK_ActProtocolProtocolId FOREIGN KEY (ProtocolId) REFERENCES Protocol(ProtocolId),
 	CONSTRAINT FK_ActProtocolActId FOREIGN KEY (ActId) REFERENCES Act(ActId)
+);
+
+CREATE TABLE ActNote
+(
+	ActNoteId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- NOTE IDENTIFIER
+	EffectiveVersionId NUMERIC(15) NOT NULL, -- THE ACT TO WHICH THE NOTE APPLIES
+	ObsoleteVersionId NUMERIC(15), -- THE VERSION WHEREBY THE NOTE IS NO LONGER ASSOCIATED
+	AuthorEntityId NUMERIC(15) NOT NULL, -- THE ENTITY WHO AUTHORED THE NOTE
+	NoteText TEXT NOT NULL,
+	CONSTRAINT PK_ActNote PRIMARY KEY (ActNoteId),
+	CONSTRAINT FK_ActNoteEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES ActVersion(ActVersionId),
+	CONSTRAINT FK_ActNoteObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES ActVersion(ActVersionId),
+	CONSTRAINT FK_ActNoteAuthorEntityId FOREIGN KEY (AuthorEntityId) REFERENCES Entity(EntityId)
+);
+
+CREATE TABLE EntityNote
+(
+	EntityNoteId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- NOTE IDENTIFIER
+	EffectiveVersionId NUMERIC(15) NOT NULL, -- THE Entity TO WHICH THE NOTE APPLIES
+	ObsoleteVersionId NUMERIC(15), -- THE VERSION WHEREBY THE NOTE IS NO LONGER ASSOCIATED
+	AuthorEntityId NUMERIC(15) NOT NULL, -- THE ENTITY WHO AUTHORED THE NOTE
+	NoteText TEXT NOT NULL,
+	CONSTRAINT PK_EntityNote PRIMARY KEY (EntityNoteId),
+	CONSTRAINT FK_EntityNoteEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_EntityNoteObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_EntityNoteAuthorEntityId FOREIGN KEY (AuthorEntityId) REFERENCES Entity(EntityId)
 );
