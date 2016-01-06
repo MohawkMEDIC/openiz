@@ -9,6 +9,8 @@ using MARC.HI.EHRS.SVC.Core.Event;
 using OpenIZ.Core.Model;
 using MARC.HI.EHRS.SVC.Core.Data;
 using OpenIZ.Persistence.Data.MSSQL.Data;
+using System.Security;
+using System.Linq.Expressions;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services
 {
@@ -137,7 +139,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// <param name="query">The query to be executed expressed as an expression tree in using the model view classes</param>
         /// <param name="authContext">The authorization context</param>
         /// <returns>A delay load IQueryable instance which converts the query objects to the model view class</returns>
-        public IQueryable<TModel> Query(Func<TModel, bool> query, AuthorizationContext authContext)
+        public IQueryable<TModel> Query(Expression<Func<TModel, bool>> query, AuthorizationContext authContext)
         {
             using (ModelDataContext dataContext = new ModelDataContext())
             {
@@ -221,7 +223,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// <param name="query">The query to be executed expressed as an expression tree in using the model view classes</param>
         /// <param name="authContext">The authorization context</param>
         /// <returns>A delay load IQueryable instance which converts the query objects to the model view class</returns>
-        public IQueryable<TModel> Query(Func<TModel, bool> query, AuthorizationContext authContext, ModelDataContext dataContext)
+        public IQueryable<TModel> Query(Expression<Func<TModel, bool>> query, AuthorizationContext authContext, ModelDataContext dataContext)
         {
             PreQueryEventArgs<TModel> preEvt = new PreQueryEventArgs<TModel>(query, authContext);
             this.Querying?.Invoke(this, preEvt);
@@ -258,7 +260,23 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             return retVal;
         }
 
-         /// <summary>
+        /// <summary>
+        /// Convert a data type into the model class
+        /// </summary>
+        /// <typeparam name="TData">The data model type</typeparam>
+        /// <param name="data">The data instance to be converted</param>
+        /// <returns>The converted data</returns>
+        internal abstract TModel Convert<TData>(TData data);
+
+        /// <summary>
+        /// Convert a model class into a data representation
+        /// </summary>
+        /// <typeparam name="TData">The data model representation type</typeparam>
+        /// <param name="model">The model to be converted</param>
+        /// <returns>The converted model class</returns>
+        internal abstract TData Convert<TData>(TModel model);
+
+        /// <summary>
         /// Must be implemented by all derivative classes, performs the actual get operation
         /// </summary>
         /// <param name="containerId">The container identifier to retrieve</param>
@@ -272,7 +290,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// <param name="query">The lambda expression representing the query</param>
         /// <param name="authContext">The authorization context</param>
         /// <returns>An IQueryable which represents the TModel</returns>
-        protected abstract IQueryable<TModel> DoQuery(Func<TModel, bool> query, AuthorizationContext authContext, ModelDataContext dataContext);
+        protected abstract IQueryable<TModel> DoQuery(Expression<Func<TModel, bool>> query, AuthorizationContext authContext, ModelDataContext dataContext);
 
         /// <summary>
         /// Perform the insert of the object
@@ -302,6 +320,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         protected abstract TModel DoUpdate(TModel storageData, AuthorizationContext authContext, ModelDataContext dataContext);
 
         #endregion
+
+        /// <summary>
+        /// Get the user identifier from the authorization context
+        /// </summary>
+        /// <param name="authContext">The current authorization context</param>
+        /// <returns>The UUID of the user which the authorization context subject represents</returns>
+        protected Guid GetUserFromAuthContext(AuthorizationContext authContext, ModelDataContext dataContext)
+        {
+
+            var user = dataContext.SecurityUsers.FirstOrDefault(o => o.UserName == authContext.Identity.Name && !o.ObsoletionTime.HasValue);
+            if (user == null)
+                throw new SecurityException("User in authorization context does not exist or is obsolete");
+
+            return user.UserId;
+
+        }
 
     }
 }

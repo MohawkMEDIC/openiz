@@ -33,6 +33,16 @@
     }
     ]]>
   </msxsl:script>
+  <xsl:template match="linq:Column">
+    <xsl:copy>
+      <xsl:apply-templates select="@*"/>
+      <xsl:if test="@IsPrimaryKey = 'true' or @Name = 'CreationTime'">
+        <xsl:attribute name="IsDbGenerated">
+          <xsl:value-of select="'true'"/>
+        </xsl:attribute>
+      </xsl:if>
+    </xsl:copy>
+  </xsl:template>
   <xsl:template match="linq:Association">
     <xsl:choose>
 

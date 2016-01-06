@@ -1,5 +1,4 @@
 ﻿using MARC.HI.EHRS.SVC.Core.Data;
-using OpenIZ.Core.Attributes;
 using OpenIZ.Core.Model.Security;
 using System;
 using System.Collections.Generic;
