@@ -32,5 +32,17 @@ namespace OpenIZ.Persistence.Data.MSSQL.Properties {
                 return ((string)(this["OpenIZConnectionString"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\JustinFyfe\\Source\\Re" +
+            "pos\\openiz\\OpenIZ.Persistence.Data.MSSQL.Test\\OpenIZ_Test.mdf;Integrated Securit" +
+            "y=True;Connect Timeout=30")]
+        public string OpenIZ_TestConnectionString {
+            get {
+                return ((string)(this["OpenIZ_TestConnectionString"]));
+            }
+        }
     }
 }

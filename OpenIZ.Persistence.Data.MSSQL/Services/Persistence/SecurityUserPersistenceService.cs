@@ -34,7 +34,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var dataUser = dataContext.SecurityUsers.FirstOrDefault(o => o.UserId == containerId.Id);
 
             if (dataUser != null)
-                return this.Convert(dataUser);
+                return this.ConvertToModel(dataUser);
             else
                 return null;
         }
@@ -51,12 +51,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (storageData.Key != default(Guid)) // Trying to insert an already inserted user?
                 throw new SqlFormalConstraintException("Insert must be for an unidentified object");
 
-            var dataUser = this.Convert<Data.SecurityUser>(storageData);
-            dataUser.CreatedBy = base.GetUserFromAuthContext(authContext, dataContext);
-            dataUser.UserId = Guid.NewGuid();
+            var dataUser = this.ConvertFromModel(storageData) as Data.SecurityUser;
+            dataUser.CreatedBy = authContext == null ? null : (Guid?)base.GetUserFromAuthContext(authContext, dataContext);
             dataContext.SecurityUsers.InsertOnSubmit(dataUser);
 
-            return this.Convert(dataUser);
+            // Persist data to the db
+            dataContext.SubmitChanges();
+
+            return this.ConvertToModel(dataUser);
         }
 
         /// <summary>
@@ -71,11 +73,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (storageData.Key == default(Guid))
                 throw new SqlFormalConstraintException("Obsolete must be for an identified object");
 
-            var dataUser = this.Convert<Data.SecurityUser>(storageData);
+            var dataUser = this.ConvertFromModel(storageData) as Data.SecurityUser;
             dataUser.ObsoletedBy = base.GetUserFromAuthContext(authContext, dataContext);
             dataUser.ObsoletionTime = DateTimeOffset.Now;
 
-            return this.Convert(dataUser);
+            // Persist data to the db
+            dataContext.SubmitChanges();
+
+            return this.ConvertToModel(dataUser);
         }
 
         /// <summary>
@@ -93,19 +98,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         }
 
         /// <summary>
-        /// Convert from model to domain
+        /// Convert a model class into a data class
         /// </summary>
-        internal override TData Convert<TData>(Core.Model.Security.SecurityUser model)
+        internal override object ConvertFromModel(Core.Model.Security.SecurityUser model)
         {
-            throw new NotImplementedException();
+            return s_mapper.MapModelInstance<Core.Model.Security.SecurityUser, Data.SecurityUser>(model);
         }
 
         /// <summary>
-        /// Convert from domain to model
+        /// Convert data to model
         /// </summary>
-        internal override Core.Model.Security.SecurityUser Convert<TData>(TData data)
+        internal override Core.Model.Security.SecurityUser ConvertToModel(object data)
         {
-            throw new NotImplementedException();
+            return s_mapper.MapDomainInstance<Data.SecurityUser, Core.Model.Security.SecurityUser>(data as Data.SecurityUser);
         }
     }
 }

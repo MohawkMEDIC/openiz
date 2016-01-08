@@ -2796,7 +2796,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProtocolId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProtocolId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ProtocolId
 		{
 			get
@@ -2820,7 +2820,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ActId
 		{
 			get
@@ -2864,7 +2864,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StateData", DbType="Xml", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StateData", DbType="Xml", UpdateCheck=UpdateCheck.Never)]
 		public System.Xml.Linq.XElement StateData
 		{
 			get
@@ -8739,7 +8739,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptSetId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptSetId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ConceptSetId
 		{
 			get
@@ -8763,7 +8763,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ConceptId
 		{
 			get
@@ -18538,7 +18538,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProtocolDefinition", DbType="Xml", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProtocolDefinition", DbType="Xml", UpdateCheck=UpdateCheck.Never)]
 		public System.Xml.Linq.XElement ProtocolDefinition
 		{
 			get
@@ -20752,7 +20752,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ApplicationId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ApplicationId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ApplicationId
 		{
 			get
@@ -20776,7 +20776,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PolicyId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PolicyId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid PolicyId
 		{
 			get
@@ -21288,7 +21288,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeviceId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeviceId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid DeviceId
 		{
 			get
@@ -21312,7 +21312,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PolicyId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PolicyId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid PolicyId
 		{
 			get
@@ -21800,7 +21800,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoleId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoleId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid RoleId
 		{
 			get
@@ -21824,7 +21824,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PolicyId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PolicyId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid PolicyId
 		{
 			get
@@ -23877,7 +23877,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LoginProvider", AutoSync=AutoSync.OnInsert, DbType="NVarChar(128) NOT NULL", CanBeNull=false, IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LoginProvider", DbType="NVarChar(128) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
 		public string LoginProvider
 		{
 			get
@@ -23897,7 +23897,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProviderKey", AutoSync=AutoSync.OnInsert, DbType="NVarChar(128) NOT NULL", CanBeNull=false, IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProviderKey", DbType="NVarChar(128) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
 		public string ProviderKey
 		{
 			get
@@ -23917,7 +23917,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid UserId
 		{
 			get
@@ -24027,7 +24027,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid UserId
 		{
 			get
@@ -24051,7 +24051,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoleId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoleId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid RoleId
 		{
 			get

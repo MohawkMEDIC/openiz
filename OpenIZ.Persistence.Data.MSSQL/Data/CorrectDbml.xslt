@@ -12,8 +12,6 @@
     <![CDATA[
     public String CorrectAssociationName(String associationName, String typeName, String memberName, String thisKey, String otherKey, Boolean isForeignKey)
     {
-      if(typeName == "SecurityUser")
-        System.Diagnostics.Debugger.Break();
         
       String preferredName = memberName;
       // Member is another class pointing at me
@@ -39,9 +37,10 @@
     ]]>
   </msxsl:script>
   <xsl:template match="linq:Column">
+    
     <xsl:copy>
       <xsl:apply-templates select="@*"/>
-      <xsl:if test="@IsPrimaryKey = 'true' or @Name = 'CreationTime'">
+      <xsl:if test="(@IsPrimaryKey = 'true' and count(../linq:Column[@IsPrimaryKey = 'true']) = 1) or @Name = 'CreationTime'">
         <xsl:attribute name="IsDbGenerated">
           <xsl:value-of select="'true'"/> 
         </xsl:attribute>

@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenIZ.Core.Model.Security;
 using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Core;
+using System.IO;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 {
@@ -14,6 +15,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
     [TestClass]
     public class SecurityUserPersistenceServiceTest : DataTest
     {
+
+        [ClassInitialize]
+        public static void ClassSetup(TestContext context)
+        {
+            AppDomain.CurrentDomain.SetData(
+                           "DataDirectory",
+                           Path.Combine(context.TestDeploymentDir, string.Empty));
+        }
+
         /// <summary>
         /// Test the insertion of a valid security user
         /// </summary>
@@ -23,7 +33,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             
             SecurityUser userUnderTest = new SecurityUser()
             {
-                CreationTime = DateTime.Now,
                 Email = "admin@test.com",
                 EmailConfirmed = true,
                 PasswordHash = "test_user_hash_store",
@@ -33,8 +42,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 
             // Store user
             IDataPersistenceService<SecurityUser> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
-            persistenceService.Insert(userUnderTest, null, DataPersistenceMode.Production);
-            
+            var userAfterTest = persistenceService.Insert(userUnderTest, null, DataPersistenceMode.Production);
+
+            // Key should be set
+            Assert.AreNotEqual(Guid.Empty, userAfterTest.Key);
+            Assert.AreNotEqual(default(DateTimeOffset), userAfterTest.CreationTime);
+            Assert.AreEqual(userUnderTest.UserName, userAfterTest.UserName);
         }
     }
 }

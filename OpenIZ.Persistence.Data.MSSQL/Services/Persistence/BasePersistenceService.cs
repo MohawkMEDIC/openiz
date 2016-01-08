@@ -14,6 +14,7 @@ using System.Linq.Expressions;
 using OpenIZ.Core.Model.Map;
 using OpenIZ.Persistence.Data.MSSQL.Configuration;
 using System.Configuration;
+using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -83,10 +84,23 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
             {
-                var retVal = this.Insert(storageData, authContext, dataContext);
-                if (mode == DataPersistenceMode.Production)
+                try
+                {
+                    dataContext.Connection.Open();
+                    dataContext.Transaction = dataContext.Connection.BeginTransaction();
+
+                    var retVal = this.Insert(storageData, authContext, dataContext);
                     dataContext.SubmitChanges();
-                return retVal;
+
+                    return retVal;
+                }
+                finally
+                {
+                    if (mode == DataPersistenceMode.Debugging)
+                        dataContext.Transaction.Rollback();
+                    else
+                        dataContext.Transaction.Commit();
+                }
             }
         }
 
@@ -101,10 +115,23 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
             {
-                var retVal = this.Update(storageData, authContext, dataContext);
-                if (mode == DataPersistenceMode.Production)
+                try
+                {
+                    dataContext.Connection.Open();
+                    dataContext.Transaction = dataContext.Connection.BeginTransaction();
+
+                    var retVal = this.Update(storageData, authContext, dataContext);
                     dataContext.SubmitChanges();
-                return retVal;
+
+                    return retVal;
+                }
+                finally
+                {
+                    if (mode == DataPersistenceMode.Debugging)
+                        dataContext.Transaction.Rollback();
+                    else
+                        dataContext.Transaction.Commit();
+                }
             }
         }
 
@@ -119,10 +146,23 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
             {
-                var retVal = this.Obsolete(storageData, authContext, dataContext);
-                if (mode == DataPersistenceMode.Production)
+                try
+                {
+                    dataContext.Connection.Open();
+                    dataContext.Transaction = dataContext.Connection.BeginTransaction();
+
+                    var retVal = this.Obsolete(storageData, authContext, dataContext);
                     dataContext.SubmitChanges();
-                return retVal;
+
+                    return retVal;
+                }
+                finally
+                {
+                    if (mode == DataPersistenceMode.Debugging)
+                        dataContext.Transaction.Rollback();
+                    else
+                        dataContext.Transaction.Commit();
+                }
             }
         }
 
@@ -159,6 +199,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         #endregion
 
         #region Internal Implementation 
+
         /// <summary>
         /// Gets the specified container
         /// </summary>
@@ -272,18 +313,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <summary>
         /// Convert a data type into the model class
         /// </summary>
-        /// <typeparam name="TData">The data model type</typeparam>
         /// <param name="data">The data instance to be converted</param>
         /// <returns>The converted data</returns>
-        internal abstract TModel Convert<TData>(TData data);
+        internal abstract TModel ConvertToModel(Object data);
 
         /// <summary>
         /// Convert a model class into a data representation
         /// </summary>
-        /// <typeparam name="TData">The data model representation type</typeparam>
         /// <param name="model">The model to be converted</param>
         /// <returns>The converted model class</returns>
-        internal abstract TData Convert<TData>(TModel model);
+        internal abstract Object ConvertFromModel(TModel model);
 
         /// <summary>
         /// Must be implemented by all derivative classes, performs the actual get operation

@@ -12,8 +12,6 @@ using OpenIZ.Persistence.Data.MSSQL.Services.Persistence;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Test.Map
 {
-    [DeploymentItem(@"OpenIZ.Test.mdf")]
-    [DeploymentItem(@"OpenIZ.Test.ldf")]
     [TestClass]
     public class ModelMapTest : DataTest
     {
@@ -142,8 +140,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Map
         public void TestConvertSecurityUserDoubleChainedContainsComplex()
         {
 
-            Expression<Func<OpenIZ.Core.Model.Security.SecurityRole, bool>> modelExpr = (r => r.Users.Any(u => u.CreatedBy.UserName == "jdoe" && u.CreationTime < DateTime.Now && u.Email.EndsWith(r.Name)) && !r.ObsoletionTime.HasValue);
-            Expression<Func<OpenIZ.Persistence.Data.MSSQL.Data.SecurityRole, bool>> domainExpr = (r => r.SecurityUserRoles.Any(u => u.SecurityUser.CreatedByEntity.UserName == "jdoe" && u.SecurityUser.CreationTime < DateTime.Now && u.SecurityUser.Email.EndsWith(r.Name)) && !r.ObsoletionTime.HasValue);
+            Expression<Func<OpenIZ.Core.Model.Security.SecurityRole, bool>> modelExpr = (r => r.Users.Any(u => u.CreatedBy.UserName == "jdoe" && u.CreationTime < DateTimeOffset.Now && u.Email.EndsWith(r.Name)) && !r.ObsoletionTime.HasValue);
+            Expression<Func<OpenIZ.Persistence.Data.MSSQL.Data.SecurityRole, bool>> domainExpr = (r => r.SecurityUserRoles.Any(u => u.SecurityUser.CreatedByEntity.UserName == "jdoe" && u.SecurityUser.CreationTime < DateTimeOffset.Now && u.SecurityUser.Email.EndsWith(r.Name)) && !r.ObsoletionTime.HasValue);
 
             Expression testValue = this.m_mapper.MapModelExpression<SecurityRole, Data.SecurityRole>(modelExpr);
             Assert.AreEqual(domainExpr.ToString(), testValue.ToString());

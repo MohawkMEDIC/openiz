@@ -55,5 +55,14 @@ namespace OpenIZ.Core.Model.Map
             retVal = this.Property.Find(o => o.ModelName == modelName);
             return retVal != null;
         }
+        
+        /// <summary>
+        /// Try to get a property map 
+        /// </summary>
+        public bool TryGetDomainProperty(string domainName, out PropertyMap retVal)
+        {
+            retVal = this.Property.Find(o => o.DomainName == domainName);
+            return retVal != null;
+        }
     }
 }

@@ -52,7 +52,7 @@
     <Compile Include="Data\Model.cs">
       <DependentUpon>Model.dbml</DependentUpon>
     </Compile>
-    <Compile Include="Data\Model.designer.cs">
+    <Compile Include="Data\Model1.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Model.dbml</DependentUpon>
@@ -71,6 +71,7 @@
     <None Include="Data\Model.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <SubType>Designer</SubType>
+      <LastGenOutput>Model1.designer.cs</LastGenOutput>
     </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

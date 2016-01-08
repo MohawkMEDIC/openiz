@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -166,6 +167,98 @@ namespace OpenIZ.Core.Model.Map
         {
             Expression expr = new ModelExpressionVisitor(this).Visit(expression.Body);
             return Expression.Lambda<Func<TTo, bool>>(expr, Expression.Parameter(typeof(TTo), expression.Parameters[0].Name));
+        }
+
+        /// <summary>
+        /// Map model instance
+        /// </summary>
+        public TDomain MapModelInstance<TModel, TDomain>(TModel modelInstance) where TDomain : new()
+        {
+            ClassMap classMap = this.m_mapFile.GetModelClassMap(typeof(TModel));
+
+            if (classMap == null)
+                return default(TDomain);
+
+            // Now the property maps
+            TDomain retVal = new TDomain();
+            foreach(var propInfo in typeof(TModel).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+
+                if (!propInfo.PropertyType.IsPrimitive && propInfo.PropertyType != typeof(Guid) &&
+                    (!propInfo.PropertyType.IsGenericType || propInfo.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) &&
+                    propInfo.PropertyType != typeof(String) &&
+                    propInfo.PropertyType != typeof(DateTime) &&
+                    propInfo.PropertyType != typeof(DateTimeOffset))
+                    continue;
+
+                // Map property
+                PropertyMap propMap = null;
+                classMap.TryGetModelProperty(propInfo.Name, out propMap);
+                PropertyInfo domainProperty = null;
+
+                // Set 
+                if (propMap == null)
+                    domainProperty = typeof(TDomain).GetProperty(propInfo.Name);
+                else
+                    domainProperty = typeof(TDomain).GetProperty(propMap.DomainName);
+
+                // Set value
+                if (domainProperty == null)
+                    Debug.WriteLine("Unmapped property: {0}", propInfo.Name);
+                else if (domainProperty.PropertyType.IsAssignableFrom(propInfo.PropertyType))
+                    domainProperty.SetValue(retVal, propInfo.GetValue(modelInstance));
+                else
+                    domainProperty.SetValue(retVal, MARC.Everest.Connectors.Util.FromWireFormat(propInfo.GetValue(modelInstance), domainProperty.PropertyType));
+
+            }
+
+            return retVal;
+        }
+
+        /// <summary>
+        /// Map model instance
+        /// </summary>
+        public TModel MapDomainInstance<TDomain, TModel>(TDomain domainInstance) where TModel : new()
+        {
+            ClassMap classMap = this.m_mapFile.GetModelClassMap(typeof(TModel));
+
+            if (classMap == null)
+                return default(TModel);
+
+            // Now the property maps
+            TModel retVal = new TModel();
+            foreach (var propInfo in typeof(TDomain).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+
+                if (!propInfo.PropertyType.IsPrimitive && propInfo.PropertyType != typeof(Guid) &&
+                    (!propInfo.PropertyType.IsGenericType || propInfo.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) &&
+                    propInfo.PropertyType != typeof(String) &&
+                    propInfo.PropertyType != typeof(DateTime) &&
+                    propInfo.PropertyType != typeof(DateTimeOffset))
+                    continue;
+
+                // Map property
+                PropertyMap propMap = null;
+                classMap.TryGetDomainProperty(propInfo.Name, out propMap);
+                PropertyInfo modelProperty = null;
+
+                // Set 
+                if (propMap == null)
+                    modelProperty = typeof(TModel).GetProperty(propInfo.Name);
+                else
+                    modelProperty = typeof(TModel).GetProperty(propMap.ModelName);
+
+                // Set value
+                if (modelProperty == null)
+                    Debug.WriteLine("Unmapped property: {0}", propInfo.Name);
+                else if (modelProperty.PropertyType.IsAssignableFrom(propInfo.PropertyType))
+                    modelProperty.SetValue(retVal, propInfo.GetValue(domainInstance));
+                else
+                    modelProperty.SetValue(retVal, MARC.Everest.Connectors.Util.FromWireFormat(propInfo.GetValue(domainInstance), modelProperty.PropertyType));
+
+            }
+
+            return retVal;
         }
     }
 }
