@@ -11,8 +11,11 @@ using MARC.HI.EHRS.SVC.Core.Data;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using System.Security;
 using System.Linq.Expressions;
+using OpenIZ.Core.Model.Map;
+using OpenIZ.Persistence.Data.MSSQL.Configuration;
+using System.Configuration;
 
-namespace OpenIZ.Persistence.Data.MSSQL.Services
+namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
     /// <summary>
     /// Represents a basic persistence service
@@ -21,6 +24,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
     public abstract class BaseDataPersistenceService<TModel> : IDataPersistenceService<TModel> where TModel : BaseData, new()
     {
 
+        // Mapper
+        protected static ModelMapper s_mapper = new ModelMapper(typeof(BaseDataPersistenceService<>).Assembly.GetManifestResourceStream("OpenIZ.Persistence.Data.MSSQL.Data.ModelMap.xml"));
+
+        // Configuration
+        protected SqlConfiguration m_configuration = ConfigurationManager.GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
+        
         #region IDataPersistence<T> Members 
         /// <summary>
         /// Fired after inserting an entity
@@ -72,7 +81,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// <returns>The inserted model object</returns>
         public TModel Insert(TModel storageData, AuthorizationContext authContext, DataPersistenceMode mode)
         {
-            using (ModelDataContext dataContext = new ModelDataContext())
+            using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
             {
                 var retVal = this.Insert(storageData, authContext, dataContext);
                 if (mode == DataPersistenceMode.Production)
@@ -90,7 +99,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// <returns>The new version of the object</returns>
         public TModel Update(TModel storageData, AuthorizationContext authContext, DataPersistenceMode mode)
         {
-            using (ModelDataContext dataContext = new ModelDataContext())
+            using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
             {
                 var retVal = this.Update(storageData, authContext, dataContext);
                 if (mode == DataPersistenceMode.Production)
@@ -108,7 +117,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// <returns>The obsoleted object</returns>
         public TModel Obsolete(TModel storageData, AuthorizationContext authContext, DataPersistenceMode mode)
         {
-            using (ModelDataContext dataContext = new ModelDataContext())
+            using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
             {
                 var retVal = this.Obsolete(storageData, authContext, dataContext);
                 if (mode == DataPersistenceMode.Production)
@@ -127,7 +136,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// <returns>The specified container object of <typeparamref name="T"/></returns>
         public TModel Get<TIdentifier>(Identifier<TIdentifier> containerId, AuthorizationContext authContext, bool loadFast)
         {
-            using (ModelDataContext dataContext = new ModelDataContext())
+            using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
             {
                 return this.Get(containerId, authContext, loadFast, dataContext);
             }
@@ -141,7 +150,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// <returns>A delay load IQueryable instance which converts the query objects to the model view class</returns>
         public IQueryable<TModel> Query(Expression<Func<TModel, bool>> query, AuthorizationContext authContext)
         {
-            using (ModelDataContext dataContext = new ModelDataContext())
+            using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
             {
                 return this.Query(query, authContext, dataContext);
             }

@@ -36,6 +36,7 @@
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Xml.Linq" />
@@ -46,6 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\SqlConfigurationSectionHandler.cs" />
+    <Compile Include="Configuration\SqlConfiguration.cs" />
     <Compile Include="Data\Model.cs">
       <DependentUpon>Model.dbml</DependentUpon>
     </Compile>
@@ -55,22 +58,18 @@
       <DependentUpon>Model.dbml</DependentUpon>
     </Compile>
     <Compile Include="Exceptions\SqlFormalConstraintException.cs" />
-    <Compile Include="Linq\ModelConversionVisitor.cs" />
-    <Compile Include="Linq\IModelConverter.cs" />
-    <Compile Include="Linq\ModelConverterUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Services\BasePersistenceService.cs" />
-    <Compile Include="Services\Security\SecurityUserPersistenceService.cs" />
+    <Compile Include="Services\Persistence\BasePersistenceService.cs" />
+    <Compile Include="Services\Persistence\SecurityUserPersistenceService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Model.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
-      <LastGenOutput>Model.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
     <None Include="Properties\Settings.settings">
@@ -90,6 +89,7 @@
     <Content Include="Data\CorrectDbml.xslt">
       <SubType>Designer</SubType>
     </Content>
+    <EmbeddedResource Include="Data\ModelMap.xml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

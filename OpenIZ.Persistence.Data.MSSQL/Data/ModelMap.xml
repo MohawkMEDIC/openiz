@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<modelMap xmlns="http://openiz.org/model/map">
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityUser, OpenIZ.Core, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SecurityUser, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
+    <collapseKey propertyName="UpdatedByEntity" keyName="UpdatedBy"/>
+    <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
+    <collapseKey propertyName="SecurityUser2" keyName="UserId"/>
+    <property modelName="Key" domainName="UserId"/>
+    <property modelName="CreatedBy" domainName="CreatedByEntity"/>
+    <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
+    <property modelName="UpdatedBy" domainName="UpdatedByEntity"/>
+  </class>
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityRole, OpenIZ.Core, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SecurityRole, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="RoleId"/>
+    <property modelName="Users" domainName="SecurityUserRoles">
+        <via domainName="SecurityUser" />
+    </property>
+  </class>
+</modelMap>

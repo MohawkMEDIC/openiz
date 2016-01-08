@@ -878,6 +878,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _MoodConceptId;
 		
+		private EntitySet<ActProtocol> _ActProtocols;
+		
+		private EntitySet<ActRelationship> _ActRelationshipsSourceActId;
+		
+		private EntitySet<ActRelationship> _ActRelationshipsTargetActId;
+		
+		private EntitySet<ActTag> _ActTags;
+		
+		private EntitySet<ActVersion> _ActVersions;
+		
 		private EntityRef<Concept> _ClassConcept;
 		
 		private EntityRef<Concept> _MoodConcept;
@@ -896,6 +906,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public Act()
 		{
+			this._ActProtocols = new EntitySet<ActProtocol>(new Action<ActProtocol>(this.attach_ActProtocols), new Action<ActProtocol>(this.detach_ActProtocols));
+			this._ActRelationshipsSourceActId = new EntitySet<ActRelationship>(new Action<ActRelationship>(this.attach_ActRelationshipsSourceActId), new Action<ActRelationship>(this.detach_ActRelationshipsSourceActId));
+			this._ActRelationshipsTargetActId = new EntitySet<ActRelationship>(new Action<ActRelationship>(this.attach_ActRelationshipsTargetActId), new Action<ActRelationship>(this.detach_ActRelationshipsTargetActId));
+			this._ActTags = new EntitySet<ActTag>(new Action<ActTag>(this.attach_ActTags), new Action<ActTag>(this.detach_ActTags));
+			this._ActVersions = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersions), new Action<ActVersion>(this.detach_ActVersions));
 			this._ClassConcept = default(EntityRef<Concept>);
 			this._MoodConcept = default(EntityRef<Concept>);
 			OnCreated();
@@ -969,6 +984,71 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Act_ActProtocol", Storage="_ActProtocols", ThisKey="ActId", OtherKey="ActId")]
+		public EntitySet<ActProtocol> ActProtocols
+		{
+			get
+			{
+				return this._ActProtocols;
+			}
+			set
+			{
+				this._ActProtocols.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Act_ActRelationship", Storage="_ActRelationshipsSourceActId", ThisKey="ActId", OtherKey="SourceActId")]
+		public EntitySet<ActRelationship> ActRelationshipsSourceActId
+		{
+			get
+			{
+				return this._ActRelationshipsSourceActId;
+			}
+			set
+			{
+				this._ActRelationshipsSourceActId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Act_ActRelationship1", Storage="_ActRelationshipsTargetActId", ThisKey="ActId", OtherKey="TargetActId")]
+		public EntitySet<ActRelationship> ActRelationshipsTargetActId
+		{
+			get
+			{
+				return this._ActRelationshipsTargetActId;
+			}
+			set
+			{
+				this._ActRelationshipsTargetActId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Act_ActTag", Storage="_ActTags", ThisKey="ActId", OtherKey="ActId")]
+		public EntitySet<ActTag> ActTags
+		{
+			get
+			{
+				return this._ActTags;
+			}
+			set
+			{
+				this._ActTags.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Act_ActVersion", Storage="_ActVersions", ThisKey="ActId", OtherKey="ActId")]
+		public EntitySet<ActVersion> ActVersions
+		{
+			get
+			{
+				return this._ActVersions;
+			}
+			set
+			{
+				this._ActVersions.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_Act", Storage="_ClassConcept", ThisKey="ClassConceptId", OtherKey="ConceptId", IsForeignKey=true)]
 		public Concept ClassConcept
 		{
@@ -978,10 +1058,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ClassConcept.Entity != value))
+				Concept previousValue = this._ClassConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._ClassConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ClassConcept.Entity = null;
+						previousValue.ActsClassConceptId.Remove(this);
+					}
 					this._ClassConcept.Entity = value;
+					if ((value != null))
+					{
+						value.ActsClassConceptId.Add(this);
+						this._ClassConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._ClassConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("ClassConcept");
 				}
 			}
@@ -996,10 +1092,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._MoodConcept.Entity != value))
+				Concept previousValue = this._MoodConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._MoodConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._MoodConcept.Entity = null;
+						previousValue.ActsMoodConceptId.Remove(this);
+					}
 					this._MoodConcept.Entity = value;
+					if ((value != null))
+					{
+						value.ActsMoodConceptId.Add(this);
+						this._MoodConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._MoodConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("MoodConcept");
 				}
 			}
@@ -1023,6 +1135,66 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_ActProtocols(ActProtocol entity)
+		{
+			this.SendPropertyChanging();
+			entity.Act = this;
+		}
+		
+		private void detach_ActProtocols(ActProtocol entity)
+		{
+			this.SendPropertyChanging();
+			entity.Act = null;
+		}
+		
+		private void attach_ActRelationshipsSourceActId(ActRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.SourceAct = this;
+		}
+		
+		private void detach_ActRelationshipsSourceActId(ActRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.SourceAct = null;
+		}
+		
+		private void attach_ActRelationshipsTargetActId(ActRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.TargetAct = this;
+		}
+		
+		private void detach_ActRelationshipsTargetActId(ActRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.TargetAct = null;
+		}
+		
+		private void attach_ActTags(ActTag entity)
+		{
+			this.SendPropertyChanging();
+			entity.Act = this;
+		}
+		
+		private void detach_ActTags(ActTag entity)
+		{
+			this.SendPropertyChanging();
+			entity.Act = null;
+		}
+		
+		private void attach_ActVersions(ActVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.Act = this;
+		}
+		
+		private void detach_ActVersions(ActVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.Act = null;
 		}
 	}
 	
@@ -1052,7 +1224,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<SecurityUser> _ObsoletedByEntity;
 		
-		private EntityRef<SecurityUser> _SecurityUser2;
+		private EntityRef<SecurityUser> _SecurityUser;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -1079,7 +1251,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._Entity = default(EntityRef<Entity>);
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
-			this._SecurityUser2 = default(EntityRef<SecurityUser>);
+			this._SecurityUser = default(EntityRef<SecurityUser>);
 			OnCreated();
 		}
 		
@@ -1114,7 +1286,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._UserId != value))
 				{
-					if (this._SecurityUser2.HasLoadedOrAssignedValue)
+					if (this._SecurityUser.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
@@ -1248,10 +1420,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._Entity.Entity != value))
+				Entity previousValue = this._Entity.Entity;
+				if (((previousValue != value) 
+							|| (this._Entity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Entity.Entity = null;
+						previousValue.UserEntities.Remove(this);
+					}
 					this._Entity.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntities.Add(this);
+						this._EntityId = value.EntityId;
+					}
+					else
+					{
+						this._EntityId = default(System.Guid);
+					}
 					this.SendPropertyChanged("Entity");
 				}
 			}
@@ -1266,10 +1454,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._CreatedByEntity.Entity != value))
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.UserEntitiesCreatedBy.Remove(this);
+					}
 					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntitiesCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
 			}
@@ -1284,29 +1488,61 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoletedByEntity.Entity != value))
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.UserEntitiesObsoletedBy.Remove(this);
+					}
 					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntitiesObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoletedByEntity");
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity2", Storage="_SecurityUser2", ThisKey="UserId", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser SecurityUser2
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity2", Storage="_SecurityUser", ThisKey="UserId", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser SecurityUser
 		{
 			get
 			{
-				return this._SecurityUser2.Entity;
+				return this._SecurityUser.Entity;
 			}
 			set
 			{
-				if ((this._SecurityUser2.Entity != value))
+				SecurityUser previousValue = this._SecurityUser.Entity;
+				if (((previousValue != value) 
+							|| (this._SecurityUser.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
-					this._SecurityUser2.Entity = value;
-					this.SendPropertyChanged("SecurityUser2");
+					if ((previousValue != null))
+					{
+						this._SecurityUser.Entity = null;
+						previousValue.UserEntities.Remove(this);
+					}
+					this._SecurityUser.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntities.Add(this);
+						this._UserId = value.UserId;
+					}
+					else
+					{
+						this._UserId = default(System.Guid);
+					}
+					this.SendPropertyChanged("SecurityUser");
 				}
 			}
 		}
@@ -1426,7 +1662,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary ExtensionValue
 		{
 			get
@@ -1523,10 +1759,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EffectiveVersion.Entity != value))
+				ActVersion previousValue = this._EffectiveVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EffectiveVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EffectiveVersion.Entity = null;
+						previousValue.ActExtensionsEffectiveVersionId.Remove(this);
+					}
 					this._EffectiveVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ActExtensionsEffectiveVersionId.Add(this);
+						this._EffectiveVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._EffectiveVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EffectiveVersion");
 				}
 			}
@@ -1541,10 +1793,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoleteVersion.Entity != value))
+				ActVersion previousValue = this._ObsoleteVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoleteVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoleteVersion.Entity = null;
+						previousValue.ActExtensionsObsoleteVersionId.Remove(this);
+					}
 					this._ObsoleteVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ActExtensionsObsoleteVersionId.Add(this);
+						this._ObsoleteVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._ObsoleteVersionId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoleteVersion");
 				}
 			}
@@ -1559,10 +1827,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ExtensionType.Entity != value))
+				ExtensionType previousValue = this._ExtensionType.Entity;
+				if (((previousValue != value) 
+							|| (this._ExtensionType.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ExtensionType.Entity = null;
+						previousValue.ActExtensions.Remove(this);
+					}
 					this._ExtensionType.Entity = value;
+					if ((value != null))
+					{
+						value.ActExtensions.Add(this);
+						this._ExtensionTypeId = value.ExtensionTypeId;
+					}
+					else
+					{
+						this._ExtensionTypeId = default(System.Guid);
+					}
 					this.SendPropertyChanged("ExtensionType");
 				}
 			}
@@ -1787,10 +2071,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EffectiveVersion.Entity != value))
+				ActVersion previousValue = this._EffectiveVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EffectiveVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EffectiveVersion.Entity = null;
+						previousValue.ActIdentifiersEffectiveVersionId.Remove(this);
+					}
 					this._EffectiveVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ActIdentifiersEffectiveVersionId.Add(this);
+						this._EffectiveVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._EffectiveVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EffectiveVersion");
 				}
 			}
@@ -1805,10 +2105,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoleteVersion.Entity != value))
+				ActVersion previousValue = this._ObsoleteVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoleteVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoleteVersion.Entity = null;
+						previousValue.ActIdentifiersObsoleteVersionId.Remove(this);
+					}
 					this._ObsoleteVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ActIdentifiersObsoleteVersionId.Add(this);
+						this._ObsoleteVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._ObsoleteVersionId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoleteVersion");
 				}
 			}
@@ -1823,10 +2139,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._AssigningAuthority.Entity != value))
+				AssigningAuthority previousValue = this._AssigningAuthority.Entity;
+				if (((previousValue != value) 
+							|| (this._AssigningAuthority.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AssigningAuthority.Entity = null;
+						previousValue.ActIdentifiers.Remove(this);
+					}
 					this._AssigningAuthority.Entity = value;
+					if ((value != null))
+					{
+						value.ActIdentifiers.Add(this);
+						this._AssigningAuthorityId = value.AssigningAuthorityId;
+					}
+					else
+					{
+						this._AssigningAuthorityId = default(System.Guid);
+					}
 					this.SendPropertyChanged("AssigningAuthority");
 				}
 			}
@@ -1841,10 +2173,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._IdentifierType.Entity != value))
+				IdentifierType previousValue = this._IdentifierType.Entity;
+				if (((previousValue != value) 
+							|| (this._IdentifierType.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._IdentifierType.Entity = null;
+						previousValue.ActIdentifiers.Remove(this);
+					}
 					this._IdentifierType.Entity = value;
+					if ((value != null))
+					{
+						value.ActIdentifiers.Add(this);
+						this._IdentifierTypeId = value.IdentifierTypeId;
+					}
+					else
+					{
+						this._IdentifierTypeId = default(System.Guid);
+					}
 					this.SendPropertyChanged("IdentifierType");
 				}
 			}
@@ -2038,10 +2386,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EffectiveVersion.Entity != value))
+				ActVersion previousValue = this._EffectiveVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EffectiveVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EffectiveVersion.Entity = null;
+						previousValue.ActNotesEffectiveVersionId.Remove(this);
+					}
 					this._EffectiveVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ActNotesEffectiveVersionId.Add(this);
+						this._EffectiveVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._EffectiveVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EffectiveVersion");
 				}
 			}
@@ -2056,10 +2420,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoleteVersion.Entity != value))
+				ActVersion previousValue = this._ObsoleteVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoleteVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoleteVersion.Entity = null;
+						previousValue.ActNotesObsoleteVersionId.Remove(this);
+					}
 					this._ObsoleteVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ActNotesObsoleteVersionId.Add(this);
+						this._ObsoleteVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._ObsoleteVersionId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoleteVersion");
 				}
 			}
@@ -2074,10 +2454,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._AuthorEntity.Entity != value))
+				Entity previousValue = this._AuthorEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._AuthorEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AuthorEntity.Entity = null;
+						previousValue.ActNotesAuthorEntityId.Remove(this);
+					}
 					this._AuthorEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ActNotesAuthorEntityId.Add(this);
+						this._AuthorEntityId = value.EntityId;
+					}
+					else
+					{
+						this._AuthorEntityId = default(System.Guid);
+					}
 					this.SendPropertyChanged("AuthorEntity");
 				}
 			}
@@ -2247,10 +2643,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EffectiveVersion.Entity != value))
+				ActVersion previousValue = this._EffectiveVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EffectiveVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EffectiveVersion.Entity = null;
+						previousValue.ActPoliciesEffectiveVersionId.Remove(this);
+					}
 					this._EffectiveVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ActPoliciesEffectiveVersionId.Add(this);
+						this._EffectiveVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._EffectiveVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EffectiveVersion");
 				}
 			}
@@ -2265,10 +2677,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoleteVersion.Entity != value))
+				ActVersion previousValue = this._ObsoleteVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoleteVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoleteVersion.Entity = null;
+						previousValue.ActPoliciesObsoleteVersionId.Remove(this);
+					}
 					this._ObsoleteVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ActPoliciesObsoleteVersionId.Add(this);
+						this._ObsoleteVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._ObsoleteVersionId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoleteVersion");
 				}
 			}
@@ -2283,10 +2711,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._Policy.Entity != value))
+				Policy previousValue = this._Policy.Entity;
+				if (((previousValue != value) 
+							|| (this._Policy.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Policy.Entity = null;
+						previousValue.ActPolicies.Remove(this);
+					}
 					this._Policy.Entity = value;
+					if ((value != null))
+					{
+						value.ActPolicies.Add(this);
+						this._PolicyId = value.PolicyId;
+					}
+					else
+					{
+						this._PolicyId = default(System.Guid);
+					}
 					this.SendPropertyChanged("Policy");
 				}
 			}
@@ -2449,10 +2893,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._Act.Entity != value))
+				Act previousValue = this._Act.Entity;
+				if (((previousValue != value) 
+							|| (this._Act.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Act.Entity = null;
+						previousValue.ActProtocols.Remove(this);
+					}
 					this._Act.Entity = value;
+					if ((value != null))
+					{
+						value.ActProtocols.Add(this);
+						this._ActId = value.ActId;
+					}
+					else
+					{
+						this._ActId = default(System.Guid);
+					}
 					this.SendPropertyChanged("Act");
 				}
 			}
@@ -2467,10 +2927,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._Protocol.Entity != value))
+				Protocol previousValue = this._Protocol.Entity;
+				if (((previousValue != value) 
+							|| (this._Protocol.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Protocol.Entity = null;
+						previousValue.ActProtocols.Remove(this);
+					}
 					this._Protocol.Entity = value;
+					if ((value != null))
+					{
+						value.ActProtocols.Add(this);
+						this._ProtocolId = value.ProtocolId;
+					}
+					else
+					{
+						this._ProtocolId = default(System.Guid);
+					}
 					this.SendPropertyChanged("Protocol");
 				}
 			}
@@ -2702,10 +3178,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._SourceAct.Entity != value))
+				Act previousValue = this._SourceAct.Entity;
+				if (((previousValue != value) 
+							|| (this._SourceAct.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SourceAct.Entity = null;
+						previousValue.ActRelationshipsSourceActId.Remove(this);
+					}
 					this._SourceAct.Entity = value;
+					if ((value != null))
+					{
+						value.ActRelationshipsSourceActId.Add(this);
+						this._SourceActId = value.ActId;
+					}
+					else
+					{
+						this._SourceActId = default(System.Guid);
+					}
 					this.SendPropertyChanged("SourceAct");
 				}
 			}
@@ -2720,10 +3212,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._TargetAct.Entity != value))
+				Act previousValue = this._TargetAct.Entity;
+				if (((previousValue != value) 
+							|| (this._TargetAct.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TargetAct.Entity = null;
+						previousValue.ActRelationshipsTargetActId.Remove(this);
+					}
 					this._TargetAct.Entity = value;
+					if ((value != null))
+					{
+						value.ActRelationshipsTargetActId.Add(this);
+						this._TargetActId = value.ActId;
+					}
+					else
+					{
+						this._TargetActId = default(System.Guid);
+					}
 					this.SendPropertyChanged("TargetAct");
 				}
 			}
@@ -2738,10 +3246,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EffectiveVersion.Entity != value))
+				ActVersion previousValue = this._EffectiveVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EffectiveVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EffectiveVersion.Entity = null;
+						previousValue.ActRelationshipsEffectiveVersionId.Remove(this);
+					}
 					this._EffectiveVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ActRelationshipsEffectiveVersionId.Add(this);
+						this._EffectiveVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._EffectiveVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EffectiveVersion");
 				}
 			}
@@ -2756,10 +3280,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoleteVersion.Entity != value))
+				ActVersion previousValue = this._ObsoleteVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoleteVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoleteVersion.Entity = null;
+						previousValue.ActRelationshipsObsoleteVersionId.Remove(this);
+					}
 					this._ObsoleteVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ActRelationshipsObsoleteVersionId.Add(this);
+						this._ObsoleteVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._ObsoleteVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("ObsoleteVersion");
 				}
 			}
@@ -2774,10 +3314,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._RelationshipTypeConcept.Entity != value))
+				Concept previousValue = this._RelationshipTypeConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._RelationshipTypeConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._RelationshipTypeConcept.Entity = null;
+						previousValue.ActRelationshipsRelationshipTypeConceptId.Remove(this);
+					}
 					this._RelationshipTypeConcept.Entity = value;
+					if ((value != null))
+					{
+						value.ActRelationshipsRelationshipTypeConceptId.Add(this);
+						this._RelationshipTypeConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._RelationshipTypeConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("RelationshipTypeConcept");
 				}
 			}
@@ -3043,10 +3599,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._Act.Entity != value))
+				Act previousValue = this._Act.Entity;
+				if (((previousValue != value) 
+							|| (this._Act.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Act.Entity = null;
+						previousValue.ActTags.Remove(this);
+					}
 					this._Act.Entity = value;
+					if ((value != null))
+					{
+						value.ActTags.Add(this);
+						this._ActId = value.ActId;
+					}
+					else
+					{
+						this._ActId = default(System.Guid);
+					}
 					this.SendPropertyChanged("Act");
 				}
 			}
@@ -3061,10 +3633,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._CreatedByEntity.Entity != value))
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.ActTagsCreatedBy.Remove(this);
+					}
 					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ActTagsCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
 			}
@@ -3079,10 +3667,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoletedByEntity.Entity != value))
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.ActTagsObsoletedBy.Remove(this);
+					}
 					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ActTagsObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoletedByEntity");
 				}
 			}
@@ -3141,6 +3745,34 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.DateTimeOffset> _ActStopTime;
 		
+		private EntitySet<ActExtension> _ActExtensionsEffectiveVersionId;
+		
+		private EntitySet<ActExtension> _ActExtensionsObsoleteVersionId;
+		
+		private EntitySet<ActIdentifier> _ActIdentifiersEffectiveVersionId;
+		
+		private EntitySet<ActIdentifier> _ActIdentifiersObsoleteVersionId;
+		
+		private EntitySet<ActNote> _ActNotesEffectiveVersionId;
+		
+		private EntitySet<ActNote> _ActNotesObsoleteVersionId;
+		
+		private EntitySet<ActPolicy> _ActPoliciesEffectiveVersionId;
+		
+		private EntitySet<ActPolicy> _ActPoliciesObsoleteVersionId;
+		
+		private EntitySet<ActRelationship> _ActRelationshipsEffectiveVersionId;
+		
+		private EntitySet<ActRelationship> _ActRelationshipsObsoleteVersionId;
+		
+		private EntitySet<ActVersion> _ActVersionsReplacesVersionId;
+		
+		private EntityRef<Observation> _Observation;
+		
+		private EntityRef<PatientEncounter> _PatientEncounter;
+		
+		private EntityRef<SubstanceAdministration> _SubstanceAdministration;
+		
 		private EntityRef<Act> _Act;
 		
 		private EntityRef<ActVersion> _ReplacesVersion;
@@ -3187,6 +3819,20 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public ActVersion()
 		{
+			this._ActExtensionsEffectiveVersionId = new EntitySet<ActExtension>(new Action<ActExtension>(this.attach_ActExtensionsEffectiveVersionId), new Action<ActExtension>(this.detach_ActExtensionsEffectiveVersionId));
+			this._ActExtensionsObsoleteVersionId = new EntitySet<ActExtension>(new Action<ActExtension>(this.attach_ActExtensionsObsoleteVersionId), new Action<ActExtension>(this.detach_ActExtensionsObsoleteVersionId));
+			this._ActIdentifiersEffectiveVersionId = new EntitySet<ActIdentifier>(new Action<ActIdentifier>(this.attach_ActIdentifiersEffectiveVersionId), new Action<ActIdentifier>(this.detach_ActIdentifiersEffectiveVersionId));
+			this._ActIdentifiersObsoleteVersionId = new EntitySet<ActIdentifier>(new Action<ActIdentifier>(this.attach_ActIdentifiersObsoleteVersionId), new Action<ActIdentifier>(this.detach_ActIdentifiersObsoleteVersionId));
+			this._ActNotesEffectiveVersionId = new EntitySet<ActNote>(new Action<ActNote>(this.attach_ActNotesEffectiveVersionId), new Action<ActNote>(this.detach_ActNotesEffectiveVersionId));
+			this._ActNotesObsoleteVersionId = new EntitySet<ActNote>(new Action<ActNote>(this.attach_ActNotesObsoleteVersionId), new Action<ActNote>(this.detach_ActNotesObsoleteVersionId));
+			this._ActPoliciesEffectiveVersionId = new EntitySet<ActPolicy>(new Action<ActPolicy>(this.attach_ActPoliciesEffectiveVersionId), new Action<ActPolicy>(this.detach_ActPoliciesEffectiveVersionId));
+			this._ActPoliciesObsoleteVersionId = new EntitySet<ActPolicy>(new Action<ActPolicy>(this.attach_ActPoliciesObsoleteVersionId), new Action<ActPolicy>(this.detach_ActPoliciesObsoleteVersionId));
+			this._ActRelationshipsEffectiveVersionId = new EntitySet<ActRelationship>(new Action<ActRelationship>(this.attach_ActRelationshipsEffectiveVersionId), new Action<ActRelationship>(this.detach_ActRelationshipsEffectiveVersionId));
+			this._ActRelationshipsObsoleteVersionId = new EntitySet<ActRelationship>(new Action<ActRelationship>(this.attach_ActRelationshipsObsoleteVersionId), new Action<ActRelationship>(this.detach_ActRelationshipsObsoleteVersionId));
+			this._ActVersionsReplacesVersionId = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersionsReplacesVersionId), new Action<ActVersion>(this.detach_ActVersionsReplacesVersionId));
+			this._Observation = default(EntityRef<Observation>);
+			this._PatientEncounter = default(EntityRef<PatientEncounter>);
+			this._SubstanceAdministration = default(EntityRef<SubstanceAdministration>);
 			this._Act = default(EntityRef<Act>);
 			this._ReplacesVersion = default(EntityRef<ActVersion>);
 			this._StatusConcept = default(EntityRef<Concept>);
@@ -3480,6 +4126,236 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActExtension", Storage="_ActExtensionsEffectiveVersionId", ThisKey="ActVersionId", OtherKey="EffectiveVersionId")]
+		public EntitySet<ActExtension> ActExtensionsEffectiveVersionId
+		{
+			get
+			{
+				return this._ActExtensionsEffectiveVersionId;
+			}
+			set
+			{
+				this._ActExtensionsEffectiveVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActExtension1", Storage="_ActExtensionsObsoleteVersionId", ThisKey="ActVersionId", OtherKey="ObsoleteVersionId")]
+		public EntitySet<ActExtension> ActExtensionsObsoleteVersionId
+		{
+			get
+			{
+				return this._ActExtensionsObsoleteVersionId;
+			}
+			set
+			{
+				this._ActExtensionsObsoleteVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActIdentifier", Storage="_ActIdentifiersEffectiveVersionId", ThisKey="ActVersionId", OtherKey="EffectiveVersionId")]
+		public EntitySet<ActIdentifier> ActIdentifiersEffectiveVersionId
+		{
+			get
+			{
+				return this._ActIdentifiersEffectiveVersionId;
+			}
+			set
+			{
+				this._ActIdentifiersEffectiveVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActIdentifier1", Storage="_ActIdentifiersObsoleteVersionId", ThisKey="ActVersionId", OtherKey="ObsoleteVersionId")]
+		public EntitySet<ActIdentifier> ActIdentifiersObsoleteVersionId
+		{
+			get
+			{
+				return this._ActIdentifiersObsoleteVersionId;
+			}
+			set
+			{
+				this._ActIdentifiersObsoleteVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActNote", Storage="_ActNotesEffectiveVersionId", ThisKey="ActVersionId", OtherKey="EffectiveVersionId")]
+		public EntitySet<ActNote> ActNotesEffectiveVersionId
+		{
+			get
+			{
+				return this._ActNotesEffectiveVersionId;
+			}
+			set
+			{
+				this._ActNotesEffectiveVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActNote1", Storage="_ActNotesObsoleteVersionId", ThisKey="ActVersionId", OtherKey="ObsoleteVersionId")]
+		public EntitySet<ActNote> ActNotesObsoleteVersionId
+		{
+			get
+			{
+				return this._ActNotesObsoleteVersionId;
+			}
+			set
+			{
+				this._ActNotesObsoleteVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActPolicy", Storage="_ActPoliciesEffectiveVersionId", ThisKey="ActVersionId", OtherKey="EffectiveVersionId")]
+		public EntitySet<ActPolicy> ActPoliciesEffectiveVersionId
+		{
+			get
+			{
+				return this._ActPoliciesEffectiveVersionId;
+			}
+			set
+			{
+				this._ActPoliciesEffectiveVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActPolicy1", Storage="_ActPoliciesObsoleteVersionId", ThisKey="ActVersionId", OtherKey="ObsoleteVersionId")]
+		public EntitySet<ActPolicy> ActPoliciesObsoleteVersionId
+		{
+			get
+			{
+				return this._ActPoliciesObsoleteVersionId;
+			}
+			set
+			{
+				this._ActPoliciesObsoleteVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActRelationship", Storage="_ActRelationshipsEffectiveVersionId", ThisKey="ActVersionId", OtherKey="EffectiveVersionId")]
+		public EntitySet<ActRelationship> ActRelationshipsEffectiveVersionId
+		{
+			get
+			{
+				return this._ActRelationshipsEffectiveVersionId;
+			}
+			set
+			{
+				this._ActRelationshipsEffectiveVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActRelationship1", Storage="_ActRelationshipsObsoleteVersionId", ThisKey="ActVersionId", OtherKey="ObsoleteVersionId")]
+		public EntitySet<ActRelationship> ActRelationshipsObsoleteVersionId
+		{
+			get
+			{
+				return this._ActRelationshipsObsoleteVersionId;
+			}
+			set
+			{
+				this._ActRelationshipsObsoleteVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActVersion", Storage="_ActVersionsReplacesVersionId", ThisKey="ActVersionId", OtherKey="ReplacesVersionId")]
+		public EntitySet<ActVersion> ActVersionsReplacesVersionId
+		{
+			get
+			{
+				return this._ActVersionsReplacesVersionId;
+			}
+			set
+			{
+				this._ActVersionsReplacesVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_Observation", Storage="_Observation", ThisKey="ActVersionId", OtherKey="ActVersionId", IsUnique=true, IsForeignKey=false)]
+		public Observation Observation
+		{
+			get
+			{
+				return this._Observation.Entity;
+			}
+			set
+			{
+				Observation previousValue = this._Observation.Entity;
+				if (((previousValue != value) 
+							|| (this._Observation.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Observation.Entity = null;
+						previousValue.ActVersion = null;
+					}
+					this._Observation.Entity = value;
+					if ((value != null))
+					{
+						value.ActVersion = this;
+					}
+					this.SendPropertyChanged("Observation");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_PatientEncounter", Storage="_PatientEncounter", ThisKey="ActVersionId", OtherKey="ActVersionId", IsUnique=true, IsForeignKey=false)]
+		public PatientEncounter PatientEncounter
+		{
+			get
+			{
+				return this._PatientEncounter.Entity;
+			}
+			set
+			{
+				PatientEncounter previousValue = this._PatientEncounter.Entity;
+				if (((previousValue != value) 
+							|| (this._PatientEncounter.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._PatientEncounter.Entity = null;
+						previousValue.ActVersion = null;
+					}
+					this._PatientEncounter.Entity = value;
+					if ((value != null))
+					{
+						value.ActVersion = this;
+					}
+					this.SendPropertyChanged("PatientEncounter");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_SubstanceAdministration", Storage="_SubstanceAdministration", ThisKey="ActVersionId", OtherKey="ActVersionId", IsUnique=true, IsForeignKey=false)]
+		public SubstanceAdministration SubstanceAdministration
+		{
+			get
+			{
+				return this._SubstanceAdministration.Entity;
+			}
+			set
+			{
+				SubstanceAdministration previousValue = this._SubstanceAdministration.Entity;
+				if (((previousValue != value) 
+							|| (this._SubstanceAdministration.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SubstanceAdministration.Entity = null;
+						previousValue.ActVersion = null;
+					}
+					this._SubstanceAdministration.Entity = value;
+					if ((value != null))
+					{
+						value.ActVersion = this;
+					}
+					this.SendPropertyChanged("SubstanceAdministration");
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Act_ActVersion", Storage="_Act", ThisKey="ActId", OtherKey="ActId", IsForeignKey=true)]
 		public Act Act
 		{
@@ -3489,10 +4365,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._Act.Entity != value))
+				Act previousValue = this._Act.Entity;
+				if (((previousValue != value) 
+							|| (this._Act.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Act.Entity = null;
+						previousValue.ActVersions.Remove(this);
+					}
 					this._Act.Entity = value;
+					if ((value != null))
+					{
+						value.ActVersions.Add(this);
+						this._ActId = value.ActId;
+					}
+					else
+					{
+						this._ActId = default(System.Guid);
+					}
 					this.SendPropertyChanged("Act");
 				}
 			}
@@ -3507,10 +4399,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ReplacesVersion.Entity != value))
+				ActVersion previousValue = this._ReplacesVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ReplacesVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ReplacesVersion.Entity = null;
+						previousValue.ActVersionsReplacesVersionId.Remove(this);
+					}
 					this._ReplacesVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ActVersionsReplacesVersionId.Add(this);
+						this._ReplacesVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._ReplacesVersionId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ReplacesVersion");
 				}
 			}
@@ -3525,10 +4433,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._StatusConcept.Entity != value))
+				Concept previousValue = this._StatusConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._StatusConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._StatusConcept.Entity = null;
+						previousValue.ActVersionsStatusConceptId.Remove(this);
+					}
 					this._StatusConcept.Entity = value;
+					if ((value != null))
+					{
+						value.ActVersionsStatusConceptId.Add(this);
+						this._StatusConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._StatusConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("StatusConcept");
 				}
 			}
@@ -3543,10 +4467,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._TypeConcept.Entity != value))
+				Concept previousValue = this._TypeConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._TypeConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TypeConcept.Entity = null;
+						previousValue.ActVersionsTypeConceptId.Remove(this);
+					}
 					this._TypeConcept.Entity = value;
+					if ((value != null))
+					{
+						value.ActVersionsTypeConceptId.Add(this);
+						this._TypeConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._TypeConceptId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("TypeConcept");
 				}
 			}
@@ -3561,10 +4501,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._CreatedByEntity.Entity != value))
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.ActVersionsCreatedBy.Remove(this);
+					}
 					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ActVersionsCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
 			}
@@ -3579,10 +4535,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoletedByEntity.Entity != value))
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.ActVersionsObsoletedBy.Remove(this);
+					}
 					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ActVersionsObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoletedByEntity");
 				}
 			}
@@ -3606,6 +4578,138 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_ActExtensionsEffectiveVersionId(ActExtension entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = this;
+		}
+		
+		private void detach_ActExtensionsEffectiveVersionId(ActExtension entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = null;
+		}
+		
+		private void attach_ActExtensionsObsoleteVersionId(ActExtension entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = this;
+		}
+		
+		private void detach_ActExtensionsObsoleteVersionId(ActExtension entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = null;
+		}
+		
+		private void attach_ActIdentifiersEffectiveVersionId(ActIdentifier entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = this;
+		}
+		
+		private void detach_ActIdentifiersEffectiveVersionId(ActIdentifier entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = null;
+		}
+		
+		private void attach_ActIdentifiersObsoleteVersionId(ActIdentifier entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = this;
+		}
+		
+		private void detach_ActIdentifiersObsoleteVersionId(ActIdentifier entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = null;
+		}
+		
+		private void attach_ActNotesEffectiveVersionId(ActNote entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = this;
+		}
+		
+		private void detach_ActNotesEffectiveVersionId(ActNote entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = null;
+		}
+		
+		private void attach_ActNotesObsoleteVersionId(ActNote entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = this;
+		}
+		
+		private void detach_ActNotesObsoleteVersionId(ActNote entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = null;
+		}
+		
+		private void attach_ActPoliciesEffectiveVersionId(ActPolicy entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = this;
+		}
+		
+		private void detach_ActPoliciesEffectiveVersionId(ActPolicy entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = null;
+		}
+		
+		private void attach_ActPoliciesObsoleteVersionId(ActPolicy entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = this;
+		}
+		
+		private void detach_ActPoliciesObsoleteVersionId(ActPolicy entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = null;
+		}
+		
+		private void attach_ActRelationshipsEffectiveVersionId(ActRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = this;
+		}
+		
+		private void detach_ActRelationshipsEffectiveVersionId(ActRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = null;
+		}
+		
+		private void attach_ActRelationshipsObsoleteVersionId(ActRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = this;
+		}
+		
+		private void detach_ActRelationshipsObsoleteVersionId(ActRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = null;
+		}
+		
+		private void attach_ActVersionsReplacesVersionId(ActVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.ReplacesVersion = this;
+		}
+		
+		private void detach_ActVersionsReplacesVersionId(ActVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.ReplacesVersion = null;
 		}
 	}
 	
@@ -3762,10 +4866,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EntityVersion.Entity != value))
+				EntityVersion previousValue = this._EntityVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EntityVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EntityVersion.Entity = null;
+						previousValue.ApplicationEntity = null;
+					}
 					this._EntityVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ApplicationEntity = this;
+						this._EntityVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EntityVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EntityVersion");
 				}
 			}
@@ -3816,6 +4936,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.Guid> _ObsoletedBy;
 		
+		private EntitySet<ActIdentifier> _ActIdentifiers;
+		
+		private EntitySet<EntityIdentifier> _EntityIdentifiers;
+		
 		private EntityRef<SecurityUser> _CreatedByEntity;
 		
 		private EntityRef<SecurityUser> _ObsoletedByEntity;
@@ -3846,6 +4970,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public AssigningAuthority()
 		{
+			this._ActIdentifiers = new EntitySet<ActIdentifier>(new Action<ActIdentifier>(this.attach_ActIdentifiers), new Action<ActIdentifier>(this.detach_ActIdentifiers));
+			this._EntityIdentifiers = new EntitySet<EntityIdentifier>(new Action<EntityIdentifier>(this.attach_EntityIdentifiers), new Action<EntityIdentifier>(this.detach_EntityIdentifiers));
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
 			OnCreated();
@@ -4039,6 +5165,32 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AssigningAuthority_ActIdentifier", Storage="_ActIdentifiers", ThisKey="AssigningAuthorityId", OtherKey="AssigningAuthorityId")]
+		public EntitySet<ActIdentifier> ActIdentifiers
+		{
+			get
+			{
+				return this._ActIdentifiers;
+			}
+			set
+			{
+				this._ActIdentifiers.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AssigningAuthority_EntityIdentifier", Storage="_EntityIdentifiers", ThisKey="AssigningAuthorityId", OtherKey="AssigningAuthorityId")]
+		public EntitySet<EntityIdentifier> EntityIdentifiers
+		{
+			get
+			{
+				return this._EntityIdentifiers;
+			}
+			set
+			{
+				this._EntityIdentifiers.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_AssigningAuthority", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
 		public SecurityUser CreatedByEntity
 		{
@@ -4048,10 +5200,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._CreatedByEntity.Entity != value))
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.AssigningAuthoritiesCreatedBy.Remove(this);
+					}
 					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.AssigningAuthoritiesCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
 			}
@@ -4066,10 +5234,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoletedByEntity.Entity != value))
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.AssigningAuthoritiesObsoletedBy.Remove(this);
+					}
 					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.AssigningAuthoritiesObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoletedByEntity");
 				}
 			}
@@ -4093,6 +5277,30 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_ActIdentifiers(ActIdentifier entity)
+		{
+			this.SendPropertyChanging();
+			entity.AssigningAuthority = this;
+		}
+		
+		private void detach_ActIdentifiers(ActIdentifier entity)
+		{
+			this.SendPropertyChanging();
+			entity.AssigningAuthority = null;
+		}
+		
+		private void attach_EntityIdentifiers(EntityIdentifier entity)
+		{
+			this.SendPropertyChanging();
+			entity.AssigningAuthority = this;
+		}
+		
+		private void detach_EntityIdentifiers(EntityIdentifier entity)
+		{
+			this.SendPropertyChanging();
+			entity.AssigningAuthority = null;
 		}
 	}
 	
@@ -4184,10 +5392,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ValueConcept.Entity != value))
+				Concept previousValue = this._ValueConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._ValueConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ValueConcept.Entity = null;
+						previousValue.CodedObservationsValueConceptId.Remove(this);
+					}
 					this._ValueConcept.Entity = value;
+					if ((value != null))
+					{
+						value.CodedObservationsValueConceptId.Add(this);
+						this._ValueConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._ValueConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("ValueConcept");
 				}
 			}
@@ -4202,10 +5426,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._Observation.Entity != value))
+				Observation previousValue = this._Observation.Entity;
+				if (((previousValue != value) 
+							|| (this._Observation.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Observation.Entity = null;
+						previousValue.CodedObservation = null;
+					}
 					this._Observation.Entity = value;
+					if ((value != null))
+					{
+						value.CodedObservation = this;
+						this._ActVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._ActVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("Observation");
 				}
 			}
@@ -4260,6 +5500,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private string _VersionText;
 		
+		private EntitySet<ReferenceTerm> _ReferenceTerms;
+		
 		private EntityRef<SecurityUser> _CreatedByEntity;
 		
 		private EntityRef<SecurityUser> _ObsoletedByEntity;
@@ -4294,6 +5536,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public CodeSystem()
 		{
+			this._ReferenceTerms = new EntitySet<ReferenceTerm>(new Action<ReferenceTerm>(this.attach_ReferenceTerms), new Action<ReferenceTerm>(this.detach_ReferenceTerms));
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
 			OnCreated();
@@ -4527,6 +5770,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CodeSystem_ReferenceTerm", Storage="_ReferenceTerms", ThisKey="CodeSystemId", OtherKey="CodeSystemId")]
+		public EntitySet<ReferenceTerm> ReferenceTerms
+		{
+			get
+			{
+				return this._ReferenceTerms;
+			}
+			set
+			{
+				this._ReferenceTerms.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_CodeSystem", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
 		public SecurityUser CreatedByEntity
 		{
@@ -4536,10 +5792,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._CreatedByEntity.Entity != value))
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.CodeSystemsCreatedBy.Remove(this);
+					}
 					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.CodeSystemsCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
 			}
@@ -4554,10 +5826,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoletedByEntity.Entity != value))
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.CodeSystemsObsoletedBy.Remove(this);
+					}
 					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.CodeSystemsObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoletedByEntity");
 				}
 			}
@@ -4582,6 +5870,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
+		
+		private void attach_ReferenceTerms(ReferenceTerm entity)
+		{
+			this.SendPropertyChanging();
+			entity.CodeSystem = this;
+		}
+		
+		private void detach_ReferenceTerms(ReferenceTerm entity)
+		{
+			this.SendPropertyChanging();
+			entity.CodeSystem = null;
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Concept")]
@@ -4593,6 +5893,78 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private System.Guid _ConceptId;
 		
 		private bool _IsSystemConcept;
+		
+		private EntitySet<Act> _ActsClassConceptId;
+		
+		private EntitySet<Act> _ActsMoodConceptId;
+		
+		private EntitySet<ActRelationship> _ActRelationshipsRelationshipTypeConceptId;
+		
+		private EntitySet<ActVersion> _ActVersionsStatusConceptId;
+		
+		private EntitySet<ActVersion> _ActVersionsTypeConceptId;
+		
+		private EntitySet<CodedObservation> _CodedObservationsValueConceptId;
+		
+		private EntitySet<ConceptRelationship> _ConceptRelationshipsSourceConceptId;
+		
+		private EntitySet<ConceptRelationship> _ConceptRelationshipsTargetConceptId;
+		
+		private EntitySet<ConceptSetMember> _ConceptSetMembers;
+		
+		private EntitySet<ConceptVersion> _ConceptVersions;
+		
+		private EntitySet<Entity> _EntitiesClassConceptId;
+		
+		private EntitySet<Entity> _EntitiesDeterminerConceptId;
+		
+		private EntitySet<EntityAddress> _EntityAddressesAddressUseConceptId;
+		
+		private EntitySet<EntityAddressComponent> _EntityAddressComponentsComponentTypeConceptId;
+		
+		private EntitySet<EntityAssociation> _EntityAssociationsAssociationTypeConceptId;
+		
+		private EntitySet<EntityName> _EntityNamesNameUseConceptId;
+		
+		private EntitySet<EntityNameComponent> _EntityNameComponentsComponentTypeConceptId;
+		
+		private EntitySet<EntityNameUse> _EntityNameUsesEntityClassScopeConceptId;
+		
+		private EntitySet<EntityNameUse> _EntityNameUsesNameUseConceptId;
+		
+		private EntitySet<EntityTelecomAddress> _EntityTelecomAddressesTelecomAddressTypeConceptId;
+		
+		private EntitySet<EntityTelecomAddress> _EntityTelecomAddressesTelecomUseConceptId;
+		
+		private EntitySet<EntityVersion> _EntityVersionsStatusConceptId;
+		
+		private EntitySet<EntityVersion> _EntityVersionsTypeConceptId;
+		
+		private EntitySet<IdentifierType> _IdentifierTypesEntityClassScopeConceptId;
+		
+		private EntitySet<IdentifierType> _IdentifierTypesIdentifierTypeConceptId;
+		
+		private EntitySet<Material> _MaterialsFormConceptId;
+		
+		private EntitySet<Material> _MaterialsQuantityConceptId;
+		
+		private EntitySet<Observation> _ObservationsInterpretationConceptId;
+		
+		private EntitySet<Organization> _OrganizationsIndustryConceptId;
+		
+		private EntitySet<Patient> _PatientsGenderConceptId;
+		
+		private EntitySet<PatientEncounter> _PatientEncountersDischargeDispositionConceptId;
+		
+		private EntitySet<PlaceService> _PlaceServicesServiceConceptId;
+		
+		private EntitySet<Provider> _ProvidersProviderSpecialtyConceptId;
+		
+		private EntitySet<QuantityObservation> _QuantityObservationsUnitOfMeasureConceptId;
+		
+		private EntitySet<SubstanceAdministration> _SubstanceAdministrationsDoseUnitConceptId;
+		
+		private EntitySet<SubstanceAdministration> _SubstanceAdministrationsRouteConceptId;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -4606,6 +5978,42 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public Concept()
 		{
+			this._ActsClassConceptId = new EntitySet<Act>(new Action<Act>(this.attach_ActsClassConceptId), new Action<Act>(this.detach_ActsClassConceptId));
+			this._ActsMoodConceptId = new EntitySet<Act>(new Action<Act>(this.attach_ActsMoodConceptId), new Action<Act>(this.detach_ActsMoodConceptId));
+			this._ActRelationshipsRelationshipTypeConceptId = new EntitySet<ActRelationship>(new Action<ActRelationship>(this.attach_ActRelationshipsRelationshipTypeConceptId), new Action<ActRelationship>(this.detach_ActRelationshipsRelationshipTypeConceptId));
+			this._ActVersionsStatusConceptId = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersionsStatusConceptId), new Action<ActVersion>(this.detach_ActVersionsStatusConceptId));
+			this._ActVersionsTypeConceptId = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersionsTypeConceptId), new Action<ActVersion>(this.detach_ActVersionsTypeConceptId));
+			this._CodedObservationsValueConceptId = new EntitySet<CodedObservation>(new Action<CodedObservation>(this.attach_CodedObservationsValueConceptId), new Action<CodedObservation>(this.detach_CodedObservationsValueConceptId));
+			this._ConceptRelationshipsSourceConceptId = new EntitySet<ConceptRelationship>(new Action<ConceptRelationship>(this.attach_ConceptRelationshipsSourceConceptId), new Action<ConceptRelationship>(this.detach_ConceptRelationshipsSourceConceptId));
+			this._ConceptRelationshipsTargetConceptId = new EntitySet<ConceptRelationship>(new Action<ConceptRelationship>(this.attach_ConceptRelationshipsTargetConceptId), new Action<ConceptRelationship>(this.detach_ConceptRelationshipsTargetConceptId));
+			this._ConceptSetMembers = new EntitySet<ConceptSetMember>(new Action<ConceptSetMember>(this.attach_ConceptSetMembers), new Action<ConceptSetMember>(this.detach_ConceptSetMembers));
+			this._ConceptVersions = new EntitySet<ConceptVersion>(new Action<ConceptVersion>(this.attach_ConceptVersions), new Action<ConceptVersion>(this.detach_ConceptVersions));
+			this._EntitiesClassConceptId = new EntitySet<Entity>(new Action<Entity>(this.attach_EntitiesClassConceptId), new Action<Entity>(this.detach_EntitiesClassConceptId));
+			this._EntitiesDeterminerConceptId = new EntitySet<Entity>(new Action<Entity>(this.attach_EntitiesDeterminerConceptId), new Action<Entity>(this.detach_EntitiesDeterminerConceptId));
+			this._EntityAddressesAddressUseConceptId = new EntitySet<EntityAddress>(new Action<EntityAddress>(this.attach_EntityAddressesAddressUseConceptId), new Action<EntityAddress>(this.detach_EntityAddressesAddressUseConceptId));
+			this._EntityAddressComponentsComponentTypeConceptId = new EntitySet<EntityAddressComponent>(new Action<EntityAddressComponent>(this.attach_EntityAddressComponentsComponentTypeConceptId), new Action<EntityAddressComponent>(this.detach_EntityAddressComponentsComponentTypeConceptId));
+			this._EntityAssociationsAssociationTypeConceptId = new EntitySet<EntityAssociation>(new Action<EntityAssociation>(this.attach_EntityAssociationsAssociationTypeConceptId), new Action<EntityAssociation>(this.detach_EntityAssociationsAssociationTypeConceptId));
+			this._EntityNamesNameUseConceptId = new EntitySet<EntityName>(new Action<EntityName>(this.attach_EntityNamesNameUseConceptId), new Action<EntityName>(this.detach_EntityNamesNameUseConceptId));
+			this._EntityNameComponentsComponentTypeConceptId = new EntitySet<EntityNameComponent>(new Action<EntityNameComponent>(this.attach_EntityNameComponentsComponentTypeConceptId), new Action<EntityNameComponent>(this.detach_EntityNameComponentsComponentTypeConceptId));
+			this._EntityNameUsesEntityClassScopeConceptId = new EntitySet<EntityNameUse>(new Action<EntityNameUse>(this.attach_EntityNameUsesEntityClassScopeConceptId), new Action<EntityNameUse>(this.detach_EntityNameUsesEntityClassScopeConceptId));
+			this._EntityNameUsesNameUseConceptId = new EntitySet<EntityNameUse>(new Action<EntityNameUse>(this.attach_EntityNameUsesNameUseConceptId), new Action<EntityNameUse>(this.detach_EntityNameUsesNameUseConceptId));
+			this._EntityTelecomAddressesTelecomAddressTypeConceptId = new EntitySet<EntityTelecomAddress>(new Action<EntityTelecomAddress>(this.attach_EntityTelecomAddressesTelecomAddressTypeConceptId), new Action<EntityTelecomAddress>(this.detach_EntityTelecomAddressesTelecomAddressTypeConceptId));
+			this._EntityTelecomAddressesTelecomUseConceptId = new EntitySet<EntityTelecomAddress>(new Action<EntityTelecomAddress>(this.attach_EntityTelecomAddressesTelecomUseConceptId), new Action<EntityTelecomAddress>(this.detach_EntityTelecomAddressesTelecomUseConceptId));
+			this._EntityVersionsStatusConceptId = new EntitySet<EntityVersion>(new Action<EntityVersion>(this.attach_EntityVersionsStatusConceptId), new Action<EntityVersion>(this.detach_EntityVersionsStatusConceptId));
+			this._EntityVersionsTypeConceptId = new EntitySet<EntityVersion>(new Action<EntityVersion>(this.attach_EntityVersionsTypeConceptId), new Action<EntityVersion>(this.detach_EntityVersionsTypeConceptId));
+			this._IdentifierTypesEntityClassScopeConceptId = new EntitySet<IdentifierType>(new Action<IdentifierType>(this.attach_IdentifierTypesEntityClassScopeConceptId), new Action<IdentifierType>(this.detach_IdentifierTypesEntityClassScopeConceptId));
+			this._IdentifierTypesIdentifierTypeConceptId = new EntitySet<IdentifierType>(new Action<IdentifierType>(this.attach_IdentifierTypesIdentifierTypeConceptId), new Action<IdentifierType>(this.detach_IdentifierTypesIdentifierTypeConceptId));
+			this._MaterialsFormConceptId = new EntitySet<Material>(new Action<Material>(this.attach_MaterialsFormConceptId), new Action<Material>(this.detach_MaterialsFormConceptId));
+			this._MaterialsQuantityConceptId = new EntitySet<Material>(new Action<Material>(this.attach_MaterialsQuantityConceptId), new Action<Material>(this.detach_MaterialsQuantityConceptId));
+			this._ObservationsInterpretationConceptId = new EntitySet<Observation>(new Action<Observation>(this.attach_ObservationsInterpretationConceptId), new Action<Observation>(this.detach_ObservationsInterpretationConceptId));
+			this._OrganizationsIndustryConceptId = new EntitySet<Organization>(new Action<Organization>(this.attach_OrganizationsIndustryConceptId), new Action<Organization>(this.detach_OrganizationsIndustryConceptId));
+			this._PatientsGenderConceptId = new EntitySet<Patient>(new Action<Patient>(this.attach_PatientsGenderConceptId), new Action<Patient>(this.detach_PatientsGenderConceptId));
+			this._PatientEncountersDischargeDispositionConceptId = new EntitySet<PatientEncounter>(new Action<PatientEncounter>(this.attach_PatientEncountersDischargeDispositionConceptId), new Action<PatientEncounter>(this.detach_PatientEncountersDischargeDispositionConceptId));
+			this._PlaceServicesServiceConceptId = new EntitySet<PlaceService>(new Action<PlaceService>(this.attach_PlaceServicesServiceConceptId), new Action<PlaceService>(this.detach_PlaceServicesServiceConceptId));
+			this._ProvidersProviderSpecialtyConceptId = new EntitySet<Provider>(new Action<Provider>(this.attach_ProvidersProviderSpecialtyConceptId), new Action<Provider>(this.detach_ProvidersProviderSpecialtyConceptId));
+			this._QuantityObservationsUnitOfMeasureConceptId = new EntitySet<QuantityObservation>(new Action<QuantityObservation>(this.attach_QuantityObservationsUnitOfMeasureConceptId), new Action<QuantityObservation>(this.detach_QuantityObservationsUnitOfMeasureConceptId));
+			this._SubstanceAdministrationsDoseUnitConceptId = new EntitySet<SubstanceAdministration>(new Action<SubstanceAdministration>(this.attach_SubstanceAdministrationsDoseUnitConceptId), new Action<SubstanceAdministration>(this.detach_SubstanceAdministrationsDoseUnitConceptId));
+			this._SubstanceAdministrationsRouteConceptId = new EntitySet<SubstanceAdministration>(new Action<SubstanceAdministration>(this.attach_SubstanceAdministrationsRouteConceptId), new Action<SubstanceAdministration>(this.detach_SubstanceAdministrationsRouteConceptId));
 			OnCreated();
 		}
 		
@@ -4649,6 +6057,474 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_Act", Storage="_ActsClassConceptId", ThisKey="ConceptId", OtherKey="ClassConceptId")]
+		public EntitySet<Act> ActsClassConceptId
+		{
+			get
+			{
+				return this._ActsClassConceptId;
+			}
+			set
+			{
+				this._ActsClassConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_Act1", Storage="_ActsMoodConceptId", ThisKey="ConceptId", OtherKey="MoodConceptId")]
+		public EntitySet<Act> ActsMoodConceptId
+		{
+			get
+			{
+				return this._ActsMoodConceptId;
+			}
+			set
+			{
+				this._ActsMoodConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ActRelationship", Storage="_ActRelationshipsRelationshipTypeConceptId", ThisKey="ConceptId", OtherKey="RelationshipTypeConceptId")]
+		public EntitySet<ActRelationship> ActRelationshipsRelationshipTypeConceptId
+		{
+			get
+			{
+				return this._ActRelationshipsRelationshipTypeConceptId;
+			}
+			set
+			{
+				this._ActRelationshipsRelationshipTypeConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ActVersion", Storage="_ActVersionsStatusConceptId", ThisKey="ConceptId", OtherKey="StatusConceptId")]
+		public EntitySet<ActVersion> ActVersionsStatusConceptId
+		{
+			get
+			{
+				return this._ActVersionsStatusConceptId;
+			}
+			set
+			{
+				this._ActVersionsStatusConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ActVersion1", Storage="_ActVersionsTypeConceptId", ThisKey="ConceptId", OtherKey="TypeConceptId")]
+		public EntitySet<ActVersion> ActVersionsTypeConceptId
+		{
+			get
+			{
+				return this._ActVersionsTypeConceptId;
+			}
+			set
+			{
+				this._ActVersionsTypeConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_CodedObservation", Storage="_CodedObservationsValueConceptId", ThisKey="ConceptId", OtherKey="ValueConceptId")]
+		public EntitySet<CodedObservation> CodedObservationsValueConceptId
+		{
+			get
+			{
+				return this._CodedObservationsValueConceptId;
+			}
+			set
+			{
+				this._CodedObservationsValueConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ConceptRelationship", Storage="_ConceptRelationshipsSourceConceptId", ThisKey="ConceptId", OtherKey="SourceConceptId")]
+		public EntitySet<ConceptRelationship> ConceptRelationshipsSourceConceptId
+		{
+			get
+			{
+				return this._ConceptRelationshipsSourceConceptId;
+			}
+			set
+			{
+				this._ConceptRelationshipsSourceConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ConceptRelationship1", Storage="_ConceptRelationshipsTargetConceptId", ThisKey="ConceptId", OtherKey="TargetConceptId")]
+		public EntitySet<ConceptRelationship> ConceptRelationshipsTargetConceptId
+		{
+			get
+			{
+				return this._ConceptRelationshipsTargetConceptId;
+			}
+			set
+			{
+				this._ConceptRelationshipsTargetConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ConceptSetMember", Storage="_ConceptSetMembers", ThisKey="ConceptId", OtherKey="ConceptId")]
+		public EntitySet<ConceptSetMember> ConceptSetMembers
+		{
+			get
+			{
+				return this._ConceptSetMembers;
+			}
+			set
+			{
+				this._ConceptSetMembers.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ConceptVersion", Storage="_ConceptVersions", ThisKey="ConceptId", OtherKey="ConceptId")]
+		public EntitySet<ConceptVersion> ConceptVersions
+		{
+			get
+			{
+				return this._ConceptVersions;
+			}
+			set
+			{
+				this._ConceptVersions.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_Entity", Storage="_EntitiesClassConceptId", ThisKey="ConceptId", OtherKey="ClassConceptId")]
+		public EntitySet<Entity> EntitiesClassConceptId
+		{
+			get
+			{
+				return this._EntitiesClassConceptId;
+			}
+			set
+			{
+				this._EntitiesClassConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_Entity1", Storage="_EntitiesDeterminerConceptId", ThisKey="ConceptId", OtherKey="DeterminerConceptId")]
+		public EntitySet<Entity> EntitiesDeterminerConceptId
+		{
+			get
+			{
+				return this._EntitiesDeterminerConceptId;
+			}
+			set
+			{
+				this._EntitiesDeterminerConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityAddress", Storage="_EntityAddressesAddressUseConceptId", ThisKey="ConceptId", OtherKey="AddressUseConceptId")]
+		public EntitySet<EntityAddress> EntityAddressesAddressUseConceptId
+		{
+			get
+			{
+				return this._EntityAddressesAddressUseConceptId;
+			}
+			set
+			{
+				this._EntityAddressesAddressUseConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityAddressComponent", Storage="_EntityAddressComponentsComponentTypeConceptId", ThisKey="ConceptId", OtherKey="ComponentTypeConceptId")]
+		public EntitySet<EntityAddressComponent> EntityAddressComponentsComponentTypeConceptId
+		{
+			get
+			{
+				return this._EntityAddressComponentsComponentTypeConceptId;
+			}
+			set
+			{
+				this._EntityAddressComponentsComponentTypeConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityAssociation", Storage="_EntityAssociationsAssociationTypeConceptId", ThisKey="ConceptId", OtherKey="AssociationTypeConceptId")]
+		public EntitySet<EntityAssociation> EntityAssociationsAssociationTypeConceptId
+		{
+			get
+			{
+				return this._EntityAssociationsAssociationTypeConceptId;
+			}
+			set
+			{
+				this._EntityAssociationsAssociationTypeConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityName", Storage="_EntityNamesNameUseConceptId", ThisKey="ConceptId", OtherKey="NameUseConceptId")]
+		public EntitySet<EntityName> EntityNamesNameUseConceptId
+		{
+			get
+			{
+				return this._EntityNamesNameUseConceptId;
+			}
+			set
+			{
+				this._EntityNamesNameUseConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityNameComponent", Storage="_EntityNameComponentsComponentTypeConceptId", ThisKey="ConceptId", OtherKey="ComponentTypeConceptId")]
+		public EntitySet<EntityNameComponent> EntityNameComponentsComponentTypeConceptId
+		{
+			get
+			{
+				return this._EntityNameComponentsComponentTypeConceptId;
+			}
+			set
+			{
+				this._EntityNameComponentsComponentTypeConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityNameUse", Storage="_EntityNameUsesEntityClassScopeConceptId", ThisKey="ConceptId", OtherKey="EntityClassScopeConceptId")]
+		public EntitySet<EntityNameUse> EntityNameUsesEntityClassScopeConceptId
+		{
+			get
+			{
+				return this._EntityNameUsesEntityClassScopeConceptId;
+			}
+			set
+			{
+				this._EntityNameUsesEntityClassScopeConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityNameUse1", Storage="_EntityNameUsesNameUseConceptId", ThisKey="ConceptId", OtherKey="NameUseConceptId")]
+		public EntitySet<EntityNameUse> EntityNameUsesNameUseConceptId
+		{
+			get
+			{
+				return this._EntityNameUsesNameUseConceptId;
+			}
+			set
+			{
+				this._EntityNameUsesNameUseConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityTelecomAddress", Storage="_EntityTelecomAddressesTelecomAddressTypeConceptId", ThisKey="ConceptId", OtherKey="TelecomAddressTypeConceptId")]
+		public EntitySet<EntityTelecomAddress> EntityTelecomAddressesTelecomAddressTypeConceptId
+		{
+			get
+			{
+				return this._EntityTelecomAddressesTelecomAddressTypeConceptId;
+			}
+			set
+			{
+				this._EntityTelecomAddressesTelecomAddressTypeConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityTelecomAddress1", Storage="_EntityTelecomAddressesTelecomUseConceptId", ThisKey="ConceptId", OtherKey="TelecomUseConceptId")]
+		public EntitySet<EntityTelecomAddress> EntityTelecomAddressesTelecomUseConceptId
+		{
+			get
+			{
+				return this._EntityTelecomAddressesTelecomUseConceptId;
+			}
+			set
+			{
+				this._EntityTelecomAddressesTelecomUseConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityVersion", Storage="_EntityVersionsStatusConceptId", ThisKey="ConceptId", OtherKey="StatusConceptId")]
+		public EntitySet<EntityVersion> EntityVersionsStatusConceptId
+		{
+			get
+			{
+				return this._EntityVersionsStatusConceptId;
+			}
+			set
+			{
+				this._EntityVersionsStatusConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityVersion1", Storage="_EntityVersionsTypeConceptId", ThisKey="ConceptId", OtherKey="TypeConceptId")]
+		public EntitySet<EntityVersion> EntityVersionsTypeConceptId
+		{
+			get
+			{
+				return this._EntityVersionsTypeConceptId;
+			}
+			set
+			{
+				this._EntityVersionsTypeConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_IdentifierType", Storage="_IdentifierTypesEntityClassScopeConceptId", ThisKey="ConceptId", OtherKey="EntityClassScopeConceptId")]
+		public EntitySet<IdentifierType> IdentifierTypesEntityClassScopeConceptId
+		{
+			get
+			{
+				return this._IdentifierTypesEntityClassScopeConceptId;
+			}
+			set
+			{
+				this._IdentifierTypesEntityClassScopeConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_IdentifierType1", Storage="_IdentifierTypesIdentifierTypeConceptId", ThisKey="ConceptId", OtherKey="IdentifierTypeConceptId")]
+		public EntitySet<IdentifierType> IdentifierTypesIdentifierTypeConceptId
+		{
+			get
+			{
+				return this._IdentifierTypesIdentifierTypeConceptId;
+			}
+			set
+			{
+				this._IdentifierTypesIdentifierTypeConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_Material", Storage="_MaterialsFormConceptId", ThisKey="ConceptId", OtherKey="FormConceptId")]
+		public EntitySet<Material> MaterialsFormConceptId
+		{
+			get
+			{
+				return this._MaterialsFormConceptId;
+			}
+			set
+			{
+				this._MaterialsFormConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_Material1", Storage="_MaterialsQuantityConceptId", ThisKey="ConceptId", OtherKey="QuantityConceptId")]
+		public EntitySet<Material> MaterialsQuantityConceptId
+		{
+			get
+			{
+				return this._MaterialsQuantityConceptId;
+			}
+			set
+			{
+				this._MaterialsQuantityConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_Observation", Storage="_ObservationsInterpretationConceptId", ThisKey="ConceptId", OtherKey="InterpretationConceptId")]
+		public EntitySet<Observation> ObservationsInterpretationConceptId
+		{
+			get
+			{
+				return this._ObservationsInterpretationConceptId;
+			}
+			set
+			{
+				this._ObservationsInterpretationConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_Organization", Storage="_OrganizationsIndustryConceptId", ThisKey="ConceptId", OtherKey="IndustryConceptId")]
+		public EntitySet<Organization> OrganizationsIndustryConceptId
+		{
+			get
+			{
+				return this._OrganizationsIndustryConceptId;
+			}
+			set
+			{
+				this._OrganizationsIndustryConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_Patient", Storage="_PatientsGenderConceptId", ThisKey="ConceptId", OtherKey="GenderConceptId")]
+		public EntitySet<Patient> PatientsGenderConceptId
+		{
+			get
+			{
+				return this._PatientsGenderConceptId;
+			}
+			set
+			{
+				this._PatientsGenderConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_PatientEncounter", Storage="_PatientEncountersDischargeDispositionConceptId", ThisKey="ConceptId", OtherKey="DischargeDispositionConceptId")]
+		public EntitySet<PatientEncounter> PatientEncountersDischargeDispositionConceptId
+		{
+			get
+			{
+				return this._PatientEncountersDischargeDispositionConceptId;
+			}
+			set
+			{
+				this._PatientEncountersDischargeDispositionConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_PlaceService", Storage="_PlaceServicesServiceConceptId", ThisKey="ConceptId", OtherKey="ServiceConceptId")]
+		public EntitySet<PlaceService> PlaceServicesServiceConceptId
+		{
+			get
+			{
+				return this._PlaceServicesServiceConceptId;
+			}
+			set
+			{
+				this._PlaceServicesServiceConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_Provider", Storage="_ProvidersProviderSpecialtyConceptId", ThisKey="ConceptId", OtherKey="ProviderSpecialtyConceptId")]
+		public EntitySet<Provider> ProvidersProviderSpecialtyConceptId
+		{
+			get
+			{
+				return this._ProvidersProviderSpecialtyConceptId;
+			}
+			set
+			{
+				this._ProvidersProviderSpecialtyConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_QuantityObservation", Storage="_QuantityObservationsUnitOfMeasureConceptId", ThisKey="ConceptId", OtherKey="UnitOfMeasureConceptId")]
+		public EntitySet<QuantityObservation> QuantityObservationsUnitOfMeasureConceptId
+		{
+			get
+			{
+				return this._QuantityObservationsUnitOfMeasureConceptId;
+			}
+			set
+			{
+				this._QuantityObservationsUnitOfMeasureConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_SubstanceAdministration", Storage="_SubstanceAdministrationsDoseUnitConceptId", ThisKey="ConceptId", OtherKey="DoseUnitConceptId")]
+		public EntitySet<SubstanceAdministration> SubstanceAdministrationsDoseUnitConceptId
+		{
+			get
+			{
+				return this._SubstanceAdministrationsDoseUnitConceptId;
+			}
+			set
+			{
+				this._SubstanceAdministrationsDoseUnitConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_SubstanceAdministration1", Storage="_SubstanceAdministrationsRouteConceptId", ThisKey="ConceptId", OtherKey="RouteConceptId")]
+		public EntitySet<SubstanceAdministration> SubstanceAdministrationsRouteConceptId
+		{
+			get
+			{
+				return this._SubstanceAdministrationsRouteConceptId;
+			}
+			set
+			{
+				this._SubstanceAdministrationsRouteConceptId.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -4668,6 +6544,438 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
+		
+		private void attach_ActsClassConceptId(Act entity)
+		{
+			this.SendPropertyChanging();
+			entity.ClassConcept = this;
+		}
+		
+		private void detach_ActsClassConceptId(Act entity)
+		{
+			this.SendPropertyChanging();
+			entity.ClassConcept = null;
+		}
+		
+		private void attach_ActsMoodConceptId(Act entity)
+		{
+			this.SendPropertyChanging();
+			entity.MoodConcept = this;
+		}
+		
+		private void detach_ActsMoodConceptId(Act entity)
+		{
+			this.SendPropertyChanging();
+			entity.MoodConcept = null;
+		}
+		
+		private void attach_ActRelationshipsRelationshipTypeConceptId(ActRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.RelationshipTypeConcept = this;
+		}
+		
+		private void detach_ActRelationshipsRelationshipTypeConceptId(ActRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.RelationshipTypeConcept = null;
+		}
+		
+		private void attach_ActVersionsStatusConceptId(ActVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.StatusConcept = this;
+		}
+		
+		private void detach_ActVersionsStatusConceptId(ActVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.StatusConcept = null;
+		}
+		
+		private void attach_ActVersionsTypeConceptId(ActVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.TypeConcept = this;
+		}
+		
+		private void detach_ActVersionsTypeConceptId(ActVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.TypeConcept = null;
+		}
+		
+		private void attach_CodedObservationsValueConceptId(CodedObservation entity)
+		{
+			this.SendPropertyChanging();
+			entity.ValueConcept = this;
+		}
+		
+		private void detach_CodedObservationsValueConceptId(CodedObservation entity)
+		{
+			this.SendPropertyChanging();
+			entity.ValueConcept = null;
+		}
+		
+		private void attach_ConceptRelationshipsSourceConceptId(ConceptRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.SourceConcept = this;
+		}
+		
+		private void detach_ConceptRelationshipsSourceConceptId(ConceptRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.SourceConcept = null;
+		}
+		
+		private void attach_ConceptRelationshipsTargetConceptId(ConceptRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.TargetConcept = this;
+		}
+		
+		private void detach_ConceptRelationshipsTargetConceptId(ConceptRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.TargetConcept = null;
+		}
+		
+		private void attach_ConceptSetMembers(ConceptSetMember entity)
+		{
+			this.SendPropertyChanging();
+			entity.Concept = this;
+		}
+		
+		private void detach_ConceptSetMembers(ConceptSetMember entity)
+		{
+			this.SendPropertyChanging();
+			entity.Concept = null;
+		}
+		
+		private void attach_ConceptVersions(ConceptVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.Concept = this;
+		}
+		
+		private void detach_ConceptVersions(ConceptVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.Concept = null;
+		}
+		
+		private void attach_EntitiesClassConceptId(Entity entity)
+		{
+			this.SendPropertyChanging();
+			entity.ClassConcept = this;
+		}
+		
+		private void detach_EntitiesClassConceptId(Entity entity)
+		{
+			this.SendPropertyChanging();
+			entity.ClassConcept = null;
+		}
+		
+		private void attach_EntitiesDeterminerConceptId(Entity entity)
+		{
+			this.SendPropertyChanging();
+			entity.DeterminerConcept = this;
+		}
+		
+		private void detach_EntitiesDeterminerConceptId(Entity entity)
+		{
+			this.SendPropertyChanging();
+			entity.DeterminerConcept = null;
+		}
+		
+		private void attach_EntityAddressesAddressUseConceptId(EntityAddress entity)
+		{
+			this.SendPropertyChanging();
+			entity.AddressUseConcept = this;
+		}
+		
+		private void detach_EntityAddressesAddressUseConceptId(EntityAddress entity)
+		{
+			this.SendPropertyChanging();
+			entity.AddressUseConcept = null;
+		}
+		
+		private void attach_EntityAddressComponentsComponentTypeConceptId(EntityAddressComponent entity)
+		{
+			this.SendPropertyChanging();
+			entity.ComponentTypeConcept = this;
+		}
+		
+		private void detach_EntityAddressComponentsComponentTypeConceptId(EntityAddressComponent entity)
+		{
+			this.SendPropertyChanging();
+			entity.ComponentTypeConcept = null;
+		}
+		
+		private void attach_EntityAssociationsAssociationTypeConceptId(EntityAssociation entity)
+		{
+			this.SendPropertyChanging();
+			entity.AssociationTypeConcept = this;
+		}
+		
+		private void detach_EntityAssociationsAssociationTypeConceptId(EntityAssociation entity)
+		{
+			this.SendPropertyChanging();
+			entity.AssociationTypeConcept = null;
+		}
+		
+		private void attach_EntityNamesNameUseConceptId(EntityName entity)
+		{
+			this.SendPropertyChanging();
+			entity.NameUseConcept = this;
+		}
+		
+		private void detach_EntityNamesNameUseConceptId(EntityName entity)
+		{
+			this.SendPropertyChanging();
+			entity.NameUseConcept = null;
+		}
+		
+		private void attach_EntityNameComponentsComponentTypeConceptId(EntityNameComponent entity)
+		{
+			this.SendPropertyChanging();
+			entity.ComponentTypeConcept = this;
+		}
+		
+		private void detach_EntityNameComponentsComponentTypeConceptId(EntityNameComponent entity)
+		{
+			this.SendPropertyChanging();
+			entity.ComponentTypeConcept = null;
+		}
+		
+		private void attach_EntityNameUsesEntityClassScopeConceptId(EntityNameUse entity)
+		{
+			this.SendPropertyChanging();
+			entity.EntityClassScopeConcept = this;
+		}
+		
+		private void detach_EntityNameUsesEntityClassScopeConceptId(EntityNameUse entity)
+		{
+			this.SendPropertyChanging();
+			entity.EntityClassScopeConcept = null;
+		}
+		
+		private void attach_EntityNameUsesNameUseConceptId(EntityNameUse entity)
+		{
+			this.SendPropertyChanging();
+			entity.NameUseConcept = this;
+		}
+		
+		private void detach_EntityNameUsesNameUseConceptId(EntityNameUse entity)
+		{
+			this.SendPropertyChanging();
+			entity.NameUseConcept = null;
+		}
+		
+		private void attach_EntityTelecomAddressesTelecomAddressTypeConceptId(EntityTelecomAddress entity)
+		{
+			this.SendPropertyChanging();
+			entity.TelecomAddressTypeConcept = this;
+		}
+		
+		private void detach_EntityTelecomAddressesTelecomAddressTypeConceptId(EntityTelecomAddress entity)
+		{
+			this.SendPropertyChanging();
+			entity.TelecomAddressTypeConcept = null;
+		}
+		
+		private void attach_EntityTelecomAddressesTelecomUseConceptId(EntityTelecomAddress entity)
+		{
+			this.SendPropertyChanging();
+			entity.TelecomUseConcept = this;
+		}
+		
+		private void detach_EntityTelecomAddressesTelecomUseConceptId(EntityTelecomAddress entity)
+		{
+			this.SendPropertyChanging();
+			entity.TelecomUseConcept = null;
+		}
+		
+		private void attach_EntityVersionsStatusConceptId(EntityVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.StatusConcept = this;
+		}
+		
+		private void detach_EntityVersionsStatusConceptId(EntityVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.StatusConcept = null;
+		}
+		
+		private void attach_EntityVersionsTypeConceptId(EntityVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.TypeConcept = this;
+		}
+		
+		private void detach_EntityVersionsTypeConceptId(EntityVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.TypeConcept = null;
+		}
+		
+		private void attach_IdentifierTypesEntityClassScopeConceptId(IdentifierType entity)
+		{
+			this.SendPropertyChanging();
+			entity.EntityClassScopeConcept = this;
+		}
+		
+		private void detach_IdentifierTypesEntityClassScopeConceptId(IdentifierType entity)
+		{
+			this.SendPropertyChanging();
+			entity.EntityClassScopeConcept = null;
+		}
+		
+		private void attach_IdentifierTypesIdentifierTypeConceptId(IdentifierType entity)
+		{
+			this.SendPropertyChanging();
+			entity.IdentifierTypeConcept = this;
+		}
+		
+		private void detach_IdentifierTypesIdentifierTypeConceptId(IdentifierType entity)
+		{
+			this.SendPropertyChanging();
+			entity.IdentifierTypeConcept = null;
+		}
+		
+		private void attach_MaterialsFormConceptId(Material entity)
+		{
+			this.SendPropertyChanging();
+			entity.FormConcept = this;
+		}
+		
+		private void detach_MaterialsFormConceptId(Material entity)
+		{
+			this.SendPropertyChanging();
+			entity.FormConcept = null;
+		}
+		
+		private void attach_MaterialsQuantityConceptId(Material entity)
+		{
+			this.SendPropertyChanging();
+			entity.QuantityConcept = this;
+		}
+		
+		private void detach_MaterialsQuantityConceptId(Material entity)
+		{
+			this.SendPropertyChanging();
+			entity.QuantityConcept = null;
+		}
+		
+		private void attach_ObservationsInterpretationConceptId(Observation entity)
+		{
+			this.SendPropertyChanging();
+			entity.InterpretationConcept = this;
+		}
+		
+		private void detach_ObservationsInterpretationConceptId(Observation entity)
+		{
+			this.SendPropertyChanging();
+			entity.InterpretationConcept = null;
+		}
+		
+		private void attach_OrganizationsIndustryConceptId(Organization entity)
+		{
+			this.SendPropertyChanging();
+			entity.IndustryConcept = this;
+		}
+		
+		private void detach_OrganizationsIndustryConceptId(Organization entity)
+		{
+			this.SendPropertyChanging();
+			entity.IndustryConcept = null;
+		}
+		
+		private void attach_PatientsGenderConceptId(Patient entity)
+		{
+			this.SendPropertyChanging();
+			entity.GenderConcept = this;
+		}
+		
+		private void detach_PatientsGenderConceptId(Patient entity)
+		{
+			this.SendPropertyChanging();
+			entity.GenderConcept = null;
+		}
+		
+		private void attach_PatientEncountersDischargeDispositionConceptId(PatientEncounter entity)
+		{
+			this.SendPropertyChanging();
+			entity.DischargeDispositionConcept = this;
+		}
+		
+		private void detach_PatientEncountersDischargeDispositionConceptId(PatientEncounter entity)
+		{
+			this.SendPropertyChanging();
+			entity.DischargeDispositionConcept = null;
+		}
+		
+		private void attach_PlaceServicesServiceConceptId(PlaceService entity)
+		{
+			this.SendPropertyChanging();
+			entity.ServiceConcept = this;
+		}
+		
+		private void detach_PlaceServicesServiceConceptId(PlaceService entity)
+		{
+			this.SendPropertyChanging();
+			entity.ServiceConcept = null;
+		}
+		
+		private void attach_ProvidersProviderSpecialtyConceptId(Provider entity)
+		{
+			this.SendPropertyChanging();
+			entity.ProviderSpecialtyConcept = this;
+		}
+		
+		private void detach_ProvidersProviderSpecialtyConceptId(Provider entity)
+		{
+			this.SendPropertyChanging();
+			entity.ProviderSpecialtyConcept = null;
+		}
+		
+		private void attach_QuantityObservationsUnitOfMeasureConceptId(QuantityObservation entity)
+		{
+			this.SendPropertyChanging();
+			entity.UnitOfMeasureConcept = this;
+		}
+		
+		private void detach_QuantityObservationsUnitOfMeasureConceptId(QuantityObservation entity)
+		{
+			this.SendPropertyChanging();
+			entity.UnitOfMeasureConcept = null;
+		}
+		
+		private void attach_SubstanceAdministrationsDoseUnitConceptId(SubstanceAdministration entity)
+		{
+			this.SendPropertyChanging();
+			entity.DoseUnitConcept = this;
+		}
+		
+		private void detach_SubstanceAdministrationsDoseUnitConceptId(SubstanceAdministration entity)
+		{
+			this.SendPropertyChanging();
+			entity.DoseUnitConcept = null;
+		}
+		
+		private void attach_SubstanceAdministrationsRouteConceptId(SubstanceAdministration entity)
+		{
+			this.SendPropertyChanging();
+			entity.RouteConcept = this;
+		}
+		
+		private void detach_SubstanceAdministrationsRouteConceptId(SubstanceAdministration entity)
+		{
+			this.SendPropertyChanging();
+			entity.RouteConcept = null;
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ConceptClass")]
@@ -4681,6 +6989,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private string _Name;
 		
 		private string _Mnemonic;
+		
+		private EntitySet<ConceptVersion> _ConceptVersions;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -4696,6 +7006,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public ConceptClass()
 		{
+			this._ConceptVersions = new EntitySet<ConceptVersion>(new Action<ConceptVersion>(this.attach_ConceptVersions), new Action<ConceptVersion>(this.detach_ConceptVersions));
 			OnCreated();
 		}
 		
@@ -4759,6 +7070,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptClass_ConceptVersion", Storage="_ConceptVersions", ThisKey="ConceptClassId", OtherKey="ConceptClassId")]
+		public EntitySet<ConceptVersion> ConceptVersions
+		{
+			get
+			{
+				return this._ConceptVersions;
+			}
+			set
+			{
+				this._ConceptVersions.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -4777,6 +7101,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_ConceptVersions(ConceptVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.ConceptClass = this;
+		}
+		
+		private void detach_ConceptVersions(ConceptVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.ConceptClass = null;
 		}
 	}
 	
@@ -4995,10 +7331,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EffectiveVersion.Entity != value))
+				ConceptVersion previousValue = this._EffectiveVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EffectiveVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EffectiveVersion.Entity = null;
+						previousValue.ConceptNamesEffectiveVersionId.Remove(this);
+					}
 					this._EffectiveVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptNamesEffectiveVersionId.Add(this);
+						this._EffectiveVersionId = value.ConceptVersionId;
+					}
+					else
+					{
+						this._EffectiveVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EffectiveVersion");
 				}
 			}
@@ -5013,10 +7365,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoleteVersion.Entity != value))
+				ConceptVersion previousValue = this._ObsoleteVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoleteVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoleteVersion.Entity = null;
+						previousValue.ConceptNamesObsoleteVersionId.Remove(this);
+					}
 					this._ObsoleteVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptNamesObsoleteVersionId.Add(this);
+						this._ObsoleteVersionId = value.ConceptVersionId;
+					}
+					else
+					{
+						this._ObsoleteVersionId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoleteVersion");
 				}
 			}
@@ -5031,10 +7399,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._PhoneticAlgorithm.Entity != value))
+				PhoneticAlgorithm previousValue = this._PhoneticAlgorithm.Entity;
+				if (((previousValue != value) 
+							|| (this._PhoneticAlgorithm.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._PhoneticAlgorithm.Entity = null;
+						previousValue.ConceptNames.Remove(this);
+					}
 					this._PhoneticAlgorithm.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptNames.Add(this);
+						this._PhoneticAlgorithmId = value.PhoneticAlgorithmId;
+					}
+					else
+					{
+						this._PhoneticAlgorithmId = default(System.Guid);
+					}
 					this.SendPropertyChanged("PhoneticAlgorithm");
 				}
 			}
@@ -5235,10 +7619,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ConceptRelationshipType.Entity != value))
+				ConceptRelationshipType previousValue = this._ConceptRelationshipType.Entity;
+				if (((previousValue != value) 
+							|| (this._ConceptRelationshipType.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ConceptRelationshipType.Entity = null;
+						previousValue.ConceptReferenceTerms.Remove(this);
+					}
 					this._ConceptRelationshipType.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptReferenceTerms.Add(this);
+						this._ConceptRelationshipTypeId = value.ConceptRelationshipTypeId;
+					}
+					else
+					{
+						this._ConceptRelationshipTypeId = default(System.Guid);
+					}
 					this.SendPropertyChanged("ConceptRelationshipType");
 				}
 			}
@@ -5253,10 +7653,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EffectiveVersion.Entity != value))
+				ConceptVersion previousValue = this._EffectiveVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EffectiveVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EffectiveVersion.Entity = null;
+						previousValue.ConceptReferenceTermsEffectiveVersionId.Remove(this);
+					}
 					this._EffectiveVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptReferenceTermsEffectiveVersionId.Add(this);
+						this._EffectiveVersionId = value.ConceptVersionId;
+					}
+					else
+					{
+						this._EffectiveVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EffectiveVersion");
 				}
 			}
@@ -5271,10 +7687,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoleteVersion.Entity != value))
+				ConceptVersion previousValue = this._ObsoleteVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoleteVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoleteVersion.Entity = null;
+						previousValue.ConceptReferenceTermsObsoleteVersionId.Remove(this);
+					}
 					this._ObsoleteVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptReferenceTermsObsoleteVersionId.Add(this);
+						this._ObsoleteVersionId = value.ConceptVersionId;
+					}
+					else
+					{
+						this._ObsoleteVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("ObsoleteVersion");
 				}
 			}
@@ -5289,10 +7721,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ReferenceTerm.Entity != value))
+				ReferenceTerm previousValue = this._ReferenceTerm.Entity;
+				if (((previousValue != value) 
+							|| (this._ReferenceTerm.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ReferenceTerm.Entity = null;
+						previousValue.ConceptReferenceTerms.Remove(this);
+					}
 					this._ReferenceTerm.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptReferenceTerms.Add(this);
+						this._ReferenceTermId = value.ReferenceTermId;
+					}
+					else
+					{
+						this._ReferenceTermId = default(System.Guid);
+					}
 					this.SendPropertyChanged("ReferenceTerm");
 				}
 			}
@@ -5524,10 +7972,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._SourceConcept.Entity != value))
+				Concept previousValue = this._SourceConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._SourceConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SourceConcept.Entity = null;
+						previousValue.ConceptRelationshipsSourceConceptId.Remove(this);
+					}
 					this._SourceConcept.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptRelationshipsSourceConceptId.Add(this);
+						this._SourceConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._SourceConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("SourceConcept");
 				}
 			}
@@ -5542,10 +8006,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._TargetConcept.Entity != value))
+				Concept previousValue = this._TargetConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._TargetConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TargetConcept.Entity = null;
+						previousValue.ConceptRelationshipsTargetConceptId.Remove(this);
+					}
 					this._TargetConcept.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptRelationshipsTargetConceptId.Add(this);
+						this._TargetConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._TargetConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("TargetConcept");
 				}
 			}
@@ -5560,10 +8040,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ConceptRelationshipType.Entity != value))
+				ConceptRelationshipType previousValue = this._ConceptRelationshipType.Entity;
+				if (((previousValue != value) 
+							|| (this._ConceptRelationshipType.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ConceptRelationshipType.Entity = null;
+						previousValue.ConceptRelationships.Remove(this);
+					}
 					this._ConceptRelationshipType.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptRelationships.Add(this);
+						this._ConceptRelationshipTypeId = value.ConceptRelationshipTypeId;
+					}
+					else
+					{
+						this._ConceptRelationshipTypeId = default(System.Guid);
+					}
 					this.SendPropertyChanged("ConceptRelationshipType");
 				}
 			}
@@ -5578,10 +8074,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EffectiveVersion.Entity != value))
+				ConceptVersion previousValue = this._EffectiveVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EffectiveVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EffectiveVersion.Entity = null;
+						previousValue.ConceptRelationshipsEffectiveVersionId.Remove(this);
+					}
 					this._EffectiveVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptRelationshipsEffectiveVersionId.Add(this);
+						this._EffectiveVersionId = value.ConceptVersionId;
+					}
+					else
+					{
+						this._EffectiveVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EffectiveVersion");
 				}
 			}
@@ -5596,10 +8108,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoleteVersion.Entity != value))
+				ConceptVersion previousValue = this._ObsoleteVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoleteVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoleteVersion.Entity = null;
+						previousValue.ConceptRelationshipsObsoleteVersionId.Remove(this);
+					}
 					this._ObsoleteVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptRelationshipsObsoleteVersionId.Add(this);
+						this._ObsoleteVersionId = value.ConceptVersionId;
+					}
+					else
+					{
+						this._ObsoleteVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("ObsoleteVersion");
 				}
 			}
@@ -5638,6 +8166,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private string _Mnemonic;
 		
+		private EntitySet<ConceptReferenceTerm> _ConceptReferenceTerms;
+		
+		private EntitySet<ConceptRelationship> _ConceptRelationships;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -5652,6 +8184,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public ConceptRelationshipType()
 		{
+			this._ConceptReferenceTerms = new EntitySet<ConceptReferenceTerm>(new Action<ConceptReferenceTerm>(this.attach_ConceptReferenceTerms), new Action<ConceptReferenceTerm>(this.detach_ConceptReferenceTerms));
+			this._ConceptRelationships = new EntitySet<ConceptRelationship>(new Action<ConceptRelationship>(this.attach_ConceptRelationships), new Action<ConceptRelationship>(this.detach_ConceptRelationships));
 			OnCreated();
 		}
 		
@@ -5715,6 +8249,32 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptRelationshipType_ConceptReferenceTerm", Storage="_ConceptReferenceTerms", ThisKey="ConceptRelationshipTypeId", OtherKey="ConceptRelationshipTypeId")]
+		public EntitySet<ConceptReferenceTerm> ConceptReferenceTerms
+		{
+			get
+			{
+				return this._ConceptReferenceTerms;
+			}
+			set
+			{
+				this._ConceptReferenceTerms.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptRelationshipType_ConceptRelationship", Storage="_ConceptRelationships", ThisKey="ConceptRelationshipTypeId", OtherKey="ConceptRelationshipTypeId")]
+		public EntitySet<ConceptRelationship> ConceptRelationships
+		{
+			get
+			{
+				return this._ConceptRelationships;
+			}
+			set
+			{
+				this._ConceptRelationships.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -5733,6 +8293,30 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_ConceptReferenceTerms(ConceptReferenceTerm entity)
+		{
+			this.SendPropertyChanging();
+			entity.ConceptRelationshipType = this;
+		}
+		
+		private void detach_ConceptReferenceTerms(ConceptReferenceTerm entity)
+		{
+			this.SendPropertyChanging();
+			entity.ConceptRelationshipType = null;
+		}
+		
+		private void attach_ConceptRelationships(ConceptRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.ConceptRelationshipType = this;
+		}
+		
+		private void detach_ConceptRelationships(ConceptRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.ConceptRelationshipType = null;
 		}
 	}
 	
@@ -5761,6 +8345,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private System.Nullable<System.Guid> _ObsoletedBy;
 		
 		private string _ObsoletionReason;
+		
+		private EntitySet<ConceptSetMember> _ConceptSetMembers;
 		
 		private EntityRef<SecurityUser> _CreatedByEntity;
 		
@@ -5794,6 +8380,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public ConceptSet()
 		{
+			this._ConceptSetMembers = new EntitySet<ConceptSetMember>(new Action<ConceptSetMember>(this.attach_ConceptSetMembers), new Action<ConceptSetMember>(this.detach_ConceptSetMembers));
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
 			OnCreated();
@@ -6007,6 +8594,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptSet_ConceptSetMember", Storage="_ConceptSetMembers", ThisKey="ConceptSetId", OtherKey="ConceptSetId")]
+		public EntitySet<ConceptSetMember> ConceptSetMembers
+		{
+			get
+			{
+				return this._ConceptSetMembers;
+			}
+			set
+			{
+				this._ConceptSetMembers.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptSet", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
 		public SecurityUser CreatedByEntity
 		{
@@ -6016,10 +8616,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._CreatedByEntity.Entity != value))
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.ConceptSetsCreatedBy.Remove(this);
+					}
 					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptSetsCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
 			}
@@ -6034,10 +8650,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoletedByEntity.Entity != value))
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.ConceptSetsObsoletedBy.Remove(this);
+					}
 					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptSetsObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoletedByEntity");
 				}
 			}
@@ -6061,6 +8693,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_ConceptSetMembers(ConceptSetMember entity)
+		{
+			this.SendPropertyChanging();
+			entity.ConceptSet = this;
+		}
+		
+		private void detach_ConceptSetMembers(ConceptSetMember entity)
+		{
+			this.SendPropertyChanging();
+			entity.ConceptSet = null;
 		}
 	}
 	
@@ -6152,10 +8796,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._Concept.Entity != value))
+				Concept previousValue = this._Concept.Entity;
+				if (((previousValue != value) 
+							|| (this._Concept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Concept.Entity = null;
+						previousValue.ConceptSetMembers.Remove(this);
+					}
 					this._Concept.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptSetMembers.Add(this);
+						this._ConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._ConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("Concept");
 				}
 			}
@@ -6170,10 +8830,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ConceptSet.Entity != value))
+				ConceptSet previousValue = this._ConceptSet.Entity;
+				if (((previousValue != value) 
+							|| (this._ConceptSet.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ConceptSet.Entity = null;
+						previousValue.ConceptSetMembers.Remove(this);
+					}
 					this._ConceptSet.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptSetMembers.Add(this);
+						this._ConceptSetId = value.ConceptSetId;
+					}
+					else
+					{
+						this._ConceptSetId = default(System.Guid);
+					}
 					this.SendPropertyChanged("ConceptSet");
 				}
 			}
@@ -6222,6 +8898,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.Guid> _ConceptClassId;
 		
+		private EntitySet<ConceptName> _ConceptNamesEffectiveVersionId;
+		
+		private EntitySet<ConceptName> _ConceptNamesObsoleteVersionId;
+		
+		private EntitySet<ConceptReferenceTerm> _ConceptReferenceTermsEffectiveVersionId;
+		
+		private EntitySet<ConceptReferenceTerm> _ConceptReferenceTermsObsoleteVersionId;
+		
+		private EntitySet<ConceptRelationship> _ConceptRelationshipsEffectiveVersionId;
+		
+		private EntitySet<ConceptRelationship> _ConceptRelationshipsObsoleteVersionId;
+		
 		private EntityRef<Concept> _Concept;
 		
 		private EntityRef<ConceptClass> _ConceptClass;
@@ -6254,6 +8942,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public ConceptVersion()
 		{
+			this._ConceptNamesEffectiveVersionId = new EntitySet<ConceptName>(new Action<ConceptName>(this.attach_ConceptNamesEffectiveVersionId), new Action<ConceptName>(this.detach_ConceptNamesEffectiveVersionId));
+			this._ConceptNamesObsoleteVersionId = new EntitySet<ConceptName>(new Action<ConceptName>(this.attach_ConceptNamesObsoleteVersionId), new Action<ConceptName>(this.detach_ConceptNamesObsoleteVersionId));
+			this._ConceptReferenceTermsEffectiveVersionId = new EntitySet<ConceptReferenceTerm>(new Action<ConceptReferenceTerm>(this.attach_ConceptReferenceTermsEffectiveVersionId), new Action<ConceptReferenceTerm>(this.detach_ConceptReferenceTermsEffectiveVersionId));
+			this._ConceptReferenceTermsObsoleteVersionId = new EntitySet<ConceptReferenceTerm>(new Action<ConceptReferenceTerm>(this.attach_ConceptReferenceTermsObsoleteVersionId), new Action<ConceptReferenceTerm>(this.detach_ConceptReferenceTermsObsoleteVersionId));
+			this._ConceptRelationshipsEffectiveVersionId = new EntitySet<ConceptRelationship>(new Action<ConceptRelationship>(this.attach_ConceptRelationshipsEffectiveVersionId), new Action<ConceptRelationship>(this.detach_ConceptRelationshipsEffectiveVersionId));
+			this._ConceptRelationshipsObsoleteVersionId = new EntitySet<ConceptRelationship>(new Action<ConceptRelationship>(this.attach_ConceptRelationshipsObsoleteVersionId), new Action<ConceptRelationship>(this.detach_ConceptRelationshipsObsoleteVersionId));
 			this._Concept = default(EntityRef<Concept>);
 			this._ConceptClass = default(EntityRef<ConceptClass>);
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
@@ -6437,6 +9131,84 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptName", Storage="_ConceptNamesEffectiveVersionId", ThisKey="ConceptVersionId", OtherKey="EffectiveVersionId")]
+		public EntitySet<ConceptName> ConceptNamesEffectiveVersionId
+		{
+			get
+			{
+				return this._ConceptNamesEffectiveVersionId;
+			}
+			set
+			{
+				this._ConceptNamesEffectiveVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptName1", Storage="_ConceptNamesObsoleteVersionId", ThisKey="ConceptVersionId", OtherKey="ObsoleteVersionId")]
+		public EntitySet<ConceptName> ConceptNamesObsoleteVersionId
+		{
+			get
+			{
+				return this._ConceptNamesObsoleteVersionId;
+			}
+			set
+			{
+				this._ConceptNamesObsoleteVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptReferenceTerm", Storage="_ConceptReferenceTermsEffectiveVersionId", ThisKey="ConceptVersionId", OtherKey="EffectiveVersionId")]
+		public EntitySet<ConceptReferenceTerm> ConceptReferenceTermsEffectiveVersionId
+		{
+			get
+			{
+				return this._ConceptReferenceTermsEffectiveVersionId;
+			}
+			set
+			{
+				this._ConceptReferenceTermsEffectiveVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptReferenceTerm1", Storage="_ConceptReferenceTermsObsoleteVersionId", ThisKey="ConceptVersionId", OtherKey="ObsoleteVersionId")]
+		public EntitySet<ConceptReferenceTerm> ConceptReferenceTermsObsoleteVersionId
+		{
+			get
+			{
+				return this._ConceptReferenceTermsObsoleteVersionId;
+			}
+			set
+			{
+				this._ConceptReferenceTermsObsoleteVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptRelationship", Storage="_ConceptRelationshipsEffectiveVersionId", ThisKey="ConceptVersionId", OtherKey="EffectiveVersionId")]
+		public EntitySet<ConceptRelationship> ConceptRelationshipsEffectiveVersionId
+		{
+			get
+			{
+				return this._ConceptRelationshipsEffectiveVersionId;
+			}
+			set
+			{
+				this._ConceptRelationshipsEffectiveVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptRelationship1", Storage="_ConceptRelationshipsObsoleteVersionId", ThisKey="ConceptVersionId", OtherKey="ObsoleteVersionId")]
+		public EntitySet<ConceptRelationship> ConceptRelationshipsObsoleteVersionId
+		{
+			get
+			{
+				return this._ConceptRelationshipsObsoleteVersionId;
+			}
+			set
+			{
+				this._ConceptRelationshipsObsoleteVersionId.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ConceptVersion", Storage="_Concept", ThisKey="ConceptId", OtherKey="ConceptId", IsForeignKey=true)]
 		public Concept Concept
 		{
@@ -6446,10 +9218,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._Concept.Entity != value))
+				Concept previousValue = this._Concept.Entity;
+				if (((previousValue != value) 
+							|| (this._Concept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Concept.Entity = null;
+						previousValue.ConceptVersions.Remove(this);
+					}
 					this._Concept.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptVersions.Add(this);
+						this._ConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._ConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("Concept");
 				}
 			}
@@ -6464,10 +9252,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ConceptClass.Entity != value))
+				ConceptClass previousValue = this._ConceptClass.Entity;
+				if (((previousValue != value) 
+							|| (this._ConceptClass.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ConceptClass.Entity = null;
+						previousValue.ConceptVersions.Remove(this);
+					}
 					this._ConceptClass.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptVersions.Add(this);
+						this._ConceptClassId = value.ConceptClassId;
+					}
+					else
+					{
+						this._ConceptClassId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ConceptClass");
 				}
 			}
@@ -6482,10 +9286,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._CreatedByEntity.Entity != value))
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.ConceptVersionsCreatedBy.Remove(this);
+					}
 					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptVersionsCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
 			}
@@ -6500,10 +9320,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoletedByEntity.Entity != value))
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.ConceptVersionsObsoletedBy.Remove(this);
+					}
 					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptVersionsObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoletedByEntity");
 				}
 			}
@@ -6527,6 +9363,78 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_ConceptNamesEffectiveVersionId(ConceptName entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = this;
+		}
+		
+		private void detach_ConceptNamesEffectiveVersionId(ConceptName entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = null;
+		}
+		
+		private void attach_ConceptNamesObsoleteVersionId(ConceptName entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = this;
+		}
+		
+		private void detach_ConceptNamesObsoleteVersionId(ConceptName entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = null;
+		}
+		
+		private void attach_ConceptReferenceTermsEffectiveVersionId(ConceptReferenceTerm entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = this;
+		}
+		
+		private void detach_ConceptReferenceTermsEffectiveVersionId(ConceptReferenceTerm entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = null;
+		}
+		
+		private void attach_ConceptReferenceTermsObsoleteVersionId(ConceptReferenceTerm entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = this;
+		}
+		
+		private void detach_ConceptReferenceTermsObsoleteVersionId(ConceptReferenceTerm entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = null;
+		}
+		
+		private void attach_ConceptRelationshipsEffectiveVersionId(ConceptRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = this;
+		}
+		
+		private void detach_ConceptRelationshipsEffectiveVersionId(ConceptRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = null;
+		}
+		
+		private void attach_ConceptRelationshipsObsoleteVersionId(ConceptRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = this;
+		}
+		
+		private void detach_ConceptRelationshipsObsoleteVersionId(ConceptRelationship entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = null;
 		}
 	}
 	
@@ -6666,10 +9574,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EntityVersion.Entity != value))
+				EntityVersion previousValue = this._EntityVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EntityVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EntityVersion.Entity = null;
+						previousValue.DeviceEntity = null;
+					}
 					this._EntityVersion.Entity = value;
+					if ((value != null))
+					{
+						value.DeviceEntity = this;
+						this._EntityVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EntityVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EntityVersion");
 				}
 			}
@@ -6684,10 +9608,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._SecurityDevice.Entity != value))
+				SecurityDevice previousValue = this._SecurityDevice.Entity;
+				if (((previousValue != value) 
+							|| (this._SecurityDevice.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SecurityDevice.Entity = null;
+						previousValue.DeviceEntities.Remove(this);
+					}
 					this._SecurityDevice.Entity = value;
+					if ((value != null))
+					{
+						value.DeviceEntities.Add(this);
+						this._DeviceId = value.DeviceId;
+					}
+					else
+					{
+						this._DeviceId = default(System.Guid);
+					}
 					this.SendPropertyChanged("SecurityDevice");
 				}
 			}
@@ -6726,6 +9666,20 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _DeterminerConceptId;
 		
+		private EntitySet<UserEntity> _UserEntities;
+		
+		private EntitySet<ActNote> _ActNotesAuthorEntityId;
+		
+		private EntitySet<EntityAssociation> _EntityAssociationsSourceEntityId;
+		
+		private EntitySet<EntityAssociation> _EntityAssociationsTargetEntityId;
+		
+		private EntitySet<EntityNote> _EntityNotesAuthorEntityId;
+		
+		private EntitySet<EntityTag> _EntityTags;
+		
+		private EntitySet<EntityVersion> _EntityVersions;
+		
 		private EntityRef<Concept> _ClassConcept;
 		
 		private EntityRef<Concept> _DeterminerConcept;
@@ -6744,6 +9698,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public Entity()
 		{
+			this._UserEntities = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntities), new Action<UserEntity>(this.detach_UserEntities));
+			this._ActNotesAuthorEntityId = new EntitySet<ActNote>(new Action<ActNote>(this.attach_ActNotesAuthorEntityId), new Action<ActNote>(this.detach_ActNotesAuthorEntityId));
+			this._EntityAssociationsSourceEntityId = new EntitySet<EntityAssociation>(new Action<EntityAssociation>(this.attach_EntityAssociationsSourceEntityId), new Action<EntityAssociation>(this.detach_EntityAssociationsSourceEntityId));
+			this._EntityAssociationsTargetEntityId = new EntitySet<EntityAssociation>(new Action<EntityAssociation>(this.attach_EntityAssociationsTargetEntityId), new Action<EntityAssociation>(this.detach_EntityAssociationsTargetEntityId));
+			this._EntityNotesAuthorEntityId = new EntitySet<EntityNote>(new Action<EntityNote>(this.attach_EntityNotesAuthorEntityId), new Action<EntityNote>(this.detach_EntityNotesAuthorEntityId));
+			this._EntityTags = new EntitySet<EntityTag>(new Action<EntityTag>(this.attach_EntityTags), new Action<EntityTag>(this.detach_EntityTags));
+			this._EntityVersions = new EntitySet<EntityVersion>(new Action<EntityVersion>(this.attach_EntityVersions), new Action<EntityVersion>(this.detach_EntityVersions));
 			this._ClassConcept = default(EntityRef<Concept>);
 			this._DeterminerConcept = default(EntityRef<Concept>);
 			OnCreated();
@@ -6817,6 +9778,97 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_UserEntity", Storage="_UserEntities", ThisKey="EntityId", OtherKey="EntityId")]
+		public EntitySet<UserEntity> UserEntities
+		{
+			get
+			{
+				return this._UserEntities;
+			}
+			set
+			{
+				this._UserEntities.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_ActNote", Storage="_ActNotesAuthorEntityId", ThisKey="EntityId", OtherKey="AuthorEntityId")]
+		public EntitySet<ActNote> ActNotesAuthorEntityId
+		{
+			get
+			{
+				return this._ActNotesAuthorEntityId;
+			}
+			set
+			{
+				this._ActNotesAuthorEntityId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_EntityAssociation", Storage="_EntityAssociationsSourceEntityId", ThisKey="EntityId", OtherKey="SourceEntityId")]
+		public EntitySet<EntityAssociation> EntityAssociationsSourceEntityId
+		{
+			get
+			{
+				return this._EntityAssociationsSourceEntityId;
+			}
+			set
+			{
+				this._EntityAssociationsSourceEntityId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_EntityAssociation1", Storage="_EntityAssociationsTargetEntityId", ThisKey="EntityId", OtherKey="TargetEntityId")]
+		public EntitySet<EntityAssociation> EntityAssociationsTargetEntityId
+		{
+			get
+			{
+				return this._EntityAssociationsTargetEntityId;
+			}
+			set
+			{
+				this._EntityAssociationsTargetEntityId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_EntityNote", Storage="_EntityNotesAuthorEntityId", ThisKey="EntityId", OtherKey="AuthorEntityId")]
+		public EntitySet<EntityNote> EntityNotesAuthorEntityId
+		{
+			get
+			{
+				return this._EntityNotesAuthorEntityId;
+			}
+			set
+			{
+				this._EntityNotesAuthorEntityId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_EntityTag", Storage="_EntityTags", ThisKey="EntityId", OtherKey="EntityId")]
+		public EntitySet<EntityTag> EntityTags
+		{
+			get
+			{
+				return this._EntityTags;
+			}
+			set
+			{
+				this._EntityTags.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_EntityVersion", Storage="_EntityVersions", ThisKey="EntityId", OtherKey="EntityId")]
+		public EntitySet<EntityVersion> EntityVersions
+		{
+			get
+			{
+				return this._EntityVersions;
+			}
+			set
+			{
+				this._EntityVersions.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_Entity", Storage="_ClassConcept", ThisKey="ClassConceptId", OtherKey="ConceptId", IsForeignKey=true)]
 		public Concept ClassConcept
 		{
@@ -6826,10 +9878,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ClassConcept.Entity != value))
+				Concept previousValue = this._ClassConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._ClassConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ClassConcept.Entity = null;
+						previousValue.EntitiesClassConceptId.Remove(this);
+					}
 					this._ClassConcept.Entity = value;
+					if ((value != null))
+					{
+						value.EntitiesClassConceptId.Add(this);
+						this._ClassConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._ClassConceptId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ClassConcept");
 				}
 			}
@@ -6844,10 +9912,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._DeterminerConcept.Entity != value))
+				Concept previousValue = this._DeterminerConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._DeterminerConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._DeterminerConcept.Entity = null;
+						previousValue.EntitiesDeterminerConceptId.Remove(this);
+					}
 					this._DeterminerConcept.Entity = value;
+					if ((value != null))
+					{
+						value.EntitiesDeterminerConceptId.Add(this);
+						this._DeterminerConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._DeterminerConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("DeterminerConcept");
 				}
 			}
@@ -6872,6 +9956,90 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
+		
+		private void attach_UserEntities(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.Entity = this;
+		}
+		
+		private void detach_UserEntities(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.Entity = null;
+		}
+		
+		private void attach_ActNotesAuthorEntityId(ActNote entity)
+		{
+			this.SendPropertyChanging();
+			entity.AuthorEntity = this;
+		}
+		
+		private void detach_ActNotesAuthorEntityId(ActNote entity)
+		{
+			this.SendPropertyChanging();
+			entity.AuthorEntity = null;
+		}
+		
+		private void attach_EntityAssociationsSourceEntityId(EntityAssociation entity)
+		{
+			this.SendPropertyChanging();
+			entity.SourceEntity = this;
+		}
+		
+		private void detach_EntityAssociationsSourceEntityId(EntityAssociation entity)
+		{
+			this.SendPropertyChanging();
+			entity.SourceEntity = null;
+		}
+		
+		private void attach_EntityAssociationsTargetEntityId(EntityAssociation entity)
+		{
+			this.SendPropertyChanging();
+			entity.TargetEntity = this;
+		}
+		
+		private void detach_EntityAssociationsTargetEntityId(EntityAssociation entity)
+		{
+			this.SendPropertyChanging();
+			entity.TargetEntity = null;
+		}
+		
+		private void attach_EntityNotesAuthorEntityId(EntityNote entity)
+		{
+			this.SendPropertyChanging();
+			entity.AuthorEntity = this;
+		}
+		
+		private void detach_EntityNotesAuthorEntityId(EntityNote entity)
+		{
+			this.SendPropertyChanging();
+			entity.AuthorEntity = null;
+		}
+		
+		private void attach_EntityTags(EntityTag entity)
+		{
+			this.SendPropertyChanging();
+			entity.Entity = this;
+		}
+		
+		private void detach_EntityTags(EntityTag entity)
+		{
+			this.SendPropertyChanging();
+			entity.Entity = null;
+		}
+		
+		private void attach_EntityVersions(EntityVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.Entity = this;
+		}
+		
+		private void detach_EntityVersions(EntityVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.Entity = null;
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.EntityAddress")]
@@ -6887,6 +10055,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private System.Nullable<System.Guid> _ObsoleteVersionId;
 		
 		private System.Guid _AddressUseConceptId;
+		
+		private EntitySet<EntityAddressComponent> _EntityAddressComponents;
 		
 		private EntityRef<Concept> _AddressUseConcept;
 		
@@ -6910,6 +10080,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public EntityAddress()
 		{
+			this._EntityAddressComponents = new EntitySet<EntityAddressComponent>(new Action<EntityAddressComponent>(this.attach_EntityAddressComponents), new Action<EntityAddressComponent>(this.detach_EntityAddressComponents));
 			this._AddressUseConcept = default(EntityRef<Concept>);
 			this._EffectiveVersion = default(EntityRef<EntityVersion>);
 			this._ObsoleteVersion = default(EntityRef<EntityVersion>);
@@ -7008,6 +10179,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityAddress_EntityAddressComponent", Storage="_EntityAddressComponents", ThisKey="EntityAddressId", OtherKey="EntityAddressId")]
+		public EntitySet<EntityAddressComponent> EntityAddressComponents
+		{
+			get
+			{
+				return this._EntityAddressComponents;
+			}
+			set
+			{
+				this._EntityAddressComponents.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityAddress", Storage="_AddressUseConcept", ThisKey="AddressUseConceptId", OtherKey="ConceptId", IsForeignKey=true)]
 		public Concept AddressUseConcept
 		{
@@ -7017,10 +10201,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._AddressUseConcept.Entity != value))
+				Concept previousValue = this._AddressUseConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._AddressUseConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AddressUseConcept.Entity = null;
+						previousValue.EntityAddressesAddressUseConceptId.Remove(this);
+					}
 					this._AddressUseConcept.Entity = value;
+					if ((value != null))
+					{
+						value.EntityAddressesAddressUseConceptId.Add(this);
+						this._AddressUseConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._AddressUseConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("AddressUseConcept");
 				}
 			}
@@ -7035,10 +10235,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EffectiveVersion.Entity != value))
+				EntityVersion previousValue = this._EffectiveVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EffectiveVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EffectiveVersion.Entity = null;
+						previousValue.EntityAddressesEffectiveVersionId.Remove(this);
+					}
 					this._EffectiveVersion.Entity = value;
+					if ((value != null))
+					{
+						value.EntityAddressesEffectiveVersionId.Add(this);
+						this._EffectiveVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EffectiveVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EffectiveVersion");
 				}
 			}
@@ -7053,10 +10269,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoleteVersion.Entity != value))
+				EntityVersion previousValue = this._ObsoleteVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoleteVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoleteVersion.Entity = null;
+						previousValue.EntityAddressesObsoleteVersionId.Remove(this);
+					}
 					this._ObsoleteVersion.Entity = value;
+					if ((value != null))
+					{
+						value.EntityAddressesObsoleteVersionId.Add(this);
+						this._ObsoleteVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._ObsoleteVersionId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoleteVersion");
 				}
 			}
@@ -7080,6 +10312,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_EntityAddressComponents(EntityAddressComponent entity)
+		{
+			this.SendPropertyChanging();
+			entity.EntityAddress = this;
+		}
+		
+		private void detach_EntityAddressComponents(EntityAddressComponent entity)
+		{
+			this.SendPropertyChanging();
+			entity.EntityAddress = null;
 		}
 	}
 	
@@ -7226,10 +10470,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EntityAddress.Entity != value))
+				EntityAddress previousValue = this._EntityAddress.Entity;
+				if (((previousValue != value) 
+							|| (this._EntityAddress.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EntityAddress.Entity = null;
+						previousValue.EntityAddressComponents.Remove(this);
+					}
 					this._EntityAddress.Entity = value;
+					if ((value != null))
+					{
+						value.EntityAddressComponents.Add(this);
+						this._EntityAddressId = value.EntityAddressId;
+					}
+					else
+					{
+						this._EntityAddressId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EntityAddress");
 				}
 			}
@@ -7244,10 +10504,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ComponentTypeConcept.Entity != value))
+				Concept previousValue = this._ComponentTypeConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._ComponentTypeConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ComponentTypeConcept.Entity = null;
+						previousValue.EntityAddressComponentsComponentTypeConceptId.Remove(this);
+					}
 					this._ComponentTypeConcept.Entity = value;
+					if ((value != null))
+					{
+						value.EntityAddressComponentsComponentTypeConceptId.Add(this);
+						this._ComponentTypeConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._ComponentTypeConceptId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ComponentTypeConcept");
 				}
 			}
@@ -7262,10 +10538,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EntityAddressComponentValue.Entity != value))
+				EntityAddressComponentValue previousValue = this._EntityAddressComponentValue.Entity;
+				if (((previousValue != value) 
+							|| (this._EntityAddressComponentValue.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EntityAddressComponentValue.Entity = null;
+						previousValue.EntityAddressComponents.Remove(this);
+					}
 					this._EntityAddressComponentValue.Entity = value;
+					if ((value != null))
+					{
+						value.EntityAddressComponents.Add(this);
+						this._ValueId = value.ValueId;
+					}
+					else
+					{
+						this._ValueId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EntityAddressComponentValue");
 				}
 			}
@@ -7302,6 +10594,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private string _Value;
 		
+		private EntitySet<EntityAddressComponent> _EntityAddressComponents;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -7314,6 +10608,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public EntityAddressComponentValue()
 		{
+			this._EntityAddressComponents = new EntitySet<EntityAddressComponent>(new Action<EntityAddressComponent>(this.attach_EntityAddressComponents), new Action<EntityAddressComponent>(this.detach_EntityAddressComponents));
 			OnCreated();
 		}
 		
@@ -7357,6 +10652,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityAddressComponentValue_EntityAddressComponent", Storage="_EntityAddressComponents", ThisKey="ValueId", OtherKey="ValueId")]
+		public EntitySet<EntityAddressComponent> EntityAddressComponents
+		{
+			get
+			{
+				return this._EntityAddressComponents;
+			}
+			set
+			{
+				this._EntityAddressComponents.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -7375,6 +10683,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_EntityAddressComponents(EntityAddressComponent entity)
+		{
+			this.SendPropertyChanging();
+			entity.EntityAddressComponentValue = this;
+		}
+		
+		private void detach_EntityAddressComponents(EntityAddressComponent entity)
+		{
+			this.SendPropertyChanging();
+			entity.EntityAddressComponentValue = null;
 		}
 	}
 	
@@ -7395,6 +10715,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private System.Nullable<System.Guid> _ObsoleteVersionId;
 		
 		private System.Nullable<System.Guid> _AssociationTypeConceptId;
+		
+		private EntityRef<QuantifiedEntityAssociation> _QuantifiedEntityAssociation;
 		
 		private EntityRef<Concept> _AssociationTypeConcept;
 		
@@ -7426,6 +10748,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public EntityAssociation()
 		{
+			this._QuantifiedEntityAssociation = default(EntityRef<QuantifiedEntityAssociation>);
 			this._AssociationTypeConcept = default(EntityRef<Concept>);
 			this._SourceEntity = default(EntityRef<Entity>);
 			this._TargetEntity = default(EntityRef<Entity>);
@@ -7574,6 +10897,35 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityAssociation_QuantifiedEntityAssociation", Storage="_QuantifiedEntityAssociation", ThisKey="EntityAssociationId", OtherKey="EntityAssociationId", IsUnique=true, IsForeignKey=false)]
+		public QuantifiedEntityAssociation QuantifiedEntityAssociation
+		{
+			get
+			{
+				return this._QuantifiedEntityAssociation.Entity;
+			}
+			set
+			{
+				QuantifiedEntityAssociation previousValue = this._QuantifiedEntityAssociation.Entity;
+				if (((previousValue != value) 
+							|| (this._QuantifiedEntityAssociation.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._QuantifiedEntityAssociation.Entity = null;
+						previousValue.EntityAssociation = null;
+					}
+					this._QuantifiedEntityAssociation.Entity = value;
+					if ((value != null))
+					{
+						value.EntityAssociation = this;
+					}
+					this.SendPropertyChanged("QuantifiedEntityAssociation");
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityAssociation", Storage="_AssociationTypeConcept", ThisKey="AssociationTypeConceptId", OtherKey="ConceptId", IsForeignKey=true)]
 		public Concept AssociationTypeConcept
 		{
@@ -7583,10 +10935,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._AssociationTypeConcept.Entity != value))
+				Concept previousValue = this._AssociationTypeConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._AssociationTypeConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AssociationTypeConcept.Entity = null;
+						previousValue.EntityAssociationsAssociationTypeConceptId.Remove(this);
+					}
 					this._AssociationTypeConcept.Entity = value;
+					if ((value != null))
+					{
+						value.EntityAssociationsAssociationTypeConceptId.Add(this);
+						this._AssociationTypeConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._AssociationTypeConceptId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("AssociationTypeConcept");
 				}
 			}
@@ -7601,10 +10969,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._SourceEntity.Entity != value))
+				Entity previousValue = this._SourceEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._SourceEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SourceEntity.Entity = null;
+						previousValue.EntityAssociationsSourceEntityId.Remove(this);
+					}
 					this._SourceEntity.Entity = value;
+					if ((value != null))
+					{
+						value.EntityAssociationsSourceEntityId.Add(this);
+						this._SourceEntityId = value.EntityId;
+					}
+					else
+					{
+						this._SourceEntityId = default(System.Guid);
+					}
 					this.SendPropertyChanged("SourceEntity");
 				}
 			}
@@ -7619,10 +11003,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._TargetEntity.Entity != value))
+				Entity previousValue = this._TargetEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._TargetEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TargetEntity.Entity = null;
+						previousValue.EntityAssociationsTargetEntityId.Remove(this);
+					}
 					this._TargetEntity.Entity = value;
+					if ((value != null))
+					{
+						value.EntityAssociationsTargetEntityId.Add(this);
+						this._TargetEntityId = value.EntityId;
+					}
+					else
+					{
+						this._TargetEntityId = default(System.Guid);
+					}
 					this.SendPropertyChanged("TargetEntity");
 				}
 			}
@@ -7637,10 +11037,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EffectiveVersion.Entity != value))
+				EntityVersion previousValue = this._EffectiveVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EffectiveVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EffectiveVersion.Entity = null;
+						previousValue.EntityAssociationsEffectiveVersionId.Remove(this);
+					}
 					this._EffectiveVersion.Entity = value;
+					if ((value != null))
+					{
+						value.EntityAssociationsEffectiveVersionId.Add(this);
+						this._EffectiveVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EffectiveVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EffectiveVersion");
 				}
 			}
@@ -7655,10 +11071,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoleteVersion.Entity != value))
+				EntityVersion previousValue = this._ObsoleteVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoleteVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoleteVersion.Entity = null;
+						previousValue.EntityAssociationsObsoleteVersionId.Remove(this);
+					}
 					this._ObsoleteVersion.Entity = value;
+					if ((value != null))
+					{
+						value.EntityAssociationsObsoleteVersionId.Add(this);
+						this._ObsoleteVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._ObsoleteVersionId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoleteVersion");
 				}
 			}
@@ -7779,7 +11211,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary ExtensionValue
 		{
 			get
@@ -7876,10 +11308,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EffectiveVersion.Entity != value))
+				EntityVersion previousValue = this._EffectiveVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EffectiveVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EffectiveVersion.Entity = null;
+						previousValue.EntityExtensionsEffectiveVersionId.Remove(this);
+					}
 					this._EffectiveVersion.Entity = value;
+					if ((value != null))
+					{
+						value.EntityExtensionsEffectiveVersionId.Add(this);
+						this._EffectiveVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EffectiveVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EffectiveVersion");
 				}
 			}
@@ -7894,10 +11342,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoleteVersion.Entity != value))
+				EntityVersion previousValue = this._ObsoleteVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoleteVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoleteVersion.Entity = null;
+						previousValue.EntityExtensionsObsoleteVersionId.Remove(this);
+					}
 					this._ObsoleteVersion.Entity = value;
+					if ((value != null))
+					{
+						value.EntityExtensionsObsoleteVersionId.Add(this);
+						this._ObsoleteVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._ObsoleteVersionId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoleteVersion");
 				}
 			}
@@ -7912,10 +11376,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ExtensionType.Entity != value))
+				ExtensionType previousValue = this._ExtensionType.Entity;
+				if (((previousValue != value) 
+							|| (this._ExtensionType.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ExtensionType.Entity = null;
+						previousValue.EntityExtensions.Remove(this);
+					}
 					this._ExtensionType.Entity = value;
+					if ((value != null))
+					{
+						value.EntityExtensions.Add(this);
+						this._ExtensionTypeId = value.ExtensionTypeId;
+					}
+					else
+					{
+						this._ExtensionTypeId = default(System.Guid);
+					}
 					this.SendPropertyChanged("ExtensionType");
 				}
 			}
@@ -8140,10 +11620,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._AssigningAuthority.Entity != value))
+				AssigningAuthority previousValue = this._AssigningAuthority.Entity;
+				if (((previousValue != value) 
+							|| (this._AssigningAuthority.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AssigningAuthority.Entity = null;
+						previousValue.EntityIdentifiers.Remove(this);
+					}
 					this._AssigningAuthority.Entity = value;
+					if ((value != null))
+					{
+						value.EntityIdentifiers.Add(this);
+						this._AssigningAuthorityId = value.AssigningAuthorityId;
+					}
+					else
+					{
+						this._AssigningAuthorityId = default(System.Guid);
+					}
 					this.SendPropertyChanged("AssigningAuthority");
 				}
 			}
@@ -8158,10 +11654,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EffectiveVersion.Entity != value))
+				EntityVersion previousValue = this._EffectiveVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EffectiveVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EffectiveVersion.Entity = null;
+						previousValue.EntityIdentifiersEffectiveVersionId.Remove(this);
+					}
 					this._EffectiveVersion.Entity = value;
+					if ((value != null))
+					{
+						value.EntityIdentifiersEffectiveVersionId.Add(this);
+						this._EffectiveVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EffectiveVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EffectiveVersion");
 				}
 			}
@@ -8176,10 +11688,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoleteVersion.Entity != value))
+				EntityVersion previousValue = this._ObsoleteVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoleteVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoleteVersion.Entity = null;
+						previousValue.EntityIdentifiersObsoleteVersionId.Remove(this);
+					}
 					this._ObsoleteVersion.Entity = value;
+					if ((value != null))
+					{
+						value.EntityIdentifiersObsoleteVersionId.Add(this);
+						this._ObsoleteVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._ObsoleteVersionId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoleteVersion");
 				}
 			}
@@ -8194,10 +11722,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._IdentifierType.Entity != value))
+				IdentifierType previousValue = this._IdentifierType.Entity;
+				if (((previousValue != value) 
+							|| (this._IdentifierType.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._IdentifierType.Entity = null;
+						previousValue.EntityIdentifiers.Remove(this);
+					}
 					this._IdentifierType.Entity = value;
+					if ((value != null))
+					{
+						value.EntityIdentifiers.Add(this);
+						this._IdentifierTypeId = value.IdentifierTypeId;
+					}
+					else
+					{
+						this._IdentifierTypeId = default(System.Guid);
+					}
 					this.SendPropertyChanged("IdentifierType");
 				}
 			}
@@ -8238,6 +11782,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.Guid> _NameUseConceptId;
 		
+		private EntitySet<EntityNameComponent> _EntityNameComponents;
+		
 		private EntityRef<Concept> _NameUseConcept;
 		
 		private EntityRef<EntityVersion> _EffectiveVersion;
@@ -8260,6 +11806,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public EntityName()
 		{
+			this._EntityNameComponents = new EntitySet<EntityNameComponent>(new Action<EntityNameComponent>(this.attach_EntityNameComponents), new Action<EntityNameComponent>(this.detach_EntityNameComponents));
 			this._NameUseConcept = default(EntityRef<Concept>);
 			this._EffectiveVersion = default(EntityRef<EntityVersion>);
 			this._ObsoleteVersion = default(EntityRef<EntityVersion>);
@@ -8358,6 +11905,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityName_EntityNameComponent", Storage="_EntityNameComponents", ThisKey="EntityNameId", OtherKey="EntityNameId")]
+		public EntitySet<EntityNameComponent> EntityNameComponents
+		{
+			get
+			{
+				return this._EntityNameComponents;
+			}
+			set
+			{
+				this._EntityNameComponents.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityName", Storage="_NameUseConcept", ThisKey="NameUseConceptId", OtherKey="ConceptId", IsForeignKey=true)]
 		public Concept NameUseConcept
 		{
@@ -8367,10 +11927,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._NameUseConcept.Entity != value))
+				Concept previousValue = this._NameUseConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._NameUseConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._NameUseConcept.Entity = null;
+						previousValue.EntityNamesNameUseConceptId.Remove(this);
+					}
 					this._NameUseConcept.Entity = value;
+					if ((value != null))
+					{
+						value.EntityNamesNameUseConceptId.Add(this);
+						this._NameUseConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._NameUseConceptId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("NameUseConcept");
 				}
 			}
@@ -8385,10 +11961,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EffectiveVersion.Entity != value))
+				EntityVersion previousValue = this._EffectiveVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EffectiveVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EffectiveVersion.Entity = null;
+						previousValue.EntityNamesEffectiveVersionId.Remove(this);
+					}
 					this._EffectiveVersion.Entity = value;
+					if ((value != null))
+					{
+						value.EntityNamesEffectiveVersionId.Add(this);
+						this._EffectiveVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EffectiveVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EffectiveVersion");
 				}
 			}
@@ -8403,10 +11995,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoleteVersion.Entity != value))
+				EntityVersion previousValue = this._ObsoleteVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoleteVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoleteVersion.Entity = null;
+						previousValue.EntityNamesObsoleteVersionId.Remove(this);
+					}
 					this._ObsoleteVersion.Entity = value;
+					if ((value != null))
+					{
+						value.EntityNamesObsoleteVersionId.Add(this);
+						this._ObsoleteVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._ObsoleteVersionId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoleteVersion");
 				}
 			}
@@ -8430,6 +12038,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_EntityNameComponents(EntityNameComponent entity)
+		{
+			this.SendPropertyChanging();
+			entity.EntityName = this;
+		}
+		
+		private void detach_EntityNameComponents(EntityNameComponent entity)
+		{
+			this.SendPropertyChanging();
+			entity.EntityName = null;
 		}
 	}
 	
@@ -8576,10 +12196,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EntityName.Entity != value))
+				EntityName previousValue = this._EntityName.Entity;
+				if (((previousValue != value) 
+							|| (this._EntityName.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EntityName.Entity = null;
+						previousValue.EntityNameComponents.Remove(this);
+					}
 					this._EntityName.Entity = value;
+					if ((value != null))
+					{
+						value.EntityNameComponents.Add(this);
+						this._EntityNameId = value.EntityNameId;
+					}
+					else
+					{
+						this._EntityNameId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EntityName");
 				}
 			}
@@ -8594,10 +12230,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ComponentTypeConcept.Entity != value))
+				Concept previousValue = this._ComponentTypeConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._ComponentTypeConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ComponentTypeConcept.Entity = null;
+						previousValue.EntityNameComponentsComponentTypeConceptId.Remove(this);
+					}
 					this._ComponentTypeConcept.Entity = value;
+					if ((value != null))
+					{
+						value.EntityNameComponentsComponentTypeConceptId.Add(this);
+						this._ComponentTypeConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._ComponentTypeConceptId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ComponentTypeConcept");
 				}
 			}
@@ -8612,10 +12264,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._PhoneticValue.Entity != value))
+				PhoneticValue previousValue = this._PhoneticValue.Entity;
+				if (((previousValue != value) 
+							|| (this._PhoneticValue.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._PhoneticValue.Entity = null;
+						previousValue.EntityNameComponents.Remove(this);
+					}
 					this._PhoneticValue.Entity = value;
+					if ((value != null))
+					{
+						value.EntityNameComponents.Add(this);
+						this._PhoneticValueId = value.PhoneticValueId;
+					}
+					else
+					{
+						this._PhoneticValueId = default(System.Guid);
+					}
 					this.SendPropertyChanged("PhoneticValue");
 				}
 			}
@@ -8754,10 +12422,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EntityClassScopeConcept.Entity != value))
+				Concept previousValue = this._EntityClassScopeConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._EntityClassScopeConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EntityClassScopeConcept.Entity = null;
+						previousValue.EntityNameUsesEntityClassScopeConceptId.Remove(this);
+					}
 					this._EntityClassScopeConcept.Entity = value;
+					if ((value != null))
+					{
+						value.EntityNameUsesEntityClassScopeConceptId.Add(this);
+						this._EntityClassScopeConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._EntityClassScopeConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EntityClassScopeConcept");
 				}
 			}
@@ -8772,10 +12456,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._NameUseConcept.Entity != value))
+				Concept previousValue = this._NameUseConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._NameUseConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._NameUseConcept.Entity = null;
+						previousValue.EntityNameUsesNameUseConceptId.Remove(this);
+					}
 					this._NameUseConcept.Entity = value;
+					if ((value != null))
+					{
+						value.EntityNameUsesNameUseConceptId.Add(this);
+						this._NameUseConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._NameUseConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("NameUseConcept");
 				}
 			}
@@ -8969,10 +12669,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._AuthorEntity.Entity != value))
+				Entity previousValue = this._AuthorEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._AuthorEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AuthorEntity.Entity = null;
+						previousValue.EntityNotesAuthorEntityId.Remove(this);
+					}
 					this._AuthorEntity.Entity = value;
+					if ((value != null))
+					{
+						value.EntityNotesAuthorEntityId.Add(this);
+						this._AuthorEntityId = value.EntityId;
+					}
+					else
+					{
+						this._AuthorEntityId = default(System.Guid);
+					}
 					this.SendPropertyChanged("AuthorEntity");
 				}
 			}
@@ -8987,10 +12703,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EffectiveVersion.Entity != value))
+				EntityVersion previousValue = this._EffectiveVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EffectiveVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EffectiveVersion.Entity = null;
+						previousValue.EntityNotesEffectiveVersionId.Remove(this);
+					}
 					this._EffectiveVersion.Entity = value;
+					if ((value != null))
+					{
+						value.EntityNotesEffectiveVersionId.Add(this);
+						this._EffectiveVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EffectiveVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EffectiveVersion");
 				}
 			}
@@ -9005,10 +12737,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoleteVersion.Entity != value))
+				EntityVersion previousValue = this._ObsoleteVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoleteVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoleteVersion.Entity = null;
+						previousValue.EntityNotesObsoleteVersionId.Remove(this);
+					}
 					this._ObsoleteVersion.Entity = value;
+					if ((value != null))
+					{
+						value.EntityNotesObsoleteVersionId.Add(this);
+						this._ObsoleteVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._ObsoleteVersionId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoleteVersion");
 				}
 			}
@@ -9274,10 +13022,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._Entity.Entity != value))
+				Entity previousValue = this._Entity.Entity;
+				if (((previousValue != value) 
+							|| (this._Entity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Entity.Entity = null;
+						previousValue.EntityTags.Remove(this);
+					}
 					this._Entity.Entity = value;
+					if ((value != null))
+					{
+						value.EntityTags.Add(this);
+						this._EntityId = value.EntityId;
+					}
+					else
+					{
+						this._EntityId = default(System.Guid);
+					}
 					this.SendPropertyChanged("Entity");
 				}
 			}
@@ -9292,10 +13056,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._CreatedByEntity.Entity != value))
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.EntityTagsCreatedBy.Remove(this);
+					}
 					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.EntityTagsCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
 			}
@@ -9310,10 +13090,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoletedByEntity.Entity != value))
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.EntityTagsObsoletedBy.Remove(this);
+					}
 					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.EntityTagsObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoletedByEntity");
 				}
 			}
@@ -9538,10 +13334,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._TelecomAddressTypeConcept.Entity != value))
+				Concept previousValue = this._TelecomAddressTypeConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._TelecomAddressTypeConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TelecomAddressTypeConcept.Entity = null;
+						previousValue.EntityTelecomAddressesTelecomAddressTypeConceptId.Remove(this);
+					}
 					this._TelecomAddressTypeConcept.Entity = value;
+					if ((value != null))
+					{
+						value.EntityTelecomAddressesTelecomAddressTypeConceptId.Add(this);
+						this._TelecomAddressTypeConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._TelecomAddressTypeConceptId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("TelecomAddressTypeConcept");
 				}
 			}
@@ -9556,10 +13368,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._TelecomUseConcept.Entity != value))
+				Concept previousValue = this._TelecomUseConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._TelecomUseConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TelecomUseConcept.Entity = null;
+						previousValue.EntityTelecomAddressesTelecomUseConceptId.Remove(this);
+					}
 					this._TelecomUseConcept.Entity = value;
+					if ((value != null))
+					{
+						value.EntityTelecomAddressesTelecomUseConceptId.Add(this);
+						this._TelecomUseConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._TelecomUseConceptId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("TelecomUseConcept");
 				}
 			}
@@ -9574,10 +13402,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EffectiveVersion.Entity != value))
+				EntityVersion previousValue = this._EffectiveVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EffectiveVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EffectiveVersion.Entity = null;
+						previousValue.EntityTelecomAddressesEffectiveVersionId.Remove(this);
+					}
 					this._EffectiveVersion.Entity = value;
+					if ((value != null))
+					{
+						value.EntityTelecomAddressesEffectiveVersionId.Add(this);
+						this._EffectiveVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EffectiveVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EffectiveVersion");
 				}
 			}
@@ -9592,10 +13436,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoleteVersion.Entity != value))
+				EntityVersion previousValue = this._ObsoleteVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoleteVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoleteVersion.Entity = null;
+						previousValue.EntityTelecomAddressesObsoleteVersionId.Remove(this);
+					}
 					this._ObsoleteVersion.Entity = value;
+					if ((value != null))
+					{
+						value.EntityTelecomAddressesObsoleteVersionId.Add(this);
+						this._ObsoleteVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._ObsoleteVersionId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoleteVersion");
 				}
 			}
@@ -9646,6 +13506,56 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.Guid> _TypeConceptId;
 		
+		private EntityRef<ApplicationEntity> _ApplicationEntity;
+		
+		private EntityRef<DeviceEntity> _DeviceEntity;
+		
+		private EntitySet<EntityAddress> _EntityAddressesEffectiveVersionId;
+		
+		private EntitySet<EntityAddress> _EntityAddressesObsoleteVersionId;
+		
+		private EntitySet<EntityAssociation> _EntityAssociationsEffectiveVersionId;
+		
+		private EntitySet<EntityAssociation> _EntityAssociationsObsoleteVersionId;
+		
+		private EntitySet<EntityExtension> _EntityExtensionsEffectiveVersionId;
+		
+		private EntitySet<EntityExtension> _EntityExtensionsObsoleteVersionId;
+		
+		private EntitySet<EntityIdentifier> _EntityIdentifiersEffectiveVersionId;
+		
+		private EntitySet<EntityIdentifier> _EntityIdentifiersObsoleteVersionId;
+		
+		private EntitySet<EntityName> _EntityNamesEffectiveVersionId;
+		
+		private EntitySet<EntityName> _EntityNamesObsoleteVersionId;
+		
+		private EntitySet<EntityNote> _EntityNotesEffectiveVersionId;
+		
+		private EntitySet<EntityNote> _EntityNotesObsoleteVersionId;
+		
+		private EntitySet<EntityTelecomAddress> _EntityTelecomAddressesEffectiveVersionId;
+		
+		private EntitySet<EntityTelecomAddress> _EntityTelecomAddressesObsoleteVersionId;
+		
+		private EntitySet<EntityVersion> _EntityVersionsReplacesVersionId;
+		
+		private EntityRef<Material> _Material;
+		
+		private EntityRef<Organization> _Organization;
+		
+		private EntityRef<Person> _Person;
+		
+		private EntitySet<PersonLanguageCommunication> _PersonLanguageCommunicationsObsoleteVersionId;
+		
+		private EntitySet<PersonLanguageCommunication> _PersonLanguageCommunicationsEffectiveVersionId;
+		
+		private EntityRef<Place> _Place;
+		
+		private EntitySet<PlaceService> _PlaceServicesEffectiveVersionId;
+		
+		private EntitySet<PlaceService> _PlaceServicesObsoleteVersionId;
+		
 		private EntityRef<Entity> _Entity;
 		
 		private EntityRef<EntityVersion> _ReplacesVersion;
@@ -9684,6 +13594,31 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public EntityVersion()
 		{
+			this._ApplicationEntity = default(EntityRef<ApplicationEntity>);
+			this._DeviceEntity = default(EntityRef<DeviceEntity>);
+			this._EntityAddressesEffectiveVersionId = new EntitySet<EntityAddress>(new Action<EntityAddress>(this.attach_EntityAddressesEffectiveVersionId), new Action<EntityAddress>(this.detach_EntityAddressesEffectiveVersionId));
+			this._EntityAddressesObsoleteVersionId = new EntitySet<EntityAddress>(new Action<EntityAddress>(this.attach_EntityAddressesObsoleteVersionId), new Action<EntityAddress>(this.detach_EntityAddressesObsoleteVersionId));
+			this._EntityAssociationsEffectiveVersionId = new EntitySet<EntityAssociation>(new Action<EntityAssociation>(this.attach_EntityAssociationsEffectiveVersionId), new Action<EntityAssociation>(this.detach_EntityAssociationsEffectiveVersionId));
+			this._EntityAssociationsObsoleteVersionId = new EntitySet<EntityAssociation>(new Action<EntityAssociation>(this.attach_EntityAssociationsObsoleteVersionId), new Action<EntityAssociation>(this.detach_EntityAssociationsObsoleteVersionId));
+			this._EntityExtensionsEffectiveVersionId = new EntitySet<EntityExtension>(new Action<EntityExtension>(this.attach_EntityExtensionsEffectiveVersionId), new Action<EntityExtension>(this.detach_EntityExtensionsEffectiveVersionId));
+			this._EntityExtensionsObsoleteVersionId = new EntitySet<EntityExtension>(new Action<EntityExtension>(this.attach_EntityExtensionsObsoleteVersionId), new Action<EntityExtension>(this.detach_EntityExtensionsObsoleteVersionId));
+			this._EntityIdentifiersEffectiveVersionId = new EntitySet<EntityIdentifier>(new Action<EntityIdentifier>(this.attach_EntityIdentifiersEffectiveVersionId), new Action<EntityIdentifier>(this.detach_EntityIdentifiersEffectiveVersionId));
+			this._EntityIdentifiersObsoleteVersionId = new EntitySet<EntityIdentifier>(new Action<EntityIdentifier>(this.attach_EntityIdentifiersObsoleteVersionId), new Action<EntityIdentifier>(this.detach_EntityIdentifiersObsoleteVersionId));
+			this._EntityNamesEffectiveVersionId = new EntitySet<EntityName>(new Action<EntityName>(this.attach_EntityNamesEffectiveVersionId), new Action<EntityName>(this.detach_EntityNamesEffectiveVersionId));
+			this._EntityNamesObsoleteVersionId = new EntitySet<EntityName>(new Action<EntityName>(this.attach_EntityNamesObsoleteVersionId), new Action<EntityName>(this.detach_EntityNamesObsoleteVersionId));
+			this._EntityNotesEffectiveVersionId = new EntitySet<EntityNote>(new Action<EntityNote>(this.attach_EntityNotesEffectiveVersionId), new Action<EntityNote>(this.detach_EntityNotesEffectiveVersionId));
+			this._EntityNotesObsoleteVersionId = new EntitySet<EntityNote>(new Action<EntityNote>(this.attach_EntityNotesObsoleteVersionId), new Action<EntityNote>(this.detach_EntityNotesObsoleteVersionId));
+			this._EntityTelecomAddressesEffectiveVersionId = new EntitySet<EntityTelecomAddress>(new Action<EntityTelecomAddress>(this.attach_EntityTelecomAddressesEffectiveVersionId), new Action<EntityTelecomAddress>(this.detach_EntityTelecomAddressesEffectiveVersionId));
+			this._EntityTelecomAddressesObsoleteVersionId = new EntitySet<EntityTelecomAddress>(new Action<EntityTelecomAddress>(this.attach_EntityTelecomAddressesObsoleteVersionId), new Action<EntityTelecomAddress>(this.detach_EntityTelecomAddressesObsoleteVersionId));
+			this._EntityVersionsReplacesVersionId = new EntitySet<EntityVersion>(new Action<EntityVersion>(this.attach_EntityVersionsReplacesVersionId), new Action<EntityVersion>(this.detach_EntityVersionsReplacesVersionId));
+			this._Material = default(EntityRef<Material>);
+			this._Organization = default(EntityRef<Organization>);
+			this._Person = default(EntityRef<Person>);
+			this._PersonLanguageCommunicationsObsoleteVersionId = new EntitySet<PersonLanguageCommunication>(new Action<PersonLanguageCommunication>(this.attach_PersonLanguageCommunicationsObsoleteVersionId), new Action<PersonLanguageCommunication>(this.detach_PersonLanguageCommunicationsObsoleteVersionId));
+			this._PersonLanguageCommunicationsEffectiveVersionId = new EntitySet<PersonLanguageCommunication>(new Action<PersonLanguageCommunication>(this.attach_PersonLanguageCommunicationsEffectiveVersionId), new Action<PersonLanguageCommunication>(this.detach_PersonLanguageCommunicationsEffectiveVersionId));
+			this._Place = default(EntityRef<Place>);
+			this._PlaceServicesEffectiveVersionId = new EntitySet<PlaceService>(new Action<PlaceService>(this.attach_PlaceServicesEffectiveVersionId), new Action<PlaceService>(this.detach_PlaceServicesEffectiveVersionId));
+			this._PlaceServicesObsoleteVersionId = new EntitySet<PlaceService>(new Action<PlaceService>(this.attach_PlaceServicesObsoleteVersionId), new Action<PlaceService>(this.detach_PlaceServicesObsoleteVersionId));
 			this._Entity = default(EntityRef<Entity>);
 			this._ReplacesVersion = default(EntityRef<EntityVersion>);
 			this._StatusConcept = default(EntityRef<Concept>);
@@ -9897,6 +13832,427 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_ApplicationEntity", Storage="_ApplicationEntity", ThisKey="EntityVersionId", OtherKey="EntityVersionId", IsUnique=true, IsForeignKey=false)]
+		public ApplicationEntity ApplicationEntity
+		{
+			get
+			{
+				return this._ApplicationEntity.Entity;
+			}
+			set
+			{
+				ApplicationEntity previousValue = this._ApplicationEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ApplicationEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ApplicationEntity.Entity = null;
+						previousValue.EntityVersion = null;
+					}
+					this._ApplicationEntity.Entity = value;
+					if ((value != null))
+					{
+						value.EntityVersion = this;
+					}
+					this.SendPropertyChanged("ApplicationEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_DeviceEntity", Storage="_DeviceEntity", ThisKey="EntityVersionId", OtherKey="EntityVersionId", IsUnique=true, IsForeignKey=false)]
+		public DeviceEntity DeviceEntity
+		{
+			get
+			{
+				return this._DeviceEntity.Entity;
+			}
+			set
+			{
+				DeviceEntity previousValue = this._DeviceEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._DeviceEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._DeviceEntity.Entity = null;
+						previousValue.EntityVersion = null;
+					}
+					this._DeviceEntity.Entity = value;
+					if ((value != null))
+					{
+						value.EntityVersion = this;
+					}
+					this.SendPropertyChanged("DeviceEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityAddress", Storage="_EntityAddressesEffectiveVersionId", ThisKey="EntityVersionId", OtherKey="EffectiveVersionId")]
+		public EntitySet<EntityAddress> EntityAddressesEffectiveVersionId
+		{
+			get
+			{
+				return this._EntityAddressesEffectiveVersionId;
+			}
+			set
+			{
+				this._EntityAddressesEffectiveVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityAddress1", Storage="_EntityAddressesObsoleteVersionId", ThisKey="EntityVersionId", OtherKey="ObsoleteVersionId")]
+		public EntitySet<EntityAddress> EntityAddressesObsoleteVersionId
+		{
+			get
+			{
+				return this._EntityAddressesObsoleteVersionId;
+			}
+			set
+			{
+				this._EntityAddressesObsoleteVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityAssociation", Storage="_EntityAssociationsEffectiveVersionId", ThisKey="EntityVersionId", OtherKey="EffectiveVersionId")]
+		public EntitySet<EntityAssociation> EntityAssociationsEffectiveVersionId
+		{
+			get
+			{
+				return this._EntityAssociationsEffectiveVersionId;
+			}
+			set
+			{
+				this._EntityAssociationsEffectiveVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityAssociation1", Storage="_EntityAssociationsObsoleteVersionId", ThisKey="EntityVersionId", OtherKey="ObsoleteVersionId")]
+		public EntitySet<EntityAssociation> EntityAssociationsObsoleteVersionId
+		{
+			get
+			{
+				return this._EntityAssociationsObsoleteVersionId;
+			}
+			set
+			{
+				this._EntityAssociationsObsoleteVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityExtension", Storage="_EntityExtensionsEffectiveVersionId", ThisKey="EntityVersionId", OtherKey="EffectiveVersionId")]
+		public EntitySet<EntityExtension> EntityExtensionsEffectiveVersionId
+		{
+			get
+			{
+				return this._EntityExtensionsEffectiveVersionId;
+			}
+			set
+			{
+				this._EntityExtensionsEffectiveVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityExtension1", Storage="_EntityExtensionsObsoleteVersionId", ThisKey="EntityVersionId", OtherKey="ObsoleteVersionId")]
+		public EntitySet<EntityExtension> EntityExtensionsObsoleteVersionId
+		{
+			get
+			{
+				return this._EntityExtensionsObsoleteVersionId;
+			}
+			set
+			{
+				this._EntityExtensionsObsoleteVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityIdentifier", Storage="_EntityIdentifiersEffectiveVersionId", ThisKey="EntityVersionId", OtherKey="EffectiveVersionId")]
+		public EntitySet<EntityIdentifier> EntityIdentifiersEffectiveVersionId
+		{
+			get
+			{
+				return this._EntityIdentifiersEffectiveVersionId;
+			}
+			set
+			{
+				this._EntityIdentifiersEffectiveVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityIdentifier1", Storage="_EntityIdentifiersObsoleteVersionId", ThisKey="EntityVersionId", OtherKey="ObsoleteVersionId")]
+		public EntitySet<EntityIdentifier> EntityIdentifiersObsoleteVersionId
+		{
+			get
+			{
+				return this._EntityIdentifiersObsoleteVersionId;
+			}
+			set
+			{
+				this._EntityIdentifiersObsoleteVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityName", Storage="_EntityNamesEffectiveVersionId", ThisKey="EntityVersionId", OtherKey="EffectiveVersionId")]
+		public EntitySet<EntityName> EntityNamesEffectiveVersionId
+		{
+			get
+			{
+				return this._EntityNamesEffectiveVersionId;
+			}
+			set
+			{
+				this._EntityNamesEffectiveVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityName1", Storage="_EntityNamesObsoleteVersionId", ThisKey="EntityVersionId", OtherKey="ObsoleteVersionId")]
+		public EntitySet<EntityName> EntityNamesObsoleteVersionId
+		{
+			get
+			{
+				return this._EntityNamesObsoleteVersionId;
+			}
+			set
+			{
+				this._EntityNamesObsoleteVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityNote", Storage="_EntityNotesEffectiveVersionId", ThisKey="EntityVersionId", OtherKey="EffectiveVersionId")]
+		public EntitySet<EntityNote> EntityNotesEffectiveVersionId
+		{
+			get
+			{
+				return this._EntityNotesEffectiveVersionId;
+			}
+			set
+			{
+				this._EntityNotesEffectiveVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityNote1", Storage="_EntityNotesObsoleteVersionId", ThisKey="EntityVersionId", OtherKey="ObsoleteVersionId")]
+		public EntitySet<EntityNote> EntityNotesObsoleteVersionId
+		{
+			get
+			{
+				return this._EntityNotesObsoleteVersionId;
+			}
+			set
+			{
+				this._EntityNotesObsoleteVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityTelecomAddress", Storage="_EntityTelecomAddressesEffectiveVersionId", ThisKey="EntityVersionId", OtherKey="EffectiveVersionId")]
+		public EntitySet<EntityTelecomAddress> EntityTelecomAddressesEffectiveVersionId
+		{
+			get
+			{
+				return this._EntityTelecomAddressesEffectiveVersionId;
+			}
+			set
+			{
+				this._EntityTelecomAddressesEffectiveVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityTelecomAddress1", Storage="_EntityTelecomAddressesObsoleteVersionId", ThisKey="EntityVersionId", OtherKey="ObsoleteVersionId")]
+		public EntitySet<EntityTelecomAddress> EntityTelecomAddressesObsoleteVersionId
+		{
+			get
+			{
+				return this._EntityTelecomAddressesObsoleteVersionId;
+			}
+			set
+			{
+				this._EntityTelecomAddressesObsoleteVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityVersion", Storage="_EntityVersionsReplacesVersionId", ThisKey="EntityVersionId", OtherKey="ReplacesVersionId")]
+		public EntitySet<EntityVersion> EntityVersionsReplacesVersionId
+		{
+			get
+			{
+				return this._EntityVersionsReplacesVersionId;
+			}
+			set
+			{
+				this._EntityVersionsReplacesVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_Material", Storage="_Material", ThisKey="EntityVersionId", OtherKey="EntityVersionId", IsUnique=true, IsForeignKey=false)]
+		public Material Material
+		{
+			get
+			{
+				return this._Material.Entity;
+			}
+			set
+			{
+				Material previousValue = this._Material.Entity;
+				if (((previousValue != value) 
+							|| (this._Material.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Material.Entity = null;
+						previousValue.EntityVersion = null;
+					}
+					this._Material.Entity = value;
+					if ((value != null))
+					{
+						value.EntityVersion = this;
+					}
+					this.SendPropertyChanged("Material");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_Organization", Storage="_Organization", ThisKey="EntityVersionId", OtherKey="EntityVersionId", IsUnique=true, IsForeignKey=false)]
+		public Organization Organization
+		{
+			get
+			{
+				return this._Organization.Entity;
+			}
+			set
+			{
+				Organization previousValue = this._Organization.Entity;
+				if (((previousValue != value) 
+							|| (this._Organization.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Organization.Entity = null;
+						previousValue.EntityVersion = null;
+					}
+					this._Organization.Entity = value;
+					if ((value != null))
+					{
+						value.EntityVersion = this;
+					}
+					this.SendPropertyChanged("Organization");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_Person", Storage="_Person", ThisKey="EntityVersionId", OtherKey="EntityVersionId", IsUnique=true, IsForeignKey=false)]
+		public Person Person
+		{
+			get
+			{
+				return this._Person.Entity;
+			}
+			set
+			{
+				Person previousValue = this._Person.Entity;
+				if (((previousValue != value) 
+							|| (this._Person.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Person.Entity = null;
+						previousValue.EntityVersion = null;
+					}
+					this._Person.Entity = value;
+					if ((value != null))
+					{
+						value.EntityVersion = this;
+					}
+					this.SendPropertyChanged("Person");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_PersonLanguageCommunication", Storage="_PersonLanguageCommunicationsObsoleteVersionId", ThisKey="EntityVersionId", OtherKey="ObsoleteVersionId")]
+		public EntitySet<PersonLanguageCommunication> PersonLanguageCommunicationsObsoleteVersionId
+		{
+			get
+			{
+				return this._PersonLanguageCommunicationsObsoleteVersionId;
+			}
+			set
+			{
+				this._PersonLanguageCommunicationsObsoleteVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_PersonLanguageCommunication1", Storage="_PersonLanguageCommunicationsEffectiveVersionId", ThisKey="EntityVersionId", OtherKey="EffectiveVersionId")]
+		public EntitySet<PersonLanguageCommunication> PersonLanguageCommunicationsEffectiveVersionId
+		{
+			get
+			{
+				return this._PersonLanguageCommunicationsEffectiveVersionId;
+			}
+			set
+			{
+				this._PersonLanguageCommunicationsEffectiveVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_Place", Storage="_Place", ThisKey="EntityVersionId", OtherKey="EntityVersionId", IsUnique=true, IsForeignKey=false)]
+		public Place Place
+		{
+			get
+			{
+				return this._Place.Entity;
+			}
+			set
+			{
+				Place previousValue = this._Place.Entity;
+				if (((previousValue != value) 
+							|| (this._Place.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Place.Entity = null;
+						previousValue.EntityVersion = null;
+					}
+					this._Place.Entity = value;
+					if ((value != null))
+					{
+						value.EntityVersion = this;
+					}
+					this.SendPropertyChanged("Place");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_PlaceService", Storage="_PlaceServicesEffectiveVersionId", ThisKey="EntityVersionId", OtherKey="EffectiveVersionId")]
+		public EntitySet<PlaceService> PlaceServicesEffectiveVersionId
+		{
+			get
+			{
+				return this._PlaceServicesEffectiveVersionId;
+			}
+			set
+			{
+				this._PlaceServicesEffectiveVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_PlaceService1", Storage="_PlaceServicesObsoleteVersionId", ThisKey="EntityVersionId", OtherKey="ObsoleteVersionId")]
+		public EntitySet<PlaceService> PlaceServicesObsoleteVersionId
+		{
+			get
+			{
+				return this._PlaceServicesObsoleteVersionId;
+			}
+			set
+			{
+				this._PlaceServicesObsoleteVersionId.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_EntityVersion", Storage="_Entity", ThisKey="EntityId", OtherKey="EntityId", IsForeignKey=true)]
 		public Entity Entity
 		{
@@ -9906,10 +14262,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._Entity.Entity != value))
+				Entity previousValue = this._Entity.Entity;
+				if (((previousValue != value) 
+							|| (this._Entity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Entity.Entity = null;
+						previousValue.EntityVersions.Remove(this);
+					}
 					this._Entity.Entity = value;
+					if ((value != null))
+					{
+						value.EntityVersions.Add(this);
+						this._EntityId = value.EntityId;
+					}
+					else
+					{
+						this._EntityId = default(System.Guid);
+					}
 					this.SendPropertyChanged("Entity");
 				}
 			}
@@ -9924,10 +14296,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ReplacesVersion.Entity != value))
+				EntityVersion previousValue = this._ReplacesVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ReplacesVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ReplacesVersion.Entity = null;
+						previousValue.EntityVersionsReplacesVersionId.Remove(this);
+					}
 					this._ReplacesVersion.Entity = value;
+					if ((value != null))
+					{
+						value.EntityVersionsReplacesVersionId.Add(this);
+						this._ReplacesVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._ReplacesVersionId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ReplacesVersion");
 				}
 			}
@@ -9942,10 +14330,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._StatusConcept.Entity != value))
+				Concept previousValue = this._StatusConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._StatusConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._StatusConcept.Entity = null;
+						previousValue.EntityVersionsStatusConceptId.Remove(this);
+					}
 					this._StatusConcept.Entity = value;
+					if ((value != null))
+					{
+						value.EntityVersionsStatusConceptId.Add(this);
+						this._StatusConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._StatusConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("StatusConcept");
 				}
 			}
@@ -9960,10 +14364,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._TypeConcept.Entity != value))
+				Concept previousValue = this._TypeConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._TypeConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TypeConcept.Entity = null;
+						previousValue.EntityVersionsTypeConceptId.Remove(this);
+					}
 					this._TypeConcept.Entity = value;
+					if ((value != null))
+					{
+						value.EntityVersionsTypeConceptId.Add(this);
+						this._TypeConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._TypeConceptId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("TypeConcept");
 				}
 			}
@@ -9978,10 +14398,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._CreatedByEntity.Entity != value))
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.EntityVersionsCreatedBy.Remove(this);
+					}
 					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.EntityVersionsCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
 			}
@@ -9996,10 +14432,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoletedByEntity.Entity != value))
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.EntityVersionsObsoletedBy.Remove(this);
+					}
 					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.EntityVersionsObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoletedByEntity");
 				}
 			}
@@ -10023,6 +14475,234 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_EntityAddressesEffectiveVersionId(EntityAddress entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = this;
+		}
+		
+		private void detach_EntityAddressesEffectiveVersionId(EntityAddress entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = null;
+		}
+		
+		private void attach_EntityAddressesObsoleteVersionId(EntityAddress entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = this;
+		}
+		
+		private void detach_EntityAddressesObsoleteVersionId(EntityAddress entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = null;
+		}
+		
+		private void attach_EntityAssociationsEffectiveVersionId(EntityAssociation entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = this;
+		}
+		
+		private void detach_EntityAssociationsEffectiveVersionId(EntityAssociation entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = null;
+		}
+		
+		private void attach_EntityAssociationsObsoleteVersionId(EntityAssociation entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = this;
+		}
+		
+		private void detach_EntityAssociationsObsoleteVersionId(EntityAssociation entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = null;
+		}
+		
+		private void attach_EntityExtensionsEffectiveVersionId(EntityExtension entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = this;
+		}
+		
+		private void detach_EntityExtensionsEffectiveVersionId(EntityExtension entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = null;
+		}
+		
+		private void attach_EntityExtensionsObsoleteVersionId(EntityExtension entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = this;
+		}
+		
+		private void detach_EntityExtensionsObsoleteVersionId(EntityExtension entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = null;
+		}
+		
+		private void attach_EntityIdentifiersEffectiveVersionId(EntityIdentifier entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = this;
+		}
+		
+		private void detach_EntityIdentifiersEffectiveVersionId(EntityIdentifier entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = null;
+		}
+		
+		private void attach_EntityIdentifiersObsoleteVersionId(EntityIdentifier entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = this;
+		}
+		
+		private void detach_EntityIdentifiersObsoleteVersionId(EntityIdentifier entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = null;
+		}
+		
+		private void attach_EntityNamesEffectiveVersionId(EntityName entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = this;
+		}
+		
+		private void detach_EntityNamesEffectiveVersionId(EntityName entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = null;
+		}
+		
+		private void attach_EntityNamesObsoleteVersionId(EntityName entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = this;
+		}
+		
+		private void detach_EntityNamesObsoleteVersionId(EntityName entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = null;
+		}
+		
+		private void attach_EntityNotesEffectiveVersionId(EntityNote entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = this;
+		}
+		
+		private void detach_EntityNotesEffectiveVersionId(EntityNote entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = null;
+		}
+		
+		private void attach_EntityNotesObsoleteVersionId(EntityNote entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = this;
+		}
+		
+		private void detach_EntityNotesObsoleteVersionId(EntityNote entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = null;
+		}
+		
+		private void attach_EntityTelecomAddressesEffectiveVersionId(EntityTelecomAddress entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = this;
+		}
+		
+		private void detach_EntityTelecomAddressesEffectiveVersionId(EntityTelecomAddress entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = null;
+		}
+		
+		private void attach_EntityTelecomAddressesObsoleteVersionId(EntityTelecomAddress entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = this;
+		}
+		
+		private void detach_EntityTelecomAddressesObsoleteVersionId(EntityTelecomAddress entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = null;
+		}
+		
+		private void attach_EntityVersionsReplacesVersionId(EntityVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.ReplacesVersion = this;
+		}
+		
+		private void detach_EntityVersionsReplacesVersionId(EntityVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.ReplacesVersion = null;
+		}
+		
+		private void attach_PersonLanguageCommunicationsObsoleteVersionId(PersonLanguageCommunication entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = this;
+		}
+		
+		private void detach_PersonLanguageCommunicationsObsoleteVersionId(PersonLanguageCommunication entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = null;
+		}
+		
+		private void attach_PersonLanguageCommunicationsEffectiveVersionId(PersonLanguageCommunication entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = this;
+		}
+		
+		private void detach_PersonLanguageCommunicationsEffectiveVersionId(PersonLanguageCommunication entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = null;
+		}
+		
+		private void attach_PlaceServicesEffectiveVersionId(PlaceService entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = this;
+		}
+		
+		private void detach_PlaceServicesEffectiveVersionId(PlaceService entity)
+		{
+			this.SendPropertyChanging();
+			entity.EffectiveVersion = null;
+		}
+		
+		private void attach_PlaceServicesObsoleteVersionId(PlaceService entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = this;
+		}
+		
+		private void detach_PlaceServicesObsoleteVersionId(PlaceService entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoleteVersion = null;
 		}
 	}
 	
@@ -10051,6 +14731,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
 		
 		private System.Nullable<System.Guid> _ObsoletedBy;
+		
+		private EntitySet<ActExtension> _ActExtensions;
+		
+		private EntitySet<EntityExtension> _EntityExtensions;
 		
 		private EntityRef<SecurityUser> _EnabledByEntity;
 		
@@ -10086,6 +14770,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public ExtensionType()
 		{
+			this._ActExtensions = new EntitySet<ActExtension>(new Action<ActExtension>(this.attach_ActExtensions), new Action<ActExtension>(this.detach_ActExtensions));
+			this._EntityExtensions = new EntitySet<EntityExtension>(new Action<EntityExtension>(this.attach_EntityExtensions), new Action<EntityExtension>(this.detach_EntityExtensions));
 			this._EnabledByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
 			this._UpdatedByEntity = default(EntityRef<SecurityUser>);
@@ -10304,6 +14990,32 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ExtensionType_ActExtension", Storage="_ActExtensions", ThisKey="ExtensionTypeId", OtherKey="ExtensionTypeId")]
+		public EntitySet<ActExtension> ActExtensions
+		{
+			get
+			{
+				return this._ActExtensions;
+			}
+			set
+			{
+				this._ActExtensions.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ExtensionType_EntityExtension", Storage="_EntityExtensions", ThisKey="ExtensionTypeId", OtherKey="ExtensionTypeId")]
+		public EntitySet<EntityExtension> EntityExtensions
+		{
+			get
+			{
+				return this._EntityExtensions;
+			}
+			set
+			{
+				this._EntityExtensions.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ExtensionType", Storage="_EnabledByEntity", ThisKey="EnabledBy", OtherKey="UserId", IsForeignKey=true)]
 		public SecurityUser EnabledByEntity
 		{
@@ -10313,10 +15025,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EnabledByEntity.Entity != value))
+				SecurityUser previousValue = this._EnabledByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._EnabledByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EnabledByEntity.Entity = null;
+						previousValue.ExtensionTypesEnabledBy.Remove(this);
+					}
 					this._EnabledByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ExtensionTypesEnabledBy.Add(this);
+						this._EnabledBy = value.UserId;
+					}
+					else
+					{
+						this._EnabledBy = default(System.Guid);
+					}
 					this.SendPropertyChanged("EnabledByEntity");
 				}
 			}
@@ -10331,10 +15059,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoletedByEntity.Entity != value))
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.ExtensionTypesObsoletedBy.Remove(this);
+					}
 					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ExtensionTypesObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoletedByEntity");
 				}
 			}
@@ -10349,10 +15093,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._UpdatedByEntity.Entity != value))
+				SecurityUser previousValue = this._UpdatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._UpdatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._UpdatedByEntity.Entity = null;
+						previousValue.ExtensionTypesUpdatedBy.Remove(this);
+					}
 					this._UpdatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ExtensionTypesUpdatedBy.Add(this);
+						this._UpdatedBy = value.UserId;
+					}
+					else
+					{
+						this._UpdatedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("UpdatedByEntity");
 				}
 			}
@@ -10377,6 +15137,30 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
+		
+		private void attach_ActExtensions(ActExtension entity)
+		{
+			this.SendPropertyChanging();
+			entity.ExtensionType = this;
+		}
+		
+		private void detach_ActExtensions(ActExtension entity)
+		{
+			this.SendPropertyChanging();
+			entity.ExtensionType = null;
+		}
+		
+		private void attach_EntityExtensions(EntityExtension entity)
+		{
+			this.SendPropertyChanging();
+			entity.ExtensionType = this;
+		}
+		
+		private void detach_EntityExtensions(EntityExtension entity)
+		{
+			this.SendPropertyChanging();
+			entity.ExtensionType = null;
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.IdentifierType")]
@@ -10390,6 +15174,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private System.Guid _IdentifierTypeConceptId;
 		
 		private System.Guid _EntityClassScopeConceptId;
+		
+		private EntitySet<ActIdentifier> _ActIdentifiers;
+		
+		private EntitySet<EntityIdentifier> _EntityIdentifiers;
 		
 		private EntityRef<Concept> _EntityClassScopeConcept;
 		
@@ -10409,6 +15197,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public IdentifierType()
 		{
+			this._ActIdentifiers = new EntitySet<ActIdentifier>(new Action<ActIdentifier>(this.attach_ActIdentifiers), new Action<ActIdentifier>(this.detach_ActIdentifiers));
+			this._EntityIdentifiers = new EntitySet<EntityIdentifier>(new Action<EntityIdentifier>(this.attach_EntityIdentifiers), new Action<EntityIdentifier>(this.detach_EntityIdentifiers));
 			this._EntityClassScopeConcept = default(EntityRef<Concept>);
 			this._IdentifierTypeConcept = default(EntityRef<Concept>);
 			OnCreated();
@@ -10482,6 +15272,32 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="IdentifierType_ActIdentifier", Storage="_ActIdentifiers", ThisKey="IdentifierTypeId", OtherKey="IdentifierTypeId")]
+		public EntitySet<ActIdentifier> ActIdentifiers
+		{
+			get
+			{
+				return this._ActIdentifiers;
+			}
+			set
+			{
+				this._ActIdentifiers.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="IdentifierType_EntityIdentifier", Storage="_EntityIdentifiers", ThisKey="IdentifierTypeId", OtherKey="IdentifierTypeId")]
+		public EntitySet<EntityIdentifier> EntityIdentifiers
+		{
+			get
+			{
+				return this._EntityIdentifiers;
+			}
+			set
+			{
+				this._EntityIdentifiers.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_IdentifierType", Storage="_EntityClassScopeConcept", ThisKey="EntityClassScopeConceptId", OtherKey="ConceptId", IsForeignKey=true)]
 		public Concept EntityClassScopeConcept
 		{
@@ -10491,10 +15307,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EntityClassScopeConcept.Entity != value))
+				Concept previousValue = this._EntityClassScopeConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._EntityClassScopeConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EntityClassScopeConcept.Entity = null;
+						previousValue.IdentifierTypesEntityClassScopeConceptId.Remove(this);
+					}
 					this._EntityClassScopeConcept.Entity = value;
+					if ((value != null))
+					{
+						value.IdentifierTypesEntityClassScopeConceptId.Add(this);
+						this._EntityClassScopeConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._EntityClassScopeConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EntityClassScopeConcept");
 				}
 			}
@@ -10509,10 +15341,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._IdentifierTypeConcept.Entity != value))
+				Concept previousValue = this._IdentifierTypeConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._IdentifierTypeConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._IdentifierTypeConcept.Entity = null;
+						previousValue.IdentifierTypesIdentifierTypeConceptId.Remove(this);
+					}
 					this._IdentifierTypeConcept.Entity = value;
+					if ((value != null))
+					{
+						value.IdentifierTypesIdentifierTypeConceptId.Add(this);
+						this._IdentifierTypeConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._IdentifierTypeConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("IdentifierTypeConcept");
 				}
 			}
@@ -10536,6 +15384,30 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_ActIdentifiers(ActIdentifier entity)
+		{
+			this.SendPropertyChanging();
+			entity.IdentifierType = this;
+		}
+		
+		private void detach_ActIdentifiers(ActIdentifier entity)
+		{
+			this.SendPropertyChanging();
+			entity.IdentifierType = null;
+		}
+		
+		private void attach_EntityIdentifiers(EntityIdentifier entity)
+		{
+			this.SendPropertyChanging();
+			entity.IdentifierType = this;
+		}
+		
+		private void detach_EntityIdentifiers(EntityIdentifier entity)
+		{
+			this.SendPropertyChanging();
+			entity.IdentifierType = null;
 		}
 	}
 	
@@ -10620,10 +15492,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._Material.Entity != value))
+				Material previousValue = this._Material.Entity;
+				if (((previousValue != value) 
+							|| (this._Material.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Material.Entity = null;
+						previousValue.ManufacturedMaterial = null;
+					}
 					this._Material.Entity = value;
+					if ((value != null))
+					{
+						value.ManufacturedMaterial = this;
+						this._EntityVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EntityVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("Material");
 				}
 			}
@@ -10666,6 +15554,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private bool _IsAdministrative;
 		
+		private EntityRef<ManufacturedMaterial> _ManufacturedMaterial;
+		
 		private EntityRef<EntityVersion> _EntityVersion;
 		
 		private EntityRef<Concept> _FormConcept;
@@ -10690,6 +15580,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public Material()
 		{
+			this._ManufacturedMaterial = default(EntityRef<ManufacturedMaterial>);
 			this._EntityVersion = default(EntityRef<EntityVersion>);
 			this._FormConcept = default(EntityRef<Concept>);
 			this._QuantityConcept = default(EntityRef<Concept>);
@@ -10808,6 +15699,35 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Material_ManufacturedMaterial", Storage="_ManufacturedMaterial", ThisKey="EntityVersionId", OtherKey="EntityVersionId", IsUnique=true, IsForeignKey=false)]
+		public ManufacturedMaterial ManufacturedMaterial
+		{
+			get
+			{
+				return this._ManufacturedMaterial.Entity;
+			}
+			set
+			{
+				ManufacturedMaterial previousValue = this._ManufacturedMaterial.Entity;
+				if (((previousValue != value) 
+							|| (this._ManufacturedMaterial.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ManufacturedMaterial.Entity = null;
+						previousValue.Material = null;
+					}
+					this._ManufacturedMaterial.Entity = value;
+					if ((value != null))
+					{
+						value.Material = this;
+					}
+					this.SendPropertyChanged("ManufacturedMaterial");
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_Material", Storage="_EntityVersion", ThisKey="EntityVersionId", OtherKey="EntityVersionId", IsForeignKey=true)]
 		public EntityVersion EntityVersion
 		{
@@ -10817,10 +15737,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EntityVersion.Entity != value))
+				EntityVersion previousValue = this._EntityVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EntityVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EntityVersion.Entity = null;
+						previousValue.Material = null;
+					}
 					this._EntityVersion.Entity = value;
+					if ((value != null))
+					{
+						value.Material = this;
+						this._EntityVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EntityVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EntityVersion");
 				}
 			}
@@ -10835,10 +15771,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._FormConcept.Entity != value))
+				Concept previousValue = this._FormConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._FormConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._FormConcept.Entity = null;
+						previousValue.MaterialsFormConceptId.Remove(this);
+					}
 					this._FormConcept.Entity = value;
+					if ((value != null))
+					{
+						value.MaterialsFormConceptId.Add(this);
+						this._FormConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._FormConceptId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("FormConcept");
 				}
 			}
@@ -10853,10 +15805,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._QuantityConcept.Entity != value))
+				Concept previousValue = this._QuantityConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._QuantityConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._QuantityConcept.Entity = null;
+						previousValue.MaterialsQuantityConceptId.Remove(this);
+					}
 					this._QuantityConcept.Entity = value;
+					if ((value != null))
+					{
+						value.MaterialsQuantityConceptId.Add(this);
+						this._QuantityConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._QuantityConceptId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("QuantityConcept");
 				}
 			}
@@ -10893,6 +15861,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _InterpretationConceptId;
 		
+		private EntityRef<CodedObservation> _CodedObservation;
+		
+		private EntityRef<QuantityObservation> _QuantityObservation;
+		
+		private EntityRef<TextObservation> _TextObservation;
+		
 		private EntityRef<ActVersion> _ActVersion;
 		
 		private EntityRef<Concept> _InterpretationConcept;
@@ -10909,6 +15883,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public Observation()
 		{
+			this._CodedObservation = default(EntityRef<CodedObservation>);
+			this._QuantityObservation = default(EntityRef<QuantityObservation>);
+			this._TextObservation = default(EntityRef<TextObservation>);
 			this._ActVersion = default(EntityRef<ActVersion>);
 			this._InterpretationConcept = default(EntityRef<Concept>);
 			OnCreated();
@@ -10962,6 +15939,93 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Observation_CodedObservation", Storage="_CodedObservation", ThisKey="ActVersionId", OtherKey="ActVersionId", IsUnique=true, IsForeignKey=false)]
+		public CodedObservation CodedObservation
+		{
+			get
+			{
+				return this._CodedObservation.Entity;
+			}
+			set
+			{
+				CodedObservation previousValue = this._CodedObservation.Entity;
+				if (((previousValue != value) 
+							|| (this._CodedObservation.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CodedObservation.Entity = null;
+						previousValue.Observation = null;
+					}
+					this._CodedObservation.Entity = value;
+					if ((value != null))
+					{
+						value.Observation = this;
+					}
+					this.SendPropertyChanged("CodedObservation");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Observation_QuantityObservation", Storage="_QuantityObservation", ThisKey="ActVersionId", OtherKey="ActVersionId", IsUnique=true, IsForeignKey=false)]
+		public QuantityObservation QuantityObservation
+		{
+			get
+			{
+				return this._QuantityObservation.Entity;
+			}
+			set
+			{
+				QuantityObservation previousValue = this._QuantityObservation.Entity;
+				if (((previousValue != value) 
+							|| (this._QuantityObservation.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._QuantityObservation.Entity = null;
+						previousValue.Observation = null;
+					}
+					this._QuantityObservation.Entity = value;
+					if ((value != null))
+					{
+						value.Observation = this;
+					}
+					this.SendPropertyChanged("QuantityObservation");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Observation_TextObservation", Storage="_TextObservation", ThisKey="ActVersionId", OtherKey="ActVersionId", IsUnique=true, IsForeignKey=false)]
+		public TextObservation TextObservation
+		{
+			get
+			{
+				return this._TextObservation.Entity;
+			}
+			set
+			{
+				TextObservation previousValue = this._TextObservation.Entity;
+				if (((previousValue != value) 
+							|| (this._TextObservation.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TextObservation.Entity = null;
+						previousValue.Observation = null;
+					}
+					this._TextObservation.Entity = value;
+					if ((value != null))
+					{
+						value.Observation = this;
+					}
+					this.SendPropertyChanged("TextObservation");
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_Observation", Storage="_ActVersion", ThisKey="ActVersionId", OtherKey="ActVersionId", IsForeignKey=true)]
 		public ActVersion ActVersion
 		{
@@ -10971,10 +16035,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ActVersion.Entity != value))
+				ActVersion previousValue = this._ActVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ActVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ActVersion.Entity = null;
+						previousValue.Observation = null;
+					}
 					this._ActVersion.Entity = value;
+					if ((value != null))
+					{
+						value.Observation = this;
+						this._ActVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._ActVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("ActVersion");
 				}
 			}
@@ -10989,10 +16069,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._InterpretationConcept.Entity != value))
+				Concept previousValue = this._InterpretationConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._InterpretationConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._InterpretationConcept.Entity = null;
+						previousValue.ObservationsInterpretationConceptId.Remove(this);
+					}
 					this._InterpretationConcept.Entity = value;
+					if ((value != null))
+					{
+						value.ObservationsInterpretationConceptId.Add(this);
+						this._InterpretationConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._InterpretationConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("InterpretationConcept");
 				}
 			}
@@ -11107,10 +16203,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EntityVersion.Entity != value))
+				EntityVersion previousValue = this._EntityVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EntityVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EntityVersion.Entity = null;
+						previousValue.Organization = null;
+					}
 					this._EntityVersion.Entity = value;
+					if ((value != null))
+					{
+						value.Organization = this;
+						this._EntityVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EntityVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EntityVersion");
 				}
 			}
@@ -11125,10 +16237,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._IndustryConcept.Entity != value))
+				Concept previousValue = this._IndustryConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._IndustryConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._IndustryConcept.Entity = null;
+						previousValue.OrganizationsIndustryConceptId.Remove(this);
+					}
 					this._IndustryConcept.Entity = value;
+					if ((value != null))
+					{
+						value.OrganizationsIndustryConceptId.Add(this);
+						this._IndustryConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._IndustryConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("IndustryConcept");
 				}
 			}
@@ -11315,10 +16443,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._GenderConcept.Entity != value))
+				Concept previousValue = this._GenderConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._GenderConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._GenderConcept.Entity = null;
+						previousValue.PatientsGenderConceptId.Remove(this);
+					}
 					this._GenderConcept.Entity = value;
+					if ((value != null))
+					{
+						value.PatientsGenderConceptId.Add(this);
+						this._GenderConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._GenderConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("GenderConcept");
 				}
 			}
@@ -11333,10 +16477,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._Person.Entity != value))
+				Person previousValue = this._Person.Entity;
+				if (((previousValue != value) 
+							|| (this._Person.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Person.Entity = null;
+						previousValue.Patient = null;
+					}
 					this._Person.Entity = value;
+					if ((value != null))
+					{
+						value.Patient = this;
+						this._EntityVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EntityVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("Person");
 				}
 			}
@@ -11451,10 +16611,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ActVersion.Entity != value))
+				ActVersion previousValue = this._ActVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ActVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ActVersion.Entity = null;
+						previousValue.PatientEncounter = null;
+					}
 					this._ActVersion.Entity = value;
+					if ((value != null))
+					{
+						value.PatientEncounter = this;
+						this._ActVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._ActVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("ActVersion");
 				}
 			}
@@ -11469,10 +16645,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._DischargeDispositionConcept.Entity != value))
+				Concept previousValue = this._DischargeDispositionConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._DischargeDispositionConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._DischargeDispositionConcept.Entity = null;
+						previousValue.PatientEncountersDischargeDispositionConceptId.Remove(this);
+					}
 					this._DischargeDispositionConcept.Entity = value;
+					if ((value != null))
+					{
+						value.PatientEncountersDischargeDispositionConceptId.Add(this);
+						this._DischargeDispositionConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._DischargeDispositionConceptId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("DischargeDispositionConcept");
 				}
 			}
@@ -11511,6 +16703,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<char> _DateOfBirthPrecision;
 		
+		private EntityRef<Patient> _Patient;
+		
+		private EntityRef<Provider> _Provider;
+		
 		private EntityRef<EntityVersion> _EntityVersion;
 		
     #region Extensibility Method Definitions
@@ -11527,6 +16723,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public Person()
 		{
+			this._Patient = default(EntityRef<Patient>);
+			this._Provider = default(EntityRef<Provider>);
 			this._EntityVersion = default(EntityRef<EntityVersion>);
 			OnCreated();
 		}
@@ -11595,6 +16793,64 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Person_Patient", Storage="_Patient", ThisKey="EntityVersionId", OtherKey="EntityVersionId", IsUnique=true, IsForeignKey=false)]
+		public Patient Patient
+		{
+			get
+			{
+				return this._Patient.Entity;
+			}
+			set
+			{
+				Patient previousValue = this._Patient.Entity;
+				if (((previousValue != value) 
+							|| (this._Patient.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Patient.Entity = null;
+						previousValue.Person = null;
+					}
+					this._Patient.Entity = value;
+					if ((value != null))
+					{
+						value.Person = this;
+					}
+					this.SendPropertyChanged("Patient");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Person_Provider", Storage="_Provider", ThisKey="EntityVersionId", OtherKey="EntityVersionId", IsUnique=true, IsForeignKey=false)]
+		public Provider Provider
+		{
+			get
+			{
+				return this._Provider.Entity;
+			}
+			set
+			{
+				Provider previousValue = this._Provider.Entity;
+				if (((previousValue != value) 
+							|| (this._Provider.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Provider.Entity = null;
+						previousValue.Person = null;
+					}
+					this._Provider.Entity = value;
+					if ((value != null))
+					{
+						value.Person = this;
+					}
+					this.SendPropertyChanged("Provider");
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_Person", Storage="_EntityVersion", ThisKey="EntityVersionId", OtherKey="EntityVersionId", IsForeignKey=true)]
 		public EntityVersion EntityVersion
 		{
@@ -11604,10 +16860,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EntityVersion.Entity != value))
+				EntityVersion previousValue = this._EntityVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EntityVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EntityVersion.Entity = null;
+						previousValue.Person = null;
+					}
 					this._EntityVersion.Entity = value;
+					if ((value != null))
+					{
+						value.Person = this;
+						this._EntityVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EntityVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EntityVersion");
 				}
 			}
@@ -11794,10 +17066,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoleteVersion.Entity != value))
+				EntityVersion previousValue = this._ObsoleteVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoleteVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoleteVersion.Entity = null;
+						previousValue.PersonLanguageCommunicationsObsoleteVersionId.Remove(this);
+					}
 					this._ObsoleteVersion.Entity = value;
+					if ((value != null))
+					{
+						value.PersonLanguageCommunicationsObsoleteVersionId.Add(this);
+						this._ObsoleteVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._ObsoleteVersionId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoleteVersion");
 				}
 			}
@@ -11812,10 +17100,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EffectiveVersion.Entity != value))
+				EntityVersion previousValue = this._EffectiveVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EffectiveVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EffectiveVersion.Entity = null;
+						previousValue.PersonLanguageCommunicationsEffectiveVersionId.Remove(this);
+					}
 					this._EffectiveVersion.Entity = value;
+					if ((value != null))
+					{
+						value.PersonLanguageCommunicationsEffectiveVersionId.Add(this);
+						this._EffectiveVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EffectiveVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EffectiveVersion");
 				}
 			}
@@ -11854,6 +17158,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private string _HandlerClass;
 		
+		private EntitySet<ConceptName> _ConceptNames;
+		
+		private EntitySet<ReferenceTermDisplayName> _ReferenceTermDisplayNames;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -11868,6 +17176,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public PhoneticAlgorithm()
 		{
+			this._ConceptNames = new EntitySet<ConceptName>(new Action<ConceptName>(this.attach_ConceptNames), new Action<ConceptName>(this.detach_ConceptNames));
+			this._ReferenceTermDisplayNames = new EntitySet<ReferenceTermDisplayName>(new Action<ReferenceTermDisplayName>(this.attach_ReferenceTermDisplayNames), new Action<ReferenceTermDisplayName>(this.detach_ReferenceTermDisplayNames));
 			OnCreated();
 		}
 		
@@ -11931,6 +17241,32 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="PhoneticAlgorithm_ConceptName", Storage="_ConceptNames", ThisKey="PhoneticAlgorithmId", OtherKey="PhoneticAlgorithmId")]
+		public EntitySet<ConceptName> ConceptNames
+		{
+			get
+			{
+				return this._ConceptNames;
+			}
+			set
+			{
+				this._ConceptNames.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="PhoneticAlgorithm_ReferenceTermDisplayName", Storage="_ReferenceTermDisplayNames", ThisKey="PhoneticAlgorithmId", OtherKey="PhoneticAlgorithmId")]
+		public EntitySet<ReferenceTermDisplayName> ReferenceTermDisplayNames
+		{
+			get
+			{
+				return this._ReferenceTermDisplayNames;
+			}
+			set
+			{
+				this._ReferenceTermDisplayNames.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -11950,6 +17286,30 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
+		
+		private void attach_ConceptNames(ConceptName entity)
+		{
+			this.SendPropertyChanging();
+			entity.PhoneticAlgorithm = this;
+		}
+		
+		private void detach_ConceptNames(ConceptName entity)
+		{
+			this.SendPropertyChanging();
+			entity.PhoneticAlgorithm = null;
+		}
+		
+		private void attach_ReferenceTermDisplayNames(ReferenceTermDisplayName entity)
+		{
+			this.SendPropertyChanging();
+			entity.PhoneticAlgorithm = this;
+		}
+		
+		private void detach_ReferenceTermDisplayNames(ReferenceTermDisplayName entity)
+		{
+			this.SendPropertyChanging();
+			entity.PhoneticAlgorithm = null;
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.PhoneticAlgorithmType")]
@@ -11963,6 +17323,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private string _Name;
 		
 		private string _HandlerClass;
+		
+		private EntitySet<PhoneticValue> _PhoneticValues;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -11978,6 +17340,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public PhoneticAlgorithmType()
 		{
+			this._PhoneticValues = new EntitySet<PhoneticValue>(new Action<PhoneticValue>(this.attach_PhoneticValues), new Action<PhoneticValue>(this.detach_PhoneticValues));
 			OnCreated();
 		}
 		
@@ -12041,6 +17404,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="PhoneticAlgorithmType_PhoneticValue", Storage="_PhoneticValues", ThisKey="PhoneticAlgorithmId", OtherKey="PhoneticAlgorithmId")]
+		public EntitySet<PhoneticValue> PhoneticValues
+		{
+			get
+			{
+				return this._PhoneticValues;
+			}
+			set
+			{
+				this._PhoneticValues.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -12060,6 +17436,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
+		
+		private void attach_PhoneticValues(PhoneticValue entity)
+		{
+			this.SendPropertyChanging();
+			entity.PhoneticAlgorithmType = this;
+		}
+		
+		private void detach_PhoneticValues(PhoneticValue entity)
+		{
+			this.SendPropertyChanging();
+			entity.PhoneticAlgorithmType = null;
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.PhoneticValues")]
@@ -12075,6 +17463,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private string _PhoneticCode;
 		
 		private System.Guid _PhoneticAlgorithmId;
+		
+		private EntitySet<EntityNameComponent> _EntityNameComponents;
 		
 		private EntityRef<PhoneticAlgorithmType> _PhoneticAlgorithmType;
 		
@@ -12094,6 +17484,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public PhoneticValue()
 		{
+			this._EntityNameComponents = new EntitySet<EntityNameComponent>(new Action<EntityNameComponent>(this.attach_EntityNameComponents), new Action<EntityNameComponent>(this.detach_EntityNameComponents));
 			this._PhoneticAlgorithmType = default(EntityRef<PhoneticAlgorithmType>);
 			OnCreated();
 		}
@@ -12182,6 +17573,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="PhoneticValue_EntityNameComponent", Storage="_EntityNameComponents", ThisKey="PhoneticValueId", OtherKey="PhoneticValueId")]
+		public EntitySet<EntityNameComponent> EntityNameComponents
+		{
+			get
+			{
+				return this._EntityNameComponents;
+			}
+			set
+			{
+				this._EntityNameComponents.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="PhoneticAlgorithmType_PhoneticValue", Storage="_PhoneticAlgorithmType", ThisKey="PhoneticAlgorithmId", OtherKey="PhoneticAlgorithmId", IsForeignKey=true)]
 		public PhoneticAlgorithmType PhoneticAlgorithmType
 		{
@@ -12191,10 +17595,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._PhoneticAlgorithmType.Entity != value))
+				PhoneticAlgorithmType previousValue = this._PhoneticAlgorithmType.Entity;
+				if (((previousValue != value) 
+							|| (this._PhoneticAlgorithmType.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._PhoneticAlgorithmType.Entity = null;
+						previousValue.PhoneticValues.Remove(this);
+					}
 					this._PhoneticAlgorithmType.Entity = value;
+					if ((value != null))
+					{
+						value.PhoneticValues.Add(this);
+						this._PhoneticAlgorithmId = value.PhoneticAlgorithmId;
+					}
+					else
+					{
+						this._PhoneticAlgorithmId = default(System.Guid);
+					}
 					this.SendPropertyChanged("PhoneticAlgorithmType");
 				}
 			}
@@ -12218,6 +17638,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_EntityNameComponents(EntityNameComponent entity)
+		{
+			this.SendPropertyChanging();
+			entity.PhoneticValue = this;
+		}
+		
+		private void detach_EntityNameComponents(EntityNameComponent entity)
+		{
+			this.SendPropertyChanging();
+			entity.PhoneticValue = null;
 		}
 	}
 	
@@ -12350,10 +17782,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EntityVersion.Entity != value))
+				EntityVersion previousValue = this._EntityVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EntityVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EntityVersion.Entity = null;
+						previousValue.Place = null;
+					}
 					this._EntityVersion.Entity = value;
+					if ((value != null))
+					{
+						value.Place = this;
+						this._EntityVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EntityVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EntityVersion");
 				}
 			}
@@ -12547,10 +17995,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EffectiveVersion.Entity != value))
+				EntityVersion previousValue = this._EffectiveVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._EffectiveVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EffectiveVersion.Entity = null;
+						previousValue.PlaceServicesEffectiveVersionId.Remove(this);
+					}
 					this._EffectiveVersion.Entity = value;
+					if ((value != null))
+					{
+						value.PlaceServicesEffectiveVersionId.Add(this);
+						this._EffectiveVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EffectiveVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EffectiveVersion");
 				}
 			}
@@ -12565,10 +18029,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoleteVersion.Entity != value))
+				EntityVersion previousValue = this._ObsoleteVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoleteVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoleteVersion.Entity = null;
+						previousValue.PlaceServicesObsoleteVersionId.Remove(this);
+					}
 					this._ObsoleteVersion.Entity = value;
+					if ((value != null))
+					{
+						value.PlaceServicesObsoleteVersionId.Add(this);
+						this._ObsoleteVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._ObsoleteVersionId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoleteVersion");
 				}
 			}
@@ -12583,10 +18063,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ServiceConcept.Entity != value))
+				Concept previousValue = this._ServiceConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._ServiceConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ServiceConcept.Entity = null;
+						previousValue.PlaceServicesServiceConceptId.Remove(this);
+					}
 					this._ServiceConcept.Entity = value;
+					if ((value != null))
+					{
+						value.PlaceServicesServiceConceptId.Add(this);
+						this._ServiceConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._ServiceConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("ServiceConcept");
 				}
 			}
@@ -12631,6 +18127,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private bool _CanElevate;
 		
+		private EntitySet<ActPolicy> _ActPolicies;
+		
+		private EntitySet<SecurityApplicationPolicy> _SecurityApplicationPolicies;
+		
+		private EntitySet<SecurityDevicePolicy> _SecurityDevicePolicies;
+		
+		private EntitySet<SecurityRolePolicy> _SecurityRolePolicies;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -12651,6 +18155,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public Policy()
 		{
+			this._ActPolicies = new EntitySet<ActPolicy>(new Action<ActPolicy>(this.attach_ActPolicies), new Action<ActPolicy>(this.detach_ActPolicies));
+			this._SecurityApplicationPolicies = new EntitySet<SecurityApplicationPolicy>(new Action<SecurityApplicationPolicy>(this.attach_SecurityApplicationPolicies), new Action<SecurityApplicationPolicy>(this.detach_SecurityApplicationPolicies));
+			this._SecurityDevicePolicies = new EntitySet<SecurityDevicePolicy>(new Action<SecurityDevicePolicy>(this.attach_SecurityDevicePolicies), new Action<SecurityDevicePolicy>(this.detach_SecurityDevicePolicies));
+			this._SecurityRolePolicies = new EntitySet<SecurityRolePolicy>(new Action<SecurityRolePolicy>(this.attach_SecurityRolePolicies), new Action<SecurityRolePolicy>(this.detach_SecurityRolePolicies));
 			OnCreated();
 		}
 		
@@ -12774,6 +18282,58 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Policy_ActPolicy", Storage="_ActPolicies", ThisKey="PolicyId", OtherKey="PolicyId")]
+		public EntitySet<ActPolicy> ActPolicies
+		{
+			get
+			{
+				return this._ActPolicies;
+			}
+			set
+			{
+				this._ActPolicies.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Policy_SecurityApplicationPolicy", Storage="_SecurityApplicationPolicies", ThisKey="PolicyId", OtherKey="PolicyId")]
+		public EntitySet<SecurityApplicationPolicy> SecurityApplicationPolicies
+		{
+			get
+			{
+				return this._SecurityApplicationPolicies;
+			}
+			set
+			{
+				this._SecurityApplicationPolicies.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Policy_SecurityDevicePolicy", Storage="_SecurityDevicePolicies", ThisKey="PolicyId", OtherKey="PolicyId")]
+		public EntitySet<SecurityDevicePolicy> SecurityDevicePolicies
+		{
+			get
+			{
+				return this._SecurityDevicePolicies;
+			}
+			set
+			{
+				this._SecurityDevicePolicies.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Policy_SecurityRolePolicy", Storage="_SecurityRolePolicies", ThisKey="PolicyId", OtherKey="PolicyId")]
+		public EntitySet<SecurityRolePolicy> SecurityRolePolicies
+		{
+			get
+			{
+				return this._SecurityRolePolicies;
+			}
+			set
+			{
+				this._SecurityRolePolicies.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -12792,6 +18352,54 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_ActPolicies(ActPolicy entity)
+		{
+			this.SendPropertyChanging();
+			entity.Policy = this;
+		}
+		
+		private void detach_ActPolicies(ActPolicy entity)
+		{
+			this.SendPropertyChanging();
+			entity.Policy = null;
+		}
+		
+		private void attach_SecurityApplicationPolicies(SecurityApplicationPolicy entity)
+		{
+			this.SendPropertyChanging();
+			entity.Policy = this;
+		}
+		
+		private void detach_SecurityApplicationPolicies(SecurityApplicationPolicy entity)
+		{
+			this.SendPropertyChanging();
+			entity.Policy = null;
+		}
+		
+		private void attach_SecurityDevicePolicies(SecurityDevicePolicy entity)
+		{
+			this.SendPropertyChanging();
+			entity.Policy = this;
+		}
+		
+		private void detach_SecurityDevicePolicies(SecurityDevicePolicy entity)
+		{
+			this.SendPropertyChanging();
+			entity.Policy = null;
+		}
+		
+		private void attach_SecurityRolePolicies(SecurityRolePolicy entity)
+		{
+			this.SendPropertyChanging();
+			entity.Policy = this;
+		}
+		
+		private void detach_SecurityRolePolicies(SecurityRolePolicy entity)
+		{
+			this.SendPropertyChanging();
+			entity.Policy = null;
 		}
 	}
 	
@@ -12818,6 +18426,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private System.Nullable<System.Guid> _ObsoletedBy;
 		
 		private System.Nullable<System.Guid> _ReplacesProtocolId;
+		
+		private EntitySet<ActProtocol> _ActProtocols;
+		
+		private EntitySet<Protocol> _ProtocolsReplacesProtocolId;
 		
 		private EntityRef<Protocol> _ReplacesProtocol;
 		
@@ -12853,6 +18465,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public Protocol()
 		{
+			this._ActProtocols = new EntitySet<ActProtocol>(new Action<ActProtocol>(this.attach_ActProtocols), new Action<ActProtocol>(this.detach_ActProtocols));
+			this._ProtocolsReplacesProtocolId = new EntitySet<Protocol>(new Action<Protocol>(this.attach_ProtocolsReplacesProtocolId), new Action<Protocol>(this.detach_ProtocolsReplacesProtocolId));
 			this._ReplacesProtocol = default(EntityRef<Protocol>);
 			this._ProtocolHandler = default(EntityRef<ProtocolHandler>);
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
@@ -13056,6 +18670,32 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Protocol_ActProtocol", Storage="_ActProtocols", ThisKey="ProtocolId", OtherKey="ProtocolId")]
+		public EntitySet<ActProtocol> ActProtocols
+		{
+			get
+			{
+				return this._ActProtocols;
+			}
+			set
+			{
+				this._ActProtocols.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Protocol_Protocol", Storage="_ProtocolsReplacesProtocolId", ThisKey="ProtocolId", OtherKey="ReplacesProtocolId")]
+		public EntitySet<Protocol> ProtocolsReplacesProtocolId
+		{
+			get
+			{
+				return this._ProtocolsReplacesProtocolId;
+			}
+			set
+			{
+				this._ProtocolsReplacesProtocolId.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Protocol_Protocol", Storage="_ReplacesProtocol", ThisKey="ReplacesProtocolId", OtherKey="ProtocolId", IsForeignKey=true)]
 		public Protocol ReplacesProtocol
 		{
@@ -13065,10 +18705,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ReplacesProtocol.Entity != value))
+				Protocol previousValue = this._ReplacesProtocol.Entity;
+				if (((previousValue != value) 
+							|| (this._ReplacesProtocol.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ReplacesProtocol.Entity = null;
+						previousValue.ProtocolsReplacesProtocolId.Remove(this);
+					}
 					this._ReplacesProtocol.Entity = value;
+					if ((value != null))
+					{
+						value.ProtocolsReplacesProtocolId.Add(this);
+						this._ReplacesProtocolId = value.ProtocolId;
+					}
+					else
+					{
+						this._ReplacesProtocolId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ReplacesProtocol");
 				}
 			}
@@ -13083,10 +18739,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ProtocolHandler.Entity != value))
+				ProtocolHandler previousValue = this._ProtocolHandler.Entity;
+				if (((previousValue != value) 
+							|| (this._ProtocolHandler.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ProtocolHandler.Entity = null;
+						previousValue.Protocols.Remove(this);
+					}
 					this._ProtocolHandler.Entity = value;
+					if ((value != null))
+					{
+						value.Protocols.Add(this);
+						this._ProtocolHandlerId = value.ProtocolHandlerId;
+					}
+					else
+					{
+						this._ProtocolHandlerId = default(System.Guid);
+					}
 					this.SendPropertyChanged("ProtocolHandler");
 				}
 			}
@@ -13101,10 +18773,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._CreatedByEntity.Entity != value))
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.ProtocolsCreatedBy.Remove(this);
+					}
 					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ProtocolsCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
 			}
@@ -13119,10 +18807,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoletedByEntity.Entity != value))
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.ProtocolsObsoletedBy.Remove(this);
+					}
 					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ProtocolsObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoletedByEntity");
 				}
 			}
@@ -13147,6 +18851,30 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
+		
+		private void attach_ActProtocols(ActProtocol entity)
+		{
+			this.SendPropertyChanging();
+			entity.Protocol = this;
+		}
+		
+		private void detach_ActProtocols(ActProtocol entity)
+		{
+			this.SendPropertyChanging();
+			entity.Protocol = null;
+		}
+		
+		private void attach_ProtocolsReplacesProtocolId(Protocol entity)
+		{
+			this.SendPropertyChanging();
+			entity.ReplacesProtocol = this;
+		}
+		
+		private void detach_ProtocolsReplacesProtocolId(Protocol entity)
+		{
+			this.SendPropertyChanging();
+			entity.ReplacesProtocol = null;
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ProtocolHandler")]
@@ -13170,6 +18898,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
 		
 		private System.Nullable<System.Guid> _ObsoletedBy;
+		
+		private EntitySet<Protocol> _Protocols;
 		
 		private EntityRef<SecurityUser> _CreatedByEntity;
 		
@@ -13199,6 +18929,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public ProtocolHandler()
 		{
+			this._Protocols = new EntitySet<Protocol>(new Action<Protocol>(this.attach_Protocols), new Action<Protocol>(this.detach_Protocols));
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
 			OnCreated();
@@ -13372,6 +19103,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ProtocolHandler_Protocol", Storage="_Protocols", ThisKey="ProtocolHandlerId", OtherKey="ProtocolHandlerId")]
+		public EntitySet<Protocol> Protocols
+		{
+			get
+			{
+				return this._Protocols;
+			}
+			set
+			{
+				this._Protocols.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ProtocolHandler", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
 		public SecurityUser CreatedByEntity
 		{
@@ -13381,10 +19125,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._CreatedByEntity.Entity != value))
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.ProtocolHandlersCreatedBy.Remove(this);
+					}
 					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ProtocolHandlersCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
 			}
@@ -13399,10 +19159,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoletedByEntity.Entity != value))
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.ProtocolHandlersObsoletedBy.Remove(this);
+					}
 					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ProtocolHandlersObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoletedByEntity");
 				}
 			}
@@ -13426,6 +19202,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_Protocols(Protocol entity)
+		{
+			this.SendPropertyChanging();
+			entity.ProtocolHandler = this;
+		}
+		
+		private void detach_Protocols(Protocol entity)
+		{
+			this.SendPropertyChanging();
+			entity.ProtocolHandler = null;
 		}
 	}
 	
@@ -13517,10 +19305,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._Person.Entity != value))
+				Person previousValue = this._Person.Entity;
+				if (((previousValue != value) 
+							|| (this._Person.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Person.Entity = null;
+						previousValue.Provider = null;
+					}
 					this._Person.Entity = value;
+					if ((value != null))
+					{
+						value.Provider = this;
+						this._EntityVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EntityVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("Person");
 				}
 			}
@@ -13535,10 +19339,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ProviderSpecialtyConcept.Entity != value))
+				Concept previousValue = this._ProviderSpecialtyConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._ProviderSpecialtyConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ProviderSpecialtyConcept.Entity = null;
+						previousValue.ProvidersProviderSpecialtyConceptId.Remove(this);
+					}
 					this._ProviderSpecialtyConcept.Entity = value;
+					if ((value != null))
+					{
+						value.ProvidersProviderSpecialtyConceptId.Add(this);
+						this._ProviderSpecialtyConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._ProviderSpecialtyConceptId = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ProviderSpecialtyConcept");
 				}
 			}
@@ -13646,10 +19466,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._EntityAssociation.Entity != value))
+				EntityAssociation previousValue = this._EntityAssociation.Entity;
+				if (((previousValue != value) 
+							|| (this._EntityAssociation.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EntityAssociation.Entity = null;
+						previousValue.QuantifiedEntityAssociation = null;
+					}
 					this._EntityAssociation.Entity = value;
+					if ((value != null))
+					{
+						value.QuantifiedEntityAssociation = this;
+						this._EntityAssociationId = value.EntityAssociationId;
+					}
+					else
+					{
+						this._EntityAssociationId = default(System.Guid);
+					}
 					this.SendPropertyChanged("EntityAssociation");
 				}
 			}
@@ -13812,10 +19648,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._Observation.Entity != value))
+				Observation previousValue = this._Observation.Entity;
+				if (((previousValue != value) 
+							|| (this._Observation.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Observation.Entity = null;
+						previousValue.QuantityObservation = null;
+					}
 					this._Observation.Entity = value;
+					if ((value != null))
+					{
+						value.QuantityObservation = this;
+						this._ActVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._ActVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("Observation");
 				}
 			}
@@ -13830,10 +19682,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._UnitOfMeasureConcept.Entity != value))
+				Concept previousValue = this._UnitOfMeasureConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._UnitOfMeasureConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._UnitOfMeasureConcept.Entity = null;
+						previousValue.QuantityObservationsUnitOfMeasureConceptId.Remove(this);
+					}
 					this._UnitOfMeasureConcept.Entity = value;
+					if ((value != null))
+					{
+						value.QuantityObservationsUnitOfMeasureConceptId.Add(this);
+						this._UnitOfMeasureConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._UnitOfMeasureConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("UnitOfMeasureConcept");
 				}
 			}
@@ -13872,6 +19740,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private string _Mnemonic;
 		
+		private EntitySet<ConceptReferenceTerm> _ConceptReferenceTerms;
+		
+		private EntitySet<ReferenceTermDisplayName> _ReferenceTermDisplayNames;
+		
 		private EntityRef<CodeSystem> _CodeSystem;
 		
     #region Extensibility Method Definitions
@@ -13888,6 +19760,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public ReferenceTerm()
 		{
+			this._ConceptReferenceTerms = new EntitySet<ConceptReferenceTerm>(new Action<ConceptReferenceTerm>(this.attach_ConceptReferenceTerms), new Action<ConceptReferenceTerm>(this.detach_ConceptReferenceTerms));
+			this._ReferenceTermDisplayNames = new EntitySet<ReferenceTermDisplayName>(new Action<ReferenceTermDisplayName>(this.attach_ReferenceTermDisplayNames), new Action<ReferenceTermDisplayName>(this.detach_ReferenceTermDisplayNames));
 			this._CodeSystem = default(EntityRef<CodeSystem>);
 			OnCreated();
 		}
@@ -13956,6 +19830,32 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ReferenceTerm_ConceptReferenceTerm", Storage="_ConceptReferenceTerms", ThisKey="ReferenceTermId", OtherKey="ReferenceTermId")]
+		public EntitySet<ConceptReferenceTerm> ConceptReferenceTerms
+		{
+			get
+			{
+				return this._ConceptReferenceTerms;
+			}
+			set
+			{
+				this._ConceptReferenceTerms.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ReferenceTerm_ReferenceTermDisplayName", Storage="_ReferenceTermDisplayNames", ThisKey="ReferenceTermId", OtherKey="ReferenceTermId")]
+		public EntitySet<ReferenceTermDisplayName> ReferenceTermDisplayNames
+		{
+			get
+			{
+				return this._ReferenceTermDisplayNames;
+			}
+			set
+			{
+				this._ReferenceTermDisplayNames.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CodeSystem_ReferenceTerm", Storage="_CodeSystem", ThisKey="CodeSystemId", OtherKey="CodeSystemId", IsForeignKey=true)]
 		public CodeSystem CodeSystem
 		{
@@ -13965,10 +19865,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._CodeSystem.Entity != value))
+				CodeSystem previousValue = this._CodeSystem.Entity;
+				if (((previousValue != value) 
+							|| (this._CodeSystem.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CodeSystem.Entity = null;
+						previousValue.ReferenceTerms.Remove(this);
+					}
 					this._CodeSystem.Entity = value;
+					if ((value != null))
+					{
+						value.ReferenceTerms.Add(this);
+						this._CodeSystemId = value.CodeSystemId;
+					}
+					else
+					{
+						this._CodeSystemId = default(System.Guid);
+					}
 					this.SendPropertyChanged("CodeSystem");
 				}
 			}
@@ -13992,6 +19908,30 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_ConceptReferenceTerms(ConceptReferenceTerm entity)
+		{
+			this.SendPropertyChanging();
+			entity.ReferenceTerm = this;
+		}
+		
+		private void detach_ConceptReferenceTerms(ConceptReferenceTerm entity)
+		{
+			this.SendPropertyChanging();
+			entity.ReferenceTerm = null;
+		}
+		
+		private void attach_ReferenceTermDisplayNames(ReferenceTermDisplayName entity)
+		{
+			this.SendPropertyChanging();
+			entity.ReferenceTerm = this;
+		}
+		
+		private void detach_ReferenceTermDisplayNames(ReferenceTermDisplayName entity)
+		{
+			this.SendPropertyChanging();
+			entity.ReferenceTerm = null;
 		}
 	}
 	
@@ -14313,10 +20253,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ReferenceTerm.Entity != value))
+				ReferenceTerm previousValue = this._ReferenceTerm.Entity;
+				if (((previousValue != value) 
+							|| (this._ReferenceTerm.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ReferenceTerm.Entity = null;
+						previousValue.ReferenceTermDisplayNames.Remove(this);
+					}
 					this._ReferenceTerm.Entity = value;
+					if ((value != null))
+					{
+						value.ReferenceTermDisplayNames.Add(this);
+						this._ReferenceTermId = value.ReferenceTermId;
+					}
+					else
+					{
+						this._ReferenceTermId = default(System.Guid);
+					}
 					this.SendPropertyChanged("ReferenceTerm");
 				}
 			}
@@ -14331,10 +20287,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._PhoneticAlgorithm.Entity != value))
+				PhoneticAlgorithm previousValue = this._PhoneticAlgorithm.Entity;
+				if (((previousValue != value) 
+							|| (this._PhoneticAlgorithm.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._PhoneticAlgorithm.Entity = null;
+						previousValue.ReferenceTermDisplayNames.Remove(this);
+					}
 					this._PhoneticAlgorithm.Entity = value;
+					if ((value != null))
+					{
+						value.ReferenceTermDisplayNames.Add(this);
+						this._PhoneticAlgorithmId = value.PhoneticAlgorithmId;
+					}
+					else
+					{
+						this._PhoneticAlgorithmId = default(System.Guid);
+					}
 					this.SendPropertyChanged("PhoneticAlgorithm");
 				}
 			}
@@ -14349,10 +20321,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._CreatedByEntity.Entity != value))
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.ReferenceTermDisplayNamesCreatedBy.Remove(this);
+					}
 					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ReferenceTermDisplayNamesCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
 			}
@@ -14367,10 +20355,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoletedByEntity.Entity != value))
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.ReferenceTermDisplayNamesObsoletedBy.Remove(this);
+					}
 					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ReferenceTermDisplayNamesObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoletedByEntity");
 				}
 			}
@@ -14417,6 +20421,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.Guid> _ReplacesApplicationId;
 		
+		private EntitySet<SecurityApplicationPolicy> _SecurityApplicationPolicies;
+		
 		private EntityRef<SecurityUser> _CreatedByEntity;
 		
 		private EntityRef<SecurityUser> _ObsoletedByEntity;
@@ -14443,6 +20449,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public SecurityApplication()
 		{
+			this._SecurityApplicationPolicies = new EntitySet<SecurityApplicationPolicy>(new Action<SecurityApplicationPolicy>(this.attach_SecurityApplicationPolicies), new Action<SecurityApplicationPolicy>(this.detach_SecurityApplicationPolicies));
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
 			OnCreated();
@@ -14596,6 +20603,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityApplication_SecurityApplicationPolicy", Storage="_SecurityApplicationPolicies", ThisKey="ApplicationId", OtherKey="ApplicationId")]
+		public EntitySet<SecurityApplicationPolicy> SecurityApplicationPolicies
+		{
+			get
+			{
+				return this._SecurityApplicationPolicies;
+			}
+			set
+			{
+				this._SecurityApplicationPolicies.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityApplication", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
 		public SecurityUser CreatedByEntity
 		{
@@ -14605,10 +20625,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._CreatedByEntity.Entity != value))
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.SecurityApplicationsCreatedBy.Remove(this);
+					}
 					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityApplicationsCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
 			}
@@ -14623,10 +20659,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoletedByEntity.Entity != value))
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.SecurityApplicationsObsoletedBy.Remove(this);
+					}
 					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityApplicationsObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoletedByEntity");
 				}
 			}
@@ -14650,6 +20702,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_SecurityApplicationPolicies(SecurityApplicationPolicy entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityApplication = this;
+		}
+		
+		private void detach_SecurityApplicationPolicies(SecurityApplicationPolicy entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityApplication = null;
 		}
 	}
 	
@@ -14765,10 +20829,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._SecurityApplication.Entity != value))
+				SecurityApplication previousValue = this._SecurityApplication.Entity;
+				if (((previousValue != value) 
+							|| (this._SecurityApplication.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SecurityApplication.Entity = null;
+						previousValue.SecurityApplicationPolicies.Remove(this);
+					}
 					this._SecurityApplication.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityApplicationPolicies.Add(this);
+						this._ApplicationId = value.ApplicationId;
+					}
+					else
+					{
+						this._ApplicationId = default(System.Guid);
+					}
 					this.SendPropertyChanged("SecurityApplication");
 				}
 			}
@@ -14783,10 +20863,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._Policy.Entity != value))
+				Policy previousValue = this._Policy.Entity;
+				if (((previousValue != value) 
+							|| (this._Policy.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Policy.Entity = null;
+						previousValue.SecurityApplicationPolicies.Remove(this);
+					}
 					this._Policy.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityApplicationPolicies.Add(this);
+						this._PolicyId = value.PolicyId;
+					}
+					else
+					{
+						this._PolicyId = default(System.Guid);
+					}
 					this.SendPropertyChanged("Policy");
 				}
 			}
@@ -14833,6 +20929,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.Guid> _ReplacesDeviceId;
 		
+		private EntitySet<DeviceEntity> _DeviceEntities;
+		
+		private EntitySet<SecurityDevicePolicy> _SecurityDevicePolicies;
+		
 		private EntityRef<SecurityUser> _ObsoletedByEntity;
 		
 		private EntityRef<SecurityUser> _CreatedByEntity;
@@ -14859,6 +20959,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public SecurityDevice()
 		{
+			this._DeviceEntities = new EntitySet<DeviceEntity>(new Action<DeviceEntity>(this.attach_DeviceEntities), new Action<DeviceEntity>(this.detach_DeviceEntities));
+			this._SecurityDevicePolicies = new EntitySet<SecurityDevicePolicy>(new Action<SecurityDevicePolicy>(this.attach_SecurityDevicePolicies), new Action<SecurityDevicePolicy>(this.detach_SecurityDevicePolicies));
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			OnCreated();
@@ -15012,6 +21114,32 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityDevice_DeviceEntity", Storage="_DeviceEntities", ThisKey="DeviceId", OtherKey="DeviceId")]
+		public EntitySet<DeviceEntity> DeviceEntities
+		{
+			get
+			{
+				return this._DeviceEntities;
+			}
+			set
+			{
+				this._DeviceEntities.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityDevice_SecurityDevicePolicy", Storage="_SecurityDevicePolicies", ThisKey="DeviceId", OtherKey="DeviceId")]
+		public EntitySet<SecurityDevicePolicy> SecurityDevicePolicies
+		{
+			get
+			{
+				return this._SecurityDevicePolicies;
+			}
+			set
+			{
+				this._SecurityDevicePolicies.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityDevice", Storage="_ObsoletedByEntity", ThisKey="ObsoletedBy", OtherKey="UserId", IsForeignKey=true)]
 		public SecurityUser ObsoletedByEntity
 		{
@@ -15021,10 +21149,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoletedByEntity.Entity != value))
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.SecurityDevicesObsoletedBy.Remove(this);
+					}
 					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityDevicesObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoletedByEntity");
 				}
 			}
@@ -15039,10 +21183,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._CreatedByEntity.Entity != value))
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.SecurityDevicesCreatedBy.Remove(this);
+					}
 					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityDevicesCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
 			}
@@ -15066,6 +21226,30 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_DeviceEntities(DeviceEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityDevice = this;
+		}
+		
+		private void detach_DeviceEntities(DeviceEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityDevice = null;
+		}
+		
+		private void attach_SecurityDevicePolicies(SecurityDevicePolicy entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityDevice = this;
+		}
+		
+		private void detach_SecurityDevicePolicies(SecurityDevicePolicy entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityDevice = null;
 		}
 	}
 	
@@ -15181,10 +21365,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._SecurityDevice.Entity != value))
+				SecurityDevice previousValue = this._SecurityDevice.Entity;
+				if (((previousValue != value) 
+							|| (this._SecurityDevice.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SecurityDevice.Entity = null;
+						previousValue.SecurityDevicePolicies.Remove(this);
+					}
 					this._SecurityDevice.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityDevicePolicies.Add(this);
+						this._DeviceId = value.DeviceId;
+					}
+					else
+					{
+						this._DeviceId = default(System.Guid);
+					}
 					this.SendPropertyChanged("SecurityDevice");
 				}
 			}
@@ -15199,10 +21399,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._Policy.Entity != value))
+				Policy previousValue = this._Policy.Entity;
+				if (((previousValue != value) 
+							|| (this._Policy.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Policy.Entity = null;
+						previousValue.SecurityDevicePolicies.Remove(this);
+					}
 					this._Policy.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityDevicePolicies.Add(this);
+						this._PolicyId = value.PolicyId;
+					}
+					else
+					{
+						this._PolicyId = default(System.Guid);
+					}
 					this.SendPropertyChanged("Policy");
 				}
 			}
@@ -15247,6 +21463,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.Guid> _ObsoletedBy;
 		
+		private EntitySet<SecurityRolePolicy> _SecurityRolePolicies;
+		
+		private EntitySet<SecurityUserRole> _SecurityUserRoles;
+		
 		private EntityRef<SecurityUser> _CreatedByEntity;
 		
 		private EntityRef<SecurityUser> _ObsoletedByEntity;
@@ -15271,6 +21491,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public SecurityRole()
 		{
+			this._SecurityRolePolicies = new EntitySet<SecurityRolePolicy>(new Action<SecurityRolePolicy>(this.attach_SecurityRolePolicies), new Action<SecurityRolePolicy>(this.detach_SecurityRolePolicies));
+			this._SecurityUserRoles = new EntitySet<SecurityUserRole>(new Action<SecurityUserRole>(this.attach_SecurityUserRoles), new Action<SecurityUserRole>(this.detach_SecurityUserRoles));
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
 			OnCreated();
@@ -15404,6 +21626,32 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityRole_SecurityRolePolicy", Storage="_SecurityRolePolicies", ThisKey="RoleId", OtherKey="RoleId")]
+		public EntitySet<SecurityRolePolicy> SecurityRolePolicies
+		{
+			get
+			{
+				return this._SecurityRolePolicies;
+			}
+			set
+			{
+				this._SecurityRolePolicies.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityRole_SecurityUserRole", Storage="_SecurityUserRoles", ThisKey="RoleId", OtherKey="RoleId")]
+		public EntitySet<SecurityUserRole> SecurityUserRoles
+		{
+			get
+			{
+				return this._SecurityUserRoles;
+			}
+			set
+			{
+				this._SecurityUserRoles.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityRole", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
 		public SecurityUser CreatedByEntity
 		{
@@ -15413,10 +21661,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._CreatedByEntity.Entity != value))
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.SecurityRolesCreatedBy.Remove(this);
+					}
 					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityRolesCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
 			}
@@ -15431,10 +21695,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoletedByEntity.Entity != value))
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.SecurityRolesObsoletedBy.Remove(this);
+					}
 					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityRolesObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoletedByEntity");
 				}
 			}
@@ -15458,6 +21738,30 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_SecurityRolePolicies(SecurityRolePolicy entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityRole = this;
+		}
+		
+		private void detach_SecurityRolePolicies(SecurityRolePolicy entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityRole = null;
+		}
+		
+		private void attach_SecurityUserRoles(SecurityUserRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityRole = this;
+		}
+		
+		private void detach_SecurityUserRoles(SecurityUserRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityRole = null;
 		}
 	}
 	
@@ -15573,10 +21877,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._Policy.Entity != value))
+				Policy previousValue = this._Policy.Entity;
+				if (((previousValue != value) 
+							|| (this._Policy.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Policy.Entity = null;
+						previousValue.SecurityRolePolicies.Remove(this);
+					}
 					this._Policy.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityRolePolicies.Add(this);
+						this._PolicyId = value.PolicyId;
+					}
+					else
+					{
+						this._PolicyId = default(System.Guid);
+					}
 					this.SendPropertyChanged("Policy");
 				}
 			}
@@ -15591,10 +21911,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._SecurityRole.Entity != value))
+				SecurityRole previousValue = this._SecurityRole.Entity;
+				if (((previousValue != value) 
+							|| (this._SecurityRole.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SecurityRole.Entity = null;
+						previousValue.SecurityRolePolicies.Remove(this);
+					}
 					this._SecurityRole.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityRolePolicies.Add(this);
+						this._RoleId = value.RoleId;
+					}
+					else
+					{
+						this._RoleId = default(System.Guid);
+					}
 					this.SendPropertyChanged("SecurityRole");
 				}
 			}
@@ -15663,6 +21999,86 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.Guid> _UpdatedBy;
 		
+		private EntitySet<UserEntity> _UserEntitiesCreatedBy;
+		
+		private EntitySet<UserEntity> _UserEntitiesObsoletedBy;
+		
+		private EntitySet<UserEntity> _UserEntities;
+		
+		private EntitySet<ActTag> _ActTagsCreatedBy;
+		
+		private EntitySet<ActTag> _ActTagsObsoletedBy;
+		
+		private EntitySet<ActVersion> _ActVersionsCreatedBy;
+		
+		private EntitySet<ActVersion> _ActVersionsObsoletedBy;
+		
+		private EntitySet<AssigningAuthority> _AssigningAuthoritiesCreatedBy;
+		
+		private EntitySet<AssigningAuthority> _AssigningAuthoritiesObsoletedBy;
+		
+		private EntitySet<CodeSystem> _CodeSystemsCreatedBy;
+		
+		private EntitySet<CodeSystem> _CodeSystemsObsoletedBy;
+		
+		private EntitySet<ConceptSet> _ConceptSetsCreatedBy;
+		
+		private EntitySet<ConceptSet> _ConceptSetsObsoletedBy;
+		
+		private EntitySet<ConceptVersion> _ConceptVersionsCreatedBy;
+		
+		private EntitySet<ConceptVersion> _ConceptVersionsObsoletedBy;
+		
+		private EntitySet<EntityTag> _EntityTagsCreatedBy;
+		
+		private EntitySet<EntityTag> _EntityTagsObsoletedBy;
+		
+		private EntitySet<EntityVersion> _EntityVersionsCreatedBy;
+		
+		private EntitySet<EntityVersion> _EntityVersionsObsoletedBy;
+		
+		private EntitySet<ExtensionType> _ExtensionTypesEnabledBy;
+		
+		private EntitySet<ExtensionType> _ExtensionTypesObsoletedBy;
+		
+		private EntitySet<ExtensionType> _ExtensionTypesUpdatedBy;
+		
+		private EntitySet<Protocol> _ProtocolsCreatedBy;
+		
+		private EntitySet<Protocol> _ProtocolsObsoletedBy;
+		
+		private EntitySet<ProtocolHandler> _ProtocolHandlersCreatedBy;
+		
+		private EntitySet<ProtocolHandler> _ProtocolHandlersObsoletedBy;
+		
+		private EntitySet<ReferenceTermDisplayName> _ReferenceTermDisplayNamesCreatedBy;
+		
+		private EntitySet<ReferenceTermDisplayName> _ReferenceTermDisplayNamesObsoletedBy;
+		
+		private EntitySet<SecurityApplication> _SecurityApplicationsCreatedBy;
+		
+		private EntitySet<SecurityApplication> _SecurityApplicationsObsoletedBy;
+		
+		private EntitySet<SecurityDevice> _SecurityDevicesObsoletedBy;
+		
+		private EntitySet<SecurityDevice> _SecurityDevicesCreatedBy;
+		
+		private EntitySet<SecurityRole> _SecurityRolesCreatedBy;
+		
+		private EntitySet<SecurityRole> _SecurityRolesObsoletedBy;
+		
+		private EntitySet<SecurityUser> _SecurityUsersCreatedBy;
+		
+		private EntitySet<SecurityUser> _SecurityUsersObsoletedBy;
+		
+		private EntitySet<SecurityUser> _SecurityUsersUpdatedBy;
+		
+		private EntitySet<SecurityUserClaim> _SecurityUserClaims;
+		
+		private EntitySet<SecurityUserLogin> _SecurityUserLogins;
+		
+		private EntitySet<SecurityUserRole> _SecurityUserRoles;
+		
 		private EntityRef<SecurityUser> _CreatedByEntity;
 		
 		private EntityRef<SecurityUser> _ObsoletedByEntity;
@@ -15713,6 +22129,46 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public SecurityUser()
 		{
+			this._UserEntitiesCreatedBy = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntitiesCreatedBy), new Action<UserEntity>(this.detach_UserEntitiesCreatedBy));
+			this._UserEntitiesObsoletedBy = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntitiesObsoletedBy), new Action<UserEntity>(this.detach_UserEntitiesObsoletedBy));
+			this._UserEntities = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntities), new Action<UserEntity>(this.detach_UserEntities));
+			this._ActTagsCreatedBy = new EntitySet<ActTag>(new Action<ActTag>(this.attach_ActTagsCreatedBy), new Action<ActTag>(this.detach_ActTagsCreatedBy));
+			this._ActTagsObsoletedBy = new EntitySet<ActTag>(new Action<ActTag>(this.attach_ActTagsObsoletedBy), new Action<ActTag>(this.detach_ActTagsObsoletedBy));
+			this._ActVersionsCreatedBy = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersionsCreatedBy), new Action<ActVersion>(this.detach_ActVersionsCreatedBy));
+			this._ActVersionsObsoletedBy = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersionsObsoletedBy), new Action<ActVersion>(this.detach_ActVersionsObsoletedBy));
+			this._AssigningAuthoritiesCreatedBy = new EntitySet<AssigningAuthority>(new Action<AssigningAuthority>(this.attach_AssigningAuthoritiesCreatedBy), new Action<AssigningAuthority>(this.detach_AssigningAuthoritiesCreatedBy));
+			this._AssigningAuthoritiesObsoletedBy = new EntitySet<AssigningAuthority>(new Action<AssigningAuthority>(this.attach_AssigningAuthoritiesObsoletedBy), new Action<AssigningAuthority>(this.detach_AssigningAuthoritiesObsoletedBy));
+			this._CodeSystemsCreatedBy = new EntitySet<CodeSystem>(new Action<CodeSystem>(this.attach_CodeSystemsCreatedBy), new Action<CodeSystem>(this.detach_CodeSystemsCreatedBy));
+			this._CodeSystemsObsoletedBy = new EntitySet<CodeSystem>(new Action<CodeSystem>(this.attach_CodeSystemsObsoletedBy), new Action<CodeSystem>(this.detach_CodeSystemsObsoletedBy));
+			this._ConceptSetsCreatedBy = new EntitySet<ConceptSet>(new Action<ConceptSet>(this.attach_ConceptSetsCreatedBy), new Action<ConceptSet>(this.detach_ConceptSetsCreatedBy));
+			this._ConceptSetsObsoletedBy = new EntitySet<ConceptSet>(new Action<ConceptSet>(this.attach_ConceptSetsObsoletedBy), new Action<ConceptSet>(this.detach_ConceptSetsObsoletedBy));
+			this._ConceptVersionsCreatedBy = new EntitySet<ConceptVersion>(new Action<ConceptVersion>(this.attach_ConceptVersionsCreatedBy), new Action<ConceptVersion>(this.detach_ConceptVersionsCreatedBy));
+			this._ConceptVersionsObsoletedBy = new EntitySet<ConceptVersion>(new Action<ConceptVersion>(this.attach_ConceptVersionsObsoletedBy), new Action<ConceptVersion>(this.detach_ConceptVersionsObsoletedBy));
+			this._EntityTagsCreatedBy = new EntitySet<EntityTag>(new Action<EntityTag>(this.attach_EntityTagsCreatedBy), new Action<EntityTag>(this.detach_EntityTagsCreatedBy));
+			this._EntityTagsObsoletedBy = new EntitySet<EntityTag>(new Action<EntityTag>(this.attach_EntityTagsObsoletedBy), new Action<EntityTag>(this.detach_EntityTagsObsoletedBy));
+			this._EntityVersionsCreatedBy = new EntitySet<EntityVersion>(new Action<EntityVersion>(this.attach_EntityVersionsCreatedBy), new Action<EntityVersion>(this.detach_EntityVersionsCreatedBy));
+			this._EntityVersionsObsoletedBy = new EntitySet<EntityVersion>(new Action<EntityVersion>(this.attach_EntityVersionsObsoletedBy), new Action<EntityVersion>(this.detach_EntityVersionsObsoletedBy));
+			this._ExtensionTypesEnabledBy = new EntitySet<ExtensionType>(new Action<ExtensionType>(this.attach_ExtensionTypesEnabledBy), new Action<ExtensionType>(this.detach_ExtensionTypesEnabledBy));
+			this._ExtensionTypesObsoletedBy = new EntitySet<ExtensionType>(new Action<ExtensionType>(this.attach_ExtensionTypesObsoletedBy), new Action<ExtensionType>(this.detach_ExtensionTypesObsoletedBy));
+			this._ExtensionTypesUpdatedBy = new EntitySet<ExtensionType>(new Action<ExtensionType>(this.attach_ExtensionTypesUpdatedBy), new Action<ExtensionType>(this.detach_ExtensionTypesUpdatedBy));
+			this._ProtocolsCreatedBy = new EntitySet<Protocol>(new Action<Protocol>(this.attach_ProtocolsCreatedBy), new Action<Protocol>(this.detach_ProtocolsCreatedBy));
+			this._ProtocolsObsoletedBy = new EntitySet<Protocol>(new Action<Protocol>(this.attach_ProtocolsObsoletedBy), new Action<Protocol>(this.detach_ProtocolsObsoletedBy));
+			this._ProtocolHandlersCreatedBy = new EntitySet<ProtocolHandler>(new Action<ProtocolHandler>(this.attach_ProtocolHandlersCreatedBy), new Action<ProtocolHandler>(this.detach_ProtocolHandlersCreatedBy));
+			this._ProtocolHandlersObsoletedBy = new EntitySet<ProtocolHandler>(new Action<ProtocolHandler>(this.attach_ProtocolHandlersObsoletedBy), new Action<ProtocolHandler>(this.detach_ProtocolHandlersObsoletedBy));
+			this._ReferenceTermDisplayNamesCreatedBy = new EntitySet<ReferenceTermDisplayName>(new Action<ReferenceTermDisplayName>(this.attach_ReferenceTermDisplayNamesCreatedBy), new Action<ReferenceTermDisplayName>(this.detach_ReferenceTermDisplayNamesCreatedBy));
+			this._ReferenceTermDisplayNamesObsoletedBy = new EntitySet<ReferenceTermDisplayName>(new Action<ReferenceTermDisplayName>(this.attach_ReferenceTermDisplayNamesObsoletedBy), new Action<ReferenceTermDisplayName>(this.detach_ReferenceTermDisplayNamesObsoletedBy));
+			this._SecurityApplicationsCreatedBy = new EntitySet<SecurityApplication>(new Action<SecurityApplication>(this.attach_SecurityApplicationsCreatedBy), new Action<SecurityApplication>(this.detach_SecurityApplicationsCreatedBy));
+			this._SecurityApplicationsObsoletedBy = new EntitySet<SecurityApplication>(new Action<SecurityApplication>(this.attach_SecurityApplicationsObsoletedBy), new Action<SecurityApplication>(this.detach_SecurityApplicationsObsoletedBy));
+			this._SecurityDevicesObsoletedBy = new EntitySet<SecurityDevice>(new Action<SecurityDevice>(this.attach_SecurityDevicesObsoletedBy), new Action<SecurityDevice>(this.detach_SecurityDevicesObsoletedBy));
+			this._SecurityDevicesCreatedBy = new EntitySet<SecurityDevice>(new Action<SecurityDevice>(this.attach_SecurityDevicesCreatedBy), new Action<SecurityDevice>(this.detach_SecurityDevicesCreatedBy));
+			this._SecurityRolesCreatedBy = new EntitySet<SecurityRole>(new Action<SecurityRole>(this.attach_SecurityRolesCreatedBy), new Action<SecurityRole>(this.detach_SecurityRolesCreatedBy));
+			this._SecurityRolesObsoletedBy = new EntitySet<SecurityRole>(new Action<SecurityRole>(this.attach_SecurityRolesObsoletedBy), new Action<SecurityRole>(this.detach_SecurityRolesObsoletedBy));
+			this._SecurityUsersCreatedBy = new EntitySet<SecurityUser>(new Action<SecurityUser>(this.attach_SecurityUsersCreatedBy), new Action<SecurityUser>(this.detach_SecurityUsersCreatedBy));
+			this._SecurityUsersObsoletedBy = new EntitySet<SecurityUser>(new Action<SecurityUser>(this.attach_SecurityUsersObsoletedBy), new Action<SecurityUser>(this.detach_SecurityUsersObsoletedBy));
+			this._SecurityUsersUpdatedBy = new EntitySet<SecurityUser>(new Action<SecurityUser>(this.attach_SecurityUsersUpdatedBy), new Action<SecurityUser>(this.detach_SecurityUsersUpdatedBy));
+			this._SecurityUserClaims = new EntitySet<SecurityUserClaim>(new Action<SecurityUserClaim>(this.attach_SecurityUserClaims), new Action<SecurityUserClaim>(this.detach_SecurityUserClaims));
+			this._SecurityUserLogins = new EntitySet<SecurityUserLogin>(new Action<SecurityUserLogin>(this.attach_SecurityUserLogins), new Action<SecurityUserLogin>(this.detach_SecurityUserLogins));
+			this._SecurityUserRoles = new EntitySet<SecurityUserRole>(new Action<SecurityUserRole>(this.attach_SecurityUserRoles), new Action<SecurityUserRole>(this.detach_SecurityUserRoles));
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
 			this._UpdatedByEntity = default(EntityRef<SecurityUser>);
@@ -16091,6 +22547,526 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity", Storage="_UserEntitiesCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<UserEntity> UserEntitiesCreatedBy
+		{
+			get
+			{
+				return this._UserEntitiesCreatedBy;
+			}
+			set
+			{
+				this._UserEntitiesCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity1", Storage="_UserEntitiesObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<UserEntity> UserEntitiesObsoletedBy
+		{
+			get
+			{
+				return this._UserEntitiesObsoletedBy;
+			}
+			set
+			{
+				this._UserEntitiesObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity2", Storage="_UserEntities", ThisKey="UserId", OtherKey="UserId")]
+		public EntitySet<UserEntity> UserEntities
+		{
+			get
+			{
+				return this._UserEntities;
+			}
+			set
+			{
+				this._UserEntities.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ActTag", Storage="_ActTagsCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<ActTag> ActTagsCreatedBy
+		{
+			get
+			{
+				return this._ActTagsCreatedBy;
+			}
+			set
+			{
+				this._ActTagsCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ActTag1", Storage="_ActTagsObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<ActTag> ActTagsObsoletedBy
+		{
+			get
+			{
+				return this._ActTagsObsoletedBy;
+			}
+			set
+			{
+				this._ActTagsObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ActVersion", Storage="_ActVersionsCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<ActVersion> ActVersionsCreatedBy
+		{
+			get
+			{
+				return this._ActVersionsCreatedBy;
+			}
+			set
+			{
+				this._ActVersionsCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ActVersion1", Storage="_ActVersionsObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<ActVersion> ActVersionsObsoletedBy
+		{
+			get
+			{
+				return this._ActVersionsObsoletedBy;
+			}
+			set
+			{
+				this._ActVersionsObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_AssigningAuthority", Storage="_AssigningAuthoritiesCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<AssigningAuthority> AssigningAuthoritiesCreatedBy
+		{
+			get
+			{
+				return this._AssigningAuthoritiesCreatedBy;
+			}
+			set
+			{
+				this._AssigningAuthoritiesCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_AssigningAuthority1", Storage="_AssigningAuthoritiesObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<AssigningAuthority> AssigningAuthoritiesObsoletedBy
+		{
+			get
+			{
+				return this._AssigningAuthoritiesObsoletedBy;
+			}
+			set
+			{
+				this._AssigningAuthoritiesObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_CodeSystem", Storage="_CodeSystemsCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<CodeSystem> CodeSystemsCreatedBy
+		{
+			get
+			{
+				return this._CodeSystemsCreatedBy;
+			}
+			set
+			{
+				this._CodeSystemsCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_CodeSystem1", Storage="_CodeSystemsObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<CodeSystem> CodeSystemsObsoletedBy
+		{
+			get
+			{
+				return this._CodeSystemsObsoletedBy;
+			}
+			set
+			{
+				this._CodeSystemsObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptSet", Storage="_ConceptSetsCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<ConceptSet> ConceptSetsCreatedBy
+		{
+			get
+			{
+				return this._ConceptSetsCreatedBy;
+			}
+			set
+			{
+				this._ConceptSetsCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptSet1", Storage="_ConceptSetsObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<ConceptSet> ConceptSetsObsoletedBy
+		{
+			get
+			{
+				return this._ConceptSetsObsoletedBy;
+			}
+			set
+			{
+				this._ConceptSetsObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptVersion", Storage="_ConceptVersionsCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<ConceptVersion> ConceptVersionsCreatedBy
+		{
+			get
+			{
+				return this._ConceptVersionsCreatedBy;
+			}
+			set
+			{
+				this._ConceptVersionsCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptVersion1", Storage="_ConceptVersionsObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<ConceptVersion> ConceptVersionsObsoletedBy
+		{
+			get
+			{
+				return this._ConceptVersionsObsoletedBy;
+			}
+			set
+			{
+				this._ConceptVersionsObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_EntityTag", Storage="_EntityTagsCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<EntityTag> EntityTagsCreatedBy
+		{
+			get
+			{
+				return this._EntityTagsCreatedBy;
+			}
+			set
+			{
+				this._EntityTagsCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_EntityTag1", Storage="_EntityTagsObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<EntityTag> EntityTagsObsoletedBy
+		{
+			get
+			{
+				return this._EntityTagsObsoletedBy;
+			}
+			set
+			{
+				this._EntityTagsObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_EntityVersion", Storage="_EntityVersionsCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<EntityVersion> EntityVersionsCreatedBy
+		{
+			get
+			{
+				return this._EntityVersionsCreatedBy;
+			}
+			set
+			{
+				this._EntityVersionsCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_EntityVersion1", Storage="_EntityVersionsObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<EntityVersion> EntityVersionsObsoletedBy
+		{
+			get
+			{
+				return this._EntityVersionsObsoletedBy;
+			}
+			set
+			{
+				this._EntityVersionsObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ExtensionType", Storage="_ExtensionTypesEnabledBy", ThisKey="UserId", OtherKey="EnabledBy")]
+		public EntitySet<ExtensionType> ExtensionTypesEnabledBy
+		{
+			get
+			{
+				return this._ExtensionTypesEnabledBy;
+			}
+			set
+			{
+				this._ExtensionTypesEnabledBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ExtensionType1", Storage="_ExtensionTypesObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<ExtensionType> ExtensionTypesObsoletedBy
+		{
+			get
+			{
+				return this._ExtensionTypesObsoletedBy;
+			}
+			set
+			{
+				this._ExtensionTypesObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ExtensionType2", Storage="_ExtensionTypesUpdatedBy", ThisKey="UserId", OtherKey="UpdatedBy")]
+		public EntitySet<ExtensionType> ExtensionTypesUpdatedBy
+		{
+			get
+			{
+				return this._ExtensionTypesUpdatedBy;
+			}
+			set
+			{
+				this._ExtensionTypesUpdatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_Protocol", Storage="_ProtocolsCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<Protocol> ProtocolsCreatedBy
+		{
+			get
+			{
+				return this._ProtocolsCreatedBy;
+			}
+			set
+			{
+				this._ProtocolsCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_Protocol1", Storage="_ProtocolsObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<Protocol> ProtocolsObsoletedBy
+		{
+			get
+			{
+				return this._ProtocolsObsoletedBy;
+			}
+			set
+			{
+				this._ProtocolsObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ProtocolHandler", Storage="_ProtocolHandlersCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<ProtocolHandler> ProtocolHandlersCreatedBy
+		{
+			get
+			{
+				return this._ProtocolHandlersCreatedBy;
+			}
+			set
+			{
+				this._ProtocolHandlersCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ProtocolHandler1", Storage="_ProtocolHandlersObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<ProtocolHandler> ProtocolHandlersObsoletedBy
+		{
+			get
+			{
+				return this._ProtocolHandlersObsoletedBy;
+			}
+			set
+			{
+				this._ProtocolHandlersObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ReferenceTermDisplayName", Storage="_ReferenceTermDisplayNamesCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<ReferenceTermDisplayName> ReferenceTermDisplayNamesCreatedBy
+		{
+			get
+			{
+				return this._ReferenceTermDisplayNamesCreatedBy;
+			}
+			set
+			{
+				this._ReferenceTermDisplayNamesCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ReferenceTermDisplayName1", Storage="_ReferenceTermDisplayNamesObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<ReferenceTermDisplayName> ReferenceTermDisplayNamesObsoletedBy
+		{
+			get
+			{
+				return this._ReferenceTermDisplayNamesObsoletedBy;
+			}
+			set
+			{
+				this._ReferenceTermDisplayNamesObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityApplication", Storage="_SecurityApplicationsCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<SecurityApplication> SecurityApplicationsCreatedBy
+		{
+			get
+			{
+				return this._SecurityApplicationsCreatedBy;
+			}
+			set
+			{
+				this._SecurityApplicationsCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityApplication1", Storage="_SecurityApplicationsObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<SecurityApplication> SecurityApplicationsObsoletedBy
+		{
+			get
+			{
+				return this._SecurityApplicationsObsoletedBy;
+			}
+			set
+			{
+				this._SecurityApplicationsObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityDevice", Storage="_SecurityDevicesObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<SecurityDevice> SecurityDevicesObsoletedBy
+		{
+			get
+			{
+				return this._SecurityDevicesObsoletedBy;
+			}
+			set
+			{
+				this._SecurityDevicesObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityDevice1", Storage="_SecurityDevicesCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<SecurityDevice> SecurityDevicesCreatedBy
+		{
+			get
+			{
+				return this._SecurityDevicesCreatedBy;
+			}
+			set
+			{
+				this._SecurityDevicesCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityRole", Storage="_SecurityRolesCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<SecurityRole> SecurityRolesCreatedBy
+		{
+			get
+			{
+				return this._SecurityRolesCreatedBy;
+			}
+			set
+			{
+				this._SecurityRolesCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityRole1", Storage="_SecurityRolesObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<SecurityRole> SecurityRolesObsoletedBy
+		{
+			get
+			{
+				return this._SecurityRolesObsoletedBy;
+			}
+			set
+			{
+				this._SecurityRolesObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityUser", Storage="_SecurityUsersCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<SecurityUser> SecurityUsersCreatedBy
+		{
+			get
+			{
+				return this._SecurityUsersCreatedBy;
+			}
+			set
+			{
+				this._SecurityUsersCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityUser1", Storage="_SecurityUsersObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<SecurityUser> SecurityUsersObsoletedBy
+		{
+			get
+			{
+				return this._SecurityUsersObsoletedBy;
+			}
+			set
+			{
+				this._SecurityUsersObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityUser2", Storage="_SecurityUsersUpdatedBy", ThisKey="UserId", OtherKey="UpdatedBy")]
+		public EntitySet<SecurityUser> SecurityUsersUpdatedBy
+		{
+			get
+			{
+				return this._SecurityUsersUpdatedBy;
+			}
+			set
+			{
+				this._SecurityUsersUpdatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityUserClaim", Storage="_SecurityUserClaims", ThisKey="UserId", OtherKey="UserId")]
+		public EntitySet<SecurityUserClaim> SecurityUserClaims
+		{
+			get
+			{
+				return this._SecurityUserClaims;
+			}
+			set
+			{
+				this._SecurityUserClaims.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityUserLogin", Storage="_SecurityUserLogins", ThisKey="UserId", OtherKey="UserId")]
+		public EntitySet<SecurityUserLogin> SecurityUserLogins
+		{
+			get
+			{
+				return this._SecurityUserLogins;
+			}
+			set
+			{
+				this._SecurityUserLogins.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityUserRole", Storage="_SecurityUserRoles", ThisKey="UserId", OtherKey="UserId")]
+		public EntitySet<SecurityUserRole> SecurityUserRoles
+		{
+			get
+			{
+				return this._SecurityUserRoles;
+			}
+			set
+			{
+				this._SecurityUserRoles.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityUser", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
 		public SecurityUser CreatedByEntity
 		{
@@ -16100,10 +23076,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._CreatedByEntity.Entity != value))
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.SecurityUsersCreatedBy.Remove(this);
+					}
 					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityUsersCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
 			}
@@ -16118,10 +23110,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ObsoletedByEntity.Entity != value))
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.SecurityUsersObsoletedBy.Remove(this);
+					}
 					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityUsersObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("ObsoletedByEntity");
 				}
 			}
@@ -16136,10 +23144,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._UpdatedByEntity.Entity != value))
+				SecurityUser previousValue = this._UpdatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._UpdatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._UpdatedByEntity.Entity = null;
+						previousValue.SecurityUsersUpdatedBy.Remove(this);
+					}
 					this._UpdatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityUsersUpdatedBy.Add(this);
+						this._UpdatedBy = value.UserId;
+					}
+					else
+					{
+						this._UpdatedBy = default(Nullable<System.Guid>);
+					}
 					this.SendPropertyChanged("UpdatedByEntity");
 				}
 			}
@@ -16163,6 +23187,486 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_UserEntitiesCreatedBy(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_UserEntitiesCreatedBy(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_UserEntitiesObsoletedBy(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_UserEntitiesObsoletedBy(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_UserEntities(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityUser = this;
+		}
+		
+		private void detach_UserEntities(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityUser = null;
+		}
+		
+		private void attach_ActTagsCreatedBy(ActTag entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_ActTagsCreatedBy(ActTag entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_ActTagsObsoletedBy(ActTag entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_ActTagsObsoletedBy(ActTag entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_ActVersionsCreatedBy(ActVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_ActVersionsCreatedBy(ActVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_ActVersionsObsoletedBy(ActVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_ActVersionsObsoletedBy(ActVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_AssigningAuthoritiesCreatedBy(AssigningAuthority entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_AssigningAuthoritiesCreatedBy(AssigningAuthority entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_AssigningAuthoritiesObsoletedBy(AssigningAuthority entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_AssigningAuthoritiesObsoletedBy(AssigningAuthority entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_CodeSystemsCreatedBy(CodeSystem entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_CodeSystemsCreatedBy(CodeSystem entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_CodeSystemsObsoletedBy(CodeSystem entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_CodeSystemsObsoletedBy(CodeSystem entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_ConceptSetsCreatedBy(ConceptSet entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_ConceptSetsCreatedBy(ConceptSet entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_ConceptSetsObsoletedBy(ConceptSet entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_ConceptSetsObsoletedBy(ConceptSet entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_ConceptVersionsCreatedBy(ConceptVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_ConceptVersionsCreatedBy(ConceptVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_ConceptVersionsObsoletedBy(ConceptVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_ConceptVersionsObsoletedBy(ConceptVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_EntityTagsCreatedBy(EntityTag entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_EntityTagsCreatedBy(EntityTag entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_EntityTagsObsoletedBy(EntityTag entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_EntityTagsObsoletedBy(EntityTag entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_EntityVersionsCreatedBy(EntityVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_EntityVersionsCreatedBy(EntityVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_EntityVersionsObsoletedBy(EntityVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_EntityVersionsObsoletedBy(EntityVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_ExtensionTypesEnabledBy(ExtensionType entity)
+		{
+			this.SendPropertyChanging();
+			entity.EnabledByEntity = this;
+		}
+		
+		private void detach_ExtensionTypesEnabledBy(ExtensionType entity)
+		{
+			this.SendPropertyChanging();
+			entity.EnabledByEntity = null;
+		}
+		
+		private void attach_ExtensionTypesObsoletedBy(ExtensionType entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_ExtensionTypesObsoletedBy(ExtensionType entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_ExtensionTypesUpdatedBy(ExtensionType entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = this;
+		}
+		
+		private void detach_ExtensionTypesUpdatedBy(ExtensionType entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = null;
+		}
+		
+		private void attach_ProtocolsCreatedBy(Protocol entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_ProtocolsCreatedBy(Protocol entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_ProtocolsObsoletedBy(Protocol entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_ProtocolsObsoletedBy(Protocol entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_ProtocolHandlersCreatedBy(ProtocolHandler entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_ProtocolHandlersCreatedBy(ProtocolHandler entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_ProtocolHandlersObsoletedBy(ProtocolHandler entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_ProtocolHandlersObsoletedBy(ProtocolHandler entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_ReferenceTermDisplayNamesCreatedBy(ReferenceTermDisplayName entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_ReferenceTermDisplayNamesCreatedBy(ReferenceTermDisplayName entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_ReferenceTermDisplayNamesObsoletedBy(ReferenceTermDisplayName entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_ReferenceTermDisplayNamesObsoletedBy(ReferenceTermDisplayName entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_SecurityApplicationsCreatedBy(SecurityApplication entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_SecurityApplicationsCreatedBy(SecurityApplication entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_SecurityApplicationsObsoletedBy(SecurityApplication entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_SecurityApplicationsObsoletedBy(SecurityApplication entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_SecurityDevicesObsoletedBy(SecurityDevice entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_SecurityDevicesObsoletedBy(SecurityDevice entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_SecurityDevicesCreatedBy(SecurityDevice entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_SecurityDevicesCreatedBy(SecurityDevice entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_SecurityRolesCreatedBy(SecurityRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_SecurityRolesCreatedBy(SecurityRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_SecurityRolesObsoletedBy(SecurityRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_SecurityRolesObsoletedBy(SecurityRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_SecurityUsersCreatedBy(SecurityUser entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_SecurityUsersCreatedBy(SecurityUser entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_SecurityUsersObsoletedBy(SecurityUser entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_SecurityUsersObsoletedBy(SecurityUser entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_SecurityUsersUpdatedBy(SecurityUser entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = this;
+		}
+		
+		private void detach_SecurityUsersUpdatedBy(SecurityUser entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = null;
+		}
+		
+		private void attach_SecurityUserClaims(SecurityUserClaim entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityUser = this;
+		}
+		
+		private void detach_SecurityUserClaims(SecurityUserClaim entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityUser = null;
+		}
+		
+		private void attach_SecurityUserLogins(SecurityUserLogin entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityUser = this;
+		}
+		
+		private void detach_SecurityUserLogins(SecurityUserLogin entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityUser = null;
+		}
+		
+		private void attach_SecurityUserRoles(SecurityUserRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityUser = this;
+		}
+		
+		private void detach_SecurityUserRoles(SecurityUserRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityUser = null;
 		}
 	}
 	
@@ -16295,10 +23799,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._SecurityUser.Entity != value))
+				SecurityUser previousValue = this._SecurityUser.Entity;
+				if (((previousValue != value) 
+							|| (this._SecurityUser.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SecurityUser.Entity = null;
+						previousValue.SecurityUserClaims.Remove(this);
+					}
 					this._SecurityUser.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityUserClaims.Add(this);
+						this._UserId = value.UserId;
+					}
+					else
+					{
+						this._UserId = default(System.Guid);
+					}
 					this.SendPropertyChanged("SecurityUser");
 				}
 			}
@@ -16430,10 +23950,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._SecurityUser.Entity != value))
+				SecurityUser previousValue = this._SecurityUser.Entity;
+				if (((previousValue != value) 
+							|| (this._SecurityUser.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SecurityUser.Entity = null;
+						previousValue.SecurityUserLogins.Remove(this);
+					}
 					this._SecurityUser.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityUserLogins.Add(this);
+						this._UserId = value.UserId;
+					}
+					else
+					{
+						this._UserId = default(System.Guid);
+					}
 					this.SendPropertyChanged("SecurityUser");
 				}
 			}
@@ -16548,10 +24084,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._SecurityRole.Entity != value))
+				SecurityRole previousValue = this._SecurityRole.Entity;
+				if (((previousValue != value) 
+							|| (this._SecurityRole.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SecurityRole.Entity = null;
+						previousValue.SecurityUserRoles.Remove(this);
+					}
 					this._SecurityRole.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityUserRoles.Add(this);
+						this._RoleId = value.RoleId;
+					}
+					else
+					{
+						this._RoleId = default(System.Guid);
+					}
 					this.SendPropertyChanged("SecurityRole");
 				}
 			}
@@ -16566,10 +24118,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._SecurityUser.Entity != value))
+				SecurityUser previousValue = this._SecurityUser.Entity;
+				if (((previousValue != value) 
+							|| (this._SecurityUser.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SecurityUser.Entity = null;
+						previousValue.SecurityUserRoles.Remove(this);
+					}
 					this._SecurityUser.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityUserRoles.Add(this);
+						this._UserId = value.UserId;
+					}
+					else
+					{
+						this._UserId = default(System.Guid);
+					}
 					this.SendPropertyChanged("SecurityUser");
 				}
 			}
@@ -16763,10 +24331,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._ActVersion.Entity != value))
+				ActVersion previousValue = this._ActVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ActVersion.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ActVersion.Entity = null;
+						previousValue.SubstanceAdministration = null;
+					}
 					this._ActVersion.Entity = value;
+					if ((value != null))
+					{
+						value.SubstanceAdministration = this;
+						this._ActVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._ActVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("ActVersion");
 				}
 			}
@@ -16781,10 +24365,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._DoseUnitConcept.Entity != value))
+				Concept previousValue = this._DoseUnitConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._DoseUnitConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._DoseUnitConcept.Entity = null;
+						previousValue.SubstanceAdministrationsDoseUnitConceptId.Remove(this);
+					}
 					this._DoseUnitConcept.Entity = value;
+					if ((value != null))
+					{
+						value.SubstanceAdministrationsDoseUnitConceptId.Add(this);
+						this._DoseUnitConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._DoseUnitConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("DoseUnitConcept");
 				}
 			}
@@ -16799,10 +24399,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._RouteConcept.Entity != value))
+				Concept previousValue = this._RouteConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._RouteConcept.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._RouteConcept.Entity = null;
+						previousValue.SubstanceAdministrationsRouteConceptId.Remove(this);
+					}
 					this._RouteConcept.Entity = value;
+					if ((value != null))
+					{
+						value.SubstanceAdministrationsRouteConceptId.Add(this);
+						this._RouteConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._RouteConceptId = default(System.Guid);
+					}
 					this.SendPropertyChanged("RouteConcept");
 				}
 			}
@@ -16910,10 +24526,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 			set
 			{
-				if ((this._Observation.Entity != value))
+				Observation previousValue = this._Observation.Entity;
+				if (((previousValue != value) 
+							|| (this._Observation.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Observation.Entity = null;
+						previousValue.TextObservation = null;
+					}
 					this._Observation.Entity = value;
+					if ((value != null))
+					{
+						value.TextObservation = this;
+						this._ActVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._ActVersionId = default(System.Guid);
+					}
 					this.SendPropertyChanged("Observation");
 				}
 			}

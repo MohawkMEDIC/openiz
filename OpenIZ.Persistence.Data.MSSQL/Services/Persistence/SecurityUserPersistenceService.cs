@@ -9,77 +9,17 @@ using MARC.HI.EHRS.SVC.Core.Data;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using System.Linq.Expressions;
 using OpenIZ.Persistence.Data.MSSQL.Exceptions;
-using OpenIZ.Persistence.Data.MSSQL.Linq;
 using System.Reflection;
 using OpenIZ.Core.Model;
 
-namespace OpenIZ.Persistence.Data.MSSQL.Services.Security
+namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
     /// <summary>
     /// A persistence service which can persist and query security user objects
     /// </summary>
-    public class SecurityUserPersistenceService : BaseDataPersistenceService<Core.Model.Security.SecurityUser>, IModelConverter
+    public class SecurityUserPersistenceService : BaseDataPersistenceService<Core.Model.Security.SecurityUser>
     {
 
-        /// <summary>
-        /// Gets the domain type which this can convert
-        /// </summary>
-        public Type DomainType
-        {
-            get
-            {
-                return typeof(Data.SecurityUser);
-            }
-        }
-
-        /// <summary>
-        /// Gets the model type of the converter
-        /// </summary>
-        public Type ModelType
-        {
-            get
-            {
-                return typeof(Core.Model.Security.SecurityUser);
-            }
-        }
-
-        /// <summary>
-        /// Convert the 
-        /// </summary>
-        /// <param name="domainModel"></param>
-        /// <returns></returns>
-        public BaseData MapInstance(object domainModel)
-        {
-            if (domainModel is Data.SecurityUser)
-                return this.Convert(domainModel as Data.SecurityUser);
-            return null;
-        }
-
-        /// <summary>
-        /// Convert model instance to this instance
-        /// </summary>
-        public object MapInstance(BaseData modelInstance)
-        {
-            if (modelInstance is Core.Model.Security.SecurityUser)
-                return this.Convert(modelInstance as Core.Model.Security.SecurityUser);
-            return null;
-        }
-
-        /// <summary>
-        /// Map members
-        /// </summary>
-        /// <param name="member"></param>
-        /// <returns></returns>
-        public MemberInfo MapMember(MemberInfo member)
-        {
-            switch(member.Name)
-            {
-                case "Key":
-                    return typeof(Data.SecurityUser).GetProperty("UserId");
-                default:
-                    return member;
-            }
-        }
 
         /// <summary>
         /// Perform a get operation
@@ -108,7 +48,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Security
         /// <returns>The security user which was inserted</returns>
         protected override Core.Model.Security.SecurityUser DoInsert(Core.Model.Security.SecurityUser storageData, AuthorizationContext authContext, ModelDataContext dataContext)
         {
-            if (storageData.Id != null) // Trying to insert an already inserted user?
+            if (storageData.Key != default(Guid)) // Trying to insert an already inserted user?
                 throw new SqlFormalConstraintException("Insert must be for an unidentified object");
 
             var dataUser = this.Convert<Data.SecurityUser>(storageData);
@@ -128,7 +68,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Security
         /// <returns>The obsoleted user</returns>
         protected override Core.Model.Security.SecurityUser DoObsolete(Core.Model.Security.SecurityUser storageData, AuthorizationContext authContext, ModelDataContext dataContext)
         {
-            if (storageData.Id == null)
+            if (storageData.Key == default(Guid))
                 throw new SqlFormalConstraintException("Obsolete must be for an identified object");
 
             var dataUser = this.Convert<Data.SecurityUser>(storageData);
@@ -143,8 +83,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Security
         /// </summary>
         protected override IQueryable<Core.Model.Security.SecurityUser> DoQuery(Expression<Func<Core.Model.Security.SecurityUser, bool>> query, AuthorizationContext authContext, ModelDataContext dataContext)
         {
-            var converter = new ModelConversionVisitor();
-            Expression queryExpression = converter.Convert<Core.Model.Security.SecurityUser, Data.SecurityUser>(query);
+            Expression queryExpression = s_mapper.MapModelExpression<Core.Model.Security.SecurityUser, Data.SecurityUser>(query);
             return null;
         }
 

@@ -46,7 +46,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Obsoletion time
         /// </summary>
-        public DateTimeOffset ObsoletionTime { get; set; }
+        public DateTimeOffset? ObsoletionTime { get; set; }
 
         /// <summary>
         /// Gets or sets the user that created this base data

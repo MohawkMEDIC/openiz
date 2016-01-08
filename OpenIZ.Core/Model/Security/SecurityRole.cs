@@ -17,5 +17,9 @@ namespace OpenIZ.Core.Model.Security
         /// </summary>
         public String Name { get; set; }
 
+        /// <summary>
+        /// Gets or sets the security users in the role
+        /// </summary>
+        public List<SecurityUser> Users { get; set; }
     }
 }

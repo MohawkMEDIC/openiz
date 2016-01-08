@@ -46,6 +46,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\BaseData.cs" />
+    <Compile Include="Model\Map\CollapseKey.cs" />
+    <Compile Include="Model\Map\ClassMap.cs" />
+    <Compile Include="Model\Map\ModelExpressionVisitor.cs" />
+    <Compile Include="Model\Map\ModelMap.cs" />
+    <Compile Include="Model\Map\ModelMapper.cs" />
+    <Compile Include="Model\Map\PropertyMap.cs" />
     <Compile Include="Model\Security\SecurityEntity.cs" />
     <Compile Include="Model\Security\SecurityPolicy.cs" />
     <Compile Include="Model\Security\SecurityRole.cs" />

@@ -40,6 +40,9 @@
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -56,8 +59,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Linq\ModelConversionVisitorTest.cs" />
+    <Compile Include="DataTest.cs" />
+    <Compile Include="Map\ModelMapTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\SecurityUserPersistenceServiceTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Core\OpenIZ.Core.csproj">
@@ -69,6 +74,15 @@
       <Name>OpenIZ.Persistence.Data.MSSQL</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="OpenIZ_Test.mdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

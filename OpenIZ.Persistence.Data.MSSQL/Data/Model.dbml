@@ -5,6 +5,11 @@
       <Column Name="ActId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="ClassConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="MoodConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Association Name="Act_ActProtocol" Member="ActProtocols" ThisKey="ActId" OtherKey="ActId" Type="ActProtocol" />
+      <Association Name="Act_ActRelationship" Member="ActRelationshipsSourceActId" ThisKey="ActId" OtherKey="SourceActId" Type="ActRelationship" />
+      <Association Name="Act_ActRelationship1" Member="ActRelationshipsTargetActId" ThisKey="ActId" OtherKey="TargetActId" Type="ActRelationship" />
+      <Association Name="Act_ActTag" Member="ActTags" ThisKey="ActId" OtherKey="ActId" Type="ActTag" />
+      <Association Name="Act_ActVersion" Member="ActVersions" ThisKey="ActId" OtherKey="ActId" Type="ActVersion" />
       <Association Name="Concept_Act" Member="ClassConcept" ThisKey="ClassConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
       <Association Name="Concept_Act1" Member="MoodConcept" ThisKey="MoodConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
     </Type>
@@ -21,7 +26,7 @@
       <Association Name="Entity_UserEntity" Member="Entity" ThisKey="EntityId" OtherKey="EntityId" Type="Entity" IsForeignKey="true" />
       <Association Name="SecurityUser_UserEntity" Member="CreatedByEntity" ThisKey="CreatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
       <Association Name="SecurityUser_UserEntity1" Member="ObsoletedByEntity" ThisKey="ObsoletedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
-      <Association Name="SecurityUser_UserEntity2" Member="SecurityUser2" ThisKey="UserId" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
+      <Association Name="SecurityUser_UserEntity2" Member="SecurityUser" ThisKey="UserId" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.ActExtension" Member="ActExtensions">
@@ -129,6 +134,20 @@
       <Column Name="StatusConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="ActStartTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="ActStopTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
+      <Association Name="ActVersion_ActExtension" Member="ActExtensionsEffectiveVersionId" ThisKey="ActVersionId" OtherKey="EffectiveVersionId" Type="ActExtension" />
+      <Association Name="ActVersion_ActExtension1" Member="ActExtensionsObsoleteVersionId" ThisKey="ActVersionId" OtherKey="ObsoleteVersionId" Type="ActExtension" />
+      <Association Name="ActVersion_ActIdentifier" Member="ActIdentifiersEffectiveVersionId" ThisKey="ActVersionId" OtherKey="EffectiveVersionId" Type="ActIdentifier" />
+      <Association Name="ActVersion_ActIdentifier1" Member="ActIdentifiersObsoleteVersionId" ThisKey="ActVersionId" OtherKey="ObsoleteVersionId" Type="ActIdentifier" />
+      <Association Name="ActVersion_ActNote" Member="ActNotesEffectiveVersionId" ThisKey="ActVersionId" OtherKey="EffectiveVersionId" Type="ActNote" />
+      <Association Name="ActVersion_ActNote1" Member="ActNotesObsoleteVersionId" ThisKey="ActVersionId" OtherKey="ObsoleteVersionId" Type="ActNote" />
+      <Association Name="ActVersion_ActPolicy" Member="ActPoliciesEffectiveVersionId" ThisKey="ActVersionId" OtherKey="EffectiveVersionId" Type="ActPolicy" />
+      <Association Name="ActVersion_ActPolicy1" Member="ActPoliciesObsoleteVersionId" ThisKey="ActVersionId" OtherKey="ObsoleteVersionId" Type="ActPolicy" />
+      <Association Name="ActVersion_ActRelationship" Member="ActRelationshipsEffectiveVersionId" ThisKey="ActVersionId" OtherKey="EffectiveVersionId" Type="ActRelationship" />
+      <Association Name="ActVersion_ActRelationship1" Member="ActRelationshipsObsoleteVersionId" ThisKey="ActVersionId" OtherKey="ObsoleteVersionId" Type="ActRelationship" />
+      <Association Name="ActVersion_ActVersion" Member="ActVersionsReplacesVersionId" ThisKey="ActVersionId" OtherKey="ReplacesVersionId" Type="ActVersion" />
+      <Association Name="ActVersion_Observation" Member="Observation" ThisKey="ActVersionId" OtherKey="ActVersionId" Type="Observation" Cardinality="One" />
+      <Association Name="ActVersion_PatientEncounter" Member="PatientEncounter" ThisKey="ActVersionId" OtherKey="ActVersionId" Type="PatientEncounter" Cardinality="One" />
+      <Association Name="ActVersion_SubstanceAdministration" Member="SubstanceAdministration" ThisKey="ActVersionId" OtherKey="ActVersionId" Type="SubstanceAdministration" Cardinality="One" />
       <Association Name="Act_ActVersion" Member="Act" ThisKey="ActId" OtherKey="ActId" Type="Act" IsForeignKey="true" />
       <Association Name="ActVersion_ActVersion" Member="ReplacesVersion" ThisKey="ReplacesVersionId" OtherKey="ActVersionId" Type="ActVersion" IsForeignKey="true" />
       <Association Name="Concept_ActVersion" Member="StatusConcept" ThisKey="StatusConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
@@ -158,6 +177,8 @@
       <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="ObsoleteTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Association Name="AssigningAuthority_ActIdentifier" Member="ActIdentifiers" ThisKey="AssigningAuthorityId" OtherKey="AssigningAuthorityId" Type="ActIdentifier" />
+      <Association Name="AssigningAuthority_EntityIdentifier" Member="EntityIdentifiers" ThisKey="AssigningAuthorityId" OtherKey="AssigningAuthorityId" Type="EntityIdentifier" />
       <Association Name="SecurityUser_AssigningAuthority" Member="CreatedByEntity" ThisKey="CreatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
       <Association Name="SecurityUser_AssigningAuthority1" Member="ObsoletedByEntity" ThisKey="ObsoletedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
     </Type>
@@ -183,6 +204,7 @@
       <Column Name="ObsoletionReason" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
       <Column Name="Url" Type="System.String" DbType="NVarChar(256) NOT NULL" CanBeNull="false" />
       <Column Name="VersionText" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
+      <Association Name="CodeSystem_ReferenceTerm" Member="ReferenceTerms" ThisKey="CodeSystemId" OtherKey="CodeSystemId" Type="ReferenceTerm" />
       <Association Name="SecurityUser_CodeSystem" Member="CreatedByEntity" ThisKey="CreatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
       <Association Name="SecurityUser_CodeSystem1" Member="ObsoletedByEntity" ThisKey="ObsoletedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
     </Type>
@@ -191,6 +213,42 @@
     <Type Name="Concept">
       <Column Name="ConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="IsSystemConcept" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="Concept_Act" Member="ActsClassConceptId" ThisKey="ConceptId" OtherKey="ClassConceptId" Type="Act" />
+      <Association Name="Concept_Act1" Member="ActsMoodConceptId" ThisKey="ConceptId" OtherKey="MoodConceptId" Type="Act" />
+      <Association Name="Concept_ActRelationship" Member="ActRelationshipsRelationshipTypeConceptId" ThisKey="ConceptId" OtherKey="RelationshipTypeConceptId" Type="ActRelationship" />
+      <Association Name="Concept_ActVersion" Member="ActVersionsStatusConceptId" ThisKey="ConceptId" OtherKey="StatusConceptId" Type="ActVersion" />
+      <Association Name="Concept_ActVersion1" Member="ActVersionsTypeConceptId" ThisKey="ConceptId" OtherKey="TypeConceptId" Type="ActVersion" />
+      <Association Name="Concept_CodedObservation" Member="CodedObservationsValueConceptId" ThisKey="ConceptId" OtherKey="ValueConceptId" Type="CodedObservation" />
+      <Association Name="Concept_ConceptRelationship" Member="ConceptRelationshipsSourceConceptId" ThisKey="ConceptId" OtherKey="SourceConceptId" Type="ConceptRelationship" />
+      <Association Name="Concept_ConceptRelationship1" Member="ConceptRelationshipsTargetConceptId" ThisKey="ConceptId" OtherKey="TargetConceptId" Type="ConceptRelationship" />
+      <Association Name="Concept_ConceptSetMember" Member="ConceptSetMembers" ThisKey="ConceptId" OtherKey="ConceptId" Type="ConceptSetMember" />
+      <Association Name="Concept_ConceptVersion" Member="ConceptVersions" ThisKey="ConceptId" OtherKey="ConceptId" Type="ConceptVersion" />
+      <Association Name="Concept_Entity" Member="EntitiesClassConceptId" ThisKey="ConceptId" OtherKey="ClassConceptId" Type="Entity" />
+      <Association Name="Concept_Entity1" Member="EntitiesDeterminerConceptId" ThisKey="ConceptId" OtherKey="DeterminerConceptId" Type="Entity" />
+      <Association Name="Concept_EntityAddress" Member="EntityAddressesAddressUseConceptId" ThisKey="ConceptId" OtherKey="AddressUseConceptId" Type="EntityAddress" />
+      <Association Name="Concept_EntityAddressComponent" Member="EntityAddressComponentsComponentTypeConceptId" ThisKey="ConceptId" OtherKey="ComponentTypeConceptId" Type="EntityAddressComponent" />
+      <Association Name="Concept_EntityAssociation" Member="EntityAssociationsAssociationTypeConceptId" ThisKey="ConceptId" OtherKey="AssociationTypeConceptId" Type="EntityAssociation" />
+      <Association Name="Concept_EntityName" Member="EntityNamesNameUseConceptId" ThisKey="ConceptId" OtherKey="NameUseConceptId" Type="EntityName" />
+      <Association Name="Concept_EntityNameComponent" Member="EntityNameComponentsComponentTypeConceptId" ThisKey="ConceptId" OtherKey="ComponentTypeConceptId" Type="EntityNameComponent" />
+      <Association Name="Concept_EntityNameUse" Member="EntityNameUsesEntityClassScopeConceptId" ThisKey="ConceptId" OtherKey="EntityClassScopeConceptId" Type="EntityNameUse" />
+      <Association Name="Concept_EntityNameUse1" Member="EntityNameUsesNameUseConceptId" ThisKey="ConceptId" OtherKey="NameUseConceptId" Type="EntityNameUse" />
+      <Association Name="Concept_EntityTelecomAddress" Member="EntityTelecomAddressesTelecomAddressTypeConceptId" ThisKey="ConceptId" OtherKey="TelecomAddressTypeConceptId" Type="EntityTelecomAddress" />
+      <Association Name="Concept_EntityTelecomAddress1" Member="EntityTelecomAddressesTelecomUseConceptId" ThisKey="ConceptId" OtherKey="TelecomUseConceptId" Type="EntityTelecomAddress" />
+      <Association Name="Concept_EntityVersion" Member="EntityVersionsStatusConceptId" ThisKey="ConceptId" OtherKey="StatusConceptId" Type="EntityVersion" />
+      <Association Name="Concept_EntityVersion1" Member="EntityVersionsTypeConceptId" ThisKey="ConceptId" OtherKey="TypeConceptId" Type="EntityVersion" />
+      <Association Name="Concept_IdentifierType" Member="IdentifierTypesEntityClassScopeConceptId" ThisKey="ConceptId" OtherKey="EntityClassScopeConceptId" Type="IdentifierType" />
+      <Association Name="Concept_IdentifierType1" Member="IdentifierTypesIdentifierTypeConceptId" ThisKey="ConceptId" OtherKey="IdentifierTypeConceptId" Type="IdentifierType" />
+      <Association Name="Concept_Material" Member="MaterialsFormConceptId" ThisKey="ConceptId" OtherKey="FormConceptId" Type="Material" />
+      <Association Name="Concept_Material1" Member="MaterialsQuantityConceptId" ThisKey="ConceptId" OtherKey="QuantityConceptId" Type="Material" />
+      <Association Name="Concept_Observation" Member="ObservationsInterpretationConceptId" ThisKey="ConceptId" OtherKey="InterpretationConceptId" Type="Observation" />
+      <Association Name="Concept_Organization" Member="OrganizationsIndustryConceptId" ThisKey="ConceptId" OtherKey="IndustryConceptId" Type="Organization" />
+      <Association Name="Concept_Patient" Member="PatientsGenderConceptId" ThisKey="ConceptId" OtherKey="GenderConceptId" Type="Patient" />
+      <Association Name="Concept_PatientEncounter" Member="PatientEncountersDischargeDispositionConceptId" ThisKey="ConceptId" OtherKey="DischargeDispositionConceptId" Type="PatientEncounter" />
+      <Association Name="Concept_PlaceService" Member="PlaceServicesServiceConceptId" ThisKey="ConceptId" OtherKey="ServiceConceptId" Type="PlaceService" />
+      <Association Name="Concept_Provider" Member="ProvidersProviderSpecialtyConceptId" ThisKey="ConceptId" OtherKey="ProviderSpecialtyConceptId" Type="Provider" />
+      <Association Name="Concept_QuantityObservation" Member="QuantityObservationsUnitOfMeasureConceptId" ThisKey="ConceptId" OtherKey="UnitOfMeasureConceptId" Type="QuantityObservation" />
+      <Association Name="Concept_SubstanceAdministration" Member="SubstanceAdministrationsDoseUnitConceptId" ThisKey="ConceptId" OtherKey="DoseUnitConceptId" Type="SubstanceAdministration" />
+      <Association Name="Concept_SubstanceAdministration1" Member="SubstanceAdministrationsRouteConceptId" ThisKey="ConceptId" OtherKey="RouteConceptId" Type="SubstanceAdministration" />
     </Type>
   </Table>
   <Table Name="dbo.ConceptClass" Member="ConceptClasses">
@@ -198,6 +256,7 @@
       <Column Name="ConceptClassId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Name" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="Mnemonic" Type="System.String" DbType="NVarChar(16) NOT NULL" CanBeNull="false" />
+      <Association Name="ConceptClass_ConceptVersion" Member="ConceptVersions" ThisKey="ConceptClassId" OtherKey="ConceptClassId" Type="ConceptVersion" />
     </Type>
   </Table>
   <Table Name="dbo.ConceptName" Member="ConceptNames">
@@ -247,6 +306,8 @@
       <Column Name="ConceptRelationshipTypeId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Name" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="Mnemonic" Type="System.String" DbType="NVarChar(20) NOT NULL" CanBeNull="false" />
+      <Association Name="ConceptRelationshipType_ConceptReferenceTerm" Member="ConceptReferenceTerms" ThisKey="ConceptRelationshipTypeId" OtherKey="ConceptRelationshipTypeId" Type="ConceptReferenceTerm" />
+      <Association Name="ConceptRelationshipType_ConceptRelationship" Member="ConceptRelationships" ThisKey="ConceptRelationshipTypeId" OtherKey="ConceptRelationshipTypeId" Type="ConceptRelationship" />
     </Type>
   </Table>
   <Table Name="dbo.ConceptSet" Member="ConceptSets">
@@ -261,6 +322,7 @@
       <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="ObsoletionReason" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Association Name="ConceptSet_ConceptSetMember" Member="ConceptSetMembers" ThisKey="ConceptSetId" OtherKey="ConceptSetId" Type="ConceptSetMember" />
       <Association Name="SecurityUser_ConceptSet" Member="CreatedByEntity" ThisKey="CreatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
       <Association Name="SecurityUser_ConceptSet1" Member="ObsoletedByEntity" ThisKey="ObsoletedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
     </Type>
@@ -283,6 +345,12 @@
       <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="ReplacesVersionId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="ConceptClassId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Association Name="ConceptVersion_ConceptName" Member="ConceptNamesEffectiveVersionId" ThisKey="ConceptVersionId" OtherKey="EffectiveVersionId" Type="ConceptName" />
+      <Association Name="ConceptVersion_ConceptName1" Member="ConceptNamesObsoleteVersionId" ThisKey="ConceptVersionId" OtherKey="ObsoleteVersionId" Type="ConceptName" />
+      <Association Name="ConceptVersion_ConceptReferenceTerm" Member="ConceptReferenceTermsEffectiveVersionId" ThisKey="ConceptVersionId" OtherKey="EffectiveVersionId" Type="ConceptReferenceTerm" />
+      <Association Name="ConceptVersion_ConceptReferenceTerm1" Member="ConceptReferenceTermsObsoleteVersionId" ThisKey="ConceptVersionId" OtherKey="ObsoleteVersionId" Type="ConceptReferenceTerm" />
+      <Association Name="ConceptVersion_ConceptRelationship" Member="ConceptRelationshipsEffectiveVersionId" ThisKey="ConceptVersionId" OtherKey="EffectiveVersionId" Type="ConceptRelationship" />
+      <Association Name="ConceptVersion_ConceptRelationship1" Member="ConceptRelationshipsObsoleteVersionId" ThisKey="ConceptVersionId" OtherKey="ObsoleteVersionId" Type="ConceptRelationship" />
       <Association Name="Concept_ConceptVersion" Member="Concept" ThisKey="ConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
       <Association Name="ConceptClass_ConceptVersion" Member="ConceptClass" ThisKey="ConceptClassId" OtherKey="ConceptClassId" Type="ConceptClass" IsForeignKey="true" />
       <Association Name="SecurityUser_ConceptVersion" Member="CreatedByEntity" ThisKey="CreatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
@@ -304,6 +372,13 @@
       <Column Name="EntityId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="ClassConceptId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="DeterminerConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Association Name="Entity_UserEntity" Member="UserEntities" ThisKey="EntityId" OtherKey="EntityId" Type="UserEntity" />
+      <Association Name="Entity_ActNote" Member="ActNotesAuthorEntityId" ThisKey="EntityId" OtherKey="AuthorEntityId" Type="ActNote" />
+      <Association Name="Entity_EntityAssociation" Member="EntityAssociationsSourceEntityId" ThisKey="EntityId" OtherKey="SourceEntityId" Type="EntityAssociation" />
+      <Association Name="Entity_EntityAssociation1" Member="EntityAssociationsTargetEntityId" ThisKey="EntityId" OtherKey="TargetEntityId" Type="EntityAssociation" />
+      <Association Name="Entity_EntityNote" Member="EntityNotesAuthorEntityId" ThisKey="EntityId" OtherKey="AuthorEntityId" Type="EntityNote" />
+      <Association Name="Entity_EntityTag" Member="EntityTags" ThisKey="EntityId" OtherKey="EntityId" Type="EntityTag" />
+      <Association Name="Entity_EntityVersion" Member="EntityVersions" ThisKey="EntityId" OtherKey="EntityId" Type="EntityVersion" />
       <Association Name="Concept_Entity" Member="ClassConcept" ThisKey="ClassConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
       <Association Name="Concept_Entity1" Member="DeterminerConcept" ThisKey="DeterminerConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
     </Type>
@@ -314,6 +389,7 @@
       <Column Name="EffectiveVersionId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="ObsoleteVersionId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="AddressUseConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Association Name="EntityAddress_EntityAddressComponent" Member="EntityAddressComponents" ThisKey="EntityAddressId" OtherKey="EntityAddressId" Type="EntityAddressComponent" />
       <Association Name="Concept_EntityAddress" Member="AddressUseConcept" ThisKey="AddressUseConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
       <Association Name="EntityVersion_EntityAddress" Member="EffectiveVersion" ThisKey="EffectiveVersionId" OtherKey="EntityVersionId" Type="EntityVersion" IsForeignKey="true" />
       <Association Name="EntityVersion_EntityAddress1" Member="ObsoleteVersion" ThisKey="ObsoleteVersionId" OtherKey="EntityVersionId" Type="EntityVersion" IsForeignKey="true" />
@@ -334,6 +410,7 @@
     <Type Name="EntityAddressComponentValue">
       <Column Name="ValueId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Value" Type="System.String" DbType="NVarChar(256) NOT NULL" CanBeNull="false" />
+      <Association Name="EntityAddressComponentValue_EntityAddressComponent" Member="EntityAddressComponents" ThisKey="ValueId" OtherKey="ValueId" Type="EntityAddressComponent" />
     </Type>
   </Table>
   <Table Name="dbo.EntityAssociation" Member="EntityAssociations">
@@ -344,6 +421,7 @@
       <Column Name="EffectiveVersionId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="ObsoleteVersionId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="AssociationTypeConceptId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Association Name="EntityAssociation_QuantifiedEntityAssociation" Member="QuantifiedEntityAssociation" ThisKey="EntityAssociationId" OtherKey="EntityAssociationId" Type="QuantifiedEntityAssociation" Cardinality="One" />
       <Association Name="Concept_EntityAssociation" Member="AssociationTypeConcept" ThisKey="AssociationTypeConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
       <Association Name="Entity_EntityAssociation" Member="SourceEntity" ThisKey="SourceEntityId" OtherKey="EntityId" Type="Entity" IsForeignKey="true" />
       <Association Name="Entity_EntityAssociation1" Member="TargetEntity" ThisKey="TargetEntityId" OtherKey="EntityId" Type="Entity" IsForeignKey="true" />
@@ -384,6 +462,7 @@
       <Column Name="EffectiveVersionId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="ObsoleteVersionId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="NameUseConceptId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Association Name="EntityName_EntityNameComponent" Member="EntityNameComponents" ThisKey="EntityNameId" OtherKey="EntityNameId" Type="EntityNameComponent" />
       <Association Name="Concept_EntityName" Member="NameUseConcept" ThisKey="NameUseConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
       <Association Name="EntityVersion_EntityName" Member="EffectiveVersion" ThisKey="EffectiveVersionId" OtherKey="EntityVersionId" Type="EntityVersion" IsForeignKey="true" />
       <Association Name="EntityVersion_EntityName1" Member="ObsoleteVersion" ThisKey="ObsoleteVersionId" OtherKey="EntityVersionId" Type="EntityVersion" IsForeignKey="true" />
@@ -461,6 +540,31 @@
       <Column Name="ObsoletionTimestamp" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="TypeConceptId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Association Name="EntityVersion_ApplicationEntity" Member="ApplicationEntity" ThisKey="EntityVersionId" OtherKey="EntityVersionId" Type="ApplicationEntity" Cardinality="One" />
+      <Association Name="EntityVersion_DeviceEntity" Member="DeviceEntity" ThisKey="EntityVersionId" OtherKey="EntityVersionId" Type="DeviceEntity" Cardinality="One" />
+      <Association Name="EntityVersion_EntityAddress" Member="EntityAddressesEffectiveVersionId" ThisKey="EntityVersionId" OtherKey="EffectiveVersionId" Type="EntityAddress" />
+      <Association Name="EntityVersion_EntityAddress1" Member="EntityAddressesObsoleteVersionId" ThisKey="EntityVersionId" OtherKey="ObsoleteVersionId" Type="EntityAddress" />
+      <Association Name="EntityVersion_EntityAssociation" Member="EntityAssociationsEffectiveVersionId" ThisKey="EntityVersionId" OtherKey="EffectiveVersionId" Type="EntityAssociation" />
+      <Association Name="EntityVersion_EntityAssociation1" Member="EntityAssociationsObsoleteVersionId" ThisKey="EntityVersionId" OtherKey="ObsoleteVersionId" Type="EntityAssociation" />
+      <Association Name="EntityVersion_EntityExtension" Member="EntityExtensionsEffectiveVersionId" ThisKey="EntityVersionId" OtherKey="EffectiveVersionId" Type="EntityExtension" />
+      <Association Name="EntityVersion_EntityExtension1" Member="EntityExtensionsObsoleteVersionId" ThisKey="EntityVersionId" OtherKey="ObsoleteVersionId" Type="EntityExtension" />
+      <Association Name="EntityVersion_EntityIdentifier" Member="EntityIdentifiersEffectiveVersionId" ThisKey="EntityVersionId" OtherKey="EffectiveVersionId" Type="EntityIdentifier" />
+      <Association Name="EntityVersion_EntityIdentifier1" Member="EntityIdentifiersObsoleteVersionId" ThisKey="EntityVersionId" OtherKey="ObsoleteVersionId" Type="EntityIdentifier" />
+      <Association Name="EntityVersion_EntityName" Member="EntityNamesEffectiveVersionId" ThisKey="EntityVersionId" OtherKey="EffectiveVersionId" Type="EntityName" />
+      <Association Name="EntityVersion_EntityName1" Member="EntityNamesObsoleteVersionId" ThisKey="EntityVersionId" OtherKey="ObsoleteVersionId" Type="EntityName" />
+      <Association Name="EntityVersion_EntityNote" Member="EntityNotesEffectiveVersionId" ThisKey="EntityVersionId" OtherKey="EffectiveVersionId" Type="EntityNote" />
+      <Association Name="EntityVersion_EntityNote1" Member="EntityNotesObsoleteVersionId" ThisKey="EntityVersionId" OtherKey="ObsoleteVersionId" Type="EntityNote" />
+      <Association Name="EntityVersion_EntityTelecomAddress" Member="EntityTelecomAddressesEffectiveVersionId" ThisKey="EntityVersionId" OtherKey="EffectiveVersionId" Type="EntityTelecomAddress" />
+      <Association Name="EntityVersion_EntityTelecomAddress1" Member="EntityTelecomAddressesObsoleteVersionId" ThisKey="EntityVersionId" OtherKey="ObsoleteVersionId" Type="EntityTelecomAddress" />
+      <Association Name="EntityVersion_EntityVersion" Member="EntityVersionsReplacesVersionId" ThisKey="EntityVersionId" OtherKey="ReplacesVersionId" Type="EntityVersion" />
+      <Association Name="EntityVersion_Material" Member="Material" ThisKey="EntityVersionId" OtherKey="EntityVersionId" Type="Material" Cardinality="One" />
+      <Association Name="EntityVersion_Organization" Member="Organization" ThisKey="EntityVersionId" OtherKey="EntityVersionId" Type="Organization" Cardinality="One" />
+      <Association Name="EntityVersion_Person" Member="Person" ThisKey="EntityVersionId" OtherKey="EntityVersionId" Type="Person" Cardinality="One" />
+      <Association Name="EntityVersion_PersonLanguageCommunication" Member="PersonLanguageCommunicationsObsoleteVersionId" ThisKey="EntityVersionId" OtherKey="ObsoleteVersionId" Type="PersonLanguageCommunication" />
+      <Association Name="EntityVersion_PersonLanguageCommunication1" Member="PersonLanguageCommunicationsEffectiveVersionId" ThisKey="EntityVersionId" OtherKey="EffectiveVersionId" Type="PersonLanguageCommunication" />
+      <Association Name="EntityVersion_Place" Member="Place" ThisKey="EntityVersionId" OtherKey="EntityVersionId" Type="Place" Cardinality="One" />
+      <Association Name="EntityVersion_PlaceService" Member="PlaceServicesEffectiveVersionId" ThisKey="EntityVersionId" OtherKey="EffectiveVersionId" Type="PlaceService" />
+      <Association Name="EntityVersion_PlaceService1" Member="PlaceServicesObsoleteVersionId" ThisKey="EntityVersionId" OtherKey="ObsoleteVersionId" Type="PlaceService" />
       <Association Name="Entity_EntityVersion" Member="Entity" ThisKey="EntityId" OtherKey="EntityId" Type="Entity" IsForeignKey="true" />
       <Association Name="EntityVersion_EntityVersion" Member="ReplacesVersion" ThisKey="ReplacesVersionId" OtherKey="EntityVersionId" Type="EntityVersion" IsForeignKey="true" />
       <Association Name="Concept_EntityVersion" Member="StatusConcept" ThisKey="StatusConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
@@ -481,6 +585,8 @@
       <Column Name="UpdatedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Association Name="ExtensionType_ActExtension" Member="ActExtensions" ThisKey="ExtensionTypeId" OtherKey="ExtensionTypeId" Type="ActExtension" />
+      <Association Name="ExtensionType_EntityExtension" Member="EntityExtensions" ThisKey="ExtensionTypeId" OtherKey="ExtensionTypeId" Type="EntityExtension" />
       <Association Name="SecurityUser_ExtensionType" Member="EnabledByEntity" ThisKey="EnabledBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
       <Association Name="SecurityUser_ExtensionType1" Member="ObsoletedByEntity" ThisKey="ObsoletedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
       <Association Name="SecurityUser_ExtensionType2" Member="UpdatedByEntity" ThisKey="UpdatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
@@ -491,6 +597,8 @@
       <Column Name="IdentifierTypeId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="IdentifierTypeConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="EntityClassScopeConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Association Name="IdentifierType_ActIdentifier" Member="ActIdentifiers" ThisKey="IdentifierTypeId" OtherKey="IdentifierTypeId" Type="ActIdentifier" />
+      <Association Name="IdentifierType_EntityIdentifier" Member="EntityIdentifiers" ThisKey="IdentifierTypeId" OtherKey="IdentifierTypeId" Type="EntityIdentifier" />
       <Association Name="Concept_IdentifierType" Member="EntityClassScopeConcept" ThisKey="EntityClassScopeConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
       <Association Name="Concept_IdentifierType1" Member="IdentifierTypeConcept" ThisKey="IdentifierTypeConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
     </Type>
@@ -509,6 +617,7 @@
       <Column Name="FormConceptId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="QuantityConceptId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="IsAdministrative" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="Material_ManufacturedMaterial" Member="ManufacturedMaterial" ThisKey="EntityVersionId" OtherKey="EntityVersionId" Type="ManufacturedMaterial" Cardinality="One" />
       <Association Name="EntityVersion_Material" Member="EntityVersion" ThisKey="EntityVersionId" OtherKey="EntityVersionId" Type="EntityVersion" IsForeignKey="true" />
       <Association Name="Concept_Material" Member="FormConcept" ThisKey="FormConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
       <Association Name="Concept_Material1" Member="QuantityConcept" ThisKey="QuantityConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
@@ -518,6 +627,9 @@
     <Type Name="Observation">
       <Column Name="ActVersionId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="InterpretationConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Association Name="Observation_CodedObservation" Member="CodedObservation" ThisKey="ActVersionId" OtherKey="ActVersionId" Type="CodedObservation" Cardinality="One" />
+      <Association Name="Observation_QuantityObservation" Member="QuantityObservation" ThisKey="ActVersionId" OtherKey="ActVersionId" Type="QuantityObservation" Cardinality="One" />
+      <Association Name="Observation_TextObservation" Member="TextObservation" ThisKey="ActVersionId" OtherKey="ActVersionId" Type="TextObservation" Cardinality="One" />
       <Association Name="ActVersion_Observation" Member="ActVersion" ThisKey="ActVersionId" OtherKey="ActVersionId" Type="ActVersion" IsForeignKey="true" />
       <Association Name="Concept_Observation" Member="InterpretationConcept" ThisKey="InterpretationConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
     </Type>
@@ -554,6 +666,8 @@
       <Column Name="EntityVersionId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="DateOfBirth" Type="System.DateTime" DbType="Date" CanBeNull="true" />
       <Column Name="DateOfBirthPrecision" Type="System.Char" DbType="Char(1)" CanBeNull="true" />
+      <Association Name="Person_Patient" Member="Patient" ThisKey="EntityVersionId" OtherKey="EntityVersionId" Type="Patient" Cardinality="One" />
+      <Association Name="Person_Provider" Member="Provider" ThisKey="EntityVersionId" OtherKey="EntityVersionId" Type="Provider" Cardinality="One" />
       <Association Name="EntityVersion_Person" Member="EntityVersion" ThisKey="EntityVersionId" OtherKey="EntityVersionId" Type="EntityVersion" IsForeignKey="true" />
     </Type>
   </Table>
@@ -573,6 +687,8 @@
       <Column Name="PhoneticAlgorithmId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Name" Type="System.String" DbType="NVarChar(32) NOT NULL" CanBeNull="false" />
       <Column Name="HandlerClass" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Association Name="PhoneticAlgorithm_ConceptName" Member="ConceptNames" ThisKey="PhoneticAlgorithmId" OtherKey="PhoneticAlgorithmId" Type="ConceptName" />
+      <Association Name="PhoneticAlgorithm_ReferenceTermDisplayName" Member="ReferenceTermDisplayNames" ThisKey="PhoneticAlgorithmId" OtherKey="PhoneticAlgorithmId" Type="ReferenceTermDisplayName" />
     </Type>
   </Table>
   <Table Name="dbo.PhoneticAlgorithmType" Member="PhoneticAlgorithmTypes">
@@ -580,6 +696,7 @@
       <Column Name="PhoneticAlgorithmId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Name" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
       <Column Name="HandlerClass" Type="System.String" DbType="NVarChar(256) NOT NULL" CanBeNull="false" />
+      <Association Name="PhoneticAlgorithmType_PhoneticValue" Member="PhoneticValues" ThisKey="PhoneticAlgorithmId" OtherKey="PhoneticAlgorithmId" Type="PhoneticValue" />
     </Type>
   </Table>
   <Table Name="dbo.PhoneticValues" Member="PhoneticValues">
@@ -588,6 +705,7 @@
       <Column Name="Value" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
       <Column Name="PhoneticCode" Type="System.String" DbType="NVarChar(32) NOT NULL" CanBeNull="false" />
       <Column Name="PhoneticAlgorithmId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Association Name="PhoneticValue_EntityNameComponent" Member="EntityNameComponents" ThisKey="PhoneticValueId" OtherKey="PhoneticValueId" Type="EntityNameComponent" />
       <Association Name="PhoneticAlgorithmType_PhoneticValue" Member="PhoneticAlgorithmType" ThisKey="PhoneticAlgorithmId" OtherKey="PhoneticAlgorithmId" Type="PhoneticAlgorithmType" IsForeignKey="true" />
     </Type>
   </Table>
@@ -620,6 +738,10 @@
       <Column Name="HandlerClass" Type="System.String" DbType="NVarChar(256)" CanBeNull="true" />
       <Column Name="IsPublic" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="CanElevate" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="Policy_ActPolicy" Member="ActPolicies" ThisKey="PolicyId" OtherKey="PolicyId" Type="ActPolicy" />
+      <Association Name="Policy_SecurityApplicationPolicy" Member="SecurityApplicationPolicies" ThisKey="PolicyId" OtherKey="PolicyId" Type="SecurityApplicationPolicy" />
+      <Association Name="Policy_SecurityDevicePolicy" Member="SecurityDevicePolicies" ThisKey="PolicyId" OtherKey="PolicyId" Type="SecurityDevicePolicy" />
+      <Association Name="Policy_SecurityRolePolicy" Member="SecurityRolePolicies" ThisKey="PolicyId" OtherKey="PolicyId" Type="SecurityRolePolicy" />
     </Type>
   </Table>
   <Table Name="dbo.Protocol" Member="Protocols">
@@ -633,6 +755,8 @@
       <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="ReplacesProtocolId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Association Name="Protocol_ActProtocol" Member="ActProtocols" ThisKey="ProtocolId" OtherKey="ProtocolId" Type="ActProtocol" />
+      <Association Name="Protocol_Protocol" Member="ProtocolsReplacesProtocolId" ThisKey="ProtocolId" OtherKey="ReplacesProtocolId" Type="Protocol" />
       <Association Name="Protocol_Protocol" Member="ReplacesProtocol" ThisKey="ReplacesProtocolId" OtherKey="ProtocolId" Type="Protocol" IsForeignKey="true" />
       <Association Name="ProtocolHandler_Protocol" Member="ProtocolHandler" ThisKey="ProtocolHandlerId" OtherKey="ProtocolHandlerId" Type="ProtocolHandler" IsForeignKey="true" />
       <Association Name="SecurityUser_Protocol" Member="CreatedByEntity" ThisKey="CreatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
@@ -649,6 +773,7 @@
       <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Association Name="ProtocolHandler_Protocol" Member="Protocols" ThisKey="ProtocolHandlerId" OtherKey="ProtocolHandlerId" Type="Protocol" />
       <Association Name="SecurityUser_ProtocolHandler" Member="CreatedByEntity" ThisKey="CreatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
       <Association Name="SecurityUser_ProtocolHandler1" Member="ObsoletedByEntity" ThisKey="ObsoletedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
     </Type>
@@ -683,6 +808,8 @@
       <Column Name="ReferenceTermId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="CodeSystemId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="Mnemonic" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="ReferenceTerm_ConceptReferenceTerm" Member="ConceptReferenceTerms" ThisKey="ReferenceTermId" OtherKey="ReferenceTermId" Type="ConceptReferenceTerm" />
+      <Association Name="ReferenceTerm_ReferenceTermDisplayName" Member="ReferenceTermDisplayNames" ThisKey="ReferenceTermId" OtherKey="ReferenceTermId" Type="ReferenceTermDisplayName" />
       <Association Name="CodeSystem_ReferenceTerm" Member="CodeSystem" ThisKey="CodeSystemId" OtherKey="CodeSystemId" Type="CodeSystem" IsForeignKey="true" />
     </Type>
   </Table>
@@ -714,6 +841,7 @@
       <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="ReplacesApplicationId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Association Name="SecurityApplication_SecurityApplicationPolicy" Member="SecurityApplicationPolicies" ThisKey="ApplicationId" OtherKey="ApplicationId" Type="SecurityApplicationPolicy" />
       <Association Name="SecurityUser_SecurityApplication" Member="CreatedByEntity" ThisKey="CreatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
       <Association Name="SecurityUser_SecurityApplication1" Member="ObsoletedByEntity" ThisKey="ObsoletedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
     </Type>
@@ -736,6 +864,8 @@
       <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="ReplacesDeviceId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Association Name="SecurityDevice_DeviceEntity" Member="DeviceEntities" ThisKey="DeviceId" OtherKey="DeviceId" Type="DeviceEntity" />
+      <Association Name="SecurityDevice_SecurityDevicePolicy" Member="SecurityDevicePolicies" ThisKey="DeviceId" OtherKey="DeviceId" Type="SecurityDevicePolicy" />
       <Association Name="SecurityUser_SecurityDevice" Member="ObsoletedByEntity" ThisKey="ObsoletedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
       <Association Name="SecurityUser_SecurityDevice1" Member="CreatedByEntity" ThisKey="CreatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
     </Type>
@@ -757,6 +887,8 @@
       <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Association Name="SecurityRole_SecurityRolePolicy" Member="SecurityRolePolicies" ThisKey="RoleId" OtherKey="RoleId" Type="SecurityRolePolicy" />
+      <Association Name="SecurityRole_SecurityUserRole" Member="SecurityUserRoles" ThisKey="RoleId" OtherKey="RoleId" Type="SecurityUserRole" />
       <Association Name="SecurityUser_SecurityRole" Member="CreatedByEntity" ThisKey="CreatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
       <Association Name="SecurityUser_SecurityRole1" Member="ObsoletedByEntity" ThisKey="ObsoletedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
     </Type>
@@ -790,6 +922,46 @@
       <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="UpdatedTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="UpdatedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Association Name="SecurityUser_UserEntity" Member="UserEntitiesCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="UserEntity" />
+      <Association Name="SecurityUser_UserEntity1" Member="UserEntitiesObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="UserEntity" />
+      <Association Name="SecurityUser_UserEntity2" Member="UserEntities" ThisKey="UserId" OtherKey="UserId" Type="UserEntity" />
+      <Association Name="SecurityUser_ActTag" Member="ActTagsCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="ActTag" />
+      <Association Name="SecurityUser_ActTag1" Member="ActTagsObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="ActTag" />
+      <Association Name="SecurityUser_ActVersion" Member="ActVersionsCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="ActVersion" />
+      <Association Name="SecurityUser_ActVersion1" Member="ActVersionsObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="ActVersion" />
+      <Association Name="SecurityUser_AssigningAuthority" Member="AssigningAuthoritiesCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="AssigningAuthority" />
+      <Association Name="SecurityUser_AssigningAuthority1" Member="AssigningAuthoritiesObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="AssigningAuthority" />
+      <Association Name="SecurityUser_CodeSystem" Member="CodeSystemsCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="CodeSystem" />
+      <Association Name="SecurityUser_CodeSystem1" Member="CodeSystemsObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="CodeSystem" />
+      <Association Name="SecurityUser_ConceptSet" Member="ConceptSetsCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="ConceptSet" />
+      <Association Name="SecurityUser_ConceptSet1" Member="ConceptSetsObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="ConceptSet" />
+      <Association Name="SecurityUser_ConceptVersion" Member="ConceptVersionsCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="ConceptVersion" />
+      <Association Name="SecurityUser_ConceptVersion1" Member="ConceptVersionsObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="ConceptVersion" />
+      <Association Name="SecurityUser_EntityTag" Member="EntityTagsCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="EntityTag" />
+      <Association Name="SecurityUser_EntityTag1" Member="EntityTagsObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="EntityTag" />
+      <Association Name="SecurityUser_EntityVersion" Member="EntityVersionsCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="EntityVersion" />
+      <Association Name="SecurityUser_EntityVersion1" Member="EntityVersionsObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="EntityVersion" />
+      <Association Name="SecurityUser_ExtensionType" Member="ExtensionTypesEnabledBy" ThisKey="UserId" OtherKey="EnabledBy" Type="ExtensionType" />
+      <Association Name="SecurityUser_ExtensionType1" Member="ExtensionTypesObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="ExtensionType" />
+      <Association Name="SecurityUser_ExtensionType2" Member="ExtensionTypesUpdatedBy" ThisKey="UserId" OtherKey="UpdatedBy" Type="ExtensionType" />
+      <Association Name="SecurityUser_Protocol" Member="ProtocolsCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="Protocol" />
+      <Association Name="SecurityUser_Protocol1" Member="ProtocolsObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="Protocol" />
+      <Association Name="SecurityUser_ProtocolHandler" Member="ProtocolHandlersCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="ProtocolHandler" />
+      <Association Name="SecurityUser_ProtocolHandler1" Member="ProtocolHandlersObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="ProtocolHandler" />
+      <Association Name="SecurityUser_ReferenceTermDisplayName" Member="ReferenceTermDisplayNamesCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="ReferenceTermDisplayName" />
+      <Association Name="SecurityUser_ReferenceTermDisplayName1" Member="ReferenceTermDisplayNamesObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="ReferenceTermDisplayName" />
+      <Association Name="SecurityUser_SecurityApplication" Member="SecurityApplicationsCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="SecurityApplication" />
+      <Association Name="SecurityUser_SecurityApplication1" Member="SecurityApplicationsObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="SecurityApplication" />
+      <Association Name="SecurityUser_SecurityDevice" Member="SecurityDevicesObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="SecurityDevice" />
+      <Association Name="SecurityUser_SecurityDevice1" Member="SecurityDevicesCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="SecurityDevice" />
+      <Association Name="SecurityUser_SecurityRole" Member="SecurityRolesCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="SecurityRole" />
+      <Association Name="SecurityUser_SecurityRole1" Member="SecurityRolesObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="SecurityRole" />
+      <Association Name="SecurityUser_SecurityUser" Member="SecurityUsersCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="SecurityUser" />
+      <Association Name="SecurityUser_SecurityUser1" Member="SecurityUsersObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="SecurityUser" />
+      <Association Name="SecurityUser_SecurityUser2" Member="SecurityUsersUpdatedBy" ThisKey="UserId" OtherKey="UpdatedBy" Type="SecurityUser" />
+      <Association Name="SecurityUser_SecurityUserClaim" Member="SecurityUserClaims" ThisKey="UserId" OtherKey="UserId" Type="SecurityUserClaim" />
+      <Association Name="SecurityUser_SecurityUserLogin" Member="SecurityUserLogins" ThisKey="UserId" OtherKey="UserId" Type="SecurityUserLogin" />
+      <Association Name="SecurityUser_SecurityUserRole" Member="SecurityUserRoles" ThisKey="UserId" OtherKey="UserId" Type="SecurityUserRole" />
       <Association Name="SecurityUser_SecurityUser" Member="CreatedByEntity" ThisKey="CreatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
       <Association Name="SecurityUser_SecurityUser1" Member="ObsoletedByEntity" ThisKey="ObsoletedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
       <Association Name="SecurityUser_SecurityUser2" Member="UpdatedByEntity" ThisKey="UpdatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
