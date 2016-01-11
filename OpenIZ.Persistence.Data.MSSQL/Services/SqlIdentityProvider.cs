@@ -19,7 +19,7 @@ using OpenIZ.Core.Security;
 using OpenIZ.Persistence.Data.MSSQL.Security;
 using MARC.HI.EHRS.SVC.Core.Exceptions;
 
-namespace OpenIZ.Persistence.Data.MSSQL
+namespace OpenIZ.Persistence.Data.MSSQL.Services
 {
     /// <summary>
     /// Identity provider service
@@ -38,15 +38,23 @@ namespace OpenIZ.Persistence.Data.MSSQL
         /// <summary>
         /// Authenticate the user
         /// </summary>
-        public ClaimsPrincipal Authenticate(string userName, string password)
+        public IPrincipal Authenticate(string userName, string password)
         {
             return SqlClaimsIdentity.Create(userName, password).CreateClaimsPrincipal();
         }
 
         /// <summary>
+        /// Gets an un-authenticated identity
+        /// </summary>
+        public IIdentity GetIdentity(string userName)
+        {
+            return SqlClaimsIdentity.Create(userName);
+        }
+
+        /// <summary>
         /// Authenticate the user using a TwoFactorAuthentication secret
         /// </summary>
-        public ClaimsPrincipal Authenticate(string userName, string password, string tfaSecret)
+        public IPrincipal Authenticate(string userName, string password, string tfaSecret)
         {
             throw new NotSupportedException();
         }
@@ -54,7 +62,7 @@ namespace OpenIZ.Persistence.Data.MSSQL
         /// <summary>
         /// Change the user's password
         /// </summary>
-        public void ChangePassword(string userName, string newPassword, ClaimsPrincipal principal)
+        public void ChangePassword(string userName, string newPassword, IPrincipal principal)
         {
             if (principal == null)
                 throw new ArgumentNullException(nameof(principal));

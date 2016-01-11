@@ -30,6 +30,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
         private String m_authenticationType;
         // Issued on
         private DateTimeOffset m_issuedOn = DateTimeOffset.Now;
+        // Roles
+        private List<SecurityRole> m_roles = null;
 
         // Configuration
         private static SqlConfiguration s_configuration = ConfigurationManager.GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
@@ -44,10 +46,32 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
                 // Attempt to get a user
                 var hasher = SHA256.Create();
                 var passwordHash = Convert.ToBase64String(hasher.ComputeHash(Encoding.UTF8.GetBytes(password)));
-                var user = dataContext.SecurityUsers.FirstOrDefault(u => u.UserName == userName && u.UserPassword == passwordHash && !u.TwoFactorEnabled && u.ObsoletionTime == null);
-                if (user == null)
-                    return null;
-                return new SqlClaimsIdentity(user, true) { m_authenticationType = "Password" };
+                var user = dataContext.SecurityUsers.FirstOrDefault(u => u.UserName == userName && u.ObsoletionTime == null);
+                if (user?.UserPassword == passwordHash && (bool)!user?.TwoFactorEnabled &&
+                    (bool)!user?.LockoutEnabled)
+                {
+                    user.LastSuccessfulLogin = DateTimeOffset.Now;
+                    user.FailedLoginAttempts = 0;
+                    dataContext.SubmitChanges();
+                    return new SqlClaimsIdentity(user, true) { m_authenticationType = "Password" };
+                }
+                else if ((bool)user?.LockoutEnabled)
+                {
+                    user.FailedLoginAttempts++;
+                    dataContext.SubmitChanges();
+                    throw new SecurityException("Account is locked");
+                }
+                else if (user != null)
+                {
+                    user.FailedLoginAttempts++;
+                    if (user.FailedLoginAttempts > 3) // TODO: Add this to configuration
+                        user.LockoutEnabled = true;
+                    dataContext.SubmitChanges();
+                    throw new SecurityException("Invalid username/password");
+                }
+                else
+                    throw new SecurityException("Invalid username/password");
+                
             }
         }
 
@@ -87,7 +111,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
         private SqlClaimsIdentity(SecurityUser user, bool isAuthenticated)
         {
             this.m_isAuthenticated = isAuthenticated;
-            this.m_securityUser = user; 
+            this.m_securityUser = user;
+            this.m_roles = user.SecurityUserRoles.Select(o => o.SecurityRole).ToList(); 
         }
 
         /// <summary>
@@ -145,7 +170,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
 
             // System claims
             List<Claim> claims = new List<Claim>(
-                this.m_securityUser.SecurityUserRoles.Select(r => new Claim(ClaimsIdentity.DefaultRoleClaimType, r.SecurityRole.Name, "xs:string", ApplicationContext.Current.Configuration.Custodianship.Name))
+                this.m_roles.Select(r => new Claim(ClaimsIdentity.DefaultRoleClaimType, r.Name, "xs:string", ApplicationContext.Current.Configuration.Custodianship.Name))
             )
             {
                 new Claim(ClaimTypes.Authentication, this.m_isAuthenticated.ToString()),

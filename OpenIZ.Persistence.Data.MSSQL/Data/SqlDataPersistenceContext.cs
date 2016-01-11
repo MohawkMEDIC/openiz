@@ -32,28 +32,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         // The transaction
         protected DbTransaction m_transaction;
 
-        // Data context
-        protected ModelDataContext m_dataContext;
-
-        // Readonly data context
-        protected ModelDataContext m_readonlyContext;
-
-        /// <summary>
-        /// Gets the context
-        /// </summary>
-        public ModelDataContext Context
-        {
-            get { return this.m_dataContext; }
-        }
-
-        /// <summary>
-        /// Gets the readonly context
-        /// </summary>
-        public ModelDataContext ReadonlyContext
-        {
-            get { return this.m_readonlyContext; }
-        }
-
         /// <summary>
         /// Open the connection to the database if it is not already open
         /// </summary>
@@ -66,12 +44,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
                 this.m_readOnlyConnection = new SqlConnection(this.m_configuration.ReadonlyConnectionString);
             else if (this.m_readOnlyConnection == null)
                 this.m_readOnlyConnection = this.m_connection;
-            if (this.m_dataContext == null)
-                this.m_dataContext = new ModelDataContext(this.m_connection);
-            if (this.m_readonlyContext == null && this.m_configuration.ReadWriteConnectionString != this.m_configuration.ReadonlyConnectionString)
-                this.m_readonlyContext = new ModelDataContext(this.m_readOnlyConnection);
-            else if (this.m_readonlyContext == null)
-                this.m_readonlyContext = this.m_dataContext;
 
             if (this.m_connection.State == System.Data.ConnectionState.Closed)
                 this.m_connection.Open();
@@ -79,6 +51,27 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
                 this.m_readOnlyConnection.Open();
         }
 
+        /// <summary>
+        /// Create data context
+        /// </summary>
+        public ModelDataContext CreateDataContext()
+        {
+            var retVal = new ModelDataContext(this.m_connection);
+            if (this.m_transaction != null)
+                retVal.Transaction = this.m_transaction;
+            return retVal;
+        }
+
+        /// <summary>
+        /// Create data context
+        /// </summary>
+        public ModelDataContext CreateReadonlyContext()
+        {
+            var retVal = new ModelDataContext(this.m_readOnlyConnection);
+            if (this.m_transaction != null)
+                retVal.Transaction = this.m_transaction;
+            return retVal;
+        }
         /// <summary>
         /// Close all connections
         /// </summary>
@@ -109,16 +102,23 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
             this.m_transaction?.Rollback();
             this.m_transaction?.Dispose();
             this.m_transaction = null;
+
         }
 
         /// <summary>
         /// Start a transaction
         /// </summary>
-        public void BeginTransaction()
+        public bool BeginTransaction()
         {
             this.ThrowIfDisposed();
             this.Open();
-            this.m_transaction = this.m_dataContext.Transaction = this.m_connection?.BeginTransaction();
+            if (this.m_transaction == null)
+            {
+                this.m_transaction = this.m_connection?.BeginTransaction();
+                return true;
+            }
+            else
+                return false;
         }
 
         /// <summary>
@@ -129,8 +129,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
             if (!this.m_disposed)
             {
                 this.Rollback();
-                this.m_dataContext?.Dispose();
-                this.m_readonlyContext?.Dispose();
                 this.m_transaction?.Dispose();
                 this.m_connection?.Dispose();
                 this.m_readOnlyConnection?.Dispose();

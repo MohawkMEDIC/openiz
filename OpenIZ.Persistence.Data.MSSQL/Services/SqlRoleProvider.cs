@@ -15,8 +15,9 @@ using System.Configuration;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using OpenIZ.Persistence.Data.MSSQL.Security;
 using System.Security;
+using System.Security.Principal;
 
-namespace OpenIZ.Persistence.Data.MSSQL
+namespace OpenIZ.Persistence.Data.MSSQL.Services
 {
     /// <summary>
     /// Local role provider
@@ -29,7 +30,7 @@ namespace OpenIZ.Persistence.Data.MSSQL
         /// <summary>
         /// Verify principal
         /// </summary>
-        private void VerifyPrincipal(ClaimsPrincipal authPrincipal, String policyCheck)
+        private void VerifyPrincipal(IPrincipal authPrincipal, String policyCheck)
         {
             if (authPrincipal == null)
                 throw new ArgumentNullException(nameof(authPrincipal));
@@ -49,7 +50,7 @@ namespace OpenIZ.Persistence.Data.MSSQL
         /// <summary>
         /// Adds the specified users to the specified roles
         /// </summary>
-        public void AddUsersToRoles(string[] users, string[] roles, ClaimsPrincipal authPrincipal)
+        public void AddUsersToRoles(string[] users, string[] roles, IPrincipal authPrincipal)
         {
             this.VerifyPrincipal(authPrincipal, PolicyIdentifiers.OpenIzAlterRolePolicy);
 
@@ -78,7 +79,7 @@ namespace OpenIZ.Persistence.Data.MSSQL
         /// <summary>
         /// Create a role
         /// </summary>
-        public void CreateRole(string roleName, ClaimsPrincipal authPrincipal)
+        public void CreateRole(string roleName, IPrincipal authPrincipal)
         {
 
             this.VerifyPrincipal(authPrincipal, PolicyIdentifiers.OpenIzCreateRolesPolicy);
@@ -127,9 +128,10 @@ namespace OpenIZ.Persistence.Data.MSSQL
         /// <summary>
         /// Determine if the user is in the specified role
         /// </summary>
-        public bool IsUserInRole(ClaimsPrincipal principal, string roleName)
+        public bool IsUserInRole(IPrincipal principal, string roleName)
         {
-            return principal.Claims.Any(r => r.Type == ClaimsIdentity.DefaultRoleClaimType && r.Value == roleName);
+            using(var dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
+                return dataContext.SecurityUserRoles.Any(ur => ur.SecurityRole.Name == roleName && ur.SecurityUser.UserName == principal.Identity.Name); 
         }
 
         /// <summary>
@@ -143,7 +145,7 @@ namespace OpenIZ.Persistence.Data.MSSQL
         /// <summary>
         /// Remove users from roles
         /// </summary>
-        public void RemoveUsersFromRoles(string[] users, string[] roles, ClaimsPrincipal authPrincipal)
+        public void RemoveUsersFromRoles(string[] users, string[] roles, IPrincipal authPrincipal)
         {
             this.VerifyPrincipal(authPrincipal, PolicyIdentifiers.OpenIzAlterRolePolicy);
 

@@ -47,7 +47,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             // Store user
             using (IDataPersistenceService<SecurityUser> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>())
             {
-                var userAfterTest = persistenceService.Insert(userUnderTest, null, DataPersistenceMode.Production);
+                var userAfterTest = persistenceService.Insert(userUnderTest, null, TransactionMode.Commit);
 
                 // Key should be set
                 Assert.AreNotEqual(Guid.Empty, userAfterTest.Key);
@@ -91,11 +91,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 roleService.DataContext = userService.DataContext;
 
                 // Insert the user
-                var userAfterInsert = userService.Insert(userUnderTest, null, DataPersistenceMode.Production);
+                var userAfterInsert = userService.Insert(userUnderTest, null, TransactionMode.Commit);
+                userAfterInsert = userService.Get(userAfterInsert.Id, null, false);
 
                 var authContext = identityService.Authenticate("updateTest", "password");
 
-                administrators = roleService.Insert(administrators, authContext, DataPersistenceMode.Production);
+                administrators = roleService.Insert(administrators, authContext, TransactionMode.Commit);
 
                 // Keys should be set
                 Assert.AreNotEqual(Guid.Empty, userAfterInsert.Key);
@@ -107,7 +108,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 userAfterInsert.EmailConfirmed = true;
                 userAfterInsert.Roles.Add(administrators);
                 userAfterInsert.Roles.Add(users);
-                var userAfterUpdate = userService.Update(userAfterInsert, authContext, DataPersistenceMode.Production);
+                var userAfterUpdate = userService.Update(userAfterInsert, authContext, TransactionMode.Commit);
+                userAfterUpdate = userService.Get(userAfterUpdate.Id, authContext, false);
 
                 // Update attributes should be set
                 Assert.AreEqual(userAfterInsert.Key, userAfterUpdate.Key);
