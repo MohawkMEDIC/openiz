@@ -4,13 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MARC.HI.EHRS.SVC.Core.Authorization;
+using System.Security.Claims;
 using MARC.HI.EHRS.SVC.Core.Data;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using System.Linq.Expressions;
 using OpenIZ.Persistence.Data.MSSQL.Exceptions;
 using System.Reflection;
 using OpenIZ.Core.Model;
+using MARC.HI.EHRS.SVC.Core.Services.Security;
+using System.Security.Principal;
+using System.Diagnostics;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -25,11 +28,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// Perform a get operation
         /// </summary>
         /// <param name="containerId">The identifier of the container to retrieve</param>
-        /// <param name="authContext">The authorization context</param>
+        /// <param name="principal">The authorization context</param>
         /// <param name="loadFast">True if the history and historical data should be loaded</param>
         /// <param name="dataContext">The data context</param>
         /// <returns>The security user as part of the get</returns>
-        protected override Core.Model.Security.SecurityUser DoGet(Identifier<Guid> containerId, AuthorizationContext authContext, bool loadFast, ModelDataContext dataContext)
+        internal override Core.Model.Security.SecurityUser Get(Identifier<Guid> containerId, ClaimsPrincipal principal, bool loadFast, ModelDataContext dataContext)
         {
             var dataUser = dataContext.SecurityUsers.FirstOrDefault(o => o.UserId == containerId.Id);
 
@@ -43,17 +46,24 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// Perform an insert
         /// </summary>
         /// <param name="storageData">The model class to be stored</param>
-        /// <param name="authContext">The authorization context</param>
+        /// <param name="principal">The authorization context</param>
         /// <param name="dataContext">The data context</param>
         /// <returns>The security user which was inserted</returns>
-        protected override Core.Model.Security.SecurityUser DoInsert(Core.Model.Security.SecurityUser storageData, AuthorizationContext authContext, ModelDataContext dataContext)
+        internal override Core.Model.Security.SecurityUser Insert(Core.Model.Security.SecurityUser storageData, ClaimsPrincipal principal, ModelDataContext dataContext)
         {
             if (storageData.Key != default(Guid)) // Trying to insert an already inserted user?
                 throw new SqlFormalConstraintException("Insert must be for an unidentified object");
 
+            if (storageData.DelayLoad) // We want a frozen asset
+                storageData = storageData.AsFrozen() as Core.Model.Security.SecurityUser;
+
             var dataUser = this.ConvertFromModel(storageData) as Data.SecurityUser;
-            dataUser.CreatedBy = authContext == null ? null : (Guid?)base.GetUserFromAuthContext(authContext, dataContext);
+            dataUser.CreatedBy = principal == null ? null : (Guid?)base.GetUserFromprincipal(principal, dataContext);
             dataContext.SecurityUsers.InsertOnSubmit(dataUser);
+            dataUser.SecurityStamp = Guid.NewGuid().ToString();
+
+            if (storageData.Roles != null)
+                dataContext.SecurityUserRoles.InsertAllOnSubmit(storageData.Roles.Select(r => new SecurityUserRole() { RoleId = r.EnsureExists(principal, dataContext).Key, SecurityUser = dataUser }));
 
             // Persist data to the db
             dataContext.SubmitChanges();
@@ -65,17 +75,23 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// Perform an obsolete
         /// </summary>
         /// <param name="storageData">The data object to be obsoleted</param>
-        /// <param name="authContext">The authorization context under which the security user is obsolete</param>
+        /// <param name="principal">The authorization context under which the security user is obsolete</param>
         /// <param name="dataContext">The current data context</param>
         /// <returns>The obsoleted user</returns>
-        protected override Core.Model.Security.SecurityUser DoObsolete(Core.Model.Security.SecurityUser storageData, AuthorizationContext authContext, ModelDataContext dataContext)
+        internal override Core.Model.Security.SecurityUser Obsolete(Core.Model.Security.SecurityUser storageData, ClaimsPrincipal principal, ModelDataContext dataContext)
         {
             if (storageData.Key == default(Guid))
                 throw new SqlFormalConstraintException("Obsolete must be for an identified object");
+            else if (principal == null)
+                throw new SqlFormalConstraintException("Obsoletion requires authorization context");
+
+            if (storageData.DelayLoad) // We want a frozen asset
+                storageData = storageData.AsFrozen() as Core.Model.Security.SecurityUser;
 
             var dataUser = this.ConvertFromModel(storageData) as Data.SecurityUser;
-            dataUser.ObsoletedBy = base.GetUserFromAuthContext(authContext, dataContext);
+            dataUser.ObsoletedBy = base.GetUserFromprincipal(principal, dataContext);
             dataUser.ObsoletionTime = DateTimeOffset.Now;
+            dataUser.SecurityStamp = Guid.NewGuid().ToString();
 
             // Persist data to the db
             dataContext.SubmitChanges();
@@ -86,15 +102,43 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <summary>
         /// Perform a query 
         /// </summary>
-        protected override IQueryable<Core.Model.Security.SecurityUser> DoQuery(Expression<Func<Core.Model.Security.SecurityUser, bool>> query, AuthorizationContext authContext, ModelDataContext dataContext)
+        internal override IQueryable<Core.Model.Security.SecurityUser> Query(Expression<Func<Core.Model.Security.SecurityUser, bool>> query, ClaimsPrincipal principal, ModelDataContext dataContext)
         {
-            Expression queryExpression = s_mapper.MapModelExpression<Core.Model.Security.SecurityUser, Data.SecurityUser>(query);
-            return null;
+            var queryExpression = s_mapper.MapModelExpression<Core.Model.Security.SecurityUser, Data.SecurityUser>(query);
+            Trace.TraceInformation("MSSQL: {0}: QUERY Tx {1} > {2}", this.GetType().Name, query, queryExpression);
+
+            return dataContext.SecurityUsers.Where(queryExpression).Select(o => this.ConvertToModel(o));
         }
 
-        protected override Core.Model.Security.SecurityUser DoUpdate(Core.Model.Security.SecurityUser storageData, AuthorizationContext authContext, ModelDataContext dataContext)
+        /// <summary>
+        /// Perform an update
+        /// </summary>
+        internal override Core.Model.Security.SecurityUser Update(Core.Model.Security.SecurityUser storageData, ClaimsPrincipal principal, ModelDataContext dataContext)
         {
-            throw new NotImplementedException();
+            if (storageData.Key == default(Guid))
+                throw new SqlFormalConstraintException("Update must be for an identified object");
+            else if (principal == null)
+                throw new SqlFormalConstraintException("Update requires authorization context");
+
+            if (storageData.DelayLoad) // We want a frozen asset
+                storageData = storageData.AsFrozen() as Core.Model.Security.SecurityUser;
+
+            var dataUser = this.ConvertFromModel(storageData) as Data.SecurityUser;
+            dataUser.UpdatedBy = base.GetUserFromprincipal(principal, dataContext);
+            dataUser.UpdatedTime = DateTimeOffset.Now;
+            dataUser.SecurityStamp = Guid.NewGuid().ToString();
+            // Roles add/remove
+            var currentRoleIds = dataUser.SecurityUserRoles.Select(r => r.RoleId).ToArray();
+            var remRoles = currentRoleIds.Where(r=>!(bool)storageData.Roles?.Select(mr=>mr.Key).Contains(r));
+            var addRoles = storageData.Roles?.Where(r => !currentRoleIds.Contains(r.Key));
+            // Remove all the roles 
+            dataContext.SecurityUserRoles.DeleteAllOnSubmit(dataContext.SecurityUserRoles.Where(r => remRoles.Contains(r.RoleId) && r.UserId == dataUser.UserId));
+            dataContext.SecurityUserRoles.InsertAllOnSubmit(addRoles.Select(r => new Data.SecurityUserRole() { RoleId = r.EnsureExists(principal, dataContext).Key, UserId = dataUser.UserId }));
+                
+            // Persist data to the db
+            dataContext.SubmitChanges();
+
+            return this.ConvertToModel(dataUser);
         }
 
         /// <summary>

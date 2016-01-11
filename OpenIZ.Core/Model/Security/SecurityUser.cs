@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,6 +17,7 @@ namespace OpenIZ.Core.Model.Security
     public class SecurityUser : SecurityEntity
     {
 
+        
         // Roles
         private List<SecurityRole> m_roles;
         // The updated by id
@@ -60,15 +62,19 @@ namespace OpenIZ.Core.Model.Security
         /// </summary>
         public byte[] UserPhoto { get; set; }
         /// <summary>
+        /// The last login time
+        /// </summary>
+        public DateTimeOffset LastLoginTime { get; set; }
+        /// <summary>
         /// Represents roles
         /// </summary>
         public List<SecurityRole> Roles {
             get
             {
-                if(this.m_roles == null)
+                if(this.DelayLoad && this.m_roles == null)
                 {
-                    var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
-                    this.m_roles = dataLayer.Query(r => r.Users.Any(u => u.Key == this.Key), null).ToList();
+                    using (var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>())
+                        this.m_roles = dataLayer.Query(r => r.Users.Any(u => u.Key == this.Key), null).ToList();
                 }
                 return this.m_roles;
             }
@@ -77,6 +83,7 @@ namespace OpenIZ.Core.Model.Security
         /// Updated time
         /// </summary>
         public DateTimeOffset? UpdatedTime { get; set; }
+
         /// <summary>
         /// Gets or sets the user that updated this base data
         /// </summary>
@@ -84,10 +91,10 @@ namespace OpenIZ.Core.Model.Security
         {
             get
             {
-                if (this.m_updatedById.HasValue && this.m_updatedById == null)
+                if (this.DelayLoad && this.m_updatedById.HasValue && this.m_updatedBy == null)
                 {
-                    var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
-                    this.m_updatedBy = dataLayer.Get(new Identifier<Guid>(this.m_updatedById.Value), null, true);
+                    using (var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>())
+                        this.m_updatedBy = dataLayer.Get(new Identifier<Guid>() { Id = this.m_updatedById.Value }, null, true);
                 }
                 return this.m_updatedBy;
             }
@@ -121,6 +128,16 @@ namespace OpenIZ.Core.Model.Security
                 this.m_updatedById = value;
             }
         }
+
+        /// <summary>
+        /// Gets or sets the patient's phone number
+        /// </summary>
+        public String PhoneNumber { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether the phone number was confirmed
+        /// </summary>
+        public Boolean PhoneNumberConfirmed { get; set; }
 
     }
 }

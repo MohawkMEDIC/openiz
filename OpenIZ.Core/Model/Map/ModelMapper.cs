@@ -165,8 +165,9 @@ namespace OpenIZ.Core.Model.Map
         /// <param name="expression">The expression to be converted</param>
         public Expression<Func<TTo, bool>> MapModelExpression<TFrom, TTo>(Expression<Func<TFrom, bool>> expression)
         {
-            Expression expr = new ModelExpressionVisitor(this).Visit(expression.Body);
-            return Expression.Lambda<Func<TTo, bool>>(expr, Expression.Parameter(typeof(TTo), expression.Parameters[0].Name));
+            var parameter = Expression.Parameter(typeof(TTo), expression.Parameters[0].Name);
+            Expression expr = new ModelExpressionVisitor(this, parameter).Visit(expression.Body);
+            return Expression.Lambda<Func<TTo, bool>>(expr, parameter);
         }
 
         /// <summary>
@@ -204,7 +205,7 @@ namespace OpenIZ.Core.Model.Map
 
                 // Set value
                 if (domainProperty == null)
-                    Debug.WriteLine("Unmapped property: {0}", propInfo.Name);
+                    Debug.WriteLine("Unmapped property ({0}).{1}", typeof(TModel).Name, propInfo.Name);
                 else if (domainProperty.PropertyType.IsAssignableFrom(propInfo.PropertyType))
                     domainProperty.SetValue(retVal, propInfo.GetValue(modelInstance));
                 else
@@ -250,7 +251,7 @@ namespace OpenIZ.Core.Model.Map
 
                 // Set value
                 if (modelProperty == null)
-                    Debug.WriteLine("Unmapped property: {0}", propInfo.Name);
+                    Debug.WriteLine("Unmapped property ({0}).{1}", typeof(TDomain).Name, propInfo.Name);
                 else if (modelProperty.PropertyType.IsAssignableFrom(propInfo.PropertyType))
                     modelProperty.SetValue(retVal, propInfo.GetValue(domainInstance));
                 else

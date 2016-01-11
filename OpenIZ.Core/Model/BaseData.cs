@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,6 +18,9 @@ namespace OpenIZ.Core.Model
     public abstract class BaseData : IIdentified<Guid>
     {
 
+        // True when the data class is locked for storage
+        protected bool m_delayLoad = true;
+        
         // Created by identifier
         private Guid m_createdById;
         // Created by
@@ -25,6 +29,43 @@ namespace OpenIZ.Core.Model
         private Guid? m_obsoletedById;
         // Obsoleted by user
         private SecurityUser m_obsoletedBy;
+
+        /// <summary>
+        /// True if the class is currently loading associations when accessed
+        /// </summary>
+        public bool DelayLoad
+        {
+            get
+            {
+                return this.m_delayLoad;
+            }
+        }
+
+        /// <summary>
+        /// Clones this object member for member with delay load disabled
+        /// </summary>
+        public BaseData AsFrozen()
+        {
+            BaseData retVal = Activator.CreateInstance(this.GetType()) as BaseData;
+            List<FieldInfo> fields = new List<FieldInfo>();
+            Type typ = this.GetType();
+            while (typ != typeof(Object))
+            {
+                fields.AddRange(typ.GetFields(BindingFlags.NonPublic | BindingFlags.Instance));
+                typ = typ.BaseType;
+            }
+
+            foreach (FieldInfo fi in fields)
+            {
+                object value = fi.GetValue(this);
+                if(value is BaseData)
+                    value = (value as BaseData).AsFrozen();
+                fi.SetValue(retVal, value);
+            }
+            retVal.m_delayLoad = false;
+            return retVal;
+        }
+
 
         /// <summary>
         /// Gets or sets the Id of the base data
@@ -66,10 +107,10 @@ namespace OpenIZ.Core.Model
         public SecurityUser CreatedBy {
             get
             {
-                if (this.m_createdBy == null)
+                if (this.m_delayLoad && this.m_createdById != Guid.Empty && this.m_createdBy == null)
                 {
-                    var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
-                    this.m_createdBy = dataLayer.Get(new Identifier<Guid>(this.m_createdById), null, true);
+                    using (var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>())
+                        this.m_createdBy = dataLayer.Get(new Identifier<Guid>() { Id = this.m_createdById }, null, true);
                 }
                 return this.m_createdBy;
             }
@@ -94,10 +135,10 @@ namespace OpenIZ.Core.Model
         public SecurityUser ObsoletedBy {
             get
             {
-                if (this.m_obsoletedById.HasValue && this.m_obsoletedBy == null)
+                if (this.m_delayLoad && this.m_obsoletedById.HasValue && this.m_obsoletedBy == null)
                 {
-                    var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
-                    this.m_obsoletedBy = dataLayer.Get(new Identifier<Guid>(this.m_obsoletedById.Value), null, true);
+                    using (var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>())
+                        this.m_obsoletedBy = dataLayer.Get(new Identifier<Guid>() { Id = this.m_obsoletedById.Value }, null, true);
                 }
                 return this.m_obsoletedBy;
             }
@@ -146,6 +187,14 @@ namespace OpenIZ.Core.Model
                     this.m_obsoletedBy = null;
                 this.m_obsoletedById = value;
             }
+        }
+
+        /// <summary>
+        /// Represent the data as a string
+        /// </summary>
+        public override string ToString()
+        {
+            return String.Format("{0} (K:{1})", this.GetType().Name, this.Key);
         }
     }
 }

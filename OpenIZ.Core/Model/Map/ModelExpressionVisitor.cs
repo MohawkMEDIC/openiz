@@ -89,12 +89,16 @@ namespace OpenIZ.Core.Model.Map
         // The mapper to be used
         private readonly ModelMapper m_mapper;
 
+        // Parameters
+        private readonly ParameterExpression[] m_parameters;
+
         /// <summary>
         /// Model conversion visitor 
         /// </summary>
-        public ModelExpressionVisitor(ModelMapper mapData)
+        public ModelExpressionVisitor(ModelMapper mapData, params ParameterExpression[] parameters)
         {
             this.m_mapper = mapData;
+            this.m_parameters = parameters;
         }
 
         /// <summary>
@@ -239,9 +243,16 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         protected override Expression VisitParameter(ParameterExpression node)
         {
+
             Type mappedType = this.m_mapper.MapModelType(node.Type);
+            var parameterRef = this.m_parameters.FirstOrDefault(p => p.Name == node.Name && p.Type == mappedType);
+            
+            if (parameterRef != null)
+                return parameterRef;
+
             if (mappedType != null && mappedType != node.Type)
                 return Expression.Parameter(mappedType, node.Name);
+
             return node;
         }
 

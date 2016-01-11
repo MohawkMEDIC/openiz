@@ -15,9 +15,21 @@
     <property modelName="InvalidLoginAttempts" domainName="FailedLoginAttempts"/>
     <property modelName="PasswordHash" domainName="UserPassword"/>
     <property modelName="SecurityHash" domainName="SecurityStamp"/>
+    <property modelName="LastLoginTime" domainName="LastSuccessfulLogin"/>
+    <property modelName="Roles" domainName="SecurityUserRoles">
+      <via domainName="SecurityRole" />
+    </property>
   </class>
   <class modelClass="OpenIZ.Core.Model.Security.SecurityRole, OpenIZ.Core, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SecurityRole, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="RoleId"/>
+    <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
+    <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
+    <property modelName="CreatedBy" domainName="CreatedByEntity"/>
+    <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
+    <property modelName="UpdatedBy" domainName="UpdatedByEntity"/>
+    <property modelName="CreatedById" domainName="CreatedBy"/>
+    <property modelName="UpdatedById" domainName="UpdatedBy"/>
+    <property modelName="ObsoletedById" domainName="ObsoletedBy"/>
     <property modelName="Users" domainName="SecurityUserRoles">
         <via domainName="SecurityUser" />
     </property>

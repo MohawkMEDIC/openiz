@@ -48,5 +48,14 @@ namespace OpenIZ.Core.Model
                 this.VersionKey = value.VersionId;
             }
         }
+
+        /// <summary>
+        /// Represent the versioned data as a string
+        /// </summary>
+        public override string ToString()
+        {
+            return String.Format("{0} (K:{1}, V:{2})", this.GetType().Name, this.Key, this.VersionKey);
+        }
     }
+
 }
