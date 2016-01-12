@@ -29,14 +29,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     /// Represents a basic persistence service
     /// </summary>
     /// <typeparam name="TModel">The OpenIZ Model type</typeparam>
-    [Service(ServiceInstantiationType.Instance)]
     public abstract class BaseDataPersistenceService<TModel> : IDataPersistenceService<TModel> where TModel : BaseData, new()
     {
 
-        // True if the context is disposed
-        private bool m_disposed;
-        // The current context
-        private SqlDataPersistenceContext m_context;
+        // Configuration
+        protected SqlConfiguration m_configuration = ConfigurationManager.GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
 
         // Mapper
         protected static ModelMapper s_mapper = new ModelMapper(typeof(BaseDataPersistenceService<>).Assembly.GetManifestResourceStream("OpenIZ.Persistence.Data.MSSQL.Data.ModelMap.xml"));
@@ -83,16 +80,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public event EventHandler<PrePersistenceEventArgs<TModel>> Updating;
 
-        /// <summary>
-        /// Disposes the object
-        /// </summary>
-        public void Dispose()
-        {
-            if (!this.m_disposed)
-                this.m_context?.Dispose();
-            this.m_disposed = true;
-        }
-
 
         /// <summary>
         /// Update property data if required
@@ -122,26 +109,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         }
 
         /// <summary>
-        /// Gets the data context
-        /// </summary>
-        public IDataPersistenceContext DataContext
-        {
-            get
-            {
-                if (this.m_context == null)
-                    this.m_context = new SqlDataPersistenceContext();
-                return this.m_context;
-            }
-            set
-            {
-                if (value is SqlDataPersistenceContext)
-                    this.m_context = value as SqlDataPersistenceContext;
-                else
-                    throw new ArgumentException(nameof(value));
-            }
-        }
-
-        /// <summary>
         /// Performs an insert of the data using a new data context
         /// </summary>
         /// <param name="storageData">The data to be inserted</param>
@@ -150,20 +117,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <returns>The inserted model object</returns>
         public TModel Insert(TModel storageData, IPrincipal principal, TransactionMode mode)
         {
-            this.ThrowIfDisposed();
-
-            try
+            // Create data context with given transaction
+            using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
             {
-
-                this.DataContext.Open(); // Open if not opened
-                if (mode != TransactionMode.None &&
-                    !this.DataContext.BeginTransaction()) // Begin a transaction if one is not already underway
-                    mode = TransactionMode.None;
-
-                // Create data context with given transaction
-                using (ModelDataContext dataContext = this.m_context.CreateDataContext())
+                Trace.TraceInformation("MSSQL: {0}: INSERT {1}", this.GetType().Name, storageData);
+                try
                 {
-                    Trace.TraceInformation("MSSQL: {0}: INSERT {1}", this.GetType().Name, storageData);
+                    dataContext.Connection.Open();
+                    dataContext.Transaction = dataContext.Connection.BeginTransaction();
 
                     PrePersistenceEventArgs<TModel> preEvt = new PrePersistenceEventArgs<TModel>(storageData, principal);
                     this.Inserting?.Invoke(this, preEvt);
@@ -178,27 +139,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     dataContext.SubmitChanges();
                     return retVal;
                 }
-            }
-            catch(Exception e)
-            {
-                Trace.TraceError(e.ToString());
-                throw;
-            }
-            finally
-            {
-                switch (mode)
+                catch (Exception e)
                 {
-                    case TransactionMode.Rollback:
-                        this.DataContext.Rollback();
-                        this.DataContext.Close();
-                        break;
-                    case TransactionMode.Commit:
-                        this.DataContext.Commit();
-                        this.DataContext.Close();
-                        break;
+                    Trace.TraceError(e.ToString());
+                    throw;
                 }
+                finally
+                {
+                    switch (mode)
+                    {
+                        case TransactionMode.Rollback:
+                            dataContext.Transaction.Rollback();
+                            break;
+                        case TransactionMode.Commit:
+                            dataContext.Transaction.Commit();
+                            break;
+                    }
 
+                }
             }
+
         }
 
         /// <summary>
@@ -210,21 +170,17 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <returns>The new version of the object</returns>
         public TModel Update(TModel storageData, IPrincipal principal, TransactionMode mode)
         {
-            this.ThrowIfDisposed();
-
-            try
+            using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
             {
-                this.DataContext.Open();
-                if (mode != TransactionMode.None &&
-                    !this.DataContext.BeginTransaction()) // Begin a transaction if one is not already underway
-                    mode = TransactionMode.None;
-
-                // Create data context with given transaction
-                using (ModelDataContext dataContext = this.m_context.CreateDataContext())
+                try
                 {
 
                     Trace.TraceInformation("MSSQL: {0}: UPDATE {1}", this.GetType().Name, storageData);
 
+                    dataContext.Connection.Open();
+                    dataContext.Transaction = dataContext.Connection.BeginTransaction();
+
+                    // Perform the update
                     PrePersistenceEventArgs<TModel> preEvt = new PrePersistenceEventArgs<TModel>(storageData, principal);
                     this.Updating?.Invoke(this, preEvt);
                     if (preEvt.Cancel)
@@ -239,24 +195,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
                     return retVal;
                 }
-            }
-            catch (Exception e)
-            {
-                Trace.TraceError(e.ToString());
-                throw;
-            }
-            finally
-            {
-                switch (mode)
+                catch (Exception e)
                 {
-                    case TransactionMode.Rollback:
-                        this.DataContext.Rollback();
-                        this.DataContext.Close();
-                        break;
-                    case TransactionMode.Commit:
-                        this.DataContext.Commit();
-                        this.DataContext.Close();
-                        break;
+                    Trace.TraceError(e.ToString());
+                    throw;
+                }
+                finally
+                {
+                    switch (mode)
+                    {
+                        case TransactionMode.Rollback:
+                            dataContext.Transaction.Rollback();
+                            break;
+                        case TransactionMode.Commit:
+                            dataContext.Transaction.Commit();
+                            break;
+                    }
                 }
             }
         }
@@ -270,19 +224,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <returns>The obsoleted object</returns>
         public TModel Obsolete(TModel storageData, IPrincipal principal, TransactionMode mode)
         {
-            this.ThrowIfDisposed();
-
-            try
+            // Create data context with given transaction
+            using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
             {
-                this.DataContext.Open();
-                if (mode != TransactionMode.None &&
-                    !this.DataContext.BeginTransaction()) // Begin a transaction if one is not already underway
-                    mode = TransactionMode.None;
-
-                // Create data context with given transaction
-                using (ModelDataContext dataContext = this.m_context.CreateDataContext())
+                try
                 {
+
                     Trace.TraceInformation("MSSQL: {0}: OBSOLETE {1}", this.GetType().Name, storageData);
+
+                    dataContext.Connection.Open();
+                    dataContext.Transaction = dataContext.Connection.BeginTransaction();
 
                     PrePersistenceEventArgs<TModel> preEvt = new PrePersistenceEventArgs<TModel>(storageData, principal);
                     this.Obsoleting?.Invoke(this, preEvt);
@@ -299,26 +250,25 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     return retVal;
 
                 }
-            }
-            catch (Exception e)
-            {
-                Trace.TraceError(e.ToString());
-                throw;
-            }
-            finally
-            {
-                switch (mode)
+                catch (Exception e)
                 {
-                    case TransactionMode.Rollback:
-                        this.DataContext.Rollback();
-                        this.DataContext.Close();
-                        break;
-                    case TransactionMode.Commit:
-                        this.DataContext.Commit();
-                        this.DataContext.Close();
-                        break;
+                    Trace.TraceError(e.ToString());
+                    throw;
+                }
+                finally
+                {
+                    switch (mode)
+                    {
+                        case TransactionMode.Rollback:
+                            dataContext.Transaction.Rollback();
+                            break;
+                        case TransactionMode.Commit:
+                            dataContext.Transaction.Commit();
+                            break;
+                    }
                 }
             }
+
         }
 
         /// <summary>
@@ -331,13 +281,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <returns>The specified container object of <typeparamref name="T"/></returns>
         public TModel Get<TIdentifier>(Identifier<TIdentifier> containerId, IPrincipal principal, bool loadFast)
         {
-            this.ThrowIfDisposed();
-            try
+            using (var dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
             {
-                this.DataContext.Open();
-
-                using (var dataContext = this.m_context.CreateReadonlyContext())
+                try
                 {
+
                     Trace.TraceInformation("MSSQL: {0}: GET {1}", this.GetType().Name, containerId);
 
                     PreRetrievalEventArgs<TModel> preEvt = new PreRetrievalEventArgs<TModel>(new TModel() { Id = containerId as Identifier<Guid> }, principal);
@@ -352,11 +300,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
                     return retVal;
                 }
-            }
-            catch(Exception e)
-            {
-                Trace.TraceError(e.ToString());
-                throw;
+                catch (Exception e)
+                {
+                    Trace.TraceError(e.ToString());
+                    throw;
+                }
             }
         }
 
@@ -373,13 +321,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public int Count(Expression<Func<TModel, bool>> query, IPrincipal principal)
         {
-            this.ThrowIfDisposed();
-
             try
             {
-                this.DataContext.Open();
 
-                using (var dataContext = this.m_context.CreateReadonlyContext())
+                using (var dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
                 {
                     Trace.TraceInformation("MSSQL: {0}: COUNT {1}", this.GetType().Name, query);
 
@@ -409,13 +354,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <returns>A delay load IQueryable instance which converts the query objects to the model view class</returns>
         public IEnumerable<TModel> Query(Expression<Func<TModel, bool>> query, int offset, int? count, IPrincipal principal)
         {
-            this.ThrowIfDisposed();
-
             try
             {
-                this.DataContext.Open();
-
-                using (var dataContext = this.m_context.CreateReadonlyContext())
+                using (var dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
                 {
                     Trace.TraceInformation("MSSQL: {0}: QUERY {1}", this.GetType().Name, query);
 
@@ -445,15 +386,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         #endregion
 
         #region Internal Implementation 
-
-        /// <summary>
-        /// Throw an exception if the object is disposed
-        /// </summary>
-        protected void ThrowIfDisposed()
-        {
-            if (this.m_disposed)
-                throw new ObjectDisposedException(this.GetType().Name);
-        }
 
         /// <summary>
         /// Convert a data type into the model class

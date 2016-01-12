@@ -109,8 +109,8 @@ namespace OpenIZ.Core.Model
             {
                 if (this.m_delayLoad && this.m_createdById != Guid.Empty && this.m_createdBy == null)
                 {
-                    using (var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>())
-                        this.m_createdBy = dataLayer.Get(new Identifier<Guid>() { Id = this.m_createdById }, null, true);
+                    var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+                    this.m_createdBy = dataLayer.Get(new Identifier<Guid>() { Id = this.m_createdById }, null, true);
                 }
                 return this.m_createdBy;
             }
@@ -137,8 +137,8 @@ namespace OpenIZ.Core.Model
             {
                 if (this.m_delayLoad && this.m_obsoletedById.HasValue && this.m_obsoletedBy == null)
                 {
-                    using (var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>())
-                        this.m_obsoletedBy = dataLayer.Get(new Identifier<Guid>() { Id = this.m_obsoletedById.Value }, null, true);
+                    var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+                    this.m_obsoletedBy = dataLayer.Get(new Identifier<Guid>() { Id = this.m_obsoletedById.Value }, null, true);
                 }
                 return this.m_obsoletedBy;
             }

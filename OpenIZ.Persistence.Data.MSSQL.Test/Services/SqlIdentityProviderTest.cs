@@ -28,21 +28,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                            Path.Combine(context.TestDeploymentDir, string.Empty));
 
             SHA256 hasher = SHA256.Create();
-            using (var dataService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>())
+            var dataService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+            dataService.Insert(new SecurityUser()
             {
-                dataService.Insert(new SecurityUser()
-                {
-                    UserName = "admin@identitytest.com",
-                    Email = "admin@identitytest.com",
-                    PasswordHash = Convert.ToBase64String(hasher.ComputeHash(Encoding.UTF8.GetBytes("password"))),
-                }, null, TransactionMode.None);
-                dataService.Insert(new SecurityUser()
-                {
-                    UserName = "user@identitytest.com",
-                    Email = "user@identitytest.com",
-                    PasswordHash = Convert.ToBase64String(hasher.ComputeHash(Encoding.UTF8.GetBytes("password"))),
-                }, null, TransactionMode.None);
-            }
+                UserName = "admin@identitytest.com",
+                Email = "admin@identitytest.com",
+                PasswordHash = Convert.ToBase64String(hasher.ComputeHash(Encoding.UTF8.GetBytes("password"))),
+            }, null, TransactionMode.Commit);
+            dataService.Insert(new SecurityUser()
+            {
+                UserName = "user@identitytest.com",
+                Email = "user@identitytest.com",
+                PasswordHash = Convert.ToBase64String(hasher.ComputeHash(Encoding.UTF8.GetBytes("password"))),
+            }, null, TransactionMode.Commit);
         }
 
         /// <summary>
@@ -81,34 +79,32 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         public void TestInvalidLoginAttemptCount()
         {
 
-            using (var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>())
+            var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+            IIdentityProviderService provider = ApplicationContext.Current.GetService<IIdentityProviderService>();
+
+            // Reset data for test
+            var user = dataPersistence.Query(u => u.UserName == "user@identitytest.com", null).First();
+            user.LockoutEnabled = false;
+            user.LastLoginTime = default(DateTimeOffset);
+            user.InvalidLoginAttempts = 0;
+            dataPersistence.Update(user, provider.Authenticate("admin@identitytest.com", "password"), TransactionMode.Commit);
+
+            try
             {
-                IIdentityProviderService provider = ApplicationContext.Current.GetService<IIdentityProviderService>();
 
-                // Reset data for test
-                var user = dataPersistence.Query(u => u.UserName == "user@identitytest.com", null).First();
-                user.LockoutEnabled = false;
-                user.LastLoginTime = default(DateTimeOffset);
-                user.InvalidLoginAttempts = 0;
-                dataPersistence.Update(user, provider.Authenticate("admin@identitytest.com","password"), TransactionMode.None);
-
-                try
-                {
-                    
-                    var principal = provider.Authenticate("user@identitytest.com", "passwordz");
-                    Assert.Fail("Should throw SecurityException");
-                }
-                catch (SecurityException)
-                {
-                    // We should have a lockout
-                    user = dataPersistence.Get(user.Id, null, false);
-                    Assert.AreEqual(1, user.InvalidLoginAttempts);
-                    Assert.AreEqual(default(DateTimeOffset), user.LastLoginTime);
-                    Assert.IsFalse(user.LockoutEnabled);
-
-                }
+                var principal = provider.Authenticate("user@identitytest.com", "passwordz");
+                Assert.Fail("Should throw SecurityException");
+            }
+            catch (SecurityException)
+            {
+                // We should have a lockout
+                user = dataPersistence.Get(user.Id, null, false);
+                Assert.AreEqual(1, user.InvalidLoginAttempts);
+                Assert.AreEqual(default(DateTimeOffset), user.LastLoginTime);
+                Assert.IsFalse(user.LockoutEnabled);
 
             }
+
         }
 
 
@@ -119,34 +115,33 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         public void TestAuthenticateLockout()
         {
 
-            using (var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>())
-            {
-                IIdentityProviderService provider = ApplicationContext.Current.GetService<IIdentityProviderService>();
-                // Reset data for test
-                var user = dataPersistence.Query(u => u.UserName == "user@identitytest.com", null).First();
-                user.LockoutEnabled = false;
-                user.LastLoginTime = default(DateTimeOffset);
-                user.InvalidLoginAttempts = 0;
-                dataPersistence.Update(user, provider.Authenticate("admin@identitytest.com", "password"), TransactionMode.None);
+            var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+            IIdentityProviderService provider = ApplicationContext.Current.GetService<IIdentityProviderService>();
+            // Reset data for test
+            var user = dataPersistence.Query(u => u.UserName == "user@identitytest.com", null).First();
+            user.LockoutEnabled = false;
+            user.LastLoginTime = default(DateTimeOffset);
+            user.InvalidLoginAttempts = 0;
+            dataPersistence.Update(user, provider.Authenticate("admin@identitytest.com", "password"), TransactionMode.Commit);
 
 
-                // Try 4 times to log in
-                for (int i = 0; i < 4; i++)
-                    try
-                    {
-                        var principal = provider.Authenticate("user@identitytest.com", "passwordz");
-                        Assert.Fail("Should throw SecurityException");
-                    }
-                    catch (SecurityException)
-                    { }
+            // Try 4 times to log in
+            for (int i = 0; i < 4; i++)
+                try
+                {
+                    var principal = provider.Authenticate("user@identitytest.com", "passwordz");
+                    Assert.Fail("Should throw SecurityException");
+                }
+                catch (SecurityException)
+                { }
 
-                // We should have a lockout
-                user = dataPersistence.Get(user.Id, null, false);
-                Assert.AreEqual(4, user.InvalidLoginAttempts);
-                Assert.AreEqual(default(DateTimeOffset), user.LastLoginTime);
-                Assert.IsTrue(user.LockoutEnabled);
+            // We should have a lockout
+            user = dataPersistence.Get(user.Id, null, false);
+            Assert.AreEqual(4, user.InvalidLoginAttempts);
+            Assert.AreEqual(default(DateTimeOffset), user.LastLoginTime);
+            Assert.IsTrue(user.LockoutEnabled);
 
-            }
+
         }
 
         /// <summary>

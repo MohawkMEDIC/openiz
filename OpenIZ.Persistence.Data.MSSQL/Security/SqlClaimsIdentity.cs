@@ -55,6 +55,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
                     dataContext.SubmitChanges();
                     return new SqlClaimsIdentity(user, true) { m_authenticationType = "Password" };
                 }
+                else if (user == null)
+                    throw new SecurityException("Invalid username/password");
                 else if ((bool)user?.LockoutEnabled)
                 {
                     user.FailedLoginAttempts++;
@@ -70,7 +72,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
                     throw new SecurityException("Invalid username/password");
                 }
                 else
-                    throw new SecurityException("Invalid username/password");
+                    throw new InvalidOperationException("Shouldn't be here");
                 
             }
         }
