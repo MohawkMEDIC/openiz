@@ -16,11 +16,16 @@ namespace OpenIZ.Core.Model.Security
 
         // User delay load
         private List<SecurityUser> m_users;
-
+        
         /// <summary>
         /// Gets or sets the name of the security role
         /// </summary>
         public String Name { get; set; }
+
+        /// <summary>
+        /// Description of the role
+        /// </summary>
+        public String Description { get; set; }
 
         /// <summary>
         /// Gets or sets the security users in the role
@@ -36,5 +41,7 @@ namespace OpenIZ.Core.Model.Security
                 return this.m_users;
             }
         }
+
+    
     }
 }

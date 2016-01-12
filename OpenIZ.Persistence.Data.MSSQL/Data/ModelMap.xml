@@ -34,4 +34,15 @@
         <via domainName="SecurityUser" />
     </property>
   </class>
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityPolicy, OpenIZ.Core, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.Policy, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="PolicyId"/>
+    <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
+    <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
+    <property modelName="Handler" domainName="HandlerClass"/>
+    <property modelName="Oid" domainName="PolicyOid"/>
+    <property modelName="CreatedBy" domainName="CreatedByEntity"/>
+    <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
+    <property modelName="CreatedById" domainName="CreatedBy"/>
+    <property modelName="UpdatedById" domainName="UpdatedBy"/>
+  </class>
 </modelMap>

@@ -34,5 +34,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
                 return new SecurityUserPersistenceService().Insert(me, principal, context);
             return me;
         }
+
+        /// <summary>
+        /// Ensure that the role exists
+        /// </summary>
+        public static Core.Model.Security.SecurityPolicy EnsureExists(this Core.Model.Security.SecurityPolicy me, IPrincipal principal, Data.ModelDataContext context)
+        {
+            if (me.Key == Guid.Empty)
+                return new SecurityPolicyPersistenceService().Insert(me, principal, context);
+            return me;
+        }
     }
 }

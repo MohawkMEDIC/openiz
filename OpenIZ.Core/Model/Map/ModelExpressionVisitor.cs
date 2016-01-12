@@ -131,7 +131,6 @@ namespace OpenIZ.Core.Model.Map
                 default:
                     return base.Visit(node);
             }
-            return base.Visit(node);
 
         }
 

@@ -18127,6 +18127,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private bool _CanElevate;
 		
+		private System.DateTimeOffset _CreationTime;
+		
+		private System.Guid _CreatedBy;
+		
+		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
+		
+		private System.Nullable<System.Guid> _ObsoletedBy;
+		
 		private EntitySet<ActPolicy> _ActPolicies;
 		
 		private EntitySet<SecurityApplicationPolicy> _SecurityApplicationPolicies;
@@ -18134,6 +18142,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private EntitySet<SecurityDevicePolicy> _SecurityDevicePolicies;
 		
 		private EntitySet<SecurityRolePolicy> _SecurityRolePolicies;
+		
+		private EntityRef<SecurityUser> _CreatedByEntity;
+		
+		private EntityRef<SecurityUser> _ObsoletedByEntity;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -18151,6 +18163,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnIsPublicChanged();
     partial void OnCanElevateChanging(bool value);
     partial void OnCanElevateChanged();
+    partial void OnCreationTimeChanging(System.DateTimeOffset value);
+    partial void OnCreationTimeChanged();
+    partial void OnCreatedByChanging(System.Guid value);
+    partial void OnCreatedByChanged();
+    partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnObsoletionTimeChanged();
+    partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
+    partial void OnObsoletedByChanged();
     #endregion
 		
 		public Policy()
@@ -18159,6 +18179,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._SecurityApplicationPolicies = new EntitySet<SecurityApplicationPolicy>(new Action<SecurityApplicationPolicy>(this.attach_SecurityApplicationPolicies), new Action<SecurityApplicationPolicy>(this.detach_SecurityApplicationPolicies));
 			this._SecurityDevicePolicies = new EntitySet<SecurityDevicePolicy>(new Action<SecurityDevicePolicy>(this.attach_SecurityDevicePolicies), new Action<SecurityDevicePolicy>(this.detach_SecurityDevicePolicies));
 			this._SecurityRolePolicies = new EntitySet<SecurityRolePolicy>(new Action<SecurityRolePolicy>(this.attach_SecurityRolePolicies), new Action<SecurityRolePolicy>(this.detach_SecurityRolePolicies));
+			this._CreatedByEntity = default(EntityRef<SecurityUser>);
+			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
 			OnCreated();
 		}
 		
@@ -18282,6 +18304,94 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", AutoSync=AutoSync.Always, DbType="DateTimeOffset NOT NULL", IsDbGenerated=true)]
+		public System.DateTimeOffset CreationTime
+		{
+			get
+			{
+				return this._CreationTime;
+			}
+			set
+			{
+				if ((this._CreationTime != value))
+				{
+					this.OnCreationTimeChanging(value);
+					this.SendPropertyChanging();
+					this._CreationTime = value;
+					this.SendPropertyChanged("CreationTime");
+					this.OnCreationTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid CreatedBy
+		{
+			get
+			{
+				return this._CreatedBy;
+			}
+			set
+			{
+				if ((this._CreatedBy != value))
+				{
+					if (this._CreatedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCreatedByChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedBy = value;
+					this.SendPropertyChanged("CreatedBy");
+					this.OnCreatedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> ObsoletionTime
+		{
+			get
+			{
+				return this._ObsoletionTime;
+			}
+			set
+			{
+				if ((this._ObsoletionTime != value))
+				{
+					this.OnObsoletionTimeChanging(value);
+					this.SendPropertyChanging();
+					this._ObsoletionTime = value;
+					this.SendPropertyChanged("ObsoletionTime");
+					this.OnObsoletionTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletedBy", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> ObsoletedBy
+		{
+			get
+			{
+				return this._ObsoletedBy;
+			}
+			set
+			{
+				if ((this._ObsoletedBy != value))
+				{
+					if (this._ObsoletedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnObsoletedByChanging(value);
+					this.SendPropertyChanging();
+					this._ObsoletedBy = value;
+					this.SendPropertyChanged("ObsoletedBy");
+					this.OnObsoletedByChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Policy_ActPolicy", Storage="_ActPolicies", ThisKey="PolicyId", OtherKey="PolicyId")]
 		public EntitySet<ActPolicy> ActPolicies
 		{
@@ -18331,6 +18441,74 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			set
 			{
 				this._SecurityRolePolicies.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_Policy", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser CreatedByEntity
+		{
+			get
+			{
+				return this._CreatedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.PoliciesCreatedBy.Remove(this);
+					}
+					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.PoliciesCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
+					this.SendPropertyChanged("CreatedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_Policy1", Storage="_ObsoletedByEntity", ThisKey="ObsoletedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser ObsoletedByEntity
+		{
+			get
+			{
+				return this._ObsoletedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.PoliciesObsoletedBy.Remove(this);
+					}
+					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.PoliciesObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("ObsoletedByEntity");
+				}
 			}
 		}
 		
@@ -20729,6 +20907,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private bool _IsDeny;
 		
+		private bool _CanOverride;
+		
 		private EntityRef<SecurityApplication> _SecurityApplication;
 		
 		private EntityRef<Policy> _Policy;
@@ -20743,6 +20923,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnPolicyIdChanged();
     partial void OnIsDenyChanging(bool value);
     partial void OnIsDenyChanged();
+    partial void OnCanOverrideChanging(bool value);
+    partial void OnCanOverrideChanged();
     #endregion
 		
 		public SecurityApplicationPolicy()
@@ -20816,6 +20998,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this._IsDeny = value;
 					this.SendPropertyChanged("IsDeny");
 					this.OnIsDenyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CanOverride", DbType="Bit NOT NULL")]
+		public bool CanOverride
+		{
+			get
+			{
+				return this._CanOverride;
+			}
+			set
+			{
+				if ((this._CanOverride != value))
+				{
+					this.OnCanOverrideChanging(value);
+					this.SendPropertyChanging();
+					this._CanOverride = value;
+					this.SendPropertyChanged("CanOverride");
+					this.OnCanOverrideChanged();
 				}
 			}
 		}
@@ -21265,6 +21467,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private bool _IsDeny;
 		
+		private bool _CanElevate;
+		
 		private EntityRef<SecurityDevice> _SecurityDevice;
 		
 		private EntityRef<Policy> _Policy;
@@ -21279,6 +21483,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnPolicyIdChanged();
     partial void OnIsDenyChanging(bool value);
     partial void OnIsDenyChanged();
+    partial void OnCanElevateChanging(bool value);
+    partial void OnCanElevateChanged();
     #endregion
 		
 		public SecurityDevicePolicy()
@@ -21352,6 +21558,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this._IsDeny = value;
 					this.SendPropertyChanged("IsDeny");
 					this.OnIsDenyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CanElevate", DbType="Bit NOT NULL")]
+		public bool CanElevate
+		{
+			get
+			{
+				return this._CanElevate;
+			}
+			set
+			{
+				if ((this._CanElevate != value))
+				{
+					this.OnCanElevateChanging(value);
+					this.SendPropertyChanging();
+					this._CanElevate = value;
+					this.SendPropertyChanged("CanElevate");
+					this.OnCanElevateChanged();
 				}
 			}
 		}
@@ -21455,6 +21681,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private string _Name;
 		
+		private string _Description;
+		
 		private System.DateTimeOffset _CreationTime;
 		
 		private System.Guid _CreatedBy;
@@ -21479,6 +21707,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnRoleIdChanged();
     partial void OnNameChanging(string value);
     partial void OnNameChanged();
+    partial void OnDescriptionChanging(string value);
+    partial void OnDescriptionChanged();
     partial void OnCreationTimeChanging(System.DateTimeOffset value);
     partial void OnCreationTimeChanged();
     partial void OnCreatedByChanging(System.Guid value);
@@ -21534,6 +21764,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this._Name = value;
 					this.SendPropertyChanged("Name");
 					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="NVarChar(256)")]
+		public string Description
+		{
+			get
+			{
+				return this._Description;
+			}
+			set
+			{
+				if ((this._Description != value))
+				{
+					this.OnDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._Description = value;
+					this.SendPropertyChanged("Description");
+					this.OnDescriptionChanged();
 				}
 			}
 		}
@@ -21777,6 +22027,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private bool _IsDeny;
 		
+		private bool _CanOverride;
+		
 		private EntityRef<Policy> _Policy;
 		
 		private EntityRef<SecurityRole> _SecurityRole;
@@ -21791,6 +22043,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnPolicyIdChanged();
     partial void OnIsDenyChanging(bool value);
     partial void OnIsDenyChanged();
+    partial void OnCanOverrideChanging(bool value);
+    partial void OnCanOverrideChanged();
     #endregion
 		
 		public SecurityRolePolicy()
@@ -21864,6 +22118,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this._IsDeny = value;
 					this.SendPropertyChanged("IsDeny");
 					this.OnIsDenyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CanOverride", DbType="Bit NOT NULL")]
+		public bool CanOverride
+		{
+			get
+			{
+				return this._CanOverride;
+			}
+			set
+			{
+				if ((this._CanOverride != value))
+				{
+					this.OnCanOverrideChanging(value);
+					this.SendPropertyChanging();
+					this._CanOverride = value;
+					this.SendPropertyChanged("CanOverride");
+					this.OnCanOverrideChanged();
 				}
 			}
 		}
@@ -22043,6 +22317,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<ExtensionType> _ExtensionTypesUpdatedBy;
 		
+		private EntitySet<Policy> _PoliciesCreatedBy;
+		
+		private EntitySet<Policy> _PoliciesObsoletedBy;
+		
 		private EntitySet<Protocol> _ProtocolsCreatedBy;
 		
 		private EntitySet<Protocol> _ProtocolsObsoletedBy;
@@ -22151,6 +22429,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._ExtensionTypesEnabledBy = new EntitySet<ExtensionType>(new Action<ExtensionType>(this.attach_ExtensionTypesEnabledBy), new Action<ExtensionType>(this.detach_ExtensionTypesEnabledBy));
 			this._ExtensionTypesObsoletedBy = new EntitySet<ExtensionType>(new Action<ExtensionType>(this.attach_ExtensionTypesObsoletedBy), new Action<ExtensionType>(this.detach_ExtensionTypesObsoletedBy));
 			this._ExtensionTypesUpdatedBy = new EntitySet<ExtensionType>(new Action<ExtensionType>(this.attach_ExtensionTypesUpdatedBy), new Action<ExtensionType>(this.detach_ExtensionTypesUpdatedBy));
+			this._PoliciesCreatedBy = new EntitySet<Policy>(new Action<Policy>(this.attach_PoliciesCreatedBy), new Action<Policy>(this.detach_PoliciesCreatedBy));
+			this._PoliciesObsoletedBy = new EntitySet<Policy>(new Action<Policy>(this.attach_PoliciesObsoletedBy), new Action<Policy>(this.detach_PoliciesObsoletedBy));
 			this._ProtocolsCreatedBy = new EntitySet<Protocol>(new Action<Protocol>(this.attach_ProtocolsCreatedBy), new Action<Protocol>(this.detach_ProtocolsCreatedBy));
 			this._ProtocolsObsoletedBy = new EntitySet<Protocol>(new Action<Protocol>(this.attach_ProtocolsObsoletedBy), new Action<Protocol>(this.detach_ProtocolsObsoletedBy));
 			this._ProtocolHandlersCreatedBy = new EntitySet<ProtocolHandler>(new Action<ProtocolHandler>(this.attach_ProtocolHandlersCreatedBy), new Action<ProtocolHandler>(this.detach_ProtocolHandlersCreatedBy));
@@ -22215,7 +22495,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Email", DbType="NVarChar(250) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Email", DbType="NVarChar(250)")]
 		public string Email
 		{
 			get
@@ -22830,6 +23110,32 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			set
 			{
 				this._ExtensionTypesUpdatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_Policy", Storage="_PoliciesCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<Policy> PoliciesCreatedBy
+		{
+			get
+			{
+				return this._PoliciesCreatedBy;
+			}
+			set
+			{
+				this._PoliciesCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_Policy1", Storage="_PoliciesObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<Policy> PoliciesObsoletedBy
+		{
+			get
+			{
+				return this._PoliciesObsoletedBy;
+			}
+			set
+			{
+				this._PoliciesObsoletedBy.Assign(value);
 			}
 		}
 		
@@ -23451,6 +23757,30 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this.SendPropertyChanging();
 			entity.UpdatedByEntity = null;
+		}
+		
+		private void attach_PoliciesCreatedBy(Policy entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_PoliciesCreatedBy(Policy entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_PoliciesObsoletedBy(Policy entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_PoliciesObsoletedBy(Policy entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
 		}
 		
 		private void attach_ProtocolsCreatedBy(Protocol entity)

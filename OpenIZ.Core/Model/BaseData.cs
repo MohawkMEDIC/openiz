@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace OpenIZ.Core.Model
 {
+
     /// <summary>
     /// Represents the root of all model classes in the OpenIZ Core
     /// </summary>

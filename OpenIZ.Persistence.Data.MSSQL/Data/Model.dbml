@@ -738,10 +738,16 @@
       <Column Name="HandlerClass" Type="System.String" DbType="NVarChar(256)" CanBeNull="true" />
       <Column Name="IsPublic" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="CanElevate" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreationTime" Type="System.DateTimeOffset" DbType="DateTimeOffset NOT NULL" CanBeNull="false" IsDbGenerated="true" />
+      <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
+      <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Association Name="Policy_ActPolicy" Member="ActPolicies" ThisKey="PolicyId" OtherKey="PolicyId" Type="ActPolicy" />
       <Association Name="Policy_SecurityApplicationPolicy" Member="SecurityApplicationPolicies" ThisKey="PolicyId" OtherKey="PolicyId" Type="SecurityApplicationPolicy" />
       <Association Name="Policy_SecurityDevicePolicy" Member="SecurityDevicePolicies" ThisKey="PolicyId" OtherKey="PolicyId" Type="SecurityDevicePolicy" />
       <Association Name="Policy_SecurityRolePolicy" Member="SecurityRolePolicies" ThisKey="PolicyId" OtherKey="PolicyId" Type="SecurityRolePolicy" />
+      <Association Name="SecurityUser_Policy" Member="CreatedByEntity" ThisKey="CreatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
+      <Association Name="SecurityUser_Policy1" Member="ObsoletedByEntity" ThisKey="ObsoletedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.Protocol" Member="Protocols">
@@ -851,6 +857,7 @@
       <Column Name="ApplicationId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="PolicyId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="IsDeny" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CanOverride" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Association Name="SecurityApplication_SecurityApplicationPolicy" Member="SecurityApplication" ThisKey="ApplicationId" OtherKey="ApplicationId" Type="SecurityApplication" IsForeignKey="true" />
       <Association Name="Policy_SecurityApplicationPolicy" Member="Policy" ThisKey="PolicyId" OtherKey="PolicyId" Type="Policy" IsForeignKey="true" />
     </Type>
@@ -875,6 +882,7 @@
       <Column Name="DeviceId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="PolicyId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="IsDeny" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CanElevate" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Association Name="SecurityDevice_SecurityDevicePolicy" Member="SecurityDevice" ThisKey="DeviceId" OtherKey="DeviceId" Type="SecurityDevice" IsForeignKey="true" />
       <Association Name="Policy_SecurityDevicePolicy" Member="Policy" ThisKey="PolicyId" OtherKey="PolicyId" Type="Policy" IsForeignKey="true" />
     </Type>
@@ -883,6 +891,7 @@
     <Type Name="SecurityRole">
       <Column Name="RoleId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" IsDbGenerated="true" />
       <Column Name="Name" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(256)" CanBeNull="true"/>
       <Column Name="CreationTime" Type="System.DateTimeOffset" DbType="DateTimeOffset NOT NULL" CanBeNull="false" IsDbGenerated="true" />
       <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
@@ -898,6 +907,7 @@
       <Column Name="RoleId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="PolicyId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="IsDeny" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CanOverride" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Association Name="Policy_SecurityRolePolicy" Member="Policy" ThisKey="PolicyId" OtherKey="PolicyId" Type="Policy" IsForeignKey="true" />
       <Association Name="SecurityRole_SecurityRolePolicy" Member="SecurityRole" ThisKey="RoleId" OtherKey="RoleId" Type="SecurityRole" IsForeignKey="true" />
     </Type>
@@ -906,7 +916,7 @@
     <Type Name="SecurityUser">
       <Column Name="UserId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" IsDbGenerated="true" />
       <Column Name="UserName" Type="System.String" DbType="NVarChar(128) NOT NULL" CanBeNull="false" />
-      <Column Name="Email" Type="System.String" DbType="NVarChar(250) NOT NULL" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
       <Column Name="EmailConfirmed" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="PhoneNumber" Type="System.String" DbType="NVarChar(128)" CanBeNull="true" />
       <Column Name="PhoneNumberConfirmed" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
@@ -944,6 +954,8 @@
       <Association Name="SecurityUser_ExtensionType" Member="ExtensionTypesEnabledBy" ThisKey="UserId" OtherKey="EnabledBy" Type="ExtensionType" />
       <Association Name="SecurityUser_ExtensionType1" Member="ExtensionTypesObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="ExtensionType" />
       <Association Name="SecurityUser_ExtensionType2" Member="ExtensionTypesUpdatedBy" ThisKey="UserId" OtherKey="UpdatedBy" Type="ExtensionType" />
+      <Association Name="SecurityUser_Policy" Member="PoliciesCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="Policy" />
+      <Association Name="SecurityUser_Policy1" Member="PoliciesObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="Policy" />
       <Association Name="SecurityUser_Protocol" Member="ProtocolsCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="Protocol" />
       <Association Name="SecurityUser_Protocol1" Member="ProtocolsObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="Protocol" />
       <Association Name="SecurityUser_ProtocolHandler" Member="ProtocolHandlersCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="ProtocolHandler" />

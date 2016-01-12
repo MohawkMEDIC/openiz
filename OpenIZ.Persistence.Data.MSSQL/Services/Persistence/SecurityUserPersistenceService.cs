@@ -52,13 +52,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         internal override Core.Model.Security.SecurityUser Insert(Core.Model.Security.SecurityUser storageData, IPrincipal principal, ModelDataContext dataContext)
         {
             if (storageData.Key != default(Guid)) // Trying to insert an already inserted user?
-                throw new SqlFormalConstraintException("Insert must be for an unidentified object");
+                throw new SqlFormalConstraintException(SqlFormalConstraintType.IdentityInsert);
 
             if (storageData.DelayLoad) // We want a frozen asset
                 storageData = storageData.AsFrozen() as Core.Model.Security.SecurityUser;
 
             var dataUser = this.ConvertFromModel(storageData) as Data.SecurityUser;
-            dataUser.CreatedBy = principal == null ? null : (Guid?)base.GetUserFromprincipal(principal, dataContext);
+            dataUser.CreatedBy = principal == null ? null : (Guid?)base.GetUserFromPrincipal(principal, dataContext);
             dataContext.SecurityUsers.InsertOnSubmit(dataUser);
             dataUser.SecurityStamp = Guid.NewGuid().ToString();
 
@@ -81,9 +81,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         internal override Core.Model.Security.SecurityUser Obsolete(Core.Model.Security.SecurityUser storageData, IPrincipal principal, ModelDataContext dataContext)
         {
             if (storageData.Key == default(Guid))
-                throw new SqlFormalConstraintException("Obsolete must be for an identified object");
+                throw new SqlFormalConstraintException(SqlFormalConstraintType.NonIdentityUpdate);
             else if (principal == null)
-                throw new SqlFormalConstraintException("Obsoletion requires authorization context");
+                throw new ArgumentNullException(nameof(principal));
 
             if (storageData.DelayLoad) // We want a frozen asset
                 storageData = storageData.AsFrozen() as Core.Model.Security.SecurityUser;
@@ -92,7 +92,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (dataUser == null)
                 throw new KeyNotFoundException();
 
-            dataUser.ObsoletedBy = base.GetUserFromprincipal(principal, dataContext);
+            dataUser.ObsoletedBy = base.GetUserFromPrincipal(principal, dataContext);
             dataUser.ObsoletionTime = DateTimeOffset.Now;
             dataUser.SecurityStamp = Guid.NewGuid().ToString();
 
@@ -108,7 +108,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         internal override IQueryable<Core.Model.Security.SecurityUser> Query(Expression<Func<Core.Model.Security.SecurityUser, bool>> query, IPrincipal principal, ModelDataContext dataContext)
         {
             var queryExpression = s_mapper.MapModelExpression<Core.Model.Security.SecurityUser, Data.SecurityUser>(query);
-            Trace.TraceInformation("MSSQL: {0}: QUERY Tx {1} > {2}", this.GetType().Name, query, queryExpression);
+            this.m_traceSource.TraceInformation("MSSQL: {0}: QUERY Tx {1} > {2}", this.GetType().Name, query, queryExpression);
 
             return dataContext.SecurityUsers.Where(queryExpression).Select(o => this.ConvertToModel(o));
         }
@@ -119,9 +119,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         internal override Core.Model.Security.SecurityUser Update(Core.Model.Security.SecurityUser storageData, IPrincipal principal, ModelDataContext dataContext)
         {
             if (storageData.Key == default(Guid))
-                throw new SqlFormalConstraintException("Update must be for an identified object");
+                throw new SqlFormalConstraintException(SqlFormalConstraintType.NonIdentityUpdate);
             else if (principal == null)
-                throw new SqlFormalConstraintException("Update requires authorization context");
+                throw new ArgumentNullException(nameof(principal));
 
             if (storageData.DelayLoad) // We want a frozen asset
                 storageData = storageData.AsFrozen() as Core.Model.Security.SecurityUser;
@@ -133,7 +133,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var newData = this.ConvertFromModel(storageData) as Data.SecurityUser;
             base.UpdatePropertyData(dataUser, newData);
 
-            dataUser.UpdatedBy = base.GetUserFromprincipal(principal, dataContext);
+            dataUser.UpdatedBy = base.GetUserFromPrincipal(principal, dataContext);
             dataUser.UpdatedTime = DateTimeOffset.Now;
             dataUser.SecurityStamp = Guid.NewGuid().ToString();
 

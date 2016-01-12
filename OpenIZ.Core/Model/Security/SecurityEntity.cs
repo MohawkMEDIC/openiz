@@ -9,21 +9,15 @@ namespace OpenIZ.Core.Model.Security
     /// <summary>
     /// Security Entity base class
     /// </summary>
-    public class SecurityEntity : VersionedBaseData
+    public abstract class SecurityEntity : VersionedBaseData
     {
 
-        /// <summary>
-        /// Gets the list of security policies associated with the user
-        /// </summary>
-        public SecurityEntity()
-        {
-            this.Policies = new List<SecurityPolicyInstance>();
-        }
+        // Policies
+        private List<SecurityPolicyInstance> m_policies = new List<SecurityPolicyInstance>();
 
         /// <summary>
-        /// Security policies associated with the security entity
+        /// Policies associated with the entity
         /// </summary>
-        public List<SecurityPolicyInstance> Policies { get; private set; }
-
+        public virtual List<SecurityPolicyInstance> Policies { get { return this.m_policies; } }
     }
 }

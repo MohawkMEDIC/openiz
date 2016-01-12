@@ -32,6 +32,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     public abstract class BaseDataPersistenceService<TModel> : IDataPersistenceService<TModel> where TModel : BaseData, new()
     {
 
+        protected TraceSource m_traceSource = new TraceSource("OpenIZ.Persistence.Data.MSSQL.Services.Persistence");
+
         // Configuration
         protected SqlConfiguration m_configuration = ConfigurationManager.GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
 
@@ -120,7 +122,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Create data context with given transaction
             using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
             {
-                Trace.TraceInformation("MSSQL: {0}: INSERT {1}", this.GetType().Name, storageData);
+                this.m_traceSource.TraceInformation("{0}: INSERT {1}", this.GetType().Name, storageData);
                 try
                 {
                     dataContext.Connection.Open();
@@ -141,7 +143,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError(e.ToString());
+                    this.m_traceSource.TraceEvent(TraceEventType.Critical, e.HResult, e.ToString());
                     throw;
                 }
                 finally
@@ -175,7 +177,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 try
                 {
 
-                    Trace.TraceInformation("MSSQL: {0}: UPDATE {1}", this.GetType().Name, storageData);
+                    this.m_traceSource.TraceInformation("{0}: UPDATE {1}", this.GetType().Name, storageData);
 
                     dataContext.Connection.Open();
                     dataContext.Transaction = dataContext.Connection.BeginTransaction();
@@ -197,7 +199,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError(e.ToString());
+                    this.m_traceSource.TraceEvent(TraceEventType.Critical, e.HResult, e.ToString());
                     throw;
                 }
                 finally
@@ -230,7 +232,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 try
                 {
 
-                    Trace.TraceInformation("MSSQL: {0}: OBSOLETE {1}", this.GetType().Name, storageData);
+                    this.m_traceSource.TraceInformation("{0}: OBSOLETE {1}", this.GetType().Name, storageData);
 
                     dataContext.Connection.Open();
                     dataContext.Transaction = dataContext.Connection.BeginTransaction();
@@ -252,7 +254,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError(e.ToString());
+                    this.m_traceSource.TraceEvent(TraceEventType.Critical, e.HResult, e.ToString());
                     throw;
                 }
                 finally
@@ -286,7 +288,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 try
                 {
 
-                    Trace.TraceInformation("MSSQL: {0}: GET {1}", this.GetType().Name, containerId);
+                    this.m_traceSource.TraceInformation("{0}: GET {1}", this.GetType().Name, containerId);
 
                     PreRetrievalEventArgs<TModel> preEvt = new PreRetrievalEventArgs<TModel>(new TModel() { Id = containerId as Identifier<Guid> }, principal);
                     this.Retrieving?.Invoke(this, preEvt);
@@ -302,7 +304,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError(e.ToString());
+                    this.m_traceSource.TraceEvent(TraceEventType.Critical, e.HResult, e.ToString());
                     throw;
                 }
             }
@@ -326,7 +328,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
                 using (var dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
                 {
-                    Trace.TraceInformation("MSSQL: {0}: COUNT {1}", this.GetType().Name, query);
+                    this.m_traceSource.TraceInformation("{0}: COUNT {1}", this.GetType().Name, query);
 
                     PreQueryEventArgs<TModel> preEvt = new PreQueryEventArgs<TModel>(query, principal);
                     this.Querying?.Invoke(this, preEvt);
@@ -340,7 +342,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             }
             catch (Exception e)
             {
-                Trace.TraceError(e.ToString());
+                this.m_traceSource.TraceEvent(TraceEventType.Critical, e.HResult, e.ToString());
                 throw;
             }
 
@@ -358,7 +360,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             {
                 using (var dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
                 {
-                    Trace.TraceInformation("MSSQL: {0}: QUERY {1}", this.GetType().Name, query);
+                    this.m_traceSource.TraceInformation("{0}: QUERY {1}", this.GetType().Name, query);
 
                     PreQueryEventArgs<TModel> preEvt = new PreQueryEventArgs<TModel>(query, principal);
                     this.Querying?.Invoke(this, preEvt);
@@ -378,7 +380,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             }
             catch (Exception e)
             {
-                Trace.TraceError(e.ToString());
+                this.m_traceSource.TraceEvent(TraceEventType.Critical, e.HResult, e.ToString());
                 throw;
             }
         }
@@ -451,7 +453,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         /// <param name="principal">The current authorization context</param>
         /// <returns>The UUID of the user which the authorization context subject represents</returns>
-        protected Guid GetUserFromprincipal(IPrincipal principal, ModelDataContext dataContext)
+        protected Guid GetUserFromPrincipal(IPrincipal principal, ModelDataContext dataContext)
         {
 
             var user = dataContext.SecurityUsers.FirstOrDefault(o => o.UserName == principal.Identity.Name && !o.ObsoletionTime.HasValue);

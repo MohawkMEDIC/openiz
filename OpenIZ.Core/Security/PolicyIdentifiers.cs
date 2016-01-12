@@ -32,5 +32,10 @@ namespace OpenIZ.Core.Security
         /// Policy identifier for allowance of altering passwords
         /// </summary>
         public const string OpenIzAlterRolePolicy = "1.1.1.1.1.1.1.1.1.4";
+
+        /// <summary>
+        /// Policy identifier for allowing of creating new identities
+        /// </summary>
+        public const string OpenIzCreateIdentityPolicy = "1.1.1.1.1.1.1.1.1.5";
     }
 }

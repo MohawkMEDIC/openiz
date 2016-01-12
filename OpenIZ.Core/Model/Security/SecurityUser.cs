@@ -139,5 +139,29 @@ namespace OpenIZ.Core.Model.Security
         /// </summary>
         public Boolean PhoneNumberConfirmed { get; set; }
 
+        /// <summary>
+        /// Get the policies active for this user
+        /// </summary>
+        public override List<SecurityPolicyInstance> Policies
+        {
+            get
+            {
+                var rolePolicies = this.Roles.SelectMany(o => o.Policies, (r, p) => p);
+                List<SecurityPolicyInstance> retVal = new List<SecurityPolicyInstance>();
+                foreach (var itm in rolePolicies)
+                {
+                    var existingRetVal = retVal.Find(o => o.Policy.Key == itm.Policy.Key);
+                    if (existingRetVal == null)
+                        retVal.Add(itm);
+                    else if (existingRetVal.GrantType > itm.GrantType)
+                    {
+                        retVal.Remove(existingRetVal);
+                        retVal.Add(itm);
+                    }
+                }
+                return retVal;
+            }
+        }
+
     }
 }

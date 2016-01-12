@@ -17,6 +17,9 @@ namespace OpenIZ.Core.Model.Map
     public sealed class ModelMapper
     {
 
+        // Model map source
+        private TraceSource m_traceSource = new TraceSource("OpenIZ.Core.Model.Map");
+
         // The map file
         private ModelMap m_mapFile;
 
@@ -185,6 +188,10 @@ namespace OpenIZ.Core.Model.Map
             foreach(var propInfo in typeof(TModel).GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
 
+                // Property info
+                if (propInfo.GetValue(modelInstance) == null)
+                    continue;
+
                 if (!propInfo.PropertyType.IsPrimitive && propInfo.PropertyType != typeof(Guid) &&
                     (!propInfo.PropertyType.IsGenericType || propInfo.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) &&
                     propInfo.PropertyType != typeof(String) &&
@@ -205,9 +212,11 @@ namespace OpenIZ.Core.Model.Map
 
                 // Set value
                 if (domainProperty == null)
-                    Debug.WriteLine("Unmapped property ({0}).{1}", typeof(TModel).Name, propInfo.Name);
+                    this.m_traceSource.TraceInformation("Unmapped property ({0}).{1}", typeof(TModel).Name, propInfo.Name);
                 else if (domainProperty.PropertyType.IsAssignableFrom(propInfo.PropertyType))
                     domainProperty.SetValue(retVal, propInfo.GetValue(modelInstance));
+                else if (propInfo.PropertyType == typeof(Type) && domainProperty.PropertyType == typeof(String))
+                    domainProperty.SetValue(retVal, (propInfo.GetValue(modelInstance) as Type).AssemblyQualifiedName);
                 else
                     domainProperty.SetValue(retVal, MARC.Everest.Connectors.Util.FromWireFormat(propInfo.GetValue(modelInstance), domainProperty.PropertyType));
 
@@ -231,6 +240,10 @@ namespace OpenIZ.Core.Model.Map
             foreach (var propInfo in typeof(TDomain).GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
 
+                // Property info
+                if (propInfo.GetValue(domainInstance) == null)
+                    continue;
+
                 if (!propInfo.PropertyType.IsPrimitive && propInfo.PropertyType != typeof(Guid) &&
                     (!propInfo.PropertyType.IsGenericType || propInfo.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) &&
                     propInfo.PropertyType != typeof(String) &&
@@ -251,9 +264,11 @@ namespace OpenIZ.Core.Model.Map
 
                 // Set value
                 if (modelProperty == null)
-                    Debug.WriteLine("Unmapped property ({0}).{1}", typeof(TDomain).Name, propInfo.Name);
+                    Trace.TraceInformation("Unmapped property ({0}).{1}", typeof(TDomain).Name, propInfo.Name);
                 else if (modelProperty.PropertyType.IsAssignableFrom(propInfo.PropertyType))
                     modelProperty.SetValue(retVal, propInfo.GetValue(domainInstance));
+                else if (propInfo.PropertyType == typeof(String) && modelProperty.PropertyType == typeof(Type))
+                    modelProperty.SetValue(retVal, Type.GetType(propInfo.GetValue(domainInstance) as String));
                 else
                     modelProperty.SetValue(retVal, MARC.Everest.Connectors.Util.FromWireFormat(propInfo.GetValue(domainInstance), modelProperty.PropertyType));
 

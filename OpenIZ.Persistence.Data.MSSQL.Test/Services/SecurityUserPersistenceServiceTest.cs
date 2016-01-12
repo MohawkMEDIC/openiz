@@ -17,7 +17,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
     /// Summary description for SecurityUserPersistenceServiceTest
     /// </summary>
     [TestClass]
-    public class SecurityUserPersistenceServiceTest : DataTest
+    public class SecurityUserPersistenceServiceTest : PersistenceTest<SecurityUser>
     {
 
         [ClassInitialize]
@@ -26,6 +26,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             AppDomain.CurrentDomain.SetData(
                            "DataDirectory",
                            Path.Combine(context.TestDeploymentDir, string.Empty));
+            IIdentityProviderService identityProvider = ApplicationContext.Current.GetService<IIdentityProviderService>();
+            identityProvider.CreateIdentity(nameof(SecurityUserPersistenceServiceTest), "password", null);
+            var auth = identityProvider.Authenticate(nameof(SecurityUserPersistenceServiceTest), "password");
         }
 
         /// <summary>
@@ -44,16 +47,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 UserName = "admin"
             };
 
-            // Store user
-            IDataPersistenceService<SecurityUser> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
-            var userAfterTest = persistenceService.Insert(userUnderTest, null, TransactionMode.Commit);
-
-            // Key should be set
-            Assert.AreNotEqual(Guid.Empty, userAfterTest.Key);
-            Assert.AreNotEqual(default(DateTimeOffset), userAfterTest.CreationTime);
+            var userAfterTest = base.DoTestInsert(userUnderTest);
             Assert.AreEqual(userUnderTest.UserName, userAfterTest.UserName);
         }
-
+        
         /// <summary>
         /// Test the updating of a valid security user
         /// </summary>
@@ -61,58 +58,53 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         public void TestUpdateValidSecurityUser()
         {
 
-            SHA256 hasher = SHA256.Create();
+            IPasswordHashingService hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
 
             SecurityUser userUnderTest = new SecurityUser()
             {
                 Email = "update@test.com",
                 EmailConfirmed = false,
-                PasswordHash = Convert.ToBase64String(hasher.ComputeHash(Encoding.UTF8.GetBytes("password"))),
+                PasswordHash = hashingService.EncodePassword("password"),
                 SecurityHash = "cert",
                 UserName = "updateTest"
             };
-
-            SecurityRole administrators = new SecurityRole()
-            {
-                Name = "Administrators"
-            },
-            users = new SecurityRole()
-            {
-                Name = "Users"
-            };
-
+            
             // Store user
-            IDataPersistenceService<SecurityUser> userService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
             IIdentityProviderService identityService = ApplicationContext.Current.GetService<IIdentityProviderService>();
-            IDataPersistenceService<SecurityRole> roleService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
-
-
-            // Insert the user
-            var userAfterInsert = userService.Insert(userUnderTest, null, TransactionMode.Commit);
-            userAfterInsert = userService.Get(userAfterInsert.Id, null, false);
-
-            var authContext = identityService.Authenticate("updateTest", "password");
-
-            administrators = roleService.Insert(administrators, authContext, TransactionMode.Commit);
-
-            // Keys should be set
-            Assert.AreNotEqual(Guid.Empty, userAfterInsert.Key);
-            Assert.IsFalse(userAfterInsert.EmailConfirmed);
+            var authContext = identityService.Authenticate(nameof(SecurityUserPersistenceServiceTest), "password");
             Assert.IsNotNull(authContext);
-            Assert.IsNull(userAfterInsert.UpdatedTime);
+            var userAfterUpdate = base.DoTestUpdate(userUnderTest, authContext, "PhoneNumber");
 
             // Update
-            userAfterInsert.EmailConfirmed = true;
-            userAfterInsert.Roles.Add(administrators);
-            userAfterInsert.Roles.Add(users);
-            var userAfterUpdate = userService.Update(userAfterInsert, authContext, TransactionMode.Commit);
-            userAfterUpdate = userService.Get(userAfterUpdate.Id, authContext, false);
-
-            // Update attributes should be set
-            Assert.AreEqual(userAfterInsert.Key, userAfterUpdate.Key);
             Assert.IsNotNull(userAfterUpdate.UpdatedTime);
-            Assert.IsTrue(userAfterUpdate.EmailConfirmed);
+            Assert.IsNotNull(userAfterUpdate.PhoneNumber);
             Assert.AreEqual(authContext.Identity.Name, userAfterUpdate.UpdatedBy.UserName);
+        }
+
+        /// <summary>
+        /// Test valid query result
+        /// </summary>
+        [TestMethod]
+        public void TestQueryValidResult()
+        {
+
+            IPasswordHashingService hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
+            String securityHash = Guid.NewGuid().ToString();
+            SecurityUser userUnderTest = new SecurityUser()
+            {
+                Email = "query@test.com",
+                EmailConfirmed = false,
+                PasswordHash = hashingService.EncodePassword("password"),
+                SecurityHash = securityHash,
+                UserName = "queryTest"
+            };
+
+            var testUser = base.DoTestInsert(userUnderTest);
+            IIdentityProviderService identityService = ApplicationContext.Current.GetService<IIdentityProviderService>();
+            var authContext = identityService.Authenticate(nameof(SecurityUserPersistenceServiceTest), "password");
+            var results = base.DoTestQuery(o => o.Email == "query@test.com", testUser.Key, authContext);
+            Assert.AreEqual(1, results.Count());
+            Assert.AreEqual(userUnderTest.Email, results.First().Email);
         }
 
     }

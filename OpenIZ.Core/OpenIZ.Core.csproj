@@ -62,7 +62,11 @@
     <Compile Include="Model\Security\SecurityUser.cs" />
     <Compile Include="Model\VersionedBaseData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\LocalPolicyDecisionService.cs" />
+    <Compile Include="Security\LocalPolicyInformationService.cs" />
+    <Compile Include="Security\OpenIzClaimTypes.cs" />
     <Compile Include="Security\PolicyIdentifiers.cs" />
+    <Compile Include="Security\SHA256PasswordHashingService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Model\Entity\" />
