@@ -165,6 +165,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             { }
         }
 
+        /// <summary>
+        /// Tests that the identity provider can change passwords
+        /// </summary>
+        public void TestChangePassword()
+        {
+
+            using (var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>())
+            {
+                var user = dataPersistence.Query(u => u.UserName == "admin@identitytest.com", null).First();
+                IIdentityProviderService identityProvider = ApplicationContext.Current.GetService()
+            }
+
+        }
 
     }
 }
