@@ -34,26 +34,24 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         [TestMethod]
         public void TestInsertValidSecurityUser()
         {
-            
+
             SecurityUser userUnderTest = new SecurityUser()
             {
                 Email = "admin@test.com",
                 EmailConfirmed = true,
                 PasswordHash = "test_user_hash_store",
                 SecurityHash = "test_security_hash",
-                UserName = "admin"                
+                UserName = "admin"
             };
 
             // Store user
-            using (IDataPersistenceService<SecurityUser> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>())
-            {
-                var userAfterTest = persistenceService.Insert(userUnderTest, null, TransactionMode.Commit);
+            IDataPersistenceService<SecurityUser> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+            var userAfterTest = persistenceService.Insert(userUnderTest, null, TransactionMode.Commit);
 
-                // Key should be set
-                Assert.AreNotEqual(Guid.Empty, userAfterTest.Key);
-                Assert.AreNotEqual(default(DateTimeOffset), userAfterTest.CreationTime);
-                Assert.AreEqual(userUnderTest.UserName, userAfterTest.UserName);
-            }
+            // Key should be set
+            Assert.AreNotEqual(Guid.Empty, userAfterTest.Key);
+            Assert.AreNotEqual(default(DateTimeOffset), userAfterTest.CreationTime);
+            Assert.AreEqual(userUnderTest.UserName, userAfterTest.UserName);
         }
 
         /// <summary>
@@ -78,45 +76,43 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             {
                 Name = "Administrators"
             },
-            users = new SecurityRole() {
+            users = new SecurityRole()
+            {
                 Name = "Users"
             };
 
             // Store user
-            using (IDataPersistenceService<SecurityUser> userService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>())
-            {
-                IIdentityProviderService identityService = ApplicationContext.Current.GetService<IIdentityProviderService>();
-                IDataPersistenceService<SecurityRole> roleService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
+            IDataPersistenceService<SecurityUser> userService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+            IIdentityProviderService identityService = ApplicationContext.Current.GetService<IIdentityProviderService>();
+            IDataPersistenceService<SecurityRole> roleService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
 
-                roleService.DataContext = userService.DataContext;
 
-                // Insert the user
-                var userAfterInsert = userService.Insert(userUnderTest, null, TransactionMode.Commit);
-                userAfterInsert = userService.Get(userAfterInsert.Id, null, false);
+            // Insert the user
+            var userAfterInsert = userService.Insert(userUnderTest, null, TransactionMode.Commit);
+            userAfterInsert = userService.Get(userAfterInsert.Id, null, false);
 
-                var authContext = identityService.Authenticate("updateTest", "password");
+            var authContext = identityService.Authenticate("updateTest", "password");
 
-                administrators = roleService.Insert(administrators, authContext, TransactionMode.Commit);
+            administrators = roleService.Insert(administrators, authContext, TransactionMode.Commit);
 
-                // Keys should be set
-                Assert.AreNotEqual(Guid.Empty, userAfterInsert.Key);
-                Assert.IsFalse(userAfterInsert.EmailConfirmed);
-                Assert.IsNotNull(authContext);
-                Assert.IsNull(userAfterInsert.UpdatedTime);
+            // Keys should be set
+            Assert.AreNotEqual(Guid.Empty, userAfterInsert.Key);
+            Assert.IsFalse(userAfterInsert.EmailConfirmed);
+            Assert.IsNotNull(authContext);
+            Assert.IsNull(userAfterInsert.UpdatedTime);
 
-                // Update
-                userAfterInsert.EmailConfirmed = true;
-                userAfterInsert.Roles.Add(administrators);
-                userAfterInsert.Roles.Add(users);
-                var userAfterUpdate = userService.Update(userAfterInsert, authContext, TransactionMode.Commit);
-                userAfterUpdate = userService.Get(userAfterUpdate.Id, authContext, false);
+            // Update
+            userAfterInsert.EmailConfirmed = true;
+            userAfterInsert.Roles.Add(administrators);
+            userAfterInsert.Roles.Add(users);
+            var userAfterUpdate = userService.Update(userAfterInsert, authContext, TransactionMode.Commit);
+            userAfterUpdate = userService.Get(userAfterUpdate.Id, authContext, false);
 
-                // Update attributes should be set
-                Assert.AreEqual(userAfterInsert.Key, userAfterUpdate.Key);
-                Assert.IsNotNull(userAfterUpdate.UpdatedTime);
-                Assert.IsTrue(userAfterUpdate.EmailConfirmed);
-                Assert.AreEqual(authContext.Identity.Name, userAfterUpdate.UpdatedBy.UserName);
-            }
+            // Update attributes should be set
+            Assert.AreEqual(userAfterInsert.Key, userAfterUpdate.Key);
+            Assert.IsNotNull(userAfterUpdate.UpdatedTime);
+            Assert.IsTrue(userAfterUpdate.EmailConfirmed);
+            Assert.AreEqual(authContext.Identity.Name, userAfterUpdate.UpdatedBy.UserName);
         }
 
     }

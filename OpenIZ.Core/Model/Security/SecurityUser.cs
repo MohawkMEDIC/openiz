@@ -73,8 +73,8 @@ namespace OpenIZ.Core.Model.Security
             {
                 if(this.DelayLoad && this.m_roles == null)
                 {
-                    using (var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>())
-                        this.m_roles = dataLayer.Query(r => r.Users.Any(u => u.Key == this.Key), null).ToList();
+                    var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
+                    this.m_roles = dataLayer.Query(r => r.Users.Any(u => u.Key == this.Key), null).ToList();
                 }
                 return this.m_roles;
             }
@@ -93,8 +93,8 @@ namespace OpenIZ.Core.Model.Security
             {
                 if (this.DelayLoad && this.m_updatedById.HasValue && this.m_updatedBy == null)
                 {
-                    using (var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>())
-                        this.m_updatedBy = dataLayer.Get(new Identifier<Guid>() { Id = this.m_updatedById.Value }, null, true);
+                    var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+                    this.m_updatedBy = dataLayer.Get(new Identifier<Guid>() { Id = this.m_updatedById.Value }, null, true);
                 }
                 return this.m_updatedBy;
             }

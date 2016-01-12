@@ -30,8 +30,8 @@ namespace OpenIZ.Core.Model.Security
             {
                 if(this.DelayLoad && this.m_users == null)
                 {
-                    using (var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>()) 
-                        this.m_users = dataLayer.Query(u => u.Roles.Any(r => r.Key == this.Key), null).ToList();
+                    var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+                    this.m_users = dataLayer.Query(u => u.Roles.Any(r => r.Key == this.Key), null).ToList();
                 }
                 return this.m_users;
             }
