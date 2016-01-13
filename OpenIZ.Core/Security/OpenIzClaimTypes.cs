@@ -18,6 +18,16 @@ namespace OpenIZ.Core.Security
         public const string OpenIzGrantedPolicyClaim = "http://openiz.org/claims/grant";
 
         /// <summary>
+        /// Device identifier claim
+        /// </summary>
+        public const string OpenIzDeviceIdentifierClaim = "http://openiz.org/claims/device-id";
+
+        /// <summary>
+        /// Identifier of the application
+        /// </summary>
+        public const string OpenIzApplicationIdentifierClaim = "http://openiz.org/claims/application-id";
+
+        /// <summary>
         /// Patient identifier claim
         /// </summary>
         public const string XUAPatientIdentifierClaim = "urn:oasis:names:tc:xacml:2.0:resource:resource-id";

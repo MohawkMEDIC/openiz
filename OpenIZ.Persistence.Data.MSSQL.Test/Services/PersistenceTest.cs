@@ -17,7 +17,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
     /// <summary>
     /// Persistence test
     /// </summary>
-    public class PersistenceTest<TModel> : DataTest where TModel : BaseData
+    public class PersistenceTest<TModel> : DataTest where TModel : BaseEntityData
     {
 
         /// <summary>

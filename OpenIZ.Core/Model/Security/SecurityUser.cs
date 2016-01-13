@@ -98,19 +98,6 @@ namespace OpenIZ.Core.Model.Security
                 }
                 return this.m_updatedBy;
             }
-            set
-            {
-                if (value == null)
-                {
-                    this.m_updatedBy = null;
-                    this.m_updatedById = null;
-                }
-                else
-                {
-                    this.m_updatedBy = value;
-                    this.m_updatedById = value.Key;
-                }
-            }
         }
 
         /// <summary>

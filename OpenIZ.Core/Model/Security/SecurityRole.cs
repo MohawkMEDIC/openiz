@@ -33,7 +33,7 @@ namespace OpenIZ.Core.Model.Security
         public List<SecurityUser> Users {
             get
             {
-                if(this.DelayLoad && this.m_users == null)
+                if (this.DelayLoad && this.m_users == null)
                 {
                     var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
                     this.m_users = dataLayer.Query(u => u.Roles.Any(r => r.Key == this.Key), null).ToList();

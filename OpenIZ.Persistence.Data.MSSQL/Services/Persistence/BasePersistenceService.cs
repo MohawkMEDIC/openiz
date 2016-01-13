@@ -29,7 +29,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     /// Represents a basic persistence service
     /// </summary>
     /// <typeparam name="TModel">The OpenIZ Model type</typeparam>
-    public abstract class BaseDataPersistenceService<TModel> : IDataPersistenceService<TModel> where TModel : BaseData, new()
+    public abstract class BaseDataPersistenceService<TModel> : IDataPersistenceService<TModel> where TModel : BaseEntityData, new()
     {
 
         protected TraceSource m_traceSource = new TraceSource("OpenIZ.Persistence.Data.MSSQL.Services.Persistence");

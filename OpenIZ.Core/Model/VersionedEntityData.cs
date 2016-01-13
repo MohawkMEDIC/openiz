@@ -10,21 +10,21 @@ namespace OpenIZ.Core.Model
     /// <summary>
     /// Represents versioned based data, that is base data which has versions
     /// </summary>
-    public abstract class VersionedBaseData : BaseData
+    public abstract class VersionedEntityData : BaseEntityData
     {
 
         /// <summary>
         /// Creates a new versioned base data class
         /// </summary>
-        public VersionedBaseData()
+        public VersionedEntityData()
         {
-            this.Versions = new List<VersionedBaseData>();
+            this.Versions = new List<VersionedEntityData>();
         }
 
         /// <summary>
         /// Gets or sets the versions of this class in the past
         /// </summary>
-        public List<VersionedBaseData> Versions { get; set; }
+        public List<VersionedEntityData> Versions { get; set; }
 
         /// <summary>
         /// Gets or sets the key which represents the version of the entity

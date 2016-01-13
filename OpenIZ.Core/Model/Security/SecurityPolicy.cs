@@ -13,7 +13,7 @@ namespace OpenIZ.Core.Model.Security
     /// <summary>
     /// Represents a simply security policy
     /// </summary>
-    public class SecurityPolicy : BaseData, IPolicy
+    public class SecurityPolicy : BaseEntityData, IPolicy
     {
         
         /// <summary>
