@@ -24,7 +24,8 @@ namespace OpenIZ.Core.Model.Security
         private Guid? m_updatedById;
         // The updated by user
         private SecurityUser m_updatedBy;
-
+        // Policies
+        private List<SecurityPolicyInstance> m_policies;
         /// <summary>
         /// Gets or sets the email address of the user
         /// </summary>
@@ -133,20 +134,23 @@ namespace OpenIZ.Core.Model.Security
         {
             get
             {
-                var rolePolicies = this.Roles.SelectMany(o => o.Policies, (r, p) => p);
-                List<SecurityPolicyInstance> retVal = new List<SecurityPolicyInstance>();
-                foreach (var itm in rolePolicies)
+                if (this.m_policies == null && this.DelayLoad)
                 {
-                    var existingRetVal = retVal.Find(o => o.Policy.Key == itm.Policy.Key);
-                    if (existingRetVal == null)
-                        retVal.Add(itm);
-                    else if (existingRetVal.GrantType > itm.GrantType)
+                    var rolePolicies = this.Roles.SelectMany(o => o.Policies, (r, p) => p);
+                    this.m_policies = new List<SecurityPolicyInstance>();
+                    foreach (var itm in rolePolicies)
                     {
-                        retVal.Remove(existingRetVal);
-                        retVal.Add(itm);
+                        var existingRetVal = this.m_policies.Find(o => o.Policy.Key == itm.Policy.Key);
+                        if (existingRetVal == null)
+                            this.m_policies.Add(itm);
+                        else if (existingRetVal.GrantType > itm.GrantType)
+                        {
+                            this.m_policies.Remove(existingRetVal);
+                            this.m_policies.Add(itm);
+                        }
                     }
                 }
-                return retVal;
+                return this.m_policies;
             }
         }
 
