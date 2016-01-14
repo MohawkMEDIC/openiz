@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -135,5 +136,21 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual(0, roleAfterTest.Policies.Count);
 
         }
+
+        /// <summary>
+        /// Test querying of role
+        /// </summary>
+        public void TestQueryRole()
+        {
+            var roleUnderTest = new SecurityRole()
+            {
+                Name = "Query Test"
+            };
+            var roleAfterInsert = base.DoTestInsert(roleUnderTest, s_authorization);
+
+            var roleQuery = base.DoTestQuery(r => r.Name == "Query Test", roleAfterInsert.Key, s_authorization);
+            Assert.AreEqual("Query Test", roleQuery.First().Name);
+        }
+
     }
 }

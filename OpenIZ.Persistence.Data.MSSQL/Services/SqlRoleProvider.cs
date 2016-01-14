@@ -34,15 +34,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         {
             if (authPrincipal == null)
                 throw new ArgumentNullException(nameof(authPrincipal));
-            else if (authPrincipal.Identity.IsAuthenticated)
+            else if (!authPrincipal.Identity.IsAuthenticated)
                 throw new SecurityException("Principal must be authenticated");
 
             if (policyCheck != null)
             {
                 var policyService = ApplicationContext.Current.GetService<IPolicyDecisionService>();
-                var policyDecision = policyService?.GetPolicyOutcome(authPrincipal, PolicyIdentifiers.OpenIzCreateRolesPolicy);
-                if (policyDecision != PolicyDecisionOutcomeType.Grant)
-                    throw new PolicyViolationException(PolicyIdentifiers.OpenIzCreateRolesPolicy, policyDecision.Value);
+                if (policyService != null)
+                {
+                    var policyDecision = policyService.GetPolicyOutcome(authPrincipal, PolicyIdentifiers.OpenIzCreateRolesPolicy);
+                    if (policyDecision != PolicyDecisionOutcomeType.Grant)
+                        throw new PolicyViolationException(PolicyIdentifiers.OpenIzCreateRolesPolicy, policyDecision);
+                }
             }
             
         }
@@ -130,8 +133,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// </summary>
         public bool IsUserInRole(IPrincipal principal, string roleName)
         {
-            using(var dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
-                return dataContext.SecurityUserRoles.Any(ur => ur.SecurityRole.Name == roleName && ur.SecurityUser.UserName == principal.Identity.Name); 
+            return this.IsUserInRole(principal.Identity.Name, roleName);
         }
 
         /// <summary>
@@ -139,7 +141,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// </summary>
         public bool IsUserInRole(string userName, string roleName)
         {
-            return this.IsUserInRole(SqlClaimsIdentity.Create(userName).CreateClaimsPrincipal(), roleName);
+            using (var dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
+                return dataContext.SecurityUserRoles.Any(ur => ur.SecurityRole.Name == roleName && ur.SecurityUser.UserName == userName);
         }
 
         /// <summary>

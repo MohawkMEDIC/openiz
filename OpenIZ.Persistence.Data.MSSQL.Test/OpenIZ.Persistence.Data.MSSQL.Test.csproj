@@ -66,6 +66,7 @@
     <Compile Include="Services\SecurityRolePersistenceServiceTest.cs" />
     <Compile Include="Services\SecurityUserPersistenceServiceTest.cs" />
     <Compile Include="Services\SqlIdentityProviderTest.cs" />
+    <Compile Include="Services\SqlRoleProviderTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Core\OpenIZ.Core.csproj">

@@ -107,5 +107,38 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual(userUnderTest.Email, results.First().Email);
         }
 
+        /// <summary>
+        /// Tests the delay loading of properties works
+        /// </summary>
+        [TestMethod]
+        public void TestDelayLoadUserProperties()
+        {
+            IPasswordHashingService hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
+            String securityHash = Guid.NewGuid().ToString();
+            SecurityUser userUnderTest = new SecurityUser()
+            {
+                Email = "query@test.com",
+                EmailConfirmed = false,
+                PasswordHash = hashingService.EncodePassword("password"),
+                SecurityHash = securityHash,
+                UserName = "delayLoadTest"
+            };
+
+            var userAfterInsert = base.DoTestInsert(userUnderTest, null);
+            var roleProvider = ApplicationContext.Current.GetService<IRoleProviderService>();
+            var identityProvider = ApplicationContext.Current.GetService<IIdentityProviderService>();
+
+            var auth = identityProvider.Authenticate("delayLoadTest", "password");
+            roleProvider.CreateRole("TestDelayLoadUserPropertiesGroup", auth);
+            roleProvider.AddUsersToRoles(new String[] { "delayLoadTest" }, new String[] { "TestDelayLoadUserPropertiesGroup" }, auth);
+
+            // Now trigger a delay load
+            var userForTest = base.DoTestQuery(u => u.UserName == "delayLoadTest", userAfterInsert.Key, auth).First();
+            Assert.AreEqual(1, userForTest.Roles.Count);
+            Assert.AreEqual("TestDelayLoadUserPropertiesGroup", userForTest.Roles[0].Name);
+
+
+        }
+
     }
 }
