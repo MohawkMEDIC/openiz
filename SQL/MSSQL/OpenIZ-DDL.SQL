@@ -3,7 +3,7 @@
 -- PORTIONS COPYRIGHT (C) 2015, FYFE SOFTWARE INC.
 -- LICENSED UNDER THE APACHE 2.0 LICENSE
 
-USE openiz;
+USE OpenIZ;
 
 /*
  PHONETIC ALGORITHM TABLE IS USED TO STORE A MASTER LIST OF PHONETIC ALGORITHMS
@@ -13,12 +13,25 @@ USE openiz;
 CREATE TABLE PhoneticAlgorithm
 (
 	PhoneticAlgorithmId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE ID FOR THE ALGORITHM
-	Name NVARCHAR(32) NOT NULL, -- THE NAME OF THE ALGORITHM
+	Name NVARCHAR(32) UNIQUE NOT NULL, -- THE NAME OF THE ALGORITHM
 	HandlerClass NVARCHAR(MAX), -- THE HANDLER CLASS WHICH GENERATES THE CODE
 	CONSTRAINT PK_PhoneticAlgorithm PRIMARY KEY (PhoneticAlgorithmId)
 );
 
 INSERT INTO PhoneticAlgorithm (Name, HandlerClass) VALUES ('SOUNDEX', NULL);
+
+/**
+ * A TABLE RESPONSIBLE FOR THE STORAGE OF PHONETIC VALUES
+ */
+CREATE TABLE PhoneticValues
+(
+	PhoneticValueId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE PHONETIC CODE
+	Value NVARCHAR(64) NOT NULL, -- THE VALUE OF THE PHONETIC VALUE IN HUMAN READABLE FORM
+	PhoneticCode NVARCHAR(32) NOT NULL, -- THE PHONETIC CODE OF THE VALUE
+	PhoneticAlgorithmId UNIQUEIDENTIFIER NOT NULL, -- THE PHONETIC ALGORITHM USED TO GENERATE THE PHONETIC CODE
+	CONSTRAINT PK_PhoneticValues PRIMARY KEY (PhoneticValueId),
+	CONSTRAINT FK_PhoneticValuesPhoneticAlgorithmId FOREIGN KEY (PhoneticAlgorithmId) REFERENCES PhoneticAlgorithm(PhoneticAlgorithmId)
+);
 
 /*
  SECTION: SECURITY TABLES
@@ -56,6 +69,9 @@ CREATE TABLE SecurityUser
 	CONSTRAINT FK_SecurityUserUpdatedBy FOREIGN KEY (UpdatedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT CK_SecurityUserUpdatedBy CHECK(UpdatedBy IS NOT NULL AND UpdatedTime IS NOT NULL OR UpdatedBy IS NULL AND UpdatedTime IS NULL)
 );
+
+-- Create a system user
+INSERT INTO SecurityUser (UserId, UserName, UserPassword, SecurityStamp) VALUES ('00000000-0000-0000-0000-000000000000', 'SYSTEM','XXXX','XXXX');
 
 /*
  THE FOLLOWING INDEXING PROVIDES LOOKUP BY USERNAME AND USERNAME/PASSWORD COMBINATION
@@ -301,20 +317,6 @@ CREATE TABLE ConceptClass
 -- INDEX: LOOKUP CONCEPT CLASS BY MNEMONIC
 CREATE UNIQUE INDEX IX_ConceptClassMnemonic ON ConceptClass(Mnemonic);
 
--- DEFAULT CLASS CODES
-INSERT INTO ConceptClass (Name, Mnemonic) VALUES ('ClassificatioConceptn', 'ClassCode');
-INSERT INTO ConceptClass (Name, Mnemonic) VALUES ('Status', 'Status');
-INSERT INTO ConceptClass (Name, Mnemonic) VALUES ('Mood', 'Mood');
-INSERT INTO ConceptClass (Name, Mnemonic) VALUES ('Relationship Type', 'Relationship');
-INSERT INTO ConceptClass (Name, Mnemonic) VALUES ('Route', 'Route');
-INSERT INTO ConceptClass (Name, Mnemonic) VALUES ('Unit of Measure', 'UnitOfMeasure');
-INSERT INTO ConceptClass (Name, Mnemonic) VALUES ('Diagnosis', 'Diagnosis');
-INSERT INTO ConceptClass (Name, Mnemonic) VALUES ('Findings', 'Finding');
-INSERT INTO ConceptClass (Name, Mnemonic) VALUES ('Problem', 'Problem');
-INSERT INTO ConceptClass (Name, Mnemonic) VALUES ('Drug or other Material', 'Material');
-INSERT INTO ConceptClass (Name, Mnemonic) VALUES ('Other Classification', 'Other');
-INSERT INTO ConceptClass (Name, Mnemonic) VALUES ('Stock control codes', 'Stock');
-
 /*
  THE CONCEPT SET TABLE IS USED TO DEFINE A SERIES OF CONCEPTS WHICH CAN BE SELECTED FOR A PARTICULAR PURPOSE
  THIS IS NOT LIKE A CONCEPT WITH MEMBERS (EXMAPLE ICD10 Z30 VS Z30.1), RATHER THIS IS A VALUE SET OF RESTRICTED 
@@ -323,8 +325,8 @@ INSERT INTO ConceptClass (Name, Mnemonic) VALUES ('Stock control codes', 'Stock'
 CREATE TABLE ConceptSet
 (
 	ConceptSetId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE CONCEPT SET UNIQUE ID
-	Name NVARCHAR(64) NOT NULL, -- THE NAME OF THE CONCEPT SET
-	Mnemonic NVARCHAR(16) NOT NULL, -- THE SYSTEM MNEMONIC OF THE CONCEPT SET
+	Name NVARCHAR(128) NOT NULL, -- THE NAME OF THE CONCEPT SET
+	Mnemonic NVARCHAR(64) NOT NULL, -- THE SYSTEM MNEMONIC OF THE CONCEPT SET
 	Oid NVARCHAR(64) NOT NULL, -- THE OID (EXTERNAL) OF THE CONCEPT SET
 	Url NVARCHAR(256) NOT NULL, -- THE URL OF THE CONCEPT SET
 	CreationTime DATETIMEOFFSET NOT NULL DEFAULT CURRENT_TIMESTAMP, -- THE CREATIONTIME OF THE CODE SYSTEM
@@ -355,6 +357,9 @@ CREATE TABLE ConceptSetMember
 	CONSTRAINT FK_ConceptSetMemberConceptId FOREIGN KEY (ConceptId) REFERENCES Concept(ConceptId)
 );
 
+-- SEQUENCE FOR VERSION SEQ
+CREATE SEQUENCE ConceptVersionSequence AS NUMERIC(20) START WITH 1 INCREMENT BY 1;
+
 /*
  CONCEPTS ARE VERSIONED, MEANING THAT EACH EDIT TO A CONCEPT'S CORE ATTRIBUTES
  RESULTS IN A NEW VERSION OF THE CONCEPT. THIS IS DONE FOR A MEDICAL LEGAL REASON
@@ -367,20 +372,70 @@ CREATE TABLE ConceptSetMember
 CREATE TABLE ConceptVersion
 (
 	ConceptVersionId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- UNIQUE IDENTIFIER FOR THE CONCEPT VERSION
+	VersionSequenceId NUMERIC(20) NOT NULL UNIQUE DEFAULT (NEXT VALUE FOR ConceptVersionSequence), -- VERSION SEQUENCE
 	ConceptId UNIQUEIDENTIFIER NOT NULL, -- THE CONCEPT TO WHICH THE VERSION APPLIES
 	CreationTime DATETIMEOFFSET NOT NULL DEFAULT CURRENT_TIMESTAMP, -- THE CREATION TIME OF THE CONCEPT VERSION
+	StatusConceptId UNIQUEIDENTIFIER NOT NULL, -- THE STATUS OF THE CONCEPT
 	CreatedBy UNIQUEIDENTIFIER NOT NULL, -- THE USER WHO CREATED THE VERSION
 	ObsoletionTime DATETIMEOFFSET, -- THE TIME WHEN THE CONCEPT VERSION IS OBSOLETE
 	ObsoletedBy UNIQUEIDENTIFIER, -- THE USER WHO OBSOLETED THE DATA
 	ReplacesVersionId UNIQUEIDENTIFIER, -- IDENTIFIES THE VERSION OF THAT THE CURRENT TUPLE REPLACES
 	ConceptClassId UNIQUEIDENTIFIER, -- THE CLASSIFICATION OF THE CONCEPT AT THE VERSION
+	Mnemonic NVARCHAR(64) NOT NULL, -- AN INVARIANT FOR THE CONCEPT
 	CONSTRAINT PK_ConceptVersion PRIMARY KEY (ConceptVersionId),
+	CONSTRAINT FK_ConceptVersionStatusConceptId FOREIGN KEY (StatusConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_ConceptVersionConcept FOREIGN KEY (ConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_ConceptVersionCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT FK_ConceptVersionObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT FK_ConceptVersionConceptClass FOREIGN KEY (ConceptClassId) REFERENCES ConceptClass(ConceptClassId),
 	CONSTRAINT CK_ConceptVersionObsoletedBy CHECK(ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletedBy IS NULL AND ObsoletionTime IS NULL)
 );
+
+INSERT INTO Concept VALUES('c8064cbd-fa06-4530-b430-1a52f1530c27',1); -- STATUS.ACTIVE
+INSERT INTO Concept VALUES('bdef5f90-5497-4f26-956c-8f818cce2bd2',1); -- STATUS.OBSOLETE
+INSERT INTO Concept VALUES('c34fcbf1-e0fe-4989-90fd-0dc49e1b9685',1); -- STATUS.NEW
+INSERT INTO Concept VALUES('cd4aa3c4-02d5-4cc9-9088-ef8f31e321c5',1); -- STATUS.NULLIFIED
+
+INSERT INTO ConceptClass VALUES ('17FD5254-8C25-4ABB-B246-083FBE9AFA15','ClassificatioConceptn', 'ClassCode');
+INSERT INTO ConceptClass VALUES ('54B93182-FC19-47A2-82C6-089FD70A4F45', 'Status', 'Status');
+INSERT INTO ConceptClass VALUES ('BBA99722-23CE-469A-8FA5-10DEBA853D35', 'Mood', 'Mood');
+INSERT INTO ConceptClass VALUES ('F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4', 'Relationship Type', 'Relationship');
+INSERT INTO ConceptClass VALUES ('A8A900D3-A07E-4E02-B45F-580D09BAF047', 'Route', 'Route');
+INSERT INTO ConceptClass VALUES ('1EF69347-EF03-4FF7-B3C5-6334448845E6', 'Unit of Measure', 'UnitOfMeasure');
+INSERT INTO ConceptClass VALUES ('92CDEA39-B9A3-4A5B-BC88-A6646C74240D', 'Diagnosis', 'Diagnosis');
+INSERT INTO ConceptClass VALUES ('E445E207-60A3-401A-9B81-A8AC2479F4A6', 'Findings', 'Finding');
+INSERT INTO ConceptClass VALUES ('4BD7F8E6-E4B8-4DBC-93A7-CF14FBAF9700', 'Problem', 'Problem');
+INSERT INTO ConceptClass VALUES ('DC9CBC32-B8EA-4144-BEF1-DC618E28F4D7', 'Drug or other Material', 'Material');
+INSERT INTO ConceptClass VALUES ('0D6B3439-C9BE-4480-AF39-EEB457C052D0', 'Other Classification', 'Other');
+INSERT INTO ConceptClass VALUES ('FFD8304A-43EC-4EBC-95FC-FB4A4F2338F0', 'Stock control codes', 'Stock');
+
+INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('aae906aa-27b3-4cdb-aff1-f08b0fd31e59', 'Concept Status', 'ConceptStatus', '1.3.6.1.4.1.33349.3.5.9.1.0', 'http://openiz.org/valueset/concept-status', '00000000-0000-0000-0000-000000000000');
+INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('62c5fde0-a3aa-45df-94e9-242f4451644a', 'Act Class', 'ActClass', '1.3.6.1.4.1.33349.3.5.9.1.1', 'http://openiz.org/valueset/act-class', '00000000-0000-0000-0000-000000000000');
+INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('e6a8e44f-0a57-4ebd-80a9-5c53b7a03d76', 'Act Mood', 'ActMood', '1.3.6.1.4.1.33349.3.5.9.1.2', 'http://openiz.org/valueset/act-mood', '00000000-0000-0000-0000-000000000000');
+INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('93a48f6a-6808-4c70-83a2-d02178c2a883', 'Act Status', 'ActStatus', '1.3.6.1.4.1.33349.3.5.9.1.3', 'http://openiz.org/valueset/act-status', '00000000-0000-0000-0000-000000000000');
+INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('cf686a21-86e5-41e7-af07-0016a054227a', 'Act Relationship Type', 'ActRelationshipType', '1.3.6.1.4.1.33349.3.5.9.1.4', 'http://openiz.org/valueset/act-relationship-type', '00000000-0000-0000-0000-000000000000');
+INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('404bf87c-e7a6-4a5a-89cf-02e6804555a0', 'Act Interpretation', 'ActInterpretation', '1.3.6.1.4.1.33349.3.5.9.1.5', 'http://openiz.org/valueset/act-interpretation', '00000000-0000-0000-0000-000000000000');
+INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('4e6da567-0094-4f23-8555-11da499593af', 'Entity Class', 'EntityClass', '1.3.6.1.4.1.33349.3.5.9.1.6', 'http://openiz.org/valueset/entity-class', '00000000-0000-0000-0000-000000000000');
+INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('c7578340-a8ff-4d7d-8105-581016324e68', 'Entity Status', 'EntityStatus', '1.3.6.1.4.1.33349.3.5.9.1.7', 'http://openiz.org/valueset/entity-status', '00000000-0000-0000-0000-000000000000');
+INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('ee16a667-2085-440a-b1e7-4032d10b9f40', 'Entity Relationship Type', 'EntityRelationshipType', '1.3.6.1.4.1.33349.3.5.9.1.8', 'http://openiz.org/valueset/entity-relationship-type', '00000000-0000-0000-0000-000000000000');
+INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('c68a7690-d78d-4afc-8a36-1ebdfb86f15f', 'Address Use', 'AddressUse', '1.3.6.1.4.1.33349.3.5.9.1.9', 'http://openiz.org/valueset/address-use', '00000000-0000-0000-0000-000000000000');
+INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('5cca5869-8a7b-47a3-83db-041d5af5c9da', 'Address Component Type', 'AddressComponentType', '1.3.6.1.4.1.33349.3.5.9.1.10', 'http://openiz.org/valueset/address-component-type', '00000000-0000-0000-0000-000000000000');
+INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('8df14280-3d05-45a6-bfae-15b63dfc379f', 'Name Use', 'NameUse', '1.3.6.1.4.1.33349.3.5.9.1.11', 'http://openiz.org/valueset/', '00000000-0000-0000-0000-000000000000');
+INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('1dabe3e2-44b8-4c45-9102-25ea147e5710', 'Telecom Address Use', 'TelecomAddressUse', '1.3.6.1.4.1.33349.3.5.9.1.12', 'http://openiz.org/valueset/name-use', '00000000-0000-0000-0000-000000000000');
+INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('0d79b02c-6444-40b5-aca4-4009fb03ad54', 'Telecom Address Type', 'TelecomAddressType', '1.3.6.1.4.1.33349.3.5.9.1.13', 'http://openiz.org/valueset/telecom-use', '00000000-0000-0000-0000-000000000000');
+INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('95f9a19a-fa85-4af7-9342-4ba3af0de72a', 'Service Code', 'ServiceCode', '1.3.6.1.4.1.33349.3.5.9.1.14', 'http://openiz.org/valueset/telecom-type', '00000000-0000-0000-0000-000000000000');
+INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('d1597e50-845a-46e1-b9ae-6f99ff93d9db', 'Industry Code', 'IndustryCode', '1.3.6.1.4.1.33349.3.5.9.1.15', 'http://openiz.org/valueset/industry-type', '00000000-0000-0000-0000-000000000000');
+INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('e9eecd3c-7b80-47f9-9cb6-55c8d3110fb0', 'Administrative Genders', 'AdministrativeGenderCode', '1.3.6.1.4.1.33349.3.5.9.1.16', 'http://openiz.org/valueset/administrative-gender', '00000000-0000-0000-0000-000000000000');
+
+INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('c8064cbd-fa06-4530-b430-1a52f1530c27', 'aae906aa-27b3-4cdb-aff1-f08b0fd31e59');
+INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('bdef5f90-5497-4f26-956c-8f818cce2bd2', 'aae906aa-27b3-4cdb-aff1-f08b0fd31e59');
+INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('c34fcbf1-e0fe-4989-90fd-0dc49e1b9685', 'aae906aa-27b3-4cdb-aff1-f08b0fd31e59');
+INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('cd4aa3c4-02d5-4cc9-9088-ef8f31e321c5', 'aae906aa-27b3-4cdb-aff1-f08b0fd31e59');
+
+INSERT INTO ConceptVersion (ConceptId, StatusConceptId, CreatedBy, Mnemonic) VALUES ('c8064cbd-fa06-4530-b430-1a52f1530c27', 'c8064cbd-fa06-4530-b430-1a52f1530c27', '00000000-0000-0000-0000-000000000000', 'ACTIVE');
+INSERT INTO ConceptVersion (ConceptId, StatusConceptId, CreatedBy, Mnemonic) VALUES ('bdef5f90-5497-4f26-956c-8f818cce2bd2', 'c8064cbd-fa06-4530-b430-1a52f1530c27', '00000000-0000-0000-0000-000000000000', 'OBSOLETE');
+INSERT INTO ConceptVersion (ConceptId, StatusConceptId, CreatedBy, Mnemonic) VALUES ('c34fcbf1-e0fe-4989-90fd-0dc49e1b9685', 'c8064cbd-fa06-4530-b430-1a52f1530c27', '00000000-0000-0000-0000-000000000000', 'NEW');
+INSERT INTO ConceptVersion (ConceptId, StatusConceptId, CreatedBy, Mnemonic) VALUES ('cd4aa3c4-02d5-4cc9-9088-ef8f31e321c5', 'c8064cbd-fa06-4530-b430-1a52f1530c27', '00000000-0000-0000-0000-000000000000', 'NULLFIIED');
 
 -- INDEX: LOOKUP CONCEPT VERSION BY CONCEPT IDENTIFIER
 CREATE INDEX IX_ConceptVersionConceptId ON ConceptVersion(ConceptId);
@@ -394,20 +449,22 @@ CREATE INDEX IX_ConceptVersionClassId ON ConceptVersion(ConceptClassId);
 CREATE TABLE ConceptName
 (
 	ConceptNameId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- UNIQUE IDENTIFIER FOR THE CONCEPT NAME ID
-	EffectiveVersionId UNIQUEIDENTIFIER NOT NULL, -- THE ID OF THE VERSION WHERE THIS CONCEPT NAME DID BECOME ACTIVE
-	ObsoleteVersionId UNIQUEIDENTIFIER, -- THE ID OF THE VERSION WHERE THIS CONCEPT NAME IS NO LONGER ACTIVE
+	ConceptId UNIQUEIDENTIFIER NOT NULL, -- THE CONCEPT THAT THIS NAME APPLIES TO
+	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE ID OF THE VERSION WHERE THIS CONCEPT NAME DID BECOME ACTIVE
+	ObsoleteVersionSequenceId NUMERIC(20), -- THE ID OF THE VERSION WHERE THIS CONCEPT NAME IS NO LONGER ACTIVE
 	LanguageCode NVARCHAR(2) NOT NULL, -- THE LANGUAGE CODE OF THE NAME
 	Name NVARCHAR(256) NOT NULL, -- THE NAME OF THE CODE
 	PhoneticCode NVARCHAR(32) NOT NULL, -- THE PHONETIC CODE FOR THE CONCEPT NAME
 	PhoneticAlgorithmId UNIQUEIDENTIFIER NOT NULL, -- THE PHONETIC ALGORITHM USED TO GENERATE THE CODE
 	CONSTRAINT PK_ConceptName PRIMARY KEY (ConceptNameId),
-	CONSTRAINT FK_ConceptNameEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES ConceptVersion(ConceptVersionId),
-	CONSTRAINT FK_ConceptNameObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES ConceptVersion(ConceptVersionId),
+	CONSTRAINT FK_ConceptNameConcept FOREIGN KEY (ConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT FK_ConceptNameEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES ConceptVersion(VersionSequenceId),
+	CONSTRAINT FK_ConceptNameObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES ConceptVersion(VersionSequenceId),
 	CONSTRAINT FK_ConceptNamePhoneticAlgorithmId FOREIGN KEY (PhoneticAlgorithmId) REFERENCES PhoneticAlgorithm(PhoneticAlgorithmId)
 );
 
 -- INDEX TO LOOKUP CONCEPT NAME BY EFFECTIVE VERSION RANGE
-CREATE INDEX IX_ConceptNameVersion ON ConceptName(EffectiveVersionId, ObsoleteVersionId);
+CREATE INDEX IX_ConceptNameVersion ON ConceptName(EffectiveVersionSequenceId, ObsoleteVersionSequenceId);
 -- LOOKUP CONCEPT NAME BY NAME
 CREATE INDEX IX_ConceptNameName ON ConceptName(Name);
 -- LOOKUP CONCEPT NAME BY PHONETIC MATCH
@@ -475,16 +532,24 @@ CREATE TABLE ConceptReferenceTerm
 (
 	ConceptReferenceTermId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER OF THE REFERENCE TERM LINK
 	ReferenceTermId UNIQUEIDENTIFIER NOT NULL, -- THE REFERENCE TERM
-	EffectiveVersionId UNIQUEIDENTIFIER NOT NULL, -- THE EFFECTIVE VERSION OF THE REFERENCE TERM
-	ObsoleteVersionId UNIQUEIDENTIFIER NOT NULL, -- THE OBSOLETION VERSION OF THE REFERENCE TERM
+	ConceptId UNIQUEIDENTIFIER NOT NULL, -- THE CONCEPT TO WHICH THE REFERENCE TERM APPLIES
+	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE EFFECTIVE VERSION OF THE REFERENCE TERM
+	ObsoleteVersionSequenceId NUMERIC(20), -- THE OBSOLETION VERSION OF THE REFERENCE TERM
 	ConceptRelationshipTypeId UNIQUEIDENTIFIER NOT NULL, -- THE TYPE OF RELATIONSHIP,
 	CONSTRAINT PK_ConceptReferenceTerm PRIMARY KEY (ConceptReferenceTermId),
+	CONSTRAINT FK_ConceptReferenceTermConceptId FOREIGN KEY (ConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_ConceptReferenceTermReferenceTermId FOREIGN KEY (ReferenceTermId) REFERENCES ReferenceTerm(ReferenceTermId),
-	CONSTRAINT FK_ConceptReferenceTermEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES ConceptVersion(ConceptVersionId),
-	CONSTRAINT FK_ConceptReferenceTermObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES ConceptVersion(ConceptVersionId),
+	CONSTRAINT FK_ConceptReferenceTermEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES ConceptVersion(VersionSequenceId),
+	CONSTRAINT FK_ConceptReferenceTermObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES ConceptVersion(VersionSequenceId),
 	CONSTRAINT FK_ConceptReferenceTermConceptRelationshipTypeId FOREIGN KEY (ConceptRelationshipTypeId) REFERENCES ConceptRelationshipType(ConceptRelationshipTypeId)
 );
 
+-- INDEX LOOKUP BY EFFECTIVE TIMES
+CREATE INDEX IX_ConceptReferenceTermEffectiveVersion ON ConceptReferenceTerm(EffectiveVersionSequenceId, ObsoleteVersionSequenceId);
+
+/**
+ * REFERENCE TERM DISPLAY NAMES FOR REPRESENTATION ON THE WIRE
+ */
 CREATE TABLE ReferenceTermDisplayName
 (
 	ReferenceTermDisplayNameId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- UNIQUE IDENTIFIER OF THE REFERENCE TERM LINK
@@ -510,22 +575,26 @@ CREATE TABLE ReferenceTermDisplayName
 CREATE INDEX IX_ReferenceTermDisplayNamePhonetic ON ReferenceTermDisplayName(PhoneticCode, PhoneticAlgorithmId);
 CREATE INDEX IX_ReferenceTermDisplayNameName ON ReferenceTermDisplayName(DisplayName);
 
+/**
+ * REPRESENTS A RELATIONSHIP BETWEEN CONCEPTS
+ */
 CREATE TABLE ConceptRelationship
 (
 	ConceptRelationshipId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE CONCEPT RELATIONSHIP
 	SourceConceptId UNIQUEIDENTIFIER NOT NULL, -- THE SOURCE OF THE CONCEPT RELATIONSHIP
 	TargetConceptId UNIQUEIDENTIFIER NOT NULL, -- THE TARGET OF THE RELATIONSHIP
 	ConceptRelationshipTypeId UNIQUEIDENTIFIER NOT NULL, -- THE TYPE OF RELATIONSHIP
-	EffectiveVersionId UNIQUEIDENTIFIER NOT NULL, -- THE VERSION OF THE CONCEPT TO WHICH THE SOURCE RELATION APPLIES
-	ObsoleteVersionId UNIQUEIDENTIFIER NOT NULL, -- THE VERSION OF THE CONCEPT WHEN THE RELATION IS NO LONGER VALID
+	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE VERSION OF THE CONCEPT TO WHICH THE SOURCE RELATION APPLIES
+	ObsoleteVersionSequenceId NUMERIC(20), -- THE VERSION OF THE CONCEPT WHEN THE RELATION IS NO LONGER VALID
 	CONSTRAINT PK_ConceptRelationship PRIMARY KEY (ConceptRelationshipId),
 	CONSTRAINT FK_ConceptRelationshipSourceConceptId FOREIGN KEY (SourceConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_ConceptRelationshipTargetConceptId FOREIGN KEY (TargetConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_ConceptRelationshipConceptRelationshipTypeId FOREIGN KEY (ConceptRelationshipTypeId) REFERENCES ConceptRelationshipType(ConceptRelationshipTypeId),
-	CONSTRAINT FK_ConceptRelationshipEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES ConceptVersion(ConceptVersionId),
-	CONSTRAINT FK_ConceptRelationshpObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES ConceptVersion(ConceptVersionId)
+	CONSTRAINT FK_ConceptRelationshipEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES ConceptVersion(VersionSequenceId),
+	CONSTRAINT FK_ConceptRelationshpObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES ConceptVersion(VersionSequenceId)
 );
 
+CREATE INDEX IX_ConceptRelationshipEffectiveVersion ON ConceptRelationship(EffectiveVersionSequenceId, ObsoleteVersionSequenceId);
 CREATE INDEX IX_ConceptRelationshipSource ON ConceptRelationship(SourceConceptId);
 CREATE INDEX IX_ConceptRelationshipTarget ON ConceptRelationship(TargetConceptId);
 
@@ -552,6 +621,9 @@ END;
 
 GO
 
+-- ADD CONSTRAINT CHECK
+ALTER TABLE ConceptVersion ADD CONSTRAINT CK_ConceptVersionStatusConceptIdConceptClass CHECK (dbo.fn_IsConceptSetMember(StatusConceptId, 'ConceptStatus') = 1);
+
 CREATE TABLE ExtensionType
 (
 	ExtensionTypeId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE EXTENSION
@@ -570,24 +642,6 @@ CREATE TABLE ExtensionType
 	CONSTRAINT FK_ExtensionTypeObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT CK_ExtensionTypeObsoletedBy CHECK(ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletedBy IS NULL AND ObsoletionTime IS NULL),
 	CONSTRAINT CK_ExtensionTypeUpdatedBy CHECK(UpdatedBy IS NOT NULL AND UpdateTime IS NOT NULL OR UpdatedBy IS NULL AND UpdateTime IS NULL)
-);
-
-CREATE TABLE PhoneticAlgorithmType
-(
-	PhoneticAlgorithmId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE PHONETIC ALGORITHM
-	Name NVARCHAR(64) NOT NULL, -- THE HUMAN NAME OF THE PHONETIC ALGORITHM
-	HandlerClass NVARCHAR(256) NOT NULL, -- THE CLASS OF TYPE IPHONETICALGORITHM WHICH GENERATES PHONETIC CODES
-	CONSTRAINT PK_PhoneticAlgorithmType PRIMARY KEY (PhoneticAlgorithmId)
-);
-
-CREATE TABLE PhoneticValues
-(
-	PhoneticValueId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE PHONETIC CODE
-	Value NVARCHAR(64) NOT NULL, -- THE VALUE OF THE PHONETIC VALUE IN HUMAN READABLE FORM
-	PhoneticCode NVARCHAR(32) NOT NULL, -- THE PHONETIC CODE OF THE VALUE
-	PhoneticAlgorithmId UNIQUEIDENTIFIER NOT NULL, -- THE PHONETIC ALGORITHM USED TO GENERATE THE PHONETIC CODE
-	CONSTRAINT PK_PhoneticValues PRIMARY KEY (PhoneticValueId),
-	CONSTRAINT FK_PhoneticValuesPhoneticAlgorithmId FOREIGN KEY (PhoneticAlgorithmId) REFERENCES PhoneticAlgorithmType(PhoneticAlgorithmId)
 );
 
 CREATE INDEX IX_PhoneticValuesPhoneticCode ON PhoneticValues(PhoneticCode, PhoneticAlgorithmId);
@@ -644,9 +698,12 @@ CREATE TABLE Act
 	CONSTRAINT CK_ActVersionActMoodConceptIdConceptClass CHECK (dbo.fn_IsConceptSetMember(MoodConceptId, 'ActMood') = 1)
 );
 
+CREATE SEQUENCE ActVersionSequenceId START WITH 1 INCREMENT BY 1;
+
 CREATE TABLE ActVersion
 (
 	ActVersionId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE VERSION
+	VersionSequenceId NUMERIC(20) NOT NULL UNIQUE DEFAULT (NEXT VALUE FOR ActVersionSequenceId), -- VERSION SEQUENCE ID
 	ActId UNIQUEIDENTIFIER NOT NULL, -- THE ACT TO WHICH THE VERSION APPLIES
 	CreationTime DATETIMEOFFSET NOT NULL DEFAULT CURRENT_TIMESTAMP, -- THE CREATION TIME OF THE ACT
 	CreatedBy UNIQUEIDENTIFIER NOT NULL, -- THE POINTER TO THE USER WHO CREATED THE VERSION
@@ -674,48 +731,61 @@ CREATE TABLE ActIdentifier
 (
 	ActIdentifierId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE ACT IDENTIFIER 
 	IdentifierTypeId UNIQUEIDENTIFIER NOT NULL, -- THE TYPE OF IDENTIFIER
-	EffectiveVersionId UNIQUEIDENTIFIER NOT NULL, -- THE VERSION WHERE THE IDENTIFIER BECAME ACTIVE
-	ObsoleteVersionId UNIQUEIDENTIFIER, -- THE OBSOLETION VERSION IDENTIFIER
+	ActId UNIQUEIDENTIFIER NOT NULL, -- THE ACT TO WHICH THE IDENTIFIER IS ATTACHED
+	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE VERSION WHERE THE IDENTIFIER BECAME ACTIVE
+	ObsoleteVersionSequenceId NUMERIC(20), -- THE OBSOLETION VERSION IDENTIFIER
 	AssigningAuthorityId UNIQUEIDENTIFIER NOT NULL, -- THE ASSIGNING AUTHORITY OF THE IDENTIFIER
 	IdentifierValue NVARCHAR(50) NOT NULL, -- THE VALUE OF THE IDENTIFIER
 	CONSTRAINT PK_ActIdentifier PRIMARY KEY (ActIdentifierId),
+	CONSTRAINT FK_ActIdentifierActId FOREIGN KEY (ActId) REFERENCES Act(ActId),
 	CONSTRAINT FK_ActIdentifierIdentifierTypeId FOREIGN KEY (IdentifierTypeId) REFERENCES IdentifierType(IdentifierTypeId),
-	CONSTRAINT FK_ActIdentifierEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES ActVersion(ActVersionId),
-	CONSTRAINT FK_ActIdentifierObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES ActVersion(ActVersionId),
+	CONSTRAINT FK_ActIdentifierEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES ActVersion(VersionSequenceId),
+	CONSTRAINT FK_ActIdentifierObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES ActVersion(VersionSequenceId),
 	CONSTRAINT FK_ActIdentifierAssigningAuthorityId FOREIGN KEY (AssigningAuthorityId) REFERENCES AssigningAuthority(AssigningAuthorityId)
 	-- TODO: CHECK IDENTIFIER TYPE SCOPE
 );
+
+CREATE INDEX IX_ActIdentifierEffectiveVersion ON ActIdentifier(EffectiveVersionSequenceId, ObsoleteVersionSequenceId);
+CREATE INDEX IX_ActIdentifierIdentifierValue ON ActIdentifier(AssigningAuthorityId, IdentifierValue);
 
 CREATE TABLE ActRelationship
 (
 	ActRelationshipId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- UNIQUE IDENTIFIER FOR THE RELATIONSHIP, ID IS A GUID BECAUSE IT ISN'T PUBLIC FACING
 	SourceActId UNIQUEIDENTIFIER NOT NULL, -- THE SOURCE ACT
 	TargetActId UNIQUEIDENTIFIER NOT NULL, -- THE TARGET ACT
-	EffectiveVersionId UNIQUEIDENTIFIER NOT NULL, -- THE EFFECTIVE VERSION OF THE ACT WHERE THE ASSOCIATION IS ACTIVE
-	ObsoleteVersionId UNIQUEIDENTIFIER NOT NULL, -- THE OBSOLETION VERSION OF THE ACT
+	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE EFFECTIVE VERSION OF THE ACT WHERE THE ASSOCIATION IS ACTIVE
+	ObsoleteVersionSequenceId NUMERIC(20) NOT NULL, -- THE OBSOLETION VERSION OF THE ACT
 	RelationshipTypeConceptId UNIQUEIDENTIFIER NOT NULL, -- THE RELATIONSHIP OF THE ACT
 	CONSTRAINT PK_ActRelationship PRIMARY KEY (ActRelationshipId),
 	CONSTRAINT FK_ActRelationshipSourceActId FOREIGN KEY (SourceActId) REFERENCES Act(ActId),
 	CONSTRAINT FK_ActRelationshipTargetActId FOREIGN KEY (TargetActId) REFERENCES Act(ActId),
-	CONSTRAINT FK_ActRelationshipEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES ActVersion(ActVersionId),
-	CONSTRAINT FK_ActRelationshipObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES ActVersion(ActVersionId),
+	CONSTRAINT FK_ActRelationshipEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES ActVersion(VersionSequenceId),
+	CONSTRAINT FK_ActRelationshipObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES ActVersion(VersionSequenceId),
 	CONSTRAINT FK_ActRelationshipRelationshipTypeConceptId FOREIGN KEY (RelationshipTypeConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT CK_ActRelationshipRelationshipTypeConceptConceptClass CHECK (dbo.fn_IsConceptSetMember(RelationshipTypeConceptId, 'ActRelationshipType') = 1)
 );
 
+CREATE INDEX IX_ActRelationshipSourceAct ON ActRelationship(SourceActId);
+CREATE INDEX IX_ActRelationshipTargetAct ON ActRelationship(TargetActId);
+CREATE INDEX IX_ActRelationshipEffectiveVersion ON ActRelationship(EffectiveVersionSequenceId, ObsoleteVersionSequenceId);
+
 CREATE TABLE ActExtension
 (
 	ActExtensionId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- UNIQUE IDENTIFIER FOR THE EXTENSION INSTANCE
+	ActId UNIQUEIDENTIFIER NOT NULL, -- THE ACT TO WHICH THE EXTENSION APPLIES
 	ExtensionTypeId UNIQUEIDENTIFIER NOT NULL, -- THE TYPE OF EXTENSION
 	ExtensionValue VARBINARY(MAX), -- THE SERIALIZED EXTENSION VALUE
 	ExtensionDisplay NVARCHAR(64), -- A DISPLAY VERSION OF THE EXTENSION VALUE
-	EffectiveVersionId UNIQUEIDENTIFIER NOT NULL, -- THE VERSION WHERE THE EXTENSION BECOMES ACTIVE
-	ObsoleteVersionId UNIQUEIDENTIFIER, -- THE VERSION WHERE THE EXTENSION IS NO LONGER VALID
+	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE VERSION WHERE THE EXTENSION BECOMES ACTIVE
+	ObsoleteVersionSequenceId NUMERIC(20), -- THE VERSION WHERE THE EXTENSION IS NO LONGER VALID
 	CONSTRAINT PK_ActExtension PRIMARY KEY (ActExtensionId),
+	CONSTRAINT FK_ActExtensionActId FOREIGN KEY (ActId) REFERENCES Act(ActId),
 	CONSTRAINT FK_ActExtensionExtensionTypeId FOREIGN KEY (ExtensionTypeId) REFERENCES ExtensionType(ExtensionTypeId),
-	CONSTRAINT FK_ActExtensionEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES ActVersion(ActVersionId),
-	CONSTRAINT FK_ActExtensionObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES ActVersion(ActVersionId)
+	CONSTRAINT FK_ActExtensionEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES ActVersion(VersionSequenceId),
+	CONSTRAINT FK_ActExtensionObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES ActVersion(VersionSequenceId)
 );
+
+CREATE INDEX IX_ActExtensionEffectiveVersion ON ActExtension(EffectiveVersionSequenceId, ObsoleteVersionSequenceId);
 
 CREATE TABLE Observation
 (
@@ -800,14 +870,18 @@ CREATE TABLE ActTag
 CREATE TABLE ActPolicy
 (
 	ActPolicyId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE ACT/POLICY 
-	EffectiveVersionId UNIQUEIDENTIFIER NOT NULL, -- THE VERSION FROM WHICH THE POLICY IS EFFECITVE
-	ObsoleteVersionId UNIQUEIDENTIFIER, -- THE VERSION AT WHICH THE POLICY NO LONGER APPLIES
+	ActId UNIQUEIDENTIFIER NOT NULL, -- THE ACT TO WHICH THE POLICY APPLIES
+	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE VERSION FROM WHICH THE POLICY IS EFFECITVE
+	ObsoleteVersionSequenceId NUMERIC(20), -- THE VERSION AT WHICH THE POLICY NO LONGER APPLIES
 	PolicyId UNIQUEIDENTIFIER NOT NULL, -- THE POLICY APPLIED
 	CONSTRAINT PK_ActPolicy PRIMARY KEY (ActPolicyId),
-	CONSTRAINT FK_ActPolicyEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES ActVersion(ActVersionId),
-	CONSTRAINT FK_ActPolicyObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES ActVersion(ActVersionId),
+	CONSTRAINT FK_ActPolicyActId FOREIGN KEY (ActId) REFERENCES Act(ActId),
+	CONSTRAINT FK_ActPolicyEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES ActVersion(VersionSequenceId),
+	CONSTRAINT FK_ActPolicyObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES ActVersion(VersionSequenceId),
 	CONSTRAINT FK_ActPolicyPolicyId FOREIGN KEY (PolicyId) REFERENCES Policy(PolicyId)
 );
+
+CREATE INDEX IX_ActPolicyEffectiveVersion ON ActPolicy(EffectiveVersionSequenceId, ObsoleteVersionSequenceId);
 
 CREATE TABLE Entity
 (
@@ -837,9 +911,12 @@ CREATE TABLE EntityTag
 	CONSTRAINT CK_EntityTagObsoletedBy CHECK(ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletedBy IS NULL AND ObsoletionTime IS NULL)
 );
 
+CREATE SEQUENCE EntityVersionSequenceId AS NUMERIC(20) START WITH 1 INCREMENT BY 1;
+
 CREATE TABLE EntityVersion
 (
 	EntityVersionId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE ENTITY
+	VersionSequenceId NUMERIC(20) NOT NULL UNIQUE DEFAULT (NEXT VALUE FOR EntityVersionSequenceId), -- UNIQUE SEQUENCING ID FOR THE VERSION
 	EntityId UNIQUEIDENTIFIER NOT NULL, -- THE ENTITY TO WHICH THE VERSION APPLIES
 	ReplacesVersionId UNIQUEIDENTIFIER, -- THE VERSION OF THE ENTITY THAT THIS VERSION REPLACES
 	StatusConceptId UNIQUEIDENTIFIER NOT NULL, -- THE STATUS OF THE ENTITY AT THIS VERSION
@@ -863,17 +940,21 @@ CREATE TABLE EntityAssociation
 	EntityAssociationId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- A UNIQUE IDENTIFIER FOR THE ASSOCIATION
 	SourceEntityId UNIQUEIDENTIFIER NOT NULL, -- THE SOURCE OF THE RELATIONSHIP
 	TargetEntityId UNIQUEIDENTIFIER NOT NULL, -- THE TARGET OF THE RELATIONSHIP
-	EffectiveVersionId UNIQUEIDENTIFIER NOT NULL, -- THE VERSION WHERE THE ASSOCIATION BECAME ACTIVE
-	ObsoleteVersionId UNIQUEIDENTIFIER, -- THE VERSION WHERE THE ASSOCIATION IS NO LONGER ACTIVE
+	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE VERSION WHERE THE ASSOCIATION BECAME ACTIVE
+	ObsoleteVersionSequenceId NUMERIC(20), -- THE VERSION WHERE THE ASSOCIATION IS NO LONGER ACTIVE
 	AssociationTypeConceptId UNIQUEIDENTIFIER
 	CONSTRAINT PK_EntityAssociation PRIMARY KEY (EntityAssociationId),
 	CONSTRAINT FK_EntityAssociationSourceEntityId FOREIGN KEY (SourceEntityId) REFERENCES Entity(EntityId),
 	CONSTRAINT FK_EntityAssociationTargetEntityId FOREIGN KEY (TargetEntityId) REFERENCES Entity(EntityId),
-	CONSTRAINT FK_EntityAssociationEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES EntityVersion(EntityVersionId),
-	CONSTRAINT FK_EntityAssociationObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_EntityAssociationEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
+	CONSTRAINT FK_EntityAssociationObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
 	CONSTRAINT FK_EntityAssociationAssociationConceptId FOREIGN KEY (AssociationTypeConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT CK_EntityAssociationAssociationConcept CHECK (dbo.fn_IsConceptSetMember(AssociationTypeConceptId, 'EntityRelationshipType') = 1)
 );
+
+CREATE INDEX IX_EntityAssociationSource ON EntityAssociation(SourceEntityId);
+CREATE INDEX IX_EntityAssociationTarget ON EntityAssociation(TargetEntityId);
+CREATE INDEX IX_EntityAssociationEffectiveVersion ON EntityAssociation(EffectiveVersionSequenceId, ObsoleteVersionSequenceId);
 
 CREATE TABLE QuantifiedEntityAssociation
 (
@@ -886,15 +967,19 @@ CREATE TABLE QuantifiedEntityAssociation
 CREATE TABLE EntityAddress
 (
 	EntityAddressId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE ADDRESS INSTANCE
-	EffectiveVersionId UNIQUEIDENTIFIER NOT NULL, -- THE EFFECTIVE VERSION OF THE ENTITY
-	ObsoleteVersionId UNIQUEIDENTIFIER, -- THE VERSION WHERE THE ENTITY ADDRESS IS NO LONGER ACTIVE
+	EntityId UNIQUEIDENTIFIER NOT NULL, -- THE ENTITY TO WHICH THE ASSOCIATION BELONGS
+	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE EFFECTIVE VERSION OF THE ENTITY
+	ObsoleteVersionSequenceId NUMERIC(20), -- THE VERSION WHERE THE ENTITY ADDRESS IS NO LONGER ACTIVE
 	AddressUseConceptId UNIQUEIDENTIFIER NOT NULL, -- INDICATES THE USE OF THE ADDRESS
 	CONSTRAINT PK_EntityAddress PRIMARY KEY (EntityAddressId),
-	CONSTRAINT FK_EntityAddressEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES EntityVersion(EntityVersionId),
-	CONSTRAINT FK_EntityAddressObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_EntityAddressEntityId FOREIGN KEY (EntityId) REFERENCES Entity(EntityId),
+	CONSTRAINT FK_EntityAddressEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
+	CONSTRAINT FK_EntityAddressObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
 	CONSTRAINT FK_EntityAddressAddressUseConceptId FOREIGN KEY (AddressUseConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_EntityAddressAddressUseConceptConceptSet CHECK (dbo.fn_IsConceptSetMember(AddressUseConceptId, 'AddressUse') = 1)
 );
+
+CREATE INDEX IX_EntityAddressEffectiveVersion ON EntityAddress(EffectiveVersionSequenceId, ObsoleteVersionSequenceId);
 
 CREATE TABLE EntityAddressComponentValue
 (
@@ -921,15 +1006,19 @@ CREATE TABLE EntityAddressComponent
 CREATE TABLE EntityName
 (
 	EntityNameId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE NAME INSTANCE
-	EffectiveVersionId UNIQUEIDENTIFIER NOT NULL, -- THE EFFECTIVE VERSION OF THE ENTITY
-	ObsoleteVersionId UNIQUEIDENTIFIER, -- THE VERSION WHERE THE ENTITY NAME IS NO LONGER ACTIVE
+	EntityId UNIQUEIDENTIFIER NOT NULL, -- THE ENTITY TO WHICH THE ASSOCIATION BELONGS
+	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE EFFECTIVE VERSION OF THE ENTITY
+	ObsoleteVersionSequenceId NUMERIC(20), -- THE VERSION WHERE THE ENTITY NAME IS NO LONGER ACTIVE
 	NameUseConceptId UNIQUEIDENTIFIER
 	CONSTRAINT PK_EntityName PRIMARY KEY (EntityNameId),
-	CONSTRAINT FK_EntityNameEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES EntityVersion(EntityVersionId),
-	CONSTRAINT FK_EntityNameObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_EntityNameEntityId FOREIGN KEY (EntityId) REFERENCES Entity(EntityId),
+	CONSTRAINT FK_EntityNameEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
+	CONSTRAINT FK_EntityNameObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
 	CONSTRAINT FK_EntityNameAddressUseConceptId FOREIGN KEY (NameUseConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_EntityNameAddressUseConceptConceptSet CHECK (dbo.fn_IsConceptSetMember(NameUseConceptId, 'NameUse') = 1)
 );
+
+CREATE INDEX IX_EntityNameEffectiveVersion ON EntityName(EffectiveVersionSequenceId, ObsoleteVersionSequenceId);
 
 CREATE TABLE EntityNameComponent
 (
@@ -941,9 +1030,8 @@ CREATE TABLE EntityNameComponent
 	CONSTRAINT FK_EntityNameComponentTypeConceptId FOREIGN KEY (ComponentTypeConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_EntityNameComponentValueId FOREIGN KEY (PhoneticValueId) REFERENCES PhoneticValues(PhoneticValueId),
 	CONSTRAINT FK_EntityNameComponentEntityNameId FOREIGN KEY (EntityNameId) REFERENCES EntityName(EntityNameId),
-	CONSTRAINT CK_EntityNameComponentTypeConceptId CHECK (dbo.fn_IsConceptSetMember(ComponentTypeConceptId, 'NamecomponentType') = 1)
+	CONSTRAINT CK_EntityNameComponentTypeConceptId CHECK (dbo.fn_IsConceptSetMember(ComponentTypeConceptId, 'NameComponentType') = 1)
 );
-
 
 CREATE TABLE EntityExtension
 (
@@ -951,46 +1039,59 @@ CREATE TABLE EntityExtension
 	ExtensionTypeId UNIQUEIDENTIFIER NOT NULL, -- THE TYPE OF EXTENSION
 	ExtensionValue VARBINARY(MAX), -- THE SERIALIZED EXTENSION VALUE
 	ExtensionDisplay NVARCHAR(64), -- A DISPLAY VERSION OF THE EXTENSION VALUE
-	EffectiveVersionId UNIQUEIDENTIFIER NOT NULL, -- THE VERSION WHERE THE EXTENSION BECOMES ACTIVE
-	ObsoleteVersionId UNIQUEIDENTIFIER, -- THE VERSION WHERE THE EXTENSION IS NO LONGER VALID
+	EntityId UNIQUEIDENTIFIER NOT NULL, -- THE ENTITY TO WHICH THE ASSOCIATION BELONGS
+	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE VERSION WHERE THE EXTENSION BECOMES ACTIVE
+	ObsoleteVersionSequenceId NUMERIC(20), -- THE VERSION WHERE THE EXTENSION IS NO LONGER VALID
 	CONSTRAINT PK_EntityExtension PRIMARY KEY (EntityExtensionId),
+	CONSTRAINT FK_EntityExtensionEntityId FOREIGN KEY (EntityId) REFERENCES Entity(EntityId),
 	CONSTRAINT FK_EntityExtensionExtensionTypeId FOREIGN KEY (ExtensionTypeId) REFERENCES ExtensionType(ExtensionTypeId),
-	CONSTRAINT FK_EntityExtensionEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES EntityVersion(EntityVersionId),
-	CONSTRAINT FK_EntityExtensionObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES EntityVersion(EntityVersionId)
+	CONSTRAINT FK_EntityExtensionEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
+	CONSTRAINT FK_EntityExtensionObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId)
 );
+
+CREATE INDEX IX_EntityVersionEffectiveVersion ON EntityExtension(EffectiveVersionSequenceId, ObsoleteVersionSequenceId);
 
 CREATE TABLE EntityIdentifier
 (
 	EntityIdentifierId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE ENTITY IDENTIFIER 
+	EntityId UNIQUEIDENTIFIER NOT NULL, -- THE ENTITY TO WHICH THE ASSOCIATION BELONGS
 	IdentifierTypeId UNIQUEIDENTIFIER NOT NULL, -- THE TYPE OF IDENTIFIER
-	EffectiveVersionId UNIQUEIDENTIFIER NOT NULL, -- THE VERSION WHERE THE IDENTIFIER BECAME ACTIVE
-	ObsoleteVersionId UNIQUEIDENTIFIER, -- THE OBSOLETION VERSION IDENTIFIER
+	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE VERSION WHERE THE IDENTIFIER BECAME ACTIVE
+	ObsoleteVersionSequenceId NUMERIC(20), -- THE OBSOLETION VERSION IDENTIFIER
 	AssigningAuthorityId UNIQUEIDENTIFIER NOT NULL, -- THE ASSIGNING AUTHORITY OF THE IDENTIFIER
 	IdentifierValue NVARCHAR(50) NOT NULL, -- THE VALUE OF THE IDENTIFIER
 	CONSTRAINT PK_EntityIdentifier PRIMARY KEY (EntityIdentifierId),
+	CONSTRAINT FK_EntityIdentifierEntityId FOREIGN KEY (EntityId) REFERENCES Entity(EntityId),
 	CONSTRAINT FK_EntityIdentifierIdentifierTypeId FOREIGN KEY (IdentifierTypeId) REFERENCES IdentifierType(IdentifierTypeId),
-	CONSTRAINT FK_EntityIdentifierEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES EntityVersion(EntityVersionId),
-	CONSTRAINT FK_EntityIdentifierObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_EntityIdentifierEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
+	CONSTRAINT FK_EntityIdentifierObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
 	CONSTRAINT FK_EntityIdentifierAssigningAuthorityId FOREIGN KEY (AssigningAuthorityId) REFERENCES AssigningAuthority(AssigningAuthorityId)
 	-- TODO: CHECK IDENTIFIER TYPE SCOPE
 );
 
+CREATE INDEX IX_EntityIdentifierEffectiveVersion ON EntityIdentifier(EffectiveVersionSequenceId, ObsoleteVersionSequenceId);
+CREATE INDEX IX_EntityIdentifierValue ON EntityIdentifier(AssigningAuthorityId, IdentifierValue);
+
 CREATE TABLE EntityTelecomAddress
 (
 	EntityTelecomAddressId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE ADDRESS
+	EntityId UNIQUEIDENTIFIER NOT NULL, -- THE ENTITY TO WHICH THE ASSOCIATION BELONGS
 	TelecomAddressTypeConceptId UNIQUEIDENTIFIER, -- IDENTIFIES THE ADDRESS TYPE CONCEPT
 	TelecomAddress NVARCHAR(256) NOT NULL, -- THE VALUE OF THE TELECOM ADDRESS
 	TelecomUseConceptId UNIQUEIDENTIFIER, -- IDENTIFIES THE USE OF THE TELECOMMUNICATIONS ADDRESS
-	EffectiveVersionId UNIQUEIDENTIFIER NOT NULL, -- THE TIME WHEN THE ADDRESS BECAME ACTIVE
-	ObsoleteVersionId UNIQUEIDENTIFIER, -- THE TIME WHEN THE ADDRESS IS NOT ACTIVE
+	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE TIME WHEN THE ADDRESS BECAME ACTIVE
+	ObsoleteVersionSequenceId NUMERIC(20), -- THE TIME WHEN THE ADDRESS IS NOT ACTIVE
 	CONSTRAINT PK_EntityTelecomAddress PRIMARY KEY (EntityTelecomAddressId),
+	CONSTRAINT FK_EntityTelecomAddressEntityId FOREIGN KEY (EntityId) REFERENCES Entity(EntityId),
 	CONSTRAINT FK_EntityTelecomAddressTelecomAddressTypeConceptId FOREIGN KEY (TelecomAddressTypeConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_EntityTelecomAddressUseConceptId FOREIGN KEY (TelecomUseConceptId) REFERENCES Concept(ConceptId),
-	CONSTRAINT FK_EntityTelecomAddressEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES EntityVersion(EntityVersionId),
-	CONSTRAINT FK_EntityTelecomAddressObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_EntityTelecomAddressEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
+	CONSTRAINT FK_EntityTelecomAddressObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
 	CONSTRAINT CK_EntityTelecomAddressTelecomAddressTypeConceptId CHECK (dbo.fn_IsConceptSetMember(TelecomAddressTypeConceptId, 'TelecomAddressType') = 1),
 	CONSTRAINT CK_EntityTelecomAddressTelecomAddressUseConceptId CHECK (dbo.fn_IsConceptSetMember(TelecomUseConceptId, 'TelecomAddressUse') = 1)
 );
+
+CREATE INDEX IX_EntityTelecomAddressEffectiveVersion ON EntityTelecomAddress(EffectiveVersionSequenceId, ObsoleteVersionSequenceId);
 
 CREATE TABLE Place
 (
@@ -1005,13 +1106,15 @@ CREATE TABLE Place
 CREATE TABLE PlaceService
 (
 	PlaceServiceId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE PLACE SERVICE ASSOCIATION
-	EffectiveVersionId UNIQUEIDENTIFIER NOT NULL, -- THE VERSION WHEN THE ASSOCIATION IS ACTIVE
-	ObsoleteVersionId UNIQUEIDENTIFIER, -- THE VERSION WHERE THE ASSOCIATION IS NO LONGER ACTIVE
+	PlaceEntityId UNIQUEIDENTIFIER NOT NULL, -- THE PLACE ENTITY TO WHICH THE ASSOCIATION APPLIES
+	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE VERSION WHEN THE ASSOCIATION IS ACTIVE
+	ObsoleteVersionSequenceId NUMERIC(20), -- THE VERSION WHERE THE ASSOCIATION IS NO LONGER ACTIVE
 	ServiceConceptId UNIQUEIDENTIFIER NOT NULL, -- THE SERVICE PERFORMED
 	ServiceSchedule XML NOT NULL, -- THE SCHEDULE WHEN THE SERVICE IS PERFORMED (A GTS)
 	CONSTRAINT PK_PlaceService PRIMARY KEY (PlaceServiceId),
-	CONSTRAINT FK_PlaceServiceEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES EntityVersion(EntityVersionId),
-	CONSTRAINT FK_PlaceServiceObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_PlaceServicePlaceEntityId FOREIGN KEY (PlaceEntityId) REFERENCES Entity(EntityId),
+	CONSTRAINT FK_PlaceServiceEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
+	CONSTRAINT FK_PlaceServiceObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
 	CONSTRAINT FK_PlaceServiceServiceConceptId FOREIGN KEY (ServiceConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT CK_PlaceServiceServiceConceptConceptSet CHECK (dbo.fn_IsConceptSetMember(ServiceConceptId, 'ServiceCode') = 1)
 );
@@ -1082,6 +1185,7 @@ CREATE TABLE DrugMaterial
 	CONSTRAINT CK_MaterialQuantityConceptClass CHECK (dbo.fn_AssertConceptClass(FormConceptId, 'Route') = 1)
 );
 */
+
 CREATE TABLE Person
 (
 	EntityVersionId UNIQUEIDENTIFIER NOT NULL, -- THE VERSION TO WHICH THE PERSON DATA APPLIES
@@ -1094,13 +1198,15 @@ CREATE TABLE Person
 CREATE TABLE PersonLanguageCommunication
 (
 	PersonLanguageCommunicationId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE LANGUAGE COMMUNICATION ID 
-	EffectiveVersionId UNIQUEIDENTIFIER NOT NULL, -- THE VERSION WHERE THE LANGUAGE OF COMMUNICATION BECOMES ACTIVE
-	ObsoleteVersionId UNIQUEIDENTIFIER, -- THE VERSION WHERE THE LANGUAGE IS NO LONGER ACTIVE
+	PersonEntityId UNIQUEIDENTIFIER NOT NULL, -- THE ID OF THE PERSON ENTITY
+	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE VERSION WHERE THE LANGUAGE OF COMMUNICATION BECOMES ACTIVE
+	ObsoleteVersionSequenceId NUMERIC(20), -- THE VERSION WHERE THE LANGUAGE IS NO LONGER ACTIVE
 	LanguageCommunication CHAR(2), -- THE 2 CHARACTER ISO 639 CODE
 	PreferenceIndicator BIT NOT NULL DEFAULT 0, -- WHETHER THE LANGUAGE IS PREFERRED
 	CONSTRAINT PK_PersonLanguageCommunication PRIMARY KEY (PersonLanguageCommunicationId),
-	CONSTRAINT FK_PersonLanguageCommunicationEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES EntityVersion(EntityVersionId),
-	CONSTRAINT FK_PersonLanguageCommunciationObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES EntityVersion(EntityVersionId)
+	CONSTRAINT FK_PersonLanguageCommunicationPersonEntityId FOREIGN KEY (PersonEntityId) REFERENCES Entity(EntityId),
+	CONSTRAINT FK_PersonLanguageCommunicationEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
+	CONSTRAINT FK_PersonLanguageCommunciationObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId)
 );
 
 CREATE TABLE Patient
@@ -1196,25 +1302,29 @@ CREATE TABLE ActProtocol
 CREATE TABLE ActNote
 (
 	ActNoteId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- NOTE IDENTIFIER
-	EffectiveVersionId UNIQUEIDENTIFIER NOT NULL, -- THE ACT TO WHICH THE NOTE APPLIES
-	ObsoleteVersionId UNIQUEIDENTIFIER, -- THE VERSION WHEREBY THE NOTE IS NO LONGER ASSOCIATED
+	ActId UNIQUEIDENTIFIER NOT NULL, -- THE ACT TO WHICH THE NOTE APPLIES
+	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE ACT TO WHICH THE NOTE APPLIES
+	ObsoleteVersionSequenceId NUMERIC(20), -- THE VERSION WHEREBY THE NOTE IS NO LONGER ASSOCIATED
 	AuthorEntityId UNIQUEIDENTIFIER NOT NULL, -- THE ENTITY WHO AUTHORED THE NOTE
 	NoteText TEXT NOT NULL,
 	CONSTRAINT PK_ActNote PRIMARY KEY (ActNoteId),
-	CONSTRAINT FK_ActNoteEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES ActVersion(ActVersionId),
-	CONSTRAINT FK_ActNoteObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES ActVersion(ActVersionId),
+	CONSTRAINT FK_ActNodeActId FOREIGN KEY (ActNoteId) REFERENCES Act(ActId),
+	CONSTRAINT FK_ActNoteEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES ActVersion(VersionSequenceId),
+	CONSTRAINT FK_ActNoteObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES ActVersion(VersionSequenceId),
 	CONSTRAINT FK_ActNoteAuthorEntityId FOREIGN KEY (AuthorEntityId) REFERENCES Entity(EntityId)
 );
 
 CREATE TABLE EntityNote
 (
 	EntityNoteId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- NOTE IDENTIFIER
-	EffectiveVersionId UNIQUEIDENTIFIER NOT NULL, -- THE Entity TO WHICH THE NOTE APPLIES
-	ObsoleteVersionId UNIQUEIDENTIFIER, -- THE VERSION WHEREBY THE NOTE IS NO LONGER ASSOCIATED
+	EntityId UNIQUEIDENTIFIER NOT NULL, -- THE ENTITY TO WHICH THE NOTE APPLIES
+	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE Entity TO WHICH THE NOTE APPLIES
+	ObsoleteVersionSequenceId NUMERIC(20), -- THE VERSION WHEREBY THE NOTE IS NO LONGER ASSOCIATED
 	AuthorEntityId UNIQUEIDENTIFIER NOT NULL, -- THE ENTITY WHO AUTHORED THE NOTE
 	NoteText TEXT NOT NULL,
 	CONSTRAINT PK_EntityNote PRIMARY KEY (EntityNoteId),
-	CONSTRAINT FK_EntityNoteEffectiveVersionId FOREIGN KEY (EffectiveVersionId) REFERENCES EntityVersion(EntityVersionId),
-	CONSTRAINT FK_EntityNoteObsoleteVersionId FOREIGN KEY (ObsoleteVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_EntityNoteEntityId FOREIGN KEY (EntityId) REFERENCES Entity(EntityId),
+	CONSTRAINT FK_EntityNoteEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
+	CONSTRAINT FK_EntityNoteObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
 	CONSTRAINT FK_EntityNoteAuthorEntityId FOREIGN KEY (AuthorEntityId) REFERENCES Entity(EntityId)
 );

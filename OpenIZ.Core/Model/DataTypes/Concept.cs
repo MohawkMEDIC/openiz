@@ -10,8 +10,10 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// A class representing a generic concept used in the OpenIZ datamodel
     /// </summary>
-    public class Concept : VersionedEntityData
+    public class Concept : VersionedEntityData<Concept>
     {
+
+      
         // Concept class id
         private Guid m_classId;
         // Backing field for relationships
@@ -20,6 +22,16 @@ namespace OpenIZ.Core.Model.DataTypes
         private ConceptClass m_class;
         // Reference terms
         private List<ConceptReferenceTerm> m_referenceTerms;
+        // Names
+        private List<ConceptName> m_conceptNames;
+        // Previous version id
+        private Guid? m_previousVersionId;
+        // Previous version
+        private Concept m_previousVersion;
+        // Status id
+        private Guid? m_conceptStatusId;
+        // Status
+        private Concept m_conceptStatus;
 
         /// <summary>
         /// Gets or sets an indicator which dictates whether the concept is a system concept
@@ -29,6 +41,89 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the unchanging mnemonic for the concept
         /// </summary>
         public String Mnemonic { get; set; }
+
+        /// <summary>
+        /// Gets or sets the status concept key
+        /// </summary>
+        [Browsable(false)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public Guid? StatusConceptId
+        {
+            get
+            {
+                return this.m_conceptStatusId;
+            }
+            set
+            {
+                this.m_conceptStatusId = value;
+                this.m_conceptStatus = null;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the status of the concept
+        /// </summary>
+        public Concept Status
+        {
+            get
+            {
+                if (this.m_conceptStatus == null &&
+                    this.DelayLoad &&
+                    this.m_conceptStatusId.HasValue)
+                {
+                    var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
+                    this.m_conceptStatus = persistenceService.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(this.m_conceptStatusId.Value), null, true);
+                }
+                return this.m_conceptStatus;
+            }
+            set
+            {
+                this.m_previousVersion = value;
+                this.m_conceptStatusId = value?.Key;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the previous version key
+        /// </summary>
+        [Browsable(false)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override Guid? PreviousVersionKey
+        {
+            get
+            {
+                return this.m_previousVersionId;
+            }
+            set
+            {
+                this.m_previousVersionId = value;
+                this.m_previousVersion = null;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the previous version
+        /// </summary>
+        public override Concept PreviousVersion
+        {
+            get
+            {
+                if(this.m_previousVersion == null &&
+                    this.DelayLoad &&
+                    this.m_previousVersionId.HasValue)
+                {
+                    var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
+                    this.m_previousVersion = persistenceService.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(this.Key, this.m_previousVersionId.Value), null, true);
+                }
+                return this.m_previousVersion;
+            }
+            set
+            {
+                this.m_previousVersion = value;
+                this.m_previousVersionId = value?.VersionKey;
+            }
+        }
+
         /// <summary>
         /// Gets a list of concept relationships
         /// </summary>
@@ -39,7 +134,7 @@ namespace OpenIZ.Core.Model.DataTypes
                 if(this.m_relationships == null && this.DelayLoad)
                 {
                     var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptRelationship>>();
-                    this.m_relationships = persistenceService.Query(r => r.EffectiveVersion.Key == this.Key && r.EffectiveVersion.CreationTime <= this.CreationTime && (r.ObsoleteVersion.ObsoletionTime == null || r.ObsoleteVersion.ObsoletionTime <= this.CreationTime), null).ToList();
+                    this.m_relationships = persistenceService.Query(r => this.Key == r.TargetEntityKey && this.VersionSequence > r.EffectiveVersionSequenceId && (r.ObsoleteVersionSequenceId == null || this.VersionSequence < r.ObsoleteVersionSequenceId), null).ToList();
                 }
                 return this.m_relationships;
             }
@@ -96,10 +191,27 @@ namespace OpenIZ.Core.Model.DataTypes
                 if(this.m_referenceTerms == null && this.DelayLoad)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptReferenceTerm>>();
-                    this.m_referenceTerms = dataPersistence.Query(r => r.EffectiveVersion.Key == this.Key && r.EffectiveVersion.CreationTime <= this.CreationTime && (r.ObsoleteVersion.ObsoletionTime == null || r.ObsoleteVersion.ObsoletionTime <= this.CreationTime), null).ToList();
+                    this.m_referenceTerms = dataPersistence.Query(r => this.Key == r.TargetEntityKey && this.VersionSequence > r.EffectiveVersionSequenceId && (r.ObsoleteVersionSequenceId == null || this.VersionSequence < r.ObsoleteVersionSequenceId) , null).ToList();
                 }
                 return this.m_referenceTerms;
             }
         }
+
+        /// <summary>
+        /// Gets the concept names
+        /// </summary>
+        public List<ConceptName> ConceptNames
+        {
+            get
+            {
+                if(this.m_conceptNames == null && this.m_delayLoad)
+                {
+                    var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptName>>();
+                    this.m_conceptNames = dataPersistence.Query(o => o.TargetEntityKey == this.Key && this.VersionSequence > o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || this.VersionSequence < o.ObsoleteVersionSequenceId), null).ToList();
+                }
+                return this.m_conceptNames;
+            }
+        }
+
     }
 }

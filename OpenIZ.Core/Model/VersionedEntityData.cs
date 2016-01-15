@@ -10,7 +10,7 @@ namespace OpenIZ.Core.Model
     /// <summary>
     /// Represents versioned based data, that is base data which has versions
     /// </summary>
-    public abstract class VersionedEntityData : BaseEntityData
+    public abstract class VersionedEntityData<THistoryModelType> : BaseEntityData
     {
 
         /// <summary>
@@ -18,18 +18,27 @@ namespace OpenIZ.Core.Model
         /// </summary>
         public VersionedEntityData()
         {
-            this.Versions = new List<VersionedEntityData>();
         }
+
+        /// <summary>
+        /// Gets or sets the previous verion
+        /// </summary>
+        public abstract Guid? PreviousVersionKey { get; set; }
 
         /// <summary>
         /// Gets or sets the versions of this class in the past
         /// </summary>
-        public List<VersionedEntityData> Versions { get; set; }
+        public abstract THistoryModelType PreviousVersion { get; set; }
 
         /// <summary>
         /// Gets or sets the key which represents the version of the entity
         /// </summary>
         public Guid VersionKey { get; set; }
+
+        /// <summary>
+        /// The sequence number of the version (for ordering)
+        /// </summary>
+        public Decimal VersionSequence { get; set; }
 
         /// <summary>
         /// Gets or sets the IIdentified data for this object

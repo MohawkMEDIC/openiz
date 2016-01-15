@@ -19,6 +19,7 @@ namespace OpenIZ.Core.Model.Map
     public class ModelExpressionVisitor : ExpressionVisitor
     {
 
+
         /// <summary>
         /// A small visitor which corrects lambda expressions to skip over associative
         /// classes
@@ -127,7 +128,7 @@ namespace OpenIZ.Core.Model.Map
                 case ExpressionType.Call:
                     return this.VisitMethodCall((MethodCallExpression)node);
                 case ExpressionType.Lambda:
-                    return this.VisitLambda((LambdaExpression)node);
+                    return this.VisitLambdaGeneric((LambdaExpression)node);
                 default:
                     return base.Visit(node);
             }
@@ -137,7 +138,7 @@ namespace OpenIZ.Core.Model.Map
         /// <summary>
         /// Visit a lambda expression
         /// </summary>
-        protected virtual Expression VisitLambda(LambdaExpression node)
+        protected virtual Expression VisitLambdaGeneric(LambdaExpression node)
         {
             Expression newBody = this.Visit(node.Body);
             if (newBody != node.Body)

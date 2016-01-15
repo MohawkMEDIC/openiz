@@ -22,11 +22,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Exceptions
         /// <summary>
         /// Indicates the identity was not present on an update or obsolete
         /// </summary>
-        NonIdentityUpdate
+        NonIdentityUpdate,
+        /// <summary>
+        /// Indicates a user attempted to update a readonly system object
+        /// </summary>
+        UpdatedReadonlyObject,
+        AssociatedEntityWithoutTargetKey,
+        AssociatedEntityWithoutEffectiveVersion
     }
     /// <summary>
     /// Represents a violation of a formal constraint
     /// </summary>
+    [Serializable]
     public class SqlFormalConstraintException : ConstraintException
     {
 
@@ -65,6 +72,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Exceptions
                             return locale.GetString("DBCE001");
                         case SqlFormalConstraintType.NonIdentityUpdate:
                             return locale.GetString("DBCE002");
+                        case SqlFormalConstraintType.UpdatedReadonlyObject:
+                            return locale.GetString("DBCE003");
                         default:
                             return this.m_violation.ToString();
                     }

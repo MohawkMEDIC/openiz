@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MARC.Everest.Connectors;
+using OpenIZ.Core.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -49,8 +51,18 @@ namespace OpenIZ.Core.Model.Map
         {
             XmlSerializer xsz = new XmlSerializer(typeof(ModelMap));
             this.m_mapFile = xsz.Deserialize(sourceStream) as ModelMap;
+            var validation = this.Validate(this.m_mapFile);
+            if (validation.Any(o => o.Type == ResultDetailType.Error))
+                throw new ModelMapValidationException(validation);
         }
 
+        /// <summary>
+        /// Validate the map
+        /// </summary>
+        public IEnumerable<IResultDetail> Validate(ModelMap map)
+        {
+            return map.Validate();
+        }
         /// <summary>
         /// Map member 
         /// </summary>
@@ -98,7 +110,7 @@ namespace OpenIZ.Core.Model.Map
                 if (domainMember != null)
                     return Expression.MakeMemberAccess(accessExpression, domainMember);
                 else
-                    throw new NotSupportedException(String.Format("Cannot find property information for {0}"));
+                    throw new NotSupportedException(String.Format("Cannot find property information for {0}", memberExpression.Member.Name));
             }
         }
 
@@ -170,7 +182,9 @@ namespace OpenIZ.Core.Model.Map
         {
             var parameter = Expression.Parameter(typeof(TTo), expression.Parameters[0].Name);
             Expression expr = new ModelExpressionVisitor(this, parameter).Visit(expression.Body);
-            return Expression.Lambda<Func<TTo, bool>>(expr, parameter);
+            var retVal = Expression.Lambda<Func<TTo, bool>>(expr, parameter); 
+            this.m_traceSource.TraceInformation("Map Expression: {0} > {1}", expression, retVal);
+            return retVal;
         }
 
         /// <summary>
@@ -196,7 +210,8 @@ namespace OpenIZ.Core.Model.Map
                     (!propInfo.PropertyType.IsGenericType || propInfo.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) &&
                     propInfo.PropertyType != typeof(String) &&
                     propInfo.PropertyType != typeof(DateTime) &&
-                    propInfo.PropertyType != typeof(DateTimeOffset))
+                    propInfo.PropertyType != typeof(DateTimeOffset) &&
+                    propInfo.PropertyType != typeof(Type))
                     continue;
 
                 // Map property

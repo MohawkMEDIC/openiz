@@ -49,7 +49,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConceptIds.cs" />
+    <Compile Include="Exceptions\ModelMapValidationException.cs" />
+    <Compile Include="Exceptions\ModelValidationException.cs" />
     <Compile Include="Model\DataTypes\CodeSystem.cs" />
+    <Compile Include="Model\DataTypes\ConceptName.cs" />
+    <Compile Include="Model\DataTypes\ConceptRelationshipType.cs" />
     <Compile Include="Model\DataTypes\PhoneticAlgorithm.cs" />
     <Compile Include="Model\DataTypes\ReferenceTermName.cs" />
     <Compile Include="Model\IdentifiedData.cs" />
@@ -83,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Model\Entity\" />
+    <Folder Include="Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

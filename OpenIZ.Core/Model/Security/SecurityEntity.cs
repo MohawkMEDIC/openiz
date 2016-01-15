@@ -9,7 +9,7 @@ namespace OpenIZ.Core.Model.Security
     /// <summary>
     /// Security Entity base class
     /// </summary>
-    public abstract class SecurityEntity : VersionedEntityData
+    public abstract class SecurityEntity : BaseEntityData
     {
 
         // Policies

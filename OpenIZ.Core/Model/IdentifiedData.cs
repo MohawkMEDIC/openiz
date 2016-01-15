@@ -1,4 +1,5 @@
-﻿using MARC.HI.EHRS.SVC.Core.Data;
+﻿using MARC.Everest.Connectors;
+using MARC.HI.EHRS.SVC.Core.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,7 @@ namespace OpenIZ.Core.Model
         /// </summary>
         public IdentifiedData AsFrozen()
         {
-            IdentifiedData retVal = Activator.CreateInstance(this.GetType()) as BaseEntityData;
+            IdentifiedData retVal = Activator.CreateInstance(this.GetType()) as IdentifiedData;
             List<FieldInfo> fields = new List<FieldInfo>();
             Type typ = this.GetType();
             while (typ != typeof(Object))
@@ -77,5 +78,14 @@ namespace OpenIZ.Core.Model
             }
         }
 
+
+        /// <summary>
+        /// Validate the state of this object
+        /// </summary>
+        /// <returns></returns>
+        public virtual IEnumerable<IResultDetail> Validate()
+        {
+            return new List<IResultDetail>();
+        }
     }
 }

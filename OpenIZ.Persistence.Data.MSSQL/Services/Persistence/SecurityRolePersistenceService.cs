@@ -49,7 +49,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 storageData = storageData.AsFrozen() as Core.Model.Security.SecurityRole;
 
             var dataRole = this.ConvertFromModel(storageData) as Data.SecurityRole;
-            dataRole.CreatedBy = base.GetUserFromPrincipal(principal, dataContext);
+            dataRole.CreatedBy = principal.GetUserGuid(dataContext);
             dataContext.SecurityRoles.InsertOnSubmit(dataRole);
             
             if (storageData.Users != null)
@@ -81,7 +81,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new ArgumentNullException(nameof(principal));
 
             var dataRole = dataContext.SecurityRoles.FirstOrDefault(r => r.RoleId == storageData.Key);
-            dataRole.ObsoletedBy = base.GetUserFromPrincipal(principal, dataContext);
+            dataRole.ObsoletedBy = principal.GetUserGuid(dataContext);
             dataRole.ObsoletionTime = DateTimeOffset.Now;
             
             // Persist
@@ -112,7 +112,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             var dataRole = dataContext.SecurityRoles.FirstOrDefault(r => r.RoleId == storageData.Key);
             var newData = this.ConvertFromModel(storageData) as Data.SecurityRole;
-            base.UpdatePropertyData(dataRole, newData);
+            dataRole.CopyObjectData(newData);
 
             // Users to be added 
             if(storageData.Users != null)

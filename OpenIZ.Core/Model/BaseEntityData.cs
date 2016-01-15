@@ -1,4 +1,5 @@
-﻿using MARC.HI.EHRS.SVC.Core;
+﻿using MARC.Everest.Connectors;
+using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Security;
@@ -107,5 +108,6 @@ namespace OpenIZ.Core.Model
         {
             return String.Format("{0} (K:{1})", this.GetType().Name, this.Key);
         }
+
     }
 }

@@ -40,7 +40,7 @@
     
     <xsl:copy>
       <xsl:apply-templates select="@*"/>
-      <xsl:if test="(@IsPrimaryKey = 'true' and count(../linq:Column[@IsPrimaryKey = 'true']) = 1) or @Name = 'CreationTime'">
+      <xsl:if test="(@IsPrimaryKey = 'true' and count(../linq:Column[@IsPrimaryKey = 'true']) = 1) or @Name = 'CreationTime' or @Name = 'VersionSequenceId'">
         <xsl:attribute name="IsDbGenerated">
           <xsl:value-of select="'true'"/> 
         </xsl:attribute>

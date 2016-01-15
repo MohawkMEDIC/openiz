@@ -21,6 +21,8 @@ using System.Data.SqlClient;
 using System.Reflection;
 using System.Data.Linq;
 using System.Security.Principal;
+using OpenIZ.Core.Exceptions;
+using OpenIZ.Persistence.Data.MSSQL.Exceptions;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -29,7 +31,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     /// Represents a basic persistence service
     /// </summary>
     /// <typeparam name="TModel">The OpenIZ Model type</typeparam>
-    public abstract class BaseDataPersistenceService<TModel> : IDataPersistenceService<TModel> where TModel : BaseEntityData, new()
+    public abstract class BaseDataPersistenceService<TModel> : IDataPersistenceService<TModel> where TModel : IdentifiedData, new()
     {
 
         protected TraceSource m_traceSource = new TraceSource("OpenIZ.Persistence.Data.MSSQL.Services.Persistence");
@@ -83,33 +85,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         public event EventHandler<PrePersistenceEventArgs<TModel>> Updating;
 
 
-        /// <summary>
-        /// Update property data if required
-        /// </summary>
-        protected virtual void UpdatePropertyData(Object existingEntity, Object newEntity)
-        {
-            if (existingEntity == null)
-                throw new ArgumentNullException(nameof(existingEntity));
-            else if (newEntity == null)
-                throw new ArgumentNullException(nameof(newEntity));
-            else if (newEntity.GetType() != existingEntity.GetType())
-                throw new ArgumentException("Type mismatch", nameof(newEntity));
-            foreach (var pi in existingEntity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {
-                if (pi.PropertyType.IsGenericTypeDefinition &&
-                    typeof(Nullable<>) == pi.PropertyType.GetGenericTypeDefinition() ||
-                    pi.PropertyType == typeof(DateTimeOffset) ||
-                    pi.PropertyType == typeof(String) ||
-                    pi.PropertyType.IsPrimitive)
-                {
-                    object newValue = pi.GetValue(newEntity),
-                        oldValue = pi.GetValue(existingEntity);
-                    if(newValue != oldValue)
-                        pi.SetValue(existingEntity, newValue);
-                }
-            }
-        }
-
+       
         /// <summary>
         /// Performs an insert of the data using a new data context
         /// </summary>
@@ -119,6 +95,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <returns>The inserted model object</returns>
         public TModel Insert(TModel storageData, IPrincipal principal, TransactionMode mode)
         {
+
+            if (storageData == null)
+                throw new ArgumentNullException(nameof(storageData));
+            else if (storageData.Key != Guid.Empty)
+                throw new SqlFormalConstraintException(SqlFormalConstraintType.IdentityInsert);
+
+            this.ThrowIfInvalid(storageData);
+
             // Create data context with given transaction
             using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
             {
@@ -148,19 +132,31 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 }
                 finally
                 {
-                    switch (mode)
-                    {
-                        case TransactionMode.Rollback:
-                            dataContext.Transaction.Rollback();
-                            break;
-                        case TransactionMode.Commit:
-                            dataContext.Transaction.Commit();
-                            break;
-                    }
+                    if(dataContext.Transaction != null)
+                        switch (mode)
+                        {
+                            case TransactionMode.Rollback:
+                                dataContext.Transaction.Rollback();
+                                break;
+                            case TransactionMode.Commit:
+                                dataContext.Transaction.Commit();
+                                break;
+                        }
 
                 }
             }
 
+        }
+
+        /// <summary>
+        /// Throw an exception if the passed instance is invalid
+        /// </summary>
+        private void ThrowIfInvalid(TModel storageData)
+        {
+            
+            IEnumerable<MARC.Everest.Connectors.IResultDetail> details = storageData.Validate();
+            if (details.Any(d => d.Type == MARC.Everest.Connectors.ResultDetailType.Error))
+                throw new ModelValidationException("Will not persist invalid model data", details);
         }
 
         /// <summary>
@@ -172,6 +168,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <returns>The new version of the object</returns>
         public TModel Update(TModel storageData, IPrincipal principal, TransactionMode mode)
         {
+            if (storageData == null)
+                throw new ArgumentNullException(nameof(storageData));
+            else if (storageData.Key == Guid.Empty)
+                throw new SqlFormalConstraintException(SqlFormalConstraintType.NonIdentityUpdate);
+
+            this.ThrowIfInvalid(storageData);
+
             using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
             {
                 try
@@ -204,15 +207,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 }
                 finally
                 {
-                    switch (mode)
-                    {
-                        case TransactionMode.Rollback:
-                            dataContext.Transaction.Rollback();
-                            break;
-                        case TransactionMode.Commit:
-                            dataContext.Transaction.Commit();
-                            break;
-                    }
+                    if (dataContext.Transaction != null)
+                        switch (mode)
+                        {
+                            case TransactionMode.Rollback:
+                                dataContext.Transaction.Rollback();
+                                break;
+                            case TransactionMode.Commit:
+                                dataContext.Transaction.Commit();
+                                break;
+                        }
                 }
             }
         }
@@ -226,6 +230,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <returns>The obsoleted object</returns>
         public TModel Obsolete(TModel storageData, IPrincipal principal, TransactionMode mode)
         {
+            if (storageData == null)
+                throw new ArgumentNullException(nameof(storageData));
+            else if (storageData.Key == Guid.Empty)
+                throw new SqlFormalConstraintException(SqlFormalConstraintType.NonIdentityUpdate);
+
+            this.ThrowIfInvalid(storageData);
+
             // Create data context with given transaction
             using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
             {
@@ -259,15 +270,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 }
                 finally
                 {
-                    switch (mode)
-                    {
-                        case TransactionMode.Rollback:
-                            dataContext.Transaction.Rollback();
-                            break;
-                        case TransactionMode.Commit:
-                            dataContext.Transaction.Commit();
-                            break;
-                    }
+                    if (dataContext.Transaction != null)
+                        switch (mode)
+                        {
+                            case TransactionMode.Rollback:
+                                dataContext.Transaction.Rollback();
+                                break;
+                            case TransactionMode.Commit:
+                                dataContext.Transaction.Commit();
+                                break;
+                        }
                 }
             }
 
@@ -283,6 +295,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <returns>The specified container object of <typeparamref name="T"/></returns>
         public TModel Get<TIdentifier>(Identifier<TIdentifier> containerId, IPrincipal principal, bool loadFast)
         {
+            if (containerId == null)
+                throw new ArgumentNullException(nameof(containerId));
+
             using (var dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
             {
                 try
@@ -323,6 +338,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public int Count(Expression<Func<TModel, bool>> query, IPrincipal principal)
         {
+            if (query == null)
+                throw new ArgumentNullException(nameof(query));
+
             try
             {
 
@@ -356,6 +374,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <returns>A delay load IQueryable instance which converts the query objects to the model view class</returns>
         public IEnumerable<TModel> Query(Expression<Func<TModel, bool>> query, int offset, int? count, IPrincipal principal)
         {
+            if (query == null)
+                throw new ArgumentNullException(nameof(query));
             try
             {
                 using (var dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
@@ -448,21 +468,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
         #endregion
 
-        /// <summary>
-        /// Get the user identifier from the authorization context
-        /// </summary>
-        /// <param name="principal">The current authorization context</param>
-        /// <returns>The UUID of the user which the authorization context subject represents</returns>
-        protected Guid GetUserFromPrincipal(IPrincipal principal, ModelDataContext dataContext)
-        {
-
-            var user = dataContext.SecurityUsers.FirstOrDefault(o => o.UserName == principal.Identity.Name && !o.ObsoletionTime.HasValue);
-            if (user == null)
-                throw new SecurityException("User in authorization context does not exist or is obsolete");
-
-            return user.UserId;
-
-        }
         
     }
 }

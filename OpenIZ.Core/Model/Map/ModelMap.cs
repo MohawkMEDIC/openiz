@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using MARC.Everest.Connectors;
 
 namespace OpenIZ.Core.Model.Map
 {
@@ -39,6 +40,17 @@ namespace OpenIZ.Core.Model.Map
                     lock(this.m_lockObject)
                         this.m_classCache.Add(type, retVal);
             }
+            return retVal;
+        }
+
+        /// <summary>
+        /// Validate the map
+        /// </summary>
+        public IEnumerable<IResultDetail> Validate()
+        {
+            List<IResultDetail> retVal = new List<IResultDetail>();
+            foreach(var cls in this.Class)
+                retVal.AddRange(cls.Validate());
             return retVal;
         }
     }

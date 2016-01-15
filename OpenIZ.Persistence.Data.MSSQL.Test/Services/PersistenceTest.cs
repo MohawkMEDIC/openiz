@@ -17,7 +17,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
     /// <summary>
     /// Persistence test
     /// </summary>
-    public class PersistenceTest<TModel> : DataTest where TModel : BaseEntityData
+    public class PersistenceTest<TModel> : DataTest where TModel : IdentifiedData
     {
 
         /// <summary>
@@ -36,7 +36,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 
             // Verify
             objectAfterTest = persistenceService.Get(objectAfterTest.Id, authContext, false);
-            Assert.AreNotEqual(default(DateTimeOffset), objectAfterTest.CreationTime);
+            if(objectAfterTest is BaseEntityData)
+                Assert.AreNotEqual(default(DateTimeOffset), (objectAfterTest as BaseEntityData).CreationTime);
 
             return objectAfterTest;
         }

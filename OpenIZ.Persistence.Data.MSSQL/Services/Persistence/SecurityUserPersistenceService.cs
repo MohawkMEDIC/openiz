@@ -58,7 +58,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 storageData = storageData.AsFrozen() as Core.Model.Security.SecurityUser;
 
             var dataUser = this.ConvertFromModel(storageData) as Data.SecurityUser;
-            dataUser.CreatedBy = principal == null ? null : (Guid?)base.GetUserFromPrincipal(principal, dataContext);
+            dataUser.CreatedBy = principal == null ? null : (Guid?)principal.GetUserGuid(dataContext);
             dataContext.SecurityUsers.InsertOnSubmit(dataUser);
             dataUser.SecurityStamp = Guid.NewGuid().ToString();
 
@@ -92,7 +92,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (dataUser == null)
                 throw new KeyNotFoundException();
 
-            dataUser.ObsoletedBy = base.GetUserFromPrincipal(principal, dataContext);
+            dataUser.ObsoletedBy = principal.GetUserGuid(dataContext);
             dataUser.ObsoletionTime = DateTimeOffset.Now;
             dataUser.SecurityStamp = Guid.NewGuid().ToString();
 
@@ -131,9 +131,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new KeyNotFoundException();
 
             var newData = this.ConvertFromModel(storageData) as Data.SecurityUser;
-            base.UpdatePropertyData(dataUser, newData);
+            dataUser.CopyObjectData(newData);
 
-            dataUser.UpdatedBy = base.GetUserFromPrincipal(principal, dataContext);
+            dataUser.UpdatedBy = principal.GetUserGuid(dataContext);
             dataUser.UpdatedTime = DateTimeOffset.Now;
             dataUser.SecurityStamp = Guid.NewGuid().ToString();
 

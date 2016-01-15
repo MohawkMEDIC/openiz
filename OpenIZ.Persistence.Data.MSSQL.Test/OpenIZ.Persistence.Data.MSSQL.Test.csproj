@@ -63,6 +63,7 @@
     <Compile Include="Map\ModelMapTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\PersistenceTest.cs" />
+    <Compile Include="Services\PhoneticAlgorithmPersistenceServiceTest.cs" />
     <Compile Include="Services\SecurityRolePersistenceServiceTest.cs" />
     <Compile Include="Services\SecurityUserPersistenceServiceTest.cs" />
     <Compile Include="Services\SqlIdentityProviderTest.cs" />

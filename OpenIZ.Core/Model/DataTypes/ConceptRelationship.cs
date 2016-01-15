@@ -20,7 +20,7 @@ namespace OpenIZ.Core.Model.DataTypes
         // Relaltionship type id
         private Guid m_relationshipTypeId;
         // Relationship type
-        private Concept m_relationshipType;
+        private ConceptRelationshipType m_relationshipType;
 
         /// <summary>
         /// Gets or sets the target concept identifier
@@ -80,7 +80,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the relationship type
         /// </summary>
-        public Concept RelationshipType
+        public ConceptRelationshipType RelationshipType
         {
             get
             {
@@ -88,7 +88,7 @@ namespace OpenIZ.Core.Model.DataTypes
                     this.DelayLoad &&
                     this.m_relationshipTypeId != Guid.Empty)
                 {
-                    var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
+                    var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptRelationshipType>>();
                     this.m_relationshipType = dataPersistence.Get(new Identifier<Guid>(this.m_relationshipTypeId), null, true);
                 }
                 return this.m_relationshipType;

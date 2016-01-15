@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MARC.Everest, Version=1.5.0.0, Culture=neutral, PublicKeyToken=ba5b2480018546af, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\MARC.Everest.dll</HintPath>
+    </Reference>
     <Reference Include="MARC.HI.EHRS.SVC.Core">
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
     </Reference>
@@ -56,6 +60,7 @@
       <DependentUpon>Model.dbml</DependentUpon>
     </Compile>
     <Compile Include="Data\ModelExtensions.cs" />
+    <Compile Include="Services\Persistence\PhoneticAlgorithmPersistenceService.cs" />
     <Compile Include="Exceptions\SqlFormalConstraintException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -63,6 +68,10 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Services\Persistence\ConceptNamePersistenceService.cs" />
+    <Compile Include="Services\Persistence\ConceptPersistenceService.cs" />
+    <Compile Include="Services\Persistence\ConceptReferenceTermPersistenceService.cs" />
+    <Compile Include="Services\Persistence\ConceptRelationshipPersistenceService.cs" />
     <Compile Include="Services\Persistence\SecurityPolicyPersistenceService.cs" />
     <Compile Include="Services\SqlIdentityProvider.cs" />
     <Compile Include="Services\SqlRoleProvider.cs" />
@@ -92,7 +101,9 @@
     <None Include="Data\Model.dbml.layout">
       <DependentUpon>Model.dbml</DependentUpon>
     </None>
-    <EmbeddedResource Include="Data\ModelMap.xml" />
+    <EmbeddedResource Include="Data\ModelMap.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

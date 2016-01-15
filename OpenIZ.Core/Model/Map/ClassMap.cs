@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using MARC.Everest.Connectors;
 
 namespace OpenIZ.Core.Model.Map
 {
@@ -55,7 +56,28 @@ namespace OpenIZ.Core.Model.Map
             retVal = this.Property.Find(o => o.ModelName == modelName);
             return retVal != null;
         }
-        
+
+        /// <summary>
+        /// Validate the class map
+        /// </summary>
+        public IEnumerable<IResultDetail> Validate()
+        {
+            List<IResultDetail> retVal = new List<IResultDetail>();
+            Type modelClass = Type.GetType(this.ModelClass),
+                domainClass = Type.GetType(this.DomainClass);
+            if (modelClass == null)
+                retVal.Add(new ValidationResultDetail(ResultDetailType.Error, String.Format("Class {0} not found", this.ModelClass), null, null));
+            if(domainClass == null)
+                retVal.Add(new ValidationResultDetail(ResultDetailType.Error, String.Format("Class {0} not found", this.DomainClass), null, null));
+
+            foreach(var p in this.Property)
+                retVal.AddRange(p.Validate(modelClass, domainClass));
+            foreach (var k in this.CollapseKey)
+                retVal.AddRange(k.Validate(domainClass));
+
+            return retVal;
+        }
+
         /// <summary>
         /// Try to get a property map 
         /// </summary>
