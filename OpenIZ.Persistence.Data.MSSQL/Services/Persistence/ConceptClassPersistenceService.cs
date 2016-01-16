@@ -37,7 +37,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.ConceptClass Get(Identifier<Guid> containerId, IPrincipal principal, bool loadFast, ModelDataContext dataContext)
         {
-            var domainConceptClass = dataContext.ConceptClasses.FirstOrDefault(c => c.ConceptClassId == containerId.Id);
+            var domainConceptClass = dataContext.ConceptClasses.SingleOrDefault(c => c.ConceptClassId == containerId.Id);
             if (domainConceptClass == null)
                 return null;
             else
@@ -63,7 +63,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.ConceptClass Obsolete(Core.Model.DataTypes.ConceptClass storageData, IPrincipal principal, ModelDataContext dataContext)
         {
-            var domainConceptClass = dataContext.ConceptClasses.FirstOrDefault(o => o.ConceptClassId == storageData.Key);
+            var domainConceptClass = dataContext.ConceptClasses.SingleOrDefault(o => o.ConceptClassId == storageData.Key);
             if (domainConceptClass == null)
                 throw new KeyNotFoundException();
             dataContext.ConceptClasses.DeleteOnSubmit(domainConceptClass);
@@ -87,7 +87,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.ConceptClass Update(Core.Model.DataTypes.ConceptClass storageData, IPrincipal principal, ModelDataContext dataContext)
         {
-            var domainConceptClass = dataContext.ConceptClasses.FirstOrDefault(o => o.ConceptClassId == storageData.Key);
+            var domainConceptClass = dataContext.ConceptClasses.SingleOrDefault(o => o.ConceptClassId == storageData.Key);
             if (domainConceptClass == null)
                 throw new KeyNotFoundException();
             domainConceptClass.CopyObjectData(this.ConvertFromModel(storageData) as Data.ConceptClass);

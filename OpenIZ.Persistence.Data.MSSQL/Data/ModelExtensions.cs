@@ -1,4 +1,8 @@
-﻿using OpenIZ.Core.Model.Attributes;
+﻿using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Persistence.Data.MSSQL.Exceptions;
 using OpenIZ.Persistence.Data.MSSQL.Services.Persistence;
 using System;
 using System.Collections.Generic;
@@ -20,83 +24,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     {
 
         /// <summary>
-        /// Ensure that the role exists
+        /// Ensures a model has been persisted
         /// </summary>
-        public static Core.Model.DataTypes.Concept EnsureExists(this Core.Model.DataTypes.Concept me, IPrincipal principal, Data.ModelDataContext context)
+        public static TModel EnsureExists<TModel>(this TModel me, IPrincipal principal, ModelDataContext dataContext) where TModel : IdentifiedData, new()
         {
-            if (me.Key == Guid.Empty)
+            var dataService = ApplicationContext.Current.GetService<IDataPersistenceService<TModel>>() as BaseDataPersistenceService<TModel>;
+            if (dataService == null)
+                throw new InvalidOperationException(String.Format("Cannot locate SQL storage provider for {0}", typeof(TModel).FullName));
+            if(me.Key == Guid.Empty)
             {
-                var retVal = new ConceptPersistenceService().Insert(me, principal, context);
-                me.Key = retVal.Key;
+                var retVal = dataService.Insert(me, principal, dataContext);
+                me.Key = retVal.Key; // prevents future loading
                 return retVal;
             }
-            return me;
-        }
-
-        /// <summary>
-        /// Ensure that the role exists
-        /// </summary>
-        public static Core.Model.DataTypes.PhoneticAlgorithm EnsureExists(this Core.Model.DataTypes.PhoneticAlgorithm me, IPrincipal principal, Data.ModelDataContext context)
-        {
-            if (me.Key == Guid.Empty)
-            {
-                var retVal = new PhoneticAlgorithmPersistenceService().Insert(me, principal, context);
-                me.Key = retVal.Key;
-                return retVal;
-
-            }
-            return me;
-        }
-
-        /// <summary>
-        /// Ensure that the role exists
-        /// </summary>
-        public static Core.Model.Security.SecurityRole EnsureExists(this Core.Model.Security.SecurityRole me, IPrincipal principal, Data.ModelDataContext context)
-        {
-            if (me.Key == Guid.Empty)
-            {
-                var retVal = new SecurityRolePersistenceService().Insert(me, principal, context);
-                me.Key = retVal.Key;
-                return retVal;
-            }
-            return me;
-        }
-
-        /// <summary>
-        /// Ensure that the role exists
-        /// </summary>
-        public static Core.Model.DataTypes.ConceptClass EnsureExists(this Core.Model.DataTypes.ConceptClass me, IPrincipal principal, Data.ModelDataContext context)
-        {
-            if (me.Key == Guid.Empty)
-            {
-                var retVal = new ConceptClassPersistenceService().Insert(me, principal, context);
-                me.Key = retVal.Key;
-                return retVal;
-            }
-            return me;
-        }
-
-        /// <summary>
-        /// Ensure that the role exists
-        /// </summary>
-        public static Core.Model.Security.SecurityUser EnsureExists(this Core.Model.Security.SecurityUser me, IPrincipal principal, Data.ModelDataContext context)
-        {
-            if (me.Key == Guid.Empty)
-            {
-                var retVal = new SecurityUserPersistenceService().Insert(me, principal, context);
-                me.Key = retVal.Key;
-                return retVal;
-            }
-            return me;
-        }
-
-        /// <summary>
-        /// Ensure that the role exists
-        /// </summary>
-        public static Core.Model.Security.SecurityPolicy EnsureExists(this Core.Model.Security.SecurityPolicy me, IPrincipal principal, Data.ModelDataContext context)
-        {
-            if (me.Key == Guid.Empty)
-                return new SecurityPolicyPersistenceService().Insert(me, principal, context);
             return me;
         }
 
@@ -105,6 +45,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// </summary>
         public static Data.ConceptVersion NewVersion(this Data.ConceptVersion me, IPrincipal principal, ModelDataContext dataContext)
         {
+            if (me.Concept.IsSystemConcept)
+                throw new SqlFormalConstraintException(SqlFormalConstraintType.UpdatedReadonlyObject);
+
             var newConceptVersion = new Data.ConceptVersion();
             var user = principal.GetUser(dataContext);
             newConceptVersion.CopyObjectData(me);

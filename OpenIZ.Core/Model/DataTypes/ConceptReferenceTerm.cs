@@ -18,7 +18,7 @@ namespace OpenIZ.Core.Model.DataTypes
         // ConceptRelationship type
         private Guid m_relationshipTypeId;
         // Relationship type
-        private Concept m_relationshipType;
+        private ConceptRelationshipType m_relationshipType;
 
         /// <summary>
         /// Gets or sets the reference term identifier
@@ -80,14 +80,14 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the relationship type
         /// </summary>
         [DelayLoad]
-        public Concept RelationshipType {
+        public ConceptRelationshipType RelationshipType {
             get
             {
                 if(this.m_relationshipType == null &&
                     this.DelayLoad &&
                     this.m_relationshipTypeId != Guid.Empty)
                 {
-                    var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
+                    var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptRelationshipType>>();
                     this.m_relationshipType = dataPersistence.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(this.m_relationshipTypeId), null, true);
                 }
                 return this.m_relationshipType;

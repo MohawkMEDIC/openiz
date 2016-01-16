@@ -89,6 +89,7 @@
     <Compile Include="Services\Persistence\ConceptReferenceTermPersistenceService.cs" />
     <Compile Include="Services\Persistence\ConceptRelationshipPersistenceService.cs" />
     <Compile Include="Services\Persistence\SecurityPolicyPersistenceService.cs" />
+    <Compile Include="Services\Persistence\SqlPersistenceService.cs" />
     <Compile Include="Services\SqlIdentityProvider.cs" />
     <Compile Include="Services\SqlRoleProvider.cs" />
     <Compile Include="Services\Persistence\BasePersistenceService.cs" />
@@ -114,6 +115,7 @@
     <Content Include="Data\CorrectDbml.xslt">
       <SubType>Designer</SubType>
     </Content>
+    <EmbeddedResource Include="Data\Sql\OpenIZ-DDL.SQL" />
     <None Include="Data\Model.dbml.layout">
       <DependentUpon>Model.dbml</DependentUpon>
     </None>

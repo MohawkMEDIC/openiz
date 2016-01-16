@@ -34,7 +34,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <returns>The security user as part of the get</returns>
         internal override Core.Model.Security.SecurityUser Get(Identifier<Guid> containerId, IPrincipal principal, bool loadFast, ModelDataContext dataContext)
         {
-            var dataUser = dataContext.SecurityUsers.FirstOrDefault(o => o.UserId == containerId.Id);
+            var dataUser = dataContext.SecurityUsers.SingleOrDefault(o => o.UserId == containerId.Id);
 
             if (dataUser != null)
                 return this.ConvertToModel(dataUser);
@@ -82,7 +82,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
-            var dataUser = dataContext.SecurityUsers.FirstOrDefault(u => u.UserId == storageData.Key);
+            var dataUser = dataContext.SecurityUsers.SingleOrDefault(u => u.UserId == storageData.Key);
             if (dataUser == null)
                 throw new KeyNotFoundException();
 
@@ -117,7 +117,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
-            var dataUser = dataContext.SecurityUsers.FirstOrDefault(u => u.UserId == storageData.Key);
+            var dataUser = dataContext.SecurityUsers.SingleOrDefault(u => u.UserId == storageData.Key);
             if (dataUser == null)
                 throw new KeyNotFoundException();
 

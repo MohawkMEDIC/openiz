@@ -35,7 +35,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.PhoneticAlgorithm Get(Identifier<Guid> containerId, IPrincipal principal, bool loadFast, ModelDataContext dataContext)
         {
-            var domainPhoneticAlgorithm = dataContext.PhoneticAlgorithms.FirstOrDefault(o => o.PhoneticAlgorithmId == containerId.Id);
+            var domainPhoneticAlgorithm = dataContext.PhoneticAlgorithms.SingleOrDefault(o => o.PhoneticAlgorithmId == containerId.Id);
             if (domainPhoneticAlgorithm == null)
                 return null;
             else
@@ -60,7 +60,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.PhoneticAlgorithm Obsolete(Core.Model.DataTypes.PhoneticAlgorithm storageData, IPrincipal principal, ModelDataContext dataContext)
         {
-            var existingDomainAlgorithm = dataContext.PhoneticAlgorithms.FirstOrDefault(o => o.PhoneticAlgorithmId == storageData.Key);
+            var existingDomainAlgorithm = dataContext.PhoneticAlgorithms.SingleOrDefault(o => o.PhoneticAlgorithmId == storageData.Key);
             if (existingDomainAlgorithm == null)
                 throw new KeyNotFoundException();
             dataContext.PhoneticAlgorithms.DeleteOnSubmit(existingDomainAlgorithm);
@@ -85,7 +85,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.PhoneticAlgorithm Update(Core.Model.DataTypes.PhoneticAlgorithm storageData, IPrincipal principal, ModelDataContext dataContext)
         {
-            var domainPhoneticAlgorithm = dataContext.PhoneticAlgorithms.FirstOrDefault(o => o.PhoneticAlgorithmId == storageData.Key);
+            var domainPhoneticAlgorithm = dataContext.PhoneticAlgorithms.SingleOrDefault(o => o.PhoneticAlgorithmId == storageData.Key);
             domainPhoneticAlgorithm.CopyObjectData(this.ConvertFromModel(storageData));
             // Update
             dataContext.SubmitChanges();

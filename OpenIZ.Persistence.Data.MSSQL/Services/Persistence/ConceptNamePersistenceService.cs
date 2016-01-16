@@ -36,7 +36,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.ConceptName Get(Identifier<Guid> containerId, IPrincipal principal, bool loadFast, ModelDataContext dataContext)
         {
-            var domainConceptName = dataContext.ConceptNames.FirstOrDefault(o => o.ConceptNameId == containerId.Id);
+            var domainConceptName = dataContext.ConceptNames.SingleOrDefault(o => o.ConceptNameId == containerId.Id);
             if (domainConceptName == null)
                 return null;
             else
@@ -74,7 +74,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 domainConceptName.ConceptId = storageData.TargetEntity.EnsureExists(principal, dataContext).Key;
 
             // Get the current version & create a new version if needed
-            var currentConceptVersion = dataContext.ConceptVersions.First(o => o.ConceptId == storageData.TargetEntityKey && o.ObsoletionTime == null);
+            var currentConceptVersion = dataContext.ConceptVersions.Single(o => o.ConceptId == storageData.TargetEntityKey && o.ObsoletionTime == null);
             ConceptVersion newConceptVersion = newVersion ? currentConceptVersion.NewVersion(principal, dataContext) : currentConceptVersion;
             domainConceptName.EffectiveVersionSequenceId = newConceptVersion.VersionSequenceId;
             domainConceptName.Concept = newConceptVersion.Concept;
@@ -111,13 +111,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.AssociatedEntityWithoutTargetKey);
 
             // obsolete (i.e. remove the name association)
-            var domainConceptName = dataContext.ConceptNames.FirstOrDefault(o => o.ConceptNameId == storageData.Key);
+            var domainConceptName = dataContext.ConceptNames.SingleOrDefault(o => o.ConceptNameId == storageData.Key);
 
             if (domainConceptName == null)
                 throw new KeyNotFoundException();
 
             // Get the current version & create a new version if needed
-            var currentConceptVersion = domainConceptName.Concept.ConceptVersions.First(o => o.ObsoletionTime == null);
+            var currentConceptVersion = domainConceptName.Concept.ConceptVersions.Single(o => o.ObsoletionTime == null);
             ConceptVersion newConceptVersion = newVersion ? currentConceptVersion.NewVersion(principal, dataContext) : currentConceptVersion;
 
             // Set the obsoletion time to the current version of the target entity
@@ -157,17 +157,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new ArgumentNullException(nameof(principal));
 
             // Existing version of the name
-            var domainConceptName = dataContext.ConceptNames.FirstOrDefault(o => o.ConceptNameId == storageData.Key);
+            var domainConceptName = dataContext.ConceptNames.SingleOrDefault(o => o.ConceptNameId == storageData.Key);
             if (domainConceptName == null)
                 throw new KeyNotFoundException();
 
             var newDomainConceptName = this.ConvertFromModel(storageData) as Data.ConceptName;
             newDomainConceptName.ConceptNameId = Guid.Empty;
 
-            // Ensure traversable properties exist if they're objects
-            if (storageData.PhoneticAlgorithm != null)
-                newDomainConceptName.PhoneticAlgorithmId = storageData.PhoneticAlgorithm.EnsureExists(principal, dataContext).Key;
-
+            
             // Is there a need to update?
             if (newDomainConceptName.LanguageCode != domainConceptName.LanguageCode ||
                 newDomainConceptName.Name != domainConceptName.Name ||
@@ -175,8 +172,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 newDomainConceptName.PhoneticAlgorithmId != domainConceptName.PhoneticAlgorithmId)
             {
 
+                // Ensure traversable properties exist if they're objects
+                if (storageData.PhoneticAlgorithm != null)
+                    newDomainConceptName.PhoneticAlgorithmId = storageData.PhoneticAlgorithm.EnsureExists(principal, dataContext).Key;
+
                 // New Concept Version
-                var currentConceptVersion = domainConceptName.Concept.ConceptVersions.First(o => o.ObsoletionTime == null);
+                var currentConceptVersion = domainConceptName.Concept.ConceptVersions.Single(o => o.ObsoletionTime == null);
                 ConceptVersion newConceptVersion = newVersion ? currentConceptVersion.NewVersion(principal, dataContext) : currentConceptVersion;
 
                 // Obsolete the old data

@@ -62,12 +62,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             {
                 foreach(var un in users)
                 {
-                    SecurityUser user = dataContext.SecurityUsers.FirstOrDefault(u => u.UserName == un);
+                    SecurityUser user = dataContext.SecurityUsers.SingleOrDefault(u => u.UserName == un);
                     if (user == null)
                         throw new KeyNotFoundException(String.Format("Could not locate user {0}", un));
                     foreach(var rol in roles)
                     {
-                        SecurityRole role = dataContext.SecurityRoles.FirstOrDefault(r => r.Name == rol);
+                        SecurityRole role = dataContext.SecurityRoles.SingleOrDefault(r => r.Name == rol);
                         if (role == null)
                             throw new KeyNotFoundException(String.Format("Could not locate role {0}", rol));
                         if (!user.SecurityUserRoles.Any(o => o.RoleId == role.RoleId))
@@ -90,7 +90,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             // Add users to role
             using (var dataContext = new Data.ModelDataContext(this.m_configuration.ReadWriteConnectionString))
             {
-                SecurityUser user = dataContext.SecurityUsers.FirstOrDefault(u => u.UserName == authPrincipal.Identity.Name);
+                SecurityUser user = dataContext.SecurityUsers.SingleOrDefault(u => u.UserName == authPrincipal.Identity.Name);
                 if (user == null)
                     throw new SecurityException(String.Format("Could not verify identity of {0}", authPrincipal.Identity.Name));
 
@@ -111,7 +111,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         {
             using (var dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
             {
-                var securityRole = dataContext.SecurityRoles.FirstOrDefault(r => r.Name == role);
+                var securityRole = dataContext.SecurityRoles.SingleOrDefault(r => r.Name == role);
                 if (securityRole == null)
                     throw new KeyNotFoundException(String.Format("Role {0} not found", role));
                 return securityRole.SecurityUserRoles.Select(o => o.SecurityUser.UserName).ToArray();
@@ -157,17 +157,17 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             {
                 foreach (var un in users)
                 {
-                    SecurityUser user = dataContext.SecurityUsers.FirstOrDefault(u => u.UserName == un);
+                    SecurityUser user = dataContext.SecurityUsers.SingleOrDefault(u => u.UserName == un);
                     if (user == null)
                         throw new KeyNotFoundException(String.Format("Could not locate user {0}", un));
                     foreach (var rol in roles)
                     {
-                        SecurityRole role = dataContext.SecurityRoles.FirstOrDefault(r => r.Name == rol);
+                        SecurityRole role = dataContext.SecurityRoles.SingleOrDefault(r => r.Name == rol);
                         if (role == null)
                             throw new KeyNotFoundException(String.Format("Could not locate role {0}", rol));
 
                         // Remove
-                        dataContext.SecurityUserRoles.DeleteOnSubmit(user.SecurityUserRoles.FirstOrDefault(ur => ur.RoleId == role.RoleId && ur.UserId == user.UserId));
+                        dataContext.SecurityUserRoles.DeleteOnSubmit(user.SecurityUserRoles.SingleOrDefault(ur => ur.RoleId == role.RoleId && ur.UserId == user.UserId));
                     }
                 }
 

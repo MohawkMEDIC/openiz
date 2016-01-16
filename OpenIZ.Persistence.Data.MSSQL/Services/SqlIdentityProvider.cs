@@ -109,7 +109,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                 // Create the hasher and load the user
                 using (var dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
                 {
-                    var user = dataContext.SecurityUsers.Where(u => u.UserName == userName && !u.ObsoletionTime.HasValue).FirstOrDefault();
+                    var user = dataContext.SecurityUsers.Where(u => u.UserName == userName && !u.ObsoletionTime.HasValue).SingleOrDefault();
                     if (user == null)
                         throw new InvalidOperationException(String.Format("Cannot locate user {0}", userName));
 
@@ -176,7 +176,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     };
 
                     if (authContext != null)
-                        newIdentityUser.CreatedByEntity = dataContext.SecurityUsers.First(u => u.UserName == authContext.Identity.Name);
+                        newIdentityUser.CreatedByEntity = dataContext.SecurityUsers.Single(u => u.UserName == authContext.Identity.Name);
 
                     dataContext.SecurityUsers.InsertOnSubmit(newIdentityUser);
                     dataContext.SubmitChanges();

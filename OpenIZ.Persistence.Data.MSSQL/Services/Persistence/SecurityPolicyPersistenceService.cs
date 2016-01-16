@@ -41,7 +41,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (containerId == null)
                 throw new ArgumentNullException(nameof(containerId));
 
-            var dataPolicy = dataContext.Policies.FirstOrDefault(p => p.PolicyId == containerId.Id);
+            var dataPolicy = dataContext.Policies.SingleOrDefault(p => p.PolicyId == containerId.Id);
             if (dataPolicy != null)
                 return this.ConvertToModel(dataPolicy);
             else
@@ -82,7 +82,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new ArgumentNullException(nameof(principal));
 
             // Update 
-            var dataPolicy = dataContext.Policies.FirstOrDefault(p => p.PolicyId == storageData.Key);
+            var dataPolicy = dataContext.Policies.SingleOrDefault(p => p.PolicyId == storageData.Key);
             dataPolicy.ObsoletedByEntity = principal.GetUser(dataContext);
             dataPolicy.ObsoletionTime = DateTimeOffset.Now;
             dataContext.SubmitChanges();

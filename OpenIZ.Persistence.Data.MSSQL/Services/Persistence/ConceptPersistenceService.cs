@@ -45,9 +45,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Return values
             Data.ConceptVersion retVal = null;
             if (containerId.VersionId != default(Guid))
-                retVal = dataContext.ConceptVersions.FirstOrDefault(o => o.ConceptVersionId == containerId.VersionId);
+                retVal = dataContext.ConceptVersions.SingleOrDefault(o => o.ConceptVersionId == containerId.VersionId);
             else if (containerId.Id != default(Guid))
-                retVal = dataContext.ConceptVersions.FirstOrDefault(o => o.ConceptId == containerId.Id && o.ObsoletionTime == null);
+                retVal = dataContext.ConceptVersions.SingleOrDefault(o => o.ConceptId == containerId.Id && o.ObsoletionTime == null);
 
             if (retVal == null)
                 return null;
@@ -91,17 +91,17 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 }
             }
 
-            //// Reference terms
-            //if (storageData.ReferenceTerms != null)
-            //{
-            //    ConceptReferenceTermPersistenceService referencePersister = new ConceptReferenceTermPersistenceService();
-            //    foreach (var rt in storageData.ReferenceTerms)
-            //    {
-            //        rt.EffectiveVersionSequenceId = storageData.VersionSequence;
-            //        rt.TargetEntityKey = storageData.Key; // Oh Elcid Barrett cried the town
-            //        referencePersister.Insert(rt, principal, dataContext); // How I wish I was in sherbrooke now!!!
-            //    }
-            //}
+            // Reference terms
+            if (storageData.ReferenceTerms != null)
+            {
+                ConceptReferenceTermPersistenceService referencePersister = new ConceptReferenceTermPersistenceService();
+                foreach (var rt in storageData.ReferenceTerms)
+                {
+                    rt.EffectiveVersionSequenceId = storageData.VersionSequence;
+                    rt.TargetEntityKey = storageData.Key; // Oh Elcid Barrett cried the town
+                    referencePersister.Insert(rt, principal, dataContext); // How I wish I was in sherbrooke now!!!
+                }
+            }
 
             //// Storage data 
             //if (storageData.Relationship != null)
@@ -132,7 +132,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (storageData.IsSystemConcept)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.UpdatedReadonlyObject);
 
-            var dataConceptVersion = dataContext.ConceptVersions.FirstOrDefault(c => c.ConceptId == storageData.Key && c.ObsoletionTime == null);
+            var dataConceptVersion = dataContext.ConceptVersions.SingleOrDefault(c => c.ConceptId == storageData.Key && c.ObsoletionTime == null);
             if (dataConceptVersion == null)
                 throw new KeyNotFoundException();
             else if (dataConceptVersion.Concept.IsSystemConcept)
@@ -176,7 +176,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
 
             // Get the existing version 
-            var domainConceptVersion = dataContext.ConceptVersions.OrderByDescending(o=>o.VersionSequenceId).FirstOrDefault(o => o.ConceptId == storageData.Key && o.ObsoletionTime == null);
+            var domainConceptVersion = dataContext.ConceptVersions.OrderByDescending(o=>o.VersionSequenceId).SingleOrDefault(o => o.ConceptId == storageData.Key && o.ObsoletionTime == null);
             Decimal oldVersionSequenceId = domainConceptVersion.VersionSequenceId;
 
             if (domainConceptVersion == null)
@@ -193,6 +193,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Update the dependent objects
             ConceptNamePersistenceService cnPersistenceService = new ConceptNamePersistenceService();
+            ConceptReferenceTermPersistenceService rtPersistenceService = new ConceptReferenceTermPersistenceService();
 
             // First thing, we want to remove any names that no longer appear in the storageData and/or update those 
             if (storageData.ConceptNames != null)
@@ -215,6 +216,31 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 {
                     ins.TargetEntityKey = domainConceptVersion.ConceptId;
                     cnPersistenceService.Insert(ins, principal, dataContext, false);
+                }
+
+            }
+
+            // New thing, we want to remove any reference terms that no longer appear
+            if (storageData.ReferenceTerms != null)
+            {
+                var existingTerms = domainConceptVersion.Concept.ConceptReferenceTerms.Where(o => oldVersionSequenceId >= o.EffectiveVersionSequenceId && o.ObsoleteVersionSequenceId == null).Select(o => rtPersistenceService.ConvertToModel(o)).ToList(); // active names
+
+                // Remove old
+                var obsoleteRecords = existingTerms.Where(o => !storageData.ReferenceTerms.Exists(ecn => ecn.Key == o.Key));
+                foreach (var del in obsoleteRecords)
+                    rtPersistenceService.Obsolete(del, principal, dataContext, false);
+
+                // Update those that need it
+                var updateRecords = storageData.ReferenceTerms.Where(o => existingTerms.Exists(ecn => ecn.Key == o.Key && o != ecn));
+                foreach (var upd in updateRecords)
+                    rtPersistenceService.Update(upd, principal, dataContext, false);
+
+                // Insert those that do not exist
+                var insertRecords = storageData.ReferenceTerms.Where(o => !existingTerms.Exists(ecn => ecn.Key == o.Key));
+                foreach (var ins in insertRecords)
+                {
+                    ins.TargetEntityKey = domainConceptVersion.ConceptId;
+                    rtPersistenceService.Insert(ins, principal, dataContext, false);
                 }
 
             }

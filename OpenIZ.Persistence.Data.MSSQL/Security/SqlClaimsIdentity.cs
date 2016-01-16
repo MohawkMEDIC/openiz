@@ -55,7 +55,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
                     var hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
 
                     var passwordHash = hashingService.EncodePassword(password);
-                    var user = dataContext.SecurityUsers.FirstOrDefault(u => u.UserName == userName && u.ObsoletionTime == null);
+                    var user = dataContext.SecurityUsers.SingleOrDefault(u => u.UserName == userName && u.ObsoletionTime == null);
                     if (user?.UserPassword == passwordHash && (bool)!user?.TwoFactorEnabled &&
                         (bool)!user?.LockoutEnabled)
                     {
@@ -129,7 +129,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
             {
                 using (var dataContext = new Data.ModelDataContext(s_configuration.ReadonlyConnectionString))
                 {
-                    var user = dataContext.SecurityUsers.FirstOrDefault(u => !u.ObsoletionTime.HasValue && u.UserName == userName);
+                    var user = dataContext.SecurityUsers.SingleOrDefault(u => !u.ObsoletionTime.HasValue && u.UserName == userName);
                     if (user == null)
                         return null;
                     return new SqlClaimsIdentity(user, false);

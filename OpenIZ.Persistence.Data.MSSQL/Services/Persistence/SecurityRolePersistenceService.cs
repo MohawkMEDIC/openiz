@@ -27,7 +27,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (containerId == null)
                 throw new ArgumentNullException(nameof(containerId));
 
-            var dataRole = dataContext.SecurityRoles.FirstOrDefault(o => o.RoleId == containerId.Id);
+            var dataRole = dataContext.SecurityRoles.SingleOrDefault(o => o.RoleId == containerId.Id);
 
             if (dataRole != null)
                 return this.ConvertToModel(dataRole);
@@ -77,7 +77,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
-            var dataRole = dataContext.SecurityRoles.FirstOrDefault(r => r.RoleId == storageData.Key);
+            var dataRole = dataContext.SecurityRoles.SingleOrDefault(r => r.RoleId == storageData.Key);
             dataRole.ObsoletedByEntity = principal.GetUser(dataContext);
             dataRole.ObsoletionTime = DateTimeOffset.Now;
             
@@ -107,7 +107,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
-            var dataRole = dataContext.SecurityRoles.FirstOrDefault(r => r.RoleId == storageData.Key);
+            var dataRole = dataContext.SecurityRoles.SingleOrDefault(r => r.RoleId == storageData.Key);
             var newData = this.ConvertFromModel(storageData) as Data.SecurityRole;
             dataRole.CopyObjectData(newData);
 
@@ -124,7 +124,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Update or insert policies
             foreach(var p in storageData.Policies)
             {
-                var existingPolicy = dataRole.SecurityRolePolicies.FirstOrDefault(o => o.PolicyId == p.Policy.EnsureExists(principal, dataContext).Key);
+                var existingPolicy = dataRole.SecurityRolePolicies.SingleOrDefault(o => o.PolicyId == p.Policy.EnsureExists(principal, dataContext).Key);
                 if (existingPolicy != null)
                 {
                     existingPolicy.IsDeny = p.GrantType < MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Grant;

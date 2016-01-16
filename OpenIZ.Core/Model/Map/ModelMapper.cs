@@ -195,7 +195,7 @@ namespace OpenIZ.Core.Model.Map
         {
             ClassMap classMap = this.m_mapFile.GetModelClassMap(typeof(TModel));
 
-            if (classMap == null)
+            if (classMap == null || modelInstance == null)
                 return default(TDomain);
 
             // Now the property maps
@@ -252,7 +252,7 @@ namespace OpenIZ.Core.Model.Map
         {
             ClassMap classMap = this.m_mapFile.GetModelClassMap(typeof(TModel));
 
-            if (classMap == null)
+            if (classMap == null || domainInstance == null)
                 return default(TModel);
 
             // Now the property maps
