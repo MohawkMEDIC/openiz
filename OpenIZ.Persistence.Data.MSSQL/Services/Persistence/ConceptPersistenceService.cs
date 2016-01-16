@@ -71,16 +71,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var dataConceptVersion = this.ConvertFromModel(storageData) as Data.ConceptVersion;
             dataConceptVersion.CreatedBy = principal.GetUserGuid(dataContext);
 
-            var dataConcept = new Data.Concept() { IsSystemConcept = storageData.IsSystemConcept };
-            dataConceptVersion.Concept = dataConcept;
-            dataConceptVersion.StatusConceptId = dataConceptVersion.StatusConceptId == Guid.Empty ? Guid.Parse(ConceptIds.StatusActive) : dataConceptVersion.StatusConceptId;
+            dataConceptVersion.StatusConceptId = dataConceptVersion.StatusConceptId == Guid.Empty ? ConceptIds.StatusActive : dataConceptVersion.StatusConceptId;
 
             // Store the root concept
-            dataContext.Concepts.InsertOnSubmit(dataConcept);
+//            dataContext.Concepts.InsertOnSubmit(dataConcept);
             dataContext.ConceptVersions.InsertOnSubmit(dataConceptVersion);
             dataContext.SubmitChanges();
             var retVal = this.ConvertToModel(dataConceptVersion);
-            retVal.IsSystemConcept = dataConcept.IsSystemConcept;
+            //retVal.IsSystemConcept = dataConcept.IsSystemConcept;
             
             // Concept names
             if (storageData.ConceptNames != null)
@@ -144,7 +142,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataConceptVersion.ObsoletionTime = DateTimeOffset.Now;
             newDataConceptVersion.CreatedBy = principal.GetUserGuid(dataContext);
             dataConceptVersion.ObsoletedBy = principal.GetUserGuid(dataContext);
-            newDataConceptVersion.StatusConceptId = Guid.Parse(Core.ConceptIds.StatusObsolete);
+            newDataConceptVersion.StatusConceptId = Core.ConceptIds.StatusObsolete;
             dataContext.ConceptVersions.InsertOnSubmit(newDataConceptVersion);
 
             dataContext.SubmitChanges();

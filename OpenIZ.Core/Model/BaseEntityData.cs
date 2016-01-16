@@ -2,6 +2,7 @@
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Security;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the user that created this base data
         /// </summary>
+        [DelayLoad]
         public virtual SecurityUser CreatedBy {
             get
             {
@@ -53,10 +55,11 @@ namespace OpenIZ.Core.Model
                 return this.m_createdBy;
             }
          }
-        
+
         /// <summary>
         /// Gets or sets the user that obsoleted this base data
         /// </summary>
+        [DelayLoad]
         public virtual SecurityUser ObsoletedBy {
             get
             {

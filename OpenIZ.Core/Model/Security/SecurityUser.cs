@@ -1,6 +1,7 @@
 ﻿using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -69,6 +70,7 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Represents roles
         /// </summary>
+        [DelayLoad]
         public List<SecurityRole> Roles {
             get
             {
@@ -88,6 +90,7 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets or sets the user that updated this base data
         /// </summary>
+        [DelayLoad]
         public SecurityUser UpdatedBy
         {
             get
@@ -130,6 +133,7 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Get the policies active for this user
         /// </summary>
+        [DelayLoad]
         public override List<SecurityPolicyInstance> Policies
         {
             get

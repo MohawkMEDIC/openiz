@@ -1,5 +1,6 @@
 ﻿using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,7 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets or sets the security users in the role
         /// </summary>
+        [DelayLoad]
         public List<SecurityUser> Users {
             get
             {

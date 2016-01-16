@@ -92,6 +92,7 @@
     <property modelName="TargetEntityKey" domainName="ConceptId"/>
     <property modelName="PhoneticAlgorithmId" domainName="PhoneticAlgorithmId"/>
     <property modelName="PhoneticAlgorithm" domainName="PhoneticAlgorithm"/>
+    <property modelName="Language" domainName="LanguageCode"/>
     <collapseKey propertyName="PhoneticAlgorithm" keyName="PhoneticAlgorithmId"/>
     <collapseKey propertyName="EffectiveVersionSequence" keyName="EffectiveVersionSequenceId"/>
     <collapseKey propertyName="ObsoleteVersionSequence" keyName="ObsoleteVersionSequenceId"/>

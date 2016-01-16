@@ -1,5 +1,6 @@
 ﻿using MARC.Everest.Connectors;
 using OpenIZ.Core.Exceptions;
+using OpenIZ.Core.Model.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -203,7 +204,8 @@ namespace OpenIZ.Core.Model.Map
             {
 
                 // Property info
-                if (propInfo.GetValue(modelInstance) == null)
+                if (propInfo.GetCustomAttribute<DelayLoadAttribute>() != null ||
+                    propInfo.GetValue(modelInstance) == null)
                     continue;
 
                 if (!propInfo.PropertyType.IsPrimitive && propInfo.PropertyType != typeof(Guid) &&
@@ -211,29 +213,47 @@ namespace OpenIZ.Core.Model.Map
                     propInfo.PropertyType != typeof(String) &&
                     propInfo.PropertyType != typeof(DateTime) &&
                     propInfo.PropertyType != typeof(DateTimeOffset) &&
-                    propInfo.PropertyType != typeof(Type))
+                    propInfo.PropertyType != typeof(Type) &&
+                    propInfo.PropertyType != typeof(Decimal))
                     continue;
 
                 // Map property
                 PropertyMap propMap = null;
                 classMap.TryGetModelProperty(propInfo.Name, out propMap);
                 PropertyInfo domainProperty = null;
+                Object targetObject = retVal;
 
                 // Set 
                 if (propMap == null)
                     domainProperty = typeof(TDomain).GetProperty(propInfo.Name);
                 else
+                {
                     domainProperty = typeof(TDomain).GetProperty(propMap.DomainName);
+                    if (propMap.Via != null)
+                        foreach (var prop in propMap.Via)
+                        {
+                            // Is the domain property null
+                            var propValue = domainProperty.GetValue(targetObject);
+                            if (propValue == null)
+                            {
+                                propValue = Activator.CreateInstance(domainProperty.PropertyType);
+                                domainProperty.SetValue(targetObject, propValue);
+                            }
+                            targetObject = propValue;
 
-                // Set value
+                            domainProperty = domainProperty.PropertyType.GetProperty(propInfo.Name);
+                        }
+                }
+
+                    // Set value
                 if (domainProperty == null)
                     this.m_traceSource.TraceInformation("Unmapped property ({0}).{1}", typeof(TModel).Name, propInfo.Name);
                 else if (domainProperty.PropertyType.IsAssignableFrom(propInfo.PropertyType))
-                    domainProperty.SetValue(retVal, propInfo.GetValue(modelInstance));
+                    domainProperty.SetValue(targetObject, propInfo.GetValue(modelInstance));
                 else if (propInfo.PropertyType == typeof(Type) && domainProperty.PropertyType == typeof(String))
-                    domainProperty.SetValue(retVal, (propInfo.GetValue(modelInstance) as Type).AssemblyQualifiedName);
+                    domainProperty.SetValue(targetObject, (propInfo.GetValue(modelInstance) as Type).AssemblyQualifiedName);
                 else
-                    domainProperty.SetValue(retVal, MARC.Everest.Connectors.Util.FromWireFormat(propInfo.GetValue(modelInstance), domainProperty.PropertyType));
+                    domainProperty.SetValue(targetObject, MARC.Everest.Connectors.Util.FromWireFormat(propInfo.GetValue(modelInstance), domainProperty.PropertyType));
 
             }
 
@@ -256,36 +276,57 @@ namespace OpenIZ.Core.Model.Map
             {
 
                 // Property info
-                if (propInfo.GetValue(domainInstance) == null)
-                    continue;
-
-                if (!propInfo.PropertyType.IsPrimitive && propInfo.PropertyType != typeof(Guid) &&
-                    (!propInfo.PropertyType.IsGenericType || propInfo.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) &&
-                    propInfo.PropertyType != typeof(String) &&
-                    propInfo.PropertyType != typeof(DateTime) &&
-                    propInfo.PropertyType != typeof(DateTimeOffset))
-                    continue;
+                try {
+                    if (propInfo.GetValue(domainInstance) == null)
+                        continue;
+                }
+                catch(Exception e) // HACK: For some reason, some LINQ providers will return NULL on EntityReferences with no value
+                {
+                    this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                }
 
                 // Map property
                 PropertyMap propMap = null;
                 classMap.TryGetDomainProperty(propInfo.Name, out propMap);
                 PropertyInfo modelProperty = null;
+                object sourceObject = domainInstance;
+                PropertyInfo sourceProperty = propInfo;
 
                 // Set 
                 if (propMap == null)
                     modelProperty = typeof(TModel).GetProperty(propInfo.Name);
                 else
+                {
                     modelProperty = typeof(TModel).GetProperty(propMap.ModelName);
+                    foreach(var p in propMap.Via.Select(o=>o).Reverse())
+                    {
+                        sourceObject = sourceProperty.GetValue(sourceObject);
+                        sourceProperty = sourceProperty.PropertyType.GetProperty(p.DomainName);
+                    }
+                }
+
+                // validate property type
+                if (!sourceProperty.PropertyType.IsPrimitive && sourceProperty.PropertyType != typeof(Guid) &&
+                    (!sourceProperty.PropertyType.IsGenericType || sourceProperty.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) &&
+                    sourceProperty.PropertyType != typeof(String) &&
+                    sourceProperty.PropertyType != typeof(DateTime) &&
+                    sourceProperty.PropertyType != typeof(DateTimeOffset) &&
+                    sourceProperty.PropertyType != typeof(Decimal))
+                    continue;
+
+                // Skip delay load props
+                if (modelProperty.GetCustomAttribute<DelayLoadAttribute>() != null)
+                    continue;
 
                 // Set value
                 if (modelProperty == null)
                     Trace.TraceInformation("Unmapped property ({0}).{1}", typeof(TDomain).Name, propInfo.Name);
-                else if (modelProperty.PropertyType.IsAssignableFrom(propInfo.PropertyType))
-                    modelProperty.SetValue(retVal, propInfo.GetValue(domainInstance));
-                else if (propInfo.PropertyType == typeof(String) && modelProperty.PropertyType == typeof(Type))
-                    modelProperty.SetValue(retVal, Type.GetType(propInfo.GetValue(domainInstance) as String));
+                else if (modelProperty.PropertyType.IsAssignableFrom(sourceProperty.PropertyType))
+                    modelProperty.SetValue(retVal, sourceProperty.GetValue(sourceObject));
+                else if (sourceProperty.PropertyType == typeof(String) && modelProperty.PropertyType == typeof(Type))
+                    modelProperty.SetValue(retVal, Type.GetType(sourceProperty.GetValue(sourceObject) as String));
                 else
-                    modelProperty.SetValue(retVal, MARC.Everest.Connectors.Util.FromWireFormat(propInfo.GetValue(domainInstance), modelProperty.PropertyType));
+                    modelProperty.SetValue(retVal, MARC.Everest.Connectors.Util.FromWireFormat(sourceProperty.GetValue(sourceObject), modelProperty.PropertyType));
 
             }
 

@@ -1,5 +1,6 @@
 ﻿using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -63,6 +64,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the status of the concept
         /// </summary>
+        [DelayLoad]
         public Concept Status
         {
             get
@@ -104,6 +106,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the previous version
         /// </summary>
+        [DelayLoad]
         public override Concept PreviousVersion
         {
             get
@@ -127,6 +130,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets a list of concept relationships
         /// </summary>
+        [DelayLoad]
         public List<ConceptRelationship> Relationship
         {
             get
@@ -134,7 +138,7 @@ namespace OpenIZ.Core.Model.DataTypes
                 if(this.m_relationships == null && this.DelayLoad)
                 {
                     var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptRelationship>>();
-                    this.m_relationships = persistenceService.Query(r => this.Key == r.TargetEntityKey && this.VersionSequence > r.EffectiveVersionSequenceId && (r.ObsoleteVersionSequenceId == null || this.VersionSequence < r.ObsoleteVersionSequenceId), null).ToList();
+                    this.m_relationships = persistenceService.Query(r => this.Key == r.TargetEntityKey && this.VersionSequence >= r.EffectiveVersionSequenceId && (r.ObsoleteVersionSequenceId == null || this.VersionSequence <= r.ObsoleteVersionSequenceId), null).ToList();
                 }
                 return this.m_relationships;
             }
@@ -158,6 +162,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the classification of the concept
         /// </summary>
+        [DelayLoad]
         public ConceptClass Class
         {
             get
@@ -184,6 +189,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets a list of concept reference terms
         /// </summary>
+        [DelayLoad]
         public List<ConceptReferenceTerm> ReferenceTerms
         {
             get
@@ -191,7 +197,7 @@ namespace OpenIZ.Core.Model.DataTypes
                 if(this.m_referenceTerms == null && this.DelayLoad)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptReferenceTerm>>();
-                    this.m_referenceTerms = dataPersistence.Query(r => this.Key == r.TargetEntityKey && this.VersionSequence > r.EffectiveVersionSequenceId && (r.ObsoleteVersionSequenceId == null || this.VersionSequence < r.ObsoleteVersionSequenceId) , null).ToList();
+                    this.m_referenceTerms = dataPersistence.Query(r => this.Key == r.TargetEntityKey && this.VersionSequence >= r.EffectiveVersionSequenceId && (r.ObsoleteVersionSequenceId == null || this.VersionSequence <= r.ObsoleteVersionSequenceId) , null).ToList();
                 }
                 return this.m_referenceTerms;
             }
@@ -200,6 +206,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets the concept names
         /// </summary>
+        [DelayLoad]
         public List<ConceptName> ConceptNames
         {
             get
@@ -207,7 +214,7 @@ namespace OpenIZ.Core.Model.DataTypes
                 if(this.m_conceptNames == null && this.m_delayLoad)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptName>>();
-                    this.m_conceptNames = dataPersistence.Query(o => o.TargetEntityKey == this.Key && this.VersionSequence > o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || this.VersionSequence < o.ObsoleteVersionSequenceId), null).ToList();
+                    this.m_conceptNames = dataPersistence.Query(o => o.TargetEntityKey == this.Key && this.VersionSequence >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || this.VersionSequence <= o.ObsoleteVersionSequenceId), null).ToList();
                 }
                 return this.m_conceptNames;
             }

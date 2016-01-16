@@ -60,6 +60,7 @@
       <DependentUpon>Model.dbml</DependentUpon>
     </Compile>
     <Compile Include="Data\ModelExtensions.cs" />
+    <Compile Include="Services\Persistence\ConceptClassPersistenceService.cs" />
     <Compile Include="Services\Persistence\PhoneticAlgorithmPersistenceService.cs" />
     <Compile Include="Exceptions\SqlFormalConstraintException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

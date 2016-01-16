@@ -738,15 +738,8 @@
       <Column Name="Name" Type="System.String" DbType="NVarChar(32) NOT NULL" CanBeNull="false" />
       <Column Name="HandlerClass" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
       <Association Name="PhoneticAlgorithm_ConceptName" Member="ConceptNames" ThisKey="PhoneticAlgorithmId" OtherKey="PhoneticAlgorithmId" Type="ConceptName" />
+      <Association Name="PhoneticAlgorithm_PhoneticValue" Member="PhoneticValues" ThisKey="PhoneticAlgorithmId" OtherKey="PhoneticAlgorithmId" Type="PhoneticValue" />
       <Association Name="PhoneticAlgorithm_ReferenceTermDisplayName" Member="ReferenceTermDisplayNames" ThisKey="PhoneticAlgorithmId" OtherKey="PhoneticAlgorithmId" Type="ReferenceTermDisplayName" />
-    </Type>
-  </Table>
-  <Table Name="dbo.PhoneticAlgorithmType" Member="PhoneticAlgorithmTypes">
-    <Type Name="PhoneticAlgorithmType">
-      <Column Name="PhoneticAlgorithmId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" IsDbGenerated="true" />
-      <Column Name="Name" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
-      <Column Name="HandlerClass" Type="System.String" DbType="NVarChar(256) NOT NULL" CanBeNull="false" />
-      <Association Name="PhoneticAlgorithmType_PhoneticValue" Member="PhoneticValues" ThisKey="PhoneticAlgorithmId" OtherKey="PhoneticAlgorithmId" Type="PhoneticValue" />
     </Type>
   </Table>
   <Table Name="dbo.PhoneticValues" Member="PhoneticValues">
@@ -756,7 +749,7 @@
       <Column Name="PhoneticCode" Type="System.String" DbType="NVarChar(32) NOT NULL" CanBeNull="false" />
       <Column Name="PhoneticAlgorithmId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Association Name="PhoneticValue_EntityNameComponent" Member="EntityNameComponents" ThisKey="PhoneticValueId" OtherKey="PhoneticValueId" Type="EntityNameComponent" />
-      <Association Name="PhoneticAlgorithmType_PhoneticValue" Member="PhoneticAlgorithmType" ThisKey="PhoneticAlgorithmId" OtherKey="PhoneticAlgorithmId" Type="PhoneticAlgorithmType" IsForeignKey="true" />
+      <Association Name="PhoneticAlgorithm_PhoneticValue" Member="PhoneticAlgorithm" ThisKey="PhoneticAlgorithmId" OtherKey="PhoneticAlgorithmId" Type="PhoneticAlgorithm" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.Place" Member="Places">

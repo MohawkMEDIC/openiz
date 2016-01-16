@@ -47,7 +47,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         /// Test inseration of valid group
         /// </summary>
         [TestMethod]
-        public void InsertValidGroupSimpleTeest()
+        public void TestInsertValidGroupSimple()
         {
             var roleUnderTest = new SecurityRole()
             {
@@ -62,7 +62,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         /// Tests insertion of a group with valid policies
         /// </summary>
         [TestMethod]
-        public void InsertValidGroupPoliciesTest()
+        public void TestInsertValidGroupPolicies()
         {
 
             var roleUnderTest = new SecurityRole()
@@ -79,7 +79,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         /// Test the updating of a valid group
         /// </summary>
         [TestMethod]
-        public void UpdateValidGroupTest()
+        public void TestUpdateValidGroup()
         {
 
             var roleUnderTest = new SecurityRole()
@@ -95,7 +95,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         /// Test the updating of a valid group
         /// </summary>
         [TestMethod]
-        public void UpdateValidGroupPermissionsTest()
+        public void TestUpdateValidGroupPermissions()
         {
 
             var roleUnderTest = new SecurityRole()
@@ -118,7 +118,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         /// Tests that the persistence layer removes a policy
         /// </summary>
         [TestMethod]
-        public void RemoveRolePolicyTest()
+        public void TestRemoveRolePolicy()
         {
             var roleUnderTest = new SecurityRole()
             {

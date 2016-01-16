@@ -1,6 +1,7 @@
 ﻿using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model.Attributes;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -40,6 +41,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the target concept
         /// </summary>
+        [DelayLoad]
         public Concept TargetConcept
         {
             get
@@ -80,6 +82,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the relationship type
         /// </summary>
+        [DelayLoad]
         public ConceptRelationshipType RelationshipType
         {
             get

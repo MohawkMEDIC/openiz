@@ -18,7 +18,7 @@ CREATE TABLE PhoneticAlgorithm
 	CONSTRAINT PK_PhoneticAlgorithm PRIMARY KEY (PhoneticAlgorithmId)
 );
 
-INSERT INTO PhoneticAlgorithm (Name, HandlerClass) VALUES ('SOUNDEX', NULL);
+INSERT INTO PhoneticAlgorithm (PhoneticAlgorithmId, Name, HandlerClass) VALUES ('402CD339-D0E4-46CE-8FC2-12A4B0E17226', 'NONE', NULL);
 
 /**
  * A TABLE RESPONSIBLE FOR THE STORAGE OF PHONETIC VALUES
@@ -27,7 +27,7 @@ CREATE TABLE PhoneticValues
 (
 	PhoneticValueId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER FOR THE PHONETIC CODE
 	Value NVARCHAR(64) NOT NULL, -- THE VALUE OF THE PHONETIC VALUE IN HUMAN READABLE FORM
-	PhoneticCode NVARCHAR(32) NOT NULL, -- THE PHONETIC CODE OF THE VALUE
+	PhoneticCode NVARCHAR(32), -- THE PHONETIC CODE OF THE VALUE
 	PhoneticAlgorithmId UNIQUEIDENTIFIER NOT NULL, -- THE PHONETIC ALGORITHM USED TO GENERATE THE PHONETIC CODE
 	CONSTRAINT PK_PhoneticValues PRIMARY KEY (PhoneticValueId),
 	CONSTRAINT FK_PhoneticValuesPhoneticAlgorithmId FOREIGN KEY (PhoneticAlgorithmId) REFERENCES PhoneticAlgorithm(PhoneticAlgorithmId)
@@ -396,7 +396,7 @@ INSERT INTO Concept VALUES('bdef5f90-5497-4f26-956c-8f818cce2bd2',1); -- STATUS.
 INSERT INTO Concept VALUES('c34fcbf1-e0fe-4989-90fd-0dc49e1b9685',1); -- STATUS.NEW
 INSERT INTO Concept VALUES('cd4aa3c4-02d5-4cc9-9088-ef8f31e321c5',1); -- STATUS.NULLIFIED
 
-INSERT INTO ConceptClass VALUES ('17FD5254-8C25-4ABB-B246-083FBE9AFA15','ClassificatioConceptn', 'ClassCode');
+INSERT INTO ConceptClass VALUES ('17FD5254-8C25-4ABB-B246-083FBE9AFA15','Classification Concept', 'ClassCode');
 INSERT INTO ConceptClass VALUES ('54B93182-FC19-47A2-82C6-089FD70A4F45', 'Status', 'Status');
 INSERT INTO ConceptClass VALUES ('BBA99722-23CE-469A-8FA5-10DEBA853D35', 'Mood', 'Mood');
 INSERT INTO ConceptClass VALUES ('F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4', 'Relationship Type', 'Relationship');
@@ -427,11 +427,25 @@ INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUE
 INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('d1597e50-845a-46e1-b9ae-6f99ff93d9db', 'Industry Code', 'IndustryCode', '1.3.6.1.4.1.33349.3.5.9.1.15', 'http://openiz.org/valueset/industry-type', '00000000-0000-0000-0000-000000000000');
 INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('e9eecd3c-7b80-47f9-9cb6-55c8d3110fb0', 'Administrative Genders', 'AdministrativeGenderCode', '1.3.6.1.4.1.33349.3.5.9.1.16', 'http://openiz.org/valueset/administrative-gender', '00000000-0000-0000-0000-000000000000');
 
+-- CONCEPT STATUS <> STATUS SET
 INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('c8064cbd-fa06-4530-b430-1a52f1530c27', 'aae906aa-27b3-4cdb-aff1-f08b0fd31e59');
 INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('bdef5f90-5497-4f26-956c-8f818cce2bd2', 'aae906aa-27b3-4cdb-aff1-f08b0fd31e59');
 INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('c34fcbf1-e0fe-4989-90fd-0dc49e1b9685', 'aae906aa-27b3-4cdb-aff1-f08b0fd31e59');
 INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('cd4aa3c4-02d5-4cc9-9088-ef8f31e321c5', 'aae906aa-27b3-4cdb-aff1-f08b0fd31e59');
 
+-- ENTITY STATUS <> STATUS SET
+INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('c8064cbd-fa06-4530-b430-1a52f1530c27', 'c7578340-a8ff-4d7d-8105-581016324e68');
+INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('bdef5f90-5497-4f26-956c-8f818cce2bd2', 'c7578340-a8ff-4d7d-8105-581016324e68');
+INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('c34fcbf1-e0fe-4989-90fd-0dc49e1b9685', 'c7578340-a8ff-4d7d-8105-581016324e68');
+INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('cd4aa3c4-02d5-4cc9-9088-ef8f31e321c5', 'c7578340-a8ff-4d7d-8105-581016324e68');
+
+-- ACT STATUS <> STATUS
+INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('c8064cbd-fa06-4530-b430-1a52f1530c27', '93a48f6a-6808-4c70-83a2-d02178c2a883');
+INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('bdef5f90-5497-4f26-956c-8f818cce2bd2', '93a48f6a-6808-4c70-83a2-d02178c2a883');
+INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('c34fcbf1-e0fe-4989-90fd-0dc49e1b9685', '93a48f6a-6808-4c70-83a2-d02178c2a883');
+INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('cd4aa3c4-02d5-4cc9-9088-ef8f31e321c5', '93a48f6a-6808-4c70-83a2-d02178c2a883');
+
+-- VERSIONS FOR THE STATUS CODES
 INSERT INTO ConceptVersion (ConceptId, StatusConceptId, CreatedBy, Mnemonic) VALUES ('c8064cbd-fa06-4530-b430-1a52f1530c27', 'c8064cbd-fa06-4530-b430-1a52f1530c27', '00000000-0000-0000-0000-000000000000', 'ACTIVE');
 INSERT INTO ConceptVersion (ConceptId, StatusConceptId, CreatedBy, Mnemonic) VALUES ('bdef5f90-5497-4f26-956c-8f818cce2bd2', 'c8064cbd-fa06-4530-b430-1a52f1530c27', '00000000-0000-0000-0000-000000000000', 'OBSOLETE');
 INSERT INTO ConceptVersion (ConceptId, StatusConceptId, CreatedBy, Mnemonic) VALUES ('c34fcbf1-e0fe-4989-90fd-0dc49e1b9685', 'c8064cbd-fa06-4530-b430-1a52f1530c27', '00000000-0000-0000-0000-000000000000', 'NEW');

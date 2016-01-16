@@ -1,5 +1,6 @@
 ﻿using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model.Attributes;
 using System;
 using System.ComponentModel;
 
@@ -36,6 +37,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or set the reference term
         /// </summary>
+        [DelayLoad]
         public ReferenceTerm ReferenceTerm
         {
             get
@@ -77,6 +79,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the relationship type
         /// </summary>
+        [DelayLoad]
         public Concept RelationshipType {
             get
             {

@@ -64,7 +64,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Ensure traversable properties exist if they're objects
             if (storageData.PhoneticAlgorithm != null)
                 domainConceptName.PhoneticAlgorithmId = storageData.PhoneticAlgorithm.EnsureExists(principal, dataContext).Key;
-            else if (storageData.TargetEntity != null)
+            if (storageData.TargetEntity != null)
                 domainConceptName.ConceptId = storageData.TargetEntity.EnsureExists(principal, dataContext).Key;
 
             dataContext.ConceptNames.InsertOnSubmit(domainConceptName);

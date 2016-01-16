@@ -1,4 +1,5 @@
 ﻿using MARC.HI.EHRS.SVC.Core.Data;
+using OpenIZ.Core.Model.Attributes;
 using System;
 
 namespace OpenIZ.Core.Model.DataTypes

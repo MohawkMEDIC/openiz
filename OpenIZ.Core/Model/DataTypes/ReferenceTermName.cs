@@ -1,5 +1,6 @@
 ﻿using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model.Attributes;
 using System;
 using System.ComponentModel;
 
@@ -54,6 +55,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the phonetic algorithm
         /// </summary>
+        [DelayLoad]
         public PhoneticAlgorithm PhoneticAlgorithm
         {
             get

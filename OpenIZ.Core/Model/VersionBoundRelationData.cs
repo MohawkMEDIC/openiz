@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core.Model.Security;
 using MARC.Everest.Connectors;
+using OpenIZ.Core.Model.Attributes;
 
 namespace OpenIZ.Core.Model
 {
@@ -48,6 +49,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// The entity that this relationship targets
         /// </summary>
+        [DelayLoad]
         public TTargetType TargetEntity
         {
             get
@@ -100,6 +102,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the effective version
         /// </summary>
+        [DelayLoad]
         public TTargetType EffectiveVersion
         {
             get
@@ -126,6 +129,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets the obsoletion version
         /// </summary>
+        [DelayLoad]
         public TTargetType ObsoleteVersion
         {
             get
@@ -153,6 +157,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the user that created this relationship
         /// </summary>
+        [DelayLoad]
         public override SecurityUser CreatedBy
         {
             get
@@ -164,6 +169,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets the identifier of the user that created this relationship
         /// </summary>
+        [DelayLoad]
         public override Guid CreatedById
         {
             get
@@ -179,6 +185,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Obsoleted by
         /// </summary>
+        [DelayLoad]
         public override SecurityUser ObsoletedBy
         {
             get
@@ -190,6 +197,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets the identifier of the user that obsoleted the relationship
         /// </summary>
+        [DelayLoad]
         public override Guid? ObsoletedById
         {
             get

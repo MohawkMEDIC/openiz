@@ -1,5 +1,6 @@
 ﻿using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model.Attributes;
 using System;
 using System.ComponentModel;
 
@@ -53,6 +54,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Type concept
         /// </summary>
+        [DelayLoad]
         public Concept TypeConcept
         {
             get
@@ -77,6 +79,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets the scope of the identifier
         /// </summary>
+        [DelayLoad]
         public Concept Scope
         {
             get

@@ -177,9 +177,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void InsertPhoneticAlgorithm(PhoneticAlgorithm instance);
     partial void UpdatePhoneticAlgorithm(PhoneticAlgorithm instance);
     partial void DeletePhoneticAlgorithm(PhoneticAlgorithm instance);
-    partial void InsertPhoneticAlgorithmType(PhoneticAlgorithmType instance);
-    partial void UpdatePhoneticAlgorithmType(PhoneticAlgorithmType instance);
-    partial void DeletePhoneticAlgorithmType(PhoneticAlgorithmType instance);
     partial void InsertPhoneticValue(PhoneticValue instance);
     partial void UpdatePhoneticValue(PhoneticValue instance);
     partial void DeletePhoneticValue(PhoneticValue instance);
@@ -670,14 +667,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			get
 			{
 				return this.GetTable<PhoneticAlgorithm>();
-			}
-		}
-		
-		public System.Data.Linq.Table<PhoneticAlgorithmType> PhoneticAlgorithmTypes
-		{
-			get
-			{
-				return this.GetTable<PhoneticAlgorithmType>();
 			}
 		}
 		
@@ -18679,6 +18668,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<ConceptName> _ConceptNames;
 		
+		private EntitySet<PhoneticValue> _PhoneticValues;
+		
 		private EntitySet<ReferenceTermDisplayName> _ReferenceTermDisplayNames;
 		
     #region Extensibility Method Definitions
@@ -18696,6 +18687,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		public PhoneticAlgorithm()
 		{
 			this._ConceptNames = new EntitySet<ConceptName>(new Action<ConceptName>(this.attach_ConceptNames), new Action<ConceptName>(this.detach_ConceptNames));
+			this._PhoneticValues = new EntitySet<PhoneticValue>(new Action<PhoneticValue>(this.attach_PhoneticValues), new Action<PhoneticValue>(this.detach_PhoneticValues));
 			this._ReferenceTermDisplayNames = new EntitySet<ReferenceTermDisplayName>(new Action<ReferenceTermDisplayName>(this.attach_ReferenceTermDisplayNames), new Action<ReferenceTermDisplayName>(this.detach_ReferenceTermDisplayNames));
 			OnCreated();
 		}
@@ -18773,6 +18765,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="PhoneticAlgorithm_PhoneticValue", Storage="_PhoneticValues", ThisKey="PhoneticAlgorithmId", OtherKey="PhoneticAlgorithmId")]
+		public EntitySet<PhoneticValue> PhoneticValues
+		{
+			get
+			{
+				return this._PhoneticValues;
+			}
+			set
+			{
+				this._PhoneticValues.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="PhoneticAlgorithm_ReferenceTermDisplayName", Storage="_ReferenceTermDisplayNames", ThisKey="PhoneticAlgorithmId", OtherKey="PhoneticAlgorithmId")]
 		public EntitySet<ReferenceTermDisplayName> ReferenceTermDisplayNames
 		{
@@ -18818,6 +18823,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			entity.PhoneticAlgorithm = null;
 		}
 		
+		private void attach_PhoneticValues(PhoneticValue entity)
+		{
+			this.SendPropertyChanging();
+			entity.PhoneticAlgorithm = this;
+		}
+		
+		private void detach_PhoneticValues(PhoneticValue entity)
+		{
+			this.SendPropertyChanging();
+			entity.PhoneticAlgorithm = null;
+		}
+		
 		private void attach_ReferenceTermDisplayNames(ReferenceTermDisplayName entity)
 		{
 			this.SendPropertyChanging();
@@ -18828,144 +18845,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this.SendPropertyChanging();
 			entity.PhoneticAlgorithm = null;
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.PhoneticAlgorithmType")]
-	public partial class PhoneticAlgorithmType : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private System.Guid _PhoneticAlgorithmId;
-		
-		private string _Name;
-		
-		private string _HandlerClass;
-		
-		private EntitySet<PhoneticValue> _PhoneticValues;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnPhoneticAlgorithmIdChanging(System.Guid value);
-    partial void OnPhoneticAlgorithmIdChanged();
-    partial void OnNameChanging(string value);
-    partial void OnNameChanged();
-    partial void OnHandlerClassChanging(string value);
-    partial void OnHandlerClassChanged();
-    #endregion
-		
-		public PhoneticAlgorithmType()
-		{
-			this._PhoneticValues = new EntitySet<PhoneticValue>(new Action<PhoneticValue>(this.attach_PhoneticValues), new Action<PhoneticValue>(this.detach_PhoneticValues));
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PhoneticAlgorithmId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
-		public System.Guid PhoneticAlgorithmId
-		{
-			get
-			{
-				return this._PhoneticAlgorithmId;
-			}
-			set
-			{
-				if ((this._PhoneticAlgorithmId != value))
-				{
-					this.OnPhoneticAlgorithmIdChanging(value);
-					this.SendPropertyChanging();
-					this._PhoneticAlgorithmId = value;
-					this.SendPropertyChanged("PhoneticAlgorithmId");
-					this.OnPhoneticAlgorithmIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
-		public string Name
-		{
-			get
-			{
-				return this._Name;
-			}
-			set
-			{
-				if ((this._Name != value))
-				{
-					this.OnNameChanging(value);
-					this.SendPropertyChanging();
-					this._Name = value;
-					this.SendPropertyChanged("Name");
-					this.OnNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HandlerClass", DbType="NVarChar(256) NOT NULL", CanBeNull=false)]
-		public string HandlerClass
-		{
-			get
-			{
-				return this._HandlerClass;
-			}
-			set
-			{
-				if ((this._HandlerClass != value))
-				{
-					this.OnHandlerClassChanging(value);
-					this.SendPropertyChanging();
-					this._HandlerClass = value;
-					this.SendPropertyChanged("HandlerClass");
-					this.OnHandlerClassChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="PhoneticAlgorithmType_PhoneticValue", Storage="_PhoneticValues", ThisKey="PhoneticAlgorithmId", OtherKey="PhoneticAlgorithmId")]
-		public EntitySet<PhoneticValue> PhoneticValues
-		{
-			get
-			{
-				return this._PhoneticValues;
-			}
-			set
-			{
-				this._PhoneticValues.Assign(value);
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void attach_PhoneticValues(PhoneticValue entity)
-		{
-			this.SendPropertyChanging();
-			entity.PhoneticAlgorithmType = this;
-		}
-		
-		private void detach_PhoneticValues(PhoneticValue entity)
-		{
-			this.SendPropertyChanging();
-			entity.PhoneticAlgorithmType = null;
 		}
 	}
 	
@@ -18985,7 +18864,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<EntityNameComponent> _EntityNameComponents;
 		
-		private EntityRef<PhoneticAlgorithmType> _PhoneticAlgorithmType;
+		private EntityRef<PhoneticAlgorithm> _PhoneticAlgorithm;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -19004,7 +18883,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		public PhoneticValue()
 		{
 			this._EntityNameComponents = new EntitySet<EntityNameComponent>(new Action<EntityNameComponent>(this.attach_EntityNameComponents), new Action<EntityNameComponent>(this.detach_EntityNameComponents));
-			this._PhoneticAlgorithmType = default(EntityRef<PhoneticAlgorithmType>);
+			this._PhoneticAlgorithm = default(EntityRef<PhoneticAlgorithm>);
 			OnCreated();
 		}
 		
@@ -19079,7 +18958,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._PhoneticAlgorithmId != value))
 				{
-					if (this._PhoneticAlgorithmType.HasLoadedOrAssignedValue)
+					if (this._PhoneticAlgorithm.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
@@ -19105,26 +18984,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="PhoneticAlgorithmType_PhoneticValue", Storage="_PhoneticAlgorithmType", ThisKey="PhoneticAlgorithmId", OtherKey="PhoneticAlgorithmId", IsForeignKey=true)]
-		public PhoneticAlgorithmType PhoneticAlgorithmType
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="PhoneticAlgorithm_PhoneticValue", Storage="_PhoneticAlgorithm", ThisKey="PhoneticAlgorithmId", OtherKey="PhoneticAlgorithmId", IsForeignKey=true)]
+		public PhoneticAlgorithm PhoneticAlgorithm
 		{
 			get
 			{
-				return this._PhoneticAlgorithmType.Entity;
+				return this._PhoneticAlgorithm.Entity;
 			}
 			set
 			{
-				PhoneticAlgorithmType previousValue = this._PhoneticAlgorithmType.Entity;
+				PhoneticAlgorithm previousValue = this._PhoneticAlgorithm.Entity;
 				if (((previousValue != value) 
-							|| (this._PhoneticAlgorithmType.HasLoadedOrAssignedValue == false)))
+							|| (this._PhoneticAlgorithm.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
 					if ((previousValue != null))
 					{
-						this._PhoneticAlgorithmType.Entity = null;
+						this._PhoneticAlgorithm.Entity = null;
 						previousValue.PhoneticValues.Remove(this);
 					}
-					this._PhoneticAlgorithmType.Entity = value;
+					this._PhoneticAlgorithm.Entity = value;
 					if ((value != null))
 					{
 						value.PhoneticValues.Add(this);
@@ -19134,7 +19013,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					{
 						this._PhoneticAlgorithmId = default(System.Guid);
 					}
-					this.SendPropertyChanged("PhoneticAlgorithmType");
+					this.SendPropertyChanged("PhoneticAlgorithm");
 				}
 			}
 		}

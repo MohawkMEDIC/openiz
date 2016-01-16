@@ -1,6 +1,7 @@
 ﻿using MARC.Everest.Connectors;
 using MARC.HI.EHRS.SVC.Core.Data;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -47,8 +48,17 @@ namespace OpenIZ.Core.Model
                 object value = fi.GetValue(this);
                 if (value is IdentifiedData)
                     value = (value as IdentifiedData).AsFrozen();
+                else if(value is IList && 
+                    typeof(IdentifiedData).IsAssignableFrom(fi.FieldType.GetGenericArguments()[0]))
+                {
+                    var newList = Activator.CreateInstance(fi.FieldType) as IList;
+                    foreach (IdentifiedData itm in value as IList)
+                        newList.Add(itm.AsFrozen());
+                    value = newList;
+                }
                 fi.SetValue(retVal, value);
             }
+
             retVal.m_delayLoad = false;
             return retVal;
         }

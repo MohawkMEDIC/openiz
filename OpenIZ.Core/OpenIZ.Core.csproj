@@ -49,9 +49,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConceptClassIds.cs" />
     <Compile Include="ConceptIds.cs" />
+    <Compile Include="ConceptSetIds.cs" />
     <Compile Include="Exceptions\ModelMapValidationException.cs" />
     <Compile Include="Exceptions\ModelValidationException.cs" />
+    <Compile Include="Model\Attributes\DelayLoadAttribute.cs" />
     <Compile Include="Model\DataTypes\CodeSystem.cs" />
     <Compile Include="Model\DataTypes\ConceptName.cs" />
     <Compile Include="Model\DataTypes\ConceptRelationshipType.cs" />

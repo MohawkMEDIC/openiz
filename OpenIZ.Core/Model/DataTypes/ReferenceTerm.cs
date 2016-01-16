@@ -4,6 +4,7 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using OpenIZ.Core.Model.Attributes;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -24,10 +25,11 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the mnemonic for the reference term
         /// </summary>
         public string Mnemonic { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the code system 
         /// </summary>
+        [DelayLoad]
         public CodeSystem CodeSystem {
             get
             {
@@ -67,6 +69,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets display names associated with the reference term
         /// </summary>
+        [DelayLoad]
         public List<ReferenceTermName> DisplayNames {
             get
             {
