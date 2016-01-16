@@ -137,7 +137,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 
             // We should have a lockout
             user = dataPersistence.Get(user.Id, null, false);
-            Assert.AreEqual(4, user.InvalidLoginAttempts);
+            Assert.IsTrue(user.InvalidLoginAttempts >= 4);
             Assert.AreEqual(default(DateTimeOffset), user.LastLoginTime);
             Assert.IsTrue(user.LockoutEnabled);
 

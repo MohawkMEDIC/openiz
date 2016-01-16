@@ -70,7 +70,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Store the data
             var dataConceptVersion = this.ConvertFromModel(storageData) as Data.ConceptVersion;
             dataConceptVersion.Concept = new Data.Concept() { IsSystemConcept = storageData.IsSystemConcept };
-            dataConceptVersion.CreatedBy = principal.GetUserGuid(dataContext);
+            dataConceptVersion.CreatedByEntity = principal.GetUser(dataContext);
 
             dataConceptVersion.StatusConceptId = dataConceptVersion.StatusConceptId == Guid.Empty ? ConceptIds.StatusActive : dataConceptVersion.StatusConceptId;
             if(storageData.Class != null)
@@ -132,7 +132,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (storageData.IsSystemConcept)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.UpdatedReadonlyObject);
 
-            var dataConceptVersion = dataContext.ConceptVersions.FirstOrDefault(c => c.ConceptVersionId == storageData.VersionKey);
+            var dataConceptVersion = dataContext.ConceptVersions.FirstOrDefault(c => c.ConceptId == storageData.Key && c.ObsoletionTime == null);
             if (dataConceptVersion == null)
                 throw new KeyNotFoundException();
             else if (dataConceptVersion.Concept.IsSystemConcept)
@@ -141,8 +141,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Update old version as obsolete, insert a new version with obsolete status
             var newDataConceptVersion = this.ConvertFromModel(storageData) as ConceptVersion;
             dataConceptVersion.ObsoletionTime = DateTimeOffset.Now;
-            newDataConceptVersion.CreatedBy = principal.GetUserGuid(dataContext);
-            dataConceptVersion.ObsoletedBy = principal.GetUserGuid(dataContext);
+            newDataConceptVersion.CreatedByEntity = principal.GetUser(dataContext);
+            dataConceptVersion.ObsoletedByEntity = principal.GetUser(dataContext);
             newDataConceptVersion.StatusConceptId = Core.ConceptIds.StatusObsolete;
             dataContext.ConceptVersions.InsertOnSubmit(newDataConceptVersion);
 
@@ -176,7 +176,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
 
             // Get the existing version 
-            var domainConceptVersion = dataContext.ConceptVersions.FirstOrDefault(o => o.ConceptId == storageData.Key && o.ObsoletionTime == null);
+            var domainConceptVersion = dataContext.ConceptVersions.OrderByDescending(o=>o.VersionSequenceId).FirstOrDefault(o => o.ConceptId == storageData.Key && o.ObsoletionTime == null);
             Decimal oldVersionSequenceId = domainConceptVersion.VersionSequenceId;
 
             if (domainConceptVersion == null)
@@ -184,7 +184,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Create the new version
             domainConceptVersion = domainConceptVersion.NewVersion(principal, dataContext);
-            storageData.Key = storageData.VersionKey = storageData.CreatedById = Guid.Empty; // Zero off associations
+            storageData.PreviousVersionKey = storageData.Key = storageData.VersionKey = storageData.CreatedById = Guid.Empty; // Zero off associations
             storageData.VersionSequence = default(decimal);
             domainConceptVersion.CopyObjectData(this.ConvertFromModel(storageData));
             domainConceptVersion.Concept.IsSystemConcept = storageData.IsSystemConcept;

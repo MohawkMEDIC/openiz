@@ -52,7 +52,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var domainConceptClass = this.ConvertFromModel(storageData) as Data.ConceptClass;
             dataContext.ConceptClasses.InsertOnSubmit(domainConceptClass);
             dataContext.SubmitChanges();
-            return this.ConvertToModel(domainConceptClass);
+
+            // Copy properties 
+            storageData.Key = domainConceptClass.ConceptClassId;
+            return storageData;
         }
 
         /// <summary>
@@ -65,7 +68,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new KeyNotFoundException();
             dataContext.ConceptClasses.DeleteOnSubmit(domainConceptClass);
             dataContext.SubmitChanges();
-            return this.ConvertToModel(domainConceptClass);
+
+            storageData.Key = Guid.Empty;
+            return storageData;
         }
 
         /// <summary>
@@ -87,7 +92,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new KeyNotFoundException();
             domainConceptClass.CopyObjectData(this.ConvertFromModel(storageData) as Data.ConceptClass);
             dataContext.SubmitChanges();
-            return this.ConvertToModel(domainConceptClass);
+            return storageData;
         }
     }
 }

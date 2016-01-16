@@ -388,6 +388,7 @@ CREATE TABLE ConceptVersion
 	CONSTRAINT FK_ConceptVersionCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT FK_ConceptVersionObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT FK_ConceptVersionConceptClass FOREIGN KEY (ConceptClassId) REFERENCES ConceptClass(ConceptClassId),
+	CONSTRAINT FK_ConceptVersionReplacesVersionId FOREIGN KEY (ReplacesVersionId) REFERENCES ConceptVersion(ConceptVersionId),
 	CONSTRAINT CK_ConceptVersionObsoletedBy CHECK(ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletedBy IS NULL AND ObsoletionTime IS NULL)
 );
 

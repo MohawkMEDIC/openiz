@@ -62,7 +62,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Insert
             var dataPolicy = this.ConvertFromModel(storageData) as Policy;
-            dataPolicy.CreatedBy = principal.GetUserGuid(dataContext);
+            dataPolicy.CreatedByEntity = principal.GetUser(dataContext);
             dataContext.Policies.InsertOnSubmit(dataPolicy);
             dataContext.SubmitChanges();
 
@@ -83,7 +83,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Update 
             var dataPolicy = dataContext.Policies.FirstOrDefault(p => p.PolicyId == storageData.Key);
-            dataPolicy.ObsoletedBy = principal.GetUserGuid(dataContext);
+            dataPolicy.ObsoletedByEntity = principal.GetUser(dataContext);
             dataPolicy.ObsoletionTime = DateTimeOffset.Now;
             dataContext.SubmitChanges();
 

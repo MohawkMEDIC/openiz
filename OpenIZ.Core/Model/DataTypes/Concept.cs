@@ -211,7 +211,7 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                if(this.m_conceptNames == null && this.m_delayLoad)
+                if(this.m_conceptNames == null && this.DelayLoad)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptName>>();
                     this.m_conceptNames = dataPersistence.Query(o => o.TargetEntityKey == this.Key && this.VersionSequence >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || this.VersionSequence < o.ObsoleteVersionSequenceId), null).ToList();

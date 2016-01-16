@@ -16,7 +16,7 @@ namespace OpenIZ.Core.Model
     public abstract class IdentifiedData : IIdentified<Guid>
     {
         // True when the data class is locked for storage
-        protected bool m_delayLoad = true;
+        private bool m_delayLoad = true;
 
         /// <summary>
         /// True if the class is currently loading associations when accessed
@@ -30,12 +30,29 @@ namespace OpenIZ.Core.Model
         }
 
         /// <summary>
-        /// Clones this object member for member with delay load disabled
+        /// Unlock the instance
         /// </summary>
-        public IdentifiedData AsFrozen() // Not the movie
+        public void Unlock()
         {
-            IdentifiedData retVal = this.GetType().GetConstructor(Type.EmptyTypes).Invoke(null) as IdentifiedData; 
+            this.SetDelayLoad(true);
+        }
+
+        /// <summary>
+        /// Lock the instnace
+        /// </summary>
+        public void Lock()
+        {
+            this.SetDelayLoad(false);
+        }
+
+        /// <summary>
+        /// Set delay load
+        /// </summary>
+        private void SetDelayLoad(bool v)
+        {
+
             List<FieldInfo> fields = new List<FieldInfo>();
+
             Type typ = this.GetType();
             while (typ != typeof(Object))
             {
@@ -44,24 +61,27 @@ namespace OpenIZ.Core.Model
                 typ = typ.BaseType;
             }
 
+            this.m_delayLoad = v;
             foreach (FieldInfo fi in fields)
             {
                 object value = fi.GetValue(this);
                 if (value is IdentifiedData)
-                    value = (value as IdentifiedData).AsFrozen(); // Let it go
-                else if(value is IList && 
+                {
+                    if (!v)
+                        (value as IdentifiedData).Lock(); // Let it go
+                    else
+                        (value as IdentifiedData).Unlock();
+                }
+                else if (value is IList &&
                     typeof(IdentifiedData).IsAssignableFrom(fi.FieldType.GetGenericArguments()[0]))
                 {
-                    var newList = fi.FieldType.GetConstructor(Type.EmptyTypes).Invoke(null) as IList;
                     foreach (IdentifiedData itm in value as IList)
-                        newList.Add(itm.AsFrozen()); // Let it go
-                    value = newList;
+                        if (!v)
+                            itm.Lock(); // Let it go
+                        else
+                            itm.Unlock();
                 }
-                fi.SetValue(retVal, value); // Can't hold it back anymore... 
             }
-
-            retVal.m_delayLoad = false; 
-            return retVal;
         }
 
         /// <summary>

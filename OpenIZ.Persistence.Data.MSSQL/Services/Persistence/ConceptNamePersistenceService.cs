@@ -83,7 +83,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             dataContext.SubmitChanges(); // Write and reload data from database
 
-            return this.ConvertToModel(domainConceptName);
+            // Copy properties
+            storageData.Key = domainConceptName.ConceptNameId;
+            storageData.EffectiveVersionSequenceId = domainConceptName.EffectiveVersionSequenceId;
+            storageData.TargetEntityKey = domainConceptName.ConceptId;
+            return storageData;
         }
 
         /// <summary>
@@ -120,7 +124,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             domainConceptName.ObsoleteVersionSequenceId = newConceptVersion.VersionSequenceId;
             dataContext.SubmitChanges(); // Write and reload values from db
 
-            return this.ConvertToModel(domainConceptName);
+            // Copy properties
+            storageData.ObsoleteVersionSequenceId = domainConceptName.ObsoleteVersionSequenceId;
+            return storageData;
 
         }
 
@@ -174,13 +180,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 ConceptVersion newConceptVersion = newVersion ? currentConceptVersion.NewVersion(principal, dataContext) : currentConceptVersion;
 
                 // Obsolete the old data
-                domainConceptName.ObsoleteVersionSequenceId = newConceptVersion.VersionSequenceId;
+                storageData.ObsoleteVersionSequenceId = domainConceptName.ObsoleteVersionSequenceId = newConceptVersion.VersionSequenceId;
                 newDomainConceptName.ConceptId = domainConceptName.ConceptId;
                 newDomainConceptName.EffectiveVersionSequenceId = newConceptVersion.VersionSequenceId;
 
                 // Insert the new concept domain name
                 dataContext.ConceptNames.InsertOnSubmit(newDomainConceptName);
                 dataContext.SubmitChanges(); 
+                
                 return this.ConvertToModel(newDomainConceptName);
             }
             else

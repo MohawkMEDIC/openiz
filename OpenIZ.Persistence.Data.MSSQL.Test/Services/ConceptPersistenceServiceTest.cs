@@ -149,8 +149,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             afterTest.ConceptNames[0].Language = "fr";
             afterTest = persistenceService.Update(afterTest, s_authorization, TransactionMode.Commit);
             Assert.AreEqual(2, afterTest.ConceptNames.Count);
-            Assert.AreEqual("fr", afterTest.ConceptNames[0].Language);
-
+            Assert.IsTrue(afterTest.ConceptNames.Exists(n => n.Language == "fr"));
+            Assert.IsNotNull(afterTest.PreviousVersion);
+            Assert.IsNotNull(afterTest.PreviousVersion.PreviousVersion);
 
         }
     }

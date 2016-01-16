@@ -117,7 +117,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     if (preEvt.Cancel)
                         return preEvt.Data;
 
-                    TModel retVal = this.Insert(preEvt.Data.AsFrozen() as TModel, principal, dataContext);
+                    preEvt.Data.Lock();
+                    var retVal = this.Insert(preEvt.Data as TModel, principal, dataContext);
+                    preEvt.Data.Unlock();
 
                     PostPersistenceEventArgs<TModel> postEvt = new PostPersistenceEventArgs<TModel>(retVal, principal);
                     this.Inserted?.Invoke(this, postEvt);
@@ -191,7 +193,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     if (preEvt.Cancel)
                         return preEvt.Data;
 
-                    TModel retVal = this.Update(preEvt.Data.AsFrozen() as TModel, principal, dataContext);
+                    preEvt.Data.Lock();
+                    var retVal = this.Update(preEvt.Data as TModel, principal, dataContext);
+                    preEvt.Data.Unlock();
 
                     PostPersistenceEventArgs<TModel> postEvt = new PostPersistenceEventArgs<TModel>(retVal, principal);
                     this.Updated?.Invoke(this, postEvt);
@@ -253,7 +257,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     if (preEvt.Cancel)
                         return preEvt.Data;
 
-                    TModel retVal = this.Obsolete(preEvt.Data.AsFrozen() as TModel, principal, dataContext);
+                    preEvt.Data.Lock();
+                    var retVal = this.Obsolete(preEvt.Data as TModel, principal, dataContext);
+                    preEvt.Data.Unlock();
 
                     PostPersistenceEventArgs<TModel> postEvt = new PostPersistenceEventArgs<TModel>(retVal, principal);
                     this.Obsoleted?.Invoke(this, postEvt);

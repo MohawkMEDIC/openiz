@@ -45,11 +45,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
-            if (storageData.DelayLoad) // We want a frozen asset
-                storageData = storageData.AsFrozen() as Core.Model.Security.SecurityRole;
-
             var dataRole = this.ConvertFromModel(storageData) as Data.SecurityRole;
-            dataRole.CreatedBy = principal.GetUserGuid(dataContext);
+            dataRole.CreatedByEntity = principal.GetUser(dataContext);
             dataContext.SecurityRoles.InsertOnSubmit(dataRole);
             
             if (storageData.Users != null)
@@ -81,7 +78,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new ArgumentNullException(nameof(principal));
 
             var dataRole = dataContext.SecurityRoles.FirstOrDefault(r => r.RoleId == storageData.Key);
-            dataRole.ObsoletedBy = principal.GetUserGuid(dataContext);
+            dataRole.ObsoletedByEntity = principal.GetUser(dataContext);
             dataRole.ObsoletionTime = DateTimeOffset.Now;
             
             // Persist

@@ -54,11 +54,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (storageData.Key != default(Guid)) // Trying to insert an already inserted user?
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.IdentityInsert);
 
-            if (storageData.DelayLoad) // We want a frozen asset
-                storageData = storageData.AsFrozen() as Core.Model.Security.SecurityUser;
-
             var dataUser = this.ConvertFromModel(storageData) as Data.SecurityUser;
-            dataUser.CreatedBy = principal == null ? null : (Guid?)principal.GetUserGuid(dataContext);
+            dataUser.CreatedByEntity = principal.GetUser(dataContext);
             dataContext.SecurityUsers.InsertOnSubmit(dataUser);
             dataUser.SecurityStamp = Guid.NewGuid().ToString();
 
@@ -85,14 +82,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
-            if (storageData.DelayLoad) // We want a frozen asset
-                storageData = storageData.AsFrozen() as Core.Model.Security.SecurityUser;
-
             var dataUser = dataContext.SecurityUsers.FirstOrDefault(u => u.UserId == storageData.Key);
             if (dataUser == null)
                 throw new KeyNotFoundException();
 
-            dataUser.ObsoletedBy = principal.GetUserGuid(dataContext);
+            dataUser.ObsoletedByEntity = principal.GetUser(dataContext);
             dataUser.ObsoletionTime = DateTimeOffset.Now;
             dataUser.SecurityStamp = Guid.NewGuid().ToString();
 
@@ -123,9 +117,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
-            if (storageData.DelayLoad) // We want a frozen asset
-                storageData = storageData.AsFrozen() as Core.Model.Security.SecurityUser;
-
             var dataUser = dataContext.SecurityUsers.FirstOrDefault(u => u.UserId == storageData.Key);
             if (dataUser == null)
                 throw new KeyNotFoundException();
@@ -133,7 +124,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var newData = this.ConvertFromModel(storageData) as Data.SecurityUser;
             dataUser.CopyObjectData(newData);
 
-            dataUser.UpdatedBy = principal.GetUserGuid(dataContext);
+            dataUser.UpdatedByEntity = principal.GetUser(dataContext);
             dataUser.UpdatedTime = DateTimeOffset.Now;
             dataUser.SecurityStamp = Guid.NewGuid().ToString();
 

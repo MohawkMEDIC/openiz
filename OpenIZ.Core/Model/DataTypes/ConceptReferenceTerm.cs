@@ -84,7 +84,7 @@ namespace OpenIZ.Core.Model.DataTypes
             get
             {
                 if(this.m_relationshipType == null &&
-                    this.m_delayLoad &&
+                    this.DelayLoad &&
                     this.m_relationshipTypeId != Guid.Empty)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
