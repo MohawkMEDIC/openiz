@@ -59,7 +59,7 @@
     <property modelName="PreviousVersionKey" domainName="ReplacesVersionId"/>
     <property modelName="Status" domainName="StatusConcept"/>
     <property modelName="IsSystemConcept" domainName="Concept">
-      <via domainName="IsSystemConcept"/>
+      <via domainName="IsSystemConcept" traverse="true"/>
     </property>
   </class>
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptClass, OpenIZ.Core, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptClass, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
@@ -94,23 +94,17 @@
     <property modelName="PhoneticAlgorithm" domainName="PhoneticAlgorithm"/>
     <property modelName="Language" domainName="LanguageCode"/>
     <collapseKey propertyName="PhoneticAlgorithm" keyName="PhoneticAlgorithmId"/>
-    <collapseKey propertyName="EffectiveVersionSequence" keyName="EffectiveVersionSequenceId"/>
-    <collapseKey propertyName="ObsoleteVersionSequence" keyName="ObsoleteVersionSequenceId"/>
   </class>
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm, OpenIZ.Core, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptReferenceTerm, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ConceptReferenceTermId"/>
     <property modelName="TargetEntityKey" domainName="ConceptId"/>
     <collapseKey propertyName="ReferenceTerm" keyName="ReferenceTermId"/>
-    <collapseKey propertyName="EffectiveVersionSequence" keyName="EffectiveVersionSequenceId"/>
-    <collapseKey propertyName="ObsoleteVersionSequence" keyName="ObsoleteVersionSequenceId"/>
     <collapseKey propertyName="ConceptRelationshipType" keyName="ConceptRelationshipTypeId"/>
     <property modelName="RelationshipTypeId" domainName="ConceptRelationshipTypeId"/>
   </class>
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptRelationship, OpenIZ.Core, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptRelationship, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ConceptRelationshipId"/>
     <property modelName="TargetEntityKey" domainName="SourceConceptId"/>
-    <collapseKey propertyName="EffectiveVersionSequence" keyName="EffectiveVersionSequenceId"/>
-    <collapseKey propertyName="ObsoleteVersionSequence" keyName="ObsoleteVersionSequenceId"/>
     <collapseKey propertyName="ConceptRelationshipType" keyName="ConceptRelationshipTypeId"/>
     <collapseKey propertyName="SourceConcept" keyName="SourceConceptId"/>
     <collapseKey propertyName="TargetConcept" keyName="TargetConceptId"/>

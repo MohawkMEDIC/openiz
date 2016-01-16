@@ -32,14 +32,15 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Clones this object member for member with delay load disabled
         /// </summary>
-        public IdentifiedData AsFrozen()
+        public IdentifiedData AsFrozen() // Not the movie
         {
-            IdentifiedData retVal = Activator.CreateInstance(this.GetType()) as IdentifiedData;
+            IdentifiedData retVal = this.GetType().GetConstructor(Type.EmptyTypes).Invoke(null) as IdentifiedData; 
             List<FieldInfo> fields = new List<FieldInfo>();
             Type typ = this.GetType();
             while (typ != typeof(Object))
             {
-                fields.AddRange(typ.GetFields(BindingFlags.NonPublic | BindingFlags.Instance));
+                fields.AddRange(typ.GetFields(BindingFlags.NonPublic // Don't let them in, don't let them see ... 
+                    | BindingFlags.Instance)); // ... Well now they know..
                 typ = typ.BaseType;
             }
 
@@ -47,19 +48,19 @@ namespace OpenIZ.Core.Model
             {
                 object value = fi.GetValue(this);
                 if (value is IdentifiedData)
-                    value = (value as IdentifiedData).AsFrozen();
+                    value = (value as IdentifiedData).AsFrozen(); // Let it go
                 else if(value is IList && 
                     typeof(IdentifiedData).IsAssignableFrom(fi.FieldType.GetGenericArguments()[0]))
                 {
-                    var newList = Activator.CreateInstance(fi.FieldType) as IList;
+                    var newList = fi.FieldType.GetConstructor(Type.EmptyTypes).Invoke(null) as IList;
                     foreach (IdentifiedData itm in value as IList)
-                        newList.Add(itm.AsFrozen());
+                        newList.Add(itm.AsFrozen()); // Let it go
                     value = newList;
                 }
-                fi.SetValue(retVal, value);
+                fi.SetValue(retVal, value); // Can't hold it back anymore... 
             }
 
-            retVal.m_delayLoad = false;
+            retVal.m_delayLoad = false; 
             return retVal;
         }
 

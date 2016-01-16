@@ -138,7 +138,7 @@ namespace OpenIZ.Core.Model.DataTypes
                 if(this.m_relationships == null && this.DelayLoad)
                 {
                     var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptRelationship>>();
-                    this.m_relationships = persistenceService.Query(r => this.Key == r.TargetEntityKey && this.VersionSequence >= r.EffectiveVersionSequenceId && (r.ObsoleteVersionSequenceId == null || this.VersionSequence <= r.ObsoleteVersionSequenceId), null).ToList();
+                    this.m_relationships = persistenceService.Query(r => this.Key == r.TargetEntityKey && this.VersionSequence >= r.EffectiveVersionSequenceId && (r.ObsoleteVersionSequenceId == null || this.VersionSequence < r.ObsoleteVersionSequenceId), null).ToList();
                 }
                 return this.m_relationships;
             }
@@ -197,7 +197,7 @@ namespace OpenIZ.Core.Model.DataTypes
                 if(this.m_referenceTerms == null && this.DelayLoad)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptReferenceTerm>>();
-                    this.m_referenceTerms = dataPersistence.Query(r => this.Key == r.TargetEntityKey && this.VersionSequence >= r.EffectiveVersionSequenceId && (r.ObsoleteVersionSequenceId == null || this.VersionSequence <= r.ObsoleteVersionSequenceId) , null).ToList();
+                    this.m_referenceTerms = dataPersistence.Query(r => this.Key == r.TargetEntityKey && this.VersionSequence >= r.EffectiveVersionSequenceId && (r.ObsoleteVersionSequenceId == null || this.VersionSequence < r.ObsoleteVersionSequenceId) , null).ToList();
                 }
                 return this.m_referenceTerms;
             }
@@ -214,7 +214,7 @@ namespace OpenIZ.Core.Model.DataTypes
                 if(this.m_conceptNames == null && this.m_delayLoad)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptName>>();
-                    this.m_conceptNames = dataPersistence.Query(o => o.TargetEntityKey == this.Key && this.VersionSequence >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || this.VersionSequence <= o.ObsoleteVersionSequenceId), null).ToList();
+                    this.m_conceptNames = dataPersistence.Query(o => o.TargetEntityKey == this.Key && this.VersionSequence >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || this.VersionSequence < o.ObsoleteVersionSequenceId), null).ToList();
                 }
                 return this.m_conceptNames;
             }

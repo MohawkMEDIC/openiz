@@ -44,14 +44,28 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 return this.ConvertToModel(domainConceptClass);
         }
 
+        /// <summary>
+        /// Insert a concept class
+        /// </summary>
         internal override Core.Model.DataTypes.ConceptClass Insert(Core.Model.DataTypes.ConceptClass storageData, IPrincipal principal, ModelDataContext dataContext)
         {
-            throw new NotImplementedException();
+            var domainConceptClass = this.ConvertFromModel(storageData) as Data.ConceptClass;
+            dataContext.ConceptClasses.InsertOnSubmit(domainConceptClass);
+            dataContext.SubmitChanges();
+            return this.ConvertToModel(domainConceptClass);
         }
 
+        /// <summary>
+        /// Obsolete the concept class
+        /// </summary>
         internal override Core.Model.DataTypes.ConceptClass Obsolete(Core.Model.DataTypes.ConceptClass storageData, IPrincipal principal, ModelDataContext dataContext)
         {
-            throw new NotImplementedException();
+            var domainConceptClass = dataContext.ConceptClasses.FirstOrDefault(o => o.ConceptClassId == storageData.Key);
+            if (domainConceptClass == null)
+                throw new KeyNotFoundException();
+            dataContext.ConceptClasses.DeleteOnSubmit(domainConceptClass);
+            dataContext.SubmitChanges();
+            return this.ConvertToModel(domainConceptClass);
         }
 
         /// <summary>
@@ -63,9 +77,17 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             return dataContext.ConceptClasses.Where(domainQuery).Select(o => this.ConvertToModel(o));
         }
 
+        /// <summary>
+        /// Update the concept class
+        /// </summary>
         internal override Core.Model.DataTypes.ConceptClass Update(Core.Model.DataTypes.ConceptClass storageData, IPrincipal principal, ModelDataContext dataContext)
         {
-            throw new NotImplementedException();
+            var domainConceptClass = dataContext.ConceptClasses.FirstOrDefault(o => o.ConceptClassId == storageData.Key);
+            if (domainConceptClass == null)
+                throw new KeyNotFoundException();
+            domainConceptClass.CopyObjectData(this.ConvertFromModel(storageData) as Data.ConceptClass);
+            dataContext.SubmitChanges();
+            return this.ConvertToModel(domainConceptClass);
         }
     }
 }

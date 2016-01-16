@@ -48,6 +48,7 @@
     </xsl:copy>
   </xsl:template>
   <xsl:template match="linq:Association">
+    <xsl:if test="@ThisKey != 'VersionSequenceId' and @OtherKey != 'VersionSequenceId'">
         <Association Name="{@Name}" Member="{openiz:CorrectAssociationName(@Name, ../../linq:Type/@Name, @Member, @ThisKey, @OtherKey, @IsForeignKey)}" ThisKey="{@ThisKey}" OtherKey="{@OtherKey}" Type="{@Type}">
           <xsl:if test="@Cardinality">
             <xsl:attribute name="Cardinality">
@@ -60,7 +61,7 @@
             </xsl:attribute>
           </xsl:if>
         </Association>
-
+    </xsl:if>
   </xsl:template>
   
     <xsl:template match="@* | node()">

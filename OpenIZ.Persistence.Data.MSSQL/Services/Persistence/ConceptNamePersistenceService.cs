@@ -45,19 +45,25 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         }
 
         /// <summary>
-        /// Insert a concept name
+        /// Insert component name
         /// </summary>
         internal override Core.Model.DataTypes.ConceptName Insert(Core.Model.DataTypes.ConceptName storageData, IPrincipal principal, ModelDataContext dataContext)
+        {
+            return this.Insert(storageData, principal, dataContext, true);
+        }
+
+        /// <summary>
+        /// Insert a concept name
+        /// </summary>
+        internal Core.Model.DataTypes.ConceptName Insert(Core.Model.DataTypes.ConceptName storageData, IPrincipal principal, ModelDataContext dataContext, bool newVersion)
         {
             // Verify data
             if (storageData.Key != Guid.Empty)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.IdentityInsert);
-            else if (storageData.TargetEntityKey == Guid.Empty)
-                throw new SqlFormalConstraintException(SqlFormalConstraintType.AssociatedEntityWithoutTargetKey);
-            else if(storageData.EffectiveVersionSequenceId == default(Decimal))
-                throw new SqlFormalConstraintException(SqlFormalConstraintType.AssociatedEntityWithoutEffectiveVersion);
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
+            else if (storageData.TargetEntityKey == Guid.Empty)
+                throw new SqlFormalConstraintException(SqlFormalConstraintType.AssociatedEntityWithoutTargetKey);
 
             var domainConceptName = this.ConvertFromModel(storageData) as Data.ConceptName;
 
@@ -67,34 +73,55 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (storageData.TargetEntity != null)
                 domainConceptName.ConceptId = storageData.TargetEntity.EnsureExists(principal, dataContext).Key;
 
+            // Get the current version & create a new version if needed
+            var currentConceptVersion = dataContext.ConceptVersions.First(o => o.ConceptId == storageData.TargetEntityKey && o.ObsoletionTime == null);
+            ConceptVersion newConceptVersion = newVersion ? currentConceptVersion.NewVersion(principal, dataContext) : currentConceptVersion;
+            domainConceptName.EffectiveVersionSequenceId = newConceptVersion.VersionSequenceId;
+            domainConceptName.Concept = newConceptVersion.Concept;
+
             dataContext.ConceptNames.InsertOnSubmit(domainConceptName);
-            dataContext.SubmitChanges();
+
+            dataContext.SubmitChanges(); // Write and reload data from database
 
             return this.ConvertToModel(domainConceptName);
         }
-        
+
+        /// <summary>
+        /// Obsolete specified component name
+        /// </summary>
+        internal override Core.Model.DataTypes.ConceptName Obsolete(Core.Model.DataTypes.ConceptName storageData, IPrincipal principal, ModelDataContext dataContext)
+        {
+            return this.Obsolete(storageData, principal, dataContext, true);
+        }
+
         /// <summary>
         /// Obsolete the specified concept name
         /// </summary>
-        internal override Core.Model.DataTypes.ConceptName Obsolete(Core.Model.DataTypes.ConceptName storageData, IPrincipal principal, ModelDataContext dataContext)
+        internal Core.Model.DataTypes.ConceptName Obsolete(Core.Model.DataTypes.ConceptName storageData, IPrincipal principal, ModelDataContext dataContext, bool newVersion)
         {
             if (storageData.Key == Guid.Empty)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.NonIdentityUpdate);
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
+            else if (storageData.TargetEntityKey == Guid.Empty)
+                throw new SqlFormalConstraintException(SqlFormalConstraintType.AssociatedEntityWithoutTargetKey);
 
             // obsolete (i.e. remove the name association)
             var domainConceptName = dataContext.ConceptNames.FirstOrDefault(o => o.ConceptNameId == storageData.Key);
+
             if (domainConceptName == null)
                 throw new KeyNotFoundException();
 
-            // Set the obsoletion time to the current version of the target entity
-            domainConceptName.ObsoleteVersionSequenceId = storageData.ObsoleteVersion?.VersionSequence ?? storageData.TargetEntity?.VersionSequence ??
-                dataContext.ConceptVersions.FirstOrDefault(o => o.VersionSequenceId == storageData.ObsoleteVersionSequenceId)?.VersionSequenceId ?? dataContext.ConceptVersions.FirstOrDefault(o => o.ConceptId == storageData.TargetEntityKey && o.ObsoletionTime == null)?.VersionSequenceId;
+            // Get the current version & create a new version if needed
+            var currentConceptVersion = domainConceptName.Concept.ConceptVersions.First(o => o.ObsoletionTime == null);
+            ConceptVersion newConceptVersion = newVersion ? currentConceptVersion.NewVersion(principal, dataContext) : currentConceptVersion;
 
-            dataContext.SubmitChanges();
+            // Set the obsoletion time to the current version of the target entity
+            domainConceptName.ObsoleteVersionSequenceId = newConceptVersion.VersionSequenceId;
+            dataContext.SubmitChanges(); // Write and reload values from db
 
             return this.ConvertToModel(domainConceptName);
+
         }
 
         /// <summary>
@@ -107,16 +134,27 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         }
 
         /// <summary>
+        /// Update concept name 
+        /// </summary>
+        internal override Core.Model.DataTypes.ConceptName Update(Core.Model.DataTypes.ConceptName storageData, IPrincipal principal, ModelDataContext dataContext)
+        {
+            return this.Update(storageData, principal, dataContext, true);
+        }
+
+        /// <summary>
         /// Update the concept name. An update occurs by creating (if necessary) a new version of the concept 
         /// to which the name is associated and obsoleting the old record
         /// </summary>
-        internal override Core.Model.DataTypes.ConceptName Update(Core.Model.DataTypes.ConceptName storageData, IPrincipal principal, ModelDataContext dataContext)
+        internal Core.Model.DataTypes.ConceptName Update(Core.Model.DataTypes.ConceptName storageData, IPrincipal principal, ModelDataContext dataContext, bool newVersion)
         {
             if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
             // Existing version of the name
             var domainConceptName = dataContext.ConceptNames.FirstOrDefault(o => o.ConceptNameId == storageData.Key);
+            if (domainConceptName == null)
+                throw new KeyNotFoundException();
+
             var newDomainConceptName = this.ConvertFromModel(storageData) as Data.ConceptName;
             newDomainConceptName.ConceptNameId = Guid.Empty;
 
@@ -131,11 +169,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 newDomainConceptName.PhoneticAlgorithmId != domainConceptName.PhoneticAlgorithmId)
             {
 
-                // Get the current version & mark as obsolete
+                // New Concept Version
                 var currentConceptVersion = domainConceptName.Concept.ConceptVersions.First(o => o.ObsoletionTime == null);
-
-                // Create a new version of the concept if needed
-                ConceptVersion newConceptVersion = currentConceptVersion.NewVersion(principal, dataContext);
+                ConceptVersion newConceptVersion = newVersion ? currentConceptVersion.NewVersion(principal, dataContext) : currentConceptVersion;
 
                 // Obsolete the old data
                 domainConceptName.ObsoleteVersionSequenceId = newConceptVersion.VersionSequenceId;
@@ -144,11 +180,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
                 // Insert the new concept domain name
                 dataContext.ConceptNames.InsertOnSubmit(newDomainConceptName);
-
+                dataContext.SubmitChanges(); 
                 return this.ConvertToModel(newDomainConceptName);
             }
             else
                 return this.ConvertToModel(domainConceptName);
+
             
         }
     }

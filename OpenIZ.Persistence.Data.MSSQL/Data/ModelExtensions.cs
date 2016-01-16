@@ -1,6 +1,8 @@
-﻿using OpenIZ.Persistence.Data.MSSQL.Services.Persistence;
+﻿using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Persistence.Data.MSSQL.Services.Persistence;
 using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Linq;
 using System.Reflection;
 using System.Security;
@@ -63,6 +65,20 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Ensure that the role exists
         /// </summary>
+        public static Core.Model.DataTypes.ConceptClass EnsureExists(this Core.Model.DataTypes.ConceptClass me, IPrincipal principal, Data.ModelDataContext context)
+        {
+            if (me.Key == Guid.Empty)
+            {
+                var retVal = new ConceptClassPersistenceService().Insert(me, principal, context);
+                me.Key = retVal.Key;
+                return retVal;
+            }
+            return me;
+        }
+
+        /// <summary>
+        /// Ensure that the role exists
+        /// </summary>
         public static Core.Model.Security.SecurityUser EnsureExists(this Core.Model.Security.SecurityUser me, IPrincipal principal, Data.ModelDataContext context)
         {
             if (me.Key == Guid.Empty)
@@ -89,16 +105,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// </summary>
         public static Data.ConceptVersion NewVersion(this Data.ConceptVersion me, IPrincipal principal, ModelDataContext dataContext)
         {
-            if (me.ConceptVersionId == Guid.Empty) // Not committed yet, no need to create
-                return me;
+            var principalId = principal.GetUserGuid(dataContext);
             var newConceptVersion = new Data.ConceptVersion();
             newConceptVersion.CopyObjectData(me);
             newConceptVersion.VersionSequenceId = default(Decimal);
             newConceptVersion.ConceptVersionId = default(Guid);
+            newConceptVersion.Concept = me.Concept;
             newConceptVersion.ReplacesVersionId = me.ConceptVersionId;
-            newConceptVersion.CreatedBy = principal.GetUserGuid(dataContext);
+            newConceptVersion.CreatedByEntity = dataContext.SecurityUsers.Single(k => k.UserId == principalId);
             // Obsolete the old version 
-            me.ObsoletedBy = principal.GetUserGuid(dataContext);
+            me.ObsoletedByEntity = dataContext.SecurityUsers.Single(k=>k.UserId == principalId);
             me.ObsoletionTime = DateTime.Now;
 
             dataContext.ConceptVersions.InsertOnSubmit(newConceptVersion);
@@ -109,7 +125,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Update property data if required
         /// </summary>
-        public static void CopyObjectData(this Object toEntity, Object fromEntity)
+        public static void CopyObjectData<TObject>(this TObject toEntity, TObject fromEntity)
         {
             if (toEntity == null)
                 throw new ArgumentNullException(nameof(toEntity));
@@ -119,15 +135,20 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
                 throw new ArgumentException("Type mismatch", nameof(fromEntity));
             foreach (var pi in toEntity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
-                if (pi.PropertyType.IsGenericTypeDefinition &&
-                    typeof(Nullable<>) == pi.PropertyType.GetGenericTypeDefinition() ||
-                    pi.PropertyType == typeof(DateTimeOffset) ||
-                    pi.PropertyType == typeof(String) ||
-                    pi.PropertyType.IsPrimitive)
+                
+                // Skip delay load 
+                if (pi.GetCustomAttribute<DelayLoadAttribute>() == null &&
+                    pi.GetSetMethod() != null)
                 {
+                    if (pi.PropertyType.IsGenericType &&
+                        pi.PropertyType.GetGenericTypeDefinition() == typeof(EntitySet<>))
+                        continue;
+
                     object newValue = pi.GetValue(fromEntity),
                         oldValue = pi.GetValue(toEntity);
-                    if (newValue != oldValue)
+                    if (newValue != null &&
+                        !newValue.Equals(oldValue) == true && 
+                        (pi.PropertyType.IsValueType && !newValue.Equals(Activator.CreateInstance(pi.PropertyType)) || !pi.PropertyType.IsValueType && newValue != null))
                         pi.SetValue(toEntity, newValue);
                 }
             }

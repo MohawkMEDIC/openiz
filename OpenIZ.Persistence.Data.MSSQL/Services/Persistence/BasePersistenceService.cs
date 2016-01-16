@@ -121,9 +121,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
                     PostPersistenceEventArgs<TModel> postEvt = new PostPersistenceEventArgs<TModel>(retVal, principal);
                     this.Inserted?.Invoke(this, postEvt);
-
                     dataContext.SubmitChanges();
-                    return retVal;
+
+                    return postEvt.Data;
                 }
                 catch (Exception e)
                 {
@@ -198,7 +198,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
                     dataContext.SubmitChanges();
 
-                    return retVal;
+                    return postEvt.Data;
                 }
                 catch (Exception e)
                 {
@@ -260,7 +260,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
                     dataContext.SubmitChanges();
 
-                    return retVal;
+                    return postEvt.Data;
 
                 }
                 catch (Exception e)
@@ -315,7 +315,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     PostRetrievalEventArgs<TModel> postEvt = new PostRetrievalEventArgs<TModel>(retVal, principal);
                     this.Retrieved?.Invoke(this, postEvt);
 
-                    return retVal;
+                    return postEvt.Data;
                 }
                 catch (Exception e)
                 {
@@ -395,7 +395,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     PostQueryEventArgs<TModel> postEvt = new PostQueryEventArgs<TModel>(preEvt.Query, retVal, principal);
                     this.Queried?.Invoke(this, postEvt);
 
-                    return retVal.ToList();
+                    return postEvt.Results.ToList();
                 }
             }
             catch (Exception e)

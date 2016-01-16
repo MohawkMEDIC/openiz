@@ -30,12 +30,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertAct(Act instance);
-    partial void UpdateAct(Act instance);
-    partial void DeleteAct(Act instance);
     partial void InsertUserEntity(UserEntity instance);
     partial void UpdateUserEntity(UserEntity instance);
     partial void DeleteUserEntity(UserEntity instance);
+    partial void InsertAct(Act instance);
+    partial void UpdateAct(Act instance);
+    partial void DeleteAct(Act instance);
     partial void InsertActExtension(ActExtension instance);
     partial void UpdateActExtension(ActExtension instance);
     partial void DeleteActExtension(ActExtension instance);
@@ -278,19 +278,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		public System.Data.Linq.Table<Act> Acts
-		{
-			get
-			{
-				return this.GetTable<Act>();
-			}
-		}
-		
 		public System.Data.Linq.Table<UserEntity> UserEntities
 		{
 			get
 			{
 				return this.GetTable<UserEntity>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Act> Acts
+		{
+			get
+			{
+				return this.GetTable<Act>();
 			}
 		}
 		
@@ -855,6 +855,376 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.UserEntity")]
+	public partial class UserEntity : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _UserEntityId;
+		
+		private System.Guid _UserId;
+		
+		private System.Guid _EntityId;
+		
+		private System.DateTimeOffset _CreationTime;
+		
+		private System.Guid _CreatedBy;
+		
+		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
+		
+		private System.Nullable<System.Guid> _ObsoletedBy;
+		
+		private EntityRef<Entity> _Entity;
+		
+		private EntityRef<SecurityUser> _CreatedByEntity;
+		
+		private EntityRef<SecurityUser> _ObsoletedByEntity;
+		
+		private EntityRef<SecurityUser> _SecurityUser;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnUserEntityIdChanging(System.Guid value);
+    partial void OnUserEntityIdChanged();
+    partial void OnUserIdChanging(System.Guid value);
+    partial void OnUserIdChanged();
+    partial void OnEntityIdChanging(System.Guid value);
+    partial void OnEntityIdChanged();
+    partial void OnCreationTimeChanging(System.DateTimeOffset value);
+    partial void OnCreationTimeChanged();
+    partial void OnCreatedByChanging(System.Guid value);
+    partial void OnCreatedByChanged();
+    partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnObsoletionTimeChanged();
+    partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
+    partial void OnObsoletedByChanged();
+    #endregion
+		
+		public UserEntity()
+		{
+			this._Entity = default(EntityRef<Entity>);
+			this._CreatedByEntity = default(EntityRef<SecurityUser>);
+			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
+			this._SecurityUser = default(EntityRef<SecurityUser>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserEntityId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		public System.Guid UserEntityId
+		{
+			get
+			{
+				return this._UserEntityId;
+			}
+			set
+			{
+				if ((this._UserEntityId != value))
+				{
+					this.OnUserEntityIdChanging(value);
+					this.SendPropertyChanging();
+					this._UserEntityId = value;
+					this.SendPropertyChanged("UserEntityId");
+					this.OnUserEntityIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid UserId
+		{
+			get
+			{
+				return this._UserId;
+			}
+			set
+			{
+				if ((this._UserId != value))
+				{
+					if (this._SecurityUser.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUserIdChanging(value);
+					this.SendPropertyChanging();
+					this._UserId = value;
+					this.SendPropertyChanged("UserId");
+					this.OnUserIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid EntityId
+		{
+			get
+			{
+				return this._EntityId;
+			}
+			set
+			{
+				if ((this._EntityId != value))
+				{
+					if (this._Entity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnEntityIdChanging(value);
+					this.SendPropertyChanging();
+					this._EntityId = value;
+					this.SendPropertyChanged("EntityId");
+					this.OnEntityIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", AutoSync=AutoSync.Always, DbType="DateTimeOffset NOT NULL", IsDbGenerated=true)]
+		public System.DateTimeOffset CreationTime
+		{
+			get
+			{
+				return this._CreationTime;
+			}
+			set
+			{
+				if ((this._CreationTime != value))
+				{
+					this.OnCreationTimeChanging(value);
+					this.SendPropertyChanging();
+					this._CreationTime = value;
+					this.SendPropertyChanged("CreationTime");
+					this.OnCreationTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid CreatedBy
+		{
+			get
+			{
+				return this._CreatedBy;
+			}
+			set
+			{
+				if ((this._CreatedBy != value))
+				{
+					if (this._CreatedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCreatedByChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedBy = value;
+					this.SendPropertyChanged("CreatedBy");
+					this.OnCreatedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> ObsoletionTime
+		{
+			get
+			{
+				return this._ObsoletionTime;
+			}
+			set
+			{
+				if ((this._ObsoletionTime != value))
+				{
+					this.OnObsoletionTimeChanging(value);
+					this.SendPropertyChanging();
+					this._ObsoletionTime = value;
+					this.SendPropertyChanged("ObsoletionTime");
+					this.OnObsoletionTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletedBy", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> ObsoletedBy
+		{
+			get
+			{
+				return this._ObsoletedBy;
+			}
+			set
+			{
+				if ((this._ObsoletedBy != value))
+				{
+					if (this._ObsoletedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnObsoletedByChanging(value);
+					this.SendPropertyChanging();
+					this._ObsoletedBy = value;
+					this.SendPropertyChanged("ObsoletedBy");
+					this.OnObsoletedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_UserEntity", Storage="_Entity", ThisKey="EntityId", OtherKey="EntityId", IsForeignKey=true)]
+		public Entity Entity
+		{
+			get
+			{
+				return this._Entity.Entity;
+			}
+			set
+			{
+				Entity previousValue = this._Entity.Entity;
+				if (((previousValue != value) 
+							|| (this._Entity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Entity.Entity = null;
+						previousValue.UserEntities.Remove(this);
+					}
+					this._Entity.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntities.Add(this);
+						this._EntityId = value.EntityId;
+					}
+					else
+					{
+						this._EntityId = default(System.Guid);
+					}
+					this.SendPropertyChanged("Entity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser CreatedByEntity
+		{
+			get
+			{
+				return this._CreatedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.UserEntitiesCreatedBy.Remove(this);
+					}
+					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntitiesCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
+					this.SendPropertyChanged("CreatedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity1", Storage="_ObsoletedByEntity", ThisKey="ObsoletedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser ObsoletedByEntity
+		{
+			get
+			{
+				return this._ObsoletedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.UserEntitiesObsoletedBy.Remove(this);
+					}
+					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntitiesObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("ObsoletedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity2", Storage="_SecurityUser", ThisKey="UserId", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser SecurityUser
+		{
+			get
+			{
+				return this._SecurityUser.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._SecurityUser.Entity;
+				if (((previousValue != value) 
+							|| (this._SecurityUser.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SecurityUser.Entity = null;
+						previousValue.UserEntities.Remove(this);
+					}
+					this._SecurityUser.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntities.Add(this);
+						this._UserId = value.UserId;
+					}
+					else
+					{
+						this._UserId = default(System.Guid);
+					}
+					this.SendPropertyChanged("SecurityUser");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Act")]
 	public partial class Act : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -1303,376 +1673,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.UserEntity")]
-	public partial class UserEntity : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private System.Guid _UserEntityId;
-		
-		private System.Guid _UserId;
-		
-		private System.Guid _EntityId;
-		
-		private System.DateTimeOffset _CreationTime;
-		
-		private System.Guid _CreatedBy;
-		
-		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
-		
-		private System.Nullable<System.Guid> _ObsoletedBy;
-		
-		private EntityRef<Entity> _Entity;
-		
-		private EntityRef<SecurityUser> _CreatedByEntity;
-		
-		private EntityRef<SecurityUser> _ObsoletedByEntity;
-		
-		private EntityRef<SecurityUser> _SecurityUser;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnUserEntityIdChanging(System.Guid value);
-    partial void OnUserEntityIdChanged();
-    partial void OnUserIdChanging(System.Guid value);
-    partial void OnUserIdChanged();
-    partial void OnEntityIdChanging(System.Guid value);
-    partial void OnEntityIdChanged();
-    partial void OnCreationTimeChanging(System.DateTimeOffset value);
-    partial void OnCreationTimeChanged();
-    partial void OnCreatedByChanging(System.Guid value);
-    partial void OnCreatedByChanged();
-    partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
-    partial void OnObsoletionTimeChanged();
-    partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
-    partial void OnObsoletedByChanged();
-    #endregion
-		
-		public UserEntity()
-		{
-			this._Entity = default(EntityRef<Entity>);
-			this._CreatedByEntity = default(EntityRef<SecurityUser>);
-			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
-			this._SecurityUser = default(EntityRef<SecurityUser>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserEntityId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
-		public System.Guid UserEntityId
-		{
-			get
-			{
-				return this._UserEntityId;
-			}
-			set
-			{
-				if ((this._UserEntityId != value))
-				{
-					this.OnUserEntityIdChanging(value);
-					this.SendPropertyChanging();
-					this._UserEntityId = value;
-					this.SendPropertyChanged("UserEntityId");
-					this.OnUserEntityIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid UserId
-		{
-			get
-			{
-				return this._UserId;
-			}
-			set
-			{
-				if ((this._UserId != value))
-				{
-					if (this._SecurityUser.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnUserIdChanging(value);
-					this.SendPropertyChanging();
-					this._UserId = value;
-					this.SendPropertyChanged("UserId");
-					this.OnUserIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityId", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid EntityId
-		{
-			get
-			{
-				return this._EntityId;
-			}
-			set
-			{
-				if ((this._EntityId != value))
-				{
-					if (this._Entity.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnEntityIdChanging(value);
-					this.SendPropertyChanging();
-					this._EntityId = value;
-					this.SendPropertyChanged("EntityId");
-					this.OnEntityIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", AutoSync=AutoSync.Always, DbType="DateTimeOffset NOT NULL", IsDbGenerated=true)]
-		public System.DateTimeOffset CreationTime
-		{
-			get
-			{
-				return this._CreationTime;
-			}
-			set
-			{
-				if ((this._CreationTime != value))
-				{
-					this.OnCreationTimeChanging(value);
-					this.SendPropertyChanging();
-					this._CreationTime = value;
-					this.SendPropertyChanged("CreationTime");
-					this.OnCreationTimeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid CreatedBy
-		{
-			get
-			{
-				return this._CreatedBy;
-			}
-			set
-			{
-				if ((this._CreatedBy != value))
-				{
-					if (this._CreatedByEntity.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnCreatedByChanging(value);
-					this.SendPropertyChanging();
-					this._CreatedBy = value;
-					this.SendPropertyChanged("CreatedBy");
-					this.OnCreatedByChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTime", DbType="DateTimeOffset")]
-		public System.Nullable<System.DateTimeOffset> ObsoletionTime
-		{
-			get
-			{
-				return this._ObsoletionTime;
-			}
-			set
-			{
-				if ((this._ObsoletionTime != value))
-				{
-					this.OnObsoletionTimeChanging(value);
-					this.SendPropertyChanging();
-					this._ObsoletionTime = value;
-					this.SendPropertyChanged("ObsoletionTime");
-					this.OnObsoletionTimeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletedBy", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> ObsoletedBy
-		{
-			get
-			{
-				return this._ObsoletedBy;
-			}
-			set
-			{
-				if ((this._ObsoletedBy != value))
-				{
-					if (this._ObsoletedByEntity.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnObsoletedByChanging(value);
-					this.SendPropertyChanging();
-					this._ObsoletedBy = value;
-					this.SendPropertyChanged("ObsoletedBy");
-					this.OnObsoletedByChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_UserEntity", Storage="_Entity", ThisKey="EntityId", OtherKey="EntityId", IsForeignKey=true)]
-		public Entity Entity
-		{
-			get
-			{
-				return this._Entity.Entity;
-			}
-			set
-			{
-				Entity previousValue = this._Entity.Entity;
-				if (((previousValue != value) 
-							|| (this._Entity.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Entity.Entity = null;
-						previousValue.UserEntities.Remove(this);
-					}
-					this._Entity.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntities.Add(this);
-						this._EntityId = value.EntityId;
-					}
-					else
-					{
-						this._EntityId = default(System.Guid);
-					}
-					this.SendPropertyChanged("Entity");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser CreatedByEntity
-		{
-			get
-			{
-				return this._CreatedByEntity.Entity;
-			}
-			set
-			{
-				SecurityUser previousValue = this._CreatedByEntity.Entity;
-				if (((previousValue != value) 
-							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._CreatedByEntity.Entity = null;
-						previousValue.UserEntitiesCreatedBy.Remove(this);
-					}
-					this._CreatedByEntity.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntitiesCreatedBy.Add(this);
-						this._CreatedBy = value.UserId;
-					}
-					else
-					{
-						this._CreatedBy = default(System.Guid);
-					}
-					this.SendPropertyChanged("CreatedByEntity");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity1", Storage="_ObsoletedByEntity", ThisKey="ObsoletedBy", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser ObsoletedByEntity
-		{
-			get
-			{
-				return this._ObsoletedByEntity.Entity;
-			}
-			set
-			{
-				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoletedByEntity.Entity = null;
-						previousValue.UserEntitiesObsoletedBy.Remove(this);
-					}
-					this._ObsoletedByEntity.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntitiesObsoletedBy.Add(this);
-						this._ObsoletedBy = value.UserId;
-					}
-					else
-					{
-						this._ObsoletedBy = default(Nullable<System.Guid>);
-					}
-					this.SendPropertyChanged("ObsoletedByEntity");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity2", Storage="_SecurityUser", ThisKey="UserId", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser SecurityUser
-		{
-			get
-			{
-				return this._SecurityUser.Entity;
-			}
-			set
-			{
-				SecurityUser previousValue = this._SecurityUser.Entity;
-				if (((previousValue != value) 
-							|| (this._SecurityUser.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._SecurityUser.Entity = null;
-						previousValue.UserEntities.Remove(this);
-					}
-					this._SecurityUser.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntities.Add(this);
-						this._UserId = value.UserId;
-					}
-					else
-					{
-						this._UserId = default(System.Guid);
-					}
-					this.SendPropertyChanged("SecurityUser");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ActExtension")]
 	public partial class ActExtension : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -1694,10 +1694,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private System.Nullable<decimal> _ObsoleteVersionSequenceId;
 		
 		private EntityRef<Act> _Act;
-		
-		private EntityRef<ActVersion> _EffectiveVersionSequence;
-		
-		private EntityRef<ActVersion> _ObsoleteVersionSequence;
 		
 		private EntityRef<ExtensionType> _ExtensionType;
 		
@@ -1724,8 +1720,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		public ActExtension()
 		{
 			this._Act = default(EntityRef<Act>);
-			this._EffectiveVersionSequence = default(EntityRef<ActVersion>);
-			this._ObsoleteVersionSequence = default(EntityRef<ActVersion>);
 			this._ExtensionType = default(EntityRef<ExtensionType>);
 			OnCreated();
 		}
@@ -1849,10 +1843,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._EffectiveVersionSequenceId != value))
 				{
-					if (this._EffectiveVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnEffectiveVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._EffectiveVersionSequenceId = value;
@@ -1873,10 +1863,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._ObsoleteVersionSequenceId != value))
 				{
-					if (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnObsoleteVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._ObsoleteVersionSequenceId = value;
@@ -1916,74 +1902,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._ActId = default(System.Guid);
 					}
 					this.SendPropertyChanged("Act");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActExtension", Storage="_EffectiveVersionSequence", ThisKey="EffectiveVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public ActVersion EffectiveVersionSequence
-		{
-			get
-			{
-				return this._EffectiveVersionSequence.Entity;
-			}
-			set
-			{
-				ActVersion previousValue = this._EffectiveVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._EffectiveVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._EffectiveVersionSequence.Entity = null;
-						previousValue.ActExtensionsEffectiveVersionSequenceId.Remove(this);
-					}
-					this._EffectiveVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.ActExtensionsEffectiveVersionSequenceId.Add(this);
-						this._EffectiveVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._EffectiveVersionSequenceId = default(decimal);
-					}
-					this.SendPropertyChanged("EffectiveVersionSequence");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActExtension1", Storage="_ObsoleteVersionSequence", ThisKey="ObsoleteVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public ActVersion ObsoleteVersionSequence
-		{
-			get
-			{
-				return this._ObsoleteVersionSequence.Entity;
-			}
-			set
-			{
-				ActVersion previousValue = this._ObsoleteVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoleteVersionSequence.Entity = null;
-						previousValue.ActExtensionsObsoleteVersionSequenceId.Remove(this);
-					}
-					this._ObsoleteVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.ActExtensionsObsoleteVersionSequenceId.Add(this);
-						this._ObsoleteVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._ObsoleteVersionSequenceId = default(Nullable<decimal>);
-					}
-					this.SendPropertyChanged("ObsoleteVersionSequence");
 				}
 			}
 		}
@@ -2065,10 +1983,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<Act> _Act;
 		
-		private EntityRef<ActVersion> _EffectiveVersionSequence;
-		
-		private EntityRef<ActVersion> _ObsoleteVersionSequence;
-		
 		private EntityRef<AssigningAuthority> _AssigningAuthority;
 		
 		private EntityRef<IdentifierType> _IdentifierType;
@@ -2096,8 +2010,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		public ActIdentifier()
 		{
 			this._Act = default(EntityRef<Act>);
-			this._EffectiveVersionSequence = default(EntityRef<ActVersion>);
-			this._ObsoleteVersionSequence = default(EntityRef<ActVersion>);
 			this._AssigningAuthority = default(EntityRef<AssigningAuthority>);
 			this._IdentifierType = default(EntityRef<IdentifierType>);
 			OnCreated();
@@ -2182,10 +2094,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._EffectiveVersionSequenceId != value))
 				{
-					if (this._EffectiveVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnEffectiveVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._EffectiveVersionSequenceId = value;
@@ -2206,10 +2114,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._ObsoleteVersionSequenceId != value))
 				{
-					if (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnObsoleteVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._ObsoleteVersionSequenceId = value;
@@ -2293,74 +2197,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._ActId = default(System.Guid);
 					}
 					this.SendPropertyChanged("Act");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActIdentifier", Storage="_EffectiveVersionSequence", ThisKey="EffectiveVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public ActVersion EffectiveVersionSequence
-		{
-			get
-			{
-				return this._EffectiveVersionSequence.Entity;
-			}
-			set
-			{
-				ActVersion previousValue = this._EffectiveVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._EffectiveVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._EffectiveVersionSequence.Entity = null;
-						previousValue.ActIdentifiersEffectiveVersionSequenceId.Remove(this);
-					}
-					this._EffectiveVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.ActIdentifiersEffectiveVersionSequenceId.Add(this);
-						this._EffectiveVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._EffectiveVersionSequenceId = default(decimal);
-					}
-					this.SendPropertyChanged("EffectiveVersionSequence");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActIdentifier1", Storage="_ObsoleteVersionSequence", ThisKey="ObsoleteVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public ActVersion ObsoleteVersionSequence
-		{
-			get
-			{
-				return this._ObsoleteVersionSequence.Entity;
-			}
-			set
-			{
-				ActVersion previousValue = this._ObsoleteVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoleteVersionSequence.Entity = null;
-						previousValue.ActIdentifiersObsoleteVersionSequenceId.Remove(this);
-					}
-					this._ObsoleteVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.ActIdentifiersObsoleteVersionSequenceId.Add(this);
-						this._ObsoleteVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._ObsoleteVersionSequenceId = default(Nullable<decimal>);
-					}
-					this.SendPropertyChanged("ObsoleteVersionSequence");
 				}
 			}
 		}
@@ -2474,10 +2310,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<Act> _Act;
 		
-		private EntityRef<ActVersion> _EffectiveVersionSequence;
-		
-		private EntityRef<ActVersion> _ObsoleteVersionSequence;
-		
 		private EntityRef<Entity> _AuthorEntity;
 		
     #region Extensibility Method Definitions
@@ -2501,8 +2333,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		public ActNote()
 		{
 			this._Act = default(EntityRef<Act>);
-			this._EffectiveVersionSequence = default(EntityRef<ActVersion>);
-			this._ObsoleteVersionSequence = default(EntityRef<ActVersion>);
 			this._AuthorEntity = default(EntityRef<Entity>);
 			OnCreated();
 		}
@@ -2562,10 +2392,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._EffectiveVersionSequenceId != value))
 				{
-					if (this._EffectiveVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnEffectiveVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._EffectiveVersionSequenceId = value;
@@ -2586,10 +2412,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._ObsoleteVersionSequenceId != value))
 				{
-					if (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnObsoleteVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._ObsoleteVersionSequenceId = value;
@@ -2677,74 +2499,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActNote", Storage="_EffectiveVersionSequence", ThisKey="EffectiveVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public ActVersion EffectiveVersionSequence
-		{
-			get
-			{
-				return this._EffectiveVersionSequence.Entity;
-			}
-			set
-			{
-				ActVersion previousValue = this._EffectiveVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._EffectiveVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._EffectiveVersionSequence.Entity = null;
-						previousValue.ActNotesEffectiveVersionSequenceId.Remove(this);
-					}
-					this._EffectiveVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.ActNotesEffectiveVersionSequenceId.Add(this);
-						this._EffectiveVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._EffectiveVersionSequenceId = default(decimal);
-					}
-					this.SendPropertyChanged("EffectiveVersionSequence");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActNote1", Storage="_ObsoleteVersionSequence", ThisKey="ObsoleteVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public ActVersion ObsoleteVersionSequence
-		{
-			get
-			{
-				return this._ObsoleteVersionSequence.Entity;
-			}
-			set
-			{
-				ActVersion previousValue = this._ObsoleteVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoleteVersionSequence.Entity = null;
-						previousValue.ActNotesObsoleteVersionSequenceId.Remove(this);
-					}
-					this._ObsoleteVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.ActNotesObsoleteVersionSequenceId.Add(this);
-						this._ObsoleteVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._ObsoleteVersionSequenceId = default(Nullable<decimal>);
-					}
-					this.SendPropertyChanged("ObsoleteVersionSequence");
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_ActNote", Storage="_AuthorEntity", ThisKey="AuthorEntityId", OtherKey="EntityId", IsForeignKey=true)]
 		public Entity AuthorEntity
 		{
@@ -2818,10 +2572,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<Act> _Act;
 		
-		private EntityRef<ActVersion> _EffectiveVersionSequence;
-		
-		private EntityRef<ActVersion> _ObsoleteVersionSequence;
-		
 		private EntityRef<Policy> _Policy;
 		
     #region Extensibility Method Definitions
@@ -2843,8 +2593,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		public ActPolicy()
 		{
 			this._Act = default(EntityRef<Act>);
-			this._EffectiveVersionSequence = default(EntityRef<ActVersion>);
-			this._ObsoleteVersionSequence = default(EntityRef<ActVersion>);
 			this._Policy = default(EntityRef<Policy>);
 			OnCreated();
 		}
@@ -2904,10 +2652,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._EffectiveVersionSequenceId != value))
 				{
-					if (this._EffectiveVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnEffectiveVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._EffectiveVersionSequenceId = value;
@@ -2928,10 +2672,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._ObsoleteVersionSequenceId != value))
 				{
-					if (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnObsoleteVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._ObsoleteVersionSequenceId = value;
@@ -2995,74 +2735,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._ActId = default(System.Guid);
 					}
 					this.SendPropertyChanged("Act");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActPolicy", Storage="_EffectiveVersionSequence", ThisKey="EffectiveVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public ActVersion EffectiveVersionSequence
-		{
-			get
-			{
-				return this._EffectiveVersionSequence.Entity;
-			}
-			set
-			{
-				ActVersion previousValue = this._EffectiveVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._EffectiveVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._EffectiveVersionSequence.Entity = null;
-						previousValue.ActPoliciesEffectiveVersionSequenceId.Remove(this);
-					}
-					this._EffectiveVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.ActPoliciesEffectiveVersionSequenceId.Add(this);
-						this._EffectiveVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._EffectiveVersionSequenceId = default(decimal);
-					}
-					this.SendPropertyChanged("EffectiveVersionSequence");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActPolicy1", Storage="_ObsoleteVersionSequence", ThisKey="ObsoleteVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public ActVersion ObsoleteVersionSequence
-		{
-			get
-			{
-				return this._ObsoleteVersionSequence.Entity;
-			}
-			set
-			{
-				ActVersion previousValue = this._ObsoleteVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoleteVersionSequence.Entity = null;
-						previousValue.ActPoliciesObsoleteVersionSequenceId.Remove(this);
-					}
-					this._ObsoleteVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.ActPoliciesObsoleteVersionSequenceId.Add(this);
-						this._ObsoleteVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._ObsoleteVersionSequenceId = default(Nullable<decimal>);
-					}
-					this.SendPropertyChanged("ObsoleteVersionSequence");
 				}
 			}
 		}
@@ -3360,10 +3032,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<Act> _TargetAct;
 		
-		private EntityRef<ActVersion> _EffectiveVersionSequence;
-		
-		private EntityRef<ActVersion> _ObsoleteVersionSequence;
-		
 		private EntityRef<Concept> _RelationshipTypeConcept;
 		
     #region Extensibility Method Definitions
@@ -3388,8 +3056,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this._SourceAct = default(EntityRef<Act>);
 			this._TargetAct = default(EntityRef<Act>);
-			this._EffectiveVersionSequence = default(EntityRef<ActVersion>);
-			this._ObsoleteVersionSequence = default(EntityRef<ActVersion>);
 			this._RelationshipTypeConcept = default(EntityRef<Concept>);
 			OnCreated();
 		}
@@ -3473,10 +3139,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._EffectiveVersionSequenceId != value))
 				{
-					if (this._EffectiveVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnEffectiveVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._EffectiveVersionSequenceId = value;
@@ -3497,10 +3159,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._ObsoleteVersionSequenceId != value))
 				{
-					if (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnObsoleteVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._ObsoleteVersionSequenceId = value;
@@ -3598,74 +3256,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._TargetActId = default(System.Guid);
 					}
 					this.SendPropertyChanged("TargetAct");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActRelationship", Storage="_EffectiveVersionSequence", ThisKey="EffectiveVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public ActVersion EffectiveVersionSequence
-		{
-			get
-			{
-				return this._EffectiveVersionSequence.Entity;
-			}
-			set
-			{
-				ActVersion previousValue = this._EffectiveVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._EffectiveVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._EffectiveVersionSequence.Entity = null;
-						previousValue.ActRelationshipsEffectiveVersionSequenceId.Remove(this);
-					}
-					this._EffectiveVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.ActRelationshipsEffectiveVersionSequenceId.Add(this);
-						this._EffectiveVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._EffectiveVersionSequenceId = default(decimal);
-					}
-					this.SendPropertyChanged("EffectiveVersionSequence");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActRelationship1", Storage="_ObsoleteVersionSequence", ThisKey="ObsoleteVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public ActVersion ObsoleteVersionSequence
-		{
-			get
-			{
-				return this._ObsoleteVersionSequence.Entity;
-			}
-			set
-			{
-				ActVersion previousValue = this._ObsoleteVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoleteVersionSequence.Entity = null;
-						previousValue.ActRelationshipsObsoleteVersionSequenceId.Remove(this);
-					}
-					this._ObsoleteVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.ActRelationshipsObsoleteVersionSequenceId.Add(this);
-						this._ObsoleteVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._ObsoleteVersionSequenceId = default(decimal);
-					}
-					this.SendPropertyChanged("ObsoleteVersionSequence");
 				}
 			}
 		}
@@ -4112,26 +3702,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.DateTimeOffset> _ActStopTime;
 		
-		private EntitySet<ActExtension> _ActExtensionsEffectiveVersionSequenceId;
-		
-		private EntitySet<ActExtension> _ActExtensionsObsoleteVersionSequenceId;
-		
-		private EntitySet<ActIdentifier> _ActIdentifiersEffectiveVersionSequenceId;
-		
-		private EntitySet<ActIdentifier> _ActIdentifiersObsoleteVersionSequenceId;
-		
-		private EntitySet<ActNote> _ActNotesEffectiveVersionSequenceId;
-		
-		private EntitySet<ActNote> _ActNotesObsoleteVersionSequenceId;
-		
-		private EntitySet<ActPolicy> _ActPoliciesEffectiveVersionSequenceId;
-		
-		private EntitySet<ActPolicy> _ActPoliciesObsoleteVersionSequenceId;
-		
-		private EntitySet<ActRelationship> _ActRelationshipsEffectiveVersionSequenceId;
-		
-		private EntitySet<ActRelationship> _ActRelationshipsObsoleteVersionSequenceId;
-		
 		private EntitySet<ActVersion> _ActVersionsReplacesVersionId;
 		
 		private EntityRef<Observation> _Observation;
@@ -4188,16 +3758,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public ActVersion()
 		{
-			this._ActExtensionsEffectiveVersionSequenceId = new EntitySet<ActExtension>(new Action<ActExtension>(this.attach_ActExtensionsEffectiveVersionSequenceId), new Action<ActExtension>(this.detach_ActExtensionsEffectiveVersionSequenceId));
-			this._ActExtensionsObsoleteVersionSequenceId = new EntitySet<ActExtension>(new Action<ActExtension>(this.attach_ActExtensionsObsoleteVersionSequenceId), new Action<ActExtension>(this.detach_ActExtensionsObsoleteVersionSequenceId));
-			this._ActIdentifiersEffectiveVersionSequenceId = new EntitySet<ActIdentifier>(new Action<ActIdentifier>(this.attach_ActIdentifiersEffectiveVersionSequenceId), new Action<ActIdentifier>(this.detach_ActIdentifiersEffectiveVersionSequenceId));
-			this._ActIdentifiersObsoleteVersionSequenceId = new EntitySet<ActIdentifier>(new Action<ActIdentifier>(this.attach_ActIdentifiersObsoleteVersionSequenceId), new Action<ActIdentifier>(this.detach_ActIdentifiersObsoleteVersionSequenceId));
-			this._ActNotesEffectiveVersionSequenceId = new EntitySet<ActNote>(new Action<ActNote>(this.attach_ActNotesEffectiveVersionSequenceId), new Action<ActNote>(this.detach_ActNotesEffectiveVersionSequenceId));
-			this._ActNotesObsoleteVersionSequenceId = new EntitySet<ActNote>(new Action<ActNote>(this.attach_ActNotesObsoleteVersionSequenceId), new Action<ActNote>(this.detach_ActNotesObsoleteVersionSequenceId));
-			this._ActPoliciesEffectiveVersionSequenceId = new EntitySet<ActPolicy>(new Action<ActPolicy>(this.attach_ActPoliciesEffectiveVersionSequenceId), new Action<ActPolicy>(this.detach_ActPoliciesEffectiveVersionSequenceId));
-			this._ActPoliciesObsoleteVersionSequenceId = new EntitySet<ActPolicy>(new Action<ActPolicy>(this.attach_ActPoliciesObsoleteVersionSequenceId), new Action<ActPolicy>(this.detach_ActPoliciesObsoleteVersionSequenceId));
-			this._ActRelationshipsEffectiveVersionSequenceId = new EntitySet<ActRelationship>(new Action<ActRelationship>(this.attach_ActRelationshipsEffectiveVersionSequenceId), new Action<ActRelationship>(this.detach_ActRelationshipsEffectiveVersionSequenceId));
-			this._ActRelationshipsObsoleteVersionSequenceId = new EntitySet<ActRelationship>(new Action<ActRelationship>(this.attach_ActRelationshipsObsoleteVersionSequenceId), new Action<ActRelationship>(this.detach_ActRelationshipsObsoleteVersionSequenceId));
 			this._ActVersionsReplacesVersionId = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersionsReplacesVersionId), new Action<ActVersion>(this.detach_ActVersionsReplacesVersionId));
 			this._Observation = default(EntityRef<Observation>);
 			this._PatientEncounter = default(EntityRef<PatientEncounter>);
@@ -4512,136 +4072,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this.SendPropertyChanged("ActStopTime");
 					this.OnActStopTimeChanged();
 				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActExtension", Storage="_ActExtensionsEffectiveVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="EffectiveVersionSequenceId")]
-		public EntitySet<ActExtension> ActExtensionsEffectiveVersionSequenceId
-		{
-			get
-			{
-				return this._ActExtensionsEffectiveVersionSequenceId;
-			}
-			set
-			{
-				this._ActExtensionsEffectiveVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActExtension1", Storage="_ActExtensionsObsoleteVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="ObsoleteVersionSequenceId")]
-		public EntitySet<ActExtension> ActExtensionsObsoleteVersionSequenceId
-		{
-			get
-			{
-				return this._ActExtensionsObsoleteVersionSequenceId;
-			}
-			set
-			{
-				this._ActExtensionsObsoleteVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActIdentifier", Storage="_ActIdentifiersEffectiveVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="EffectiveVersionSequenceId")]
-		public EntitySet<ActIdentifier> ActIdentifiersEffectiveVersionSequenceId
-		{
-			get
-			{
-				return this._ActIdentifiersEffectiveVersionSequenceId;
-			}
-			set
-			{
-				this._ActIdentifiersEffectiveVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActIdentifier1", Storage="_ActIdentifiersObsoleteVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="ObsoleteVersionSequenceId")]
-		public EntitySet<ActIdentifier> ActIdentifiersObsoleteVersionSequenceId
-		{
-			get
-			{
-				return this._ActIdentifiersObsoleteVersionSequenceId;
-			}
-			set
-			{
-				this._ActIdentifiersObsoleteVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActNote", Storage="_ActNotesEffectiveVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="EffectiveVersionSequenceId")]
-		public EntitySet<ActNote> ActNotesEffectiveVersionSequenceId
-		{
-			get
-			{
-				return this._ActNotesEffectiveVersionSequenceId;
-			}
-			set
-			{
-				this._ActNotesEffectiveVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActNote1", Storage="_ActNotesObsoleteVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="ObsoleteVersionSequenceId")]
-		public EntitySet<ActNote> ActNotesObsoleteVersionSequenceId
-		{
-			get
-			{
-				return this._ActNotesObsoleteVersionSequenceId;
-			}
-			set
-			{
-				this._ActNotesObsoleteVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActPolicy", Storage="_ActPoliciesEffectiveVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="EffectiveVersionSequenceId")]
-		public EntitySet<ActPolicy> ActPoliciesEffectiveVersionSequenceId
-		{
-			get
-			{
-				return this._ActPoliciesEffectiveVersionSequenceId;
-			}
-			set
-			{
-				this._ActPoliciesEffectiveVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActPolicy1", Storage="_ActPoliciesObsoleteVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="ObsoleteVersionSequenceId")]
-		public EntitySet<ActPolicy> ActPoliciesObsoleteVersionSequenceId
-		{
-			get
-			{
-				return this._ActPoliciesObsoleteVersionSequenceId;
-			}
-			set
-			{
-				this._ActPoliciesObsoleteVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActRelationship", Storage="_ActRelationshipsEffectiveVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="EffectiveVersionSequenceId")]
-		public EntitySet<ActRelationship> ActRelationshipsEffectiveVersionSequenceId
-		{
-			get
-			{
-				return this._ActRelationshipsEffectiveVersionSequenceId;
-			}
-			set
-			{
-				this._ActRelationshipsEffectiveVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActRelationship1", Storage="_ActRelationshipsObsoleteVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="ObsoleteVersionSequenceId")]
-		public EntitySet<ActRelationship> ActRelationshipsObsoleteVersionSequenceId
-		{
-			get
-			{
-				return this._ActRelationshipsObsoleteVersionSequenceId;
-			}
-			set
-			{
-				this._ActRelationshipsObsoleteVersionSequenceId.Assign(value);
 			}
 		}
 		
@@ -4967,126 +4397,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
-		}
-		
-		private void attach_ActExtensionsEffectiveVersionSequenceId(ActExtension entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = this;
-		}
-		
-		private void detach_ActExtensionsEffectiveVersionSequenceId(ActExtension entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = null;
-		}
-		
-		private void attach_ActExtensionsObsoleteVersionSequenceId(ActExtension entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = this;
-		}
-		
-		private void detach_ActExtensionsObsoleteVersionSequenceId(ActExtension entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = null;
-		}
-		
-		private void attach_ActIdentifiersEffectiveVersionSequenceId(ActIdentifier entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = this;
-		}
-		
-		private void detach_ActIdentifiersEffectiveVersionSequenceId(ActIdentifier entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = null;
-		}
-		
-		private void attach_ActIdentifiersObsoleteVersionSequenceId(ActIdentifier entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = this;
-		}
-		
-		private void detach_ActIdentifiersObsoleteVersionSequenceId(ActIdentifier entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = null;
-		}
-		
-		private void attach_ActNotesEffectiveVersionSequenceId(ActNote entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = this;
-		}
-		
-		private void detach_ActNotesEffectiveVersionSequenceId(ActNote entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = null;
-		}
-		
-		private void attach_ActNotesObsoleteVersionSequenceId(ActNote entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = this;
-		}
-		
-		private void detach_ActNotesObsoleteVersionSequenceId(ActNote entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = null;
-		}
-		
-		private void attach_ActPoliciesEffectiveVersionSequenceId(ActPolicy entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = this;
-		}
-		
-		private void detach_ActPoliciesEffectiveVersionSequenceId(ActPolicy entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = null;
-		}
-		
-		private void attach_ActPoliciesObsoleteVersionSequenceId(ActPolicy entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = this;
-		}
-		
-		private void detach_ActPoliciesObsoleteVersionSequenceId(ActPolicy entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = null;
-		}
-		
-		private void attach_ActRelationshipsEffectiveVersionSequenceId(ActRelationship entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = this;
-		}
-		
-		private void detach_ActRelationshipsEffectiveVersionSequenceId(ActRelationship entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = null;
-		}
-		
-		private void attach_ActRelationshipsObsoleteVersionSequenceId(ActRelationship entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = this;
-		}
-		
-		private void detach_ActRelationshipsObsoleteVersionSequenceId(ActRelationship entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = null;
 		}
 		
 		private void attach_ActVersionsReplacesVersionId(ActVersion entity)
@@ -7702,10 +7012,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<Concept> _Concept;
 		
-		private EntityRef<ConceptVersion> _EffectiveVersionSequence;
-		
-		private EntityRef<ConceptVersion> _ObsoleteVersionSequence;
-		
 		private EntityRef<PhoneticAlgorithm> _PhoneticAlgorithm;
 		
     #region Extensibility Method Definitions
@@ -7733,8 +7039,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		public ConceptName()
 		{
 			this._Concept = default(EntityRef<Concept>);
-			this._EffectiveVersionSequence = default(EntityRef<ConceptVersion>);
-			this._ObsoleteVersionSequence = default(EntityRef<ConceptVersion>);
 			this._PhoneticAlgorithm = default(EntityRef<PhoneticAlgorithm>);
 			OnCreated();
 		}
@@ -7794,10 +7098,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._EffectiveVersionSequenceId != value))
 				{
-					if (this._EffectiveVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnEffectiveVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._EffectiveVersionSequenceId = value;
@@ -7818,10 +7118,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._ObsoleteVersionSequenceId != value))
 				{
-					if (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnObsoleteVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._ObsoleteVersionSequenceId = value;
@@ -7949,74 +7245,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptName", Storage="_EffectiveVersionSequence", ThisKey="EffectiveVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public ConceptVersion EffectiveVersionSequence
-		{
-			get
-			{
-				return this._EffectiveVersionSequence.Entity;
-			}
-			set
-			{
-				ConceptVersion previousValue = this._EffectiveVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._EffectiveVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._EffectiveVersionSequence.Entity = null;
-						previousValue.ConceptNamesEffectiveVersionSequenceId.Remove(this);
-					}
-					this._EffectiveVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.ConceptNamesEffectiveVersionSequenceId.Add(this);
-						this._EffectiveVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._EffectiveVersionSequenceId = default(decimal);
-					}
-					this.SendPropertyChanged("EffectiveVersionSequence");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptName1", Storage="_ObsoleteVersionSequence", ThisKey="ObsoleteVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public ConceptVersion ObsoleteVersionSequence
-		{
-			get
-			{
-				return this._ObsoleteVersionSequence.Entity;
-			}
-			set
-			{
-				ConceptVersion previousValue = this._ObsoleteVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoleteVersionSequence.Entity = null;
-						previousValue.ConceptNamesObsoleteVersionSequenceId.Remove(this);
-					}
-					this._ObsoleteVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.ConceptNamesObsoleteVersionSequenceId.Add(this);
-						this._ObsoleteVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._ObsoleteVersionSequenceId = default(Nullable<decimal>);
-					}
-					this.SendPropertyChanged("ObsoleteVersionSequence");
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="PhoneticAlgorithm_ConceptName", Storage="_PhoneticAlgorithm", ThisKey="PhoneticAlgorithmId", OtherKey="PhoneticAlgorithmId", IsForeignKey=true)]
 		public PhoneticAlgorithm PhoneticAlgorithm
 		{
@@ -8094,10 +7322,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<ConceptRelationshipType> _ConceptRelationshipType;
 		
-		private EntityRef<ConceptVersion> _EffectiveVersionSequence;
-		
-		private EntityRef<ConceptVersion> _ObsoleteVersionSequence;
-		
 		private EntityRef<ReferenceTerm> _ReferenceTerm;
 		
     #region Extensibility Method Definitions
@@ -8122,8 +7346,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this._Concept = default(EntityRef<Concept>);
 			this._ConceptRelationshipType = default(EntityRef<ConceptRelationshipType>);
-			this._EffectiveVersionSequence = default(EntityRef<ConceptVersion>);
-			this._ObsoleteVersionSequence = default(EntityRef<ConceptVersion>);
 			this._ReferenceTerm = default(EntityRef<ReferenceTerm>);
 			OnCreated();
 		}
@@ -8207,10 +7429,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._EffectiveVersionSequenceId != value))
 				{
-					if (this._EffectiveVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnEffectiveVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._EffectiveVersionSequenceId = value;
@@ -8231,10 +7449,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._ObsoleteVersionSequenceId != value))
 				{
-					if (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnObsoleteVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._ObsoleteVersionSequenceId = value;
@@ -8336,74 +7550,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptReferenceTerm", Storage="_EffectiveVersionSequence", ThisKey="EffectiveVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public ConceptVersion EffectiveVersionSequence
-		{
-			get
-			{
-				return this._EffectiveVersionSequence.Entity;
-			}
-			set
-			{
-				ConceptVersion previousValue = this._EffectiveVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._EffectiveVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._EffectiveVersionSequence.Entity = null;
-						previousValue.ConceptReferenceTermsEffectiveVersionSequenceId.Remove(this);
-					}
-					this._EffectiveVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.ConceptReferenceTermsEffectiveVersionSequenceId.Add(this);
-						this._EffectiveVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._EffectiveVersionSequenceId = default(decimal);
-					}
-					this.SendPropertyChanged("EffectiveVersionSequence");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptReferenceTerm1", Storage="_ObsoleteVersionSequence", ThisKey="ObsoleteVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public ConceptVersion ObsoleteVersionSequence
-		{
-			get
-			{
-				return this._ObsoleteVersionSequence.Entity;
-			}
-			set
-			{
-				ConceptVersion previousValue = this._ObsoleteVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoleteVersionSequence.Entity = null;
-						previousValue.ConceptReferenceTermsObsoleteVersionSequenceId.Remove(this);
-					}
-					this._ObsoleteVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.ConceptReferenceTermsObsoleteVersionSequenceId.Add(this);
-						this._ObsoleteVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._ObsoleteVersionSequenceId = default(Nullable<decimal>);
-					}
-					this.SendPropertyChanged("ObsoleteVersionSequence");
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ReferenceTerm_ConceptReferenceTerm", Storage="_ReferenceTerm", ThisKey="ReferenceTermId", OtherKey="ReferenceTermId", IsForeignKey=true)]
 		public ReferenceTerm ReferenceTerm
 		{
@@ -8483,10 +7629,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<ConceptRelationshipType> _ConceptRelationshipType;
 		
-		private EntityRef<ConceptVersion> _EffectiveVersionSequence;
-		
-		private EntityRef<ConceptVersion> _ObsoleteVersionSequence;
-		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -8510,8 +7652,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._SourceConcept = default(EntityRef<Concept>);
 			this._TargetConcept = default(EntityRef<Concept>);
 			this._ConceptRelationshipType = default(EntityRef<ConceptRelationshipType>);
-			this._EffectiveVersionSequence = default(EntityRef<ConceptVersion>);
-			this._ObsoleteVersionSequence = default(EntityRef<ConceptVersion>);
 			OnCreated();
 		}
 		
@@ -8618,10 +7758,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._EffectiveVersionSequenceId != value))
 				{
-					if (this._EffectiveVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnEffectiveVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._EffectiveVersionSequenceId = value;
@@ -8642,10 +7778,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._ObsoleteVersionSequenceId != value))
 				{
-					if (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnObsoleteVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._ObsoleteVersionSequenceId = value;
@@ -8753,74 +7885,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._ConceptRelationshipTypeId = default(System.Guid);
 					}
 					this.SendPropertyChanged("ConceptRelationshipType");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptRelationship", Storage="_EffectiveVersionSequence", ThisKey="EffectiveVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public ConceptVersion EffectiveVersionSequence
-		{
-			get
-			{
-				return this._EffectiveVersionSequence.Entity;
-			}
-			set
-			{
-				ConceptVersion previousValue = this._EffectiveVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._EffectiveVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._EffectiveVersionSequence.Entity = null;
-						previousValue.ConceptRelationshipsEffectiveVersionSequenceId.Remove(this);
-					}
-					this._EffectiveVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.ConceptRelationshipsEffectiveVersionSequenceId.Add(this);
-						this._EffectiveVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._EffectiveVersionSequenceId = default(decimal);
-					}
-					this.SendPropertyChanged("EffectiveVersionSequence");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptRelationship1", Storage="_ObsoleteVersionSequence", ThisKey="ObsoleteVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public ConceptVersion ObsoleteVersionSequence
-		{
-			get
-			{
-				return this._ObsoleteVersionSequence.Entity;
-			}
-			set
-			{
-				ConceptVersion previousValue = this._ObsoleteVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoleteVersionSequence.Entity = null;
-						previousValue.ConceptRelationshipsObsoleteVersionSequenceId.Remove(this);
-					}
-					this._ObsoleteVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.ConceptRelationshipsObsoleteVersionSequenceId.Add(this);
-						this._ObsoleteVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._ObsoleteVersionSequenceId = default(Nullable<decimal>);
-					}
-					this.SendPropertyChanged("ObsoleteVersionSequence");
 				}
 			}
 		}
@@ -9596,18 +8660,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private string _Mnemonic;
 		
-		private EntitySet<ConceptName> _ConceptNamesEffectiveVersionSequenceId;
-		
-		private EntitySet<ConceptName> _ConceptNamesObsoleteVersionSequenceId;
-		
-		private EntitySet<ConceptReferenceTerm> _ConceptReferenceTermsEffectiveVersionSequenceId;
-		
-		private EntitySet<ConceptReferenceTerm> _ConceptReferenceTermsObsoleteVersionSequenceId;
-		
-		private EntitySet<ConceptRelationship> _ConceptRelationshipsEffectiveVersionSequenceId;
-		
-		private EntitySet<ConceptRelationship> _ConceptRelationshipsObsoleteVersionSequenceId;
-		
 		private EntityRef<Concept> _Concept;
 		
 		private EntityRef<ConceptClass> _ConceptClass;
@@ -9648,12 +8700,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public ConceptVersion()
 		{
-			this._ConceptNamesEffectiveVersionSequenceId = new EntitySet<ConceptName>(new Action<ConceptName>(this.attach_ConceptNamesEffectiveVersionSequenceId), new Action<ConceptName>(this.detach_ConceptNamesEffectiveVersionSequenceId));
-			this._ConceptNamesObsoleteVersionSequenceId = new EntitySet<ConceptName>(new Action<ConceptName>(this.attach_ConceptNamesObsoleteVersionSequenceId), new Action<ConceptName>(this.detach_ConceptNamesObsoleteVersionSequenceId));
-			this._ConceptReferenceTermsEffectiveVersionSequenceId = new EntitySet<ConceptReferenceTerm>(new Action<ConceptReferenceTerm>(this.attach_ConceptReferenceTermsEffectiveVersionSequenceId), new Action<ConceptReferenceTerm>(this.detach_ConceptReferenceTermsEffectiveVersionSequenceId));
-			this._ConceptReferenceTermsObsoleteVersionSequenceId = new EntitySet<ConceptReferenceTerm>(new Action<ConceptReferenceTerm>(this.attach_ConceptReferenceTermsObsoleteVersionSequenceId), new Action<ConceptReferenceTerm>(this.detach_ConceptReferenceTermsObsoleteVersionSequenceId));
-			this._ConceptRelationshipsEffectiveVersionSequenceId = new EntitySet<ConceptRelationship>(new Action<ConceptRelationship>(this.attach_ConceptRelationshipsEffectiveVersionSequenceId), new Action<ConceptRelationship>(this.detach_ConceptRelationshipsEffectiveVersionSequenceId));
-			this._ConceptRelationshipsObsoleteVersionSequenceId = new EntitySet<ConceptRelationship>(new Action<ConceptRelationship>(this.attach_ConceptRelationshipsObsoleteVersionSequenceId), new Action<ConceptRelationship>(this.detach_ConceptRelationshipsObsoleteVersionSequenceId));
 			this._Concept = default(EntityRef<Concept>);
 			this._ConceptClass = default(EntityRef<ConceptClass>);
 			this._StatusConcept = default(EntityRef<Concept>);
@@ -9902,84 +8948,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptName", Storage="_ConceptNamesEffectiveVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="EffectiveVersionSequenceId")]
-		public EntitySet<ConceptName> ConceptNamesEffectiveVersionSequenceId
-		{
-			get
-			{
-				return this._ConceptNamesEffectiveVersionSequenceId;
-			}
-			set
-			{
-				this._ConceptNamesEffectiveVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptName1", Storage="_ConceptNamesObsoleteVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="ObsoleteVersionSequenceId")]
-		public EntitySet<ConceptName> ConceptNamesObsoleteVersionSequenceId
-		{
-			get
-			{
-				return this._ConceptNamesObsoleteVersionSequenceId;
-			}
-			set
-			{
-				this._ConceptNamesObsoleteVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptReferenceTerm", Storage="_ConceptReferenceTermsEffectiveVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="EffectiveVersionSequenceId")]
-		public EntitySet<ConceptReferenceTerm> ConceptReferenceTermsEffectiveVersionSequenceId
-		{
-			get
-			{
-				return this._ConceptReferenceTermsEffectiveVersionSequenceId;
-			}
-			set
-			{
-				this._ConceptReferenceTermsEffectiveVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptReferenceTerm1", Storage="_ConceptReferenceTermsObsoleteVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="ObsoleteVersionSequenceId")]
-		public EntitySet<ConceptReferenceTerm> ConceptReferenceTermsObsoleteVersionSequenceId
-		{
-			get
-			{
-				return this._ConceptReferenceTermsObsoleteVersionSequenceId;
-			}
-			set
-			{
-				this._ConceptReferenceTermsObsoleteVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptRelationship", Storage="_ConceptRelationshipsEffectiveVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="EffectiveVersionSequenceId")]
-		public EntitySet<ConceptRelationship> ConceptRelationshipsEffectiveVersionSequenceId
-		{
-			get
-			{
-				return this._ConceptRelationshipsEffectiveVersionSequenceId;
-			}
-			set
-			{
-				this._ConceptRelationshipsEffectiveVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptRelationship1", Storage="_ConceptRelationshipsObsoleteVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="ObsoleteVersionSequenceId")]
-		public EntitySet<ConceptRelationship> ConceptRelationshipsObsoleteVersionSequenceId
-		{
-			get
-			{
-				return this._ConceptRelationshipsObsoleteVersionSequenceId;
-			}
-			set
-			{
-				this._ConceptRelationshipsObsoleteVersionSequenceId.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ConceptVersion", Storage="_Concept", ThisKey="ConceptId", OtherKey="ConceptId", IsForeignKey=true)]
 		public Concept Concept
 		{
@@ -10168,78 +9136,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
-		}
-		
-		private void attach_ConceptNamesEffectiveVersionSequenceId(ConceptName entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = this;
-		}
-		
-		private void detach_ConceptNamesEffectiveVersionSequenceId(ConceptName entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = null;
-		}
-		
-		private void attach_ConceptNamesObsoleteVersionSequenceId(ConceptName entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = this;
-		}
-		
-		private void detach_ConceptNamesObsoleteVersionSequenceId(ConceptName entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = null;
-		}
-		
-		private void attach_ConceptReferenceTermsEffectiveVersionSequenceId(ConceptReferenceTerm entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = this;
-		}
-		
-		private void detach_ConceptReferenceTermsEffectiveVersionSequenceId(ConceptReferenceTerm entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = null;
-		}
-		
-		private void attach_ConceptReferenceTermsObsoleteVersionSequenceId(ConceptReferenceTerm entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = this;
-		}
-		
-		private void detach_ConceptReferenceTermsObsoleteVersionSequenceId(ConceptReferenceTerm entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = null;
-		}
-		
-		private void attach_ConceptRelationshipsEffectiveVersionSequenceId(ConceptRelationship entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = this;
-		}
-		
-		private void detach_ConceptRelationshipsEffectiveVersionSequenceId(ConceptRelationship entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = null;
-		}
-		
-		private void attach_ConceptRelationshipsObsoleteVersionSequenceId(ConceptRelationship entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = this;
-		}
-		
-		private void detach_ConceptRelationshipsObsoleteVersionSequenceId(ConceptRelationship entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = null;
 		}
 	}
 	
@@ -11093,10 +9989,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<Entity> _Entity;
 		
-		private EntityRef<EntityVersion> _EffectiveVersionSequence;
-		
-		private EntityRef<EntityVersion> _ObsoleteVersionSequence;
-		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -11118,8 +10010,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._EntityAddressComponents = new EntitySet<EntityAddressComponent>(new Action<EntityAddressComponent>(this.attach_EntityAddressComponents), new Action<EntityAddressComponent>(this.detach_EntityAddressComponents));
 			this._AddressUseConcept = default(EntityRef<Concept>);
 			this._Entity = default(EntityRef<Entity>);
-			this._EffectiveVersionSequence = default(EntityRef<EntityVersion>);
-			this._ObsoleteVersionSequence = default(EntityRef<EntityVersion>);
 			OnCreated();
 		}
 		
@@ -11178,10 +10068,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._EffectiveVersionSequenceId != value))
 				{
-					if (this._EffectiveVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnEffectiveVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._EffectiveVersionSequenceId = value;
@@ -11202,10 +10088,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._ObsoleteVersionSequenceId != value))
 				{
-					if (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnObsoleteVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._ObsoleteVersionSequenceId = value;
@@ -11316,74 +10198,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._EntityId = default(System.Guid);
 					}
 					this.SendPropertyChanged("Entity");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityAddress", Storage="_EffectiveVersionSequence", ThisKey="EffectiveVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public EntityVersion EffectiveVersionSequence
-		{
-			get
-			{
-				return this._EffectiveVersionSequence.Entity;
-			}
-			set
-			{
-				EntityVersion previousValue = this._EffectiveVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._EffectiveVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._EffectiveVersionSequence.Entity = null;
-						previousValue.EntityAddressesEffectiveVersionSequenceId.Remove(this);
-					}
-					this._EffectiveVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.EntityAddressesEffectiveVersionSequenceId.Add(this);
-						this._EffectiveVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._EffectiveVersionSequenceId = default(decimal);
-					}
-					this.SendPropertyChanged("EffectiveVersionSequence");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityAddress1", Storage="_ObsoleteVersionSequence", ThisKey="ObsoleteVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public EntityVersion ObsoleteVersionSequence
-		{
-			get
-			{
-				return this._ObsoleteVersionSequence.Entity;
-			}
-			set
-			{
-				EntityVersion previousValue = this._ObsoleteVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoleteVersionSequence.Entity = null;
-						previousValue.EntityAddressesObsoleteVersionSequenceId.Remove(this);
-					}
-					this._ObsoleteVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.EntityAddressesObsoleteVersionSequenceId.Add(this);
-						this._ObsoleteVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._ObsoleteVersionSequenceId = default(Nullable<decimal>);
-					}
-					this.SendPropertyChanged("ObsoleteVersionSequence");
 				}
 			}
 		}
@@ -11818,10 +10632,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<Entity> _TargetEntity;
 		
-		private EntityRef<EntityVersion> _EffectiveVersionSequence;
-		
-		private EntityRef<EntityVersion> _ObsoleteVersionSequence;
-		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -11846,8 +10656,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._AssociationTypeConcept = default(EntityRef<Concept>);
 			this._SourceEntity = default(EntityRef<Entity>);
 			this._TargetEntity = default(EntityRef<Entity>);
-			this._EffectiveVersionSequence = default(EntityRef<EntityVersion>);
-			this._ObsoleteVersionSequence = default(EntityRef<EntityVersion>);
 			OnCreated();
 		}
 		
@@ -11930,10 +10738,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._EffectiveVersionSequenceId != value))
 				{
-					if (this._EffectiveVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnEffectiveVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._EffectiveVersionSequenceId = value;
@@ -11954,10 +10758,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._ObsoleteVersionSequenceId != value))
 				{
-					if (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnObsoleteVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._ObsoleteVersionSequenceId = value;
@@ -12122,74 +10922,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityAssociation", Storage="_EffectiveVersionSequence", ThisKey="EffectiveVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public EntityVersion EffectiveVersionSequence
-		{
-			get
-			{
-				return this._EffectiveVersionSequence.Entity;
-			}
-			set
-			{
-				EntityVersion previousValue = this._EffectiveVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._EffectiveVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._EffectiveVersionSequence.Entity = null;
-						previousValue.EntityAssociationsEffectiveVersionSequenceId.Remove(this);
-					}
-					this._EffectiveVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.EntityAssociationsEffectiveVersionSequenceId.Add(this);
-						this._EffectiveVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._EffectiveVersionSequenceId = default(decimal);
-					}
-					this.SendPropertyChanged("EffectiveVersionSequence");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityAssociation1", Storage="_ObsoleteVersionSequence", ThisKey="ObsoleteVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public EntityVersion ObsoleteVersionSequence
-		{
-			get
-			{
-				return this._ObsoleteVersionSequence.Entity;
-			}
-			set
-			{
-				EntityVersion previousValue = this._ObsoleteVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoleteVersionSequence.Entity = null;
-						previousValue.EntityAssociationsObsoleteVersionSequenceId.Remove(this);
-					}
-					this._ObsoleteVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.EntityAssociationsObsoleteVersionSequenceId.Add(this);
-						this._ObsoleteVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._ObsoleteVersionSequenceId = default(Nullable<decimal>);
-					}
-					this.SendPropertyChanged("ObsoleteVersionSequence");
-				}
-			}
-		}
-		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -12233,10 +10965,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<Entity> _Entity;
 		
-		private EntityRef<EntityVersion> _EffectiveVersionSequence;
-		
-		private EntityRef<EntityVersion> _ObsoleteVersionSequence;
-		
 		private EntityRef<ExtensionType> _ExtensionType;
 		
     #region Extensibility Method Definitions
@@ -12262,8 +10990,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		public EntityExtension()
 		{
 			this._Entity = default(EntityRef<Entity>);
-			this._EffectiveVersionSequence = default(EntityRef<EntityVersion>);
-			this._ObsoleteVersionSequence = default(EntityRef<EntityVersion>);
 			this._ExtensionType = default(EntityRef<ExtensionType>);
 			OnCreated();
 		}
@@ -12387,10 +11113,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._EffectiveVersionSequenceId != value))
 				{
-					if (this._EffectiveVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnEffectiveVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._EffectiveVersionSequenceId = value;
@@ -12411,10 +11133,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._ObsoleteVersionSequenceId != value))
 				{
-					if (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnObsoleteVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._ObsoleteVersionSequenceId = value;
@@ -12454,74 +11172,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._EntityId = default(System.Guid);
 					}
 					this.SendPropertyChanged("Entity");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityExtension", Storage="_EffectiveVersionSequence", ThisKey="EffectiveVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public EntityVersion EffectiveVersionSequence
-		{
-			get
-			{
-				return this._EffectiveVersionSequence.Entity;
-			}
-			set
-			{
-				EntityVersion previousValue = this._EffectiveVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._EffectiveVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._EffectiveVersionSequence.Entity = null;
-						previousValue.EntityExtensionsEffectiveVersionSequenceId.Remove(this);
-					}
-					this._EffectiveVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.EntityExtensionsEffectiveVersionSequenceId.Add(this);
-						this._EffectiveVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._EffectiveVersionSequenceId = default(decimal);
-					}
-					this.SendPropertyChanged("EffectiveVersionSequence");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityExtension1", Storage="_ObsoleteVersionSequence", ThisKey="ObsoleteVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public EntityVersion ObsoleteVersionSequence
-		{
-			get
-			{
-				return this._ObsoleteVersionSequence.Entity;
-			}
-			set
-			{
-				EntityVersion previousValue = this._ObsoleteVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoleteVersionSequence.Entity = null;
-						previousValue.EntityExtensionsObsoleteVersionSequenceId.Remove(this);
-					}
-					this._ObsoleteVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.EntityExtensionsObsoleteVersionSequenceId.Add(this);
-						this._ObsoleteVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._ObsoleteVersionSequenceId = default(Nullable<decimal>);
-					}
-					this.SendPropertyChanged("ObsoleteVersionSequence");
 				}
 			}
 		}
@@ -12605,10 +11255,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<Entity> _Entity;
 		
-		private EntityRef<EntityVersion> _EffectiveVersionSequence;
-		
-		private EntityRef<EntityVersion> _ObsoleteVersionSequence;
-		
 		private EntityRef<IdentifierType> _IdentifierType;
 		
     #region Extensibility Method Definitions
@@ -12635,8 +11281,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this._AssigningAuthority = default(EntityRef<AssigningAuthority>);
 			this._Entity = default(EntityRef<Entity>);
-			this._EffectiveVersionSequence = default(EntityRef<EntityVersion>);
-			this._ObsoleteVersionSequence = default(EntityRef<EntityVersion>);
 			this._IdentifierType = default(EntityRef<IdentifierType>);
 			OnCreated();
 		}
@@ -12720,10 +11364,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._EffectiveVersionSequenceId != value))
 				{
-					if (this._EffectiveVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnEffectiveVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._EffectiveVersionSequenceId = value;
@@ -12744,10 +11384,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._ObsoleteVersionSequenceId != value))
 				{
-					if (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnObsoleteVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._ObsoleteVersionSequenceId = value;
@@ -12869,74 +11505,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityIdentifier", Storage="_EffectiveVersionSequence", ThisKey="EffectiveVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public EntityVersion EffectiveVersionSequence
-		{
-			get
-			{
-				return this._EffectiveVersionSequence.Entity;
-			}
-			set
-			{
-				EntityVersion previousValue = this._EffectiveVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._EffectiveVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._EffectiveVersionSequence.Entity = null;
-						previousValue.EntityIdentifiersEffectiveVersionSequenceId.Remove(this);
-					}
-					this._EffectiveVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.EntityIdentifiersEffectiveVersionSequenceId.Add(this);
-						this._EffectiveVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._EffectiveVersionSequenceId = default(decimal);
-					}
-					this.SendPropertyChanged("EffectiveVersionSequence");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityIdentifier1", Storage="_ObsoleteVersionSequence", ThisKey="ObsoleteVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public EntityVersion ObsoleteVersionSequence
-		{
-			get
-			{
-				return this._ObsoleteVersionSequence.Entity;
-			}
-			set
-			{
-				EntityVersion previousValue = this._ObsoleteVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoleteVersionSequence.Entity = null;
-						previousValue.EntityIdentifiersObsoleteVersionSequenceId.Remove(this);
-					}
-					this._ObsoleteVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.EntityIdentifiersObsoleteVersionSequenceId.Add(this);
-						this._ObsoleteVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._ObsoleteVersionSequenceId = default(Nullable<decimal>);
-					}
-					this.SendPropertyChanged("ObsoleteVersionSequence");
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="IdentifierType_EntityIdentifier", Storage="_IdentifierType", ThisKey="IdentifierTypeId", OtherKey="IdentifierTypeId", IsForeignKey=true)]
 		public IdentifierType IdentifierType
 		{
@@ -13014,10 +11582,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<Entity> _Entity;
 		
-		private EntityRef<EntityVersion> _EffectiveVersionSequence;
-		
-		private EntityRef<EntityVersion> _ObsoleteVersionSequence;
-		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -13039,8 +11603,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._EntityNameComponents = new EntitySet<EntityNameComponent>(new Action<EntityNameComponent>(this.attach_EntityNameComponents), new Action<EntityNameComponent>(this.detach_EntityNameComponents));
 			this._NameUseConcept = default(EntityRef<Concept>);
 			this._Entity = default(EntityRef<Entity>);
-			this._EffectiveVersionSequence = default(EntityRef<EntityVersion>);
-			this._ObsoleteVersionSequence = default(EntityRef<EntityVersion>);
 			OnCreated();
 		}
 		
@@ -13099,10 +11661,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._EffectiveVersionSequenceId != value))
 				{
-					if (this._EffectiveVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnEffectiveVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._EffectiveVersionSequenceId = value;
@@ -13123,10 +11681,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._ObsoleteVersionSequenceId != value))
 				{
-					if (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnObsoleteVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._ObsoleteVersionSequenceId = value;
@@ -13237,74 +11791,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._EntityId = default(System.Guid);
 					}
 					this.SendPropertyChanged("Entity");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityName", Storage="_EffectiveVersionSequence", ThisKey="EffectiveVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public EntityVersion EffectiveVersionSequence
-		{
-			get
-			{
-				return this._EffectiveVersionSequence.Entity;
-			}
-			set
-			{
-				EntityVersion previousValue = this._EffectiveVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._EffectiveVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._EffectiveVersionSequence.Entity = null;
-						previousValue.EntityNamesEffectiveVersionSequenceId.Remove(this);
-					}
-					this._EffectiveVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.EntityNamesEffectiveVersionSequenceId.Add(this);
-						this._EffectiveVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._EffectiveVersionSequenceId = default(decimal);
-					}
-					this.SendPropertyChanged("EffectiveVersionSequence");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityName1", Storage="_ObsoleteVersionSequence", ThisKey="ObsoleteVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public EntityVersion ObsoleteVersionSequence
-		{
-			get
-			{
-				return this._ObsoleteVersionSequence.Entity;
-			}
-			set
-			{
-				EntityVersion previousValue = this._ObsoleteVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoleteVersionSequence.Entity = null;
-						previousValue.EntityNamesObsoleteVersionSequenceId.Remove(this);
-					}
-					this._ObsoleteVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.EntityNamesObsoleteVersionSequenceId.Add(this);
-						this._ObsoleteVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._ObsoleteVersionSequenceId = default(Nullable<decimal>);
-					}
-					this.SendPropertyChanged("ObsoleteVersionSequence");
 				}
 			}
 		}
@@ -13813,10 +12299,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<Entity> _Entity;
 		
-		private EntityRef<EntityVersion> _EffectiveVersionSequence;
-		
-		private EntityRef<EntityVersion> _ObsoleteVersionSequence;
-		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -13839,8 +12321,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this._AuthorEntity = default(EntityRef<Entity>);
 			this._Entity = default(EntityRef<Entity>);
-			this._EffectiveVersionSequence = default(EntityRef<EntityVersion>);
-			this._ObsoleteVersionSequence = default(EntityRef<EntityVersion>);
 			OnCreated();
 		}
 		
@@ -13899,10 +12379,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._EffectiveVersionSequenceId != value))
 				{
-					if (this._EffectiveVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnEffectiveVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._EffectiveVersionSequenceId = value;
@@ -13923,10 +12399,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._ObsoleteVersionSequenceId != value))
 				{
-					if (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnObsoleteVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._ObsoleteVersionSequenceId = value;
@@ -14044,74 +12516,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._EntityId = default(System.Guid);
 					}
 					this.SendPropertyChanged("Entity");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityNote", Storage="_EffectiveVersionSequence", ThisKey="EffectiveVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public EntityVersion EffectiveVersionSequence
-		{
-			get
-			{
-				return this._EffectiveVersionSequence.Entity;
-			}
-			set
-			{
-				EntityVersion previousValue = this._EffectiveVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._EffectiveVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._EffectiveVersionSequence.Entity = null;
-						previousValue.EntityNotesEffectiveVersionSequenceId.Remove(this);
-					}
-					this._EffectiveVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.EntityNotesEffectiveVersionSequenceId.Add(this);
-						this._EffectiveVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._EffectiveVersionSequenceId = default(decimal);
-					}
-					this.SendPropertyChanged("EffectiveVersionSequence");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityNote1", Storage="_ObsoleteVersionSequence", ThisKey="ObsoleteVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public EntityVersion ObsoleteVersionSequence
-		{
-			get
-			{
-				return this._ObsoleteVersionSequence.Entity;
-			}
-			set
-			{
-				EntityVersion previousValue = this._ObsoleteVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoleteVersionSequence.Entity = null;
-						previousValue.EntityNotesObsoleteVersionSequenceId.Remove(this);
-					}
-					this._ObsoleteVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.EntityNotesObsoleteVersionSequenceId.Add(this);
-						this._ObsoleteVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._ObsoleteVersionSequenceId = default(Nullable<decimal>);
-					}
-					this.SendPropertyChanged("ObsoleteVersionSequence");
 				}
 			}
 		}
@@ -14516,10 +12920,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<Concept> _TelecomUseConcept;
 		
-		private EntityRef<EntityVersion> _EffectiveVersionSequence;
-		
-		private EntityRef<EntityVersion> _ObsoleteVersionSequence;
-		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -14545,8 +12945,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._Entity = default(EntityRef<Entity>);
 			this._TelecomAddressTypeConcept = default(EntityRef<Concept>);
 			this._TelecomUseConcept = default(EntityRef<Concept>);
-			this._EffectiveVersionSequence = default(EntityRef<EntityVersion>);
-			this._ObsoleteVersionSequence = default(EntityRef<EntityVersion>);
 			OnCreated();
 		}
 		
@@ -14673,10 +13071,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._EffectiveVersionSequenceId != value))
 				{
-					if (this._EffectiveVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnEffectiveVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._EffectiveVersionSequenceId = value;
@@ -14697,10 +13091,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._ObsoleteVersionSequenceId != value))
 				{
-					if (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnObsoleteVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._ObsoleteVersionSequenceId = value;
@@ -14812,74 +13202,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityTelecomAddress", Storage="_EffectiveVersionSequence", ThisKey="EffectiveVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public EntityVersion EffectiveVersionSequence
-		{
-			get
-			{
-				return this._EffectiveVersionSequence.Entity;
-			}
-			set
-			{
-				EntityVersion previousValue = this._EffectiveVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._EffectiveVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._EffectiveVersionSequence.Entity = null;
-						previousValue.EntityTelecomAddressesEffectiveVersionSequenceId.Remove(this);
-					}
-					this._EffectiveVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.EntityTelecomAddressesEffectiveVersionSequenceId.Add(this);
-						this._EffectiveVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._EffectiveVersionSequenceId = default(decimal);
-					}
-					this.SendPropertyChanged("EffectiveVersionSequence");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityTelecomAddress1", Storage="_ObsoleteVersionSequence", ThisKey="ObsoleteVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public EntityVersion ObsoleteVersionSequence
-		{
-			get
-			{
-				return this._ObsoleteVersionSequence.Entity;
-			}
-			set
-			{
-				EntityVersion previousValue = this._ObsoleteVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoleteVersionSequence.Entity = null;
-						previousValue.EntityTelecomAddressesObsoleteVersionSequenceId.Remove(this);
-					}
-					this._ObsoleteVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.EntityTelecomAddressesObsoleteVersionSequenceId.Add(this);
-						this._ObsoleteVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._ObsoleteVersionSequenceId = default(Nullable<decimal>);
-					}
-					this.SendPropertyChanged("ObsoleteVersionSequence");
-				}
-			}
-		}
-		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -14931,34 +13253,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<DeviceEntity> _DeviceEntity;
 		
-		private EntitySet<EntityAddress> _EntityAddressesEffectiveVersionSequenceId;
-		
-		private EntitySet<EntityAddress> _EntityAddressesObsoleteVersionSequenceId;
-		
-		private EntitySet<EntityAssociation> _EntityAssociationsEffectiveVersionSequenceId;
-		
-		private EntitySet<EntityAssociation> _EntityAssociationsObsoleteVersionSequenceId;
-		
-		private EntitySet<EntityExtension> _EntityExtensionsEffectiveVersionSequenceId;
-		
-		private EntitySet<EntityExtension> _EntityExtensionsObsoleteVersionSequenceId;
-		
-		private EntitySet<EntityIdentifier> _EntityIdentifiersEffectiveVersionSequenceId;
-		
-		private EntitySet<EntityIdentifier> _EntityIdentifiersObsoleteVersionSequenceId;
-		
-		private EntitySet<EntityName> _EntityNamesEffectiveVersionSequenceId;
-		
-		private EntitySet<EntityName> _EntityNamesObsoleteVersionSequenceId;
-		
-		private EntitySet<EntityNote> _EntityNotesEffectiveVersionSequenceId;
-		
-		private EntitySet<EntityNote> _EntityNotesObsoleteVersionSequenceId;
-		
-		private EntitySet<EntityTelecomAddress> _EntityTelecomAddressesEffectiveVersionSequenceId;
-		
-		private EntitySet<EntityTelecomAddress> _EntityTelecomAddressesObsoleteVersionSequenceId;
-		
 		private EntitySet<EntityVersion> _EntityVersionsReplacesVersionId;
 		
 		private EntityRef<Material> _Material;
@@ -14967,15 +13261,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<Person> _Person;
 		
-		private EntitySet<PersonLanguageCommunication> _PersonLanguageCommunicationsObsoleteVersionSequenceId;
-		
-		private EntitySet<PersonLanguageCommunication> _PersonLanguageCommunicationsEffectiveVersionSequenceId;
-		
 		private EntityRef<Place> _Place;
-		
-		private EntitySet<PlaceService> _PlaceServicesEffectiveVersionSequenceId;
-		
-		private EntitySet<PlaceService> _PlaceServicesObsoleteVersionSequenceId;
 		
 		private EntityRef<Entity> _Entity;
 		
@@ -15019,29 +13305,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this._ApplicationEntity = default(EntityRef<ApplicationEntity>);
 			this._DeviceEntity = default(EntityRef<DeviceEntity>);
-			this._EntityAddressesEffectiveVersionSequenceId = new EntitySet<EntityAddress>(new Action<EntityAddress>(this.attach_EntityAddressesEffectiveVersionSequenceId), new Action<EntityAddress>(this.detach_EntityAddressesEffectiveVersionSequenceId));
-			this._EntityAddressesObsoleteVersionSequenceId = new EntitySet<EntityAddress>(new Action<EntityAddress>(this.attach_EntityAddressesObsoleteVersionSequenceId), new Action<EntityAddress>(this.detach_EntityAddressesObsoleteVersionSequenceId));
-			this._EntityAssociationsEffectiveVersionSequenceId = new EntitySet<EntityAssociation>(new Action<EntityAssociation>(this.attach_EntityAssociationsEffectiveVersionSequenceId), new Action<EntityAssociation>(this.detach_EntityAssociationsEffectiveVersionSequenceId));
-			this._EntityAssociationsObsoleteVersionSequenceId = new EntitySet<EntityAssociation>(new Action<EntityAssociation>(this.attach_EntityAssociationsObsoleteVersionSequenceId), new Action<EntityAssociation>(this.detach_EntityAssociationsObsoleteVersionSequenceId));
-			this._EntityExtensionsEffectiveVersionSequenceId = new EntitySet<EntityExtension>(new Action<EntityExtension>(this.attach_EntityExtensionsEffectiveVersionSequenceId), new Action<EntityExtension>(this.detach_EntityExtensionsEffectiveVersionSequenceId));
-			this._EntityExtensionsObsoleteVersionSequenceId = new EntitySet<EntityExtension>(new Action<EntityExtension>(this.attach_EntityExtensionsObsoleteVersionSequenceId), new Action<EntityExtension>(this.detach_EntityExtensionsObsoleteVersionSequenceId));
-			this._EntityIdentifiersEffectiveVersionSequenceId = new EntitySet<EntityIdentifier>(new Action<EntityIdentifier>(this.attach_EntityIdentifiersEffectiveVersionSequenceId), new Action<EntityIdentifier>(this.detach_EntityIdentifiersEffectiveVersionSequenceId));
-			this._EntityIdentifiersObsoleteVersionSequenceId = new EntitySet<EntityIdentifier>(new Action<EntityIdentifier>(this.attach_EntityIdentifiersObsoleteVersionSequenceId), new Action<EntityIdentifier>(this.detach_EntityIdentifiersObsoleteVersionSequenceId));
-			this._EntityNamesEffectiveVersionSequenceId = new EntitySet<EntityName>(new Action<EntityName>(this.attach_EntityNamesEffectiveVersionSequenceId), new Action<EntityName>(this.detach_EntityNamesEffectiveVersionSequenceId));
-			this._EntityNamesObsoleteVersionSequenceId = new EntitySet<EntityName>(new Action<EntityName>(this.attach_EntityNamesObsoleteVersionSequenceId), new Action<EntityName>(this.detach_EntityNamesObsoleteVersionSequenceId));
-			this._EntityNotesEffectiveVersionSequenceId = new EntitySet<EntityNote>(new Action<EntityNote>(this.attach_EntityNotesEffectiveVersionSequenceId), new Action<EntityNote>(this.detach_EntityNotesEffectiveVersionSequenceId));
-			this._EntityNotesObsoleteVersionSequenceId = new EntitySet<EntityNote>(new Action<EntityNote>(this.attach_EntityNotesObsoleteVersionSequenceId), new Action<EntityNote>(this.detach_EntityNotesObsoleteVersionSequenceId));
-			this._EntityTelecomAddressesEffectiveVersionSequenceId = new EntitySet<EntityTelecomAddress>(new Action<EntityTelecomAddress>(this.attach_EntityTelecomAddressesEffectiveVersionSequenceId), new Action<EntityTelecomAddress>(this.detach_EntityTelecomAddressesEffectiveVersionSequenceId));
-			this._EntityTelecomAddressesObsoleteVersionSequenceId = new EntitySet<EntityTelecomAddress>(new Action<EntityTelecomAddress>(this.attach_EntityTelecomAddressesObsoleteVersionSequenceId), new Action<EntityTelecomAddress>(this.detach_EntityTelecomAddressesObsoleteVersionSequenceId));
 			this._EntityVersionsReplacesVersionId = new EntitySet<EntityVersion>(new Action<EntityVersion>(this.attach_EntityVersionsReplacesVersionId), new Action<EntityVersion>(this.detach_EntityVersionsReplacesVersionId));
 			this._Material = default(EntityRef<Material>);
 			this._Organization = default(EntityRef<Organization>);
 			this._Person = default(EntityRef<Person>);
-			this._PersonLanguageCommunicationsObsoleteVersionSequenceId = new EntitySet<PersonLanguageCommunication>(new Action<PersonLanguageCommunication>(this.attach_PersonLanguageCommunicationsObsoleteVersionSequenceId), new Action<PersonLanguageCommunication>(this.detach_PersonLanguageCommunicationsObsoleteVersionSequenceId));
-			this._PersonLanguageCommunicationsEffectiveVersionSequenceId = new EntitySet<PersonLanguageCommunication>(new Action<PersonLanguageCommunication>(this.attach_PersonLanguageCommunicationsEffectiveVersionSequenceId), new Action<PersonLanguageCommunication>(this.detach_PersonLanguageCommunicationsEffectiveVersionSequenceId));
 			this._Place = default(EntityRef<Place>);
-			this._PlaceServicesEffectiveVersionSequenceId = new EntitySet<PlaceService>(new Action<PlaceService>(this.attach_PlaceServicesEffectiveVersionSequenceId), new Action<PlaceService>(this.detach_PlaceServicesEffectiveVersionSequenceId));
-			this._PlaceServicesObsoleteVersionSequenceId = new EntitySet<PlaceService>(new Action<PlaceService>(this.attach_PlaceServicesObsoleteVersionSequenceId), new Action<PlaceService>(this.detach_PlaceServicesObsoleteVersionSequenceId));
 			this._Entity = default(EntityRef<Entity>);
 			this._ReplacesVersion = default(EntityRef<EntityVersion>);
 			this._StatusConcept = default(EntityRef<Concept>);
@@ -15333,188 +13601,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityAddress", Storage="_EntityAddressesEffectiveVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="EffectiveVersionSequenceId")]
-		public EntitySet<EntityAddress> EntityAddressesEffectiveVersionSequenceId
-		{
-			get
-			{
-				return this._EntityAddressesEffectiveVersionSequenceId;
-			}
-			set
-			{
-				this._EntityAddressesEffectiveVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityAddress1", Storage="_EntityAddressesObsoleteVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="ObsoleteVersionSequenceId")]
-		public EntitySet<EntityAddress> EntityAddressesObsoleteVersionSequenceId
-		{
-			get
-			{
-				return this._EntityAddressesObsoleteVersionSequenceId;
-			}
-			set
-			{
-				this._EntityAddressesObsoleteVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityAssociation", Storage="_EntityAssociationsEffectiveVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="EffectiveVersionSequenceId")]
-		public EntitySet<EntityAssociation> EntityAssociationsEffectiveVersionSequenceId
-		{
-			get
-			{
-				return this._EntityAssociationsEffectiveVersionSequenceId;
-			}
-			set
-			{
-				this._EntityAssociationsEffectiveVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityAssociation1", Storage="_EntityAssociationsObsoleteVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="ObsoleteVersionSequenceId")]
-		public EntitySet<EntityAssociation> EntityAssociationsObsoleteVersionSequenceId
-		{
-			get
-			{
-				return this._EntityAssociationsObsoleteVersionSequenceId;
-			}
-			set
-			{
-				this._EntityAssociationsObsoleteVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityExtension", Storage="_EntityExtensionsEffectiveVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="EffectiveVersionSequenceId")]
-		public EntitySet<EntityExtension> EntityExtensionsEffectiveVersionSequenceId
-		{
-			get
-			{
-				return this._EntityExtensionsEffectiveVersionSequenceId;
-			}
-			set
-			{
-				this._EntityExtensionsEffectiveVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityExtension1", Storage="_EntityExtensionsObsoleteVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="ObsoleteVersionSequenceId")]
-		public EntitySet<EntityExtension> EntityExtensionsObsoleteVersionSequenceId
-		{
-			get
-			{
-				return this._EntityExtensionsObsoleteVersionSequenceId;
-			}
-			set
-			{
-				this._EntityExtensionsObsoleteVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityIdentifier", Storage="_EntityIdentifiersEffectiveVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="EffectiveVersionSequenceId")]
-		public EntitySet<EntityIdentifier> EntityIdentifiersEffectiveVersionSequenceId
-		{
-			get
-			{
-				return this._EntityIdentifiersEffectiveVersionSequenceId;
-			}
-			set
-			{
-				this._EntityIdentifiersEffectiveVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityIdentifier1", Storage="_EntityIdentifiersObsoleteVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="ObsoleteVersionSequenceId")]
-		public EntitySet<EntityIdentifier> EntityIdentifiersObsoleteVersionSequenceId
-		{
-			get
-			{
-				return this._EntityIdentifiersObsoleteVersionSequenceId;
-			}
-			set
-			{
-				this._EntityIdentifiersObsoleteVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityName", Storage="_EntityNamesEffectiveVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="EffectiveVersionSequenceId")]
-		public EntitySet<EntityName> EntityNamesEffectiveVersionSequenceId
-		{
-			get
-			{
-				return this._EntityNamesEffectiveVersionSequenceId;
-			}
-			set
-			{
-				this._EntityNamesEffectiveVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityName1", Storage="_EntityNamesObsoleteVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="ObsoleteVersionSequenceId")]
-		public EntitySet<EntityName> EntityNamesObsoleteVersionSequenceId
-		{
-			get
-			{
-				return this._EntityNamesObsoleteVersionSequenceId;
-			}
-			set
-			{
-				this._EntityNamesObsoleteVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityNote", Storage="_EntityNotesEffectiveVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="EffectiveVersionSequenceId")]
-		public EntitySet<EntityNote> EntityNotesEffectiveVersionSequenceId
-		{
-			get
-			{
-				return this._EntityNotesEffectiveVersionSequenceId;
-			}
-			set
-			{
-				this._EntityNotesEffectiveVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityNote1", Storage="_EntityNotesObsoleteVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="ObsoleteVersionSequenceId")]
-		public EntitySet<EntityNote> EntityNotesObsoleteVersionSequenceId
-		{
-			get
-			{
-				return this._EntityNotesObsoleteVersionSequenceId;
-			}
-			set
-			{
-				this._EntityNotesObsoleteVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityTelecomAddress", Storage="_EntityTelecomAddressesEffectiveVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="EffectiveVersionSequenceId")]
-		public EntitySet<EntityTelecomAddress> EntityTelecomAddressesEffectiveVersionSequenceId
-		{
-			get
-			{
-				return this._EntityTelecomAddressesEffectiveVersionSequenceId;
-			}
-			set
-			{
-				this._EntityTelecomAddressesEffectiveVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityTelecomAddress1", Storage="_EntityTelecomAddressesObsoleteVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="ObsoleteVersionSequenceId")]
-		public EntitySet<EntityTelecomAddress> EntityTelecomAddressesObsoleteVersionSequenceId
-		{
-			get
-			{
-				return this._EntityTelecomAddressesObsoleteVersionSequenceId;
-			}
-			set
-			{
-				this._EntityTelecomAddressesObsoleteVersionSequenceId.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_EntityVersion", Storage="_EntityVersionsReplacesVersionId", ThisKey="EntityVersionId", OtherKey="ReplacesVersionId")]
 		public EntitySet<EntityVersion> EntityVersionsReplacesVersionId
 		{
@@ -15615,32 +13701,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_PersonLanguageCommunication", Storage="_PersonLanguageCommunicationsObsoleteVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="ObsoleteVersionSequenceId")]
-		public EntitySet<PersonLanguageCommunication> PersonLanguageCommunicationsObsoleteVersionSequenceId
-		{
-			get
-			{
-				return this._PersonLanguageCommunicationsObsoleteVersionSequenceId;
-			}
-			set
-			{
-				this._PersonLanguageCommunicationsObsoleteVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_PersonLanguageCommunication1", Storage="_PersonLanguageCommunicationsEffectiveVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="EffectiveVersionSequenceId")]
-		public EntitySet<PersonLanguageCommunication> PersonLanguageCommunicationsEffectiveVersionSequenceId
-		{
-			get
-			{
-				return this._PersonLanguageCommunicationsEffectiveVersionSequenceId;
-			}
-			set
-			{
-				this._PersonLanguageCommunicationsEffectiveVersionSequenceId.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_Place", Storage="_Place", ThisKey="EntityVersionId", OtherKey="EntityVersionId", IsUnique=true, IsForeignKey=false)]
 		public Place Place
 		{
@@ -15667,32 +13727,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					}
 					this.SendPropertyChanged("Place");
 				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_PlaceService", Storage="_PlaceServicesEffectiveVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="EffectiveVersionSequenceId")]
-		public EntitySet<PlaceService> PlaceServicesEffectiveVersionSequenceId
-		{
-			get
-			{
-				return this._PlaceServicesEffectiveVersionSequenceId;
-			}
-			set
-			{
-				this._PlaceServicesEffectiveVersionSequenceId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_PlaceService1", Storage="_PlaceServicesObsoleteVersionSequenceId", ThisKey="VersionSequenceId", OtherKey="ObsoleteVersionSequenceId")]
-		public EntitySet<PlaceService> PlaceServicesObsoleteVersionSequenceId
-		{
-			get
-			{
-				return this._PlaceServicesObsoleteVersionSequenceId;
-			}
-			set
-			{
-				this._PlaceServicesObsoleteVersionSequenceId.Assign(value);
 			}
 		}
 		
@@ -15920,174 +13954,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		private void attach_EntityAddressesEffectiveVersionSequenceId(EntityAddress entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = this;
-		}
-		
-		private void detach_EntityAddressesEffectiveVersionSequenceId(EntityAddress entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = null;
-		}
-		
-		private void attach_EntityAddressesObsoleteVersionSequenceId(EntityAddress entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = this;
-		}
-		
-		private void detach_EntityAddressesObsoleteVersionSequenceId(EntityAddress entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = null;
-		}
-		
-		private void attach_EntityAssociationsEffectiveVersionSequenceId(EntityAssociation entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = this;
-		}
-		
-		private void detach_EntityAssociationsEffectiveVersionSequenceId(EntityAssociation entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = null;
-		}
-		
-		private void attach_EntityAssociationsObsoleteVersionSequenceId(EntityAssociation entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = this;
-		}
-		
-		private void detach_EntityAssociationsObsoleteVersionSequenceId(EntityAssociation entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = null;
-		}
-		
-		private void attach_EntityExtensionsEffectiveVersionSequenceId(EntityExtension entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = this;
-		}
-		
-		private void detach_EntityExtensionsEffectiveVersionSequenceId(EntityExtension entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = null;
-		}
-		
-		private void attach_EntityExtensionsObsoleteVersionSequenceId(EntityExtension entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = this;
-		}
-		
-		private void detach_EntityExtensionsObsoleteVersionSequenceId(EntityExtension entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = null;
-		}
-		
-		private void attach_EntityIdentifiersEffectiveVersionSequenceId(EntityIdentifier entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = this;
-		}
-		
-		private void detach_EntityIdentifiersEffectiveVersionSequenceId(EntityIdentifier entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = null;
-		}
-		
-		private void attach_EntityIdentifiersObsoleteVersionSequenceId(EntityIdentifier entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = this;
-		}
-		
-		private void detach_EntityIdentifiersObsoleteVersionSequenceId(EntityIdentifier entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = null;
-		}
-		
-		private void attach_EntityNamesEffectiveVersionSequenceId(EntityName entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = this;
-		}
-		
-		private void detach_EntityNamesEffectiveVersionSequenceId(EntityName entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = null;
-		}
-		
-		private void attach_EntityNamesObsoleteVersionSequenceId(EntityName entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = this;
-		}
-		
-		private void detach_EntityNamesObsoleteVersionSequenceId(EntityName entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = null;
-		}
-		
-		private void attach_EntityNotesEffectiveVersionSequenceId(EntityNote entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = this;
-		}
-		
-		private void detach_EntityNotesEffectiveVersionSequenceId(EntityNote entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = null;
-		}
-		
-		private void attach_EntityNotesObsoleteVersionSequenceId(EntityNote entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = this;
-		}
-		
-		private void detach_EntityNotesObsoleteVersionSequenceId(EntityNote entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = null;
-		}
-		
-		private void attach_EntityTelecomAddressesEffectiveVersionSequenceId(EntityTelecomAddress entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = this;
-		}
-		
-		private void detach_EntityTelecomAddressesEffectiveVersionSequenceId(EntityTelecomAddress entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = null;
-		}
-		
-		private void attach_EntityTelecomAddressesObsoleteVersionSequenceId(EntityTelecomAddress entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = this;
-		}
-		
-		private void detach_EntityTelecomAddressesObsoleteVersionSequenceId(EntityTelecomAddress entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = null;
-		}
-		
 		private void attach_EntityVersionsReplacesVersionId(EntityVersion entity)
 		{
 			this.SendPropertyChanging();
@@ -16098,54 +13964,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this.SendPropertyChanging();
 			entity.ReplacesVersion = null;
-		}
-		
-		private void attach_PersonLanguageCommunicationsObsoleteVersionSequenceId(PersonLanguageCommunication entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = this;
-		}
-		
-		private void detach_PersonLanguageCommunicationsObsoleteVersionSequenceId(PersonLanguageCommunication entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = null;
-		}
-		
-		private void attach_PersonLanguageCommunicationsEffectiveVersionSequenceId(PersonLanguageCommunication entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = this;
-		}
-		
-		private void detach_PersonLanguageCommunicationsEffectiveVersionSequenceId(PersonLanguageCommunication entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = null;
-		}
-		
-		private void attach_PlaceServicesEffectiveVersionSequenceId(PlaceService entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = this;
-		}
-		
-		private void detach_PlaceServicesEffectiveVersionSequenceId(PlaceService entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectiveVersionSequence = null;
-		}
-		
-		private void attach_PlaceServicesObsoleteVersionSequenceId(PlaceService entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = this;
-		}
-		
-		private void detach_PlaceServicesObsoleteVersionSequenceId(PlaceService entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoleteVersionSequence = null;
 		}
 	}
 	
@@ -18367,10 +16185,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private bool _PreferenceIndicator;
 		
-		private EntityRef<EntityVersion> _ObsoleteVersionSequence;
-		
-		private EntityRef<EntityVersion> _EffectiveVersionSequence;
-		
 		private EntityRef<Entity> _PersonEntity;
 		
     #region Extensibility Method Definitions
@@ -18393,8 +16207,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public PersonLanguageCommunication()
 		{
-			this._ObsoleteVersionSequence = default(EntityRef<EntityVersion>);
-			this._EffectiveVersionSequence = default(EntityRef<EntityVersion>);
 			this._PersonEntity = default(EntityRef<Entity>);
 			OnCreated();
 		}
@@ -18454,10 +16266,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._EffectiveVersionSequenceId != value))
 				{
-					if (this._EffectiveVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnEffectiveVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._EffectiveVersionSequenceId = value;
@@ -18478,10 +16286,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._ObsoleteVersionSequenceId != value))
 				{
-					if (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnObsoleteVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._ObsoleteVersionSequenceId = value;
@@ -18527,74 +16331,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this._PreferenceIndicator = value;
 					this.SendPropertyChanged("PreferenceIndicator");
 					this.OnPreferenceIndicatorChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_PersonLanguageCommunication", Storage="_ObsoleteVersionSequence", ThisKey="ObsoleteVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public EntityVersion ObsoleteVersionSequence
-		{
-			get
-			{
-				return this._ObsoleteVersionSequence.Entity;
-			}
-			set
-			{
-				EntityVersion previousValue = this._ObsoleteVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoleteVersionSequence.Entity = null;
-						previousValue.PersonLanguageCommunicationsObsoleteVersionSequenceId.Remove(this);
-					}
-					this._ObsoleteVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.PersonLanguageCommunicationsObsoleteVersionSequenceId.Add(this);
-						this._ObsoleteVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._ObsoleteVersionSequenceId = default(Nullable<decimal>);
-					}
-					this.SendPropertyChanged("ObsoleteVersionSequence");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_PersonLanguageCommunication1", Storage="_EffectiveVersionSequence", ThisKey="EffectiveVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public EntityVersion EffectiveVersionSequence
-		{
-			get
-			{
-				return this._EffectiveVersionSequence.Entity;
-			}
-			set
-			{
-				EntityVersion previousValue = this._EffectiveVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._EffectiveVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._EffectiveVersionSequence.Entity = null;
-						previousValue.PersonLanguageCommunicationsEffectiveVersionSequenceId.Remove(this);
-					}
-					this._EffectiveVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.PersonLanguageCommunicationsEffectiveVersionSequenceId.Add(this);
-						this._EffectiveVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._EffectiveVersionSequenceId = default(decimal);
-					}
-					this.SendPropertyChanged("EffectiveVersionSequence");
 				}
 			}
 		}
@@ -19244,10 +16980,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Xml.Linq.XElement _ServiceSchedule;
 		
-		private EntityRef<EntityVersion> _EffectiveVersionSequence;
-		
-		private EntityRef<EntityVersion> _ObsoleteVersionSequence;
-		
 		private EntityRef<Entity> _PlaceEntity;
 		
 		private EntityRef<Concept> _ServiceConcept;
@@ -19272,8 +17004,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public PlaceService()
 		{
-			this._EffectiveVersionSequence = default(EntityRef<EntityVersion>);
-			this._ObsoleteVersionSequence = default(EntityRef<EntityVersion>);
 			this._PlaceEntity = default(EntityRef<Entity>);
 			this._ServiceConcept = default(EntityRef<Concept>);
 			OnCreated();
@@ -19334,10 +17064,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._EffectiveVersionSequenceId != value))
 				{
-					if (this._EffectiveVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnEffectiveVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._EffectiveVersionSequenceId = value;
@@ -19358,10 +17084,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._ObsoleteVersionSequenceId != value))
 				{
-					if (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnObsoleteVersionSequenceIdChanging(value);
 					this.SendPropertyChanging();
 					this._ObsoleteVersionSequenceId = value;
@@ -19411,74 +17133,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this._ServiceSchedule = value;
 					this.SendPropertyChanged("ServiceSchedule");
 					this.OnServiceScheduleChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_PlaceService", Storage="_EffectiveVersionSequence", ThisKey="EffectiveVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public EntityVersion EffectiveVersionSequence
-		{
-			get
-			{
-				return this._EffectiveVersionSequence.Entity;
-			}
-			set
-			{
-				EntityVersion previousValue = this._EffectiveVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._EffectiveVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._EffectiveVersionSequence.Entity = null;
-						previousValue.PlaceServicesEffectiveVersionSequenceId.Remove(this);
-					}
-					this._EffectiveVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.PlaceServicesEffectiveVersionSequenceId.Add(this);
-						this._EffectiveVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._EffectiveVersionSequenceId = default(decimal);
-					}
-					this.SendPropertyChanged("EffectiveVersionSequence");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityVersion_PlaceService1", Storage="_ObsoleteVersionSequence", ThisKey="ObsoleteVersionSequenceId", OtherKey="VersionSequenceId", IsForeignKey=true)]
-		public EntityVersion ObsoleteVersionSequence
-		{
-			get
-			{
-				return this._ObsoleteVersionSequence.Entity;
-			}
-			set
-			{
-				EntityVersion previousValue = this._ObsoleteVersionSequence.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoleteVersionSequence.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoleteVersionSequence.Entity = null;
-						previousValue.PlaceServicesObsoleteVersionSequenceId.Remove(this);
-					}
-					this._ObsoleteVersionSequence.Entity = value;
-					if ((value != null))
-					{
-						value.PlaceServicesObsoleteVersionSequenceId.Add(this);
-						this._ObsoleteVersionSequenceId = value.VersionSequenceId;
-					}
-					else
-					{
-						this._ObsoleteVersionSequenceId = default(Nullable<decimal>);
-					}
-					this.SendPropertyChanged("ObsoleteVersionSequence");
 				}
 			}
 		}

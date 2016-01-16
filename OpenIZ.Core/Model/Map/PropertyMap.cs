@@ -33,6 +33,12 @@ namespace OpenIZ.Core.Model.Map
         public List<PropertyMap> Via { get; set; }
 
         /// <summary>
+        /// When this property is a via then traverse this
+        /// </summary>
+        [XmlAttribute("traverse")]
+        public bool Traverse { get; set; }
+
+        /// <summary>
         /// Validate the property type
         /// </summary>
         public IEnumerable<IResultDetail> Validate(Type modelClass, Type domainClass)

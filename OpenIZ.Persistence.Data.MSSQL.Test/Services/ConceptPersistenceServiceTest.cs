@@ -1,4 +1,5 @@
 ﻿using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenIZ.Core;
@@ -87,5 +88,70 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual("E", afterTest.ConceptNames[0].PhoneticCode);
         }
 
+        /// <summary>
+        /// Tests that the concept persistence service can persist a 
+        /// simple concept which has a display name
+        /// </summary>
+        [TestMethod]
+        public void TestUpdateNamedConcept()
+        {
+            Concept namedConcept = new Concept()
+            {
+                ClassId = ConceptClassIds.OtherId,
+                IsSystemConcept = false,
+                Mnemonic = "TESTCODE3"
+            };
+
+            // Names
+            namedConcept.ConceptNames.Add(new ConceptName()
+            {
+                Name = "Test Code 1",
+                Language = "en",
+                PhoneticAlgorithm = PhoneticAlgorithm.EmptyAlgorithm,
+                PhoneticCode = "E"
+            });
+            namedConcept.ConceptNames.Add(new ConceptName()
+            {
+                Name = "Test Code 2",
+                Language = "en",
+                PhoneticAlgorithm = PhoneticAlgorithm.EmptyAlgorithm,
+                PhoneticCode = "E"
+            });
+
+            // Insert
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
+            var afterTest = persistenceService.Insert(namedConcept, s_authorization, TransactionMode.Commit);
+
+            Assert.AreEqual("TESTCODE3", afterTest.Mnemonic);
+            Assert.AreEqual("Other", afterTest.Class.Mnemonic);
+            Assert.IsFalse(afterTest.IsSystemConcept);
+            Assert.AreEqual(2, afterTest.ConceptNames.Count);
+            Assert.AreEqual("en", afterTest.ConceptNames[0].Language);
+            Assert.IsTrue(afterTest.ConceptNames.Exists(n => n.Name == "Test Code 1"));
+            Assert.AreEqual("E", afterTest.ConceptNames[0].PhoneticCode);
+            Assert.IsNotNull(afterTest.CreatedBy);
+
+            // Step 1: Test an ADD of a name
+            afterTest.ConceptNames.Add(new ConceptName()
+            {
+                Name = "Test Code 3",
+                Language = "en",
+                PhoneticAlgorithm = PhoneticAlgorithm.EmptyAlgorithm,
+                PhoneticCode = "E"
+            });
+            afterTest.Mnemonic = "TESTCODE3_A";
+            afterTest = persistenceService.Update(afterTest, s_authorization, TransactionMode.Commit);
+            Assert.AreEqual(3, afterTest.ConceptNames.Count);
+            Assert.AreEqual("TESTCODE3_A", afterTest.Mnemonic);
+
+            // Verify 2: Remove a name
+            afterTest.ConceptNames.RemoveAt(1);
+            afterTest.ConceptNames[0].Language = "fr";
+            afterTest = persistenceService.Update(afterTest, s_authorization, TransactionMode.Commit);
+            Assert.AreEqual(2, afterTest.ConceptNames.Count);
+            Assert.AreEqual("fr", afterTest.ConceptNames[0].Language);
+
+
+        }
     }
 }
