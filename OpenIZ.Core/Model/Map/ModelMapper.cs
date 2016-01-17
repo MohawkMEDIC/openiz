@@ -286,10 +286,10 @@ namespace OpenIZ.Core.Model.Map
                     // Go through the via elements in the object map. This code traces a path 
                     // through the domain class instantiating any necessary associative entity
                     // classes. Example when a model entity is really two or three tables in the DB..
-                    // "Ah for just one time, I would take the northwest passage
+                    // 🎶 Ah for just one time, I would take the northwest passage
                     // To find the hand of Franklin reaching for the Beaufort Sea.
                     // Tracing one warm line, through a land so wide and savage
-                    // And make a northwest passage to the sea."
+                    // And make a northwest passage to the sea. 🎶
                     foreach (var p in propMap.Via.Where(o=>o.Traverse == true).Reverse())
                     {
                         sourceObject = sourceProperty.GetValue(sourceObject);

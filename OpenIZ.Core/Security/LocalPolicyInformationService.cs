@@ -4,6 +4,7 @@ using MARC.HI.EHRS.SVC.Core.Services.Policy;
 using OpenIZ.Core.Model.Security;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,10 @@ namespace OpenIZ.Core.Security
     /// </summary>
     public class LocalPolicyInformationService : IPolicyInformationService
     {
+
+        // Policy tracer
+        private TraceSource m_tracer = new TraceSource("OpenIZ.Core.Security.Policy");
+
         /// <summary>
         /// Get active policies for a securable
         /// </summary>

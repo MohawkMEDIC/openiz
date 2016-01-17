@@ -503,7 +503,8 @@ CREATE TABLE CodeSystem
 	ObsoletedBy UNIQUEIDENTIFIER, -- WHEN PRESENT INDICATES THE PERSON WHO OBSOLETED RECORD
 	ObsoletionReason NVARCHAR(MAX) , -- WHEN PRESENT INDICATES WHY THE RECORD WAS OBSOLETED
 	Url NVARCHAR(256) NOT NULL, -- THE URL OR URI TO THE CODE SYSTEM
-	VersionText NVARCHAR(10) NOT NULL, -- THE VERSION OF THE CODE SYSTEM
+	VersionText NVARCHAR(10), -- THE VERSION OF THE CODE SYSTEM
+	[Description] NVARCHAR(256), -- DESCRIPTIVE TEXT
 	CONSTRAINT PK_CodeSystem PRIMARY KEY (CodeSystemId),
 	CONSTRAINT FK_CodeSystemCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT FK_CodeSystemObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UserId),
@@ -516,6 +517,16 @@ CREATE UNIQUE INDEX IX_CodeSystemOid ON CodeSystem(Oid);
 -- INDEX: LOOKUP CODE SYSTEM BY URL
 CREATE INDEX IX_CodeSystemUrl ON CodeSystem(Url);
 
+INSERT INTO CodeSystem (CodeSystemId, Name, Oid, Authority, CreatedBy, Url) VALUES ('f7a5cbd8-5425-415e-8308-d14b94f56917', 'ICD10', '2.16.840.1.113883.6.3', 'I10', '00000000-0000-0000-0000-000000000000', 'http://hl7.org/fhir/sid/icd-10');
+INSERT INTO CodeSystem (CodeSystemId, Name, Oid, Authority, CreatedBy, Url) VALUES ('ed9742e5-fa5b-4644-9fb5-2f935ed08b1e', 'ICD10CM', '2.16.840.1.113883.6.90' ,'I10C', '00000000-0000-0000-0000-000000000000', 'http://openiz.org/codesystem/icd-10-cm');
+INSERT INTO CodeSystem (CodeSystemId, Name, Oid, Authority, CreatedBy, Url) VALUES ('51ea1e1b-edc0-455a-a72b-9076860e284d', 'ICD9', '2.16.840.1.113883.6.2', 'I9', '00000000-0000-0000-0000-000000000000', 'http://hl7.org/fhir/sid/icd-9');
+INSERT INTO CodeSystem (CodeSystemId, Name, Oid, Authority, CreatedBy, Url) VALUES ('eb04fe20-bbbc-4c70-9eef-045bc4f70982', 'ISO639-1', '2.16.840.1.113883.6.99', 'ISO639-1', '00000000-0000-0000-0000-000000000000', 'http://hl7.org/fhir/sid/iso-639-1');
+INSERT INTO CodeSystem (CodeSystemId, Name, Oid, Authority, CreatedBy, Url) VALUES ('089044ea-dd41-4258-a497-e6247dd364f6', 'ISO639-2', '2.16.840.1.113883.6.100', 'ISO639-2', '00000000-0000-0000-0000-000000000000','http://openiz.org/codesystem/iso639-2');
+INSERT INTO CodeSystem (CodeSystemId, Name, Oid, Authority, CreatedBy, Url) VALUES ('08c59397-706b-456a-aeb1-9e7d5a2adc94', 'LOINC', '2.16.840.1.113883.6.1', 'LN', '00000000-0000-0000-0000-000000000000','http://hl7.org/fhir/sid/loinc');
+INSERT INTO CodeSystem (CodeSystemId, Name, Oid, Authority, CreatedBy, Url) VALUES ('4853a702-fff3-4efb-8dd7-54aacca53664', 'UCUM', '2.16.840.1.113883.6.8', 'UCUM', '00000000-0000-0000-0000-000000000000','http://hl7.org/fhir/sid/ucum');
+INSERT INTO CodeSystem (CodeSystemId, Name, Oid, Authority, CreatedBy, Url) VALUES ('b3030751-d4db-420b-b765-e837607820cd', 'SNOMED CT', '2.16.840.1.113883.6.96', 'SNM', '00000000-0000-0000-0000-000000000000','http://snomed.info');
+INSERT INTO CodeSystem (CodeSystemId, Name, Oid, Authority, CreatedBy, Url) VALUES ('eba4f94a-2cad-4bb3-aca7-f4e54eaac4bd', 'CVX Vaccine Codes', '2.16.840.1.113883.3.88.12.80.22', 'CVX', '00000000-0000-0000-0000-000000000000','http://hl7.org/fhir/ValueSet/vaccine-code');
+
 CREATE TABLE ConceptRelationshipType
 (
 	ConceptRelationshipTypeId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER OF THE RELATIONSHIP
@@ -526,10 +537,10 @@ CREATE TABLE ConceptRelationshipType
 
 CREATE INDEX IX_ConceptRelationshipTypeMnemonic ON ConceptRelationshipType(Mnemonic);
 
-INSERT INTO ConceptRelationshipType (Name, Mnemonic) VALUES ('Same as', 'SameAs');
-INSERT INTO ConceptRelationshipType (Name, Mnemonic) VALUES ('Inverse of', 'InverseOf');
-INSERT INTO ConceptRelationshipType (Name, Mnemonic) VALUES ('Member of', 'MemberOf');
-INSERT INTO ConceptRelationshipType (Name, Mnemonic) VALUES ('Negation of', 'NegationOf');
+INSERT INTO ConceptRelationshipType (ConceptRelationshipId, Name, Mnemonic) VALUES ('2c4dafc2-566a-41ae-9ebc-3097d7d22f4a', 'Same as', 'SameAs');
+INSERT INTO ConceptRelationshipType (ConceptRelationshipId, Name, Mnemonic) VALUES ('ad27293d-433c-4b75-88d2-b5360cd95450', 'Inverse of', 'InverseOf');
+INSERT INTO ConceptRelationshipType (ConceptRelationshipId, Name, Mnemonic) VALUES ('a159d45b-3c34-4e1b-9b75-9193a7528ced', 'Member of', 'MemberOf');
+INSERT INTO ConceptRelationshipType (ConceptRelationshipId, Name, Mnemonic) VALUES ('ae8b4f2f-009f-4e0d-b35e-5a89555c5947', 'Negation of', 'NegationOf');
 
 CREATE TABLE ReferenceTerm
 (

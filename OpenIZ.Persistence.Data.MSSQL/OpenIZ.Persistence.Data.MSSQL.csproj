@@ -75,6 +75,7 @@
       <DependentUpon>Model.dbml</DependentUpon>
     </Compile>
     <Compile Include="Data\ModelExtensions.cs" />
+    <Compile Include="Services\Persistence\CodeSystemPersistenceService.cs" />
     <Compile Include="Services\Persistence\ConceptClassPersistenceService.cs" />
     <Compile Include="Services\Persistence\PhoneticAlgorithmPersistenceService.cs" />
     <Compile Include="Exceptions\SqlFormalConstraintException.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="Services\Persistence\ConceptPersistenceService.cs" />
     <Compile Include="Services\Persistence\ConceptReferenceTermPersistenceService.cs" />
     <Compile Include="Services\Persistence\ConceptRelationshipPersistenceService.cs" />
+    <Compile Include="Services\Persistence\ReferenceTermPersistenceService.cs" />
     <Compile Include="Services\Persistence\SecurityPolicyPersistenceService.cs" />
     <Compile Include="Services\Persistence\SqlPersistenceService.cs" />
     <Compile Include="Services\SqlIdentityProvider.cs" />
@@ -98,6 +100,9 @@
     <Compile Include="Security\SqlClaimsIdentity.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\OpenIZ.licenseheader">
+      <Link>OpenIZ.licenseheader</Link>
+    </None>
     <None Include="Data\Model.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>Model.designer.cs</LastGenOutput>

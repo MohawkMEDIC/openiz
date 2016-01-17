@@ -154,5 +154,57 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.IsNotNull(afterTest.PreviousVersion.PreviousVersion);
 
         }
+
+        /// <summary>
+        /// Tests that the concept persistence service can persist a 
+        /// simple concept which has a display name
+        /// </summary>
+        [TestMethod]
+        public void TestInsertReferenceTermConcept()
+        {
+            Concept refTermConcept = new Concept()
+            {
+                ClassId = ConceptClassIds.OtherId,
+                IsSystemConcept = false,
+                Mnemonic = "TESTCODE5"
+            };
+
+            // Names
+            refTermConcept.ConceptNames.Add(new ConceptName()
+            {
+                Name = "Test Code",
+                Language = "en",
+                PhoneticAlgorithm = PhoneticAlgorithm.EmptyAlgorithm,
+                PhoneticCode = "E"
+            });
+
+            // Reference term
+            refTermConcept.ReferenceTerms.Add(new ConceptReferenceTerm()
+            {
+                RelationshipTypeId = ConceptRelationshipTypeIds.SameAs,
+                ReferenceTerm = new ReferenceTerm()
+                {
+                    CodeSystemId = CodeSystemIds.LOINC,
+                    Mnemonic = "X-4039503-403"
+                }
+            });
+
+            // Insert
+            var afterTest = base.DoTestInsert(refTermConcept, s_authorization);
+            Assert.AreEqual("TESTCODE5", afterTest.Mnemonic);
+            Assert.AreEqual("Other", afterTest.Class.Mnemonic);
+            Assert.IsFalse(afterTest.IsSystemConcept);
+            Assert.AreEqual(1, afterTest.ConceptNames.Count);
+            Assert.AreEqual(1, afterTest.ReferenceTerms.Count);
+            Assert.AreEqual("en", afterTest.ConceptNames[0].Language);
+            Assert.AreEqual(ConceptRelationshipTypeIds.SameAs, afterTest.ReferenceTerms[0].RelationshipTypeId);
+            Assert.IsNotNull(afterTest.ReferenceTerms[0].RelationshipType);
+            Assert.IsNotNull(afterTest.ReferenceTerms[0].ReferenceTerm);
+            Assert.AreEqual(CodeSystemIds.LOINC, afterTest.ReferenceTerms[0].ReferenceTerm.CodeSystem.Key);
+            Assert.AreEqual("Test Code", afterTest.ConceptNames[0].Name);
+            Assert.AreEqual("E", afterTest.ConceptNames[0].PhoneticCode);
+        }
+
+
     }
 }

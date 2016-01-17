@@ -49,9 +49,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConceptClassIds.cs" />
-    <Compile Include="ConceptIds.cs" />
-    <Compile Include="ConceptSetIds.cs" />
+    <Compile Include="Model\DataTypes\CodeSystemIds.cs" />
+    <Compile Include="Model\DataTypes\ConceptClassIds.cs" />
+    <Compile Include="Model\DataTypes\ConceptIds.cs" />
+    <Compile Include="Model\DataTypes\ConceptSetIds.cs" />
     <Compile Include="Exceptions\ModelMapValidationException.cs" />
     <Compile Include="Exceptions\ModelValidationException.cs" />
     <Compile Include="Model\Attributes\DelayLoadAttribute.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="Model\DataTypes\ConceptRelationshipType.cs" />
     <Compile Include="Model\DataTypes\PhoneticAlgorithm.cs" />
     <Compile Include="Model\DataTypes\ReferenceTermName.cs" />
+    <Compile Include="Model\DataTypes\ConceptRelationshipTypeIds.cs" />
     <Compile Include="Model\IdentifiedData.cs" />
     <Compile Include="Model\BaseEntityData.cs" />
     <Compile Include="Model\DataTypes\AssigningAuthority.cs" />
@@ -70,6 +72,7 @@
     <Compile Include="Model\DataTypes\Identifier.cs" />
     <Compile Include="Model\DataTypes\IdentifierType.cs" />
     <Compile Include="Model\DataTypes\ReferenceTerm.cs" />
+    <Compile Include="Model\Interfaces\ISecurable.cs" />
     <Compile Include="Model\Map\CollapseKey.cs" />
     <Compile Include="Model\Map\ClassMap.cs" />
     <Compile Include="Model\Map\ModelExpressionVisitor.cs" />
@@ -84,6 +87,7 @@
     <Compile Include="Model\VersionedEntityData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\LocalPolicyDecisionService.cs" />
+    <Compile Include="Security\LocalPolicyEnforcementService.cs" />
     <Compile Include="Security\LocalPolicyInformationService.cs" />
     <Compile Include="Security\OpenIzClaimTypes.cs" />
     <Compile Include="Security\PolicyIdentifiers.cs" />
@@ -92,6 +96,11 @@
   <ItemGroup>
     <Folder Include="Model\Entity\" />
     <Folder Include="Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\OpenIZ.licenseheader">
+      <Link>OpenIZ.licenseheader</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
