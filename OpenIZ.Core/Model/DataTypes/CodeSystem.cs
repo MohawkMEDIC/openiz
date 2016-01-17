@@ -35,6 +35,9 @@
         /// </summary>
         public string VersionText { get; set; }
 
-
+        /// <summary>
+        /// Gets or sets the human description
+        /// </summary>
+        public string Description { get; set; }
     }
 }

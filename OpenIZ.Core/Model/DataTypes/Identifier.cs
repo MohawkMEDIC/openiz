@@ -10,10 +10,27 @@ using System.Threading.Tasks;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
+    /*
+    /// <summary>
+    /// Entity identifiers
+    /// </summary>
+    public class EntityIdentifier : Identifier<Entity>
+    {
+
+    }
+
+    /// <summary>
+    /// Act identifier
+    /// </summary>
+    public class ActIdentifier : Identifier<Act>
+    {
+
+    }
+    */
     /// <summary>
     /// Represents an external assigned identifier
     /// </summary>
-    public class Identifier : BaseEntityData
+    public abstract class IdentifierBase<TBoundModel> : VersionBoundRelationData<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
     {
 
         // Identifier id

@@ -119,7 +119,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
                     preEvt.Data.Lock();
                     var retVal = this.Insert(preEvt.Data as TModel, principal, dataContext);
-                    preEvt.Data.Unlock();
+                    retVal.Unlock();
 
                     PostPersistenceEventArgs<TModel> postEvt = new PostPersistenceEventArgs<TModel>(retVal, principal);
                     this.Inserted?.Invoke(this, postEvt);
@@ -195,7 +195,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
                     preEvt.Data.Lock();
                     var retVal = this.Update(preEvt.Data as TModel, principal, dataContext);
-                    preEvt.Data.Unlock();
+                    retVal.Unlock(); // HACK: This should be cleaned up eventually
 
                     PostPersistenceEventArgs<TModel> postEvt = new PostPersistenceEventArgs<TModel>(retVal, principal);
                     this.Updated?.Invoke(this, postEvt);
@@ -259,7 +259,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
                     preEvt.Data.Lock();
                     var retVal = this.Obsolete(preEvt.Data as TModel, principal, dataContext);
-                    preEvt.Data.Unlock();
+                    retVal.Unlock();
 
                     PostPersistenceEventArgs<TModel> postEvt = new PostPersistenceEventArgs<TModel>(retVal, principal);
                     this.Obsoleted?.Invoke(this, postEvt);

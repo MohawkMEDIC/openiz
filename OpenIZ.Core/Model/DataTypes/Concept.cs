@@ -1,6 +1,7 @@
 ﻿using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,7 +12,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// A class representing a generic concept used in the OpenIZ datamodel
     /// </summary>
-    public class Concept : VersionedEntityData<Concept>
+    public class Concept : VersionedEntityData<Concept>, ISecurable
     {
 
       
@@ -220,5 +221,11 @@ namespace OpenIZ.Core.Model.DataTypes
             }
         }
 
+        /// <summary>
+        /// If the object is masked
+        /// </summary>
+        public void Mask()
+        {
+        }
     }
 }

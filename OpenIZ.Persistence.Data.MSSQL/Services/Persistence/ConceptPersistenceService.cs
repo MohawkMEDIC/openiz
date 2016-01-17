@@ -86,7 +86,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 ConceptNamePersistenceService namePersister = new ConceptNamePersistenceService();
                 foreach (var cn in storageData.ConceptNames)
                 {
-                    cn.TargetEntityKey = dataConceptVersion.ConceptId;
+                    cn.TargetEntityKey = dataConceptVersion.ConceptId; // Ohhh... The year was 1778
                     namePersister.Insert(cn, principal, dataContext, false); // How I wish I was in sherbrooke now!!!
                 }
             }
@@ -97,9 +97,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 ConceptReferenceTermPersistenceService referencePersister = new ConceptReferenceTermPersistenceService();
                 foreach (var rt in storageData.ReferenceTerms)
                 {
-                    rt.EffectiveVersionSequenceId = storageData.VersionSequence;
-                    rt.TargetEntityKey = storageData.Key; // Oh Elcid Barrett cried the town
-                    referencePersister.Insert(rt, principal, dataContext); // How I wish I was in sherbrooke now!!!
+                    rt.TargetEntityKey = dataConceptVersion.ConceptId; // Oh Elcid Barrett cried the town!!!
+                    referencePersister.Insert(rt, principal, dataContext, false); // How I wish I was in sherbrooke now!!!
                 }
             }
 
@@ -143,7 +142,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataConceptVersion.ObsoletionTime = DateTimeOffset.Now;
             newDataConceptVersion.CreatedByEntity = principal.GetUser(dataContext);
             dataConceptVersion.ObsoletedByEntity = principal.GetUser(dataContext);
-            newDataConceptVersion.StatusConceptId = Core.ConceptIds.StatusObsolete;
+            newDataConceptVersion.StatusConceptId = ConceptIds.StatusObsolete;
             dataContext.ConceptVersions.InsertOnSubmit(newDataConceptVersion);
 
             dataContext.SubmitChanges();
@@ -220,7 +219,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             }
 
-            // New thing, we want to remove any reference terms that no longer appear
+            // Next thing, we want to remove any reference terms that no longer appear
             if (storageData.ReferenceTerms != null)
             {
                 var existingTerms = domainConceptVersion.Concept.ConceptReferenceTerms.Where(o => oldVersionSequenceId >= o.EffectiveVersionSequenceId && o.ObsoleteVersionSequenceId == null).Select(o => rtPersistenceService.ConvertToModel(o)).ToList(); // active names
