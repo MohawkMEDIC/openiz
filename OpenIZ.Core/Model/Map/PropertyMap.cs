@@ -29,7 +29,7 @@ namespace OpenIZ.Core.Model.Map
     /// <summary>
     /// Represents a property map
     /// </summary>
-    [XmlType(nameof(PropertyMap), Namespace = "http://openiz.org/model/map")]
+    [XmlType( nameof(PropertyMap), Namespace = "http://openiz.org/model/map")]
     public class PropertyMap
     {
         /// <summary>

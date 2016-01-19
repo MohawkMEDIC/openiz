@@ -25,6 +25,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -48,28 +49,35 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents an external assigned identifier
     /// </summary>
+    [DataContract(Name = "IdentifierBase", Namespace = "http://openiz.org/model")]
+    [Serializable]
     public abstract class IdentifierBase<TBoundModel> : VersionBoundRelationData<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
     {
 
         // Identifier id
         private Guid? m_identifierTypeId;
         // Authority id
+        [NonSerialized]
         private Guid m_authorityId;
 
         // Identifier type backing type
+        [NonSerialized]
         private IdentifierType m_identifierType;
         // Assigning authority
+        [NonSerialized]
         private AssigningAuthority m_authority;
 
         /// <summary>
         /// Gets or sets the value of the identifier
         /// </summary>
+        [DataMember(Name = "value")]
         public String Value { get; set; }
 
         /// <summary>
         /// Gets or sets the identifier type
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public IdentifierType Type
         {
             get
@@ -94,6 +102,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the assigning authority 
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public AssigningAuthority Authority
         {
             get
@@ -122,6 +131,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [DataMember(Name = "authorityId")]
         public Guid AuthorityId {
             get { return this.m_authorityId; }
             set
@@ -138,6 +148,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [DataMember(Name = "typeId")]
         public Guid? TypeId
         {
             get { return this.m_identifierTypeId; }

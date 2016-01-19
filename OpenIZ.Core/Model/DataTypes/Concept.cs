@@ -24,12 +24,15 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
     /// <summary>
     /// A class representing a generic concept used in the OpenIZ datamodel
     /// </summary>
+    [Serializable]
+    [DataContract(Name = "Concept", Namespace = "http://openiz.org/model")]
     public class Concept : VersionedEntityData<Concept>
     {
 
@@ -37,29 +40,32 @@ namespace OpenIZ.Core.Model.DataTypes
         // Concept class id
         private Guid m_classId;
         // Backing field for relationships
+        [NonSerialized]
         private List<ConceptRelationship> m_relationships;
         // Concept class
+        [NonSerialized]
         private ConceptClass m_class;
         // Reference terms
+        [NonSerialized]
         private List<ConceptReferenceTerm> m_referenceTerms;
         // Names
+        [NonSerialized]
         private List<ConceptName> m_conceptNames;
-        // Previous version id
-        private Guid? m_previousVersionId;
-        // Previous version
-        private Concept m_previousVersion;
         // Status id
         private Guid? m_conceptStatusId;
         // Status
+        [NonSerialized]
         private Concept m_conceptStatus;
 
         /// <summary>
         /// Gets or sets an indicator which dictates whether the concept is a system concept
         /// </summary>
+        [DataMember(Name = "isReadonly")]
         public bool IsSystemConcept { get; set; }
         /// <summary>
         /// Gets or sets the unchanging mnemonic for the concept
         /// </summary>
+        [DataMember(Name = "mnemonic")]
         public String Mnemonic { get; set; }
 
         /// <summary>
@@ -67,6 +73,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [DataMember(Name = "statusConceptId")]
         public Guid? StatusConceptId
         {
             get
@@ -84,6 +91,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the status of the concept
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public Concept Status
         {
             get
@@ -99,57 +107,18 @@ namespace OpenIZ.Core.Model.DataTypes
             }
             set
             {
-                this.m_previousVersion = value;
+                this.m_conceptStatus = value;
                 this.m_conceptStatusId = value?.Key;
             }
         }
 
-        /// <summary>
-        /// Gets or sets the previous version key
-        /// </summary>
-        [Browsable(false)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public override Guid? PreviousVersionKey
-        {
-            get
-            {
-                return this.m_previousVersionId;
-            }
-            set
-            {
-                this.m_previousVersionId = value;
-                this.m_previousVersion = null;
-            }
-        }
 
-        /// <summary>
-        /// Gets or sets the previous version
-        /// </summary>
-        [DelayLoad]
-        public override Concept PreviousVersion
-        {
-            get
-            {
-                if(this.m_previousVersion == null &&
-                    this.DelayLoad &&
-                    this.m_previousVersionId.HasValue)
-                {
-                    var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
-                    this.m_previousVersion = persistenceService.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(this.Key, this.m_previousVersionId.Value), null, true);
-                }
-                return this.m_previousVersion;
-            }
-            set
-            {
-                this.m_previousVersion = value;
-                this.m_previousVersionId = value?.VersionKey;
-            }
-        }
 
         /// <summary>
         /// Gets a list of concept relationships
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public List<ConceptRelationship> Relationship
         {
             get
@@ -168,6 +137,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [DataMember(Name = "classId")]
         public Guid ClassId
         {
             get { return this.m_classId; }
@@ -182,6 +152,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the classification of the concept
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public ConceptClass Class
         {
             get
@@ -209,6 +180,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets a list of concept reference terms
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public List<ConceptReferenceTerm> ReferenceTerms
         {
             get
@@ -226,6 +198,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets the concept names
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public List<ConceptName> ConceptNames
         {
             get
@@ -248,7 +221,6 @@ namespace OpenIZ.Core.Model.DataTypes
             this.m_class = null;
             this.m_conceptNames = null;
             this.m_conceptStatus = null;
-            this.m_previousVersion = null;
             this.m_referenceTerms = null;
             this.m_relationships = null;
         }

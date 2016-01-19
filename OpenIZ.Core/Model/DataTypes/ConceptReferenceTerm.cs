@@ -21,21 +21,26 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Attributes;
 using System;
 using System.ComponentModel;
+using System.Runtime.Serialization;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
     /// <summary>
     /// Represents a reference term relationship between a concept and reference term
     /// </summary>
+    [Serializable]
+    [DataContract(Name = "ConceptReferenceTerm", Namespace = "http://openiz.org/model")]
     public class ConceptReferenceTerm : VersionBoundRelationData<Concept>
     {
         // Reference term id
         private Guid m_referenceTermId;
         // Reference term
+        [NonSerialized]
         private ReferenceTerm m_referenceTerm;
         // ConceptRelationship type
         private Guid m_relationshipTypeId;
         // Relationship type
+        [NonSerialized]
         private ConceptRelationshipType m_relationshipType;
 
         /// <summary>
@@ -43,6 +48,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
+        [DataMember(Name = "referenceTermId")]
         public Guid ReferenceTermId {
             get { return this.m_referenceTermId; }
             set
@@ -56,6 +62,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or set the reference term
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public ReferenceTerm ReferenceTerm
         {
             get
@@ -85,6 +92,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
+        [DataMember(Name = "relationshipTypeId")]
         public Guid RelationshipTypeId {
             get { return this.m_relationshipTypeId; }
             set
@@ -98,6 +106,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the relationship type
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public ConceptRelationshipType RelationshipType {
             get
             {

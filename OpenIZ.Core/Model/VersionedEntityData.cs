@@ -22,14 +22,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MARC.HI.EHRS.SVC.Core.Data;
+using System.Runtime.Serialization;
+using System.ComponentModel;
+using OpenIZ.Core.Model.Attributes;
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
 
 namespace OpenIZ.Core.Model
 {
     /// <summary>
     /// Represents versioned based data, that is base data which has versions
     /// </summary>
-    public abstract class VersionedEntityData<THistoryModelType> : BaseEntityData
+    [Serializable]
+    [DataContract(Name = "VersionedEntityData", Namespace = "http://openiz.org/model")]
+    public abstract class VersionedEntityData<THistoryModelType> : BaseEntityData where THistoryModelType : VersionedEntityData<THistoryModelType>
     {
+
+        // Previous version id
+        private Guid? m_previousVersionId;
+        // Previous version
+        [NonSerialized]
+        private THistoryModelType m_previousVersion;
 
         /// <summary>
         /// Creates a new versioned base data class
@@ -39,28 +52,68 @@ namespace OpenIZ.Core.Model
         }
 
         /// <summary>
-        /// Gets or sets the previous verion
+        /// Gets or sets the previous version key
         /// </summary>
-        public abstract Guid? PreviousVersionKey { get; set; }
+        [Browsable(false)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DataMember(Name = "previousVersionId")]
+        public virtual Guid? PreviousVersionKey
+        {
+            get
+            {
+                return this.m_previousVersionId;
+            }
+            set
+            {
+                this.m_previousVersionId = value;
+                this.m_previousVersion = default(THistoryModelType);
+            }
+        }
 
         /// <summary>
-        /// Gets or sets the versions of this class in the past
+        /// Gets or sets the previous version
         /// </summary>
-        public abstract THistoryModelType PreviousVersion { get; set; }
+        [DelayLoad]
+        [IgnoreDataMember]
+        public virtual THistoryModelType PreviousVersion
+        {
+            get
+            {
+                if (this.m_previousVersion == null &&
+                    this.DelayLoad &&
+                    this.m_previousVersionId.HasValue)
+                {
+                    var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<THistoryModelType>>();
+                    this.m_previousVersion = persistenceService.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(this.Key, this.m_previousVersionId.Value), null, true);
+                }
+                return this.m_previousVersion;
+            }
+            set
+            {
+                this.m_previousVersion = value;
+                if (value == default(THistoryModelType))
+                    this.m_previousVersionId = null;
+                else
+                    this.m_previousVersionId = value.VersionKey;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the key which represents the version of the entity
         /// </summary>
+        [DataMember(Name = "versionId")]
         public Guid VersionKey { get; set; }
 
         /// <summary>
         /// The sequence number of the version (for ordering)
         /// </summary>
+        [DataMember(Name = "sequenceId")]
         public Decimal VersionSequence { get; set; }
 
         /// <summary>
         /// Gets or sets the IIdentified data for this object
         /// </summary>
+        [IgnoreDataMember]
         public override Identifier<Guid> Id
         {
             get
@@ -82,6 +135,15 @@ namespace OpenIZ.Core.Model
         public override string ToString()
         {
             return String.Format("{0} (K:{1}, V:{2})", this.GetType().Name, this.Key, this.VersionKey);
+        }
+
+        /// <summary>
+        /// Force bound attributes to reload
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_previousVersion = default(THistoryModelType);
         }
     }
 

@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Feature xmlns="http://marc-hi.ca/plugin/dbxml" verion="1.0.0.0" id="CE79889F-79B0-461B-A42E-50CD07F78B07" dbms="mssql">
+  <install>
+    <sqlScript assemblyName="OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0" resourceName="OpenIZ.Persistence.Data.MSSQL.Data.Sql.OpenIZDDL.sql" dbms="mssql" id="BC4D007D-C6FB-4B11-849A-4BE08A5A3E0B"/>
+  </install>
+</Feature>

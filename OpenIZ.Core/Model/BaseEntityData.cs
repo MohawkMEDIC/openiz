@@ -29,6 +29,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace OpenIZ.Core.Model
 {
@@ -36,32 +37,39 @@ namespace OpenIZ.Core.Model
     /// <summary>
     /// Represents the root of all model classes in the OpenIZ Core
     /// </summary>
+    [Serializable]
+    [DataContract(Name = "BaseEntityData", Namespace = "http://openiz.org/model")]
     public abstract class BaseEntityData : IdentifiedData
     {
 
         // Created by identifier
         private Guid m_createdById;
         // Created by
+        [NonSerialized]
         private SecurityUser m_createdBy;
         // Obsoleted by
         private Guid? m_obsoletedById;
         // Obsoleted by user
+        [NonSerialized]
         private SecurityUser m_obsoletedBy;
         
         /// <summary>
         /// Creation Time
         /// </summary>
+        [DataMember(Name = "creationTime")]
         public DateTimeOffset CreationTime { get; set; }
 
         /// <summary>
         /// Obsoletion time
         /// </summary>
+        [DataMember(Name = "obsoletionTime")]
         public DateTimeOffset? ObsoletionTime { get; set; }
 
         /// <summary>
         /// Gets or sets the user that created this base data
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public virtual SecurityUser CreatedBy {
             get
             {
@@ -78,6 +86,7 @@ namespace OpenIZ.Core.Model
         /// Gets or sets the user that obsoleted this base data
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public virtual SecurityUser ObsoletedBy {
             get
             {
@@ -95,6 +104,7 @@ namespace OpenIZ.Core.Model
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [DataMember(Name ="createdBy")]
         public virtual Guid CreatedById
         {
             get { return this.m_createdById; }
@@ -111,6 +121,7 @@ namespace OpenIZ.Core.Model
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [DataMember(Name ="obsoletedBy")]
         public virtual Guid? ObsoletedById
         {
             get { return this.m_obsoletedById; }

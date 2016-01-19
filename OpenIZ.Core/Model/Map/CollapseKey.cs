@@ -29,7 +29,7 @@ namespace OpenIZ.Core.Model.Map
     /// <summary>
     /// Association map
     /// </summary>
-    [XmlType(nameof(CollapseKey), Namespace = "http://openiz.org/model/map")]
+    [XmlType( nameof(CollapseKey), Namespace = "http://openiz.org/model/map")]
     public class CollapseKey
     {
         /// <summary>

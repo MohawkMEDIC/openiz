@@ -21,12 +21,15 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Attributes;
 using System;
 using System.ComponentModel;
+using System.Runtime.Serialization;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
     /// <summary>
     /// Represents a basic information class which classifies the use of an identifier
     /// </summary>
+    [Serializable]
+    [DataContract(Name = "IdentifierType", Namespace = "http://openiz.org/model")]
     public class IdentifierType : BaseEntityData
     {
 
@@ -35,8 +38,10 @@ namespace OpenIZ.Core.Model.DataTypes
         // Scope concept identifier
         private Guid? m_scopeConceptId;
         // Type concept
+        [NonSerialized]
         private Concept m_typeConcept;
         // Scope concept
+        [NonSerialized]
         private Concept m_scopeConcept;
 
         /// <summary>
@@ -44,6 +49,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [DataMember(Name = "scopeConceptId")]
         public Guid? ScopeConceptId
         {
             get { return this.m_scopeConceptId; }
@@ -59,6 +65,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [DataMember(Name = "typeConceptId")]
         public Guid TypeConceptId
         {
             get { return this.m_typeConceptId; }
@@ -73,6 +80,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Type concept
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public Concept TypeConcept
         {
             get
@@ -98,6 +106,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets the scope of the identifier
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public Concept Scope
         {
             get

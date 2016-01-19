@@ -29,7 +29,7 @@ namespace OpenIZ.Core.Model.Map
     /// <summary>
     /// Class mapping
     /// </summary>
-    [XmlType(nameof(ClassMap), Namespace = "http://openiz.org/model/map")]
+    [XmlType( nameof(ClassMap), Namespace = "http://openiz.org/model/map")]
     public class ClassMap
     {
 

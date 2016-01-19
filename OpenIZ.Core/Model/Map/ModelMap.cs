@@ -30,7 +30,7 @@ namespace OpenIZ.Core.Model.Map
     /// Model map format class
     /// </summary>
     [XmlRoot("modelMap", Namespace = "http://openiz.org/model/map")]
-    [XmlType(nameof(ModelMap), Namespace = "http://openiz.org/model/map")]
+    [XmlType( nameof(ModelMap), Namespace = "http://openiz.org/model/map")]
     public class ModelMap
     {
 

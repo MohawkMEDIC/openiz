@@ -17,22 +17,27 @@
  * Date: 2016-1-19
  */
 using System;
+using System.Runtime.Serialization;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
     /// <summary>
     /// Identifies a classification for a concept
     /// </summary>
+    [Serializable]
+    [DataContract(Name = "ConceptClass", Namespace = "http://openiz.org/model")]
     public class ConceptClass : IdentifiedData
     {
 
         /// <summary>
         /// Gets or sets the name of the concept class
         /// </summary>
+        [DataMember(Name = "name")]
         public string Name { get; set; }
         /// <summary>
         /// Gets or sets the mnemonic
         /// </summary>
+        [DataMember(Name = "mnemonic")]
         public string Mnemonic { get; set; }
 
 

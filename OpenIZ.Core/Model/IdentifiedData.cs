@@ -25,20 +25,25 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace OpenIZ.Core.Model
 {
     /// <summary>
     /// Represents data that is identified by a key
     /// </summary>
+    [Serializable]
+    [DataContract(Name = "IdentifiedData", Namespace = "http://openiz.org/model")]
     public abstract class IdentifiedData : IIdentified<Guid>
     {
         // True when the data class is locked for storage
+        [NonSerialized]
         private bool m_delayLoad = true;
 
         /// <summary>
         /// True if the class is currently loading associations when accessed
         /// </summary>
+        [IgnoreDataMember]
         public bool DelayLoad
         {
             get
@@ -105,12 +110,14 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// The internal primary key value of the entity
         /// </summary>
+        [DataMember(Name = "id")]
         public Guid Key { get; set; }
 
 
         /// <summary>
         /// Gets or sets the Id of the base data
         /// </summary>
+        [IgnoreDataMember]
         public virtual Identifier<Guid> Id
         {
             get

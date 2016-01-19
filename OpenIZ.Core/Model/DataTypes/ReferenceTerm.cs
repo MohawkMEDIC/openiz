@@ -23,31 +23,37 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using OpenIZ.Core.Model.Attributes;
+using System.Runtime.Serialization;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
     /// <summary>
     /// Represents a basic reference term
     /// </summary>
+    [Serializable]
+    [DataContract(Name = "ReferenceTerm", Namespace = "http://openiz.org/model")]
     public class ReferenceTerm : IdentifiedData
     {
 
         // Backing field for code system identifier
         private Guid m_codeSystemId;
         // Code system
+        [NonSerialized]
         private CodeSystem m_codeSystem;
         // Display names
+        [NonSerialized]
         private List<ReferenceTermName> m_displayNames;
 
         /// <summary>
         /// Gets or sets the mnemonic for the reference term
         /// </summary>
+        [DataMember(Name = "mnemonic")]
         public string Mnemonic { get; set; }
 
         /// <summary>
         /// Gets or sets the code system 
         /// </summary>
-        [DelayLoad]
+        [IgnoreDataMember]
         public CodeSystem CodeSystem {
             get
             {
@@ -75,6 +81,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
+        [DataMember(Name = "codeSystemId")]
         public Guid CodeSystemId {
             get { return this.m_codeSystemId; }
             set
@@ -88,6 +95,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets display names associated with the reference term
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public List<ReferenceTermName> DisplayNames {
             get
             {

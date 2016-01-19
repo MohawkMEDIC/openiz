@@ -21,23 +21,28 @@ using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
 using System;
 using System.ComponentModel;
+using System.Runtime.Serialization;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
     /// <summary>
     /// Concept relationship type
     /// </summary>
+    [Serializable]
+    [DataContract(Name = "ConceptRelationshipType", Namespace = "http://openiz.org/model")]
     public class ConceptRelationshipType : IdentifiedData
     {
 
         /// <summary>
         /// Gets or sets the name of the relationship
         /// </summary>
+        [DataMember(Name = "name")]
         public String Name { get; set; }
 
         /// <summary>
         /// The invariant of the relationship type
         /// </summary>
+        [DataMember(Name = "mnemonic")]
         public String Mnemonic { get; set; }
 
     }

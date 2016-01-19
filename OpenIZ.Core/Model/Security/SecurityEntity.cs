@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,15 +28,18 @@ namespace OpenIZ.Core.Model.Security
     /// <summary>
     /// Security Entity base class
     /// </summary>
+    [DataContract(Namespace = "http://openiz.org/model", Name = "SecurityEntity")]
     public abstract class SecurityEntity : BaseEntityData
     {
 
         // Policies
+        [NonSerialized]
         private List<SecurityPolicyInstance> m_policies = new List<SecurityPolicyInstance>();
 
         /// <summary>
         /// Policies associated with the entity
         /// </summary>
+        [IgnoreDataMember]
         public virtual List<SecurityPolicyInstance> Policies { get { return this.m_policies; } }
         
     }

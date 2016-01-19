@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,61 +34,77 @@ namespace OpenIZ.Core.Model.Security
     /// <summary>
     /// Security user represents a user for the purpose of security 
     /// </summary>
+    [DataContract(Name = "SecurityUser", Namespace = "http://openiz.org/model")]
+    [Serializable]
     public class SecurityUser : SecurityEntity
     {
 
         
         // Roles
+        [NonSerialized]
         private List<SecurityRole> m_roles;
         // The updated by id
         private Guid? m_updatedById;
         // The updated by user
+        [NonSerialized]
         private SecurityUser m_updatedBy;
         // Policies
+        [NonSerialized]
         private List<SecurityPolicyInstance> m_policies;
         /// <summary>
         /// Gets or sets the email address of the user
         /// </summary>
+        [DataMember(Name = "email")]
         public String Email { get; set; }
         /// <summary>
         /// Gets or sets whether the email address is confirmed
         /// </summary>
+        [DataMember(Name = "emailConfirmed")]
         public Boolean EmailConfirmed { get; set; }
         /// <summary>
         /// Gets or sets the number of invalid login attempts by the user
         /// </summary>
+        [DataMember(Name = "invalidLoginAttempts")]
         public Int32 InvalidLoginAttempts { get; set; }
         /// <summary>
         /// Gets or sets whether the account is locked out
         /// </summary>
+        [DataMember(Name = "lockoutEnabled")]
         public Boolean LockoutEnabled { get; set; }
         /// <summary>
         /// Gets or sets whether the password hash is enabled
         /// </summary>
+        [DataMember(Name = "passwordHash")]
         public String PasswordHash { get; set; }
         /// <summary>
         /// Gets or sets whether the security has is enabled
         /// </summary>
+        [DataMember(Name = "securityStamp")]
         public String SecurityHash { get; set; }
         /// <summary>
         /// Gets or sets whether two factor authentication is required
         /// </summary>
+        [DataMember(Name = "twoFactorEnabled")]
         public Boolean TwoFactorEnabled { get; set; }
         /// <summary>
         /// Gets or sets the logical user name ofthe user
         /// </summary>
+        [DataMember(Name = "userName")]
         public String UserName { get; set; }
         /// <summary>
         /// Gets or sets the binary representation of the user's photo
         /// </summary>
+        [DataMember(Name = "photo")]
         public byte[] UserPhoto { get; set; }
         /// <summary>
         /// The last login time
         /// </summary>
+        [DataMember(Name = "lastLoginTime")]
         public DateTimeOffset LastLoginTime { get; set; }
         /// <summary>
         /// Represents roles
         /// </summary>
+        [IgnoreDataMember]
         [DelayLoad]
         public List<SecurityRole> Roles {
             get
@@ -103,12 +120,14 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Updated time
         /// </summary>
+        [DataMember(Name = "updatedTime")]
         public DateTimeOffset? UpdatedTime { get; set; }
 
         /// <summary>
         /// Gets or sets the user that updated this base data
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public SecurityUser UpdatedBy
         {
             get
@@ -127,6 +146,7 @@ namespace OpenIZ.Core.Model.Security
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [DataMember(Name = "updatedById")]
         public Guid? UpdatedById
         {
             get { return this.m_updatedById; }
@@ -141,17 +161,20 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets or sets the patient's phone number
         /// </summary>
+        [DataMember(Name = "phoneNumber")]
         public String PhoneNumber { get; set; }
 
         /// <summary>
         /// Gets or sets whether the phone number was confirmed
         /// </summary>
+        [DataMember(Name = "phoneNumberConfirmed")]
         public Boolean PhoneNumberConfirmed { get; set; }
 
         /// <summary>
         /// Get the policies active for this user
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public override List<SecurityPolicyInstance> Policies
         {
             get

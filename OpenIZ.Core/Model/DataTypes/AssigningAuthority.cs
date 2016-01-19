@@ -19,43 +19,53 @@
 using MARC.HI.EHRS.SVC.Core.Data;
 using OpenIZ.Core.Model.Attributes;
 using System;
+using System.Runtime.Serialization;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
     /// <summary>
     /// Represents a model class which is an assigning authority
     /// </summary>
+    [Serializable]
+    [DataContract(Name = "AssigningAuthority", Namespace = "http://openiz.org/model")]
     public  class AssigningAuthority : BaseEntityData
     {
         // Assigning device id
         private Guid m_assigningDeviceId;
 
         // TODO: Change this to SecurityDevice
+        [NonSerialized]
         private Object m_assigningDevice;
 
         /// <summary>
         /// Gets or sets the name of the assigning authority
         /// </summary>
+        [DataMember(Name = "name")]
         public String Name { get; set; }
         /// <summary>
         /// Gets or sets the domain name of the assigning authority
         /// </summary>
+        [DataMember(Name = "domainName")]
         public String DomainName { get; set; }
         /// <summary>
         /// Gets or sets the description of the assigning authority
         /// </summary>
+        [DataMember(Name = "Description")]
         public String Description { get; set; }
         /// <summary>
         /// Gets or sets the oid of the assigning authority
         /// </summary>
+        [DataMember(Name = "oid")]
         public String Oid { get; set; }
         /// <summary>
         /// The URL of the assigning authority
         /// </summary>
+        [DataMember(Name = "Url")]
         public String Url { get; set; }
         /// <summary>
         /// Assigning device identifier
         /// </summary>
+        [DataMember(Name = "assigningDeviceId")]
         public Guid AssigningDeviceId
         {
             get { return this.m_assigningDeviceId; }
@@ -69,6 +79,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the assigning device
         /// </summary>
+        [IgnoreDataMember]
         public Object AssigningDevice { get; set; }
 
         /// <summary>

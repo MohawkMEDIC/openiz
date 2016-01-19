@@ -121,7 +121,10 @@
     <Content Include="Data\CorrectDbml.xslt">
       <SubType>Designer</SubType>
     </Content>
-    <EmbeddedResource Include="Data\Sql\OpenIZ-DDL.SQL" />
+    <Content Include="Data\dbfeatures.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <EmbeddedResource Include="Data\Sql\OpenIZDDL.sql" />
     <None Include="Data\Model.dbml.layout">
       <DependentUpon>Model.dbml</DependentUpon>
     </None>
