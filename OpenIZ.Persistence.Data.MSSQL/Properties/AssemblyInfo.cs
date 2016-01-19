@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using MARC.HI.EHRS.SVC.Core.Plugins;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -34,3 +35,9 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+
+// Plugin stuff
+[assembly: AssemblyPlugin()]
+
+// Depends: OpenIZ.Core v1.0.0.0
+[assembly: AssemblyPluginDependency("db9bc05e-45f1-4f96-a161-f36bdecaf566", "1.0.0.0")]
