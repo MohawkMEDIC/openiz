@@ -12,7 +12,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// A class representing a generic concept used in the OpenIZ datamodel
     /// </summary>
-    public class Concept : VersionedEntityData<Concept>, ISecurable
+    public class Concept : VersionedEntityData<Concept>
     {
 
       
@@ -222,10 +222,17 @@ namespace OpenIZ.Core.Model.DataTypes
         }
 
         /// <summary>
-        /// If the object is masked
+        /// Refresh the specified object's delay load properties
         /// </summary>
-        public void Mask()
+        public override void Refresh()
         {
+            base.Refresh();
+            this.m_class = null;
+            this.m_conceptNames = null;
+            this.m_conceptStatus = null;
+            this.m_previousVersion = null;
+            this.m_referenceTerms = null;
+            this.m_relationships = null;
         }
     }
 }

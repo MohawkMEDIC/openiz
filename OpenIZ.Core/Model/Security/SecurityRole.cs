@@ -44,6 +44,14 @@ namespace OpenIZ.Core.Model.Security
             }
         }
 
-    
+        /// <summary>
+        /// Force delay load properties to be reloaded from the data store
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_users = null;
+        }
+
     }
 }

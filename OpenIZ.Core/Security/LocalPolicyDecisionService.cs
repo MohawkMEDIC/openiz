@@ -49,7 +49,7 @@ namespace OpenIZ.Core.Security
 
             // Policies
             var policyInstance = user.Policies.Find(o => o.Policy.Oid == policyId);
-            if (!policyInstance.Policy.CanElevate && policyInstance.GrantType == PolicyDecisionOutcomeType.Elevate)
+            if (!policyInstance.Policy.CanOverride && policyInstance.GrantType == PolicyDecisionOutcomeType.Elevate)
                 return PolicyDecisionOutcomeType.Deny;
             else if (policyInstance.Policy.ObsoletionTime != null)
                 return PolicyDecisionOutcomeType.Deny;

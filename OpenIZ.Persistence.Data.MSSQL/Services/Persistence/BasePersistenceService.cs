@@ -393,15 +393,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     if (preEvt.Cancel)
                         return null;
 
-                    // TODO: Keep an eye for this one.. not sure what it will...
-                    IQueryable<TModel> retVal = this.Query(preEvt.Query, principal, dataContext).Skip(offset);
-                    if (count.HasValue)
-                        retVal = retVal.Take(count.Value);
-
+                    // TODO: Keep an eye for this one.. not sure what it will perform like...
+                    // Alternateive is to skip/take before filtering results
+                    IQueryable<TModel> retVal = this.Query(preEvt.Query, principal, dataContext);
+                    
                     PostQueryEventArgs<TModel> postEvt = new PostQueryEventArgs<TModel>(preEvt.Query, retVal, principal);
                     this.Queried?.Invoke(this, postEvt);
 
-                    return postEvt.Results.ToList();
+                    retVal = postEvt.Results.Skip(offset);
+                    if (count.HasValue)
+                        retVal = retVal.Take(count.Value);
+
+                    return retVal.ToList();
                 }
             }
             catch (Exception e)

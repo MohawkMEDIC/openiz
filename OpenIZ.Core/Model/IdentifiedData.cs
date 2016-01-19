@@ -118,5 +118,10 @@ namespace OpenIZ.Core.Model
         {
             return new List<IResultDetail>();
         }
+
+        /// <summary>
+        /// Force reloading of delay load properties
+        /// </summary>
+        public virtual void Refresh() { }
     }
 }

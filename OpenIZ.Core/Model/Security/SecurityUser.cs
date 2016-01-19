@@ -158,5 +158,16 @@ namespace OpenIZ.Core.Model.Security
             }
         }
 
+        /// <summary>
+        /// Forces delay load properties to be from the database
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_policies = null;
+            this.m_roles = null;
+            this.m_updatedBy = null;
+        }
+
     }
 }

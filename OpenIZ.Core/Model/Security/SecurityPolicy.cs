@@ -39,7 +39,7 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Whether the policy can be elevated over
         /// </summary>
-        public bool CanElevate { get; set; }
+        public bool CanOverride { get; set; }
     }
 
     /// <summary>

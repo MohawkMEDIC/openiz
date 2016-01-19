@@ -102,5 +102,14 @@ namespace OpenIZ.Core.Model.DataTypes
             }
         }
 
+        /// <summary>
+        /// Refresh the specified object
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_referenceTerm = null;
+            this.m_relationshipType = null;
+        }
     }
 }

@@ -19,5 +19,6 @@ namespace OpenIZ.Core.Model.Security
         /// Policies associated with the entity
         /// </summary>
         public virtual List<SecurityPolicyInstance> Policies { get { return this.m_policies; } }
+        
     }
 }

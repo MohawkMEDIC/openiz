@@ -41,6 +41,7 @@
     <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
     <property modelName="CreatedById" domainName="CreatedBy"/>
     <property modelName="ObsoletedById" domainName="ObsoletedBy"/>
+    <property modelName="CanOverride" domainName="CanElevate"/>
   </class>
   <class modelClass="OpenIZ.Core.Model.DataTypes.Concept, OpenIZ.Core, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptVersion, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ConceptId"/>

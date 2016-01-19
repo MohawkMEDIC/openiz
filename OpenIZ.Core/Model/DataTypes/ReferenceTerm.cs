@@ -82,5 +82,14 @@ namespace OpenIZ.Core.Model.DataTypes
             }
         }
 
+        /// <summary>
+        /// Force reloading of delay load properties
+        /// </summary>
+        public override void Refresh()
+        {
+            this.m_codeSystem = null;
+            this.m_displayNames = null;
+        }
+
     }
 }

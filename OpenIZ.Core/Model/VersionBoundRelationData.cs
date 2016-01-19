@@ -220,5 +220,14 @@ namespace OpenIZ.Core.Model
                 validResults.Add(new RequiredElementMissingResultDetail(ResultDetailType.Error, String.Format("({0}).{1} required", this.GetType().Name, nameof(TargetEntityKey)), null));
             return validResults;
         }
+
+        /// <summary>
+        /// Refresh
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_effectiveVersion = this.m_obsoleteVersion = this.m_targetEntity = null;
+        }
     }
 }
