@@ -1,4 +1,22 @@
-﻿using MARC.HI.EHRS.SVC.Core;
+﻿/**
+ * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: fyfej
+ * Date: 2016-1-19
+ */
+using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Attributes;
 using System;
@@ -7,6 +25,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -30,28 +49,35 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents an external assigned identifier
     /// </summary>
+    [DataContract(Name = "IdentifierBase", Namespace = "http://openiz.org/model")]
+    [Serializable]
     public abstract class IdentifierBase<TBoundModel> : VersionBoundRelationData<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
     {
 
         // Identifier id
         private Guid? m_identifierTypeId;
         // Authority id
+        [NonSerialized]
         private Guid m_authorityId;
 
         // Identifier type backing type
+        [NonSerialized]
         private IdentifierType m_identifierType;
         // Assigning authority
+        [NonSerialized]
         private AssigningAuthority m_authority;
 
         /// <summary>
         /// Gets or sets the value of the identifier
         /// </summary>
+        [DataMember(Name = "value")]
         public String Value { get; set; }
 
         /// <summary>
         /// Gets or sets the identifier type
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public IdentifierType Type
         {
             get
@@ -76,6 +102,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the assigning authority 
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public AssigningAuthority Authority
         {
             get
@@ -104,6 +131,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [DataMember(Name = "authorityId")]
         public Guid AuthorityId {
             get { return this.m_authorityId; }
             set
@@ -120,6 +148,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [DataMember(Name = "typeId")]
         public Guid? TypeId
         {
             get { return this.m_identifierTypeId; }
