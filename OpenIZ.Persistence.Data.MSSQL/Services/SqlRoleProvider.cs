@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -42,7 +42,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
     /// </summary>
     public class SqlRoleProvider : IRoleProviderService
     {
-        // Configuration
+        /// <summary>
+        /// Configuration 
+        /// </summary>
         protected SqlConfiguration m_configuration = ConfigurationManager.GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
 
         /// <summary>

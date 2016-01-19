@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -45,7 +45,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Exceptions
         /// Indicates a user attempted to update a readonly system object
         /// </summary>
         UpdatedReadonlyObject,
-        AssociatedEntityWithoutTargetKey,
+        /// <summary>
+        /// Associated entity was persisted however there is no source object
+        /// </summary>
+        AssociatedEntityWithoutSourceKey,
+        /// <summary>
+        /// Attempated to insert an associated entity without an effective version
+        /// </summary>
         AssociatedEntityWithoutEffectiveVersion
     }
     /// <summary>

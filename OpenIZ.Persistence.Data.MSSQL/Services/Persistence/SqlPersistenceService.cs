@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -36,7 +36,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         // Service providers
         private List<Type> m_serviceProviders = new List<Type>();
 
-        // Trace source
+        /// <summary>
+        /// Represents a source of trace logs from this object
+        /// </summary>
         protected TraceSource m_traceSource = new TraceSource("OpenIZ.Persistence.Data.MSSQL.Services.Persistence");
 
         /// <summary>

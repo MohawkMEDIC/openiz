@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -81,7 +81,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
             else if (storageData.SourceEntityKey == Guid.Empty)
-                throw new SqlFormalConstraintException(SqlFormalConstraintType.AssociatedEntityWithoutTargetKey);
+                throw new SqlFormalConstraintException(SqlFormalConstraintType.AssociatedEntityWithoutSourceKey);
 
             var domainConceptName = this.ConvertFromModel(storageData) as Data.ConceptName;
 
@@ -126,7 +126,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
             else if (storageData.SourceEntityKey == Guid.Empty)
-                throw new SqlFormalConstraintException(SqlFormalConstraintType.AssociatedEntityWithoutTargetKey);
+                throw new SqlFormalConstraintException(SqlFormalConstraintType.AssociatedEntityWithoutSourceKey);
 
             // obsolete (i.e. remove the name association)
             var domainConceptName = dataContext.ConceptNames.SingleOrDefault(o => o.ConceptNameId == storageData.Key);

@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -52,12 +52,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     public abstract class BaseDataPersistenceService<TModel> : IDataPersistenceService<TModel> where TModel : IdentifiedData, new()
     {
 
+        /// <summary>
+        /// Identifies a source of trace logs from this object
+        /// </summary>
         protected TraceSource m_traceSource = new TraceSource("OpenIZ.Persistence.Data.MSSQL.Services.Persistence");
 
-        // Configuration
+        /// <summary>
+        /// The local configuration for this connector
+        /// </summary>
         protected SqlConfiguration m_configuration = ConfigurationManager.GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
 
-        // Mapper
+        /// <summary>
+        /// The current mapping instance
+        /// </summary>
         protected static ModelMapper s_mapper = new ModelMapper(typeof(BaseDataPersistenceService<>).Assembly.GetManifestResourceStream("OpenIZ.Persistence.Data.MSSQL.Data.ModelMap.xml"));
 
         #region IDataPersistence<T> Members 
@@ -316,7 +323,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <param name="containerId">The unique identifier for the container</param>
         /// <param name="principal">The authorization context for the current session</param>
         /// <param name="loadFast">True if only the current version should be loaded (i.e. no deep loading)</param>
-        /// <returns>The specified container object of <typeparamref name="T"/></returns>
+        /// <returns>The specified container object of <typeparamref name="TIdentifier"/></returns>
         public TModel Get<TIdentifier>(Identifier<TIdentifier> containerId, IPrincipal principal, bool loadFast)
         {
             if (containerId == null)
@@ -391,11 +398,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         }
 
         /// <summary>
-        /// Queries the database for an object of type <paramref name="T"/>
+        /// Queries the database for an object of type <typeparamref name="TModel"/>
         /// </summary>
         /// <param name="query">The query to be executed expressed as an expression tree in using the model view classes</param>
         /// <param name="principal">The authorization context</param>
         /// <returns>A delay load IQueryable instance which converts the query objects to the model view class</returns>
+        /// <param name="offset">The offset in the result set to start returning</param>
+        /// <param name="count">The number of objects to include in ths result set</param>
         public IEnumerable<TModel> Query(Expression<Func<TModel, bool>> query, int offset, int? count, IPrincipal principal)
         {
             if (query == null)
@@ -455,7 +464,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         /// <param name="containerId">The container identifier to retrieve</param>
         /// <param name="principal">The authorization context</param>
-        /// <param name="loadFast">True if loading fast should be enabled</param>
+        /// <param name="dataContext">The context from which data should be loaded</param>
+        /// <param name="loadFast">When true, deep loading should occur</param>
         internal abstract TModel Get(Identifier<Guid> containerId, IPrincipal principal, bool loadFast, ModelDataContext dataContext);
 
         /// <summary>
@@ -463,6 +473,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         /// <param name="query">The lambda expression representing the query</param>
         /// <param name="principal">The authorization context</param>
+        /// <param name="dataContext">The context from which data should be loaded</param>
         /// <returns>An IQueryable which represents the TModel</returns>
         internal abstract IQueryable<TModel> Query(Expression<Func<TModel, bool>> query, IPrincipal principal, ModelDataContext dataContext);
 
@@ -471,7 +482,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         /// <param name="storageData">The object data to be inserted</param>
         /// <param name="principal">The authorization context</param>
-        /// <param name="mode">The mode of insert</param>
+        /// <param name="dataContext">The context from which data should be loaded</param>
         /// <returns>The inserted model object</returns>
         internal abstract TModel Insert(TModel storageData, IPrincipal principal, ModelDataContext dataContext);
 
@@ -480,7 +491,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         /// <param name="storageData">The data to be obsoleted</param>
         /// <param name="principal">The authorization context</param>
-        /// <param name="mode">The mode of obsoletion</param>
+        /// <param name="dataContext">The context from which data should be loaded</param>
         /// <returns>The new version (obsoleted) of the model</returns>
         internal abstract TModel Obsolete(TModel storageData, IPrincipal principal, ModelDataContext dataContext);
 
@@ -489,7 +500,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         /// <param name="storageData">The data to be obsoleted</param>
         /// <param name="principal">The authorization context</param>
-        /// <param name="mode">The mode of obsoletion</param>
+        /// <param name="dataContext">The context from which data should be loaded</param>
         /// <returns>The new version of the model object</returns>
         internal abstract TModel Update(TModel storageData, IPrincipal principal, ModelDataContext dataContext);
 

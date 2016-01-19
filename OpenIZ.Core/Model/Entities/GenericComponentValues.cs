@@ -21,12 +21,6 @@ namespace OpenIZ.Core.Model.Entities
         private Concept m_componentType;
 
         /// <summary>
-        /// Gets or sets the value of the component
-        /// </summary>
-        [DataMember(Name = "value")]
-        public String Value { get; set; }
-
-        /// <summary>
         /// Component type key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]

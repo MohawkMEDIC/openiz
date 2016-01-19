@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -28,6 +28,7 @@ namespace OpenIZ.Core.Exceptions
     /// <summary>
     /// Model validation exception
     /// </summary>
+    [Serializable]
     public class ModelValidationException : Exception
     {
         /// <summary>

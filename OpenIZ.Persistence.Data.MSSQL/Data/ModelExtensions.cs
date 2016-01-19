@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -126,6 +126,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// Get the user identifier from the authorization context
         /// </summary>
         /// <param name="principal">The current authorization context</param>
+        /// <param name="dataContext">The context under which the get operation should be completed</param>
         /// <returns>The UUID of the user which the authorization context subject represents</returns>
         public static Data.SecurityUser GetUser(this IPrincipal principal, ModelDataContext dataContext)
         {

@@ -20,7 +20,7 @@ CREATE TABLE PhoneticAlgorithm
 
 INSERT INTO PhoneticAlgorithm (PhoneticAlgorithmId, Name, HandlerClass) VALUES ('402CD339-D0E4-46CE-8FC2-12A4B0E17226', 'NONE', NULL);
 
-/**
+/*
  * A TABLE RESPONSIBLE FOR THE STORAGE OF PHONETIC VALUES
  */
 CREATE TABLE PhoneticValues
@@ -573,7 +573,7 @@ CREATE TABLE ConceptReferenceTerm
 -- INDEX LOOKUP BY EFFECTIVE TIMES
 CREATE INDEX IX_ConceptReferenceTermEffectiveVersion ON ConceptReferenceTerm(EffectiveVersionSequenceId, ObsoleteVersionSequenceId);
 
-/**
+/*
  * REFERENCE TERM DISPLAY NAMES FOR REPRESENTATION ON THE WIRE
  */
 CREATE TABLE ReferenceTermDisplayName
@@ -601,7 +601,7 @@ CREATE TABLE ReferenceTermDisplayName
 CREATE INDEX IX_ReferenceTermDisplayNamePhonetic ON ReferenceTermDisplayName(PhoneticCode, PhoneticAlgorithmId);
 CREATE INDEX IX_ReferenceTermDisplayNameName ON ReferenceTermDisplayName(DisplayName);
 
-/**
+/*
  * REPRESENTS A RELATIONSHIP BETWEEN CONCEPTS
  */
 CREATE TABLE ConceptRelationship

@@ -100,6 +100,7 @@
     <Compile Include="Model\VersionBoundRelationData.cs" />
     <Compile Include="Model\VersionedEntityData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\IPolicyHandler.cs" />
     <Compile Include="Security\LocalPolicyDecisionService.cs" />
     <Compile Include="Security\LocalPolicyEnforcementService.cs" />
     <Compile Include="Security\LocalPolicyInformationService.cs" />

@@ -1,4 +1,4 @@
-﻿/**
+﻿/*
  * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -35,6 +35,11 @@ namespace OpenIZ.Core.Security
     /// </summary>
     public class LocalPolicyDecisionService : IPolicyDecisionService
     {
+
+        // Policy handler cache
+        private Dictionary<Type, IPolicyHandler> m_policyHandlers = new Dictionary<Type, IPolicyHandler>();
+        private Object m_lockObject = new object();
+
         /// <summary>
         /// Get a policy decision 
         /// </summary>
@@ -67,11 +72,23 @@ namespace OpenIZ.Core.Security
 
             // Policies
             var policyInstance = user.Policies.Find(o => o.Policy.Oid == policyId);
+
             if (!policyInstance.Policy.CanOverride && policyInstance.GrantType == PolicyDecisionOutcomeType.Elevate)
                 return PolicyDecisionOutcomeType.Deny;
             else if (policyInstance.Policy.ObsoletionTime != null)
                 return PolicyDecisionOutcomeType.Deny;
-
+            else if (policyInstance.Policy.Handler != null)
+            {
+                IPolicyHandler handlerInstance = null;
+                if(!this.m_policyHandlers.TryGetValue(policyInstance.Policy.Handler, out handlerInstance))
+                {
+                    handlerInstance = policyInstance.Policy.Handler.GetConstructor(Type.EmptyTypes).Invoke(null) as IPolicyHandler;
+                    if (handlerInstance != null)
+                        lock(this.m_lockObject)
+                            this.m_policyHandlers.Add(policyInstance.Policy.Handler, handlerInstance);
+                }
+                return handlerInstance.GetPolicyDecision(principal, policyInstance as IPolicy, null).Outcome;
+            }
             return policyInstance.GrantType;
             
         }
