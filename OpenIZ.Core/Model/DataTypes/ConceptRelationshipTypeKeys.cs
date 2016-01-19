@@ -27,7 +27,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Reference type identifiers
     /// </summary>
-    public static class ConceptRelationshipTypeIds
+    public static class ConceptRelationshipTypeKeys
     {
         /// <summary>
         /// Same as relationship

@@ -37,7 +37,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the Oid of the code system
         /// </summary>
-        [DataMember(Name = "oid")]
+        [DataMember(Name = "oRef")]
         public string Oid { get; set; }
 
         /// <summary>

@@ -27,7 +27,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Code system identifiers
     /// </summary>
-    public static class CodeSystemIds
+    public static class CodeSystemKeys
     {
 
         /// <summary>

@@ -50,19 +50,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\DataTypes\CodeSystemIds.cs" />
-    <Compile Include="Model\DataTypes\ConceptClassIds.cs" />
-    <Compile Include="Model\DataTypes\ConceptIds.cs" />
-    <Compile Include="Model\DataTypes\ConceptSetIds.cs" />
+    <Compile Include="Model\DataTypes\CodeSystemKeys.cs" />
+    <Compile Include="Model\DataTypes\ConceptClassKeys.cs" />
+    <Compile Include="Model\DataTypes\Extension.cs" />
+    <Compile Include="Model\DataTypes\ExtensionType.cs" />
+    <Compile Include="Model\DataTypes\StatusConceptKeys.cs" />
+    <Compile Include="Model\DataTypes\ConceptSetKeys.cs" />
     <Compile Include="Exceptions\ModelMapValidationException.cs" />
     <Compile Include="Exceptions\ModelValidationException.cs" />
     <Compile Include="Model\Attributes\DelayLoadAttribute.cs" />
     <Compile Include="Model\DataTypes\CodeSystem.cs" />
     <Compile Include="Model\DataTypes\ConceptName.cs" />
     <Compile Include="Model\DataTypes\ConceptRelationshipType.cs" />
+    <Compile Include="Model\DataTypes\Note.cs" />
     <Compile Include="Model\DataTypes\PhoneticAlgorithm.cs" />
     <Compile Include="Model\DataTypes\ReferenceTermName.cs" />
-    <Compile Include="Model\DataTypes\ConceptRelationshipTypeIds.cs" />
+    <Compile Include="Model\DataTypes\ConceptRelationshipTypeKeys.cs" />
+    <Compile Include="Model\DataTypes\Tag.cs" />
+    <Compile Include="Model\Entities\Entity.cs" />
+    <Compile Include="Model\Entities\EntityAddress.cs" />
+    <Compile Include="Model\Entities\EntityAddressComponent.cs" />
+    <Compile Include="Model\Entities\EntityAssociation.cs" />
+    <Compile Include="Model\Entities\EntityName.cs" />
+    <Compile Include="Model\Entities\EntityNameComponent.cs" />
+    <Compile Include="Model\Entities\EntityTelecomAddress.cs" />
+    <Compile Include="Model\BoundRelationData.cs" />
+    <Compile Include="Model\Entities\GenericComponentValues.cs" />
     <Compile Include="Model\IdentifiedData.cs" />
     <Compile Include="Model\BaseEntityData.cs" />
     <Compile Include="Model\DataTypes\AssigningAuthority.cs" />
@@ -95,7 +108,6 @@
     <Compile Include="Security\SHA256PasswordHashingService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Model\Entity\" />
     <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>

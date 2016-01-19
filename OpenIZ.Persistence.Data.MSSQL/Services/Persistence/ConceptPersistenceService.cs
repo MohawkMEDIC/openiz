@@ -90,7 +90,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataConceptVersion.Concept = new Data.Concept() { IsSystemConcept = storageData.IsSystemConcept };
             dataConceptVersion.CreatedByEntity = principal.GetUser(dataContext);
 
-            dataConceptVersion.StatusConceptId = dataConceptVersion.StatusConceptId == Guid.Empty ? ConceptIds.StatusActive : dataConceptVersion.StatusConceptId;
+            dataConceptVersion.StatusConceptId = dataConceptVersion.StatusConceptId == Guid.Empty ? StatusConceptKeys.Active : dataConceptVersion.StatusConceptId;
             if(storageData.Class != null)
                 dataConceptVersion.ConceptClassId = storageData.Class.EnsureExists(principal, dataContext)?.Key;
 
@@ -104,7 +104,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 ConceptNamePersistenceService namePersister = new ConceptNamePersistenceService();
                 foreach (var cn in storageData.ConceptNames)
                 {
-                    cn.TargetEntityKey = dataConceptVersion.ConceptId; // Ohhh... The year was 1778
+                    cn.SourceEntityKey = dataConceptVersion.ConceptId; // Ohhh... The year was 1778
                     namePersister.Insert(cn, principal, dataContext, false); // How I wish I was in sherbrooke now!!!
                 }
             }
@@ -115,7 +115,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 ConceptReferenceTermPersistenceService referencePersister = new ConceptReferenceTermPersistenceService();
                 foreach (var rt in storageData.ReferenceTerms)
                 {
-                    rt.TargetEntityKey = dataConceptVersion.ConceptId; // Oh Elcid Barrett cried the town!!!
+                    rt.SourceEntityKey = dataConceptVersion.ConceptId; // Oh Elcid Barrett cried the town!!!
                     referencePersister.Insert(rt, principal, dataContext, false); // How I wish I was in sherbrooke now!!!
                 }
             }
@@ -160,7 +160,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataConceptVersion.ObsoletionTime = DateTimeOffset.Now;
             newDataConceptVersion.CreatedByEntity = principal.GetUser(dataContext);
             dataConceptVersion.ObsoletedByEntity = principal.GetUser(dataContext);
-            newDataConceptVersion.StatusConceptId = ConceptIds.StatusObsolete;
+            newDataConceptVersion.StatusConceptId = StatusConceptKeys.Obsolete;
             dataContext.ConceptVersions.InsertOnSubmit(newDataConceptVersion);
 
             dataContext.SubmitChanges();
@@ -231,7 +231,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 var insertRecords = storageData.ConceptNames.Where(o => !existingNames.Exists(ecn => ecn.Key == o.Key));
                 foreach (var ins in insertRecords)
                 {
-                    ins.TargetEntityKey = domainConceptVersion.ConceptId;
+                    ins.SourceEntityKey = domainConceptVersion.ConceptId;
                     cnPersistenceService.Insert(ins, principal, dataContext, false);
                 }
 
@@ -256,7 +256,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 var insertRecords = storageData.ReferenceTerms.Where(o => !existingTerms.Exists(ecn => ecn.Key == o.Key));
                 foreach (var ins in insertRecords)
                 {
-                    ins.TargetEntityKey = domainConceptVersion.ConceptId;
+                    ins.SourceEntityKey = domainConceptVersion.ConceptId;
                     rtPersistenceService.Insert(ins, principal, dataContext, false);
                 }
 

@@ -26,18 +26,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
-    /*
     /// <summary>
     /// Entity identifiers
     /// </summary>
-    public class EntityIdentifier : Identifier<Entity>
+    public class EntityIdentifier : IdentifierBase<Entity>
     {
 
     }
 
+    /*
     /// <summary>
     /// Act identifier
     /// </summary>
@@ -82,14 +83,7 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-               if(this.DelayLoad && 
-                    this.m_identifierType == null && 
-                    this.m_identifierTypeId.HasValue)
-                {
-                    var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<IdentifierType>>();
-                    this.m_identifierType = persistenceService.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(this.m_identifierTypeId.Value), null, true);
-                }
-                return this.m_identifierType;
+                return base.DelayLoad(this.m_identifierTypeId, this.m_identifierType);
             }
             set
             {
@@ -107,14 +101,7 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                if (this.DelayLoad &&
-                    this.m_authorityId != Guid.Empty &&
-                    this.m_authority == null)
-                {
-                    var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>();
-                    this.m_authority = persistenceService.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(this.m_authorityId), null, true);
-                }
-                return this.m_authority;
+                return base.DelayLoad(this.m_authorityId, this.m_authority);
             }
             set
             {
@@ -131,8 +118,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "authorityId")]
-        public Guid AuthorityId {
+        [DataMember(Name = "authorityRef")]
+        public Guid  AuthorityKey {
             get { return this.m_authorityId; }
             set
             {
@@ -148,8 +135,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "typeId")]
-        public Guid? TypeId
+        [DataMember(Name = "typeRef")]
+        public Guid?  TypeKey
         {
             get { return this.m_identifierTypeId; }
             set

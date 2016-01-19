@@ -73,12 +73,7 @@ namespace OpenIZ.Core.Model
         public virtual SecurityUser CreatedBy {
             get
             {
-                if (this.DelayLoad && this.m_createdById != Guid.Empty && this.m_createdBy == null)
-                {
-                    var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
-                    this.m_createdBy = dataLayer.Get(new Identifier<Guid>() { Id = this.m_createdById }, null, true);
-                }
-                return this.m_createdBy;
+                return base.DelayLoad(this.m_createdById, this.m_createdBy);
             }
          }
 
@@ -90,12 +85,7 @@ namespace OpenIZ.Core.Model
         public virtual SecurityUser ObsoletedBy {
             get
             {
-                if (this.DelayLoad && this.m_obsoletedById.HasValue && this.m_obsoletedBy == null)
-                {
-                    var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
-                    this.m_obsoletedBy = dataLayer.Get(new Identifier<Guid>() { Id = this.m_obsoletedById.Value }, null, true);
-                }
-                return this.m_obsoletedBy;
+                return base.DelayLoad(this.m_obsoletedById, this.m_obsoletedBy);
             }
         }
 

@@ -73,8 +73,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "statusConceptId")]
-        public Guid? StatusConceptId
+        [DataMember(Name = "statusConceptRef")]
+        public Guid?  StatusConceptKey
         {
             get
             {
@@ -96,14 +96,7 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                if (this.m_conceptStatus == null &&
-                    this.DelayLoad &&
-                    this.m_conceptStatusId.HasValue)
-                {
-                    var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
-                    this.m_conceptStatus = persistenceService.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(this.m_conceptStatusId.Value), null, true);
-                }
-                return this.m_conceptStatus;
+                return base.DelayLoad(this.m_conceptStatusId, this.m_conceptStatus);
             }
             set
             {
@@ -123,10 +116,10 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                if(this.m_relationships == null && this.DelayLoad)
+                if(this.m_relationships == null && this.IsDelayLoad)
                 {
                     var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptRelationship>>();
-                    this.m_relationships = persistenceService.Query(r => this.Key == r.TargetEntityKey && this.VersionSequence >= r.EffectiveVersionSequenceId && (r.ObsoleteVersionSequenceId == null || this.VersionSequence < r.ObsoleteVersionSequenceId), null).ToList();
+                    this.m_relationships = persistenceService.Query(r => this.Key == r.SourceEntityKey && this.VersionSequence >= r.EffectiveVersionSequenceId && (r.ObsoleteVersionSequenceId == null || this.VersionSequence < r.ObsoleteVersionSequenceId), null).ToList();
                 }
                 return this.m_relationships;
             }
@@ -137,8 +130,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "classId")]
-        public Guid ClassId
+        [DataMember(Name = "classRef")]
+        public Guid  ClassKey
         {
             get { return this.m_classId; }
             set
@@ -157,14 +150,7 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                if(this.m_class == null &&
-                    this.DelayLoad &&
-                    this.m_classId != Guid.Empty)
-                {
-                    var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptClass>>();
-                    this.m_class = persistenceService.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(this.m_classId), null, true);
-                }
-                return this.m_class;
+                return base.DelayLoad(this.m_classId, this.m_class);
             }
             set
             {
@@ -185,10 +171,10 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                if(this.m_referenceTerms == null && this.DelayLoad)
+                if(this.m_referenceTerms == null && this.IsDelayLoad)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptReferenceTerm>>();
-                    this.m_referenceTerms = dataPersistence.Query(r => this.Key == r.TargetEntityKey && this.VersionSequence >= r.EffectiveVersionSequenceId && (r.ObsoleteVersionSequenceId == null || this.VersionSequence < r.ObsoleteVersionSequenceId) , null).ToList();
+                    this.m_referenceTerms = dataPersistence.Query(r => this.Key == r.SourceEntityKey && this.VersionSequence >= r.EffectiveVersionSequenceId && (r.ObsoleteVersionSequenceId == null || this.VersionSequence < r.ObsoleteVersionSequenceId) , null).ToList();
                 }
                 return this.m_referenceTerms;
             }
@@ -203,10 +189,10 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                if(this.m_conceptNames == null && this.DelayLoad)
+                if(this.m_conceptNames == null && this.IsDelayLoad)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptName>>();
-                    this.m_conceptNames = dataPersistence.Query(o => o.TargetEntityKey == this.Key && this.VersionSequence >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || this.VersionSequence < o.ObsoleteVersionSequenceId), null).ToList();
+                    this.m_conceptNames = dataPersistence.Query(o => o.SourceEntityKey == this.Key && this.VersionSequence >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || this.VersionSequence < o.ObsoleteVersionSequenceId), null).ToList();
                 }
                 return this.m_conceptNames;
             }

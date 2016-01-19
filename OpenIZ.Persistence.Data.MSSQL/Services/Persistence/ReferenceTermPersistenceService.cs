@@ -71,7 +71,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             
             // Persist code system
             if (storageData.CodeSystem != null)
-                storageData.CodeSystemId = storageData.CodeSystem.EnsureExists(principal, dataContext).Key;
+                storageData.CodeSystemKey = storageData.CodeSystem.EnsureExists(principal, dataContext).Key;
 
             // Display names
             if(storageData.DisplayNames != null)

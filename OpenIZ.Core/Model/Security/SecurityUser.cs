@@ -109,7 +109,7 @@ namespace OpenIZ.Core.Model.Security
         public List<SecurityRole> Roles {
             get
             {
-                if(this.DelayLoad && this.m_roles == null)
+                if(this.IsDelayLoad && this.m_roles == null)
                 {
                     var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
                     this.m_roles = dataLayer.Query(r => r.Users.Any(u => u.Key == this.Key), null).ToList();
@@ -132,12 +132,7 @@ namespace OpenIZ.Core.Model.Security
         {
             get
             {
-                if (this.DelayLoad && this.m_updatedById.HasValue && this.m_updatedBy == null)
-                {
-                    var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
-                    this.m_updatedBy = dataLayer.Get(new Identifier<Guid>() { Id = this.m_updatedById.Value }, null, true);
-                }
-                return this.m_updatedBy;
+                return base.DelayLoad(this.m_updatedById, this.m_updatedBy);
             }
         }
 
@@ -146,8 +141,8 @@ namespace OpenIZ.Core.Model.Security
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "updatedById")]
-        public Guid? UpdatedById
+        [DataMember(Name = "updatedByRef")]
+        public Guid?  UpdatedByKey
         {
             get { return this.m_updatedById; }
             set
@@ -179,7 +174,7 @@ namespace OpenIZ.Core.Model.Security
         {
             get
             {
-                if (this.m_policies == null && this.DelayLoad)
+                if (this.m_policies == null && this.IsDelayLoad)
                 {
                     var rolePolicies = this.Roles.SelectMany(o => o.Policies, (r, p) => p);
                     this.m_policies = new List<SecurityPolicyInstance>();

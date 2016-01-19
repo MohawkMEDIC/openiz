@@ -48,8 +48,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "referenceTermId")]
-        public Guid ReferenceTermId {
+        [DataMember(Name = "referenceTermRef")]
+        public Guid  ReferenceTermKey {
             get { return this.m_referenceTermId; }
             set
             {
@@ -67,14 +67,7 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                if (this.m_referenceTerm == null &&
-                    this.DelayLoad &&
-                    this.m_referenceTermId != Guid.Empty)
-                {
-                    var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<ReferenceTerm>>();
-                    this.m_referenceTerm = dataPersistence.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(this.m_referenceTermId), null, true);
-                }
-                return this.m_referenceTerm;
+                return base.DelayLoad(this.m_referenceTermId, this.m_referenceTerm);
 
             }
             set
@@ -92,8 +85,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "relationshipTypeId")]
-        public Guid RelationshipTypeId {
+        [DataMember(Name = "relationshipTypeRef")]
+        public Guid  RelationshipTypeKey {
             get { return this.m_relationshipTypeId; }
             set
             {
@@ -110,14 +103,7 @@ namespace OpenIZ.Core.Model.DataTypes
         public ConceptRelationshipType RelationshipType {
             get
             {
-                if(this.m_relationshipType == null &&
-                    this.DelayLoad &&
-                    this.m_relationshipTypeId != Guid.Empty)
-                {
-                    var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptRelationshipType>>();
-                    this.m_relationshipType = dataPersistence.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(this.m_relationshipTypeId), null, true);
-                }
-                return this.m_relationshipType;
+                return base.DelayLoad(this.m_relationshipTypeId, this.m_relationshipType);
             }
             set
             {

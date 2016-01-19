@@ -35,7 +35,7 @@ namespace OpenIZ.Core.Model
     /// </summary>
     [Serializable]
     [DataContract(Name = "VersionBoundRelationData", Namespace = "http://openiz.org/model")]
-    public abstract class VersionBoundRelationData<TTargetType> : BaseEntityData where TTargetType : VersionedEntityData<TTargetType>
+    public abstract class VersionBoundRelationData<TSourceType> : BoundRelationData<TSourceType> where TSourceType : VersionedEntityData<TSourceType>
     {
 
         // The identifier of the version where this data is effective
@@ -44,61 +44,11 @@ namespace OpenIZ.Core.Model
         private Decimal? m_obsoleteVersionSequenceId;
         // The version where this data is effective
         [NonSerialized]
-        private TTargetType m_effectiveVersion;
+        private TSourceType m_effectiveVersion;
         // The version where this data is obsolete
         [NonSerialized]
-        private TTargetType m_obsoleteVersion;
-        // Target entity key
-        private Guid m_targetEntityKey;
-        // The target entity
-        [NonSerialized]
-        private TTargetType m_targetEntity;
-
-        /// <summary>
-        /// Gets or sets the target entity's key
-        /// </summary>
-        [DataMember(Name = "sourceId")]
-        public Guid TargetEntityKey
-        {
-            get
-            {
-                return this.m_targetEntityKey;
-            }
-            set
-            {
-                this.m_targetEntityKey = value;
-                this.m_targetEntity = null;
-            }
-        }
-
-        /// <summary>
-        /// The entity that this relationship targets
-        /// </summary>
-        [DelayLoad]
-        [IgnoreDataMember]
-        public TTargetType TargetEntity
-        {
-            get
-            {
-                if (this.m_targetEntity == null &&
-                   this.DelayLoad &&
-                   this.m_targetEntityKey != default(Guid))
-                {
-                    var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<TTargetType>>();
-                    this.m_targetEntity = dataPersistence.Query(t => t.Key == this.m_targetEntityKey, null).FirstOrDefault();
-                }
-                return this.m_targetEntity;
-            }
-            set
-            {
-                this.m_targetEntity = value;
-                if (value == null)
-                    this.m_targetEntityKey = default(Guid);
-                else
-                    this.m_targetEntityKey = value.Key;
-            }
-        }
-
+        private TSourceType m_obsoleteVersion;
+       
         /// <summary>
         /// Gets or sets the effective version of this type
         /// </summary>
@@ -132,15 +82,15 @@ namespace OpenIZ.Core.Model
         /// </summary>
         [DelayLoad]
         [IgnoreDataMember]
-        public TTargetType EffectiveVersion
+        public TSourceType EffectiveVersion
         {
             get
             {
                 if(this.m_effectiveVersion == null &&
-                    this.DelayLoad &&
+                    this.IsDelayLoad &&
                     this.m_effectiveVersionSequenceId != default(Decimal))
                 {
-                    var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<TTargetType>>();
+                    var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<TSourceType>>();
                     this.m_effectiveVersion = dataPersistence.Query(t => t.VersionSequence == this.m_effectiveVersionSequenceId, null).FirstOrDefault();
                 }
                 return this.m_effectiveVersion;
@@ -160,15 +110,15 @@ namespace OpenIZ.Core.Model
         /// </summary>
         [DelayLoad]
         [IgnoreDataMember]
-        public TTargetType ObsoleteVersion
+        public TSourceType ObsoleteVersion
         {
             get
             {
                 if(this.m_obsoleteVersion == null &&
-                    this.DelayLoad &&
+                    this.IsDelayLoad &&
                     this.m_obsoleteVersionSequenceId.HasValue)
                 {
-                    var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<TTargetType>>();
+                    var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<TSourceType>>();
                     this.m_obsoleteVersion = dataPersistence.Query(t => t.VersionSequence == this.m_obsoleteVersionSequenceId, null).FirstOrDefault();
 
                 }
@@ -250,8 +200,8 @@ namespace OpenIZ.Core.Model
         public override IEnumerable<IResultDetail> Validate()
         {
             var validResults = base.Validate() as List<IResultDetail>;
-            if (this.TargetEntityKey == Guid.Empty)
-                validResults.Add(new RequiredElementMissingResultDetail(ResultDetailType.Error, String.Format("({0}).{1} required", this.GetType().Name, nameof(TargetEntityKey)), null));
+            if (this.SourceEntityKey == Guid.Empty)
+                validResults.Add(new RequiredElementMissingResultDetail(ResultDetailType.Error, String.Format("({0}).{1} required", this.GetType().Name, nameof(SourceEntityKey)), null));
             return validResults;
         }
 
@@ -261,7 +211,7 @@ namespace OpenIZ.Core.Model
         public override void Refresh()
         {
             base.Refresh();
-            this.m_effectiveVersion = this.m_obsoleteVersion = this.m_targetEntity = null;
+            this.m_effectiveVersion = this.m_obsoleteVersion = null;
         }
     }
 }

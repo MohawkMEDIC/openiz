@@ -80,7 +80,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.IdentityInsert);
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
-            else if (storageData.TargetEntityKey == Guid.Empty)
+            else if (storageData.SourceEntityKey == Guid.Empty)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.AssociatedEntityWithoutTargetKey);
 
             var domainConceptName = this.ConvertFromModel(storageData) as Data.ConceptName;
@@ -88,11 +88,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Ensure traversable properties exist if they're objects
             if (storageData.PhoneticAlgorithm != null)
                 domainConceptName.PhoneticAlgorithmId = storageData.PhoneticAlgorithm.EnsureExists(principal, dataContext).Key;
-            if (storageData.TargetEntity != null)
-                domainConceptName.ConceptId = storageData.TargetEntity.EnsureExists(principal, dataContext).Key;
+            if (storageData.SourceEntity != null)
+                domainConceptName.ConceptId = storageData.SourceEntity.EnsureExists(principal, dataContext).Key;
 
             // Get the current version & create a new version if needed
-            var currentConceptVersion = dataContext.ConceptVersions.Single(o => o.ConceptId == storageData.TargetEntityKey && o.ObsoletionTime == null);
+            var currentConceptVersion = dataContext.ConceptVersions.Single(o => o.ConceptId == storageData.SourceEntityKey && o.ObsoletionTime == null);
             ConceptVersion newConceptVersion = newVersion ? currentConceptVersion.NewVersion(principal, dataContext) : currentConceptVersion;
             domainConceptName.EffectiveVersionSequenceId = newConceptVersion.VersionSequenceId;
             domainConceptName.Concept = newConceptVersion.Concept;
@@ -104,7 +104,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Copy properties
             storageData.Key = domainConceptName.ConceptNameId;
             storageData.EffectiveVersionSequenceId = domainConceptName.EffectiveVersionSequenceId;
-            storageData.TargetEntityKey = domainConceptName.ConceptId;
+            storageData.SourceEntityKey = domainConceptName.ConceptId;
             return storageData;
         }
 
@@ -125,7 +125,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.NonIdentityUpdate);
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
-            else if (storageData.TargetEntityKey == Guid.Empty)
+            else if (storageData.SourceEntityKey == Guid.Empty)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.AssociatedEntityWithoutTargetKey);
 
             // obsolete (i.e. remove the name association)

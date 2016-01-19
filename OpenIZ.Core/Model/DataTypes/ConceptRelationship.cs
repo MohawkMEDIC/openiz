@@ -51,8 +51,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "targetConceptId")]
-        public Guid TargetConceptId
+        [DataMember(Name = "targetConceptRef")]
+        public Guid  TargetConceptKey
         {
             get { return this.m_targetConceptId; }
             set
@@ -71,14 +71,7 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                if(this.m_targetConcept == null &&
-                    this.DelayLoad &&
-                    this.m_targetConceptId != Guid.Empty)
-                {
-                    var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
-                    this.m_targetConcept = dataPersistence.Get(new Identifier<Guid>(this.m_targetConceptId), null, true);
-                }
-                return this.m_targetConcept;
+                return base.DelayLoad(this.m_targetConceptId, this.m_targetConcept);
             }
             set
             {
@@ -95,8 +88,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "relationshipTypeId")]
-        public Guid RelationshipTypeId {
+        [DataMember(Name = "relationshipTypeRef")]
+        public Guid  RelationshipTypeKey {
             get { return this.m_relationshipTypeId; }
             set
             {
@@ -115,7 +108,7 @@ namespace OpenIZ.Core.Model.DataTypes
             get
             {
                 if(this.m_relationshipType == null &&
-                    this.DelayLoad &&
+                    this.IsDelayLoad &&
                     this.m_relationshipTypeId != Guid.Empty)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptRelationshipType>>();

@@ -56,7 +56,7 @@ namespace OpenIZ.Core.Model
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "previousVersionId")]
+        [DataMember(Name = "previousVersionRef")]
         public virtual Guid? PreviousVersionKey
         {
             get
@@ -79,14 +79,7 @@ namespace OpenIZ.Core.Model
         {
             get
             {
-                if (this.m_previousVersion == null &&
-                    this.DelayLoad &&
-                    this.m_previousVersionId.HasValue)
-                {
-                    var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<THistoryModelType>>();
-                    this.m_previousVersion = persistenceService.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(this.Key, this.m_previousVersionId.Value), null, true);
-                }
-                return this.m_previousVersion;
+                return base.DelayLoad(this.m_previousVersionId, this.m_previousVersion);
             }
             set
             {
@@ -101,13 +94,13 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the key which represents the version of the entity
         /// </summary>
-        [DataMember(Name = "versionId")]
+        [DataMember(Name = "versionRef")]
         public Guid VersionKey { get; set; }
 
         /// <summary>
         /// The sequence number of the version (for ordering)
         /// </summary>
-        [DataMember(Name = "sequenceId")]
+        [DataMember(Name = "sequenceRef")]
         public Decimal VersionSequence { get; set; }
 
         /// <summary>

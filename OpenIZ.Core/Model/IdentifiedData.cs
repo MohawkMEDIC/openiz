@@ -26,6 +26,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
 
 namespace OpenIZ.Core.Model
 {
@@ -44,7 +46,7 @@ namespace OpenIZ.Core.Model
         /// True if the class is currently loading associations when accessed
         /// </summary>
         [IgnoreDataMember]
-        public bool DelayLoad
+        public bool IsDelayLoad
         {
             get
             {
@@ -134,6 +136,21 @@ namespace OpenIZ.Core.Model
             }
         }
 
+        /// <summary>
+        /// Get associated entity
+        /// </summary>
+        protected TEntity DelayLoad<TEntity>(Guid? keyReference, TEntity currentInstance)
+        {
+            if(currentInstance == null &&
+                this.m_delayLoad &&
+                keyReference.HasValue &&
+                keyReference.Value != default(Guid))
+            {
+                var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TEntity>>();
+                currentInstance = persistenceService.Get(new Identifier<Guid>(keyReference.Value), null, true);
+            }
+            return currentInstance;
+        }
 
         /// <summary>
         /// Validate the state of this object

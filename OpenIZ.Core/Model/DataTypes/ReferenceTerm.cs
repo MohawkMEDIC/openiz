@@ -57,15 +57,7 @@ namespace OpenIZ.Core.Model.DataTypes
         public CodeSystem CodeSystem {
             get
             {
-                if(this.m_codeSystem == null &&
-                    this.DelayLoad &&
-                    this.m_codeSystemId != Guid.Empty)
-                {
-                    var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<CodeSystem>>();
-                    this.m_codeSystem = dataPersistence.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(this.m_codeSystemId), null, true);
-                }
-                return this.m_codeSystem;
-            }
+                return base.DelayLoad(this.m_codeSystemId, this.m_codeSystem);            }
             set
             {
                 this.m_codeSystem = value;
@@ -81,8 +73,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "codeSystemId")]
-        public Guid CodeSystemId {
+        [DataMember(Name = "codeSystemRef")]
+        public Guid  CodeSystemKey {
             get { return this.m_codeSystemId; }
             set
             {
@@ -99,10 +91,10 @@ namespace OpenIZ.Core.Model.DataTypes
         public List<ReferenceTermName> DisplayNames {
             get
             {
-                if(this.m_displayNames == null && this.DelayLoad)
+                if(this.m_displayNames == null && this.IsDelayLoad)
                 {
                     var dataService = ApplicationContext.Current.GetService<IDataPersistenceService<ReferenceTermName>>();
-                    this.m_displayNames = dataService.Query(o => o.ReferenceTermId == this.Key && o.ObsoletionTime == null, null).ToList();
+                    this.m_displayNames = dataService.Query(o => o.ReferenceTermKey == this.Key && o.ObsoletionTime == null, null).ToList();
                 }
                 return this.m_displayNames;
             }

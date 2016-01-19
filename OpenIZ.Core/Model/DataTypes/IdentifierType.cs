@@ -49,8 +49,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "scopeConceptId")]
-        public Guid? ScopeConceptId
+        [DataMember(Name = "scopeConceptRef")]
+        public Guid?  ScopeConceptKey
         {
             get { return this.m_scopeConceptId; }
             set
@@ -65,8 +65,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "typeConceptId")]
-        public Guid TypeConceptId
+        [DataMember(Name = "typeConceptRef")]
+        public Guid  TypeConceptKey
         {
             get { return this.m_typeConceptId; }
             set
@@ -85,12 +85,7 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                if(this.m_typeConcept == null && this.DelayLoad)
-                {
-                    var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
-                    this.m_typeConcept = persistenceService.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(this.m_typeConceptId), null, true);
-                }
-                return this.m_typeConcept;
+                return base.DelayLoad(this.m_typeConceptId, this.m_typeConcept);
             }
             set
             {
@@ -111,12 +106,7 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                if (this.m_scopeConcept == null && this.m_scopeConceptId.HasValue && this.DelayLoad)
-                {
-                    var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
-                    this.m_scopeConcept = persistenceService.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(this.m_scopeConceptId.Value), null, true);
-                }
-                return this.m_scopeConcept;
+                return base.DelayLoad(this.m_scopeConceptId, this.m_scopeConcept);
             }
             set
             {

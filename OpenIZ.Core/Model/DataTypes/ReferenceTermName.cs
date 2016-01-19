@@ -42,8 +42,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Back-reference to reference term
         /// </summary>
-        [DataMember(Name = "referenceTermId")]
-        public Guid ReferenceTermId { get; set; }
+        [DataMember(Name = "referenceTermRef")]
+        public Guid  ReferenceTermKey { get; set; }
 
         /// <summary>
         /// Gets or sets the language code of the object
@@ -68,8 +68,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "phoneticAlgorithmId")]
-        public Guid PhoneticAlgorithmId
+        [DataMember(Name = "phoneticAlgorithmRef")]
+        public Guid  PhoneticAlgorithmKey
         {
             get { return this.m_phoneticAlgorithmId; }
             set
@@ -88,14 +88,7 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                if(this.m_phoneticAlgorithm == null &&
-                    this.DelayLoad &&
-                    this.m_phoneticAlgorithmId != Guid.Empty)
-                {
-                    var dataService = ApplicationContext.Current.GetService<IDataPersistenceService<PhoneticAlgorithm>>();
-                    this.m_phoneticAlgorithm = dataService.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(this.m_phoneticAlgorithmId), null, true);
-                }
-                return this.m_phoneticAlgorithm;
+                return base.DelayLoad(this.m_phoneticAlgorithmId, this.m_phoneticAlgorithm);
             }
             set
             {

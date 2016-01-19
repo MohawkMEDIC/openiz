@@ -52,7 +52,7 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets or sets the universal ID
         /// </summary>
-        [DataMember(Name = "oid")]
+        [DataMember(Name = "oRef")]
         public String Oid { get; set; }
 
         /// <summary>
