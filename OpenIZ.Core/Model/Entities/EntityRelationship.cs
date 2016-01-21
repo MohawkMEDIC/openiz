@@ -17,12 +17,12 @@ namespace OpenIZ.Core.Model.Entities
         // The entity key
         private Guid m_targetEntityKey;
         // The target entity
-        [NonSerialized]
+        
         private Entity m_targetEntity;
         // The association type key
         private Guid m_associationTypeKey;
         // The association type
-        [NonSerialized]
+        
         private Concept m_relationshipType;
 
         /// <summary>

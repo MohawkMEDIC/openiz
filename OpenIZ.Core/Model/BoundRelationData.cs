@@ -20,7 +20,7 @@ namespace OpenIZ.Core.Model
         // Target entity key
         private Guid m_sourceEntityKey;
         // The target entity
-        [NonSerialized]
+        
         private TSourceType m_sourceEntity;
 
         /// <summary>

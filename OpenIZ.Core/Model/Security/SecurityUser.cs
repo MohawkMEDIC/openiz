@@ -41,15 +41,15 @@ namespace OpenIZ.Core.Model.Security
 
         
         // Roles
-        [NonSerialized]
+        
         private List<SecurityRole> m_roles;
         // The updated by id
         private Guid? m_updatedById;
         // The updated by user
-        [NonSerialized]
+        
         private SecurityUser m_updatedBy;
         // Policies
-        [NonSerialized]
+        
         private List<SecurityPolicyInstance> m_policies;
         /// <summary>
         /// Gets or sets the email address of the user

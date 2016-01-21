@@ -18,7 +18,7 @@ namespace OpenIZ.Core.Model.Entities
         // Service key
         private Guid m_serviceConceptKey;
         // Service
-        [NonSerialized]
+        
         private Concept m_service;
 
         /// <summary>

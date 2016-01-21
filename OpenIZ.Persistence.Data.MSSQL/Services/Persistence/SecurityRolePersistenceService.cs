@@ -73,8 +73,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Policies
             dataContext.SecurityRolePolicies.InsertAllOnSubmit(storageData.Policies.Select(p => new SecurityRolePolicy()
             {
-                IsDeny = p.GrantType < MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Grant,
-                CanOverride = p.GrantType > MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Deny,
+                PolicyAction = (int)p.GrantType,
                 PolicyId = p.Policy.EnsureExists(principal, dataContext).Key,
                 SecurityRole = dataRole
             }));
@@ -145,15 +144,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 var existingPolicy = dataRole.SecurityRolePolicies.SingleOrDefault(o => o.PolicyId == p.Policy.EnsureExists(principal, dataContext).Key);
                 if (existingPolicy != null)
                 {
-                    existingPolicy.IsDeny = p.GrantType < MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Grant;
-                    existingPolicy.CanOverride = p.GrantType > MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Deny;
+                    existingPolicy.PolicyAction = (int)p.GrantType;
                 }
                 else
                 {
                     dataContext.SecurityRolePolicies.InsertOnSubmit(new SecurityRolePolicy()
                     {
-                        IsDeny = p.GrantType < MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Grant,
-                        CanOverride = p.GrantType > MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Deny,
+                        PolicyAction = (int)p.GrantType ,
                         PolicyId = p.Policy.EnsureExists(principal, dataContext).Key,
                         SecurityRole = dataRole
                     });
@@ -184,18 +181,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.Security.SecurityRole ConvertToModel(object data)
         {
-            var securityRole = data as Data.SecurityRole;
-            var retVal = s_mapper.MapDomainInstance<Data.SecurityRole, Core.Model.Security.SecurityRole>(securityRole);
-            // No delay load on policies
-            retVal.Policies.AddRange(securityRole.SecurityRolePolicies.Select(p => new SecurityPolicyInstance()
-            {
-                Policy = new SecurityPolicyPersistenceService().ConvertToModel(p.Policy),
-                GrantType =
-                    p.IsDeny && p.CanOverride ? MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Elevate :
-                    p.IsDeny ? MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Deny :
-                    MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Grant
-            }));
-            return retVal;
+            return s_mapper.MapDomainInstance<Data.SecurityRole, Core.Model.Security.SecurityRole>(data as Data.SecurityRole);
+
         }
 
     }

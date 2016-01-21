@@ -18,6 +18,7 @@
  */
 using MARC.HI.EHRS.SVC.Core.Data;
 using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Security;
 using System;
 using System.Runtime.Serialization;
 
@@ -31,11 +32,10 @@ namespace OpenIZ.Core.Model.DataTypes
     public  class AssigningAuthority : BaseEntityData
     {
         // Assigning device id
-        private Guid m_assigningDeviceId;
+        private Guid? m_assigningDeviceId;
 
         // TODO: Change this to SecurityDevice
-        [NonSerialized]
-        private Object m_assigningDevice;
+        private SecurityDevice m_assigningDevice;
 
         /// <summary>
         /// Gets or sets the name of the assigning authority
@@ -66,7 +66,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Assigning device identifier
         /// </summary>
         [DataMember(Name = "assigningDeviceRef")]
-        public Guid  AssigningDeviceKey
+        public Guid? AssigningDeviceKey
         {
             get { return this.m_assigningDeviceId; }
             set
@@ -80,7 +80,18 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the assigning device
         /// </summary>
         [IgnoreDataMember]
-        public Object AssigningDevice { get; set; }
+        public SecurityDevice AssigningDevice {
+            get
+            {
+                this.m_assigningDevice = base.DelayLoad(this.m_assigningDeviceId, this.m_assigningDevice);
+                return this.m_assigningDevice;
+            }
+            set
+            {
+                this.m_assigningDevice = value;
+                this.m_assigningDeviceId = value?.Key;
+            }
+        }
 
         /// <summary>
         /// Convert this AA to OID Data for configuration purposes

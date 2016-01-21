@@ -25,28 +25,28 @@ namespace OpenIZ.Core.Model.Acts
         private Guid m_statusConceptKey;
         private Guid m_moodConceptKey;
         private Guid? m_reasonConceptKey;
-        [NonSerialized]
+        
         private Concept m_classConcept;
-        [NonSerialized]
+        
         private Concept m_typeConcept;
-        [NonSerialized]
+        
         private Concept m_statusConcept;
-        [NonSerialized]
+        
         private Concept m_moodConcept;
-        [NonSerialized]
+        
         private Concept m_reasonConcept;
 
-        [NonSerialized]
+        
         private List<ActRelationship> m_relationships;
-        [NonSerialized]
+        
         private List<ActNote> m_notes;
-        [NonSerialized]
+        
         private List<ActTag> m_tags;
-        [NonSerialized]
+        
         private List<ActExtension> m_extensions;
-        [NonSerialized]
+        
         private List<ActIdentifier> m_identifiers;
-        [NonSerialized]
+        
         private List<ActParticipation> m_participations;
         
         public Boolean IsNegated { get; set; }

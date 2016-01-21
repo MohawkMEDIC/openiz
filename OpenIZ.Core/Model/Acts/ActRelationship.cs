@@ -20,12 +20,12 @@ namespace OpenIZ.Core.Model.Acts
         // The entity key
         private Guid m_targetActKey;
         // The target entity
-        [NonSerialized]
+        
         private Act m_targetAct;
         // The association type key
         private Guid m_relationshipTypeKey;
         // The association type
-        [NonSerialized]
+        
         private Concept m_relationshipType;
 
         /// <summary>

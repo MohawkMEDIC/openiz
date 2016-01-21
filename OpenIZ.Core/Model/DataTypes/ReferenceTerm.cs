@@ -38,10 +38,10 @@ namespace OpenIZ.Core.Model.DataTypes
         // Backing field for code system identifier
         private Guid m_codeSystemId;
         // Code system
-        [NonSerialized]
+        
         private CodeSystem m_codeSystem;
         // Display names
-        [NonSerialized]
+        
         private List<ReferenceTermName> m_displayNames;
 
         /// <summary>

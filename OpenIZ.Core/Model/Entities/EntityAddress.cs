@@ -21,10 +21,10 @@ namespace OpenIZ.Core.Model.Entities
         // Address use key
         private Guid? m_addressUseKey;
         // Address use concept
-        [NonSerialized]
+        
         private Concept m_addressUseConcept;
         // Address components
-        [NonSerialized]
+        
         private List<EntityAddressComponent> m_addressComponents;
 
         /// <summary>

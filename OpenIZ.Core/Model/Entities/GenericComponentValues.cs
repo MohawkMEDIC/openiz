@@ -17,7 +17,7 @@ namespace OpenIZ.Core.Model.Entities
         // Component type
         private Guid m_componentTypeKey;
         // Component type
-        [NonSerialized]
+        
         private Concept m_componentType;
 
         /// <summary>

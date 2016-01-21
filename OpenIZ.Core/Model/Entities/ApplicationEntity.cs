@@ -22,7 +22,7 @@ namespace OpenIZ.Core.Model.Entities
         // Security application key
         private Guid m_securityApplicationKey;
         // Security application
-        [NonSerialized]
+        
         private SecurityApplication m_securityApplication;
 
         /// <summary>

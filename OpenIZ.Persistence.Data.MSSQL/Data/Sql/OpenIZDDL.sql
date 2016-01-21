@@ -198,8 +198,7 @@ CREATE TABLE SecurityRolePolicy
 (
 	RoleId UNIQUEIDENTIFIER NOT NULL, -- THE ROLE TO WHICH THE POLICY APPLIES
 	PolicyId UNIQUEIDENTIFIER NOT NULL, -- THE POLICY TO WHICH THE ASSOCIATION APPLIES
-	IsDeny BIT NOT NULL DEFAULT 0, -- WHEN TRUE, INDICATES THAT THE PRESENCE OF A POLICY ON AN ACT IS A DENY FOR THE ROLE
-	CanOverride BIT NOT NULL DEFAULT 0, -- WHEN TRUE, INDICATES THAT THE USER IN THE ROLE MAY ELEVATE
+	PolicyAction INT NOT NULL DEFAULT 0 CHECK (PolicyAction < 3),
 	CONSTRAINT PK_SecurityRolePolicy PRIMARY KEY (RoleId, PolicyId),
 	CONSTRAINT FK_SecurityRolePolicyRoleId FOREIGN KEY (RoleId) REFERENCES SecurityRole(RoleId),
 	CONSTRAINT FK_SecurityRolePolicyPolicyId FOREIGN KEY (PolicyId) REFERENCES Policy(PolicyId)
@@ -258,7 +257,7 @@ CREATE TABLE SecurityDevicePolicy
 	DeviceId UNIQUEIDENTIFIER NOT NULL, -- THE DEVICE TO WHICH THE POLICY ASSOCIATION APPLIES 
 	PolicyId UNIQUEIDENTIFIER NOT NULL, -- THE POLICY IDENTIFIER TO WHICH THE POLICY ASSOCIATION APPLIES
 	IsDeny BIT NOT NULL DEFAULT 0, -- WHEN TRUE INDICATES THE ACTS WITH POLICY APPLIED IS A DENY
-	CanElevate BIT NOT NULL DEFAULT 0, -- WHEN TRUE INDICATES THEUSER CAN ELEVATE OVER A DENY
+	PolicyAction INT NOT NULL DEFAULT 0 CHECK (PolicyAction < 3),	
 	CONSTRAINT PK_SecurityDevicePolicy PRIMARY KEY (DeviceId, PolicyId),
 	CONSTRAINT FK_SecurityDevicePolicyDeviceId FOREIGN KEY (DeviceId) REFERENCES SecurityDevice(DeviceId),
 	CONSTRAINT FK_SecurityDevicePolicyPolicyId FOREIGN KEY (PolicyId) REFERENCES Policy(PolicyId)
@@ -271,8 +270,7 @@ CREATE TABLE SecurityApplicationPolicy
 (
 	ApplicationId UNIQUEIDENTIFIER NOT NULL, -- THE Application TO WHICH THE POLICY ASSOCIATION APPLIES 
 	PolicyId UNIQUEIDENTIFIER NOT NULL, -- THE POLICY IDENTIFIER TO WHICH THE POLICY ASSOCIATION APPLIES
-	IsDeny BIT NOT NULL DEFAULT 0, -- WHEN TRUE INDICATES THE ACTS WITH POLICY APPLIED IS A DENY
-	CanOverride BIT NOT NULL DEFAULT 0, -- WHEN TRUE INDICATES THE APPLICATION CAN ELEVATE TO OVERRIDE
+	PolicyAction INT NOT NULL DEFAULT 0 CHECK (PolicyAction < 3),
 	CONSTRAINT PK_SecurityApplicationPolicy PRIMARY KEY (ApplicationId, PolicyId),
 	CONSTRAINT FK_SecurityApplicationPolicyApplicationId FOREIGN KEY (ApplicationId) REFERENCES SecurityApplication(ApplicationId),
 	CONSTRAINT FK_SecurityApplicationPolicyPolicyId FOREIGN KEY (PolicyId) REFERENCES Policy(PolicyId)
@@ -746,7 +744,8 @@ CREATE INDEX IX_ActExtensionEffectiveVersion ON ActExtension(EffectiveVersionSeq
 CREATE TABLE Observation
 (
 	ActVersionId UNIQUEIDENTIFIER NOT NULL, -- THE VERSION TO WHICH THIS OBSERVATION DATA APPLIES
-	InterpretationConceptId UNIQUEIDENTIFIER NOT NULL, -- THE INTERPRETAION CODE
+	InterpretationConceptId UNIQUEIDENTIFIER, -- THE INTERPRETAION CODE
+	ValueType CHAR(2) NOT NULL CHECK (ValueType IN ('PQ','ST','CD')),
 	CONSTRAINT PK_Observation PRIMARY KEY (ActVersionId),
 	CONSTRAINT FK_ObservationActVersionId FOREIGN KEY (ActVersionId) REFERENCES ActVersion(ActVersionId),
 	CONSTRAINT FK_ObservationInterpretationConceptId FOREIGN KEY (InterpretationConceptId) REFERENCES Concept(ConceptId),
@@ -1299,7 +1298,7 @@ CREATE TABLE ActParticipation
 	CONSTRAINT FK_ActParticipationEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES ActVersion(VersionSequenceId),
 	CONSTRAINT FK_ActParticipationObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES ActVersion(VersionSequenceId),
 	CONSTRAINT FK_ActParticipationRoleConceptId FOREIGN KEY (ParticipationRoleConceptId) REFERENCES Concept(ConceptId),
-	CONSTRAINT CK_ActParticipationRoleConceptIdSet CHECK (dbo.fn_IsConceptSetMember(GenderConceptId, 'ActParticipationType') = 1)
+	CONSTRAINT CK_ActParticipationRoleConceptIdSet CHECK (dbo.fn_IsConceptSetMember(ParticipationRoleConceptId, 'ActParticipationType') = 1)
 );
 
 CREATE TABLE QuantifiedActParticipation

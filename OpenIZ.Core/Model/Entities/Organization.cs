@@ -22,7 +22,7 @@ namespace OpenIZ.Core.Model.Entities
         // Industry concept
         private Guid m_industryConceptKey;
         // Industry Concept
-        [NonSerialized]
+        
         private Concept m_industryConcept;
 
         /// <summary>

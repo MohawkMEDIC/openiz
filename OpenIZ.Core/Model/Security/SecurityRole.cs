@@ -37,7 +37,7 @@ namespace OpenIZ.Core.Model.Security
     {
 
         // User delay load
-        [NonSerialized]
+        
         private List<SecurityUser> m_users;
         
         /// <summary>

@@ -21,7 +21,7 @@ namespace OpenIZ.Core.Model.DataTypes
         // Author id
         private Guid m_authorKey;
         // Author entity
-        [NonSerialized]
+        
         private Entity m_author;
 
         /// <summary>

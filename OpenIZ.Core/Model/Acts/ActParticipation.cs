@@ -20,10 +20,10 @@ namespace OpenIZ.Core.Model.Acts
     {
 
         private Guid m_targetEntityKey;
-        [NonSerialized]
+        
         private Entity m_targetEntity;
         private Guid m_participationRoleKey;
-        [NonSerialized]
+        
         private Concept m_participationRole;
 
         /// <summary>

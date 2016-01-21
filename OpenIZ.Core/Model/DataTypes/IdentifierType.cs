@@ -38,10 +38,10 @@ namespace OpenIZ.Core.Model.DataTypes
         // Scope concept identifier
         private Guid? m_scopeConceptId;
         // Type concept
-        [NonSerialized]
+        
         private Concept m_typeConcept;
         // Scope concept
-        [NonSerialized]
+        
         private Concept m_scopeConcept;
 
         /// <summary>

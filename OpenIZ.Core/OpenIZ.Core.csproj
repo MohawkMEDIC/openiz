@@ -53,6 +53,10 @@
     <Compile Include="Model\Acts\Act.cs" />
     <Compile Include="Model\Acts\ActParticipation.cs" />
     <Compile Include="Model\Acts\ActRelationship.cs" />
+    <Compile Include="Model\Acts\Observation.cs" />
+    <Compile Include="Model\Acts\PatientEncounter.cs" />
+    <Compile Include="Model\Acts\SubstanceAdministration.cs" />
+    <Compile Include="Model\Constants\ActClassKeys.cs" />
     <Compile Include="Model\Constants\EntityRelationshipTypeKeys.cs" />
     <Compile Include="Model\Constants\CodeSystemKeys.cs" />
     <Compile Include="Model\Constants\ConceptClassKeys.cs" />
@@ -125,10 +129,9 @@
     <Compile Include="Security\OpenIzClaimTypes.cs" />
     <Compile Include="Security\PolicyIdentifiers.cs" />
     <Compile Include="Security\SHA256PasswordHashingService.cs" />
+    <Compile Include="Services\IExtendedPolicyInformationService.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>

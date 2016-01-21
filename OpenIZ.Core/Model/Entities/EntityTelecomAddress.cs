@@ -17,7 +17,7 @@ namespace OpenIZ.Core.Model.Entities
         // Name use key
         private Guid? m_nameUseKey;
         // Name use concept
-        [NonSerialized]
+        
         private Concept m_nameUseConcept;
 
         /// <summary>

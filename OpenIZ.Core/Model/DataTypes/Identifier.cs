@@ -63,14 +63,14 @@ namespace OpenIZ.Core.Model.DataTypes
         // Identifier id
         private Guid? m_identifierTypeId;
         // Authority id
-        [NonSerialized]
+        
         private Guid m_authorityId;
 
         // Identifier type backing type
-        [NonSerialized]
+        
         private IdentifierType m_identifierType;
         // Assigning authority
-        [NonSerialized]
+        
         private AssigningAuthority m_authority;
 
         /// <summary>

@@ -30,12 +30,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertUserEntity(UserEntity instance);
-    partial void UpdateUserEntity(UserEntity instance);
-    partial void DeleteUserEntity(UserEntity instance);
     partial void InsertAct(Act instance);
     partial void UpdateAct(Act instance);
     partial void DeleteAct(Act instance);
+    partial void InsertTextObservation(TextObservation instance);
+    partial void UpdateTextObservation(TextObservation instance);
+    partial void DeleteTextObservation(TextObservation instance);
     partial void InsertActExtension(ActExtension instance);
     partial void UpdateActExtension(ActExtension instance);
     partial void DeleteActExtension(ActExtension instance);
@@ -45,6 +45,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void InsertActNote(ActNote instance);
     partial void UpdateActNote(ActNote instance);
     partial void DeleteActNote(ActNote instance);
+    partial void InsertActParticipation(ActParticipation instance);
+    partial void UpdateActParticipation(ActParticipation instance);
+    partial void DeleteActParticipation(ActParticipation instance);
     partial void InsertActPolicy(ActPolicy instance);
     partial void UpdateActPolicy(ActPolicy instance);
     partial void DeleteActPolicy(ActPolicy instance);
@@ -198,6 +201,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void InsertProvider(Provider instance);
     partial void UpdateProvider(Provider instance);
     partial void DeleteProvider(Provider instance);
+    partial void InsertQuantifiedActParticipation(QuantifiedActParticipation instance);
+    partial void UpdateQuantifiedActParticipation(QuantifiedActParticipation instance);
+    partial void DeleteQuantifiedActParticipation(QuantifiedActParticipation instance);
     partial void InsertQuantifiedEntityAssociation(QuantifiedEntityAssociation instance);
     partial void UpdateQuantifiedEntityAssociation(QuantifiedEntityAssociation instance);
     partial void DeleteQuantifiedEntityAssociation(QuantifiedEntityAssociation instance);
@@ -243,9 +249,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void InsertSubstanceAdministration(SubstanceAdministration instance);
     partial void UpdateSubstanceAdministration(SubstanceAdministration instance);
     partial void DeleteSubstanceAdministration(SubstanceAdministration instance);
-    partial void InsertTextObservation(TextObservation instance);
-    partial void UpdateTextObservation(TextObservation instance);
-    partial void DeleteTextObservation(TextObservation instance);
+    partial void InsertUserEntity(UserEntity instance);
+    partial void UpdateUserEntity(UserEntity instance);
+    partial void DeleteUserEntity(UserEntity instance);
     #endregion
 		
 		public ModelDataContext() : 
@@ -278,19 +284,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		public System.Data.Linq.Table<UserEntity> UserEntities
-		{
-			get
-			{
-				return this.GetTable<UserEntity>();
-			}
-		}
-		
 		public System.Data.Linq.Table<Act> Acts
 		{
 			get
 			{
 				return this.GetTable<Act>();
+			}
+		}
+		
+		public System.Data.Linq.Table<TextObservation> TextObservations
+		{
+			get
+			{
+				return this.GetTable<TextObservation>();
 			}
 		}
 		
@@ -315,6 +321,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			get
 			{
 				return this.GetTable<ActNote>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ActParticipation> ActParticipations
+		{
+			get
+			{
+				return this.GetTable<ActParticipation>();
 			}
 		}
 		
@@ -726,6 +740,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		public System.Data.Linq.Table<QuantifiedActParticipation> QuantifiedActParticipations
+		{
+			get
+			{
+				return this.GetTable<QuantifiedActParticipation>();
+			}
+		}
+		
 		public System.Data.Linq.Table<QuantifiedEntityAssociation> QuantifiedEntityAssociations
 		{
 			get
@@ -846,381 +868,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		public System.Data.Linq.Table<TextObservation> TextObservations
+		public System.Data.Linq.Table<UserEntity> UserEntities
 		{
 			get
 			{
-				return this.GetTable<TextObservation>();
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.UserEntity")]
-	public partial class UserEntity : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private System.Guid _UserEntityId;
-		
-		private System.Guid _UserId;
-		
-		private System.Guid _EntityId;
-		
-		private System.DateTimeOffset _CreationTime;
-		
-		private System.Guid _CreatedBy;
-		
-		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
-		
-		private System.Nullable<System.Guid> _ObsoletedBy;
-		
-		private EntityRef<Entity> _Entity;
-		
-		private EntityRef<SecurityUser> _CreatedByEntity;
-		
-		private EntityRef<SecurityUser> _ObsoletedByEntity;
-		
-		private EntityRef<SecurityUser> _SecurityUser;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnUserEntityIdChanging(System.Guid value);
-    partial void OnUserEntityIdChanged();
-    partial void OnUserIdChanging(System.Guid value);
-    partial void OnUserIdChanged();
-    partial void OnEntityIdChanging(System.Guid value);
-    partial void OnEntityIdChanged();
-    partial void OnCreationTimeChanging(System.DateTimeOffset value);
-    partial void OnCreationTimeChanged();
-    partial void OnCreatedByChanging(System.Guid value);
-    partial void OnCreatedByChanged();
-    partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
-    partial void OnObsoletionTimeChanged();
-    partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
-    partial void OnObsoletedByChanged();
-    #endregion
-		
-		public UserEntity()
-		{
-			this._Entity = default(EntityRef<Entity>);
-			this._CreatedByEntity = default(EntityRef<SecurityUser>);
-			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
-			this._SecurityUser = default(EntityRef<SecurityUser>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserEntityId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
-		public System.Guid UserEntityId
-		{
-			get
-			{
-				return this._UserEntityId;
-			}
-			set
-			{
-				if ((this._UserEntityId != value))
-				{
-					this.OnUserEntityIdChanging(value);
-					this.SendPropertyChanging();
-					this._UserEntityId = value;
-					this.SendPropertyChanged("UserEntityId");
-					this.OnUserEntityIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid UserId
-		{
-			get
-			{
-				return this._UserId;
-			}
-			set
-			{
-				if ((this._UserId != value))
-				{
-					if (this._SecurityUser.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnUserIdChanging(value);
-					this.SendPropertyChanging();
-					this._UserId = value;
-					this.SendPropertyChanged("UserId");
-					this.OnUserIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityId", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid EntityId
-		{
-			get
-			{
-				return this._EntityId;
-			}
-			set
-			{
-				if ((this._EntityId != value))
-				{
-					if (this._Entity.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnEntityIdChanging(value);
-					this.SendPropertyChanging();
-					this._EntityId = value;
-					this.SendPropertyChanged("EntityId");
-					this.OnEntityIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", AutoSync=AutoSync.Always, DbType="DateTimeOffset NOT NULL", IsDbGenerated=true)]
-		public System.DateTimeOffset CreationTime
-		{
-			get
-			{
-				return this._CreationTime;
-			}
-			set
-			{
-				if ((this._CreationTime != value))
-				{
-					this.OnCreationTimeChanging(value);
-					this.SendPropertyChanging();
-					this._CreationTime = value;
-					this.SendPropertyChanged("CreationTime");
-					this.OnCreationTimeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid CreatedBy
-		{
-			get
-			{
-				return this._CreatedBy;
-			}
-			set
-			{
-				if ((this._CreatedBy != value))
-				{
-					if (this._CreatedByEntity.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnCreatedByChanging(value);
-					this.SendPropertyChanging();
-					this._CreatedBy = value;
-					this.SendPropertyChanged("CreatedBy");
-					this.OnCreatedByChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTime", DbType="DateTimeOffset")]
-		public System.Nullable<System.DateTimeOffset> ObsoletionTime
-		{
-			get
-			{
-				return this._ObsoletionTime;
-			}
-			set
-			{
-				if ((this._ObsoletionTime != value))
-				{
-					this.OnObsoletionTimeChanging(value);
-					this.SendPropertyChanging();
-					this._ObsoletionTime = value;
-					this.SendPropertyChanged("ObsoletionTime");
-					this.OnObsoletionTimeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletedBy", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> ObsoletedBy
-		{
-			get
-			{
-				return this._ObsoletedBy;
-			}
-			set
-			{
-				if ((this._ObsoletedBy != value))
-				{
-					if (this._ObsoletedByEntity.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnObsoletedByChanging(value);
-					this.SendPropertyChanging();
-					this._ObsoletedBy = value;
-					this.SendPropertyChanged("ObsoletedBy");
-					this.OnObsoletedByChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_UserEntity", Storage="_Entity", ThisKey="EntityId", OtherKey="EntityId", IsForeignKey=true)]
-		public Entity Entity
-		{
-			get
-			{
-				return this._Entity.Entity;
-			}
-			set
-			{
-				Entity previousValue = this._Entity.Entity;
-				if (((previousValue != value) 
-							|| (this._Entity.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Entity.Entity = null;
-						previousValue.UserEntities.Remove(this);
-					}
-					this._Entity.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntities.Add(this);
-						this._EntityId = value.EntityId;
-					}
-					else
-					{
-						this._EntityId = default(System.Guid);
-					}
-					this.SendPropertyChanged("Entity");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser CreatedByEntity
-		{
-			get
-			{
-				return this._CreatedByEntity.Entity;
-			}
-			set
-			{
-				SecurityUser previousValue = this._CreatedByEntity.Entity;
-				if (((previousValue != value) 
-							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._CreatedByEntity.Entity = null;
-						previousValue.UserEntitiesCreatedBy.Remove(this);
-					}
-					this._CreatedByEntity.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntitiesCreatedBy.Add(this);
-						this._CreatedBy = value.UserId;
-					}
-					else
-					{
-						this._CreatedBy = default(System.Guid);
-					}
-					this.SendPropertyChanged("CreatedByEntity");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity1", Storage="_ObsoletedByEntity", ThisKey="ObsoletedBy", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser ObsoletedByEntity
-		{
-			get
-			{
-				return this._ObsoletedByEntity.Entity;
-			}
-			set
-			{
-				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoletedByEntity.Entity = null;
-						previousValue.UserEntitiesObsoletedBy.Remove(this);
-					}
-					this._ObsoletedByEntity.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntitiesObsoletedBy.Add(this);
-						this._ObsoletedBy = value.UserId;
-					}
-					else
-					{
-						this._ObsoletedBy = default(Nullable<System.Guid>);
-					}
-					this.SendPropertyChanged("ObsoletedByEntity");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity2", Storage="_SecurityUser", ThisKey="UserId", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser SecurityUser
-		{
-			get
-			{
-				return this._SecurityUser.Entity;
-			}
-			set
-			{
-				SecurityUser previousValue = this._SecurityUser.Entity;
-				if (((previousValue != value) 
-							|| (this._SecurityUser.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._SecurityUser.Entity = null;
-						previousValue.UserEntities.Remove(this);
-					}
-					this._SecurityUser.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntities.Add(this);
-						this._UserId = value.UserId;
-					}
-					else
-					{
-						this._UserId = default(System.Guid);
-					}
-					this.SendPropertyChanged("SecurityUser");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+				return this.GetTable<UserEntity>();
 			}
 		}
 	}
@@ -1242,6 +894,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private EntitySet<ActIdentifier> _ActIdentifiers;
 		
 		private EntityRef<ActNote> _ActNoteActNoteId;
+		
+		private EntitySet<ActParticipation> _ActParticipations;
 		
 		private EntitySet<ActPolicy> _ActPolicies;
 		
@@ -1276,6 +930,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._ActExtensions = new EntitySet<ActExtension>(new Action<ActExtension>(this.attach_ActExtensions), new Action<ActExtension>(this.detach_ActExtensions));
 			this._ActIdentifiers = new EntitySet<ActIdentifier>(new Action<ActIdentifier>(this.attach_ActIdentifiers), new Action<ActIdentifier>(this.detach_ActIdentifiers));
 			this._ActNoteActNoteId = default(EntityRef<ActNote>);
+			this._ActParticipations = new EntitySet<ActParticipation>(new Action<ActParticipation>(this.attach_ActParticipations), new Action<ActParticipation>(this.detach_ActParticipations));
 			this._ActPolicies = new EntitySet<ActPolicy>(new Action<ActPolicy>(this.attach_ActPolicies), new Action<ActPolicy>(this.detach_ActPolicies));
 			this._ActProtocols = new EntitySet<ActProtocol>(new Action<ActProtocol>(this.attach_ActProtocols), new Action<ActProtocol>(this.detach_ActProtocols));
 			this._ActRelationshipsSourceActId = new EntitySet<ActRelationship>(new Action<ActRelationship>(this.attach_ActRelationshipsSourceActId), new Action<ActRelationship>(this.detach_ActRelationshipsSourceActId));
@@ -1407,6 +1062,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					}
 					this.SendPropertyChanged("ActNoteActNoteId");
 				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Act_ActParticipation", Storage="_ActParticipations", ThisKey="ActId", OtherKey="ActId")]
+		public EntitySet<ActParticipation> ActParticipations
+		{
+			get
+			{
+				return this._ActParticipations;
+			}
+			set
+			{
+				this._ActParticipations.Assign(value);
 			}
 		}
 		
@@ -1600,6 +1268,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			entity.Act = null;
 		}
 		
+		private void attach_ActParticipations(ActParticipation entity)
+		{
+			this.SendPropertyChanging();
+			entity.Act = this;
+		}
+		
+		private void detach_ActParticipations(ActParticipation entity)
+		{
+			this.SendPropertyChanging();
+			entity.Act = null;
+		}
+		
 		private void attach_ActPolicies(ActPolicy entity)
 		{
 			this.SendPropertyChanging();
@@ -1670,6 +1350,133 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this.SendPropertyChanging();
 			entity.Act = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TextObservation")]
+	public partial class TextObservation : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _ActVersionId;
+		
+		private string _Value;
+		
+		private EntityRef<Observation> _Observation;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnActVersionIdChanging(System.Guid value);
+    partial void OnActVersionIdChanged();
+    partial void OnValueChanging(string value);
+    partial void OnValueChanged();
+    #endregion
+		
+		public TextObservation()
+		{
+			this._Observation = default(EntityRef<Observation>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		public System.Guid ActVersionId
+		{
+			get
+			{
+				return this._ActVersionId;
+			}
+			set
+			{
+				if ((this._ActVersionId != value))
+				{
+					if (this._Observation.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnActVersionIdChanging(value);
+					this.SendPropertyChanging();
+					this._ActVersionId = value;
+					this.SendPropertyChanged("ActVersionId");
+					this.OnActVersionIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Value", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
+		public string Value
+		{
+			get
+			{
+				return this._Value;
+			}
+			set
+			{
+				if ((this._Value != value))
+				{
+					this.OnValueChanging(value);
+					this.SendPropertyChanging();
+					this._Value = value;
+					this.SendPropertyChanged("Value");
+					this.OnValueChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Observation_TextObservation", Storage="_Observation", ThisKey="ActVersionId", OtherKey="ActVersionId", IsForeignKey=true)]
+		public Observation Observation
+		{
+			get
+			{
+				return this._Observation.Entity;
+			}
+			set
+			{
+				Observation previousValue = this._Observation.Entity;
+				if (((previousValue != value) 
+							|| (this._Observation.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Observation.Entity = null;
+						previousValue.TextObservation = null;
+					}
+					this._Observation.Entity = value;
+					if ((value != null))
+					{
+						value.TextObservation = this;
+						this._ActVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._ActVersionId = default(System.Guid);
+					}
+					this.SendPropertyChanged("Observation");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 	}
 	
@@ -2529,6 +2336,343 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._AuthorEntityId = default(System.Guid);
 					}
 					this.SendPropertyChanged("AuthorEntity");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ActParticipation")]
+	public partial class ActParticipation : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _ActParticipationId;
+		
+		private System.Guid _EntityId;
+		
+		private System.Guid _ActId;
+		
+		private decimal _EffectiveVersionSequenceId;
+		
+		private System.Nullable<decimal> _ObsoleteVersionSequenceId;
+		
+		private System.Guid _ParticipationRoleConceptId;
+		
+		private EntityRef<QuantifiedActParticipation> _QuantifiedActParticipation;
+		
+		private EntityRef<Act> _Act;
+		
+		private EntityRef<Concept> _ParticipationRoleConcept;
+		
+		private EntityRef<Entity> _Entity;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnActParticipationIdChanging(System.Guid value);
+    partial void OnActParticipationIdChanged();
+    partial void OnEntityIdChanging(System.Guid value);
+    partial void OnEntityIdChanged();
+    partial void OnActIdChanging(System.Guid value);
+    partial void OnActIdChanged();
+    partial void OnEffectiveVersionSequenceIdChanging(decimal value);
+    partial void OnEffectiveVersionSequenceIdChanged();
+    partial void OnObsoleteVersionSequenceIdChanging(System.Nullable<decimal> value);
+    partial void OnObsoleteVersionSequenceIdChanged();
+    partial void OnParticipationRoleConceptIdChanging(System.Guid value);
+    partial void OnParticipationRoleConceptIdChanged();
+    #endregion
+		
+		public ActParticipation()
+		{
+			this._QuantifiedActParticipation = default(EntityRef<QuantifiedActParticipation>);
+			this._Act = default(EntityRef<Act>);
+			this._ParticipationRoleConcept = default(EntityRef<Concept>);
+			this._Entity = default(EntityRef<Entity>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActParticipationId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		public System.Guid ActParticipationId
+		{
+			get
+			{
+				return this._ActParticipationId;
+			}
+			set
+			{
+				if ((this._ActParticipationId != value))
+				{
+					this.OnActParticipationIdChanging(value);
+					this.SendPropertyChanging();
+					this._ActParticipationId = value;
+					this.SendPropertyChanged("ActParticipationId");
+					this.OnActParticipationIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid EntityId
+		{
+			get
+			{
+				return this._EntityId;
+			}
+			set
+			{
+				if ((this._EntityId != value))
+				{
+					if (this._Entity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnEntityIdChanging(value);
+					this.SendPropertyChanging();
+					this._EntityId = value;
+					this.SendPropertyChanged("EntityId");
+					this.OnEntityIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid ActId
+		{
+			get
+			{
+				return this._ActId;
+			}
+			set
+			{
+				if ((this._ActId != value))
+				{
+					if (this._Act.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnActIdChanging(value);
+					this.SendPropertyChanging();
+					this._ActId = value;
+					this.SendPropertyChanged("ActId");
+					this.OnActIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectiveVersionSequenceId", DbType="Decimal(20,0) NOT NULL")]
+		public decimal EffectiveVersionSequenceId
+		{
+			get
+			{
+				return this._EffectiveVersionSequenceId;
+			}
+			set
+			{
+				if ((this._EffectiveVersionSequenceId != value))
+				{
+					this.OnEffectiveVersionSequenceIdChanging(value);
+					this.SendPropertyChanging();
+					this._EffectiveVersionSequenceId = value;
+					this.SendPropertyChanged("EffectiveVersionSequenceId");
+					this.OnEffectiveVersionSequenceIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoleteVersionSequenceId", DbType="Decimal(20,0)")]
+		public System.Nullable<decimal> ObsoleteVersionSequenceId
+		{
+			get
+			{
+				return this._ObsoleteVersionSequenceId;
+			}
+			set
+			{
+				if ((this._ObsoleteVersionSequenceId != value))
+				{
+					this.OnObsoleteVersionSequenceIdChanging(value);
+					this.SendPropertyChanging();
+					this._ObsoleteVersionSequenceId = value;
+					this.SendPropertyChanged("ObsoleteVersionSequenceId");
+					this.OnObsoleteVersionSequenceIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ParticipationRoleConceptId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid ParticipationRoleConceptId
+		{
+			get
+			{
+				return this._ParticipationRoleConceptId;
+			}
+			set
+			{
+				if ((this._ParticipationRoleConceptId != value))
+				{
+					if (this._ParticipationRoleConcept.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnParticipationRoleConceptIdChanging(value);
+					this.SendPropertyChanging();
+					this._ParticipationRoleConceptId = value;
+					this.SendPropertyChanged("ParticipationRoleConceptId");
+					this.OnParticipationRoleConceptIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActParticipation_QuantifiedActParticipation", Storage="_QuantifiedActParticipation", ThisKey="ActParticipationId", OtherKey="ActParticipationId", IsUnique=true, IsForeignKey=false)]
+		public QuantifiedActParticipation QuantifiedActParticipation
+		{
+			get
+			{
+				return this._QuantifiedActParticipation.Entity;
+			}
+			set
+			{
+				QuantifiedActParticipation previousValue = this._QuantifiedActParticipation.Entity;
+				if (((previousValue != value) 
+							|| (this._QuantifiedActParticipation.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._QuantifiedActParticipation.Entity = null;
+						previousValue.ActParticipation = null;
+					}
+					this._QuantifiedActParticipation.Entity = value;
+					if ((value != null))
+					{
+						value.ActParticipation = this;
+					}
+					this.SendPropertyChanged("QuantifiedActParticipation");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Act_ActParticipation", Storage="_Act", ThisKey="ActId", OtherKey="ActId", IsForeignKey=true)]
+		public Act Act
+		{
+			get
+			{
+				return this._Act.Entity;
+			}
+			set
+			{
+				Act previousValue = this._Act.Entity;
+				if (((previousValue != value) 
+							|| (this._Act.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Act.Entity = null;
+						previousValue.ActParticipations.Remove(this);
+					}
+					this._Act.Entity = value;
+					if ((value != null))
+					{
+						value.ActParticipations.Add(this);
+						this._ActId = value.ActId;
+					}
+					else
+					{
+						this._ActId = default(System.Guid);
+					}
+					this.SendPropertyChanged("Act");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ActParticipation", Storage="_ParticipationRoleConcept", ThisKey="ParticipationRoleConceptId", OtherKey="ConceptId", IsForeignKey=true)]
+		public Concept ParticipationRoleConcept
+		{
+			get
+			{
+				return this._ParticipationRoleConcept.Entity;
+			}
+			set
+			{
+				Concept previousValue = this._ParticipationRoleConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._ParticipationRoleConcept.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ParticipationRoleConcept.Entity = null;
+						previousValue.ActParticipationsParticipationRoleConceptId.Remove(this);
+					}
+					this._ParticipationRoleConcept.Entity = value;
+					if ((value != null))
+					{
+						value.ActParticipationsParticipationRoleConceptId.Add(this);
+						this._ParticipationRoleConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._ParticipationRoleConceptId = default(System.Guid);
+					}
+					this.SendPropertyChanged("ParticipationRoleConcept");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_ActParticipation", Storage="_Entity", ThisKey="EntityId", OtherKey="EntityId", IsForeignKey=true)]
+		public Entity Entity
+		{
+			get
+			{
+				return this._Entity.Entity;
+			}
+			set
+			{
+				Entity previousValue = this._Entity.Entity;
+				if (((previousValue != value) 
+							|| (this._Entity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Entity.Entity = null;
+						previousValue.ActParticipations.Remove(this);
+					}
+					this._Entity.Entity = value;
+					if ((value != null))
+					{
+						value.ActParticipations.Add(this);
+						this._EntityId = value.EntityId;
+					}
+					else
+					{
+						this._EntityId = default(System.Guid);
+					}
+					this.SendPropertyChanged("Entity");
 				}
 			}
 		}
@@ -5288,6 +5432,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private string _VersionText;
 		
+		private string _Description;
+		
 		private EntitySet<ReferenceTerm> _ReferenceTerms;
 		
 		private EntityRef<SecurityUser> _CreatedByEntity;
@@ -5320,6 +5466,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnUrlChanged();
     partial void OnVersionTextChanging(string value);
     partial void OnVersionTextChanged();
+    partial void OnDescriptionChanging(string value);
+    partial void OnDescriptionChanged();
     #endregion
 		
 		public CodeSystem()
@@ -5538,7 +5686,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_VersionText", DbType="NVarChar(10) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_VersionText", DbType="NVarChar(10)")]
 		public string VersionText
 		{
 			get
@@ -5554,6 +5702,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this._VersionText = value;
 					this.SendPropertyChanged("VersionText");
 					this.OnVersionTextChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="NVarChar(256)")]
+		public string Description
+		{
+			get
+			{
+				return this._Description;
+			}
+			set
+			{
+				if ((this._Description != value))
+				{
+					this.OnDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._Description = value;
+					this.SendPropertyChanged("Description");
+					this.OnDescriptionChanged();
 				}
 			}
 		}
@@ -5686,6 +5854,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<Act> _ActsMoodConceptId;
 		
+		private EntitySet<ActParticipation> _ActParticipationsParticipationRoleConceptId;
+		
 		private EntitySet<ActRelationship> _ActRelationshipsRelationshipTypeConceptId;
 		
 		private EntitySet<ActVersion> _ActVersionsStatusConceptId;
@@ -5774,6 +5944,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this._ActsClassConceptId = new EntitySet<Act>(new Action<Act>(this.attach_ActsClassConceptId), new Action<Act>(this.detach_ActsClassConceptId));
 			this._ActsMoodConceptId = new EntitySet<Act>(new Action<Act>(this.attach_ActsMoodConceptId), new Action<Act>(this.detach_ActsMoodConceptId));
+			this._ActParticipationsParticipationRoleConceptId = new EntitySet<ActParticipation>(new Action<ActParticipation>(this.attach_ActParticipationsParticipationRoleConceptId), new Action<ActParticipation>(this.detach_ActParticipationsParticipationRoleConceptId));
 			this._ActRelationshipsRelationshipTypeConceptId = new EntitySet<ActRelationship>(new Action<ActRelationship>(this.attach_ActRelationshipsRelationshipTypeConceptId), new Action<ActRelationship>(this.detach_ActRelationshipsRelationshipTypeConceptId));
 			this._ActVersionsStatusConceptId = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersionsStatusConceptId), new Action<ActVersion>(this.detach_ActVersionsStatusConceptId));
 			this._ActVersionsTypeConceptId = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersionsTypeConceptId), new Action<ActVersion>(this.detach_ActVersionsTypeConceptId));
@@ -5877,6 +6048,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			set
 			{
 				this._ActsMoodConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ActParticipation", Storage="_ActParticipationsParticipationRoleConceptId", ThisKey="ConceptId", OtherKey="ParticipationRoleConceptId")]
+		public EntitySet<ActParticipation> ActParticipationsParticipationRoleConceptId
+		{
+			get
+			{
+				return this._ActParticipationsParticipationRoleConceptId;
+			}
+			set
+			{
+				this._ActParticipationsParticipationRoleConceptId.Assign(value);
 			}
 		}
 		
@@ -6403,6 +6587,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this.SendPropertyChanging();
 			entity.MoodConcept = null;
+		}
+		
+		private void attach_ActParticipationsParticipationRoleConceptId(ActParticipation entity)
+		{
+			this.SendPropertyChanging();
+			entity.ParticipationRoleConcept = this;
+		}
+		
+		private void detach_ActParticipationsParticipationRoleConceptId(ActParticipation entity)
+		{
+			this.SendPropertyChanging();
+			entity.ParticipationRoleConcept = null;
 		}
 		
 		private void attach_ActRelationshipsRelationshipTypeConceptId(ActRelationship entity)
@@ -7167,7 +7363,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PhoneticCode", DbType="NVarChar(32) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PhoneticCode", DbType="NVarChar(32)")]
 		public string PhoneticCode
 		{
 			get
@@ -8660,9 +8856,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private string _Mnemonic;
 		
+		private EntitySet<ConceptVersion> _ConceptVersionsReplacesVersionId;
+		
 		private EntityRef<Concept> _Concept;
 		
 		private EntityRef<ConceptClass> _ConceptClass;
+		
+		private EntityRef<ConceptVersion> _ReplacesVersion;
 		
 		private EntityRef<Concept> _StatusConcept;
 		
@@ -8700,8 +8900,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public ConceptVersion()
 		{
+			this._ConceptVersionsReplacesVersionId = new EntitySet<ConceptVersion>(new Action<ConceptVersion>(this.attach_ConceptVersionsReplacesVersionId), new Action<ConceptVersion>(this.detach_ConceptVersionsReplacesVersionId));
 			this._Concept = default(EntityRef<Concept>);
 			this._ConceptClass = default(EntityRef<ConceptClass>);
+			this._ReplacesVersion = default(EntityRef<ConceptVersion>);
 			this._StatusConcept = default(EntityRef<Concept>);
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
@@ -8895,6 +9097,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._ReplacesVersionId != value))
 				{
+					if (this._ReplacesVersion.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
 					this.OnReplacesVersionIdChanging(value);
 					this.SendPropertyChanging();
 					this._ReplacesVersionId = value;
@@ -8945,6 +9151,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this.SendPropertyChanged("Mnemonic");
 					this.OnMnemonicChanged();
 				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptVersion", Storage="_ConceptVersionsReplacesVersionId", ThisKey="ConceptVersionId", OtherKey="ReplacesVersionId")]
+		public EntitySet<ConceptVersion> ConceptVersionsReplacesVersionId
+		{
+			get
+			{
+				return this._ConceptVersionsReplacesVersionId;
+			}
+			set
+			{
+				this._ConceptVersionsReplacesVersionId.Assign(value);
 			}
 		}
 		
@@ -9012,6 +9231,40 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._ConceptClassId = default(Nullable<System.Guid>);
 					}
 					this.SendPropertyChanged("ConceptClass");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptVersion_ConceptVersion", Storage="_ReplacesVersion", ThisKey="ReplacesVersionId", OtherKey="ConceptVersionId", IsForeignKey=true)]
+		public ConceptVersion ReplacesVersion
+		{
+			get
+			{
+				return this._ReplacesVersion.Entity;
+			}
+			set
+			{
+				ConceptVersion previousValue = this._ReplacesVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ReplacesVersion.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ReplacesVersion.Entity = null;
+						previousValue.ConceptVersionsReplacesVersionId.Remove(this);
+					}
+					this._ReplacesVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptVersionsReplacesVersionId.Add(this);
+						this._ReplacesVersionId = value.ConceptVersionId;
+					}
+					else
+					{
+						this._ReplacesVersionId = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("ReplacesVersion");
 				}
 			}
 		}
@@ -9136,6 +9389,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_ConceptVersionsReplacesVersionId(ConceptVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.ReplacesVersion = this;
+		}
+		
+		private void detach_ConceptVersionsReplacesVersionId(ConceptVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.ReplacesVersion = null;
 		}
 	}
 	
@@ -9367,9 +9632,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _DeterminerConceptId;
 		
-		private EntitySet<UserEntity> _UserEntities;
-		
 		private EntitySet<ActNote> _ActNotesAuthorEntityId;
+		
+		private EntitySet<ActParticipation> _ActParticipations;
 		
 		private EntitySet<EntityAddress> _EntityAddresses;
 		
@@ -9397,6 +9662,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<PlaceService> _PlaceServicesPlaceEntityId;
 		
+		private EntitySet<UserEntity> _UserEntities;
+		
 		private EntityRef<Concept> _ClassConcept;
 		
 		private EntityRef<Concept> _DeterminerConcept;
@@ -9415,8 +9682,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public Entity()
 		{
-			this._UserEntities = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntities), new Action<UserEntity>(this.detach_UserEntities));
 			this._ActNotesAuthorEntityId = new EntitySet<ActNote>(new Action<ActNote>(this.attach_ActNotesAuthorEntityId), new Action<ActNote>(this.detach_ActNotesAuthorEntityId));
+			this._ActParticipations = new EntitySet<ActParticipation>(new Action<ActParticipation>(this.attach_ActParticipations), new Action<ActParticipation>(this.detach_ActParticipations));
 			this._EntityAddresses = new EntitySet<EntityAddress>(new Action<EntityAddress>(this.attach_EntityAddresses), new Action<EntityAddress>(this.detach_EntityAddresses));
 			this._EntityAssociationsSourceEntityId = new EntitySet<EntityAssociation>(new Action<EntityAssociation>(this.attach_EntityAssociationsSourceEntityId), new Action<EntityAssociation>(this.detach_EntityAssociationsSourceEntityId));
 			this._EntityAssociationsTargetEntityId = new EntitySet<EntityAssociation>(new Action<EntityAssociation>(this.attach_EntityAssociationsTargetEntityId), new Action<EntityAssociation>(this.detach_EntityAssociationsTargetEntityId));
@@ -9430,6 +9697,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._EntityVersions = new EntitySet<EntityVersion>(new Action<EntityVersion>(this.attach_EntityVersions), new Action<EntityVersion>(this.detach_EntityVersions));
 			this._PersonLanguageCommunicationsPersonEntityId = new EntitySet<PersonLanguageCommunication>(new Action<PersonLanguageCommunication>(this.attach_PersonLanguageCommunicationsPersonEntityId), new Action<PersonLanguageCommunication>(this.detach_PersonLanguageCommunicationsPersonEntityId));
 			this._PlaceServicesPlaceEntityId = new EntitySet<PlaceService>(new Action<PlaceService>(this.attach_PlaceServicesPlaceEntityId), new Action<PlaceService>(this.detach_PlaceServicesPlaceEntityId));
+			this._UserEntities = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntities), new Action<UserEntity>(this.detach_UserEntities));
 			this._ClassConcept = default(EntityRef<Concept>);
 			this._DeterminerConcept = default(EntityRef<Concept>);
 			OnCreated();
@@ -9503,19 +9771,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_UserEntity", Storage="_UserEntities", ThisKey="EntityId", OtherKey="EntityId")]
-		public EntitySet<UserEntity> UserEntities
-		{
-			get
-			{
-				return this._UserEntities;
-			}
-			set
-			{
-				this._UserEntities.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_ActNote", Storage="_ActNotesAuthorEntityId", ThisKey="EntityId", OtherKey="AuthorEntityId")]
 		public EntitySet<ActNote> ActNotesAuthorEntityId
 		{
@@ -9526,6 +9781,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			set
 			{
 				this._ActNotesAuthorEntityId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_ActParticipation", Storage="_ActParticipations", ThisKey="EntityId", OtherKey="EntityId")]
+		public EntitySet<ActParticipation> ActParticipations
+		{
+			get
+			{
+				return this._ActParticipations;
+			}
+			set
+			{
+				this._ActParticipations.Assign(value);
 			}
 		}
 		
@@ -9698,6 +9966,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_UserEntity", Storage="_UserEntities", ThisKey="EntityId", OtherKey="EntityId")]
+		public EntitySet<UserEntity> UserEntities
+		{
+			get
+			{
+				return this._UserEntities;
+			}
+			set
+			{
+				this._UserEntities.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_Entity", Storage="_ClassConcept", ThisKey="ClassConceptId", OtherKey="ConceptId", IsForeignKey=true)]
 		public Concept ClassConcept
 		{
@@ -9786,18 +10067,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		private void attach_UserEntities(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.Entity = this;
-		}
-		
-		private void detach_UserEntities(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.Entity = null;
-		}
-		
 		private void attach_ActNotesAuthorEntityId(ActNote entity)
 		{
 			this.SendPropertyChanging();
@@ -9808,6 +10077,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this.SendPropertyChanging();
 			entity.AuthorEntity = null;
+		}
+		
+		private void attach_ActParticipations(ActParticipation entity)
+		{
+			this.SendPropertyChanging();
+			entity.Entity = this;
+		}
+		
+		private void detach_ActParticipations(ActParticipation entity)
+		{
+			this.SendPropertyChanging();
+			entity.Entity = null;
 		}
 		
 		private void attach_EntityAddresses(EntityAddress entity)
@@ -9964,6 +10245,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this.SendPropertyChanging();
 			entity.PlaceEntity = null;
+		}
+		
+		private void attach_UserEntities(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.Entity = this;
+		}
+		
+		private void detach_UserEntities(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.Entity = null;
 		}
 	}
 	
@@ -15122,11 +15415,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _InterpretationConceptId;
 		
+		private EntityRef<TextObservation> _TextObservation;
+		
 		private EntityRef<CodedObservation> _CodedObservation;
 		
 		private EntityRef<QuantityObservation> _QuantityObservation;
-		
-		private EntityRef<TextObservation> _TextObservation;
 		
 		private EntityRef<ActVersion> _ActVersion;
 		
@@ -15144,9 +15437,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public Observation()
 		{
+			this._TextObservation = default(EntityRef<TextObservation>);
 			this._CodedObservation = default(EntityRef<CodedObservation>);
 			this._QuantityObservation = default(EntityRef<QuantityObservation>);
-			this._TextObservation = default(EntityRef<TextObservation>);
 			this._ActVersion = default(EntityRef<ActVersion>);
 			this._InterpretationConcept = default(EntityRef<Concept>);
 			OnCreated();
@@ -15196,6 +15489,35 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this._InterpretationConceptId = value;
 					this.SendPropertyChanged("InterpretationConceptId");
 					this.OnInterpretationConceptIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Observation_TextObservation", Storage="_TextObservation", ThisKey="ActVersionId", OtherKey="ActVersionId", IsUnique=true, IsForeignKey=false)]
+		public TextObservation TextObservation
+		{
+			get
+			{
+				return this._TextObservation.Entity;
+			}
+			set
+			{
+				TextObservation previousValue = this._TextObservation.Entity;
+				if (((previousValue != value) 
+							|| (this._TextObservation.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TextObservation.Entity = null;
+						previousValue.Observation = null;
+					}
+					this._TextObservation.Entity = value;
+					if ((value != null))
+					{
+						value.Observation = this;
+					}
+					this.SendPropertyChanged("TextObservation");
 				}
 			}
 		}
@@ -15254,35 +15576,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						value.Observation = this;
 					}
 					this.SendPropertyChanged("QuantityObservation");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Observation_TextObservation", Storage="_TextObservation", ThisKey="ActVersionId", OtherKey="ActVersionId", IsUnique=true, IsForeignKey=false)]
-		public TextObservation TextObservation
-		{
-			get
-			{
-				return this._TextObservation.Entity;
-			}
-			set
-			{
-				TextObservation previousValue = this._TextObservation.Entity;
-				if (((previousValue != value) 
-							|| (this._TextObservation.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._TextObservation.Entity = null;
-						previousValue.Observation = null;
-					}
-					this._TextObservation.Entity = value;
-					if ((value != null))
-					{
-						value.Observation = this;
-					}
-					this.SendPropertyChanged("TextObservation");
 				}
 			}
 		}
@@ -16663,7 +16956,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PhoneticCode", DbType="NVarChar(32) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PhoneticCode", DbType="NVarChar(32)")]
 		public string PhoneticCode
 		{
 			get
@@ -18680,6 +18973,133 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.QuantifiedActParticipation")]
+	public partial class QuantifiedActParticipation : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _ActParticipationId;
+		
+		private int _Quantity;
+		
+		private EntityRef<ActParticipation> _ActParticipation;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnActParticipationIdChanging(System.Guid value);
+    partial void OnActParticipationIdChanged();
+    partial void OnQuantityChanging(int value);
+    partial void OnQuantityChanged();
+    #endregion
+		
+		public QuantifiedActParticipation()
+		{
+			this._ActParticipation = default(EntityRef<ActParticipation>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActParticipationId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		public System.Guid ActParticipationId
+		{
+			get
+			{
+				return this._ActParticipationId;
+			}
+			set
+			{
+				if ((this._ActParticipationId != value))
+				{
+					if (this._ActParticipation.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnActParticipationIdChanging(value);
+					this.SendPropertyChanging();
+					this._ActParticipationId = value;
+					this.SendPropertyChanged("ActParticipationId");
+					this.OnActParticipationIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Quantity", DbType="Int NOT NULL")]
+		public int Quantity
+		{
+			get
+			{
+				return this._Quantity;
+			}
+			set
+			{
+				if ((this._Quantity != value))
+				{
+					this.OnQuantityChanging(value);
+					this.SendPropertyChanging();
+					this._Quantity = value;
+					this.SendPropertyChanged("Quantity");
+					this.OnQuantityChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActParticipation_QuantifiedActParticipation", Storage="_ActParticipation", ThisKey="ActParticipationId", OtherKey="ActParticipationId", IsForeignKey=true)]
+		public ActParticipation ActParticipation
+		{
+			get
+			{
+				return this._ActParticipation.Entity;
+			}
+			set
+			{
+				ActParticipation previousValue = this._ActParticipation.Entity;
+				if (((previousValue != value) 
+							|| (this._ActParticipation.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ActParticipation.Entity = null;
+						previousValue.QuantifiedActParticipation = null;
+					}
+					this._ActParticipation.Entity = value;
+					if ((value != null))
+					{
+						value.QuantifiedActParticipation = this;
+						this._ActParticipationId = value.ActParticipationId;
+					}
+					else
+					{
+						this._ActParticipationId = default(System.Guid);
+					}
+					this.SendPropertyChanged("ActParticipation");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.QuantifiedEntityAssociation")]
 	public partial class QuantifiedEntityAssociation : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -19495,7 +19915,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PhoneticCode", DbType="NVarChar(20) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PhoneticCode", DbType="NVarChar(20)")]
 		public string PhoneticCode
 		{
 			get
@@ -20022,9 +20442,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _PolicyId;
 		
-		private bool _IsDeny;
-		
-		private bool _CanOverride;
+		private int _PolicyAction;
 		
 		private EntityRef<SecurityApplication> _SecurityApplication;
 		
@@ -20038,10 +20456,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnApplicationIdChanged();
     partial void OnPolicyIdChanging(System.Guid value);
     partial void OnPolicyIdChanged();
-    partial void OnIsDenyChanging(bool value);
-    partial void OnIsDenyChanged();
-    partial void OnCanOverrideChanging(bool value);
-    partial void OnCanOverrideChanged();
+    partial void OnPolicyActionChanging(int value);
+    partial void OnPolicyActionChanged();
     #endregion
 		
 		public SecurityApplicationPolicy()
@@ -20099,42 +20515,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDeny", DbType="Bit NOT NULL")]
-		public bool IsDeny
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PolicyAction", DbType="Int NOT NULL")]
+		public int PolicyAction
 		{
 			get
 			{
-				return this._IsDeny;
+				return this._PolicyAction;
 			}
 			set
 			{
-				if ((this._IsDeny != value))
+				if ((this._PolicyAction != value))
 				{
-					this.OnIsDenyChanging(value);
+					this.OnPolicyActionChanging(value);
 					this.SendPropertyChanging();
-					this._IsDeny = value;
-					this.SendPropertyChanged("IsDeny");
-					this.OnIsDenyChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CanOverride", DbType="Bit NOT NULL")]
-		public bool CanOverride
-		{
-			get
-			{
-				return this._CanOverride;
-			}
-			set
-			{
-				if ((this._CanOverride != value))
-				{
-					this.OnCanOverrideChanging(value);
-					this.SendPropertyChanging();
-					this._CanOverride = value;
-					this.SendPropertyChanged("CanOverride");
-					this.OnCanOverrideChanged();
+					this._PolicyAction = value;
+					this.SendPropertyChanged("PolicyAction");
+					this.OnPolicyActionChanged();
 				}
 			}
 		}
@@ -20636,7 +21032,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private bool _IsDeny;
 		
-		private bool _CanElevate;
+		private int _PolicyAction;
 		
 		private EntityRef<SecurityDevice> _SecurityDevice;
 		
@@ -20652,8 +21048,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnPolicyIdChanged();
     partial void OnIsDenyChanging(bool value);
     partial void OnIsDenyChanged();
-    partial void OnCanElevateChanging(bool value);
-    partial void OnCanElevateChanged();
+    partial void OnPolicyActionChanging(int value);
+    partial void OnPolicyActionChanged();
     #endregion
 		
 		public SecurityDevicePolicy()
@@ -20731,22 +21127,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CanElevate", DbType="Bit NOT NULL")]
-		public bool CanElevate
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PolicyAction", DbType="Int NOT NULL")]
+		public int PolicyAction
 		{
 			get
 			{
-				return this._CanElevate;
+				return this._PolicyAction;
 			}
 			set
 			{
-				if ((this._CanElevate != value))
+				if ((this._PolicyAction != value))
 				{
-					this.OnCanElevateChanging(value);
+					this.OnPolicyActionChanging(value);
 					this.SendPropertyChanging();
-					this._CanElevate = value;
-					this.SendPropertyChanged("CanElevate");
-					this.OnCanElevateChanged();
+					this._PolicyAction = value;
+					this.SendPropertyChanged("PolicyAction");
+					this.OnPolicyActionChanged();
 				}
 			}
 		}
@@ -21194,9 +21590,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _PolicyId;
 		
-		private bool _IsDeny;
-		
-		private bool _CanOverride;
+		private int _PolicyAction;
 		
 		private EntityRef<Policy> _Policy;
 		
@@ -21210,10 +21604,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnRoleIdChanged();
     partial void OnPolicyIdChanging(System.Guid value);
     partial void OnPolicyIdChanged();
-    partial void OnIsDenyChanging(bool value);
-    partial void OnIsDenyChanged();
-    partial void OnCanOverrideChanging(bool value);
-    partial void OnCanOverrideChanged();
+    partial void OnPolicyActionChanging(int value);
+    partial void OnPolicyActionChanged();
     #endregion
 		
 		public SecurityRolePolicy()
@@ -21271,42 +21663,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDeny", DbType="Bit NOT NULL")]
-		public bool IsDeny
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PolicyAction", DbType="Int NOT NULL")]
+		public int PolicyAction
 		{
 			get
 			{
-				return this._IsDeny;
+				return this._PolicyAction;
 			}
 			set
 			{
-				if ((this._IsDeny != value))
+				if ((this._PolicyAction != value))
 				{
-					this.OnIsDenyChanging(value);
+					this.OnPolicyActionChanging(value);
 					this.SendPropertyChanging();
-					this._IsDeny = value;
-					this.SendPropertyChanged("IsDeny");
-					this.OnIsDenyChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CanOverride", DbType="Bit NOT NULL")]
-		public bool CanOverride
-		{
-			get
-			{
-				return this._CanOverride;
-			}
-			set
-			{
-				if ((this._CanOverride != value))
-				{
-					this.OnCanOverrideChanging(value);
-					this.SendPropertyChanging();
-					this._CanOverride = value;
-					this.SendPropertyChanged("CanOverride");
-					this.OnCanOverrideChanged();
+					this._PolicyAction = value;
+					this.SendPropertyChanged("PolicyAction");
+					this.OnPolicyActionChanged();
 				}
 			}
 		}
@@ -21442,12 +21814,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.Guid> _UpdatedBy;
 		
-		private EntitySet<UserEntity> _UserEntitiesCreatedBy;
-		
-		private EntitySet<UserEntity> _UserEntitiesObsoletedBy;
-		
-		private EntitySet<UserEntity> _UserEntities;
-		
 		private EntitySet<ActTag> _ActTagsCreatedBy;
 		
 		private EntitySet<ActTag> _ActTagsObsoletedBy;
@@ -21526,6 +21892,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<SecurityUserRole> _SecurityUserRoles;
 		
+		private EntitySet<UserEntity> _UserEntitiesCreatedBy;
+		
+		private EntitySet<UserEntity> _UserEntitiesObsoletedBy;
+		
+		private EntitySet<UserEntity> _UserEntities;
+		
 		private EntityRef<SecurityUser> _CreatedByEntity;
 		
 		private EntityRef<SecurityUser> _ObsoletedByEntity;
@@ -21576,9 +21948,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public SecurityUser()
 		{
-			this._UserEntitiesCreatedBy = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntitiesCreatedBy), new Action<UserEntity>(this.detach_UserEntitiesCreatedBy));
-			this._UserEntitiesObsoletedBy = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntitiesObsoletedBy), new Action<UserEntity>(this.detach_UserEntitiesObsoletedBy));
-			this._UserEntities = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntities), new Action<UserEntity>(this.detach_UserEntities));
 			this._ActTagsCreatedBy = new EntitySet<ActTag>(new Action<ActTag>(this.attach_ActTagsCreatedBy), new Action<ActTag>(this.detach_ActTagsCreatedBy));
 			this._ActTagsObsoletedBy = new EntitySet<ActTag>(new Action<ActTag>(this.attach_ActTagsObsoletedBy), new Action<ActTag>(this.detach_ActTagsObsoletedBy));
 			this._ActVersionsCreatedBy = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersionsCreatedBy), new Action<ActVersion>(this.detach_ActVersionsCreatedBy));
@@ -21618,6 +21987,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._SecurityUserClaims = new EntitySet<SecurityUserClaim>(new Action<SecurityUserClaim>(this.attach_SecurityUserClaims), new Action<SecurityUserClaim>(this.detach_SecurityUserClaims));
 			this._SecurityUserLogins = new EntitySet<SecurityUserLogin>(new Action<SecurityUserLogin>(this.attach_SecurityUserLogins), new Action<SecurityUserLogin>(this.detach_SecurityUserLogins));
 			this._SecurityUserRoles = new EntitySet<SecurityUserRole>(new Action<SecurityUserRole>(this.attach_SecurityUserRoles), new Action<SecurityUserRole>(this.detach_SecurityUserRoles));
+			this._UserEntitiesCreatedBy = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntitiesCreatedBy), new Action<UserEntity>(this.detach_UserEntitiesCreatedBy));
+			this._UserEntitiesObsoletedBy = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntitiesObsoletedBy), new Action<UserEntity>(this.detach_UserEntitiesObsoletedBy));
+			this._UserEntities = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntities), new Action<UserEntity>(this.detach_UserEntities));
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
 			this._UpdatedByEntity = default(EntityRef<SecurityUser>);
@@ -21993,45 +22365,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this.SendPropertyChanged("UpdatedBy");
 					this.OnUpdatedByChanged();
 				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity", Storage="_UserEntitiesCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
-		public EntitySet<UserEntity> UserEntitiesCreatedBy
-		{
-			get
-			{
-				return this._UserEntitiesCreatedBy;
-			}
-			set
-			{
-				this._UserEntitiesCreatedBy.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity1", Storage="_UserEntitiesObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
-		public EntitySet<UserEntity> UserEntitiesObsoletedBy
-		{
-			get
-			{
-				return this._UserEntitiesObsoletedBy;
-			}
-			set
-			{
-				this._UserEntitiesObsoletedBy.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity2", Storage="_UserEntities", ThisKey="UserId", OtherKey="UserId")]
-		public EntitySet<UserEntity> UserEntities
-		{
-			get
-			{
-				return this._UserEntities;
-			}
-			set
-			{
-				this._UserEntities.Assign(value);
 			}
 		}
 		
@@ -22542,6 +22875,45 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity", Storage="_UserEntitiesCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<UserEntity> UserEntitiesCreatedBy
+		{
+			get
+			{
+				return this._UserEntitiesCreatedBy;
+			}
+			set
+			{
+				this._UserEntitiesCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity1", Storage="_UserEntitiesObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<UserEntity> UserEntitiesObsoletedBy
+		{
+			get
+			{
+				return this._UserEntitiesObsoletedBy;
+			}
+			set
+			{
+				this._UserEntitiesObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity2", Storage="_UserEntities", ThisKey="UserId", OtherKey="UserId")]
+		public EntitySet<UserEntity> UserEntities
+		{
+			get
+			{
+				return this._UserEntities;
+			}
+			set
+			{
+				this._UserEntities.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityUser", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
 		public SecurityUser CreatedByEntity
 		{
@@ -22662,42 +23034,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
-		}
-		
-		private void attach_UserEntitiesCreatedBy(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.CreatedByEntity = this;
-		}
-		
-		private void detach_UserEntitiesCreatedBy(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.CreatedByEntity = null;
-		}
-		
-		private void attach_UserEntitiesObsoletedBy(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoletedByEntity = this;
-		}
-		
-		private void detach_UserEntitiesObsoletedBy(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoletedByEntity = null;
-		}
-		
-		private void attach_UserEntities(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.SecurityUser = this;
-		}
-		
-		private void detach_UserEntities(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.SecurityUser = null;
 		}
 		
 		private void attach_ActTagsCreatedBy(ActTag entity)
@@ -23163,6 +23499,42 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		}
 		
 		private void detach_SecurityUserRoles(SecurityUserRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityUser = null;
+		}
+		
+		private void attach_UserEntitiesCreatedBy(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_UserEntitiesCreatedBy(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_UserEntitiesObsoletedBy(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_UserEntitiesObsoletedBy(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_UserEntities(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityUser = this;
+		}
+		
+		private void detach_UserEntities(UserEntity entity)
 		{
 			this.SendPropertyChanging();
 			entity.SecurityUser = null;
@@ -23944,108 +24316,351 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TextObservation")]
-	public partial class TextObservation : INotifyPropertyChanging, INotifyPropertyChanged
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.UserEntity")]
+	public partial class UserEntity : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private System.Guid _ActVersionId;
+		private System.Guid _UserEntityId;
 		
-		private string _Value;
+		private System.Guid _UserId;
 		
-		private EntityRef<Observation> _Observation;
+		private System.Guid _EntityId;
+		
+		private System.DateTimeOffset _CreationTime;
+		
+		private System.Guid _CreatedBy;
+		
+		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
+		
+		private System.Nullable<System.Guid> _ObsoletedBy;
+		
+		private EntityRef<SecurityUser> _CreatedByEntity;
+		
+		private EntityRef<Entity> _Entity;
+		
+		private EntityRef<SecurityUser> _ObsoletedByEntity;
+		
+		private EntityRef<SecurityUser> _SecurityUser;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnActVersionIdChanging(System.Guid value);
-    partial void OnActVersionIdChanged();
-    partial void OnValueChanging(string value);
-    partial void OnValueChanged();
+    partial void OnUserEntityIdChanging(System.Guid value);
+    partial void OnUserEntityIdChanged();
+    partial void OnUserIdChanging(System.Guid value);
+    partial void OnUserIdChanged();
+    partial void OnEntityIdChanging(System.Guid value);
+    partial void OnEntityIdChanged();
+    partial void OnCreationTimeChanging(System.DateTimeOffset value);
+    partial void OnCreationTimeChanged();
+    partial void OnCreatedByChanging(System.Guid value);
+    partial void OnCreatedByChanged();
+    partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnObsoletionTimeChanged();
+    partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
+    partial void OnObsoletedByChanged();
     #endregion
 		
-		public TextObservation()
+		public UserEntity()
 		{
-			this._Observation = default(EntityRef<Observation>);
+			this._CreatedByEntity = default(EntityRef<SecurityUser>);
+			this._Entity = default(EntityRef<Entity>);
+			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
+			this._SecurityUser = default(EntityRef<SecurityUser>);
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
-		public System.Guid ActVersionId
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserEntityId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		public System.Guid UserEntityId
 		{
 			get
 			{
-				return this._ActVersionId;
+				return this._UserEntityId;
 			}
 			set
 			{
-				if ((this._ActVersionId != value))
+				if ((this._UserEntityId != value))
 				{
-					if (this._Observation.HasLoadedOrAssignedValue)
+					this.OnUserEntityIdChanging(value);
+					this.SendPropertyChanging();
+					this._UserEntityId = value;
+					this.SendPropertyChanged("UserEntityId");
+					this.OnUserEntityIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid UserId
+		{
+			get
+			{
+				return this._UserId;
+			}
+			set
+			{
+				if ((this._UserId != value))
+				{
+					if (this._SecurityUser.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
-					this.OnActVersionIdChanging(value);
+					this.OnUserIdChanging(value);
 					this.SendPropertyChanging();
-					this._ActVersionId = value;
-					this.SendPropertyChanged("ActVersionId");
-					this.OnActVersionIdChanged();
+					this._UserId = value;
+					this.SendPropertyChanged("UserId");
+					this.OnUserIdChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Value", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
-		public string Value
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid EntityId
 		{
 			get
 			{
-				return this._Value;
+				return this._EntityId;
 			}
 			set
 			{
-				if ((this._Value != value))
+				if ((this._EntityId != value))
 				{
-					this.OnValueChanging(value);
+					if (this._Entity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnEntityIdChanging(value);
 					this.SendPropertyChanging();
-					this._Value = value;
-					this.SendPropertyChanged("Value");
-					this.OnValueChanged();
+					this._EntityId = value;
+					this.SendPropertyChanged("EntityId");
+					this.OnEntityIdChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Observation_TextObservation", Storage="_Observation", ThisKey="ActVersionId", OtherKey="ActVersionId", IsForeignKey=true)]
-		public Observation Observation
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", AutoSync=AutoSync.Always, DbType="DateTimeOffset NOT NULL", IsDbGenerated=true)]
+		public System.DateTimeOffset CreationTime
 		{
 			get
 			{
-				return this._Observation.Entity;
+				return this._CreationTime;
 			}
 			set
 			{
-				Observation previousValue = this._Observation.Entity;
+				if ((this._CreationTime != value))
+				{
+					this.OnCreationTimeChanging(value);
+					this.SendPropertyChanging();
+					this._CreationTime = value;
+					this.SendPropertyChanged("CreationTime");
+					this.OnCreationTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid CreatedBy
+		{
+			get
+			{
+				return this._CreatedBy;
+			}
+			set
+			{
+				if ((this._CreatedBy != value))
+				{
+					if (this._CreatedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCreatedByChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedBy = value;
+					this.SendPropertyChanged("CreatedBy");
+					this.OnCreatedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> ObsoletionTime
+		{
+			get
+			{
+				return this._ObsoletionTime;
+			}
+			set
+			{
+				if ((this._ObsoletionTime != value))
+				{
+					this.OnObsoletionTimeChanging(value);
+					this.SendPropertyChanging();
+					this._ObsoletionTime = value;
+					this.SendPropertyChanged("ObsoletionTime");
+					this.OnObsoletionTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletedBy", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> ObsoletedBy
+		{
+			get
+			{
+				return this._ObsoletedBy;
+			}
+			set
+			{
+				if ((this._ObsoletedBy != value))
+				{
+					if (this._ObsoletedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnObsoletedByChanging(value);
+					this.SendPropertyChanging();
+					this._ObsoletedBy = value;
+					this.SendPropertyChanged("ObsoletedBy");
+					this.OnObsoletedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser CreatedByEntity
+		{
+			get
+			{
+				return this._CreatedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
 				if (((previousValue != value) 
-							|| (this._Observation.HasLoadedOrAssignedValue == false)))
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
 					if ((previousValue != null))
 					{
-						this._Observation.Entity = null;
-						previousValue.TextObservation = null;
+						this._CreatedByEntity.Entity = null;
+						previousValue.UserEntitiesCreatedBy.Remove(this);
 					}
-					this._Observation.Entity = value;
+					this._CreatedByEntity.Entity = value;
 					if ((value != null))
 					{
-						value.TextObservation = this;
-						this._ActVersionId = value.ActVersionId;
+						value.UserEntitiesCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
 					}
 					else
 					{
-						this._ActVersionId = default(System.Guid);
+						this._CreatedBy = default(System.Guid);
 					}
-					this.SendPropertyChanged("Observation");
+					this.SendPropertyChanged("CreatedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_UserEntity", Storage="_Entity", ThisKey="EntityId", OtherKey="EntityId", IsForeignKey=true)]
+		public Entity Entity
+		{
+			get
+			{
+				return this._Entity.Entity;
+			}
+			set
+			{
+				Entity previousValue = this._Entity.Entity;
+				if (((previousValue != value) 
+							|| (this._Entity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Entity.Entity = null;
+						previousValue.UserEntities.Remove(this);
+					}
+					this._Entity.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntities.Add(this);
+						this._EntityId = value.EntityId;
+					}
+					else
+					{
+						this._EntityId = default(System.Guid);
+					}
+					this.SendPropertyChanged("Entity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity1", Storage="_ObsoletedByEntity", ThisKey="ObsoletedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser ObsoletedByEntity
+		{
+			get
+			{
+				return this._ObsoletedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.UserEntitiesObsoletedBy.Remove(this);
+					}
+					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntitiesObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("ObsoletedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity2", Storage="_SecurityUser", ThisKey="UserId", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser SecurityUser
+		{
+			get
+			{
+				return this._SecurityUser.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._SecurityUser.Entity;
+				if (((previousValue != value) 
+							|| (this._SecurityUser.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SecurityUser.Entity = null;
+						previousValue.UserEntities.Remove(this);
+					}
+					this._SecurityUser.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntities.Add(this);
+						this._UserId = value.UserId;
+					}
+					else
+					{
+						this._UserId = default(System.Guid);
+					}
+					this.SendPropertyChanged("SecurityUser");
 				}
 			}
 		}

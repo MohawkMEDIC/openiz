@@ -32,19 +32,15 @@ namespace OpenIZ.Core.Model.Entities
         private Guid? m_typeConceptId;
 
         // Class concept
-        [NonSerialized]
         private Concept m_classConcept;
         // Determiner concept
-        [NonSerialized]
+        
         private Concept m_determinerConcept;
         // TODO: Change this to Act
-        [NonSerialized]
-        private IdentifiedData m_creationAct;
+        private Act m_creationAct;
         // Status concept
-        [NonSerialized]
         private Concept m_statusConcept;
         // Type concept
-        [NonSerialized]
         private Concept m_typeConcept;
 
         // Identifiers 
@@ -200,7 +196,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [DelayLoad]
         [IgnoreDataMember]
-        public IdentifiedData CreationAct
+        public Act CreationAct
         {
             get {
                 this.m_creationAct = base.DelayLoad(this.m_creationActId, this.m_creationAct);

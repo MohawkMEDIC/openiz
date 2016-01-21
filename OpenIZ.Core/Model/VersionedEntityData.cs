@@ -41,7 +41,7 @@ namespace OpenIZ.Core.Model
         // Previous version id
         private Guid? m_previousVersionId;
         // Previous version
-        [NonSerialized]
+        
         private THistoryModelType m_previousVersion;
 
         /// <summary>

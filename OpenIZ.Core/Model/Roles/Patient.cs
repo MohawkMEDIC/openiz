@@ -24,7 +24,7 @@ namespace OpenIZ.Core.Model.Roles
         // Gender concept key
         private Guid m_genderConceptKey;
         // Gender concept
-        [NonSerialized]
+        
         private Concept m_genderConcept;
 
         /// <summary>

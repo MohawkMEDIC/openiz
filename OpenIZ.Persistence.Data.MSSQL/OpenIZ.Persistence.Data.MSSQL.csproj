@@ -94,6 +94,7 @@
     <Compile Include="Services\Persistence\SecurityPolicyPersistenceService.cs" />
     <Compile Include="Services\Persistence\SqlPersistenceService.cs" />
     <Compile Include="Services\SqlIdentityProvider.cs" />
+    <Compile Include="Services\SqlPolicyInformationService.cs" />
     <Compile Include="Services\SqlRoleProvider.cs" />
     <Compile Include="Services\Persistence\BasePersistenceService.cs" />
     <Compile Include="Services\Persistence\SecurityRolePersistenceService.cs" />
@@ -125,10 +126,10 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Data\Sql\OpenIZCodes.sql" />
-    <EmbeddedResource Include="Data\Sql\OpenIZDDL.sql" />
     <None Include="Data\Model.dbml.layout">
       <DependentUpon>Model.dbml</DependentUpon>
     </None>
+    <EmbeddedResource Include="Data\Sql\OpenIZDDL.sql" />
     <EmbeddedResource Include="Data\ModelMap.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>

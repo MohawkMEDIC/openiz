@@ -43,10 +43,10 @@ namespace OpenIZ.Core.Model
         // The identifier of the version where this data is no longer effective
         private Decimal? m_obsoleteVersionSequenceId;
         // The version where this data is effective
-        [NonSerialized]
+        
         private TSourceType m_effectiveVersion;
         // The version where this data is obsolete
-        [NonSerialized]
+        
         private TSourceType m_obsoleteVersion;
        
         /// <summary>

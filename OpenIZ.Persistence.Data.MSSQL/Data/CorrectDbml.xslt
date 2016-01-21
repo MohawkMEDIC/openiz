@@ -10,10 +10,10 @@
 
   <msxsl:script language="cs" implements-prefix="openiz">
     <![CDATA[
-    public String CorrectAssociationName(String associationName, String typeName, String memberName, String thisKey, String otherKey, Boolean isForeignKey)
+    public System.String CorrectAssociationName(System.String associationName, System.String typeName, System.String memberName, System.String thisKey, System.String otherKey, System.Boolean isForeignKey)
     {
         
-      String preferredName = memberName;
+      System.String preferredName = memberName;
       // Member is another class pointing at me
       System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("\\d");
       if(otherKey != thisKey)

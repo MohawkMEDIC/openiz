@@ -17,7 +17,7 @@ namespace OpenIZ.Core.Model.Entities
         // Id of the algorithm used to generate phonetic code
         private Guid m_phoneticAlgorithmId;
         // Algorithm used to generate the code
-        [NonSerialized]
+        
         private PhoneticAlgorithm m_phoneticAlgorithm;
 
         /// <summary>

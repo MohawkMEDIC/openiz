@@ -21,7 +21,7 @@ namespace OpenIZ.Core.Model.Entities
     {
 
         // Language communication
-        [NonSerialized]
+        
         private List<PersonLanguageCommunication> m_languageCommunication;
 
         /// <summary>

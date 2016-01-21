@@ -38,12 +38,12 @@ namespace OpenIZ.Core.Model.DataTypes
         // Target concept id
         private Guid m_targetConceptId;
         // Target concept
-        [NonSerialized]
+        
         private Concept m_targetConcept;
         // Relaltionship type id
         private Guid m_relationshipTypeId;
         // Relationship type
-        [NonSerialized]
+        
         private ConceptRelationshipType m_relationshipType;
 
         /// <summary>

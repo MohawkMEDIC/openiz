@@ -22,7 +22,7 @@ namespace OpenIZ.Core.Model.DataTypes
         // Extension type key
         private Guid m_extensionTypeKey;
         // Extension type
-        [NonSerialized]
+        
         private ExtensionType m_extensionType;
 
         /// <summary>

@@ -40,21 +40,21 @@ namespace OpenIZ.Core.Model.DataTypes
         // Concept class id
         private Guid m_classId;
         // Backing field for relationships
-        [NonSerialized]
+        
         private List<ConceptRelationship> m_relationships;
         // Concept class
-        [NonSerialized]
+        
         private ConceptClass m_class;
         // Reference terms
-        [NonSerialized]
+        
         private List<ConceptReferenceTerm> m_referenceTerms;
         // Names
-        [NonSerialized]
+        
         private List<ConceptName> m_conceptNames;
         // Status id
         private Guid? m_conceptStatusId;
         // Status
-        [NonSerialized]
+        
         private Concept m_conceptStatus;
 
         /// <summary>

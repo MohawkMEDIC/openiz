@@ -35,12 +35,12 @@ namespace OpenIZ.Core.Model.DataTypes
         // Reference term id
         private Guid m_referenceTermId;
         // Reference term
-        [NonSerialized]
+        
         private ReferenceTerm m_referenceTerm;
         // ConceptRelationship type
         private Guid m_relationshipTypeId;
         // Relationship type
-        [NonSerialized]
+        
         private ConceptRelationshipType m_relationshipType;
 
         /// <summary>

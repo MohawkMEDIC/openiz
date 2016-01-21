@@ -23,7 +23,7 @@ namespace OpenIZ.Core.Model.Roles
         // Specialty key
         private Guid? m_providerSpecialtyKey;
         // Specialty value
-        [NonSerialized]
+        
         private Concept m_providerSpeciality;
 
         /// <summary>

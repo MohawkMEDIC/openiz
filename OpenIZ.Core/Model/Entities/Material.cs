@@ -23,10 +23,8 @@ namespace OpenIZ.Core.Model.Entities
         // Quantity concept key
         private Guid? m_quantityConceptKey;
         // Form concept
-        [NonSerialized]
         private Concept m_formConcept;
         // Quantity concept
-        [NonSerialized]
         private Concept m_quantityConcept;
 
         /// <summary>

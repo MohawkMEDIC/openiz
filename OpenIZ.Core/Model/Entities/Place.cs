@@ -18,7 +18,7 @@ namespace OpenIZ.Core.Model.Entities
     public class Place : Entity
     {
         // Servics
-        [NonSerialized]
+        
         private List<PlaceService> m_services;
 
         /// <summary>

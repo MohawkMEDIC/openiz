@@ -35,7 +35,7 @@ namespace OpenIZ.Core.Model.Security
     {
 
         // Policies
-        [NonSerialized]
+        
         private List<SecurityPolicyInstance> m_policies = new List<SecurityPolicyInstance>();
 
         /// <summary>
