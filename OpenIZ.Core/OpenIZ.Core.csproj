@@ -51,7 +51,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\DataTypes\CodeSystemKeys.cs" />
-    <Compile Include="Model\DataTypes\ConceptClassKeys.cs" />
+    <Compile Include="Model\DataTypes\ConceptClassConceptKeys.cs" />
+    <Compile Include="Model\DataTypes\DeterminerConceptKeys.cs" />
+    <Compile Include="Model\DataTypes\EntityClassConceptKeys.cs" />
     <Compile Include="Model\DataTypes\Extension.cs" />
     <Compile Include="Model\DataTypes\ExtensionType.cs" />
     <Compile Include="Model\DataTypes\StatusConceptKeys.cs" />
@@ -67,6 +69,8 @@
     <Compile Include="Model\DataTypes\ReferenceTermName.cs" />
     <Compile Include="Model\DataTypes\ConceptRelationshipTypeKeys.cs" />
     <Compile Include="Model\DataTypes\Tag.cs" />
+    <Compile Include="Model\Entities\ApplicationEntity.cs" />
+    <Compile Include="Model\Entities\DeviceEntity.cs" />
     <Compile Include="Model\Entities\Entity.cs" />
     <Compile Include="Model\Entities\EntityAddress.cs" />
     <Compile Include="Model\Entities\EntityAddressComponent.cs" />
@@ -76,6 +80,10 @@
     <Compile Include="Model\Entities\EntityTelecomAddress.cs" />
     <Compile Include="Model\BoundRelationData.cs" />
     <Compile Include="Model\Entities\GenericComponentValues.cs" />
+    <Compile Include="Model\Entities\Material.cs" />
+    <Compile Include="Model\Entities\Organization.cs" />
+    <Compile Include="Model\Entities\Place.cs" />
+    <Compile Include="Model\Entities\PlaceService.cs" />
     <Compile Include="Model\IdentifiedData.cs" />
     <Compile Include="Model\BaseEntityData.cs" />
     <Compile Include="Model\DataTypes\AssigningAuthority.cs" />
@@ -93,6 +101,8 @@
     <Compile Include="Model\Map\ModelMap.cs" />
     <Compile Include="Model\Map\ModelMapper.cs" />
     <Compile Include="Model\Map\PropertyMap.cs" />
+    <Compile Include="Model\Security\SecurityApplication.cs" />
+    <Compile Include="Model\Security\SecurityDevice.cs" />
     <Compile Include="Model\Security\SecurityEntity.cs" />
     <Compile Include="Model\Security\SecurityPolicy.cs" />
     <Compile Include="Model\Security\SecurityRole.cs" />
@@ -103,7 +113,6 @@
     <Compile Include="Security\IPolicyHandler.cs" />
     <Compile Include="Security\LocalPolicyDecisionService.cs" />
     <Compile Include="Security\LocalPolicyEnforcementService.cs" />
-    <Compile Include="Security\LocalPolicyInformationService.cs" />
     <Compile Include="Security\OpenIzClaimTypes.cs" />
     <Compile Include="Security\PolicyIdentifiers.cs" />
     <Compile Include="Security\SHA256PasswordHashingService.cs" />

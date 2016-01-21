@@ -55,7 +55,8 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                return base.DelayLoad(this.m_authorKey, this.m_author);
+                this.m_author = base.DelayLoad(this.m_authorKey, this.m_author);
+                return this.m_author;
             }
             set
             {

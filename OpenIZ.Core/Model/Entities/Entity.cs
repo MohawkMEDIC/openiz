@@ -44,7 +44,7 @@ namespace OpenIZ.Core.Model.Entities
         private Concept m_statusConcept;
         // Type concept
         [NonSerialized]
-        private Concept m_typeConept;
+        private Concept m_typeConcept;
 
         // Identifiers 
         private List<EntityIdentifier> m_identifiers;
@@ -139,7 +139,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 this.m_typeConceptId = value;
-                this.m_typeConept = null;
+                this.m_typeConcept = null;
             }
         }
 
@@ -151,7 +151,8 @@ namespace OpenIZ.Core.Model.Entities
         public Concept ClassConcept
         {
             get {
-                return base.DelayLoad(this.m_classConceptId, this.m_classConcept);
+                this.m_classConcept = base.DelayLoad(this.m_classConceptId, this.m_classConcept);
+                return this.m_classConcept;
             }
         }
 
@@ -162,7 +163,11 @@ namespace OpenIZ.Core.Model.Entities
         [IgnoreDataMember]
         public virtual Concept DeterminerConcept
         {
-            get { return base.DelayLoad(this.m_determinerConceptId, this.m_determinerConcept); }
+            get
+            {
+                this.m_determinerConcept = base.DelayLoad(this.m_determinerConceptId, this.m_determinerConcept);
+                return this.m_determinerConcept;
+            }
         }
 
         /// <summary>
@@ -172,7 +177,11 @@ namespace OpenIZ.Core.Model.Entities
         [IgnoreDataMember]
         public Concept StatusConcept
         {
-            get { return base.DelayLoad(this.m_statusConceptId, this.m_statusConcept); }
+            get
+            {
+                this.m_statusConcept = base.DelayLoad(this.m_statusConceptId, this.m_statusConcept);
+                return this.m_statusConcept;
+            }
             set
             {
                 this.m_statusConcept = value;
@@ -190,7 +199,10 @@ namespace OpenIZ.Core.Model.Entities
         [IgnoreDataMember]
         public IdentifiedData CreationAct
         {
-            get { return base.DelayLoad(this.m_creationActId, this.m_creationAct); }
+            get {
+                this.m_creationAct = base.DelayLoad(this.m_creationActId, this.m_creationAct);
+                return this.m_creationAct;
+            }
             set
             {
                 this.m_creationAct = value;
@@ -208,10 +220,13 @@ namespace OpenIZ.Core.Model.Entities
         [IgnoreDataMember]
         public Concept TypeConcept
         {
-            get { return base.DelayLoad(this.m_typeConceptId, this.m_typeConept); }
+            get {
+                this.m_typeConcept = base.DelayLoad(this.m_typeConceptId, this.m_typeConcept);
+                return this.m_typeConcept;
+            }
             set
             {
-                this.m_typeConept = value;
+                this.m_typeConcept = value;
                 this.m_typeConceptId = value?.Key;
             }
         }
@@ -366,7 +381,7 @@ namespace OpenIZ.Core.Model.Entities
         public override void Refresh()
         {
             base.Refresh();
-            this.m_classConcept = this.m_determinerConcept = this.m_statusConcept = this.m_typeConept = null;
+            this.m_classConcept = this.m_determinerConcept = this.m_statusConcept = this.m_typeConcept = null;
             this.m_addresses = null;
             this.m_associations = null;
             this.m_creationAct = null;

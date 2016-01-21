@@ -27,7 +27,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Concept classification identifiers
     /// </summary>
-    public static class ConceptClassKeys
+    public static class ConceptClassConceptKeys
     {
         /// <summary>
         /// Class code identifier

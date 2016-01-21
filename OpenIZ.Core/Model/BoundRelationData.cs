@@ -49,7 +49,8 @@ namespace OpenIZ.Core.Model
         {
             get
             {
-                return this.DelayLoad(this.m_sourceEntityKey, this.m_sourceEntity);
+                this.m_sourceEntity = this.DelayLoad(this.m_sourceEntityKey, this.m_sourceEntity);
+                return this.m_sourceEntity;
             }
             set
             {

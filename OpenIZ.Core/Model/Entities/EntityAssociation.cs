@@ -46,7 +46,10 @@ namespace OpenIZ.Core.Model.Entities
         [IgnoreDataMember]
         public Entity TargetEntity
         {
-            get { return base.DelayLoad(this.m_targetEntityKey, this.m_targetEntity); }
+            get {
+                this.m_targetEntity = base.DelayLoad(this.m_targetEntityKey, this.m_targetEntity);
+                return this.m_targetEntity;
+            }
             set
             {
                 this.m_targetEntity = value;
@@ -80,7 +83,10 @@ namespace OpenIZ.Core.Model.Entities
         [DelayLoad]
         public Concept AssociationType
         {
-            get { return base.DelayLoad(this.m_associationTypeKey, this.m_associationType); }
+            get {
+                this.m_associationType = base.DelayLoad(this.m_associationTypeKey, this.m_associationType);
+                return this.m_associationType;
+            }
             set
             {
                 this.m_associationType = value;

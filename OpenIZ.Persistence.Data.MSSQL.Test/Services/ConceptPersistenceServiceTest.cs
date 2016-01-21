@@ -62,7 +62,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         {
             Concept simpleConcept = new Concept()
             {
-                ClassKey = ConceptClassKeys.Other,
+                ClassKey = ConceptClassConceptKeys.Other,
                 IsSystemConcept = true,
                 Mnemonic = "TESTCODE1"
             };
@@ -81,7 +81,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         {
             Concept namedConcept = new Concept()
             {
-                ClassKey = ConceptClassKeys.Other,
+                ClassKey = ConceptClassConceptKeys.Other,
                 IsSystemConcept = false,
                 Mnemonic = "TESTCODE2"
             };
@@ -115,7 +115,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         {
             Concept namedConcept = new Concept()
             {
-                ClassKey = ConceptClassKeys.Other,
+                ClassKey = ConceptClassConceptKeys.Other,
                 IsSystemConcept = false,
                 Mnemonic = "TESTCODE3"
             };
@@ -182,7 +182,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         {
             Concept refTermConcept = new Concept()
             {
-                ClassKey = ConceptClassKeys.Other,
+                ClassKey = ConceptClassConceptKeys.Other,
                 IsSystemConcept = false,
                 Mnemonic = "TESTCODE5"
             };
@@ -233,7 +233,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         {
             Concept refTermConcept = new Concept()
             {
-                ClassKey = ConceptClassKeys.Other,
+                ClassKey = ConceptClassConceptKeys.Other,
                 IsSystemConcept = false,
                 Mnemonic = "TESTCODE6"
             };

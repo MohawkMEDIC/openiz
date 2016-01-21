@@ -57,7 +57,9 @@ namespace OpenIZ.Core.Model.DataTypes
         public CodeSystem CodeSystem {
             get
             {
-                return base.DelayLoad(this.m_codeSystemId, this.m_codeSystem);            }
+                this.m_codeSystem = base.DelayLoad(this.m_codeSystemId, this.m_codeSystem);
+                return this.m_codeSystem;
+            }
             set
             {
                 this.m_codeSystem = value;

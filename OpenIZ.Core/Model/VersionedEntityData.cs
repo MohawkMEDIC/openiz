@@ -79,7 +79,8 @@ namespace OpenIZ.Core.Model
         {
             get
             {
-                return base.DelayLoad(this.m_previousVersionId, this.m_previousVersion);
+                this.m_previousVersion = base.DelayLoad(this.m_previousVersionId, this.m_previousVersion);
+                return this.m_previousVersion;
             }
             set
             {

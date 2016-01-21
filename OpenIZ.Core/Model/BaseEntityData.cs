@@ -73,7 +73,8 @@ namespace OpenIZ.Core.Model
         public virtual SecurityUser CreatedBy {
             get
             {
-                return base.DelayLoad(this.m_createdById, this.m_createdBy);
+                this.m_createdBy = base.DelayLoad(this.m_createdById, this.m_createdBy);
+                return this.m_createdBy;
             }
          }
 
@@ -85,7 +86,8 @@ namespace OpenIZ.Core.Model
         public virtual SecurityUser ObsoletedBy {
             get
             {
-                return base.DelayLoad(this.m_obsoletedById, this.m_obsoletedBy);
+                this.m_obsoletedBy= base.DelayLoad(this.m_obsoletedById, this.m_obsoletedBy);
+                return this.m_obsoletedBy;
             }
         }
 

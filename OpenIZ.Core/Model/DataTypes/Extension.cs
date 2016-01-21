@@ -52,7 +52,10 @@ namespace OpenIZ.Core.Model.DataTypes
         [DelayLoad]
         public ExtensionType ExtensionType
         {
-            get { return base.DelayLoad(this.m_extensionTypeKey, this.m_extensionType); }
+            get {
+                this.m_extensionType = base.DelayLoad(this.m_extensionTypeKey, this.m_extensionType);
+                return this.m_extensionType;
+            }
             set
             {
                 this.m_extensionType = value;

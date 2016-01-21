@@ -83,7 +83,8 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                return base.DelayLoad(this.m_identifierTypeId, this.m_identifierType);
+                this.m_identifierType = base.DelayLoad(this.m_identifierTypeId, this.m_identifierType);
+                return this.m_identifierType;
             }
             set
             {
@@ -101,7 +102,8 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                return base.DelayLoad(this.m_authorityId, this.m_authority);
+                this.m_authority = base.DelayLoad(this.m_authorityId, this.m_authority);
+                return this.m_authority;
             }
             set
             {

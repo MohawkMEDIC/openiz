@@ -85,7 +85,8 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                return base.DelayLoad(this.m_phoneticAlgorithmId, this.m_phoneticAlgorithm);
+                this.m_phoneticAlgorithm = base.DelayLoad(this.m_phoneticAlgorithmId, this.m_phoneticAlgorithm);
+                return this.m_phoneticAlgorithm;
             }
             set
             {

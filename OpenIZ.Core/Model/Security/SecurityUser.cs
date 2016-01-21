@@ -132,7 +132,8 @@ namespace OpenIZ.Core.Model.Security
         {
             get
             {
-                return base.DelayLoad(this.m_updatedById, this.m_updatedBy);
+                this.m_updatedBy = base.DelayLoad(this.m_updatedById, this.m_updatedBy);
+                return this.m_updatedBy;
             }
         }
 

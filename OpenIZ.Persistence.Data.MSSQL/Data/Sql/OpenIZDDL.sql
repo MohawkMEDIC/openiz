@@ -3,7 +3,7 @@
 -- PORTIONS COPYRIGHT (C) 2015, FYFE SOFTWARE INC.
 -- LICENSED UNDER THE APACHE 2.0 LICENSE
 
---USE OpenIZ;
+USE OpenIZ;
 
 /*
  PHONETIC ALGORITHM TABLE IS USED TO STORE A MASTER LIST OF PHONETIC ALGORITHMS
@@ -392,66 +392,6 @@ CREATE TABLE ConceptVersion
 	CONSTRAINT CK_ConceptVersionObsoletedBy CHECK(ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletedBy IS NULL AND ObsoletionTime IS NULL)
 );
 
-INSERT INTO Concept VALUES('c8064cbd-fa06-4530-b430-1a52f1530c27',1); -- STATUS.ACTIVE
-INSERT INTO Concept VALUES('bdef5f90-5497-4f26-956c-8f818cce2bd2',1); -- STATUS.OBSOLETE
-INSERT INTO Concept VALUES('c34fcbf1-e0fe-4989-90fd-0dc49e1b9685',1); -- STATUS.NEW
-INSERT INTO Concept VALUES('cd4aa3c4-02d5-4cc9-9088-ef8f31e321c5',1); -- STATUS.NULLIFIED
-
-INSERT INTO ConceptClass VALUES ('17FD5254-8C25-4ABB-B246-083FBE9AFA15','Classification Concept', 'ClassCode');
-INSERT INTO ConceptClass VALUES ('54B93182-FC19-47A2-82C6-089FD70A4F45', 'Status', 'Status');
-INSERT INTO ConceptClass VALUES ('BBA99722-23CE-469A-8FA5-10DEBA853D35', 'Mood', 'Mood');
-INSERT INTO ConceptClass VALUES ('F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4', 'Relationship Type', 'Relationship');
-INSERT INTO ConceptClass VALUES ('A8A900D3-A07E-4E02-B45F-580D09BAF047', 'Route', 'Route');
-INSERT INTO ConceptClass VALUES ('1EF69347-EF03-4FF7-B3C5-6334448845E6', 'Unit of Measure', 'UnitOfMeasure');
-INSERT INTO ConceptClass VALUES ('92CDEA39-B9A3-4A5B-BC88-A6646C74240D', 'Diagnosis', 'Diagnosis');
-INSERT INTO ConceptClass VALUES ('E445E207-60A3-401A-9B81-A8AC2479F4A6', 'Findings', 'Finding');
-INSERT INTO ConceptClass VALUES ('4BD7F8E6-E4B8-4DBC-93A7-CF14FBAF9700', 'Problem', 'Problem');
-INSERT INTO ConceptClass VALUES ('DC9CBC32-B8EA-4144-BEF1-DC618E28F4D7', 'Drug or other Material', 'Material');
-INSERT INTO ConceptClass VALUES ('0D6B3439-C9BE-4480-AF39-EEB457C052D0', 'Other Classification', 'Other');
-INSERT INTO ConceptClass VALUES ('FFD8304A-43EC-4EBC-95FC-FB4A4F2338F0', 'Stock control codes', 'Stock');
-
-INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('aae906aa-27b3-4cdb-aff1-f08b0fd31e59', 'Concept Status', 'ConceptStatus', '1.3.6.1.4.1.33349.3.5.9.1.0', 'http://openiz.org/valueset/concept-status', '00000000-0000-0000-0000-000000000000');
-INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('62c5fde0-a3aa-45df-94e9-242f4451644a', 'Act Class', 'ActClass', '1.3.6.1.4.1.33349.3.5.9.1.1', 'http://openiz.org/valueset/act-class', '00000000-0000-0000-0000-000000000000');
-INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('e6a8e44f-0a57-4ebd-80a9-5c53b7a03d76', 'Act Mood', 'ActMood', '1.3.6.1.4.1.33349.3.5.9.1.2', 'http://openiz.org/valueset/act-mood', '00000000-0000-0000-0000-000000000000');
-INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('93a48f6a-6808-4c70-83a2-d02178c2a883', 'Act Status', 'ActStatus', '1.3.6.1.4.1.33349.3.5.9.1.3', 'http://openiz.org/valueset/act-status', '00000000-0000-0000-0000-000000000000');
-INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('cf686a21-86e5-41e7-af07-0016a054227a', 'Act Relationship Type', 'ActRelationshipType', '1.3.6.1.4.1.33349.3.5.9.1.4', 'http://openiz.org/valueset/act-relationship-type', '00000000-0000-0000-0000-000000000000');
-INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('404bf87c-e7a6-4a5a-89cf-02e6804555a0', 'Act Interpretation', 'ActInterpretation', '1.3.6.1.4.1.33349.3.5.9.1.5', 'http://openiz.org/valueset/act-interpretation', '00000000-0000-0000-0000-000000000000');
-INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('4e6da567-0094-4f23-8555-11da499593af', 'Entity Class', 'EntityClass', '1.3.6.1.4.1.33349.3.5.9.1.6', 'http://openiz.org/valueset/entity-class', '00000000-0000-0000-0000-000000000000');
-INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('c7578340-a8ff-4d7d-8105-581016324e68', 'Entity Status', 'EntityStatus', '1.3.6.1.4.1.33349.3.5.9.1.7', 'http://openiz.org/valueset/entity-status', '00000000-0000-0000-0000-000000000000');
-INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('ee16a667-2085-440a-b1e7-4032d10b9f40', 'Entity Relationship Type', 'EntityRelationshipType', '1.3.6.1.4.1.33349.3.5.9.1.8', 'http://openiz.org/valueset/entity-relationship-type', '00000000-0000-0000-0000-000000000000');
-INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('c68a7690-d78d-4afc-8a36-1ebdfb86f15f', 'Address Use', 'AddressUse', '1.3.6.1.4.1.33349.3.5.9.1.9', 'http://openiz.org/valueset/address-use', '00000000-0000-0000-0000-000000000000');
-INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('5cca5869-8a7b-47a3-83db-041d5af5c9da', 'Address Component Type', 'AddressComponentType', '1.3.6.1.4.1.33349.3.5.9.1.10', 'http://openiz.org/valueset/address-component-type', '00000000-0000-0000-0000-000000000000');
-INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('8df14280-3d05-45a6-bfae-15b63dfc379f', 'Name Use', 'NameUse', '1.3.6.1.4.1.33349.3.5.9.1.11', 'http://openiz.org/valueset/', '00000000-0000-0000-0000-000000000000');
-INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('1dabe3e2-44b8-4c45-9102-25ea147e5710', 'Telecom Address Use', 'TelecomAddressUse', '1.3.6.1.4.1.33349.3.5.9.1.12', 'http://openiz.org/valueset/name-use', '00000000-0000-0000-0000-000000000000');
-INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('0d79b02c-6444-40b5-aca4-4009fb03ad54', 'Telecom Address Type', 'TelecomAddressType', '1.3.6.1.4.1.33349.3.5.9.1.13', 'http://openiz.org/valueset/telecom-use', '00000000-0000-0000-0000-000000000000');
-INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('95f9a19a-fa85-4af7-9342-4ba3af0de72a', 'Service Code', 'ServiceCode', '1.3.6.1.4.1.33349.3.5.9.1.14', 'http://openiz.org/valueset/telecom-type', '00000000-0000-0000-0000-000000000000');
-INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('d1597e50-845a-46e1-b9ae-6f99ff93d9db', 'Industry Code', 'IndustryCode', '1.3.6.1.4.1.33349.3.5.9.1.15', 'http://openiz.org/valueset/industry-type', '00000000-0000-0000-0000-000000000000');
-INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('e9eecd3c-7b80-47f9-9cb6-55c8d3110fb0', 'Administrative Genders', 'AdministrativeGenderCode', '1.3.6.1.4.1.33349.3.5.9.1.16', 'http://openiz.org/valueset/administrative-gender', '00000000-0000-0000-0000-000000000000');
-
--- CONCEPT STATUS <> STATUS SET
-INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('c8064cbd-fa06-4530-b430-1a52f1530c27', 'aae906aa-27b3-4cdb-aff1-f08b0fd31e59');
-INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('bdef5f90-5497-4f26-956c-8f818cce2bd2', 'aae906aa-27b3-4cdb-aff1-f08b0fd31e59');
-INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('c34fcbf1-e0fe-4989-90fd-0dc49e1b9685', 'aae906aa-27b3-4cdb-aff1-f08b0fd31e59');
-INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('cd4aa3c4-02d5-4cc9-9088-ef8f31e321c5', 'aae906aa-27b3-4cdb-aff1-f08b0fd31e59');
-
--- ENTITY STATUS <> STATUS SET
-INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('c8064cbd-fa06-4530-b430-1a52f1530c27', 'c7578340-a8ff-4d7d-8105-581016324e68');
-INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('bdef5f90-5497-4f26-956c-8f818cce2bd2', 'c7578340-a8ff-4d7d-8105-581016324e68');
-INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('c34fcbf1-e0fe-4989-90fd-0dc49e1b9685', 'c7578340-a8ff-4d7d-8105-581016324e68');
-INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('cd4aa3c4-02d5-4cc9-9088-ef8f31e321c5', 'c7578340-a8ff-4d7d-8105-581016324e68');
-
--- ACT STATUS <> STATUS
-INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('c8064cbd-fa06-4530-b430-1a52f1530c27', '93a48f6a-6808-4c70-83a2-d02178c2a883');
-INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('bdef5f90-5497-4f26-956c-8f818cce2bd2', '93a48f6a-6808-4c70-83a2-d02178c2a883');
-INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('c34fcbf1-e0fe-4989-90fd-0dc49e1b9685', '93a48f6a-6808-4c70-83a2-d02178c2a883');
-INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('cd4aa3c4-02d5-4cc9-9088-ef8f31e321c5', '93a48f6a-6808-4c70-83a2-d02178c2a883');
-
--- VERSIONS FOR THE STATUS CODES
-INSERT INTO ConceptVersion (ConceptId, StatusConceptId, CreatedBy, Mnemonic) VALUES ('c8064cbd-fa06-4530-b430-1a52f1530c27', 'c8064cbd-fa06-4530-b430-1a52f1530c27', '00000000-0000-0000-0000-000000000000', 'ACTIVE');
-INSERT INTO ConceptVersion (ConceptId, StatusConceptId, CreatedBy, Mnemonic) VALUES ('bdef5f90-5497-4f26-956c-8f818cce2bd2', 'c8064cbd-fa06-4530-b430-1a52f1530c27', '00000000-0000-0000-0000-000000000000', 'OBSOLETE');
-INSERT INTO ConceptVersion (ConceptId, StatusConceptId, CreatedBy, Mnemonic) VALUES ('c34fcbf1-e0fe-4989-90fd-0dc49e1b9685', 'c8064cbd-fa06-4530-b430-1a52f1530c27', '00000000-0000-0000-0000-000000000000', 'NEW');
-INSERT INTO ConceptVersion (ConceptId, StatusConceptId, CreatedBy, Mnemonic) VALUES ('cd4aa3c4-02d5-4cc9-9088-ef8f31e321c5', 'c8064cbd-fa06-4530-b430-1a52f1530c27', '00000000-0000-0000-0000-000000000000', 'NULLFIIED');
-
 -- INDEX: LOOKUP CONCEPT VERSION BY CONCEPT IDENTIFIER
 CREATE INDEX IX_ConceptVersionConceptId ON ConceptVersion(ConceptId);
 CREATE INDEX IX_ConceptVersionClassId ON ConceptVersion(ConceptClassId);
@@ -469,7 +409,7 @@ CREATE TABLE ConceptName
 	ObsoleteVersionSequenceId NUMERIC(20), -- THE ID OF THE VERSION WHERE THIS CONCEPT NAME IS NO LONGER ACTIVE
 	LanguageCode NVARCHAR(2) NOT NULL, -- THE LANGUAGE CODE OF THE NAME
 	Name NVARCHAR(256) NOT NULL, -- THE NAME OF THE CODE
-	PhoneticCode NVARCHAR(32) NOT NULL, -- THE PHONETIC CODE FOR THE CONCEPT NAME
+	PhoneticCode NVARCHAR(32), -- THE PHONETIC CODE FOR THE CONCEPT NAME
 	PhoneticAlgorithmId UNIQUEIDENTIFIER NOT NULL, -- THE PHONETIC ALGORITHM USED TO GENERATE THE CODE
 	CONSTRAINT PK_ConceptName PRIMARY KEY (ConceptNameId),
 	CONSTRAINT FK_ConceptNameConcept FOREIGN KEY (ConceptId) REFERENCES Concept(ConceptId),
@@ -517,16 +457,6 @@ CREATE UNIQUE INDEX IX_CodeSystemOid ON CodeSystem(Oid);
 -- INDEX: LOOKUP CODE SYSTEM BY URL
 CREATE INDEX IX_CodeSystemUrl ON CodeSystem(Url);
 
-INSERT INTO CodeSystem (CodeSystemId, Name, Oid, Authority, CreatedBy, Url) VALUES ('f7a5cbd8-5425-415e-8308-d14b94f56917', 'ICD10', '2.16.840.1.113883.6.3', 'I10', '00000000-0000-0000-0000-000000000000', 'http://hl7.org/fhir/sid/icd-10');
-INSERT INTO CodeSystem (CodeSystemId, Name, Oid, Authority, CreatedBy, Url) VALUES ('ed9742e5-fa5b-4644-9fb5-2f935ed08b1e', 'ICD10CM', '2.16.840.1.113883.6.90' ,'I10C', '00000000-0000-0000-0000-000000000000', 'http://openiz.org/codesystem/icd-10-cm');
-INSERT INTO CodeSystem (CodeSystemId, Name, Oid, Authority, CreatedBy, Url) VALUES ('51ea1e1b-edc0-455a-a72b-9076860e284d', 'ICD9', '2.16.840.1.113883.6.2', 'I9', '00000000-0000-0000-0000-000000000000', 'http://hl7.org/fhir/sid/icd-9');
-INSERT INTO CodeSystem (CodeSystemId, Name, Oid, Authority, CreatedBy, Url) VALUES ('eb04fe20-bbbc-4c70-9eef-045bc4f70982', 'ISO639-1', '2.16.840.1.113883.6.99', 'ISO639-1', '00000000-0000-0000-0000-000000000000', 'http://hl7.org/fhir/sid/iso-639-1');
-INSERT INTO CodeSystem (CodeSystemId, Name, Oid, Authority, CreatedBy, Url) VALUES ('089044ea-dd41-4258-a497-e6247dd364f6', 'ISO639-2', '2.16.840.1.113883.6.100', 'ISO639-2', '00000000-0000-0000-0000-000000000000','http://openiz.org/codesystem/iso639-2');
-INSERT INTO CodeSystem (CodeSystemId, Name, Oid, Authority, CreatedBy, Url) VALUES ('08c59397-706b-456a-aeb1-9e7d5a2adc94', 'LOINC', '2.16.840.1.113883.6.1', 'LN', '00000000-0000-0000-0000-000000000000','http://hl7.org/fhir/sid/loinc');
-INSERT INTO CodeSystem (CodeSystemId, Name, Oid, Authority, CreatedBy, Url) VALUES ('4853a702-fff3-4efb-8dd7-54aacca53664', 'UCUM', '2.16.840.1.113883.6.8', 'UCUM', '00000000-0000-0000-0000-000000000000','http://hl7.org/fhir/sid/ucum');
-INSERT INTO CodeSystem (CodeSystemId, Name, Oid, Authority, CreatedBy, Url) VALUES ('b3030751-d4db-420b-b765-e837607820cd', 'SNOMED CT', '2.16.840.1.113883.6.96', 'SNM', '00000000-0000-0000-0000-000000000000','http://snomed.info');
-INSERT INTO CodeSystem (CodeSystemId, Name, Oid, Authority, CreatedBy, Url) VALUES ('eba4f94a-2cad-4bb3-aca7-f4e54eaac4bd', 'CVX Vaccine Codes', '2.16.840.1.113883.3.88.12.80.22', 'CVX', '00000000-0000-0000-0000-000000000000','http://hl7.org/fhir/ValueSet/vaccine-code');
-
 CREATE TABLE ConceptRelationshipType
 (
 	ConceptRelationshipTypeId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- THE UNIQUE IDENTIFIER OF THE RELATIONSHIP
@@ -537,10 +467,10 @@ CREATE TABLE ConceptRelationshipType
 
 CREATE INDEX IX_ConceptRelationshipTypeMnemonic ON ConceptRelationshipType(Mnemonic);
 
-INSERT INTO ConceptRelationshipType (ConceptRelationshipId, Name, Mnemonic) VALUES ('2c4dafc2-566a-41ae-9ebc-3097d7d22f4a', 'Same as', 'SameAs');
-INSERT INTO ConceptRelationshipType (ConceptRelationshipId, Name, Mnemonic) VALUES ('ad27293d-433c-4b75-88d2-b5360cd95450', 'Inverse of', 'InverseOf');
-INSERT INTO ConceptRelationshipType (ConceptRelationshipId, Name, Mnemonic) VALUES ('a159d45b-3c34-4e1b-9b75-9193a7528ced', 'Member of', 'MemberOf');
-INSERT INTO ConceptRelationshipType (ConceptRelationshipId, Name, Mnemonic) VALUES ('ae8b4f2f-009f-4e0d-b35e-5a89555c5947', 'Negation of', 'NegationOf');
+INSERT INTO ConceptRelationshipType (ConceptRelationshipTypeId, Name, Mnemonic) VALUES ('2c4dafc2-566a-41ae-9ebc-3097d7d22f4a', 'Same as', 'SameAs');
+INSERT INTO ConceptRelationshipType (ConceptRelationshipTypeId, Name, Mnemonic) VALUES ('ad27293d-433c-4b75-88d2-b5360cd95450', 'Inverse of', 'InverseOf');
+INSERT INTO ConceptRelationshipType (ConceptRelationshipTypeId, Name, Mnemonic) VALUES ('a159d45b-3c34-4e1b-9b75-9193a7528ced', 'Member of', 'MemberOf');
+INSERT INTO ConceptRelationshipType (ConceptRelationshipTypeId, Name, Mnemonic) VALUES ('ae8b4f2f-009f-4e0d-b35e-5a89555c5947', 'Negation of', 'NegationOf');
 
 CREATE TABLE ReferenceTerm
 (
@@ -552,7 +482,7 @@ CREATE TABLE ReferenceTerm
 );
 
 CREATE INDEX IX_ReferenceTermMnemonic ON ReferenceTerm(Mnemonic);
-CREATE INDEX IX_ReferenceTermCodeSystemMnemonic ON ReferenceTerm(CodeSystemId, Mnemonic);
+CREATE UNIQUE INDEX IX_ReferenceTermCodeSystemMnemonic ON ReferenceTerm(CodeSystemId, Mnemonic);
 
 CREATE TABLE ConceptReferenceTerm
 (
@@ -587,7 +517,7 @@ CREATE TABLE ReferenceTermDisplayName
 	ObsoletionTime DATETIMEOFFSET, -- WHEN PRESENT REPRESENTS THE TIME THE RECORD WAS OBSOLETE
 	ObsoletedBy UNIQUEIDENTIFIER, -- THE USER WHO OBSOLETED THIS RECORD
 	ObsoletionReason NVARCHAR(MAX), -- WHEN PRESENT INDICATES WHY THE RECORD WAS OBSOLETED
-	PhoneticCode NVARCHAR(20) NOT NULL, -- THE PHONETIC CODE 
+	PhoneticCode NVARCHAR(20), -- THE PHONETIC CODE 
 	PhoneticAlgorithmId UNIQUEIDENTIFIER NOT NULL, -- THE ALGORITHM USED TO GENERATE THE CODE
 	CONSTRAINT PK_ReferenceTermDisplayName PRIMARY KEY (ReferenceTermDisplayNameId),
 	CONSTRAINT FK_ReferenceTermDisplayNameReferenceTermId FOREIGN KEY (ReferenceTermId) REFERENCES ReferenceTerm(ReferenceTermId),

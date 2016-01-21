@@ -50,7 +50,10 @@ namespace OpenIZ.Core.Model.Entities
         [IgnoreDataMember]
         public Concept AddressUse
         {
-            get { return base.DelayLoad(this.m_addressUseKey, this.m_addressUseConcept); }
+            get {
+                this.m_addressUseConcept = base.DelayLoad(this.m_addressUseKey, this.m_addressUseConcept);
+                return this.m_addressUseConcept;
+            }
             set
             {
                 this.m_addressUseConcept = value;

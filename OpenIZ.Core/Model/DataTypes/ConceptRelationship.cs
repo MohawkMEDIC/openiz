@@ -71,7 +71,8 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                return base.DelayLoad(this.m_targetConceptId, this.m_targetConcept);
+                this.m_targetConcept = base.DelayLoad(this.m_targetConceptId, this.m_targetConcept);
+                return this.m_targetConcept;
             }
             set
             {

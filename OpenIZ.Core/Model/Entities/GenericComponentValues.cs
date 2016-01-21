@@ -43,7 +43,10 @@ namespace OpenIZ.Core.Model.Entities
         [DelayLoad]
         public Concept Type
         {
-            get { return base.DelayLoad(this.m_componentTypeKey, this.m_componentType); }
+            get {
+                this.m_componentType = base.DelayLoad(this.m_componentTypeKey, this.m_componentType);
+                return this.m_componentType;
+            }
             set
             {
                 this.m_componentType = value;

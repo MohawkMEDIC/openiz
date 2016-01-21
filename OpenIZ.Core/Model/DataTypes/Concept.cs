@@ -96,7 +96,8 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                return base.DelayLoad(this.m_conceptStatusId, this.m_conceptStatus);
+                this.m_conceptStatus = base.DelayLoad(this.m_conceptStatusId, this.m_conceptStatus);
+                return this.m_conceptStatus;
             }
             set
             {
@@ -150,7 +151,8 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                return base.DelayLoad(this.m_classId, this.m_class);
+                this.m_class = base.DelayLoad(this.m_classId, this.m_class);
+                return this.m_class;
             }
             set
             {

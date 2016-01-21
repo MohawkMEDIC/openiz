@@ -16,6 +16,8 @@
  * User: fyfej
  * Date: 2016-1-19
  */
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services.Policy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +42,19 @@ namespace OpenIZ.Core.Model.Security
         /// Policies associated with the entity
         /// </summary>
         [IgnoreDataMember]
-        public virtual List<SecurityPolicyInstance> Policies { get { return this.m_policies; } }
-        
+        public virtual List<SecurityPolicyInstance> Policies
+        {
+            get
+            {
+                if (this.m_policies == null &&
+                    this.IsDelayLoad)
+                {
+                    var pip = ApplicationContext.Current.GetService<IPolicyInformationService>();
+                    this.m_policies = pip.GetActivePolicies(this).OfType<SecurityPolicyInstance>().ToList();
+                }
+                return this.m_policies;
+            }
+
+        }
     }
 }

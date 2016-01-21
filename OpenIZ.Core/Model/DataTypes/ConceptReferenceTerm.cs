@@ -67,8 +67,8 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                return base.DelayLoad(this.m_referenceTermId, this.m_referenceTerm);
-
+                this.m_referenceTerm = base.DelayLoad(this.m_referenceTermId, this.m_referenceTerm);
+                return this.m_referenceTerm;
             }
             set
             {
@@ -103,7 +103,8 @@ namespace OpenIZ.Core.Model.DataTypes
         public ConceptRelationshipType RelationshipType {
             get
             {
-                return base.DelayLoad(this.m_relationshipTypeId, this.m_relationshipType);
+                return this.m_relationshipType = base.DelayLoad(this.m_relationshipTypeId, this.m_relationshipType);
+                return this.m_relationshipType;
             }
             set
             {
