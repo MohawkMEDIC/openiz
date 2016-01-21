@@ -87,7 +87,7 @@ namespace OpenIZ.Core.Model
             get
             {
                 if(this.m_effectiveVersion == null &&
-                    this.IsDelayLoad &&
+                    this.IsDelayLoadEnabled &&
                     this.m_effectiveVersionSequenceId != default(Decimal))
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<TSourceType>>();
@@ -115,7 +115,7 @@ namespace OpenIZ.Core.Model
             get
             {
                 if(this.m_obsoleteVersion == null &&
-                    this.IsDelayLoad &&
+                    this.IsDelayLoadEnabled &&
                     this.m_obsoleteVersionSequenceId.HasValue)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<TSourceType>>();

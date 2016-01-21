@@ -22,7 +22,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Core.Model.DataTypes
+namespace OpenIZ.Core.Model.Constants
 {
     /// <summary>
     /// Represents concept set identifiers
@@ -97,5 +97,9 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Telecom address use
         /// </summary>
         public static readonly Guid TelecomAddressUse = Guid.Parse("1DABE3E2-44B8-4C45-9102-25EA147E5710");
+        /// <summary>
+        /// Family members
+        /// </summary>
+        public static readonly Guid FamilyMember = Guid.Parse("d3692f40-1033-48ea-94cb-31fc0f352a4e");
     }
 }

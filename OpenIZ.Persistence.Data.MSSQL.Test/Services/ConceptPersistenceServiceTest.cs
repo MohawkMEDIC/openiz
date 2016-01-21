@@ -21,6 +21,7 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenIZ.Core;
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.Collections.Generic;
@@ -62,7 +63,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         {
             Concept simpleConcept = new Concept()
             {
-                ClassKey = ConceptClassConceptKeys.Other,
+                ClassKey = ConceptClassKeys.Other,
                 IsSystemConcept = true,
                 Mnemonic = "TESTCODE1"
             };
@@ -81,7 +82,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         {
             Concept namedConcept = new Concept()
             {
-                ClassKey = ConceptClassConceptKeys.Other,
+                ClassKey = ConceptClassKeys.Other,
                 IsSystemConcept = false,
                 Mnemonic = "TESTCODE2"
             };
@@ -115,7 +116,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         {
             Concept namedConcept = new Concept()
             {
-                ClassKey = ConceptClassConceptKeys.Other,
+                ClassKey = ConceptClassKeys.Other,
                 IsSystemConcept = false,
                 Mnemonic = "TESTCODE3"
             };
@@ -182,7 +183,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         {
             Concept refTermConcept = new Concept()
             {
-                ClassKey = ConceptClassConceptKeys.Other,
+                ClassKey = ConceptClassKeys.Other,
                 IsSystemConcept = false,
                 Mnemonic = "TESTCODE5"
             };
@@ -233,7 +234,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         {
             Concept refTermConcept = new Concept()
             {
-                ClassKey = ConceptClassConceptKeys.Other,
+                ClassKey = ConceptClassKeys.Other,
                 IsSystemConcept = false,
                 Mnemonic = "TESTCODE6"
             };

@@ -46,7 +46,7 @@ namespace OpenIZ.Core.Model
         /// True if the class is currently loading associations when accessed
         /// </summary>
         [IgnoreDataMember]
-        public bool IsDelayLoad
+        public bool IsDelayLoadEnabled
         {
             get
             {

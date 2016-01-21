@@ -68,7 +68,7 @@ namespace OpenIZ.Core.Model.Entities
         {
             get
             {
-                if (this.m_nameComponents == null && this.IsDelayLoad)
+                if (this.m_nameComponents == null && this.IsDelayLoadEnabled)
                 {
                     var dataPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<EntityNameComponent>>();
                     this.m_nameComponents = dataPersistenceService.Query(o => o.SourceEntityKey == this.Key, null).ToList();

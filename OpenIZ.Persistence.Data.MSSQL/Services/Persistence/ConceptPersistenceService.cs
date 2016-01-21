@@ -28,6 +28,7 @@ using System.Linq.Expressions;
 using System.Security.Principal;
 using OpenIZ.Persistence.Data.MSSQL.Exceptions;
 using OpenIZ.Core;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -90,7 +91,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataConceptVersion.Concept = new Data.Concept() { IsSystemConcept = storageData.IsSystemConcept };
             dataConceptVersion.CreatedByEntity = principal.GetUser(dataContext);
 
-            dataConceptVersion.StatusConceptId = dataConceptVersion.StatusConceptId == Guid.Empty ? StatusConceptKeys.Active : dataConceptVersion.StatusConceptId;
+            dataConceptVersion.StatusConceptId = dataConceptVersion.StatusConceptId == Guid.Empty ? StatusKeys.Active : dataConceptVersion.StatusConceptId;
             if(storageData.Class != null)
                 dataConceptVersion.ConceptClassId = storageData.Class.EnsureExists(principal, dataContext)?.Key;
 
@@ -160,7 +161,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataConceptVersion.ObsoletionTime = DateTimeOffset.Now;
             newDataConceptVersion.CreatedByEntity = principal.GetUser(dataContext);
             dataConceptVersion.ObsoletedByEntity = principal.GetUser(dataContext);
-            newDataConceptVersion.StatusConceptId = StatusConceptKeys.Obsolete;
+            newDataConceptVersion.StatusConceptId = StatusKeys.Obsolete;
             dataContext.ConceptVersions.InsertOnSubmit(newDataConceptVersion);
 
             dataContext.SubmitChanges();

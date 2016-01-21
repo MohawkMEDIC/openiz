@@ -1,5 +1,6 @@
 ﻿using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
 using System;
@@ -16,7 +17,7 @@ namespace OpenIZ.Core.Model.Entities
     /// Represents the base of all entities
     /// </summary>
     [DataContract(Name = "Entity", Namespace = "http://openiz.org/model")]
-    public abstract class Entity : VersionedEntityData<Entity>
+    public class Entity : VersionedEntityData<Entity>
     {
 
         // Classe concept
@@ -49,7 +50,7 @@ namespace OpenIZ.Core.Model.Entities
         // Identifiers 
         private List<EntityIdentifier> m_identifiers;
         // Associations
-        private List<EntityAssociation> m_associations;
+        private List<EntityRelationship> m_relationships;
         // Telecom addresses
         private List<EntityTelecomAddress> m_telecomAddresses;
         // Extensions
@@ -62,6 +63,8 @@ namespace OpenIZ.Core.Model.Entities
         private List<EntityNote> m_notes;
         // Tags
         private List<EntityTag> m_tags;
+        // Participations
+        private List<ActParticipation> m_participations;
 
         /// <summary>
         /// Class concept
@@ -240,7 +243,7 @@ namespace OpenIZ.Core.Model.Entities
         {
             get
             {
-                if(this.m_identifiers == null && this.IsDelayLoad)
+                if(this.m_identifiers == null && this.IsDelayLoadEnabled)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<EntityIdentifier>>();
                     this.m_identifiers = dataPersistence.Query(o => o.SourceEntityKey == this.Key && this.VersionSequence >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || this.VersionSequence < o.ObsoleteVersionSequenceId), null).ToList();
@@ -254,16 +257,16 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [DelayLoad]
         [IgnoreDataMember]
-        public List<EntityAssociation> Associations
+        public List<EntityRelationship> Relationships
         {
             get
             {
-                if (this.m_associations == null && this.IsDelayLoad)
+                if (this.m_relationships == null && this.IsDelayLoadEnabled)
                 {
-                    var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<EntityAssociation>>();
-                    this.m_associations = dataPersistence.Query(o => o.SourceEntityKey == this.Key && this.VersionSequence >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || this.VersionSequence < o.ObsoleteVersionSequenceId), null).ToList();
+                    var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>();
+                    this.m_relationships = dataPersistence.Query(o => o.SourceEntityKey == this.Key && this.VersionSequence >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || this.VersionSequence < o.ObsoleteVersionSequenceId), null).ToList();
                 }
-                return this.m_associations;
+                return this.m_relationships;
             }
         }
 
@@ -276,7 +279,7 @@ namespace OpenIZ.Core.Model.Entities
         {
             get
             {
-                if (this.m_telecomAddresses == null && this.IsDelayLoad)
+                if (this.m_telecomAddresses == null && this.IsDelayLoadEnabled)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<EntityTelecomAddress>>();
                     this.m_telecomAddresses = dataPersistence.Query(o => o.SourceEntityKey == this.Key && this.VersionSequence >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || this.VersionSequence < o.ObsoleteVersionSequenceId), null).ToList();
@@ -294,7 +297,7 @@ namespace OpenIZ.Core.Model.Entities
         {
             get
             {
-                if (this.m_extensions == null && this.IsDelayLoad)
+                if (this.m_extensions == null && this.IsDelayLoadEnabled)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<EntityExtension>>();
                     this.m_extensions = dataPersistence.Query(o => o.SourceEntityKey == this.Key && this.VersionSequence >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || this.VersionSequence < o.ObsoleteVersionSequenceId), null).ToList();
@@ -312,7 +315,7 @@ namespace OpenIZ.Core.Model.Entities
         {
             get
             {
-                if (this.m_names == null && this.IsDelayLoad)
+                if (this.m_names == null && this.IsDelayLoadEnabled)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<EntityName>>();
                     this.m_names = dataPersistence.Query(o => o.SourceEntityKey == this.Key && this.VersionSequence >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || this.VersionSequence < o.ObsoleteVersionSequenceId), null).ToList();
@@ -330,7 +333,7 @@ namespace OpenIZ.Core.Model.Entities
         {
             get
             {
-                if (this.m_addresses == null && this.IsDelayLoad)
+                if (this.m_addresses == null && this.IsDelayLoadEnabled)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<EntityAddress>>();
                     this.m_addresses = dataPersistence.Query(o => o.SourceEntityKey == this.Key && this.VersionSequence >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || this.VersionSequence < o.ObsoleteVersionSequenceId), null).ToList();
@@ -348,7 +351,7 @@ namespace OpenIZ.Core.Model.Entities
         {
             get
             {
-                if (this.m_notes == null && this.IsDelayLoad)
+                if (this.m_notes == null && this.IsDelayLoadEnabled)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<EntityNote>>();
                     this.m_notes = dataPersistence.Query(o => o.SourceEntityKey == this.Key && this.VersionSequence >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || this.VersionSequence < o.ObsoleteVersionSequenceId), null).ToList();
@@ -366,7 +369,7 @@ namespace OpenIZ.Core.Model.Entities
         {
             get
             {
-                if (this.m_tags == null && this.IsDelayLoad)
+                if (this.m_tags == null && this.IsDelayLoadEnabled)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<EntityTag>>();
                     this.m_tags = dataPersistence.Query(o => o.SourceEntityKey == this.Key && o.ObsoletionTime == null, null).ToList();
@@ -376,6 +379,23 @@ namespace OpenIZ.Core.Model.Entities
         }
         
         /// <summary>
+        /// Gets the acts in which this entity participates
+        /// </summary>
+        public List<ActParticipation> Participations
+        {
+            get
+            {
+                if(this.m_participations == null &&
+                    this.IsDelayLoadEnabled)
+                {
+                    var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<ActParticipation>>();
+                    this.m_participations = dataPersistence.Query(o => o.TargetEntityKey == this.Key && o.ObsoleteVersionSequenceId == null, null).ToList();
+                }
+                return this.m_participations;
+            }
+        }
+
+        /// <summary>
         /// Forces the delay load properties in this type to reload
         /// </summary>
         public override void Refresh()
@@ -383,7 +403,7 @@ namespace OpenIZ.Core.Model.Entities
             base.Refresh();
             this.m_classConcept = this.m_determinerConcept = this.m_statusConcept = this.m_typeConcept = null;
             this.m_addresses = null;
-            this.m_associations = null;
+            this.m_relationships = null;
             this.m_creationAct = null;
             this.m_extensions = null;
             this.m_identifiers = null;

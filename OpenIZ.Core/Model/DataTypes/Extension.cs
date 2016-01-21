@@ -1,4 +1,5 @@
-﻿using OpenIZ.Core.Model.Attributes;
+﻿using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Entities;
 using System;
 using System.Collections.Generic;
@@ -70,7 +71,19 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Extension bound to entity
     /// </summary>
+    [Serializable]
+    [DataContract(Name = "EntityExtension", Namespace = "http://openiz.org/model")]
     public class EntityExtension : Extension<Entity>
+    {
+
+    }
+
+    /// <summary>
+    /// Act extension
+    /// </summary>
+    [Serializable]
+    [DataContract(Name = "ActExtension", Namespace = "http://openiz.org/model")]
+    public class ActExtension : Extension<Act>
     {
 
     }

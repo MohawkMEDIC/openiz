@@ -22,29 +22,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Core.Model.DataTypes
+namespace OpenIZ.Core.Model.Constants
 {
     /// <summary>
-    /// Concept identifiers
+    /// Reference type identifiers
     /// </summary>
-    public static class StatusConceptKeys
+    public static class ConceptRelationshipTypeKeys
     {
-
         /// <summary>
-        /// Status - New
+        /// Same as relationship
         /// </summary>
-        public static readonly Guid New = Guid.Parse("C34FCBF1-E0FE-4989-90FD-0DC49E1B9685");
+        public static readonly Guid SameAs = Guid.Parse("2c4dafc2-566a-41ae-9ebc-3097d7d22f4a");
         /// <summary>
-        /// Status - Obsolete
+        /// Negation of 
         /// </summary>
-        public static readonly Guid Obsolete = Guid.Parse("BDEF5F90-5497-4F26-956C-8F818CCE2BD2");
+        public static readonly Guid NegationOf = Guid.Parse("ae8b4f2f-009f-4e0d-b35e-5a89555c5947");
         /// <summary>
-        /// Status - Nullified
+        /// Member of
         /// </summary>
-        public static readonly Guid Nullfied = Guid.Parse("CD4AA3C4-02D5-4CC9-9088-EF8F31E321C5");
+        public static readonly Guid MemberOf = Guid.Parse("a159d45b-3c34-4e1b-9b75-9193a7528ced");
         /// <summary>
-        /// Status - Active
+        /// Inverse of
         /// </summary>
-        public static readonly Guid Active = Guid.Parse("C8064CBD-FA06-4530-B430-1A52F1530C27");
+        public static readonly Guid InverseOf = Guid.Parse("ad27293d-433c-4b75-88d2-b5360cd95450");
     }
 }

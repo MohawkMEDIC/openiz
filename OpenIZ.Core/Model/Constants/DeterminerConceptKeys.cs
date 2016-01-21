@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Core.Model.DataTypes
+namespace OpenIZ.Core.Model.Constants
 {
     /// <summary>
     /// Determiner codes
     /// </summary>
-    public static class DeterminerConceptKeys
+    public static class DeterminerKeys
     {
         /// <summary>
         /// QUALIFIEDKIND

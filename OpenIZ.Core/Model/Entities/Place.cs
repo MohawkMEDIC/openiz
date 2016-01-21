@@ -1,4 +1,5 @@
-﻿using OpenIZ.Core.Model.DataTypes;
+﻿using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -25,8 +26,8 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         public Place()
         {
-            base.ClassConceptKey = EntityClassConceptKeys.Place;
-            base.DeterminerConceptKey = DeterminerConceptKeys.Specific;
+            base.ClassConceptKey = EntityClassKeys.Place;
+            base.DeterminerConceptKey = DeterminerKeys.Specific;
         }
 
         /// <summary>
@@ -44,10 +45,10 @@ namespace OpenIZ.Core.Model.Entities
 
             set
             {
-                if (value == EntityClassConceptKeys.Place ||
-                    value == EntityClassConceptKeys.ServiceDeliveryLocation ||
-                    value == EntityClassConceptKeys.State ||
-                    value == EntityClassConceptKeys.CityOrTown)
+                if (value == EntityClassKeys.Place ||
+                    value == EntityClassKeys.ServiceDeliveryLocation ||
+                    value == EntityClassKeys.State ||
+                    value == EntityClassKeys.CityOrTown)
                     base.ClassConceptKey = value;
                 else throw new ArgumentOutOfRangeException("Invalid ClassConceptKey value");
             }

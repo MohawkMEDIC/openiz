@@ -1,4 +1,5 @@
 ﻿using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Security;
 using System;
@@ -29,8 +30,8 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         public DeviceEntity()
         {
-            this.DeterminerConceptKey = DeterminerConceptKeys.Specific;
-            this.ClassConceptKey = EntityClassConceptKeys.Device;
+            this.DeterminerConceptKey = DeterminerKeys.Specific;
+            this.ClassConceptKey = EntityClassKeys.Device;
         }
 
         /// <summary>

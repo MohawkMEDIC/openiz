@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Core.Model.DataTypes
+namespace OpenIZ.Core.Model.Constants
 {
     /// <summary>
     /// Entity class concept keys
     /// </summary>
-    public static class EntityClassConceptKeys
+    public static class EntityClassKeys
     {
         /// <summary>
         /// Entity

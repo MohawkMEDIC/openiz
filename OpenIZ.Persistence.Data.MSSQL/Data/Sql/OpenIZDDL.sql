@@ -1284,3 +1284,28 @@ CREATE TABLE EntityNote
 	CONSTRAINT FK_EntityNoteObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
 	CONSTRAINT FK_EntityNoteAuthorEntityId FOREIGN KEY (AuthorEntityId) REFERENCES Entity(EntityId)
 );
+
+CREATE TABLE ActParticipation
+(
+	ActParticipationId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(), -- UNIQUELY IDENTIFIES THE PARTICIPATION
+	EntityId UNIQUEIDENTIFIER NOT NULL, -- THE THE ENTITY TO WHICH PARTICIPATION
+	ActId UNIQUEIDENTIFIER NOT NULL, -- THE ACT TO WHICH THE PARTICIPATION APPLIES
+	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE ACT TO WHICH THE PARTICIPATION APPLIES
+	ObsoleteVersionSequenceId NUMERIC(20), -- THE VERSION WHEREBY THE PARTICIPATION IS NO LONGER ASSOCIATED
+	ParticipationRoleConceptId UNIQUEIDENTIFIER NOT NULL, -- THE PARTICIPATION TYPE
+	CONSTRAINT PK_ActParticipation PRIMARY KEY (ActParticipationId),
+	CONSTRAINT FK_ActParticipationEntityId FOREIGN KEY (EntityId) REFERENCES Entity(EntityId),
+	CONSTRAINT FK_ActParticipationActId FOREIGN KEY (ActId) REFERENCES Act(ActId),
+	CONSTRAINT FK_ActParticipationEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES ActVersion(VersionSequenceId),
+	CONSTRAINT FK_ActParticipationObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES ActVersion(VersionSequenceId),
+	CONSTRAINT FK_ActParticipationRoleConceptId FOREIGN KEY (ParticipationRoleConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT CK_ActParticipationRoleConceptIdSet CHECK (dbo.fn_IsConceptSetMember(GenderConceptId, 'ActParticipationType') = 1)
+);
+
+CREATE TABLE QuantifiedActParticipation
+(
+	ActParticipationId UNIQUEIDENTIFIER NOT NULL, -- THE ACT PARTICIPATION THIS QUANTIFIED PARTICIPATION QUALIFIES
+	Quantity INT NOT NULL CHECK (Quantity >= 0), -- THE QUANTITY OF ENTITY INSTANCES PARTICIPATING IN THE PARTICIPATION
+	CONSTRAINT PK_QuantifiedActParticipation PRIMARY KEY (ActParticipationId),
+	CONSTRAINT FK_QuantifiedActParticipationId FOREIGN KEY (ActParticipationId) REFERENCES ActParticipation(ActParticipationId)
+);

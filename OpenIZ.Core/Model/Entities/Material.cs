@@ -1,4 +1,6 @@
-﻿using OpenIZ.Core.Model.DataTypes;
+﻿using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -32,7 +34,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         public Material()
         {
-            this.ClassConceptKey = EntityClassConceptKeys.Material;
+            this.ClassConceptKey = EntityClassKeys.Material;
         }
 
         /// <summary>
@@ -70,6 +72,8 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the concept which dictates the form of the material (solid, liquid, capsule, injection, etc.)
         /// </summary>
+        [IgnoreDataMember]
+        [DelayLoad]
         public Concept FormConcept
         {
             get {
@@ -87,6 +91,8 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the concept which dictates the unit of measure for a single instance of this entity
         /// </summary>
+        [IgnoreDataMember]
+        [DelayLoad]
         public Concept QuantityConcept
         {
             get

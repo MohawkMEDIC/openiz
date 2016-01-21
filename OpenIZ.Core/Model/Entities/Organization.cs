@@ -1,4 +1,5 @@
 ﻿using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.Collections.Generic;
@@ -29,8 +30,8 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         public Organization()
         {
-            this.DeterminerConceptKey = DeterminerConceptKeys.Specific;
-            this.ClassConceptKey = EntityClassConceptKeys.Organization;
+            this.DeterminerConceptKey = DeterminerKeys.Specific;
+            this.ClassConceptKey = EntityClassKeys.Organization;
         }
 
         /// <summary>

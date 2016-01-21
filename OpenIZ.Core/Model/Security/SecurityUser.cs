@@ -109,7 +109,7 @@ namespace OpenIZ.Core.Model.Security
         public List<SecurityRole> Roles {
             get
             {
-                if(this.IsDelayLoad && this.m_roles == null)
+                if(this.IsDelayLoadEnabled && this.m_roles == null)
                 {
                     var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
                     this.m_roles = dataLayer.Query(r => r.Users.Any(u => u.Key == this.Key), null).ToList();
@@ -175,7 +175,7 @@ namespace OpenIZ.Core.Model.Security
         {
             get
             {
-                if (this.m_policies == null && this.IsDelayLoad)
+                if (this.m_policies == null && this.IsDelayLoadEnabled)
                 {
                     var rolePolicies = this.Roles.SelectMany(o => o.Policies, (r, p) => p);
                     this.m_policies = new List<SecurityPolicyInstance>();

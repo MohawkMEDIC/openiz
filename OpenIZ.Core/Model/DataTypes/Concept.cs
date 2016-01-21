@@ -117,7 +117,7 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                if(this.m_relationships == null && this.IsDelayLoad)
+                if(this.m_relationships == null && this.IsDelayLoadEnabled)
                 {
                     var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptRelationship>>();
                     this.m_relationships = persistenceService.Query(r => this.Key == r.SourceEntityKey && this.VersionSequence >= r.EffectiveVersionSequenceId && (r.ObsoleteVersionSequenceId == null || this.VersionSequence < r.ObsoleteVersionSequenceId), null).ToList();
@@ -173,7 +173,7 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                if(this.m_referenceTerms == null && this.IsDelayLoad)
+                if(this.m_referenceTerms == null && this.IsDelayLoadEnabled)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptReferenceTerm>>();
                     this.m_referenceTerms = dataPersistence.Query(r => this.Key == r.SourceEntityKey && this.VersionSequence >= r.EffectiveVersionSequenceId && (r.ObsoleteVersionSequenceId == null || this.VersionSequence < r.ObsoleteVersionSequenceId) , null).ToList();
@@ -191,7 +191,7 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                if(this.m_conceptNames == null && this.IsDelayLoad)
+                if(this.m_conceptNames == null && this.IsDelayLoadEnabled)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptName>>();
                     this.m_conceptNames = dataPersistence.Query(o => o.SourceEntityKey == this.Key && this.VersionSequence >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || this.VersionSequence < o.ObsoleteVersionSequenceId), null).ToList();

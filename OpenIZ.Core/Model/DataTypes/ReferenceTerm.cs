@@ -93,7 +93,7 @@ namespace OpenIZ.Core.Model.DataTypes
         public List<ReferenceTermName> DisplayNames {
             get
             {
-                if(this.m_displayNames == null && this.IsDelayLoad)
+                if(this.m_displayNames == null && this.IsDelayLoadEnabled)
                 {
                     var dataService = ApplicationContext.Current.GetService<IDataPersistenceService<ReferenceTermName>>();
                     this.m_displayNames = dataService.Query(o => o.ReferenceTermKey == this.Key && o.ObsoletionTime == null, null).ToList();

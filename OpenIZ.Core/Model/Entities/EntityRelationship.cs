@@ -10,8 +10,8 @@ namespace OpenIZ.Core.Model.Entities
     /// Represents an association between two entities
     /// </summary>
     [Serializable]
-    [DataContract(Name = "EntityAssociation", Namespace = "http://openiz.org/model")]
-    public class EntityAssociation : VersionBoundRelationData<Entity>
+    [DataContract(Name = "EntityRelationship", Namespace = "http://openiz.org/model")]
+    public class EntityRelationship : VersionBoundRelationData<Entity>
     {
 
         // The entity key
@@ -23,7 +23,7 @@ namespace OpenIZ.Core.Model.Entities
         private Guid m_associationTypeKey;
         // The association type
         [NonSerialized]
-        private Concept m_associationType;
+        private Concept m_relationshipType;
 
         /// <summary>
         /// The target of the association
@@ -63,16 +63,16 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Association type key
         /// </summary>
-        [DataMember(Name = "associationTypeRef")]
+        [DataMember(Name = "relationshipTypeRef")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        public Guid AssociationTypeKey
+        public Guid RelationshipTypeKey
         {
             get { return this.m_associationTypeKey; }
             set
             {
                 this.m_associationTypeKey = value;
-                this.m_associationType = null;
+                this.m_relationshipType = null;
             }
         }
 
@@ -81,15 +81,15 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [IgnoreDataMember]
         [DelayLoad]
-        public Concept AssociationType
+        public Concept RelationshipType
         {
             get {
-                this.m_associationType = base.DelayLoad(this.m_associationTypeKey, this.m_associationType);
-                return this.m_associationType;
+                this.m_relationshipType = base.DelayLoad(this.m_associationTypeKey, this.m_relationshipType);
+                return this.m_relationshipType;
             }
             set
             {
-                this.m_associationType = value;
+                this.m_relationshipType = value;
                 if (value == null)
                     this.m_associationTypeKey = Guid.Empty;
                 else

@@ -27,26 +27,31 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Acts;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
     /// <summary>
     /// Entity identifiers
     /// </summary>
+    [Serializable]
+    [DataContract(Name = "EntityIdentifier", Namespace = "http://openiz.org/model")]
     public class EntityIdentifier : IdentifierBase<Entity>
     {
 
     }
 
-    /*
+
     /// <summary>
     /// Act identifier
     /// </summary>
-    public class ActIdentifier : Identifier<Act>
+    [Serializable]
+    [DataContract(Namespace = "http://openiz.org/model", Name = "ActIdentifier")]
+    public class ActIdentifier : IdentifierBase<Act>
     {
 
     }
-    */
+
     /// <summary>
     /// Represents an external assigned identifier
     /// </summary>

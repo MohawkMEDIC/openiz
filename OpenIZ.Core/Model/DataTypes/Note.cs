@@ -73,9 +73,19 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents a note attached to an entity
     /// </summary>
-    [DataContract(Name = "EntityName", Namespace = "http://openiz.org/model")]
+    [DataContract(Name = "EntityNote", Namespace = "http://openiz.org/model")]
     public class EntityNote : Note<Entity>
     {
 
     }
+
+    /// <summary>
+    /// Represents a note attached to an entity
+    /// </summary>
+    [DataContract(Name = "ActNote", Namespace = "http://openiz.org/model")]
+    public class ActNote : Note<Acts.Act>
+    {
+
+    }
+
 }

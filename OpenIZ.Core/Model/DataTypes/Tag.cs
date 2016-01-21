@@ -1,4 +1,5 @@
-﻿using OpenIZ.Core.Model.Entities;
+﻿using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,13 +41,15 @@ namespace OpenIZ.Core.Model.DataTypes
 
     }
 
-    /*
+
     /// <summary>
     /// Represents a tag on an act
     /// </summary>
+    [Serializable]
+    [DataContract(Name = "ActTag", Namespace = "http://openiz.org/model")]
     public class ActTag : Tag<Act>
     {
 
     }
-    */
+
 }

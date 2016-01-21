@@ -47,7 +47,7 @@ namespace OpenIZ.Core.Model.Security
             get
             {
                 if (this.m_policies == null &&
-                    this.IsDelayLoad)
+                    this.IsDelayLoadEnabled)
                 {
                     var pip = ApplicationContext.Current.GetService<IPolicyInformationService>();
                     this.m_policies = pip.GetActivePolicies(this).OfType<SecurityPolicyInstance>().ToList();
