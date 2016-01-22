@@ -100,7 +100,7 @@ namespace OpenIZ.Core.Model.Security
         /// The last login time
         /// </summary>
         [DataMember(Name = "lastLoginTime")]
-        public DateTimeOffset LastLoginTime { get; set; }
+        public DateTime LastLoginTime { get; set; }
         /// <summary>
         /// Represents roles
         /// </summary>
@@ -121,7 +121,7 @@ namespace OpenIZ.Core.Model.Security
         /// Updated time
         /// </summary>
         [DataMember(Name = "updatedTime")]
-        public DateTimeOffset? UpdatedTime { get; set; }
+        public DateTime? UpdatedTime { get; set; }
 
         /// <summary>
         /// Gets or sets the user that updated this base data

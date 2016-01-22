@@ -1,8 +1,8 @@
-﻿using MARC.Everest.DataTypes;
-using MARC.HI.EHRS.SVC.Core;
+﻿using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -11,7 +11,7 @@ namespace OpenIZ.Core.Model.Entities
     /// Represents a service for a place
     /// </summary>
     [Serializable]
-    [DataContract(Name = "Place", Namespace = "http://openiz.org/model")]
+    [DataContract(Name = "PlaceService", Namespace = "http://openiz.org/model")]
     public class PlaceService : VersionBoundRelationData<Entity>
     {
 

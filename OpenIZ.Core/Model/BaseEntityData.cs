@@ -57,13 +57,13 @@ namespace OpenIZ.Core.Model
         /// Creation Time
         /// </summary>
         [DataMember(Name = "creationTime")]
-        public DateTimeOffset CreationTime { get; set; }
+        public DateTime CreationTime { get; set; }
 
         /// <summary>
         /// Obsoletion time
         /// </summary>
         [DataMember(Name = "obsoletionTime")]
-        public DateTimeOffset? ObsoletionTime { get; set; }
+        public DateTime? ObsoletionTime { get; set; }
 
         /// <summary>
         /// Gets or sets the user that created this base data

@@ -14,7 +14,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Generic note class
     /// </summary>
     [Serializable]
-    [DataContract(Namespace = "http://openiz.org", Name = "Note")]
+    [DataContract(Namespace = "http://openiz.org/model", Name = "Note")]
     public abstract class Note<TBoundModel> : VersionBoundRelationData<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
     {
 

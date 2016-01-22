@@ -60,7 +60,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets the handler (or generator) for the phonetic algorithm
         /// </summary>
-        [DataMember(Name = "handler")]
+        [IgnoreDataMember]
         public Type Handler { get; set; }
 
     }

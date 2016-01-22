@@ -32,10 +32,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MARC.Everest">
+    <Reference Include="MARC.Everest, Version=1.5.0.0, Culture=neutral, PublicKeyToken=ba5b2480018546af, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\MARC.Everest.dll</HintPath>
     </Reference>
-    <Reference Include="MARC.HI.EHRS.SVC.Core">
+    <Reference Include="MARC.HI.EHRS.SVC.Core, Version=2.0.0.39574, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -62,6 +64,7 @@
     <Compile Include="Model\Constants\ConceptClassKeys.cs" />
     <Compile Include="Model\Constants\DeterminerConceptKeys.cs" />
     <Compile Include="Model\Constants\EntityClassConceptKeys.cs" />
+    <Compile Include="Model\DataTypes\DatePrecision.cs" />
     <Compile Include="Model\DataTypes\Extension.cs" />
     <Compile Include="Model\DataTypes\ExtensionType.cs" />
     <Compile Include="Model\Constants\StatusConceptKeys.cs" />

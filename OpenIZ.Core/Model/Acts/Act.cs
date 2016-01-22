@@ -51,9 +51,9 @@ namespace OpenIZ.Core.Model.Acts
         
         public Boolean IsNegated { get; set; }
 
-        public DateTimeOffset? StartTime { get; set; }
+        public DateTime? StartTime { get; set; }
 
-        public DateTimeOffset? StopTime { get; set; }
+        public DateTime? StopTime { get; set; }
 
         /// <summary>
         /// Class concept

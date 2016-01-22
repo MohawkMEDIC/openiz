@@ -20,7 +20,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [IgnoreDataMember]
         public Type ExtensionHandler { get; set; }
-
+        
         /// <summary>
         /// Gets or sets the description
         /// </summary>

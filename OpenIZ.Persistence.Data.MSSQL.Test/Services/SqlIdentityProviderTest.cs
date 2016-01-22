@@ -103,7 +103,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             // Reset data for test
             var user = dataPersistence.Query(u => u.UserName == "user@identitytest.com", null).First();
             user.LockoutEnabled = false;
-            user.LastLoginTime = default(DateTimeOffset);
+            user.LastLoginTime = default(DateTime);
             user.InvalidLoginAttempts = 0;
             dataPersistence.Update(user, provider.Authenticate("admin@identitytest.com", "password"), TransactionMode.Commit);
 
@@ -118,7 +118,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 // We should have a lockout
                 user = dataPersistence.Get(user.Id, null, false);
                 Assert.AreEqual(1, user.InvalidLoginAttempts);
-                Assert.AreEqual(default(DateTimeOffset), user.LastLoginTime);
+                Assert.AreEqual(default(DateTime), user.LastLoginTime);
                 Assert.IsFalse(user.LockoutEnabled);
 
             }
@@ -138,7 +138,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             // Reset data for test
             var user = dataPersistence.Query(u => u.UserName == "user@identitytest.com", null).First();
             user.LockoutEnabled = false;
-            user.LastLoginTime = default(DateTimeOffset);
+            user.LastLoginTime = default(DateTime);
             user.InvalidLoginAttempts = 0;
             dataPersistence.Update(user, provider.Authenticate("admin@identitytest.com", "password"), TransactionMode.Commit);
 
@@ -156,7 +156,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             // We should have a lockout
             user = dataPersistence.Get(user.Id, null, false);
             Assert.IsTrue(user.InvalidLoginAttempts >= 4);
-            Assert.AreEqual(default(DateTimeOffset), user.LastLoginTime);
+            Assert.AreEqual(default(DateTime), user.LastLoginTime);
             Assert.IsTrue(user.LockoutEnabled);
 
 

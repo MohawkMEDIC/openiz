@@ -1,5 +1,4 @@
-﻿using MARC.Everest.DataTypes;
-using OpenIZ.Core.Model.Attributes;
+﻿using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
