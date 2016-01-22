@@ -1,4 +1,22 @@
-﻿using MARC.Everest.Connectors;
+﻿/*
+ * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: fyfej
+ * Date: 2016-1-19
+ */
+using MARC.Everest.Connectors;
 using OpenIZ.Core.Exceptions;
 using OpenIZ.Core.Model.Attributes;
 using System;
@@ -195,7 +213,7 @@ namespace OpenIZ.Core.Model.Map
         {
             ClassMap classMap = this.m_mapFile.GetModelClassMap(typeof(TModel));
 
-            if (classMap == null)
+            if (classMap == null || modelInstance == null)
                 return default(TDomain);
 
             // Now the property maps
@@ -227,24 +245,9 @@ namespace OpenIZ.Core.Model.Map
                 if (propMap == null)
                     domainProperty = typeof(TDomain).GetProperty(propInfo.Name);
                 else
-                {
                     domainProperty = typeof(TDomain).GetProperty(propMap.DomainName);
-                    if (propMap.Via != null)
-                        foreach (var prop in propMap.Via)
-                        {
-                            // Is the domain property null
-                            var propValue = domainProperty.GetValue(targetObject);
-                            if (propValue == null)
-                            {
-                                propValue = Activator.CreateInstance(domainProperty.PropertyType);
-                                domainProperty.SetValue(targetObject, propValue);
-                            }
-                            targetObject = propValue;
 
-                            domainProperty = domainProperty.PropertyType.GetProperty(propInfo.Name);
-                        }
-                }
-
+                object domainValue = null;
                     // Set value
                 if (domainProperty == null)
                     this.m_traceSource.TraceInformation("Unmapped property ({0}).{1}", typeof(TModel).Name, propInfo.Name);
@@ -252,8 +255,8 @@ namespace OpenIZ.Core.Model.Map
                     domainProperty.SetValue(targetObject, propInfo.GetValue(modelInstance));
                 else if (propInfo.PropertyType == typeof(Type) && domainProperty.PropertyType == typeof(String))
                     domainProperty.SetValue(targetObject, (propInfo.GetValue(modelInstance) as Type).AssemblyQualifiedName);
-                else
-                    domainProperty.SetValue(targetObject, MARC.Everest.Connectors.Util.FromWireFormat(propInfo.GetValue(modelInstance), domainProperty.PropertyType));
+                else if (MARC.Everest.Connectors.Util.TryFromWireFormat(propInfo.GetValue(modelInstance), domainProperty.PropertyType, out domainValue))
+                    domainProperty.SetValue(targetObject, domainValue);
 
             }
 
@@ -267,7 +270,7 @@ namespace OpenIZ.Core.Model.Map
         {
             ClassMap classMap = this.m_mapFile.GetModelClassMap(typeof(TModel));
 
-            if (classMap == null)
+            if (classMap == null || domainInstance == null)
                 return default(TModel);
 
             // Now the property maps
@@ -298,7 +301,14 @@ namespace OpenIZ.Core.Model.Map
                 else
                 {
                     modelProperty = typeof(TModel).GetProperty(propMap.ModelName);
-                    foreach(var p in propMap.Via.Select(o=>o).Reverse())
+                    // Go through the via elements in the object map. This code traces a path 
+                    // through the domain class instantiating any necessary associative entity
+                    // classes. Example when a model entity is really two or three tables in the DB..
+                    // 🎶 Ah for just one time, I would take the northwest passage
+                    // To find the hand of Franklin reaching for the Beaufort Sea.
+                    // Tracing one warm line, through a land so wide and savage
+                    // And make a northwest passage to the sea. 🎶
+                    foreach (var p in propMap.Via.Where(o=>o.Traverse == true).Reverse())
                     {
                         sourceObject = sourceProperty.GetValue(sourceObject);
                         sourceProperty = sourceProperty.PropertyType.GetProperty(p.DomainName);

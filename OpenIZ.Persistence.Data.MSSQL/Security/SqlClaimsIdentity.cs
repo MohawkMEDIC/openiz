@@ -1,4 +1,22 @@
-﻿using MARC.HI.EHRS.SVC.Core;
+﻿/*
+ * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: fyfej
+ * Date: 2016-1-19
+ */
+using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using OpenIZ.Core.Security;
@@ -55,7 +73,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
                     var hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
 
                     var passwordHash = hashingService.EncodePassword(password);
-                    var user = dataContext.SecurityUsers.FirstOrDefault(u => u.UserName == userName && u.ObsoletionTime == null);
+                    var user = dataContext.SecurityUsers.SingleOrDefault(u => u.UserName == userName && u.ObsoletionTime == null);
                     if (user?.UserPassword == passwordHash && (bool)!user?.TwoFactorEnabled &&
                         (bool)!user?.LockoutEnabled)
                     {
@@ -129,7 +147,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
             {
                 using (var dataContext = new Data.ModelDataContext(s_configuration.ReadonlyConnectionString))
                 {
-                    var user = dataContext.SecurityUsers.FirstOrDefault(u => !u.ObsoletionTime.HasValue && u.UserName == userName);
+                    var user = dataContext.SecurityUsers.SingleOrDefault(u => !u.ObsoletionTime.HasValue && u.UserName == userName);
                     if (user == null)
                         return null;
                     return new SqlClaimsIdentity(user, false);

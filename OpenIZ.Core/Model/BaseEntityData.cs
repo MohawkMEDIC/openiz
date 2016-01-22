@@ -1,4 +1,22 @@
-﻿using MARC.Everest.Connectors;
+﻿/*
+ * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: fyfej
+ * Date: 2016-1-19
+ */
+using MARC.Everest.Connectors;
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
@@ -11,6 +29,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace OpenIZ.Core.Model
 {
@@ -18,40 +37,43 @@ namespace OpenIZ.Core.Model
     /// <summary>
     /// Represents the root of all model classes in the OpenIZ Core
     /// </summary>
+    [Serializable]
+    [DataContract(Name = "BaseEntityData", Namespace = "http://openiz.org/model")]
     public abstract class BaseEntityData : IdentifiedData
     {
 
         // Created by identifier
         private Guid m_createdById;
         // Created by
+        
         private SecurityUser m_createdBy;
         // Obsoleted by
         private Guid? m_obsoletedById;
         // Obsoleted by user
+        
         private SecurityUser m_obsoletedBy;
         
         /// <summary>
         /// Creation Time
         /// </summary>
+        [DataMember(Name = "creationTime")]
         public DateTimeOffset CreationTime { get; set; }
 
         /// <summary>
         /// Obsoletion time
         /// </summary>
+        [DataMember(Name = "obsoletionTime")]
         public DateTimeOffset? ObsoletionTime { get; set; }
 
         /// <summary>
         /// Gets or sets the user that created this base data
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public virtual SecurityUser CreatedBy {
             get
             {
-                if (this.m_delayLoad && this.m_createdById != Guid.Empty && this.m_createdBy == null)
-                {
-                    var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
-                    this.m_createdBy = dataLayer.Get(new Identifier<Guid>() { Id = this.m_createdById }, null, true);
-                }
+                this.m_createdBy = base.DelayLoad(this.m_createdById, this.m_createdBy);
                 return this.m_createdBy;
             }
          }
@@ -60,14 +82,11 @@ namespace OpenIZ.Core.Model
         /// Gets or sets the user that obsoleted this base data
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public virtual SecurityUser ObsoletedBy {
             get
             {
-                if (this.m_delayLoad && this.m_obsoletedById.HasValue && this.m_obsoletedBy == null)
-                {
-                    var dataLayer = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
-                    this.m_obsoletedBy = dataLayer.Get(new Identifier<Guid>() { Id = this.m_obsoletedById.Value }, null, true);
-                }
+                this.m_obsoletedBy= base.DelayLoad(this.m_obsoletedById, this.m_obsoletedBy);
                 return this.m_obsoletedBy;
             }
         }
@@ -77,6 +96,7 @@ namespace OpenIZ.Core.Model
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [DataMember(Name ="createdBy")]
         public virtual Guid CreatedById
         {
             get { return this.m_createdById; }
@@ -93,6 +113,7 @@ namespace OpenIZ.Core.Model
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [DataMember(Name ="obsoletedBy")]
         public virtual Guid? ObsoletedById
         {
             get { return this.m_obsoletedById; }
@@ -112,5 +133,12 @@ namespace OpenIZ.Core.Model
             return String.Format("{0} (K:{1})", this.GetType().Name, this.Key);
         }
 
+        /// <summary>
+        /// Clears delay load properties forcing a refresh
+        /// </summary>
+        public override void Refresh()
+        {
+            this.m_createdBy = this.m_obsoletedBy = null;
+        }
     }
 }

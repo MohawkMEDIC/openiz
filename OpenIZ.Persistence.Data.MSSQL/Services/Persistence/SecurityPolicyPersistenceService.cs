@@ -1,4 +1,22 @@
-﻿using System;
+﻿/*
+ * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: fyfej
+ * Date: 2016-1-19
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -41,7 +59,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (containerId == null)
                 throw new ArgumentNullException(nameof(containerId));
 
-            var dataPolicy = dataContext.Policies.FirstOrDefault(p => p.PolicyId == containerId.Id);
+            var dataPolicy = dataContext.Policies.SingleOrDefault(p => p.PolicyId == containerId.Id);
             if (dataPolicy != null)
                 return this.ConvertToModel(dataPolicy);
             else
@@ -62,7 +80,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Insert
             var dataPolicy = this.ConvertFromModel(storageData) as Policy;
-            dataPolicy.CreatedBy = principal.GetUserGuid(dataContext);
+            dataPolicy.CreatedByEntity = principal.GetUser(dataContext);
             dataContext.Policies.InsertOnSubmit(dataPolicy);
             dataContext.SubmitChanges();
 
@@ -82,8 +100,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new ArgumentNullException(nameof(principal));
 
             // Update 
-            var dataPolicy = dataContext.Policies.FirstOrDefault(p => p.PolicyId == storageData.Key);
-            dataPolicy.ObsoletedBy = principal.GetUserGuid(dataContext);
+            var dataPolicy = dataContext.Policies.SingleOrDefault(p => p.PolicyId == storageData.Key);
+            dataPolicy.ObsoletedByEntity = principal.GetUser(dataContext);
             dataPolicy.ObsoletionTime = DateTimeOffset.Now;
             dataContext.SubmitChanges();
 

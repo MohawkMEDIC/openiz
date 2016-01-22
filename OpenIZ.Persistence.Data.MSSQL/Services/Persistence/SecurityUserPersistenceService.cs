@@ -1,4 +1,22 @@
-﻿using OpenIZ.Core.Model.Security;
+﻿/*
+ * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: fyfej
+ * Date: 2016-1-19
+ */
+using OpenIZ.Core.Model.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +52,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <returns>The security user as part of the get</returns>
         internal override Core.Model.Security.SecurityUser Get(Identifier<Guid> containerId, IPrincipal principal, bool loadFast, ModelDataContext dataContext)
         {
-            var dataUser = dataContext.SecurityUsers.FirstOrDefault(o => o.UserId == containerId.Id);
+            var dataUser = dataContext.SecurityUsers.SingleOrDefault(o => o.UserId == containerId.Id);
 
             if (dataUser != null)
                 return this.ConvertToModel(dataUser);
@@ -54,11 +72,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (storageData.Key != default(Guid)) // Trying to insert an already inserted user?
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.IdentityInsert);
 
-            if (storageData.DelayLoad) // We want a frozen asset
-                storageData = storageData.AsFrozen() as Core.Model.Security.SecurityUser;
-
             var dataUser = this.ConvertFromModel(storageData) as Data.SecurityUser;
-            dataUser.CreatedBy = principal == null ? null : (Guid?)principal.GetUserGuid(dataContext);
+            dataUser.CreatedByEntity = principal.GetUser(dataContext);
             dataContext.SecurityUsers.InsertOnSubmit(dataUser);
             dataUser.SecurityStamp = Guid.NewGuid().ToString();
 
@@ -85,14 +100,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
-            if (storageData.DelayLoad) // We want a frozen asset
-                storageData = storageData.AsFrozen() as Core.Model.Security.SecurityUser;
-
-            var dataUser = dataContext.SecurityUsers.FirstOrDefault(u => u.UserId == storageData.Key);
+            var dataUser = dataContext.SecurityUsers.SingleOrDefault(u => u.UserId == storageData.Key);
             if (dataUser == null)
                 throw new KeyNotFoundException();
 
-            dataUser.ObsoletedBy = principal.GetUserGuid(dataContext);
+            dataUser.ObsoletedByEntity = principal.GetUser(dataContext);
             dataUser.ObsoletionTime = DateTimeOffset.Now;
             dataUser.SecurityStamp = Guid.NewGuid().ToString();
 
@@ -123,17 +135,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
-            if (storageData.DelayLoad) // We want a frozen asset
-                storageData = storageData.AsFrozen() as Core.Model.Security.SecurityUser;
-
-            var dataUser = dataContext.SecurityUsers.FirstOrDefault(u => u.UserId == storageData.Key);
+            var dataUser = dataContext.SecurityUsers.SingleOrDefault(u => u.UserId == storageData.Key);
             if (dataUser == null)
                 throw new KeyNotFoundException();
 
             var newData = this.ConvertFromModel(storageData) as Data.SecurityUser;
             dataUser.CopyObjectData(newData);
 
-            dataUser.UpdatedBy = principal.GetUserGuid(dataContext);
+            dataUser.UpdatedByEntity = principal.GetUser(dataContext);
             dataUser.UpdatedTime = DateTimeOffset.Now;
             dataUser.SecurityStamp = Guid.NewGuid().ToString();
 

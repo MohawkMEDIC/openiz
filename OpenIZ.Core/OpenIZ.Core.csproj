@@ -41,6 +41,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -49,17 +50,51 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConceptClassIds.cs" />
-    <Compile Include="ConceptIds.cs" />
-    <Compile Include="ConceptSetIds.cs" />
+    <Compile Include="Model\Acts\Act.cs" />
+    <Compile Include="Model\Acts\ActParticipation.cs" />
+    <Compile Include="Model\Acts\ActRelationship.cs" />
+    <Compile Include="Model\Acts\Observation.cs" />
+    <Compile Include="Model\Acts\PatientEncounter.cs" />
+    <Compile Include="Model\Acts\SubstanceAdministration.cs" />
+    <Compile Include="Model\Constants\ActClassKeys.cs" />
+    <Compile Include="Model\Constants\EntityRelationshipTypeKeys.cs" />
+    <Compile Include="Model\Constants\CodeSystemKeys.cs" />
+    <Compile Include="Model\Constants\ConceptClassKeys.cs" />
+    <Compile Include="Model\Constants\DeterminerConceptKeys.cs" />
+    <Compile Include="Model\Constants\EntityClassConceptKeys.cs" />
+    <Compile Include="Model\DataTypes\Extension.cs" />
+    <Compile Include="Model\DataTypes\ExtensionType.cs" />
+    <Compile Include="Model\Constants\StatusConceptKeys.cs" />
+    <Compile Include="Model\Constants\ConceptSetKeys.cs" />
     <Compile Include="Exceptions\ModelMapValidationException.cs" />
     <Compile Include="Exceptions\ModelValidationException.cs" />
     <Compile Include="Model\Attributes\DelayLoadAttribute.cs" />
     <Compile Include="Model\DataTypes\CodeSystem.cs" />
     <Compile Include="Model\DataTypes\ConceptName.cs" />
     <Compile Include="Model\DataTypes\ConceptRelationshipType.cs" />
+    <Compile Include="Model\DataTypes\Note.cs" />
     <Compile Include="Model\DataTypes\PhoneticAlgorithm.cs" />
     <Compile Include="Model\DataTypes\ReferenceTermName.cs" />
+    <Compile Include="Model\Constants\ConceptRelationshipTypeKeys.cs" />
+    <Compile Include="Model\DataTypes\Tag.cs" />
+    <Compile Include="Model\Entities\ApplicationEntity.cs" />
+    <Compile Include="Model\Entities\DeviceEntity.cs" />
+    <Compile Include="Model\Entities\Entity.cs" />
+    <Compile Include="Model\Entities\EntityAddress.cs" />
+    <Compile Include="Model\Entities\EntityAddressComponent.cs" />
+    <Compile Include="Model\Entities\EntityRelationship.cs" />
+    <Compile Include="Model\Entities\EntityName.cs" />
+    <Compile Include="Model\Entities\EntityNameComponent.cs" />
+    <Compile Include="Model\Entities\EntityTelecomAddress.cs" />
+    <Compile Include="Model\BoundRelationData.cs" />
+    <Compile Include="Model\Entities\GenericComponentValues.cs" />
+    <Compile Include="Model\Entities\ManufacturedMaterial.cs" />
+    <Compile Include="Model\Entities\Material.cs" />
+    <Compile Include="Model\Entities\Organization.cs" />
+    <Compile Include="Model\Entities\Person.cs" />
+    <Compile Include="Model\Entities\PersonLanguageCommunication.cs" />
+    <Compile Include="Model\Entities\Place.cs" />
+    <Compile Include="Model\Entities\PlaceService.cs" />
     <Compile Include="Model\IdentifiedData.cs" />
     <Compile Include="Model\BaseEntityData.cs" />
     <Compile Include="Model\DataTypes\AssigningAuthority.cs" />
@@ -70,12 +105,17 @@
     <Compile Include="Model\DataTypes\Identifier.cs" />
     <Compile Include="Model\DataTypes\IdentifierType.cs" />
     <Compile Include="Model\DataTypes\ReferenceTerm.cs" />
+    <Compile Include="Model\Interfaces\ISecurable.cs" />
     <Compile Include="Model\Map\CollapseKey.cs" />
     <Compile Include="Model\Map\ClassMap.cs" />
     <Compile Include="Model\Map\ModelExpressionVisitor.cs" />
     <Compile Include="Model\Map\ModelMap.cs" />
     <Compile Include="Model\Map\ModelMapper.cs" />
     <Compile Include="Model\Map\PropertyMap.cs" />
+    <Compile Include="Model\Roles\Patient.cs" />
+    <Compile Include="Model\Roles\Provider.cs" />
+    <Compile Include="Model\Security\SecurityApplication.cs" />
+    <Compile Include="Model\Security\SecurityDevice.cs" />
     <Compile Include="Model\Security\SecurityEntity.cs" />
     <Compile Include="Model\Security\SecurityPolicy.cs" />
     <Compile Include="Model\Security\SecurityRole.cs" />
@@ -83,15 +123,19 @@
     <Compile Include="Model\VersionBoundRelationData.cs" />
     <Compile Include="Model\VersionedEntityData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\IPolicyHandler.cs" />
     <Compile Include="Security\LocalPolicyDecisionService.cs" />
-    <Compile Include="Security\LocalPolicyInformationService.cs" />
+    <Compile Include="Security\LocalPolicyEnforcementService.cs" />
     <Compile Include="Security\OpenIzClaimTypes.cs" />
     <Compile Include="Security\PolicyIdentifiers.cs" />
     <Compile Include="Security\SHA256PasswordHashingService.cs" />
+    <Compile Include="Services\IExtendedPolicyInformationService.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Model\Entity\" />
-    <Folder Include="Services\" />
+    <None Include="..\OpenIZ.licenseheader">
+      <Link>OpenIZ.licenseheader</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

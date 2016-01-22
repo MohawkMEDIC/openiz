@@ -1,4 +1,22 @@
-﻿using MARC.HI.EHRS.SVC.Core;
+﻿/*
+ * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: fyfej
+ * Date: 2016-1-19
+ */
+using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Attributes;
 using System;
@@ -7,45 +25,70 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
+using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Acts;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
     /// <summary>
+    /// Entity identifiers
+    /// </summary>
+    [Serializable]
+    [DataContract(Name = "EntityIdentifier", Namespace = "http://openiz.org/model")]
+    public class EntityIdentifier : IdentifierBase<Entity>
+    {
+
+    }
+
+
+    /// <summary>
+    /// Act identifier
+    /// </summary>
+    [Serializable]
+    [DataContract(Namespace = "http://openiz.org/model", Name = "ActIdentifier")]
+    public class ActIdentifier : IdentifierBase<Act>
+    {
+
+    }
+
+    /// <summary>
     /// Represents an external assigned identifier
     /// </summary>
-    public class Identifier : BaseEntityData
+    [DataContract(Name = "IdentifierBase", Namespace = "http://openiz.org/model")]
+    [Serializable]
+    public abstract class IdentifierBase<TBoundModel> : VersionBoundRelationData<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
     {
 
         // Identifier id
         private Guid? m_identifierTypeId;
         // Authority id
+        
         private Guid m_authorityId;
 
         // Identifier type backing type
+        
         private IdentifierType m_identifierType;
         // Assigning authority
+        
         private AssigningAuthority m_authority;
 
         /// <summary>
         /// Gets or sets the value of the identifier
         /// </summary>
+        [DataMember(Name = "value")]
         public String Value { get; set; }
 
         /// <summary>
         /// Gets or sets the identifier type
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public IdentifierType Type
         {
             get
             {
-               if(this.DelayLoad && 
-                    this.m_identifierType == null && 
-                    this.m_identifierTypeId.HasValue)
-                {
-                    var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<IdentifierType>>();
-                    this.m_identifierType = persistenceService.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(this.m_identifierTypeId.Value), null, true);
-                }
+                this.m_identifierType = base.DelayLoad(this.m_identifierTypeId, this.m_identifierType);
                 return this.m_identifierType;
             }
             set
@@ -59,17 +102,12 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the assigning authority 
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public AssigningAuthority Authority
         {
             get
             {
-                if (this.DelayLoad &&
-                    this.m_authorityId != Guid.Empty &&
-                    this.m_authority == null)
-                {
-                    var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>();
-                    this.m_authority = persistenceService.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(this.m_authorityId), null, true);
-                }
+                this.m_authority = base.DelayLoad(this.m_authorityId, this.m_authority);
                 return this.m_authority;
             }
             set
@@ -87,7 +125,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public Guid AuthorityId {
+        [DataMember(Name = "authorityRef")]
+        public Guid  AuthorityKey {
             get { return this.m_authorityId; }
             set
             {
@@ -103,7 +142,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public Guid? TypeId
+        [DataMember(Name = "typeRef")]
+        public Guid?  TypeKey
         {
             get { return this.m_identifierTypeId; }
             set
@@ -115,6 +155,14 @@ namespace OpenIZ.Core.Model.DataTypes
             }
         }
 
-
+        /// <summary>
+        /// Force reloading of delay load properties
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_authority = null;
+            this.m_identifierType = null;
+        }
     }
 }

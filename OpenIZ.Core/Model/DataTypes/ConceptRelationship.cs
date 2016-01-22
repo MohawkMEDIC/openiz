@@ -1,26 +1,49 @@
-﻿using MARC.HI.EHRS.SVC.Core;
+﻿/*
+ * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: fyfej
+ * Date: 2016-1-19
+ */
+using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Attributes;
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
     /// <summary>
     /// Represents a relationship between two concepts
     /// </summary>
+    [Serializable]
+    [DataContract(Name = "ConceptRelationship", Namespace = "http://openiz.org/model")]
     public class ConceptRelationship : VersionBoundRelationData<Concept>
     {
 
         // Target concept id
         private Guid m_targetConceptId;
         // Target concept
+        
         private Concept m_targetConcept;
         // Relaltionship type id
         private Guid m_relationshipTypeId;
         // Relationship type
+        
         private ConceptRelationshipType m_relationshipType;
 
         /// <summary>
@@ -28,7 +51,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        public Guid TargetConceptId
+        [DataMember(Name = "targetConceptRef")]
+        public Guid  TargetConceptKey
         {
             get { return this.m_targetConceptId; }
             set
@@ -42,17 +66,12 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the target concept
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public Concept TargetConcept
         {
             get
             {
-                if(this.m_targetConcept == null &&
-                    this.DelayLoad &&
-                    this.m_targetConceptId != Guid.Empty)
-                {
-                    var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
-                    this.m_targetConcept = dataPersistence.Get(new Identifier<Guid>(this.m_targetConceptId), null, true);
-                }
+                this.m_targetConcept = base.DelayLoad(this.m_targetConceptId, this.m_targetConcept);
                 return this.m_targetConcept;
             }
             set
@@ -70,7 +89,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        public Guid RelationshipTypeId {
+        [DataMember(Name = "relationshipTypeRef")]
+        public Guid  RelationshipTypeKey {
             get { return this.m_relationshipTypeId; }
             set
             {
@@ -83,12 +103,13 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the relationship type
         /// </summary>
         [DelayLoad]
+        [IgnoreDataMember]
         public ConceptRelationshipType RelationshipType
         {
             get
             {
                 if(this.m_relationshipType == null &&
-                    this.DelayLoad &&
+                    this.IsDelayLoadEnabled &&
                     this.m_relationshipTypeId != Guid.Empty)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptRelationshipType>>();
@@ -104,6 +125,16 @@ namespace OpenIZ.Core.Model.DataTypes
                 else
                     this.m_relationshipTypeId = value.Key;
             }
+        }
+
+        /// <summary>
+        /// Force reloading of delay load properties
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_relationshipType = null;
+            this.m_targetConcept = null;
         }
     }
 }

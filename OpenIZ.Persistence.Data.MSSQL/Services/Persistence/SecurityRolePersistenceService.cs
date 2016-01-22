@@ -1,4 +1,22 @@
-﻿using System;
+﻿/*
+ * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: fyfej
+ * Date: 2016-1-19
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -27,7 +45,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (containerId == null)
                 throw new ArgumentNullException(nameof(containerId));
 
-            var dataRole = dataContext.SecurityRoles.FirstOrDefault(o => o.RoleId == containerId.Id);
+            var dataRole = dataContext.SecurityRoles.SingleOrDefault(o => o.RoleId == containerId.Id);
 
             if (dataRole != null)
                 return this.ConvertToModel(dataRole);
@@ -45,11 +63,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
-            if (storageData.DelayLoad) // We want a frozen asset
-                storageData = storageData.AsFrozen() as Core.Model.Security.SecurityRole;
-
             var dataRole = this.ConvertFromModel(storageData) as Data.SecurityRole;
-            dataRole.CreatedBy = principal.GetUserGuid(dataContext);
+            dataRole.CreatedByEntity = principal.GetUser(dataContext);
             dataContext.SecurityRoles.InsertOnSubmit(dataRole);
             
             if (storageData.Users != null)
@@ -58,8 +73,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Policies
             dataContext.SecurityRolePolicies.InsertAllOnSubmit(storageData.Policies.Select(p => new SecurityRolePolicy()
             {
-                IsDeny = p.GrantType < MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Grant,
-                CanOverride = p.GrantType > MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Deny,
+                PolicyAction = (int)p.GrantType,
                 PolicyId = p.Policy.EnsureExists(principal, dataContext).Key,
                 SecurityRole = dataRole
             }));
@@ -80,8 +94,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
-            var dataRole = dataContext.SecurityRoles.FirstOrDefault(r => r.RoleId == storageData.Key);
-            dataRole.ObsoletedBy = principal.GetUserGuid(dataContext);
+            var dataRole = dataContext.SecurityRoles.SingleOrDefault(r => r.RoleId == storageData.Key);
+            dataRole.ObsoletedByEntity = principal.GetUser(dataContext);
             dataRole.ObsoletionTime = DateTimeOffset.Now;
             
             // Persist
@@ -110,7 +124,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
-            var dataRole = dataContext.SecurityRoles.FirstOrDefault(r => r.RoleId == storageData.Key);
+            var dataRole = dataContext.SecurityRoles.SingleOrDefault(r => r.RoleId == storageData.Key);
             var newData = this.ConvertFromModel(storageData) as Data.SecurityRole;
             dataRole.CopyObjectData(newData);
 
@@ -127,18 +141,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Update or insert policies
             foreach(var p in storageData.Policies)
             {
-                var existingPolicy = dataRole.SecurityRolePolicies.FirstOrDefault(o => o.PolicyId == p.Policy.EnsureExists(principal, dataContext).Key);
+                var existingPolicy = dataRole.SecurityRolePolicies.SingleOrDefault(o => o.PolicyId == p.Policy.EnsureExists(principal, dataContext).Key);
                 if (existingPolicy != null)
                 {
-                    existingPolicy.IsDeny = p.GrantType < MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Grant;
-                    existingPolicy.CanOverride = p.GrantType > MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Deny;
+                    existingPolicy.PolicyAction = (int)p.GrantType;
                 }
                 else
                 {
                     dataContext.SecurityRolePolicies.InsertOnSubmit(new SecurityRolePolicy()
                     {
-                        IsDeny = p.GrantType < MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Grant,
-                        CanOverride = p.GrantType > MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Deny,
+                        PolicyAction = (int)p.GrantType ,
                         PolicyId = p.Policy.EnsureExists(principal, dataContext).Key,
                         SecurityRole = dataRole
                     });
@@ -169,18 +181,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.Security.SecurityRole ConvertToModel(object data)
         {
-            var securityRole = data as Data.SecurityRole;
-            var retVal = s_mapper.MapDomainInstance<Data.SecurityRole, Core.Model.Security.SecurityRole>(securityRole);
-            // No delay load on policies
-            retVal.Policies.AddRange(securityRole.SecurityRolePolicies.Select(p => new SecurityPolicyInstance()
-            {
-                Policy = new SecurityPolicyPersistenceService().ConvertToModel(p.Policy),
-                GrantType =
-                    p.IsDeny && p.CanOverride ? MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Elevate :
-                    p.IsDeny ? MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Deny :
-                    MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Grant
-            }));
-            return retVal;
+            return s_mapper.MapDomainInstance<Data.SecurityRole, Core.Model.Security.SecurityRole>(data as Data.SecurityRole);
+
         }
 
     }
