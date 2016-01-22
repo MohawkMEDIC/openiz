@@ -51,7 +51,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "targetConceptRef")]
+        [DataMember(Name = "targetConcept")]
         public Guid  TargetConceptKey
         {
             get { return this.m_targetConceptId; }
@@ -65,7 +65,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the target concept
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(TargetConceptKey))]
         [IgnoreDataMember]
         public Concept TargetConcept
         {
@@ -89,7 +89,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "relationshipTypeRef")]
+        [DataMember(Name = "relationshipType")]
         public Guid  RelationshipTypeKey {
             get { return this.m_relationshipTypeId; }
             set
@@ -102,7 +102,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the relationship type
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(RelationshipTypeKey))]
         [IgnoreDataMember]
         public ConceptRelationshipType RelationshipType
         {

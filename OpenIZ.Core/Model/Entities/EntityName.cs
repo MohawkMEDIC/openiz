@@ -29,7 +29,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the name use key
         /// </summary>
-        [DataMember(Name = "nameUseRef")]
+        [DataMember(Name = "nameUse")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid? NameUseKey
@@ -45,7 +45,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the name use
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(NameUseKey))]
         [IgnoreDataMember]
         public Concept NameUse
         {
@@ -63,7 +63,8 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the component types
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
+        [IgnoreDataMember]
         public List<EntityNameComponent> Component
         {
             get

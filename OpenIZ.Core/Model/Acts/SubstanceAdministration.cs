@@ -40,7 +40,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "routeRef")]
+        [DataMember(Name = "route")]
         public Guid RouteKey
         {
             get { return this.m_routeKey; }
@@ -56,7 +56,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "doseUnitRef")]
+        [DataMember(Name = "doseUnit")]
         public Guid DoseUnitKey
         {
             get { return this.m_doseUnitKey; }
@@ -71,7 +71,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets a concept which indicates the route of administration (eg: Oral, Injection, etc.)
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(nameof(RouteKey))]
         public Concept Route
         {
             get
@@ -93,7 +93,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets a concept which indicates the unit of measure for the dose (eg: 5 mL, 10 mL, 1 drop, etc.)
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(nameof(DoseUnitKey))]
         public Concept DoseUnit
         {
             get

@@ -31,7 +31,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "targetEntityRef")]
+        [DataMember(Name = "targetEntity")]
         public Guid TargetEntityKey
         {
             get { return this.m_targetEntityKey; }
@@ -47,7 +47,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "participationRoleRef")]
+        [DataMember(Name = "participationRole")]
         public Guid ParticipationRoleKey
         {
             get { return this.m_participationRoleKey; }
@@ -62,7 +62,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the entity which participated in the act
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(nameof(TargetEntityKey))]
         public Entity TargetEntity
         {
             get
@@ -84,7 +84,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the role that the entity played in participating in the act
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(nameof(ParticipationRoleKey))]
         public Concept ParticipationRole
         {
             get

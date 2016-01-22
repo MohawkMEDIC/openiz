@@ -40,7 +40,7 @@ namespace OpenIZ.Core.Model.Roles
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "providerSpecialtyRef")]
+        [DataMember(Name = "providerSpecialty")]
         public Guid? ProviderSpecialtyKey
         {
             get
@@ -58,7 +58,7 @@ namespace OpenIZ.Core.Model.Roles
         /// Gets or sets the provider specialty
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(nameof(ProviderSpecialtyKey))]
         public Concept ProviderSpecialty
         {
             get

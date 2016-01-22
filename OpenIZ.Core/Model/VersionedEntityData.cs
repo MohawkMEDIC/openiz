@@ -56,7 +56,7 @@ namespace OpenIZ.Core.Model
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "previousVersionRef")]
+        [DataMember(Name = "previousVersion")]
         public virtual Guid? PreviousVersionKey
         {
             get
@@ -73,7 +73,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the previous version
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(PreviousVersionKey))]
         [IgnoreDataMember]
         public virtual THistoryModelType PreviousVersion
         {
@@ -95,13 +95,13 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the key which represents the version of the entity
         /// </summary>
-        [DataMember(Name = "versionRef")]
+        [DataMember(Name = "version")]
         public Guid VersionKey { get; set; }
 
         /// <summary>
         /// The sequence number of the version (for ordering)
         /// </summary>
-        [DataMember(Name = "sequenceRef")]
+        [DataMember(Name = "sequence")]
         public Decimal VersionSequence { get; set; }
 
         /// <summary>

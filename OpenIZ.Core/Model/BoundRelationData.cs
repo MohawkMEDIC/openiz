@@ -26,7 +26,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the source entity's key (where the relationship is FROM)
         /// </summary>
-        [DataMember(Name = "sourceEntityRef")]
+        [DataMember(Name = "sourceEntity")]
         public Guid SourceEntityKey
         {
             get
@@ -43,7 +43,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// The entity that this relationship targets
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(SourceEntityKey))]
         [IgnoreDataMember]
         public TSourceType SourceEntity
         {

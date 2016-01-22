@@ -42,7 +42,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Back-reference to reference term
         /// </summary>
-        [DataMember(Name = "referenceTermRef")]
+        [DataMember(Name = "referenceTerm")]
         public Guid  ReferenceTermKey { get; set; }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "phoneticAlgorithmRef")]
+        [DataMember(Name = "phoneticAlgorithm")]
         public Guid  PhoneticAlgorithmKey
         {
             get { return this.m_phoneticAlgorithmId; }
@@ -82,7 +82,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the phonetic algorithm
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(PhoneticAlgorithmKey))]
         [IgnoreDataMember]
         public PhoneticAlgorithm PhoneticAlgorithm
         {

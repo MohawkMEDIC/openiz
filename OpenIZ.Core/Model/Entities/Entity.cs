@@ -67,7 +67,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name ="classConceptRef")]
+        [DataMember(Name ="classConcept")]
         public virtual Guid ClassConceptKey
         {
             get { return this.m_classConceptId; }
@@ -83,7 +83,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name ="determinerConceptRef")]
+        [DataMember(Name ="determinerConcept")]
         public virtual Guid DeterminerConceptKey
         {
             get { return this.m_determinerConceptId; }
@@ -99,7 +99,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "statusConceptRef")]
+        [DataMember(Name = "statusConcept")]
         public Guid  StatusConceptKey
         {
             get { return this.m_statusConceptId; }
@@ -115,7 +115,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "creationActRef")]
+        [DataMember(Name = "creationAct")]
         public Guid  CreationActKey
         {
             get { return this.m_creationActId; }
@@ -131,7 +131,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "typeConceptRef")]
+        [DataMember(Name = "typeConcept")]
         public Guid?  TypeConceptKey
         {
             get { return this.m_typeConceptId; }
@@ -146,7 +146,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Class concept datal load property
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(nameof(ClassConceptKey))]
         public Concept ClassConcept
         {
             get {
@@ -158,7 +158,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Determiner concept
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(DeterminerConceptKey))]
         [IgnoreDataMember]
         public virtual Concept DeterminerConcept
         {
@@ -172,7 +172,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Status concept id
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(StatusConceptKey))]
         [IgnoreDataMember]
         public Concept StatusConcept
         {
@@ -194,7 +194,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Creation act reference
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(CreationActKey))]
         [IgnoreDataMember]
         public Act CreationAct
         {
@@ -215,7 +215,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Type concept identifier
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(TypeConceptKey))]
         [IgnoreDataMember]
         public Concept TypeConcept
         {
@@ -233,7 +233,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets the identifiers associated with this entity
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public List<EntityIdentifier> Identifiers
         {
@@ -251,7 +251,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets a list of all associated entities for this entity
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public List<EntityRelationship> Relationships
         {
@@ -269,7 +269,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets a list of all telecommunications addresses associated with the entity
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public List<EntityTelecomAddress> Telecom
         {
@@ -287,7 +287,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets a list of all extensions associated with the entity
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public List<EntityExtension> Extensions
         {
@@ -305,7 +305,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets a list of all names associated with the entity
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public List<EntityName> Names
         {
@@ -323,7 +323,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets a list of all addresses associated with the entity
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public List<EntityAddress> Addresses
         {
@@ -341,7 +341,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets a list of all notes associated with the entity
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public List<EntityNote> Notes
         {
@@ -359,7 +359,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets a list of all tags associated with the entity
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public List<EntityTag> Tags
         {
@@ -373,10 +373,12 @@ namespace OpenIZ.Core.Model.Entities
                 return this.m_tags;
             }
         }
-        
+
         /// <summary>
         /// Gets the acts in which this entity participates
         /// </summary>
+        [DelayLoad(null)]
+        [IgnoreDataMember]
         public List<ActParticipation> Participations
         {
             get

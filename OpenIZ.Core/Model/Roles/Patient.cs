@@ -54,7 +54,7 @@ namespace OpenIZ.Core.Model.Roles
         /// <summary>
         /// Gets or sets the gender concept key
         /// </summary>
-        [DataMember(Name = "genderConceptRef")]
+        [DataMember(Name = "genderConcept")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid GenderCocneptKey
@@ -70,7 +70,7 @@ namespace OpenIZ.Core.Model.Roles
         /// <summary>
         /// Gets or sets the gender concept
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(GenderCocneptKey))]
         [IgnoreDataMember]
         public Concept GenderConcept
         {

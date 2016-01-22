@@ -35,7 +35,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "authorRef")]
+        [DataMember(Name = "author")]
         public Guid AuthorKey
         {
             get { return this.m_authorKey; }
@@ -50,7 +50,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the author entity
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(nameof(AuthorKey))]
         public Entity Author
         {
             get

@@ -37,7 +37,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "dischargeDispositionRef")]
+        [DataMember(Name = "dischargeDisposition")]
         public Guid? DischargeDispositionKey
         {
             get { return this.m_dischargeDispositionKey; }
@@ -52,7 +52,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the discharge disposition (how the patient left the encounter
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(nameof(DischargeDispositionKey))]
         public Concept DischargeDisposition
         {
             get

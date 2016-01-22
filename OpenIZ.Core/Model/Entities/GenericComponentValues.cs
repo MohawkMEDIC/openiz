@@ -25,7 +25,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "typeRef")]
+        [DataMember(Name = "type")]
         public Guid TypeKey
         {
             get { return this.m_componentTypeKey; }
@@ -40,7 +40,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the type of address component
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(nameof(TypeKey))]
         public Concept Type
         {
             get {

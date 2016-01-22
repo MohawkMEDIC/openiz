@@ -30,5 +30,18 @@ namespace OpenIZ.Core.Model.Attributes
     [AttributeUsage(AttributeTargets.Property)]
     public class DelayLoadAttribute : Attribute
     {
+
+        /// <summary>
+        /// Gets or sets the key property for the delay field
+        /// </summary>
+        public DelayLoadAttribute(String keyPropertyName)
+        {
+            this.KeyPropertyName = keyPropertyName;
+        }
+
+        /// <summary>
+        /// Gets pr sets the key property name
+        /// </summary>
+        public String KeyPropertyName { get; set; }
     }
 }

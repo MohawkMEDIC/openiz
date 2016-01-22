@@ -55,7 +55,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the oid of the assigning authority
         /// </summary>
-        [DataMember(Name = "oRef")]
+        [DataMember(Name = "o")]
         public String Oid { get; set; }
         /// <summary>
         /// The URL of the assigning authority
@@ -65,7 +65,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Assigning device identifier
         /// </summary>
-        [DataMember(Name = "assigningDeviceRef")]
+        [DataMember(Name = "assigningDevice")]
         public Guid? AssigningDeviceKey
         {
             get { return this.m_assigningDeviceId; }

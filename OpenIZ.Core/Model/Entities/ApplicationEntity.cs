@@ -37,7 +37,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the security application
         /// </summary>
-        [DataMember(Name = "securityApplicationRef")]
+        [DataMember(Name = "securityApplication")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid SecurityApplicationKey
@@ -53,7 +53,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the security application
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(SecurityApplicationKey))]
         [IgnoreDataMember]
         public SecurityApplication SecurityApplication
         {

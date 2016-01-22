@@ -30,7 +30,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the address use key
         /// </summary>
-        [DataMember(Name = "addressUseRef")]
+        [DataMember(Name = "addressUse")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid? AddressUseKey
@@ -46,7 +46,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the address use
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(AddressUseKey))]
         [IgnoreDataMember]
         public Concept AddressUse
         {
@@ -64,7 +64,8 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the component types
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
+        [IgnoreDataMember]
         public List<EntityAddressComponent> Component
         {
             get

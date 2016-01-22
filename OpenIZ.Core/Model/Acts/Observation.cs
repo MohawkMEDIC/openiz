@@ -37,7 +37,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "interpretationConceptRef")]
+        [DataMember(Name = "interpretationConcept")]
         public Guid? InterpretationConceptKey
         {
             get { return this.m_interpretationConceptKey; }
@@ -51,7 +51,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the concept which indicates the interpretation of the observtion
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(InterpretationConceptKey))]
         [IgnoreDataMember]
         public Concept InterpretationConcept
         {
@@ -89,7 +89,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the key of the uom concept
         /// </summary>
-        [DataMember(Name = "unitOfMeasureRef")]
+        [DataMember(Name = "unitOfMeasure")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid UnitOfMeasureKey
@@ -106,7 +106,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the unit of measure
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(nameof(UnitOfMeasureKey))]
         public Concept UnitOfMeasure
         {
             get
@@ -156,7 +156,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the key of the uom concept
         /// </summary>
-        [DataMember(Name = "valueRef")]
+        [DataMember(Name = "value")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid ValueKey
@@ -173,7 +173,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the coded value of the observation
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(nameof(ValueKey))]
         public Concept Value
         {
             get

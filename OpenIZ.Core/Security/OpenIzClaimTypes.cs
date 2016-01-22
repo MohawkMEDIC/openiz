@@ -38,17 +38,17 @@ namespace OpenIZ.Core.Security
         /// <summary>
         /// Device identifier claim
         /// </summary>
-        public const string OpenIzDeviceIdentifierClaim = "http://openiz.org/claims/device-Ref";
+        public const string OpenIzDeviceIdentifierClaim = "http://openiz.org/claims/device-";
 
         /// <summary>
         /// Identifier of the application
         /// </summary>
-        public const string OpenIzApplicationIdentifierClaim = "http://openiz.org/claims/application-Ref";
+        public const string OpenIzApplicationIdentifierClaim = "http://openiz.org/claims/application-";
 
         /// <summary>
         /// Patient identifier claim
         /// </summary>
-        public const string XUAPatientIdentifierClaim = "urn:oasis:names:tc:xacml:2.0:resource:resource-Ref";
+        public const string XUAPatientIdentifierClaim = "urn:oasis:names:tc:xacml:2.0:resource:resource-";
         /// <summary>
         /// Purpose of use claim
         /// </summary>
@@ -64,10 +64,10 @@ namespace OpenIZ.Core.Security
         /// <summary>
         /// Organization name claim
         /// </summary>
-        public const string XspaOrganizationNameClaim = "urn:oasis:names:tc:xspa:1.0: subject:organization-Ref";
+        public const string XspaOrganizationNameClaim = "urn:oasis:names:tc:xspa:1.0: subject:organization-";
         /// <summary>
         /// User identifier claim
         /// </summary>
-        public const string XspaUserIdentifierClaim = "urn:oasis:names:tc:xacml:1.0: subject:subject-Ref";
+        public const string XspaUserIdentifierClaim = "urn:oasis:names:tc:xacml:1.0: subject:subject-";
     }
 }

@@ -31,7 +31,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// The target of the association
         /// </summary>
-        [DataMember(Name = "targetRef")]
+        [DataMember(Name = "target")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid TargetActKey
@@ -47,7 +47,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Target act reference
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(TargetActKey))]
         [IgnoreDataMember]
         public Act TargetAct
         {
@@ -69,7 +69,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Association type key
         /// </summary>
-        [DataMember(Name = "relationshipTypeRef")]
+        [DataMember(Name = "relationshipType")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid RelationshipTypeKey
@@ -86,7 +86,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the association type
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(nameof(RelationshipTypeKey))]
         public Concept RelationshipType
         {
             get

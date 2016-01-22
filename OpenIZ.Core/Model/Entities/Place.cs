@@ -35,7 +35,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "classConceptRef")]
+        [DataMember(Name = "classConcept")]
         public override Guid ClassConceptKey
         {
             get

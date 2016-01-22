@@ -49,7 +49,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "scopeConceptRef")]
+        [DataMember(Name = "scopeConcept")]
         public Guid?  ScopeConceptKey
         {
             get { return this.m_scopeConceptId; }
@@ -65,7 +65,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "typeConceptRef")]
+        [DataMember(Name = "typeConcept")]
         public Guid  TypeConceptKey
         {
             get { return this.m_typeConceptId; }
@@ -79,7 +79,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Type concept
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(TypeConceptKey))]
         [IgnoreDataMember]
         public Concept TypeConcept
         {
@@ -101,7 +101,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets the scope of the identifier
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(ScopeConceptKey))]
         [IgnoreDataMember]
         public Concept Scope
         {

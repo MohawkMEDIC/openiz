@@ -60,7 +60,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "classConceptRef")]
+        [DataMember(Name = "classConcept")]
         public virtual Guid ClassConceptKey
         {
             get { return this.m_classConceptKey; }
@@ -76,7 +76,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "moodConceptRef")]
+        [DataMember(Name = "moodConcept")]
         public virtual Guid MoodConceptKey
         {
             get { return this.m_moodConceptKey; }
@@ -93,7 +93,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "reasonConceptRef")]
+        [DataMember(Name = "reasonConcept")]
         public Guid? ReasonConceptKey
         {
             get { return this.m_reasonConceptKey; }
@@ -109,7 +109,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "statusConceptRef")]
+        [DataMember(Name = "statusConcept")]
         public Guid StatusConceptKey
         {
             get { return this.m_statusConceptKey; }
@@ -125,7 +125,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "typeConceptRef")]
+        [DataMember(Name = "typeConcept")]
         public Guid TypeConceptKey
         {
             get { return this.m_typeConceptKey; }
@@ -141,7 +141,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Class concept datal load property
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(nameof(ClassConceptKey))]
         public Concept ClassConcept
         {
             get
@@ -155,7 +155,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Mood concept data load property
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(nameof(MoodConceptKey))]
         public Concept MoodConcept
         {
             get
@@ -177,7 +177,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Mood concept data load property
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(nameof(ReasonConceptKey))]
         public Concept ReasonConcept
         {
             get
@@ -195,7 +195,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Status concept id
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(StatusConceptKey))]
         [IgnoreDataMember]
         public Concept StatusConcept
         {
@@ -217,7 +217,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Type concept identifier
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(TypeConceptKey))]
         [IgnoreDataMember]
         public Concept TypeConcept
         {
@@ -239,7 +239,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets the identifiers associated with this act
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public List<ActIdentifier> Identifiers
         {
@@ -257,7 +257,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets a list of all associated acts for this act
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public List<ActRelationship> Relationships
         {
@@ -275,7 +275,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets a list of all extensions associated with the act
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public List<ActExtension> Extensions
         {
@@ -293,7 +293,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets a list of all notes associated with the act
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public List<ActNote> Notes
         {
@@ -311,7 +311,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets a list of all tags associated with the act
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public List<ActTag> Tags
         {

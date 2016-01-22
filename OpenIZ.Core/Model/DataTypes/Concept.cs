@@ -73,7 +73,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "statusConceptRef")]
+        [DataMember(Name = "statusConcept")]
         public Guid?  StatusConceptKey
         {
             get
@@ -90,7 +90,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the status of the concept
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(StatusConceptKey))]
         [IgnoreDataMember]
         public Concept Status
         {
@@ -111,7 +111,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets a list of concept relationships
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public List<ConceptRelationship> Relationship
         {
@@ -131,7 +131,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "classRef")]
+        [DataMember(Name = "class")]
         public Guid  ClassKey
         {
             get { return this.m_classId; }
@@ -145,7 +145,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the classification of the concept
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(ClassKey))]
         [IgnoreDataMember]
         public ConceptClass Class
         {
@@ -167,7 +167,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets a list of concept reference terms
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public List<ConceptReferenceTerm> ReferenceTerms
         {
@@ -185,7 +185,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets the concept names
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public List<ConceptName> ConceptNames
         {

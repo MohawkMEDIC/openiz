@@ -80,7 +80,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the effective version
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(EffectiveVersionSequenceId))]
         [IgnoreDataMember]
         public TSourceType EffectiveVersion
         {
@@ -108,7 +108,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets the obsoletion version
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(ObsoleteVersionSequenceId))]
         [IgnoreDataMember]
         public TSourceType ObsoleteVersion
         {
@@ -137,7 +137,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the user that created this relationship
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(CreatedById))]
         [IgnoreDataMember]
         public override SecurityUser CreatedBy
         {
@@ -150,7 +150,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets the identifier of the user that created this relationship
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public override Guid CreatedById
         {
@@ -167,7 +167,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Obsoleted by
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(ObsoletedById))]
         [IgnoreDataMember]
         public override SecurityUser ObsoletedBy
         {
@@ -180,7 +180,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets the identifier of the user that obsoleted the relationship
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public override Guid? ObsoletedById
         {

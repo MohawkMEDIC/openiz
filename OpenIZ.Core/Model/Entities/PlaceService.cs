@@ -32,7 +32,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "serviceConceptRef")]
+        [DataMember(Name = "serviceConcept")]
         public Guid ServiceConceptKey
         {
             get { return this.m_serviceConceptKey; }
@@ -46,7 +46,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the service concept
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(ServiceConceptKey))]
         [IgnoreDataMember]
         public Concept ServiceConcept
         {

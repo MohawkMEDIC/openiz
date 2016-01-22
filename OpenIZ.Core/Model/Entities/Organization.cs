@@ -39,7 +39,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "industryConceptRef")]
+        [DataMember(Name = "industryConcept")]
         public Guid IndustryConceptKey
         {
             get { return this.m_industryConceptKey; }
@@ -53,7 +53,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the industry in which the organization operates
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(IndustryConceptKey))]
         [IgnoreDataMember]
         public Concept IndustryConcept
         {

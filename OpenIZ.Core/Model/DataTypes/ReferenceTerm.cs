@@ -75,7 +75,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "codeSystemRef")]
+        [DataMember(Name = "codeSystem")]
         public Guid  CodeSystemKey {
             get { return this.m_codeSystemId; }
             set
@@ -88,7 +88,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets display names associated with the reference term
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public List<ReferenceTermName> DisplayNames {
             get

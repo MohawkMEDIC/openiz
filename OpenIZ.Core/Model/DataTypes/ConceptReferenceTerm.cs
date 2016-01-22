@@ -48,7 +48,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "referenceTermRef")]
+        [DataMember(Name = "referenceTerm")]
         public Guid  ReferenceTermKey {
             get { return this.m_referenceTermId; }
             set
@@ -61,7 +61,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or set the reference term
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(ReferenceTermKey))]
         [IgnoreDataMember]
         public ReferenceTerm ReferenceTerm
         {
@@ -85,7 +85,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "relationshipTypeRef")]
+        [DataMember(Name = "relationshipType")]
         public Guid  RelationshipTypeKey {
             get { return this.m_relationshipTypeId; }
             set
@@ -98,7 +98,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the relationship type
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(RelationshipTypeKey))]
         [IgnoreDataMember]
         public ConceptRelationshipType RelationshipType {
             get

@@ -105,7 +105,7 @@ namespace OpenIZ.Core.Model.Security
         /// Represents roles
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(null)]
         public List<SecurityRole> Roles {
             get
             {
@@ -126,7 +126,7 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets or sets the user that updated this base data
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public SecurityUser UpdatedBy
         {
@@ -142,7 +142,7 @@ namespace OpenIZ.Core.Model.Security
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "updatedByRef")]
+        [DataMember(Name = "updatedBy")]
         public Guid?  UpdatedByKey
         {
             get { return this.m_updatedById; }
@@ -169,7 +169,7 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Get the policies active for this user
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public override List<SecurityPolicyInstance> Policies
         {

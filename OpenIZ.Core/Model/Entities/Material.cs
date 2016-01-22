@@ -45,7 +45,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the form concept's key
         /// </summary>
-        [DataMember(Name = "formConceptRef")]
+        [DataMember(Name = "formConcept")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid? FormConceptKey
@@ -61,7 +61,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the quantity concept ref
         /// </summary>
-        [DataMember(Name = "quantityConceptRef")]
+        [DataMember(Name = "quantityConcept")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid? QuantityConceptKey
@@ -78,7 +78,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the concept which dictates the form of the material (solid, liquid, capsule, injection, etc.)
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(nameof(FormConceptKey))]
         public Concept FormConcept
         {
             get {
@@ -97,7 +97,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the concept which dictates the unit of measure for a single instance of this entity
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(nameof(QuantityConceptKey))]
         public Concept QuantityConcept
         {
             get

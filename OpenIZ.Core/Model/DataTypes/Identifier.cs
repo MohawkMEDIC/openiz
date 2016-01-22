@@ -82,7 +82,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the identifier type
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(TypeKey))]
         [IgnoreDataMember]
         public IdentifierType Type
         {
@@ -101,7 +101,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the assigning authority 
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(AuthorityKey))]
         [IgnoreDataMember]
         public AssigningAuthority Authority
         {
@@ -125,7 +125,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "authorityRef")]
+        [DataMember(Name = "authority")]
         public Guid  AuthorityKey {
             get { return this.m_authorityId; }
             set
@@ -142,7 +142,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "typeRef")]
+        [DataMember(Name = "type")]
         public Guid?  TypeKey
         {
             get { return this.m_identifierTypeId; }

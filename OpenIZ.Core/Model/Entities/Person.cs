@@ -47,7 +47,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets the person's languages of communication
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(null)]
         [IgnoreDataMember]
         public List<PersonLanguageCommunication> LanguageCommunication
         {

@@ -37,7 +37,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the security device key
         /// </summary>
-        [DataMember(Name ="securityDeviceRef")]
+        [DataMember(Name ="securityDevice")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid SecurityDeviceKey
@@ -53,7 +53,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the security device
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(SecurityDeviceKey))]
         [IgnoreDataMember]
         public SecurityDevice SecurityDevice
         {

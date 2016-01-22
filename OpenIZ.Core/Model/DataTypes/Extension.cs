@@ -34,7 +34,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the extension type key
         /// </summary>
-        [DataMember(Name = "extensionTypeRef")]
+        [DataMember(Name = "extensionType")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid ExtensionTypeKey
@@ -50,7 +50,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the extension type
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(ExtensionTypeKey))]
         public ExtensionType ExtensionType
         {
             get {

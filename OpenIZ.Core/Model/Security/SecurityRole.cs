@@ -56,7 +56,7 @@ namespace OpenIZ.Core.Model.Security
         /// Gets or sets the security users in the role
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(null)]
         public List<SecurityUser> Users {
             get
             {

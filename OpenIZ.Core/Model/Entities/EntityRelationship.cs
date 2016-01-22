@@ -28,7 +28,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// The target of the association
         /// </summary>
-        [DataMember(Name = "targetRef")]
+        [DataMember(Name = "target")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid TargetEntityKey
@@ -42,7 +42,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Target entity reference
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(TargetEntityKey))]
         [IgnoreDataMember]
         public Entity TargetEntity
         {
@@ -63,7 +63,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Association type key
         /// </summary>
-        [DataMember(Name = "relationshipTypeRef")]
+        [DataMember(Name = "relationshipType")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid RelationshipTypeKey
@@ -80,7 +80,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the association type
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad]
+        [DelayLoad(nameof(RelationshipTypeKey))]
         public Concept RelationshipType
         {
             get {

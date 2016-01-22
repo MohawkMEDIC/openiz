@@ -68,7 +68,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the user that created this base data
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(CreatedById))]
         [IgnoreDataMember]
         public virtual SecurityUser CreatedBy {
             get
@@ -81,7 +81,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the user that obsoleted this base data
         /// </summary>
-        [DelayLoad]
+        [DelayLoad(nameof(ObsoletedById))]
         [IgnoreDataMember]
         public virtual SecurityUser ObsoletedBy {
             get
