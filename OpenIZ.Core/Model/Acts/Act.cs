@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,8 +16,8 @@ namespace OpenIZ.Core.Model.Acts
     /// Represents the base class for an act
     /// </summary>
     [Serializable]
-    [DataContract(Namespace ="http://openiz.org/model", Name ="Act")]
-    [Resource(ModelScope.Clinical)]
+    [XmlType(Namespace ="http://openiz.org/model", TypeName ="Act")]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Act")]
     public class Act : VersionedEntityData<Act>
     {
 
@@ -44,19 +44,19 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets an indicator which identifies whether the object is negated
         /// </summary>
-        [DataMember(Name = "isNegated")]
+        [XmlElement("isNegated")]
         public Boolean IsNegated { get; set; }
 
         /// <summary>
         /// Gets or sets the start time of the act
         /// </summary>
-        [DataMember(Name = "startTime")]
+        [XmlElement("startTime")]
         public DateTime? StartTime { get; set; }
 
         /// <summary>
         /// Gets or sets the stop time of the act
         /// </summary>
-        [DataMember(Name = "stopTime")]
+        [XmlElement("stopTime")]
         public DateTime? StopTime { get; set; }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "classConcept")]
+        [XmlElement("classConcept")]
         public virtual Guid ClassConceptKey
         {
             get { return this.m_classConceptKey; }
@@ -80,7 +80,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "moodConcept")]
+        [XmlElement("moodConcept")]
         public virtual Guid MoodConceptKey
         {
             get { return this.m_moodConceptKey; }
@@ -97,7 +97,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "reasonConcept")]
+        [XmlElement("reasonConcept")]
         public Guid? ReasonConceptKey
         {
             get { return this.m_reasonConceptKey; }
@@ -113,7 +113,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "statusConcept")]
+        [XmlElement("statusConcept")]
         public Guid StatusConceptKey
         {
             get { return this.m_statusConceptKey; }
@@ -129,7 +129,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "typeConcept")]
+        [XmlElement("typeConcept")]
         public Guid TypeConceptKey
         {
             get { return this.m_typeConceptKey; }
@@ -144,7 +144,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Class concept datal load property
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         [DelayLoad(nameof(ClassConceptKey))]
         public Concept ClassConcept
         {
@@ -158,7 +158,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Mood concept data load property
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         [DelayLoad(nameof(MoodConceptKey))]
         public Concept MoodConcept
         {
@@ -180,7 +180,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Mood concept data load property
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         [DelayLoad(nameof(ReasonConceptKey))]
         public Concept ReasonConcept
         {
@@ -200,7 +200,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Status concept id
         /// </summary>
         [DelayLoad(nameof(StatusConceptKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Concept StatusConcept
         {
             get
@@ -222,7 +222,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Type concept identifier
         /// </summary>
         [DelayLoad(nameof(TypeConceptKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Concept TypeConcept
         {
             get
@@ -244,7 +244,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets the identifiers associated with this act
         /// </summary>
         [DelayLoad(null)]
-        [DataMember(Name = "identifier")]
+        [XmlElement("identifier")]
         public List<ActIdentifier> Identifiers
         {
             get
@@ -262,7 +262,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets a list of all associated acts for this act
         /// </summary>
         [DelayLoad(null)]
-        [DataMember(Name = "relationship")]
+        [XmlElement("relationship")]
         public List<ActRelationship> Relationships
         {
             get
@@ -280,7 +280,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets a list of all extensions associated with the act
         /// </summary>
         [DelayLoad(null)]
-        [DataMember(Name= "extension")]
+        [XmlElement("extension")]
         public List<ActExtension> Extensions
         {
             get
@@ -298,7 +298,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets a list of all notes associated with the act
         /// </summary>
         [DelayLoad(null)]
-        [DataMember(Name = "note")]
+        [XmlElement("note")]
         public List<ActNote> Notes
         {
             get
@@ -316,7 +316,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets a list of all tags associated with the act
         /// </summary>
         [DelayLoad(null)]
-        [DataMember(Name = "tag")]
+        [XmlElement("tag")]
         public List<ActTag> Tags
         {
             get

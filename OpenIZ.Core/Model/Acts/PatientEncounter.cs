@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,8 +15,8 @@ namespace OpenIZ.Core.Model.Acts
     /// Represents an encounter a patient has with the health system
     /// </summary>
     [Serializable]
-    [DataContract(Name = "PatientEncounter", Namespace = "http://openiz.org/model")]
-    [Resource(ModelScope.Clinical)]
+    [XmlType("PatientEncounter", Namespace = "http://openiz.org/model")]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "PatientEncounter")]
     public class PatientEncounter : Act
     {
 
@@ -38,7 +38,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "dischargeDisposition")]
+        [XmlElement("dischargeDisposition")]
         public Guid? DischargeDispositionKey
         {
             get { return this.m_dischargeDispositionKey; }
@@ -52,7 +52,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the discharge disposition (how the patient left the encounter
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         [DelayLoad(nameof(DischargeDispositionKey))]
         public Concept DischargeDisposition
         {

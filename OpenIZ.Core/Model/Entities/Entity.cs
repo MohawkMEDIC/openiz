@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,8 +16,8 @@ namespace OpenIZ.Core.Model.Entities
     /// <summary>
     /// Represents the base of all entities
     /// </summary>
-    [DataContract(Name = "Entity", Namespace = "http://openiz.org/model")]
-    [Resource(ModelScope.Clinical)]
+    [XmlType("Entity", Namespace = "http://openiz.org/model")]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Entity")]
     [Serializable]
     public class Entity : VersionedEntityData<Entity>
     {
@@ -69,7 +69,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name ="classConcept")]
+        [XmlElement("classConcept")]
         public virtual Guid ClassConceptKey
         {
             get { return this.m_classConceptId; }
@@ -85,7 +85,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name ="determinerConcept")]
+        [XmlElement("determinerConcept")]
         public virtual Guid DeterminerConceptKey
         {
             get { return this.m_determinerConceptId; }
@@ -101,7 +101,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "statusConcept")]
+        [XmlElement("statusConcept")]
         public Guid  StatusConceptKey
         {
             get { return this.m_statusConceptId; }
@@ -117,7 +117,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "creationAct")]
+        [XmlElement("creationAct")]
         public Guid  CreationActKey
         {
             get { return this.m_creationActId; }
@@ -133,7 +133,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "typeConcept")]
+        [XmlElement("typeConcept")]
         public Guid?  TypeConceptKey
         {
             get { return this.m_typeConceptId; }
@@ -147,7 +147,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Class concept datal load property
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         [DelayLoad(nameof(ClassConceptKey))]
         public Concept ClassConcept
         {
@@ -161,7 +161,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Determiner concept
         /// </summary>
         [DelayLoad(nameof(DeterminerConceptKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public virtual Concept DeterminerConcept
         {
             get
@@ -175,7 +175,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Status concept id
         /// </summary>
         [DelayLoad(nameof(StatusConceptKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Concept StatusConcept
         {
             get
@@ -197,7 +197,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Creation act reference
         /// </summary>
         [DelayLoad(nameof(CreationActKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Act CreationAct
         {
             get {
@@ -218,7 +218,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Type concept identifier
         /// </summary>
         [DelayLoad(nameof(TypeConceptKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Concept TypeConcept
         {
             get {
@@ -236,7 +236,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets the identifiers associated with this entity
         /// </summary>
         [DelayLoad(null)]
-        [DataMember(Name = "identifier")]
+        [XmlElement("identifier")]
         public List<EntityIdentifier> Identifiers
         {
             get
@@ -254,7 +254,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all associated entities for this entity
         /// </summary>
         [DelayLoad(null)]
-        [DataMember(Name = "relationship")]
+        [XmlElement("relationship")]
         public List<EntityRelationship> Relationships
         {
             get
@@ -272,7 +272,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all telecommunications addresses associated with the entity
         /// </summary>
         [DelayLoad(null)]
-        [DataMember(Name = "telecom")]
+        [XmlElement("telecom")]
         public List<EntityTelecomAddress> Telecom
         {
             get
@@ -290,7 +290,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all extensions associated with the entity
         /// </summary>
         [DelayLoad(null)]
-        [DataMember(Name = "extension")]
+        [XmlElement("extension")]
         public List<EntityExtension> Extensions
         {
             get
@@ -308,7 +308,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all names associated with the entity
         /// </summary>
         [DelayLoad(null)]
-        [DataMember(Name = "name")]
+        [XmlElement("name")]
         public List<EntityName> Names
         {
             get
@@ -326,7 +326,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all addresses associated with the entity
         /// </summary>
         [DelayLoad(null)]
-        [DataMember(Name = "address")]
+        [XmlElement("address")]
         public List<EntityAddress> Addresses
         {
             get
@@ -344,7 +344,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all notes associated with the entity
         /// </summary>
         [DelayLoad(null)]
-        [DataMember(Name = "note")]
+        [XmlElement("note")]
         public List<EntityNote> Notes
         {
             get
@@ -362,7 +362,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all tags associated with the entity
         /// </summary>
         [DelayLoad(null)]
-        [DataMember(Name = "tag")]
+        [XmlElement("tag")]
         public List<EntityTag> Tags
         {
             get
@@ -380,7 +380,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets the acts in which this entity participates
         /// </summary>
         [DelayLoad(null)]
-        [DataMember(Name = "participation")]
+        [XmlElement("participation")]
         public List<ActParticipation> Participations
         {
             get

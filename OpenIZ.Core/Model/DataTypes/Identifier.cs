@@ -25,7 +25,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Acts;
 
@@ -35,7 +35,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Entity identifiers
     /// </summary>
     [Serializable]
-    [DataContract(Name = "EntityIdentifier", Namespace = "http://openiz.org/model")]
+    [XmlType("EntityIdentifier", Namespace = "http://openiz.org/model")]
     public class EntityIdentifier : IdentifierBase<Entity>
     {
 
@@ -46,7 +46,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Act identifier
     /// </summary>
     [Serializable]
-    [DataContract(Namespace = "http://openiz.org/model", Name = "ActIdentifier")]
+    [XmlType(Namespace = "http://openiz.org/model", TypeName = "ActIdentifier")]
     public class ActIdentifier : IdentifierBase<Act>
     {
 
@@ -55,7 +55,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents an external assigned identifier
     /// </summary>
-    [DataContract(Name = "IdentifierBase", Namespace = "http://openiz.org/model")]
+    [XmlType(Namespace = "http://openiz.org/model")]
     [Serializable]
     public abstract class IdentifierBase<TBoundModel> : VersionBoundRelationData<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
     {
@@ -76,15 +76,15 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the value of the identifier
         /// </summary>
-        [DataMember(Name = "value")]
+        [XmlElement("value")]
         public String Value { get; set; }
 
         /// <summary>
         /// Gets or sets the identifier type
         /// </summary>
         [DelayLoad(nameof(TypeKey))]
-        [IgnoreDataMember]
-        [DataMember(Name = "type")]
+        [XmlIgnore]
+        [XmlElement("type")]
         public IdentifierType Type
         {
             get
@@ -103,8 +103,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the assigning authority 
         /// </summary>
         [DelayLoad(nameof(AuthorityKey))]
-        [IgnoreDataMember]
-        [DataMember(Name = "authority")]
+        [XmlIgnore]
+        [XmlElement("authority")]
         public AssigningAuthority Authority
         {
             get
@@ -127,7 +127,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Guid  AuthorityKey {
             get { return this.m_authorityId; }
             set
@@ -144,7 +144,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Guid?  TypeKey
         {
             get { return this.m_identifierTypeId; }

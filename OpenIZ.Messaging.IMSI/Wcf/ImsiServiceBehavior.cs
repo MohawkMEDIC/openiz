@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.ServiceModel.Web;
 using System.IO;
 using OpenIZ.Core.Model.Attributes;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Messaging.IMSI.Wcf
 {
@@ -44,18 +45,19 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             throw new NotImplementedException();
         }
 
-        public Stream GetSchema(int schemaId)
+        public XmlSchema GetSchema(int schemaId)
         {
             try
             {
-                XsdDataContractExporter exporter = new XsdDataContractExporter();
+                XmlSchemas schemaCollection = new XmlSchemas();
 
-                List<Type> exportTypes = new List<Type>(typeof(IdentifiedData).Assembly.GetTypes().Where(o => o.GetCustomAttribute<ResourceAttribute>() != null && (o.GetCustomAttribute<ResourceAttribute>().Scope & (ModelScope.Clinical | ModelScope.Concept | ModelScope.Protocol | ModelScope.MetaData)) != (ModelScope)0 && !o.IsGenericTypeDefinition && !o.IsAbstract));
-                exportTypes.AddRange(typeof(ImsiServiceBehavior).Assembly.GetTypes().Where(o => o.GetCustomAttribute<ResourceAttribute>()?.Scope == ModelScope.Clinical &&  !o.IsGenericTypeDefinition && !o.IsAbstract));
-                exporter.Export(exportTypes);
+                XmlReflectionImporter importer = new XmlReflectionImporter("http://openiz.org/model");
+                XmlSchemaExporter exporter = new XmlSchemaExporter(schemaCollection);
 
-                var schemas = exporter.Schemas.Schemas().OfType<XmlSchema>().ToArray();
-                if (schemaId > schemas.Length)
+                foreach (var cls in typeof(IdentifiedData).Assembly.GetTypes().Where(o => o.GetCustomAttribute<XmlRootAttribute>() != null && !o.IsGenericTypeDefinition))
+                    exporter.ExportTypeMapping(importer.ImportTypeMapping(cls, "http://openiz.org/model"));
+
+                if (schemaId > schemaCollection.Count)
                 {
                     WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NotFound;
                     return null;
@@ -64,10 +66,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 {
                     WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.OK;
                     WebOperationContext.Current.OutgoingResponse.ContentType = "text/xml";
-                    var outStream = new MemoryStream();
-                    schemas[schemaId].Write(outStream);
-                    outStream.Seek(0, SeekOrigin.Begin);
-                    return outStream;
+                    return schemaCollection[schemaId];
                 }                
             }
             catch(Exception e)

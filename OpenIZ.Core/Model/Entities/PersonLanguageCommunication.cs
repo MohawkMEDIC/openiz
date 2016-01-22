@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -7,20 +7,20 @@ namespace OpenIZ.Core.Model.Entities
     /// Represents a single preferred communication method for the entity
     /// </summary>
     [Serializable]
-    [DataContract(Name = "PersonLanguageCommunication", IsReference = false, Namespace ="http://openiz.org/model")]
+    [XmlType("PersonLanguageCommunication", Namespace ="http://openiz.org/model")]
     public class PersonLanguageCommunication : VersionBoundRelationData<Entity>
     {
 
         /// <summary>
         /// Gets or sets the language code
         /// </summary>
-        [DataMember(Name = "languageCode")]
+        [XmlElement("languageCode")]
         public string LanguageCode { get; set; }
 
         /// <summary>
         /// Gets or set the user's preference indicator
         /// </summary>
-        [DataMember(Name = "isPreferred")]
+        [XmlElement("isPreferred")]
         public bool IsPreferred { get; set; }
 
     }

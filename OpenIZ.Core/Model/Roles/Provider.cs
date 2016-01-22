@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,8 +16,8 @@ namespace OpenIZ.Core.Model.Roles
     /// Represents a provider role of a person
     /// </summary>
     [Serializable]
-    [DataContract(Name = "Provider", Namespace = "http://openiz.org/model")]
-    [Resource(ModelScope.Clinical)]
+    [XmlType("Provider", Namespace = "http://openiz.org/model")]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Provider")]
     public class Provider : Person
     {
 
@@ -41,7 +41,7 @@ namespace OpenIZ.Core.Model.Roles
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "providerSpecialty")]
+        [XmlElement("providerSpecialty")]
         public Guid? ProviderSpecialtyKey
         {
             get
@@ -58,7 +58,7 @@ namespace OpenIZ.Core.Model.Roles
         /// <summary>
         /// Gets or sets the provider specialty
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         [DelayLoad(nameof(ProviderSpecialtyKey))]
         public Concept ProviderSpecialty
         {

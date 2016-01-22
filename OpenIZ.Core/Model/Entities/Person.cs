@@ -6,7 +6,7 @@ using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,8 +16,8 @@ namespace OpenIZ.Core.Model.Entities
     /// Represents an entity which is a person
     /// </summary>
     [Serializable]
-    [DataContract(Name = "Person", Namespace = "http://openiz.org/model")]
-    [Resource(ModelScope.Clinical)]
+    [XmlType("Person", Namespace = "http://openiz.org/model")]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Person")]
     public class Person : Entity
     {
 
@@ -37,19 +37,19 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the person's date of birth
         /// </summary>
-        [DataMember(Name = "dateOfBirth")]
+        [XmlElement("dateOfBirth")]
         public DateTime DateOfBirth { get; set; }
         /// <summary>
         /// Gets or sets the precision ofthe date of birth
         /// </summary>
-        [DataMember(Name = "datePrecision")]
+        [XmlElement("datePrecision")]
         public DatePrecision DatePrecision { get; set; }
 
         /// <summary>
         /// Gets the person's languages of communication
         /// </summary>
         [DelayLoad(null)]
-        [DataMember(Name = "language")]
+        [XmlElement("language")]
         public List<PersonLanguageCommunication> LanguageCommunication
         {
             get

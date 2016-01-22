@@ -29,7 +29,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model
 {
@@ -38,7 +38,7 @@ namespace OpenIZ.Core.Model
     /// Represents the root of all model classes in the OpenIZ Core
     /// </summary>
     [Serializable]
-    [DataContract(Name = "BaseEntityData", Namespace = "http://openiz.org/model")]
+    [XmlType("BaseEntityData", Namespace = "http://openiz.org/model")]
     public abstract class BaseEntityData : IdentifiedData
     {
 
@@ -56,20 +56,20 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Creation Time
         /// </summary>
-        [DataMember(Name = "creationTime")]
+        [XmlElement("creationTime")]
         public DateTime CreationTime { get; set; }
 
         /// <summary>
         /// Obsoletion time
         /// </summary>
-        [DataMember(Name = "obsoletionTime")]
+        [XmlElement("obsoletionTime")]
         public DateTime? ObsoletionTime { get; set; }
 
         /// <summary>
         /// Gets or sets the user that created this base data
         /// </summary>
         [DelayLoad(nameof(CreatedById))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public virtual SecurityUser CreatedBy {
             get
             {
@@ -82,7 +82,7 @@ namespace OpenIZ.Core.Model
         /// Gets or sets the user that obsoleted this base data
         /// </summary>
         [DelayLoad(nameof(ObsoletedById))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public virtual SecurityUser ObsoletedBy {
             get
             {
@@ -96,7 +96,7 @@ namespace OpenIZ.Core.Model
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name ="createdBy")]
+        [XmlElement("createdBy")]
         public virtual Guid CreatedById
         {
             get { return this.m_createdById; }
@@ -113,7 +113,7 @@ namespace OpenIZ.Core.Model
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name ="obsoletedBy")]
+        [XmlElement("obsoletedBy")]
         public virtual Guid? ObsoletedById
         {
             get { return this.m_obsoletedById; }

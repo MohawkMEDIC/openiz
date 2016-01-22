@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,8 +15,8 @@ namespace OpenIZ.Core.Model.Entities
     /// Represents a material 
     /// </summary>
     [Serializable]
-    [DataContract(Name = "Material", Namespace = "http://openiz.org/model")]
-    [Resource(ModelScope.Clinical)]
+    [XmlType("Material", Namespace = "http://openiz.org/model")]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Material")]
     public class Material : Entity
     {
         // Form concept key
@@ -40,13 +40,13 @@ namespace OpenIZ.Core.Model.Entities
         /// The base quantity of the object in the units. This differs from quantity on the relationship
         /// which is a /per ... 
         /// </summary>
-        [DataMember(Name = "quantity")]
+        [XmlElement("quantity")]
         public Decimal Quantity { get; set; }
 
         /// <summary>
         /// Gets or sets the form concept's key
         /// </summary>
-        [DataMember(Name = "formConcept")]
+        [XmlElement("formConcept")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid? FormConceptKey
@@ -62,7 +62,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the quantity concept ref
         /// </summary>
-        [DataMember(Name = "quantityConcept")]
+        [XmlElement("quantityConcept")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid? QuantityConceptKey
@@ -78,7 +78,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the concept which dictates the form of the material (solid, liquid, capsule, injection, etc.)
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         [DelayLoad(nameof(FormConceptKey))]
         public Concept FormConcept
         {
@@ -97,7 +97,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the concept which dictates the unit of measure for a single instance of this entity
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         [DelayLoad(nameof(QuantityConceptKey))]
         public Concept QuantityConcept
         {
@@ -117,13 +117,13 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the expiry date of the material
         /// </summary>
-        [DataMember(Name = "expiryDate")]
+        [XmlElement("expiryDate")]
         public DateTime ExpiryDate { get; set; }
 
         /// <summary>
         /// True if the material is simply administrative
         /// </summary>
-        [DataMember(Name = "isAdministrative")]
+        [XmlElement("isAdministrative")]
         public Boolean IsAdministrative { get; set; }
 
         /// <summary>

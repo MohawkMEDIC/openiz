@@ -15,6 +15,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     /// The IMSI service interface
     /// </summary>
     [ServiceContract(Namespace = "http://openiz.org/imsi/1.0", Name = "IMSI", ConfigurationName = "IMSI_1.0")]
+    [XmlSerializerFormat]
     public interface IImsiServiceContract 
     {
 
@@ -71,6 +72,6 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// Get the schema
         /// </summary>
         [WebGet(UriTemplate = "/?xsd={schemaId}")]
-        Stream GetSchema(int schemaId);
+        XmlSchema GetSchema(int schemaId);
     }
 }

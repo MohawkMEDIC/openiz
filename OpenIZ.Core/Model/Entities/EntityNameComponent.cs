@@ -2,7 +2,7 @@
 using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.ComponentModel;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -10,7 +10,7 @@ namespace OpenIZ.Core.Model.Entities
     /// Represents a name component which is bound to a name
     /// </summary>
     [Serializable]
-    [DataContract(Namespace = "http://openiz.org/model", Name = "EntityNameComponent")]
+    [XmlType(Namespace = "http://openiz.org/model", TypeName = "EntityNameComponent")]
     public class EntityNameComponent : GenericComponentValues<EntityName>
     {
 
@@ -23,13 +23,13 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the value of the name component
         /// </summary>
-        [DataMember(Name = "value")]
+        [XmlElement("value")]
         public String Value { get; set; }
 
         /// <summary>
         /// Gets or sets the phonetic code of the reference term
         /// </summary>
-        [DataMember(Name = "phoneticCode")]
+        [XmlElement("phoneticCode")]
         public String PhoneticCode { get; set; }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "phoneticAlgorithm")]
+        [XmlElement("phoneticAlgorithm")]
         public Guid PhoneticAlgorithmKey
         {
             get { return this.m_phoneticAlgorithmId; }
@@ -52,7 +52,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the phonetic algorithm
         /// </summary>
         [DelayLoad(nameof(PhoneticAlgorithmKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public PhoneticAlgorithm PhoneticAlgorithm
         {
             get

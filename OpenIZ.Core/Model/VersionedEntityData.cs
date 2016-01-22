@@ -22,7 +22,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MARC.HI.EHRS.SVC.Core.Data;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.ComponentModel;
 using OpenIZ.Core.Model.Attributes;
 using MARC.HI.EHRS.SVC.Core;
@@ -34,7 +34,7 @@ namespace OpenIZ.Core.Model
     /// Represents versioned based data, that is base data which has versions
     /// </summary>
     [Serializable]
-    [DataContract(Name = "VersionedEntityData", Namespace = "http://openiz.org/model")]
+    [XmlType(Namespace = "http://openiz.org/model")]
     public abstract class VersionedEntityData<THistoryModelType> : BaseEntityData where THistoryModelType : VersionedEntityData<THistoryModelType>
     {
 
@@ -56,7 +56,7 @@ namespace OpenIZ.Core.Model
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "previousVersion")]
+        [XmlElement("previousVersion")]
         public virtual Guid? PreviousVersionKey
         {
             get
@@ -74,7 +74,7 @@ namespace OpenIZ.Core.Model
         /// Gets or sets the previous version
         /// </summary>
         [DelayLoad(nameof(PreviousVersionKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public virtual THistoryModelType PreviousVersion
         {
             get
@@ -95,19 +95,19 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the key which represents the version of the entity
         /// </summary>
-        [DataMember(Name = "version")]
+        [XmlElement("version")]
         public Guid VersionKey { get; set; }
 
         /// <summary>
         /// The sequence number of the version (for ordering)
         /// </summary>
-        [DataMember(Name = "sequence")]
+        [XmlElement("sequence")]
         public Decimal VersionSequence { get; set; }
 
         /// <summary>
         /// Gets or sets the IIdentified data for this object
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         public override Identifier<Guid> Id
         {
             get

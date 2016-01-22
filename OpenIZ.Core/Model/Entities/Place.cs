@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,8 +17,8 @@ namespace OpenIZ.Core.Model.Entities
     /// An entity which is a place where healthcare services are delivered
     /// </summary>
     [Serializable]
-    [DataContract(Name = "Place", Namespace = "http://openiz.org/model")]
-    [Resource(ModelScope.Clinical)]
+    [XmlType("Place", Namespace = "http://openiz.org/model")]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Place")]
     public class Place : Entity
     {
         // Servics
@@ -39,7 +39,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "classConcept")]
+        [XmlElement("classConcept")]
         public override Guid ClassConceptKey
         {
             get
@@ -62,26 +62,26 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// True if location is mobile
         /// </summary>
-        [DataMember(Name = "isMobile")]
+        [XmlElement("isMobile")]
         public Boolean IsMobile { get; set; }
 
         /// <summary>
         /// Gets or sets the latitude
         /// </summary>
-        [DataMember(Name = "lat")]
+        [XmlElement("lat")]
         public float Lat { get; set; }
 
         /// <summary>
         /// Gets or sets the longitude
         /// </summary>
-        [DataMember(Name = "lng")]
+        [XmlElement("lng")]
         public float Lng { get; set; }
 
         /// <summary>
         /// Gets the services
         /// </summary>
         [DelayLoad(null)]
-        [DataMember(Name = "service")]
+        [XmlElement("service")]
         public List<PlaceService> Services
         {
             get

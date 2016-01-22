@@ -2,7 +2,7 @@
 using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.ComponentModel;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -11,7 +11,7 @@ namespace OpenIZ.Core.Model.Entities
     /// </summary>
     /// <typeparam name="TBoundModel"></typeparam>
     [Serializable]
-    [DataContract(Name = "GenericComponentValues", Namespace = "http://openiz.org/model")]
+    [XmlType(Namespace = "http://openiz.org/model")]
     public abstract class GenericComponentValues<TBoundModel> : BoundRelationData<TBoundModel> where TBoundModel : IdentifiedData
     {
         // Component type
@@ -25,7 +25,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "type")]
+        [XmlElement("type")]
         public Guid TypeKey
         {
             get { return this.m_componentTypeKey; }
@@ -39,7 +39,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the type of address component
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         [DelayLoad(nameof(TypeKey))]
         public Concept Type
         {

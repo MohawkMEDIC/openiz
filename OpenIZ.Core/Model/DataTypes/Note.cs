@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,7 +14,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Generic note class
     /// </summary>
     [Serializable]
-    [DataContract(Namespace = "http://openiz.org/model", Name = "Note")]
+    [XmlType(Namespace = "http://openiz.org/model")]
     public abstract class Note<TBoundModel> : VersionBoundRelationData<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
     {
 
@@ -27,7 +27,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the note text
         /// </summary>
-        [DataMember(Name = "text")]
+        [XmlElement("text")]
         public String Text { get; set; }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "author")]
+        [XmlElement("author")]
         public Guid AuthorKey
         {
             get { return this.m_authorKey; }
@@ -49,7 +49,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the author entity
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         [DelayLoad(nameof(AuthorKey))]
         public Entity Author
         {
@@ -82,7 +82,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents a note attached to an entity
     /// </summary>
-    [DataContract(Name = "EntityNote", Namespace = "http://openiz.org/model")]
+    [XmlType("EntityNote", Namespace = "http://openiz.org/model")]
     public class EntityNote : Note<Entity>
     {
 
@@ -91,7 +91,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents a note attached to an entity
     /// </summary>
-    [DataContract(Name = "ActNote", Namespace = "http://openiz.org/model")]
+    [XmlType("ActNote", Namespace = "http://openiz.org/model")]
     public class ActNote : Note<Acts.Act>
     {
 

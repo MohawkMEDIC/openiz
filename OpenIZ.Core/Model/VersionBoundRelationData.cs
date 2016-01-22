@@ -26,7 +26,7 @@ using System.Threading.Tasks;
 using OpenIZ.Core.Model.Security;
 using MARC.Everest.Connectors;
 using OpenIZ.Core.Model.Attributes;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model
 {
@@ -34,7 +34,7 @@ namespace OpenIZ.Core.Model
     /// Represents a relational class which is bound on a version boundary
     /// </summary>
     [Serializable]
-    [DataContract(Name = "VersionBoundRelationData", Namespace = "http://openiz.org/model")]
+    [XmlType(Namespace = "http://openiz.org/model")]
     public abstract class VersionBoundRelationData<TSourceType> : BoundRelationData<TSourceType> where TSourceType : VersionedEntityData<TSourceType>
     {
 
@@ -52,7 +52,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the effective version of this type
         /// </summary>
-        [DataMember(Name = "effectiveVersionSequence")]
+        [XmlElement("effectiveVersionSequence")]
         public Decimal EffectiveVersionSequenceId
         {
             get { return this.m_effectiveVersionSequenceId; }
@@ -66,7 +66,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the obsoleted version identifier
         /// </summary>
-        [DataMember(Name = "obsoleteVersionSequence")]
+        [XmlElement("obsoleteVersionSequence")]
         public Decimal? ObsoleteVersionSequenceId
         {
             get { return this.m_obsoleteVersionSequenceId; }
@@ -81,7 +81,7 @@ namespace OpenIZ.Core.Model
         /// Gets or sets the effective version
         /// </summary>
         [DelayLoad(nameof(EffectiveVersionSequenceId))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public TSourceType EffectiveVersion
         {
             get
@@ -109,7 +109,7 @@ namespace OpenIZ.Core.Model
         /// Gets the obsoletion version
         /// </summary>
         [DelayLoad(nameof(ObsoleteVersionSequenceId))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public TSourceType ObsoleteVersion
         {
             get
@@ -138,7 +138,7 @@ namespace OpenIZ.Core.Model
         /// Gets or sets the user that created this relationship
         /// </summary>
         [DelayLoad(nameof(CreatedById))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public override SecurityUser CreatedBy
         {
             get
@@ -151,7 +151,7 @@ namespace OpenIZ.Core.Model
         /// Gets the identifier of the user that created this relationship
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public override Guid CreatedById
         {
             get
@@ -168,7 +168,7 @@ namespace OpenIZ.Core.Model
         /// Obsoleted by
         /// </summary>
         [DelayLoad(nameof(ObsoletedById))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public override SecurityUser ObsoletedBy
         {
             get
@@ -181,7 +181,7 @@ namespace OpenIZ.Core.Model
         /// Gets the identifier of the user that obsoleted the relationship
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public override Guid? ObsoletedById
         {
             get

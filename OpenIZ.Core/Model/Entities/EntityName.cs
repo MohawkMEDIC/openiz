@@ -5,7 +5,7 @@ using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Linq;
 
 namespace OpenIZ.Core.Model.Entities
@@ -14,7 +14,7 @@ namespace OpenIZ.Core.Model.Entities
     /// Represents a name for an entity
     /// </summary>
     [Serializable]
-    [DataContract(Name = "EntityName", Namespace = "http://openiz.org/model")]
+    [XmlType("EntityName", Namespace = "http://openiz.org/model")]
     public class EntityName : VersionBoundRelationData<Entity>
     {
         // Name use key
@@ -29,7 +29,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the name use key
         /// </summary>
-        [DataMember(Name = "nameUse")]
+        [XmlElement("nameUse")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid? NameUseKey
@@ -46,7 +46,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the name use
         /// </summary>
         [DelayLoad(nameof(NameUseKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Concept NameUse
         {
             get {
@@ -64,7 +64,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the component types
         /// </summary>
         [DelayLoad(null)]
-        [DataMember(Name = "component")]
+        [XmlElement("component")]
         public List<EntityNameComponent> Component
         {
             get

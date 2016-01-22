@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,8 +16,8 @@ namespace OpenIZ.Core.Model.Roles
     /// Represents an entity which is a patient
     /// </summary>
     [Serializable]
-    [DataContract(Name = "Patient", Namespace = "http://openiz.org/model")]
-    [Resource(ModelScope.Clinical)]
+    [XmlType("Patient", Namespace = "http://openiz.org/model")]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Patient")]
     public class Patient : Person
     {
 
@@ -39,23 +39,23 @@ namespace OpenIZ.Core.Model.Roles
         /// <summary>
         /// Gets or sets the date the patient was deceased
         /// </summary>
-        [DataMember(Name = "deceasedDate")]
+        [XmlElement("deceasedDate")]
         public DateTime? DeceasedDate { get; set; }
         /// <summary>
         /// Gets or sets the precision of the date of deceased
         /// </summary>
-        [DataMember(Name = "deceasedDatePrecision")]
+        [XmlElement("deceasedDatePrecision")]
         public DatePrecision? DeceasedDatePrecision { get; set; }
         /// <summary>
         /// Gets or sets the multiple birth order of the patient 
         /// </summary>
-        [DataMember(Name = "multipleBirthOrder")]
+        [XmlElement("multipleBirthOrder")]
         public int? MultipleBirthOrder { get; set; }
 
         /// <summary>
         /// Gets or sets the gender concept key
         /// </summary>
-        [DataMember(Name = "genderConcept")]
+        [XmlElement("genderConcept")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid GenderCocneptKey
@@ -72,7 +72,7 @@ namespace OpenIZ.Core.Model.Roles
         /// Gets or sets the gender concept
         /// </summary>
         [DelayLoad(nameof(GenderCocneptKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Concept GenderConcept
         {
             get

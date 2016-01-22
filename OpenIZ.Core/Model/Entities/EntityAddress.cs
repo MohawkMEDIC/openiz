@@ -5,7 +5,7 @@ using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Linq;
 
 namespace OpenIZ.Core.Model.Entities
@@ -14,7 +14,7 @@ namespace OpenIZ.Core.Model.Entities
     /// Entity address
     /// </summary>
     [Serializable]
-    [DataContract(Name = "EntityAddress", Namespace = "http://openiz.org/model")]
+    [XmlType("EntityAddress", Namespace = "http://openiz.org/model")]
     public class EntityAddress : VersionBoundRelationData<Entity>
     {
 
@@ -30,7 +30,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the address use key
         /// </summary>
-        [DataMember(Name = "addressUse")]
+        [XmlElement("addressUse")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid? AddressUseKey
@@ -47,7 +47,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the address use
         /// </summary>
         [DelayLoad(nameof(AddressUseKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Concept AddressUse
         {
             get {
@@ -65,7 +65,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the component types
         /// </summary>
         [DelayLoad(null)]
-        [DataMember(Name = "component")]
+        [XmlElement("component")]
         public List<EntityAddressComponent> Component
         {
             get

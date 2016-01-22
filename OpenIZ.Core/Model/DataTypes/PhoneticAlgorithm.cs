@@ -20,7 +20,7 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Attributes;
 using System;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -28,8 +28,8 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a phonetic algorithm record in the model
     /// </summary>
     [Serializable]
-    [DataContract(Name = "PhoneticAlgorithm", Namespace = "http://openiz.org/model")]
-    [Resource(ModelScope.MetaData)]
+    [XmlType("PhoneticAlgorithm", Namespace = "http://openiz.org/model")]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "PhoneticAlgorithm")]
     public class PhoneticAlgorithm : IdentifiedData
     {
         // Phonetic algorithm
@@ -57,12 +57,12 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets the name of the phonetic algorithm
         /// </summary>
-        [DataMember(Name = "name")]
+        [XmlElement("name")]
         public String Name { get; set; }
         /// <summary>
         /// Gets the handler (or generator) for the phonetic algorithm
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Type Handler { get; set; }
 
     }

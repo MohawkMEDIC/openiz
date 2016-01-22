@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,15 +12,15 @@ namespace OpenIZ.Core.Model.Security
     /// Represents a security device
     /// </summary>
     [Serializable]
-    [Resource(ModelScope.Security)]
-    [DataContract(Name = "SecurityDevice", Namespace = "http://openiz.org/model")]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "SecurityDevice")]
+    [XmlType("SecurityDevice", Namespace = "http://openiz.org/model")]
     public class SecurityDevice : SecurityEntity
     {
 
         /// <summary>
         /// Gets or sets the device secret
         /// </summary>
-        [DataMember(Name = "deviceSecret")]
+        [XmlElement("deviceSecret")]
         public String DeviceSecret { get; set; }
 
 

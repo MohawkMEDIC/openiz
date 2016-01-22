@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,9 +34,9 @@ namespace OpenIZ.Core.Model.Security
     /// <summary>
     /// Security user represents a user for the purpose of security 
     /// </summary>
-    [DataContract(Name = "SecurityUser", Namespace = "http://openiz.org/model")]
+    [XmlType("SecurityUser", Namespace = "http://openiz.org/model")]
     [Serializable]
-    [Resource(ModelScope.Security)]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "SecurityUser")]
     public class SecurityUser : SecurityEntity
     {
 
@@ -55,57 +55,57 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets or sets the email address of the user
         /// </summary>
-        [DataMember(Name = "email")]
+        [XmlElement("email")]
         public String Email { get; set; }
         /// <summary>
         /// Gets or sets whether the email address is confirmed
         /// </summary>
-        [DataMember(Name = "emailConfirmed")]
+        [XmlElement("emailConfirmed")]
         public Boolean EmailConfirmed { get; set; }
         /// <summary>
         /// Gets or sets the number of invalid login attempts by the user
         /// </summary>
-        [DataMember(Name = "invalidLoginAttempts")]
+        [XmlElement("invalidLoginAttempts")]
         public Int32 InvalidLoginAttempts { get; set; }
         /// <summary>
         /// Gets or sets whether the account is locked out
         /// </summary>
-        [DataMember(Name = "lockoutEnabled")]
+        [XmlElement("lockoutEnabled")]
         public Boolean LockoutEnabled { get; set; }
         /// <summary>
         /// Gets or sets whether the password hash is enabled
         /// </summary>
-        [DataMember(Name = "passwordHash")]
+        [XmlElement("passwordHash")]
         public String PasswordHash { get; set; }
         /// <summary>
         /// Gets or sets whether the security has is enabled
         /// </summary>
-        [DataMember(Name = "securityStamp")]
+        [XmlElement("securityStamp")]
         public String SecurityHash { get; set; }
         /// <summary>
         /// Gets or sets whether two factor authentication is required
         /// </summary>
-        [DataMember(Name = "twoFactorEnabled")]
+        [XmlElement("twoFactorEnabled")]
         public Boolean TwoFactorEnabled { get; set; }
         /// <summary>
         /// Gets or sets the logical user name ofthe user
         /// </summary>
-        [DataMember(Name = "userName")]
+        [XmlElement("userName")]
         public String UserName { get; set; }
         /// <summary>
         /// Gets or sets the binary representation of the user's photo
         /// </summary>
-        [DataMember(Name = "photo")]
+        [XmlElement("photo")]
         public byte[] UserPhoto { get; set; }
         /// <summary>
         /// The last login time
         /// </summary>
-        [DataMember(Name = "lastLoginTime")]
+        [XmlElement("lastLoginTime")]
         public DateTime LastLoginTime { get; set; }
         /// <summary>
         /// Represents roles
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         [DelayLoad(null)]
         public List<SecurityRole> Roles {
             get
@@ -121,14 +121,14 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Updated time
         /// </summary>
-        [DataMember(Name = "updatedTime")]
+        [XmlElement("updatedTime")]
         public DateTime? UpdatedTime { get; set; }
 
         /// <summary>
         /// Gets or sets the user that updated this base data
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public SecurityUser UpdatedBy
         {
             get
@@ -143,7 +143,7 @@ namespace OpenIZ.Core.Model.Security
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "updatedBy")]
+        [XmlElement("updatedBy")]
         public Guid?  UpdatedByKey
         {
             get { return this.m_updatedById; }
@@ -158,20 +158,20 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets or sets the patient's phone number
         /// </summary>
-        [DataMember(Name = "phoneNumber")]
+        [XmlElement("phoneNumber")]
         public String PhoneNumber { get; set; }
 
         /// <summary>
         /// Gets or sets whether the phone number was confirmed
         /// </summary>
-        [DataMember(Name = "phoneNumberConfirmed")]
+        [XmlElement("phoneNumberConfirmed")]
         public Boolean PhoneNumberConfirmed { get; set; }
 
         /// <summary>
         /// Get the policies active for this user
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public override List<SecurityPolicyInstance> Policies
         {
             get

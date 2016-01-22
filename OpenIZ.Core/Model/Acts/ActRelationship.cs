@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,7 +14,7 @@ namespace OpenIZ.Core.Model.Acts
     /// Act relationships
     /// </summary>
     [Serializable]
-    [DataContract(Name = "ActRelationship", Namespace = "http://openiz.org/model")]
+    [XmlType("ActRelationship", Namespace = "http://openiz.org/model")]
     public class ActRelationship : VersionBoundRelationData<Act>
     {
         // The entity key
@@ -31,7 +31,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// The target of the association
         /// </summary>
-        [DataMember(Name = "target")]
+        [XmlElement("target")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid TargetActKey
@@ -48,7 +48,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Target act reference
         /// </summary>
         [DelayLoad(nameof(TargetActKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Act TargetAct
         {
             get
@@ -69,7 +69,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Association type key
         /// </summary>
-        [DataMember(Name = "relationshipType")]
+        [XmlElement("relationshipType")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid RelationshipTypeKey
@@ -85,7 +85,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the association type
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         [DelayLoad(nameof(RelationshipTypeKey))]
         public Concept RelationshipType
         {

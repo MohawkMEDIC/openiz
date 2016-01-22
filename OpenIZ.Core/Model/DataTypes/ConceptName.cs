@@ -23,7 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -31,7 +31,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a name (human name) that a concept may have
     /// </summary>
     [Serializable]
-    [DataContract(Name = "ConceptName", Namespace = "http://openiz.org/model")]
+    [XmlType("ConceptName", Namespace = "http://openiz.org/model")]
     public class ConceptName : VersionBoundRelationData<Concept>
     {
 
@@ -45,19 +45,19 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the language code of the object
         /// </summary>
-        [DataMember(Name = "language")]
+        [XmlElement("language")]
         public String Language { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the reference term
         /// </summary>
-        [DataMember(Name = "name")]
+        [XmlElement("name")]
         public String Name { get; set; }
 
         /// <summary>
         /// Gets or sets the phonetic code of the reference term
         /// </summary>
-        [DataMember(Name = "phoneticCode")]
+        [XmlElement("phoneticCode")]
         public String PhoneticCode { get; set; }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "phoneticAlgorithm")]
+        [XmlElement("phoneticAlgorithm")]
         public Guid  PhoneticAlgorithmKey
         {
             get { return this.m_phoneticAlgorithmId; }
@@ -80,7 +80,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the phonetic algorithm
         /// </summary>
         [DelayLoad(nameof(PhoneticAlgorithmKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public PhoneticAlgorithm PhoneticAlgorithm
         {
             get

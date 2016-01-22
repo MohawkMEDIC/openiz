@@ -25,7 +25,7 @@ using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core;
 using System.ComponentModel;
 using MARC.HI.EHRS.SVC.Core.Services.Policy;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using OpenIZ.Core.Model.Attributes;
 
 namespace OpenIZ.Core.Model.Security
@@ -33,40 +33,40 @@ namespace OpenIZ.Core.Model.Security
     /// <summary>
     /// Represents a simply security policy
     /// </summary>
-    [DataContract(Name = "SecurityPolicy", Namespace = "http://openiz.org/model")]
+    [XmlType("SecurityPolicy", Namespace = "http://openiz.org/model")]
     [Serializable]
-    [Resource(ModelScope.Security)]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "SecurityPolicy")]
     public class SecurityPolicy : BaseEntityData, IPolicy
     {
         
         /// <summary>
         /// Gets or sets the handler which may handle this policy
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Type Handler { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the policy
         /// </summary>
-        [DataMember(Name = "name")]
+        [XmlElement("name")]
         public String Name { get; set; }
 
         /// <summary>
         /// Gets or sets the universal ID
         /// </summary>
-        [DataMember(Name = "o")]
+        [XmlElement("o")]
         public String Oid { get; set; }
 
         /// <summary>
         /// Whether the property is public
         /// </summary>
-        [DataMember(Name = "isPublic")]
+        [XmlElement("isPublic")]
         public bool IsPublic { get; set; }
 
         /// <summary>
         /// Whether the policy can be elevated over
         /// </summary>
-        [DataMember(Name = "canOverride")]
+        [XmlElement("canOverride")]
         public bool CanOverride { get; set; }
     }
 

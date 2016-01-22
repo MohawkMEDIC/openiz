@@ -2,7 +2,7 @@
 using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.ComponentModel;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Xml;
 
 namespace OpenIZ.Core.Model.Entities
@@ -11,7 +11,7 @@ namespace OpenIZ.Core.Model.Entities
     /// Represents a service for a place
     /// </summary>
     [Serializable]
-    [DataContract(Name = "PlaceService", Namespace = "http://openiz.org/model")]
+    [XmlType("PlaceService", Namespace = "http://openiz.org/model")]
     public class PlaceService : VersionBoundRelationData<Entity>
     {
 
@@ -24,7 +24,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// The schedule that the service is offered
         /// </summary>
-        [DataMember(Name = "serviceSchedule")]
+        [XmlElement("serviceSchedule")]
         public XmlElement ServiceSchedule { get; set; }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "serviceConcept")]
+        [XmlElement("serviceConcept")]
         public Guid ServiceConceptKey
         {
             get { return this.m_serviceConceptKey; }
@@ -47,7 +47,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the service concept
         /// </summary>
         [DelayLoad(nameof(ServiceConceptKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Concept ServiceConcept
         {
             get {

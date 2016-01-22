@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,20 +10,20 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents a date precision object
     /// </summary>
-    [DataContract(Name = "DatePrecision", Namespace = "http://openiz.org/model")]
+    [XmlType("DatePrecision", Namespace = "http://openiz.org/model")]
     public enum DatePrecision
     {
-        [EnumMember(Value = "Y")]
+        [XmlEnum("Y")]
         Year,
-        [EnumMember(Value = "m")]
+        [XmlEnum("m")]
         Month,
-        [EnumMember(Value = "D")]
+        [XmlEnum("D")]
         Day,
-        [EnumMember(Value = "H")]
+        [XmlEnum("H")]
         Hour,
-        [EnumMember(Value = "M")]
+        [XmlEnum("M")]
         Minute,
-        [EnumMember(Value = "S")]
+        [XmlEnum("S")]
         Second
     }
 }

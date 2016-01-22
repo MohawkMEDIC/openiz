@@ -25,7 +25,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 
@@ -35,7 +35,7 @@ namespace OpenIZ.Core.Model
     /// Represents data that is identified by a key
     /// </summary>
     [Serializable]
-    [DataContract(Name = "IdentifiedData", Namespace = "http://openiz.org/model")]
+    [XmlType("IdentifiedData", Namespace = "http://openiz.org/model")]
     public abstract class IdentifiedData : IIdentified<Guid>
     {
         // True when the data class is locked for storage
@@ -45,7 +45,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// True if the class is currently loading associations when accessed
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         public bool IsDelayLoadEnabled
         {
             get
@@ -112,14 +112,14 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// The internal primary key value of the entity
         /// </summary>
-        [DataMember(Name = "id")]
+        [XmlElement("id")]
         public Guid Key { get; set; }
 
 
         /// <summary>
         /// Gets or sets the Id of the base data
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         public virtual Identifier<Guid> Id
         {
             get

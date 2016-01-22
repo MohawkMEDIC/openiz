@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,7 +15,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a base entity extension
     /// </summary>
     [Serializable]
-    [DataContract(Namespace = "http://openiz.org/model", Name = "Extension")]
+    [XmlType(Namespace = "http://openiz.org/model")]
     public abstract class Extension<TBoundModel> : VersionBoundRelationData<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
     {
 
@@ -28,7 +28,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the value of the extension
         /// </summary>
-        [DataMember(Name = "value")]
+        [XmlElement("value")]
         public byte[] ExtensionValue { get; set; }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Guid ExtensionTypeKey
         {
             get { return this.m_extensionTypeKey; }
@@ -51,7 +51,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the extension type
         /// </summary>
         [DelayLoad(nameof(ExtensionTypeKey))]
-        [DataMember(Name = "extensionType")]
+        [XmlElement("extensionType")]
         public ExtensionType ExtensionType
         {
             get {
@@ -82,7 +82,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Extension bound to entity
     /// </summary>
     [Serializable]
-    [DataContract(Name = "EntityExtension", Namespace = "http://openiz.org/model")]
+    [XmlType("EntityExtension", Namespace = "http://openiz.org/model")]
     public class EntityExtension : Extension<Entity>
     {
 
@@ -92,7 +92,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Act extension
     /// </summary>
     [Serializable]
-    [DataContract(Name = "ActExtension", Namespace = "http://openiz.org/model")]
+    [XmlType("ActExtension", Namespace = "http://openiz.org/model")]
     public class ActExtension : Extension<Act>
     {
 

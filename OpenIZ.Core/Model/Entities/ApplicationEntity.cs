@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,8 +16,8 @@ namespace OpenIZ.Core.Model.Entities
     /// An associative entity which links a SecurityApplication to an Entity
     /// </summary>
     [Serializable]
-    [DataContract(Name = "ApplicationEntity", Namespace = "http://openiz.org/model")]
-    [Resource(ModelScope.Clinical)]
+    [XmlType("ApplicationEntity", Namespace = "http://openiz.org/model")]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "ApplicationEntity")]
     public class ApplicationEntity : Entity
     {
         // Security application key
@@ -38,7 +38,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the security application
         /// </summary>
-        [DataMember(Name = "securityApplication")]
+        [XmlElement("securityApplication")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid SecurityApplicationKey
@@ -55,7 +55,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the security application
         /// </summary>
         [DelayLoad(nameof(SecurityApplicationKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public SecurityApplication SecurityApplication
         {
             get {
@@ -75,19 +75,19 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the name of the software
         /// </summary>
-        [DataMember(Name = "softwareName")]
+        [XmlElement("softwareName")]
         public String SoftwareName { get; set; }
 
         /// <summary>
         /// Gets or sets the version of the software
         /// </summary>
-        [DataMember(Name = "versionName")]
+        [XmlElement("versionName")]
         public String VersionName { get; set; }
 
         /// <summary>
         /// Gets or sets the vendoer name of the software
         /// </summary>
-        [DataMember(Name = "vendorName")]
+        [XmlElement("vendorName")]
         public String VendorName { get; set; }
 
         /// <summary>

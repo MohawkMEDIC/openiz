@@ -3,7 +3,7 @@ using OpenIZ.Core.Model.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,20 +13,20 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents the base class for tags
     /// </summary>
     [Serializable]
-    [DataContract(Name = "Tag", Namespace = "http://openiz.org/model")]
+    [XmlType(Namespace = "http://openiz.org/model")]
     public abstract class Tag<TSourceType> : BoundRelationData<TSourceType> where TSourceType : IdentifiedData
     {
 
         /// <summary>
         /// Gets or sets the key of the tag
         /// </summary>
-        [DataMember(Name ="key")]
+        [XmlElement("key")]
         public String TagKey { get; set; }
 
         /// <summary>
         /// Gets or sets the value of the tag
         /// </summary>
-        [DataMember(Name = "value")]
+        [XmlElement("value")]
         public String Value { get; set; }
 
     }
@@ -35,7 +35,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a tag associated with an entity
     /// </summary>
     [Serializable]
-    [DataContract(Name = "EntityTag", Namespace = "http://openiz.org/model")]
+    [XmlType("EntityTag", Namespace = "http://openiz.org/model")]
     public class EntityTag : Tag<Entity>
     {
 
@@ -46,7 +46,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a tag on an act
     /// </summary>
     [Serializable]
-    [DataContract(Name = "ActTag", Namespace = "http://openiz.org/model")]
+    [XmlType("ActTag", Namespace = "http://openiz.org/model")]
     public class ActTag : Tag<Act>
     {
 

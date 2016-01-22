@@ -22,7 +22,7 @@ using OpenIZ.Core.Model.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,9 +31,9 @@ namespace OpenIZ.Core.Model.Security
     /// <summary>
     /// Security role
     /// </summary>
-    [DataContract(Namespace = "http://openiz.org/model", Name = "SecurityRole")]
+    [XmlType(Namespace = "http://openiz.org/model", TypeName = "SecurityRole")]
     [Serializable]
-    [Resource(ModelScope.Security)]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "SecurityRole")]
     public class SecurityRole : SecurityEntity
     {
 
@@ -44,19 +44,19 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets or sets the name of the security role
         /// </summary>
-        [DataMember(Name = "name")]
+        [XmlElement("name")]
         public String Name { get; set; }
 
         /// <summary>
         /// Description of the role
         /// </summary>
-        [DataMember(Name = "description")]
+        [XmlElement("description")]
         public String Description { get; set; }
 
         /// <summary>
         /// Gets or sets the security users in the role
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         [DelayLoad(null)]
         public List<SecurityUser> Users {
             get

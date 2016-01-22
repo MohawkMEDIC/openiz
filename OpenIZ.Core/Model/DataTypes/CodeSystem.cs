@@ -1,7 +1,7 @@
 ﻿
 using OpenIZ.Core.Model.Attributes;
 using System;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 /*
 * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
 * 
@@ -26,50 +26,50 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a code system which is a collection of reference terms
     /// </summary>
     [Serializable]
-    [DataContract(Name = "CodeSystem", Namespace = "http://openiz.org/model")]
-    [Resource(ModelScope.Concept)]
+    [XmlType("CodeSystem", Namespace = "http://openiz.org/model")]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "CodeSystem")]
     public class CodeSystem : BaseEntityData
     {
         /// <summary>
         /// Gets or sets the name of the code system
         /// </summary>
-        [DataMember(Name = "name")]
+        [XmlElement("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the Oid of the code system
         /// </summary>
-        [DataMember(Name = "oid")]
+        [XmlElement("oid")]
         public string Oid { get; set; }
 
         /// <summary>
         /// Gets or sets the authority of the code system
         /// </summary>
-        [DataMember(Name = "authority")]
+        [XmlElement("authority")]
         public string Authority { get; set; }
 
         /// <summary>
         /// Gets or sets the obsoletion reason of the code system
         /// </summary>
-        [DataMember(Name ="obsoletionReason")]
+        [XmlElement("obsoletionReason")]
         public string ObsoletionReason { get; set; }
 
         /// <summary>
         /// Gets or sets the URL of the code system
         /// </summary>
-        [DataMember(Name = "url")]
+        [XmlElement("url")]
         public string Url { get; set; }
 
         /// <summary>
         /// Gets or sets the version text of the code system
         /// </summary>
-        [DataMember(Name = "version")]
+        [XmlElement("version")]
         public string VersionText { get; set; }
 
         /// <summary>
         /// Gets or sets the human description
         /// </summary>
-        [DataMember(Name ="description")]
+        [XmlElement("description")]
         public string Description { get; set; }
     }
 }

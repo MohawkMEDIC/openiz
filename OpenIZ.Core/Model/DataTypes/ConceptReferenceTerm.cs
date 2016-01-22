@@ -21,7 +21,7 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Attributes;
 using System;
 using System.ComponentModel;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -29,7 +29,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a reference term relationship between a concept and reference term
     /// </summary>
     [Serializable]
-    [DataContract(Name = "ConceptReferenceTerm", Namespace = "http://openiz.org/model")]
+    [XmlType("ConceptReferenceTerm", Namespace = "http://openiz.org/model")]
     public class ConceptReferenceTerm : VersionBoundRelationData<Concept>
     {
         // Reference term id
@@ -48,7 +48,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "referenceTerm")]
+        [XmlElement("referenceTerm")]
         public Guid  ReferenceTermKey {
             get { return this.m_referenceTermId; }
             set
@@ -62,7 +62,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or set the reference term
         /// </summary>
         [DelayLoad(nameof(ReferenceTermKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public ReferenceTerm ReferenceTerm
         {
             get
@@ -85,7 +85,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "relationshipType")]
+        [XmlElement("relationshipType")]
         public Guid  RelationshipTypeKey {
             get { return this.m_relationshipTypeId; }
             set
@@ -99,7 +99,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the relationship type
         /// </summary>
         [DelayLoad(nameof(RelationshipTypeKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public ConceptRelationshipType RelationshipType {
             get
             {

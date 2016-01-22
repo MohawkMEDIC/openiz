@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,7 +13,7 @@ namespace OpenIZ.Core.Model
     /// </summary>
     /// <typeparam name="TSourceType"></typeparam>
     [Serializable]
-    [DataContract(Name = "BoundRelationData", Namespace = "http://openiz.org/model")]
+    [XmlType(Namespace = "http://openiz.org/model")]
     public abstract class BoundRelationData<TSourceType> : BaseEntityData where TSourceType : IdentifiedData
     {
 
@@ -26,7 +26,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the source entity's key (where the relationship is FROM)
         /// </summary>
-        [DataMember(Name = "source")]
+        [XmlElement("source")]
         public virtual Guid SourceEntityKey
         {
             get
@@ -44,7 +44,7 @@ namespace OpenIZ.Core.Model
         /// The entity that this relationship targets
         /// </summary>
         [DelayLoad(nameof(SourceEntityKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public TSourceType SourceEntity
         {
             get

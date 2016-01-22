@@ -29,8 +29,8 @@ namespace OpenIZ.Core.Model.Map
     /// <summary>
     /// Model map format class
     /// </summary>
-    [XmlRoot("modelMap", Namespace = "http://openiz.org/model/map")]
-    [XmlType( nameof(ModelMap), Namespace = "http://openiz.org/model/map")]
+    [XmlRoot(Namespace = "http://openiz.org/model/map", ElementName ="modelMap")]
+    [XmlType(nameof(ModelMap), Namespace = "http://openiz.org/model/map")]
     public class ModelMap
     {
 

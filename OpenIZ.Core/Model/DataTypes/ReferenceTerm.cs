@@ -23,7 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using OpenIZ.Core.Model.Attributes;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -31,8 +31,8 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a basic reference term
     /// </summary>
     [Serializable]
-    [DataContract(Name = "ReferenceTerm", Namespace = "http://openiz.org/model")]
-    [Resource(ModelScope.Concept)]
+    [XmlType("ReferenceTerm", Namespace = "http://openiz.org/model")]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "ReferenceTerm")]
     public class ReferenceTerm : IdentifiedData
     {
 
@@ -48,14 +48,14 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the mnemonic for the reference term
         /// </summary>
-        [DataMember(Name = "mnemonic")]
+        [XmlElement("mnemonic")]
         public string Mnemonic { get; set; }
 
         /// <summary>
         /// Gets or sets the code system 
         /// </summary>
         [DelayLoad(nameof(CodeSystemKey))]
-        [DataMember(Name = "codeSystem")]
+        [XmlElement("codeSystem")]
         public CodeSystem CodeSystem {
             get
             {
@@ -76,7 +76,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the code system identifier
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [IgnoreDataMember]
+        [XmlIgnore]
         [Browsable(false)]
         public Guid  CodeSystemKey {
             get { return this.m_codeSystemId; }
@@ -91,7 +91,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets display names associated with the reference term
         /// </summary>
         [DelayLoad(null)]
-        [DataMember(Name = "name")]
+        [XmlElement("name")]
         public List<ReferenceTermName> DisplayNames {
             get
             {

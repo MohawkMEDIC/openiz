@@ -23,7 +23,7 @@ using OpenIZ.Core.Model.Attributes;
 using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -31,7 +31,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a relationship between two concepts
     /// </summary>
     [Serializable]
-    [DataContract(Name = "ConceptRelationship", Namespace = "http://openiz.org/model")]
+    [XmlType("ConceptRelationship", Namespace = "http://openiz.org/model")]
     public class ConceptRelationship : VersionBoundRelationData<Concept>
     {
 
@@ -51,7 +51,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "targetConcept")]
+        [XmlElement("targetConcept")]
         public Guid  TargetConceptKey
         {
             get { return this.m_targetConceptId; }
@@ -66,7 +66,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the target concept
         /// </summary>
         [DelayLoad(nameof(TargetConceptKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Concept TargetConcept
         {
             get
@@ -89,7 +89,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Guid  RelationshipTypeKey {
             get { return this.m_relationshipTypeId; }
             set
@@ -103,8 +103,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the relationship type
         /// </summary>
         [DelayLoad(nameof(RelationshipTypeKey))]
-        [IgnoreDataMember]
-        [DataMember(Name = "relationshipType")]
+        [XmlIgnore]
+        [XmlElement("relationshipType")]
         public ConceptRelationshipType RelationshipType
         {
             get

@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,7 +14,7 @@ namespace OpenIZ.Core.Model.Acts
     /// <summary>
     /// Represents a class which is an observation
     /// </summary>
-    [DataContract(Name = "Observation", Namespace = "http://openiz.org/model")]
+    [XmlType("Observation", Namespace = "http://openiz.org/model")]
     [Serializable]
     public abstract class Observation : Act
     {
@@ -37,7 +37,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "interpretationConcept")]
+        [XmlElement("interpretationConcept")]
         public Guid? InterpretationConceptKey
         {
             get { return this.m_interpretationConceptKey; }
@@ -52,7 +52,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the concept which indicates the interpretation of the observtion
         /// </summary>
         [DelayLoad(nameof(InterpretationConceptKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Concept InterpretationConcept
         {
             get {
@@ -79,9 +79,9 @@ namespace OpenIZ.Core.Model.Acts
     /// <summary>
     /// Represents an observation that contains a quantity
     /// </summary>
-    [DataContract(Name = "QuantityObservation", Namespace = "http://openiz.org/model")]
+    [XmlType("QuantityObservation", Namespace = "http://openiz.org/model")]
     [Serializable]
-    [Resource(ModelScope.Clinical)]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "QuantityObservation" )]
     public class QuantityObservation : Observation
     {
 
@@ -93,13 +93,13 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the observed quantity
         /// </summary>
-        [DataMember(Name = "value")]
+        [XmlElement("value")]
         public Decimal Value { get; set; }
 
         /// <summary>
         /// Gets or sets the key of the uom concept
         /// </summary>
-        [DataMember(Name = "unitOfMeasure")]
+        [XmlElement("unitOfMeasure")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid UnitOfMeasureKey
@@ -115,7 +115,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the unit of measure
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         [DelayLoad(nameof(UnitOfMeasureKey))]
         public Concept UnitOfMeasure
         {
@@ -147,24 +147,24 @@ namespace OpenIZ.Core.Model.Acts
     /// <summary>
     /// Represents an observation with a text value
     /// </summary>
-    [DataContract(Name = "TextObservation", Namespace = "http://openiz.org/model")]
+    [XmlType("TextObservation", Namespace = "http://openiz.org/model")]
     [Serializable]
-    [Resource(ModelScope.Clinical)]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "TextObservation")]
     public class TextObservation : Observation
     {
         /// <summary>
         /// Gets or sets the textual value
         /// </summary>
-        [DataMember(Name = "value")]
+        [XmlElement("value")]
         public String Value { get; set; }
     }
 
     /// <summary>
     /// Represents an observation with a concept value
     /// </summary>
-    [DataContract(Name = "CodedObservation", Namespace = "http://openiz.org/model")]
+    [XmlType("CodedObservation", Namespace = "http://openiz.org/model")]
     [Serializable]
-    [Resource(ModelScope.Clinical)]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "CodedObservation")]
     public class CodedObservation : Observation
     {
 
@@ -176,7 +176,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the key of the uom concept
         /// </summary>
-        [DataMember(Name = "value")]
+        [XmlElement("value")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid ValueKey
@@ -192,7 +192,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the coded value of the observation
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         [DelayLoad(nameof(ValueKey))]
         public Concept Value
         {

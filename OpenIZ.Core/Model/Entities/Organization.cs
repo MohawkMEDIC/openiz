@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,8 +15,8 @@ namespace OpenIZ.Core.Model.Entities
     /// Organization entity
     /// </summary>
     [Serializable]
-    [DataContract(Name = "Organization", Namespace = "http://openiz.org/model")]
-    [Resource(ModelScope.Clinical)]
+    [XmlType("Organization", Namespace = "http://openiz.org/model")]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Organization")]
     public class Organization : Entity
     {
 
@@ -40,7 +40,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "industryConcept")]
+        [XmlElement("industryConcept")]
         public Guid IndustryConceptKey
         {
             get { return this.m_industryConceptKey; }
@@ -55,7 +55,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the industry in which the organization operates
         /// </summary>
         [DelayLoad(nameof(IndustryConceptKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Concept IndustryConcept
         {
             get {

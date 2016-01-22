@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,8 +16,8 @@ namespace OpenIZ.Core.Model.Entities
     /// Represents a device entity
     /// </summary>
     [Serializable]
-    [DataContract(Name = "DeviceEntity", Namespace = "http://openiz.org/model")]
-    [Resource(ModelScope.Clinical)]
+    [XmlType("DeviceEntity", Namespace = "http://openiz.org/model")]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "DeviceEntity")]
     public class DeviceEntity : Entity
     {
 
@@ -38,7 +38,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the security device key
         /// </summary>
-        [DataMember(Name ="securityDevice")]
+        [XmlElement("securityDevice")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid SecurityDeviceKey
@@ -55,7 +55,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the security device
         /// </summary>
         [DelayLoad(nameof(SecurityDeviceKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public SecurityDevice SecurityDevice
         {
             get {
@@ -74,12 +74,12 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the manufacturer model name
         /// </summary>
-        [DataMember(Name ="manufacturerModelName")]
+        [XmlElement("manufacturerModelName")]
         public String ManufacturedModelName { get; set; }
         /// <summary>
         /// Gets or sets the operating system name
         /// </summary>
-        [DataMember(Name = "operatingSystemName")]
+        [XmlElement("operatingSystemName")]
         public String OperatingSystemName { get; set; }
 
         /// <summary>

@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,7 +15,7 @@ namespace OpenIZ.Core.Model.Acts
     /// Associates an entity which participates in an act
     /// </summary>
     [Serializable]
-    [DataContract(Namespace = "http://openiz.org/model", Name ="ActParticipation")]
+    [XmlType(Namespace = "http://openiz.org/model", TypeName = "ActParticipation")]
     public class ActParticipation : VersionBoundRelationData<Act>
     {
 
@@ -31,7 +31,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "player")]
+        [XmlElement("player")]
         public Guid PlayerEntityKey
         {
             get { return this.m_playerKey; }
@@ -47,7 +47,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "participationRole")]
+        [XmlElement("participationRole")]
         public Guid ParticipationRoleKey
         {
             get { return this.m_participationRoleKey; }
@@ -61,7 +61,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the entity which participated in the act
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         [DelayLoad(nameof(PlayerEntityKey))]
         public Entity PlayerEntity
         {
@@ -83,7 +83,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the role that the entity played in participating in the act
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         [DelayLoad(nameof(ParticipationRoleKey))]
         public Concept ParticipationRole
         {
@@ -99,25 +99,6 @@ namespace OpenIZ.Core.Model.Acts
                     this.m_participationRoleKey = Guid.Empty;
                 else
                     this.m_participationRoleKey = value.Key;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the act 
-        /// </summary>
-        [DataMember(Name = "act")]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        [Browsable(false)]
-        public override Guid SourceEntityKey
-        {
-            get
-            {
-                return base.SourceEntityKey;
-            }
-
-            set
-            {
-                base.SourceEntityKey = value;
             }
         }
 

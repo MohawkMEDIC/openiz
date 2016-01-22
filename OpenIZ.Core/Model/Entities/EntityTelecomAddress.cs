@@ -2,7 +2,7 @@
 using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.ComponentModel;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -10,7 +10,7 @@ namespace OpenIZ.Core.Model.Entities
     /// Represents an entity telecom address
     /// </summary>
     [Serializable]
-    [DataContract(Name = "EntityTelecomAddress", Namespace = "http://openiz.org/model")]
+    [XmlType("EntityTelecomAddress", Namespace = "http://openiz.org/model")]
     public class EntityTelecomAddress : VersionBoundRelationData<Entity>
     {
 
@@ -23,7 +23,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the name use key
         /// </summary>
-        [DataMember(Name = "addressUse")]
+        [XmlElement("addressUse")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
         public Guid? AddressUseKey
@@ -40,7 +40,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the name use
         /// </summary>
         [DelayLoad(nameof(AddressUseKey))]
-        [IgnoreDataMember]
+        [XmlIgnore]
         public Concept AddressUse
         {
             get {
@@ -57,7 +57,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the value of the telecom address
         /// </summary>
-        [DataMember(Name = "value")]
+        [XmlElement("value")]
         public String Value { get; set; }
 
         /// <summary>

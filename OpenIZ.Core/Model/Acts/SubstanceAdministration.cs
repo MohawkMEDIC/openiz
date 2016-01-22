@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,8 +15,8 @@ namespace OpenIZ.Core.Model.Acts
     /// Represents an act whereby a substance is administered to the patient
     /// </summary>
     [Serializable]
-    [DataContract(Name = "SubstanceAdministration", Namespace = "http://openiz.org/model")]
-    [Resource(ModelScope.Clinical)]
+    [XmlType("SubstanceAdministration", Namespace = "http://openiz.org/model")]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "SubstanceAdministration")]
     public class SubstanceAdministration : Act
     {
         // Route key
@@ -41,7 +41,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "route")]
+        [XmlElement("route")]
         public Guid RouteKey
         {
             get { return this.m_routeKey; }
@@ -57,7 +57,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "doseUnit")]
+        [XmlElement("doseUnit")]
         public Guid DoseUnitKey
         {
             get { return this.m_doseUnitKey; }
@@ -71,7 +71,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets a concept which indicates the route of administration (eg: Oral, Injection, etc.)
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         [DelayLoad(nameof(RouteKey))]
         public Concept Route
         {
@@ -93,7 +93,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets a concept which indicates the unit of measure for the dose (eg: 5 mL, 10 mL, 1 drop, etc.)
         /// </summary>
-        [IgnoreDataMember]
+        [XmlIgnore]
         [DelayLoad(nameof(DoseUnitKey))]
         public Concept DoseUnit
         {
@@ -115,13 +115,13 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the amount of substance administered
         /// </summary>
-        [DataMember(Name = "doseQuantity")]
+        [XmlElement("doseQuantity")]
         public Decimal DoseQuantity { get; set; }
 
         /// <summary>
         /// The sequence of the dose (i.e. OPV 0 = 0 , OPV 1 = 1, etc.)
         /// </summary>
-        [DataMember(Name = "doseSequence")]
+        [XmlElement("doseSequence")]
         public uint SequenceId { get; set; }
 
         /// <summary>
