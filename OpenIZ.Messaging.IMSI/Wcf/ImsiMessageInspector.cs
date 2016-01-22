@@ -99,32 +99,35 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     {
                         WebOperationContext.Current.OutgoingResponse.Headers.Add("Content-Encoding", compressionScheme);
                         WebOperationContext.Current.OutgoingResponse.Headers.Add("X-CompressResponseStream", compressionScheme);
+                        byte[] messageContent;
 
-                        using (MemoryStream ms = new MemoryStream())
+                        // Read binary contents of the message
+                        switch(this.GetContentFormat(reply))
                         {
-
-                            // Write out the XML
-                            using (var xdr = XmlDictionaryWriter.CreateTextWriter(ms, Encoding.UTF8, false))
-                                reply.WriteBodyContents(xdr);
-
-                            // Hack: If it is RAW we want to skip the <Binary> tags
-                            var messageContent = ms.ToArray();
-                            if(this.GetContentFormat(reply) == WebContentFormat.Raw) // Skip binary 
-                            {
-                                int headerLength = Encoding.UTF8.GetByteCount("<Binary>"),
-                                    footerLength = Encoding.UTF8.GetByteCount("</Binary>");
-                                //byte[] binArray = new byte[messageContent.Length - headerLength - footerLength];
-                                Array.ConstrainedCopy(messageContent, headerLength, messageContent, 0, messageContent.Length - headerLength - footerLength);
-                                Array.Resize(ref messageContent, messageContent.Length - headerLength - footerLength);
-                                messageContent = Convert.FromBase64String(Encoding.UTF8.GetString(messageContent));
-                            }
-
-                            Message compressedMessage = Message.CreateMessage(reply.Version, reply.Headers.Action, new CompressionWriter(messageContent, CompressionUtil.GetCompressionScheme(compressionScheme)));
-                            compressedMessage.Properties.CopyProperties(reply.Properties);
-                            compressedMessage.Properties.Remove(WebBodyFormatMessageProperty.Name);
-                            compressedMessage.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(WebContentFormat.Raw));
-                            reply = compressedMessage;
+                            case WebContentFormat.Xml:
+                                using (MemoryStream ms = new MemoryStream())
+                                {
+                                    // Write out the XML
+                                    using (var xdr = XmlDictionaryWriter.CreateTextWriter(ms, Encoding.UTF8, false))
+                                        reply.WriteBodyContents(xdr);
+                                    messageContent = ms.ToArray(); // original message content
+                                }
+                                break;
+                            case WebContentFormat.Raw:
+                                {
+                                    var xdr = reply.GetReaderAtBodyContents();
+                                    xdr.ReadStartElement("Binary");
+                                    messageContent = xdr.ReadContentAsBase64();
+                                    break;
+                                }
                         }
+
+                        Message compressedMessage = Message.CreateMessage(reply.Version, reply.Headers.Action, new CompressionWriter(messageContent, CompressionUtil.GetCompressionScheme(compressionScheme)));
+                        compressedMessage.Properties.CopyProperties(reply.Properties);
+                        compressedMessage.Properties.Remove(WebBodyFormatMessageProperty.Name);
+                        compressedMessage.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(WebContentFormat.Raw));
+                        reply = compressedMessage;
+
                     }
                     catch (Exception e)
                     {
