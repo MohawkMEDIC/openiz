@@ -17,6 +17,7 @@ namespace OpenIZ.Core.Model.Entities
     /// </summary>
     [Serializable]
     [DataContract(Name = "Person", Namespace = "http://openiz.org/model")]
+    [Resource(ModelScope.Clinical)]
     public class Person : Entity
     {
 
@@ -48,7 +49,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets the person's languages of communication
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "language")]
         public List<PersonLanguageCommunication> LanguageCommunication
         {
             get
@@ -61,6 +62,15 @@ namespace OpenIZ.Core.Model.Entities
                 }
                 return this.m_languageCommunication;
             }
+        }
+
+        /// <summary>
+        /// Forces a refresh of delay load properties
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_languageCommunication = null;
         }
 
     }

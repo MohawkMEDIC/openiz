@@ -33,6 +33,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// </summary>
     [Serializable]
     [DataContract(Name = "Concept", Namespace = "http://openiz.org/model")]
+    [Resource(ModelScope.Concept)]
     public class Concept : VersionedEntityData<Concept>
     {
 
@@ -112,7 +113,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets a list of concept relationships
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "relationship")]
         public List<ConceptRelationship> Relationship
         {
             get
@@ -131,7 +132,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataMember(Name = "class")]
+        [IgnoreDataMember]
         public Guid  ClassKey
         {
             get { return this.m_classId; }
@@ -147,6 +148,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [DelayLoad(nameof(ClassKey))]
         [IgnoreDataMember]
+        [DataMember(Name = "class")]
         public ConceptClass Class
         {
             get
@@ -168,7 +170,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets a list of concept reference terms
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "referenceTerm")]
         public List<ConceptReferenceTerm> ReferenceTerms
         {
             get
@@ -186,7 +188,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets the concept names
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "name")]
         public List<ConceptName> ConceptNames
         {
             get

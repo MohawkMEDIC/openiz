@@ -1,4 +1,5 @@
 ﻿
+using OpenIZ.Core.Model.Attributes;
 using System;
 using System.Runtime.Serialization;
 /*
@@ -26,6 +27,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// </summary>
     [Serializable]
     [DataContract(Name = "CodeSystem", Namespace = "http://openiz.org/model")]
+    [Resource(ModelScope.Concept)]
     public class CodeSystem : BaseEntityData
     {
         /// <summary>
@@ -37,7 +39,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the Oid of the code system
         /// </summary>
-        [DataMember(Name = "o")]
+        [DataMember(Name = "oid")]
         public string Oid { get; set; }
 
         /// <summary>

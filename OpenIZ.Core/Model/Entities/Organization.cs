@@ -16,6 +16,7 @@ namespace OpenIZ.Core.Model.Entities
     /// </summary>
     [Serializable]
     [DataContract(Name = "Organization", Namespace = "http://openiz.org/model")]
+    [Resource(ModelScope.Clinical)]
     public class Organization : Entity
     {
 
@@ -68,6 +69,16 @@ namespace OpenIZ.Core.Model.Entities
                 else
                     this.m_industryConceptKey = value.Key;
             }
+        }
+
+
+        /// <summary>
+        /// Forces reload of delay load properties
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_industryConcept = null;
         }
     }
 }

@@ -64,7 +64,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the component types
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "component")]
         public List<EntityNameComponent> Component
         {
             get
@@ -76,6 +76,16 @@ namespace OpenIZ.Core.Model.Entities
                 }
                 return this.m_nameComponents;
             }
+        }
+
+        /// <summary>
+        /// Refreshes the underlying content
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_nameComponents = null;
+            this.m_nameUseKey = null;
         }
     }
 }

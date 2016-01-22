@@ -32,6 +32,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// </summary>
     [Serializable]
     [DataContract(Name = "ReferenceTerm", Namespace = "http://openiz.org/model")]
+    [Resource(ModelScope.Concept)]
     public class ReferenceTerm : IdentifiedData
     {
 
@@ -53,7 +54,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the code system 
         /// </summary>
-        [IgnoreDataMember]
+        [DelayLoad(nameof(CodeSystemKey))]
+        [DataMember(Name = "codeSystem")]
         public CodeSystem CodeSystem {
             get
             {
@@ -74,8 +76,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the code system identifier
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [IgnoreDataMember]
         [Browsable(false)]
-        [DataMember(Name = "codeSystem")]
         public Guid  CodeSystemKey {
             get { return this.m_codeSystemId; }
             set
@@ -89,7 +91,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets display names associated with the reference term
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "name")]
         public List<ReferenceTermName> DisplayNames {
             get
             {

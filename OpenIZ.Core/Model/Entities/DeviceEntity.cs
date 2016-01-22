@@ -17,6 +17,7 @@ namespace OpenIZ.Core.Model.Entities
     /// </summary>
     [Serializable]
     [DataContract(Name = "DeviceEntity", Namespace = "http://openiz.org/model")]
+    [Resource(ModelScope.Clinical)]
     public class DeviceEntity : Entity
     {
 
@@ -80,5 +81,14 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [DataMember(Name = "operatingSystemName")]
         public String OperatingSystemName { get; set; }
+
+        /// <summary>
+        /// Force refresh of data model
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_securityDevice = null;
+        }
     }
 }

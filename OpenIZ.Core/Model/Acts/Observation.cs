@@ -65,6 +65,15 @@ namespace OpenIZ.Core.Model.Acts
                 this.m_interpretationConceptKey = value?.Key;
             }
         }
+
+        /// <summary>
+        /// Refresh the object forcing delay load 
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_interpretationConcept = null;
+        }
     }
 
     /// <summary>
@@ -72,6 +81,7 @@ namespace OpenIZ.Core.Model.Acts
     /// </summary>
     [DataContract(Name = "QuantityObservation", Namespace = "http://openiz.org/model")]
     [Serializable]
+    [Resource(ModelScope.Clinical)]
     public class QuantityObservation : Observation
     {
 
@@ -124,6 +134,14 @@ namespace OpenIZ.Core.Model.Acts
             }
         }
 
+        /// <summary>
+        /// Forces a refresh of the object
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_unitOfMeasure = null;
+        }
     }
 
     /// <summary>
@@ -131,6 +149,7 @@ namespace OpenIZ.Core.Model.Acts
     /// </summary>
     [DataContract(Name = "TextObservation", Namespace = "http://openiz.org/model")]
     [Serializable]
+    [Resource(ModelScope.Clinical)]
     public class TextObservation : Observation
     {
         /// <summary>
@@ -145,6 +164,7 @@ namespace OpenIZ.Core.Model.Acts
     /// </summary>
     [DataContract(Name = "CodedObservation", Namespace = "http://openiz.org/model")]
     [Serializable]
+    [Resource(ModelScope.Clinical)]
     public class CodedObservation : Observation
     {
 
@@ -189,6 +209,15 @@ namespace OpenIZ.Core.Model.Acts
                 else
                     this.m_valueKey = value.Key;
             }
+        }
+
+        /// <summary>
+        /// Forces a refresh of underlying data
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_value = null;
         }
     }
 

@@ -17,6 +17,7 @@ namespace OpenIZ.Core.Model.Acts
     /// </summary>
     [Serializable]
     [DataContract(Namespace ="http://openiz.org/model", Name ="Act")]
+    [Resource(ModelScope.Clinical)]
     public class Act : VersionedEntityData<Act>
     {
 
@@ -27,32 +28,35 @@ namespace OpenIZ.Core.Model.Acts
         private Guid? m_reasonConceptKey;
         
         private Concept m_classConcept;
-        
         private Concept m_typeConcept;
-        
         private Concept m_statusConcept;
-        
         private Concept m_moodConcept;
-        
         private Concept m_reasonConcept;
 
         
         private List<ActRelationship> m_relationships;
-        
         private List<ActNote> m_notes;
-        
         private List<ActTag> m_tags;
-        
         private List<ActExtension> m_extensions;
-        
         private List<ActIdentifier> m_identifiers;
-        
         private List<ActParticipation> m_participations;
         
+        /// <summary>
+        /// Gets or sets an indicator which identifies whether the object is negated
+        /// </summary>
+        [DataMember(Name = "isNegated")]
         public Boolean IsNegated { get; set; }
 
+        /// <summary>
+        /// Gets or sets the start time of the act
+        /// </summary>
+        [DataMember(Name = "startTime")]
         public DateTime? StartTime { get; set; }
 
+        /// <summary>
+        /// Gets or sets the stop time of the act
+        /// </summary>
+        [DataMember(Name = "stopTime")]
         public DateTime? StopTime { get; set; }
 
         /// <summary>
@@ -240,7 +244,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets the identifiers associated with this act
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "identifier")]
         public List<ActIdentifier> Identifiers
         {
             get
@@ -258,7 +262,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets a list of all associated acts for this act
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "relationship")]
         public List<ActRelationship> Relationships
         {
             get
@@ -276,7 +280,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets a list of all extensions associated with the act
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name= "extension")]
         public List<ActExtension> Extensions
         {
             get
@@ -294,7 +298,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets a list of all notes associated with the act
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "note")]
         public List<ActNote> Notes
         {
             get
@@ -312,7 +316,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets a list of all tags associated with the act
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "tag")]
         public List<ActTag> Tags
         {
             get

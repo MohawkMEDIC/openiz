@@ -96,5 +96,15 @@ namespace OpenIZ.Core.Model.Entities
                     this.m_associationTypeKey = value.Key;
             }
         }
+
+        /// <summary>
+        /// Refresh this entity
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_relationshipType = null;
+            this.m_targetEntity = null;
+        }
     }
 }

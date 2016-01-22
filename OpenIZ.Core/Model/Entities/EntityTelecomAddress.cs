@@ -60,7 +60,14 @@ namespace OpenIZ.Core.Model.Entities
         [DataMember(Name = "value")]
         public String Value { get; set; }
 
-
+        /// <summary>
+        /// Forces refresh of the delay load properties
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_nameUseConcept = null;
+        }
 
     }
 }

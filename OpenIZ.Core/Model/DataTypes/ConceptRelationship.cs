@@ -89,7 +89,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "relationshipType")]
+        [IgnoreDataMember]
         public Guid  RelationshipTypeKey {
             get { return this.m_relationshipTypeId; }
             set
@@ -104,6 +104,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [DelayLoad(nameof(RelationshipTypeKey))]
         [IgnoreDataMember]
+        [DataMember(Name = "relationshipType")]
         public ConceptRelationshipType RelationshipType
         {
             get

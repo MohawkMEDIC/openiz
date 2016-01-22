@@ -26,6 +26,7 @@ using MARC.HI.EHRS.SVC.Core;
 using System.ComponentModel;
 using MARC.HI.EHRS.SVC.Core.Services.Policy;
 using System.Runtime.Serialization;
+using OpenIZ.Core.Model.Attributes;
 
 namespace OpenIZ.Core.Model.Security
 {
@@ -34,6 +35,7 @@ namespace OpenIZ.Core.Model.Security
     /// </summary>
     [DataContract(Name = "SecurityPolicy", Namespace = "http://openiz.org/model")]
     [Serializable]
+    [Resource(ModelScope.Security)]
     public class SecurityPolicy : BaseEntityData, IPolicy
     {
         

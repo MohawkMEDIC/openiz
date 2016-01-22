@@ -64,5 +64,13 @@ namespace OpenIZ.Core.Model.Entities
             }
         }
 
+        /// <summary>
+        /// Refresh the delay load properties
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_service = null;
+        }
     }
 }

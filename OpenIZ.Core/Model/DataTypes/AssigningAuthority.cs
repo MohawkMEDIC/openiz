@@ -50,17 +50,17 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the description of the assigning authority
         /// </summary>
-        [DataMember(Name = "Description")]
+        [DataMember(Name = "description")]
         public String Description { get; set; }
         /// <summary>
         /// Gets or sets the oid of the assigning authority
         /// </summary>
-        [DataMember(Name = "o")]
+        [DataMember(Name = "oid")]
         public String Oid { get; set; }
         /// <summary>
         /// The URL of the assigning authority
         /// </summary>
-        [DataMember(Name = "Url")]
+        [DataMember(Name = "url")]
         public String Url { get; set; }
         /// <summary>
         /// Assigning device identifier

@@ -34,9 +34,9 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the extension type key
         /// </summary>
-        [DataMember(Name = "extensionType")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
+        [IgnoreDataMember]
         public Guid ExtensionTypeKey
         {
             get { return this.m_extensionTypeKey; }
@@ -51,6 +51,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the extension type
         /// </summary>
         [DelayLoad(nameof(ExtensionTypeKey))]
+        [DataMember(Name = "extensionType")]
         public ExtensionType ExtensionType
         {
             get {
@@ -65,6 +66,15 @@ namespace OpenIZ.Core.Model.DataTypes
                 else
                     this.m_extensionTypeKey = value.Key;
             }
+        }
+
+        /// <summary>
+        /// Forces refresh 
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_extensionType = null;
         }
     }
 

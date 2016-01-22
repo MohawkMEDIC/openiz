@@ -26,8 +26,8 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the source entity's key (where the relationship is FROM)
         /// </summary>
-        [DataMember(Name = "sourceEntity")]
-        public Guid SourceEntityKey
+        [DataMember(Name = "source")]
+        public virtual Guid SourceEntityKey
         {
             get
             {

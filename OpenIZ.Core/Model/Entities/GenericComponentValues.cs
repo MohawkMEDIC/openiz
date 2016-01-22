@@ -56,5 +56,14 @@ namespace OpenIZ.Core.Model.Entities
                     this.m_componentTypeKey = value.Key;
             }
         }
+
+        /// <summary>
+        /// Forces refreshing of delay load properties
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_componentType = null;
+        }
     }
 }

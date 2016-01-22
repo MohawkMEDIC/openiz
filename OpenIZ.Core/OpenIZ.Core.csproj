@@ -58,6 +58,7 @@
     <Compile Include="Model\Acts\Observation.cs" />
     <Compile Include="Model\Acts\PatientEncounter.cs" />
     <Compile Include="Model\Acts\SubstanceAdministration.cs" />
+    <Compile Include="Model\Attributes\ResourceAttribute.cs" />
     <Compile Include="Model\Constants\ActClassKeys.cs" />
     <Compile Include="Model\Constants\EntityRelationshipTypeKeys.cs" />
     <Compile Include="Model\Constants\CodeSystemKeys.cs" />

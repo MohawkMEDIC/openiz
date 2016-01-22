@@ -16,6 +16,7 @@ namespace OpenIZ.Core.Model.Acts
     /// </summary>
     [Serializable]
     [DataContract(Name = "SubstanceAdministration", Namespace = "http://openiz.org/model")]
+    [Resource(ModelScope.Clinical)]
     public class SubstanceAdministration : Act
     {
         // Route key
@@ -120,7 +121,16 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// The sequence of the dose (i.e. OPV 0 = 0 , OPV 1 = 1, etc.)
         /// </summary>
-        [DataMember(Name = "sequenceId")]
+        [DataMember(Name = "doseSequence")]
         public uint SequenceId { get; set; }
+
+        /// <summary>
+        /// Force delay loading of properties
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_doseUnit = this.m_route = null;
+        }
     }
 }

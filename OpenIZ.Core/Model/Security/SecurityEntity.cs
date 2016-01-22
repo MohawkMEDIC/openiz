@@ -18,6 +18,7 @@
  */
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services.Policy;
+using OpenIZ.Core.Model.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;

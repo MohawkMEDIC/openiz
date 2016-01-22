@@ -67,7 +67,16 @@ namespace OpenIZ.Core.Model.DataTypes
                     this.m_authorKey = value.Key;
             }
         }
-        
+
+        /// <summary>
+        /// Forces a refresh of the object
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_author = null;
+        }
+
     }
 
     /// <summary>

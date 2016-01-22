@@ -1,785 +1,808 @@
 <?xml version="1.0"?>
-<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://openiz.org/model" elementFormDefault="qualified" targetNamespace="http://openiz.org/model" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="Serialization.xsd" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
-  <xs:complexType name="IdentifiedData">
+<!-- edited with XMLSpy v2015 rel. 4 (http://www.altova.com) by Justin Fyfe (Mohawk College) -->
+<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://openiz.org/model" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:q1="http://schemas.datacontract.org/2004/07/OpenIZ.Core.Model.DataTypes" targetNamespace="http://openiz.org/model" elementFormDefault="qualified">
+	<xs:import schemaLocation="Serialization.xsd" namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+	<xs:complexType name="Patient" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Person">
+				<xs:sequence>
+					<xs:element name="deceasedDate" type="xs:dateTime" nillable="true" minOccurs="0"/>
+					<xs:element name="deceasedDatePrecision" type="tns:DatePrecision" nillable="true" minOccurs="0"/>
+					<xs:element name="genderConcept" type="ser:guid" minOccurs="0"/>
+					<xs:element name="multipleBirthOrder" type="xs:int" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="Patient" type="tns:Patient" nillable="true"/>
+	<xs:complexType name="Person" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Entity">
+				<xs:sequence>
+					<xs:element name="dateOfBirth" type="xs:dateTime" minOccurs="0"/>
+					<xs:element name="datePrecision" type="tns:DatePrecision" minOccurs="0"/>
+					<xs:element name="language" type="tns:ArrayOfPersonLanguageCommunication" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfConceptRelationship">
     <xs:sequence>
-      <xs:element minOccurs="0" name="id" type="ser:guid" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ConceptRelationship" nillable="true" type="tns:ConceptRelationship" />
     </xs:sequence>
   </xs:complexType>
-  <xs:element name="IdentifiedData" nillable="true" type="tns:IdentifiedData" />
-  <xs:complexType name="BaseEntityData">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:IdentifiedData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="createdBy" type="ser:guid" />
-          <xs:element minOccurs="0" name="creationTime" type="xs:dateTime" />
-          <xs:element minOccurs="0" name="obsoletedBy" nillable="true" type="ser:guid" />
-          <xs:element minOccurs="0" name="obsoletionTime" nillable="true" type="xs:dateTime" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="BaseEntityData" nillable="true" type="tns:BaseEntityData" />
-  <xs:complexType name="SecurityApplication">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:SecurityEntity">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="applicationSecret" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="SecurityApplication" nillable="true" type="tns:SecurityApplication" />
-  <xs:complexType name="SecurityEntity">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:BaseEntityData">
-        <xs:sequence />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="SecurityEntity" nillable="true" type="tns:SecurityEntity" />
-  <xs:complexType name="SecurityDevice">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:SecurityEntity">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="deviceSecret" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="SecurityDevice" nillable="true" type="tns:SecurityDevice" />
-  <xs:complexType name="SecurityPolicy">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:BaseEntityData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="canOverride" type="xs:boolean" />
-          <xs:element minOccurs="0" name="isPublic" type="xs:boolean" />
-          <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="oRef" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="SecurityPolicy" nillable="true" type="tns:SecurityPolicy" />
-  <xs:complexType name="SecurityRole">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:SecurityEntity">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="description" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="SecurityRole" nillable="true" type="tns:SecurityRole" />
-  <xs:complexType name="SecurityUser">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:SecurityEntity">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="email" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="emailConfirmed" type="xs:boolean" />
-          <xs:element minOccurs="0" name="invalidLoginAttempts" type="xs:int" />
-          <xs:element minOccurs="0" name="lastLoginTime" type="xs:dateTime" />
-          <xs:element minOccurs="0" name="lockoutEnabled" type="xs:boolean" />
-          <xs:element minOccurs="0" name="passwordHash" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="phoneNumber" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="phoneNumberConfirmed" type="xs:boolean" />
-          <xs:element minOccurs="0" name="photo" nillable="true" type="xs:base64Binary" />
-          <xs:element minOccurs="0" name="securityStamp" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="twoFactorEnabled" type="xs:boolean" />
-          <xs:element minOccurs="0" name="updatedByRef" nillable="true" type="ser:guid" />
-          <xs:element minOccurs="0" name="updatedTime" nillable="true" type="xs:dateTime" />
-          <xs:element minOccurs="0" name="userName" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="SecurityUser" nillable="true" type="tns:SecurityUser" />
-  <xs:complexType name="Patient">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Person">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="deceasedDate" nillable="true" type="xs:dateTime" />
-          <xs:element minOccurs="0" name="deceasedDatePrecision" nillable="true" type="tns:DatePrecision" />
-          <xs:element minOccurs="0" name="genderConceptRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="multipleBirthOrder" nillable="true" type="xs:int" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="Patient" nillable="true" type="tns:Patient" />
-  <xs:complexType name="Person">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Entity">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="dateOfBirth" type="xs:dateTime" />
-          <xs:element minOccurs="0" name="datePrecision" type="tns:DatePrecision" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="Person" nillable="true" type="tns:Person" />
-  <xs:complexType name="Entity">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:VersionedEntityData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="classConceptRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="creationActRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="determinerConceptRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="statusConceptRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="typeConceptRef" nillable="true" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="Entity" nillable="true" type="tns:Entity" />
-  <xs:complexType name="VersionedEntityData">
-    <xs:annotation>
-      <xs:appinfo>
-        <GenericType Name="VersionedEntityData" Namespace="http://openiz.org/model" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
-          <GenericParameter Name="Entity" Namespace="http://openiz.org/model" />
-        </GenericType>
-      </xs:appinfo>
-    </xs:annotation>
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:BaseEntityData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="previousVersionRef" nillable="true" type="ser:guid" />
-          <xs:element minOccurs="0" name="sequenceRef" type="xs:decimal" />
-          <xs:element minOccurs="0" name="versionRef" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="VersionedEntityData" nillable="true" type="tns:VersionedEntityData" />
-  <xs:simpleType name="DatePrecision">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="Y" />
-      <xs:enumeration value="m" />
-      <xs:enumeration value="D" />
-      <xs:enumeration value="H" />
-      <xs:enumeration value="M" />
-      <xs:enumeration value="S" />
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:element name="DatePrecision" nillable="true" type="tns:DatePrecision" />
-  <xs:complexType name="Provider">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Person">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="providerSpecialtyRef" nillable="true" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="Provider" nillable="true" type="tns:Provider" />
-  <xs:complexType name="ApplicationEntity">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Entity">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="securityApplicationRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="softwareName" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="vendorName" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="versionName" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="ApplicationEntity" nillable="true" type="tns:ApplicationEntity" />
-  <xs:complexType name="DeviceEntity">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Entity">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="manufacturerModelName" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="operatingSystemName" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="securityDeviceRef" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="DeviceEntity" nillable="true" type="tns:DeviceEntity" />
-  <xs:complexType name="EntityAddress">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:VersionBoundRelationData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="addressUseRef" nillable="true" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="EntityAddress" nillable="true" type="tns:EntityAddress" />
-  <xs:complexType name="VersionBoundRelationData">
-    <xs:annotation>
-      <xs:appinfo>
-        <GenericType Name="VersionBoundRelationData" Namespace="http://openiz.org/model" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
-          <GenericParameter Name="Entity" Namespace="http://openiz.org/model" />
-        </GenericType>
-      </xs:appinfo>
-    </xs:annotation>
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:BoundRelationData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="effectiveVersionSequence" type="xs:decimal" />
-          <xs:element minOccurs="0" name="obsoleteVersionSequence" nillable="true" type="xs:decimal" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="VersionBoundRelationData" nillable="true" type="tns:VersionBoundRelationData" />
-  <xs:complexType name="BoundRelationData">
-    <xs:annotation>
-      <xs:appinfo>
-        <GenericType Name="BoundRelationData" Namespace="http://openiz.org/model" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
-          <GenericParameter Name="Entity" Namespace="http://openiz.org/model" />
-        </GenericType>
-      </xs:appinfo>
-    </xs:annotation>
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:BaseEntityData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="sourceEntityRef" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="BoundRelationData" nillable="true" type="tns:BoundRelationData" />
-  <xs:complexType name="AddressComponent">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:GenericComponentValues">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="value" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="AddressComponent" nillable="true" type="tns:AddressComponent" />
-  <xs:complexType name="GenericComponentValues">
-    <xs:annotation>
-      <xs:appinfo>
-        <GenericType Name="GenericComponentValues" Namespace="http://openiz.org/model" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
-          <GenericParameter Name="EntityAddress" Namespace="http://openiz.org/model" />
-        </GenericType>
-      </xs:appinfo>
-    </xs:annotation>
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:BoundRelationData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="typeRef" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="GenericComponentValues" nillable="true" type="tns:GenericComponentValues" />
-  <xs:complexType name="EntityRelationship">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:VersionBoundRelationData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="relationshipTypeRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="targetRef" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="EntityRelationship" nillable="true" type="tns:EntityRelationship" />
-  <xs:complexType name="EntityName">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:VersionBoundRelationData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="nameUseRef" nillable="true" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="EntityName" nillable="true" type="tns:EntityName" />
-  <xs:complexType name="EntityNameComponent">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:GenericComponentValues">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="phoneticAlgorithmRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="phoneticCode" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="value" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="EntityNameComponent" nillable="true" type="tns:EntityNameComponent" />
-  <xs:complexType name="EntityTelecomAddress">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:VersionBoundRelationData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="addressUseRef" nillable="true" type="ser:guid" />
-          <xs:element minOccurs="0" name="value" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="EntityTelecomAddress" nillable="true" type="tns:EntityTelecomAddress" />
-  <xs:complexType name="ManufacturedMaterial">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Material">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="lotNumber" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="ManufacturedMaterial" nillable="true" type="tns:ManufacturedMaterial" />
-  <xs:complexType name="Material">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Entity">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="expiryDate" type="xs:dateTime" />
-          <xs:element minOccurs="0" name="formConceptRef" nillable="true" type="ser:guid" />
-          <xs:element minOccurs="0" name="isAdministrative" type="xs:boolean" />
-          <xs:element minOccurs="0" name="quantity" type="xs:decimal" />
-          <xs:element minOccurs="0" name="quantityConceptRef" nillable="true" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="Material" nillable="true" type="tns:Material" />
-  <xs:complexType name="Organization">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Entity">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="industryConceptRef" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="Organization" nillable="true" type="tns:Organization" />
-  <xs:complexType name="PersonLanguageCommunication">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:VersionBoundRelationData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="isPreferred" type="xs:boolean" />
-          <xs:element minOccurs="0" name="languageCode" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="PersonLanguageCommunication" nillable="true" type="tns:PersonLanguageCommunication" />
-  <xs:complexType name="Place">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Entity">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="isMobile" type="xs:boolean" />
-          <xs:element minOccurs="0" name="lat" type="xs:float" />
-          <xs:element minOccurs="0" name="lng" type="xs:float" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="Place" nillable="true" type="tns:Place" />
-  <xs:complexType name="PlaceService">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:VersionBoundRelationData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="serviceConceptRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="serviceSchedule" nillable="true">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:any minOccurs="0" processContents="lax" />
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="PlaceService" nillable="true" type="tns:PlaceService" />
-  <xs:complexType name="EntityExtension">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Extension">
-        <xs:sequence />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="EntityExtension" nillable="true" type="tns:EntityExtension" />
-  <xs:complexType name="Extension">
-    <xs:annotation>
-      <xs:appinfo>
-        <GenericType Name="Extension" Namespace="http://openiz.org/model" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
-          <GenericParameter Name="Entity" Namespace="http://openiz.org/model" />
-        </GenericType>
-      </xs:appinfo>
-    </xs:annotation>
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:VersionBoundRelationData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="extensionTypeRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="value" nillable="true" type="xs:base64Binary" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="Extension" nillable="true" type="tns:Extension" />
-  <xs:complexType name="ActExtension">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Extension">
-        <xs:sequence />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="ActExtension" nillable="true" type="tns:ActExtension" />
-  <xs:complexType name="ExtensionType">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:BaseEntityData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="ExtensionType" nillable="true" type="tns:ExtensionType" />
-  <xs:complexType name="CodeSystem">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:BaseEntityData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="authority" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="description" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="oRef" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="obsoletionReason" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="url" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="version" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="CodeSystem" nillable="true" type="tns:CodeSystem" />
-  <xs:complexType name="ConceptName">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:VersionBoundRelationData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="language" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="phoneticAlgorithmRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="phoneticCode" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="ConceptName" nillable="true" type="tns:ConceptName" />
-  <xs:complexType name="ConceptRelationshipType">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:IdentifiedData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="mnemonic" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="ConceptRelationshipType" nillable="true" type="tns:ConceptRelationshipType" />
-  <xs:complexType name="EntityNote">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Note">
-        <xs:sequence />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="EntityNote" nillable="true" type="tns:EntityNote" />
-  <xs:complexType name="Note">
-    <xs:annotation>
-      <xs:appinfo>
-        <GenericType Name="Note" Namespace="http://openiz.org/model" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
-          <GenericParameter Name="Entity" Namespace="http://openiz.org/model" />
-        </GenericType>
-      </xs:appinfo>
-    </xs:annotation>
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:VersionBoundRelationData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="authorRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="text" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="Note" nillable="true" type="tns:Note" />
-  <xs:complexType name="ActNote">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Note">
-        <xs:sequence />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="ActNote" nillable="true" type="tns:ActNote" />
-  <xs:complexType name="PhoneticAlgorithm">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:IdentifiedData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="PhoneticAlgorithm" nillable="true" type="tns:PhoneticAlgorithm" />
-  <xs:complexType name="ReferenceTermName">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:BaseEntityData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="language" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="phoneticAlgorithmRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="phoneticCode" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="referenceTermRef" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="ReferenceTermName" nillable="true" type="tns:ReferenceTermName" />
-  <xs:complexType name="EntityTag">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Tag">
-        <xs:sequence />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="EntityTag" nillable="true" type="tns:EntityTag" />
-  <xs:complexType name="Tag">
-    <xs:annotation>
-      <xs:appinfo>
-        <GenericType Name="Tag" Namespace="http://openiz.org/model" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
-          <GenericParameter Name="Entity" Namespace="http://openiz.org/model" />
-        </GenericType>
-      </xs:appinfo>
-    </xs:annotation>
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:BoundRelationData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="key" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="value" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="Tag" nillable="true" type="tns:Tag" />
-  <xs:complexType name="ActTag">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Tag">
-        <xs:sequence />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="ActTag" nillable="true" type="tns:ActTag" />
-  <xs:complexType name="AssigningAuthority">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:BaseEntityData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="Url" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="assigningDeviceRef" nillable="true" type="ser:guid" />
-          <xs:element minOccurs="0" name="domainName" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="oRef" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="AssigningAuthority" nillable="true" type="tns:AssigningAuthority" />
-  <xs:complexType name="Concept">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:VersionedEntityData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="classRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="isReadonly" type="xs:boolean" />
-          <xs:element minOccurs="0" name="mnemonic" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="statusConceptRef" nillable="true" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="Concept" nillable="true" type="tns:Concept" />
-  <xs:complexType name="ConceptClass">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:IdentifiedData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="mnemonic" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="ConceptClass" nillable="true" type="tns:ConceptClass" />
-  <xs:complexType name="ConceptReferenceTerm">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:VersionBoundRelationData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="referenceTermRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="relationshipTypeRef" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="ConceptReferenceTerm" nillable="true" type="tns:ConceptReferenceTerm" />
   <xs:complexType name="ConceptRelationship">
     <xs:complexContent mixed="false">
       <xs:extension base="tns:VersionBoundRelationData">
         <xs:sequence>
-          <xs:element minOccurs="0" name="relationshipTypeRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="targetConceptRef" type="ser:guid" />
+          <xs:element minOccurs="0" name="relationshipType" nillable="true" type="tns:ConceptRelationshipType" />
+          <xs:element minOccurs="0" name="targetConcept" type="ser:guid" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:element name="ConceptRelationship" nillable="true" type="tns:ConceptRelationship" />
-  <xs:complexType name="EntityIdentifier">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:IdentifierBase">
-        <xs:sequence />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="EntityIdentifier" nillable="true" type="tns:EntityIdentifier" />
-  <xs:complexType name="IdentifierBase">
-    <xs:annotation>
-      <xs:appinfo>
-        <GenericType Name="IdentifierBase" Namespace="http://openiz.org/model" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
-          <GenericParameter Name="Entity" Namespace="http://openiz.org/model" />
-        </GenericType>
-      </xs:appinfo>
-    </xs:annotation>
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:VersionBoundRelationData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="authorityRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="typeRef" nillable="true" type="ser:guid" />
-          <xs:element minOccurs="0" name="value" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="IdentifierBase" nillable="true" type="tns:IdentifierBase" />
-  <xs:complexType name="ActIdentifier">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:IdentifierBase">
-        <xs:sequence />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="ActIdentifier" nillable="true" type="tns:ActIdentifier" />
-  <xs:complexType name="IdentifierType">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:BaseEntityData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="scopeConceptRef" nillable="true" type="ser:guid" />
-          <xs:element minOccurs="0" name="typeConceptRef" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="IdentifierType" nillable="true" type="tns:IdentifierType" />
-  <xs:complexType name="ReferenceTerm">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:IdentifiedData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="codeSystemRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="mnemonic" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="ReferenceTerm" nillable="true" type="tns:ReferenceTerm" />
-  <xs:complexType name="Act">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:VersionedEntityData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="classConceptRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="moodConceptRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="reasonConceptRef" nillable="true" type="ser:guid" />
-          <xs:element minOccurs="0" name="statusConceptRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="typeConceptRef" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="Act" nillable="true" type="tns:Act" />
-  <xs:complexType name="ActParticipation">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:VersionBoundRelationData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="participationRoleRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="targetEntityRef" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="ActParticipation" nillable="true" type="tns:ActParticipation" />
-  <xs:complexType name="ActRelationship">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:VersionBoundRelationData">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="relationshipTypeRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="targetRef" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="ActRelationship" nillable="true" type="tns:ActRelationship" />
-  <xs:complexType name="Observation">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Act">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="interpretationConceptRef" nillable="true" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="Observation" nillable="true" type="tns:Observation" />
-  <xs:complexType name="QuantityObservation">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Observation">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="unitOfMeasureRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="value" type="xs:decimal" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="QuantityObservation" nillable="true" type="tns:QuantityObservation" />
-  <xs:complexType name="TextObservation">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Observation">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="value" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="TextObservation" nillable="true" type="tns:TextObservation" />
-  <xs:complexType name="CodedObservation">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Observation">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="valueRef" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="CodedObservation" nillable="true" type="tns:CodedObservation" />
-  <xs:complexType name="PatientEncounter">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Act">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="dischargeDispositionRef" nillable="true" type="ser:guid" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="PatientEncounter" nillable="true" type="tns:PatientEncounter" />
-  <xs:complexType name="SubstanceAdministration">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Act">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="doseQuantity" type="xs:decimal" />
-          <xs:element minOccurs="0" name="doseUnitRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="routeRef" type="ser:guid" />
-          <xs:element minOccurs="0" name="sequenceId" type="xs:unsignedInt" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="SubstanceAdministration" nillable="true" type="tns:SubstanceAdministration" />
+
+	<xs:element name="Person" type="tns:Person" nillable="true"/>
+	<xs:complexType name="Entity" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedEntityData">
+				<xs:sequence>
+					<xs:element name="address" type="tns:ArrayOfEntityAddress" nillable="true" minOccurs="0"/>
+					<xs:element name="classConcept" type="ser:guid" minOccurs="0"/>
+					<xs:element name="creationAct" type="ser:guid" minOccurs="0"/>
+					<xs:element name="determinerConcept" type="ser:guid" minOccurs="0"/>
+					<xs:element name="extension" type="tns:ArrayOfEntityExtension" nillable="true" minOccurs="0"/>
+					<xs:element name="identifier" type="tns:ArrayOfEntityIdentifier" nillable="true" minOccurs="0"/>
+					<xs:element name="name" type="tns:ArrayOfEntityName" nillable="true" minOccurs="0"/>
+					<xs:element name="note" type="tns:ArrayOfEntityNote" nillable="true" minOccurs="0"/>
+					<xs:element name="participation" type="tns:ArrayOfActParticipation" nillable="true" minOccurs="0"/>
+					<xs:element name="relationship" type="tns:ArrayOfEntityRelationship" nillable="true" minOccurs="0"/>
+					<xs:element name="statusConcept" type="ser:guid" minOccurs="0"/>
+					<xs:element name="tag" type="tns:ArrayOfEntityTag" nillable="true" minOccurs="0"/>
+					<xs:element name="telecom" type="tns:ArrayOfEntityTelecomAddress" nillable="true" minOccurs="0"/>
+					<xs:element name="typeConcept" type="ser:guid" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="Entity" type="tns:Entity" nillable="true"/>
+	<xs:complexType name="VersionedEntityData" mixed="false">
+		<xs:annotation>
+			<xs:appinfo>
+				<GenericType Name="VersionedEntityData" Namespace="http://openiz.org/model" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+					<GenericParameter Name="Entity" Namespace="http://openiz.org/model"/>
+				</GenericType>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="tns:BaseEntityData">
+				<xs:sequence>
+					<xs:element name="previousVersion" type="ser:guid" nillable="true" minOccurs="0"/>
+					<xs:element name="sequence" type="xs:decimal" minOccurs="0"/>
+					<xs:element name="version" type="ser:guid" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="BaseEntityData" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:IdentifiedData">
+				<xs:sequence>
+					<xs:element name="createdBy" type="ser:guid" minOccurs="0"/>
+					<xs:element name="creationTime" type="xs:dateTime" minOccurs="0"/>
+					<xs:element name="obsoletedBy" type="ser:guid" nillable="true" minOccurs="0"/>
+					<xs:element name="obsoletionTime" type="xs:dateTime" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="IdentifiedData">
+		<xs:sequence>
+			<xs:element name="id" type="ser:guid" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfEntityAddress">
+		<xs:sequence>
+			<xs:element name="EntityAddress" type="tns:EntityAddress" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EntityAddress" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionBoundRelationData">
+				<xs:sequence>
+					<xs:element name="addressUse" type="ser:guid" nillable="true" minOccurs="0"/>
+					<xs:element name="component" type="tns:ArrayOfAddressComponent" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="VersionBoundRelationData" mixed="false">
+		<xs:annotation>
+			<xs:appinfo>
+				<GenericType Name="VersionBoundRelationData" Namespace="http://openiz.org/model" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+					<GenericParameter Name="Entity" Namespace="http://openiz.org/model"/>
+				</GenericType>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="tns:BoundRelationData">
+				<xs:sequence>
+					<xs:element name="effectiveVersionSequence" type="xs:decimal" minOccurs="0"/>
+					<xs:element name="obsoleteVersionSequence" type="xs:decimal" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="BoundRelationData" mixed="false">
+		<xs:annotation>
+			<xs:appinfo>
+				<GenericType Name="BoundRelationData" Namespace="http://openiz.org/model" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+					<GenericParameter Name="Entity" Namespace="http://openiz.org/model"/>
+				</GenericType>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="tns:BaseEntityData">
+				<xs:sequence>
+					<xs:element name="source" type="ser:guid" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfAddressComponent">
+		<xs:sequence>
+			<xs:element name="AddressComponent" type="tns:AddressComponent" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AddressComponent" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:GenericComponentValues">
+				<xs:sequence>
+					<xs:element name="value" type="xs:string" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GenericComponentValues" mixed="false">
+		<xs:annotation>
+			<xs:appinfo>
+				<GenericType Name="GenericComponentValues" Namespace="http://openiz.org/model" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+					<GenericParameter Name="EntityAddress" Namespace="http://openiz.org/model"/>
+				</GenericType>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="tns:BoundRelationData">
+				<xs:sequence>
+					<xs:element name="type" type="ser:guid" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfEntityExtension">
+		<xs:sequence>
+			<xs:element name="EntityExtension" type="tns:EntityExtension" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EntityExtension" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Extension">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Extension" mixed="false">
+		<xs:annotation>
+			<xs:appinfo>
+				<GenericType Name="Extension" Namespace="http://openiz.org/model" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+					<GenericParameter Name="Entity" Namespace="http://openiz.org/model"/>
+				</GenericType>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="tns:VersionBoundRelationData">
+				<xs:sequence>
+					<xs:element name="extensionType" type="tns:ExtensionType" nillable="true" minOccurs="0"/>
+					<xs:element name="value" type="xs:base64Binary" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ExtensionType" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseEntityData">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfEntityIdentifier">
+		<xs:sequence>
+			<xs:element name="EntityIdentifier" type="tns:EntityIdentifier" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EntityIdentifier" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:IdentifierBase">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="IdentifierBase" mixed="false">
+		<xs:annotation>
+			<xs:appinfo>
+				<GenericType Name="IdentifierBase" Namespace="http://openiz.org/model" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+					<GenericParameter Name="Entity" Namespace="http://openiz.org/model"/>
+				</GenericType>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="tns:VersionBoundRelationData">
+				<xs:sequence>
+					<xs:element name="authority" type="tns:AssigningAuthority" nillable="true" minOccurs="0"/>
+					<xs:element name="type" type="tns:IdentifierType" nillable="true" minOccurs="0"/>
+					<xs:element name="value" type="xs:string" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AssigningAuthority" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseEntityData">
+				<xs:sequence>
+					<xs:element name="assigningDevice" type="ser:guid" nillable="true" minOccurs="0"/>
+					<xs:element name="description" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="domainName" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="name" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="oid" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="url" type="xs:string" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="IdentifierType" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseEntityData">
+				<xs:sequence>
+					<xs:element name="scopeConcept" type="ser:guid" nillable="true" minOccurs="0"/>
+					<xs:element name="typeConcept" type="ser:guid" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfEntityName">
+		<xs:sequence>
+			<xs:element name="EntityName" type="tns:EntityName" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EntityName" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionBoundRelationData">
+				<xs:sequence>
+					<xs:element name="component" type="tns:ArrayOfEntityNameComponent" nillable="true" minOccurs="0"/>
+					<xs:element name="nameUse" type="ser:guid" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfEntityNameComponent">
+		<xs:sequence>
+			<xs:element name="EntityNameComponent" type="tns:EntityNameComponent" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EntityNameComponent" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:GenericComponentValues">
+				<xs:sequence>
+					<xs:element name="phoneticAlgorithm" type="ser:guid" minOccurs="0"/>
+					<xs:element name="phoneticCode" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="value" type="xs:string" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfEntityNote">
+		<xs:sequence>
+			<xs:element name="EntityNote" type="tns:EntityNote" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EntityNote" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Note">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Note" mixed="false">
+		<xs:annotation>
+			<xs:appinfo>
+				<GenericType Name="Note" Namespace="http://openiz.org/model" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+					<GenericParameter Name="Entity" Namespace="http://openiz.org/model"/>
+				</GenericType>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="tns:VersionBoundRelationData">
+				<xs:sequence>
+					<xs:element name="author" type="ser:guid" minOccurs="0"/>
+					<xs:element name="text" type="xs:string" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfActParticipation">
+		<xs:sequence>
+			<xs:element name="ActParticipation" type="tns:ActParticipation" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ActParticipation" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionBoundRelationData">
+				<xs:sequence>
+					<xs:element name="participationRole" type="ser:guid" minOccurs="0"/>
+					<xs:element name="player" type="ser:guid" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfEntityRelationship">
+		<xs:sequence>
+			<xs:element name="EntityRelationship" type="tns:EntityRelationship" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EntityRelationship" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionBoundRelationData">
+				<xs:sequence>
+					<xs:element name="relationshipType" type="ser:guid" minOccurs="0"/>
+					<xs:element name="target" type="ser:guid" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfEntityTag">
+		<xs:sequence>
+			<xs:element name="EntityTag" type="tns:EntityTag" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EntityTag" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Tag">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Tag" mixed="false">
+		<xs:annotation>
+			<xs:appinfo>
+				<GenericType Name="Tag" Namespace="http://openiz.org/model" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+					<GenericParameter Name="Entity" Namespace="http://openiz.org/model"/>
+				</GenericType>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="tns:BoundRelationData">
+				<xs:sequence>
+					<xs:element name="key" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="value" type="xs:string" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfEntityTelecomAddress">
+		<xs:sequence>
+			<xs:element name="EntityTelecomAddress" type="tns:EntityTelecomAddress" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EntityTelecomAddress" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionBoundRelationData">
+				<xs:sequence>
+					<xs:element name="addressUse" type="ser:guid" nillable="true" minOccurs="0"/>
+					<xs:element name="value" type="xs:string" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:simpleType name="DatePrecision">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Y"/>
+			<xs:enumeration value="m"/>
+			<xs:enumeration value="D"/>
+			<xs:enumeration value="H"/>
+			<xs:enumeration value="M"/>
+			<xs:enumeration value="S"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="ArrayOfPersonLanguageCommunication">
+		<xs:sequence>
+			<xs:element name="PersonLanguageCommunication" type="tns:PersonLanguageCommunication" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PersonLanguageCommunication" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionBoundRelationData">
+				<xs:sequence>
+					<xs:element name="isPreferred" type="xs:boolean" minOccurs="0"/>
+					<xs:element name="languageCode" type="xs:string" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Provider" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Person">
+				<xs:sequence>
+					<xs:element name="providerSpecialty" type="ser:guid" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="Provider" type="tns:Provider" nillable="true"/>
+	<xs:complexType name="ApplicationEntity" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Entity">
+				<xs:sequence>
+					<xs:element name="securityApplication" type="ser:guid" minOccurs="0"/>
+					<xs:element name="softwareName" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="vendorName" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="versionName" type="xs:string" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="ApplicationEntity" type="tns:ApplicationEntity" nillable="true"/>
+	<xs:complexType name="DeviceEntity" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Entity">
+				<xs:sequence>
+					<xs:element name="manufacturerModelName" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="operatingSystemName" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="securityDevice" type="ser:guid" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="DeviceEntity" type="tns:DeviceEntity" nillable="true"/>
+	<xs:complexType name="ManufacturedMaterial" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Material">
+				<xs:sequence>
+					<xs:element name="lotNumber" type="xs:string" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="ManufacturedMaterial" type="tns:ManufacturedMaterial" nillable="true"/>
+	<xs:complexType name="Material" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Entity">
+				<xs:sequence>
+					<xs:element name="expiryDate" type="xs:dateTime" minOccurs="0"/>
+					<xs:element name="formConcept" type="ser:guid" nillable="true" minOccurs="0"/>
+					<xs:element name="isAdministrative" type="xs:boolean" minOccurs="0"/>
+					<xs:element name="quantity" type="xs:decimal" minOccurs="0"/>
+					<xs:element name="quantityConcept" type="ser:guid" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="Material" type="tns:Material" nillable="true"/>
+	<xs:complexType name="Organization" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Entity">
+				<xs:sequence>
+					<xs:element name="industryConcept" type="ser:guid" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="Organization" type="tns:Organization" nillable="true"/>
+	<xs:complexType name="Place" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Entity">
+				<xs:sequence>
+					<xs:element name="isMobile" type="xs:boolean" minOccurs="0"/>
+					<xs:element name="lat" type="xs:float" minOccurs="0"/>
+					<xs:element name="lng" type="xs:float" minOccurs="0"/>
+					<xs:element name="service" type="tns:ArrayOfPlaceService" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="Place" type="tns:Place" nillable="true"/>
+	<xs:complexType name="ArrayOfPlaceService">
+		<xs:sequence>
+			<xs:element name="PlaceService" type="tns:PlaceService" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PlaceService" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionBoundRelationData">
+				<xs:sequence>
+					<xs:element name="serviceConcept" type="ser:guid" minOccurs="0"/>
+					<xs:element name="serviceSchedule" nillable="true" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:any processContents="lax" minOccurs="0"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CodeSystem" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseEntityData">
+				<xs:sequence>
+					<xs:element name="authority" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="description" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="name" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="obsoletionReason" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="oid" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="url" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="version" type="xs:string" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="CodeSystem" type="tns:CodeSystem" nillable="true"/>
+	<xs:complexType name="PhoneticAlgorithm" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:IdentifiedData">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="PhoneticAlgorithm" type="tns:PhoneticAlgorithm" nillable="true"/>
+	<xs:complexType name="Concept" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedEntityData">
+				<xs:sequence>
+					<xs:element name="class" type="tns:ConceptClass" nillable="true" minOccurs="0"/>
+					<xs:element name="isReadonly" type="xs:boolean" minOccurs="0"/>
+					<xs:element name="mnemonic" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="name" type="tns:ArrayOfConceptName" nillable="true" minOccurs="0"/>
+					<xs:element name="referenceTerm" type="tns:ArrayOfConceptReferenceTerm" nillable="true" minOccurs="0"/>
+					<xs:element name="relationship" type="tns:ArrayOfConceptRelationship" nillable="true" minOccurs="0"/>
+					<xs:element name="statusConcept" type="ser:guid" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="Concept" type="tns:Concept" nillable="true"/>
+	<xs:complexType name="ConceptClass" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:IdentifiedData">
+				<xs:sequence>
+					<xs:element name="mnemonic" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="name" type="xs:string" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfConceptName">
+		<xs:sequence>
+			<xs:element name="ConceptName" type="tns:ConceptName" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ConceptName" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionBoundRelationData">
+				<xs:sequence>
+					<xs:element name="language" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="name" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="phoneticAlgorithm" type="ser:guid" minOccurs="0"/>
+					<xs:element name="phoneticCode" type="xs:string" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfConceptReferenceTerm">
+		<xs:sequence>
+			<xs:element name="ConceptReferenceTerm" type="tns:ConceptReferenceTerm" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ConceptReferenceTerm" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionBoundRelationData">
+				<xs:sequence>
+					<xs:element name="referenceTerm" type="ser:guid" minOccurs="0"/>
+					<xs:element name="relationshipType" type="ser:guid" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ConceptRelationshipType" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:IdentifiedData">
+				<xs:sequence>
+					<xs:element name="mnemonic" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="name" type="xs:string" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ReferenceTerm" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:IdentifiedData">
+				<xs:sequence>
+					<xs:element name="codeSystem" type="tns:CodeSystem" nillable="true" minOccurs="0"/>
+					<xs:element name="mnemonic" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="name" type="tns:ArrayOfReferenceTermName" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="ReferenceTerm" type="tns:ReferenceTerm" nillable="true"/>
+	<xs:complexType name="ArrayOfReferenceTermName">
+		<xs:sequence>
+			<xs:element name="ReferenceTermName" type="tns:ReferenceTermName" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ReferenceTermName" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseEntityData">
+				<xs:sequence>
+					<xs:element name="language" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="name" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="phoneticAlgorithm" type="ser:guid" minOccurs="0"/>
+					<xs:element name="phoneticCode" type="xs:string" nillable="true" minOccurs="0"/>
+					<xs:element name="referenceTerm" type="ser:guid" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Act" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedEntityData">
+				<xs:sequence>
+					<xs:element name="classConcept" type="ser:guid" minOccurs="0"/>
+					<xs:element name="extension" type="tns:ArrayOfActExtension" nillable="true" minOccurs="0"/>
+					<xs:element name="identifier" type="tns:ArrayOfActIdentifier" nillable="true" minOccurs="0"/>
+					<xs:element name="isNegated" type="xs:boolean" minOccurs="0"/>
+					<xs:element name="moodConcept" type="ser:guid" minOccurs="0"/>
+					<xs:element name="note" type="tns:ArrayOfActNote" nillable="true" minOccurs="0"/>
+					<xs:element name="reasonConcept" type="ser:guid" nillable="true" minOccurs="0"/>
+					<xs:element name="relationship" type="tns:ArrayOfActRelationship" nillable="true" minOccurs="0"/>
+					<xs:element name="startTime" type="xs:dateTime" nillable="true" minOccurs="0"/>
+					<xs:element name="statusConcept" type="ser:guid" minOccurs="0"/>
+					<xs:element name="stopTime" type="xs:dateTime" nillable="true" minOccurs="0"/>
+					<xs:element name="tag" type="tns:ArrayOfActTag" nillable="true" minOccurs="0"/>
+					<xs:element name="typeConcept" type="ser:guid" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="Act" type="tns:Act" nillable="true"/>
+	<xs:complexType name="ArrayOfActExtension">
+		<xs:sequence>
+			<xs:element name="ActExtension" type="tns:ActExtension" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ActExtension" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Extension">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfActIdentifier">
+		<xs:sequence>
+			<xs:element name="ActIdentifier" type="tns:ActIdentifier" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ActIdentifier" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:IdentifierBase">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfActNote">
+		<xs:sequence>
+			<xs:element name="ActNote" type="tns:ActNote" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ActNote" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Note">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfActRelationship">
+		<xs:sequence>
+			<xs:element name="ActRelationship" type="tns:ActRelationship" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ActRelationship" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionBoundRelationData">
+				<xs:sequence>
+					<xs:element name="relationshipType" type="ser:guid" minOccurs="0"/>
+					<xs:element name="target" type="ser:guid" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfActTag">
+		<xs:sequence>
+			<xs:element name="ActTag" type="tns:ActTag" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ActTag" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Tag">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="QuantityObservation" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Observation">
+				<xs:sequence>
+					<xs:element name="unitOfMeasure" type="ser:guid" minOccurs="0"/>
+					<xs:element name="value" type="xs:decimal" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="QuantityObservation" type="tns:QuantityObservation" nillable="true"/>
+	<xs:complexType name="Observation" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Act">
+				<xs:sequence>
+					<xs:element name="interpretationConcept" type="ser:guid" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="TextObservation" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Observation">
+				<xs:sequence>
+					<xs:element name="value" type="xs:string" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="TextObservation" type="tns:TextObservation" nillable="true"/>
+	<xs:complexType name="CodedObservation" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Observation">
+				<xs:sequence>
+					<xs:element name="value" type="ser:guid" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="CodedObservation" type="tns:CodedObservation" nillable="true"/>
+	<xs:complexType name="PatientEncounter" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Act">
+				<xs:sequence>
+					<xs:element name="dischargeDisposition" type="ser:guid" nillable="true" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="PatientEncounter" type="tns:PatientEncounter" nillable="true"/>
+	<xs:complexType name="SubstanceAdministration" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Act">
+				<xs:sequence>
+					<xs:element name="doseQuantity" type="xs:decimal" minOccurs="0"/>
+					<xs:element name="doseSequence" type="xs:unsignedInt" minOccurs="0"/>
+					<xs:element name="doseUnit" type="ser:guid" minOccurs="0"/>
+					<xs:element name="route" type="ser:guid" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="SubstanceAdministration" type="tns:SubstanceAdministration" nillable="true"/>
 </xs:schema>

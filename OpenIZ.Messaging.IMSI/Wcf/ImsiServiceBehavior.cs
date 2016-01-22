@@ -11,6 +11,7 @@ using System.ServiceModel;
 using System.Diagnostics;
 using System.ServiceModel.Web;
 using System.IO;
+using OpenIZ.Core.Model.Attributes;
 
 namespace OpenIZ.Messaging.IMSI.Wcf
 {
@@ -49,8 +50,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             {
                 XsdDataContractExporter exporter = new XsdDataContractExporter();
 
-                List<Type> exportTypes = new List<Type>(typeof(IdentifiedData).Assembly.GetTypes().Where(o => o.GetCustomAttribute<DataContractAttribute>() != null && !o.IsGenericTypeDefinition));
-                exportTypes.AddRange(typeof(ImsiServiceBehavior).Assembly.GetTypes().Where(o => o.GetCustomAttribute<DataContractAttribute>() != null && !o.IsGenericTypeDefinition));
+                List<Type> exportTypes = new List<Type>(typeof(IdentifiedData).Assembly.GetTypes().Where(o => o.GetCustomAttribute<ResourceAttribute>() != null && (o.GetCustomAttribute<ResourceAttribute>().Scope & (ModelScope.Clinical | ModelScope.Concept | ModelScope.Protocol | ModelScope.MetaData)) != (ModelScope)0 && !o.IsGenericTypeDefinition && !o.IsAbstract));
+                exportTypes.AddRange(typeof(ImsiServiceBehavior).Assembly.GetTypes().Where(o => o.GetCustomAttribute<ResourceAttribute>()?.Scope == ModelScope.Clinical &&  !o.IsGenericTypeDefinition && !o.IsAbstract));
                 exporter.Export(exportTypes);
 
                 var schemas = exporter.Schemas.Schemas().OfType<XmlSchema>().ToArray();

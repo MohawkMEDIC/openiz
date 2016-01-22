@@ -16,6 +16,7 @@ namespace OpenIZ.Core.Model.Entities
     /// </summary>
     [Serializable]
     [DataContract(Name = "Material", Namespace = "http://openiz.org/model")]
+    [Resource(ModelScope.Clinical)]
     public class Material : Entity
     {
         // Form concept key
@@ -124,5 +125,15 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [DataMember(Name = "isAdministrative")]
         public Boolean IsAdministrative { get; set; }
+
+        /// <summary>
+        /// Forces refresh of the delay load properties
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_formConcept = null;
+            this.m_quantityConcept = null;
+        }
     }
 }

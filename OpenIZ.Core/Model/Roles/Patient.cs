@@ -17,6 +17,7 @@ namespace OpenIZ.Core.Model.Roles
     /// </summary>
     [Serializable]
     [DataContract(Name = "Patient", Namespace = "http://openiz.org/model")]
+    [Resource(ModelScope.Clinical)]
     public class Patient : Person
     {
 
@@ -87,6 +88,16 @@ namespace OpenIZ.Core.Model.Roles
                 else
                     this.m_genderConceptKey = value.Key;
             }
+        }
+        
+        /// <summary>
+        /// Force a refresh of delay load properties
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_genderConcept = null;
+            
         }
     }
 }

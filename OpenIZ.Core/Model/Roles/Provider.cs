@@ -17,6 +17,7 @@ namespace OpenIZ.Core.Model.Roles
     /// </summary>
     [Serializable]
     [DataContract(Name = "Provider", Namespace = "http://openiz.org/model")]
+    [Resource(ModelScope.Clinical)]
     public class Provider : Person
     {
 
@@ -71,6 +72,15 @@ namespace OpenIZ.Core.Model.Roles
                 this.m_providerSpeciality = value;
                 this.m_providerSpecialtyKey = value?.Key;
             }
+        }
+
+        /// <summary>
+        /// Force a refresh of the delay load properties
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_providerSpeciality = null;
         }
     }
 }

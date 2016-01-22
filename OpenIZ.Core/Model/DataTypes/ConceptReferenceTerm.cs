@@ -103,7 +103,7 @@ namespace OpenIZ.Core.Model.DataTypes
         public ConceptRelationshipType RelationshipType {
             get
             {
-                return this.m_relationshipType = base.DelayLoad(this.m_relationshipTypeId, this.m_relationshipType);
+                this.m_relationshipType = base.DelayLoad(this.m_relationshipTypeId, this.m_relationshipType);
                 return this.m_relationshipType;
             }
             set

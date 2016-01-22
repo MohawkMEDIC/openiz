@@ -1,4 +1,7 @@
-﻿using OpenIZ.Core.Model.Constants;
+﻿using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.Collections.Generic;
@@ -15,6 +18,7 @@ namespace OpenIZ.Core.Model.Entities
     /// </summary>
     [Serializable]
     [DataContract(Name = "Place", Namespace = "http://openiz.org/model")]
+    [Resource(ModelScope.Clinical)]
     public class Place : Entity
     {
         // Servics
@@ -73,6 +77,32 @@ namespace OpenIZ.Core.Model.Entities
         [DataMember(Name = "lng")]
         public float Lng { get; set; }
 
+        /// <summary>
+        /// Gets the services
+        /// </summary>
+        [DelayLoad(null)]
+        [DataMember(Name = "service")]
+        public List<PlaceService> Services
+        {
+            get
+            {
+                if(this.m_services == null)
+                {
+                    var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<PlaceService>>();
+                    this.m_services = dataPersistence.Query(s=>s.SourceEntityKey == this.Key, null).ToList();
+                }
+                return this.m_services;
+            }
+        }
+
+        /// <summary>
+        /// Refresh the place entity
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_services = null;
+        }
 
     }
 }

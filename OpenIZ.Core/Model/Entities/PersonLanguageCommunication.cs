@@ -7,7 +7,7 @@ namespace OpenIZ.Core.Model.Entities
     /// Represents a single preferred communication method for the entity
     /// </summary>
     [Serializable]
-    [DataContract(Name = "PersonLanguageCommunication", Namespace ="http://openiz.org/model")]
+    [DataContract(Name = "PersonLanguageCommunication", IsReference = false, Namespace ="http://openiz.org/model")]
     public class PersonLanguageCommunication : VersionBoundRelationData<Entity>
     {
 

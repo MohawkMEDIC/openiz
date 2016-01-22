@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenIZ.Core.Model.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -11,6 +12,7 @@ namespace OpenIZ.Core.Model.Security
     /// Represents a security device
     /// </summary>
     [Serializable]
+    [Resource(ModelScope.Security)]
     [DataContract(Name = "SecurityDevice", Namespace = "http://openiz.org/model")]
     public class SecurityDevice : SecurityEntity
     {

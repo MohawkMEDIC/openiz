@@ -17,6 +17,7 @@ namespace OpenIZ.Core.Model.Entities
     /// </summary>
     [Serializable]
     [DataContract(Name = "ApplicationEntity", Namespace = "http://openiz.org/model")]
+    [Resource(ModelScope.Clinical)]
     public class ApplicationEntity : Entity
     {
         // Security application key
@@ -88,5 +89,14 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [DataMember(Name = "vendorName")]
         public String VendorName { get; set; }
+
+        /// <summary>
+        /// Force delay loading
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_securityApplication = null;
+        }
     }
 }

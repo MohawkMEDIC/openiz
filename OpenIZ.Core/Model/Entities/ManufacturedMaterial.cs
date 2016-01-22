@@ -1,4 +1,5 @@
-﻿using OpenIZ.Core.Model.Constants;
+﻿using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace OpenIZ.Core.Model.Entities
     /// </summary>
     [Serializable]
     [DataContract(Name = "ManufacturedMaterial", Namespace = "http://openiz.org/model")]
+    [Resource(ModelScope.Clinical)]
     public class ManufacturedMaterial : Material
     {
 

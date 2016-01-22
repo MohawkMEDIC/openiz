@@ -17,6 +17,8 @@ namespace OpenIZ.Core.Model.Entities
     /// Represents the base of all entities
     /// </summary>
     [DataContract(Name = "Entity", Namespace = "http://openiz.org/model")]
+    [Resource(ModelScope.Clinical)]
+    [Serializable]
     public class Entity : VersionedEntityData<Entity>
     {
 
@@ -234,7 +236,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets the identifiers associated with this entity
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "identifier")]
         public List<EntityIdentifier> Identifiers
         {
             get
@@ -252,7 +254,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all associated entities for this entity
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "relationship")]
         public List<EntityRelationship> Relationships
         {
             get
@@ -270,7 +272,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all telecommunications addresses associated with the entity
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "telecom")]
         public List<EntityTelecomAddress> Telecom
         {
             get
@@ -288,7 +290,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all extensions associated with the entity
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "extension")]
         public List<EntityExtension> Extensions
         {
             get
@@ -306,7 +308,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all names associated with the entity
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "name")]
         public List<EntityName> Names
         {
             get
@@ -324,7 +326,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all addresses associated with the entity
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "address")]
         public List<EntityAddress> Addresses
         {
             get
@@ -342,7 +344,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all notes associated with the entity
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "note")]
         public List<EntityNote> Notes
         {
             get
@@ -360,7 +362,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all tags associated with the entity
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "tag")]
         public List<EntityTag> Tags
         {
             get
@@ -378,7 +380,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets the acts in which this entity participates
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "participation")]
         public List<ActParticipation> Participations
         {
             get
@@ -387,7 +389,7 @@ namespace OpenIZ.Core.Model.Entities
                     this.IsDelayLoadEnabled)
                 {
                     var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<ActParticipation>>();
-                    this.m_participations = dataPersistence.Query(o => o.TargetEntityKey == this.Key && o.ObsoleteVersionSequenceId == null, null).ToList();
+                    this.m_participations = dataPersistence.Query(o => o.PlayerEntityKey == this.Key && o.ObsoleteVersionSequenceId == null, null).ToList();
                 }
                 return this.m_participations;
             }

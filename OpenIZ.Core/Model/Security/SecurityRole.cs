@@ -33,6 +33,7 @@ namespace OpenIZ.Core.Model.Security
     /// </summary>
     [DataContract(Namespace = "http://openiz.org/model", Name = "SecurityRole")]
     [Serializable]
+    [Resource(ModelScope.Security)]
     public class SecurityRole : SecurityEntity
     {
 

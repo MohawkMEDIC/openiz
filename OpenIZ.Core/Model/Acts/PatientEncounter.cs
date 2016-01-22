@@ -16,6 +16,7 @@ namespace OpenIZ.Core.Model.Acts
     /// </summary>
     [Serializable]
     [DataContract(Name = "PatientEncounter", Namespace = "http://openiz.org/model")]
+    [Resource(ModelScope.Clinical)]
     public class PatientEncounter : Act
     {
 
@@ -65,6 +66,15 @@ namespace OpenIZ.Core.Model.Acts
                 this.m_dischargeDisposition = value;
                 this.m_dischargeDispositionKey = value?.Key;
             }
+        }
+
+        /// <summary>
+        /// Refresh forcing delay load
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_dischargeDisposition = null;
         }
     }
 }

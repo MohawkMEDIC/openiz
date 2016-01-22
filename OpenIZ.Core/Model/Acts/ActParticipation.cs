@@ -19,9 +19,9 @@ namespace OpenIZ.Core.Model.Acts
     public class ActParticipation : VersionBoundRelationData<Act>
     {
 
-        private Guid m_targetEntityKey;
+        private Guid m_playerKey;
         
-        private Entity m_targetEntity;
+        private Entity m_player;
         private Guid m_participationRoleKey;
         
         private Concept m_participationRole;
@@ -31,14 +31,14 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [Browsable(false)]
-        [DataMember(Name = "targetEntity")]
-        public Guid TargetEntityKey
+        [DataMember(Name = "player")]
+        public Guid PlayerEntityKey
         {
-            get { return this.m_targetEntityKey; }
+            get { return this.m_playerKey; }
             set
             {
-                this.m_targetEntityKey = value;
-                this.m_targetEntity = null;
+                this.m_playerKey = value;
+                this.m_player = null;
             }
         }
 
@@ -62,21 +62,21 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the entity which participated in the act
         /// </summary>
         [IgnoreDataMember]
-        [DelayLoad(nameof(TargetEntityKey))]
-        public Entity TargetEntity
+        [DelayLoad(nameof(PlayerEntityKey))]
+        public Entity PlayerEntity
         {
             get
             {
-                this.m_targetEntity = base.DelayLoad(this.m_targetEntityKey, this.m_targetEntity);
-                return this.m_targetEntity;
+                this.m_player = base.DelayLoad(this.m_playerKey, this.m_player);
+                return this.m_player;
             }
             set
             {
-                this.m_targetEntity = value;
+                this.m_player = value;
                 if (value == null)
-                    this.m_targetEntityKey = Guid.Empty;
+                    this.m_playerKey = Guid.Empty;
                 else
-                    this.m_targetEntityKey = value.Key;
+                    this.m_playerKey = value.Key;
             }
         }
 
@@ -100,6 +100,35 @@ namespace OpenIZ.Core.Model.Acts
                 else
                     this.m_participationRoleKey = value.Key;
             }
+        }
+
+        /// <summary>
+        /// Gets or sets the act 
+        /// </summary>
+        [DataMember(Name = "act")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Browsable(false)]
+        public override Guid SourceEntityKey
+        {
+            get
+            {
+                return base.SourceEntityKey;
+            }
+
+            set
+            {
+                base.SourceEntityKey = value;
+            }
+        }
+
+        /// <summary>
+        /// Forces a delay load from the underlying model
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_participationRole = null;
+            this.m_player = null;
         }
     }
 }

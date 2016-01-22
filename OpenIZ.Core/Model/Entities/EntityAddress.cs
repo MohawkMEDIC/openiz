@@ -65,7 +65,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the component types
         /// </summary>
         [DelayLoad(null)]
-        [IgnoreDataMember]
+        [DataMember(Name = "component")]
         public List<EntityAddressComponent> Component
         {
             get
@@ -77,6 +77,16 @@ namespace OpenIZ.Core.Model.Entities
                 }
                 return this.m_addressComponents;
             }
+        }
+
+        /// <summary>
+        /// Force linked properties to delay load
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_addressComponents = null;
+            this.m_addressUseKey = null;
         }
     }
 }

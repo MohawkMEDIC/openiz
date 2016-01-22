@@ -18,6 +18,7 @@
  */
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model.Attributes;
 using System;
 using System.Runtime.Serialization;
 
@@ -28,6 +29,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// </summary>
     [Serializable]
     [DataContract(Name = "PhoneticAlgorithm", Namespace = "http://openiz.org/model")]
+    [Resource(ModelScope.MetaData)]
     public class PhoneticAlgorithm : IdentifiedData
     {
         // Phonetic algorithm

@@ -104,6 +104,14 @@ namespace OpenIZ.Core.Model.Acts
             }
         }
 
-  
+        /// <summary>
+        /// Refreshes the model to force reload from underlying model
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_relationshipType = null;
+            this.m_targetAct = null;
+        }
     }
 }
