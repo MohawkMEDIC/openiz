@@ -36,6 +36,13 @@ namespace OpenIZ.Core.Model.Entities
         }
 
         /// <summary>
+        /// The base quantity of the object in the units. This differs from quantity on the relationship
+        /// which is a /per ... 
+        /// </summary>
+        [DataMember(Name = "quantity")]
+        public Decimal Quantity { get; set; }
+
+        /// <summary>
         /// Gets or sets the form concept's key
         /// </summary>
         [DataMember(Name = "formConceptRef")]
