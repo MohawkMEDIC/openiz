@@ -324,13 +324,12 @@ namespace OpenIZ.Core.Model.Map
                     sourceProperty.PropertyType != typeof(Decimal))
                     continue;
 
-                // Skip delay load props
-                if (modelProperty.GetCustomAttribute<DelayLoadAttribute>() != null)
-                    continue;
 
                 // Set value
                 if (modelProperty == null)
                     Trace.TraceInformation("Unmapped property ({0}).{1}", typeof(TDomain).Name, propInfo.Name);
+                else if (modelProperty.GetCustomAttribute<DelayLoadAttribute>() != null)
+                    continue;
                 else if (modelProperty.PropertyType.IsAssignableFrom(sourceProperty.PropertyType))
                     modelProperty.SetValue(retVal, sourceProperty.GetValue(sourceObject));
                 else if (sourceProperty.PropertyType == typeof(String) && modelProperty.PropertyType == typeof(Type))

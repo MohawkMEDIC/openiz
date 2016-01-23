@@ -1,4 +1,5 @@
 ﻿using MARC.HI.EHRS.SVC.Core;
+using OpenIZ.Core.Model.EntityLoader;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

@@ -1,5 +1,6 @@
 ﻿using MARC.HI.EHRS.SVC.Core;
 using MohawkCollege.Util.Console.Parameters;
+using OpenIZ.Core.Model.EntityLoader;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -42,6 +43,7 @@ namespace OpenIZ
             try
             {
                 var parameters = parser.Parse(args);
+                EntitySource.Current = new EntitySource(new PersistenceServiceEntitySource());
 
                 // What to do?
                 if (parameters.ShowHelp)

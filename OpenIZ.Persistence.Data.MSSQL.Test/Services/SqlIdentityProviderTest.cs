@@ -27,6 +27,7 @@ using System.Security.Cryptography;
 using System.Text;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using System.Security;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 {
@@ -116,7 +117,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             catch (SecurityException)
             {
                 // We should have a lockout
-                user = dataPersistence.Get(user.Id, null, false);
+                user = dataPersistence.Get(user.Id(), null, false);
                 Assert.AreEqual(1, user.InvalidLoginAttempts);
                 Assert.AreEqual(default(DateTime), user.LastLoginTime);
                 Assert.IsFalse(user.LockoutEnabled);
@@ -154,7 +155,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 { }
 
             // We should have a lockout
-            user = dataPersistence.Get(user.Id, null, false);
+            user = dataPersistence.Get(user.Id(), null, false);
             Assert.IsTrue(user.InvalidLoginAttempts >= 4);
             Assert.AreEqual(default(DateTime), user.LastLoginTime);
             Assert.IsTrue(user.LockoutEnabled);
@@ -193,7 +194,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             // Now change the password
             var principal = identityProvider.Authenticate("admin@identitytest.com", "password");
             identityProvider.ChangePassword("admin@identitytest.com", "newpassword", principal);
-            user = dataPersistence.Get(user.Id, principal, false);
+            user = dataPersistence.Get(user.Id(), principal, false);
             Assert.AreNotEqual(existingPassword, user.PasswordHash);
 
             // Change the password back 

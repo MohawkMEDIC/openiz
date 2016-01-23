@@ -47,13 +47,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         {
             PhoneticAlgorithm underTest = new PhoneticAlgorithm()
             {
-                Handler = typeof(PhoneticAlgorithm),
+                Handler = typeof(PhoneticAlgorithm).AssemblyQualifiedName,
                 Name = "A Phonetic Algorithm"
             };
             var afterTest = base.DoTestInsert(underTest);
 
             Assert.AreEqual("A Phonetic Algorithm", afterTest.Name);
-            Assert.AreEqual(typeof(PhoneticAlgorithm), afterTest.Handler);
+            Assert.AreEqual(typeof(PhoneticAlgorithm).AssemblyQualifiedName, afterTest.Handler);
         }
 
         /// <summary>
@@ -64,11 +64,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         {
             PhoneticAlgorithm underTest = new PhoneticAlgorithm()
             {
-                Handler = typeof(PhoneticAlgorithm),
+                Handler = typeof(PhoneticAlgorithm).AssemblyQualifiedName,
                 Name = "An algorithm to be updated"
             };
             var afterTest = base.DoTestUpdate(underTest, null, "Name");
-            Assert.AreEqual(typeof(PhoneticAlgorithm), afterTest.Handler);
+            Assert.AreEqual(typeof(PhoneticAlgorithm).AssemblyQualifiedName, afterTest.Handler);
         }
 
         /// <summary>
@@ -79,11 +79,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         {
             PhoneticAlgorithm underTest = new PhoneticAlgorithm()
             {
-                Handler = typeof(PhoneticAlgorithm),
+                Handler = typeof(PhoneticAlgorithm).AssemblyQualifiedName,
                 Name = "An algorithm to be queried"
             };
             var afterTest = base.DoTestInsert(underTest);
-            Assert.AreEqual(typeof(PhoneticAlgorithm), afterTest.Handler);
+            Assert.AreEqual(typeof(PhoneticAlgorithm).AssemblyQualifiedName, afterTest.Handler);
             var queryResults = base.DoTestQuery(o => o.Name == "An algorithm to be queried", afterTest.Key, null);
             Assert.AreEqual(1, queryResults.Count());
         }

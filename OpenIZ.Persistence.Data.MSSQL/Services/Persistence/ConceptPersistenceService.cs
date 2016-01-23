@@ -202,7 +202,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Create the new version
             domainConceptVersion = domainConceptVersion.NewVersion(principal, dataContext);
-            storageData.PreviousVersionKey = storageData.Key = storageData.VersionKey = storageData.CreatedById = Guid.Empty; // Zero off associations
+            storageData.PreviousVersionKey = storageData.Key = storageData.VersionKey = storageData.CreatedByKey = Guid.Empty; // Zero off associations
             storageData.VersionSequence = default(decimal);
             domainConceptVersion.CopyObjectData(this.ConvertFromModel(storageData));
             domainConceptVersion.Concept.IsSystemConcept = storageData.IsSystemConcept;

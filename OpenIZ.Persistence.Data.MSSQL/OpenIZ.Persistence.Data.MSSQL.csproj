@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OpenIZ.Persistence.Data.MSSQL</RootNamespace>
     <AssemblyName>OpenIZ.Persistence.Data.MSSQL</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
@@ -78,6 +78,8 @@
       <DependentUpon>Model.dbml</DependentUpon>
     </Compile>
     <Compile Include="Data\ModelExtensions.cs" />
+    <Compile Include="Security\SqlSecurityPolicy.cs" />
+    <Compile Include="Security\SqlSecurityPolicyInstance.cs" />
     <Compile Include="Services\Persistence\CodeSystemPersistenceService.cs" />
     <Compile Include="Services\Persistence\ConceptClassPersistenceService.cs" />
     <Compile Include="Services\Persistence\ConceptRelationshipTypePersistenceService.cs" />
@@ -150,6 +152,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
+      <Project>{f1a82a4f-4a57-47d7-ae76-444c8a4ff54a}</Project>
+      <Name>OpenIZ.Core.Model</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core\OpenIZ.Core.csproj">
       <Project>{db9bc05e-45f1-4f96-a161-f36bdecaf566}</Project>
       <Name>OpenIZ.Core</Name>

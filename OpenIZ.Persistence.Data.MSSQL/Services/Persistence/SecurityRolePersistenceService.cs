@@ -181,8 +181,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.Security.SecurityRole ConvertToModel(object data)
         {
-            return s_mapper.MapDomainInstance<Data.SecurityRole, Core.Model.Security.SecurityRole>(data as Data.SecurityRole);
-
+            var securityRole = data as Data.SecurityRole;
+            var retVal = s_mapper.MapDomainInstance<Data.SecurityRole, Core.Model.Security.SecurityRole>(securityRole);
+            // No delay load on policies
+            retVal.Policies.AddRange(securityRole.SecurityRolePolicies.Select(p => new SecurityPolicyInstance()
+            {
+                Policy = new SecurityPolicyPersistenceService().ConvertToModel(p.Policy),
+                GrantType = (PolicyGrantType)p.PolicyAction
+            }));
+            return retVal;
         }
 
     }

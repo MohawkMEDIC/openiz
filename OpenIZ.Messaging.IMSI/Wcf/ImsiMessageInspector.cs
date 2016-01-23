@@ -99,7 +99,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     {
                         WebOperationContext.Current.OutgoingResponse.Headers.Add("Content-Encoding", compressionScheme);
                         WebOperationContext.Current.OutgoingResponse.Headers.Add("X-CompressResponseStream", compressionScheme);
-                        byte[] messageContent;
+                        byte[] messageContent = null;
 
                         // Read binary contents of the message
                         switch(this.GetContentFormat(reply))

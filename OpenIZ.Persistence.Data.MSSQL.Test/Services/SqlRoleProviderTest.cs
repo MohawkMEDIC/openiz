@@ -26,6 +26,7 @@ using System.IO;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Persistence.Data.MSSQL.Services;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 {
@@ -94,7 +95,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             userProvider.CreateIdentity("UserInRole1", "role1password", s_authorization);
             userProvider.CreateIdentity("UserInRole2", "role2password", s_authorization);
             roleProvider.AddUsersToRoles(new String[] { "UserInRole1", "UserInRole2" }, new String[] { "TestAddUsersToRole" }, s_authorization);
-            modelRole = dataPersistence.Get(modelRole.Id, s_authorization, true);
+            modelRole = dataPersistence.Get(modelRole.Id(), s_authorization, true);
 
             // Role provider
             Assert.AreEqual(2, modelRole.Users.Count);

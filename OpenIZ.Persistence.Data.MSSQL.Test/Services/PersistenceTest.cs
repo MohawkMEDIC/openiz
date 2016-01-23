@@ -53,7 +53,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreNotEqual(Guid.Empty, objectAfterTest.Key);
 
             // Verify
-            objectAfterTest = persistenceService.Get(objectAfterTest.Id, authContext, false);
+            objectAfterTest = persistenceService.Get(objectAfterTest.Id(), authContext, false);
             if(objectAfterTest is BaseEntityData)
                 Assert.AreNotEqual(default(DateTimeOffset), (objectAfterTest as BaseEntityData).CreationTime);
 
@@ -86,7 +86,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 
             var objectAfterUpdate = persistenceService.Update(objectAfterInsert, authContext, TransactionMode.Commit);
             Assert.AreEqual(objectAfterInsert.Key, objectAfterUpdate.Key);
-            objectAfterUpdate = persistenceService.Get(objectAfterUpdate.Id, authContext, false);
+            objectAfterUpdate = persistenceService.Get(objectAfterUpdate.Id(), authContext, false);
             // Update attributes should be set
             Assert.AreNotEqual(propertyInfo.GetValue(objectUnderTest), propertyInfo.GetValue(objectAfterUpdate));
             Assert.AreEqual(objectAfterInsert.Key, objectAfterUpdate.Key);

@@ -18,6 +18,7 @@
  */
 using System;
 using System.Linq;
+using OpenIZ.Core.Model;
 using System.Text;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -87,7 +88,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             {
                 Name = "Chicken Costume Users"
             };
-            roleUnderTest.Policies.Add(new SecurityPolicyInstance(s_chickenCostumePolicy, MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Grant));
+            roleUnderTest.Policies.Add(new SecurityPolicyInstance(s_chickenCostumePolicy, PolicyGrantType.Grant));
             var roleAfterInsert = base.DoTestInsert(roleUnderTest, s_authorization);
             Assert.AreEqual(1, roleAfterInsert.Policies.Count);
             
@@ -120,15 +121,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             {
                 Name = "Non Chicken Costume Users"
             };
-            roleUnderTest.Policies.Add(new SecurityPolicyInstance(s_chickenCostumePolicy, MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Deny));
+            roleUnderTest.Policies.Add(new SecurityPolicyInstance(s_chickenCostumePolicy, PolicyGrantType.Deny));
             var roleAfterInsert = base.DoTestInsert(roleUnderTest, s_authorization);
 
             // Now we want to update the grant so that users can elevate
-            roleAfterInsert.Policies[0].GrantType = MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Elevate;
+            roleAfterInsert.Policies[0].GrantType = PolicyGrantType.Elevate;
             var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
             dataPersistence.Update(roleAfterInsert, s_authorization, TransactionMode.Commit);
-            var roleAfterTest = dataPersistence.Get(roleAfterInsert.Id, s_authorization, false);
-            Assert.AreEqual(MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Elevate, roleAfterTest.Policies[0].GrantType);
+            var roleAfterTest = dataPersistence.Get(roleAfterInsert.Id(), s_authorization, false);
+            Assert.AreEqual(PolicyGrantType.Elevate, roleAfterTest.Policies[0].GrantType);
             
         }
 
@@ -142,7 +143,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             {
                 Name = "Indifferent Chicken-Costume Users"
             };
-            roleUnderTest.Policies.Add(new SecurityPolicyInstance(s_chickenCostumePolicy, MARC.HI.EHRS.SVC.Core.Services.Policy.PolicyDecisionOutcomeType.Grant));
+            roleUnderTest.Policies.Add(new SecurityPolicyInstance(s_chickenCostumePolicy, PolicyGrantType.Grant));
             var roleAfterInsert = base.DoTestInsert(roleUnderTest, s_authorization);
             Assert.AreEqual(1, roleAfterInsert.Policies.Count);
 
@@ -150,7 +151,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             roleAfterInsert.Policies.Clear();
             var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
             dataPersistence.Update(roleAfterInsert, s_authorization, TransactionMode.Commit);
-            var roleAfterTest = dataPersistence.Get(roleAfterInsert.Id, s_authorization, false);
+            var roleAfterTest = dataPersistence.Get(roleAfterInsert.Id(), s_authorization, false);
             Assert.AreEqual(0, roleAfterTest.Policies.Count);
 
         }

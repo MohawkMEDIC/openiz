@@ -41,6 +41,7 @@ using System.Data.Linq;
 using System.Security.Principal;
 using OpenIZ.Core.Exceptions;
 using OpenIZ.Persistence.Data.MSSQL.Exceptions;
+using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -324,7 +325,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <param name="principal">The authorization context for the current session</param>
         /// <param name="loadFast">True if only the current version should be loaded (i.e. no deep loading)</param>
         /// <returns>The specified container object of <typeparamref name="TIdentifier"/></returns>
-        public TModel Get<TIdentifier>(Identifier<TIdentifier> containerId, IPrincipal principal, bool loadFast)
+        public TModel Get<TIdentifier>(Identifier<TIdentifier> containerId, IPrincipal principal, bool loadFast) 
         {
             if (containerId == null)
                 throw new ArgumentNullException(nameof(containerId));
@@ -336,12 +337,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
                     this.m_traceSource.TraceInformation("{0}: GET {1}", this.GetType().Name, containerId);
 
-                    PreRetrievalEventArgs<TModel> preEvt = new PreRetrievalEventArgs<TModel>(new TModel() { Id = containerId as Identifier<Guid> }, principal);
+                    var preEvtModel = new TModel() { Key = (Guid)(Object)containerId.Id };
+                    if (preEvtModel is IVersionedEntity)
+                        (preEvtModel as IVersionedEntity).VersionKey = (Guid)(Object)containerId.VersionId;
+
+                    PreRetrievalEventArgs<TModel> preEvt = new PreRetrievalEventArgs<TModel>(preEvtModel, principal);
                     this.Retrieving?.Invoke(this, preEvt);
                     if (preEvt.Cancel)
                         return preEvt.Data;
 
-                    TModel retVal = this.Get(preEvt.Data.Id, principal, loadFast, dataContext);
+                    TModel retVal = this.Get(new Identifier<Guid>(preEvtModel.Key, (preEvtModel as IVersionedEntity)?.VersionKey ?? Guid.Empty), principal, loadFast, dataContext);
 
                     PostRetrievalEventArgs<TModel> postEvt = new PostRetrievalEventArgs<TModel>(retVal, principal);
                     this.Retrieved?.Invoke(this, postEvt);

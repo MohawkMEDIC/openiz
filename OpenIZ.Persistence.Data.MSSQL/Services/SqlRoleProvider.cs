@@ -27,13 +27,13 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services.Policy;
 using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Core.Exceptions;
-using OpenIZ.Core.Security;
 using OpenIZ.Persistence.Data.MSSQL.Configuration;
 using System.Configuration;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using OpenIZ.Persistence.Data.MSSQL.Security;
 using System.Security;
 using System.Security.Principal;
+using OpenIZ.Core.Security;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services
 {

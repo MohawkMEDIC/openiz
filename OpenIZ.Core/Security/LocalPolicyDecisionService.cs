@@ -36,10 +36,6 @@ namespace OpenIZ.Core.Security
     public class LocalPolicyDecisionService : IPolicyDecisionService
     {
 
-        // Policy handler cache
-        private Dictionary<Type, IPolicyHandler> m_policyHandlers = new Dictionary<Type, IPolicyHandler>();
-        private Object m_lockObject = new object();
-
         /// <summary>
         /// Get a policy decision 
         /// </summary>
@@ -63,33 +59,29 @@ namespace OpenIZ.Core.Security
                 return PolicyDecisionOutcomeType.Grant;
             
             // Get the user object from the principal
-            var userService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
-            var user = userService.Query(o => o.UserName == principal.Identity.Name, principal).FirstOrDefault();
-
-            // Deny
-            if (user == null)
-                return PolicyDecisionOutcomeType.Deny;
+            var pip = ApplicationContext.Current.GetService<IPolicyInformationService>();
 
             // Policies
-            var policyInstance = user.Policies.Find(o => o.Policy.Oid == policyId);
-
-            if (!policyInstance.Policy.CanOverride && policyInstance.GrantType == PolicyDecisionOutcomeType.Elevate)
+            var policyInstance = pip.GetActivePolicies(principal).SingleOrDefault(o => o.Policy.Oid == policyId);
+            
+            if(policyInstance == null)
+            {
+                // TODO: Configure OptIn or OptOut
                 return PolicyDecisionOutcomeType.Deny;
-            else if (policyInstance.Policy.ObsoletionTime != null)
+            }
+            else if (!policyInstance.Policy.CanOverride && policyInstance.Rule == PolicyDecisionOutcomeType.Elevate)
                 return PolicyDecisionOutcomeType.Deny;
-            else if (policyInstance.Policy.Handler != null)
+            else if (!policyInstance.Policy.IsActive)
+                return PolicyDecisionOutcomeType.Grant;
+            else if ((policyInstance.Policy as ILocalPolicy)?.Handler != null)
             {
                 IPolicyHandler handlerInstance = null;
-                if(!this.m_policyHandlers.TryGetValue(policyInstance.Policy.Handler, out handlerInstance))
-                {
-                    handlerInstance = policyInstance.Policy.Handler.GetConstructor(Type.EmptyTypes).Invoke(null) as IPolicyHandler;
-                    if (handlerInstance != null)
-                        lock(this.m_lockObject)
-                            this.m_policyHandlers.Add(policyInstance.Policy.Handler, handlerInstance);
-                }
-                return handlerInstance.GetPolicyDecision(principal, policyInstance as IPolicy, null).Outcome;
+                var policy = policyInstance.Policy as ILocalPolicy;
+                if(policy != null)
+                    return policy.Handler.GetPolicyDecision(principal, policy, null).Outcome;
+
             }
-            return policyInstance.GrantType;
+            return policyInstance.Rule;
             
         }
     }
