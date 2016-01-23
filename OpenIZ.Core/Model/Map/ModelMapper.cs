@@ -199,11 +199,19 @@ namespace OpenIZ.Core.Model.Map
         /// <param name="expression">The expression to be converted</param>
         public Expression<Func<TTo, bool>> MapModelExpression<TFrom, TTo>(Expression<Func<TFrom, bool>> expression)
         {
-            var parameter = Expression.Parameter(typeof(TTo), expression.Parameters[0].Name);
-            Expression expr = new ModelExpressionVisitor(this, parameter).Visit(expression.Body);
-            var retVal = Expression.Lambda<Func<TTo, bool>>(expr, parameter); 
-            this.m_traceSource.TraceInformation("Map Expression: {0} > {1}", expression, retVal);
-            return retVal;
+            try
+            {
+                var parameter = Expression.Parameter(typeof(TTo), expression.Parameters[0].Name);
+                Expression expr = new ModelExpressionVisitor(this, parameter).Visit(expression.Body);
+                var retVal = Expression.Lambda<Func<TTo, bool>>(expr, parameter);
+                this.m_traceSource.TraceInformation("Map Expression: {0} > {1}", expression, retVal);
+                return retVal;
+            }
+            catch(Exception e)
+            {
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, "Error converting {0}. {1}", expression, e.ToString());
+                throw;
+            }
         }
 
         /// <summary>
