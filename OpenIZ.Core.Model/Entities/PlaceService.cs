@@ -31,7 +31,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the service concept key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("serviceConceptString", typeof(String))]
+        [XmlElement("serviceConcept")]
         public Guid ServiceConceptKey
         {
             get { return this.m_serviceConceptKey; }

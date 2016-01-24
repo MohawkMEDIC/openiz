@@ -22,7 +22,9 @@ namespace OpenIZ.Core.Model.EntityLoader
         public TObject Get<TObject>(Guid key)
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>();
-            return persistenceService.Get(new Identifier<Guid>(key), null, true);
+            if(persistenceService != null)
+                return persistenceService.Get(new Identifier<Guid>(key), null, true);
+            return default(TObject);
         }
 
         /// <summary>
@@ -31,7 +33,9 @@ namespace OpenIZ.Core.Model.EntityLoader
         public TObject Get<TObject>(Guid key, Guid versionKey)
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>();
-            return persistenceService.Get(new Identifier<Guid>(key, versionKey), null, true);
+            if (persistenceService != null)
+                return persistenceService.Get(new Identifier<Guid>(key, versionKey), null, true);
+            return default(TObject);
         }
 
         /// <summary>
@@ -40,7 +44,9 @@ namespace OpenIZ.Core.Model.EntityLoader
         public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query)
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>();
-            return persistenceService.Query(query, null);
+            if(persistenceService != null)
+                return persistenceService.Query(query, null);
+            return new List<TObject>();
         }
     }
 }

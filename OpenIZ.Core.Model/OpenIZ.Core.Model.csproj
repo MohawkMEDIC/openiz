@@ -34,9 +34,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Acts\Act.cs" />
     <Compile Include="Acts\ActParticipation.cs" />
     <Compile Include="Acts\ActRelationship.cs" />
@@ -46,6 +43,7 @@
     <Compile Include="Attributes\DelayLoadAttribute.cs" />
     <Compile Include="BaseEntityData.cs" />
     <Compile Include="Association.cs" />
+    <Compile Include="Collection\Bundle.cs" />
     <Compile Include="Constants\ActClassKeys.cs" />
     <Compile Include="Constants\CodeSystemKeys.cs" />
     <Compile Include="Constants\ConceptClassKeys.cs" />
@@ -109,6 +107,11 @@
     <Compile Include="Security\SecurityUser.cs" />
     <Compile Include="VersionedAssociation.cs" />
     <Compile Include="VersionedEntityData.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

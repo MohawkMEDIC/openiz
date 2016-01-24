@@ -151,7 +151,10 @@ namespace OpenIZ.Core.Model
         {
             get
             {
-                return (Guid)this.EffectiveVersion?.CreatedByKey;
+                if (this.EffectiveVersion == null)
+                    return Guid.Empty;
+                else
+                    return this.EffectiveVersion.CreatedByKey;
             }
             set
             {
@@ -181,7 +184,8 @@ namespace OpenIZ.Core.Model
         {
             get
             {
-                return this.ObsoleteVersion?.ObsoletedByKey;
+                    return this.ObsoleteVersion?.CreatedByKey;
+                
             }
             set
             {

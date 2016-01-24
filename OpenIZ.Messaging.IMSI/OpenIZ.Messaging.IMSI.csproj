@@ -55,6 +55,9 @@
     <Compile Include="Configuration\ImsiConfigurationSectionHandler.cs" />
     <Compile Include="ImsiMessageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceHandler\ConceptResourceHandler.cs" />
+    <Compile Include="ResourceHandler\IResourceHandler.cs" />
+    <Compile Include="ResourceHandler\ResourceHandlerUtil.cs" />
     <Compile Include="Wcf\Compression\CompressionUtil.cs" />
     <Compile Include="Wcf\Compression\CompressionWriter.cs" />
     <Compile Include="Wcf\Compression\DeflateCompressionScheme.cs" />

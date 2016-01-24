@@ -13,7 +13,6 @@ namespace OpenIZ.Core.Model
     /// Represents a bse class for bound relational data
     /// </summary>
     /// <typeparam name="TSourceType"></typeparam>
-    
     [XmlType(Namespace = "http://openiz.org/model")]
     public abstract class Association<TSourceType> : BaseEntityData, ISimpleAssociation where TSourceType : IdentifiedData
     {

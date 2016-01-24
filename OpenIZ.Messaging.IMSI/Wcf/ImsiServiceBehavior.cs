@@ -13,6 +13,14 @@ using System.ServiceModel.Web;
 using System.IO;
 using OpenIZ.Core.Model.Attributes;
 using System.Xml.Serialization;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Roles;
+using OpenIZ.Core.Model.Entities;
+using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Messaging.IMSI.ResourceHandler;
 
 namespace OpenIZ.Messaging.IMSI.Wcf
 {
@@ -35,9 +43,20 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Get the specified object
+        /// </summary>
         public IdentifiedData Get(string resourceType, string id)
         {
-            throw new NotImplementedException();
+
+            var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
+            if (handler != null)
+            {
+                var retVal = handler.Get(Guid.Parse(id), Guid.Empty);
+                //retVal.Lock();
+                return Bundle.CreateBundle(retVal);
+            }
+            return null;
         }
 
         public IdentifiedData GetVersion(string resourceType, string id, string versionId)

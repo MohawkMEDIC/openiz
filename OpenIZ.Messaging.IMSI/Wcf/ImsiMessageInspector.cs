@@ -104,6 +104,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                         // Read binary contents of the message
                         switch(this.GetContentFormat(reply))
                         {
+                            case WebContentFormat.Default:
                             case WebContentFormat.Xml:
                                 using (MemoryStream ms = new MemoryStream())
                                 {

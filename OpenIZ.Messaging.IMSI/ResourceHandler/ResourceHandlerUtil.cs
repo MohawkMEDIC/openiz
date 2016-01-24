@@ -1,0 +1,61 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace OpenIZ.Messaging.IMSI.ResourceHandler
+{
+    /// <summary>
+    /// Resource handler utility
+    /// </summary>
+    public class ResourceHandlerUtil
+    {
+
+        // Resource handler utility classes
+        private static object m_lockObject = new object();
+        private static ResourceHandlerUtil m_instance = null;
+        // Handlers
+        private Dictionary<String, IResourceHandler> m_handlers = new Dictionary<string, IResourceHandler>();
+
+        /// <summary>
+        /// Gets the current resource handler utility
+        /// </summary>
+        public static ResourceHandlerUtil Current
+        {
+            get
+            {
+                if (m_instance == null)
+                    lock (m_lockObject)
+                        if (m_instance == null)
+                            m_instance = new ResourceHandlerUtil();
+                return m_instance;
+            }
+        }
+
+        /// <summary>
+        /// Resource handler utility ctor
+        /// </summary>
+        private ResourceHandlerUtil()
+        {
+            foreach(var asm in AppDomain.CurrentDomain.GetAssemblies())
+                foreach(var t in asm.GetTypes().Where(o=>typeof(IResourceHandler).IsAssignableFrom(o) && o.IsClass && !o.IsAbstract))
+                {
+                    ConstructorInfo ci = t.GetConstructor(Type.EmptyTypes);
+                    IResourceHandler rh = ci.Invoke(null) as IResourceHandler;
+                    m_handlers.Add(rh.ResourceName, rh);
+                }
+        }
+
+        /// <summary>
+        /// Get resource handler
+        /// </summary>
+        public IResourceHandler GetResourceHandler(String resourceName)
+        {
+            IResourceHandler retVal = null;
+            this.m_handlers.TryGetValue(resourceName, out retVal);
+            return retVal;
+        }
+    }
+}

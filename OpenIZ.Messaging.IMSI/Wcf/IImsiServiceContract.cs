@@ -1,4 +1,9 @@
 ﻿using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Roles;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,6 +21,25 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     /// </summary>
     [ServiceContract(Namespace = "http://openiz.org/imsi/1.0", Name = "IMSI", ConfigurationName = "IMSI_1.0")]
     [XmlSerializerFormat]
+    [ServiceKnownType(typeof(Concept))]
+    [ServiceKnownType(typeof(ReferenceTerm))]
+    [ServiceKnownType(typeof(Act))]
+    [ServiceKnownType(typeof(TextObservation))]
+    [ServiceKnownType(typeof(CodedObservation))]
+    [ServiceKnownType(typeof(QuantityObservation))]
+    [ServiceKnownType(typeof(PatientEncounter))]
+    [ServiceKnownType(typeof(SubstanceAdministration))]
+    [ServiceKnownType(typeof(Entity))]
+    [ServiceKnownType(typeof(Patient))]
+    [ServiceKnownType(typeof(Provider))]
+    [ServiceKnownType(typeof(Organization))]
+    [ServiceKnownType(typeof(Place))]
+    [ServiceKnownType(typeof(Material))]
+    [ServiceKnownType(typeof(ManufacturedMaterial))]
+    [ServiceKnownType(typeof(DeviceEntity))]
+    [ServiceKnownType(typeof(ApplicationEntity))]
+    [ServiceKnownType(typeof(DeviceEntity))]
+    [ServiceKnownType(typeof(Bundle))]
     public interface IImsiServiceContract 
     {
 
