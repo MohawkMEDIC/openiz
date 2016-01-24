@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Xml.Serialization;
 using System.Linq;
 using OpenIZ.Core.Model.EntityLoader;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -15,7 +16,7 @@ namespace OpenIZ.Core.Model.Entities
     /// Entity address
     /// </summary>
     
-    [XmlType("EntityAddress", Namespace = "http://openiz.org/model")]
+    [XmlType("EntityAddress",  Namespace = "http://openiz.org/model"), JsonObject("EntityAddress")]
     public class EntityAddress : VersionedAssociation<Entity>
     {
 
@@ -31,7 +32,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the address use key
         /// </summary>
-        [XmlElement("addressUse")]
+        [XmlElement("addressUse"), JsonProperty("addressUse")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         public Guid? AddressUseKey
@@ -48,7 +49,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the address use
         /// </summary>
         [DelayLoad(nameof(AddressUseKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Concept AddressUse
         {
             get {
@@ -66,7 +67,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the component types
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("component")]
+        [XmlElement("component"), JsonProperty("component")]
         public List<EntityAddressComponent> Component
         {
             get

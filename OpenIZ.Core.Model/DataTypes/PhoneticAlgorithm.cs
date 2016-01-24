@@ -18,6 +18,7 @@
  */
 
 
+using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.EntityLoader;
 using System;
@@ -29,7 +30,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a phonetic algorithm record in the model
     /// </summary>
     
-    [XmlType("PhoneticAlgorithm", Namespace = "http://openiz.org/model")]
+    [XmlType("PhoneticAlgorithm",  Namespace = "http://openiz.org/model"), JsonObject("PhoneticAlgorithm")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "PhoneticAlgorithm")]
     public class PhoneticAlgorithm : IdentifiedData
     {
@@ -54,12 +55,12 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets the name of the phonetic algorithm
         /// </summary>
-        [XmlElement("name")]
+        [XmlElement("name"), JsonProperty("name")]
         public String Name { get; set; }
         /// <summary>
         /// Gets the handler (or generator) for the phonetic algorithm
         /// </summary>
-        [XmlElement("handler")]
+        [XmlElement("handler"), JsonProperty("handler")]
         public String Handler { get; set; }
 
     }

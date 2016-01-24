@@ -8,6 +8,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Acts
 {
@@ -15,7 +16,7 @@ namespace OpenIZ.Core.Model.Acts
     /// Represents an act whereby a substance is administered to the patient
     /// </summary>
     
-    [XmlType("SubstanceAdministration", Namespace = "http://openiz.org/model")]
+    [XmlType("SubstanceAdministration",  Namespace = "http://openiz.org/model"), JsonObject("SubstanceAdministration")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "SubstanceAdministration")]
     public class SubstanceAdministration : Act
     {
@@ -41,7 +42,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("route")]
+        [XmlElement("route"), JsonProperty("route")]
         public Guid RouteKey
         {
             get { return this.m_routeKey; }
@@ -57,7 +58,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("doseUnit")]
+        [XmlElement("doseUnit"), JsonProperty("doseUnit")]
         public Guid DoseUnitKey
         {
             get { return this.m_doseUnitKey; }
@@ -71,7 +72,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets a concept which indicates the route of administration (eg: Oral, Injection, etc.)
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(RouteKey))]
         public Concept Route
         {
@@ -93,7 +94,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets a concept which indicates the unit of measure for the dose (eg: 5 mL, 10 mL, 1 drop, etc.)
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(DoseUnitKey))]
         public Concept DoseUnit
         {
@@ -115,13 +116,13 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the amount of substance administered
         /// </summary>
-        [XmlElement("doseQuantity")]
+        [XmlElement("doseQuantity"), JsonProperty("doseQuantity")]
         public Decimal DoseQuantity { get; set; }
 
         /// <summary>
         /// The sequence of the dose (i.e. OPV 0 = 0 , OPV 1 = 1, etc.)
         /// </summary>
-        [XmlElement("doseSequence")]
+        [XmlElement("doseSequence"), JsonProperty("doseSequence")]
         public uint SequenceId { get; set; }
 
         /// <summary>

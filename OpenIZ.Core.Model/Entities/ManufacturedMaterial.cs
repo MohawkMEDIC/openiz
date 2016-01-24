@@ -6,6 +6,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -13,7 +14,7 @@ namespace OpenIZ.Core.Model.Entities
     /// Manufactured material
     /// </summary>
     
-    [XmlType("ManufacturedMaterial", Namespace = "http://openiz.org/model")]
+    [XmlType("ManufacturedMaterial",  Namespace = "http://openiz.org/model"), JsonObject("ManufacturedMaterial")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "ManufacturedMaterial")]
     public class ManufacturedMaterial : Material
     {
@@ -30,7 +31,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the lot number of the manufactured material
         /// </summary>
-        [XmlElement("lotNumber")]
+        [XmlElement("lotNumber"), JsonProperty("lotNumber")]
         public String LotNumber { get; set; }
 
     }

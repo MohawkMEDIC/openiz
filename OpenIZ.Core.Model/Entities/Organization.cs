@@ -8,6 +8,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -15,7 +16,7 @@ namespace OpenIZ.Core.Model.Entities
     /// Organization entity
     /// </summary>
     
-    [XmlType("Organization", Namespace = "http://openiz.org/model")]
+    [XmlType("Organization",  Namespace = "http://openiz.org/model"), JsonObject("Organization")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Organization")]
     public class Organization : Entity
     {
@@ -40,7 +41,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("industryConcept")]
+        [XmlElement("industryConcept"), JsonProperty("industryConcept")]
         public Guid IndustryConceptKey
         {
             get { return this.m_industryConceptKey; }
@@ -55,7 +56,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the industry in which the organization operates
         /// </summary>
         [DelayLoad(nameof(IndustryConceptKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Concept IndustryConcept
         {
             get {

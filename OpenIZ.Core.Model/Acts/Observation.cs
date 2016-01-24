@@ -8,13 +8,14 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Acts
 {
     /// <summary>
     /// Represents a class which is an observation
     /// </summary>
-    [XmlType("Observation", Namespace = "http://openiz.org/model")]
+    [XmlType("Observation",  Namespace = "http://openiz.org/model"), JsonObject("Observation")]
     
     public abstract class Observation : Act
     {
@@ -37,7 +38,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("interpretationConcept")]
+        [XmlElement("interpretationConcept"), JsonProperty("interpretationConcept")]
         public Guid? InterpretationConceptKey
         {
             get { return this.m_interpretationConceptKey; }
@@ -52,7 +53,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the concept which indicates the interpretation of the observtion
         /// </summary>
         [DelayLoad(nameof(InterpretationConceptKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Concept InterpretationConcept
         {
             get {
@@ -79,7 +80,7 @@ namespace OpenIZ.Core.Model.Acts
     /// <summary>
     /// Represents an observation that contains a quantity
     /// </summary>
-    [XmlType("QuantityObservation", Namespace = "http://openiz.org/model")]
+    [XmlType("QuantityObservation",  Namespace = "http://openiz.org/model"), JsonObject("QuantityObservation")]
     
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "QuantityObservation" )]
     public class QuantityObservation : Observation
@@ -93,13 +94,13 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the observed quantity
         /// </summary>
-        [XmlElement("value")]
+        [XmlElement("value"), JsonProperty("value")]
         public Decimal Value { get; set; }
 
         /// <summary>
         /// Gets or sets the key of the uom concept
         /// </summary>
-        [XmlElement("unitOfMeasure")]
+        [XmlElement("unitOfMeasure"), JsonProperty("unitOfMeasure")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         public Guid UnitOfMeasureKey
@@ -115,7 +116,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the unit of measure
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(UnitOfMeasureKey))]
         public Concept UnitOfMeasure
         {
@@ -147,7 +148,7 @@ namespace OpenIZ.Core.Model.Acts
     /// <summary>
     /// Represents an observation with a text value
     /// </summary>
-    [XmlType("TextObservation", Namespace = "http://openiz.org/model")]
+    [XmlType("TextObservation",  Namespace = "http://openiz.org/model"), JsonObject("TextObservation")]
     
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "TextObservation")]
     public class TextObservation : Observation
@@ -155,14 +156,14 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the textual value
         /// </summary>
-        [XmlElement("value")]
+        [XmlElement("value"), JsonProperty("value")]
         public String Value { get; set; }
     }
 
     /// <summary>
     /// Represents an observation with a concept value
     /// </summary>
-    [XmlType("CodedObservation", Namespace = "http://openiz.org/model")]
+    [XmlType("CodedObservation",  Namespace = "http://openiz.org/model"), JsonObject("CodedObservation")]
     
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "CodedObservation")]
     public class CodedObservation : Observation
@@ -176,7 +177,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the key of the uom concept
         /// </summary>
-        [XmlElement("value")]
+        [XmlElement("value"), JsonProperty("value")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         public Guid ValueKey
@@ -192,7 +193,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the coded value of the observation
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(ValueKey))]
         public Concept Value
         {

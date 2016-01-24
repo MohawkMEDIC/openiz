@@ -1,4 +1,5 @@
-﻿using OpenIZ.Core.Model.Attributes;
+﻿using Newtonsoft.Json;
+using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.ComponentModel;
@@ -10,7 +11,7 @@ namespace OpenIZ.Core.Model.Entities
     /// Represents an association between two entities
     /// </summary>
     
-    [XmlType("EntityRelationship", Namespace = "http://openiz.org/model")]
+    [XmlType("EntityRelationship",  Namespace = "http://openiz.org/model"), JsonObject("EntityRelationship")]
     public class EntityRelationship : VersionedAssociation<Entity>
     {
 
@@ -28,7 +29,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// The target of the association
         /// </summary>
-        [XmlElement("target")]
+        [XmlElement("target"), JsonProperty("target")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         public Guid TargetEntityKey
@@ -43,7 +44,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Target entity reference
         /// </summary>
         [DelayLoad(nameof(TargetEntityKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Entity TargetEntity
         {
             get {
@@ -63,7 +64,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Association type key
         /// </summary>
-        [XmlElement("relationshipType")]
+        [XmlElement("relationshipType"), JsonProperty("relationshipType")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         public Guid RelationshipTypeKey
@@ -79,7 +80,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the association type
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(RelationshipTypeKey))]
         public Concept RelationshipType
         {

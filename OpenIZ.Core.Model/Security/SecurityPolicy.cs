@@ -27,6 +27,7 @@ using System.ComponentModel;
 
 using System.Xml.Serialization;
 using OpenIZ.Core.Model.Attributes;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Security
 {
@@ -44,7 +45,7 @@ namespace OpenIZ.Core.Model.Security
     /// <summary>
     /// Represents a simply security policy
     /// </summary>
-    [XmlType("SecurityPolicy", Namespace = "http://openiz.org/model")]
+    [XmlType("SecurityPolicy",   Namespace = "http://openiz.org/model"), JsonObject("SecurityPolicy")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "SecurityPolicy")]
     public class SecurityPolicy : BaseEntityData
     {
@@ -52,31 +53,31 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets or sets the handler which may handle this policy
         /// </summary>
-        [XmlElement("handler")]
+        [XmlElement("handler"), JsonProperty("handler")]
         public String Handler { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the policy
         /// </summary>
-        [XmlElement("name")]
+        [XmlElement("name"), JsonProperty("name")]
         public String Name { get; set; }
 
         /// <summary>
         /// Gets or sets the universal ID
         /// </summary>
-        [XmlElement("o")]
+        [XmlElement("o"), JsonProperty("o")]
         public String Oid { get; set; }
 
         /// <summary>
         /// Whether the property is public
         /// </summary>
-        [XmlElement("isPublic")]
+        [XmlElement("isPublic"), JsonProperty("isPublic")]
         public bool IsPublic { get; set; }
 
         /// <summary>
         /// Whether the policy can be elevated over
         /// </summary>
-        [XmlElement("canOverride")]
+        [XmlElement("canOverride"), JsonProperty("canOverride")]
         public bool CanOverride { get; set; }
     }
 

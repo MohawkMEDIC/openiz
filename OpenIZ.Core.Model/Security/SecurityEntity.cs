@@ -26,6 +26,7 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core.Model.EntityLoader;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Security
 {
@@ -42,7 +43,7 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Policies associated with the entity
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public virtual List<SecurityPolicyInstance> Policies
         {
             get

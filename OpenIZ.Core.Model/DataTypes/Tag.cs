@@ -6,6 +6,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -20,13 +21,13 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the key of the tag
         /// </summary>
-        [XmlElement("key")]
+        [XmlElement("key"), JsonProperty("key")]
         public String TagKey { get; set; }
 
         /// <summary>
         /// Gets or sets the value of the tag
         /// </summary>
-        [XmlElement("value")]
+        [XmlElement("value"), JsonProperty("value")]
         public String Value { get; set; }
 
     }
@@ -35,7 +36,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a tag associated with an entity
     /// </summary>
     
-    [XmlType("EntityTag", Namespace = "http://openiz.org/model")]
+    [XmlType("EntityTag",  Namespace = "http://openiz.org/model"), JsonObject("EntityTag")]
     public class EntityTag : Tag<Entity>
     {
 
@@ -46,7 +47,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a tag on an act
     /// </summary>
     
-    [XmlType("ActTag", Namespace = "http://openiz.org/model")]
+    [XmlType("ActTag",  Namespace = "http://openiz.org/model"), JsonObject("ActTag")]
     public class ActTag : Tag<Act>
     {
 

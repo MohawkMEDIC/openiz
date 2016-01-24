@@ -17,6 +17,7 @@
  * Date: 2016-1-19
  */
 
+using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Security;
 using System;
@@ -28,7 +29,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a model class which is an assigning authority
     /// </summary>
     
-    [XmlType("AssigningAuthority", Namespace = "http://openiz.org/model")]
+    [XmlType("AssigningAuthority",  Namespace = "http://openiz.org/model"), JsonObject("AssigningAuthority")]
     public  class AssigningAuthority : BaseEntityData
     {
         // Assigning device id
@@ -40,32 +41,32 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the name of the assigning authority
         /// </summary>
-        [XmlElement("name")]
+        [XmlElement("name"), JsonProperty("name")]
         public String Name { get; set; }
         /// <summary>
         /// Gets or sets the domain name of the assigning authority
         /// </summary>
-        [XmlElement("domainName")]
+        [XmlElement("domainName"), JsonProperty("domainName")]
         public String DomainName { get; set; }
         /// <summary>
         /// Gets or sets the description of the assigning authority
         /// </summary>
-        [XmlElement("description")]
+        [XmlElement("description"), JsonProperty("description")]
         public String Description { get; set; }
         /// <summary>
         /// Gets or sets the oid of the assigning authority
         /// </summary>
-        [XmlElement("oid")]
+        [XmlElement("oid"), JsonProperty("oid")]
         public String Oid { get; set; }
         /// <summary>
         /// The URL of the assigning authority
         /// </summary>
-        [XmlElement("url")]
+        [XmlElement("url"), JsonProperty("url")]
         public String Url { get; set; }
         /// <summary>
         /// Assigning device identifier
         /// </summary>
-        [XmlElement("assigningDevice")]
+        [XmlElement("assigningDevice"), JsonProperty("assigningDevice")]
         public Guid? AssigningDeviceKey
         {
             get { return this.m_assigningDeviceId; }
@@ -79,7 +80,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the assigning device
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public SecurityDevice AssigningDevice {
             get
             {

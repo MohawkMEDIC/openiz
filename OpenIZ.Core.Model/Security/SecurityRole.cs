@@ -26,6 +26,7 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core.Model.EntityLoader;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Security
 {
@@ -45,19 +46,19 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets or sets the name of the security role
         /// </summary>
-        [XmlElement("name")]
+        [XmlElement("name"), JsonProperty("name")]
         public String Name { get; set; }
 
         /// <summary>
         /// Description of the role
         /// </summary>
-        [XmlElement("description")]
+        [XmlElement("description"), JsonProperty("description")]
         public String Description { get; set; }
 
         /// <summary>
         /// Gets or sets the security users in the role
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(null)]
         public List<SecurityUser> Users {
             get

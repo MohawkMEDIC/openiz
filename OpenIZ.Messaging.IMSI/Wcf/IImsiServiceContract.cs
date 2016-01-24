@@ -4,6 +4,7 @@ using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
+using OpenIZ.Messaging.IMSI.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,6 +41,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     [ServiceKnownType(typeof(ApplicationEntity))]
     [ServiceKnownType(typeof(DeviceEntity))]
     [ServiceKnownType(typeof(Bundle))]
+    [ServiceKnownType(typeof(ErrorResult))]
     public interface IImsiServiceContract 
     {
 

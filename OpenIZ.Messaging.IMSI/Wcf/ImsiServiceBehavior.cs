@@ -21,6 +21,9 @@ using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Model.Entities;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Messaging.IMSI.ResourceHandler;
+using OpenIZ.Messaging.IMSI.Model;
+using System.Net;
+using System.Data;
 
 namespace OpenIZ.Messaging.IMSI.Wcf
 {
@@ -49,14 +52,32 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         public IdentifiedData Get(string resourceType, string id)
         {
 
-            var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
-            if (handler != null)
+            try
             {
-                var retVal = handler.Get(Guid.Parse(id), Guid.Empty);
-                //retVal.Lock();
-                return Bundle.CreateBundle(retVal);
+                var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
+                if (handler != null)
+                {
+                    var retVal = handler.Get(Guid.Parse(id), Guid.Empty);
+                    if (retVal == null)
+                        throw new FileNotFoundException(id);
+
+                    this.ExpandProperties(retVal);
+
+                    if(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_all"] != "true")
+                        retVal.Lock();
+                    if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_bundle"] == "true")
+                        return Bundle.CreateBundle(retVal);
+                    else
+                        return retVal;
+                }
+                else
+                    throw new FileNotFoundException(resourceType);
+
             }
-            return null;
+            catch(Exception e)
+            {
+                return this.ErrorHelper(e, false);
+            }
         }
 
         public IdentifiedData GetVersion(string resourceType, string id, string versionId)
@@ -73,7 +94,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 XmlReflectionImporter importer = new XmlReflectionImporter("http://openiz.org/model");
                 XmlSchemaExporter exporter = new XmlSchemaExporter(schemaCollection);
 
-                foreach (var cls in typeof(IdentifiedData).Assembly.GetTypes().Where(o => o.GetCustomAttribute<XmlRootAttribute>() != null && !o.IsGenericTypeDefinition))
+                foreach (var cls in typeof(IImsiServiceContract).GetCustomAttributes<ServiceKnownTypeAttribute>().Select(o=>o.Type))
                     exporter.ExportTypeMapping(importer.ImportTypeMapping(cls, "http://openiz.org/model"));
 
                 if (schemaId > schemaCollection.Count)
@@ -115,5 +136,70 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         {
             throw new NotImplementedException();
         }
+
+        #region Helper Methods
+
+        /// <summary>
+        /// Throw an appropriate exception based on the caught exception
+        /// </summary>
+        private ErrorResult ErrorHelper(Exception e, bool returnBundle)
+        {
+
+            ErrorResult result = new ErrorResult();
+            Trace.TraceError(e.ToString());
+            result.Details.Add(new ResultDetail(DetailType.Error, e.Message));
+
+            HttpStatusCode retCode = HttpStatusCode.OK;
+
+            if (e is NotSupportedException)
+                retCode = System.Net.HttpStatusCode.MethodNotAllowed;
+            else if (e is NotImplementedException)
+                retCode = System.Net.HttpStatusCode.NotImplemented;
+            else if (e is InvalidDataException)
+                retCode = HttpStatusCode.BadRequest;
+            else if (e is FileLoadException)
+                retCode = System.Net.HttpStatusCode.Gone;
+            else if (e is FileNotFoundException || e is ArgumentException)
+                retCode = System.Net.HttpStatusCode.NotFound;
+            else if (e is ConstraintException)
+                retCode = (HttpStatusCode)422;
+            else
+                retCode = System.Net.HttpStatusCode.InternalServerError;
+
+            WebOperationContext.Current.OutgoingResponse.StatusCode = retCode;
+            WebOperationContext.Current.OutgoingResponse.Format = WebMessageFormat.Xml;
+
+         
+            WebOperationContext.Current.OutgoingResponse.Headers.Add("Content-Disposition", "filename=\"error.xml\"");
+            throw new WebFaultException<ErrorResult>(result, retCode);
+
+        }
+
+        /// <summary>
+        /// Expand properties
+        /// </summary>
+        private void ExpandProperties(IdentifiedData returnValue)
+        {
+            if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_expand"] == null)
+                return;
+            foreach(var nvs in WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_expand"].Split(','))
+            {
+                // Get the property the user wants to expand
+                object scope = returnValue;
+                foreach (var property in nvs.Split('.'))
+                {
+                    PropertyInfo keyPi = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<XmlElementAttribute>()?.ElementName == property);
+                    if (keyPi == null)
+                        continue;
+                    // Get the backing property
+                    PropertyInfo expandProp = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == keyPi.Name);
+                    if (expandProp != null)
+                        scope = expandProp.GetValue(scope);
+                    else
+                        scope = keyPi.GetValue(scope);
+                }
+            }
+        }
+        #endregion
     }
 }

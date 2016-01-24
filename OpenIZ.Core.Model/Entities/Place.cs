@@ -11,6 +11,7 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core.Model.EntityLoader;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -18,7 +19,7 @@ namespace OpenIZ.Core.Model.Entities
     /// An entity which is a place where healthcare services are delivered
     /// </summary>
     
-    [XmlType("Place", Namespace = "http://openiz.org/model")]
+    [XmlType("Place",  Namespace = "http://openiz.org/model"), JsonObject("Place")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Place")]
     public class Place : Entity
     {
@@ -40,7 +41,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("classConcept")]
+        [XmlElement("classConcept"), JsonProperty("classConcept")]
         public override Guid ClassConceptKey
         {
             get
@@ -63,26 +64,26 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// True if location is mobile
         /// </summary>
-        [XmlElement("isMobile")]
+        [XmlElement("isMobile"), JsonProperty("isMobile")]
         public Boolean IsMobile { get; set; }
 
         /// <summary>
         /// Gets or sets the latitude
         /// </summary>
-        [XmlElement("lat")]
+        [XmlElement("lat"), JsonProperty("lat")]
         public float Lat { get; set; }
 
         /// <summary>
         /// Gets or sets the longitude
         /// </summary>
-        [XmlElement("lng")]
+        [XmlElement("lng"), JsonProperty("lng")]
         public float Lng { get; set; }
 
         /// <summary>
         /// Gets the services
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("service")]
+        [XmlElement("service"), JsonProperty("service")]
         public List<PlaceService> Services
         {
             get

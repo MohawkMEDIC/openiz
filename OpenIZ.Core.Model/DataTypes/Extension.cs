@@ -8,6 +8,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -28,7 +29,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the value of the extension
         /// </summary>
-        [XmlElement("value")]
+        [XmlElement("value"), JsonProperty("value")]
         public byte[] ExtensionValue { get; set; }
 
         /// <summary>
@@ -36,7 +37,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Guid ExtensionTypeKey
         {
             get { return this.m_extensionTypeKey; }
@@ -51,7 +52,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the extension type
         /// </summary>
         [DelayLoad(nameof(ExtensionTypeKey))]
-        [XmlElement("extensionType")]
+        [XmlElement("extensionType"), JsonProperty("extensionType")]
         public ExtensionType ExtensionType
         {
             get {
@@ -82,7 +83,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Extension bound to entity
     /// </summary>
     
-    [XmlType("EntityExtension", Namespace = "http://openiz.org/model")]
+    [XmlType("EntityExtension",  Namespace = "http://openiz.org/model"), JsonObject("EntityExtension")]
     public class EntityExtension : Extension<Entity>
     {
 
@@ -92,7 +93,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Act extension
     /// </summary>
     
-    [XmlType("ActExtension", Namespace = "http://openiz.org/model")]
+    [XmlType("ActExtension",  Namespace = "http://openiz.org/model"), JsonObject("ActExtension")]
     public class ActExtension : Extension<Act>
     {
 

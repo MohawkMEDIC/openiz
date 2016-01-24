@@ -18,6 +18,7 @@
  */
 
 
+using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
 using System;
 using System.ComponentModel;
@@ -29,7 +30,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a reference term relationship between a concept and reference term
     /// </summary>
     
-    [XmlType("ConceptReferenceTerm", Namespace = "http://openiz.org/model")]
+    [XmlType("ConceptReferenceTerm",  Namespace = "http://openiz.org/model"), JsonObject("ConceptReferenceTerm")]
     public class ConceptReferenceTerm : VersionedAssociation<Concept>
     {
         // Reference term id
@@ -48,7 +49,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("referenceTerm")]
+        [XmlElement("referenceTerm"), JsonProperty("referenceTerm")]
         public Guid  ReferenceTermKey {
             get { return this.m_referenceTermId; }
             set
@@ -62,7 +63,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or set the reference term
         /// </summary>
         [DelayLoad(nameof(ReferenceTermKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public ReferenceTerm ReferenceTerm
         {
             get
@@ -85,7 +86,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("relationshipType")]
+        [XmlElement("relationshipType"), JsonProperty("relationshipType")]
         public Guid  RelationshipTypeKey {
             get { return this.m_relationshipTypeId; }
             set
@@ -99,7 +100,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the relationship type
         /// </summary>
         [DelayLoad(nameof(RelationshipTypeKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public ConceptRelationshipType RelationshipType {
             get
             {

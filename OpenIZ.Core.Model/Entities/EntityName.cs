@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Xml.Serialization;
 using System.Linq;
 using OpenIZ.Core.Model.EntityLoader;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -15,7 +16,7 @@ namespace OpenIZ.Core.Model.Entities
     /// Represents a name for an entity
     /// </summary>
     
-    [XmlType("EntityName", Namespace = "http://openiz.org/model")]
+    [XmlType("EntityName",  Namespace = "http://openiz.org/model"), JsonObject("EntityName")]
     public class EntityName : VersionedAssociation<Entity>
     {
         // Name use key
@@ -30,7 +31,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the name use key
         /// </summary>
-        [XmlElement("nameUse")]
+        [XmlElement("nameUse"), JsonProperty("nameUse")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         public Guid? NameUseKey
@@ -47,7 +48,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the name use
         /// </summary>
         [DelayLoad(nameof(NameUseKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Concept NameUse
         {
             get {
@@ -65,7 +66,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the component types
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("component")]
+        [XmlElement("component"), JsonProperty("component")]
         public List<EntityNameComponent> Component
         {
             get

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Roles
 {
@@ -16,7 +17,7 @@ namespace OpenIZ.Core.Model.Roles
     /// Represents a provider role of a person
     /// </summary>
     
-    [XmlType("Provider", Namespace = "http://openiz.org/model")]
+    [XmlType("Provider",  Namespace = "http://openiz.org/model"), JsonObject("Provider")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Provider")]
     public class Provider : Person
     {
@@ -41,7 +42,7 @@ namespace OpenIZ.Core.Model.Roles
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("providerSpecialty")]
+        [XmlElement("providerSpecialty"), JsonProperty("providerSpecialty")]
         public Guid? ProviderSpecialtyKey
         {
             get
@@ -58,7 +59,7 @@ namespace OpenIZ.Core.Model.Roles
         /// <summary>
         /// Gets or sets the provider specialty
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(ProviderSpecialtyKey))]
         public Concept ProviderSpecialty
         {

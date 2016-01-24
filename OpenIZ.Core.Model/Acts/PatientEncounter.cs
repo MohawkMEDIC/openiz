@@ -8,6 +8,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Acts
 {
@@ -15,7 +16,7 @@ namespace OpenIZ.Core.Model.Acts
     /// Represents an encounter a patient has with the health system
     /// </summary>
     
-    [XmlType("PatientEncounter", Namespace = "http://openiz.org/model")]
+    [XmlType("PatientEncounter",  Namespace = "http://openiz.org/model"), JsonObject("PatientEncounter")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "PatientEncounter")]
     public class PatientEncounter : Act
     {
@@ -38,7 +39,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("dischargeDisposition")]
+        [XmlElement("dischargeDisposition"), JsonProperty("dischargeDisposition")]
         public Guid? DischargeDispositionKey
         {
             get { return this.m_dischargeDispositionKey; }
@@ -52,7 +53,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the discharge disposition (how the patient left the encounter
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(DischargeDispositionKey))]
         public Concept DischargeDisposition
         {

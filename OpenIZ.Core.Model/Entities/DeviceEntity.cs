@@ -9,6 +9,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -16,7 +17,7 @@ namespace OpenIZ.Core.Model.Entities
     /// Represents a device entity
     /// </summary>
     
-    [XmlType("DeviceEntity", Namespace = "http://openiz.org/model")]
+    [XmlType("DeviceEntity",  Namespace = "http://openiz.org/model"), JsonObject("DeviceEntity")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "DeviceEntity")]
     public class DeviceEntity : Entity
     {
@@ -38,7 +39,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the security device key
         /// </summary>
-        [XmlElement("securityDevice")]
+        [XmlElement("securityDevice"), JsonProperty("securityDevice")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         public Guid SecurityDeviceKey
@@ -55,7 +56,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the security device
         /// </summary>
         [DelayLoad(nameof(SecurityDeviceKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public SecurityDevice SecurityDevice
         {
             get {
@@ -74,12 +75,12 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the manufacturer model name
         /// </summary>
-        [XmlElement("manufacturerModelName")]
+        [XmlElement("manufacturerModelName"), JsonProperty("manufacturerModelName")]
         public String ManufacturedModelName { get; set; }
         /// <summary>
         /// Gets or sets the operating system name
         /// </summary>
-        [XmlElement("operatingSystemName")]
+        [XmlElement("operatingSystemName"), JsonProperty("operatingSystemName")]
         public String OperatingSystemName { get; set; }
 
         /// <summary>

@@ -6,6 +6,7 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core.Model.Interfaces;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model
 {
@@ -26,7 +27,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the source entity's key (where the relationship is FROM)
         /// </summary>
-        [XmlElement("source")]
+        [XmlElement("source"), JsonProperty("source")]
         public virtual Guid SourceEntityKey
         {
             get
@@ -44,7 +45,7 @@ namespace OpenIZ.Core.Model
         /// The entity that this relationship targets
         /// </summary>
         [DelayLoad(nameof(SourceEntityKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public TSourceType SourceEntity
         {
             get

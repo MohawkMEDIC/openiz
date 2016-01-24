@@ -1,4 +1,5 @@
-﻿using OpenIZ.Core.Model.Attributes;
+﻿using Newtonsoft.Json;
+using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.ComponentModel;
@@ -23,13 +24,13 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the value of the name component
         /// </summary>
-        [XmlElement("value")]
+        [XmlElement("value"), JsonProperty("value")]
         public String Value { get; set; }
 
         /// <summary>
         /// Gets or sets the phonetic code of the reference term
         /// </summary>
-        [XmlElement("phoneticCode")]
+        [XmlElement("phoneticCode"), JsonProperty("phoneticCode")]
         public String PhoneticCode { get; set; }
 
         /// <summary>
@@ -37,7 +38,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("phoneticAlgorithm")]
+        [XmlElement("phoneticAlgorithm"), JsonProperty("phoneticAlgorithm")]
         public Guid PhoneticAlgorithmKey
         {
             get { return this.m_phoneticAlgorithmId; }
@@ -52,7 +53,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the phonetic algorithm
         /// </summary>
         [DelayLoad(nameof(PhoneticAlgorithmKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public PhoneticAlgorithm PhoneticAlgorithm
         {
             get

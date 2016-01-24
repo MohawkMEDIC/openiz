@@ -9,6 +9,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -16,7 +17,7 @@ namespace OpenIZ.Core.Model.Entities
     /// An associative entity which links a SecurityApplication to an Entity
     /// </summary>
     
-    [XmlType("ApplicationEntity", Namespace = "http://openiz.org/model")]
+    [XmlType("ApplicationEntity",  Namespace = "http://openiz.org/model"), JsonObject("ApplicationEntity")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "ApplicationEntity")]
     public class ApplicationEntity : Entity
     {
@@ -38,7 +39,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the security application
         /// </summary>
-        [XmlElement("securityApplication")]
+        [XmlElement("securityApplication"), JsonProperty("securityApplication")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         public Guid SecurityApplicationKey
@@ -55,7 +56,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the security application
         /// </summary>
         [DelayLoad(nameof(SecurityApplicationKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public SecurityApplication SecurityApplication
         {
             get {
@@ -75,19 +76,19 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the name of the software
         /// </summary>
-        [XmlElement("softwareName")]
+        [XmlElement("softwareName"), JsonProperty("softwareName")]
         public String SoftwareName { get; set; }
 
         /// <summary>
         /// Gets or sets the version of the software
         /// </summary>
-        [XmlElement("versionName")]
+        [XmlElement("versionName"), JsonProperty("versionName")]
         public String VersionName { get; set; }
 
         /// <summary>
         /// Gets or sets the vendoer name of the software
         /// </summary>
-        [XmlElement("vendorName")]
+        [XmlElement("vendorName"), JsonProperty("vendorName")]
         public String VendorName { get; set; }
 
         /// <summary>

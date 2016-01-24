@@ -7,6 +7,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Security
 {
@@ -15,7 +16,7 @@ namespace OpenIZ.Core.Model.Security
     /// </summary>
     
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "SecurityApplication")]
-    [XmlType("SecurityApplication", Namespace = "http://openiz.org/model")]
+    [XmlType("SecurityApplication",  Namespace = "http://openiz.org/model"), JsonObject("SecurityApplication")]
     public class SecurityApplication : SecurityEntity
     {
         // Backing field
@@ -24,7 +25,7 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets or sets the application secret used for authenticating the application
         /// </summary>
-        [XmlElement("applicationSecret")]
+        [XmlElement("applicationSecret"), JsonProperty("applicationSecret")]
         public String ApplicationSecret { get; set; }
 
     }

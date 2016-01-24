@@ -11,13 +11,14 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core.Model.EntityLoader;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Entities
 {
     /// <summary>
     /// Represents the base of all entities
     /// </summary>
-    [XmlType("Entity", Namespace = "http://openiz.org/model")]
+    [XmlType("Entity",  Namespace = "http://openiz.org/model"), JsonObject("Entity")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Entity")]
     
     public class Entity : VersionedEntityData<Entity>
@@ -70,7 +71,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("classConcept")]
+        [XmlElement("classConcept"), JsonProperty("classConcept")]
         public virtual Guid ClassConceptKey
         {
             get { return this.m_classConceptId; }
@@ -86,7 +87,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("determinerConcept")]
+        [XmlElement("determinerConcept"), JsonProperty("determinerConcept")]
         public virtual Guid DeterminerConceptKey
         {
             get { return this.m_determinerConceptId; }
@@ -102,7 +103,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("statusConcept")]
+        [XmlElement("statusConcept"), JsonProperty("statusConcept")]
         public Guid  StatusConceptKey
         {
             get { return this.m_statusConceptId; }
@@ -118,7 +119,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("creationAct")]
+        [XmlElement("creationAct"), JsonProperty("creationAct")]
         public Guid  CreationActKey
         {
             get { return this.m_creationActId; }
@@ -134,7 +135,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("typeConcept")]
+        [XmlElement("typeConcept"), JsonProperty("typeConcept")]
         public Guid?  TypeConceptKey
         {
             get { return this.m_typeConceptId; }
@@ -148,7 +149,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Class concept datal load property
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(ClassConceptKey))]
         public Concept ClassConcept
         {
@@ -162,7 +163,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Determiner concept
         /// </summary>
         [DelayLoad(nameof(DeterminerConceptKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public virtual Concept DeterminerConcept
         {
             get
@@ -176,7 +177,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Status concept id
         /// </summary>
         [DelayLoad(nameof(StatusConceptKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Concept StatusConcept
         {
             get
@@ -198,7 +199,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Creation act reference
         /// </summary>
         [DelayLoad(nameof(CreationActKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Act CreationAct
         {
             get {
@@ -219,7 +220,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Type concept identifier
         /// </summary>
         [DelayLoad(nameof(TypeConceptKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Concept TypeConcept
         {
             get {
@@ -237,7 +238,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets the identifiers associated with this entity
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("identifier")]
+        [XmlElement("identifier"), JsonProperty("identifier")]
         public List<EntityIdentifier> Identifiers
         {
             get
@@ -252,7 +253,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all associated entities for this entity
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("relationship")]
+        [XmlElement("relationship"), JsonProperty("relationship")]
         public List<EntityRelationship> Relationships
         {
             get
@@ -268,7 +269,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all telecommunications addresses associated with the entity
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("telecom")]
+        [XmlElement("telecom"), JsonProperty("telecom")]
         public List<EntityTelecomAddress> Telecom
         {
             get
@@ -284,7 +285,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all extensions associated with the entity
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("extension")]
+        [XmlElement("extension"), JsonProperty("extension")]
         public List<EntityExtension> Extensions
         {
             get
@@ -300,7 +301,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all names associated with the entity
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("name")]
+        [XmlElement("name"), JsonProperty("name")]
         public List<EntityName> Names
         {
             get
@@ -316,7 +317,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all addresses associated with the entity
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("address")]
+        [XmlElement("address"), JsonProperty("address")]
         public List<EntityAddress> Addresses
         {
             get
@@ -332,7 +333,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all notes associated with the entity
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("note")]
+        [XmlElement("note"), JsonProperty("note")]
         public List<EntityNote> Notes
         {
             get
@@ -348,7 +349,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all tags associated with the entity
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("tag")]
+        [XmlElement("tag"), JsonProperty("tag")]
         public List<EntityTag> Tags
         {
             get
@@ -364,7 +365,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets the acts in which this entity participates
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("participation")]
+        [XmlElement("participation"), JsonProperty("participation")]
         public List<ActParticipation> Participations
         {
             get

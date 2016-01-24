@@ -17,6 +17,7 @@
  * Date: 2016-1-19
  */
 
+using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Security;
 using System;
@@ -36,7 +37,7 @@ namespace OpenIZ.Core.Model
     /// Represents the root of all model classes in the OpenIZ Core
     /// </summary>
     
-    [XmlType("BaseEntityData", Namespace = "http://openiz.org/model")]
+    [XmlType("BaseEntityData",  Namespace = "http://openiz.org/model"), JsonObject("BaseEntityData")]
     public abstract class BaseEntityData : IdentifiedData
     {
 
@@ -54,13 +55,13 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Creation Time
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public DateTimeOffset CreationTime { get; set; }
 
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
-        [XmlElement("creationTime")]
+        [XmlElement("creationTime"), JsonProperty("creationTime")]
         public String CreationTimeXml
         {
             get { return this.CreationTime.ToString("o", CultureInfo.InvariantCulture); }
@@ -74,13 +75,13 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Obsoletion time
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public DateTimeOffset? ObsoletionTime { get; set; }
 
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
-        [XmlElement("obsoletionTime")]
+        [XmlElement("obsoletionTime"), JsonProperty("obsoletionTime")]
         public String ObsoletionTimeXml
         {
             get { return this.ObsoletionTime?.ToString("o", CultureInfo.InvariantCulture); }
@@ -96,7 +97,7 @@ namespace OpenIZ.Core.Model
         /// Gets or sets the user that created this base data
         /// </summary>
         [DelayLoad(nameof(CreatedByKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public virtual SecurityUser CreatedBy {
             get
             {
@@ -109,7 +110,7 @@ namespace OpenIZ.Core.Model
         /// Gets or sets the user that obsoleted this base data
         /// </summary>
         [DelayLoad(nameof(ObsoletedByKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public virtual SecurityUser ObsoletedBy {
             get
             {
@@ -123,7 +124,7 @@ namespace OpenIZ.Core.Model
         /// </summary>
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("createdBy")]
+        [XmlElement("createdBy"), JsonProperty("createdBy")]
         public virtual Guid CreatedByKey
         {
             get { return this.m_createdById; }
@@ -140,7 +141,7 @@ namespace OpenIZ.Core.Model
         /// </summary>
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("obsoletedBy")]
+        [XmlElement("obsoletedBy"), JsonProperty("obsoletedBy")]
         public virtual Guid? ObsoletedByKey
         {
             get { return this.m_obsoletedById; }

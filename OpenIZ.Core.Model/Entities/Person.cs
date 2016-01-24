@@ -10,6 +10,7 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core.Model.EntityLoader;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -17,7 +18,7 @@ namespace OpenIZ.Core.Model.Entities
     /// Represents an entity which is a person
     /// </summary>
     
-    [XmlType("Person", Namespace = "http://openiz.org/model")]
+    [XmlType("Person",  Namespace = "http://openiz.org/model"), JsonObject("Person")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Person")]
     public class Person : Entity
     {
@@ -38,20 +39,20 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the person's date of birth
         /// </summary>
-        [XmlElement("dateOfBirth")]
+        [XmlElement("dateOfBirth"), JsonProperty("dateOfBirth")]
         public DateTime DateOfBirth { get; set; }
 
         /// <summary>
         /// Gets or sets the precision ofthe date of birth
         /// </summary>
-        [XmlElement("datePrecision")]
+        [XmlElement("datePrecision"), JsonProperty("datePrecision")]
         public DatePrecision DatePrecision { get; set; }
 
         /// <summary>
         /// Gets the person's languages of communication
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("language")]
+        [XmlElement("language"), JsonProperty("language")]
         public List<PersonLanguageCommunication> LanguageCommunication
         {
             get

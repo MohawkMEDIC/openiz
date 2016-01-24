@@ -27,6 +27,7 @@ using System.ComponentModel;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.EntityLoader;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model
 {
@@ -56,7 +57,7 @@ namespace OpenIZ.Core.Model
         /// </summary>
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("previousVersion")]
+        [XmlElement("previousVersion"), JsonProperty("previousVersion")]
         public virtual Guid? PreviousVersionKey
         {
             get
@@ -74,7 +75,7 @@ namespace OpenIZ.Core.Model
         /// Gets or sets the previous version
         /// </summary>
         [DelayLoad(nameof(PreviousVersionKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public virtual THistoryModelType PreviousVersion
         {
             get
@@ -97,13 +98,13 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the key which represents the version of the entity
         /// </summary>
-        [XmlElement("version")]
+        [XmlElement("version"), JsonProperty("version")]
         public Guid VersionKey { get; set; }
 
         /// <summary>
         /// The sequence number of the version (for ordering)
         /// </summary>
-        [XmlElement("sequence")]
+        [XmlElement("sequence"), JsonProperty("sequence")]
         public Decimal VersionSequence { get; set; }
 
         /// <summary>

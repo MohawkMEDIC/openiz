@@ -8,6 +8,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Acts
 {
@@ -31,7 +32,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("player")]
+        [XmlElement("player"), JsonProperty("player")]
         public Guid PlayerEntityKey
         {
             get { return this.m_playerKey; }
@@ -47,7 +48,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("participationRole")]
+        [XmlElement("participationRole"), JsonProperty("participationRole")]
         public Guid ParticipationRoleKey
         {
             get { return this.m_participationRoleKey; }
@@ -61,7 +62,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the entity which participated in the act
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(PlayerEntityKey))]
         public Entity PlayerEntity
         {
@@ -83,7 +84,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the role that the entity played in participating in the act
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(ParticipationRoleKey))]
         public Concept ParticipationRole
         {

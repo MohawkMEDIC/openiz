@@ -12,6 +12,8 @@ using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
+using OpenIZ.Core.Model.Security;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Collection
 {
@@ -43,6 +45,7 @@ namespace OpenIZ.Core.Model.Collection
     [XmlInclude(typeof(ConceptClass))]
     [XmlInclude(typeof(ConceptRelationship))]
     [XmlInclude(typeof(ConceptRelationshipType))]
+    [XmlInclude(typeof(SecurityUser))]
     public class Bundle : IdentifiedData
     {
 
@@ -54,7 +57,7 @@ namespace OpenIZ.Core.Model.Collection
         /// <summary>
         /// Gets or sets items in the bundle
         /// </summary>
-        [XmlElement("item")]
+        [XmlElement("item"), JsonProperty("item")]
         public List<IdentifiedData> Item
         {
             get { return this.m_bundleContents; }

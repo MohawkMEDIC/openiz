@@ -29,6 +29,7 @@ using OpenIZ.Core.Model.Attributes;
 using System.Xml.Serialization;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.EntityLoader;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model
 {
@@ -54,7 +55,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the effective version of this type
         /// </summary>
-        [XmlElement("effectiveVersionSequence")]
+        [XmlElement("effectiveVersionSequence"), JsonProperty("effectiveVersionSequence")]
         public Decimal EffectiveVersionSequenceId
         {
             get { return this.m_effectiveVersionSequenceId; }
@@ -68,7 +69,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the obsoleted version identifier
         /// </summary>
-        [XmlElement("obsoleteVersionSequence")]
+        [XmlElement("obsoleteVersionSequence"), JsonProperty("obsoleteVersionSequence")]
         public Decimal? ObsoleteVersionSequenceId
         {
             get { return this.m_obsoleteVersionSequenceId; }
@@ -83,7 +84,7 @@ namespace OpenIZ.Core.Model
         /// Gets or sets the effective version
         /// </summary>
         [DelayLoad(nameof(EffectiveVersionSequenceId))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public TSourceType EffectiveVersion
         {
             get
@@ -108,7 +109,7 @@ namespace OpenIZ.Core.Model
         /// Gets the obsoletion version
         /// </summary>
         [DelayLoad(nameof(ObsoleteVersionSequenceId))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public TSourceType ObsoleteVersion
         {
             get
@@ -133,7 +134,7 @@ namespace OpenIZ.Core.Model
         /// Gets or sets the user that created this relationship
         /// </summary>
         [DelayLoad(nameof(CreatedByKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public override SecurityUser CreatedBy
         {
             get
@@ -146,7 +147,7 @@ namespace OpenIZ.Core.Model
         /// Gets the identifier of the user that created this relationship
         /// </summary>
         [DelayLoad(null)]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public override Guid CreatedByKey
         {
             get
@@ -166,7 +167,7 @@ namespace OpenIZ.Core.Model
         /// Obsoleted by
         /// </summary>
         [DelayLoad(nameof(ObsoletedByKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public override SecurityUser ObsoletedBy
         {
             get
@@ -179,7 +180,7 @@ namespace OpenIZ.Core.Model
         /// Gets the identifier of the user that obsoleted the relationship
         /// </summary>
         [DelayLoad(null)]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public override Guid? ObsoletedByKey
         {
             get

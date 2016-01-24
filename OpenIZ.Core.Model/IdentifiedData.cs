@@ -16,6 +16,7 @@
  * User: fyfej
  * Date: 2016-1-19
  */
+using Newtonsoft.Json;
 using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Model.Interfaces;
 using System;
@@ -34,7 +35,7 @@ namespace OpenIZ.Core.Model
     /// <summary>
     /// Represents data that is identified by a key
     /// </summary>
-    [XmlType("IdentifiedData", Namespace = "http://openiz.org/model")]
+    [XmlType("IdentifiedData",  Namespace = "http://openiz.org/model"), JsonObject("IdentifiedData")]
     public abstract class IdentifiedData : IIdentifiedEntity
     {
         // True when the data class is locked for storage
@@ -43,7 +44,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// True if the class is currently loading associations when accessed
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public bool IsDelayLoadEnabled
         {
             get
@@ -110,7 +111,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// The internal primary key value of the entity
         /// </summary>
-        [XmlElement("id")]
+        [XmlElement("id"), JsonProperty("id")]
         public Guid Key { get; set; }
 
         /// <summary>

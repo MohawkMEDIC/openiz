@@ -28,6 +28,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Acts;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -35,7 +36,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Entity identifiers
     /// </summary>
     
-    [XmlType("EntityIdentifier", Namespace = "http://openiz.org/model")]
+    [XmlType("EntityIdentifier",  Namespace = "http://openiz.org/model"), JsonObject("EntityIdentifier")]
     public class EntityIdentifier : IdentifierBase<Entity>
     {
 
@@ -76,15 +77,15 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the value of the identifier
         /// </summary>
-        [XmlElement("value")]
+        [XmlElement("value"), JsonProperty("value")]
         public String Value { get; set; }
 
         /// <summary>
         /// Gets or sets the identifier type
         /// </summary>
         [DelayLoad(nameof(TypeKey))]
-        [XmlIgnore]
-        [XmlElement("type")]
+        [XmlIgnore, JsonIgnore]
+        [XmlElement("type"), JsonProperty("type")]
         public IdentifierType Type
         {
             get
@@ -103,8 +104,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the assigning authority 
         /// </summary>
         [DelayLoad(nameof(AuthorityKey))]
-        [XmlIgnore]
-        [XmlElement("authority")]
+        [XmlIgnore, JsonIgnore]
+        [XmlElement("authority"), JsonProperty("authority")]
         public AssigningAuthority Authority
         {
             get
@@ -127,7 +128,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Guid  AuthorityKey {
             get { return this.m_authorityId; }
             set
@@ -144,7 +145,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Guid?  TypeKey
         {
             get { return this.m_identifierTypeId; }

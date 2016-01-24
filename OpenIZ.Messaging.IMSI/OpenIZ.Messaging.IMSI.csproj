@@ -54,6 +54,8 @@
     <Compile Include="Configuration\ImsiConfiguration.cs" />
     <Compile Include="Configuration\ImsiConfigurationSectionHandler.cs" />
     <Compile Include="ImsiMessageHandler.cs" />
+    <Compile Include="Model\ErrorResult.cs" />
+    <Compile Include="Model\ResultDetail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourceHandler\ConceptResourceHandler.cs" />
     <Compile Include="ResourceHandler\IResourceHandler.cs" />

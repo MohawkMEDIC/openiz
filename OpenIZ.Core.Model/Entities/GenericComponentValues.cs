@@ -1,4 +1,5 @@
-﻿using OpenIZ.Core.Model.Attributes;
+﻿using Newtonsoft.Json;
+using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.ComponentModel;
@@ -25,7 +26,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("type")]
+        [XmlElement("type"), JsonProperty("type")]
         public Guid TypeKey
         {
             get { return this.m_componentTypeKey; }
@@ -39,7 +40,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the type of address component
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(TypeKey))]
         public Concept Type
         {

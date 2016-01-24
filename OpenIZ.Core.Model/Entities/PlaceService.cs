@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
 using System.Xml;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -11,7 +12,7 @@ namespace OpenIZ.Core.Model.Entities
     /// Represents a service for a place
     /// </summary>
     
-    [XmlType("PlaceService", Namespace = "http://openiz.org/model")]
+    [XmlType("PlaceService",  Namespace = "http://openiz.org/model"), JsonObject("PlaceService")]
     public class PlaceService : VersionedAssociation<Entity>
     {
 
@@ -24,14 +25,14 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// The schedule that the service is offered
         /// </summary>
-        [XmlElement("serviceSchedule")]
+        [XmlElement("serviceSchedule"), JsonProperty("serviceSchedule")]
         public Object ServiceSchedule { get; set; }
 
         /// <summary>
         /// Gets or sets the service concept key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("serviceConcept")]
+        [XmlElement("serviceConcept"), JsonProperty("serviceConcept")]
         public Guid ServiceConceptKey
         {
             get { return this.m_serviceConceptKey; }
@@ -46,7 +47,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the service concept
         /// </summary>
         [DelayLoad(nameof(ServiceConceptKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Concept ServiceConcept
         {
             get {

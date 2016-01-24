@@ -55,7 +55,6 @@ namespace OpenIZ.Core.Model.EntityLoader
         public TObject Get<TObject>(Guid key, Guid version, TObject currentInstance) where TObject : IdentifiedData
         {
             if (currentInstance == null &&
-                key != Guid.Empty &&
                 version != Guid.Empty)
                 return this.m_provider.Get<TObject>(key, version);
             return currentInstance;
@@ -66,8 +65,7 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// </summary>
         public TObject Get<TObject>(Guid key, TObject currentInstance) where TObject : IdentifiedData
         {
-            if (currentInstance == null &&
-                    key != Guid.Empty)
+            if (currentInstance == null)
                 return this.m_provider.Get<TObject>(key);
             return currentInstance;
         }

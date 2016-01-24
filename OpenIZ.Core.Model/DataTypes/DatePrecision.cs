@@ -4,13 +4,14 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
     /// <summary>
     /// Represents a date precision object
     /// </summary>
-    [XmlType("DatePrecision", Namespace = "http://openiz.org/model")]
+    [XmlType("DatePrecision",  Namespace = "http://openiz.org/model")]
     public enum DatePrecision
     {
         [XmlEnum("Y")]

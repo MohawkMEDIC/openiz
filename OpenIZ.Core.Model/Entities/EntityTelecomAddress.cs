@@ -1,4 +1,5 @@
-﻿using OpenIZ.Core.Model.Attributes;
+﻿using Newtonsoft.Json;
+using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.ComponentModel;
@@ -10,7 +11,7 @@ namespace OpenIZ.Core.Model.Entities
     /// Represents an entity telecom address
     /// </summary>
     
-    [XmlType("EntityTelecomAddress", Namespace = "http://openiz.org/model")]
+    [XmlType("EntityTelecomAddress",  Namespace = "http://openiz.org/model"), JsonObject("EntityTelecomAddress")]
     public class EntityTelecomAddress : VersionedAssociation<Entity>
     {
 
@@ -23,7 +24,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the name use key
         /// </summary>
-        [XmlElement("addressUse")]
+        [XmlElement("addressUse"), JsonProperty("addressUse")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         public Guid? AddressUseKey
@@ -40,7 +41,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the name use
         /// </summary>
         [DelayLoad(nameof(AddressUseKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Concept AddressUse
         {
             get {
@@ -57,7 +58,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the value of the telecom address
         /// </summary>
-        [XmlElement("value")]
+        [XmlElement("value"), JsonProperty("value")]
         public String Value { get; set; }
 
         /// <summary>

@@ -18,6 +18,7 @@
  */
 
 
+using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Model.Interfaces;
@@ -33,7 +34,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// A class representing a generic concept used in the OpenIZ datamodel
     /// </summary>
     
-    [XmlType("Concept", Namespace = "http://openiz.org/model")]
+    [XmlType("Concept",  Namespace = "http://openiz.org/model"), JsonObject("Concept")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Concept")]
     public class Concept : VersionedEntityData<Concept>
     {
@@ -62,12 +63,12 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets an indicator which dictates whether the concept is a system concept
         /// </summary>
-        [XmlElement("isReadonly")]
+        [XmlElement("isReadonly"), JsonProperty("isReadonly")]
         public bool IsSystemConcept { get; set; }
         /// <summary>
         /// Gets or sets the unchanging mnemonic for the concept
         /// </summary>
-        [XmlElement("mnemonic")]
+        [XmlElement("mnemonic"), JsonProperty("mnemonic")]
         public String Mnemonic { get; set; }
 
         /// <summary>
@@ -75,7 +76,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("statusConcept")]
+        [XmlElement("statusConcept"), JsonProperty("statusConcept")]
         public Guid?  StatusConceptKey
         {
             get
@@ -93,7 +94,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the status of the concept
         /// </summary>
         [DelayLoad(nameof(StatusConceptKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Concept Status
         {
             get
@@ -114,7 +115,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets a list of concept relationships
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("relationship")]
+        [XmlElement("relationship"), JsonProperty("relationship")]
         public List<ConceptRelationship> Relationship
         {
             get
@@ -131,7 +132,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Guid  ClassKey
         {
             get { return this.m_classId; }
@@ -146,8 +147,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the classification of the concept
         /// </summary>
         [DelayLoad(nameof(ClassKey))]
-        [XmlIgnore]
-        [XmlElement("class")]
+        [XmlIgnore, JsonIgnore]
+        [XmlElement("class"), JsonProperty("class")]
         public ConceptClass Class
         {
             get
@@ -169,7 +170,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets a list of concept reference terms
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("referenceTerm")]
+        [XmlElement("referenceTerm"), JsonProperty("referenceTerm")]
         public List<ConceptReferenceTerm> ReferenceTerms
         {
             get
@@ -185,7 +186,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets the concept names
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("name")]
+        [XmlElement("name"), JsonProperty("name")]
         public List<ConceptName> ConceptNames
         {
             get

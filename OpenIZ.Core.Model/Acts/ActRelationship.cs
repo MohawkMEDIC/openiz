@@ -7,6 +7,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Acts
 {
@@ -14,7 +15,7 @@ namespace OpenIZ.Core.Model.Acts
     /// Act relationships
     /// </summary>
     
-    [XmlType("ActRelationship", Namespace = "http://openiz.org/model")]
+    [XmlType("ActRelationship",  Namespace = "http://openiz.org/model"), JsonObject("ActRelationship")]
     public class ActRelationship : VersionedAssociation<Act>
     {
         // The entity key
@@ -31,7 +32,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// The target of the association
         /// </summary>
-        [XmlElement("target")]
+        [XmlElement("target"), JsonProperty("target")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         public Guid TargetActKey
@@ -48,7 +49,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Target act reference
         /// </summary>
         [DelayLoad(nameof(TargetActKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Act TargetAct
         {
             get
@@ -69,7 +70,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Association type key
         /// </summary>
-        [XmlElement("relationshipType")]
+        [XmlElement("relationshipType"), JsonProperty("relationshipType")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         public Guid RelationshipTypeKey
@@ -85,7 +86,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the association type
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(RelationshipTypeKey))]
         public Concept RelationshipType
         {
