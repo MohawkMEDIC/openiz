@@ -1,4 +1,22 @@
-﻿using OpenIZ.Messaging.IMSI.Wcf.Compression;
+﻿/*
+ * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: fyfej
+ * Date: 2016-1-24
+ */
+using OpenIZ.Messaging.IMSI.Wcf.Compression;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +33,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Compression
     /// <summary>
     /// Compression writer
     /// </summary>
-    public class CompressionWriter : BodyWriter
+    public class CompressionBodyWriter : BodyWriter
     {
         private byte[] m_data;
         private ICompressionScheme m_compressor;
@@ -23,7 +41,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Compression
         /// <summary>
         /// GZip writer
         /// </summary>
-        public CompressionWriter(byte[] data, ICompressionScheme compressor) : base(false)
+        public CompressionBodyWriter(byte[] data, ICompressionScheme compressor) : base(false)
         {
             this.m_data = data;
             this.m_compressor = compressor;

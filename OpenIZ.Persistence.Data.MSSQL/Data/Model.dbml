@@ -1,5 +1,5 @@
 ﻿<Database Name="OpenIZ" Class="ModelDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=.;Initial Catalog=OpenIZ;Integrated Security=True" SettingsObjectName="OpenIZ.Persistence.Data.MSSQL.Properties.Settings" SettingsPropertyName="OpenIZConnectionString" Provider="System.Data.SqlClient" />
+  <Connection Mode="AppSettings" ConnectionString="Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\fyfej\Source\Repos\openiz\OpenIZ\Data\OpenIZ.mdf;Integrated Security=True" SettingsObjectName="OpenIZ.Persistence.Data.MSSQL.Properties.Settings" SettingsPropertyName="OpenIZConnectionString1" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Act" Member="Acts">
     <Type Name="Act">
       <Column Name="ActId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" IsDbGenerated="true" />
@@ -17,13 +17,6 @@
       <Association Name="Act_ActVersion" Member="ActVersions" ThisKey="ActId" OtherKey="ActId" Type="ActVersion" />
       <Association Name="Concept_Act" Member="ClassConcept" ThisKey="ClassConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
       <Association Name="Concept_Act1" Member="MoodConcept" ThisKey="MoodConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.TextObservation" Member="TextObservations">
-    <Type Name="TextObservation">
-      <Column Name="ActVersionId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" IsDbGenerated="true" />
-      <Column Name="Value" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
-      <Association Name="Observation_TextObservation" Member="Observation" ThisKey="ActVersionId" OtherKey="ActVersionId" Type="Observation" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.ActExtension" Member="ActExtensions">
@@ -679,6 +672,7 @@
       <Column Name="EntityVersionId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" IsDbGenerated="true" />
       <Column Name="ExpiryDate" Type="System.DateTime" DbType="Date" CanBeNull="true" />
       <Column Name="FormConceptId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="Quantity" Type="System.Decimal" DbType="Decimal(20,10)" CanBeNull="true" />
       <Column Name="QuantityConceptId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="IsAdministrative" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Association Name="Material_ManufacturedMaterial" Member="ManufacturedMaterial" ThisKey="EntityVersionId" OtherKey="EntityVersionId" Type="ManufacturedMaterial" Cardinality="One" />
@@ -690,10 +684,11 @@
   <Table Name="dbo.Observation" Member="Observations">
     <Type Name="Observation">
       <Column Name="ActVersionId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" IsDbGenerated="true" />
-      <Column Name="InterpretationConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
-      <Association Name="Observation_TextObservation" Member="TextObservation" ThisKey="ActVersionId" OtherKey="ActVersionId" Type="TextObservation" Cardinality="One" />
+      <Column Name="InterpretationConceptId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="ValueType" Type="System.String" DbType="Char(2) NOT NULL" CanBeNull="false" />
       <Association Name="Observation_CodedObservation" Member="CodedObservation" ThisKey="ActVersionId" OtherKey="ActVersionId" Type="CodedObservation" Cardinality="One" />
       <Association Name="Observation_QuantityObservation" Member="QuantityObservation" ThisKey="ActVersionId" OtherKey="ActVersionId" Type="QuantityObservation" Cardinality="One" />
+      <Association Name="Observation_TextObservation" Member="TextObservation" ThisKey="ActVersionId" OtherKey="ActVersionId" Type="TextObservation" Cardinality="One" />
       <Association Name="ActVersion_Observation" Member="ActVersion" ThisKey="ActVersionId" OtherKey="ActVersionId" Type="ActVersion" IsForeignKey="true" />
       <Association Name="Concept_Observation" Member="InterpretationConcept" ThisKey="InterpretationConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
     </Type>
@@ -1082,6 +1077,13 @@
       <Association Name="ActVersion_SubstanceAdministration" Member="ActVersion" ThisKey="ActVersionId" OtherKey="ActVersionId" Type="ActVersion" IsForeignKey="true" />
       <Association Name="Concept_SubstanceAdministration" Member="DoseUnitConcept" ThisKey="DoseUnitConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
       <Association Name="Concept_SubstanceAdministration1" Member="RouteConcept" ThisKey="RouteConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.TextObservation" Member="TextObservations">
+    <Type Name="TextObservation">
+      <Column Name="ActVersionId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" IsDbGenerated="true" />
+      <Column Name="Value" Type="System.String" DbType="VarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Association Name="Observation_TextObservation" Member="Observation" ThisKey="ActVersionId" OtherKey="ActVersionId" Type="Observation" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.UserEntity" Member="UserEntities">

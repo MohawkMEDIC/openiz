@@ -42,6 +42,7 @@ using System.Security.Principal;
 using OpenIZ.Core.Exceptions;
 using OpenIZ.Persistence.Data.MSSQL.Exceptions;
 using OpenIZ.Core.Model.Interfaces;
+using MARC.HI.EHRS.SVC.Core;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -61,7 +62,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <summary>
         /// The local configuration for this connector
         /// </summary>
-        protected SqlConfiguration m_configuration = ConfigurationManager.GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
+        protected SqlConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
 
         /// <summary>
         /// The current mapping instance

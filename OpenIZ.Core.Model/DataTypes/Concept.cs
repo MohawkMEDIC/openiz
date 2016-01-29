@@ -14,10 +14,8 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-19
+ * Date: 2016-1-24
  */
-
-
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.EntityLoader;
@@ -43,23 +41,19 @@ namespace OpenIZ.Core.Model.DataTypes
         // Concept class id
         private Guid m_classId;
         // Backing field for relationships
-        
         private List<ConceptRelationship> m_relationships;
         // Concept class
-        
         private ConceptClass m_class;
         // Reference terms
-        
         private List<ConceptReferenceTerm> m_referenceTerms;
         // Names
-        
         private List<ConceptName> m_conceptNames;
         // Status id
         private Guid? m_conceptStatusId;
         // Status
-        
         private Concept m_conceptStatus;
-
+        // Concept set
+        private List<ConceptSet> m_conceptSet;
         /// <summary>
         /// Gets or sets an indicator which dictates whether the concept is a system concept
         /// </summary>
@@ -195,6 +189,21 @@ namespace OpenIZ.Core.Model.DataTypes
                     this.m_conceptNames = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_conceptNames);
 
                 return this.m_conceptNames;
+            }
+        }
+
+
+        /// <summary>
+        /// Gets concept sets to which this concept is a member
+        /// </summary>
+        public List<ConceptSet> ConceptSets
+        {
+            get
+            {
+                if(this.m_conceptSet == null &&
+                    this.IsDelayLoadEnabled)
+                    this.m_conceptSet = EntitySource.Current.Provider.Query<ConceptSet>(s => s.Concepts.Any(c => c.Key == this.Key)).ToList();
+                return this.m_conceptSet;
             }
         }
 

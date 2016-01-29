@@ -83,6 +83,7 @@
     <Compile Include="Services\Persistence\CodeSystemPersistenceService.cs" />
     <Compile Include="Services\Persistence\ConceptClassPersistenceService.cs" />
     <Compile Include="Services\Persistence\ConceptRelationshipTypePersistenceService.cs" />
+    <Compile Include="Services\Persistence\ConceptSetPersistenceService.cs" />
     <Compile Include="Services\Persistence\PhoneticAlgorithmPersistenceService.cs" />
     <Compile Include="Exceptions\SqlFormalConstraintException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -110,6 +111,7 @@
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
     </None>
+    <None Include="app.config" />
     <None Include="Data\Model.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>Model.designer.cs</LastGenOutput>
@@ -127,9 +129,9 @@
     <Content Include="Data\CorrectDbml.xslt">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Data\dbfeatures.xml">
+    <EmbeddedResource Include="Data\dbfeatures.xml">
       <SubType>Designer</SubType>
-    </Content>
+    </EmbeddedResource>
     <Content Include="Data\Sql\OpenIZCodes.sql" />
     <None Include="Data\Model.dbml.layout">
       <DependentUpon>Model.dbml</DependentUpon>

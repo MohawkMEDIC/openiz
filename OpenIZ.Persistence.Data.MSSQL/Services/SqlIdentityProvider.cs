@@ -51,7 +51,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         private TraceSource m_traceSource = new TraceSource("OpenIZ.Persistence.Data.MSSQL.Services.Identity");
 
         // Configuration
-        private SqlConfiguration m_configuration = ConfigurationManager.GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
+        private SqlConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
 
         /// <summary>
         /// Fired prior to an authentication request being made
@@ -135,11 +135,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     var policyDecisionService = ApplicationContext.Current.GetService<IPolicyDecisionService>();
                     var passwordHashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
 
-                    var pdpOutcome = policyDecisionService?.GetPolicyOutcome(principal, PolicyIdentifiers.OpenIzChangePasswordPolicy);
+                    var pdpOutcome = policyDecisionService?.GetPolicyOutcome(principal, PermissionPolicyIdentifiers.ChangePassword);
                     if (userName != principal.Identity.Name &&
                         pdpOutcome.HasValue &&
                         pdpOutcome != PolicyDecisionOutcomeType.Grant)
-                        throw new PolicyViolationException(PolicyIdentifiers.OpenIzChangePasswordPolicy, pdpOutcome.Value);
+                        throw new PolicyViolationException(PermissionPolicyIdentifiers.ChangePassword, pdpOutcome.Value);
 
                     user.UserPassword = passwordHashingService.EncodePassword(newPassword);
                     dataContext.SubmitChanges();
@@ -180,10 +180,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     var hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
                     var pdpService = ApplicationContext.Current.GetService<IPolicyDecisionService>();
 
-                    var policyOutcome = pdpService?.GetPolicyOutcome(authContext, PolicyIdentifiers.OpenIzCreateIdentityPolicy);
+                    var policyOutcome = pdpService?.GetPolicyOutcome(authContext, PermissionPolicyIdentifiers.CreateIdentity);
                     if (policyOutcome.HasValue &&
                         policyOutcome != PolicyDecisionOutcomeType.Grant)
-                        throw new PolicyViolationException(PolicyIdentifiers.OpenIzCreateIdentityPolicy, policyOutcome.Value);
+                        throw new PolicyViolationException(PermissionPolicyIdentifiers.CreateIdentity, policyOutcome.Value);
 
                     // Does this principal have the ability to 
                     Data.SecurityUser newIdentityUser = new Data.SecurityUser()

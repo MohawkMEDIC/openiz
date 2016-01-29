@@ -45,7 +45,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// <summary>
         /// Configuration 
         /// </summary>
-        protected SqlConfiguration m_configuration = ConfigurationManager.GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
+        protected SqlConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
 
         /// <summary>
         /// Verify principal
@@ -62,9 +62,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                 var policyService = ApplicationContext.Current.GetService<IPolicyDecisionService>();
                 if (policyService != null)
                 {
-                    var policyDecision = policyService.GetPolicyOutcome(authPrincipal, PolicyIdentifiers.OpenIzCreateRolesPolicy);
+                    var policyDecision = policyService.GetPolicyOutcome(authPrincipal, PermissionPolicyIdentifiers.CreateRoles);
                     if (policyDecision != PolicyDecisionOutcomeType.Grant)
-                        throw new PolicyViolationException(PolicyIdentifiers.OpenIzCreateRolesPolicy, policyDecision);
+                        throw new PolicyViolationException(PermissionPolicyIdentifiers.CreateRoles, policyDecision);
                 }
             }
             
@@ -75,7 +75,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// </summary>
         public void AddUsersToRoles(string[] users, string[] roles, IPrincipal authPrincipal)
         {
-            this.VerifyPrincipal(authPrincipal, PolicyIdentifiers.OpenIzAlterRolePolicy);
+            this.VerifyPrincipal(authPrincipal, PermissionPolicyIdentifiers.AlterRoles);
 
             // Add users to role
             using (var dataContext = new Data.ModelDataContext(this.m_configuration.ReadWriteConnectionString))
@@ -105,7 +105,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         public void CreateRole(string roleName, IPrincipal authPrincipal)
         {
 
-            this.VerifyPrincipal(authPrincipal, PolicyIdentifiers.OpenIzCreateRolesPolicy);
+            this.VerifyPrincipal(authPrincipal, PermissionPolicyIdentifiers.CreateRoles);
 
             // Add users to role
             using (var dataContext = new Data.ModelDataContext(this.m_configuration.ReadWriteConnectionString))
@@ -170,7 +170,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// </summary>
         public void RemoveUsersFromRoles(string[] users, string[] roles, IPrincipal authPrincipal)
         {
-            this.VerifyPrincipal(authPrincipal, PolicyIdentifiers.OpenIzAlterRolePolicy);
+            this.VerifyPrincipal(authPrincipal, PermissionPolicyIdentifiers.AlterRoles);
 
             // Add users to role
             using (var dataContext = new Data.ModelDataContext(this.m_configuration.ReadWriteConnectionString))

@@ -33,9 +33,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void InsertAct(Act instance);
     partial void UpdateAct(Act instance);
     partial void DeleteAct(Act instance);
-    partial void InsertTextObservation(TextObservation instance);
-    partial void UpdateTextObservation(TextObservation instance);
-    partial void DeleteTextObservation(TextObservation instance);
     partial void InsertActExtension(ActExtension instance);
     partial void UpdateActExtension(ActExtension instance);
     partial void DeleteActExtension(ActExtension instance);
@@ -249,13 +246,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void InsertSubstanceAdministration(SubstanceAdministration instance);
     partial void UpdateSubstanceAdministration(SubstanceAdministration instance);
     partial void DeleteSubstanceAdministration(SubstanceAdministration instance);
+    partial void InsertTextObservation(TextObservation instance);
+    partial void UpdateTextObservation(TextObservation instance);
+    partial void DeleteTextObservation(TextObservation instance);
     partial void InsertUserEntity(UserEntity instance);
     partial void UpdateUserEntity(UserEntity instance);
     partial void DeleteUserEntity(UserEntity instance);
     #endregion
 		
 		public ModelDataContext() : 
-				base(global::OpenIZ.Persistence.Data.MSSQL.Properties.Settings.Default.OpenIZConnectionString, mappingSource)
+				base(global::OpenIZ.Persistence.Data.MSSQL.Properties.Settings.Default.OpenIZConnectionString1, mappingSource)
 		{
 			OnCreated();
 		}
@@ -289,14 +289,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			get
 			{
 				return this.GetTable<Act>();
-			}
-		}
-		
-		public System.Data.Linq.Table<TextObservation> TextObservations
-		{
-			get
-			{
-				return this.GetTable<TextObservation>();
 			}
 		}
 		
@@ -868,6 +860,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		public System.Data.Linq.Table<TextObservation> TextObservations
+		{
+			get
+			{
+				return this.GetTable<TextObservation>();
+			}
+		}
+		
 		public System.Data.Linq.Table<UserEntity> UserEntities
 		{
 			get
@@ -1350,133 +1350,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this.SendPropertyChanging();
 			entity.Act = null;
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TextObservation")]
-	public partial class TextObservation : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private System.Guid _ActVersionId;
-		
-		private string _Value;
-		
-		private EntityRef<Observation> _Observation;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnActVersionIdChanging(System.Guid value);
-    partial void OnActVersionIdChanged();
-    partial void OnValueChanging(string value);
-    partial void OnValueChanged();
-    #endregion
-		
-		public TextObservation()
-		{
-			this._Observation = default(EntityRef<Observation>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
-		public System.Guid ActVersionId
-		{
-			get
-			{
-				return this._ActVersionId;
-			}
-			set
-			{
-				if ((this._ActVersionId != value))
-				{
-					if (this._Observation.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnActVersionIdChanging(value);
-					this.SendPropertyChanging();
-					this._ActVersionId = value;
-					this.SendPropertyChanged("ActVersionId");
-					this.OnActVersionIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Value", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
-		public string Value
-		{
-			get
-			{
-				return this._Value;
-			}
-			set
-			{
-				if ((this._Value != value))
-				{
-					this.OnValueChanging(value);
-					this.SendPropertyChanging();
-					this._Value = value;
-					this.SendPropertyChanged("Value");
-					this.OnValueChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Observation_TextObservation", Storage="_Observation", ThisKey="ActVersionId", OtherKey="ActVersionId", IsForeignKey=true)]
-		public Observation Observation
-		{
-			get
-			{
-				return this._Observation.Entity;
-			}
-			set
-			{
-				Observation previousValue = this._Observation.Entity;
-				if (((previousValue != value) 
-							|| (this._Observation.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Observation.Entity = null;
-						previousValue.TextObservation = null;
-					}
-					this._Observation.Entity = value;
-					if ((value != null))
-					{
-						value.TextObservation = this;
-						this._ActVersionId = value.ActVersionId;
-					}
-					else
-					{
-						this._ActVersionId = default(System.Guid);
-					}
-					this.SendPropertyChanged("Observation");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
 		}
 	}
 	
@@ -3045,7 +2918,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StateData", DbType="Xml", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StateData", DbType="Xml", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
 		public System.Xml.Linq.XElement StateData
 		{
 			get
@@ -15104,6 +14977,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.Guid> _FormConceptId;
 		
+		private System.Nullable<decimal> _Quantity;
+		
 		private System.Nullable<System.Guid> _QuantityConceptId;
 		
 		private bool _IsAdministrative;
@@ -15126,6 +15001,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnExpiryDateChanged();
     partial void OnFormConceptIdChanging(System.Nullable<System.Guid> value);
     partial void OnFormConceptIdChanged();
+    partial void OnQuantityChanging(System.Nullable<decimal> value);
+    partial void OnQuantityChanged();
     partial void OnQuantityConceptIdChanging(System.Nullable<System.Guid> value);
     partial void OnQuantityConceptIdChanged();
     partial void OnIsAdministrativeChanging(bool value);
@@ -15205,6 +15082,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this._FormConceptId = value;
 					this.SendPropertyChanged("FormConceptId");
 					this.OnFormConceptIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Quantity", DbType="Decimal(20,10)")]
+		public System.Nullable<decimal> Quantity
+		{
+			get
+			{
+				return this._Quantity;
+			}
+			set
+			{
+				if ((this._Quantity != value))
+				{
+					this.OnQuantityChanging(value);
+					this.SendPropertyChanging();
+					this._Quantity = value;
+					this.SendPropertyChanged("Quantity");
+					this.OnQuantityChanged();
 				}
 			}
 		}
@@ -15413,13 +15310,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _ActVersionId;
 		
-		private System.Guid _InterpretationConceptId;
+		private System.Nullable<System.Guid> _InterpretationConceptId;
 		
-		private EntityRef<TextObservation> _TextObservation;
+		private string _ValueType;
 		
 		private EntityRef<CodedObservation> _CodedObservation;
 		
 		private EntityRef<QuantityObservation> _QuantityObservation;
+		
+		private EntityRef<TextObservation> _TextObservation;
 		
 		private EntityRef<ActVersion> _ActVersion;
 		
@@ -15431,15 +15330,17 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnCreated();
     partial void OnActVersionIdChanging(System.Guid value);
     partial void OnActVersionIdChanged();
-    partial void OnInterpretationConceptIdChanging(System.Guid value);
+    partial void OnInterpretationConceptIdChanging(System.Nullable<System.Guid> value);
     partial void OnInterpretationConceptIdChanged();
+    partial void OnValueTypeChanging(string value);
+    partial void OnValueTypeChanged();
     #endregion
 		
 		public Observation()
 		{
-			this._TextObservation = default(EntityRef<TextObservation>);
 			this._CodedObservation = default(EntityRef<CodedObservation>);
 			this._QuantityObservation = default(EntityRef<QuantityObservation>);
+			this._TextObservation = default(EntityRef<TextObservation>);
 			this._ActVersion = default(EntityRef<ActVersion>);
 			this._InterpretationConcept = default(EntityRef<Concept>);
 			OnCreated();
@@ -15469,8 +15370,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InterpretationConceptId", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid InterpretationConceptId
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InterpretationConceptId", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> InterpretationConceptId
 		{
 			get
 			{
@@ -15493,31 +15394,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Observation_TextObservation", Storage="_TextObservation", ThisKey="ActVersionId", OtherKey="ActVersionId", IsUnique=true, IsForeignKey=false)]
-		public TextObservation TextObservation
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ValueType", DbType="Char(2) NOT NULL", CanBeNull=false)]
+		public string ValueType
 		{
 			get
 			{
-				return this._TextObservation.Entity;
+				return this._ValueType;
 			}
 			set
 			{
-				TextObservation previousValue = this._TextObservation.Entity;
-				if (((previousValue != value) 
-							|| (this._TextObservation.HasLoadedOrAssignedValue == false)))
+				if ((this._ValueType != value))
 				{
+					this.OnValueTypeChanging(value);
 					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._TextObservation.Entity = null;
-						previousValue.Observation = null;
-					}
-					this._TextObservation.Entity = value;
-					if ((value != null))
-					{
-						value.Observation = this;
-					}
-					this.SendPropertyChanged("TextObservation");
+					this._ValueType = value;
+					this.SendPropertyChanged("ValueType");
+					this.OnValueTypeChanged();
 				}
 			}
 		}
@@ -15576,6 +15468,35 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						value.Observation = this;
 					}
 					this.SendPropertyChanged("QuantityObservation");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Observation_TextObservation", Storage="_TextObservation", ThisKey="ActVersionId", OtherKey="ActVersionId", IsUnique=true, IsForeignKey=false)]
+		public TextObservation TextObservation
+		{
+			get
+			{
+				return this._TextObservation.Entity;
+			}
+			set
+			{
+				TextObservation previousValue = this._TextObservation.Entity;
+				if (((previousValue != value) 
+							|| (this._TextObservation.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TextObservation.Entity = null;
+						previousValue.Observation = null;
+					}
+					this._TextObservation.Entity = value;
+					if ((value != null))
+					{
+						value.Observation = this;
+					}
+					this.SendPropertyChanged("TextObservation");
 				}
 			}
 		}
@@ -15641,7 +15562,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					}
 					else
 					{
-						this._InterpretationConceptId = default(System.Guid);
+						this._InterpretationConceptId = default(Nullable<System.Guid>);
 					}
 					this.SendPropertyChanged("InterpretationConcept");
 				}
@@ -18126,7 +18047,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProtocolDefinition", DbType="Xml", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProtocolDefinition", DbType="Xml", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
 		public System.Xml.Linq.XElement ProtocolDefinition
 		{
 			get
@@ -24291,6 +24212,133 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._RouteConceptId = default(System.Guid);
 					}
 					this.SendPropertyChanged("RouteConcept");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TextObservation")]
+	public partial class TextObservation : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _ActVersionId;
+		
+		private string _Value;
+		
+		private EntityRef<Observation> _Observation;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnActVersionIdChanging(System.Guid value);
+    partial void OnActVersionIdChanged();
+    partial void OnValueChanging(string value);
+    partial void OnValueChanged();
+    #endregion
+		
+		public TextObservation()
+		{
+			this._Observation = default(EntityRef<Observation>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		public System.Guid ActVersionId
+		{
+			get
+			{
+				return this._ActVersionId;
+			}
+			set
+			{
+				if ((this._ActVersionId != value))
+				{
+					if (this._Observation.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnActVersionIdChanging(value);
+					this.SendPropertyChanging();
+					this._ActVersionId = value;
+					this.SendPropertyChanged("ActVersionId");
+					this.OnActVersionIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Value", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
+		public string Value
+		{
+			get
+			{
+				return this._Value;
+			}
+			set
+			{
+				if ((this._Value != value))
+				{
+					this.OnValueChanging(value);
+					this.SendPropertyChanging();
+					this._Value = value;
+					this.SendPropertyChanged("Value");
+					this.OnValueChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Observation_TextObservation", Storage="_Observation", ThisKey="ActVersionId", OtherKey="ActVersionId", IsForeignKey=true)]
+		public Observation Observation
+		{
+			get
+			{
+				return this._Observation.Entity;
+			}
+			set
+			{
+				Observation previousValue = this._Observation.Entity;
+				if (((previousValue != value) 
+							|| (this._Observation.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Observation.Entity = null;
+						previousValue.TextObservation = null;
+					}
+					this._Observation.Entity = value;
+					if ((value != null))
+					{
+						value.TextObservation = this;
+						this._ActVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._ActVersionId = default(System.Guid);
+					}
+					this.SendPropertyChanged("Observation");
 				}
 			}
 		}

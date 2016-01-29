@@ -46,12 +46,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Configuration
                 if (connectionNode.Attributes["readWriteConnection"] == null)
                     throw new ConfigurationErrorsException("Connection manager must have a read/write connection", connectionNode);
                 else
-                    retVal.ReadWriteConnectionString = ConfigurationManager.ConnectionStrings[connectionNode.Attributes["readWriteConnection"].Value].ConnectionString;
+                    retVal.ReadWriteConnectionString = ConfigurationManager.ConnectionStrings[connectionNode.Attributes["readWriteConnection"].Value]?.ConnectionString;
                 if (connectionNode.Attributes["readonlyConnection"] != null)
-                    retVal.ReadonlyConnectionString = ConfigurationManager.ConnectionStrings[connectionNode.Attributes["readonlyConnection"].Value].ConnectionString;
+                    retVal.ReadonlyConnectionString = ConfigurationManager.ConnectionStrings[connectionNode.Attributes["readonlyConnection"].Value]?.ConnectionString;
                 else
                     retVal.ReadonlyConnectionString = retVal.ReadWriteConnectionString;
             }
+
+            if (retVal.ReadWriteConnectionString == null || retVal.ReadonlyConnectionString == null)
+                throw new ConfigurationErrorsException("Connection string not found");
             return retVal;
                 
         }

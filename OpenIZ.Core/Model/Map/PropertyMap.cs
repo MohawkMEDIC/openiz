@@ -81,7 +81,7 @@ namespace OpenIZ.Core.Model.Map
             // 2. All property maps should exist
             if (this.Via != null)
                 foreach (var v in this.Via)
-                    retVal.AddRange(v.Validate(modelClass?.GetProperty(this.ModelName)?.PropertyType, domainClass?.GetProperty(this.DomainName)?.PropertyType));
+                    retVal.AddRange(v.Validate(modelClass?.GetProperty(this.ModelName ?? "")?.PropertyType ?? modelClass, domainClass?.GetProperty(this.DomainName)?.PropertyType));
 
             return retVal;
 

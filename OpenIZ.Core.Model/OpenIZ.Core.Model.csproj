@@ -61,6 +61,7 @@
     <Compile Include="DataTypes\ConceptReferenceTerm.cs" />
     <Compile Include="DataTypes\ConceptRelationship.cs" />
     <Compile Include="DataTypes\ConceptRelationshipType.cs" />
+    <Compile Include="DataTypes\ConceptSet.cs" />
     <Compile Include="DataTypes\DatePrecision.cs" />
     <Compile Include="DataTypes\Extension.cs" />
     <Compile Include="DataTypes\ExtensionType.cs" />
@@ -112,6 +113,11 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\OpenIZ.licenseheader">
+      <Link>OpenIZ.licenseheader</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

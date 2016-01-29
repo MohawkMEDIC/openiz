@@ -14,10 +14,8 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-19
+ * Date: 2016-1-24
  */
-
-
 using OpenIZ.Core.Model.Attributes;
 using System;
 using System.Collections.Generic;

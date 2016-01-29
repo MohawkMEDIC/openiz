@@ -62,6 +62,19 @@
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
     <property modelName="CanOverride" domainName="CanElevate"/>
   </class>
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptSet, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptSet, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="ConceptSetId"/>
+    <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
+    <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
+    <property modelName="CreatedBy" domainName="CreatedByEntity"/>
+    <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
+    <property modelName="CreatedByKey" domainName="CreatedBy"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
+    <property modelName="Concepts" domainName="ConceptSetMembers">
+      <via domainName="ConceptId"/>
+    </property>
+  </class>
+
   <class modelClass="OpenIZ.Core.Model.DataTypes.Concept, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptVersion, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ConceptId"/>
     <property modelName="VersionKey" domainName="ConceptVersionId"/>
@@ -81,6 +94,11 @@
     <property modelName="StatusConceptKey" domainName="StatusConceptId"/>
     <property modelName="IsSystemConcept" domainName="Concept">
       <via domainName="IsSystemConcept" traverse="true"/>
+    </property>
+    <property modelName="ConceptSets" domainName="Concept">
+      <via domainName="ConceptSetMembers">
+        <via domainName="ConceptSetId"/>
+      </via>
     </property>
   </class>
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptClass, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptClass, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">

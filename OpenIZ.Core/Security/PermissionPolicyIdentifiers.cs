@@ -27,33 +27,55 @@ namespace OpenIZ.Core.Security
     /// <summary>
     /// Claim types
     /// </summary>
-    public static class PolicyIdentifiers
+    public static class PermissionPolicyIdentifiers
     {
 
         /// <summary>
         /// Policy identifier for allowance of changing passwords
         /// </summary>
         /// TODO: Affix the mohawk college OID for this
-        public const string OpenIzChangePasswordPolicy = "1.1.1.1.1.1.1.1.1.1";
+        public const string ChangePassword = "1.3.6.1.4.1.33349.3.5.9.2.0";
 
         /// <summary>
         /// Policy identifier for allowance of login
         /// </summary>
-        public const string OpenIzLoginPolicy = "1.1.1.1.1.1.1.1.2";
+        public const string Login = "1.3.6.1.4.1.33349.3.5.9.2.1";
 
         /// <summary>
         /// Whether the user can create roles
         /// </summary>
-        public const string OpenIzCreateRolesPolicy = "1.1.1.1.1.1.1.1.3";
+        public const string CreateRoles = "1.3.6.1.4.1.33349.3.5.9.2.2";
 
         /// <summary>
         /// Policy identifier for allowance of altering passwords
         /// </summary>
-        public const string OpenIzAlterRolePolicy = "1.1.1.1.1.1.1.1.1.4";
+        public const string AlterRoles = "1.3.6.1.4.1.33349.3.5.9.2.3";
 
         /// <summary>
         /// Policy identifier for allowing of creating new identities
         /// </summary>
-        public const string OpenIzCreateIdentityPolicy = "1.1.1.1.1.1.1.1.1.5";
+        public const string CreateIdentity = "1.3.6.1.4.1.33349.3.5.9.2.4";
+
+        /// <summary>
+        /// Query clinical data
+        /// </summary>
+        public const string QueryClinicalData = "1.3.6.1.4.1.33349.3.5.9.2.5";
+        /// <summary>
+        /// Write clinical data
+        /// </summary>
+        public const string WriteClinicalData = "1.3.6.1.4.1.33349.3.5.9.2.6";
+        /// <summary>
+        /// Delete clinical data
+        /// </summary>
+        public const string DeleteClinicalData = "1.3.6.1.4.1.33349.3.5.9.2.7";
+        /// <summary>
+        /// Read clinical data
+        /// </summary>
+        public const string ReadClinicalData = "1.3.6.1.4.1.33349.3.5.9.2.8";
+        /// <summary>
+        /// Access administrative function
+        /// </summary>
+        public const string AccessAdministrativeFunction = "1.3.6.1.4.1.33349.3.5.9.2.9";
+
     }
 }
