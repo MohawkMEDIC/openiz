@@ -4,6 +4,7 @@ using OpenIZ.Messaging.IMSI.Util;
 using System.Collections.Specialized;
 using OpenIZ.Core.Model.DataTypes;
 using System.Linq.Expressions;
+using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Messaging.IMSI.Test
 {
@@ -53,14 +54,14 @@ namespace OpenIZ.Messaging.IMSI.Test
         public void TestBuildSimpleAndLinqMethod()
         {
 
-            var dtString = DateTime.Now;
-            Expression<Func<Concept, bool>> expected = (o => o.Mnemonic == "EVN" && o.CreationTime == dtString);
+            
+            Expression<Func<SecurityUser, bool>> expected = (o => o.UserName == "Charles" && o.PasswordHash == "20329132");
 
             var builder = new QueryParameterLinqExpressionBuilder();
             NameValueCollection httpQueryParameters = new NameValueCollection();
-            httpQueryParameters.Add("mnemonic", "EVN");
-            httpQueryParameters.Add("creationTime", dtString.ToString("o"));
-            var expr = builder.BuildLinqExpression<Concept>(httpQueryParameters);
+            httpQueryParameters.Add("userName", "Charles");
+            httpQueryParameters.Add("passwordHash", "20329132");
+            var expr = builder.BuildLinqExpression<SecurityUser>(httpQueryParameters);
             Assert.AreEqual(expected.ToString(), expr.ToString());
 
         }
@@ -74,14 +75,14 @@ namespace OpenIZ.Messaging.IMSI.Test
         {
 
             var dtString = DateTime.Now;
-            Expression<Func<Concept, bool>> expected = (o => (o.Mnemonic == "EVN" || o.Mnemonic == "INT") && o.CreationTime == dtString);
+            Expression<Func<SecurityUser, bool>> expected = (o => (o.UserName == "Charles" || o.UserName == "Charles2") && o.PasswordHash == "XXX");
 
             var builder = new QueryParameterLinqExpressionBuilder();
             NameValueCollection httpQueryParameters = new NameValueCollection();
-            httpQueryParameters.Add("mnemonic", "EVN");
-            httpQueryParameters.Add("mnemonic", "INT");
-            httpQueryParameters.Add("creationTime", dtString.ToString("o"));
-            var expr = builder.BuildLinqExpression<Concept>(httpQueryParameters);
+            httpQueryParameters.Add("userName", "Charles");
+            httpQueryParameters.Add("userName", "Charles2");
+            httpQueryParameters.Add("passwordHash", "XXX");
+            var expr = builder.BuildLinqExpression<SecurityUser>(httpQueryParameters);
             Assert.AreEqual(expected.ToString(), expr.ToString());
 
         }
@@ -94,35 +95,17 @@ namespace OpenIZ.Messaging.IMSI.Test
         {
 
             var dtString = DateTime.Now;
-            Expression<Func<Concept, bool>> expected = (o => o.CreationTime <= dtString);
+            Expression<Func<SecurityUser, bool>> expected = (o => o.InvalidLoginAttempts < 4);
 
             var builder = new QueryParameterLinqExpressionBuilder();
             NameValueCollection httpQueryParameters = new NameValueCollection();
-            httpQueryParameters.Add("creationTime", "<" + dtString.ToString("o"));
-            var expr = builder.BuildLinqExpression<Concept>(httpQueryParameters);
+            httpQueryParameters.Add("invalidLoginAttempts", "<4");
+            var expr = builder.BuildLinqExpression<SecurityUser>(httpQueryParameters);
             Assert.AreEqual(expected.ToString(), expr.ToString());
 
         }
 
 
-
-        /// <summary>
-        /// Test tht building of a simple by key method
-        /// </summary>
-        [TestMethod]
-        public void TestSimpleKeyLinqExpression()
-        {
-
-            var dtString = DateTime.Now;
-            Expression<Func<Concept, bool>> expected = (o => o.CreatedByKey == Guid.Empty);
-
-            var builder = new QueryParameterLinqExpressionBuilder();
-            NameValueCollection httpQueryParameters = new NameValueCollection();
-            httpQueryParameters.Add("createdBy", Guid.Empty.ToString());
-            var expr = builder.BuildLinqExpression<Concept>(httpQueryParameters);
-            Assert.AreEqual(expected.ToString(), expr.ToString());
-
-        }
 
 
     }

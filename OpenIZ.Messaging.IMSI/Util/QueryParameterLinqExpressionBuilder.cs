@@ -116,11 +116,8 @@ namespace OpenIZ.Messaging.IMSI.Util
                         valueExpr = Expression.Constant(DateTimeOffset.ParseExact(pValue, "o", CultureInfo.InvariantCulture));
                     else if (accessExpression.Type == typeof(Guid))
                         valueExpr = Expression.Constant(Guid.Parse(pValue));
-                    else if (accessExpression.Type == typeof(Decimal))
-                        valueExpr = Expression.Constant(Decimal.Parse(pValue));
                     else
-                        valueExpr = Expression.Convert(Expression.Constant(pValue), accessExpression.Type);
-
+                        valueExpr = Expression.Constant(Convert.ChangeType(pValue, accessExpression.Type));
                     Expression singleExpression = Expression.MakeBinary(et, accessExpression, valueExpr);
                     if (keyExpression == null)
                         keyExpression = singleExpression;
