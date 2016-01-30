@@ -122,7 +122,7 @@ namespace OpenIZ.Core.Security.Attribute
             else if (pdp != null)
                 action = pdp.GetPolicyOutcome(this.m_principal, this.m_policyId);
 
-            this.m_traceSource.TraceInformation("Policy Enforce: {0}({1}) = {2}", this.m_principal.Identity.Name, this.m_policyId, action);
+            this.m_traceSource.TraceInformation("Policy Enforce: {0}({1}) = {2}", this.m_principal?.Identity?.Name, this.m_policyId, action);
 
             if (action != PolicyDecisionOutcomeType.Grant)
                 throw new PolicyViolationException(this.m_policyId, action);
