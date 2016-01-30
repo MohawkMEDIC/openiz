@@ -48,7 +48,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.ConceptSet ConvertToModel(object data)
         {
-            return s_mapper.MapModelInstance<Data.ConceptSet, Core.Model.DataTypes.ConceptSet>(data as Data.ConceptSet);
+            var conceptSet = data as Data.ConceptSet;
+            Core.Model.DataTypes.ConceptSet cacheHit = null;
+            if (!this.m_cache.TryGetValue(conceptSet.ConceptSetId, out cacheHit))
+            {
+                cacheHit = s_mapper.MapDomainInstance<Data.ConceptSet, Core.Model.DataTypes.ConceptSet>(data as Data.ConceptSet);
+                this.AddToCache(cacheHit);
+            }
+            return cacheHit;
         }
 
         /// <summary>
@@ -56,12 +63,23 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.ConceptSet Get(Identifier<Guid> containerId, IPrincipal principal, bool loadFast, ModelDataContext dataContext)
         {
-            var retVal = dataContext.ConceptSets.SingleOrDefault(o => o.ConceptSetId == containerId.Id);
-            
-            if (retVal == null)
-                return null;
-            else
-                return this.ConvertToModel(retVal);
+
+            Core.Model.DataTypes.ConceptSet retVal = null;
+            if (!this.m_cache.TryGetValue(containerId.Id, out retVal))
+            {
+                var tRetVal = dataContext.ConceptSets.SingleOrDefault(o => o.ConceptSetId == containerId.Id);
+
+                // Return value
+                if (tRetVal == null)
+                    return null;
+                else
+                {
+                    retVal = this.ConvertToModel(tRetVal);
+
+                    this.AddToCache(retVal);
+                }
+            }
+            return retVal;
         }
 
         /// <summary>
@@ -100,11 +118,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
+            this.RemoveFromCache(storageData);
+
             // Retrieve
             var domainConceptSet = dataContext.ConceptSets.SingleOrDefault(o => o.ConceptSetId == storageData.Key);
             if (domainConceptSet == null)
                 throw new KeyNotFoundException();
-
             // Obsolete
             domainConceptSet.ObsoletedByEntity = principal.GetUser(dataContext);
             storageData.ObsoletionTime =  domainConceptSet.ObsoletionTime = DateTime.Now;
@@ -113,6 +132,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Submit changes
             dataContext.SubmitChanges();
+
+            // Add new version to cache
+            this.AddToCache(storageData);
 
             return storageData;
         }
@@ -123,7 +145,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         internal override IQueryable<Core.Model.DataTypes.ConceptSet> Query(Expression<Func<Core.Model.DataTypes.ConceptSet, bool>> query, IPrincipal principal, ModelDataContext dataContext)
         {
             var domainQuery = s_mapper.MapModelExpression<Core.Model.DataTypes.ConceptSet, Data.ConceptSet>(query);
-            return dataContext.ConceptSets.Where(domainQuery).Select(o => this.ConvertToModel(o));
+            return dataContext.ConceptSets.Where(domainQuery).Select(
+                o => this.ConvertToModel(o)
+            );
         }
 
         /// <summary>
@@ -135,6 +159,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.NonIdentityUpdate);
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
+
+            this.RemoveFromCache(storageData);
 
             // Get the existing version
             var existingSet = dataContext.ConceptSets.SingleOrDefault(o => o.ConceptSetId == storageData.Key);
@@ -159,7 +185,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             }
 
             dataContext.SubmitChanges();
-            return this.ConvertToModel(existingSet);
+
+            // Add new version to cache
+            var retVal = this.ConvertToModel(existingSet);
+            this.AddToCache(retVal);
+
+            return retVal;
         }
     }
 }

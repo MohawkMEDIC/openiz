@@ -55,6 +55,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     {
 
         /// <summary>
+        /// Cache of loaded objects if desired
+        /// </summary>
+        protected Dictionary<Guid, TModel> m_cache = new Dictionary<Guid, TModel>();
+        /// <summary>
+        /// Lock object
+        /// </summary>
+        protected Object m_lockObject = new object();
+        /// <summary>
         /// Identifies a source of trace logs from this object
         /// </summary>
         protected TraceSource m_traceSource = new TraceSource("OpenIZ.Persistence.Data.MSSQL.Services.Persistence");
@@ -136,6 +144,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 this.m_traceSource.TraceInformation("{0}: INSERT {1}", this.GetType().Name, storageData);
                 try
                 {
+#if DEBUG
+                    dataContext.Log = Console.Out;
+#endif 
+
                     dataContext.Connection.Open();
                     dataContext.Transaction = dataContext.Connection.BeginTransaction();
 
@@ -208,6 +220,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             {
                 try
                 {
+#if DEBUG
+                    dataContext.Log = Console.Out;
+#endif 
 
                     this.m_traceSource.TraceInformation("{0}: UPDATE {1}", this.GetType().Name, storageData);
 
@@ -273,6 +288,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             {
                 try
                 {
+#if DEBUG
+                    dataContext.Log = Console.Out;
+#endif 
 
                     this.m_traceSource.TraceInformation("{0}: OBSOLETE {1}", this.GetType().Name, storageData);
 
@@ -335,6 +353,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             {
                 try
                 {
+#if DEBUG
+                    dataContext.Log = Console.Out;
+#endif 
 
                     this.m_traceSource.TraceInformation("{0}: GET {1}", this.GetType().Name, containerId);
 
@@ -383,6 +404,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
                 using (var dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
                 {
+#if DEBUG
+                    dataContext.Log = Console.Out;
+#endif 
                     this.m_traceSource.TraceInformation("{0}: COUNT {1}", this.GetType().Name, query);
 
                     PreQueryEventArgs<TModel> preEvt = new PreQueryEventArgs<TModel>(query, principal);
@@ -419,6 +443,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             {
                 using (var dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
                 {
+#if DEBUG
+                    dataContext.Log = Console.Out;
+#endif 
                     this.m_traceSource.TraceInformation("{0}: QUERY {1}", this.GetType().Name, query);
 
                     PreQueryEventArgs<TModel> preEvt = new PreQueryEventArgs<TModel>(query, principal);
@@ -450,6 +477,40 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         #endregion
 
         #region Internal Implementation 
+
+        /// <summary>
+        /// Adds the specified data to the cache
+        /// </summary>
+        protected void AddToCache(TModel data)
+        {
+            if (this.m_cache.Count > this.m_configuration.MaxCacheSize)
+                this.m_cache.Clear();
+            lock(this.m_lockObject)
+            {
+                Guid key = data.Key;
+                if (data is IVersionedEntity)
+                    key = (data as IVersionedEntity).VersionKey;
+
+                if (this.m_cache.ContainsKey(key))
+                    this.m_cache[key] = data;
+                else
+                    this.m_cache.Add(key, data);
+            }
+        }
+
+        /// <summary>
+        /// Remove data from the cache
+        /// </summary>
+        protected void RemoveFromCache(TModel data)
+        {
+            lock(this.m_lockObject)
+            {
+                if (data is IVersionedEntity)
+                    this.m_cache.Remove((data as IVersionedEntity).VersionKey);
+                else
+                    this.m_cache.Remove(data.Key);
+            }
+        }
 
         /// <summary>
         /// Convert a data type into the model class

@@ -103,16 +103,18 @@ namespace OpenIZ.Core.Model.Map
             else if (classMap.TryGetModelProperty(memberExpression.Member.Name, out propertyMap))
             {
                 // We have to map through an associative table
-                if(propertyMap.Via != null && accessExpressionAsMember != null)
+                if(propertyMap.Via != null )
                 {
                     MemberExpression viaExpression = Expression.MakeMemberAccess(accessExpression, accessExpression.Type.GetProperty(propertyMap.DomainName));
-                    foreach(var via in propertyMap.Via)
+                    var via = propertyMap.Via;
+                    while (via != null)
                     {
                         
-                        MemberInfo viaMember = this.ExtractDomainType(viaExpression.Type).GetProperty(via.DomainName);
+                        MemberInfo viaMember = viaExpression.Type.GetProperty(via.DomainName);
                         if (viaMember == null)
-                            throw new MissingMemberException(via.DomainName);
+                            break;
                         viaExpression = Expression.MakeMemberAccess(viaExpression, viaMember);
+                        via = via.Via;
                     }
                     return viaExpression;
                 }
@@ -164,7 +166,7 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         public Expression CreateLambdaMemberAdjustmentExpression(MemberExpression rootExpression, ParameterExpression lambdaParameterExpression)
         {
-            ClassMap classMap = this.m_mapFile.GetModelClassMap(rootExpression.Expression.Type);
+            ClassMap classMap = this.m_mapFile.GetModelClassMap(this.ExtractDomainType(rootExpression.Expression.Type));
 
             if (classMap == null)
                 return lambdaParameterExpression;
@@ -177,13 +179,15 @@ namespace OpenIZ.Core.Model.Map
             if (propertyMap.Via != null)
             {
                 Expression viaExpression = lambdaParameterExpression;
-                foreach (var via in propertyMap.Via)
+                var via = propertyMap.Via;
+                while (via != null)
                 {
 
-                    MemberInfo viaMember = this.ExtractDomainType(viaExpression.Type).GetProperty(via.DomainName);
+                    MemberInfo viaMember = viaExpression.Type.GetProperty(via.DomainName);
                     if (viaMember == null)
-                        throw new MissingMemberException(via.DomainName);
+                        break;
                     viaExpression = Expression.MakeMemberAccess(viaExpression, viaMember);
+                    via = via.Via;
                 }
                 return viaExpression;
             }
@@ -316,7 +320,15 @@ namespace OpenIZ.Core.Model.Map
                     // To find the hand of Franklin reaching for the Beaufort Sea.
                     // Tracing one warm line, through a land so wide and savage
                     // And make a northwest passage to the sea. 🎶
-                    foreach (var p in propMap.Via.Where(o=>o.Traverse == true).Reverse())
+                    var via = propMap.Via;
+                    List<PropertyMap> viaWalk = new List<PropertyMap>();
+                    while(via?.Traverse == true)
+                    {
+                        viaWalk.Add(via);
+                        via = via.Via;
+                    }
+
+                    foreach (var p in viaWalk.Where(o=>o.Traverse == true).Reverse())
                     {
                         sourceObject = sourceProperty.GetValue(sourceObject);
                         sourceProperty = sourceProperty.PropertyType.GetProperty(p.DomainName);

@@ -678,7 +678,7 @@ CREATE TABLE ActVersion
 	CONSTRAINT FK_ActVersionStatusConceptId FOREIGN KEY (StatusConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT CK_ActVersionActClassStatusConceptIdConceptClass CHECK (dbo.fn_IsConceptSetMember(StatusConceptId, 'ActStatus') = 1),
 	CONSTRAINT CK_ActVersionObsoletedBy CHECK(ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletedBy IS NULL AND ObsoletionTime IS NULL),
-	CONSTRAINT CK_ActVersionActTime CHECK(ActTime IS NOT NULL OR ActStartTime IS NOT NULL OR ActEndTime IS NOT NULL) -- CHECK: ONE OF ACT TIME, START, OR END MUST BE PROVIDED
+	CONSTRAINT CK_ActVersionActTime CHECK(ActTime IS NOT NULL OR ActStartTime IS NOT NULL OR ActStopTime IS NOT NULL) -- CHECK: ONE OF ACT TIME, START, OR END MUST BE PROVIDED
 );
 
 CREATE TABLE ActIdentifier

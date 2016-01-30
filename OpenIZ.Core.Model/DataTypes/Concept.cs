@@ -192,10 +192,29 @@ namespace OpenIZ.Core.Model.DataTypes
             }
         }
 
+        /// <summary>
+        /// Concept sets as identifiers for XML purposes only
+        /// </summary>
+        [XmlElement("conceptSet"), JsonProperty("conceptSet")]
+        [DelayLoad(null)]
+        //[Bundle(nameof(ConceptSets))]
+        public List<Guid> ConceptSetsXml
+        {
+            get
+            {
+                return this.ConceptSets?.Select(o => o.Key).ToList();
+            }
+            set
+            {
+                ; // nothing
+            }
+        }
 
         /// <summary>
         /// Gets concept sets to which this concept is a member
         /// </summary>
+        [XmlIgnore]
+        [DelayLoad(null)]
         public List<ConceptSet> ConceptSets
         {
             get

@@ -71,7 +71,7 @@
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
     <property modelName="Concepts" domainName="ConceptSetMembers">
-      <via domainName="ConceptId"/>
+      <via domainName="Concept"/>
     </property>
   </class>
 
@@ -96,8 +96,8 @@
       <via domainName="IsSystemConcept" traverse="true"/>
     </property>
     <property modelName="ConceptSets" domainName="Concept">
-      <via domainName="ConceptSetMembers">
-        <via domainName="ConceptSetId"/>
+      <via domainName="ConceptSetMembers" traverse="true">
+        <via domainName="Concept"/>
       </via>
     </property>
   </class>

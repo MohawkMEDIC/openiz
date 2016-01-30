@@ -39,5 +39,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Configuration
         /// Readonly connection string
         /// </summary>
         public String ReadonlyConnectionString { get; set; }
+
+        /// <summary>
+        /// Maximum cache size of an object
+        /// </summary>
+        public int MaxCacheSize { get; internal set; }
     }
 }

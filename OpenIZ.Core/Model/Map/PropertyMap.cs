@@ -48,7 +48,7 @@ namespace OpenIZ.Core.Model.Map
         /// Identifies the route 
         /// </summary>
         [XmlElement("via")]
-        public List<PropertyMap> Via { get; set; }
+        public PropertyMap Via { get; set; }
 
         /// <summary>
         /// When this property is a via then traverse this
@@ -80,8 +80,7 @@ namespace OpenIZ.Core.Model.Map
 
             // 2. All property maps should exist
             if (this.Via != null)
-                foreach (var v in this.Via)
-                    retVal.AddRange(v.Validate(modelClass?.GetProperty(this.ModelName ?? "")?.PropertyType ?? modelClass, domainClass?.GetProperty(this.DomainName)?.PropertyType));
+                retVal.AddRange(this.Via.Validate(modelClass?.GetProperty(this.ModelName ?? "")?.PropertyType ?? modelClass, domainClass?.GetProperty(this.DomainName)?.PropertyType));
 
             return retVal;
 

@@ -42,6 +42,10 @@ using OpenIZ.Messaging.IMSI.ResourceHandler;
 using OpenIZ.Messaging.IMSI.Model;
 using System.Net;
 using System.Data;
+using System.Collections;
+using OpenIZ.Core.Security.Attribute;
+using System.Security.Permissions;
+using OpenIZ.Core.Security;
 
 namespace OpenIZ.Messaging.IMSI.Wcf
 {
@@ -54,11 +58,13 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         // Trace source
         private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.IMSI");
 
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
         public IdentifiedData Create(string resourceType, IdentifiedData body)
         {
             throw new NotImplementedException();
         }
 
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
         public IdentifiedData CreateUpdate(string resourceType, string id, IdentifiedData body)
         {
             throw new NotImplementedException();
@@ -67,11 +73,13 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Get the specified object
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
         public IdentifiedData Get(string resourceType, string id)
         {
 
             try
             {
+
                 var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
                 if (handler != null)
                 {
@@ -102,6 +110,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Gets a specific version of a resource
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
         public IdentifiedData GetVersion(string resourceType, string id, string versionId)
         {
             try
@@ -132,6 +141,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
         }
 
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AccessAdministrativeFunction)]
         public XmlSchema GetSchema(int schemaId)
         {
             try
@@ -164,11 +174,13 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
         }
 
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
         public IdentifiedData History(string resourceType, string id)
         {
             throw new NotImplementedException();
         }
 
+        [PolicyPermissionAttribute(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryClinicalData)]
         public IdentifiedData Search(string resourceType)
         {
             throw new NotImplementedException();
@@ -179,6 +191,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             throw new NotImplementedException();
         }
 
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
         public IdentifiedData Update(string resourceType, string id, IdentifiedData body)
         {
             throw new NotImplementedException();
@@ -235,19 +248,40 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 object scope = returnValue;
                 foreach (var property in nvs.Split('.'))
                 {
-                    PropertyInfo keyPi = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<XmlElementAttribute>()?.ElementName == property);
-                    if (keyPi == null)
-                        continue;
-                    // Get the backing property
-                    PropertyInfo expandProp = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == keyPi.Name);
-                    if (expandProp != null)
-                        scope = expandProp.GetValue(scope);
+                    if (scope is IList)
+                    {
+                        foreach (var sc in scope as IList)
+                        {
+                            PropertyInfo keyPi = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<XmlElementAttribute>()?.ElementName == property);
+                            if (keyPi == null)
+                                continue;
+                            // Get the backing property
+                            PropertyInfo expandProp = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == keyPi.Name);
+                            if (expandProp != null)
+                                scope = expandProp.GetValue(sc);
+                            else
+                                scope = keyPi.GetValue(sc);
+
+                        }
+                    }
                     else
-                        scope = keyPi.GetValue(scope);
+                    {
+                        PropertyInfo keyPi = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<XmlElementAttribute>()?.ElementName == property);
+                        if (keyPi == null)
+                            continue;
+                        // Get the backing property
+                        PropertyInfo expandProp = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == keyPi.Name);
+                        if (expandProp != null)
+                            scope = expandProp.GetValue(scope);
+                        else
+                            scope = keyPi.GetValue(scope);
+                    }
                 }
             }
         }
 
+
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.DeleteClinicalData)]
         public IdentifiedData Delete(string resourceType, string id)
         {
             throw new NotImplementedException();

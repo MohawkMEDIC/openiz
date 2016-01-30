@@ -62,6 +62,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     [ServiceKnownType(typeof(DeviceEntity))]
     [ServiceKnownType(typeof(Bundle))]
     [ServiceKnownType(typeof(ErrorResult))]
+    [ServiceKnownType(typeof(ConceptSet))]
     public interface IImsiServiceContract 
     {
 
@@ -69,41 +70,35 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// Search for the specified resource type
         /// </summary>
         [WebGet(UriTemplate = "/{resourceType}", BodyStyle = WebMessageBodyStyle.Bare)]
-        [PolicyPermissionAttribute(SecurityAction.Demand, PermissionPolicyIdentifiers.QueryClinicalData)]
         IdentifiedData Search(string resourceType);
 
         /// <summary>
         /// Get the specified resource
         /// </summary>
         [WebGet(UriTemplate = "/{resourceType}/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
-        [PolicyPermissionAttribute(SecurityAction.Demand, PermissionPolicyIdentifiers.ReadClinicalData)]
         IdentifiedData Get(string resourceType, string id);
 
         /// <summary>
         /// Get history of an object
         /// </summary>
         [WebGet(UriTemplate = "/{resourceType}/{id}/history", BodyStyle = WebMessageBodyStyle.Bare)]
-        [PolicyPermission(SecurityAction.Demand, PermissionPolicyIdentifiers.ReadClinicalData)]
         IdentifiedData History(string resourceType, string id);
 
         /// <summary>
         /// Get a specific version
         /// </summary>
         [WebGet(UriTemplate = "/{resourceType}/{id}/history/{versionId}", BodyStyle = WebMessageBodyStyle.Bare)]
-        [PolicyPermission(SecurityAction.Demand, PermissionPolicyIdentifiers.ReadClinicalData)]
         IdentifiedData GetVersion(string resourceType, string id, string versionId);
 
         /// <summary>
         /// Create the resource
         /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PermissionPolicyIdentifiers.WriteClinicalData)]
         [WebInvoke(Method = "POST", UriTemplate = "/{resourceType}", BodyStyle = WebMessageBodyStyle.Bare)]
         IdentifiedData Create(string resourceType, IdentifiedData body);
 
         /// <summary>
         /// Update the specified resource
         /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PermissionPolicyIdentifiers.WriteClinicalData)]
         [WebInvoke(Method = "PUT", UriTemplate = "/{resourceType}/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
         IdentifiedData Update(string resourceType, string id, IdentifiedData body);
 
@@ -111,14 +106,12 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// Creates a resource or updates one
         /// </summary>
         [WebInvoke(Method = "POST", UriTemplate = "/{resourceType}/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
-        [PolicyPermission(SecurityAction.Demand, PermissionPolicyIdentifiers.WriteClinicalData)]
         IdentifiedData CreateUpdate(string resourceType, string id, IdentifiedData body);
 
         /// <summary>
         /// Creates a resource or updates one
         /// </summary>
         [WebInvoke(Method = "DELETE", UriTemplate = "/{resourceType}/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
-        [PolicyPermission(SecurityAction.Demand, PermissionPolicyIdentifiers.DeleteClinicalData)]
         IdentifiedData Delete(string resourceType, string id);
 
         /// <summary>
@@ -132,7 +125,6 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// Get the schema
         /// </summary>
         [WebGet(UriTemplate = "/?xsd={schemaId}")]
-        [PolicyPermission(SecurityAction.Demand, PermissionPolicyIdentifiers.AccessAdministrativeFunction)]
         XmlSchema GetSchema(int schemaId);
     }
 }

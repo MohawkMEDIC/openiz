@@ -61,11 +61,30 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [XmlElement("url"), JsonProperty("url")]
         public String Url { get; set; }
+        
         /// <summary>
-        /// Gets the concept 
+        /// Concepts as identifiers for XML purposes only
         /// </summary>
         [XmlElement("concept"), JsonProperty("concept")]
         [DelayLoad(null)]
+        //[Bundle(nameof(Concepts))]
+        public List<Guid> ConceptSetsXml
+        {
+            get
+            {
+                return this.Concepts?.Select(o => o.Key).ToList();
+            }
+            set
+            {
+                ; // nothing
+            }
+        }
+
+        /// <summary>
+        /// Gets the concepts in the set
+        /// </summary>
+        [DelayLoad(null)]
+        [XmlIgnore]
         public List<Concept> Concepts
         {
             get {
@@ -75,6 +94,10 @@ namespace OpenIZ.Core.Model.DataTypes
             }
         }
 
+        /// <summary>
+        /// Gets or sets the obsoletion reason
+        /// </summary>
+        [XmlElement("obsoletionReason")]
         public string ObsoletionReason { get; set; }
     }
 }

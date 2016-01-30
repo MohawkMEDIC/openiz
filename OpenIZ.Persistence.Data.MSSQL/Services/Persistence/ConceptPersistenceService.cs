@@ -50,7 +50,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.Concept ConvertToModel(object data)
         {
-            return s_mapper.MapDomainInstance<Data.ConceptVersion, Core.Model.DataTypes.Concept>(data as Data.ConceptVersion);
+            var conceptSet = data as Data.ConceptVersion;
+            Core.Model.DataTypes.Concept cacheHit = null;
+            if (!this.m_cache.TryGetValue(conceptSet.ConceptVersionId, out cacheHit))
+            {
+                cacheHit = s_mapper.MapDomainInstance<Data.ConceptVersion, Core.Model.DataTypes.Concept>(data as Data.ConceptVersion);
+                this.AddToCache(cacheHit);
+            }
+            return cacheHit;
         }
 
         /// <summary>
@@ -61,17 +68,29 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (containerId == null)
                 throw new ArgumentNullException(nameof(containerId));
 
-            // Return values
-            Data.ConceptVersion retVal = null;
-            if (containerId.VersionId != default(Guid))
-                retVal = dataContext.ConceptVersions.SingleOrDefault(o => o.ConceptVersionId == containerId.VersionId);
-            else if (containerId.Id != default(Guid))
-                retVal = dataContext.ConceptVersions.SingleOrDefault(o => o.ConceptId == containerId.Id && o.ObsoletionTime == null);
 
-            if (retVal == null)
-                return null;
-            else
-                return this.ConvertToModel(retVal);
+            Core.Model.DataTypes.Concept retVal = null;
+            if (!this.m_cache.TryGetValue(containerId.Id, out retVal))
+            {
+                Data.ConceptVersion tRetVal = null;
+                if (containerId.VersionId != default(Guid))
+                    tRetVal = dataContext.ConceptVersions.SingleOrDefault(o => o.ConceptVersionId == containerId.VersionId);
+                else if (containerId.Id != default(Guid))
+                    tRetVal = dataContext.ConceptVersions.SingleOrDefault(o => o.ConceptId == containerId.Id && o.ObsoletionTime == null);
+
+
+                // Return value
+                if (tRetVal == null)
+                    return null;
+                else
+                {
+                    retVal = this.ConvertToModel(tRetVal);
+
+                    this.AddToCache(retVal);
+                }
+            }
+            return retVal;
+
         }
 
         /// <summary>
@@ -150,6 +169,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (storageData.IsSystemConcept)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.UpdatedReadonlyObject);
 
+            this.RemoveFromCache(storageData);
+
             var dataConceptVersion = dataContext.ConceptVersions.SingleOrDefault(c => c.ConceptId == storageData.Key && c.ObsoletionTime == null);
             if (dataConceptVersion == null)
                 throw new KeyNotFoundException();
@@ -165,8 +186,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataContext.ConceptVersions.InsertOnSubmit(newDataConceptVersion);
 
             dataContext.SubmitChanges();
-            return this.ConvertToModel(newDataConceptVersion);
-
+            
+            var retVal = this.ConvertToModel(newDataConceptVersion);
+            this.AddToCache(retVal);
+            return retVal;
         }
 
         /// <summary>
@@ -192,6 +215,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (storageData.IsSystemConcept)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.UpdatedReadonlyObject);
 
+
+            this.RemoveFromCache(storageData);
 
             // Get the existing version 
             var domainConceptVersion = dataContext.ConceptVersions.OrderByDescending(o=>o.VersionSequenceId).SingleOrDefault(o => o.ConceptId == storageData.Key && o.ObsoletionTime == null);
@@ -263,7 +288,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             }
 
-            return this.ConvertToModel(domainConceptVersion);
+            var retVal = this.ConvertToModel(domainConceptVersion);
+            this.AddToCache(retVal);
+            return retVal;
         }
     }
 }

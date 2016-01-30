@@ -61,6 +61,7 @@ namespace OpenIZ.Core.Model.Collection
     [XmlInclude(typeof(PhoneticAlgorithm))]
     [XmlInclude(typeof(Bundle))]
     [XmlInclude(typeof(ConceptClass))]
+    [XmlInclude(typeof(Bundle))]
     [XmlInclude(typeof(ConceptRelationship))]
     [XmlInclude(typeof(ConceptRelationshipType))]
     [XmlInclude(typeof(SecurityUser))]
@@ -99,7 +100,7 @@ namespace OpenIZ.Core.Model.Collection
         /// <summary>
         /// Packages the objects into a bundle
         /// </summary>
-        private static void ProcessModel(IdentifiedData model, Bundle currentBundle)
+        private static void ProcessModel(IdentifiedData model, Bundle currentBundle, bool followList = true)
         {
 
             foreach(var pi in model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<DelayLoadAttribute>() != null))
@@ -109,15 +110,20 @@ namespace OpenIZ.Core.Model.Collection
                     object rawValue = pi.GetValue(model);
                     if (rawValue == null) continue;
 
-                    if (rawValue is IList)
+                    if (rawValue is IList && followList)
                     {
                         foreach (var itm in rawValue as IList)
                         {
+
                             if (itm is IdentifiedData)
                             {
+                                if (currentBundle.Item.Exists(o => o.Key == (itm as IdentifiedData).Key))
+                                    continue;
+
                                 if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null)
                                     currentBundle.Item.Add(itm as IdentifiedData);
-                                ProcessModel(itm as IdentifiedData, currentBundle);
+
+                                ProcessModel(itm as IdentifiedData, currentBundle, false);
                             }
                         }
                     }
@@ -127,7 +133,7 @@ namespace OpenIZ.Core.Model.Collection
                         var versionedValue = rawValue as IVersionedEntity;
 
                         // Check for existing item
-                        if (!currentBundle.Item.Any(i => i.Key == iValue.Key && versionedValue?.VersionKey == (i as IVersionedEntity)?.VersionKey))
+                        if (!currentBundle.Item.Exists(i => i.Key == iValue.Key && versionedValue?.VersionKey == (i as IVersionedEntity)?.VersionKey))
                         {
                             if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null)
                                 currentBundle.Item.Add(iValue);

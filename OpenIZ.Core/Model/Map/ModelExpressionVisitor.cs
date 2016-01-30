@@ -82,7 +82,13 @@ namespace OpenIZ.Core.Model.Map
                         {
                             MemberExpression memberExpression = node as MemberExpression;
                             if ((memberExpression.Expression as ParameterExpression)?.Name == this.m_originalParameter.Name)
-                                return Expression.MakeMemberAccess(this.m_memberAccess, memberExpression.Member);
+                            {
+                                var memInfo = this.m_memberAccess.Type.GetMember(memberExpression.Member.Name, memberExpression.Member.MemberType, BindingFlags.Public | BindingFlags.Instance);
+                                if(memInfo.Length == 0)
+                                    return memberExpression;
+                                else
+                                    return Expression.MakeMemberAccess(this.m_memberAccess, memInfo.FirstOrDefault() ?? memberExpression.Member);
+                            }
                             else
                                 return base.Visit(node);
                         }
