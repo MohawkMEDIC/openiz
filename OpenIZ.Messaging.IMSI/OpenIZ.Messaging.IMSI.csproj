@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MARC.Everest, Version=1.5.0.0, Culture=neutral, PublicKeyToken=ba5b2480018546af, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\MARC.Everest.dll</HintPath>
+    </Reference>
     <Reference Include="MARC.HI.EHRS.SVC.Core">
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
     </Reference>
@@ -64,6 +68,7 @@
     <Compile Include="ResourceHandler\ConceptResourceHandler.cs" />
     <Compile Include="ResourceHandler\IResourceHandler.cs" />
     <Compile Include="ResourceHandler\ResourceHandlerUtil.cs" />
+    <Compile Include="Util\BundleUtil.cs" />
     <Compile Include="Util\QueryParameterLinqExpressionBuilder.cs" />
     <Compile Include="Wcf\Compression\CompressionUtil.cs" />
     <Compile Include="Wcf\Compression\CompressionBodyWriter.cs" />

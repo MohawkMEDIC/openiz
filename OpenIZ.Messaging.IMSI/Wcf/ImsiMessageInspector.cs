@@ -114,8 +114,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     {"Access-Control-Allow-Headers", "X-Requested-With,Content-Type,Accept,Content-Encoding,Accept-Encoding"}
                 };
                 foreach (var kv in requiredHeaders)
-                    if (!httpResponse.Headers.AllKeys.Contains(kv.Key))
-                        httpResponse.Headers.Add(kv.Key, kv.Value);
+                    if (!WebOperationContext.Current.OutgoingResponse.Headers.AllKeys.Contains(kv.Key))
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add(kv.Key, kv.Value);
 
                 // Finally compress
                 // Compress
@@ -123,8 +123,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 {
                     try
                     {
-                        httpResponse.Headers.Add("Content-Encoding", compressionScheme);
-                        httpResponse.Headers.Add("X-CompressResponseStream", compressionScheme);
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add("Content-Encoding", compressionScheme);
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add("X-CompressResponseStream", compressionScheme);
                         byte[] messageContent = null;
 
                         // Read binary contents of the message

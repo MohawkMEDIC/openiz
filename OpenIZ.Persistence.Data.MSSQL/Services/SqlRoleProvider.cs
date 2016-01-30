@@ -34,6 +34,7 @@ using OpenIZ.Persistence.Data.MSSQL.Security;
 using System.Security;
 using System.Security.Principal;
 using OpenIZ.Core.Security;
+using OpenIZ.Core.Security.Attribute;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services
 {
@@ -50,23 +51,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// <summary>
         /// Verify principal
         /// </summary>
-        private void VerifyPrincipal(IPrincipal authPrincipal, String policyCheck)
+        private void VerifyPrincipal(IPrincipal authPrincipal, String policyId)
         {
             if (authPrincipal == null)
                 throw new ArgumentNullException(nameof(authPrincipal));
             else if (!authPrincipal.Identity.IsAuthenticated)
                 throw new SecurityException("Principal must be authenticated");
 
-            if (policyCheck != null)
-            {
-                var policyService = ApplicationContext.Current.GetService<IPolicyDecisionService>();
-                if (policyService != null)
-                {
-                    var policyDecision = policyService.GetPolicyOutcome(authPrincipal, PermissionPolicyIdentifiers.CreateRoles);
-                    if (policyDecision != PolicyDecisionOutcomeType.Grant)
-                        throw new PolicyViolationException(PermissionPolicyIdentifiers.CreateRoles, policyDecision);
-                }
-            }
+            new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, policyId, authPrincipal).Demand();
             
         }
 

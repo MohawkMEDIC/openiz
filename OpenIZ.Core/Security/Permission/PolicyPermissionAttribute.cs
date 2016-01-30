@@ -17,13 +17,16 @@
  * Date: 2016-1-25
  */
 using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Exceptions;
 using MARC.HI.EHRS.SVC.Core.Services.Policy;
+using MARC.HI.EHRS.SVC.Core.Services.Security;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Security;
 using System.Security.Permissions;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -73,9 +76,20 @@ namespace OpenIZ.Core.Security.Attribute
         // True if unrestricted
         private bool m_isUnrestricted;
         private String m_policyId;
+        private IPrincipal m_principal;
+
         // Security
         private TraceSource m_traceSource = new TraceSource("OpenIZ.Core.Security");
 
+        /// <summary>
+        /// Policy permission
+        /// </summary>
+        public PolicyPermission(PermissionState state, String policyId, IPrincipal principal)
+        {
+            this.m_isUnrestricted = state == PermissionState.Unrestricted;
+            this.m_policyId = policyId;
+            this.m_principal = principal;
+        }
 
         /// <summary>
         /// Creates a new policy permission
@@ -84,6 +98,7 @@ namespace OpenIZ.Core.Security.Attribute
         {
             this.m_isUnrestricted = state == PermissionState.Unrestricted;
             this.m_policyId = policyId;
+            this.m_principal = AuthenticationContext.Current.Principal;
         }
 
         /// <summary>
@@ -91,7 +106,7 @@ namespace OpenIZ.Core.Security.Attribute
         /// </summary>
         public IPermission Copy()
         {
-            return new PolicyPermission(this.m_isUnrestricted ? PermissionState.Unrestricted : PermissionState.None, this.m_policyId);
+            return new PolicyPermission(this.m_isUnrestricted ? PermissionState.Unrestricted : PermissionState.None, this.m_policyId, this.m_principal);
         }
 
         /// <summary>
@@ -100,18 +115,17 @@ namespace OpenIZ.Core.Security.Attribute
         public void Demand()
         {
             var pdp = ApplicationContext.Current.GetService<IPolicyDecisionService>();
-            var currentPrincipal = System.Threading.Thread.CurrentPrincipal;
 
             PolicyDecisionOutcomeType action = PolicyDecisionOutcomeType.Deny;
-            if (this.m_isUnrestricted)
+            if (pdp == null) // No way to verify 
                 action = PolicyDecisionOutcomeType.Grant;
             else if (pdp != null)
-                action = pdp.GetPolicyOutcome(currentPrincipal, this.m_policyId);
+                action = pdp.GetPolicyOutcome(this.m_principal, this.m_policyId);
 
-            this.m_traceSource.TraceInformation("Policy Enforce: {0}({1}) = {2}", currentPrincipal.Identity.Name, this.m_policyId, action);
+            this.m_traceSource.TraceInformation("Policy Enforce: {0}({1}) = {2}", this.m_principal.Identity.Name, this.m_policyId, action);
 
             if (action != PolicyDecisionOutcomeType.Grant)
-                throw new SecurityException("Principal does not have requested permission");
+                throw new PolicyViolationException(this.m_policyId, action);
         }
 
         /// <summary>
@@ -125,6 +139,9 @@ namespace OpenIZ.Core.Security.Attribute
             element = elem.Attribute("PolicyId");
             if (element != null)
                 this.m_policyId = element;
+            element = elem.Attribute("principal");
+            if(element != null)
+                this.m_principal = new GenericPrincipal(ApplicationContext.Current.GetService<IIdentityProviderService>().GetIdentity(element), null);
             else
                 throw new InvalidOperationException("Must have policyid");
         }
@@ -178,6 +195,7 @@ namespace OpenIZ.Core.Security.Attribute
             element.AddAttribute("version", "1");
             element.AddAttribute("Unrestricted", this.m_isUnrestricted.ToString());
             element.AddAttribute("Policy", this.m_policyId);
+            element.AddAttribute("Principal", this.m_principal.Identity.Name);
             return element;
 
         }

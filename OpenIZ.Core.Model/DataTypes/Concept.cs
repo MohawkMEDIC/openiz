@@ -126,7 +126,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlIgnore, JsonIgnore]
+        [XmlElement("class"), JsonProperty("class")]
         public Guid  ClassKey
         {
             get { return this.m_classId; }
@@ -142,7 +142,6 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [DelayLoad(nameof(ClassKey))]
         [XmlIgnore, JsonIgnore]
-        [XmlElement("class"), JsonProperty("class")]
         public ConceptClass Class
         {
             get
@@ -213,7 +212,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets concept sets to which this concept is a member
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(null)]
         public List<ConceptSet> ConceptSets
         {
@@ -224,6 +223,15 @@ namespace OpenIZ.Core.Model.DataTypes
                     this.m_conceptSet = EntitySource.Current.Provider.Query<ConceptSet>(s => s.Concepts.Any(c => c.Key == this.Key)).ToList();
                 return this.m_conceptSet;
             }
+        }
+
+        /// <summary>
+        /// Reference terms
+        /// </summary>
+        public void SetDelayLoadProperties(List<ConceptName> names, List<ConceptReferenceTerm> referenceTerms)
+        {
+            this.m_conceptNames = names;
+            this.m_referenceTerms = referenceTerms;
         }
 
         /// <summary>

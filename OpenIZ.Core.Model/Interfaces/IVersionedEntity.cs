@@ -39,5 +39,15 @@ namespace OpenIZ.Core.Model.Interfaces
         /// Gets the version key
         /// </summary>
         Guid VersionKey { get; set; }
+
+        /// <summary>
+        /// Gets the previous version's key
+        /// </summary>
+        Guid? PreviousVersionKey { get; }
+
+        /// <summary>
+        /// Gets the previous version
+        /// </summary>
+        IVersionedEntity PreviousVersion { get; }
     }
 }

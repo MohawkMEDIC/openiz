@@ -50,15 +50,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.Concept ConvertToModel(object data)
         {
-            var conceptSet = data as Data.ConceptVersion;
-            Core.Model.DataTypes.Concept cacheHit = null;
-            if (!this.m_cache.TryGetValue(conceptSet.ConceptVersionId, out cacheHit))
-            {
-                cacheHit = s_mapper.MapDomainInstance<Data.ConceptVersion, Core.Model.DataTypes.Concept>(data as Data.ConceptVersion);
-                this.AddToCache(cacheHit);
-            }
-            return cacheHit;
-        }
+            if (data == null)
+                return null;
+            var concept = data as Data.ConceptVersion;
+            return this.GetCacheItem(concept.ConceptId, concept.ConceptVersionId, concept);
+        }        
 
         /// <summary>
         /// Get the specified concept with version
@@ -68,9 +64,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (containerId == null)
                 throw new ArgumentNullException(nameof(containerId));
 
-
-            Core.Model.DataTypes.Concept retVal = null;
-            if (!this.m_cache.TryGetValue(containerId.Id, out retVal))
+            Core.Model.DataTypes.Concept retVal = this.GetCacheItem<Data.ConceptVersion>(containerId.Id, containerId.VersionId, null);
+            if(retVal == null)
             {
                 Data.ConceptVersion tRetVal = null;
                 if (containerId.VersionId != default(Guid))
@@ -78,16 +73,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 else if (containerId.Id != default(Guid))
                     tRetVal = dataContext.ConceptVersions.SingleOrDefault(o => o.ConceptId == containerId.Id && o.ObsoletionTime == null);
 
-
                 // Return value
                 if (tRetVal == null)
                     return null;
                 else
-                {
                     retVal = this.ConvertToModel(tRetVal);
-
-                    this.AddToCache(retVal);
-                }
             }
             return retVal;
 
@@ -188,7 +178,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataContext.SubmitChanges();
             
             var retVal = this.ConvertToModel(newDataConceptVersion);
-            this.AddToCache(retVal);
+            this.AddToCache(retVal, newDataConceptVersion);
             return retVal;
         }
 
@@ -201,7 +191,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new ArgumentNullException(nameof(query));
 
             var domainQuery = s_mapper.MapModelExpression<Core.Model.DataTypes.Concept, Data.ConceptVersion>(query);
-            return dataContext.ConceptVersions.Where(domainQuery).Select(o=>this.ConvertToModel(o));
+            return dataContext.ConceptVersions.Where(domainQuery).OrderByDescending(o=>o.VersionSequenceId).Select(o=>this.ConvertToModel(o));
 
         }
 
@@ -289,7 +279,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             }
 
             var retVal = this.ConvertToModel(domainConceptVersion);
-            this.AddToCache(retVal);
             return retVal;
         }
     }

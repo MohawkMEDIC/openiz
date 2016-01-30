@@ -53,6 +53,17 @@ namespace OpenIZ.Core.Model
         }
 
         /// <summary>
+        /// Previous version
+        /// </summary>
+        IVersionedEntity IVersionedEntity.PreviousVersion
+        {
+            get
+            {
+                return this.PreviousVersion;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the previous version key
         /// </summary>
         

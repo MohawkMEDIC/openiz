@@ -36,6 +36,7 @@ using System.ServiceModel.Web;
 using OpenIZ.Core.Model;
 using System.Xml.Schema;
 using OpenIZ.Messaging.IMSI.ResourceHandler;
+using OpenIZ.Core.Model.Serialization;
 
 namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
 {
@@ -96,13 +97,20 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
                 // Use JSON Serializer
                 else if (contentType?.StartsWith("application/json") == true)
                 {
+                    // Read the binary contents form the WCF pipeline
                     XmlDictionaryReader bodyReader = request.GetReaderAtBodyContents();
                     bodyReader.ReadStartElement("Binary");
                     byte[] rawBody = bodyReader.ReadContentAsBase64();
-                    MemoryStream ms = new MemoryStream(rawBody);
 
+                    // Now read the JSON data
+                    MemoryStream ms = new MemoryStream(rawBody);
                     StreamReader sr = new StreamReader(ms);
-                    JsonSerializer jsz = new JsonSerializer();
+                    JsonSerializer jsz = new JsonSerializer()
+                    {
+                        Binder = new ModelSerializationBinder(),
+                        TypeNameAssemblyFormat = 0,
+                        TypeNameHandling = TypeNameHandling.All
+                    };
                     var dserType = ResourceHandlerUtil.Current.GetResourceHandler(templateMatch.BoundVariables["resourceType"])?.Type ?? parm.Type;
                     parameters[0] = jsz.Deserialize(sr, dserType);
                 }
@@ -132,16 +140,22 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
                 if (accepts?.StartsWith("application/json")  == true||
                     contentType?.StartsWith("application/json") == true)
                 {
+                    // Prepare the serializer
                     JsonSerializer jsz = new JsonSerializer();
+
+                    // Write json data
                     byte[] body = null;
                     using (MemoryStream ms = new MemoryStream())
                     using (StreamWriter sw = new StreamWriter(ms, Encoding.UTF8))
                     using (JsonWriter jsw = new JsonTextWriter(sw))
                     {
+                        
                         jsz.Serialize(jsw, result);
                         sw.Flush();
                         body = ms.ToArray();
                     }
+
+                    // Prepare reply for the WCF pipeline
                     format = WebContentFormat.Raw;
                     contentType = "application/json";
                     reply = Message.CreateMessage(messageVersion, this.m_operationDescription.Messages[1].Action, new RawBodyWriter(body));
@@ -157,6 +171,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
                     format = WebContentFormat.Xml;
                     contentType = "application/xml";
                     ms.Seek(0, SeekOrigin.Begin);
+
                     reply = Message.CreateMessage(messageVersion, this.m_operationDescription.Messages[1].Action, XmlDictionaryReader.Create(ms));
                 }
             }
@@ -175,11 +190,9 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
             }
 
             reply.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(format));
-            HttpResponseMessageProperty respProp = new HttpResponseMessageProperty();
-            respProp.Headers[HttpResponseHeader.ContentType] = contentType;
-            respProp.Headers.Add("X-PoweredBy","OpenIZIMSI");
-            respProp.Headers.Add("X-GeneratedOn", DateTime.Now.ToString("o"));
-            reply.Properties.Add(HttpResponseMessageProperty.Name, respProp);
+            WebOperationContext.Current.OutgoingResponse.ContentType = contentType;
+            WebOperationContext.Current.OutgoingResponse.Headers.Add("X-PoweredBy","OpenIZIMSI");
+            WebOperationContext.Current.OutgoingResponse.Headers.Add("X-GeneratedOn", DateTime.Now.ToString("o"));
             return reply;
 
         }

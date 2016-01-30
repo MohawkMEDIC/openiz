@@ -52,6 +52,11 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters);
 
         /// <summary>
+        /// Perform a query with offset/count
+        /// </summary>
+        IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out Int32 totalCount);
+
+        /// <summary>
         /// Creates the specified data in the persistence store
         /// </summary>
         IdentifiedData Create(IdentifiedData data, bool updateIfExists);

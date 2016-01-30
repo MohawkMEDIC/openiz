@@ -38,6 +38,7 @@ using OpenIZ.Persistence.Data.MSSQL.Security;
 using MARC.HI.EHRS.SVC.Core.Exceptions;
 using MARC.HI.EHRS.SVC.Core.Event;
 using System.Diagnostics;
+using OpenIZ.Core.Security.Attribute;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services
 {
@@ -180,10 +181,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     var hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
                     var pdpService = ApplicationContext.Current.GetService<IPolicyDecisionService>();
 
-                    var policyOutcome = pdpService?.GetPolicyOutcome(authContext, PermissionPolicyIdentifiers.CreateIdentity);
-                    if (policyOutcome.HasValue &&
-                        policyOutcome != PolicyDecisionOutcomeType.Grant)
-                        throw new PolicyViolationException(PermissionPolicyIdentifiers.CreateIdentity, policyOutcome.Value);
+                    // Demand create identity
+                    new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.CreateIdentity, authContext).Demand();
+
 
                     // Does this principal have the ability to 
                     Data.SecurityUser newIdentityUser = new Data.SecurityUser()

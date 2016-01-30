@@ -68,6 +68,9 @@ namespace OpenIZ.Core.Model.Collection
     public class Bundle : IdentifiedData
     {
 
+        // Lock object
+        private object m_lockObject = new object();
+
         /// <summary>
         /// Represents bundle contents
         /// </summary>
@@ -84,23 +87,97 @@ namespace OpenIZ.Core.Model.Collection
         }
 
         /// <summary>
+        /// Entry into the bundle
+        /// </summary>
+        [XmlElement("entry"), JsonProperty("entry")]
+        public Guid? EntryKey { get; set; }
+
+        /// <summary>
+        /// Gets the entry object
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public IdentifiedData Entry
+        {
+            get { return this.Item.Find(o => o.Key == this.EntryKey); }
+        }
+
+        /// <summary>
+        /// Gets or sets the count in this bundle
+        /// </summary>
+        [XmlElement("offset"), JsonProperty("offset")]
+        public int Offset { get; set; }
+
+        /// <summary>
+        /// Gets or sets the count in this bundle
+        /// </summary>
+        [XmlElement("count"), JsonProperty("count")]
+        public int Count { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total results
+        /// </summary>
+        [XmlElement("totalResults"), JsonProperty("totalResults")]
+        public int TotalResults { get; set; }
+
+        /// <summary>
         /// Create a bundle
         /// </summary>
         public static Bundle CreateBundle(IdentifiedData resourceRoot)
         {
             Bundle retVal = new Bundle();
+            retVal.Key = Guid.NewGuid();
+            retVal.Count = retVal.TotalResults = 1;
             if (resourceRoot == null)
                 return retVal;
-
+            
             retVal.Item.Add(resourceRoot);
             ProcessModel(resourceRoot, retVal);
             return retVal;
         }
 
         /// <summary>
+        /// Reconstitutes the bundle (takes the flat reference structures and fills them out into proper object references)
+        /// </summary>
+        public void Reconstitute()
+        {
+            foreach(var itm in this.Item)
+                this.Reconstitute(itm);
+        }
+        
+        /// <summary>
+        /// Re-constitute the data
+        /// </summary>
+        /// <remarks>Basically this will find any refs and fill them in</remarks>
+        private void Reconstitute(IdentifiedData data)
+        {
+            // Prevent delay loading from EntitySource (we're doing that right now)
+            data.Lock();
+
+            // Iterate over properties
+            foreach(var pi in data.GetType().GetRuntimeProperties())
+            {
+                // Is the pi a delay load? if so then get the key property
+                var keyName = pi.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName;
+                if (keyName == null || pi.SetMethod == null)
+                    continue; // Skip if there is no delay load or if we can't even set this property
+
+                // Now we get the value of the key
+                var keyPi = data.GetType().GetRuntimeProperty(keyName);
+                if (keyPi == null)
+                    continue; // Invalid key link name
+
+                // Get the key and find a match
+                var key = (Guid)keyPi.GetValue(data);
+                var bundleItem = this.Item.Find(o => o.Key == key);
+                pi.SetValue(data, bundleItem);
+                
+            }
+        }
+
+        /// <summary>
         /// Packages the objects into a bundle
         /// </summary>
-        private static void ProcessModel(IdentifiedData model, Bundle currentBundle, bool followList = true)
+        public static void ProcessModel(IdentifiedData model, Bundle currentBundle, bool followList = true)
         {
 
             foreach(var pi in model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<DelayLoadAttribute>() != null))
@@ -121,7 +198,8 @@ namespace OpenIZ.Core.Model.Collection
                                     continue;
 
                                 if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null)
-                                    currentBundle.Item.Add(itm as IdentifiedData);
+                                    lock(currentBundle.m_lockObject)
+                                        currentBundle.Item.Add(itm as IdentifiedData);
 
                                 ProcessModel(itm as IdentifiedData, currentBundle, false);
                             }
@@ -136,7 +214,8 @@ namespace OpenIZ.Core.Model.Collection
                         if (!currentBundle.Item.Exists(i => i.Key == iValue.Key && versionedValue?.VersionKey == (i as IVersionedEntity)?.VersionKey))
                         {
                             if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null)
-                                currentBundle.Item.Add(iValue);
+                                lock (currentBundle.m_lockObject)
+                                    currentBundle.Item.Add(iValue);
                             ProcessModel(iValue, currentBundle);
                         }
                     }

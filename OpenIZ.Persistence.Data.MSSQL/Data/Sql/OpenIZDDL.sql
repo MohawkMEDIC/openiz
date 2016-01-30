@@ -69,7 +69,9 @@ CREATE TABLE SecurityUser
 );
 
 -- Create a system user
-INSERT INTO SecurityUser (UserId, UserName, UserPassword, SecurityStamp) VALUES ('00000000-0000-0000-0000-000000000000', 'SYSTEM','XXXX','XXXX');
+INSERT INTO SecurityUser (UserId, UserName, UserPassword, SecurityStamp) VALUES ('fadca076-3690-4a6e-af9e-f1cd68e8c7e8', 'SYSTEM','XXXX','XXXX');
+-- Create the anonymous user
+INSERT INTO SecurityUser (UserId, UserName, UserPassword, SecurityStamp) VALUES ('00000000-0000-0000-0000-000000000000', 'ANONYMOUS','XXXX','XXXX');
 
 /*
  THE FOLLOWING INDEXING PROVIDES LOOKUP BY USERNAME AND USERNAME/PASSWORD COMBINATION
@@ -420,6 +422,8 @@ CREATE INDEX IX_ConceptNameVersion ON ConceptName(EffectiveVersionSequenceId, Ob
 CREATE INDEX IX_ConceptNameName ON ConceptName(Name);
 -- LOOKUP CONCEPT NAME BY PHONETIC MATCH
 CREATE INDEX IX_ConceptNamePhoneticCode ON ConceptName(PhoneticCode, PhoneticAlgorithmId);
+-- CONCEPT ID LOOKUP
+CREATE INDEX IX_ConceptNameConceptId ON ConceptName(ConceptId);
 
 /*
  REPRESENTS THE EXTERNAL CODE SYSTEMS FROM WHICH WIRE-LEVEL CODES CAN BE SENT/RECEIVED

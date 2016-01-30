@@ -56,8 +56,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Configuration
             if (retVal.ReadWriteConnectionString == null || retVal.ReadonlyConnectionString == null)
                 throw new ConfigurationErrorsException("Connection string not found");
 
-            // TODO: Load this
-            retVal.MaxCacheSize = UInt16.MaxValue;
+            retVal.MaxCacheSize = ushort.MaxValue;
 
             return retVal;
                 

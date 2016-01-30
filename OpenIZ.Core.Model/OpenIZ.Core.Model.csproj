@@ -106,6 +106,7 @@
     <Compile Include="Security\SecurityPolicy.cs" />
     <Compile Include="Security\SecurityRole.cs" />
     <Compile Include="Security\SecurityUser.cs" />
+    <Compile Include="Serialization\ModelSerializationBinder.cs" />
     <Compile Include="VersionedAssociation.cs" />
     <Compile Include="VersionedEntityData.cs" />
   </ItemGroup>

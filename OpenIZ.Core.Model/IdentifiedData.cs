@@ -75,6 +75,9 @@ namespace OpenIZ.Core.Model
         private void SetDelayLoad(bool v)
         {
 
+            if (this.m_delayLoad == v)
+                return;
+
             List<FieldInfo> fields = new List<FieldInfo>();
 
             Type typ = this.GetType();
@@ -115,6 +118,19 @@ namespace OpenIZ.Core.Model
         public Guid Key { get; set; }
 
         /// <summary>
+        /// Gets the type
+        /// </summary>
+        [XmlIgnore, JsonProperty("$type")]
+        public virtual String Type
+        {
+            get
+            {
+                return this.GetType().GetTypeInfo().GetCustomAttribute<JsonObjectAttribute>().Id;
+            }
+            set { }
+        }
+
+        /// <summary>
         /// Get associated entity
         /// </summary>
         protected TEntity DelayLoad<TEntity>(Guid? keyReference, TEntity currentInstance) where TEntity : IdentifiedData
@@ -129,5 +145,15 @@ namespace OpenIZ.Core.Model
         /// Force reloading of delay load properties
         /// </summary>
         public virtual void Refresh() { }
+
+        /// <summary>
+        /// Clone the specified data
+        /// </summary>
+        public IdentifiedData Clone()
+        {
+            var retVal = this.MemberwiseClone() as IdentifiedData;
+            retVal.m_delayLoad = true;
+            return retVal;
+        }
     }
 }

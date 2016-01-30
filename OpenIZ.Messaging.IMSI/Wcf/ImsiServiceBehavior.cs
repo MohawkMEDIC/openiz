@@ -46,6 +46,8 @@ using System.Collections;
 using OpenIZ.Core.Security.Attribute;
 using System.Security.Permissions;
 using OpenIZ.Core.Security;
+using OpenIZ.Messaging.IMSI.Util;
+using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.Messaging.IMSI.Wcf
 {
@@ -58,10 +60,44 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         // Trace source
         private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.IMSI");
 
+        /// <summary>
+        /// Create the specified resource
+        /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
         public IdentifiedData Create(string resourceType, IdentifiedData body)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
+                if (handler != null)
+                {
+
+                    var retVal = handler.Create(body, false);
+
+                    var versioned = retVal as IVersionedEntity;
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Created;
+                    if(versioned != null)
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpRequestHeader.ContentLocation, String.Format("{0}/{1}/{2}/history/{3}",
+                            WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
+                            resourceType,
+                            retVal.Key,
+                            versioned.Key));
+                    else
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpRequestHeader.ContentLocation, String.Format("{0}/{1}/{2}",
+                            WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
+                            resourceType,
+                            retVal.Key));
+
+                    return retVal;
+                }
+                else
+                    throw new FileNotFoundException(resourceType);
+
+            }
+            catch (Exception e)
+            {
+                return this.ErrorHelper(e, false);
+            }
         }
 
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
@@ -141,6 +177,9 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
         }
 
+        /// <summary>
+        /// Get the schema which defines this service
+        /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AccessAdministrativeFunction)]
         public XmlSchema GetSchema(int schemaId)
         {
@@ -174,16 +213,80 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
         }
 
+        /// <summary>
+        /// Gets the recent history an object
+        /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
         public IdentifiedData History(string resourceType, string id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
+
+                if (handler != null)
+                {
+                    String since = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_since"];
+                    Guid sinceGuid = since != null ? Guid.Parse(since) : Guid.Empty;
+
+                    // Query 
+                    var retVal = handler.Get(Guid.Parse(id), Guid.Empty);
+                    var histItm = retVal;
+                    while (histItm != null)
+                    {
+                        this.ExpandProperties(histItm);
+                        histItm = (histItm as IVersionedEntity)?.PreviousVersion as IdentifiedData;
+
+                        // Should we stop fetching?
+                        if ((histItm as IVersionedEntity)?.VersionKey == sinceGuid)
+                            break;
+
+                    }
+
+                    // Lock the item
+                    histItm.Lock();
+
+                    return Bundle.CreateBundle(retVal);
+                }
+                else
+                    throw new FileNotFoundException(resourceType);
+            }
+            catch (Exception e)
+            {
+                return this.ErrorHelper(e, false);
+            }
         }
 
+        /// <summary>
+        /// Perform a search on the specified resource type
+        /// </summary>
         [PolicyPermissionAttribute(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryClinicalData)]
         public IdentifiedData Search(string resourceType)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
+                if (handler != null)
+                {
+                    String offset = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_offset"],
+                        count = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_count"];
+                    int totalResults = 0;
+                    IEnumerable<IdentifiedData> retVal = handler.Query(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters, Int32.Parse(offset ?? "0"), Int32.Parse(count ?? "100"), out totalResults);
+
+                    foreach(var itm in retVal)
+                        this.ExpandProperties(itm);
+
+                    foreach(var itm in retVal)
+                        itm.Lock();
+
+                    return BundleUtil.CreateBundle(retVal, totalResults, Int32.Parse(offset ?? "0"));
+                }
+                else
+                    throw new FileNotFoundException(resourceType);
+            }
+            catch(Exception e)
+            {
+                return this.ErrorHelper(e, false);
+            }
         }
 
         public DateTime Time()
@@ -227,11 +330,11 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 retCode = System.Net.HttpStatusCode.InternalServerError;
 
             WebOperationContext.Current.OutgoingResponse.StatusCode = retCode;
-            WebOperationContext.Current.OutgoingResponse.Format = WebMessageFormat.Xml;
+            //WebOperationContext.Current.OutgoingResponse.Format = WebMessageFormat.Xml;
 
-         
-            WebOperationContext.Current.OutgoingResponse.Headers.Add("Content-Disposition", "filename=\"error.xml\"");
-            throw new WebFaultException<ErrorResult>(result, retCode);
+            this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+
+            return result;
 
         }
 

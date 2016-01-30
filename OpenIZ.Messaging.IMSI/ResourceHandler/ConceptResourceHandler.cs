@@ -30,6 +30,9 @@ using System.ServiceModel.Web;
 using System.ServiceModel;
 using System.Security.Claims;
 using System.Collections.Specialized;
+using OpenIZ.Messaging.IMSI.Util;
+using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {
@@ -59,7 +62,24 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
         {
-            throw new NotImplementedException();
+            var conceptService = ApplicationContext.Current.GetService<IConceptService>();
+
+            Bundle bundleData = data as Bundle;
+            bundleData?.Reconstitute();
+            var processData = bundleData?.Entry ?? data;
+
+            if (processData is Bundle)
+                throw new InvalidOperationException("Bundle must have entry of type Concept");
+            else if (processData is Concept)
+            {
+                var conceptData = data as Concept;
+                if (updateIfExists)
+                    return conceptService.SaveConcept(conceptData);
+                else
+                    return conceptService.InsertConcept(conceptData);
+            }
+            else
+                throw new ArgumentException("Invalid persistence type");
         }
 
         /// <summary>
@@ -67,23 +87,57 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         public IdentifiedData Get(Guid id, Guid versionId)
         {
-            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
-            return persistenceService.Get(new Identifier<Guid>(id, versionId), null, true); // TODO: AUTH
+            var conceptService = ApplicationContext.Current.GetService<IConceptService>();
+            return conceptService.GetConcept(id, versionId);
         }
 
+        /// <summary>
+        /// Obsolete the specified concept
+        /// </summary>
         public IdentifiedData Obsolete(Guid key)
         {
-            throw new NotImplementedException();
+            var conceptService = ApplicationContext.Current.GetService<IConceptService>();
+            return conceptService.ObsoleteConcept(key);
         }
 
+        /// <summary>
+        /// Query the specified data
+        /// </summary>
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
         {
-            throw new NotImplementedException();
+            var conceptService = ApplicationContext.Current.GetService<IConceptService>();
+            return conceptService.FindConcepts(new QueryParameterLinqExpressionBuilder().BuildLinqExpression<Concept>(queryParameters));
         }
 
+        /// <summary>
+        /// Query with offsets
+        /// </summary>
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out Int32 totalCount)
+        {
+            var conceptService = ApplicationContext.Current.GetService<IConceptService>();
+            return conceptService.FindConcepts(new QueryParameterLinqExpressionBuilder().BuildLinqExpression<Concept>(queryParameters), offset, count, out totalCount);
+        }
+
+        /// <summary>
+        /// Update the specified data
+        /// </summary>
         public IdentifiedData Update(IdentifiedData data)
         {
-            throw new NotImplementedException();
+            var conceptService = ApplicationContext.Current.GetService<IConceptService>();
+
+            Bundle bundleData = data as Bundle;
+            bundleData?.Reconstitute();
+            var processData = bundleData?.Entry ?? data;
+
+            if (processData is Bundle)
+                throw new InvalidOperationException("Bundle must have entry of type Concept");
+            else if (processData is Concept)
+            {
+                var conceptData = data as Concept;
+                return conceptService.SaveConcept(conceptData);
+            }
+            else
+                throw new ArgumentException("Invalid persistence type");
         }
     }
 }

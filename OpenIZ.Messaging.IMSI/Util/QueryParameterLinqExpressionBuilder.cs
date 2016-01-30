@@ -27,6 +27,7 @@ using System.Reflection;
 using System.Xml.Serialization;
 using System.Diagnostics;
 using System.Globalization;
+using OpenIZ.Core.Model.Attributes;
 
 namespace OpenIZ.Messaging.IMSI.Util
 {
@@ -47,7 +48,7 @@ namespace OpenIZ.Messaging.IMSI.Util
             var parameterExpression = Expression.Parameter(typeof(TModelType), "o");
             Expression retVal = null;
             // Iterate 
-            foreach (var nvc in httpQueryParameters.AllKeys.Distinct())
+            foreach (var nvc in httpQueryParameters.AllKeys.Where(p=>!p.StartsWith("_")).Distinct())
             {
                 // Create accessor expression
                 Expression accessExpression = parameterExpression;
@@ -58,9 +59,16 @@ namespace OpenIZ.Messaging.IMSI.Util
                     if (memberInfo == null)
                         throw new ArgumentOutOfRangeException(nvc);
 
+
                     // Handle XML props
                     if (memberInfo.Name.EndsWith("Xml"))
                         memberInfo = accessExpression.Type.GetProperty(memberInfo.Name.Replace("Xml", ""));
+                    else if (pMember != memberPath.Last())
+                    {
+                        var backingFor = accessExpression.Type.GetProperties().SingleOrDefault(p => p.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == memberInfo.Name);
+                        if (backingFor != null)
+                            memberInfo = backingFor;
+                    }
                     accessExpression = Expression.MakeMemberAccess(accessExpression, memberInfo);
 
                 }
@@ -81,6 +89,13 @@ namespace OpenIZ.Messaging.IMSI.Util
                         case '>':
                             et = ExpressionType.GreaterThan;
                             pValue = value.Substring(1);
+                            break;
+                        case '~':
+                            et = ExpressionType.Equal;
+                            if (accessExpression.Type != typeof(String))
+                                throw new InvalidOperationException("~ can only be applied to string properties");
+                            accessExpression = Expression.Call(accessExpression, typeof(String).GetMethod("Contains"), Expression.Constant(pValue.Substring(1).Replace("*","/")));
+                            pValue = "true";
                             break;
                         case '=':
                             switch(value[1])
