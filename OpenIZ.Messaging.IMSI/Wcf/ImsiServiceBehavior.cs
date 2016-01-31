@@ -100,10 +100,44 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
         }
 
+        /// <summary>
+        /// Create or update the specified object
+        /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
         public IdentifiedData CreateUpdate(string resourceType, string id, IdentifiedData body)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
+                if (handler != null)
+                {
+
+                    var retVal = handler.Create(body, true);
+
+                    var versioned = retVal as IVersionedEntity;
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Created;
+                    if (versioned != null)
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpRequestHeader.ContentLocation, String.Format("{0}/{1}/{2}/history/{3}",
+                            WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
+                            resourceType,
+                            retVal.Key,
+                            versioned.Key));
+                    else
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpRequestHeader.ContentLocation, String.Format("{0}/{1}/{2}",
+                            WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
+                            resourceType,
+                            retVal.Key));
+
+                    return retVal;
+                }
+                else
+                    throw new FileNotFoundException(resourceType);
+
+            }
+            catch (Exception e)
+            {
+                return this.ErrorHelper(e, false);
+            }
         }
 
         /// <summary>
@@ -289,15 +323,52 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
         }
 
+        /// <summary>
+        /// Get the server's current time
+        /// </summary>
         public DateTime Time()
         {
-            throw new NotImplementedException();
+            return DateTime.Now;
         }
 
+        /// <summary>
+        /// Update the specified resource
+        /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
         public IdentifiedData Update(string resourceType, string id, IdentifiedData body)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
+                if (handler != null)
+                {
+
+                    var retVal = handler.Update(body);
+
+                    var versioned = retVal as IVersionedEntity;
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+                    if (versioned != null)
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpRequestHeader.ContentLocation, String.Format("{0}/{1}/{2}/history/{3}",
+                            WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
+                            resourceType,
+                            retVal.Key,
+                            versioned.Key));
+                    else
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpRequestHeader.ContentLocation, String.Format("{0}/{1}/{2}",
+                            WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
+                            resourceType,
+                            retVal.Key));
+
+                    return retVal;
+                }
+                else
+                    throw new FileNotFoundException(resourceType);
+
+            }
+            catch (Exception e)
+            {
+                return this.ErrorHelper(e, false);
+            }
         }
 
         #region Helper Methods
@@ -383,11 +454,45 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
         }
 
-
+        /// <summary>
+        /// Obsolete the specified data
+        /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.DeleteClinicalData)]
         public IdentifiedData Delete(string resourceType, string id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
+                if (handler != null)
+                {
+
+                    var retVal = handler.Obsolete(Guid.Parse(id));
+
+                    var versioned = retVal as IVersionedEntity;
+
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Created;
+                    if (versioned != null)
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpRequestHeader.ContentLocation, String.Format("{0}/{1}/{2}/history/{3}",
+                            WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
+                            resourceType,
+                            retVal.Key,
+                            versioned.Key));
+                    else
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpRequestHeader.ContentLocation, String.Format("{0}/{1}/{2}",
+                            WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
+                            resourceType,
+                            retVal.Key));
+
+                    return retVal;
+                }
+                else
+                    throw new FileNotFoundException(resourceType);
+
+            }
+            catch (Exception e)
+            {
+                return this.ErrorHelper(e, false);
+            }
         }
         #endregion
     }

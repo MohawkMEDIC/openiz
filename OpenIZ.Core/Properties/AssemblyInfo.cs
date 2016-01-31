@@ -16,6 +16,7 @@
  * User: fyfej
  * Date: 2016-1-19
  */
+using MARC.HI.EHRS.SVC.Core.Plugins;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -26,8 +27,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("OpenIZ.Core")]
 [assembly: AssemblyDescription("OpenImmuinize Core")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("OpenImmunize Community")]
-[assembly: AssemblyProduct("OpenImmunize")]
+[assembly: AssemblyCompany("OpenIZ Community")]
+[assembly: AssemblyProduct("OpenIZ")]
 [assembly: AssemblyCopyright("Copyright ©  2015, Mohawk College of Applied Arts and Technology")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -52,3 +53,4 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+
