@@ -82,7 +82,6 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the identifier type
         /// </summary>
         [DelayLoad(nameof(TypeKey))]
-        [XmlIgnore, JsonIgnore]
         [XmlElement("type"), JsonProperty("type")]
         public IdentifierType Type
         {
@@ -102,7 +101,6 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the assigning authority 
         /// </summary>
         [DelayLoad(nameof(AuthorityKey))]
-        [XmlIgnore, JsonIgnore]
         [XmlElement("authority"), JsonProperty("authority")]
         public AssigningAuthority Authority
         {

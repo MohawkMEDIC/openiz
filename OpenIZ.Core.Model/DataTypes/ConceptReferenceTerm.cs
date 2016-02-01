@@ -83,7 +83,6 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the relationship type identifier
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         [XmlElement("relationshipType"), JsonProperty("relationshipType")]
         public Guid  RelationshipTypeKey {
             get { return this.m_relationshipTypeId; }
@@ -97,8 +96,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the relationship type
         /// </summary>
-        [DelayLoad(nameof(RelationshipTypeKey))]
         [XmlIgnore, JsonIgnore]
+        [DelayLoad(nameof(RelationshipTypeKey))]
         public ConceptRelationshipType RelationshipType {
             get
             {

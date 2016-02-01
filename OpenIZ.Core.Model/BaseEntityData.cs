@@ -61,6 +61,7 @@ namespace OpenIZ.Core.Model
         /// Gets or sets the creation time in XML format
         /// </summary>
         [XmlElement("creationTime"), JsonProperty("creationTime")]
+        [JsonRequired]
         public String CreationTimeXml
         {
             get { return this.CreationTime.ToString("o", CultureInfo.InvariantCulture); }
@@ -80,7 +81,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
-        [XmlElement("obsoletionTime"), JsonProperty("obsoletionTime")]
+        [XmlElement("obsoletionTime", IsNullable = false), JsonProperty("obsoletionTime")]
         public String ObsoletionTimeXml
         {
             get { return this.ObsoletionTime?.ToString("o", CultureInfo.InvariantCulture); }
@@ -124,6 +125,7 @@ namespace OpenIZ.Core.Model
         
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("createdBy"), JsonProperty("createdBy")]
+        [JsonRequired]
         public virtual Guid CreatedByKey
         {
             get { return this.m_createdById; }
@@ -140,7 +142,7 @@ namespace OpenIZ.Core.Model
         /// </summary>
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("obsoletedBy"), JsonProperty("obsoletedBy")]
+        [XmlElement("obsoletedBy", IsNullable = false), JsonProperty("obsoletedBy")]
         public virtual Guid? ObsoletedByKey
         {
             get { return this.m_obsoletedById; }

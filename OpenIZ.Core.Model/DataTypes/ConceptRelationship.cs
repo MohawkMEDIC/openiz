@@ -86,8 +86,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Relationship type
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
-        [XmlIgnore, JsonIgnore]
+        [XmlElement("relationshipType"), JsonProperty("relationshipType")]
         public Guid  RelationshipTypeKey {
             get { return this.m_relationshipTypeId; }
             set
@@ -102,7 +101,6 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [DelayLoad(nameof(RelationshipTypeKey))]
         [XmlIgnore, JsonIgnore]
-        [XmlElement("relationshipType"), JsonProperty("relationshipType")]
         public ConceptRelationshipType RelationshipType
         {
             get
