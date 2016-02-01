@@ -53,7 +53,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (data == null)
                 return null;
             var concept = data as Data.ConceptVersion;
-            return this.GetCacheItem(concept.ConceptId, concept.ConceptVersionId, concept);
+
+            bool cacheHit = this.m_cache.ContainsKey(concept.ConceptVersionId);
+
+            var retVal = this.GetCacheItem(concept.ConceptId, concept.ConceptVersionId, concept, false);
+
+            if (!cacheHit)
+                retVal.SetDelayLoadProperties(
+                    concept.Concept.ConceptNames.Where(o => concept.VersionSequenceId >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || concept.VersionSequenceId < o.ObsoleteVersionSequenceId)).Select(o => new ConceptNamePersistenceService().ConvertToModel(o)).ToList(),
+                    concept.Concept.ConceptReferenceTerms.Where(o => concept.VersionSequenceId >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || concept.VersionSequenceId < o.ObsoleteVersionSequenceId)).Select(o => new ConceptReferenceTermPersistenceService().ConvertToModel(o)).ToList()
+                );
+
+            return retVal as Core.Model.DataTypes.Concept;
         }        
 
         /// <summary>

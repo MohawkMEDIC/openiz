@@ -43,6 +43,7 @@ using OpenIZ.Core.Exceptions;
 using OpenIZ.Persistence.Data.MSSQL.Exceptions;
 using OpenIZ.Core.Model.Interfaces;
 using MARC.HI.EHRS.SVC.Core;
+using System.Threading;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -53,7 +54,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     /// <typeparam name="TModel">The OpenIZ Model type</typeparam>
     public abstract class BaseDataPersistenceService<TModel> : IDataPersistenceService<TModel> where TModel : IdentifiedData, new()
     {
-
+        
         /// <summary>
         /// Cache of loaded objects if desired
         /// </summary>
@@ -519,7 +520,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <summary>
         /// Gets a cache item
         /// </summary>
-        protected TModel GetCacheItem<TDomainClass>(Guid key, Guid? versionKey, TDomainClass domainItem)
+        protected TModel GetCacheItem<TDomainClass>(Guid key, Guid? versionKey, TDomainClass domainItem, bool clone = true)
         {
             CacheItem existingItem = default(CacheItem);
             if (!this.m_cache.TryGetValue(versionKey ?? key, out existingItem)) // cache miss
@@ -541,7 +542,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 existingItem.ModelInstance = s_mapper.MapDomainInstance<TDomainClass, TModel>(domainItem);
                 existingItem.DomainItem = domainItem;
             }
-            return existingItem.ModelInstance?.Clone() as TModel;
+            return clone ? existingItem.ModelInstance?.Clone() as TModel : existingItem.ModelInstance as TModel;
         }
 
         /// <summary>
