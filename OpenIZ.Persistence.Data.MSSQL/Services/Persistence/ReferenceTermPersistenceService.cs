@@ -48,7 +48,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.ReferenceTerm ConvertToModel(object data)
         {
-            return s_mapper.MapDomainInstance<Data.ReferenceTerm, Core.Model.DataTypes.ReferenceTerm>(data as Data.ReferenceTerm);
+            return this.ConvertToModel(data as Data.ReferenceTerm);
+        }
+
+        /// <summary>
+        /// Convert to model
+        /// </summary>
+        internal Core.Model.DataTypes.ReferenceTerm ConvertToModel(Data.ReferenceTerm data)
+        {
+            if (data == null)
+                return null;
+            else
+                return this.GetCacheItem(data.ReferenceTermId, null, data);
         }
 
         /// <summary>

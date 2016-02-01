@@ -72,6 +72,7 @@
     <Compile Include="Security\PermissionPolicyIdentifiers.cs" />
     <Compile Include="Security\SHA256PasswordHashingService.cs" />
     <Compile Include="Services\IConceptService.cs" />
+    <Compile Include="Services\Impl\LocalConceptService.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -147,6 +147,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 try
                 {
 
+                    if (s_configuration.TraceSql)
+                        dataContext.Log = new LinqTraceWriter();
+
                     dataContext.Connection.Open();
                     dataContext.Transaction = dataContext.Connection.BeginTransaction();
 
@@ -182,6 +185,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                                 dataContext.Transaction.Commit();
                                 break;
                         }
+
+                    this.m_traceSource.TraceInformation("{0}: END INSERT {1}", this.GetType().Name, storageData.Key);
 
                 }
             }
@@ -222,6 +227,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
                     this.m_traceSource.TraceInformation("{0}: UPDATE {1}", this.GetType().Name, storageData);
 
+                    if (s_configuration.TraceSql)
+                        dataContext.Log = new LinqTraceWriter();
+
                     dataContext.Connection.Open();
                     dataContext.Transaction = dataContext.Connection.BeginTransaction();
 
@@ -259,6 +267,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                                 dataContext.Transaction.Commit();
                                 break;
                         }
+
+                    this.m_traceSource.TraceInformation("{0}: END UPDATE {1}", this.GetType().Name, storageData.Key);
+
                 }
             }
         }
@@ -286,6 +297,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 {
 
                     this.m_traceSource.TraceInformation("{0}: OBSOLETE {1}", this.GetType().Name, storageData);
+
+                    if (s_configuration.TraceSql)
+                        dataContext.Log = new LinqTraceWriter();
 
                     dataContext.Connection.Open();
                     dataContext.Transaction = dataContext.Connection.BeginTransaction();
@@ -324,6 +338,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                                 dataContext.Transaction.Commit();
                                 break;
                         }
+
+                    this.m_traceSource.TraceInformation("{0}: END OBSOLETE {1}", this.GetType().Name, storageData.Key);
+
                 }
             }
 
@@ -349,6 +366,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
                     this.m_traceSource.TraceInformation("{0}: GET {1}", this.GetType().Name, containerId);
 
+                    if (s_configuration.TraceSql)
+                        dataContext.Log = new LinqTraceWriter();
+
                     var preEvtModel = new TModel() { Key = (Guid)(Object)containerId.Id };
                     if (preEvtModel is IVersionedEntity)
                         (preEvtModel as IVersionedEntity).VersionKey = (Guid)(Object)containerId.VersionId;
@@ -358,7 +378,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     if (preEvt.Cancel)
                         return preEvt.Data;
 
-                    TModel retVal = this.Get(new Identifier<Guid>(preEvtModel.Key, (preEvtModel as IVersionedEntity)?.VersionKey ?? Guid.Empty), principal, loadFast, dataContext);
+                    // In cache?
+                    TModel retVal = this.GetCacheItem<Object>(preEvtModel.Key, (preEvtModel as IVersionedEntity)?.VersionKey, null);
+                    if(retVal == null)
+                        retVal = this.Get(new Identifier<Guid>(preEvtModel.Key, (preEvtModel as IVersionedEntity)?.VersionKey ?? Guid.Empty), principal, loadFast, dataContext);
 
                     PostRetrievalEventArgs<TModel> postEvt = new PostRetrievalEventArgs<TModel>(retVal, principal);
                     this.Retrieved?.Invoke(this, postEvt);
@@ -370,6 +393,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     this.m_traceSource.TraceEvent(TraceEventType.Critical, e.HResult, e.ToString());
                     throw;
                 }
+                finally
+                {
+                    this.m_traceSource.TraceInformation("{0}: END GET {1}", this.GetType().Name, containerId);
+                }
+
             }
         }
 
@@ -397,6 +425,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 {
                     this.m_traceSource.TraceInformation("{0}: COUNT {1}", this.GetType().Name, query);
 
+                    if (s_configuration.TraceSql)
+                        dataContext.Log = new LinqTraceWriter();
+
                     PreQueryEventArgs<TModel> preEvt = new PreQueryEventArgs<TModel>(query, principal);
                     this.Querying?.Invoke(this, preEvt);
                     if (preEvt.Cancel)
@@ -411,6 +442,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Critical, e.HResult, e.ToString());
                 throw;
+            }
+            finally
+            {
+                this.m_traceSource.TraceInformation("{0}: END COUNT {1}", this.GetType().Name, query);
             }
 
         }
@@ -431,11 +466,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             {
                 using (var dataContext = new ModelDataContext(s_configuration.ReadonlyConnectionString))
                 {
-                    //#if DEBUG
-                    //                    dataContext.Log = Console.Out;
-                    //#endif 
+                    
                     totalCount = 0;
                     this.m_traceSource.TraceInformation("{0}: QUERY {1}", this.GetType().Name, query);
+
+                    if (s_configuration.TraceSql)
+                        dataContext.Log = new LinqTraceWriter();
 
                     PreQueryEventArgs<TModel> preEvt = new PreQueryEventArgs<TModel>(query, principal);
                     this.Querying?.Invoke(this, preEvt);
@@ -449,9 +485,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     PostQueryEventArgs<TModel> postEvt = new PostQueryEventArgs<TModel>(preEvt.Query, retVal, principal);
                     this.Queried?.Invoke(this, postEvt);
 
-                    totalCount = retVal.Count();
+                    // If we're going to limit, get the total count now
+                    if(count.HasValue)
+                        totalCount = retVal.Count();
 
-                    retVal = postEvt.Results.Skip(offset);
+                    // Offset and count?
+                    if(offset > 0)
+                        retVal = postEvt.Results.Skip(offset);
                     if (count.HasValue)
                         retVal = retVal.Take(count.Value);
 
@@ -464,6 +504,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 this.m_traceSource.TraceEvent(TraceEventType.Critical, e.HResult, e.ToString());
                 throw;
             }
+            finally
+            {
+                this.m_traceSource.TraceInformation("{0}: END QUERY {1}", this.GetType().Name, query);
+            }
+
         }
 
         #endregion
@@ -544,7 +589,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         /// <param name="data">The data instance to be converted</param>
         /// <returns>The converted data</returns>
-        internal abstract TModel ConvertToModel(Object data);
+        internal abstract TModel ConvertToModel(object data);
 
         /// <summary>
         /// Convert a model class into a data representation

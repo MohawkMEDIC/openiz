@@ -45,7 +45,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.PhoneticAlgorithm ConvertToModel(object data)
         {
-            return s_mapper.MapDomainInstance<Data.PhoneticAlgorithm, Core.Model.DataTypes.PhoneticAlgorithm>(data as Data.PhoneticAlgorithm);
+            return this.ConvertToModel(data as Data.PhoneticAlgorithm);
+        }
+
+        /// <summary>
+        /// Convert to model
+        /// </summary>
+        internal Core.Model.DataTypes.PhoneticAlgorithm ConvertToModel(Data.PhoneticAlgorithm data)
+        {
+            if (data == null)
+                return null;
+            else
+                return this.GetCacheItem(data.PhoneticAlgorithmId, null, data);
         }
 
         /// <summary>

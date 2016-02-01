@@ -37,6 +37,7 @@ using OpenIZ.Core.Model;
 using System.Xml.Schema;
 using OpenIZ.Messaging.IMSI.ResourceHandler;
 using OpenIZ.Core.Model.Serialization;
+using OpenIZ.Core.Security;
 
 namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
 {
@@ -193,6 +194,9 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
             WebOperationContext.Current.OutgoingResponse.ContentType = contentType;
             WebOperationContext.Current.OutgoingResponse.Headers.Add("X-PoweredBy","OpenIZIMSI");
             WebOperationContext.Current.OutgoingResponse.Headers.Add("X-GeneratedOn", DateTime.Now.ToString("o"));
+
+            // TODO: Determine best way to clear current authentication context
+            AuthenticationContext.Current = null;
             return reply;
 
         }

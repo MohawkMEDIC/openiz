@@ -43,6 +43,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Configuration
         /// <summary>
         /// Maximum cache size of an object
         /// </summary>
-        public int MaxCacheSize { get; internal set; }
+        public int MaxCacheSize { get; set; }
+
+        /// <summary>
+        /// Trace SQL enabled
+        /// </summary>
+        public bool TraceSql { get; set; }
     }
 }
