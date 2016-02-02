@@ -82,7 +82,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Persist data to the db
             dataContext.SubmitChanges();
-
+           
             return this.ConvertToModel(dataUser);
         }
 
@@ -110,7 +110,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Persist data to the db
             dataContext.SubmitChanges();
-
+            
             return this.ConvertToModel(dataUser);
         }
 
@@ -157,7 +157,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
               
             // Persist data to the db
             dataContext.SubmitChanges();
-
+            
             return this.ConvertToModel(dataUser);
         }
 
@@ -182,10 +182,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal Core.Model.Security.SecurityUser ConvertToModel(Data.SecurityUser data)
         {
-            if (data == null)
-                return null;
-            else
-                return this.GetCacheItem(data.UserId, null, data);
+            return this.ConvertItem(data);
         }
     }
 }

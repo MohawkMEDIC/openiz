@@ -56,10 +56,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal Core.Model.DataTypes.ConceptSet ConvertToModel(Data.ConceptSet data)
         {
-            if (data == null)
-                return null;
-            else
-                return this.GetCacheItem(data.ConceptSetId, null, data);
+            return this.ConvertItem(data);
         }
 
         /// <summary>
@@ -68,18 +65,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         internal override Core.Model.DataTypes.ConceptSet Get(Identifier<Guid> containerId, IPrincipal principal, bool loadFast, ModelDataContext dataContext)
         {
 
-            Core.Model.DataTypes.ConceptSet retVal = this.GetCacheItem<Data.ConceptSet>(containerId.Id, null, null);
-            if (retVal == null)
-            {
-                Data.ConceptSet tRetVal = dataContext.ConceptSets.SingleOrDefault(o => o.ConceptSetId == containerId.Id);
+            Data.ConceptSet tRetVal = dataContext.ConceptSets.SingleOrDefault(o => o.ConceptSetId == containerId.Id);
 
-                // Return value
-                if (tRetVal == null)
-                    return null;
-                else
-                    retVal = this.ConvertToModel(tRetVal);
-            }
-            return retVal;
+            // Return value
+            if (tRetVal == null)
+                return null;
+            else
+                return this.ConvertToModel(tRetVal);
 
         }
 
@@ -119,7 +111,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
-            this.RemoveFromCache(storageData);
 
             // Retrieve
             var domainConceptSet = dataContext.ConceptSets.SingleOrDefault(o => o.ConceptSetId == storageData.Key);
@@ -133,9 +124,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Submit changes
             dataContext.SubmitChanges();
-
-            // Add new version to cache
-            this.AddToCache(storageData, domainConceptSet);
 
             return storageData;
         }
@@ -161,7 +149,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
-            this.RemoveFromCache(storageData);
 
             // Get the existing version
             var existingSet = dataContext.ConceptSets.SingleOrDefault(o => o.ConceptSetId == storageData.Key);
@@ -187,7 +174,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             dataContext.SubmitChanges();
 
-            // Add new version to cache
             var retVal = this.ConvertToModel(existingSet);
 
             return retVal;

@@ -56,10 +56,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal Core.Model.DataTypes.ReferenceTerm ConvertToModel(Data.ReferenceTerm data)
         {
-            if (data == null)
-                return null;
-            else
-                return this.GetCacheItem(data.ReferenceTermId, null, data);
+            return this.ConvertItem(data);
         }
 
         /// <summary>
@@ -166,6 +163,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             }
             
             dataContext.SubmitChanges();
+
             return storageData;
         }
     }

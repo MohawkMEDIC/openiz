@@ -55,10 +55,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal Core.Model.DataTypes.ConceptClass ConvertToModel(Data.ConceptClass data)
         {
-            if (data == null)
-                return null;
-            else
-                return this.GetCacheItem(data.ConceptClassId, null, data);
+            return this.ConvertItem(data);
         }
 
 
@@ -123,6 +120,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new KeyNotFoundException();
             domainConceptClass.CopyObjectData(this.ConvertFromModel(storageData) as Data.ConceptClass);
             dataContext.SubmitChanges();
+
             return storageData;
         }
     }

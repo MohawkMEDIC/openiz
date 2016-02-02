@@ -54,10 +54,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal Core.Model.DataTypes.ConceptReferenceTerm ConvertToModel(Data.ConceptReferenceTerm data)
         {
-            if (data == null)
-                return null;
-            else
-                return this.GetCacheItem(data.ConceptReferenceTermId, null, data);
+            return this.ConvertItem(data);
         }
 
         /// <summary>
@@ -113,6 +110,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             storageData.Key = domainConceptReferenceTerm.ReferenceTermId;
             storageData.EffectiveVersionSequenceId = domainConceptReferenceTerm.EffectiveVersionSequenceId;
             storageData.SourceEntityKey = domainConceptReferenceTerm.ConceptId;
+
             return storageData;
         }
 
@@ -152,6 +150,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Copy properties
             storageData.ObsoleteVersionSequenceId = domainReferenceTerm.ObsoleteVersionSequenceId;
+
             return storageData;
         }
 

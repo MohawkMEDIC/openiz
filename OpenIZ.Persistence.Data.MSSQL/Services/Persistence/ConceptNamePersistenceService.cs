@@ -54,10 +54,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal Core.Model.DataTypes.ConceptName ConvertToModel(Data.ConceptName data)
         {
-            if (data == null)
-                return null;
-            else
-                return this.GetCacheItem(data.ConceptNameId, null, data);
+            return this.ConvertItem(data);
+
         }
 
         /// <summary>
@@ -217,7 +215,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 // Insert the new concept domain name
                 dataContext.ConceptNames.InsertOnSubmit(newDomainConceptName);
                 dataContext.SubmitChanges(); 
-                
+
                 return this.ConvertToModel(newDomainConceptName);
             }
             else
