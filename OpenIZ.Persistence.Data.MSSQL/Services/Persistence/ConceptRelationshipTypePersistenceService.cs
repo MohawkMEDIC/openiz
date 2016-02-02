@@ -48,7 +48,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.ConceptRelationshipType ConvertToModel(object data)
         {
-            return s_mapper.MapDomainInstance<Data.ConceptRelationshipType, Core.Model.DataTypes.ConceptRelationshipType>(data as Data.ConceptRelationshipType);
+            return this.ConvertToModel(data as Data.ConceptRelationshipType);
+        }
+
+        /// <summary>
+        /// Convert to model
+        /// </summary>
+        internal Core.Model.DataTypes.ConceptRelationshipType ConvertToModel(Data.ConceptRelationshipType data)
+        {
+            if (data == null)
+                return null;
+            else
+                return this.GetCacheItem(data.ConceptRelationshipTypeId, null, data);
         }
 
         /// <summary>

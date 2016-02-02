@@ -48,7 +48,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.CodeSystem ConvertToModel(object data)
         {
-            return s_mapper.MapDomainInstance<Data.CodeSystem, Core.Model.DataTypes.CodeSystem>(data as Data.CodeSystem);
+            return this.ConvertToModel(data as Data.CodeSystem);
+        }
+
+        /// <summary>
+        /// Convert to model
+        /// </summary>
+        internal Core.Model.DataTypes.CodeSystem ConvertToModel(Data.CodeSystem data)
+        {
+            if (data == null)
+                return null;
+            else
+                return this.GetCacheItem(data.CodeSystemId, null, data);
         }
 
         /// <summary>

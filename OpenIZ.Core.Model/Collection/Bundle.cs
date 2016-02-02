@@ -179,7 +179,6 @@ namespace OpenIZ.Core.Model.Collection
         /// </summary>
         public static void ProcessModel(IdentifiedData model, Bundle currentBundle, bool followList = true)
         {
-
             foreach(var pi in model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<DelayLoadAttribute>() != null))
             {
                 try

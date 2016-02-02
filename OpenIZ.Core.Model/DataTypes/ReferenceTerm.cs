@@ -57,7 +57,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the code system 
         /// </summary>
         [DelayLoad(nameof(CodeSystemKey))]
-        [XmlElement("codeSystem"), JsonProperty("codeSystem")]
+        [XmlIgnore, JsonIgnore]
         public CodeSystem CodeSystem {
             get
             {
@@ -78,8 +78,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the code system identifier
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlIgnore, JsonIgnore]
-        
+        [XmlElement("codeSystem"), JsonProperty("codeSystem")]
         public Guid  CodeSystemKey {
             get { return this.m_codeSystemId; }
             set

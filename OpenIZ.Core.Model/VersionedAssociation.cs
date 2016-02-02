@@ -127,71 +127,7 @@ namespace OpenIZ.Core.Model
                     this.m_obsoleteVersionSequenceId = value.VersionSequence;
             }
         }
-
-        /// <summary>
-        /// Gets or sets the user that created this relationship
-        /// </summary>
-        [DelayLoad(nameof(CreatedByKey))]
-        [XmlIgnore, JsonIgnore]
-        public override SecurityUser CreatedBy
-        {
-            get
-            {
-                return this.EffectiveVersion?.CreatedBy;
-            }
-        }
-
-        /// <summary>
-        /// Gets the identifier of the user that created this relationship
-        /// </summary>
-        [DelayLoad(null)]
-        [XmlIgnore, JsonIgnore]
-        public override Guid CreatedByKey
-        {
-            get
-            {
-                if (this.EffectiveVersion == null)
-                    return Guid.Empty;
-                else
-                    return this.EffectiveVersion.CreatedByKey;
-            }
-            set
-            {
-                throw new NotSupportedException("CreatedById is based on EffectiveVersion property");
-            }
-        }
-
-        /// <summary>
-        /// Obsoleted by
-        /// </summary>
-        [DelayLoad(nameof(ObsoletedByKey))]
-        [XmlIgnore, JsonIgnore]
-        public override SecurityUser ObsoletedBy
-        {
-            get
-            {
-                return this.ObsoleteVersion?.CreatedBy;
-            }
-        }
-
-        /// <summary>
-        /// Gets the identifier of the user that obsoleted the relationship
-        /// </summary>
-        [DelayLoad(null)]
-        [XmlIgnore, JsonIgnore]
-        public override Guid? ObsoletedByKey
-        {
-            get
-            {
-                    return this.ObsoleteVersion?.CreatedByKey;
-                
-            }
-            set
-            {
-                throw new NotSupportedException("ObsoletedById is based on EffectiveVersion property");
-            }
-        }
-
+        
         /// <summary>
         /// Refresh
         /// </summary>

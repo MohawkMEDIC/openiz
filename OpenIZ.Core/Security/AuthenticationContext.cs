@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OpenIZ.Core.Security
@@ -10,13 +11,18 @@ namespace OpenIZ.Core.Security
     /// <summary>
     /// Authentication context
     /// </summary>
-    public class AuthenticationContext
+    public sealed class AuthenticationContext
     {
         /// <summary>
         /// Current context in the request pipeline
         /// </summary>
         [ThreadStatic]
         private static AuthenticationContext s_current;
+
+        /// <summary>
+        /// Locking
+        /// </summary>
+        private static Object s_lockObject = new object();
 
         /// <summary>
         /// The principal
@@ -36,7 +42,13 @@ namespace OpenIZ.Core.Security
         /// </summary>
         public static AuthenticationContext Current
         {
-            get { return s_current; }
+            get
+            {
+                if(s_current == null)
+                    lock(s_lockObject)
+                        s_current = new AuthenticationContext(new GenericPrincipal(new GenericIdentity("ANONYMOUS"), new string[] { }));
+                return s_current;
+            }
             set { s_current = value; }
         }
 

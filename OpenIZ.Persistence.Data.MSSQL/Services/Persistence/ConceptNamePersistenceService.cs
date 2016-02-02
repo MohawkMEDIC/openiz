@@ -46,7 +46,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.ConceptName ConvertToModel(object data)
         {
-            return s_mapper.MapDomainInstance<Data.ConceptName, Core.Model.DataTypes.ConceptName>(data as Data.ConceptName);
+            return this.ConvertToModel(data as Data.ConceptName);
+        }
+
+        /// <summary>
+        /// Convert to model
+        /// </summary>
+        internal Core.Model.DataTypes.ConceptName ConvertToModel(Data.ConceptName data)
+        {
+            if (data == null)
+                return null;
+            else
+                return this.GetCacheItem(data.ConceptNameId, null, data);
         }
 
         /// <summary>

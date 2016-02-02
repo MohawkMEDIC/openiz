@@ -54,7 +54,6 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the extension type key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         [XmlIgnore, JsonIgnore]
         public Guid ExtensionTypeKey
         {

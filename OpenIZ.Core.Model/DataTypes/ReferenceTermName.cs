@@ -41,7 +41,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Back-reference to reference term
         /// </summary>
-        [XmlElement("referenceTerm"), JsonProperty("referenceTerm")]
+        [XmlIgnore, JsonIgnore]
         public Guid  ReferenceTermKey { get; set; }
 
         /// <summary>

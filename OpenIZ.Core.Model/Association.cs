@@ -33,7 +33,7 @@ namespace OpenIZ.Core.Model
     /// </summary>
     /// <typeparam name="TSourceType"></typeparam>
     [XmlType(Namespace = "http://openiz.org/model")]
-    public abstract class Association<TSourceType> : BaseEntityData, ISimpleAssociation where TSourceType : IdentifiedData
+    public abstract class Association<TSourceType> : IdentifiedData, ISimpleAssociation where TSourceType : IdentifiedData
     {
 
         // Target entity key

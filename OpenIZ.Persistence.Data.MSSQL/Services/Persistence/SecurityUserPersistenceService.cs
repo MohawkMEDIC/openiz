@@ -174,7 +174,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.Security.SecurityUser ConvertToModel(object data)
         {
-            return s_mapper.MapDomainInstance<Data.SecurityUser, Core.Model.Security.SecurityUser>(data as Data.SecurityUser);
+            return this.ConvertToModel(data as Data.SecurityUser);
+        }
+
+        /// <summary>
+        /// Convert to model
+        /// </summary>
+        internal Core.Model.Security.SecurityUser ConvertToModel(Data.SecurityUser data)
+        {
+            if (data == null)
+                return null;
+            else
+                return this.GetCacheItem(data.UserId, null, data);
         }
     }
 }

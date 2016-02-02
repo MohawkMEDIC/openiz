@@ -88,12 +88,15 @@
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
     <property modelName="ClassKey" domainName="ConceptClassId"/>
-    <property modelName="Class" domainName="ConceptClass"/>
+    <property modelName="Class" domainName="ConceptClass" traverse="true"/>
     <property modelName="PreviousVersionKey" domainName="ReplacesVersionId"/>
-    <property modelName="Status" domainName="StatusConcept"/>
+    <property modelName="Status" domainName="StatusConcept"  traverse="true"/>
     <property modelName="StatusConceptKey" domainName="StatusConceptId"/>
     <property modelName="IsSystemConcept" domainName="Concept">
       <via domainName="IsSystemConcept" traverse="true"/>
+    </property>
+    <property modelName="ConceptNames" domainName="Concept">
+      <via domainName="ConceptNames" traverse="true"/>
     </property>
     <property modelName="ConceptSets" domainName="Concept">
       <via domainName="ConceptSetMembers" traverse="true">

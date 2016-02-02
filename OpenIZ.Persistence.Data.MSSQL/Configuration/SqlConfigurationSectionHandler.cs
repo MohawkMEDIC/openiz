@@ -51,12 +51,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Configuration
                     retVal.ReadonlyConnectionString = ConfigurationManager.ConnectionStrings[connectionNode.Attributes["readonlyConnection"].Value]?.ConnectionString;
                 else
                     retVal.ReadonlyConnectionString = retVal.ReadWriteConnectionString;
+                if (connectionNode.Attributes["maxCacheSize"] != null)
+                    retVal.MaxCacheSize = Int32.Parse(connectionNode.Attributes["maxCacheSize"].Value);
+                else
+                    retVal.MaxCacheSize = ushort.MaxValue;
+                if (connectionNode.Attributes["traceSql"] != null)
+                    retVal.TraceSql = Boolean.Parse(connectionNode.Attributes["traceSql"].Value);
             }
 
             if (retVal.ReadWriteConnectionString == null || retVal.ReadonlyConnectionString == null)
                 throw new ConfigurationErrorsException("Connection string not found");
 
-            retVal.MaxCacheSize = ushort.MaxValue;
+
 
             return retVal;
                 

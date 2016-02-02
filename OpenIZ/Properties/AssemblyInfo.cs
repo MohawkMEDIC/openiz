@@ -26,7 +26,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("OpenIZ")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("OpenIZ Community")]
 [assembly: AssemblyProduct("OpenIZ")]
 [assembly: AssemblyCopyright("Copyright © 2016 Mohawk College of Applied Arts and Technology.")]
 [assembly: AssemblyTrademark("")]

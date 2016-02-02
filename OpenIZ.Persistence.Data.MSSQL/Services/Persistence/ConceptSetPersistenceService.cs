@@ -48,8 +48,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.ConceptSet ConvertToModel(object data)
         {
-            var concept = data as Data.ConceptSet;
-            return this.GetCacheItem(concept.ConceptSetId, null, concept);
+            return this.ConvertToModel(data as Data.ConceptSet);
+        }
+
+        /// <summary>
+        /// Convert to model
+        /// </summary>
+        internal Core.Model.DataTypes.ConceptSet ConvertToModel(Data.ConceptSet data)
+        {
+            if (data == null)
+                return null;
+            else
+                return this.GetCacheItem(data.ConceptSetId, null, data);
         }
 
         /// <summary>

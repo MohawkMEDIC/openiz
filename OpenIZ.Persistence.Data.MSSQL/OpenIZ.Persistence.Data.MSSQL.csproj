@@ -73,6 +73,7 @@
     <Compile Include="Configuration\SqlConfigurationSectionHandler.cs" />
     <Compile Include="Configuration\SqlConfiguration.cs" />
     <Compile Include="Data\CacheItem.cs" />
+    <Compile Include="Data\LinqTraceWriter.cs" />
     <Compile Include="Data\Model.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
