@@ -42,7 +42,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override object ConvertFromModel(Core.Model.DataTypes.Concept model)
         {
-            return s_mapper.MapModelInstance<Core.Model.DataTypes.Concept, Data.ConceptVersion>(model);
+            return s_mapper.MapModelInstance<Core.Model.DataTypes.Concept, Data.ConceptView>(model);
         }
 
         /// <summary>
@@ -52,8 +52,39 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             if (data == null)
                 return null;
-            return this.ConvertItem(data as Data.ConceptVersion);
-        }        
+
+            var concept = data as ConceptVersion;
+            var retVal = this.ConvertItem(concept);
+
+            // Load fast?
+            if (retVal != null && concept.Concept != null)
+            {
+                retVal.IsSystemConcept = concept.Concept.IsSystemConcept;
+                retVal.Status = base.ConvertItem(concept.StatusConcept.ConceptVersions.SingleOrDefault(o=>o.ObsoletionTime == null));
+                retVal.Class = s_mapper.MapDomainInstance<Data.ConceptClass, Core.Model.DataTypes.ConceptClass>(concept.ConceptClass);
+                // Concept delay load
+                retVal.SetDelayLoadProperties(
+                    concept.Concept.ConceptNames.Where(o => concept.VersionSequenceId >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || concept.VersionSequenceId < o.ObsoleteVersionSequenceId)).Select(o => s_mapper.MapDomainInstance<Data.ConceptName, Core.Model.DataTypes.ConceptName>(o)).AsParallel().ToList(),
+                    concept.Concept.ConceptReferenceTerms.Where(o => concept.VersionSequenceId >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || concept.VersionSequenceId < o.ObsoleteVersionSequenceId)).Select(o => s_mapper.MapDomainInstance<Data.ConceptReferenceTerm, Core.Model.DataTypes.ConceptReferenceTerm>(o)).AsParallel().ToList()
+                    );
+            }
+
+            return retVal;
+        }
+
+        /// <summary>
+        /// Convert to model
+        /// </summary>
+        internal Core.Model.DataTypes.Concept ConvertToModel(Data.ConceptVersion data, Data.Concept concept, Data.ConceptClass clazz, Data.ConceptVersion status)
+        {
+            var retVal = this.ConvertToModel(data);
+            if(retVal != null)
+                retVal.IsSystemConcept = concept.IsSystemConcept;
+            retVal.Status = this.ConvertToModel(status);
+            retVal.Class = s_mapper.MapDomainInstance<Data.ConceptClass, Core.Model.DataTypes.ConceptClass>(clazz);
+            
+            return retVal;
+        }     
 
         /// <summary>
         /// Get the specified concept with version
@@ -186,7 +217,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new ArgumentNullException(nameof(query));
 
             var domainQuery = s_mapper.MapModelExpression<Core.Model.DataTypes.Concept, Data.ConceptVersion>(query);
-            return dataContext.ConceptVersions.Where(domainQuery).OrderByDescending(o=>o.VersionSequenceId).Select(o=>this.ConvertToModel(o));
+            return dataContext.ConceptVersions.Where(domainQuery)
+                .OrderByDescending(o => o.VersionSequenceId)
+                .Join(dataContext.Concepts, c => c.ConceptId, r => r.ConceptId, (a,b)=>new { ver = a, con = b })
+                .Join(dataContext.ConceptClasses, c=>c.ver.ConceptClassId, r=>r.ConceptClassId, (a,b) => new { ver = a.ver, con = a.con, clazz = b })
+                .Join(dataContext.ConceptVersions, c=>c.ver.StatusConceptId, r=>r.ConceptId, (a,b) => new { ver = a.ver, con = a.con, clazz = a.clazz, status = b })
+                .Select(o=>this.ConvertToModel(o.ver, o.con, o.clazz, o.status));
 
         }
 

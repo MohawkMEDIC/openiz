@@ -366,7 +366,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 {
 
                     this.m_traceSource.TraceInformation("{0}: GET {1}", this.GetType().Name, containerId);
-
+                    dataContext.DeferredLoadingEnabled = !loadFast;
                     if (s_configuration.TraceSql)
                         dataContext.Log = new LinqTraceWriter();
 
@@ -465,7 +465,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             {
                 using (var dataContext = new ModelDataContext(s_configuration.ReadonlyConnectionString))
                 {
-                    
+                    dataContext.DeferredLoadingEnabled = false;
                     totalCount = 0;
                     this.m_traceSource.TraceInformation("{0}: QUERY {1}", this.GetType().Name, query);
 
@@ -495,7 +495,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                         retVal = retVal.Take(count.Value);
 
                     
-                    return retVal.ToList();
+                    return retVal.AsParallel().ToList();
                 }
             }
             catch (Exception e)

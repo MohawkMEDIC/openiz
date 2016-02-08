@@ -48,6 +48,8 @@ using System.Security.Permissions;
 using OpenIZ.Core.Security;
 using OpenIZ.Messaging.IMSI.Util;
 using OpenIZ.Core.Model.Interfaces;
+using MARC.Everest.Threading;
+using System.Collections.Specialized;
 
 namespace OpenIZ.Messaging.IMSI.Wcf
 {
@@ -59,6 +61,14 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     {
         // Trace source
         private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.IMSI");
+
+        // Lock object
+        private object m_lockObject = new object();
+
+        /// <summary>
+        /// Load cache
+        /// </summary>
+        private Dictionary<Object, Object> m_loadCache = new Dictionary<Object, Object>();
 
         /// <summary>
         /// Create the specified resource
@@ -157,14 +167,18 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     if (retVal == null)
                         throw new FileNotFoundException(id);
 
-                    this.ExpandProperties(retVal);
+                    this.ExpandProperties(retVal, WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters);
 
-                    if(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_all"] != "true")
+                    if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_all"] != "true")
                         retVal.Lock();
+
                     if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_bundle"] == "true")
                         return Bundle.CreateBundle(retVal);
                     else
+                    {
+                        retVal.Lock();
                         return retVal;
+                    }
                 }
                 else
                     throw new FileNotFoundException(resourceType);
@@ -192,7 +206,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     if (retVal == null)
                         throw new FileNotFoundException(id);
 
-                    this.ExpandProperties(retVal);
+                    this.ExpandProperties(retVal, WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters);
 
                     if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_all"] != "true")
                         retVal.Lock();
@@ -267,7 +281,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     var histItm = retVal;
                     while (histItm != null)
                     {
-                        this.ExpandProperties(histItm);
+                        this.ExpandProperties(histItm, WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters);
                         histItm = (histItm as IVersionedEntity)?.PreviousVersion as IdentifiedData;
 
                         // Should we stop fetching?
@@ -306,12 +320,17 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     int totalResults = 0;
                     IEnumerable<IdentifiedData> retVal = handler.Query(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters, Int32.Parse(offset ?? "0"), Int32.Parse(count ?? "100"), out totalResults);
 
-                    foreach(var itm in retVal)
-                        this.ExpandProperties(itm);
+                    using (WaitThreadPool wtp = new WaitThreadPool(Environment.ProcessorCount * 4))
+                    {
+                        foreach (var itm in retVal)
+                            wtp.QueueUserWorkItem(o=>this.ExpandProperties(itm, o as NameValueCollection), WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters);
+                        wtp.WaitOne();
 
-                    foreach(var itm in retVal)
-                        itm.Lock();
+                        foreach (var itm in retVal)
+                            wtp.QueueUserWorkItem(o => (o as IdentifiedData).Lock(), itm);
 
+                        wtp.WaitOne();
+                    }
                     return BundleUtil.CreateBundle(retVal, totalResults, Int32.Parse(offset ?? "0"));
                 }
                 else
@@ -412,11 +431,12 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Expand properties
         /// </summary>
-        private void ExpandProperties(IdentifiedData returnValue)
+        private void ExpandProperties(IdentifiedData returnValue, NameValueCollection qp)
         {
-            if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_expand"] == null)
+            if (qp["_expand"] == null)
                 return;
-            foreach(var nvs in WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_expand"].Split(','))
+
+            foreach (var nvs in qp["_expand"].Split(','))
             {
                 // Get the property the user wants to expand
                 object scope = returnValue;
@@ -445,14 +465,32 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                             continue;
                         // Get the backing property
                         PropertyInfo expandProp = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == keyPi.Name);
-                        if (expandProp != null)
-                            scope = expandProp.GetValue(scope);
+
+                        Object existing = null;
+                        Object keyValue = keyPi.GetValue(scope);
+
+                        if (expandProp != null && expandProp.CanWrite && this.m_loadCache.TryGetValue(keyValue, out existing))
+                        {
+                            expandProp.SetValue(scope, existing);
+                            scope = existing;
+                        }
                         else
-                            scope = keyPi.GetValue(scope);
+                        {
+                            if (expandProp != null)
+                            {
+                                scope = expandProp.GetValue(scope);
+                                lock(this.m_lockObject)
+                                    if(!this.m_loadCache.ContainsKey(keyValue))
+                                        this.m_loadCache.Add(keyValue, scope);
+                            }
+                            else
+                                scope = keyValue;
+                        }
                     }
                 }
             }
         }
+        
 
         /// <summary>
         /// Obsolete the specified data

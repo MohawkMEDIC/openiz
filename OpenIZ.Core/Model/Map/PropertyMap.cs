@@ -53,8 +53,8 @@ namespace OpenIZ.Core.Model.Map
         /// <summary>
         /// When this property is a via then traverse this
         /// </summary>
-        [XmlAttribute("traverse")]
-        public bool Traverse { get; set; }
+        [XmlAttribute("dontLoad")]
+        public bool DontLoad { get; set; }
 
         /// <summary>
         /// Validate the property type

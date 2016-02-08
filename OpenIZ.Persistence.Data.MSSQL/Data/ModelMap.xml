@@ -83,23 +83,23 @@
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="ConceptClass" keyName="ConceptClassId"/>
     <collapseKey propertyName="StatusConcept" keyName="StatusConceptId"/>
-    <property modelName="CreatedBy" domainName="CreatedByEntity"/>
-    <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
+    <property modelName="CreatedBy" domainName="CreatedByEntity"  dontLoad="true"/>
+    <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"  dontLoad="true"/>
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
-    <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedBy" />
     <property modelName="ClassKey" domainName="ConceptClassId"/>
-    <property modelName="Class" domainName="ConceptClass" traverse="true"/>
+    <property modelName="Class" domainName="ConceptClass"  dontLoad="true"/>
     <property modelName="PreviousVersionKey" domainName="ReplacesVersionId"/>
-    <property modelName="Status" domainName="StatusConcept"  traverse="true"/>
+    <property modelName="Status" domainName="StatusConcept" dontLoad="true" />
     <property modelName="StatusConceptKey" domainName="StatusConceptId"/>
-    <property modelName="IsSystemConcept" domainName="Concept">
-      <via domainName="IsSystemConcept" traverse="true"/>
+    <property modelName="IsSystemConcept" domainName="Concept" dontLoad="true">
+      <via domainName="IsSystemConcept"/>
     </property>
-    <property modelName="ConceptNames" domainName="Concept">
-      <via domainName="ConceptNames" traverse="true"/>
+    <property modelName="ConceptNames" domainName="Concept" dontLoad="true">
+      <via domainName="ConceptNames"/>
     </property>
-    <property modelName="ConceptSets" domainName="Concept">
-      <via domainName="ConceptSetMembers" traverse="true">
+    <property modelName="ConceptSets" domainName="Concept" dontLoad="true">
+      <via domainName="ConceptSetMembers" >
         <via domainName="Concept"/>
       </via>
     </property>
@@ -133,7 +133,7 @@
     <property modelName="Key" domainName="ConceptNameId"/>
     <property modelName="SourceEntityKey" domainName="ConceptId"/>
     <property modelName="PhoneticAlgorithmKey" domainName="PhoneticAlgorithmId"/>
-    <property modelName="PhoneticAlgorithm" domainName="PhoneticAlgorithm"/>
+    <property modelName="PhoneticAlgorithm" domainName="PhoneticAlgorithm" dontLoad="true"/>
     <property modelName="Language" domainName="LanguageCode"/>
     <collapseKey propertyName="PhoneticAlgorithm" keyName="PhoneticAlgorithmId"/>
   </class>
