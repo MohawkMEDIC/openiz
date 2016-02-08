@@ -66,6 +66,29 @@ namespace OpenIZ.Core.Model.Acts
         public Boolean IsNegated { get; set; }
 
         /// <summary>
+        /// Gets or sets the stop time of the act
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public DateTimeOffset ActTime { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the creation time in XML format
+        /// </summary>
+        [XmlElement("actTime"), JsonProperty("actTime")]
+        public String ActTimeXml
+        {
+            get { return this.ActTime.ToString("o", CultureInfo.InvariantCulture); }
+            set
+            {
+                if (value != null)
+                    this.ActTime = DateTimeOffset.ParseExact(value, "o", CultureInfo.InvariantCulture);
+                else
+                    this.ActTime = default(DateTimeOffset);
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the start time of the act
         /// </summary>
         [XmlIgnore, JsonIgnore]
@@ -145,7 +168,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Reason concept
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("reasonConcept"), JsonProperty("reasonConcept")]
+        [XmlElement("reasonConcept", IsNullable = false), JsonProperty("reasonConcept")]
         public Guid? ReasonConceptKey
         {
             get { return this.m_reasonConceptKey; }

@@ -50,7 +50,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the name of the reference term
         /// </summary>
-        [XmlElement("name"), JsonProperty("name")]
+        [XmlElement("value"), JsonProperty("value")]
         public String Name { get; set; }
 
         /// <summary>

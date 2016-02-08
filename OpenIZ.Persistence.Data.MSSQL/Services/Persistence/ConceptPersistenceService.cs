@@ -52,19 +52,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             if (data == null)
                 return null;
-            var concept = data as Data.ConceptVersion;
-
-            bool cacheHit = this.m_cache.ContainsKey(concept.ConceptVersionId);
-
-            var retVal = this.GetCacheItem(concept.ConceptId, concept.ConceptVersionId, concept, false);
-
-            if (!cacheHit)
-                retVal.SetDelayLoadProperties(
-                    concept.Concept.ConceptNames.Where(o => concept.VersionSequenceId >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || concept.VersionSequenceId < o.ObsoleteVersionSequenceId)).Select(o => new ConceptNamePersistenceService().ConvertToModel(o)).ToList(),
-                    concept.Concept.ConceptReferenceTerms.Where(o => concept.VersionSequenceId >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || concept.VersionSequenceId < o.ObsoleteVersionSequenceId)).Select(o => new ConceptReferenceTermPersistenceService().ConvertToModel(o)).ToList()
-                );
-
-            return retVal as Core.Model.DataTypes.Concept;
+            return this.ConvertItem(data as Data.ConceptVersion);
         }        
 
         /// <summary>
@@ -75,22 +63,17 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (containerId == null)
                 throw new ArgumentNullException(nameof(containerId));
 
-            Core.Model.DataTypes.Concept retVal = this.GetCacheItem<Data.ConceptVersion>(containerId.Id, containerId.VersionId, null);
-            if(retVal == null)
-            {
-                Data.ConceptVersion tRetVal = null;
-                if (containerId.VersionId != default(Guid))
-                    tRetVal = dataContext.ConceptVersions.SingleOrDefault(o => o.ConceptVersionId == containerId.VersionId);
-                else if (containerId.Id != default(Guid))
-                    tRetVal = dataContext.ConceptVersions.SingleOrDefault(o => o.ConceptId == containerId.Id && o.ObsoletionTime == null);
+            ConceptVersion tRetVal = null;
+            if (containerId.VersionId != default(Guid))
+                tRetVal = dataContext.ConceptVersions.SingleOrDefault(o => o.ConceptVersionId == containerId.VersionId);
+            else if (containerId.Id != default(Guid))
+                tRetVal = dataContext.ConceptVersions.SingleOrDefault(o => o.ConceptId == containerId.Id && o.ObsoletionTime == null);
 
-                // Return value
-                if (tRetVal == null)
-                    return null;
-                else
-                    retVal = this.ConvertToModel(tRetVal);
-            }
-            return retVal;
+            // Return value
+            if (tRetVal == null)
+                return null;
+            else
+                return this.ConvertToModel(tRetVal);
 
         }
 
@@ -119,6 +102,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataContext.ConceptVersions.InsertOnSubmit(dataConceptVersion);
             dataContext.SubmitChanges();
 
+            storageData.Key = dataConceptVersion.ConceptId;
+            storageData.VersionKey = dataConceptVersion.ConceptVersionId;
+
             // Concept names
             if (storageData.ConceptNames != null)
             {
@@ -141,14 +127,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 }
             }
 
-            //// Storage data 
+            // Storage data 
             //if (storageData.Relationship != null)
             //{
             //    ConceptRelationshipPersistenceService relationshipPersister = new ConceptRelationshipPersistenceService();
             //    foreach (var rel in storageData.Relationship)
             //    {
             //        rel.EffectiveVersionSequenceId = storageData.VersionSequence;
-            //        rel.TargetEntityKey = storageData.Key; // The Antelope's sloop wa a sickening sight
+            //        rel.SourceEntityKey = storageData.Key; // The Antelope's sloop wa a sickening sight
             //        relationshipPersister.Insert(rel, principal, dataContext); // How I wish I was in sherbrooke now!!!
             //    }
             //}
@@ -170,7 +156,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (storageData.IsSystemConcept)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.UpdatedReadonlyObject);
 
-            this.RemoveFromCache(storageData);
 
             var dataConceptVersion = dataContext.ConceptVersions.SingleOrDefault(c => c.ConceptId == storageData.Key && c.ObsoletionTime == null);
             if (dataConceptVersion == null)
@@ -189,7 +174,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataContext.SubmitChanges();
             
             var retVal = this.ConvertToModel(newDataConceptVersion);
-            this.AddToCache(retVal, newDataConceptVersion);
             return retVal;
         }
 
@@ -217,7 +201,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.UpdatedReadonlyObject);
 
 
-            this.RemoveFromCache(storageData);
 
             // Get the existing version 
             var domainConceptVersion = dataContext.ConceptVersions.OrderByDescending(o=>o.VersionSequenceId).SingleOrDefault(o => o.ConceptId == storageData.Key && o.ObsoletionTime == null);

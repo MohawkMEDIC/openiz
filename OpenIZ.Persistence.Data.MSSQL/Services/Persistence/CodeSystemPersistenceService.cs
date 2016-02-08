@@ -56,10 +56,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal Core.Model.DataTypes.CodeSystem ConvertToModel(Data.CodeSystem data)
         {
-            if (data == null)
-                return null;
-            else
-                return this.GetCacheItem(data.CodeSystemId, null, data);
+            return this.ConvertItem(data as Data.CodeSystem);
         }
 
         /// <summary>
@@ -85,8 +82,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataContext.CodeSystems.InsertOnSubmit(domainCodeSystem);
 
             dataContext.SubmitChanges();
-
             storageData.Key = domainCodeSystem.CodeSystemId;
+
             return storageData;
         }
 
@@ -107,8 +104,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataContext.SubmitChanges();
 
             storageData.Key = Guid.Empty;
-            domainCodeSystem.ObsoletionTime = domainCodeSystem.ObsoletionTime;
-
+            storageData.ObsoletionTime = domainCodeSystem.ObsoletionTime;
             return storageData;
         }
 

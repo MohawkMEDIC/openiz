@@ -56,10 +56,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal Core.Model.DataTypes.ConceptRelationshipType ConvertToModel(Data.ConceptRelationshipType data)
         {
-            if (data == null)
-                return null;
-            else
-                return this.GetCacheItem(data.ConceptRelationshipTypeId, null, data);
+            return this.ConvertItem(data);
         }
 
         /// <summary>
@@ -101,6 +98,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataContext.SubmitChanges();
 
             storageData.Key = Guid.Empty;
+
             return storageData;
         }
 
@@ -129,6 +127,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             storageData.Mnemonic = domainRelationshipType.Mnemonic = storageData.Mnemonic ?? domainRelationshipType.Mnemonic;
             storageData.Name = domainRelationshipType.Name = storageData.Mnemonic ?? domainRelationshipType.Name;
             dataContext.SubmitChanges();
+
             return storageData;
         }
     }

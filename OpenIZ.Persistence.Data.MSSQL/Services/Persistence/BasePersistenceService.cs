@@ -380,9 +380,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                         return preEvt.Data;
 
                     // In cache?
-                    TModel retVal = this.GetCacheItem<Object>(preEvtModel.Key, (preEvtModel as IVersionedEntity)?.VersionKey, null);
-                    if(retVal == null)
-                        retVal = this.Get(new Identifier<Guid>(preEvtModel.Key, (preEvtModel as IVersionedEntity)?.VersionKey ?? Guid.Empty), principal, loadFast, dataContext);
+                    var retVal = this.Get(new Identifier<Guid>(preEvtModel.Key, (preEvtModel as IVersionedEntity)?.VersionKey ?? Guid.Empty), principal, loadFast, dataContext);
 
                     PostRetrievalEventArgs<TModel> postEvt = new PostRetrievalEventArgs<TModel>(retVal, principal);
                     this.Retrieved?.Invoke(this, postEvt);
@@ -520,70 +518,51 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <summary>
         /// Gets a cache item
         /// </summary>
-        protected TModel GetCacheItem<TDomainClass>(Guid key, Guid? versionKey, TDomainClass domainItem, bool clone = true)
+        protected TModel ConvertItem<TDomainClass>(TDomainClass domainItem)
         {
-            CacheItem existingItem = default(CacheItem);
-            if (!this.m_cache.TryGetValue(versionKey ?? key, out existingItem)) // cache miss
-            {
-                if (domainItem != null)
-                {
-                    existingItem.DomainItem = domainItem;
-                    existingItem.ModelInstance = s_mapper.MapDomainInstance<TDomainClass, TModel>(domainItem);
-                    if (this.m_cache.Count > s_configuration.MaxCacheSize)
-                        lock(this.m_lockObject)
-                            this.m_cache.Clear();
-                    lock(this.m_lockObject)
-                        if(!this.m_cache.ContainsKey(versionKey ?? key))
-                            this.m_cache.Add(versionKey ?? key, existingItem);
-                }
-            }
-            else if (domainItem != null && existingItem.DomainItem.Equals(domainItem)) // compare
-            {
-                existingItem.ModelInstance = s_mapper.MapDomainInstance<TDomainClass, TModel>(domainItem);
-                existingItem.DomainItem = domainItem;
-            }
-            return clone ? existingItem.ModelInstance?.Clone() as TModel : existingItem.ModelInstance as TModel;
+            return s_mapper.MapDomainInstance<TDomainClass, TModel>(domainItem);
         }
 
-        /// <summary>
-        /// Adds the specified data to the cache
-        /// </summary>
-        protected void AddToCache(TModel modelItem, Object domainItem)
-        {
-            if (s_configuration.MaxCacheSize == 0)
-                return; // no caching
+        ///// <summary>
+        ///// Adds the specified data to the cache
+        ///// </summary>
+        //protected void AddToCache(TModel modelItem, Object domainItem)
+        //{
+        //    if (s_configuration.MaxCacheSize == 0)
+        //        return; // no caching
 
-            if (this.m_cache.Count > s_configuration.MaxCacheSize)
-                lock(this.m_lockObject)
-                    this.m_cache.Clear();
+        //    if (this.m_cache.Count > s_configuration.MaxCacheSize)
+        //        lock (this.m_lockObject)
+        //            this.m_cache.Clear();
 
-            Guid key = modelItem.Key;
-            if (modelItem is IVersionedEntity)
-                key = (modelItem as IVersionedEntity).VersionKey;
 
-            if (this.m_cache.ContainsKey(key))
-                this.m_cache[key] = new CacheItem(modelItem, domainItem);
-            else
-                lock(this.m_lockObject)
-                    this.m_cache.Add(key, new CacheItem(modelItem, domainItem));
-        }
+        //    CacheItem existingItem = default(CacheItem);
+        //    if (this.m_cache.TryGetValue(modelItem.Key, out existingItem))
+        //    { 
+        //        existingItem.ModelInstance = modelItem;
+        //        existingItem.DomainItem = domainItem;
+        //    }
+        //    else
+        //        lock(this.m_lockObject)
+        //            this.m_cache.Add(modelItem.Key, new CacheItem(modelItem, domainItem));
+        //}
 
         /// <summary>
         /// Remove data from the cache
         /// </summary>
-        protected void RemoveFromCache(TModel data)
-        {
-            if (s_configuration.MaxCacheSize == 0)
-                return;
+        //protected void RemoveFromCache(TModel data)
+        //{
+        //    if (s_configuration.MaxCacheSize == 0)
+        //        return;
 
-            lock(this.m_lockObject)
-            {
-                if (data is IVersionedEntity)
-                    this.m_cache.Remove((data as IVersionedEntity).VersionKey);
-                else
-                    this.m_cache.Remove(data.Key);
-            }
-        }
+        //    lock(this.m_lockObject)
+        //    {
+        //        if (data is IVersionedEntity)
+        //            this.m_cache.Remove((data as IVersionedEntity).VersionKey);
+        //        else
+        //            this.m_cache.Remove(data.Key);
+        //    }
+        //}
 
         /// <summary>
         /// Convert a data type into the model class

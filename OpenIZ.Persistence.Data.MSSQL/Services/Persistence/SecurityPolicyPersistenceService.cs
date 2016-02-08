@@ -56,10 +56,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal Core.Model.Security.SecurityPolicy ConvertToModel(Data.Policy data)
         {
-            if (data == null)
-                return null;
-            else
-                return this.GetCacheItem(data.PolicyId, null, data);
+            return this.ConvertItem(data);
         }
 
         /// <summary>

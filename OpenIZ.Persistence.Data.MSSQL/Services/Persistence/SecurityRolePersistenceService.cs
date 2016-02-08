@@ -163,7 +163,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataContext.SecurityRolePolicies.DeleteAllOnSubmit(dataRole.SecurityRolePolicies.Where(p => remPolicies.Contains(p.PolicyId)));
 
             dataContext.SubmitChanges();
-
+           
             return this.ConvertToModel(dataRole);
         }
 
