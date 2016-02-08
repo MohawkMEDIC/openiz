@@ -59,7 +59,6 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     [ServiceKnownType(typeof(ManufacturedMaterial))]
     [ServiceKnownType(typeof(DeviceEntity))]
     [ServiceKnownType(typeof(ApplicationEntity))]
-    [ServiceKnownType(typeof(DeviceEntity))]
     [ServiceKnownType(typeof(Bundle))]
     [ServiceKnownType(typeof(ErrorResult))]
     [ServiceKnownType(typeof(ConceptSet))]

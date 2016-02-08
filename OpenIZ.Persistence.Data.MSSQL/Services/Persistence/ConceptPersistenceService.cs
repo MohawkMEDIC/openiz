@@ -42,7 +42,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override object ConvertFromModel(Core.Model.DataTypes.Concept model)
         {
-            return s_mapper.MapModelInstance<Core.Model.DataTypes.Concept, Data.ConceptView>(model);
+            return s_mapper.MapModelInstance<Core.Model.DataTypes.Concept, Data.ConceptVersion>(model);
         }
 
         /// <summary>
@@ -124,7 +124,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var dataConceptVersion = this.ConvertFromModel(storageData) as Data.ConceptVersion;
             dataConceptVersion.Concept = new Data.Concept() { IsSystemConcept = storageData.IsSystemConcept };
             dataConceptVersion.CreatedByEntity = principal.GetUser(dataContext);
-
             dataConceptVersion.StatusConceptId = dataConceptVersion.StatusConceptId == Guid.Empty ? StatusKeys.Active : dataConceptVersion.StatusConceptId;
             if(storageData.Class != null)
                 dataConceptVersion.ConceptClassId = storageData.Class.EnsureExists(principal, dataContext)?.Key;
@@ -247,9 +246,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Create the new version
             domainConceptVersion = domainConceptVersion.NewVersion(principal, dataContext);
-            storageData.PreviousVersionKey = storageData.Key = storageData.VersionKey = storageData.CreatedByKey = Guid.Empty; // Zero off associations
-            storageData.VersionSequence = default(decimal);
+            // Copy and update new version tuple
             domainConceptVersion.CopyObjectData(this.ConvertFromModel(storageData));
+            domainConceptVersion.CreatedByEntity = principal.GetUser(dataContext);
+            domainConceptVersion.ConceptVersionId = Guid.Empty;
+            domainConceptVersion.ReplacesVersionId = storageData.VersionKey;
             domainConceptVersion.Concept.IsSystemConcept = storageData.IsSystemConcept;
 
             dataContext.SubmitChanges(); // Submit changes to db
@@ -281,6 +282,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     cnPersistenceService.Insert(ins, principal, dataContext, false);
                 }
 
+
             }
 
             // Next thing, we want to remove any reference terms that no longer appear
@@ -305,6 +307,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     ins.SourceEntityKey = domainConceptVersion.ConceptId;
                     rtPersistenceService.Insert(ins, principal, dataContext, false);
                 }
+
 
             }
 

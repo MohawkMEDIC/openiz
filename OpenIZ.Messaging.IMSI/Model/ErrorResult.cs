@@ -30,6 +30,7 @@ namespace OpenIZ.Messaging.IMSI.Model
     /// Identified data
     /// </summary>
     [XmlType(nameof(ErrorResult), Namespace = "http://openiz.org/imsi")]
+    [XmlRoot(nameof(ErrorResult), Namespace = "http://openiz.org/imsi")]
     public class ErrorResult : IdentifiedData
     {
 

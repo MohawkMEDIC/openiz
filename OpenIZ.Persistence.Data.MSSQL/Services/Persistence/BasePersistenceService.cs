@@ -469,7 +469,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             {
                 using (var dataContext = new ModelDataContext(s_configuration.ReadonlyConnectionString))
                 {
-                    dataContext.DeferredLoadingEnabled = false;
+                    dataContext.DeferredLoadingEnabled = true;
                     totalCount = 0;
                     this.m_traceSource.TraceInformation("{0}: QUERY {1}", this.GetType().Name, query);
 

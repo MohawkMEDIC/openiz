@@ -39,6 +39,7 @@ using OpenIZ.Messaging.IMSI.ResourceHandler;
 using OpenIZ.Core.Model.Serialization;
 using OpenIZ.Core.Security;
 using System.Diagnostics;
+using OpenIZ.Core.Model.Collection;
 
 namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
 {
@@ -52,6 +53,17 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
 
         // Trace source
         private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.IMSI");
+        // Known types
+        private static Type[] s_knownTypes = typeof(IImsiServiceContract).GetCustomAttributes<ServiceKnownTypeAttribute>().Select(t => t.Type).ToArray();
+        // Serializers
+        private static Dictionary<Type, XmlSerializer> s_serializers = new Dictionary<Type, XmlSerializer>();
+
+        // Static ctor
+        static ImsiMessageDispatchFormatter()
+        {
+            foreach (var s in s_knownTypes)
+                s_serializers.Add(s, new XmlSerializer(s,  s.GetCustomAttributes<XmlIncludeAttribute>().Select(o => o.Type).ToArray()));
+        }
 
         public ImsiMessageDispatchFormatter()
         {
@@ -97,7 +109,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
                     // Use XML Serializer
                     else if (contentType?.StartsWith("application/xml") == true)
                     {
-                        XmlSerializer xsz = new XmlSerializer(parm.Type, typeof(IImsiServiceContract).GetCustomAttributes<ServiceKnownTypeAttribute>().Select(t => t.Type).ToArray());
+                        XmlSerializer xsz = s_serializers[parm.Type];
                         XmlDictionaryReader bodyReader = request.GetReaderAtBodyContents();
                         parameters[0] = xsz.Deserialize(bodyReader);
                     }
@@ -165,7 +177,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
                         using (StreamWriter sw = new StreamWriter(ms, Encoding.UTF8))
                         using (JsonWriter jsw = new JsonTextWriter(sw))
                         {
-
+                            jsz.NullValueHandling = NullValueHandling.Ignore;
                             jsz.Serialize(jsw, result);
                             sw.Flush();
                             body = ms.ToArray();
@@ -181,7 +193,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
                     else
                     {
 
-                        XmlSerializer xsz = new XmlSerializer(result.GetType(), typeof(IImsiServiceContract).GetCustomAttributes<ServiceKnownTypeAttribute>().Select(t => t.Type).ToArray());
+                        XmlSerializer xsz = s_serializers[result.GetType()];
                         MemoryStream ms = new MemoryStream();
                         xsz.Serialize(ms, result);
                         format = WebContentFormat.Xml;

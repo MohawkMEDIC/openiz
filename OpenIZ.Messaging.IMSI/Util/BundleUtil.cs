@@ -31,8 +31,13 @@ namespace OpenIZ.Messaging.IMSI.Util
             {
                 foreach (var itm in resourceRoot)
                 {
-                    retVal.Item.Add(itm);
-                    wtp.QueueUserWorkItem((o)=>Bundle.ProcessModel(o as IdentifiedData, retVal), itm);
+                    if (itm == null)
+                        continue;
+                    if (!retVal.Item.Exists(o => o.Key == itm.Key))
+                    {
+                        retVal.Item.Add(itm);
+                        wtp.QueueUserWorkItem((o) => Bundle.ProcessModel(o as IdentifiedData, retVal), itm);
+                    }
                 }
                 wtp.WaitOne();
             }

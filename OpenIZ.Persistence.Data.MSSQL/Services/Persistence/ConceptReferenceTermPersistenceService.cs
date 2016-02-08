@@ -212,7 +212,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 newDomainConceptReferenceTerm.EffectiveVersionSequenceId = newConceptVersion.VersionSequenceId;
 
                 // Insert the new concept domain name
-                dataContext.ConceptReferenceTerms.InsertOnSubmit(newDomainConceptReferenceTerm);
+                newConceptVersion.Concept.ConceptReferenceTerms.Add(newDomainConceptReferenceTerm);
                 dataContext.SubmitChanges();
 
                 return this.ConvertToModel(newDomainConceptReferenceTerm);

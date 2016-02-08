@@ -478,10 +478,12 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                         {
                             if (expandProp != null)
                             {
-                                scope = expandProp.GetValue(scope);
                                 lock(this.m_lockObject)
-                                    if(!this.m_loadCache.ContainsKey(keyValue))
+                                    if (!this.m_loadCache.ContainsKey(keyValue))
+                                    {
+                                        scope = expandProp.GetValue(scope);
                                         this.m_loadCache.Add(keyValue, scope);
+                                    }
                             }
                             else
                                 scope = keyValue;

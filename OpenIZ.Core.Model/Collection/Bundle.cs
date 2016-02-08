@@ -198,7 +198,8 @@ namespace OpenIZ.Core.Model.Collection
 
                                 if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null)
                                     lock(currentBundle.m_lockObject)
-                                        currentBundle.Item.Add(itm as IdentifiedData);
+                                        if (!currentBundle.Item.Exists(o => o.Key == (itm as IdentifiedData).Key))
+                                            currentBundle.Item.Add(itm as IdentifiedData);
 
                                 ProcessModel(itm as IdentifiedData, currentBundle, false);
                             }
@@ -214,7 +215,8 @@ namespace OpenIZ.Core.Model.Collection
                         {
                             if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null)
                                 lock (currentBundle.m_lockObject)
-                                    currentBundle.Item.Add(iValue);
+                                    if (!currentBundle.Item.Exists(o => o.Key == iValue.Key))
+                                        currentBundle.Item.Add(iValue);
                             ProcessModel(iValue, currentBundle);
                         }
                     }

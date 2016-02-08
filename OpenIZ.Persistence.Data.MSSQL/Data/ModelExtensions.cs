@@ -41,6 +41,29 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     public static class ModelExtensions
     {
 
+        // Field cache
+        private static Dictionary<Type, FieldInfo[]> s_fieldCache = new Dictionary<Type, FieldInfo[]>();
+
+        // Lock object
+        private static Object s_lockObject = new object();
+
+        /// <summary>
+        /// Get fields
+        /// </summary>
+        private static FieldInfo[] GetFields(Type type)
+        {
+            
+            FieldInfo[] retVal = null;
+            if(!s_fieldCache.TryGetValue(type, out retVal))
+            {
+                retVal = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(o =>!typeof(MulticastDelegate).IsAssignableFrom(o.FieldType)).ToArray();
+                lock(s_lockObject)
+                    if (!s_fieldCache.ContainsKey(type))
+                        s_fieldCache.Add(type, retVal);
+            }
+            return retVal;
+        }
+
         /// <summary>
         /// Ensures a model has been persisted
         /// </summary>
@@ -125,14 +148,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Has data changed
         /// </summary>
-        public static bool HasChanged<TObject>(this TObject me, TObject other)
+        public static bool IsSame<TObject>(this TObject me, TObject other)
         {
             bool retVal = true;
             if ((me == null) ^ (other == null)) return false;
-            foreach(var pi in typeof(TObject).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            foreach(var pi in GetFields(me.GetType()))
             {
-                if (pi.PropertyType.IsGenericType) continue; /// Skip generics
-                retVal &= (pi.GetValue(me)?.Equals(pi.GetValue(other)) == true);
+                if (pi.FieldType.IsGenericType) continue; /// Skip generics
+                object meValue = pi.GetValue(me),
+                    otherValue = pi.GetValue(other);
+
+                retVal &= meValue != null ? meValue.Equals(otherValue) : otherValue == null;// Case null
+
             }
             return retVal;
         }

@@ -204,16 +204,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     newDomainConceptName.PhoneticAlgorithmId = storageData.PhoneticAlgorithm.EnsureExists(principal, dataContext).Key;
 
                 // New Concept Version
-                var currentConceptVersion = domainConceptName.Concept.ConceptVersions.Single(o => o.ObsoletionTime == null);
+                var currentConceptVersion = domainConceptName.Concept.ConceptVersions.OrderByDescending(o=>o.VersionSequenceId).Single(o => o.ObsoletionTime == null);
                 ConceptVersion newConceptVersion = newVersion ? currentConceptVersion.NewVersion(principal, dataContext) : currentConceptVersion;
 
                 // Obsolete the old data
                 storageData.ObsoleteVersionSequenceId = domainConceptName.ObsoleteVersionSequenceId = newConceptVersion.VersionSequenceId;
                 newDomainConceptName.ConceptId = domainConceptName.ConceptId;
+                
                 newDomainConceptName.EffectiveVersionSequenceId = newConceptVersion.VersionSequenceId;
 
                 // Insert the new concept domain name
-                dataContext.ConceptNames.InsertOnSubmit(newDomainConceptName);
+                //dataContext.ConceptNames.InsertOnSubmit(newDomainConceptName);
+                newConceptVersion.Concept.ConceptNames.Add(newDomainConceptName);
                 dataContext.SubmitChanges(); 
 
                 return this.ConvertToModel(newDomainConceptName);
