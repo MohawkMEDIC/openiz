@@ -168,7 +168,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Reason concept
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("reasonConcept", IsNullable = false), JsonProperty("reasonConcept")]
+        [XmlElement("reasonConcept"), JsonProperty("reasonConcept")]
         public Guid? ReasonConceptKey
         {
             get { return this.m_reasonConceptKey; }

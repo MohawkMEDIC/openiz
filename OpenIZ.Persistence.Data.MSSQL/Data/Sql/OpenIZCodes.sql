@@ -493,18 +493,18 @@ INSERT INTO Concept VALUES ('e658ca72-3b6a-4099-ab6e-7cf6861a5b61', 1);
 INSERT INTO Concept VALUES ('b389dedf-be61-456b-aa70-786e1a5a69e0', 1);
 
 -- Concept Classes
- INSERT INTO ConceptClass VALUES ('17FD5254-8C25-4ABB-B246-083FBE9AFA15','Classification Concept', 'ClassCode');
-INSERT INTO ConceptClass VALUES ('54B93182-FC19-47A2-82C6-089FD70A4F45', 'Status', 'Status');
-INSERT INTO ConceptClass VALUES ('BBA99722-23CE-469A-8FA5-10DEBA853D35', 'Mood', 'Mood');
-INSERT INTO ConceptClass VALUES ('F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4', 'Relationship Type', 'Relationship');
-INSERT INTO ConceptClass VALUES ('A8A900D3-A07E-4E02-B45F-580D09BAF047', 'Route', 'Route');
-INSERT INTO ConceptClass VALUES ('1EF69347-EF03-4FF7-B3C5-6334448845E6', 'Unit of Measure', 'UnitOfMeasure');
-INSERT INTO ConceptClass VALUES ('92CDEA39-B9A3-4A5B-BC88-A6646C74240D', 'Diagnosis', 'Diagnosis');
-INSERT INTO ConceptClass VALUES ('E445E207-60A3-401A-9B81-A8AC2479F4A6', 'Findings', 'Finding');
-INSERT INTO ConceptClass VALUES ('4BD7F8E6-E4B8-4DBC-93A7-CF14FBAF9700', 'Problem', 'Problem');
-INSERT INTO ConceptClass VALUES ('DC9CBC32-B8EA-4144-BEF1-DC618E28F4D7', 'Drug or other Material', 'Material');
-INSERT INTO ConceptClass VALUES ('0D6B3439-C9BE-4480-AF39-EEB457C052D0', 'Other Classification', 'Other');
-INSERT INTO ConceptClass VALUES ('FFD8304A-43EC-4EBC-95FC-FB4A4F2338F0', 'Stock control codes', 'Stock');
+INSERT INTO ConceptClass (ConceptClassId, Name, Mnemonic, CreatedBy) VALUES ('17FD5254-8C25-4ABB-B246-083FBE9AFA15','Classification Concept', 'ClassCode');
+INSERT INTO ConceptClass (ConceptClassId, Name, Mnemonic, CreatedBy) VALUES ('54B93182-FC19-47A2-82C6-089FD70A4F45', 'Status', 'Status');
+INSERT INTO ConceptClass (ConceptClassId, Name, Mnemonic, CreatedBy) VALUES ('BBA99722-23CE-469A-8FA5-10DEBA853D35', 'Mood', 'Mood');
+INSERT INTO ConceptClass (ConceptClassId, Name, Mnemonic, CreatedBy) VALUES ('F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4', 'Relationship Type', 'Relationship');
+INSERT INTO ConceptClass (ConceptClassId, Name, Mnemonic, CreatedBy) VALUES ('A8A900D3-A07E-4E02-B45F-580D09BAF047', 'Route', 'Route');
+INSERT INTO ConceptClass (ConceptClassId, Name, Mnemonic, CreatedBy) VALUES ('1EF69347-EF03-4FF7-B3C5-6334448845E6', 'Unit of Measure', 'UnitOfMeasure');
+INSERT INTO ConceptClass (ConceptClassId, Name, Mnemonic, CreatedBy) VALUES ('92CDEA39-B9A3-4A5B-BC88-A6646C74240D', 'Diagnosis', 'Diagnosis');
+INSERT INTO ConceptClass (ConceptClassId, Name, Mnemonic, CreatedBy) VALUES ('E445E207-60A3-401A-9B81-A8AC2479F4A6', 'Findings', 'Finding');
+INSERT INTO ConceptClass (ConceptClassId, Name, Mnemonic, CreatedBy) VALUES ('4BD7F8E6-E4B8-4DBC-93A7-CF14FBAF9700', 'Problem', 'Problem');
+INSERT INTO ConceptClass (ConceptClassId, Name, Mnemonic, CreatedBy) VALUES ('DC9CBC32-B8EA-4144-BEF1-DC618E28F4D7', 'Drug or other Material', 'Material');
+INSERT INTO ConceptClass (ConceptClassId, Name, Mnemonic, CreatedBy) VALUES ('0D6B3439-C9BE-4480-AF39-EEB457C052D0', 'Other Classification', 'Other');
+INSERT INTO ConceptClass (ConceptClassId, Name, Mnemonic, CreatedBy) VALUES ('FFD8304A-43EC-4EBC-95FC-FB4A4F2338F0', 'Stock control codes', 'Stock');
 
 -- Concept Sets
 INSERT INTO ConceptSet (ConceptSetId, Name, Mnemonic, Oid, Url, CreatedBy) VALUES ('aae906aa-27b3-4cdb-aff1-f08b0fd31e59', 'Concept Status', 'ConceptStatus', '1.3.6.1.4.1.33349.3.5.9.1.0', 'http://openiz.org/valueset/concept-status', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');

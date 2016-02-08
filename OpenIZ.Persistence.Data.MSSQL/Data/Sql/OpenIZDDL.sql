@@ -276,14 +276,14 @@ CREATE TABLE PhoneticAlgorithm
 	ObsoletionTime DATETIMEOFFSET, -- OBSOLETION TIME
 	ObsoletedBy UNIQUEIDENTIFIER, -- OBSOLETION BY
 	CONSTRAINT PK_PhoneticAlgorithm PRIMARY KEY (PhoneticAlgorithmId),
-	CONSTRAINT FK_PhoneticAlgorithmCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UesrId),
-	CONSTRAINT FK_PhoneticAlgorithmUpdatedBy FOREIGN KEY (UpdatedBy) REFERENCES SecurityUser(UesrId),
-	CONSTRAINT FK_PhoneticAlgorithmObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UesrId),
+	CONSTRAINT FK_PhoneticAlgorithmCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT FK_PhoneticAlgorithmUpdatedBy FOREIGN KEY (UpdatedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT FK_PhoneticAlgorithmObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT CK_PhoneticAlgorithmObsoletedBy CHECK (ObsoletedBy IS NULL AND ObsoletionTime IS NULL OR ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL) 
 
 );
 
-INSERT INTO PhoneticAlgorithm (PhoneticAlgorithmId, Name, HandlerClass) VALUES ('402CD339-D0E4-46CE-8FC2-12A4B0E17226', 'NONE', NULL);
+INSERT INTO PhoneticAlgorithm (PhoneticAlgorithmId, Name, HandlerClass, CreatedBy) VALUES ('402CD339-D0E4-46CE-8FC2-12A4B0E17226', 'NONE', NULL, 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 
 /*
  * A TABLE RESPONSIBLE FOR THE STORAGE OF PHONETIC VALUES
@@ -338,9 +338,9 @@ CREATE TABLE ConceptClass
 	ObsoletionTime DATETIMEOFFSET, -- OBSOLETION TIME
 	ObsoletedBy UNIQUEIDENTIFIER, -- OBSOLETION BY
 	CONSTRAINT PK_ConceptClass PRIMARY KEY (ConceptClassId),
-	CONSTRAINT FK_ConceptClassCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UesrId),
-	CONSTRAINT FK_ConceptClassUpdatedBy FOREIGN KEY (UpdatedBy) REFERENCES SecurityUser(UesrId),
-	CONSTRAINT FK_ConceptClassObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UesrId),
+	CONSTRAINT FK_ConceptClassCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT FK_ConceptClassUpdatedBy FOREIGN KEY (UpdatedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT FK_ConceptClassObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT CK_ConceptClassObsoletedBy CHECK (ObsoletedBy IS NULL AND ObsoletionTime IS NULL OR ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL) 
 
 );
@@ -508,19 +508,19 @@ CREATE TABLE ConceptRelationshipType
 	ObsoletionTime DATETIMEOFFSET, -- OBSOLETION TIME
 	ObsoletedBy UNIQUEIDENTIFIER, -- OBSOLETION BY
 	CONSTRAINT PK_ConceptRelationshipType PRIMARY KEY (ConceptRelationshipTypeId),
-	CONSTRAINT FK_ConceptRelationshipTypeCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UesrId),
-	CONSTRAINT FK_ConceptRelationshipTypeUpdatedBy FOREIGN KEY (UpdatedBy) REFERENCES SecurityUser(UesrId),
-	CONSTRAINT FK_ConceptRelationshipTypeObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UesrId),
+	CONSTRAINT FK_ConceptRelationshipTypeCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT FK_ConceptRelationshipTypeUpdatedBy FOREIGN KEY (UpdatedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT FK_ConceptRelationshipTypeObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT CK_ConceptRelationshipTypeObsoletedBy CHECK (ObsoletedBy IS NULL AND ObsoletionTime IS NULL OR ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL) 
 
 );
 
 CREATE INDEX IX_ConceptRelationshipTypeMnemonic ON ConceptRelationshipType(Mnemonic);
 
-INSERT INTO ConceptRelationshipType (ConceptRelationshipTypeId, Name, Mnemonic) VALUES ('2c4dafc2-566a-41ae-9ebc-3097d7d22f4a', 'Same as', 'SameAs');
-INSERT INTO ConceptRelationshipType (ConceptRelationshipTypeId, Name, Mnemonic) VALUES ('ad27293d-433c-4b75-88d2-b5360cd95450', 'Inverse of', 'InverseOf');
-INSERT INTO ConceptRelationshipType (ConceptRelationshipTypeId, Name, Mnemonic) VALUES ('a159d45b-3c34-4e1b-9b75-9193a7528ced', 'Member of', 'MemberOf');
-INSERT INTO ConceptRelationshipType (ConceptRelationshipTypeId, Name, Mnemonic) VALUES ('ae8b4f2f-009f-4e0d-b35e-5a89555c5947', 'Negation of', 'NegationOf');
+INSERT INTO ConceptRelationshipType (ConceptRelationshipTypeId, Name, Mnemonic, CreatedBy) VALUES ('2c4dafc2-566a-41ae-9ebc-3097d7d22f4a', 'Same as', 'SameAs', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO ConceptRelationshipType (ConceptRelationshipTypeId, Name, Mnemonic, CreatedBy) VALUES ('ad27293d-433c-4b75-88d2-b5360cd95450', 'Inverse of', 'InverseOf', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO ConceptRelationshipType (ConceptRelationshipTypeId, Name, Mnemonic, CreatedBy) VALUES ('a159d45b-3c34-4e1b-9b75-9193a7528ced', 'Member of', 'MemberOf', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO ConceptRelationshipType (ConceptRelationshipTypeId, Name, Mnemonic, CreatedBy) VALUES ('ae8b4f2f-009f-4e0d-b35e-5a89555c5947', 'Negation of', 'NegationOf', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 
 CREATE TABLE ReferenceTerm
 (
@@ -535,9 +535,9 @@ CREATE TABLE ReferenceTerm
 	ObsoletedBy UNIQUEIDENTIFIER, -- OBSOLETION BY
 	CONSTRAINT PK_ReferenceTerm PRIMARY KEY (ReferenceTermId),
 	CONSTRAINT FK_ReferenceTermCodeSystemId FOREIGN KEY (CodeSystemId) REFERENCES CodeSystem(CodeSystemId),
-	CONSTRAINT FK_ReferenceTermCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UesrId),
-	CONSTRAINT FK_ReferenceTermUpdatedBy FOREIGN KEY (UpdatedBy) REFERENCES SecurityUser(UesrId),
-	CONSTRAINT FK_ReferenceTermObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UesrId),
+	CONSTRAINT FK_ReferenceTermCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT FK_ReferenceTermUpdatedBy FOREIGN KEY (UpdatedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT FK_ReferenceTermObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT CK_ReferenceTermObsoletedBy CHECK (ObsoletedBy IS NULL AND ObsoletionTime IS NULL OR ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL) 
 );
 
@@ -581,11 +581,11 @@ CREATE TABLE ReferenceTermDisplayName
 	PhoneticAlgorithmId UNIQUEIDENTIFIER NOT NULL, -- THE ALGORITHM USED TO GENERATE THE CODE
 	CONSTRAINT PK_ReferenceTermDisplayName PRIMARY KEY (ReferenceTermDisplayNameId),
 	CONSTRAINT FK_ReferenceTermDisplayNameReferenceTermId FOREIGN KEY (ReferenceTermId) REFERENCES ReferenceTerm(ReferenceTermId),
-	CONSTRAINT FK_ReferenceTermCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
-	CONSTRAINT FK_ReferenceTermObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UserId),
-	CONSTRAINT FK_ReferenceTermPhoneticAlgorithmId FOREIGN KEY (PhoneticAlgorithmId) REFERENCES PhoneticAlgorithm(PhoneticAlgorithmId),
-	CONSTRAINT CK_ReferenceTermObsoletedBy CHECK(ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletedBy IS NULL AND ObsoletionTime IS NULL),
-	CONSTRAINT CK_ReferenceTermObsoletionReason  CHECK(ObsoletionReason IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletionTime IS NULL AND ObsoletionReason IS NULL)
+	CONSTRAINT FK_ReferenceTermDisplayNameCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT FK_ReferenceTermDisplayNameObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT FK_ReferenceTermDisplayNamePhoneticAlgorithmId FOREIGN KEY (PhoneticAlgorithmId) REFERENCES PhoneticAlgorithm(PhoneticAlgorithmId),
+	CONSTRAINT CK_ReferenceTermDisplayNameObsoletedBy CHECK(ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletedBy IS NULL AND ObsoletionTime IS NULL),
+	CONSTRAINT CK_ReferenceTermDisplayNameObsoletionReason  CHECK(ObsoletionReason IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletionTime IS NULL AND ObsoletionReason IS NULL)
 );
 
 CREATE INDEX IX_ReferenceTermDisplayNamePhonetic ON ReferenceTermDisplayName(PhoneticCode, PhoneticAlgorithmId);

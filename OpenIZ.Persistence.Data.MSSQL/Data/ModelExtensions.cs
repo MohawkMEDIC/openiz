@@ -123,6 +123,21 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         }
 
         /// <summary>
+        /// Has data changed
+        /// </summary>
+        public static bool HasChanged<TObject>(this TObject me, TObject other)
+        {
+            bool retVal = true;
+            if ((me == null) ^ (other == null)) return false;
+            foreach(var pi in typeof(TObject).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                if (pi.PropertyType.IsGenericType) continue; /// Skip generics
+                retVal &= (pi.GetValue(me)?.Equals(pi.GetValue(other)) == true);
+            }
+            return retVal;
+        }
+
+        /// <summary>
         /// Get the user identifier from the authorization context
         /// </summary>
         /// <param name="principal">The current authorization context</param>

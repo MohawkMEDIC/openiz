@@ -44,6 +44,7 @@ using OpenIZ.Persistence.Data.MSSQL.Exceptions;
 using OpenIZ.Core.Model.Interfaces;
 using MARC.HI.EHRS.SVC.Core;
 using System.Threading;
+using System.Data.Linq.Mapping;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -79,6 +80,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// The current mapping instance
         /// </summary>
         protected static ModelMapper s_mapper = new ModelMapper(typeof(BaseDataPersistenceService<>).Assembly.GetManifestResourceStream("OpenIZ.Persistence.Data.MSSQL.Data.ModelMap.xml"));
+
+        // Primary key map
+        private static Dictionary<Type, PropertyInfo> s_primaryKeys = new Dictionary<Type, PropertyInfo>();
 
         #region IDataPersistence<T> Members 
         /// <summary>
@@ -518,52 +522,27 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <summary>
         /// Gets a cache item
         /// </summary>
-        protected TModel ConvertItem<TDomainClass>(TDomainClass domainItem)
+        protected TModel ConvertItem<TDomainClass>(TDomainClass domainItem) where TDomainClass : class, new()
         {
-            return s_mapper.MapDomainInstance<TDomainClass, TModel>(domainItem);
+            // Get PK
+            PropertyInfo pkProperty = null;
+            if (!s_primaryKeys.TryGetValue(typeof(TDomainClass), out pkProperty))
+            {
+                pkProperty = typeof(TDomainClass).GetProperties().SingleOrDefault(p => p.GetCustomAttribute<ColumnAttribute>()?.IsPrimaryKey == true);
+                lock (this.m_lockObject)
+                    if (!s_primaryKeys.ContainsKey(typeof(TDomainClass)))
+                        s_primaryKeys.Add(typeof(TDomainClass), pkProperty);
+            }
+
+            TModel existingItem = default(TModel);
+
+            if (pkProperty != null)
+                existingItem = DataCache.Current.GetOrAdd<TModel, TDomainClass>((Guid)pkProperty.GetValue(domainItem), domainItem);
+            else
+                existingItem = s_mapper.MapDomainInstance<TDomainClass, TModel>(domainItem);
+            return existingItem;
         }
-
-        ///// <summary>
-        ///// Adds the specified data to the cache
-        ///// </summary>
-        //protected void AddToCache(TModel modelItem, Object domainItem)
-        //{
-        //    if (s_configuration.MaxCacheSize == 0)
-        //        return; // no caching
-
-        //    if (this.m_cache.Count > s_configuration.MaxCacheSize)
-        //        lock (this.m_lockObject)
-        //            this.m_cache.Clear();
-
-
-        //    CacheItem existingItem = default(CacheItem);
-        //    if (this.m_cache.TryGetValue(modelItem.Key, out existingItem))
-        //    { 
-        //        existingItem.ModelInstance = modelItem;
-        //        existingItem.DomainItem = domainItem;
-        //    }
-        //    else
-        //        lock(this.m_lockObject)
-        //            this.m_cache.Add(modelItem.Key, new CacheItem(modelItem, domainItem));
-        //}
-
-        /// <summary>
-        /// Remove data from the cache
-        /// </summary>
-        //protected void RemoveFromCache(TModel data)
-        //{
-        //    if (s_configuration.MaxCacheSize == 0)
-        //        return;
-
-        //    lock(this.m_lockObject)
-        //    {
-        //        if (data is IVersionedEntity)
-        //            this.m_cache.Remove((data as IVersionedEntity).VersionKey);
-        //        else
-        //            this.m_cache.Remove(data.Key);
-        //    }
-        //}
-
+        
         /// <summary>
         /// Convert a data type into the model class
         /// </summary>

@@ -38,6 +38,7 @@ using System.Xml.Schema;
 using OpenIZ.Messaging.IMSI.ResourceHandler;
 using OpenIZ.Core.Model.Serialization;
 using OpenIZ.Core.Security;
+using System.Diagnostics;
 
 namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
 {
@@ -48,6 +49,9 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
     {
         // The operation description
         private OperationDescription m_operationDescription;
+
+        // Trace source
+        private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.IMSI");
 
         public ImsiMessageDispatchFormatter()
         {
@@ -67,57 +71,66 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
         public void DeserializeRequest(Message request, object[] parameters)
         {
 
-            HttpRequestMessageProperty httpRequest = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
-            string contentType = httpRequest.Headers[HttpRequestHeader.ContentType];
-
-
-            UriTemplateMatch templateMatch = (UriTemplateMatch)request.Properties.SingleOrDefault(o=>o.Value is UriTemplateMatch).Value;
-            // Not found
-            if(templateMatch == null)
+            try
             {
-                throw new WebFaultException(HttpStatusCode.NotFound);
-            }
+                HttpRequestMessageProperty httpRequest = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
+                string contentType = httpRequest.Headers[HttpRequestHeader.ContentType];
 
-            for (int pNumber = 0; pNumber < parameters.Length; pNumber++)
-            {
-                var parm = this.m_operationDescription.Messages[0].Body.Parts[pNumber];
 
-                // Simple parameter
-                if (templateMatch.BoundVariables[parm.Name] != null)
+                UriTemplateMatch templateMatch = (UriTemplateMatch)request.Properties.SingleOrDefault(o => o.Value is UriTemplateMatch).Value;
+                // Not found
+                if (templateMatch == null)
                 {
-                    var rawData = templateMatch.BoundVariables[parm.Name];
-                    parameters[pNumber] = Convert.ChangeType(rawData, parm.Type);
+                    throw new WebFaultException(HttpStatusCode.NotFound);
                 }
-                // Use XML Serializer
-                else if (contentType?.StartsWith("application/xml") == true)
-                {
-                    XmlSerializer xsz = new XmlSerializer(parm.Type, typeof(IImsiServiceContract).GetCustomAttributes<ServiceKnownTypeAttribute>().Select(t => t.Type).ToArray());
-                    XmlDictionaryReader bodyReader = request.GetReaderAtBodyContents();
-                    parameters[0] = xsz.Deserialize(bodyReader);
-                }
-                // Use JSON Serializer
-                else if (contentType?.StartsWith("application/json") == true)
-                {
-                    // Read the binary contents form the WCF pipeline
-                    XmlDictionaryReader bodyReader = request.GetReaderAtBodyContents();
-                    bodyReader.ReadStartElement("Binary");
-                    byte[] rawBody = bodyReader.ReadContentAsBase64();
 
-                    // Now read the JSON data
-                    MemoryStream ms = new MemoryStream(rawBody);
-                    StreamReader sr = new StreamReader(ms);
-                    JsonSerializer jsz = new JsonSerializer()
+                for (int pNumber = 0; pNumber < parameters.Length; pNumber++)
+                {
+                    var parm = this.m_operationDescription.Messages[0].Body.Parts[pNumber];
+
+                    // Simple parameter
+                    if (templateMatch.BoundVariables[parm.Name] != null)
                     {
-                        Binder = new ModelSerializationBinder(),
-                        TypeNameAssemblyFormat = 0,
-                        TypeNameHandling = TypeNameHandling.All
-                    };
-                    var dserType = ResourceHandlerUtil.Current.GetResourceHandler(templateMatch.BoundVariables["resourceType"])?.Type ?? parm.Type;
-                    parameters[0] = jsz.Deserialize(sr, dserType);
+                        var rawData = templateMatch.BoundVariables[parm.Name];
+                        parameters[pNumber] = Convert.ChangeType(rawData, parm.Type);
+                    }
+                    // Use XML Serializer
+                    else if (contentType?.StartsWith("application/xml") == true)
+                    {
+                        XmlSerializer xsz = new XmlSerializer(parm.Type, typeof(IImsiServiceContract).GetCustomAttributes<ServiceKnownTypeAttribute>().Select(t => t.Type).ToArray());
+                        XmlDictionaryReader bodyReader = request.GetReaderAtBodyContents();
+                        parameters[0] = xsz.Deserialize(bodyReader);
+                    }
+                    // Use JSON Serializer
+                    else if (contentType?.StartsWith("application/json") == true)
+                    {
+                        // Read the binary contents form the WCF pipeline
+                        XmlDictionaryReader bodyReader = request.GetReaderAtBodyContents();
+                        bodyReader.ReadStartElement("Binary");
+                        byte[] rawBody = bodyReader.ReadContentAsBase64();
+
+                        // Now read the JSON data
+                        MemoryStream ms = new MemoryStream(rawBody);
+                        StreamReader sr = new StreamReader(ms);
+                        JsonSerializer jsz = new JsonSerializer()
+                        {
+                            Binder = new ModelSerializationBinder(),
+                            TypeNameAssemblyFormat = 0,
+                            TypeNameHandling = TypeNameHandling.All
+                        };
+                        var dserType = ResourceHandlerUtil.Current.GetResourceHandler(templateMatch.BoundVariables["resourceType"])?.Type ?? parm.Type;
+                        parameters[0] = jsz.Deserialize(sr, dserType);
+                    }
+                    else if (contentType != null)// TODO: Binaries
+                        throw new InvalidOperationException("Invalid request format");
                 }
-                else if (contentType != null)// TODO: Binaries
-                    throw new InvalidOperationException("Invalid request format");
             }
+            catch (Exception e)
+            {
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                throw;
+            }
+
         }
 
         /// <summary>
@@ -125,80 +138,87 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
         /// </summary>
         public Message SerializeReply(MessageVersion messageVersion, object[] parameters, object result)
         {
-            // Outbound control
-            var format = WebContentFormat.Raw;
-            Message request = OperationContext.Current.RequestContext.RequestMessage;
-            HttpRequestMessageProperty httpRequest = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
-            string accepts = httpRequest.Headers[HttpRequestHeader.Accept],
-                contentType = httpRequest.Headers[HttpRequestHeader.ContentType];
-            Message reply = null;
-
-            // Result is serializable
-            if (result?.GetType().GetCustomAttribute<XmlTypeAttribute>() != null ||
-                result?.GetType().GetCustomAttribute<JsonObjectAttribute>() != null)
+            try
             {
-                // The request was in JSON or the accept is JSON
-                if (accepts?.StartsWith("application/json")  == true||
-                    contentType?.StartsWith("application/json") == true)
-                {
-                    // Prepare the serializer
-                    JsonSerializer jsz = new JsonSerializer();
+                // Outbound control
+                var format = WebContentFormat.Raw;
+                Message request = OperationContext.Current.RequestContext.RequestMessage;
+                HttpRequestMessageProperty httpRequest = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
+                string accepts = httpRequest.Headers[HttpRequestHeader.Accept],
+                    contentType = httpRequest.Headers[HttpRequestHeader.ContentType];
+                Message reply = null;
 
-                    // Write json data
-                    byte[] body = null;
-                    using (MemoryStream ms = new MemoryStream())
-                    using (StreamWriter sw = new StreamWriter(ms, Encoding.UTF8))
-                    using (JsonWriter jsw = new JsonTextWriter(sw))
+                // Result is serializable
+                if (result?.GetType().GetCustomAttribute<XmlTypeAttribute>() != null ||
+                    result?.GetType().GetCustomAttribute<JsonObjectAttribute>() != null)
+                {
+                    // The request was in JSON or the accept is JSON
+                    if (accepts?.StartsWith("application/json") == true ||
+                        contentType?.StartsWith("application/json") == true)
                     {
-                        
-                        jsz.Serialize(jsw, result);
-                        sw.Flush();
-                        body = ms.ToArray();
+                        // Prepare the serializer
+                        JsonSerializer jsz = new JsonSerializer();
+
+                        // Write json data
+                        byte[] body = null;
+                        using (MemoryStream ms = new MemoryStream())
+                        using (StreamWriter sw = new StreamWriter(ms, Encoding.UTF8))
+                        using (JsonWriter jsw = new JsonTextWriter(sw))
+                        {
+
+                            jsz.Serialize(jsw, result);
+                            sw.Flush();
+                            body = ms.ToArray();
+                        }
+
+                        // Prepare reply for the WCF pipeline
+                        format = WebContentFormat.Raw;
+                        contentType = "application/json";
+                        reply = Message.CreateMessage(messageVersion, this.m_operationDescription.Messages[1].Action, new RawBodyWriter(body));
+
                     }
+                    // The request was in XML and/or the accept is JSON
+                    else
+                    {
 
-                    // Prepare reply for the WCF pipeline
-                    format = WebContentFormat.Raw;
-                    contentType = "application/json";
-                    reply = Message.CreateMessage(messageVersion, this.m_operationDescription.Messages[1].Action, new RawBodyWriter(body));
+                        XmlSerializer xsz = new XmlSerializer(result.GetType(), typeof(IImsiServiceContract).GetCustomAttributes<ServiceKnownTypeAttribute>().Select(t => t.Type).ToArray());
+                        MemoryStream ms = new MemoryStream();
+                        xsz.Serialize(ms, result);
+                        format = WebContentFormat.Xml;
+                        contentType = "application/xml";
+                        ms.Seek(0, SeekOrigin.Begin);
 
+                        reply = Message.CreateMessage(messageVersion, this.m_operationDescription.Messages[1].Action, XmlDictionaryReader.Create(ms));
+                    }
                 }
-                // The request was in XML and/or the accept is JSON
-                else 
+                else if (result is XmlSchema)
                 {
-
-                    XmlSerializer xsz = new XmlSerializer(result.GetType(), typeof(IImsiServiceContract).GetCustomAttributes<ServiceKnownTypeAttribute>().Select(t=>t.Type).ToArray());
                     MemoryStream ms = new MemoryStream();
-                    xsz.Serialize(ms, result);
-                    format = WebContentFormat.Xml;
-                    contentType = "application/xml";
+                    (result as XmlSchema).Write(ms);
                     ms.Seek(0, SeekOrigin.Begin);
-
+                    format = WebContentFormat.Xml;
+                    contentType = "text/xml";
                     reply = Message.CreateMessage(messageVersion, this.m_operationDescription.Messages[1].Action, XmlDictionaryReader.Create(ms));
                 }
+                else if (result is Stream) // TODO: This is messy, clean it up
+                {
+                    reply = Message.CreateMessage(messageVersion, this.m_operationDescription.Messages[1].Action, new RawBodyWriter(result as Stream));
+                }
+
+                reply.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(format));
+                WebOperationContext.Current.OutgoingResponse.ContentType = contentType;
+                WebOperationContext.Current.OutgoingResponse.Headers.Add("X-PoweredBy", "OpenIZIMSI");
+                WebOperationContext.Current.OutgoingResponse.Headers.Add("X-GeneratedOn", DateTime.Now.ToString("o"));
+
+                // TODO: Determine best way to clear current authentication context
+                AuthenticationContext.Current = null;
+                return reply;
             }
-            else if(result is XmlSchema)
+            catch (Exception e)
             {
-                MemoryStream ms = new MemoryStream();
-                (result as XmlSchema).Write(ms);
-                ms.Seek(0, SeekOrigin.Begin);
-                format = WebContentFormat.Xml;
-                contentType = "text/xml";
-                reply = Message.CreateMessage(messageVersion, this.m_operationDescription.Messages[1].Action, XmlDictionaryReader.Create(ms));
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                throw;
             }
-            else if(result is Stream) // TODO: This is messy, clean it up
-            {
-                reply = Message.CreateMessage(messageVersion, this.m_operationDescription.Messages[1].Action, new RawBodyWriter(result as Stream));
-            }
-
-            reply.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(format));
-            WebOperationContext.Current.OutgoingResponse.ContentType = contentType;
-            WebOperationContext.Current.OutgoingResponse.Headers.Add("X-PoweredBy","OpenIZIMSI");
-            WebOperationContext.Current.OutgoingResponse.Headers.Add("X-GeneratedOn", DateTime.Now.ToString("o"));
-
-            // TODO: Determine best way to clear current authentication context
-            AuthenticationContext.Current = null;
-            return reply;
-
         }
     }
 }

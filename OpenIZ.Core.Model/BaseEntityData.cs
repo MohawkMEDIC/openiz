@@ -142,7 +142,7 @@ namespace OpenIZ.Core.Model
         /// </summary>
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("obsoletedBy", IsNullable = false), JsonProperty("obsoletedBy")]
+        [XmlElement("obsoletedBy"), JsonProperty("obsoletedBy")]
         public virtual Guid? ObsoletedByKey
         {
             get { return this.m_obsoletedById; }
