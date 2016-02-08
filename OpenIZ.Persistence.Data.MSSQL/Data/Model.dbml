@@ -1101,4 +1101,20 @@
       <Association Name="SecurityUser_UserEntity2" Member="SecurityUser" ThisKey="UserId" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
     </Type>
   </Table>
+  <Table Name="dbo.ConceptView" Member="ConceptViews">
+    <Type Name="ConceptView">
+      <Column Name="IsSystemConcept" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="ConceptVersionId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="VersionSequenceId" Type="System.Decimal" DbType="Decimal(20,0) NOT NULL" CanBeNull="false" IsDbGenerated="true" />
+      <Column Name="ConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="CreationTime" Type="System.DateTimeOffset" DbType="DateTimeOffset NOT NULL" CanBeNull="false" IsDbGenerated="true" />
+      <Column Name="StatusConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
+      <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="ReplacesVersionId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="ConceptClassId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="Mnemonic" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
 </Database>

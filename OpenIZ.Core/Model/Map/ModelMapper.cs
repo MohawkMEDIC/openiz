@@ -290,8 +290,16 @@ namespace OpenIZ.Core.Model.Map
             foreach (var propInfo in typeof(TDomain).GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
 
+                // Map property
+                PropertyMap propMap = null;
+                classMap.TryGetDomainProperty(propInfo.Name, out propMap);
+
+                if (propMap?.DontLoad == true)
+                    continue;
+
                 // Property info
-                try {
+                try
+                {
                     if (propInfo.GetValue(domainInstance) == null)
                         continue;
                 }
@@ -300,9 +308,7 @@ namespace OpenIZ.Core.Model.Map
                     this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
                 }
 
-                // Map property
-                PropertyMap propMap = null;
-                classMap.TryGetDomainProperty(propInfo.Name, out propMap);
+                // Traversal stuff
                 PropertyInfo modelProperty = null;
                 object sourceObject = domainInstance;
                 PropertyInfo sourceProperty = propInfo;
@@ -322,16 +328,16 @@ namespace OpenIZ.Core.Model.Map
                     // And make a northwest passage to the sea. 🎶
                     var via = propMap.Via;
                     List<PropertyMap> viaWalk = new List<PropertyMap>();
-                    while(via?.Traverse == true)
+                    while(via?.DontLoad == false)
                     {
                         viaWalk.Add(via);
                         via = via.Via;
                     }
 
-                    foreach (var p in viaWalk.Where(o=>o.Traverse == true).Reverse())
+                    foreach (var p in viaWalk.Select(o=>o).Reverse())
                     {
                         sourceObject = sourceProperty.GetValue(sourceObject);
-                        sourceProperty = sourceProperty.PropertyType.GetProperty(p.DomainName);
+                        sourceProperty = this.ExtractDomainType(sourceProperty.PropertyType).GetProperty(p.DomainName);
                     }
                 }
 

@@ -178,9 +178,9 @@ namespace OpenIZ.Messaging.IMSI.Util
                         if (accessExpression.Type == typeof(String))
                             valueExpr = Expression.Constant(pValue);
                         else if (accessExpression.Type == typeof(DateTime))
-                            valueExpr = Expression.Constant(DateTime.ParseExact(pValue, "o", System.Globalization.CultureInfo.InvariantCulture));
+                            valueExpr = Expression.Constant(DateTime.Parse(pValue));
                         else if (accessExpression.Type == typeof(DateTimeOffset))
-                            valueExpr = Expression.Constant(DateTimeOffset.ParseExact(pValue, "o", CultureInfo.InvariantCulture));
+                            valueExpr = Expression.Constant(DateTimeOffset.Parse(pValue));
                         else if (accessExpression.Type == typeof(Guid))
                             valueExpr = Expression.Constant(Guid.Parse(pValue));
                         else

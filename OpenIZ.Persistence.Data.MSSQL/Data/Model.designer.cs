@@ -875,6 +875,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 				return this.GetTable<UserEntity>();
 			}
 		}
+		
+		public System.Data.Linq.Table<ConceptView> ConceptViews
+		{
+			get
+			{
+				return this.GetTable<ConceptView>();
+			}
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Act")]
@@ -24730,6 +24738,231 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			if ((this.PropertyChanged != null))
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ConceptView")]
+	public partial class ConceptView
+	{
+		
+		private bool _IsSystemConcept;
+		
+		private System.Guid _ConceptVersionId;
+		
+		private decimal _VersionSequenceId;
+		
+		private System.Guid _ConceptId;
+		
+		private System.DateTimeOffset _CreationTime;
+		
+		private System.Guid _StatusConceptId;
+		
+		private System.Guid _CreatedBy;
+		
+		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
+		
+		private System.Nullable<System.Guid> _ObsoletedBy;
+		
+		private System.Nullable<System.Guid> _ReplacesVersionId;
+		
+		private System.Nullable<System.Guid> _ConceptClassId;
+		
+		private string _Mnemonic;
+		
+		public ConceptView()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsSystemConcept", DbType="Bit NOT NULL")]
+		public bool IsSystemConcept
+		{
+			get
+			{
+				return this._IsSystemConcept;
+			}
+			set
+			{
+				if ((this._IsSystemConcept != value))
+				{
+					this._IsSystemConcept = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptVersionId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid ConceptVersionId
+		{
+			get
+			{
+				return this._ConceptVersionId;
+			}
+			set
+			{
+				if ((this._ConceptVersionId != value))
+				{
+					this._ConceptVersionId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_VersionSequenceId", AutoSync=AutoSync.Always, DbType="Decimal(20,0) NOT NULL", IsDbGenerated=true)]
+		public decimal VersionSequenceId
+		{
+			get
+			{
+				return this._VersionSequenceId;
+			}
+			set
+			{
+				if ((this._VersionSequenceId != value))
+				{
+					this._VersionSequenceId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid ConceptId
+		{
+			get
+			{
+				return this._ConceptId;
+			}
+			set
+			{
+				if ((this._ConceptId != value))
+				{
+					this._ConceptId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", AutoSync=AutoSync.Always, DbType="DateTimeOffset NOT NULL", IsDbGenerated=true)]
+		public System.DateTimeOffset CreationTime
+		{
+			get
+			{
+				return this._CreationTime;
+			}
+			set
+			{
+				if ((this._CreationTime != value))
+				{
+					this._CreationTime = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StatusConceptId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid StatusConceptId
+		{
+			get
+			{
+				return this._StatusConceptId;
+			}
+			set
+			{
+				if ((this._StatusConceptId != value))
+				{
+					this._StatusConceptId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid CreatedBy
+		{
+			get
+			{
+				return this._CreatedBy;
+			}
+			set
+			{
+				if ((this._CreatedBy != value))
+				{
+					this._CreatedBy = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> ObsoletionTime
+		{
+			get
+			{
+				return this._ObsoletionTime;
+			}
+			set
+			{
+				if ((this._ObsoletionTime != value))
+				{
+					this._ObsoletionTime = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletedBy", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> ObsoletedBy
+		{
+			get
+			{
+				return this._ObsoletedBy;
+			}
+			set
+			{
+				if ((this._ObsoletedBy != value))
+				{
+					this._ObsoletedBy = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReplacesVersionId", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> ReplacesVersionId
+		{
+			get
+			{
+				return this._ReplacesVersionId;
+			}
+			set
+			{
+				if ((this._ReplacesVersionId != value))
+				{
+					this._ReplacesVersionId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptClassId", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> ConceptClassId
+		{
+			get
+			{
+				return this._ConceptClassId;
+			}
+			set
+			{
+				if ((this._ConceptClassId != value))
+				{
+					this._ConceptClassId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Mnemonic", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
+		public string Mnemonic
+		{
+			get
+			{
+				return this._Mnemonic;
+			}
+			set
+			{
+				if ((this._Mnemonic != value))
+				{
+					this._Mnemonic = value;
+				}
 			}
 		}
 	}

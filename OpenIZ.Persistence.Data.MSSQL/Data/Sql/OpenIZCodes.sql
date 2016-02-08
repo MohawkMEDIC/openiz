@@ -3750,3 +3750,7 @@ INSERT INTO ConceptName (ConceptId, EffectiveVersionSequenceId, LanguageCode, Na
 INSERT INTO ConceptName (ConceptId, EffectiveVersionSequenceId, LanguageCode, Name, PhoneticAlgorithmId) SELECT '8cc5ef0d-3911-4d99-937f-6cfdc2a27d55', VersionSequenceId, 'en', 'Procedure', '402CD339-D0E4-46CE-8FC2-12A4B0E17226' FROM ConceptVersion WHERE ConceptId = '8cc5ef0d-3911-4d99-937f-6cfdc2a27d55' AND ObsoletionTime IS NULL;
 INSERT INTO ConceptName (ConceptId, EffectiveVersionSequenceId, LanguageCode, Name, PhoneticAlgorithmId) SELECT 'e658ca72-3b6a-4099-ab6e-7cf6861a5b61', VersionSequenceId, 'en', 'request', '402CD339-D0E4-46CE-8FC2-12A4B0E17226' FROM ConceptVersion WHERE ConceptId = 'e658ca72-3b6a-4099-ab6e-7cf6861a5b61' AND ObsoletionTime IS NULL;
 INSERT INTO ConceptName (ConceptId, EffectiveVersionSequenceId, LanguageCode, Name, PhoneticAlgorithmId) SELECT 'b389dedf-be61-456b-aa70-786e1a5a69e0', VersionSequenceId, 'en', 'promise', '402CD339-D0E4-46CE-8FC2-12A4B0E17226' FROM ConceptVersion WHERE ConceptId = 'b389dedf-be61-456b-aa70-786e1a5a69e0' AND ObsoletionTime IS NULL;
+
+
+delete from ConceptReferenceTerm WHERE conceptreferencetermid in (select ConceptReferenceTermId from ConceptReferenceTerm o where 
+	(select count(*) from ConceptReferenceTerm i where o.ConceptId = i.ConceptId and o.ReferenceTermId = i.ReferenceTermId) > 1);

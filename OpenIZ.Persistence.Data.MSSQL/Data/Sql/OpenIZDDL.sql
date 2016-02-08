@@ -1373,3 +1373,11 @@ CREATE TABLE QuantifiedActParticipation
 	CONSTRAINT PK_QuantifiedActParticipation PRIMARY KEY (ActParticipationId),
 	CONSTRAINT FK_QuantifiedActParticipationId FOREIGN KEY (ActParticipationId) REFERENCES ActParticipation(ActParticipationId)
 );
+
+GO 
+
+-- CREATE CONCEPT VIEW
+CREATE VIEW ConceptView AS
+	SELECT c.IsSystemConcept, v.* FROM ConceptVersion v INNER JOIN Concept c ON (v.ConceptId = c.ConceptId);
+
+GO

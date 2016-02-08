@@ -104,6 +104,14 @@ namespace OpenIZ.Core.Model
                 this.m_createdBy = base.DelayLoad(this.m_createdById, this.m_createdBy);
                 return this.m_createdBy;
             }
+            set
+            {
+                this.m_createdBy = value;
+                if (value == null)
+                    this.m_createdById = Guid.Empty;
+                else
+                    this.m_createdById = value.Key;
+            }
          }
 
         /// <summary>
@@ -116,6 +124,15 @@ namespace OpenIZ.Core.Model
             {
                 this.m_obsoletedBy= base.DelayLoad(this.m_obsoletedById, this.m_obsoletedBy);
                 return this.m_obsoletedBy;
+            }
+            set
+            {
+                this.m_obsoletedBy = value;
+                if (value == null)
+                    this.m_obsoletedById = Guid.Empty;
+                else
+                    this.m_obsoletedById = value.Key;
+
             }
         }
 
