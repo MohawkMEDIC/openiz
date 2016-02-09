@@ -14,10 +14,9 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-19
+ * Date: 2016-1-24
  */
-
-
+using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
 using System;
 using System.ComponentModel;
@@ -28,7 +27,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Display name of a code system or reference term
     /// </summary>
-    [XmlType("ReferenceTermName", Namespace = "http://openiz.org/model")]
+    [XmlType("ReferenceTermName",  Namespace = "http://openiz.org/model"), JsonObject("ReferenceTermName")]
     
     public abstract class ReferenceTermName : BaseEntityData
     {
@@ -42,25 +41,25 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Back-reference to reference term
         /// </summary>
-        [XmlElement("referenceTerm")]
+        [XmlIgnore, JsonIgnore]
         public Guid  ReferenceTermKey { get; set; }
 
         /// <summary>
         /// Gets or sets the language code of the object
         /// </summary>
-        [XmlElement("language")]
+        [XmlElement("language"), JsonProperty("language")]
         public String Language { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the reference term
         /// </summary>
-        [XmlElement("name")]
+        [XmlElement("name"), JsonProperty("name")]
         public String Name { get; set; }
 
         /// <summary>
         /// Gets or sets the phonetic code of the reference term
         /// </summary>
-        [XmlElement("phoneticCode")]
+        [XmlElement("phoneticCode"), JsonProperty("phoneticCode")]
         public String PhoneticCode { get; set; }
 
         /// <summary>
@@ -68,7 +67,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("phoneticAlgorithm")]
+        [XmlElement("phoneticAlgorithm"), JsonProperty("phoneticAlgorithm")]
         public Guid  PhoneticAlgorithmKey
         {
             get { return this.m_phoneticAlgorithmId; }
@@ -83,7 +82,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the phonetic algorithm
         /// </summary>
         [DelayLoad(nameof(PhoneticAlgorithmKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public PhoneticAlgorithm PhoneticAlgorithm
         {
             get

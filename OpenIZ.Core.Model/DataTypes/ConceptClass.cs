@@ -14,8 +14,9 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-19
+ * Date: 2016-1-24
  */
+using Newtonsoft.Json;
 using System;
 using System.Xml.Serialization;
 
@@ -25,19 +26,19 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Identifies a classification for a concept
     /// </summary>
     
-    [XmlType("ConceptClass", Namespace = "http://openiz.org/model")]
+    [XmlType("ConceptClass",  Namespace = "http://openiz.org/model"), JsonObject("ConceptClass")]
     public class ConceptClass : IdentifiedData
     {
 
         /// <summary>
         /// Gets or sets the name of the concept class
         /// </summary>
-        [XmlElement("name")]
+        [XmlElement("name"), JsonProperty("name")]
         public string Name { get; set; }
         /// <summary>
         /// Gets or sets the mnemonic
         /// </summary>
-        [XmlElement("mnemonic")]
+        [XmlElement("mnemonic"), JsonProperty("mnemonic")]
         public string Mnemonic { get; set; }
 
 

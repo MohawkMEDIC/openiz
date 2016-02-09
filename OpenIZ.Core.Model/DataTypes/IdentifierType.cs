@@ -14,10 +14,9 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-19
+ * Date: 2016-1-24
  */
-
-
+using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
 using System;
 using System.ComponentModel;
@@ -29,7 +28,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a basic information class which classifies the use of an identifier
     /// </summary>
     
-    [XmlType("IdentifierType", Namespace = "http://openiz.org/model")]
+    [XmlType("IdentifierType",  Namespace = "http://openiz.org/model"), JsonObject("IdentifierType")]
     public class IdentifierType : BaseEntityData
     {
 
@@ -49,7 +48,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("scopeConcept")]
+        [XmlElement("scopeConcept"), JsonProperty("scopeConcept")]
         public Guid?  ScopeConceptKey
         {
             get { return this.m_scopeConceptId; }
@@ -65,7 +64,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("typeConcept")]
+        [XmlElement("typeConcept"), JsonProperty("typeConcept")]
         public Guid  TypeConceptKey
         {
             get { return this.m_typeConceptId; }
@@ -80,7 +79,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Type concept
         /// </summary>
         [DelayLoad(nameof(TypeConceptKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Concept TypeConcept
         {
             get
@@ -102,7 +101,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets the scope of the identifier
         /// </summary>
         [DelayLoad(nameof(ScopeConceptKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Concept Scope
         {
             get

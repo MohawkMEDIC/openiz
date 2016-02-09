@@ -45,7 +45,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.PhoneticAlgorithm ConvertToModel(object data)
         {
-            return s_mapper.MapDomainInstance<Data.PhoneticAlgorithm, Core.Model.DataTypes.PhoneticAlgorithm>(data as Data.PhoneticAlgorithm);
+            return this.ConvertToModel(data as Data.PhoneticAlgorithm);
+        }
+
+        /// <summary>
+        /// Convert to model
+        /// </summary>
+        internal Core.Model.DataTypes.PhoneticAlgorithm ConvertToModel(Data.PhoneticAlgorithm data)
+        {
+            return this.ConvertItem(data);
         }
 
         /// <summary>
@@ -85,7 +93,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataContext.SubmitChanges();
 
             existingDomainAlgorithm.PhoneticAlgorithmId = Guid.Empty;
-
             return this.ConvertToModel(existingDomainAlgorithm);
         }
 
@@ -107,7 +114,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             domainPhoneticAlgorithm.CopyObjectData(this.ConvertFromModel(storageData));
             // Update
             dataContext.SubmitChanges();
-
             return this.ConvertToModel(domainPhoneticAlgorithm);
         }
     }

@@ -31,8 +31,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MARC.Everest, Version=1.5.0.0, Culture=neutral, PublicKeyToken=ba5b2480018546af, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\MARC.Everest.dll</HintPath>
+    </Reference>
     <Reference Include="MARC.HI.EHRS.SVC.Core">
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -54,18 +62,27 @@
     <Compile Include="Configuration\ImsiConfiguration.cs" />
     <Compile Include="Configuration\ImsiConfigurationSectionHandler.cs" />
     <Compile Include="ImsiMessageHandler.cs" />
+    <Compile Include="Model\ErrorResult.cs" />
+    <Compile Include="Model\ResultDetail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceHandler\ConceptResourceHandler.cs" />
+    <Compile Include="ResourceHandler\IResourceHandler.cs" />
+    <Compile Include="ResourceHandler\ResourceHandlerUtil.cs" />
+    <Compile Include="Util\BundleUtil.cs" />
+    <Compile Include="Util\QueryParameterLinqExpressionBuilder.cs" />
     <Compile Include="Wcf\Compression\CompressionUtil.cs" />
-    <Compile Include="Wcf\Compression\CompressionWriter.cs" />
+    <Compile Include="Wcf\Compression\CompressionBodyWriter.cs" />
     <Compile Include="Wcf\Compression\DeflateCompressionScheme.cs" />
     <Compile Include="Wcf\Compression\GzipCompressionScheme.cs" />
     <Compile Include="Wcf\Compression\ICompressionScheme.cs" />
-    <Compile Include="Wcf\Compression\TextWriter.cs" />
+    <Compile Include="Wcf\Compression\RawBodyWriter.cs" />
     <Compile Include="Wcf\IImsiServiceContract.cs" />
     <Compile Include="Wcf\ImsiContentTypeHandler.cs" />
     <Compile Include="Wcf\ImsiMessageInspector.cs" />
     <Compile Include="Wcf\ImsiRestEndpointBehavior.cs" />
+    <Compile Include="Wcf\ImsiSerializerOperationBehavior.cs" />
     <Compile Include="Wcf\ImsiServiceBehavior.cs" />
+    <Compile Include="Wcf\Serialization\ImsiMessageDispatchFormatter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
@@ -76,6 +93,11 @@
       <Project>{db9bc05e-45f1-4f96-a161-f36bdecaf566}</Project>
       <Name>OpenIZ.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\OpenIZ.licenseheader">
+      <Link>OpenIZ.licenseheader</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

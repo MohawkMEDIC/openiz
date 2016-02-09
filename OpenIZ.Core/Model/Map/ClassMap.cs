@@ -33,6 +33,11 @@ namespace OpenIZ.Core.Model.Map
     public class ClassMap
     {
 
+        // Cache
+        private Dictionary<String, PropertyMap> m_modelPropertyMap = new Dictionary<String, PropertyMap>();
+        private Dictionary<String, PropertyMap> m_domainPropertyMap = new Dictionary<String, PropertyMap>();
+        private Object m_lockObject = new Object();
+
         /// <summary>
         /// Gets or sets the model class for the mapper
         /// </summary>
@@ -71,7 +76,13 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         public bool TryGetModelProperty(string modelName, out PropertyMap retVal)
         {
-            retVal = this.Property.Find(o => o.ModelName == modelName);
+            if (!this.m_modelPropertyMap.TryGetValue(modelName, out retVal))
+            {
+                retVal = this.Property.Find(o => o.ModelName == modelName);
+                lock(this.m_lockObject)
+                    if (!this.m_modelPropertyMap.ContainsKey(modelName))
+                        this.m_modelPropertyMap.Add(modelName, retVal);
+            }
             return retVal != null;
         }
 
@@ -101,8 +112,17 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         public bool TryGetDomainProperty(string domainName, out PropertyMap retVal)
         {
-            retVal = this.Property.Find(o => o.DomainName == domainName);
+
+            if (!this.m_domainPropertyMap.TryGetValue(domainName, out retVal))
+            {
+                retVal = this.Property.Find(o => o.DomainName == domainName);
+                lock (this.m_lockObject)
+                    if (!this.m_domainPropertyMap.ContainsKey(domainName))
+                        this.m_domainPropertyMap.Add(domainName, retVal);
+            }
             return retVal != null;
+
+            
         }
     }
 }

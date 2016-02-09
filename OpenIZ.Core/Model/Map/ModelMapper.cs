@@ -103,16 +103,18 @@ namespace OpenIZ.Core.Model.Map
             else if (classMap.TryGetModelProperty(memberExpression.Member.Name, out propertyMap))
             {
                 // We have to map through an associative table
-                if(propertyMap.Via != null && accessExpressionAsMember != null)
+                if(propertyMap.Via != null )
                 {
                     MemberExpression viaExpression = Expression.MakeMemberAccess(accessExpression, accessExpression.Type.GetProperty(propertyMap.DomainName));
-                    foreach(var via in propertyMap.Via)
+                    var via = propertyMap.Via;
+                    while (via != null)
                     {
                         
-                        MemberInfo viaMember = this.ExtractDomainType(viaExpression.Type).GetProperty(via.DomainName);
+                        MemberInfo viaMember = viaExpression.Type.GetProperty(via.DomainName);
                         if (viaMember == null)
-                            throw new MissingMemberException(via.DomainName);
+                            break;
                         viaExpression = Expression.MakeMemberAccess(viaExpression, viaMember);
+                        via = via.Via;
                     }
                     return viaExpression;
                 }
@@ -164,7 +166,7 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         public Expression CreateLambdaMemberAdjustmentExpression(MemberExpression rootExpression, ParameterExpression lambdaParameterExpression)
         {
-            ClassMap classMap = this.m_mapFile.GetModelClassMap(rootExpression.Expression.Type);
+            ClassMap classMap = this.m_mapFile.GetModelClassMap(this.ExtractDomainType(rootExpression.Expression.Type));
 
             if (classMap == null)
                 return lambdaParameterExpression;
@@ -177,13 +179,15 @@ namespace OpenIZ.Core.Model.Map
             if (propertyMap.Via != null)
             {
                 Expression viaExpression = lambdaParameterExpression;
-                foreach (var via in propertyMap.Via)
+                var via = propertyMap.Via;
+                while (via != null)
                 {
 
-                    MemberInfo viaMember = this.ExtractDomainType(viaExpression.Type).GetProperty(via.DomainName);
+                    MemberInfo viaMember = viaExpression.Type.GetProperty(via.DomainName);
                     if (viaMember == null)
-                        throw new MissingMemberException(via.DomainName);
+                        break;
                     viaExpression = Expression.MakeMemberAccess(viaExpression, viaMember);
+                    via = via.Via;
                 }
                 return viaExpression;
             }
@@ -199,11 +203,19 @@ namespace OpenIZ.Core.Model.Map
         /// <param name="expression">The expression to be converted</param>
         public Expression<Func<TTo, bool>> MapModelExpression<TFrom, TTo>(Expression<Func<TFrom, bool>> expression)
         {
-            var parameter = Expression.Parameter(typeof(TTo), expression.Parameters[0].Name);
-            Expression expr = new ModelExpressionVisitor(this, parameter).Visit(expression.Body);
-            var retVal = Expression.Lambda<Func<TTo, bool>>(expr, parameter); 
-            this.m_traceSource.TraceInformation("Map Expression: {0} > {1}", expression, retVal);
-            return retVal;
+            try
+            {
+                var parameter = Expression.Parameter(typeof(TTo), expression.Parameters[0].Name);
+                Expression expr = new ModelExpressionVisitor(this, parameter).Visit(expression.Body);
+                var retVal = Expression.Lambda<Func<TTo, bool>>(expr, parameter);
+                this.m_traceSource.TraceInformation("Map Expression: {0} > {1}", expression, retVal);
+                return retVal;
+            }
+            catch(Exception e)
+            {
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, "Error converting {0}. {1}", expression, e.ToString());
+                throw;
+            }
         }
 
         /// <summary>
@@ -278,8 +290,16 @@ namespace OpenIZ.Core.Model.Map
             foreach (var propInfo in typeof(TDomain).GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
 
+                // Map property
+                PropertyMap propMap = null;
+                classMap.TryGetDomainProperty(propInfo.Name, out propMap);
+
+                if (propMap?.DontLoad == true)
+                    continue;
+
                 // Property info
-                try {
+                try
+                {
                     if (propInfo.GetValue(domainInstance) == null)
                         continue;
                 }
@@ -288,9 +308,7 @@ namespace OpenIZ.Core.Model.Map
                     this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
                 }
 
-                // Map property
-                PropertyMap propMap = null;
-                classMap.TryGetDomainProperty(propInfo.Name, out propMap);
+                // Traversal stuff
                 PropertyInfo modelProperty = null;
                 object sourceObject = domainInstance;
                 PropertyInfo sourceProperty = propInfo;
@@ -308,10 +326,18 @@ namespace OpenIZ.Core.Model.Map
                     // To find the hand of Franklin reaching for the Beaufort Sea.
                     // Tracing one warm line, through a land so wide and savage
                     // And make a northwest passage to the sea. 🎶
-                    foreach (var p in propMap.Via.Where(o=>o.Traverse == true).Reverse())
+                    var via = propMap.Via;
+                    List<PropertyMap> viaWalk = new List<PropertyMap>();
+                    while(via?.DontLoad == false)
+                    {
+                        viaWalk.Add(via);
+                        via = via.Via;
+                    }
+
+                    foreach (var p in viaWalk.Select(o=>o).Reverse())
                     {
                         sourceObject = sourceProperty.GetValue(sourceObject);
-                        sourceProperty = sourceProperty.PropertyType.GetProperty(p.DomainName);
+                        sourceProperty = this.ExtractDomainType(sourceProperty.PropertyType).GetProperty(p.DomainName);
                     }
                 }
 

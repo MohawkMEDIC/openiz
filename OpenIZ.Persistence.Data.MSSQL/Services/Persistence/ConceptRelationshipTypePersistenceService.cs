@@ -48,7 +48,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.ConceptRelationshipType ConvertToModel(object data)
         {
-            return s_mapper.MapDomainInstance<Data.ConceptRelationshipType, Core.Model.DataTypes.ConceptRelationshipType>(data as Data.ConceptRelationshipType);
+            return this.ConvertToModel(data as Data.ConceptRelationshipType);
+        }
+
+        /// <summary>
+        /// Convert to model
+        /// </summary>
+        internal Core.Model.DataTypes.ConceptRelationshipType ConvertToModel(Data.ConceptRelationshipType data)
+        {
+            return this.ConvertItem(data);
         }
 
         /// <summary>
@@ -90,6 +98,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataContext.SubmitChanges();
 
             storageData.Key = Guid.Empty;
+
             return storageData;
         }
 
@@ -118,6 +127,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             storageData.Mnemonic = domainRelationshipType.Mnemonic = storageData.Mnemonic ?? domainRelationshipType.Mnemonic;
             storageData.Name = domainRelationshipType.Name = storageData.Mnemonic ?? domainRelationshipType.Name;
             dataContext.SubmitChanges();
+
             return storageData;
         }
     }

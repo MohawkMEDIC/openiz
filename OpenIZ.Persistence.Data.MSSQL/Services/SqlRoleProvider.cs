@@ -34,6 +34,7 @@ using OpenIZ.Persistence.Data.MSSQL.Security;
 using System.Security;
 using System.Security.Principal;
 using OpenIZ.Core.Security;
+using OpenIZ.Core.Security.Attribute;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services
 {
@@ -45,28 +46,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// <summary>
         /// Configuration 
         /// </summary>
-        protected SqlConfiguration m_configuration = ConfigurationManager.GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
+        protected SqlConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
 
         /// <summary>
         /// Verify principal
         /// </summary>
-        private void VerifyPrincipal(IPrincipal authPrincipal, String policyCheck)
+        private void VerifyPrincipal(IPrincipal authPrincipal, String policyId)
         {
             if (authPrincipal == null)
                 throw new ArgumentNullException(nameof(authPrincipal));
             else if (!authPrincipal.Identity.IsAuthenticated)
                 throw new SecurityException("Principal must be authenticated");
 
-            if (policyCheck != null)
-            {
-                var policyService = ApplicationContext.Current.GetService<IPolicyDecisionService>();
-                if (policyService != null)
-                {
-                    var policyDecision = policyService.GetPolicyOutcome(authPrincipal, PolicyIdentifiers.OpenIzCreateRolesPolicy);
-                    if (policyDecision != PolicyDecisionOutcomeType.Grant)
-                        throw new PolicyViolationException(PolicyIdentifiers.OpenIzCreateRolesPolicy, policyDecision);
-                }
-            }
+            new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, policyId, authPrincipal).Demand();
             
         }
 
@@ -75,7 +67,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// </summary>
         public void AddUsersToRoles(string[] users, string[] roles, IPrincipal authPrincipal)
         {
-            this.VerifyPrincipal(authPrincipal, PolicyIdentifiers.OpenIzAlterRolePolicy);
+            this.VerifyPrincipal(authPrincipal, PermissionPolicyIdentifiers.AlterRoles);
 
             // Add users to role
             using (var dataContext = new Data.ModelDataContext(this.m_configuration.ReadWriteConnectionString))
@@ -105,7 +97,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         public void CreateRole(string roleName, IPrincipal authPrincipal)
         {
 
-            this.VerifyPrincipal(authPrincipal, PolicyIdentifiers.OpenIzCreateRolesPolicy);
+            this.VerifyPrincipal(authPrincipal, PermissionPolicyIdentifiers.CreateRoles);
 
             // Add users to role
             using (var dataContext = new Data.ModelDataContext(this.m_configuration.ReadWriteConnectionString))
@@ -170,7 +162,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// </summary>
         public void RemoveUsersFromRoles(string[] users, string[] roles, IPrincipal authPrincipal)
         {
-            this.VerifyPrincipal(authPrincipal, PolicyIdentifiers.OpenIzAlterRolePolicy);
+            this.VerifyPrincipal(authPrincipal, PermissionPolicyIdentifiers.AlterRoles);
 
             // Add users to role
             using (var dataContext = new Data.ModelDataContext(this.m_configuration.ReadWriteConnectionString))

@@ -1,4 +1,22 @@
-﻿using OpenIZ.Core.Model.Attributes;
+﻿/*
+ * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: fyfej
+ * Date: 2016-1-24
+ */
+using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using System;
@@ -8,6 +26,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Acts
 {
@@ -15,7 +34,7 @@ namespace OpenIZ.Core.Model.Acts
     /// Represents an act whereby a substance is administered to the patient
     /// </summary>
     
-    [XmlType("SubstanceAdministration", Namespace = "http://openiz.org/model")]
+    [XmlType("SubstanceAdministration",  Namespace = "http://openiz.org/model"), JsonObject("SubstanceAdministration")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "SubstanceAdministration")]
     public class SubstanceAdministration : Act
     {
@@ -41,7 +60,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("route")]
+        [XmlElement("route"), JsonProperty("route")]
         public Guid RouteKey
         {
             get { return this.m_routeKey; }
@@ -57,7 +76,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("doseUnit")]
+        [XmlElement("doseUnit"), JsonProperty("doseUnit")]
         public Guid DoseUnitKey
         {
             get { return this.m_doseUnitKey; }
@@ -71,7 +90,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets a concept which indicates the route of administration (eg: Oral, Injection, etc.)
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(RouteKey))]
         public Concept Route
         {
@@ -93,7 +112,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets a concept which indicates the unit of measure for the dose (eg: 5 mL, 10 mL, 1 drop, etc.)
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(DoseUnitKey))]
         public Concept DoseUnit
         {
@@ -115,13 +134,13 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the amount of substance administered
         /// </summary>
-        [XmlElement("doseQuantity")]
+        [XmlElement("doseQuantity"), JsonProperty("doseQuantity")]
         public Decimal DoseQuantity { get; set; }
 
         /// <summary>
         /// The sequence of the dose (i.e. OPV 0 = 0 , OPV 1 = 1, etc.)
         /// </summary>
-        [XmlElement("doseSequence")]
+        [XmlElement("doseSequence"), JsonProperty("doseSequence")]
         public uint SequenceId { get; set; }
 
         /// <summary>

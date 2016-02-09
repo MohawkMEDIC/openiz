@@ -14,7 +14,7 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-19
+ * Date: 2016-1-24
  */
 using System.Linq;
 
@@ -25,6 +25,7 @@ using System.ComponentModel;
 using OpenIZ.Core.Model.Attributes;
 using System.Xml.Serialization;
 using OpenIZ.Core.Model.EntityLoader;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -32,7 +33,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a basic reference term
     /// </summary>
     
-    [XmlType("ReferenceTerm", Namespace = "http://openiz.org/model")]
+    [XmlType("ReferenceTerm",  Namespace = "http://openiz.org/model"), JsonObject("ReferenceTerm")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "ReferenceTerm")]
     public class ReferenceTerm : IdentifiedData
     {
@@ -49,14 +50,14 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the mnemonic for the reference term
         /// </summary>
-        [XmlElement("mnemonic")]
+        [XmlElement("mnemonic"), JsonProperty("mnemonic")]
         public string Mnemonic { get; set; }
 
         /// <summary>
         /// Gets or sets the code system 
         /// </summary>
         [DelayLoad(nameof(CodeSystemKey))]
-        [XmlElement("codeSystem")]
+        [XmlIgnore, JsonIgnore]
         public CodeSystem CodeSystem {
             get
             {
@@ -77,8 +78,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the code system identifier
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlIgnore]
-        
+        [XmlElement("codeSystem"), JsonProperty("codeSystem")]
         public Guid  CodeSystemKey {
             get { return this.m_codeSystemId; }
             set
@@ -92,7 +92,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets display names associated with the reference term
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("name")]
+        [XmlElement("name"), JsonProperty("name")]
         public List<ReferenceTermName> DisplayNames {
             get
             {

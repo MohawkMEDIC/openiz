@@ -14,11 +14,8 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-19
+ * Date: 2016-1-24
  */
-
-
-
 using OpenIZ.Core.Model.Attributes;
 using System;
 using System.Collections.Generic;
@@ -30,13 +27,14 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core.Model.EntityLoader;
 using System.Globalization;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Security
 {
     /// <summary>
     /// Security user represents a user for the purpose of security 
     /// </summary>
-    [XmlType("SecurityUser", Namespace = "http://openiz.org/model")]
+    [XmlType("SecurityUser",  Namespace = "http://openiz.org/model"), JsonObject("SecurityUser")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "SecurityUser")]
     public class SecurityUser : SecurityEntity
     {
@@ -55,58 +53,58 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets or sets the email address of the user
         /// </summary>
-        [XmlElement("email")]
+        [XmlElement("email"), JsonProperty("email")]
         public String Email { get; set; }
         /// <summary>
         /// Gets or sets whether the email address is confirmed
         /// </summary>
-        [XmlElement("emailConfirmed")]
+        [XmlElement("emailConfirmed"), JsonProperty("emailConfirmed")]
         public Boolean EmailConfirmed { get; set; }
         /// <summary>
         /// Gets or sets the number of invalid login attempts by the user
         /// </summary>
-        [XmlElement("invalidLoginAttempts")]
+        [XmlElement("invalidLoginAttempts"), JsonProperty("invalidLoginAttempts")]
         public Int32 InvalidLoginAttempts { get; set; }
         /// <summary>
         /// Gets or sets whether the account is locked out
         /// </summary>
-        [XmlElement("lockoutEnabled")]
+        [XmlElement("lockoutEnabled"), JsonProperty("lockoutEnabled")]
         public Boolean LockoutEnabled { get; set; }
         /// <summary>
         /// Gets or sets whether the password hash is enabled
         /// </summary>
-        [XmlElement("passwordHash")]
+        [XmlElement("passwordHash"), JsonProperty("passwordHash")]
         public String PasswordHash { get; set; }
         /// <summary>
         /// Gets or sets whether the security has is enabled
         /// </summary>
-        [XmlElement("securityStamp")]
+        [XmlElement("securityStamp"), JsonProperty("securityStamp")]
         public String SecurityHash { get; set; }
         /// <summary>
         /// Gets or sets whether two factor authentication is required
         /// </summary>
-        [XmlElement("twoFactorEnabled")]
+        [XmlElement("twoFactorEnabled"), JsonProperty("twoFactorEnabled")]
         public Boolean TwoFactorEnabled { get; set; }
         /// <summary>
         /// Gets or sets the logical user name ofthe user
         /// </summary>
-        [XmlElement("userName")]
+        [XmlElement("userName"), JsonProperty("userName")]
         public String UserName { get; set; }
         /// <summary>
         /// Gets or sets the binary representation of the user's photo
         /// </summary>
-        [XmlElement("photo")]
+        [XmlElement("photo"), JsonProperty("photo")]
         public byte[] UserPhoto { get; set; }
         /// <summary>
         /// The last login time
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public DateTimeOffset LastLoginTime { get; set; }
         
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
-        [XmlElement("lastLoginTime")]
+        [XmlElement("lastLoginTime"), JsonProperty("lastLoginTime")]
         public String LastLoginTimeXml
         {
             get { return this.LastLoginTime.ToString("o", CultureInfo.InvariantCulture); }
@@ -122,7 +120,7 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Represents roles
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(null)]
         public List<SecurityRole> Roles {
             get
@@ -135,14 +133,14 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Updated time
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public DateTimeOffset? UpdatedTime { get; set; }
 
 
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
-        [XmlElement("updatedTime")]
+        [XmlElement("updatedTime"), JsonProperty("updatedTime")]
         public String UpdatedTimeXml
         {
             get { return this.UpdatedTime?.ToString("o", CultureInfo.InvariantCulture); }
@@ -159,7 +157,7 @@ namespace OpenIZ.Core.Model.Security
         /// Gets or sets the user that updated this base data
         /// </summary>
         [DelayLoad(null)]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public SecurityUser UpdatedBy
         {
             get
@@ -174,7 +172,7 @@ namespace OpenIZ.Core.Model.Security
         /// </summary>
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("updatedBy")]
+        [XmlElement("updatedBy"), JsonProperty("updatedBy")]
         public Guid?  UpdatedByKey
         {
             get { return this.m_updatedById; }
@@ -189,13 +187,13 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets or sets the patient's phone number
         /// </summary>
-        [XmlElement("phoneNumber")]
+        [XmlElement("phoneNumber"), JsonProperty("phoneNumber")]
         public String PhoneNumber { get; set; }
 
         /// <summary>
         /// Gets or sets whether the phone number was confirmed
         /// </summary>
-        [XmlElement("phoneNumberConfirmed")]
+        [XmlElement("phoneNumberConfirmed"), JsonProperty("phoneNumberConfirmed")]
         public Boolean PhoneNumberConfirmed { get; set; }
 
         /// <summary>

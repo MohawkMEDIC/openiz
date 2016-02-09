@@ -1,4 +1,22 @@
-﻿using OpenIZ.Core.Model.Attributes;
+﻿/*
+ * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: fyfej
+ * Date: 2016-1-24
+ */
+using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using System;
@@ -8,6 +26,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Acts
 {
@@ -31,7 +50,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("player")]
+        [XmlElement("player"), JsonProperty("player")]
         public Guid PlayerEntityKey
         {
             get { return this.m_playerKey; }
@@ -47,7 +66,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("participationRole")]
+        [XmlElement("participationRole"), JsonProperty("participationRole")]
         public Guid ParticipationRoleKey
         {
             get { return this.m_participationRoleKey; }
@@ -61,7 +80,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the entity which participated in the act
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(PlayerEntityKey))]
         public Entity PlayerEntity
         {
@@ -83,7 +102,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the role that the entity played in participating in the act
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(ParticipationRoleKey))]
         public Concept ParticipationRole
         {

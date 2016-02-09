@@ -46,12 +46,24 @@ namespace OpenIZ.Persistence.Data.MSSQL.Configuration
                 if (connectionNode.Attributes["readWriteConnection"] == null)
                     throw new ConfigurationErrorsException("Connection manager must have a read/write connection", connectionNode);
                 else
-                    retVal.ReadWriteConnectionString = ConfigurationManager.ConnectionStrings[connectionNode.Attributes["readWriteConnection"].Value].ConnectionString;
+                    retVal.ReadWriteConnectionString = ConfigurationManager.ConnectionStrings[connectionNode.Attributes["readWriteConnection"].Value]?.ConnectionString;
                 if (connectionNode.Attributes["readonlyConnection"] != null)
-                    retVal.ReadonlyConnectionString = ConfigurationManager.ConnectionStrings[connectionNode.Attributes["readonlyConnection"].Value].ConnectionString;
+                    retVal.ReadonlyConnectionString = ConfigurationManager.ConnectionStrings[connectionNode.Attributes["readonlyConnection"].Value]?.ConnectionString;
                 else
                     retVal.ReadonlyConnectionString = retVal.ReadWriteConnectionString;
+                if (connectionNode.Attributes["maxCacheSize"] != null)
+                    retVal.MaxCacheSize = Int32.Parse(connectionNode.Attributes["maxCacheSize"].Value);
+                else
+                    retVal.MaxCacheSize = ushort.MaxValue;
+                if (connectionNode.Attributes["traceSql"] != null)
+                    retVal.TraceSql = Boolean.Parse(connectionNode.Attributes["traceSql"].Value);
             }
+
+            if (retVal.ReadWriteConnectionString == null || retVal.ReadonlyConnectionString == null)
+                throw new ConfigurationErrorsException("Connection string not found");
+
+
+
             return retVal;
                 
         }

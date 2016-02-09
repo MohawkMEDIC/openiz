@@ -1,4 +1,22 @@
-﻿using OpenIZ.Core.Model.Acts;
+﻿/*
+ * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: fyfej
+ * Date: 2016-1-24
+ */
+using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Entities;
 using System;
@@ -8,6 +26,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -28,15 +47,14 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the value of the extension
         /// </summary>
-        [XmlElement("value")]
+        [XmlElement("value"), JsonProperty("value")]
         public byte[] ExtensionValue { get; set; }
 
         /// <summary>
         /// Gets or sets the extension type key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Guid ExtensionTypeKey
         {
             get { return this.m_extensionTypeKey; }
@@ -51,7 +69,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the extension type
         /// </summary>
         [DelayLoad(nameof(ExtensionTypeKey))]
-        [XmlElement("extensionType")]
+        [XmlElement("extensionType"), JsonProperty("extensionType")]
         public ExtensionType ExtensionType
         {
             get {
@@ -82,7 +100,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Extension bound to entity
     /// </summary>
     
-    [XmlType("EntityExtension", Namespace = "http://openiz.org/model")]
+    [XmlType("EntityExtension",  Namespace = "http://openiz.org/model"), JsonObject("EntityExtension")]
     public class EntityExtension : Extension<Entity>
     {
 
@@ -92,7 +110,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Act extension
     /// </summary>
     
-    [XmlType("ActExtension", Namespace = "http://openiz.org/model")]
+    [XmlType("ActExtension",  Namespace = "http://openiz.org/model"), JsonObject("ActExtension")]
     public class ActExtension : Extension<Act>
     {
 

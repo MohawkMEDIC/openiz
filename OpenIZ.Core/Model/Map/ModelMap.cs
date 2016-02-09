@@ -56,7 +56,8 @@ namespace OpenIZ.Core.Model.Map
                 retVal = this.Class.Find(o => Type.GetType(o.ModelClass) == type);
                 if(retVal != null)
                     lock(this.m_lockObject)
-                        this.m_classCache.Add(type, retVal);
+                        if(!this.m_classCache.ContainsKey(type))
+                            this.m_classCache.Add(type, retVal);
             }
             return retVal;
         }

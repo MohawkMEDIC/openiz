@@ -1,4 +1,22 @@
-﻿using OpenIZ.Core.Model.Attributes;
+﻿/*
+ * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: fyfej
+ * Date: 2016-1-24
+ */
+using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.Collections.Generic;
@@ -9,6 +27,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core.Model.EntityLoader;
 using System.Globalization;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.Acts
 {
@@ -43,19 +62,42 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets an indicator which identifies whether the object is negated
         /// </summary>
-        [XmlElement("isNegated")]
+        [XmlElement("isNegated"), JsonProperty("isNegated")]
         public Boolean IsNegated { get; set; }
+
+        /// <summary>
+        /// Gets or sets the stop time of the act
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public DateTimeOffset ActTime { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the creation time in XML format
+        /// </summary>
+        [XmlElement("actTime"), JsonProperty("actTime")]
+        public String ActTimeXml
+        {
+            get { return this.ActTime.ToString("o", CultureInfo.InvariantCulture); }
+            set
+            {
+                if (value != null)
+                    this.ActTime = DateTimeOffset.ParseExact(value, "o", CultureInfo.InvariantCulture);
+                else
+                    this.ActTime = default(DateTimeOffset);
+            }
+        }
 
         /// <summary>
         /// Gets or sets the start time of the act
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public DateTimeOffset? StartTime { get; set; }
         
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
-        [XmlElement("startTime")]
+        [XmlElement("startTime"), JsonProperty("startTime")]
         public String StartTimeXml
         {
             get { return this.StartTime?.ToString("o", CultureInfo.InvariantCulture); }
@@ -71,14 +113,14 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the stop time of the act
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public DateTimeOffset? StopTime { get; set; }
 
 
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
-        [XmlElement("stopTime")]
+        [XmlElement("stopTime"), JsonProperty("stopTime")]
         public String StopTimeXml
         {
             get { return this.StopTime?.ToString("o", CultureInfo.InvariantCulture); }
@@ -95,7 +137,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Class concept
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("classConcept")]
+        [XmlElement("classConcept"), JsonProperty("classConcept")]
         public virtual Guid ClassConceptKey
         {
             get { return this.m_classConceptKey; }
@@ -110,7 +152,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Mood concept
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("moodConcept")]
+        [XmlElement("moodConcept"), JsonProperty("moodConcept")]
         public virtual Guid MoodConceptKey
         {
             get { return this.m_moodConceptKey; }
@@ -126,7 +168,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Reason concept
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("reasonConcept")]
+        [XmlElement("reasonConcept"), JsonProperty("reasonConcept")]
         public Guid? ReasonConceptKey
         {
             get { return this.m_reasonConceptKey; }
@@ -141,7 +183,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Status concept id
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("statusConcept")]
+        [XmlElement("statusConcept"), JsonProperty("statusConcept")]
         public Guid StatusConceptKey
         {
             get { return this.m_statusConceptKey; }
@@ -156,7 +198,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Type concept identifier
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("typeConcept")]
+        [XmlElement("typeConcept"), JsonProperty("typeConcept")]
         public Guid TypeConceptKey
         {
             get { return this.m_typeConceptKey; }
@@ -171,7 +213,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Class concept datal load property
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(ClassConceptKey))]
         public Concept ClassConcept
         {
@@ -185,7 +227,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Mood concept data load property
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(MoodConceptKey))]
         public Concept MoodConcept
         {
@@ -207,7 +249,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Mood concept data load property
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(ReasonConceptKey))]
         public Concept ReasonConcept
         {
@@ -227,7 +269,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Status concept id
         /// </summary>
         [DelayLoad(nameof(StatusConceptKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Concept StatusConcept
         {
             get
@@ -249,7 +291,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Type concept identifier
         /// </summary>
         [DelayLoad(nameof(TypeConceptKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Concept TypeConcept
         {
             get
@@ -271,7 +313,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets the identifiers associated with this act
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("identifier")]
+        [XmlElement("identifier"), JsonProperty("identifier")]
         public List<ActIdentifier> Identifiers
         {
             get
@@ -287,7 +329,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets a list of all associated acts for this act
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("relationship")]
+        [XmlElement("relationship"), JsonProperty("relationship")]
         public List<ActRelationship> Relationships
         {
             get
@@ -303,7 +345,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets a list of all extensions associated with the act
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("extension")]
+        [XmlElement("extension"), JsonProperty("extension")]
         public List<ActExtension> Extensions
         {
             get
@@ -319,7 +361,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets a list of all notes associated with the act
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("note")]
+        [XmlElement("note"), JsonProperty("note")]
         public List<ActNote> Notes
         {
             get
@@ -334,7 +376,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets a list of all tags associated with the act
         /// </summary>
         [DelayLoad(null)]
-        [XmlElement("tag")]
+        [XmlElement("tag"), JsonProperty("tag")]
         public List<ActTag> Tags
         {
             get

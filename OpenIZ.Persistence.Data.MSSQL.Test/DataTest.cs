@@ -17,6 +17,7 @@
  * Date: 2016-1-19
  */
 using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Persistence.Data.MSSQL.Services.Persistence;
@@ -37,8 +38,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test
 
             // Start the daemon services
             var sqlPersistenceService = ApplicationContext.Current.GetService<SqlPersistenceService>();
-            if(!sqlPersistenceService.IsRunning)
+            if (!sqlPersistenceService.IsRunning)
+            {
                 sqlPersistenceService.Start();
+                ApplicationContext.Current.Configuration.ServiceProviders.Add(typeof(LocalConfigurationManager));
+            }
         }
     }
 }

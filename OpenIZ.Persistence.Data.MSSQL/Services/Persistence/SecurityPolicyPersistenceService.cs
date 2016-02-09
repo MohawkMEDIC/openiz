@@ -48,7 +48,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override SecurityPolicy ConvertToModel(object data)
         {
-            return s_mapper.MapDomainInstance<Policy, SecurityPolicy>(data as Policy);
+            return this.ConvertToModel(data as Data.Policy);
+        }
+
+        /// <summary>
+        /// Convert to model
+        /// </summary>
+        internal Core.Model.Security.SecurityPolicy ConvertToModel(Data.Policy data)
+        {
+            return this.ConvertItem(data);
         }
 
         /// <summary>

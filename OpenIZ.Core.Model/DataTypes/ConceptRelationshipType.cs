@@ -14,11 +14,9 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-19
+ * Date: 2016-1-24
  */
-
-
-
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -28,21 +26,21 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Concept relationship type
     /// </summary>
-    
-    [XmlType("ConceptRelationshipType", Namespace = "http://openiz.org/model")]
+    [XmlRoot("ConceptRelationshipType", Namespace = "http://openiz.org/model")]
+    [XmlType("ConceptRelationshipType",  Namespace = "http://openiz.org/model"), JsonObject("ConceptRelationshipType")]
     public class ConceptRelationshipType : IdentifiedData
     {
 
         /// <summary>
         /// Gets or sets the name of the relationship
         /// </summary>
-        [XmlElement("name")]
+        [XmlElement("name"), JsonProperty("name")]
         public String Name { get; set; }
 
         /// <summary>
         /// The invariant of the relationship type
         /// </summary>
-        [XmlElement("mnemonic")]
+        [XmlElement("mnemonic"), JsonProperty("mnemonic")]
         public String Mnemonic { get; set; }
 
     }

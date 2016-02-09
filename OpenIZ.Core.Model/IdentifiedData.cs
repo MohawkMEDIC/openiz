@@ -14,8 +14,9 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-19
+ * Date: 2016-1-24
  */
+using Newtonsoft.Json;
 using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Model.Interfaces;
 using System;
@@ -34,7 +35,7 @@ namespace OpenIZ.Core.Model
     /// <summary>
     /// Represents data that is identified by a key
     /// </summary>
-    [XmlType("IdentifiedData", Namespace = "http://openiz.org/model")]
+    [XmlType("IdentifiedData",  Namespace = "http://openiz.org/model"), JsonObject("IdentifiedData")]
     public abstract class IdentifiedData : IIdentifiedEntity
     {
         // True when the data class is locked for storage
@@ -43,7 +44,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// True if the class is currently loading associations when accessed
         /// </summary>
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public bool IsDelayLoadEnabled
         {
             get
@@ -73,6 +74,9 @@ namespace OpenIZ.Core.Model
         /// </summary>
         private void SetDelayLoad(bool v)
         {
+
+            if (this.m_delayLoad == v)
+                return;
 
             List<FieldInfo> fields = new List<FieldInfo>();
 
@@ -110,8 +114,21 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// The internal primary key value of the entity
         /// </summary>
-        [XmlElement("id")]
+        [XmlElement("id"), JsonProperty("id")]
         public Guid Key { get; set; }
+
+        /// <summary>
+        /// Gets the type
+        /// </summary>
+        [XmlIgnore, JsonProperty("$type")]
+        public virtual String Type
+        {
+            get
+            {
+                return this.GetType().GetTypeInfo().GetCustomAttribute<JsonObjectAttribute>().Id;
+            }
+            set { }
+        }
 
         /// <summary>
         /// Get associated entity
@@ -128,5 +145,15 @@ namespace OpenIZ.Core.Model
         /// Force reloading of delay load properties
         /// </summary>
         public virtual void Refresh() { }
+
+        /// <summary>
+        /// Clone the specified data
+        /// </summary>
+        public IdentifiedData Clone()
+        {
+            var retVal = this.MemberwiseClone() as IdentifiedData;
+            retVal.m_delayLoad = true;
+            return retVal;
+        }
     }
 }

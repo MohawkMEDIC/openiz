@@ -58,7 +58,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
         private List<SecurityRole> m_roles = null;
 
         // Configuration
-        private static SqlConfiguration s_configuration = ConfigurationManager.GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
+        private static SqlConfiguration s_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
 
         /// <summary>
         /// Creates a principal based on username and password

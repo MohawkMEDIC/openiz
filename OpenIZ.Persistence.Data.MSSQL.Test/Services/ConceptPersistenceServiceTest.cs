@@ -150,6 +150,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual("E", afterTest.ConceptNames[0].PhoneticCode);
             Assert.IsNotNull(afterTest.CreatedBy);
 
+            var originalId = afterTest.VersionKey;
+
             // Step 1: Test an ADD of a name
             afterTest.ConceptNames.Add(new ConceptName()
             {
@@ -162,6 +164,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             afterTest = persistenceService.Update(afterTest, s_authorization, TransactionMode.Commit);
             Assert.AreEqual(3, afterTest.ConceptNames.Count);
             Assert.AreEqual("TESTCODE3_A", afterTest.Mnemonic);
+            Assert.IsNotNull(afterTest.PreviousVersion);
+            Assert.AreEqual(originalId, afterTest.PreviousVersionKey);
+            var updateKey = afterTest.VersionKey;
 
             // Verify 2: Remove a name
             afterTest.ConceptNames.RemoveAt(1);
@@ -170,8 +175,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual(2, afterTest.ConceptNames.Count);
             Assert.IsTrue(afterTest.ConceptNames.Exists(n => n.Language == "fr"));
             Assert.IsNotNull(afterTest.PreviousVersion);
+            Assert.AreEqual(updateKey, afterTest.PreviousVersionKey);
             Assert.IsNotNull(afterTest.PreviousVersion.PreviousVersion);
-
+            Assert.AreEqual(originalId, afterTest.PreviousVersion.PreviousVersionKey);
         }
 
         /// <summary>

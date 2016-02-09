@@ -1,4 +1,22 @@
-﻿using System;
+﻿/*
+ * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: fyfej
+ * Date: 2016-1-24
+ */
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.ServiceModel;
@@ -10,6 +28,11 @@ using System.IO;
 using System.Xml;
 using System.Text;
 using System.Diagnostics;
+using OpenIZ.Messaging.IMSI.Wcf.Serialization;
+using Newtonsoft.Json;
+using System.Xml.Serialization;
+using System.Reflection;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Messaging.IMSI.Wcf
 {
@@ -47,6 +70,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 var compressionScheme = CompressionUtil.GetCompressionScheme(WebOperationContext.Current.IncomingRequest.Headers[System.Net.HttpRequestHeader.ContentEncoding]);
                 if (compressionScheme != null)
                     CompressionUtil.DeCompressMessage(ref request, compressionScheme, this.GetContentFormat(request));
+
+                
                 return null;
             }
             catch(Exception e)
@@ -80,13 +105,14 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 }
 
 
+                var httpResponse = (HttpResponseMessageProperty)reply.Properties[HttpResponseMessageProperty.Name];
                 // CORS
                 // TODO: Add a configuration option to disable this
                 Dictionary<String, String> requiredHeaders = new Dictionary<string, string>() {
-                {"Access-Control-Allow-Origin", "*"},
-                {"Access-Control-Request-Method", "GET,POST,OPTIONS"},
-                {"Access-Control-Allow-Headers", "X-Requested-With,Content-Type"}
-            };
+                    {"Access-Control-Allow-Origin", "*"},
+                    {"Access-Control-Request-Method", "GET,POST,PUT,DELETE,OPTIONS"},
+                    {"Access-Control-Allow-Headers", "X-Requested-With,Content-Type,Accept,Content-Encoding,Accept-Encoding"}
+                };
                 foreach (var kv in requiredHeaders)
                     if (!WebOperationContext.Current.OutgoingResponse.Headers.AllKeys.Contains(kv.Key))
                         WebOperationContext.Current.OutgoingResponse.Headers.Add(kv.Key, kv.Value);
@@ -104,6 +130,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                         // Read binary contents of the message
                         switch(this.GetContentFormat(reply))
                         {
+                            case WebContentFormat.Default:
                             case WebContentFormat.Xml:
                                 using (MemoryStream ms = new MemoryStream())
                                 {
@@ -122,7 +149,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                                 }
                         }
 
-                        Message compressedMessage = Message.CreateMessage(reply.Version, reply.Headers.Action, new CompressionWriter(messageContent, CompressionUtil.GetCompressionScheme(compressionScheme)));
+                        Message compressedMessage = Message.CreateMessage(reply.Version, reply.Headers.Action, new CompressionBodyWriter(messageContent, CompressionUtil.GetCompressionScheme(compressionScheme)));
                         compressedMessage.Properties.CopyProperties(reply.Properties);
                         compressedMessage.Properties.Remove(WebBodyFormatMessageProperty.Name);
                         compressedMessage.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(WebContentFormat.Raw));

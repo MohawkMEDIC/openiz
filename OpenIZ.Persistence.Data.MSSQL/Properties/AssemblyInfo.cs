@@ -24,11 +24,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OpenIZ.Persistence.Data.MSSQL")]
+[assembly: AssemblyTitle("OpenIZ SQL Server Persistence")]
 [assembly: AssemblyDescription("OpenImmunize Microsoft SQL Server Data Persistence")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("OpenImmunize Community")]
-[assembly: AssemblyProduct("OpenImmunize")]
+[assembly: AssemblyCompany("OpenIZ Community")]
+[assembly: AssemblyProduct("OpenIZ")]
 [assembly: AssemblyCopyright("Copyright ©  2015, Mohawk College of Applied Arts and Technology")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -58,4 +58,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyPlugin()]
 
 // Depends: OpenIZ.Core v1.0.0.0
-[assembly: AssemblyPluginDependency("db9bc05e-45f1-4f96-a161-f36bdecaf566", "1.0.0.0")]
+[assembly: AssemblyPluginDependency("OpenIZ.Core", "1.0.0.0")]

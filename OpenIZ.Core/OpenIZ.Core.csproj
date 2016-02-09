@@ -62,17 +62,19 @@
     <Compile Include="Model\Map\PropertyMap.cs" />
     <Compile Include="Model\ModelExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\Permission\PolicyPermissionAttribute.cs" />
+    <Compile Include="Security\AuthenticationContext.cs" />
     <Compile Include="Security\ILocalPolicy.cs" />
     <Compile Include="Security\IPolicyHandler.cs" />
     <Compile Include="Security\LocalPolicyDecisionService.cs" />
     <Compile Include="Security\LocalPolicyEnforcementService.cs" />
     <Compile Include="Security\OpenIzClaimTypes.cs" />
-    <Compile Include="Security\PolicyIdentifiers.cs" />
+    <Compile Include="Security\PermissionPolicyIdentifiers.cs" />
     <Compile Include="Security\SHA256PasswordHashingService.cs" />
+    <Compile Include="Services\IConceptService.cs" />
+    <Compile Include="Services\Impl\LocalConceptService.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>

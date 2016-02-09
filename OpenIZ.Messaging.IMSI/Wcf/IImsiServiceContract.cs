@@ -1,8 +1,35 @@
-﻿using OpenIZ.Core.Model;
+﻿/*
+ * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: fyfej
+ * Date: 2016-1-24
+ */
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Roles;
+using OpenIZ.Core.Security;
+using OpenIZ.Core.Security.Attribute;
+using OpenIZ.Messaging.IMSI.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Permissions;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
@@ -15,7 +42,26 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     /// The IMSI service interface
     /// </summary>
     [ServiceContract(Namespace = "http://openiz.org/imsi/1.0", Name = "IMSI", ConfigurationName = "IMSI_1.0")]
-    [XmlSerializerFormat]
+    [ServiceKnownType(typeof(Concept))]
+    [ServiceKnownType(typeof(ReferenceTerm))]
+    [ServiceKnownType(typeof(Act))]
+    [ServiceKnownType(typeof(TextObservation))]
+    [ServiceKnownType(typeof(CodedObservation))]
+    [ServiceKnownType(typeof(QuantityObservation))]
+    [ServiceKnownType(typeof(PatientEncounter))]
+    [ServiceKnownType(typeof(SubstanceAdministration))]
+    [ServiceKnownType(typeof(Entity))]
+    [ServiceKnownType(typeof(Patient))]
+    [ServiceKnownType(typeof(Provider))]
+    [ServiceKnownType(typeof(Organization))]
+    [ServiceKnownType(typeof(Place))]
+    [ServiceKnownType(typeof(Material))]
+    [ServiceKnownType(typeof(ManufacturedMaterial))]
+    [ServiceKnownType(typeof(DeviceEntity))]
+    [ServiceKnownType(typeof(ApplicationEntity))]
+    [ServiceKnownType(typeof(Bundle))]
+    [ServiceKnownType(typeof(ErrorResult))]
+    [ServiceKnownType(typeof(ConceptSet))]
     public interface IImsiServiceContract 
     {
 
@@ -60,6 +106,12 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// </summary>
         [WebInvoke(Method = "POST", UriTemplate = "/{resourceType}/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
         IdentifiedData CreateUpdate(string resourceType, string id, IdentifiedData body);
+
+        /// <summary>
+        /// Creates a resource or updates one
+        /// </summary>
+        [WebInvoke(Method = "DELETE", UriTemplate = "/{resourceType}/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
+        IdentifiedData Delete(string resourceType, string id);
 
         /// <summary>
         /// Get the current time

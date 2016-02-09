@@ -48,7 +48,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.CodeSystem ConvertToModel(object data)
         {
-            return s_mapper.MapDomainInstance<Data.CodeSystem, Core.Model.DataTypes.CodeSystem>(data as Data.CodeSystem);
+            return this.ConvertToModel(data as Data.CodeSystem);
+        }
+
+        /// <summary>
+        /// Convert to model
+        /// </summary>
+        internal Core.Model.DataTypes.CodeSystem ConvertToModel(Data.CodeSystem data)
+        {
+            return this.ConvertItem(data as Data.CodeSystem);
         }
 
         /// <summary>
@@ -74,8 +82,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataContext.CodeSystems.InsertOnSubmit(domainCodeSystem);
 
             dataContext.SubmitChanges();
-
             storageData.Key = domainCodeSystem.CodeSystemId;
+
             return storageData;
         }
 
@@ -96,8 +104,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataContext.SubmitChanges();
 
             storageData.Key = Guid.Empty;
-            domainCodeSystem.ObsoletionTime = domainCodeSystem.ObsoletionTime;
-
+            storageData.ObsoletionTime = domainCodeSystem.ObsoletionTime;
             return storageData;
         }
 

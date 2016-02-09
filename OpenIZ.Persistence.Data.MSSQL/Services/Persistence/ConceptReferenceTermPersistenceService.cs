@@ -46,7 +46,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.ConceptReferenceTerm ConvertToModel(object data)
         {
-            return s_mapper.MapDomainInstance<Data.ConceptReferenceTerm, Core.Model.DataTypes.ConceptReferenceTerm>(data as Data.ConceptReferenceTerm);
+            return this.ConvertToModel(data as Data.ConceptReferenceTerm);
+        }
+
+        /// <summary>
+        /// Convert to model
+        /// </summary>
+        internal Core.Model.DataTypes.ConceptReferenceTerm ConvertToModel(Data.ConceptReferenceTerm data)
+        {
+            return this.ConvertItem(data);
         }
 
         /// <summary>
@@ -102,6 +110,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             storageData.Key = domainConceptReferenceTerm.ReferenceTermId;
             storageData.EffectiveVersionSequenceId = domainConceptReferenceTerm.EffectiveVersionSequenceId;
             storageData.SourceEntityKey = domainConceptReferenceTerm.ConceptId;
+
             return storageData;
         }
 
@@ -141,6 +150,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Copy properties
             storageData.ObsoleteVersionSequenceId = domainReferenceTerm.ObsoleteVersionSequenceId;
+
             return storageData;
         }
 
@@ -202,7 +212,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 newDomainConceptReferenceTerm.EffectiveVersionSequenceId = newConceptVersion.VersionSequenceId;
 
                 // Insert the new concept domain name
-                dataContext.ConceptReferenceTerms.InsertOnSubmit(newDomainConceptReferenceTerm);
+                newConceptVersion.Concept.ConceptReferenceTerms.Add(newDomainConceptReferenceTerm);
                 dataContext.SubmitChanges();
 
                 return this.ConvertToModel(newDomainConceptReferenceTerm);

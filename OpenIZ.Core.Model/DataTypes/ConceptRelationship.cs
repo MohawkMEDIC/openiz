@@ -14,11 +14,9 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-19
+ * Date: 2016-1-24
  */
-
-
-
+using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
 using System;
 using System.ComponentModel;
@@ -31,7 +29,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a relationship between two concepts
     /// </summary>
     
-    [XmlType("ConceptRelationship", Namespace = "http://openiz.org/model")]
+    [XmlType("ConceptRelationship",  Namespace = "http://openiz.org/model"), JsonObject("ConceptRelationship")]
     public class ConceptRelationship : VersionedAssociation<Concept>
     {
 
@@ -51,7 +49,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("targetConcept")]
+        [XmlElement("targetConcept"), JsonProperty("targetConcept")]
         public Guid  TargetConceptKey
         {
             get { return this.m_targetConceptId; }
@@ -66,7 +64,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the target concept
         /// </summary>
         [DelayLoad(nameof(TargetConceptKey))]
-        [XmlIgnore]
+        [XmlIgnore, JsonIgnore]
         public Concept TargetConcept
         {
             get
@@ -88,8 +86,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Relationship type
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
-        [XmlIgnore]
+        [XmlElement("relationshipType"), JsonProperty("relationshipType")]
         public Guid  RelationshipTypeKey {
             get { return this.m_relationshipTypeId; }
             set
@@ -103,8 +100,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the relationship type
         /// </summary>
         [DelayLoad(nameof(RelationshipTypeKey))]
-        [XmlIgnore]
-        [XmlElement("relationshipType")]
+        [XmlIgnore, JsonIgnore]
         public ConceptRelationshipType RelationshipType
         {
             get

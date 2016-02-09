@@ -50,8 +50,41 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.Concept ConvertToModel(object data)
         {
-            return s_mapper.MapDomainInstance<Data.ConceptVersion, Core.Model.DataTypes.Concept>(data as Data.ConceptVersion);
+            if (data == null)
+                return null;
+
+            var concept = data as ConceptVersion;
+            var retVal = this.ConvertItem(concept);
+
+            // Load fast?
+            if (retVal != null && concept.Concept != null)
+            {
+                retVal.IsSystemConcept = concept.Concept.IsSystemConcept;
+                retVal.Status = base.ConvertItem(concept.StatusConcept.ConceptVersions.SingleOrDefault(o=>o.ObsoletionTime == null));
+                retVal.Class = s_mapper.MapDomainInstance<Data.ConceptClass, Core.Model.DataTypes.ConceptClass>(concept.ConceptClass);
+                // Concept delay load
+                retVal.SetDelayLoadProperties(
+                    concept.Concept.ConceptNames.Where(o => concept.VersionSequenceId >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || concept.VersionSequenceId < o.ObsoleteVersionSequenceId)).Select(o => s_mapper.MapDomainInstance<Data.ConceptName, Core.Model.DataTypes.ConceptName>(o)).AsParallel().ToList(),
+                    concept.Concept.ConceptReferenceTerms.Where(o => concept.VersionSequenceId >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || concept.VersionSequenceId < o.ObsoleteVersionSequenceId)).Select(o => s_mapper.MapDomainInstance<Data.ConceptReferenceTerm, Core.Model.DataTypes.ConceptReferenceTerm>(o)).AsParallel().ToList()
+                    );
+            }
+
+            return retVal;
         }
+
+        /// <summary>
+        /// Convert to model
+        /// </summary>
+        internal Core.Model.DataTypes.Concept ConvertToModel(Data.ConceptVersion data, Data.Concept concept, Data.ConceptClass clazz, Data.ConceptVersion status)
+        {
+            var retVal = this.ConvertToModel(data);
+            if(retVal != null)
+                retVal.IsSystemConcept = concept.IsSystemConcept;
+            retVal.Status = this.ConvertToModel(status);
+            retVal.Class = s_mapper.MapDomainInstance<Data.ConceptClass, Core.Model.DataTypes.ConceptClass>(clazz);
+            
+            return retVal;
+        }     
 
         /// <summary>
         /// Get the specified concept with version
@@ -61,17 +94,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (containerId == null)
                 throw new ArgumentNullException(nameof(containerId));
 
-            // Return values
-            Data.ConceptVersion retVal = null;
+            ConceptVersion tRetVal = null;
             if (containerId.VersionId != default(Guid))
-                retVal = dataContext.ConceptVersions.SingleOrDefault(o => o.ConceptVersionId == containerId.VersionId);
+                tRetVal = dataContext.ConceptVersions.SingleOrDefault(o => o.ConceptVersionId == containerId.VersionId);
             else if (containerId.Id != default(Guid))
-                retVal = dataContext.ConceptVersions.SingleOrDefault(o => o.ConceptId == containerId.Id && o.ObsoletionTime == null);
+                tRetVal = dataContext.ConceptVersions.SingleOrDefault(o => o.ConceptId == containerId.Id && o.ObsoletionTime == null);
 
-            if (retVal == null)
+            // Return value
+            if (tRetVal == null)
                 return null;
             else
-                return this.ConvertToModel(retVal);
+                return this.ConvertToModel(tRetVal);
+
         }
 
         /// <summary>
@@ -90,7 +124,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var dataConceptVersion = this.ConvertFromModel(storageData) as Data.ConceptVersion;
             dataConceptVersion.Concept = new Data.Concept() { IsSystemConcept = storageData.IsSystemConcept };
             dataConceptVersion.CreatedByEntity = principal.GetUser(dataContext);
-
             dataConceptVersion.StatusConceptId = dataConceptVersion.StatusConceptId == Guid.Empty ? StatusKeys.Active : dataConceptVersion.StatusConceptId;
             if(storageData.Class != null)
                 dataConceptVersion.ConceptClassId = storageData.Class.EnsureExists(principal, dataContext)?.Key;
@@ -98,6 +131,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Store the root concept
             dataContext.ConceptVersions.InsertOnSubmit(dataConceptVersion);
             dataContext.SubmitChanges();
+
+            storageData.Key = dataConceptVersion.ConceptId;
+            storageData.VersionKey = dataConceptVersion.ConceptVersionId;
 
             // Concept names
             if (storageData.ConceptNames != null)
@@ -121,14 +157,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 }
             }
 
-            //// Storage data 
+            // Storage data 
             //if (storageData.Relationship != null)
             //{
             //    ConceptRelationshipPersistenceService relationshipPersister = new ConceptRelationshipPersistenceService();
             //    foreach (var rel in storageData.Relationship)
             //    {
             //        rel.EffectiveVersionSequenceId = storageData.VersionSequence;
-            //        rel.TargetEntityKey = storageData.Key; // The Antelope's sloop wa a sickening sight
+            //        rel.SourceEntityKey = storageData.Key; // The Antelope's sloop wa a sickening sight
             //        relationshipPersister.Insert(rel, principal, dataContext); // How I wish I was in sherbrooke now!!!
             //    }
             //}
@@ -150,6 +186,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             else if (storageData.IsSystemConcept)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.UpdatedReadonlyObject);
 
+
             var dataConceptVersion = dataContext.ConceptVersions.SingleOrDefault(c => c.ConceptId == storageData.Key && c.ObsoletionTime == null);
             if (dataConceptVersion == null)
                 throw new KeyNotFoundException();
@@ -165,8 +202,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataContext.ConceptVersions.InsertOnSubmit(newDataConceptVersion);
 
             dataContext.SubmitChanges();
-            return this.ConvertToModel(newDataConceptVersion);
-
+            
+            var retVal = this.ConvertToModel(newDataConceptVersion);
+            return retVal;
         }
 
         /// <summary>
@@ -178,7 +216,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new ArgumentNullException(nameof(query));
 
             var domainQuery = s_mapper.MapModelExpression<Core.Model.DataTypes.Concept, Data.ConceptVersion>(query);
-            return dataContext.ConceptVersions.Where(domainQuery).Select(o=>this.ConvertToModel(o));
+            return dataContext.ConceptVersions.Where(domainQuery)
+                .OrderByDescending(o => o.VersionSequenceId)
+                .Join(dataContext.Concepts, c => c.ConceptId, r => r.ConceptId, (a,b)=>new { ver = a, con = b })
+                .Join(dataContext.ConceptClasses, c=>c.ver.ConceptClassId, r=>r.ConceptClassId, (a,b) => new { ver = a.ver, con = a.con, clazz = b })
+                .Join(dataContext.ConceptVersions, c=>c.ver.StatusConceptId, r=>r.ConceptId, (a,b) => new { ver = a.ver, con = a.con, clazz = a.clazz, status = b })
+                .Select(o=>this.ConvertToModel(o.ver, o.con, o.clazz, o.status));
 
         }
 
@@ -193,6 +236,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.UpdatedReadonlyObject);
 
 
+
             // Get the existing version 
             var domainConceptVersion = dataContext.ConceptVersions.OrderByDescending(o=>o.VersionSequenceId).SingleOrDefault(o => o.ConceptId == storageData.Key && o.ObsoletionTime == null);
             Decimal oldVersionSequenceId = domainConceptVersion.VersionSequenceId;
@@ -202,9 +246,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Create the new version
             domainConceptVersion = domainConceptVersion.NewVersion(principal, dataContext);
-            storageData.PreviousVersionKey = storageData.Key = storageData.VersionKey = storageData.CreatedByKey = Guid.Empty; // Zero off associations
-            storageData.VersionSequence = default(decimal);
+            // Copy and update new version tuple
             domainConceptVersion.CopyObjectData(this.ConvertFromModel(storageData));
+            domainConceptVersion.CreatedByEntity = principal.GetUser(dataContext);
+            domainConceptVersion.ConceptVersionId = Guid.Empty;
+            domainConceptVersion.ReplacesVersionId = storageData.VersionKey;
             domainConceptVersion.Concept.IsSystemConcept = storageData.IsSystemConcept;
 
             dataContext.SubmitChanges(); // Submit changes to db
@@ -236,6 +282,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     cnPersistenceService.Insert(ins, principal, dataContext, false);
                 }
 
+
             }
 
             // Next thing, we want to remove any reference terms that no longer appear
@@ -261,9 +308,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     rtPersistenceService.Insert(ins, principal, dataContext, false);
                 }
 
+
             }
 
-            return this.ConvertToModel(domainConceptVersion);
+            var retVal = this.ConvertToModel(domainConceptVersion);
+            return retVal;
         }
     }
 }

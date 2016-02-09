@@ -65,7 +65,7 @@ namespace OpenIZ.Core.Model.Map
             /// </summary>
             public override Expression Visit(Expression node)
             {
-                
+
                 if (node == null)
                     return node;
 
@@ -79,13 +79,19 @@ namespace OpenIZ.Core.Model.Map
                     case ExpressionType.Equal:
                         return this.VisitBinary((BinaryExpression)node);
                     case ExpressionType.MemberAccess:
-                    {
-                        MemberExpression memberExpression = node as MemberExpression;
-                        if ((memberExpression.Expression as ParameterExpression)?.Name == this.m_originalParameter.Name)
-                            return Expression.MakeMemberAccess(this.m_memberAccess, memberExpression.Member);
-                        else
-                            return base.Visit(node);
-                    }
+                        {
+                            MemberExpression memberExpression = node as MemberExpression;
+                            if ((memberExpression.Expression as ParameterExpression)?.Name == this.m_originalParameter.Name)
+                            {
+                                var memInfo = this.m_memberAccess.Type.GetMember(memberExpression.Member.Name, memberExpression.Member.MemberType, BindingFlags.Public | BindingFlags.Instance);
+                                if(memInfo.Length == 0)
+                                    return memberExpression;
+                                else
+                                    return Expression.MakeMemberAccess(this.m_memberAccess, memInfo.FirstOrDefault() ?? memberExpression.Member);
+                            }
+                            else
+                                return base.Visit(node);
+                        }
                     default:
                         return base.Visit(node);
                 }
@@ -129,7 +135,7 @@ namespace OpenIZ.Core.Model.Map
             if (node == null)
                 return node;
 
-            switch(node.NodeType)
+            switch (node.NodeType)
             {
                 // TODO: Unary
                 case ExpressionType.LessThan:
@@ -147,10 +153,28 @@ namespace OpenIZ.Core.Model.Map
                     return this.VisitMethodCall((MethodCallExpression)node);
                 case ExpressionType.Lambda:
                     return this.VisitLambdaGeneric((LambdaExpression)node);
+                case ExpressionType.Convert:
+                    return this.VisitConvert((UnaryExpression)node);
                 default:
                     return base.Visit(node);
             }
 
+        }
+
+        /// <summary>
+        /// Remove unnecessary convert statement
+        /// </summary>
+        public virtual Expression VisitConvert(UnaryExpression convert)
+        {
+            Expression newOperand = this.Visit(convert.Operand);
+            if (newOperand != convert.Operand)
+            {
+                Type targetType = m_mapper.MapModelType(convert.Type);
+                if (targetType == convert.Type) // No map
+                    return newOperand;
+                return Expression.Convert(newOperand, targetType);
+            }
+            return convert;
         }
 
         /// <summary>
@@ -163,7 +187,7 @@ namespace OpenIZ.Core.Model.Map
             {
                 var parameters = this.VisitExpressionList(node.Parameters.OfType<Expression>().ToList().AsReadOnly()).OfType<ParameterExpression>().ToArray();
                 var lambdaType = node.Type;
-                if(lambdaType.GetGenericTypeDefinition() == typeof(Func<,>))
+                if (lambdaType.GetGenericTypeDefinition() == typeof(Func<,>))
                     lambdaType = typeof(Func<,>).MakeGenericType(parameters.Select(p => p.Type).Union(new Type[] { newBody.Type }).ToArray());
                 return Expression.Lambda(lambdaType, newBody, parameters);
             }
@@ -185,7 +209,7 @@ namespace OpenIZ.Core.Model.Map
                 if (methodInfo.IsGenericMethod) // Generic re-bind
                 {
                     // HACK: Find a more appropriate way of doing this
-                    Type bindType = this.m_mapper.ExtractDomainType(args.First().Type); 
+                    Type bindType = this.m_mapper.ExtractDomainType(args.First().Type);
                     methodInfo = methodInfo.GetGenericMethodDefinition().MakeGenericMethod(new Type[] { bindType });
                 }
 
@@ -201,25 +225,22 @@ namespace OpenIZ.Core.Model.Map
         {
             List<Expression> retVal = new List<Expression>();
             bool isDifferent = false;
-            foreach(var exp in args)
+            foreach (var exp in args)
             {
                 Expression argExpression = this.Visit(exp);
 
                 // Is there a VIA expression to be corrected?
-                if(argExpression is LambdaExpression)
+                if (argExpression is LambdaExpression)
                 {
                     var lambdaExpression = argExpression as LambdaExpression;
-                    if(lambdaExpression.Parameters[0].Type != this.m_mapper.ExtractDomainType(retVal[0].Type))
-                    {
-                        // Ok, we need to find the traversal expression
-                        //this.m_mapper.
-                        ParameterExpression newParameter = Expression.Parameter(this.m_mapper.ExtractDomainType(retVal[0].Type), lambdaExpression.Parameters[0].Name);
-                        Expression accessExpression = this.m_mapper.CreateLambdaMemberAdjustmentExpression(args.First() as MemberExpression, newParameter);
-                        Expression newBody = new LambdaCorrectionVisitor(accessExpression, lambdaExpression.Parameters[0]).Visit(lambdaExpression.Body);
-                        Type lambdaType = typeof(Func<,>).MakeGenericType(new Type[] { newParameter.Type, newBody.Type });
-                        argExpression = Expression.Lambda(lambdaType, newBody, newParameter);
+                    // Ok, we need to find the traversal expression
+                    //this.m_mapper.
+                    ParameterExpression newParameter = Expression.Parameter(this.m_mapper.ExtractDomainType(retVal[0].Type), lambdaExpression.Parameters[0].Name);
+                    Expression accessExpression = this.m_mapper.CreateLambdaMemberAdjustmentExpression(args.First() as MemberExpression, newParameter);
+                    Expression newBody = new LambdaCorrectionVisitor(accessExpression, lambdaExpression.Parameters[0]).Visit(lambdaExpression.Body);
+                    Type lambdaType = typeof(Func<,>).MakeGenericType(new Type[] { newParameter.Type, newBody.Type });
+                    argExpression = Expression.Lambda(lambdaType, newBody, newParameter);
 
-                    }
                 }
                 // Add the expression
                 if (argExpression != exp)
@@ -244,12 +265,12 @@ namespace OpenIZ.Core.Model.Map
             Expression right = this.Visit(node.Right),
                 left = this.Visit(node.Left);
             // Are the types compatible?
-            if(!right.Type.IsAssignableFrom(left.Type))
+            if (!right.Type.IsAssignableFrom(left.Type))
             {
                 // Convert
                 return Expression.MakeBinary(node.NodeType, left, Expression.Convert(right, left.Type));
             }
-            else if(right != node.Right || left != node.Left)
+            else if (right != node.Right || left != node.Left)
             {
                 return Expression.MakeBinary(node.NodeType, left, right);
             }
@@ -264,7 +285,7 @@ namespace OpenIZ.Core.Model.Map
 
             Type mappedType = this.m_mapper.MapModelType(node.Type);
             var parameterRef = this.m_parameters.FirstOrDefault(p => p.Name == node.Name && p.Type == mappedType);
-            
+
             if (parameterRef != null)
                 return parameterRef;
 
@@ -283,10 +304,19 @@ namespace OpenIZ.Core.Model.Map
             // Convert the expression
             Expression newExpression = this.Visit(node.Expression);
             if (newExpression != node.Expression)
+            {
+                // Is the node member access a useless convert function?
+                if (node.Expression.NodeType == ExpressionType.Convert)
+                {
+                    UnaryExpression convertExpression = node.Expression as UnaryExpression;
+                    if (convertExpression.Type.IsAssignableFrom(convertExpression.Operand.Type))
+                        node = Expression.MakeMemberAccess(convertExpression.Operand, node.Member);
+                }
                 return this.m_mapper.MapModelMember(node, newExpression);
+            }
             return node;
         }
-        
-      
+
+
     }
 }
