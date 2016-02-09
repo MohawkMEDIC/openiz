@@ -73,9 +73,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.PhoneticAlgorithm Insert(Core.Model.DataTypes.PhoneticAlgorithm storageData, IPrincipal principal, ModelDataContext dataContext)
         {
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+
 
             var domainPhoneticAlgorithm = this.ConvertFromModel(storageData) as Data.PhoneticAlgorithm;
             dataContext.PhoneticAlgorithms.InsertOnSubmit(domainPhoneticAlgorithm);
+            domainPhoneticAlgorithm.CreatedByEntity = principal.GetUser(dataContext);
             dataContext.SubmitChanges();
             return this.ConvertToModel(domainPhoneticAlgorithm);
 
@@ -86,10 +90,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.PhoneticAlgorithm Obsolete(Core.Model.DataTypes.PhoneticAlgorithm storageData, IPrincipal principal, ModelDataContext dataContext)
         {
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+
             var existingDomainAlgorithm = dataContext.PhoneticAlgorithms.SingleOrDefault(o => o.PhoneticAlgorithmId == storageData.Key);
             if (existingDomainAlgorithm == null)
                 throw new KeyNotFoundException();
-            dataContext.PhoneticAlgorithms.DeleteOnSubmit(existingDomainAlgorithm);
+
+            //            dataContext.PhoneticAlgorithms.DeleteOnSubmit(existingDomainAlgorithm);
+            existingDomainAlgorithm.ObsoletedByEntity = principal.GetUser(dataContext);
+            existingDomainAlgorithm.ObsoletionTime = DateTimeOffset.Now;
             dataContext.SubmitChanges();
 
             existingDomainAlgorithm.PhoneticAlgorithmId = Guid.Empty;
@@ -110,8 +120,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.PhoneticAlgorithm Update(Core.Model.DataTypes.PhoneticAlgorithm storageData, IPrincipal principal, ModelDataContext dataContext)
         {
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+
             var domainPhoneticAlgorithm = dataContext.PhoneticAlgorithms.SingleOrDefault(o => o.PhoneticAlgorithmId == storageData.Key);
             domainPhoneticAlgorithm.CopyObjectData(this.ConvertFromModel(storageData));
+            domainPhoneticAlgorithm.UpdatedByEntity = principal.GetUser(dataContext);
+            domainPhoneticAlgorithm.UpdateTime = DateTime.Now;
+
             // Update
             dataContext.SubmitChanges();
             return this.ConvertToModel(domainPhoneticAlgorithm);

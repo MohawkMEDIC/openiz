@@ -76,6 +76,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.IdentityInsert);
 
             var domainRelationshipType = this.ConvertFromModel(storageData) as Data.ConceptRelationshipType;
+            domainRelationshipType.CreatedByEntity = principal.GetUser(dataContext);
             dataContext.ConceptRelationshipTypes.InsertOnSubmit(domainRelationshipType);
             dataContext.SubmitChanges();
             storageData.Key = domainRelationshipType.ConceptRelationshipTypeId;
@@ -94,7 +95,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var domainRelationshipType = dataContext.ConceptRelationshipTypes.SingleOrDefault(o => o.ConceptRelationshipTypeId == storageData.Key);
             if (domainRelationshipType == null)
                 throw new KeyNotFoundException();
-            dataContext.ConceptRelationshipTypes.DeleteOnSubmit(domainRelationshipType);
+
+            domainRelationshipType.ObsoletedByEntity = principal.GetUser(dataContext);
+            domainRelationshipType.ObsoletionTime = DateTime.Now;
+
+            //dataContext.ConceptRelationshipTypes.DeleteOnSubmit(domainRelationshipType);
             dataContext.SubmitChanges();
 
             storageData.Key = Guid.Empty;
@@ -124,6 +129,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.NonIdentityUpdate);
 
             // Update data
+            domainRelationshipType.UpdatedByEntity = principal.GetUser(dataContext);
+            domainRelationshipType.UpdateTime = DateTimeOffset.Now;
+
             storageData.Mnemonic = domainRelationshipType.Mnemonic = storageData.Mnemonic ?? domainRelationshipType.Mnemonic;
             storageData.Name = domainRelationshipType.Name = storageData.Mnemonic ?? domainRelationshipType.Name;
             dataContext.SubmitChanges();

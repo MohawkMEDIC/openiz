@@ -22,6 +22,7 @@ using MARC.HI.EHRS.SVC.Core.Services.Security;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Security;
+using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +45,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         public TModel DoTestInsert(TModel objectUnderTest, IPrincipal authContext = null)
         {
 
+            // Auth context
+            if (authContext == null)
+                authContext = AuthenticationContext.AnonymousPrincipal;
+
             // Store user
             IDataPersistenceService<TModel> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TModel>>();
             Assert.IsNotNull(persistenceService);
@@ -65,6 +70,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         /// </summary>
         public TModel DoTestUpdate(TModel objectUnderTest, IPrincipal authContext, String propertyToChange)
         {
+
+            // Auth context
+            if (authContext == null)
+                authContext = AuthenticationContext.AnonymousPrincipal;
 
             // Store user
             IDataPersistenceService<TModel> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TModel>>();
@@ -99,6 +108,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         /// </summary>
         public IEnumerable<TModel> DoTestQuery(Expression<Func<TModel, bool>> predicate, Guid knownResultKey, IPrincipal authContext)
         {
+
+            // Auth context
+            if (authContext == null)
+                authContext = AuthenticationContext.AnonymousPrincipal;
 
             IDataPersistenceService<TModel> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TModel>>();
             Assert.IsNotNull(persistenceService);

@@ -154,8 +154,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var existingSet = dataContext.ConceptSets.SingleOrDefault(o => o.ConceptSetId == storageData.Key);
             if (existingSet == null)
                 throw new KeyNotFoundException();
+            
             // Merge changes
             existingSet.CopyObjectData(this.ConvertFromModel(storageData));
+            existingSet.UpdatedByEntity = principal.GetUser(dataContext);
+            existingSet.UpdateTime = DateTimeOffset.Now;
 
             // Now verify which concepts should be removed/added/updated
             if(storageData.Concepts != null)

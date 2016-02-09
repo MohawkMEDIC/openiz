@@ -13,6 +13,39 @@ namespace OpenIZ.Core.Security
     /// </summary>
     public sealed class AuthenticationContext
     {
+
+        /// <summary>
+        /// System identity
+        /// </summary>
+        private static readonly IPrincipal s_system = new GenericPrincipal(new GenericIdentity("SYSTEM"), new string[] { });
+        
+        /// <summary>
+        /// Anonymous identity
+        /// </summary>
+        private static readonly IPrincipal s_anonymous = new GenericPrincipal(new GenericIdentity("ANONYMOUS"), new string[] { });
+
+        /// <summary>
+        /// Gets the anonymous principal
+        /// </summary>
+        public static IPrincipal AnonymousPrincipal
+        {
+            get
+            {
+                return s_anonymous;
+            }
+        }
+
+        /// <summary>
+        /// Get the system principal
+        /// </summary>
+        public static IPrincipal SystemPrincipal
+        {
+            get
+            {
+                return s_system;
+            }
+        }
+
         /// <summary>
         /// Current context in the request pipeline
         /// </summary>
@@ -46,7 +79,7 @@ namespace OpenIZ.Core.Security
             {
                 if(s_current == null)
                     lock(s_lockObject)
-                        s_current = new AuthenticationContext(new GenericPrincipal(new GenericIdentity("ANONYMOUS"), new string[] { }));
+                        s_current = new AuthenticationContext(s_anonymous);
                 return s_current;
             }
             set { s_current = value; }

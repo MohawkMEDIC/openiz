@@ -128,6 +128,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var newData = this.ConvertFromModel(storageData) as Data.SecurityRole;
             dataRole.CopyObjectData(newData);
 
+            dataRole.UpdatedByEntity = principal.GetUser(dataContext);
+            dataRole.UpdateTime = DateTime.Now;
+
             // Users to be added 
             if(storageData.Users != null)
             {

@@ -33,6 +33,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void InsertAct(Act instance);
     partial void UpdateAct(Act instance);
     partial void DeleteAct(Act instance);
+    partial void InsertUserEntity(UserEntity instance);
+    partial void UpdateUserEntity(UserEntity instance);
+    partial void DeleteUserEntity(UserEntity instance);
     partial void InsertActExtension(ActExtension instance);
     partial void UpdateActExtension(ActExtension instance);
     partial void DeleteActExtension(ActExtension instance);
@@ -249,13 +252,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void InsertTextObservation(TextObservation instance);
     partial void UpdateTextObservation(TextObservation instance);
     partial void DeleteTextObservation(TextObservation instance);
-    partial void InsertUserEntity(UserEntity instance);
-    partial void UpdateUserEntity(UserEntity instance);
-    partial void DeleteUserEntity(UserEntity instance);
     #endregion
 		
 		public ModelDataContext() : 
-				base(global::OpenIZ.Persistence.Data.MSSQL.Properties.Settings.Default.OpenIZConnectionString1, mappingSource)
+				base(global::OpenIZ.Persistence.Data.MSSQL.Properties.Settings.Default.OpenIZConnectionString, mappingSource)
 		{
 			OnCreated();
 		}
@@ -289,6 +289,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			get
 			{
 				return this.GetTable<Act>();
+			}
+		}
+		
+		public System.Data.Linq.Table<UserEntity> UserEntities
+		{
+			get
+			{
+				return this.GetTable<UserEntity>();
 			}
 		}
 		
@@ -867,22 +875,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 				return this.GetTable<TextObservation>();
 			}
 		}
-		
-		public System.Data.Linq.Table<UserEntity> UserEntities
-		{
-			get
-			{
-				return this.GetTable<UserEntity>();
-			}
-		}
-		
-		public System.Data.Linq.Table<ConceptView> ConceptViews
-		{
-			get
-			{
-				return this.GetTable<ConceptView>();
-			}
-		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Act")]
@@ -1361,6 +1353,376 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.UserEntity")]
+	public partial class UserEntity : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _UserEntityId;
+		
+		private System.Guid _UserId;
+		
+		private System.Guid _EntityId;
+		
+		private System.DateTimeOffset _CreationTime;
+		
+		private System.Guid _CreatedBy;
+		
+		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
+		
+		private System.Nullable<System.Guid> _ObsoletedBy;
+		
+		private EntityRef<Entity> _Entity;
+		
+		private EntityRef<SecurityUser> _CreatedByEntity;
+		
+		private EntityRef<SecurityUser> _ObsoletedByEntity;
+		
+		private EntityRef<SecurityUser> _SecurityUser;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnUserEntityIdChanging(System.Guid value);
+    partial void OnUserEntityIdChanged();
+    partial void OnUserIdChanging(System.Guid value);
+    partial void OnUserIdChanged();
+    partial void OnEntityIdChanging(System.Guid value);
+    partial void OnEntityIdChanged();
+    partial void OnCreationTimeChanging(System.DateTimeOffset value);
+    partial void OnCreationTimeChanged();
+    partial void OnCreatedByChanging(System.Guid value);
+    partial void OnCreatedByChanged();
+    partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnObsoletionTimeChanged();
+    partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
+    partial void OnObsoletedByChanged();
+    #endregion
+		
+		public UserEntity()
+		{
+			this._Entity = default(EntityRef<Entity>);
+			this._CreatedByEntity = default(EntityRef<SecurityUser>);
+			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
+			this._SecurityUser = default(EntityRef<SecurityUser>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserEntityId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		public System.Guid UserEntityId
+		{
+			get
+			{
+				return this._UserEntityId;
+			}
+			set
+			{
+				if ((this._UserEntityId != value))
+				{
+					this.OnUserEntityIdChanging(value);
+					this.SendPropertyChanging();
+					this._UserEntityId = value;
+					this.SendPropertyChanged("UserEntityId");
+					this.OnUserEntityIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid UserId
+		{
+			get
+			{
+				return this._UserId;
+			}
+			set
+			{
+				if ((this._UserId != value))
+				{
+					if (this._SecurityUser.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUserIdChanging(value);
+					this.SendPropertyChanging();
+					this._UserId = value;
+					this.SendPropertyChanged("UserId");
+					this.OnUserIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid EntityId
+		{
+			get
+			{
+				return this._EntityId;
+			}
+			set
+			{
+				if ((this._EntityId != value))
+				{
+					if (this._Entity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnEntityIdChanging(value);
+					this.SendPropertyChanging();
+					this._EntityId = value;
+					this.SendPropertyChanged("EntityId");
+					this.OnEntityIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", AutoSync=AutoSync.Always, DbType="DateTimeOffset NOT NULL", IsDbGenerated=true)]
+		public System.DateTimeOffset CreationTime
+		{
+			get
+			{
+				return this._CreationTime;
+			}
+			set
+			{
+				if ((this._CreationTime != value))
+				{
+					this.OnCreationTimeChanging(value);
+					this.SendPropertyChanging();
+					this._CreationTime = value;
+					this.SendPropertyChanged("CreationTime");
+					this.OnCreationTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid CreatedBy
+		{
+			get
+			{
+				return this._CreatedBy;
+			}
+			set
+			{
+				if ((this._CreatedBy != value))
+				{
+					if (this._CreatedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCreatedByChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedBy = value;
+					this.SendPropertyChanged("CreatedBy");
+					this.OnCreatedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> ObsoletionTime
+		{
+			get
+			{
+				return this._ObsoletionTime;
+			}
+			set
+			{
+				if ((this._ObsoletionTime != value))
+				{
+					this.OnObsoletionTimeChanging(value);
+					this.SendPropertyChanging();
+					this._ObsoletionTime = value;
+					this.SendPropertyChanged("ObsoletionTime");
+					this.OnObsoletionTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletedBy", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> ObsoletedBy
+		{
+			get
+			{
+				return this._ObsoletedBy;
+			}
+			set
+			{
+				if ((this._ObsoletedBy != value))
+				{
+					if (this._ObsoletedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnObsoletedByChanging(value);
+					this.SendPropertyChanging();
+					this._ObsoletedBy = value;
+					this.SendPropertyChanged("ObsoletedBy");
+					this.OnObsoletedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_UserEntity", Storage="_Entity", ThisKey="EntityId", OtherKey="EntityId", IsForeignKey=true)]
+		public Entity Entity
+		{
+			get
+			{
+				return this._Entity.Entity;
+			}
+			set
+			{
+				Entity previousValue = this._Entity.Entity;
+				if (((previousValue != value) 
+							|| (this._Entity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Entity.Entity = null;
+						previousValue.UserEntities.Remove(this);
+					}
+					this._Entity.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntities.Add(this);
+						this._EntityId = value.EntityId;
+					}
+					else
+					{
+						this._EntityId = default(System.Guid);
+					}
+					this.SendPropertyChanged("Entity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser CreatedByEntity
+		{
+			get
+			{
+				return this._CreatedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.UserEntitiesCreatedBy.Remove(this);
+					}
+					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntitiesCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
+					this.SendPropertyChanged("CreatedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity1", Storage="_ObsoletedByEntity", ThisKey="ObsoletedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser ObsoletedByEntity
+		{
+			get
+			{
+				return this._ObsoletedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.UserEntitiesObsoletedBy.Remove(this);
+					}
+					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntitiesObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("ObsoletedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity2", Storage="_SecurityUser", ThisKey="UserId", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser SecurityUser
+		{
+			get
+			{
+				return this._SecurityUser.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._SecurityUser.Entity;
+				if (((previousValue != value) 
+							|| (this._SecurityUser.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SecurityUser.Entity = null;
+						previousValue.UserEntities.Remove(this);
+					}
+					this._SecurityUser.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntities.Add(this);
+						this._UserId = value.UserId;
+					}
+					else
+					{
+						this._UserId = default(System.Guid);
+					}
+					this.SendPropertyChanged("SecurityUser");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ActExtension")]
 	public partial class ActExtension : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -1480,7 +1842,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary ExtensionValue
 		{
 			get
@@ -2926,7 +3288,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StateData", DbType="Xml", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StateData", DbType="Xml", UpdateCheck=UpdateCheck.Never)]
 		public System.Xml.Linq.XElement StateData
 		{
 			get
@@ -3723,6 +4085,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _StatusConceptId;
 		
+		private System.Nullable<System.DateTimeOffset> _ActTime;
+		
 		private System.Nullable<System.DateTimeOffset> _ActStartTime;
 		
 		private System.Nullable<System.DateTimeOffset> _ActStopTime;
@@ -3775,6 +4139,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnTypeConceptIdChanged();
     partial void OnStatusConceptIdChanging(System.Guid value);
     partial void OnStatusConceptIdChanged();
+    partial void OnActTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnActTimeChanged();
     partial void OnActStartTimeChanging(System.Nullable<System.DateTimeOffset> value);
     partial void OnActStartTimeChanged();
     partial void OnActStopTimeChanging(System.Nullable<System.DateTimeOffset> value);
@@ -4056,6 +4422,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this._StatusConceptId = value;
 					this.SendPropertyChanged("StatusConceptId");
 					this.OnStatusConceptIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> ActTime
+		{
+			get
+			{
+				return this._ActTime;
+			}
+			set
+			{
+				if ((this._ActTime != value))
+				{
+					this.OnActTimeChanging(value);
+					this.SendPropertyChanging();
+					this._ActTime = value;
+					this.SendPropertyChanged("ActTime");
+					this.OnActTimeChanged();
 				}
 			}
 		}
@@ -5307,6 +5693,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.Guid> _ObsoletedBy;
 		
+		private System.Nullable<System.DateTimeOffset> _UpdateTime;
+		
+		private System.Nullable<System.Guid> _UpdatedBy;
+		
 		private string _ObsoletionReason;
 		
 		private string _Url;
@@ -5320,6 +5710,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private EntityRef<SecurityUser> _CreatedByEntity;
 		
 		private EntityRef<SecurityUser> _ObsoletedByEntity;
+		
+		private EntityRef<SecurityUser> _UpdatedByEntity;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -5341,6 +5733,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnObsoletionTimeChanged();
     partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
     partial void OnObsoletedByChanged();
+    partial void OnUpdateTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnUpdateTimeChanged();
+    partial void OnUpdatedByChanging(System.Nullable<System.Guid> value);
+    partial void OnUpdatedByChanged();
     partial void OnObsoletionReasonChanging(string value);
     partial void OnObsoletionReasonChanged();
     partial void OnUrlChanging(string value);
@@ -5356,6 +5752,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._ReferenceTerms = new EntitySet<ReferenceTerm>(new Action<ReferenceTerm>(this.attach_ReferenceTerms), new Action<ReferenceTerm>(this.detach_ReferenceTerms));
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
+			this._UpdatedByEntity = default(EntityRef<SecurityUser>);
 			OnCreated();
 		}
 		
@@ -5527,6 +5924,50 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdateTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> UpdateTime
+		{
+			get
+			{
+				return this._UpdateTime;
+			}
+			set
+			{
+				if ((this._UpdateTime != value))
+				{
+					this.OnUpdateTimeChanging(value);
+					this.SendPropertyChanging();
+					this._UpdateTime = value;
+					this.SendPropertyChanged("UpdateTime");
+					this.OnUpdateTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedBy", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> UpdatedBy
+		{
+			get
+			{
+				return this._UpdatedBy;
+			}
+			set
+			{
+				if ((this._UpdatedBy != value))
+				{
+					if (this._UpdatedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUpdatedByChanging(value);
+					this.SendPropertyChanging();
+					this._UpdatedBy = value;
+					this.SendPropertyChanged("UpdatedBy");
+					this.OnUpdatedByChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionReason", DbType="NVarChar(MAX)")]
 		public string ObsoletionReason
 		{
@@ -5684,6 +6125,40 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._ObsoletedBy = default(Nullable<System.Guid>);
 					}
 					this.SendPropertyChanged("ObsoletedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_CodeSystem2", Storage="_UpdatedByEntity", ThisKey="UpdatedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser UpdatedByEntity
+		{
+			get
+			{
+				return this._UpdatedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._UpdatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._UpdatedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._UpdatedByEntity.Entity = null;
+						previousValue.CodeSystemsUpdatedBy.Remove(this);
+					}
+					this._UpdatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.CodeSystemsUpdatedBy.Add(this);
+						this._UpdatedBy = value.UserId;
+					}
+					else
+					{
+						this._UpdatedBy = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("UpdatedByEntity");
 				}
 			}
 		}
@@ -6939,7 +7414,25 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private string _Mnemonic;
 		
+		private System.DateTimeOffset _CreationTime;
+		
+		private System.Guid _CreatedBy;
+		
+		private System.Nullable<System.DateTimeOffset> _UpdateTime;
+		
+		private System.Nullable<System.Guid> _UpdatedBy;
+		
+		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
+		
+		private System.Nullable<System.Guid> _ObsoletedBy;
+		
 		private EntitySet<ConceptVersion> _ConceptVersions;
+		
+		private EntityRef<SecurityUser> _CreatedByEntity;
+		
+		private EntityRef<SecurityUser> _ObsoletedByEntity;
+		
+		private EntityRef<SecurityUser> _UpdatedByEntity;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -6951,11 +7444,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnNameChanged();
     partial void OnMnemonicChanging(string value);
     partial void OnMnemonicChanged();
+    partial void OnCreationTimeChanging(System.DateTimeOffset value);
+    partial void OnCreationTimeChanged();
+    partial void OnCreatedByChanging(System.Guid value);
+    partial void OnCreatedByChanged();
+    partial void OnUpdateTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnUpdateTimeChanged();
+    partial void OnUpdatedByChanging(System.Nullable<System.Guid> value);
+    partial void OnUpdatedByChanged();
+    partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnObsoletionTimeChanged();
+    partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
+    partial void OnObsoletedByChanged();
     #endregion
 		
 		public ConceptClass()
 		{
 			this._ConceptVersions = new EntitySet<ConceptVersion>(new Action<ConceptVersion>(this.attach_ConceptVersions), new Action<ConceptVersion>(this.detach_ConceptVersions));
+			this._CreatedByEntity = default(EntityRef<SecurityUser>);
+			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
+			this._UpdatedByEntity = default(EntityRef<SecurityUser>);
 			OnCreated();
 		}
 		
@@ -7019,6 +7527,138 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", AutoSync=AutoSync.Always, DbType="DateTimeOffset NOT NULL", IsDbGenerated=true)]
+		public System.DateTimeOffset CreationTime
+		{
+			get
+			{
+				return this._CreationTime;
+			}
+			set
+			{
+				if ((this._CreationTime != value))
+				{
+					this.OnCreationTimeChanging(value);
+					this.SendPropertyChanging();
+					this._CreationTime = value;
+					this.SendPropertyChanged("CreationTime");
+					this.OnCreationTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid CreatedBy
+		{
+			get
+			{
+				return this._CreatedBy;
+			}
+			set
+			{
+				if ((this._CreatedBy != value))
+				{
+					if (this._CreatedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCreatedByChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedBy = value;
+					this.SendPropertyChanged("CreatedBy");
+					this.OnCreatedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdateTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> UpdateTime
+		{
+			get
+			{
+				return this._UpdateTime;
+			}
+			set
+			{
+				if ((this._UpdateTime != value))
+				{
+					this.OnUpdateTimeChanging(value);
+					this.SendPropertyChanging();
+					this._UpdateTime = value;
+					this.SendPropertyChanged("UpdateTime");
+					this.OnUpdateTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedBy", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> UpdatedBy
+		{
+			get
+			{
+				return this._UpdatedBy;
+			}
+			set
+			{
+				if ((this._UpdatedBy != value))
+				{
+					if (this._UpdatedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUpdatedByChanging(value);
+					this.SendPropertyChanging();
+					this._UpdatedBy = value;
+					this.SendPropertyChanged("UpdatedBy");
+					this.OnUpdatedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> ObsoletionTime
+		{
+			get
+			{
+				return this._ObsoletionTime;
+			}
+			set
+			{
+				if ((this._ObsoletionTime != value))
+				{
+					this.OnObsoletionTimeChanging(value);
+					this.SendPropertyChanging();
+					this._ObsoletionTime = value;
+					this.SendPropertyChanged("ObsoletionTime");
+					this.OnObsoletionTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletedBy", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> ObsoletedBy
+		{
+			get
+			{
+				return this._ObsoletedBy;
+			}
+			set
+			{
+				if ((this._ObsoletedBy != value))
+				{
+					if (this._ObsoletedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnObsoletedByChanging(value);
+					this.SendPropertyChanging();
+					this._ObsoletedBy = value;
+					this.SendPropertyChanged("ObsoletedBy");
+					this.OnObsoletedByChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptClass_ConceptVersion", Storage="_ConceptVersions", ThisKey="ConceptClassId", OtherKey="ConceptClassId")]
 		public EntitySet<ConceptVersion> ConceptVersions
 		{
@@ -7029,6 +7669,108 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			set
 			{
 				this._ConceptVersions.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptClass", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser CreatedByEntity
+		{
+			get
+			{
+				return this._CreatedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.ConceptClassesCreatedBy.Remove(this);
+					}
+					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptClassesCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
+					this.SendPropertyChanged("CreatedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptClass1", Storage="_ObsoletedByEntity", ThisKey="ObsoletedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser ObsoletedByEntity
+		{
+			get
+			{
+				return this._ObsoletedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.ConceptClassesObsoletedBy.Remove(this);
+					}
+					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptClassesObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("ObsoletedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptClass2", Storage="_UpdatedByEntity", ThisKey="UpdatedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser UpdatedByEntity
+		{
+			get
+			{
+				return this._UpdatedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._UpdatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._UpdatedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._UpdatedByEntity.Entity = null;
+						previousValue.ConceptClassesUpdatedBy.Remove(this);
+					}
+					this._UpdatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptClassesUpdatedBy.Add(this);
+						this._UpdatedBy = value.UserId;
+					}
+					else
+					{
+						this._UpdatedBy = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("UpdatedByEntity");
+				}
 			}
 		}
 		
@@ -7999,9 +8741,27 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private string _Mnemonic;
 		
+		private System.DateTimeOffset _CreationTime;
+		
+		private System.Guid _CreatedBy;
+		
+		private System.Nullable<System.DateTimeOffset> _UpdateTime;
+		
+		private System.Nullable<System.Guid> _UpdatedBy;
+		
+		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
+		
+		private System.Nullable<System.Guid> _ObsoletedBy;
+		
 		private EntitySet<ConceptReferenceTerm> _ConceptReferenceTerms;
 		
 		private EntitySet<ConceptRelationship> _ConceptRelationships;
+		
+		private EntityRef<SecurityUser> _CreatedByEntity;
+		
+		private EntityRef<SecurityUser> _ObsoletedByEntity;
+		
+		private EntityRef<SecurityUser> _UpdatedByEntity;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -8013,12 +8773,27 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnNameChanged();
     partial void OnMnemonicChanging(string value);
     partial void OnMnemonicChanged();
+    partial void OnCreationTimeChanging(System.DateTimeOffset value);
+    partial void OnCreationTimeChanged();
+    partial void OnCreatedByChanging(System.Guid value);
+    partial void OnCreatedByChanged();
+    partial void OnUpdateTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnUpdateTimeChanged();
+    partial void OnUpdatedByChanging(System.Nullable<System.Guid> value);
+    partial void OnUpdatedByChanged();
+    partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnObsoletionTimeChanged();
+    partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
+    partial void OnObsoletedByChanged();
     #endregion
 		
 		public ConceptRelationshipType()
 		{
 			this._ConceptReferenceTerms = new EntitySet<ConceptReferenceTerm>(new Action<ConceptReferenceTerm>(this.attach_ConceptReferenceTerms), new Action<ConceptReferenceTerm>(this.detach_ConceptReferenceTerms));
 			this._ConceptRelationships = new EntitySet<ConceptRelationship>(new Action<ConceptRelationship>(this.attach_ConceptRelationships), new Action<ConceptRelationship>(this.detach_ConceptRelationships));
+			this._CreatedByEntity = default(EntityRef<SecurityUser>);
+			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
+			this._UpdatedByEntity = default(EntityRef<SecurityUser>);
 			OnCreated();
 		}
 		
@@ -8082,6 +8857,138 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", AutoSync=AutoSync.Always, DbType="DateTimeOffset NOT NULL", IsDbGenerated=true)]
+		public System.DateTimeOffset CreationTime
+		{
+			get
+			{
+				return this._CreationTime;
+			}
+			set
+			{
+				if ((this._CreationTime != value))
+				{
+					this.OnCreationTimeChanging(value);
+					this.SendPropertyChanging();
+					this._CreationTime = value;
+					this.SendPropertyChanged("CreationTime");
+					this.OnCreationTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid CreatedBy
+		{
+			get
+			{
+				return this._CreatedBy;
+			}
+			set
+			{
+				if ((this._CreatedBy != value))
+				{
+					if (this._CreatedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCreatedByChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedBy = value;
+					this.SendPropertyChanged("CreatedBy");
+					this.OnCreatedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdateTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> UpdateTime
+		{
+			get
+			{
+				return this._UpdateTime;
+			}
+			set
+			{
+				if ((this._UpdateTime != value))
+				{
+					this.OnUpdateTimeChanging(value);
+					this.SendPropertyChanging();
+					this._UpdateTime = value;
+					this.SendPropertyChanged("UpdateTime");
+					this.OnUpdateTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedBy", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> UpdatedBy
+		{
+			get
+			{
+				return this._UpdatedBy;
+			}
+			set
+			{
+				if ((this._UpdatedBy != value))
+				{
+					if (this._UpdatedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUpdatedByChanging(value);
+					this.SendPropertyChanging();
+					this._UpdatedBy = value;
+					this.SendPropertyChanged("UpdatedBy");
+					this.OnUpdatedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> ObsoletionTime
+		{
+			get
+			{
+				return this._ObsoletionTime;
+			}
+			set
+			{
+				if ((this._ObsoletionTime != value))
+				{
+					this.OnObsoletionTimeChanging(value);
+					this.SendPropertyChanging();
+					this._ObsoletionTime = value;
+					this.SendPropertyChanged("ObsoletionTime");
+					this.OnObsoletionTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletedBy", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> ObsoletedBy
+		{
+			get
+			{
+				return this._ObsoletedBy;
+			}
+			set
+			{
+				if ((this._ObsoletedBy != value))
+				{
+					if (this._ObsoletedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnObsoletedByChanging(value);
+					this.SendPropertyChanging();
+					this._ObsoletedBy = value;
+					this.SendPropertyChanged("ObsoletedBy");
+					this.OnObsoletedByChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptRelationshipType_ConceptReferenceTerm", Storage="_ConceptReferenceTerms", ThisKey="ConceptRelationshipTypeId", OtherKey="ConceptRelationshipTypeId")]
 		public EntitySet<ConceptReferenceTerm> ConceptReferenceTerms
 		{
@@ -8105,6 +9012,108 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			set
 			{
 				this._ConceptRelationships.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptRelationshipType", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser CreatedByEntity
+		{
+			get
+			{
+				return this._CreatedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.ConceptRelationshipTypesCreatedBy.Remove(this);
+					}
+					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptRelationshipTypesCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
+					this.SendPropertyChanged("CreatedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptRelationshipType1", Storage="_ObsoletedByEntity", ThisKey="ObsoletedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser ObsoletedByEntity
+		{
+			get
+			{
+				return this._ObsoletedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.ConceptRelationshipTypesObsoletedBy.Remove(this);
+					}
+					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptRelationshipTypesObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("ObsoletedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptRelationshipType2", Storage="_UpdatedByEntity", ThisKey="UpdatedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser UpdatedByEntity
+		{
+			get
+			{
+				return this._UpdatedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._UpdatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._UpdatedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._UpdatedByEntity.Entity = null;
+						previousValue.ConceptRelationshipTypesUpdatedBy.Remove(this);
+					}
+					this._UpdatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptRelationshipTypesUpdatedBy.Add(this);
+						this._UpdatedBy = value.UserId;
+					}
+					else
+					{
+						this._UpdatedBy = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("UpdatedByEntity");
+				}
 			}
 		}
 		
@@ -8179,11 +9188,17 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private string _ObsoletionReason;
 		
+		private System.Nullable<System.DateTimeOffset> _UpdateTime;
+		
+		private System.Nullable<System.Guid> _UpdatedBy;
+		
 		private EntitySet<ConceptSetMember> _ConceptSetMembers;
 		
 		private EntityRef<SecurityUser> _CreatedByEntity;
 		
 		private EntityRef<SecurityUser> _ObsoletedByEntity;
+		
+		private EntityRef<SecurityUser> _UpdatedByEntity;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -8209,6 +9224,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnObsoletedByChanged();
     partial void OnObsoletionReasonChanging(string value);
     partial void OnObsoletionReasonChanged();
+    partial void OnUpdateTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnUpdateTimeChanged();
+    partial void OnUpdatedByChanging(System.Nullable<System.Guid> value);
+    partial void OnUpdatedByChanged();
     #endregion
 		
 		public ConceptSet()
@@ -8216,6 +9235,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._ConceptSetMembers = new EntitySet<ConceptSetMember>(new Action<ConceptSetMember>(this.attach_ConceptSetMembers), new Action<ConceptSetMember>(this.detach_ConceptSetMembers));
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
+			this._UpdatedByEntity = default(EntityRef<SecurityUser>);
 			OnCreated();
 		}
 		
@@ -8427,6 +9447,50 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdateTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> UpdateTime
+		{
+			get
+			{
+				return this._UpdateTime;
+			}
+			set
+			{
+				if ((this._UpdateTime != value))
+				{
+					this.OnUpdateTimeChanging(value);
+					this.SendPropertyChanging();
+					this._UpdateTime = value;
+					this.SendPropertyChanged("UpdateTime");
+					this.OnUpdateTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedBy", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> UpdatedBy
+		{
+			get
+			{
+				return this._UpdatedBy;
+			}
+			set
+			{
+				if ((this._UpdatedBy != value))
+				{
+					if (this._UpdatedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUpdatedByChanging(value);
+					this.SendPropertyChanging();
+					this._UpdatedBy = value;
+					this.SendPropertyChanged("UpdatedBy");
+					this.OnUpdatedByChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConceptSet_ConceptSetMember", Storage="_ConceptSetMembers", ThisKey="ConceptSetId", OtherKey="ConceptSetId")]
 		public EntitySet<ConceptSetMember> ConceptSetMembers
 		{
@@ -8504,6 +9568,40 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._ObsoletedBy = default(Nullable<System.Guid>);
 					}
 					this.SendPropertyChanged("ObsoletedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptSet2", Storage="_UpdatedByEntity", ThisKey="UpdatedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser UpdatedByEntity
+		{
+			get
+			{
+				return this._UpdatedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._UpdatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._UpdatedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._UpdatedByEntity.Entity = null;
+						previousValue.ConceptSetsUpdatedBy.Remove(this);
+					}
+					this._UpdatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ConceptSetsUpdatedBy.Add(this);
+						this._UpdatedBy = value.UserId;
+					}
+					else
+					{
+						this._UpdatedBy = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("UpdatedByEntity");
 				}
 			}
 		}
@@ -9513,6 +10611,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _DeterminerConceptId;
 		
+		private EntitySet<UserEntity> _UserEntities;
+		
 		private EntitySet<ActNote> _ActNotesAuthorEntityId;
 		
 		private EntitySet<ActParticipation> _ActParticipations;
@@ -9543,8 +10643,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<PlaceService> _PlaceServicesPlaceEntityId;
 		
-		private EntitySet<UserEntity> _UserEntities;
-		
 		private EntityRef<Concept> _ClassConcept;
 		
 		private EntityRef<Concept> _DeterminerConcept;
@@ -9563,6 +10661,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public Entity()
 		{
+			this._UserEntities = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntities), new Action<UserEntity>(this.detach_UserEntities));
 			this._ActNotesAuthorEntityId = new EntitySet<ActNote>(new Action<ActNote>(this.attach_ActNotesAuthorEntityId), new Action<ActNote>(this.detach_ActNotesAuthorEntityId));
 			this._ActParticipations = new EntitySet<ActParticipation>(new Action<ActParticipation>(this.attach_ActParticipations), new Action<ActParticipation>(this.detach_ActParticipations));
 			this._EntityAddresses = new EntitySet<EntityAddress>(new Action<EntityAddress>(this.attach_EntityAddresses), new Action<EntityAddress>(this.detach_EntityAddresses));
@@ -9578,7 +10677,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._EntityVersions = new EntitySet<EntityVersion>(new Action<EntityVersion>(this.attach_EntityVersions), new Action<EntityVersion>(this.detach_EntityVersions));
 			this._PersonLanguageCommunicationsPersonEntityId = new EntitySet<PersonLanguageCommunication>(new Action<PersonLanguageCommunication>(this.attach_PersonLanguageCommunicationsPersonEntityId), new Action<PersonLanguageCommunication>(this.detach_PersonLanguageCommunicationsPersonEntityId));
 			this._PlaceServicesPlaceEntityId = new EntitySet<PlaceService>(new Action<PlaceService>(this.attach_PlaceServicesPlaceEntityId), new Action<PlaceService>(this.detach_PlaceServicesPlaceEntityId));
-			this._UserEntities = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntities), new Action<UserEntity>(this.detach_UserEntities));
 			this._ClassConcept = default(EntityRef<Concept>);
 			this._DeterminerConcept = default(EntityRef<Concept>);
 			OnCreated();
@@ -9649,6 +10747,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this.SendPropertyChanged("DeterminerConceptId");
 					this.OnDeterminerConceptIdChanged();
 				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_UserEntity", Storage="_UserEntities", ThisKey="EntityId", OtherKey="EntityId")]
+		public EntitySet<UserEntity> UserEntities
+		{
+			get
+			{
+				return this._UserEntities;
+			}
+			set
+			{
+				this._UserEntities.Assign(value);
 			}
 		}
 		
@@ -9847,19 +10958,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_UserEntity", Storage="_UserEntities", ThisKey="EntityId", OtherKey="EntityId")]
-		public EntitySet<UserEntity> UserEntities
-		{
-			get
-			{
-				return this._UserEntities;
-			}
-			set
-			{
-				this._UserEntities.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_Entity", Storage="_ClassConcept", ThisKey="ClassConceptId", OtherKey="ConceptId", IsForeignKey=true)]
 		public Concept ClassConcept
 		{
@@ -9946,6 +11044,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_UserEntities(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.Entity = this;
+		}
+		
+		private void detach_UserEntities(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.Entity = null;
 		}
 		
 		private void attach_ActNotesAuthorEntityId(ActNote entity)
@@ -10126,18 +11236,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this.SendPropertyChanging();
 			entity.PlaceEntity = null;
-		}
-		
-		private void attach_UserEntities(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.Entity = this;
-		}
-		
-		private void detach_UserEntities(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.Entity = null;
 		}
 	}
 	
@@ -11212,7 +12310,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary ExtensionValue
 		{
 			get
@@ -16624,11 +17722,29 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private string _HandlerClass;
 		
+		private System.DateTimeOffset _CreationTime;
+		
+		private System.Guid _CreatedBy;
+		
+		private System.Nullable<System.DateTimeOffset> _UpdateTime;
+		
+		private System.Nullable<System.Guid> _UpdatedBy;
+		
+		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
+		
+		private System.Nullable<System.Guid> _ObsoletedBy;
+		
 		private EntitySet<ConceptName> _ConceptNames;
 		
 		private EntitySet<PhoneticValue> _PhoneticValues;
 		
 		private EntitySet<ReferenceTermDisplayName> _ReferenceTermDisplayNames;
+		
+		private EntityRef<SecurityUser> _CreatedByEntity;
+		
+		private EntityRef<SecurityUser> _ObsoletedByEntity;
+		
+		private EntityRef<SecurityUser> _UpdatedByEntity;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -16640,6 +17756,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnNameChanged();
     partial void OnHandlerClassChanging(string value);
     partial void OnHandlerClassChanged();
+    partial void OnCreationTimeChanging(System.DateTimeOffset value);
+    partial void OnCreationTimeChanged();
+    partial void OnCreatedByChanging(System.Guid value);
+    partial void OnCreatedByChanged();
+    partial void OnUpdateTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnUpdateTimeChanged();
+    partial void OnUpdatedByChanging(System.Nullable<System.Guid> value);
+    partial void OnUpdatedByChanged();
+    partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnObsoletionTimeChanged();
+    partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
+    partial void OnObsoletedByChanged();
     #endregion
 		
 		public PhoneticAlgorithm()
@@ -16647,6 +17775,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._ConceptNames = new EntitySet<ConceptName>(new Action<ConceptName>(this.attach_ConceptNames), new Action<ConceptName>(this.detach_ConceptNames));
 			this._PhoneticValues = new EntitySet<PhoneticValue>(new Action<PhoneticValue>(this.attach_PhoneticValues), new Action<PhoneticValue>(this.detach_PhoneticValues));
 			this._ReferenceTermDisplayNames = new EntitySet<ReferenceTermDisplayName>(new Action<ReferenceTermDisplayName>(this.attach_ReferenceTermDisplayNames), new Action<ReferenceTermDisplayName>(this.detach_ReferenceTermDisplayNames));
+			this._CreatedByEntity = default(EntityRef<SecurityUser>);
+			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
+			this._UpdatedByEntity = default(EntityRef<SecurityUser>);
 			OnCreated();
 		}
 		
@@ -16710,6 +17841,138 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", AutoSync=AutoSync.Always, DbType="DateTimeOffset NOT NULL", IsDbGenerated=true)]
+		public System.DateTimeOffset CreationTime
+		{
+			get
+			{
+				return this._CreationTime;
+			}
+			set
+			{
+				if ((this._CreationTime != value))
+				{
+					this.OnCreationTimeChanging(value);
+					this.SendPropertyChanging();
+					this._CreationTime = value;
+					this.SendPropertyChanged("CreationTime");
+					this.OnCreationTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid CreatedBy
+		{
+			get
+			{
+				return this._CreatedBy;
+			}
+			set
+			{
+				if ((this._CreatedBy != value))
+				{
+					if (this._CreatedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCreatedByChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedBy = value;
+					this.SendPropertyChanged("CreatedBy");
+					this.OnCreatedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdateTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> UpdateTime
+		{
+			get
+			{
+				return this._UpdateTime;
+			}
+			set
+			{
+				if ((this._UpdateTime != value))
+				{
+					this.OnUpdateTimeChanging(value);
+					this.SendPropertyChanging();
+					this._UpdateTime = value;
+					this.SendPropertyChanged("UpdateTime");
+					this.OnUpdateTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedBy", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> UpdatedBy
+		{
+			get
+			{
+				return this._UpdatedBy;
+			}
+			set
+			{
+				if ((this._UpdatedBy != value))
+				{
+					if (this._UpdatedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUpdatedByChanging(value);
+					this.SendPropertyChanging();
+					this._UpdatedBy = value;
+					this.SendPropertyChanged("UpdatedBy");
+					this.OnUpdatedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> ObsoletionTime
+		{
+			get
+			{
+				return this._ObsoletionTime;
+			}
+			set
+			{
+				if ((this._ObsoletionTime != value))
+				{
+					this.OnObsoletionTimeChanging(value);
+					this.SendPropertyChanging();
+					this._ObsoletionTime = value;
+					this.SendPropertyChanged("ObsoletionTime");
+					this.OnObsoletionTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletedBy", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> ObsoletedBy
+		{
+			get
+			{
+				return this._ObsoletedBy;
+			}
+			set
+			{
+				if ((this._ObsoletedBy != value))
+				{
+					if (this._ObsoletedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnObsoletedByChanging(value);
+					this.SendPropertyChanging();
+					this._ObsoletedBy = value;
+					this.SendPropertyChanged("ObsoletedBy");
+					this.OnObsoletedByChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="PhoneticAlgorithm_ConceptName", Storage="_ConceptNames", ThisKey="PhoneticAlgorithmId", OtherKey="PhoneticAlgorithmId")]
 		public EntitySet<ConceptName> ConceptNames
 		{
@@ -16746,6 +18009,108 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			set
 			{
 				this._ReferenceTermDisplayNames.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_PhoneticAlgorithm", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser CreatedByEntity
+		{
+			get
+			{
+				return this._CreatedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.PhoneticAlgorithmsCreatedBy.Remove(this);
+					}
+					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.PhoneticAlgorithmsCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
+					this.SendPropertyChanged("CreatedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_PhoneticAlgorithm1", Storage="_ObsoletedByEntity", ThisKey="ObsoletedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser ObsoletedByEntity
+		{
+			get
+			{
+				return this._ObsoletedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.PhoneticAlgorithmsObsoletedBy.Remove(this);
+					}
+					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.PhoneticAlgorithmsObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("ObsoletedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_PhoneticAlgorithm2", Storage="_UpdatedByEntity", ThisKey="UpdatedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser UpdatedByEntity
+		{
+			get
+			{
+				return this._UpdatedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._UpdatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._UpdatedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._UpdatedByEntity.Entity = null;
+						previousValue.PhoneticAlgorithmsUpdatedBy.Remove(this);
+					}
+					this._UpdatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.PhoneticAlgorithmsUpdatedBy.Add(this);
+						this._UpdatedBy = value.UserId;
+					}
+					else
+					{
+						this._UpdatedBy = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("UpdatedByEntity");
+				}
 			}
 		}
 		
@@ -18055,7 +19420,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProtocolDefinition", DbType="Xml", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProtocolDefinition", DbType="Xml", UpdateCheck=UpdateCheck.Never)]
 		public System.Xml.Linq.XElement ProtocolDefinition
 		{
 			get
@@ -19384,11 +20749,29 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private string _Mnemonic;
 		
+		private System.DateTimeOffset _CreationTime;
+		
+		private System.Guid _CreatedBy;
+		
+		private System.Nullable<System.DateTimeOffset> _UpdateTime;
+		
+		private System.Nullable<System.Guid> _UpdatedBy;
+		
+		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
+		
+		private System.Nullable<System.Guid> _ObsoletedBy;
+		
 		private EntitySet<ConceptReferenceTerm> _ConceptReferenceTerms;
 		
 		private EntitySet<ReferenceTermDisplayName> _ReferenceTermDisplayNames;
 		
 		private EntityRef<CodeSystem> _CodeSystem;
+		
+		private EntityRef<SecurityUser> _CreatedByEntity;
+		
+		private EntityRef<SecurityUser> _ObsoletedByEntity;
+		
+		private EntityRef<SecurityUser> _UpdatedByEntity;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -19400,6 +20783,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnCodeSystemIdChanged();
     partial void OnMnemonicChanging(string value);
     partial void OnMnemonicChanged();
+    partial void OnCreationTimeChanging(System.DateTimeOffset value);
+    partial void OnCreationTimeChanged();
+    partial void OnCreatedByChanging(System.Guid value);
+    partial void OnCreatedByChanged();
+    partial void OnUpdateTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnUpdateTimeChanged();
+    partial void OnUpdatedByChanging(System.Nullable<System.Guid> value);
+    partial void OnUpdatedByChanged();
+    partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnObsoletionTimeChanged();
+    partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
+    partial void OnObsoletedByChanged();
     #endregion
 		
 		public ReferenceTerm()
@@ -19407,6 +20802,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._ConceptReferenceTerms = new EntitySet<ConceptReferenceTerm>(new Action<ConceptReferenceTerm>(this.attach_ConceptReferenceTerms), new Action<ConceptReferenceTerm>(this.detach_ConceptReferenceTerms));
 			this._ReferenceTermDisplayNames = new EntitySet<ReferenceTermDisplayName>(new Action<ReferenceTermDisplayName>(this.attach_ReferenceTermDisplayNames), new Action<ReferenceTermDisplayName>(this.detach_ReferenceTermDisplayNames));
 			this._CodeSystem = default(EntityRef<CodeSystem>);
+			this._CreatedByEntity = default(EntityRef<SecurityUser>);
+			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
+			this._UpdatedByEntity = default(EntityRef<SecurityUser>);
 			OnCreated();
 		}
 		
@@ -19474,6 +20872,138 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", AutoSync=AutoSync.Always, DbType="DateTimeOffset NOT NULL", IsDbGenerated=true)]
+		public System.DateTimeOffset CreationTime
+		{
+			get
+			{
+				return this._CreationTime;
+			}
+			set
+			{
+				if ((this._CreationTime != value))
+				{
+					this.OnCreationTimeChanging(value);
+					this.SendPropertyChanging();
+					this._CreationTime = value;
+					this.SendPropertyChanged("CreationTime");
+					this.OnCreationTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid CreatedBy
+		{
+			get
+			{
+				return this._CreatedBy;
+			}
+			set
+			{
+				if ((this._CreatedBy != value))
+				{
+					if (this._CreatedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCreatedByChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedBy = value;
+					this.SendPropertyChanged("CreatedBy");
+					this.OnCreatedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdateTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> UpdateTime
+		{
+			get
+			{
+				return this._UpdateTime;
+			}
+			set
+			{
+				if ((this._UpdateTime != value))
+				{
+					this.OnUpdateTimeChanging(value);
+					this.SendPropertyChanging();
+					this._UpdateTime = value;
+					this.SendPropertyChanged("UpdateTime");
+					this.OnUpdateTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedBy", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> UpdatedBy
+		{
+			get
+			{
+				return this._UpdatedBy;
+			}
+			set
+			{
+				if ((this._UpdatedBy != value))
+				{
+					if (this._UpdatedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUpdatedByChanging(value);
+					this.SendPropertyChanging();
+					this._UpdatedBy = value;
+					this.SendPropertyChanged("UpdatedBy");
+					this.OnUpdatedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> ObsoletionTime
+		{
+			get
+			{
+				return this._ObsoletionTime;
+			}
+			set
+			{
+				if ((this._ObsoletionTime != value))
+				{
+					this.OnObsoletionTimeChanging(value);
+					this.SendPropertyChanging();
+					this._ObsoletionTime = value;
+					this.SendPropertyChanged("ObsoletionTime");
+					this.OnObsoletionTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletedBy", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> ObsoletedBy
+		{
+			get
+			{
+				return this._ObsoletedBy;
+			}
+			set
+			{
+				if ((this._ObsoletedBy != value))
+				{
+					if (this._ObsoletedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnObsoletedByChanging(value);
+					this.SendPropertyChanging();
+					this._ObsoletedBy = value;
+					this.SendPropertyChanged("ObsoletedBy");
+					this.OnObsoletedByChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ReferenceTerm_ConceptReferenceTerm", Storage="_ConceptReferenceTerms", ThisKey="ReferenceTermId", OtherKey="ReferenceTermId")]
 		public EntitySet<ConceptReferenceTerm> ConceptReferenceTerms
 		{
@@ -19530,6 +21060,108 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._CodeSystemId = default(System.Guid);
 					}
 					this.SendPropertyChanged("CodeSystem");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ReferenceTerm", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser CreatedByEntity
+		{
+			get
+			{
+				return this._CreatedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.ReferenceTermsCreatedBy.Remove(this);
+					}
+					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ReferenceTermsCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
+					this.SendPropertyChanged("CreatedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ReferenceTerm1", Storage="_ObsoletedByEntity", ThisKey="ObsoletedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser ObsoletedByEntity
+		{
+			get
+			{
+				return this._ObsoletedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.ReferenceTermsObsoletedBy.Remove(this);
+					}
+					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ReferenceTermsObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("ObsoletedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ReferenceTerm2", Storage="_UpdatedByEntity", ThisKey="UpdatedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser UpdatedByEntity
+		{
+			get
+			{
+				return this._UpdatedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._UpdatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._UpdatedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._UpdatedByEntity.Entity = null;
+						previousValue.ReferenceTermsUpdatedBy.Remove(this);
+					}
+					this._UpdatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.ReferenceTermsUpdatedBy.Add(this);
+						this._UpdatedBy = value.UserId;
+					}
+					else
+					{
+						this._UpdatedBy = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("UpdatedByEntity");
 				}
 			}
 		}
@@ -19607,9 +21239,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _PhoneticAlgorithmId;
 		
-		private EntityRef<ReferenceTerm> _ReferenceTerm;
-		
 		private EntityRef<PhoneticAlgorithm> _PhoneticAlgorithm;
+		
+		private EntityRef<ReferenceTerm> _ReferenceTerm;
 		
 		private EntityRef<SecurityUser> _CreatedByEntity;
 		
@@ -19645,8 +21277,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public ReferenceTermDisplayName()
 		{
-			this._ReferenceTerm = default(EntityRef<ReferenceTerm>);
 			this._PhoneticAlgorithm = default(EntityRef<PhoneticAlgorithm>);
+			this._ReferenceTerm = default(EntityRef<ReferenceTerm>);
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
 			OnCreated();
@@ -19888,40 +21520,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ReferenceTerm_ReferenceTermDisplayName", Storage="_ReferenceTerm", ThisKey="ReferenceTermId", OtherKey="ReferenceTermId", IsForeignKey=true)]
-		public ReferenceTerm ReferenceTerm
-		{
-			get
-			{
-				return this._ReferenceTerm.Entity;
-			}
-			set
-			{
-				ReferenceTerm previousValue = this._ReferenceTerm.Entity;
-				if (((previousValue != value) 
-							|| (this._ReferenceTerm.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ReferenceTerm.Entity = null;
-						previousValue.ReferenceTermDisplayNames.Remove(this);
-					}
-					this._ReferenceTerm.Entity = value;
-					if ((value != null))
-					{
-						value.ReferenceTermDisplayNames.Add(this);
-						this._ReferenceTermId = value.ReferenceTermId;
-					}
-					else
-					{
-						this._ReferenceTermId = default(System.Guid);
-					}
-					this.SendPropertyChanged("ReferenceTerm");
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="PhoneticAlgorithm_ReferenceTermDisplayName", Storage="_PhoneticAlgorithm", ThisKey="PhoneticAlgorithmId", OtherKey="PhoneticAlgorithmId", IsForeignKey=true)]
 		public PhoneticAlgorithm PhoneticAlgorithm
 		{
@@ -19952,6 +21550,40 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._PhoneticAlgorithmId = default(System.Guid);
 					}
 					this.SendPropertyChanged("PhoneticAlgorithm");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ReferenceTerm_ReferenceTermDisplayName", Storage="_ReferenceTerm", ThisKey="ReferenceTermId", OtherKey="ReferenceTermId", IsForeignKey=true)]
+		public ReferenceTerm ReferenceTerm
+		{
+			get
+			{
+				return this._ReferenceTerm.Entity;
+			}
+			set
+			{
+				ReferenceTerm previousValue = this._ReferenceTerm.Entity;
+				if (((previousValue != value) 
+							|| (this._ReferenceTerm.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ReferenceTerm.Entity = null;
+						previousValue.ReferenceTermDisplayNames.Remove(this);
+					}
+					this._ReferenceTerm.Entity = value;
+					if ((value != null))
+					{
+						value.ReferenceTermDisplayNames.Add(this);
+						this._ReferenceTermId = value.ReferenceTermId;
+					}
+					else
+					{
+						this._ReferenceTermId = default(System.Guid);
+					}
+					this.SendPropertyChanged("ReferenceTerm");
 				}
 			}
 		}
@@ -20959,8 +22591,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _PolicyId;
 		
-		private bool _IsDeny;
-		
 		private int _PolicyAction;
 		
 		private EntityRef<SecurityDevice> _SecurityDevice;
@@ -20975,8 +22605,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnDeviceIdChanged();
     partial void OnPolicyIdChanging(System.Guid value);
     partial void OnPolicyIdChanged();
-    partial void OnIsDenyChanging(bool value);
-    partial void OnIsDenyChanged();
     partial void OnPolicyActionChanging(int value);
     partial void OnPolicyActionChanged();
     #endregion
@@ -21032,26 +22660,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this._PolicyId = value;
 					this.SendPropertyChanged("PolicyId");
 					this.OnPolicyIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDeny", DbType="Bit NOT NULL")]
-		public bool IsDeny
-		{
-			get
-			{
-				return this._IsDeny;
-			}
-			set
-			{
-				if ((this._IsDeny != value))
-				{
-					this.OnIsDenyChanging(value);
-					this.SendPropertyChanging();
-					this._IsDeny = value;
-					this.SendPropertyChanged("IsDeny");
-					this.OnIsDenyChanged();
 				}
 			}
 		}
@@ -21185,6 +22793,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.Guid> _ObsoletedBy;
 		
+		private System.Nullable<System.DateTimeOffset> _UpdateTime;
+		
+		private System.Nullable<System.Guid> _UpdatedBy;
+		
 		private EntitySet<SecurityRolePolicy> _SecurityRolePolicies;
 		
 		private EntitySet<SecurityUserRole> _SecurityUserRoles;
@@ -21192,6 +22804,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private EntityRef<SecurityUser> _CreatedByEntity;
 		
 		private EntityRef<SecurityUser> _ObsoletedByEntity;
+		
+		private EntityRef<SecurityUser> _UpdatedByEntity;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -21211,6 +22825,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnObsoletionTimeChanged();
     partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
     partial void OnObsoletedByChanged();
+    partial void OnUpdateTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnUpdateTimeChanged();
+    partial void OnUpdatedByChanging(System.Nullable<System.Guid> value);
+    partial void OnUpdatedByChanged();
     #endregion
 		
 		public SecurityRole()
@@ -21219,6 +22837,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._SecurityUserRoles = new EntitySet<SecurityUserRole>(new Action<SecurityUserRole>(this.attach_SecurityUserRoles), new Action<SecurityUserRole>(this.detach_SecurityUserRoles));
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
+			this._UpdatedByEntity = default(EntityRef<SecurityUser>);
 			OnCreated();
 		}
 		
@@ -21370,6 +22989,50 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdateTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> UpdateTime
+		{
+			get
+			{
+				return this._UpdateTime;
+			}
+			set
+			{
+				if ((this._UpdateTime != value))
+				{
+					this.OnUpdateTimeChanging(value);
+					this.SendPropertyChanging();
+					this._UpdateTime = value;
+					this.SendPropertyChanged("UpdateTime");
+					this.OnUpdateTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedBy", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> UpdatedBy
+		{
+			get
+			{
+				return this._UpdatedBy;
+			}
+			set
+			{
+				if ((this._UpdatedBy != value))
+				{
+					if (this._UpdatedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUpdatedByChanging(value);
+					this.SendPropertyChanging();
+					this._UpdatedBy = value;
+					this.SendPropertyChanged("UpdatedBy");
+					this.OnUpdatedByChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityRole_SecurityRolePolicy", Storage="_SecurityRolePolicies", ThisKey="RoleId", OtherKey="RoleId")]
 		public EntitySet<SecurityRolePolicy> SecurityRolePolicies
 		{
@@ -21460,6 +23123,40 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._ObsoletedBy = default(Nullable<System.Guid>);
 					}
 					this.SendPropertyChanged("ObsoletedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityRole2", Storage="_UpdatedByEntity", ThisKey="UpdatedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser UpdatedByEntity
+		{
+			get
+			{
+				return this._UpdatedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._UpdatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._UpdatedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._UpdatedByEntity.Entity = null;
+						previousValue.SecurityRolesUpdatedBy.Remove(this);
+					}
+					this._UpdatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityRolesUpdatedBy.Add(this);
+						this._UpdatedBy = value.UserId;
+					}
+					else
+					{
+						this._UpdatedBy = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("UpdatedByEntity");
 				}
 			}
 		}
@@ -21743,6 +23440,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.Guid> _UpdatedBy;
 		
+		private EntitySet<UserEntity> _UserEntitiesCreatedBy;
+		
+		private EntitySet<UserEntity> _UserEntitiesObsoletedBy;
+		
+		private EntitySet<UserEntity> _UserEntities;
+		
 		private EntitySet<ActTag> _ActTagsCreatedBy;
 		
 		private EntitySet<ActTag> _ActTagsObsoletedBy;
@@ -21759,9 +23462,25 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<CodeSystem> _CodeSystemsObsoletedBy;
 		
+		private EntitySet<CodeSystem> _CodeSystemsUpdatedBy;
+		
+		private EntitySet<ConceptClass> _ConceptClassesCreatedBy;
+		
+		private EntitySet<ConceptClass> _ConceptClassesObsoletedBy;
+		
+		private EntitySet<ConceptClass> _ConceptClassesUpdatedBy;
+		
+		private EntitySet<ConceptRelationshipType> _ConceptRelationshipTypesCreatedBy;
+		
+		private EntitySet<ConceptRelationshipType> _ConceptRelationshipTypesObsoletedBy;
+		
+		private EntitySet<ConceptRelationshipType> _ConceptRelationshipTypesUpdatedBy;
+		
 		private EntitySet<ConceptSet> _ConceptSetsCreatedBy;
 		
 		private EntitySet<ConceptSet> _ConceptSetsObsoletedBy;
+		
+		private EntitySet<ConceptSet> _ConceptSetsUpdatedBy;
 		
 		private EntitySet<ConceptVersion> _ConceptVersionsCreatedBy;
 		
@@ -21781,6 +23500,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<ExtensionType> _ExtensionTypesUpdatedBy;
 		
+		private EntitySet<PhoneticAlgorithm> _PhoneticAlgorithmsCreatedBy;
+		
+		private EntitySet<PhoneticAlgorithm> _PhoneticAlgorithmsObsoletedBy;
+		
+		private EntitySet<PhoneticAlgorithm> _PhoneticAlgorithmsUpdatedBy;
+		
 		private EntitySet<Policy> _PoliciesCreatedBy;
 		
 		private EntitySet<Policy> _PoliciesObsoletedBy;
@@ -21792,6 +23517,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private EntitySet<ProtocolHandler> _ProtocolHandlersCreatedBy;
 		
 		private EntitySet<ProtocolHandler> _ProtocolHandlersObsoletedBy;
+		
+		private EntitySet<ReferenceTerm> _ReferenceTermsCreatedBy;
+		
+		private EntitySet<ReferenceTerm> _ReferenceTermsObsoletedBy;
+		
+		private EntitySet<ReferenceTerm> _ReferenceTermsUpdatedBy;
 		
 		private EntitySet<ReferenceTermDisplayName> _ReferenceTermDisplayNamesCreatedBy;
 		
@@ -21809,6 +23540,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<SecurityRole> _SecurityRolesObsoletedBy;
 		
+		private EntitySet<SecurityRole> _SecurityRolesUpdatedBy;
+		
 		private EntitySet<SecurityUser> _SecurityUsersCreatedBy;
 		
 		private EntitySet<SecurityUser> _SecurityUsersObsoletedBy;
@@ -21820,12 +23553,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private EntitySet<SecurityUserLogin> _SecurityUserLogins;
 		
 		private EntitySet<SecurityUserRole> _SecurityUserRoles;
-		
-		private EntitySet<UserEntity> _UserEntitiesCreatedBy;
-		
-		private EntitySet<UserEntity> _UserEntitiesObsoletedBy;
-		
-		private EntitySet<UserEntity> _UserEntities;
 		
 		private EntityRef<SecurityUser> _CreatedByEntity;
 		
@@ -21877,6 +23604,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public SecurityUser()
 		{
+			this._UserEntitiesCreatedBy = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntitiesCreatedBy), new Action<UserEntity>(this.detach_UserEntitiesCreatedBy));
+			this._UserEntitiesObsoletedBy = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntitiesObsoletedBy), new Action<UserEntity>(this.detach_UserEntitiesObsoletedBy));
+			this._UserEntities = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntities), new Action<UserEntity>(this.detach_UserEntities));
 			this._ActTagsCreatedBy = new EntitySet<ActTag>(new Action<ActTag>(this.attach_ActTagsCreatedBy), new Action<ActTag>(this.detach_ActTagsCreatedBy));
 			this._ActTagsObsoletedBy = new EntitySet<ActTag>(new Action<ActTag>(this.attach_ActTagsObsoletedBy), new Action<ActTag>(this.detach_ActTagsObsoletedBy));
 			this._ActVersionsCreatedBy = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersionsCreatedBy), new Action<ActVersion>(this.detach_ActVersionsCreatedBy));
@@ -21885,8 +23615,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._AssigningAuthoritiesObsoletedBy = new EntitySet<AssigningAuthority>(new Action<AssigningAuthority>(this.attach_AssigningAuthoritiesObsoletedBy), new Action<AssigningAuthority>(this.detach_AssigningAuthoritiesObsoletedBy));
 			this._CodeSystemsCreatedBy = new EntitySet<CodeSystem>(new Action<CodeSystem>(this.attach_CodeSystemsCreatedBy), new Action<CodeSystem>(this.detach_CodeSystemsCreatedBy));
 			this._CodeSystemsObsoletedBy = new EntitySet<CodeSystem>(new Action<CodeSystem>(this.attach_CodeSystemsObsoletedBy), new Action<CodeSystem>(this.detach_CodeSystemsObsoletedBy));
+			this._CodeSystemsUpdatedBy = new EntitySet<CodeSystem>(new Action<CodeSystem>(this.attach_CodeSystemsUpdatedBy), new Action<CodeSystem>(this.detach_CodeSystemsUpdatedBy));
+			this._ConceptClassesCreatedBy = new EntitySet<ConceptClass>(new Action<ConceptClass>(this.attach_ConceptClassesCreatedBy), new Action<ConceptClass>(this.detach_ConceptClassesCreatedBy));
+			this._ConceptClassesObsoletedBy = new EntitySet<ConceptClass>(new Action<ConceptClass>(this.attach_ConceptClassesObsoletedBy), new Action<ConceptClass>(this.detach_ConceptClassesObsoletedBy));
+			this._ConceptClassesUpdatedBy = new EntitySet<ConceptClass>(new Action<ConceptClass>(this.attach_ConceptClassesUpdatedBy), new Action<ConceptClass>(this.detach_ConceptClassesUpdatedBy));
+			this._ConceptRelationshipTypesCreatedBy = new EntitySet<ConceptRelationshipType>(new Action<ConceptRelationshipType>(this.attach_ConceptRelationshipTypesCreatedBy), new Action<ConceptRelationshipType>(this.detach_ConceptRelationshipTypesCreatedBy));
+			this._ConceptRelationshipTypesObsoletedBy = new EntitySet<ConceptRelationshipType>(new Action<ConceptRelationshipType>(this.attach_ConceptRelationshipTypesObsoletedBy), new Action<ConceptRelationshipType>(this.detach_ConceptRelationshipTypesObsoletedBy));
+			this._ConceptRelationshipTypesUpdatedBy = new EntitySet<ConceptRelationshipType>(new Action<ConceptRelationshipType>(this.attach_ConceptRelationshipTypesUpdatedBy), new Action<ConceptRelationshipType>(this.detach_ConceptRelationshipTypesUpdatedBy));
 			this._ConceptSetsCreatedBy = new EntitySet<ConceptSet>(new Action<ConceptSet>(this.attach_ConceptSetsCreatedBy), new Action<ConceptSet>(this.detach_ConceptSetsCreatedBy));
 			this._ConceptSetsObsoletedBy = new EntitySet<ConceptSet>(new Action<ConceptSet>(this.attach_ConceptSetsObsoletedBy), new Action<ConceptSet>(this.detach_ConceptSetsObsoletedBy));
+			this._ConceptSetsUpdatedBy = new EntitySet<ConceptSet>(new Action<ConceptSet>(this.attach_ConceptSetsUpdatedBy), new Action<ConceptSet>(this.detach_ConceptSetsUpdatedBy));
 			this._ConceptVersionsCreatedBy = new EntitySet<ConceptVersion>(new Action<ConceptVersion>(this.attach_ConceptVersionsCreatedBy), new Action<ConceptVersion>(this.detach_ConceptVersionsCreatedBy));
 			this._ConceptVersionsObsoletedBy = new EntitySet<ConceptVersion>(new Action<ConceptVersion>(this.attach_ConceptVersionsObsoletedBy), new Action<ConceptVersion>(this.detach_ConceptVersionsObsoletedBy));
 			this._EntityTagsCreatedBy = new EntitySet<EntityTag>(new Action<EntityTag>(this.attach_EntityTagsCreatedBy), new Action<EntityTag>(this.detach_EntityTagsCreatedBy));
@@ -21896,12 +23634,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._ExtensionTypesEnabledBy = new EntitySet<ExtensionType>(new Action<ExtensionType>(this.attach_ExtensionTypesEnabledBy), new Action<ExtensionType>(this.detach_ExtensionTypesEnabledBy));
 			this._ExtensionTypesObsoletedBy = new EntitySet<ExtensionType>(new Action<ExtensionType>(this.attach_ExtensionTypesObsoletedBy), new Action<ExtensionType>(this.detach_ExtensionTypesObsoletedBy));
 			this._ExtensionTypesUpdatedBy = new EntitySet<ExtensionType>(new Action<ExtensionType>(this.attach_ExtensionTypesUpdatedBy), new Action<ExtensionType>(this.detach_ExtensionTypesUpdatedBy));
+			this._PhoneticAlgorithmsCreatedBy = new EntitySet<PhoneticAlgorithm>(new Action<PhoneticAlgorithm>(this.attach_PhoneticAlgorithmsCreatedBy), new Action<PhoneticAlgorithm>(this.detach_PhoneticAlgorithmsCreatedBy));
+			this._PhoneticAlgorithmsObsoletedBy = new EntitySet<PhoneticAlgorithm>(new Action<PhoneticAlgorithm>(this.attach_PhoneticAlgorithmsObsoletedBy), new Action<PhoneticAlgorithm>(this.detach_PhoneticAlgorithmsObsoletedBy));
+			this._PhoneticAlgorithmsUpdatedBy = new EntitySet<PhoneticAlgorithm>(new Action<PhoneticAlgorithm>(this.attach_PhoneticAlgorithmsUpdatedBy), new Action<PhoneticAlgorithm>(this.detach_PhoneticAlgorithmsUpdatedBy));
 			this._PoliciesCreatedBy = new EntitySet<Policy>(new Action<Policy>(this.attach_PoliciesCreatedBy), new Action<Policy>(this.detach_PoliciesCreatedBy));
 			this._PoliciesObsoletedBy = new EntitySet<Policy>(new Action<Policy>(this.attach_PoliciesObsoletedBy), new Action<Policy>(this.detach_PoliciesObsoletedBy));
 			this._ProtocolsCreatedBy = new EntitySet<Protocol>(new Action<Protocol>(this.attach_ProtocolsCreatedBy), new Action<Protocol>(this.detach_ProtocolsCreatedBy));
 			this._ProtocolsObsoletedBy = new EntitySet<Protocol>(new Action<Protocol>(this.attach_ProtocolsObsoletedBy), new Action<Protocol>(this.detach_ProtocolsObsoletedBy));
 			this._ProtocolHandlersCreatedBy = new EntitySet<ProtocolHandler>(new Action<ProtocolHandler>(this.attach_ProtocolHandlersCreatedBy), new Action<ProtocolHandler>(this.detach_ProtocolHandlersCreatedBy));
 			this._ProtocolHandlersObsoletedBy = new EntitySet<ProtocolHandler>(new Action<ProtocolHandler>(this.attach_ProtocolHandlersObsoletedBy), new Action<ProtocolHandler>(this.detach_ProtocolHandlersObsoletedBy));
+			this._ReferenceTermsCreatedBy = new EntitySet<ReferenceTerm>(new Action<ReferenceTerm>(this.attach_ReferenceTermsCreatedBy), new Action<ReferenceTerm>(this.detach_ReferenceTermsCreatedBy));
+			this._ReferenceTermsObsoletedBy = new EntitySet<ReferenceTerm>(new Action<ReferenceTerm>(this.attach_ReferenceTermsObsoletedBy), new Action<ReferenceTerm>(this.detach_ReferenceTermsObsoletedBy));
+			this._ReferenceTermsUpdatedBy = new EntitySet<ReferenceTerm>(new Action<ReferenceTerm>(this.attach_ReferenceTermsUpdatedBy), new Action<ReferenceTerm>(this.detach_ReferenceTermsUpdatedBy));
 			this._ReferenceTermDisplayNamesCreatedBy = new EntitySet<ReferenceTermDisplayName>(new Action<ReferenceTermDisplayName>(this.attach_ReferenceTermDisplayNamesCreatedBy), new Action<ReferenceTermDisplayName>(this.detach_ReferenceTermDisplayNamesCreatedBy));
 			this._ReferenceTermDisplayNamesObsoletedBy = new EntitySet<ReferenceTermDisplayName>(new Action<ReferenceTermDisplayName>(this.attach_ReferenceTermDisplayNamesObsoletedBy), new Action<ReferenceTermDisplayName>(this.detach_ReferenceTermDisplayNamesObsoletedBy));
 			this._SecurityApplicationsCreatedBy = new EntitySet<SecurityApplication>(new Action<SecurityApplication>(this.attach_SecurityApplicationsCreatedBy), new Action<SecurityApplication>(this.detach_SecurityApplicationsCreatedBy));
@@ -21910,15 +23654,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._SecurityDevicesCreatedBy = new EntitySet<SecurityDevice>(new Action<SecurityDevice>(this.attach_SecurityDevicesCreatedBy), new Action<SecurityDevice>(this.detach_SecurityDevicesCreatedBy));
 			this._SecurityRolesCreatedBy = new EntitySet<SecurityRole>(new Action<SecurityRole>(this.attach_SecurityRolesCreatedBy), new Action<SecurityRole>(this.detach_SecurityRolesCreatedBy));
 			this._SecurityRolesObsoletedBy = new EntitySet<SecurityRole>(new Action<SecurityRole>(this.attach_SecurityRolesObsoletedBy), new Action<SecurityRole>(this.detach_SecurityRolesObsoletedBy));
+			this._SecurityRolesUpdatedBy = new EntitySet<SecurityRole>(new Action<SecurityRole>(this.attach_SecurityRolesUpdatedBy), new Action<SecurityRole>(this.detach_SecurityRolesUpdatedBy));
 			this._SecurityUsersCreatedBy = new EntitySet<SecurityUser>(new Action<SecurityUser>(this.attach_SecurityUsersCreatedBy), new Action<SecurityUser>(this.detach_SecurityUsersCreatedBy));
 			this._SecurityUsersObsoletedBy = new EntitySet<SecurityUser>(new Action<SecurityUser>(this.attach_SecurityUsersObsoletedBy), new Action<SecurityUser>(this.detach_SecurityUsersObsoletedBy));
 			this._SecurityUsersUpdatedBy = new EntitySet<SecurityUser>(new Action<SecurityUser>(this.attach_SecurityUsersUpdatedBy), new Action<SecurityUser>(this.detach_SecurityUsersUpdatedBy));
 			this._SecurityUserClaims = new EntitySet<SecurityUserClaim>(new Action<SecurityUserClaim>(this.attach_SecurityUserClaims), new Action<SecurityUserClaim>(this.detach_SecurityUserClaims));
 			this._SecurityUserLogins = new EntitySet<SecurityUserLogin>(new Action<SecurityUserLogin>(this.attach_SecurityUserLogins), new Action<SecurityUserLogin>(this.detach_SecurityUserLogins));
 			this._SecurityUserRoles = new EntitySet<SecurityUserRole>(new Action<SecurityUserRole>(this.attach_SecurityUserRoles), new Action<SecurityUserRole>(this.detach_SecurityUserRoles));
-			this._UserEntitiesCreatedBy = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntitiesCreatedBy), new Action<UserEntity>(this.detach_UserEntitiesCreatedBy));
-			this._UserEntitiesObsoletedBy = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntitiesObsoletedBy), new Action<UserEntity>(this.detach_UserEntitiesObsoletedBy));
-			this._UserEntities = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntities), new Action<UserEntity>(this.detach_UserEntities));
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
 			this._UpdatedByEntity = default(EntityRef<SecurityUser>);
@@ -22297,6 +24039,45 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity", Storage="_UserEntitiesCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<UserEntity> UserEntitiesCreatedBy
+		{
+			get
+			{
+				return this._UserEntitiesCreatedBy;
+			}
+			set
+			{
+				this._UserEntitiesCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity1", Storage="_UserEntitiesObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<UserEntity> UserEntitiesObsoletedBy
+		{
+			get
+			{
+				return this._UserEntitiesObsoletedBy;
+			}
+			set
+			{
+				this._UserEntitiesObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity2", Storage="_UserEntities", ThisKey="UserId", OtherKey="UserId")]
+		public EntitySet<UserEntity> UserEntities
+		{
+			get
+			{
+				return this._UserEntities;
+			}
+			set
+			{
+				this._UserEntities.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ActTag", Storage="_ActTagsCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
 		public EntitySet<ActTag> ActTagsCreatedBy
 		{
@@ -22401,6 +24182,97 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_CodeSystem2", Storage="_CodeSystemsUpdatedBy", ThisKey="UserId", OtherKey="UpdatedBy")]
+		public EntitySet<CodeSystem> CodeSystemsUpdatedBy
+		{
+			get
+			{
+				return this._CodeSystemsUpdatedBy;
+			}
+			set
+			{
+				this._CodeSystemsUpdatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptClass", Storage="_ConceptClassesCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<ConceptClass> ConceptClassesCreatedBy
+		{
+			get
+			{
+				return this._ConceptClassesCreatedBy;
+			}
+			set
+			{
+				this._ConceptClassesCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptClass1", Storage="_ConceptClassesObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<ConceptClass> ConceptClassesObsoletedBy
+		{
+			get
+			{
+				return this._ConceptClassesObsoletedBy;
+			}
+			set
+			{
+				this._ConceptClassesObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptClass2", Storage="_ConceptClassesUpdatedBy", ThisKey="UserId", OtherKey="UpdatedBy")]
+		public EntitySet<ConceptClass> ConceptClassesUpdatedBy
+		{
+			get
+			{
+				return this._ConceptClassesUpdatedBy;
+			}
+			set
+			{
+				this._ConceptClassesUpdatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptRelationshipType", Storage="_ConceptRelationshipTypesCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<ConceptRelationshipType> ConceptRelationshipTypesCreatedBy
+		{
+			get
+			{
+				return this._ConceptRelationshipTypesCreatedBy;
+			}
+			set
+			{
+				this._ConceptRelationshipTypesCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptRelationshipType1", Storage="_ConceptRelationshipTypesObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<ConceptRelationshipType> ConceptRelationshipTypesObsoletedBy
+		{
+			get
+			{
+				return this._ConceptRelationshipTypesObsoletedBy;
+			}
+			set
+			{
+				this._ConceptRelationshipTypesObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptRelationshipType2", Storage="_ConceptRelationshipTypesUpdatedBy", ThisKey="UserId", OtherKey="UpdatedBy")]
+		public EntitySet<ConceptRelationshipType> ConceptRelationshipTypesUpdatedBy
+		{
+			get
+			{
+				return this._ConceptRelationshipTypesUpdatedBy;
+			}
+			set
+			{
+				this._ConceptRelationshipTypesUpdatedBy.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptSet", Storage="_ConceptSetsCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
 		public EntitySet<ConceptSet> ConceptSetsCreatedBy
 		{
@@ -22424,6 +24296,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			set
 			{
 				this._ConceptSetsObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ConceptSet2", Storage="_ConceptSetsUpdatedBy", ThisKey="UserId", OtherKey="UpdatedBy")]
+		public EntitySet<ConceptSet> ConceptSetsUpdatedBy
+		{
+			get
+			{
+				return this._ConceptSetsUpdatedBy;
+			}
+			set
+			{
+				this._ConceptSetsUpdatedBy.Assign(value);
 			}
 		}
 		
@@ -22544,6 +24429,45 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_PhoneticAlgorithm", Storage="_PhoneticAlgorithmsCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<PhoneticAlgorithm> PhoneticAlgorithmsCreatedBy
+		{
+			get
+			{
+				return this._PhoneticAlgorithmsCreatedBy;
+			}
+			set
+			{
+				this._PhoneticAlgorithmsCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_PhoneticAlgorithm1", Storage="_PhoneticAlgorithmsObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<PhoneticAlgorithm> PhoneticAlgorithmsObsoletedBy
+		{
+			get
+			{
+				return this._PhoneticAlgorithmsObsoletedBy;
+			}
+			set
+			{
+				this._PhoneticAlgorithmsObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_PhoneticAlgorithm2", Storage="_PhoneticAlgorithmsUpdatedBy", ThisKey="UserId", OtherKey="UpdatedBy")]
+		public EntitySet<PhoneticAlgorithm> PhoneticAlgorithmsUpdatedBy
+		{
+			get
+			{
+				return this._PhoneticAlgorithmsUpdatedBy;
+			}
+			set
+			{
+				this._PhoneticAlgorithmsUpdatedBy.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_Policy", Storage="_PoliciesCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
 		public EntitySet<Policy> PoliciesCreatedBy
 		{
@@ -22619,6 +24543,45 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			set
 			{
 				this._ProtocolHandlersObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ReferenceTerm", Storage="_ReferenceTermsCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<ReferenceTerm> ReferenceTermsCreatedBy
+		{
+			get
+			{
+				return this._ReferenceTermsCreatedBy;
+			}
+			set
+			{
+				this._ReferenceTermsCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ReferenceTerm1", Storage="_ReferenceTermsObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<ReferenceTerm> ReferenceTermsObsoletedBy
+		{
+			get
+			{
+				return this._ReferenceTermsObsoletedBy;
+			}
+			set
+			{
+				this._ReferenceTermsObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ReferenceTerm2", Storage="_ReferenceTermsUpdatedBy", ThisKey="UserId", OtherKey="UpdatedBy")]
+		public EntitySet<ReferenceTerm> ReferenceTermsUpdatedBy
+		{
+			get
+			{
+				return this._ReferenceTermsUpdatedBy;
+			}
+			set
+			{
+				this._ReferenceTermsUpdatedBy.Assign(value);
 			}
 		}
 		
@@ -22726,6 +24689,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityRole2", Storage="_SecurityRolesUpdatedBy", ThisKey="UserId", OtherKey="UpdatedBy")]
+		public EntitySet<SecurityRole> SecurityRolesUpdatedBy
+		{
+			get
+			{
+				return this._SecurityRolesUpdatedBy;
+			}
+			set
+			{
+				this._SecurityRolesUpdatedBy.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityUser", Storage="_SecurityUsersCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
 		public EntitySet<SecurityUser> SecurityUsersCreatedBy
 		{
@@ -22801,45 +24777,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			set
 			{
 				this._SecurityUserRoles.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity", Storage="_UserEntitiesCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
-		public EntitySet<UserEntity> UserEntitiesCreatedBy
-		{
-			get
-			{
-				return this._UserEntitiesCreatedBy;
-			}
-			set
-			{
-				this._UserEntitiesCreatedBy.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity1", Storage="_UserEntitiesObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
-		public EntitySet<UserEntity> UserEntitiesObsoletedBy
-		{
-			get
-			{
-				return this._UserEntitiesObsoletedBy;
-			}
-			set
-			{
-				this._UserEntitiesObsoletedBy.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity2", Storage="_UserEntities", ThisKey="UserId", OtherKey="UserId")]
-		public EntitySet<UserEntity> UserEntities
-		{
-			get
-			{
-				return this._UserEntities;
-			}
-			set
-			{
-				this._UserEntities.Assign(value);
 			}
 		}
 		
@@ -22965,6 +24902,42 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		private void attach_UserEntitiesCreatedBy(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_UserEntitiesCreatedBy(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_UserEntitiesObsoletedBy(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_UserEntitiesObsoletedBy(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_UserEntities(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityUser = this;
+		}
+		
+		private void detach_UserEntities(UserEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityUser = null;
+		}
+		
 		private void attach_ActTagsCreatedBy(ActTag entity)
 		{
 			this.SendPropertyChanging();
@@ -23061,6 +25034,90 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			entity.ObsoletedByEntity = null;
 		}
 		
+		private void attach_CodeSystemsUpdatedBy(CodeSystem entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = this;
+		}
+		
+		private void detach_CodeSystemsUpdatedBy(CodeSystem entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = null;
+		}
+		
+		private void attach_ConceptClassesCreatedBy(ConceptClass entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_ConceptClassesCreatedBy(ConceptClass entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_ConceptClassesObsoletedBy(ConceptClass entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_ConceptClassesObsoletedBy(ConceptClass entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_ConceptClassesUpdatedBy(ConceptClass entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = this;
+		}
+		
+		private void detach_ConceptClassesUpdatedBy(ConceptClass entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = null;
+		}
+		
+		private void attach_ConceptRelationshipTypesCreatedBy(ConceptRelationshipType entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_ConceptRelationshipTypesCreatedBy(ConceptRelationshipType entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_ConceptRelationshipTypesObsoletedBy(ConceptRelationshipType entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_ConceptRelationshipTypesObsoletedBy(ConceptRelationshipType entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_ConceptRelationshipTypesUpdatedBy(ConceptRelationshipType entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = this;
+		}
+		
+		private void detach_ConceptRelationshipTypesUpdatedBy(ConceptRelationshipType entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = null;
+		}
+		
 		private void attach_ConceptSetsCreatedBy(ConceptSet entity)
 		{
 			this.SendPropertyChanging();
@@ -23083,6 +25140,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this.SendPropertyChanging();
 			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_ConceptSetsUpdatedBy(ConceptSet entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = this;
+		}
+		
+		private void detach_ConceptSetsUpdatedBy(ConceptSet entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = null;
 		}
 		
 		private void attach_ConceptVersionsCreatedBy(ConceptVersion entity)
@@ -23193,6 +25262,42 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			entity.UpdatedByEntity = null;
 		}
 		
+		private void attach_PhoneticAlgorithmsCreatedBy(PhoneticAlgorithm entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_PhoneticAlgorithmsCreatedBy(PhoneticAlgorithm entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_PhoneticAlgorithmsObsoletedBy(PhoneticAlgorithm entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_PhoneticAlgorithmsObsoletedBy(PhoneticAlgorithm entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_PhoneticAlgorithmsUpdatedBy(PhoneticAlgorithm entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = this;
+		}
+		
+		private void detach_PhoneticAlgorithmsUpdatedBy(PhoneticAlgorithm entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = null;
+		}
+		
 		private void attach_PoliciesCreatedBy(Policy entity)
 		{
 			this.SendPropertyChanging();
@@ -23263,6 +25368,42 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this.SendPropertyChanging();
 			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_ReferenceTermsCreatedBy(ReferenceTerm entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_ReferenceTermsCreatedBy(ReferenceTerm entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_ReferenceTermsObsoletedBy(ReferenceTerm entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_ReferenceTermsObsoletedBy(ReferenceTerm entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_ReferenceTermsUpdatedBy(ReferenceTerm entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = this;
+		}
+		
+		private void detach_ReferenceTermsUpdatedBy(ReferenceTerm entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = null;
 		}
 		
 		private void attach_ReferenceTermDisplayNamesCreatedBy(ReferenceTermDisplayName entity)
@@ -23361,6 +25502,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			entity.ObsoletedByEntity = null;
 		}
 		
+		private void attach_SecurityRolesUpdatedBy(SecurityRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = this;
+		}
+		
+		private void detach_SecurityRolesUpdatedBy(SecurityRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = null;
+		}
+		
 		private void attach_SecurityUsersCreatedBy(SecurityUser entity)
 		{
 			this.SendPropertyChanging();
@@ -23428,42 +25581,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		}
 		
 		private void detach_SecurityUserRoles(SecurityUserRole entity)
-		{
-			this.SendPropertyChanging();
-			entity.SecurityUser = null;
-		}
-		
-		private void attach_UserEntitiesCreatedBy(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.CreatedByEntity = this;
-		}
-		
-		private void detach_UserEntitiesCreatedBy(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.CreatedByEntity = null;
-		}
-		
-		private void attach_UserEntitiesObsoletedBy(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoletedByEntity = this;
-		}
-		
-		private void detach_UserEntitiesObsoletedBy(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoletedByEntity = null;
-		}
-		
-		private void attach_UserEntities(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.SecurityUser = this;
-		}
-		
-		private void detach_UserEntities(UserEntity entity)
 		{
 			this.SendPropertyChanging();
 			entity.SecurityUser = null;
@@ -24368,601 +26485,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			if ((this.PropertyChanged != null))
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.UserEntity")]
-	public partial class UserEntity : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private System.Guid _UserEntityId;
-		
-		private System.Guid _UserId;
-		
-		private System.Guid _EntityId;
-		
-		private System.DateTimeOffset _CreationTime;
-		
-		private System.Guid _CreatedBy;
-		
-		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
-		
-		private System.Nullable<System.Guid> _ObsoletedBy;
-		
-		private EntityRef<SecurityUser> _CreatedByEntity;
-		
-		private EntityRef<Entity> _Entity;
-		
-		private EntityRef<SecurityUser> _ObsoletedByEntity;
-		
-		private EntityRef<SecurityUser> _SecurityUser;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnUserEntityIdChanging(System.Guid value);
-    partial void OnUserEntityIdChanged();
-    partial void OnUserIdChanging(System.Guid value);
-    partial void OnUserIdChanged();
-    partial void OnEntityIdChanging(System.Guid value);
-    partial void OnEntityIdChanged();
-    partial void OnCreationTimeChanging(System.DateTimeOffset value);
-    partial void OnCreationTimeChanged();
-    partial void OnCreatedByChanging(System.Guid value);
-    partial void OnCreatedByChanged();
-    partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
-    partial void OnObsoletionTimeChanged();
-    partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
-    partial void OnObsoletedByChanged();
-    #endregion
-		
-		public UserEntity()
-		{
-			this._CreatedByEntity = default(EntityRef<SecurityUser>);
-			this._Entity = default(EntityRef<Entity>);
-			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
-			this._SecurityUser = default(EntityRef<SecurityUser>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserEntityId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
-		public System.Guid UserEntityId
-		{
-			get
-			{
-				return this._UserEntityId;
-			}
-			set
-			{
-				if ((this._UserEntityId != value))
-				{
-					this.OnUserEntityIdChanging(value);
-					this.SendPropertyChanging();
-					this._UserEntityId = value;
-					this.SendPropertyChanged("UserEntityId");
-					this.OnUserEntityIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid UserId
-		{
-			get
-			{
-				return this._UserId;
-			}
-			set
-			{
-				if ((this._UserId != value))
-				{
-					if (this._SecurityUser.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnUserIdChanging(value);
-					this.SendPropertyChanging();
-					this._UserId = value;
-					this.SendPropertyChanged("UserId");
-					this.OnUserIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityId", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid EntityId
-		{
-			get
-			{
-				return this._EntityId;
-			}
-			set
-			{
-				if ((this._EntityId != value))
-				{
-					if (this._Entity.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnEntityIdChanging(value);
-					this.SendPropertyChanging();
-					this._EntityId = value;
-					this.SendPropertyChanged("EntityId");
-					this.OnEntityIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", AutoSync=AutoSync.Always, DbType="DateTimeOffset NOT NULL", IsDbGenerated=true)]
-		public System.DateTimeOffset CreationTime
-		{
-			get
-			{
-				return this._CreationTime;
-			}
-			set
-			{
-				if ((this._CreationTime != value))
-				{
-					this.OnCreationTimeChanging(value);
-					this.SendPropertyChanging();
-					this._CreationTime = value;
-					this.SendPropertyChanged("CreationTime");
-					this.OnCreationTimeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid CreatedBy
-		{
-			get
-			{
-				return this._CreatedBy;
-			}
-			set
-			{
-				if ((this._CreatedBy != value))
-				{
-					if (this._CreatedByEntity.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnCreatedByChanging(value);
-					this.SendPropertyChanging();
-					this._CreatedBy = value;
-					this.SendPropertyChanged("CreatedBy");
-					this.OnCreatedByChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTime", DbType="DateTimeOffset")]
-		public System.Nullable<System.DateTimeOffset> ObsoletionTime
-		{
-			get
-			{
-				return this._ObsoletionTime;
-			}
-			set
-			{
-				if ((this._ObsoletionTime != value))
-				{
-					this.OnObsoletionTimeChanging(value);
-					this.SendPropertyChanging();
-					this._ObsoletionTime = value;
-					this.SendPropertyChanged("ObsoletionTime");
-					this.OnObsoletionTimeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletedBy", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> ObsoletedBy
-		{
-			get
-			{
-				return this._ObsoletedBy;
-			}
-			set
-			{
-				if ((this._ObsoletedBy != value))
-				{
-					if (this._ObsoletedByEntity.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnObsoletedByChanging(value);
-					this.SendPropertyChanging();
-					this._ObsoletedBy = value;
-					this.SendPropertyChanged("ObsoletedBy");
-					this.OnObsoletedByChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser CreatedByEntity
-		{
-			get
-			{
-				return this._CreatedByEntity.Entity;
-			}
-			set
-			{
-				SecurityUser previousValue = this._CreatedByEntity.Entity;
-				if (((previousValue != value) 
-							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._CreatedByEntity.Entity = null;
-						previousValue.UserEntitiesCreatedBy.Remove(this);
-					}
-					this._CreatedByEntity.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntitiesCreatedBy.Add(this);
-						this._CreatedBy = value.UserId;
-					}
-					else
-					{
-						this._CreatedBy = default(System.Guid);
-					}
-					this.SendPropertyChanged("CreatedByEntity");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_UserEntity", Storage="_Entity", ThisKey="EntityId", OtherKey="EntityId", IsForeignKey=true)]
-		public Entity Entity
-		{
-			get
-			{
-				return this._Entity.Entity;
-			}
-			set
-			{
-				Entity previousValue = this._Entity.Entity;
-				if (((previousValue != value) 
-							|| (this._Entity.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Entity.Entity = null;
-						previousValue.UserEntities.Remove(this);
-					}
-					this._Entity.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntities.Add(this);
-						this._EntityId = value.EntityId;
-					}
-					else
-					{
-						this._EntityId = default(System.Guid);
-					}
-					this.SendPropertyChanged("Entity");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity1", Storage="_ObsoletedByEntity", ThisKey="ObsoletedBy", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser ObsoletedByEntity
-		{
-			get
-			{
-				return this._ObsoletedByEntity.Entity;
-			}
-			set
-			{
-				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoletedByEntity.Entity = null;
-						previousValue.UserEntitiesObsoletedBy.Remove(this);
-					}
-					this._ObsoletedByEntity.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntitiesObsoletedBy.Add(this);
-						this._ObsoletedBy = value.UserId;
-					}
-					else
-					{
-						this._ObsoletedBy = default(Nullable<System.Guid>);
-					}
-					this.SendPropertyChanged("ObsoletedByEntity");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity2", Storage="_SecurityUser", ThisKey="UserId", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser SecurityUser
-		{
-			get
-			{
-				return this._SecurityUser.Entity;
-			}
-			set
-			{
-				SecurityUser previousValue = this._SecurityUser.Entity;
-				if (((previousValue != value) 
-							|| (this._SecurityUser.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._SecurityUser.Entity = null;
-						previousValue.UserEntities.Remove(this);
-					}
-					this._SecurityUser.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntities.Add(this);
-						this._UserId = value.UserId;
-					}
-					else
-					{
-						this._UserId = default(System.Guid);
-					}
-					this.SendPropertyChanged("SecurityUser");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ConceptView")]
-	public partial class ConceptView
-	{
-		
-		private bool _IsSystemConcept;
-		
-		private System.Guid _ConceptVersionId;
-		
-		private decimal _VersionSequenceId;
-		
-		private System.Guid _ConceptId;
-		
-		private System.DateTimeOffset _CreationTime;
-		
-		private System.Guid _StatusConceptId;
-		
-		private System.Guid _CreatedBy;
-		
-		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
-		
-		private System.Nullable<System.Guid> _ObsoletedBy;
-		
-		private System.Nullable<System.Guid> _ReplacesVersionId;
-		
-		private System.Nullable<System.Guid> _ConceptClassId;
-		
-		private string _Mnemonic;
-		
-		public ConceptView()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsSystemConcept", DbType="Bit NOT NULL")]
-		public bool IsSystemConcept
-		{
-			get
-			{
-				return this._IsSystemConcept;
-			}
-			set
-			{
-				if ((this._IsSystemConcept != value))
-				{
-					this._IsSystemConcept = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptVersionId", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid ConceptVersionId
-		{
-			get
-			{
-				return this._ConceptVersionId;
-			}
-			set
-			{
-				if ((this._ConceptVersionId != value))
-				{
-					this._ConceptVersionId = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_VersionSequenceId", AutoSync=AutoSync.Always, DbType="Decimal(20,0) NOT NULL", IsDbGenerated=true)]
-		public decimal VersionSequenceId
-		{
-			get
-			{
-				return this._VersionSequenceId;
-			}
-			set
-			{
-				if ((this._VersionSequenceId != value))
-				{
-					this._VersionSequenceId = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptId", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid ConceptId
-		{
-			get
-			{
-				return this._ConceptId;
-			}
-			set
-			{
-				if ((this._ConceptId != value))
-				{
-					this._ConceptId = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", AutoSync=AutoSync.Always, DbType="DateTimeOffset NOT NULL", IsDbGenerated=true)]
-		public System.DateTimeOffset CreationTime
-		{
-			get
-			{
-				return this._CreationTime;
-			}
-			set
-			{
-				if ((this._CreationTime != value))
-				{
-					this._CreationTime = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StatusConceptId", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid StatusConceptId
-		{
-			get
-			{
-				return this._StatusConceptId;
-			}
-			set
-			{
-				if ((this._StatusConceptId != value))
-				{
-					this._StatusConceptId = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid CreatedBy
-		{
-			get
-			{
-				return this._CreatedBy;
-			}
-			set
-			{
-				if ((this._CreatedBy != value))
-				{
-					this._CreatedBy = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTime", DbType="DateTimeOffset")]
-		public System.Nullable<System.DateTimeOffset> ObsoletionTime
-		{
-			get
-			{
-				return this._ObsoletionTime;
-			}
-			set
-			{
-				if ((this._ObsoletionTime != value))
-				{
-					this._ObsoletionTime = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletedBy", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> ObsoletedBy
-		{
-			get
-			{
-				return this._ObsoletedBy;
-			}
-			set
-			{
-				if ((this._ObsoletedBy != value))
-				{
-					this._ObsoletedBy = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReplacesVersionId", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> ReplacesVersionId
-		{
-			get
-			{
-				return this._ReplacesVersionId;
-			}
-			set
-			{
-				if ((this._ReplacesVersionId != value))
-				{
-					this._ReplacesVersionId = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptClassId", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> ConceptClassId
-		{
-			get
-			{
-				return this._ConceptClassId;
-			}
-			set
-			{
-				if ((this._ConceptClassId != value))
-				{
-					this._ConceptClassId = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Mnemonic", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
-		public string Mnemonic
-		{
-			get
-			{
-				return this._Mnemonic;
-			}
-			set
-			{
-				if ((this._Mnemonic != value))
-				{
-					this._Mnemonic = value;
-				}
 			}
 		}
 	}

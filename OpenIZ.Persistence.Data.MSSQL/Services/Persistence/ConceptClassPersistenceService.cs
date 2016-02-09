@@ -57,9 +57,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             return this.ConvertItem(data);
         }
-
-
-
+        
         /// <summary>
         /// Get the specified concept class
         /// </summary>
@@ -78,6 +76,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         internal override Core.Model.DataTypes.ConceptClass Insert(Core.Model.DataTypes.ConceptClass storageData, IPrincipal principal, ModelDataContext dataContext)
         {
             var domainConceptClass = this.ConvertFromModel(storageData) as Data.ConceptClass;
+            domainConceptClass.CreatedByEntity = principal.GetUser(dataContext);
+
+
             dataContext.ConceptClasses.InsertOnSubmit(domainConceptClass);
             dataContext.SubmitChanges();
 
@@ -94,7 +95,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var domainConceptClass = dataContext.ConceptClasses.SingleOrDefault(o => o.ConceptClassId == storageData.Key);
             if (domainConceptClass == null)
                 throw new KeyNotFoundException();
-            dataContext.ConceptClasses.DeleteOnSubmit(domainConceptClass);
+
+            domainConceptClass.ObsoletedByEntity = principal.GetUser(dataContext);
+            domainConceptClass.ObsoletionTime = DateTimeOffset.Now;
+
+            //dataContext.ConceptClasses.DeleteOnSubmit(domainConceptClass);
             dataContext.SubmitChanges();
 
             storageData.Key = Guid.Empty;
@@ -119,6 +124,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (domainConceptClass == null)
                 throw new KeyNotFoundException();
             domainConceptClass.CopyObjectData(this.ConvertFromModel(storageData) as Data.ConceptClass);
+
+            domainConceptClass.UpdatedByEntity = principal.GetUser(dataContext);
+            domainConceptClass.UpdateTime = DateTimeOffset.Now;
+
             dataContext.SubmitChanges();
 
             return storageData;

@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Core.Model", "OpenIZ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Messaging.IMSI.Test", "OpenIZ.Messaging.IMSI.Test\OpenIZ.Messaging.IMSI.Test.csproj", "{B25778DB-97DA-4BA1-BF77-72838658B148}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Persistence.Data.PSQL", "OpenIZ.Persistence.Data.PSQL\OpenIZ.Persistence.Data.PSQL.csproj", "{F38ED54C-E4E4-499A-882E-736289F332C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{B25778DB-97DA-4BA1-BF77-72838658B148}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B25778DB-97DA-4BA1-BF77-72838658B148}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B25778DB-97DA-4BA1-BF77-72838658B148}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F38ED54C-E4E4-499A-882E-736289F332C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F38ED54C-E4E4-499A-882E-736289F332C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F38ED54C-E4E4-499A-882E-736289F332C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F38ED54C-E4E4-499A-882E-736289F332C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,5 +75,6 @@ Global
 		{04E3C581-5A04-4691-82AC-F339947FCE75} = {A1C82EDF-C27A-4A7A-A186-09E88BF63F36}
 		{F1A82A4F-4A57-47D7-AE76-444C8A4FF54A} = {3D1B75E7-2CFB-4FA6-92A0-F91EB884D0E4}
 		{B25778DB-97DA-4BA1-BF77-72838658B148} = {A1C82EDF-C27A-4A7A-A186-09E88BF63F36}
+		{F38ED54C-E4E4-499A-882E-736289F332C0} = {2914F4AD-4661-4C73-ADB6-B1D91C11C569}
 	EndGlobalSection
 EndGlobal

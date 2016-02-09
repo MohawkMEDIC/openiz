@@ -28,6 +28,7 @@ using System.Text;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using System.Security;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Security;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 {
@@ -53,13 +54,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 UserName = "admin@identitytest.com",
                 Email = "admin@identitytest.com",
                 PasswordHash = hashingService.EncodePassword("password"),
-            }, null, TransactionMode.Commit);
+            }, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
             dataService.Insert(new SecurityUser()
             {
                 UserName = "user@identitytest.com",
                 Email = "user@identitytest.com",
                 PasswordHash = hashingService.EncodePassword("password"),
-            }, null, TransactionMode.Commit);
+            }, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
         }
 
         /// <summary>

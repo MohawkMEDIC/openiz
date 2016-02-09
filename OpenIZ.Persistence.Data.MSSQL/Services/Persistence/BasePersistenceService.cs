@@ -142,6 +142,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new ArgumentNullException(nameof(storageData));
             else if (storageData.Key != Guid.Empty)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.IdentityInsert);
+            else if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
 
             this.ThrowIfInvalid(storageData);
 
@@ -222,6 +224,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new ArgumentNullException(nameof(storageData));
             else if (storageData.Key == Guid.Empty)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.NonIdentityUpdate);
+            else if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
 
             this.ThrowIfInvalid(storageData);
 
@@ -292,6 +296,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new ArgumentNullException(nameof(storageData));
             else if (storageData.Key == Guid.Empty)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.NonIdentityUpdate);
+            else if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
 
             this.ThrowIfInvalid(storageData);
 

@@ -140,6 +140,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new KeyNotFoundException();
             domainReferenceTerm.CopyObjectData(this.ConvertFromModel(storageData));
 
+            domainReferenceTerm.UpdatedByEntity = principal.GetUser(dataContext);
+            domainReferenceTerm.UpdateTime = DateTime.Now;
+
             // Display names
             if (storageData.DisplayNames != null)
             {
