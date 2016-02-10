@@ -151,7 +151,7 @@ namespace OpenIZ.Core.Model.Collection
         private void Reconstitute(IdentifiedData data)
         {
             // Prevent delay loading from EntitySource (we're doing that right now)
-            data.Lock();
+            data = data.GetLocked();
 
             // Iterate over properties
             foreach(var pi in data.GetType().GetRuntimeProperties())

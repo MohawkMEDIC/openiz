@@ -129,7 +129,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataRole.CopyObjectData(newData);
 
             dataRole.UpdatedByEntity = principal.GetUser(dataContext);
-            dataRole.UpdateTime = DateTime.Now;
+            dataRole.UpdatedTime = DateTime.Now;
 
             // Users to be added 
             if(storageData.Users != null)

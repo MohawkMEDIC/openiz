@@ -170,13 +170,13 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     this.ExpandProperties(retVal, WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters);
 
                     if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_all"] != "true")
-                        retVal.Lock();
+                        retVal = retVal.GetLocked();
 
                     if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_bundle"] == "true")
                         return Bundle.CreateBundle(retVal);
                     else
                     {
-                        retVal.Lock();
+                        retVal = retVal.GetLocked();
                         return retVal;
                     }
                 }
@@ -209,7 +209,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     this.ExpandProperties(retVal, WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters);
 
                     if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_all"] != "true")
-                        retVal.Lock();
+                        retVal = retVal.GetLocked();
                     if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_bundle"] == "true")
                         return Bundle.CreateBundle(retVal);
                     else
@@ -291,9 +291,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     }
 
                     // Lock the item
-                    histItm.Lock();
-
-                    return Bundle.CreateBundle(retVal);
+                    return Bundle.CreateBundle(histItm.GetLocked());
                 }
                 else
                     throw new FileNotFoundException(resourceType);
@@ -325,12 +323,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                         foreach (var itm in retVal)
                             wtp.QueueUserWorkItem(o=>this.ExpandProperties(itm, o as NameValueCollection), WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters);
                         wtp.WaitOne();
-
-                        foreach (var itm in retVal)
-                            wtp.QueueUserWorkItem(o => (o as IdentifiedData).Lock(), itm);
-
-                        wtp.WaitOne();
                     }
+
                     return BundleUtil.CreateBundle(retVal, totalResults, Int32.Parse(offset ?? "0"));
                 }
                 else

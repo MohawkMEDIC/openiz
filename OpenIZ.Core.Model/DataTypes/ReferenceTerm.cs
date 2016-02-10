@@ -35,7 +35,7 @@ namespace OpenIZ.Core.Model.DataTypes
     
     [XmlType("ReferenceTerm",  Namespace = "http://openiz.org/model"), JsonObject("ReferenceTerm")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "ReferenceTerm")]
-    public class ReferenceTerm : IdentifiedData
+    public class ReferenceTerm : NonVersionedEntityData
     {
 
         // Backing field for code system identifier

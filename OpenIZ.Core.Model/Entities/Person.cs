@@ -27,6 +27,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core.Model.EntityLoader;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -39,8 +40,10 @@ namespace OpenIZ.Core.Model.Entities
     public class Person : Entity
     {
 
+        // Security user
+        private SecurityUser m_securityUser;
+
         // Language communication
-        
         private List<PersonLanguageCommunication> m_languageCommunication;
 
         /// <summary>
@@ -89,5 +92,17 @@ namespace OpenIZ.Core.Model.Entities
             this.m_languageCommunication = null;
         }
 
+        /// <summary>
+        /// Gets the security user account associated with this person if applicable
+        /// </summary>
+        public SecurityUser AsSecurityUser
+        {
+            get
+            {
+                if(this.IsDelayLoadEnabled && this.m_securityUser == null)
+                    this.m_securityUser = EntitySource.Current.Get<UserEntity>(this.Key, this.VersionKey, null).SecurityUser;
+                return this.m_securityUser;
+            }
+        }
     }
 }

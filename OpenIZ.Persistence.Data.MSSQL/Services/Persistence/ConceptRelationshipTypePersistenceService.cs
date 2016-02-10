@@ -130,7 +130,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Update data
             domainRelationshipType.UpdatedByEntity = principal.GetUser(dataContext);
-            domainRelationshipType.UpdateTime = DateTimeOffset.Now;
+            domainRelationshipType.UpdatedTime = DateTimeOffset.Now;
 
             storageData.Mnemonic = domainRelationshipType.Mnemonic = storageData.Mnemonic ?? domainRelationshipType.Mnemonic;
             storageData.Name = domainRelationshipType.Name = storageData.Mnemonic ?? domainRelationshipType.Name;

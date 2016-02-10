@@ -28,6 +28,7 @@ using System.Threading.Tasks;
 using OpenIZ.Core.Model.EntityLoader;
 using System.Globalization;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Core.Model.Security
 {
@@ -42,14 +43,9 @@ namespace OpenIZ.Core.Model.Security
         
         // Roles
         private List<SecurityRole> m_roles;
-        // The updated by id
-        private Guid? m_updatedById;
-        // The updated by user
-        
-        private SecurityUser m_updatedBy;
-        // Policies
-        
-        private List<SecurityPolicyInstance> m_policies;
+        // User entities
+        private List<UserEntity> m_userEntities;
+
         /// <summary>
         /// Gets or sets the email address of the user
         /// </summary>
@@ -95,12 +91,45 @@ namespace OpenIZ.Core.Model.Security
         /// </summary>
         [XmlElement("photo"), JsonProperty("photo")]
         public byte[] UserPhoto { get; set; }
+
+        /// <summary>
+        /// Gets the list of entities associated with this security user
+        /// </summary>
+        [XmlIgnore,JsonIgnore]
+        public List<Person> Entities
+        {
+            get
+            {
+                if (this.IsDelayLoadEnabled)
+                    this.m_userEntities = EntitySource.Current.Provider.Query<UserEntity>(o => o.SecurityUserKey == this.Key && o.ObsoletionTime == null).ToList();
+                return this.m_userEntities.OfType<Person>().ToList();
+            }
+        }
+
+        /// <summary>
+        /// Concepts as identifiers for XML purposes only
+        /// </summary>
+        [XmlElement("entity"), JsonProperty("entity")]
+        [DelayLoad(null)]
+        //[Bundle(nameof(Concepts))]
+        public List<Guid> EntitiesXml
+        {
+            get
+            {
+                return this.Entities?.Select(o => o.Key).ToList();
+            }
+            set
+            {
+                ; // nothing
+            }
+        }
+
         /// <summary>
         /// The last login time
         /// </summary>
         [XmlIgnore, JsonIgnore]
         public DateTimeOffset LastLoginTime { get; set; }
-        
+       
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
@@ -130,60 +159,7 @@ namespace OpenIZ.Core.Model.Security
                 return this.m_roles;
             }
         }
-        /// <summary>
-        /// Updated time
-        /// </summary>
-        [XmlIgnore, JsonIgnore]
-        public DateTimeOffset? UpdatedTime { get; set; }
-
-
-        /// <summary>
-        /// Gets or sets the creation time in XML format
-        /// </summary>
-        [XmlElement("updatedTime"), JsonProperty("updatedTime")]
-        public String UpdatedTimeXml
-        {
-            get { return this.UpdatedTime?.ToString("o", CultureInfo.InvariantCulture); }
-            set
-            {
-                if (value != null)
-                    this.UpdatedTime = DateTimeOffset.ParseExact(value, "o", CultureInfo.InvariantCulture);
-                else
-                    this.UpdatedTime = null;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the user that updated this base data
-        /// </summary>
-        [DelayLoad(null)]
-        [XmlIgnore, JsonIgnore]
-        public SecurityUser UpdatedBy
-        {
-            get
-            {
-                this.m_updatedBy = base.DelayLoad(this.m_updatedById, this.m_updatedBy);
-                return this.m_updatedBy;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the created by identifier
-        /// </summary>
-        
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("updatedBy"), JsonProperty("updatedBy")]
-        public Guid?  UpdatedByKey
-        {
-            get { return this.m_updatedById; }
-            set
-            {
-                if (this.m_updatedById != value)
-                    this.m_updatedBy = null;
-                this.m_updatedById = value;
-            }
-        }
-
+      
         /// <summary>
         /// Gets or sets the patient's phone number
         /// </summary>
@@ -195,16 +171,14 @@ namespace OpenIZ.Core.Model.Security
         /// </summary>
         [XmlElement("phoneNumberConfirmed"), JsonProperty("phoneNumberConfirmed")]
         public Boolean PhoneNumberConfirmed { get; set; }
-
+        
         /// <summary>
         /// Forces delay load properties to be from the database
         /// </summary>
         public override void Refresh()
         {
             base.Refresh();
-            this.m_policies = null;
             this.m_roles = null;
-            this.m_updatedBy = null;
         }
 
     }

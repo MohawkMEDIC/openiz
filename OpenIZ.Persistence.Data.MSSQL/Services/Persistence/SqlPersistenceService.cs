@@ -16,8 +16,10 @@
  * User: fyfej
  * Date: 2016-1-19
  */
+using MARC.Everest.Threading;
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Persistence.Data.MSSQL.Data;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -39,7 +41,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <summary>
         /// Represents a source of trace logs from this object
         /// </summary>
-        protected TraceSource m_traceSource = new TraceSource("OpenIZ.Persistence.Data.MSSQL.Services.Persistence");
+        protected TraceSource m_traceSource = new TraceSource(SqlServerConstants.PersistenceTraceSourceName);
 
         /// <summary>
         /// Whether the daemon is running
@@ -77,6 +79,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             this.Starting?.Invoke(this, EventArgs.Empty);
 
+            this.m_traceSource.TraceInformation("Compiling model map...");
+            var cache = DataCache.Current; // Force load map
+
             var assemblyTypes = typeof(SqlPersistenceService).Assembly.GetTypes();
             foreach (Type t in assemblyTypes.Where(o => o.GetInterface(typeof(IDataPersistenceService<>).FullName) != null))
             {
@@ -85,6 +90,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 ApplicationContext.Current.AddServiceProvider(t);
             }
             this.Started?.Invoke(this, EventArgs.Empty);
+
+            // Load system concepts into cache
+            if (DataCache.Current.IsCacheEnabled)
+            {
+                this.m_traceSource.TraceInformation("Loading system concepts into data cache...");
+                var concepts = new ConceptPersistenceService().Query(o => o.IsSystemConcept, null);
+                m_traceSource.TraceInformation("{0} items loaded into cache", DataCache.Current.Count);
+            }
             return true;
         }
 

@@ -27,7 +27,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// </summary>
     
     [XmlType("ConceptClass",  Namespace = "http://openiz.org/model"), JsonObject("ConceptClass")]
-    public class ConceptClass : IdentifiedData
+    public class ConceptClass : NonVersionedEntityData
     {
 
         /// <summary>

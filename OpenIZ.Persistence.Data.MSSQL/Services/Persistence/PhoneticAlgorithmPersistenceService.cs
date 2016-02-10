@@ -126,7 +126,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var domainPhoneticAlgorithm = dataContext.PhoneticAlgorithms.SingleOrDefault(o => o.PhoneticAlgorithmId == storageData.Key);
             domainPhoneticAlgorithm.CopyObjectData(this.ConvertFromModel(storageData));
             domainPhoneticAlgorithm.UpdatedByEntity = principal.GetUser(dataContext);
-            domainPhoneticAlgorithm.UpdateTime = DateTime.Now;
+            domainPhoneticAlgorithm.UpdatedTime = DateTime.Now;
 
             // Update
             dataContext.SubmitChanges();

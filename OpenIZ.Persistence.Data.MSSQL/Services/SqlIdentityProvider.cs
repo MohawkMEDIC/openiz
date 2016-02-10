@@ -49,10 +49,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
     {
 
         // Trace source
-        private TraceSource m_traceSource = new TraceSource("OpenIZ.Persistence.Data.MSSQL.Services.Identity");
+        private TraceSource m_traceSource = new TraceSource(SqlServerConstants.IdentityTraceSourceName);
 
         // Configuration
-        private SqlConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
+        private SqlConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection(SqlServerConstants.ConfigurationSectionName) as SqlConfiguration;
 
         /// <summary>
         /// Fired prior to an authentication request being made

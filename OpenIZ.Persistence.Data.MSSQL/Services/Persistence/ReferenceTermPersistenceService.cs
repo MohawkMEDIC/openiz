@@ -141,7 +141,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             domainReferenceTerm.CopyObjectData(this.ConvertFromModel(storageData));
 
             domainReferenceTerm.UpdatedByEntity = principal.GetUser(dataContext);
-            domainReferenceTerm.UpdateTime = DateTime.Now;
+            domainReferenceTerm.UpdatedTime = DateTime.Now;
 
             // Display names
             if (storageData.DisplayNames != null)

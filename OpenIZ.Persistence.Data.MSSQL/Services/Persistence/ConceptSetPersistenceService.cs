@@ -158,7 +158,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Merge changes
             existingSet.CopyObjectData(this.ConvertFromModel(storageData));
             existingSet.UpdatedByEntity = principal.GetUser(dataContext);
-            existingSet.UpdateTime = DateTimeOffset.Now;
+            existingSet.UpdatedTime = DateTimeOffset.Now;
 
             // Now verify which concepts should be removed/added/updated
             if(storageData.Concepts != null)

@@ -54,25 +54,9 @@ namespace OpenIZ.Core.Model
         }
 
         /// <summary>
-        /// Unlock the instance
-        /// </summary>
-        public void Unlock()
-        {
-            this.SetDelayLoad(true);
-        }
-
-        /// <summary>
-        /// Lock the instnace
-        /// </summary>
-        public void Lock()
-        {
-            this.SetDelayLoad(false);
-        }
-
-        /// <summary>
         /// Set delay load
         /// </summary>
-        private void SetDelayLoad(bool v)
+        public void SetDelayLoad(bool v)
         {
 
             if (this.m_delayLoad == v)
@@ -93,20 +77,12 @@ namespace OpenIZ.Core.Model
             {
                 object value = fi.GetValue(this);
                 if (value is IdentifiedData)
-                {
-                    if (!v)
-                        (value as IdentifiedData).Lock(); // Let it go
-                    else
-                        (value as IdentifiedData).Unlock();
-                }
+                    (value as IdentifiedData).SetDelayLoad(v); // Let it go
                 else if (value is IList &&
                     typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(fi.FieldType.GenericTypeArguments[0].GetTypeInfo()))
                 {
                     foreach (IdentifiedData itm in value as IList)
-                        if (!v)
-                            itm.Lock(); // Let it go
-                        else
-                            itm.Unlock();
+                        itm.SetDelayLoad(v);
                 }
             }
         }
@@ -154,6 +130,21 @@ namespace OpenIZ.Core.Model
             var retVal = this.MemberwiseClone() as IdentifiedData;
             retVal.m_delayLoad = true;
             return retVal;
+        }
+
+        /// <summary>
+        /// Clone the specified data
+        /// </summary>
+        public IdentifiedData GetLocked()
+        {
+            // Locked already?
+            if (this.m_delayLoad)
+            {
+                var retVal = this.MemberwiseClone() as IdentifiedData;
+                retVal.SetDelayLoad(false);
+                return retVal;
+            }
+            return this;
         }
     }
 }

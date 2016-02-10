@@ -54,19 +54,24 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 return null;
 
             var concept = data as ConceptVersion;
-            var retVal = this.ConvertItem(concept);
 
-            // Load fast?
-            if (retVal != null && concept.Concept != null)
+            var retVal = DataCache.Current.Get(concept.ConceptVersionId) as Core.Model.DataTypes.Concept;
+            if (retVal == null)
             {
-                retVal.IsSystemConcept = concept.Concept.IsSystemConcept;
-                retVal.Status = base.ConvertItem(concept.StatusConcept.ConceptVersions.SingleOrDefault(o=>o.ObsoletionTime == null));
-                retVal.Class = s_mapper.MapDomainInstance<Data.ConceptClass, Core.Model.DataTypes.ConceptClass>(concept.ConceptClass);
-                // Concept delay load
-                retVal.SetDelayLoadProperties(
-                    concept.Concept.ConceptNames.Where(o => concept.VersionSequenceId >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || concept.VersionSequenceId < o.ObsoleteVersionSequenceId)).Select(o => s_mapper.MapDomainInstance<Data.ConceptName, Core.Model.DataTypes.ConceptName>(o)).AsParallel().ToList(),
-                    concept.Concept.ConceptReferenceTerms.Where(o => concept.VersionSequenceId >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || concept.VersionSequenceId < o.ObsoleteVersionSequenceId)).Select(o => s_mapper.MapDomainInstance<Data.ConceptReferenceTerm, Core.Model.DataTypes.ConceptReferenceTerm>(o)).AsParallel().ToList()
-                    );
+                retVal = this.ConvertItem(concept);
+
+                // Load fast?
+                if (retVal != null && concept.Concept != null)
+                {
+                    retVal.IsSystemConcept = concept.Concept.IsSystemConcept;
+                    retVal.Status = base.ConvertItem(concept.StatusConcept.ConceptVersions.SingleOrDefault(o => o.ObsoletionTime == null));
+                    retVal.Class = s_mapper.MapDomainInstance<Data.ConceptClass, Core.Model.DataTypes.ConceptClass>(concept.ConceptClass);
+                    // Concept delay load
+                    retVal.SetDelayLoadProperties(
+                        concept.Concept.ConceptNames.Where(o => concept.VersionSequenceId >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || concept.VersionSequenceId < o.ObsoleteVersionSequenceId)).Select(o => s_mapper.MapDomainInstance<Data.ConceptName, Core.Model.DataTypes.ConceptName>(o)).AsParallel().ToList(),
+                        concept.Concept.ConceptReferenceTerms.Where(o => concept.VersionSequenceId >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || concept.VersionSequenceId < o.ObsoleteVersionSequenceId)).Select(o => s_mapper.MapDomainInstance<Data.ConceptReferenceTerm, Core.Model.DataTypes.ConceptReferenceTerm>(o)).AsParallel().ToList()
+                        );
+                }
             }
 
             return retVal;

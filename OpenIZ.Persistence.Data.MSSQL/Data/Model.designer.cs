@@ -1842,7 +1842,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary ExtensionValue
 		{
 			get
@@ -5693,7 +5693,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.Guid> _ObsoletedBy;
 		
-		private System.Nullable<System.DateTimeOffset> _UpdateTime;
+		private System.Nullable<System.DateTimeOffset> _UpdatedTime;
 		
 		private System.Nullable<System.Guid> _UpdatedBy;
 		
@@ -5733,8 +5733,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnObsoletionTimeChanged();
     partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
     partial void OnObsoletedByChanged();
-    partial void OnUpdateTimeChanging(System.Nullable<System.DateTimeOffset> value);
-    partial void OnUpdateTimeChanged();
+    partial void OnUpdatedTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnUpdatedTimeChanged();
     partial void OnUpdatedByChanging(System.Nullable<System.Guid> value);
     partial void OnUpdatedByChanged();
     partial void OnObsoletionReasonChanging(string value);
@@ -5924,22 +5924,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdateTime", DbType="DateTimeOffset")]
-		public System.Nullable<System.DateTimeOffset> UpdateTime
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> UpdatedTime
 		{
 			get
 			{
-				return this._UpdateTime;
+				return this._UpdatedTime;
 			}
 			set
 			{
-				if ((this._UpdateTime != value))
+				if ((this._UpdatedTime != value))
 				{
-					this.OnUpdateTimeChanging(value);
+					this.OnUpdatedTimeChanging(value);
 					this.SendPropertyChanging();
-					this._UpdateTime = value;
-					this.SendPropertyChanged("UpdateTime");
-					this.OnUpdateTimeChanged();
+					this._UpdatedTime = value;
+					this.SendPropertyChanged("UpdatedTime");
+					this.OnUpdatedTimeChanged();
 				}
 			}
 		}
@@ -7418,7 +7418,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _CreatedBy;
 		
-		private System.Nullable<System.DateTimeOffset> _UpdateTime;
+		private System.Nullable<System.DateTimeOffset> _UpdatedTime;
 		
 		private System.Nullable<System.Guid> _UpdatedBy;
 		
@@ -7448,8 +7448,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnCreationTimeChanged();
     partial void OnCreatedByChanging(System.Guid value);
     partial void OnCreatedByChanged();
-    partial void OnUpdateTimeChanging(System.Nullable<System.DateTimeOffset> value);
-    partial void OnUpdateTimeChanged();
+    partial void OnUpdatedTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnUpdatedTimeChanged();
     partial void OnUpdatedByChanging(System.Nullable<System.Guid> value);
     partial void OnUpdatedByChanged();
     partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
@@ -7571,22 +7571,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdateTime", DbType="DateTimeOffset")]
-		public System.Nullable<System.DateTimeOffset> UpdateTime
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> UpdatedTime
 		{
 			get
 			{
-				return this._UpdateTime;
+				return this._UpdatedTime;
 			}
 			set
 			{
-				if ((this._UpdateTime != value))
+				if ((this._UpdatedTime != value))
 				{
-					this.OnUpdateTimeChanging(value);
+					this.OnUpdatedTimeChanging(value);
 					this.SendPropertyChanging();
-					this._UpdateTime = value;
-					this.SendPropertyChanged("UpdateTime");
-					this.OnUpdateTimeChanged();
+					this._UpdatedTime = value;
+					this.SendPropertyChanged("UpdatedTime");
+					this.OnUpdatedTimeChanged();
 				}
 			}
 		}
@@ -8745,7 +8745,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _CreatedBy;
 		
-		private System.Nullable<System.DateTimeOffset> _UpdateTime;
+		private System.Nullable<System.DateTimeOffset> _UpdatedTime;
 		
 		private System.Nullable<System.Guid> _UpdatedBy;
 		
@@ -8777,8 +8777,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnCreationTimeChanged();
     partial void OnCreatedByChanging(System.Guid value);
     partial void OnCreatedByChanged();
-    partial void OnUpdateTimeChanging(System.Nullable<System.DateTimeOffset> value);
-    partial void OnUpdateTimeChanged();
+    partial void OnUpdatedTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnUpdatedTimeChanged();
     partial void OnUpdatedByChanging(System.Nullable<System.Guid> value);
     partial void OnUpdatedByChanged();
     partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
@@ -8901,22 +8901,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdateTime", DbType="DateTimeOffset")]
-		public System.Nullable<System.DateTimeOffset> UpdateTime
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> UpdatedTime
 		{
 			get
 			{
-				return this._UpdateTime;
+				return this._UpdatedTime;
 			}
 			set
 			{
-				if ((this._UpdateTime != value))
+				if ((this._UpdatedTime != value))
 				{
-					this.OnUpdateTimeChanging(value);
+					this.OnUpdatedTimeChanging(value);
 					this.SendPropertyChanging();
-					this._UpdateTime = value;
-					this.SendPropertyChanged("UpdateTime");
-					this.OnUpdateTimeChanged();
+					this._UpdatedTime = value;
+					this.SendPropertyChanged("UpdatedTime");
+					this.OnUpdatedTimeChanged();
 				}
 			}
 		}
@@ -9188,7 +9188,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private string _ObsoletionReason;
 		
-		private System.Nullable<System.DateTimeOffset> _UpdateTime;
+		private System.Nullable<System.DateTimeOffset> _UpdatedTime;
 		
 		private System.Nullable<System.Guid> _UpdatedBy;
 		
@@ -9224,8 +9224,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnObsoletedByChanged();
     partial void OnObsoletionReasonChanging(string value);
     partial void OnObsoletionReasonChanged();
-    partial void OnUpdateTimeChanging(System.Nullable<System.DateTimeOffset> value);
-    partial void OnUpdateTimeChanged();
+    partial void OnUpdatedTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnUpdatedTimeChanged();
     partial void OnUpdatedByChanging(System.Nullable<System.Guid> value);
     partial void OnUpdatedByChanged();
     #endregion
@@ -9447,22 +9447,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdateTime", DbType="DateTimeOffset")]
-		public System.Nullable<System.DateTimeOffset> UpdateTime
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> UpdatedTime
 		{
 			get
 			{
-				return this._UpdateTime;
+				return this._UpdatedTime;
 			}
 			set
 			{
-				if ((this._UpdateTime != value))
+				if ((this._UpdatedTime != value))
 				{
-					this.OnUpdateTimeChanging(value);
+					this.OnUpdatedTimeChanging(value);
 					this.SendPropertyChanging();
-					this._UpdateTime = value;
-					this.SendPropertyChanged("UpdateTime");
-					this.OnUpdateTimeChanged();
+					this._UpdatedTime = value;
+					this.SendPropertyChanged("UpdatedTime");
+					this.OnUpdatedTimeChanged();
 				}
 			}
 		}
@@ -12310,7 +12310,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary ExtensionValue
 		{
 			get
@@ -15257,7 +15257,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _EnabledBy;
 		
-		private System.Nullable<System.DateTimeOffset> _UpdateTime;
+		private System.Nullable<System.DateTimeOffset> _UpdatedTime;
 		
 		private System.Nullable<System.Guid> _UpdatedBy;
 		
@@ -15291,8 +15291,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnCreationTimeChanged();
     partial void OnEnabledByChanging(System.Guid value);
     partial void OnEnabledByChanged();
-    partial void OnUpdateTimeChanging(System.Nullable<System.DateTimeOffset> value);
-    partial void OnUpdateTimeChanged();
+    partial void OnUpdatedTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnUpdatedTimeChanged();
     partial void OnUpdatedByChanging(System.Nullable<System.Guid> value);
     partial void OnUpdatedByChanged();
     partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
@@ -15435,22 +15435,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdateTime", DbType="DateTimeOffset")]
-		public System.Nullable<System.DateTimeOffset> UpdateTime
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> UpdatedTime
 		{
 			get
 			{
-				return this._UpdateTime;
+				return this._UpdatedTime;
 			}
 			set
 			{
-				if ((this._UpdateTime != value))
+				if ((this._UpdatedTime != value))
 				{
-					this.OnUpdateTimeChanging(value);
+					this.OnUpdatedTimeChanging(value);
 					this.SendPropertyChanging();
-					this._UpdateTime = value;
-					this.SendPropertyChanged("UpdateTime");
-					this.OnUpdateTimeChanged();
+					this._UpdatedTime = value;
+					this.SendPropertyChanged("UpdatedTime");
+					this.OnUpdatedTimeChanged();
 				}
 			}
 		}
@@ -17726,7 +17726,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _CreatedBy;
 		
-		private System.Nullable<System.DateTimeOffset> _UpdateTime;
+		private System.Nullable<System.DateTimeOffset> _UpdatedTime;
 		
 		private System.Nullable<System.Guid> _UpdatedBy;
 		
@@ -17760,8 +17760,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnCreationTimeChanged();
     partial void OnCreatedByChanging(System.Guid value);
     partial void OnCreatedByChanged();
-    partial void OnUpdateTimeChanging(System.Nullable<System.DateTimeOffset> value);
-    partial void OnUpdateTimeChanged();
+    partial void OnUpdatedTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnUpdatedTimeChanged();
     partial void OnUpdatedByChanging(System.Nullable<System.Guid> value);
     partial void OnUpdatedByChanged();
     partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
@@ -17885,22 +17885,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdateTime", DbType="DateTimeOffset")]
-		public System.Nullable<System.DateTimeOffset> UpdateTime
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> UpdatedTime
 		{
 			get
 			{
-				return this._UpdateTime;
+				return this._UpdatedTime;
 			}
 			set
 			{
-				if ((this._UpdateTime != value))
+				if ((this._UpdatedTime != value))
 				{
-					this.OnUpdateTimeChanging(value);
+					this.OnUpdatedTimeChanging(value);
 					this.SendPropertyChanging();
-					this._UpdateTime = value;
-					this.SendPropertyChanged("UpdateTime");
-					this.OnUpdateTimeChanged();
+					this._UpdatedTime = value;
+					this.SendPropertyChanged("UpdatedTime");
+					this.OnUpdatedTimeChanged();
 				}
 			}
 		}
@@ -20753,7 +20753,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _CreatedBy;
 		
-		private System.Nullable<System.DateTimeOffset> _UpdateTime;
+		private System.Nullable<System.DateTimeOffset> _UpdatedTime;
 		
 		private System.Nullable<System.Guid> _UpdatedBy;
 		
@@ -20787,8 +20787,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnCreationTimeChanged();
     partial void OnCreatedByChanging(System.Guid value);
     partial void OnCreatedByChanged();
-    partial void OnUpdateTimeChanging(System.Nullable<System.DateTimeOffset> value);
-    partial void OnUpdateTimeChanged();
+    partial void OnUpdatedTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnUpdatedTimeChanged();
     partial void OnUpdatedByChanging(System.Nullable<System.Guid> value);
     partial void OnUpdatedByChanged();
     partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
@@ -20916,22 +20916,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdateTime", DbType="DateTimeOffset")]
-		public System.Nullable<System.DateTimeOffset> UpdateTime
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> UpdatedTime
 		{
 			get
 			{
-				return this._UpdateTime;
+				return this._UpdatedTime;
 			}
 			set
 			{
-				if ((this._UpdateTime != value))
+				if ((this._UpdatedTime != value))
 				{
-					this.OnUpdateTimeChanging(value);
+					this.OnUpdatedTimeChanging(value);
 					this.SendPropertyChanging();
-					this._UpdateTime = value;
-					this.SendPropertyChanged("UpdateTime");
-					this.OnUpdateTimeChanged();
+					this._UpdatedTime = value;
+					this.SendPropertyChanged("UpdatedTime");
+					this.OnUpdatedTimeChanged();
 				}
 			}
 		}
@@ -22793,7 +22793,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.Guid> _ObsoletedBy;
 		
-		private System.Nullable<System.DateTimeOffset> _UpdateTime;
+		private System.Nullable<System.DateTimeOffset> _UpdatedTime;
 		
 		private System.Nullable<System.Guid> _UpdatedBy;
 		
@@ -22825,8 +22825,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnObsoletionTimeChanged();
     partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
     partial void OnObsoletedByChanged();
-    partial void OnUpdateTimeChanging(System.Nullable<System.DateTimeOffset> value);
-    partial void OnUpdateTimeChanged();
+    partial void OnUpdatedTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnUpdatedTimeChanged();
     partial void OnUpdatedByChanging(System.Nullable<System.Guid> value);
     partial void OnUpdatedByChanged();
     #endregion
@@ -22989,22 +22989,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdateTime", DbType="DateTimeOffset")]
-		public System.Nullable<System.DateTimeOffset> UpdateTime
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> UpdatedTime
 		{
 			get
 			{
-				return this._UpdateTime;
+				return this._UpdatedTime;
 			}
 			set
 			{
-				if ((this._UpdateTime != value))
+				if ((this._UpdatedTime != value))
 				{
-					this.OnUpdateTimeChanging(value);
+					this.OnUpdatedTimeChanging(value);
 					this.SendPropertyChanging();
-					this._UpdateTime = value;
-					this.SendPropertyChanged("UpdateTime");
-					this.OnUpdateTimeChanged();
+					this._UpdatedTime = value;
+					this.SendPropertyChanged("UpdatedTime");
+					this.OnUpdatedTimeChanged();
 				}
 			}
 		}

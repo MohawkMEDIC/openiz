@@ -44,7 +44,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
     public class SqlClaimsIdentity : IIdentity
     {
         // Trace source
-        private static TraceSource s_traceSource = new TraceSource("OpenIZ.Persistence.Data.MSSQL.Services.Identity");
+        private static TraceSource s_traceSource = new TraceSource(SqlServerConstants.IdentityTraceSourceName);
         
         // Whether the user is authenticated
         private bool m_isAuthenticated;
@@ -58,7 +58,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
         private List<SecurityRole> m_roles = null;
 
         // Configuration
-        private static SqlConfiguration s_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
+        private static SqlConfiguration s_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection(SqlServerConstants.ConfigurationSectionName) as SqlConfiguration;
 
         /// <summary>
         /// Creates a principal based on username and password

@@ -108,6 +108,7 @@
     <Compile Include="Services\Persistence\SecurityRolePersistenceService.cs" />
     <Compile Include="Services\Persistence\SecurityUserPersistenceService.cs" />
     <Compile Include="Security\SqlClaimsIdentity.cs" />
+    <Compile Include="SqlServerConstants.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\OpenIZ.licenseheader">

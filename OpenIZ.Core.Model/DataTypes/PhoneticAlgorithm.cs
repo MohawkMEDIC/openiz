@@ -30,7 +30,7 @@ namespace OpenIZ.Core.Model.DataTypes
     
     [XmlType("PhoneticAlgorithm",  Namespace = "http://openiz.org/model"), JsonObject("PhoneticAlgorithm")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "PhoneticAlgorithm")]
-    public class PhoneticAlgorithm : IdentifiedData
+    public class PhoneticAlgorithm : NonVersionedEntityData
     {
         // Phonetic algorithm
         private static PhoneticAlgorithm s_nullPhoneticAlgorithm = null;

@@ -126,7 +126,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             domainConceptClass.CopyObjectData(this.ConvertFromModel(storageData) as Data.ConceptClass);
 
             domainConceptClass.UpdatedByEntity = principal.GetUser(dataContext);
-            domainConceptClass.UpdateTime = DateTimeOffset.Now;
+            domainConceptClass.UpdatedTime = DateTimeOffset.Now;
 
             dataContext.SubmitChanges();
 

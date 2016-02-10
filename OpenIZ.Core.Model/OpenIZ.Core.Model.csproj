@@ -72,6 +72,7 @@
     <Compile Include="DataTypes\ReferenceTerm.cs" />
     <Compile Include="DataTypes\ReferenceTermName.cs" />
     <Compile Include="DataTypes\Tag.cs" />
+    <Compile Include="Entities\UserEntity.cs" />
     <Compile Include="EntityLoader\EntitySource.cs" />
     <Compile Include="EntityLoader\IEntitySourceProvider.cs" />
     <Compile Include="Entities\ApplicationEntity.cs" />
@@ -107,6 +108,7 @@
     <Compile Include="Security\SecurityRole.cs" />
     <Compile Include="Security\SecurityUser.cs" />
     <Compile Include="Serialization\ModelSerializationBinder.cs" />
+    <Compile Include="NonVersionedEntityData.cs" />
     <Compile Include="VersionedAssociation.cs" />
     <Compile Include="VersionedEntityData.cs" />
   </ItemGroup>

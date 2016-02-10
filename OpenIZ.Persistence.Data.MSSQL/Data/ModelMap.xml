@@ -106,6 +106,13 @@
   </class>
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptClass, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptClass, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ConceptClassId"/>
+    <property modelName="CreatedBy" domainName="CreatedByEntity"/>
+    <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
+    <property modelName="UpdatedBy" domainName="UpdatedByEntity"/>
+    <property modelName="CreatedByKey" domainName="CreatedBy"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
+    <property modelName="UpdatedByKey" domainName="UpdatedBy"/>
+
   </class>
   <class modelClass="OpenIZ.Core.Model.DataTypes.AssigningAuthority, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.AssigningAuthority, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="AssigningAuthorityId"/>
@@ -125,9 +132,10 @@
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <property modelName="CreatedBy" domainName="CreatedByEntity"/>
     <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
+    <property modelName="UpdatedBy" domainName="UpdatedByEntity"/>
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
-
+    <property modelName="UpdatedByKey" domainName="UpdatedBy"/>
   </class>
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptName, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptName, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ConceptNameId"/>
@@ -155,16 +163,34 @@
   </class>
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptRelationshipType, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptRelationshipType, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ConceptRelationshipTypeId"/>
+      <property modelName="CreatedBy" domainName="CreatedByEntity"/>
+    <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
+    <property modelName="UpdatedBy" domainName="UpdatedByEntity"/>
+    <property modelName="CreatedByKey" domainName="CreatedBy"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
+    <property modelName="UpdatedByKey" domainName="UpdatedBy"/>
   </class>
   <class modelClass="OpenIZ.Core.Model.DataTypes.PhoneticAlgorithm, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.PhoneticAlgorithm, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="PhoneticAlgorithmId"/>
     <property modelName="Handler" domainName="HandlerClass"/>
+        <property modelName="CreatedBy" domainName="CreatedByEntity"/>
+    <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
+    <property modelName="UpdatedBy" domainName="UpdatedByEntity"/>
+    <property modelName="CreatedByKey" domainName="CreatedBy"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
+    <property modelName="UpdatedByKey" domainName="UpdatedBy"/>
   </class>
   <class modelClass="OpenIZ.Core.Model.DataTypes.ReferenceTerm, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ReferenceTerm, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ReferenceTermId"/>
     <property modelName="CodeSystemKey" domainName="CodeSystemId"/>
     
     <collapseKey propertyName="CodeSystem" keyName="CodeSystemId"/>
+        <property modelName="CreatedBy" domainName="CreatedByEntity"/>
+    <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
+    <property modelName="UpdatedBy" domainName="UpdatedByEntity"/>
+    <property modelName="CreatedByKey" domainName="CreatedBy"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
+    <property modelName="UpdatedByKey" domainName="UpdatedBy"/>
   </class>
   <class modelClass="OpenIZ.Core.Model.DataTypes.ReferenceTermName, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ReferenceTermDisplayName, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ReferenceTermDisplayNameId"/>

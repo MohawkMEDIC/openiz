@@ -69,18 +69,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <summary>
         /// Identifies a source of trace logs from this object
         /// </summary>
-        protected TraceSource m_traceSource = new TraceSource("OpenIZ.Persistence.Data.MSSQL.Services.Persistence");
+        protected TraceSource m_traceSource = new TraceSource(SqlServerConstants.PersistenceTraceSourceName);
 
         /// <summary>
         /// The local configuration for this connector
         /// </summary>
-        protected static SqlConfiguration s_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
+        protected static SqlConfiguration s_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection(SqlServerConstants.ConfigurationSectionName) as SqlConfiguration;
 
         /// <summary>
         /// The current mapping instance
         /// </summary>
-        protected static ModelMapper s_mapper = new ModelMapper(typeof(BaseDataPersistenceService<>).Assembly.GetManifestResourceStream("OpenIZ.Persistence.Data.MSSQL.Data.ModelMap.xml"));
-
+        protected static ModelMapper s_mapper = new ModelMapper(typeof(BaseDataPersistenceService<>).Assembly.GetManifestResourceStream(SqlServerConstants.ModelMapResourceName));
+        
         // Primary key map
         private static Dictionary<Type, PropertyInfo> s_primaryKeys = new Dictionary<Type, PropertyInfo>();
 
@@ -165,9 +165,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     if (preEvt.Cancel)
                         return preEvt.Data;
 
-                    preEvt.Data.Lock();
+                    preEvt.Data.SetDelayLoad(false);
                     var retVal = this.Insert(preEvt.Data as TModel, principal, dataContext);
-                    retVal.Unlock();
+                    preEvt.Data.SetDelayLoad(true);
 
                     PostPersistenceEventArgs<TModel> postEvt = new PostPersistenceEventArgs<TModel>(retVal, principal);
                     this.Inserted?.Invoke(this, postEvt);
@@ -248,9 +248,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     if (preEvt.Cancel)
                         return preEvt.Data;
 
-                    preEvt.Data.Lock();
+                    preEvt.Data.SetDelayLoad(false);
                     var retVal = this.Update(preEvt.Data as TModel, principal, dataContext);
-                    retVal.Unlock(); // HACK: This should be cleaned up eventually
+                    preEvt.Data.SetDelayLoad(true);
+
 
                     PostPersistenceEventArgs<TModel> postEvt = new PostPersistenceEventArgs<TModel>(retVal, principal);
                     this.Updated?.Invoke(this, postEvt);
@@ -320,9 +321,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     if (preEvt.Cancel)
                         return preEvt.Data;
 
-                    preEvt.Data.Lock();
+                    preEvt.Data.SetDelayLoad(false);
                     var retVal = this.Obsolete(preEvt.Data as TModel, principal, dataContext);
-                    retVal.Unlock();
+                    preEvt.Data.SetDelayLoad(true);
 
                     PostPersistenceEventArgs<TModel> postEvt = new PostPersistenceEventArgs<TModel>(retVal, principal);
                     this.Obsoleted?.Invoke(this, postEvt);

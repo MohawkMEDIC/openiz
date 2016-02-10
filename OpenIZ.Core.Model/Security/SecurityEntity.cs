@@ -32,7 +32,7 @@ namespace OpenIZ.Core.Model.Security
     /// Security Entity base class
     /// </summary>
     [XmlType(Namespace = "http://openiz.org/model", TypeName = "SecurityEntity")]
-    public abstract class SecurityEntity : BaseEntityData
+    public abstract class SecurityEntity : NonVersionedEntityData
     {
 
         // Policies

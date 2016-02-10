@@ -72,13 +72,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         private static Object s_lockObject = new object();
 
         // Configuration
-        private SqlConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
+        private SqlConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection(SqlServerConstants.ConfigurationSectionName) as SqlConfiguration;
 
         // Cache itmes
         private Dictionary<Guid, CacheItem> m_cache = new Dictionary<Guid, CacheItem>();
 
         // TODO: Move this to a singleton
-        private static ModelMapper s_mapper = new ModelMapper(typeof(DataCache).Assembly.GetManifestResourceStream("OpenIZ.Persistence.Data.MSSQL.Data.ModelMap.xml"));
+        private static ModelMapper s_mapper = new ModelMapper(typeof(DataCache).Assembly.GetManifestResourceStream(SqlServerConstants.ModelMapResourceName));
 
         /// <summary>
         /// Private ctor
@@ -104,11 +104,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets the cache item
         /// </summary>
-        public IdentifiedData Get(Guid key)
+        internal IdentifiedData Get(Guid key)
         {
             CacheItem existingItem = default(CacheItem);
             if (this.m_cache.TryGetValue(key, out existingItem))
-                return existingItem.ModelInstance.Clone();
+                return existingItem.ModelInstance;
             return null;
         }
 
@@ -190,7 +190,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
                 lock (s_lockObject)
                     if (!this.m_cache.ContainsKey(key))
                         this.m_cache.Add(key, new CacheItem(modelItem, domainObject));
-                return modelItem.Clone() as TModel;
+                return modelItem as TModel;
             }
             else if (!domainObject.IsSame(existingItem.DomainItem))
             {
@@ -198,10 +198,33 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
                 TModel modelItem = s_mapper.MapDomainInstance<TDomain, TModel>(domainObject);
                 existingItem.ModelInstance = modelItem;
                 existingItem.DomainItem = domainObject;
-                return modelItem.Clone() as TModel;
+                return modelItem as TModel;
             }
             else
-                return existingItem.ModelInstance.Clone() as TModel;
+                return existingItem.ModelInstance as TModel;
+        }
+
+
+        /// <summary>
+        /// Is the cache enabled
+        /// </summary>
+        public bool IsCacheEnabled
+        {
+            get
+            {
+                return this.m_configuration.MaxCacheSize > 0;
+            }
+        }
+
+        /// <summary>
+        /// Gets the current size of the cahce
+        /// </summary>
+        public int Count
+        {
+            get
+            {
+                return this.m_cache.Count;
+            }
         }
     }
 }
