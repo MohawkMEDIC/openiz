@@ -40,8 +40,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test
             var sqlPersistenceService = ApplicationContext.Current.GetService<SqlPersistenceService>();
             if (!sqlPersistenceService.IsRunning)
             {
-                sqlPersistenceService.Start();
                 ApplicationContext.Current.Configuration.ServiceProviders.Add(typeof(LocalConfigurationManager));
+                sqlPersistenceService.Start();
             }
         }
     }

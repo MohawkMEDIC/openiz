@@ -60,7 +60,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     return context.SecurityRolePolicies.Where(o => o.RoleId == (securable as IdentifiedData).Key && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o));
                 else if (securable is IPrincipal || securable is IIdentity)
                 {
-                    var identity = (securable as IPrincipal).Identity ?? securable as IIdentity;
+                    var identity = (securable as IPrincipal)?.Identity ?? securable as IIdentity;
                     var user = context.SecurityUsers.SingleOrDefault(u => u.UserName == identity.Name);
                     if (user == null)
                         throw new KeyNotFoundException("Identity not found");
@@ -68,7 +68,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     List<IPolicyInstance> retVal = new List<IPolicyInstance>();
 
                     // Role policies
-                    retVal.AddRange(context.SecurityRolePolicies.Where(o => user.SecurityUserRoles.Any(r => r.RoleId == o.RoleId)).Select(o=>new SqlSecurityPolicyInstance(o)));
+                    var roleIds = user.SecurityUserRoles.Select(o => o.RoleId).ToList();
+                    retVal.AddRange(context.SecurityRolePolicies.Where(o => roleIds.Contains(o.RoleId)).Select(o=>new SqlSecurityPolicyInstance(o)));
 
                     // Claims principal, then we want device and app SID
                     if (securable is ClaimsPrincipal)
@@ -79,11 +80,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
 
                         // There is an application claim so we want to add the application policies - most restrictive
                         if (appClaim != null)
-                            retVal.AddRange(context.SecurityApplicationPolicies.Where(o => o.SecurityApplication.ApplicationSecret == appClaim.Value).Select(o => new SqlSecurityPolicyInstance(o)));
+                            retVal.AddRange(context.SecurityApplicationPolicies.Where(o => o.SecurityApplication.ApplicationId == Guid.Parse(appClaim.Value)).Select(o => new SqlSecurityPolicyInstance(o)));
                         // There is an device claim so we want to add the device policies - most restrictive
                         if (devClaim != null)
-                            retVal.AddRange(context.SecurityDevicePolicies.Where(o => o.SecurityDevice.DeviceSecret == devClaim.Value).Select(o => new SqlSecurityPolicyInstance(o)));
+                            retVal.AddRange(context.SecurityDevicePolicies.Where(o => o.SecurityDevice.DeviceId == Guid.Parse(devClaim.Value)).Select(o => new SqlSecurityPolicyInstance(o)));
                     }
+
+                    // TODO: Most restrictive
                     return retVal;
                 }
                 else if (securable is Core.Model.Security.SecurityApplication)

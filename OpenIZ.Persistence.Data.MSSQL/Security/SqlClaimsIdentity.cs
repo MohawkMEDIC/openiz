@@ -18,6 +18,7 @@
  */
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
+using MARC.HI.EHRS.SVC.Core.Services.Policy;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using OpenIZ.Core.Security;
 using OpenIZ.Persistence.Data.MSSQL.Configuration;
@@ -77,10 +78,23 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
                     if (user?.UserPassword == passwordHash && (bool)!user?.TwoFactorEnabled &&
                         (bool)!user?.LockoutEnabled)
                     {
-                        user.LastSuccessfulLogin = DateTimeOffset.Now;
-                        user.FailedLoginAttempts = 0;
-                        dataContext.SubmitChanges();
-                        return new SqlClaimsIdentity(user, true) { m_authenticationType = "Password" };
+                        var userIdentity = new SqlClaimsIdentity(user, true) { m_authenticationType = "Password" };
+                        // Is user allowed to login?
+                        IPolicyInformationService pip = ApplicationContext.Current.GetService<IPolicyInformationService>();
+                        if (pip.GetActivePolicies(userIdentity).Any(o => o.Policy.Oid == PermissionPolicyIdentifiers.Login && o.Rule == PolicyDecisionOutcomeType.Deny))
+                        {
+                            // Deny login
+                            user.FailedLoginAttempts++;
+                            dataContext.SubmitChanges();
+                            throw new SecurityException("User denied Login policy");
+                        }
+                        else
+                        {
+                            user.LastSuccessfulLogin = DateTimeOffset.Now;
+                            user.FailedLoginAttempts = 0;
+                            dataContext.SubmitChanges();
+                            return userIdentity;
+                        }
                     }
                     else if (user == null)
                         throw new SecurityException("Invalid username/password");

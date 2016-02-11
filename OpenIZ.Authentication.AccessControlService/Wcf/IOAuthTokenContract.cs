@@ -1,5 +1,7 @@
-﻿using System;
+﻿using OpenIZ.Authentication.AccessControlService.Model;
+using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
@@ -17,10 +19,10 @@ namespace OpenIZ.Authentication.AccessControlService.Wcf
     {
 
         /// <summary>
-        /// Represents a token request
+        /// Token request
         /// </summary>
-        [WebInvoke(UriTemplate = "/oauth20_token", Method = "POST")]
-        Stream Token();
-
+        [WebInvoke(UriTemplate = "/oauth2_token")]
+        [OperationContract]
+        Stream Token(NameValueCollection tokenRequest);
     }
 }

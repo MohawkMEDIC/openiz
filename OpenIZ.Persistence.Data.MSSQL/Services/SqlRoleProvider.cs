@@ -141,6 +141,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         }
 
         /// <summary>
+        /// Get all rolesfor user
+        /// </summary>
+        /// <returns></returns>
+        public string[] GetAllRoles(String userName)
+        {
+            using (var dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
+                return dataContext.SecurityUsers.SingleOrDefault(o => o.UserName == userName)?.SecurityUserRoles.Select(r => r.SecurityRole.Name).ToArray();
+        }
+
+        /// <summary>
         /// Determine if the user is in the specified role
         /// </summary>
         public bool IsUserInRole(IPrincipal principal, string roleName)

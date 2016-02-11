@@ -44,7 +44,7 @@ namespace OpenIZ.Core.Model.Security
         // Roles
         private List<SecurityRole> m_roles;
         // User entities
-        private List<UserEntity> m_userEntities;
+        private List<Person> m_userEntities;
 
         /// <summary>
         /// Gets or sets the email address of the user
@@ -101,8 +101,8 @@ namespace OpenIZ.Core.Model.Security
             get
             {
                 if (this.IsDelayLoadEnabled)
-                    this.m_userEntities = EntitySource.Current.Provider.Query<UserEntity>(o => o.SecurityUserKey == this.Key && o.ObsoletionTime == null).ToList();
-                return this.m_userEntities.OfType<Person>().ToList();
+                    this.m_userEntities = EntitySource.Current.Provider.Query<UserEntity>(o => o.SecurityUserKey == this.Key && o.ObsoletionTime == null).OfType<Person>().ToList();
+                return this.m_userEntities;
             }
         }
 
