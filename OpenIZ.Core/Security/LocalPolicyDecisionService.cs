@@ -62,8 +62,15 @@ namespace OpenIZ.Core.Security
             var pip = ApplicationContext.Current.GetService<IPolicyInformationService>();
 
             // Policies
-            var policyInstance = pip.GetActivePolicies(principal).SingleOrDefault(o => o.Policy.Oid == policyId);
-            
+            var activePolicies = pip.GetActivePolicies(principal).Where(o => policyId.StartsWith(o.Policy.Oid));
+            // Most restrictive
+            IPolicyInstance policyInstance = null;
+            foreach (var pol in activePolicies)
+                if (policyInstance == null)
+                    policyInstance = pol;
+                else if (pol.Rule < policyInstance.Rule)
+                    policyInstance = pol;
+
             if(policyInstance == null)
             {
                 // TODO: Configure OptIn or OptOut

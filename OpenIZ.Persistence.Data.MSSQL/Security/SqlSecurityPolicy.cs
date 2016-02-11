@@ -52,9 +52,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
             this.Key = policy.PolicyId;
             this.Name = policy.Name;
             this.Oid = policy.PolicyOid;
-            this.IsActive = policy.ObsoletionTime == null;
+            this.IsActive = policy.ObsoletionTime == null || policy.ObsoletionTime < DateTimeOffset.Now;
 
-            if(!s_handlers.TryGetValue(policy.HandlerClass, out this.m_handler))
+            if(!String.IsNullOrEmpty(policy.HandlerClass) && !s_handlers.TryGetValue(policy.HandlerClass, out this.m_handler))
             {
                 Type handlerType = Type.GetType(policy.HandlerClass);
                 if (handlerType == null)

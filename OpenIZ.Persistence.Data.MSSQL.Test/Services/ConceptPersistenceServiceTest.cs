@@ -23,6 +23,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenIZ.Core;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -48,9 +49,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             AppDomain.CurrentDomain.SetData(
                            "DataDirectory",
                            Path.Combine(context.TestDeploymentDir, string.Empty));
-            IIdentityProviderService identityProvider = ApplicationContext.Current.GetService<IIdentityProviderService>();
-            identityProvider.CreateIdentity(nameof(ConceptPersistenceServiceTest), "password", null);
-            s_authorization = identityProvider.Authenticate(nameof(ConceptPersistenceServiceTest), "password");
+            s_authorization = AuthenticationContext.SystemPrincipal;
 
         }
 

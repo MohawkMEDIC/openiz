@@ -116,6 +116,11 @@ namespace OpenIZ.Core.Security.Attribute
         {
             var pdp = ApplicationContext.Current.GetService<IPolicyDecisionService>();
 
+            // Non system principals must be authenticated
+            if(!this.m_principal.Identity.IsAuthenticated &&
+                this.m_principal != AuthenticationContext.SystemPrincipal)
+                throw new PolicyViolationException(this.m_policyId, PolicyDecisionOutcomeType.Deny);
+
             PolicyDecisionOutcomeType action = PolicyDecisionOutcomeType.Deny;
             if (pdp == null) // No way to verify 
                 action = PolicyDecisionOutcomeType.Grant;

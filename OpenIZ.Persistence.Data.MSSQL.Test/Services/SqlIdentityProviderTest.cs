@@ -61,6 +61,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 Email = "user@identitytest.com",
                 PasswordHash = hashingService.EncodePassword("password"),
             }, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
+
+            IRoleProviderService roleService = ApplicationContext.Current.GetService<IRoleProviderService>();
+            roleService.AddUsersToRoles(new string[] { "admin@identitytest.com", "user@identitytest.com" }, new string[] { "USERS" }, AuthenticationContext.SystemPrincipal);
+            roleService.AddUsersToRoles(new string[] { "admin@identitytest.com" }, new string[] { "ADMINISTRATORS" }, AuthenticationContext.SystemPrincipal);
         }
 
         /// <summary>
@@ -142,7 +146,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             user.LockoutEnabled = false;
             user.LastLoginTime = default(DateTime);
             user.InvalidLoginAttempts = 0;
-            dataPersistence.Update(user, provider.Authenticate("admin@identitytest.com", "password"), TransactionMode.Commit);
+            dataPersistence.Update(user, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
 
 
             // Try 4 times to log in
@@ -214,7 +218,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             var identityService = ApplicationContext.Current.GetService<IIdentityProviderService>();
             var hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
 
-            var identity = identityService.CreateIdentity("anonymous@identitytest.com", "mypassword", null);
+            var identity = identityService.CreateIdentity("anonymous@identitytest.com", "mypassword", AuthenticationContext.SystemPrincipal);
             Assert.IsNotNull(identity);
             Assert.IsFalse(identity.IsAuthenticated);
 
@@ -244,9 +248,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual(hashingService.EncodePassword("mypassword"), dataUser.PasswordHash);
             Assert.IsFalse(dataUser.LockoutEnabled);
             Assert.AreEqual(authContext.Identity.Name, dataUser.CreatedBy.UserName);
-
-            // Now authenticate
-            var authUser = identityService.Authenticate("admincreated@identitytest.com", "mypassword");
+            
 
         }
     }

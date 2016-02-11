@@ -17,10 +17,12 @@
  * Date: 2016-1-19
  */
 using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Exceptions;
 using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Core.Services.Policy;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using OpenIZ.Core.Security;
+using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Persistence.Data.MSSQL.Configuration;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using System;
@@ -79,21 +81,21 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
                         (bool)!user?.LockoutEnabled)
                     {
                         var userIdentity = new SqlClaimsIdentity(user, true) { m_authenticationType = "Password" };
+
                         // Is user allowed to login?
-                        IPolicyInformationService pip = ApplicationContext.Current.GetService<IPolicyInformationService>();
-                        if (pip.GetActivePolicies(userIdentity).Any(o => o.Policy.Oid == PermissionPolicyIdentifiers.Login && o.Rule == PolicyDecisionOutcomeType.Deny))
+                        try
                         {
-                            // Deny login
-                            user.FailedLoginAttempts++;
-                            dataContext.SubmitChanges();
-                            throw new SecurityException("User denied Login policy");
-                        }
-                        else
-                        {
+                            new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.Login, new GenericPrincipal(userIdentity, null)).Demand();
                             user.LastSuccessfulLogin = DateTimeOffset.Now;
                             user.FailedLoginAttempts = 0;
                             dataContext.SubmitChanges();
                             return userIdentity;
+                        }
+                        catch (PolicyViolationException e)
+                        {
+                            user.FailedLoginAttempts++;
+                            dataContext.SubmitChanges();
+                            throw;
                         }
                     }
                     else if (user == null)
@@ -242,7 +244,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
 
                 // System claims
                 List<Claim> claims = new List<Claim>(
-                    this.m_roles.Select(r => new Claim(ClaimsIdentity.DefaultRoleClaimType, r.Name, "xs:string", ApplicationContext.Current.Configuration.Custodianship.Name))
+                    this.m_roles.Select(r => new Claim(ClaimsIdentity.DefaultRoleClaimType, r.Name))
                 )
                 {
                     new Claim(ClaimTypes.Authentication, this.m_isAuthenticated.ToString()),

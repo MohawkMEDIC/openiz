@@ -147,14 +147,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             dataUser.SecurityStamp = Guid.NewGuid().ToString();
 
             // Roles add/remove
-            var currentRoleIds = dataUser.SecurityUserRoles.Select(r => r.RoleId).ToArray();
-            var remRoles = currentRoleIds.Where(r=>!(bool)storageData.Roles?.Select(mr=>mr.Key).Contains(r));
-            var addRoles = storageData.Roles?.Where(r => !currentRoleIds.Contains(r.Key));
-            // Remove all the roles 
-            dataContext.SecurityUserRoles.DeleteAllOnSubmit(dataContext.SecurityUserRoles.Where(r => remRoles.Contains(r.RoleId) && r.UserId == dataUser.UserId));
-            if(addRoles != null)
-               dataContext.SecurityUserRoles.InsertAllOnSubmit(addRoles?.Select(r => new Data.SecurityUserRole() { RoleId = r.EnsureExists(principal, dataContext).Key, UserId = dataUser.UserId }));
-              
+
+            if(storageData.Roles != null)
+            {
+                var currentRoleIds = dataUser.SecurityUserRoles.Select(r => r.RoleId).ToArray();
+                var remRoles = currentRoleIds.Where(r => !(bool)storageData.Roles?.Select(mr => mr.Key).Contains(r));
+                var addRoles = storageData.Roles?.Where(r => !currentRoleIds.Contains(r.Key));
+                // Remove all the roles 
+                dataContext.SecurityUserRoles.DeleteAllOnSubmit(dataContext.SecurityUserRoles.Where(r => remRoles.Contains(r.RoleId) && r.UserId == dataUser.UserId));
+                if (addRoles != null)
+                    dataContext.SecurityUserRoles.InsertAllOnSubmit(addRoles?.Select(r => new Data.SecurityUserRole() { RoleId = r.EnsureExists(principal, dataContext).Key, UserId = dataUser.UserId }));
+            }
+
             // Persist data to the db
             dataContext.SubmitChanges();
             

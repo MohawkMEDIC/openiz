@@ -28,6 +28,7 @@ using System.IO;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
+using OpenIZ.Core.Security;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 {
@@ -44,9 +45,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             AppDomain.CurrentDomain.SetData(
                            "DataDirectory",
                            Path.Combine(context.TestDeploymentDir, string.Empty));
-            IIdentityProviderService identityProvider = ApplicationContext.Current.GetService<IIdentityProviderService>();
-            identityProvider.CreateIdentity(nameof(SecurityUserPersistenceServiceTest), "password", null);
-            var auth = identityProvider.Authenticate(nameof(SecurityUserPersistenceServiceTest), "password");
+
         }
 
         /// <summary>
@@ -89,7 +88,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             
             // Store user
             IIdentityProviderService identityService = ApplicationContext.Current.GetService<IIdentityProviderService>();
-            var authContext = identityService.Authenticate(nameof(SecurityUserPersistenceServiceTest), "password");
+            var authContext = AuthenticationContext.SystemPrincipal;
             Assert.IsNotNull(authContext);
             var userAfterUpdate = base.DoTestUpdate(userUnderTest, authContext, "PhoneNumber");
 
@@ -119,8 +118,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 
             var testUser = base.DoTestInsert(userUnderTest);
             IIdentityProviderService identityService = ApplicationContext.Current.GetService<IIdentityProviderService>();
-            var authContext = identityService.Authenticate(nameof(SecurityUserPersistenceServiceTest), "password");
-            var results = base.DoTestQuery(o => o.Email == "query@test.com", testUser.Key, authContext);
+            var results = base.DoTestQuery(o => o.Email == "query@test.com", testUser.Key, AuthenticationContext.SystemPrincipal);
             Assert.AreEqual(1, results.Count());
             Assert.AreEqual(userUnderTest.Email, results.First().Email);
         }
@@ -142,17 +140,21 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 UserName = "delayLoadTest"
             };
 
+
             var userAfterInsert = base.DoTestInsert(userUnderTest, null);
             var roleProvider = ApplicationContext.Current.GetService<IRoleProviderService>();
             var identityProvider = ApplicationContext.Current.GetService<IIdentityProviderService>();
 
+            // Allow login
+            roleProvider.AddUsersToRoles(new string[] { "delayLoadTest" }, new string[] { "USERS" }, AuthenticationContext.SystemPrincipal);
+
             var auth = identityProvider.Authenticate("delayLoadTest", "password");
-            roleProvider.CreateRole("TestDelayLoadUserPropertiesGroup", auth);
-            roleProvider.AddUsersToRoles(new String[] { "delayLoadTest" }, new String[] { "TestDelayLoadUserPropertiesGroup" }, auth);
+            roleProvider.CreateRole("TestDelayLoadUserPropertiesGroup", AuthenticationContext.SystemPrincipal);
+            roleProvider.AddUsersToRoles(new String[] { "delayLoadTest" }, new String[] { "TestDelayLoadUserPropertiesGroup" }, AuthenticationContext.SystemPrincipal);
 
             // Now trigger a delay load
             var userForTest = base.DoTestQuery(u => u.UserName == "delayLoadTest", userAfterInsert.Key, auth).First();
-            Assert.AreEqual(1, userForTest.Roles.Count);
+            Assert.AreEqual(2, userForTest.Roles.Count);
             Assert.AreEqual("TestDelayLoadUserPropertiesGroup", userForTest.Roles[0].Name);
 
 

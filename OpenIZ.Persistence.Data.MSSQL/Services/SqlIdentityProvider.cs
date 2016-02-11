@@ -171,6 +171,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                 throw new ArgumentNullException(nameof(userName));
             else if (String.IsNullOrEmpty(password))
                 throw new ArgumentNullException(nameof(password));
+            else if (authContext == null)
+                throw new ArgumentNullException(nameof(authContext));
 
             this.m_traceSource.TraceInformation("Creating identity {0} ({1})", userName, authContext);
 
@@ -183,7 +185,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
 
                     // Demand create identity
                     new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.CreateIdentity, authContext).Demand();
-
 
                     // Does this principal have the ability to 
                     Data.SecurityUser newIdentityUser = new Data.SecurityUser()

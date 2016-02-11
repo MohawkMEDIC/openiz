@@ -27,6 +27,7 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Persistence.Data.MSSQL.Services;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Security;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 {
@@ -46,7 +47,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                            "DataDirectory",
                            Path.Combine(context.TestDeploymentDir, string.Empty));
             IIdentityProviderService identityProvider = ApplicationContext.Current.GetService<IIdentityProviderService>();
-            identityProvider.CreateIdentity(nameof(SqlRoleProviderTest), "password", null);
+            var identity = identityProvider.CreateIdentity(nameof(SqlRoleProviderTest), "password", AuthenticationContext.SystemPrincipal);
+
+            // Give this identity the administrative functions group
+            IRoleProviderService roleProvider = ApplicationContext.Current.GetService<IRoleProviderService>();
+            roleProvider.AddUsersToRoles(new string[] { identity.Name }, new string[] { "ADMINISTRATORS" }, AuthenticationContext.SystemPrincipal);
+
+            // Authorize
             s_authorization = identityProvider.Authenticate(nameof(SqlRoleProviderTest), "password");
 
         }

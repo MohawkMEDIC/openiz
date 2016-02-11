@@ -55,8 +55,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         {
             if (authPrincipal == null)
                 throw new ArgumentNullException(nameof(authPrincipal));
-            else if (!authPrincipal.Identity.IsAuthenticated)
-                throw new SecurityException("Principal must be authenticated");
 
             new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, policyId, authPrincipal).Demand();
             

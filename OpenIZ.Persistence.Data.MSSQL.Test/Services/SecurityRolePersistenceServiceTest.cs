@@ -28,6 +28,7 @@ using System.IO;
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using System.Security.Principal;
+using OpenIZ.Core.Security;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 {
@@ -48,9 +49,17 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             AppDomain.CurrentDomain.SetData(
                            "DataDirectory",
                            Path.Combine(context.TestDeploymentDir, string.Empty));
+
             IIdentityProviderService identityProvider = ApplicationContext.Current.GetService<IIdentityProviderService>();
-            identityProvider.CreateIdentity(nameof(SecurityRolePersistenceServiceTest), "password", null);
+            var identity = identityProvider.CreateIdentity(nameof(SecurityRolePersistenceServiceTest), "password", AuthenticationContext.SystemPrincipal);
+
+            // Give this identity the administrative functions group
+            IRoleProviderService roleProvider = ApplicationContext.Current.GetService<IRoleProviderService>();
+            roleProvider.AddUsersToRoles(new string[] { identity.Name }, new string[] { "ADMINISTRATORS" }, AuthenticationContext.SystemPrincipal);
+
+            // Authorize
             s_authorization = identityProvider.Authenticate(nameof(SecurityRolePersistenceServiceTest), "password");
+
 
             IDataPersistenceService<SecurityPolicy> policyService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityPolicy>>();
             s_chickenCostumePolicy = new SecurityPolicy()
