@@ -27,7 +27,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Persistence.Data.PSQ
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Auth", "Auth", "{0EE3D33B-99BE-4BED-A19C-93FD5086C60E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Authentication.AccessControlService", "OpenIZ.Authentication.AccessControlService\OpenIZ.Authentication.AccessControlService.csproj", "{A3975C6F-4FDB-43BE-81AB-3357B86173F1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Authentication.OAuth2", "OpenIZ.Authentication.AccessControlService\OpenIZ.Authentication.OAuth2.csproj", "{A3975C6F-4FDB-43BE-81AB-3357B86173F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

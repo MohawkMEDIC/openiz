@@ -7,8 +7,8 @@
     <ProjectGuid>{A3975C6F-4FDB-43BE-81AB-3357B86173F1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenIZ.Authentication.AccessControlService</RootNamespace>
-    <AssemblyName>OpenIZ.Authentication.AccessControlService</AssemblyName>
+    <RootNamespace>OpenIZ.Authentication.OAuth2</RootNamespace>
+    <AssemblyName>OpenIZ.Authentication.OAuth2</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -37,12 +37,14 @@
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.identitymodel.services" />
     <Reference Include="System.IdentityModel.Tokens.Jwt">
       <HintPath>..\Solution Items\System.IdentityModel.Tokens.Jwt.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -53,10 +55,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\ConfigurationSectionHandler.cs" />
+    <Compile Include="Configuration\OAuthConfiguration.cs" />
     <Compile Include="Model\OAuthError.cs" />
     <Compile Include="Model\OAuthTokenRequest.cs" />
+    <Compile Include="Model\OAuthTokenResponse.cs" />
     <Compile Include="OAuthConstants.cs" />
+    <Compile Include="OAuthMessageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Wcf\ClientAuthorizationPolicy.cs" />
+    <Compile Include="Wcf\ClientCredentialValidator.cs" />
     <Compile Include="Wcf\IOAuthTokenContract.cs" />
     <Compile Include="Wcf\OAuthTokenBehavior.cs" />
   </ItemGroup>

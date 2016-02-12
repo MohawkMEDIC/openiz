@@ -101,6 +101,7 @@
     <Compile Include="Services\Persistence\ReferenceTermPersistenceService.cs" />
     <Compile Include="Services\Persistence\SecurityPolicyPersistenceService.cs" />
     <Compile Include="Services\Persistence\SqlPersistenceService.cs" />
+    <Compile Include="Services\SqlApplicationIdentityProvider.cs" />
     <Compile Include="Services\SqlIdentityProvider.cs" />
     <Compile Include="Services\SqlPolicyInformationService.cs" />
     <Compile Include="Services\SqlRoleProvider.cs" />

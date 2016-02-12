@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OpenIZ.Authentication.AccessControlService.Model;
+using OpenIZ.Authentication.OAuth2.Model;
 using System.Diagnostics;
 using OpenIZ.Core.Services;
 using MARC.HI.EHRS.SVC.Core;
@@ -21,24 +21,50 @@ using MARC.HI.EHRS.SVC.Core.Services.Policy;
 using System.Security.Claims;
 using System.IdentityModel.Tokens;
 using System.Security.Cryptography;
+using System.ServiceModel.Channels;
+using System.Xml;
+using MARC.HI.EHRS.SVC.Core.Exceptions;
+using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Authentication.OAuth2.Configuration;
+using Newtonsoft.Json.Converters;
 
-namespace OpenIZ.Authentication.AccessControlService.Wcf
+namespace OpenIZ.Authentication.OAuth2.Wcf
 {
     /// <summary>
     /// OAuth Token Service
     /// </summary>
+    [ServiceBehavior(ConfigurationName = "OpenIZ.Authentication.OAuth2")]
     public class OAuthTokenBehavior : IOAuthTokenContract
     {
 
         // Trace source name
         private TraceSource m_traceSource = new TraceSource(OAuthConstants.TraceSourceName);
 
+        // OAuth configuration
+        private OAuthConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection(OAuthConstants.ConfigurationName) as OAuthConfiguration;
+
         /// <summary>
         /// OAuth token request
         /// </summary>
         // TODO: Add ability to authentication a claim with POU
-        public Stream Token(NameValueCollection tokenRequest)
+        public Stream Token(Message incomingMessage)
         {
+            // Convert inbound data to token request
+            // HACK: This is to overcome WCF's lack of easy URL encoded form processing
+            // Why use WCF you ask? Well, everything else is hosted in WCF and we 
+            // want to be able to use the same ports as our other services. Could find
+            // no documentation about running WCF and WepAPI stuff in the same app domain
+            // on the same ports
+            NameValueCollection tokenRequest = new NameValueCollection();
+            XmlDictionaryReader bodyReader = incomingMessage.GetReaderAtBodyContents();
+            bodyReader.ReadStartElement("Binary");
+            String rawBody = Encoding.UTF8.GetString(bodyReader.ReadContentAsBase64());
+            var parms = rawBody.Split('&');
+            foreach (var p in parms)
+            {
+                var kvp = p.Split('=');
+                tokenRequest.Add(kvp[0], kvp[1]);
+            }
 
             // Get the client application 
             IApplicationIdentityProviderService clientIdentityService = ApplicationContext.Current.GetService<IApplicationIdentityProviderService>();
@@ -53,38 +79,17 @@ namespace OpenIZ.Authentication.AccessControlService.Wcf
             if (String.IsNullOrWhiteSpace(tokenRequest["scope"]) || !Uri.TryCreate(tokenRequest["scope"], UriKind.Absolute, out scope))
                 return this.CreateErrorCondition(OAuthErrorType.invalid_scope, "Password grant must have well known scope");
 
-            IPrincipal clientPrincipal = null; 
-            
-            // First is there a client Basic header on the request
-            if (!String.IsNullOrEmpty(WebOperationContext.Current.IncomingRequest.Headers["Authorization"]))
-            {
-
-                // Validate the client
-                if (!ClaimsPrincipal.Current.Identity.IsAuthenticated)
-                    return this.CreateErrorCondition(OAuthErrorType.invalid_client, "Anonymous clients not allowed");
-                var passwordClaim = ClaimsPrincipal.Current.FindFirst("password");
-
-                // Validate password / secret
-                if (passwordClaim == null)
-                    return this.CreateErrorCondition(OAuthErrorType.unauthorized_client, "No client secret provided");
-
-                try
-                {
-                    clientPrincipal = clientIdentityService.Authenticate(ClaimsPrincipal.Current.Identity.Name, passwordClaim.Value);
-                    this.m_traceSource.TraceInformation("Client principal : {0}", clientPrincipal?.Identity.Name);
-                }
-                catch(SecurityException e)
-                {
-                    return this.CreateErrorCondition(OAuthErrorType.unauthorized_client, e.Message);
-                }
-
-            }
+            IPrincipal clientPrincipal = ClaimsPrincipal.Current;
             
             // Client is not authenticated
-            if(clientPrincipal == null)
+            if(clientPrincipal == null || !clientPrincipal.Identity.IsAuthenticated)
                 return this.CreateErrorCondition(OAuthErrorType.unauthorized_client, "Unauthorized Client");
             
             this.m_traceSource.TraceInformation("Begin owner password credential grant for {0}", clientPrincipal.Identity.Name);
+
+            if (this.m_configuration.AllowedScopes != null && !this.m_configuration.AllowedScopes.Contains(tokenRequest["scope"]))
+                return this.CreateErrorCondition(OAuthErrorType.invalid_scope, "Scope not registered with provider");
+
             var appliesTo = new EndpointReference(tokenRequest["scope"]);
 
             // Validate username and password
@@ -99,7 +104,6 @@ namespace OpenIZ.Authentication.AccessControlService.Wcf
                         return this.CreateErrorCondition(OAuthErrorType.invalid_grant, "Invalid username or password");
                     else
                     {
-
                         return this.CreateTokenResponse(principal, clientPrincipal, appliesTo, this.ValidateClaims(principal));
                     }
                 }
@@ -121,21 +125,20 @@ namespace OpenIZ.Authentication.AccessControlService.Wcf
 
             // HACK: Find a better way to make claims
             // Claims are stored as X-OpenIZACS-Claim headers
-            foreach(var itm in WebOperationContext.Current.IncomingRequest.Headers.GetValues("X-OpenIZACS-Claim"))
-            {
-                var claim = itm.Split('=');
-
-                // Purpose of use claim
-                if (String.Equals(claim[0], OpenIzClaimTypes.XspaPurposeOfUseClaim, StringComparison.InvariantCultureIgnoreCase))
+            var claims = WebOperationContext.Current.IncomingRequest.Headers.GetValues("X-OpenIZ-Claim");
+            if(claims != null)
+                foreach (var itm in claims.Select(o=>Encoding.UTF8.GetString(Convert.FromBase64String(o))))
                 {
-                    if (pdp.GetPolicyOutcome(userPrincipal, PermissionPolicyIdentifiers.ElevateClinicalData) == PolicyDecisionOutcomeType.Grant) // Uesr can use POU to elevate to get all clinical data
-                        retVal.Add(new Claim(OpenIzClaimTypes.XspaPurposeOfUseClaim, claim[1]));
+
+                    var claim = itm.Split('=');
+
+                    // Claim allowed
+                    if (this.m_configuration.AllowedClientClaims == null ||
+                        !this.m_configuration.AllowedClientClaims.Contains(claim[0]))
+                        throw new SecurityException("Client claims are not allowed on this endpoint");
                     else
-                        throw new SecurityException(String.Format("No right to make claim {0}", claim[0]));
+                        retVal.Add(new Claim(claim[0], claim[1]));
                 }
-                else
-                    throw new SecurityException(String.Format("Unrecognized claim {0}", claim[0]));
-            }
 
             return retVal;
         }
@@ -153,7 +156,7 @@ namespace OpenIZ.Authentication.AccessControlService.Wcf
 
             // TODO: Add configuration for expiry
             DateTime issued = DateTime.Now,
-                expires = DateTime.Now.AddMinutes(10);
+                expires = DateTime.Now.Add(this.m_configuration.ValidityTime);
 
             // System claims
             List<Claim> claims = new List<Claim>(
@@ -180,24 +183,42 @@ namespace OpenIZ.Authentication.AccessControlService.Wcf
 
             var principal = new ClaimsPrincipal(new ClaimsIdentity(oizPrincipal.Identity, claims));
 
-            // TODO: Add configuration parameters to customize this behavior
-            RNGCryptoServiceProvider cryptoProvider = new RNGCryptoServiceProvider();
-            byte[] key = new byte[64];
-            cryptoProvider.GetNonZeroBytes(key);
-
-            var jwt = new JwtSecurityToken(
-                signingCredentials: new SigningCredentials(
-                    new InMemorySymmetricSecurityKey(key),
+            SigningCredentials credentials = null;
+            // Signing credentials
+            if (this.m_configuration.Certificate != null)
+                credentials = new X509SigningCredentials(this.m_configuration.Certificate);
+            else if (!String.IsNullOrEmpty(this.m_configuration.ServerSecret))
+            {
+                var sha = SHA256.Create();
+                credentials = new SigningCredentials(
+                    new InMemorySymmetricSecurityKey(sha.ComputeHash(Encoding.UTF8.GetBytes(this.m_configuration.ServerSecret))),
                     "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256",
                     "http://www.w3.org/2001/04/xmlenc#sha256"
-                ),
+                );
+            }
+            else
+                throw new SecurityException("Invalid signing configuration");
+
+            // Generate security token            
+            var jwt = new JwtSecurityToken(
+                signingCredentials: credentials,
                 audience: appliesTo.Uri.ToString(),
                 notBefore: issued,
                 expires: expires,
                 claims: claims
             );
+
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-            return new MemoryStream(System.Text.Encoding.UTF8.GetBytes(handler.WriteToken(jwt)));
+            WebOperationContext.Current.OutgoingResponse.ContentType = "application/json";
+            OAuthTokenResponse response = new OAuthTokenResponse()
+            {
+                TokenType = OAuthConstants.JwtTokenType,
+                AccessToken = handler.WriteToken(jwt),
+                ExpiresIn = (int)this.m_configuration.ValidityTime.TotalMilliseconds,
+                //RefreshToken = // TODO: Need to write a SessionProvider for this so we can keep track of refresh tokens 
+            };
+
+            return this.CreateResponse(response);
         }
 
         /// <summary>
@@ -217,10 +238,16 @@ namespace OpenIZ.Authentication.AccessControlService.Wcf
         /// <summary>
         /// Create response
         /// </summary>
-        private Stream CreateResponse(OAuthError err)
+        private Stream CreateResponse(Object response)
         {
-            String result = JsonConvert.SerializeObject(err, Formatting.None);
+            var settings = new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
+            settings.Converters.Add(new StringEnumConverter());
+            String result = JsonConvert.SerializeObject(response, Newtonsoft.Json.Formatting.Indented, settings);
             MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(result));
+            WebOperationContext.Current.OutgoingResponse.ContentType = "application/json";
             return ms;
         }
     }

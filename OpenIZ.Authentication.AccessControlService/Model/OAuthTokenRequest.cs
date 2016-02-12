@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Authentication.AccessControlService.Model
+namespace OpenIZ.Authentication.OAuth2.Model
 {
     /// <summary>
     /// A token request

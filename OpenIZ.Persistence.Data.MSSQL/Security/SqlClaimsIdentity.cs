@@ -121,6 +121,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
             }
             catch(SecurityException)
             {
+                // TODO: Audit this
                 throw;
             }
             catch(Exception e)

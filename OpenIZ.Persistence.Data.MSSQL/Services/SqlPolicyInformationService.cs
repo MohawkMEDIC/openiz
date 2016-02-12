@@ -58,6 +58,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     return context.SecurityDevicePolicies.Where(o => o.DeviceId == (securable as IdentifiedData).Key && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o));
                 else if (securable is Core.Model.Security.SecurityRole)
                     return context.SecurityRolePolicies.Where(o => o.RoleId == (securable as IdentifiedData).Key && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o));
+                else if (securable is Core.Model.Security.SecurityApplication)
+                    return context.SecurityApplicationPolicies.Where(o => o.ApplicationId == (securable as IdentifiedData).Key && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o));
+                else if (securable is ApplicationPrincipal)
+                {
+                    Guid appId = Guid.Parse((securable as ApplicationPrincipal).Identity.Name);
+                    return context.SecurityApplicationPolicies.Where(o => o.ApplicationId == appId && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o));
+                }
                 else if (securable is IPrincipal || securable is IIdentity)
                 {
                     var identity = (securable as IPrincipal)?.Identity ?? securable as IIdentity;
@@ -69,7 +76,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
 
                     // Role policies
                     var roleIds = user.SecurityUserRoles.Select(o => o.RoleId).ToList();
-                    retVal.AddRange(context.SecurityRolePolicies.Where(o => roleIds.Contains(o.RoleId)).Select(o=>new SqlSecurityPolicyInstance(o)));
+                    retVal.AddRange(context.SecurityRolePolicies.Where(o => roleIds.Contains(o.RoleId)).Select(o => new SqlSecurityPolicyInstance(o)));
 
                     // Claims principal, then we want device and app SID
                     if (securable is ClaimsPrincipal)
@@ -89,8 +96,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     // TODO: Most restrictive
                     return retVal;
                 }
-                else if (securable is Core.Model.Security.SecurityApplication)
-                    return context.SecurityApplicationPolicies.Where(o => o.ApplicationId == (securable as IdentifiedData).Key && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o));
                 else if (securable is Core.Model.Acts.Act)
                 {
                     var pAct = securable as Core.Model.Acts.Act;
