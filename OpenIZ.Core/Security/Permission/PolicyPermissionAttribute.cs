@@ -79,7 +79,7 @@ namespace OpenIZ.Core.Security.Attribute
         private IPrincipal m_principal;
 
         // Security
-        private TraceSource m_traceSource = new TraceSource("OpenIZ.Core.Security");
+        private TraceSource m_traceSource = new TraceSource(OpenIzConstants.SecurityTraceSourceName);
 
         /// <summary>
         /// Policy permission

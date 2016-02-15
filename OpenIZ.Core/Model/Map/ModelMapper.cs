@@ -39,7 +39,7 @@ namespace OpenIZ.Core.Model.Map
     {
 
         // Model map source
-        private TraceSource m_traceSource = new TraceSource("OpenIZ.Core.Model.Map");
+        private TraceSource m_traceSource = new TraceSource(OpenIzConstants.MapTraceSourceName);
 
         // The map file
         private ModelMap m_mapFile;

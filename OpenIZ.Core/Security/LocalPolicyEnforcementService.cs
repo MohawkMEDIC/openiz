@@ -37,7 +37,7 @@ namespace OpenIZ.Core.Security
     {
 
         // Policy tracer
-        private TraceSource m_tracer = new TraceSource("OpenIZ.Core.Security.Policy");
+        private TraceSource m_tracer = new TraceSource(OpenIzConstants.SecurityTraceSourceName);
         
         // Attached and receiving events?
         private bool m_attached = false;

@@ -27,6 +27,7 @@ using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Model.Security;
 using MARC.HI.EHRS.SVC.Core.Services;
 using System.Security.Claims;
+using OpenIZ.Core.Security.Claims;
 
 namespace OpenIZ.Core.Security
 {

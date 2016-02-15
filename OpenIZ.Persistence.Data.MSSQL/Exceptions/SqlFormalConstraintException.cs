@@ -98,6 +98,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Exceptions
                             return locale.GetString("DBCE002");
                         case SqlFormalConstraintType.UpdatedReadonlyObject:
                             return locale.GetString("DBCE003");
+                        case SqlFormalConstraintType.AssociatedEntityWithoutEffectiveVersion:
+                            return locale.GetString("DBCE004");
+                        case SqlFormalConstraintType.AssociatedEntityWithoutSourceKey:
+                            return locale.GetString("DBCE005");
+                            
                         default:
                             return this.m_violation.ToString();
                     }

@@ -24,6 +24,7 @@ using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Security;
+using OpenIZ.Core.Security.Claims;
 using OpenIZ.Persistence.Data.MSSQL.Configuration;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using OpenIZ.Persistence.Data.MSSQL.Security;

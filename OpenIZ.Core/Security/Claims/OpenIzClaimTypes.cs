@@ -18,17 +18,37 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Core.Security
+namespace OpenIZ.Core.Security.Claims
 {
     /// <summary>
     /// OpenIZ Claim Types
     /// </summary>
     public static class OpenIzClaimTypes
     {
+
+        /// <summary>
+        /// Static ctor
+        /// </summary>
+        static OpenIzClaimTypes()
+        {
+            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+                foreach (var t in asm.GetTypes().Where(o => typeof(IClaimTypeHandler).IsAssignableFrom(o) && o.IsClass))
+                {
+                    IClaimTypeHandler handler = t.GetConstructor(Type.EmptyTypes).Invoke(null) as IClaimTypeHandler;
+                    s_claimHandlers.Add(handler.ClaimType, handler);
+                }
+        }
+
+        /// <summary>
+        /// A list of claim handlers
+        /// </summary>
+        private static Dictionary<String, IClaimTypeHandler> s_claimHandlers = new Dictionary<string, IClaimTypeHandler>();
 
         /// <summary>
         /// Granted policy claim
@@ -69,5 +89,27 @@ namespace OpenIZ.Core.Security
         /// User identifier claim
         /// </summary>
         public const string XspaUserIdentifierClaim = "urn:oasis:names:tc:xacml:1.0:subject:subject-id";
+
+        /// <summary>
+        /// Gets the specified claim type handler
+        /// </summary>
+        public static IClaimTypeHandler GetHandler(String claimType)
+        {
+            IClaimTypeHandler handler = null;
+            s_claimHandlers.TryGetValue(claimType, out handler);
+            return handler;
+        }
+
+        /// <summary>
+        /// Extract claims
+        /// </summary>
+        public static List<Claim> ExtractClaims(NameValueCollection headers)
+        {
+            var claimsHeaders = headers.GetValues(OpenIzConstants.BasicHttpClientClaimHeaderName);
+            if (claimsHeaders == null)
+                return new List<Claim>();
+            else
+                return claimsHeaders.Select(o => Encoding.UTF8.GetString(Convert.FromBase64String(o)).Split('=')).Select(c => new Claim(c[0], c[1])).ToList();
+        } 
     }
 }
