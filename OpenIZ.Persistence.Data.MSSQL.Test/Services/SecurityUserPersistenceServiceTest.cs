@@ -155,7 +155,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             // Now trigger a delay load
             var userForTest = base.DoTestQuery(u => u.UserName == "delayLoadTest", userAfterInsert.Key, auth).First();
             Assert.AreEqual(2, userForTest.Roles.Count);
-            Assert.AreEqual("TestDelayLoadUserPropertiesGroup", userForTest.Roles[0].Name);
+            Assert.IsTrue(userForTest.Roles.Exists(o=>o.Name == "TestDelayLoadUserPropertiesGroup"));
 
 
         }

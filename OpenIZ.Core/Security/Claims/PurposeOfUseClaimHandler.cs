@@ -38,19 +38,11 @@ namespace OpenIZ.Core.Security.Claims
         public bool Validate(IPrincipal principal, String value)
         {
             IConceptService conceptService = ApplicationContext.Current.GetService<IConceptService>();
-            var claimValue = value.Split('|'); // Claim value is in FHIR token|namespace format for namespace is an OID
 
             try
             {
-                OID namespaceOid = claimValue[1];
-                var concepts = conceptService.FindConceptsByReferenceTerm(claimValue[0], namespaceOid);
-                var pouConceptSet = conceptService.GetConceptSet("PurposeOfUse");
-                if (pouConceptSet == null)
-                    throw new ConfigurationException("PurposeOfUse concept set not found on this node");
 
-                var pouConcept = concepts.SingleOrDefault(o => o.ConceptSets.Exists(s=>s.Key == pouConceptSet.Key));
-                if (pouConcept == null)
-                    throw new SecurityException("Purpose of use claim must be derived from PurposeOfUse concept set");
+                // TODO: Validate that the "value" comes from the configured POU domain
 
                 return true;
             }

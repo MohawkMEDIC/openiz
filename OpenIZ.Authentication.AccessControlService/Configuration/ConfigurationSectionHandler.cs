@@ -59,7 +59,7 @@ namespace OpenIZ.Authentication.OAuth2.Configuration
                 {
                     store.Open(OpenFlags.ReadOnly);
                     // Now find the certificate
-                    var matches = store.Certificates.Find((X509FindType)Enum.Parse(typeof(X509FindType), x509Signature.Attributes["x509FindType"]?.Value), x509Signature.Attributes["value"]?.Value, false);
+                    var matches = store.Certificates.Find((X509FindType)Enum.Parse(typeof(X509FindType), x509Signature.Attributes["x509FindType"]?.Value), x509Signature.Attributes["findValue"]?.Value, false);
                     if (matches.Count > 1)
                         throw new ConfigurationErrorsException("More than one candidate certificate found", x509Signature);
                     else if (matches.Count == 0)
