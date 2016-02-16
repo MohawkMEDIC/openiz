@@ -34,5 +34,13 @@ namespace OpenIZ.Core
         {
             return me.GetService<IConceptService>();
         }
+
+        /// <summary>
+        /// Get application provider service
+        /// </summary>
+        public static IApplicationIdentityProviderService GetApplicationProviderService(this ApplicationContext me)
+        {
+            return me.GetService<IApplicationIdentityProviderService>();
+        }
     }
 }

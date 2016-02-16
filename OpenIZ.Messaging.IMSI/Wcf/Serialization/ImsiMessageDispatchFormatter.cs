@@ -40,6 +40,7 @@ using OpenIZ.Core.Model.Serialization;
 using OpenIZ.Core.Security;
 using System.Diagnostics;
 using OpenIZ.Core.Model.Collection;
+using Newtonsoft.Json.Converters;
 
 namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
 {
@@ -130,6 +131,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
                             TypeNameAssemblyFormat = 0,
                             TypeNameHandling = TypeNameHandling.All
                         };
+                        jsz.Converters.Add(new StringEnumConverter());
                         var dserType = ResourceHandlerUtil.Current.GetResourceHandler(templateMatch.BoundVariables["resourceType"])?.Type ?? parm.Type;
                         parameters[0] = jsz.Deserialize(sr, dserType);
                     }
@@ -178,6 +180,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
                         using (JsonWriter jsw = new JsonTextWriter(sw))
                         {
                             jsz.NullValueHandling = NullValueHandling.Ignore;
+                            jsz.Converters.Add(new StringEnumConverter());
                             jsz.Serialize(jsw, result);
                             sw.Flush();
                             body = ms.ToArray();
@@ -186,7 +189,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
                         // Prepare reply for the WCF pipeline
                         format = WebContentFormat.Raw;
                         contentType = "application/json";
-                        reply = Message.CreateMessage(messageVersion, this.m_operationDescription.Messages[1].Action, new RawBodyWriter(body));
+                        reply = Message.CreateMessage(messageVersion, this.m_operationDescription?.Messages[1]?.Action, new RawBodyWriter(body));
 
                     }
                     // The request was in XML and/or the accept is JSON
@@ -200,7 +203,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
                         contentType = "application/xml";
                         ms.Seek(0, SeekOrigin.Begin);
 
-                        reply = Message.CreateMessage(messageVersion, this.m_operationDescription.Messages[1].Action, XmlDictionaryReader.Create(ms));
+                        reply = Message.CreateMessage(messageVersion, this.m_operationDescription?.Messages[1]?.Action, XmlDictionaryReader.Create(ms));
                     }
                 }
                 else if (result is XmlSchema)

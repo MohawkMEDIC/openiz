@@ -27,7 +27,7 @@ using System.ServiceModel.Web;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Messaging.IMSI.Wcf
+namespace OpenIZ.Messaging.IMSI.Wcf.Behavior
 {
     /// <summary>
     /// IMSI REST Endpoint Behavior

@@ -17,6 +17,8 @@ using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core;
+using System.ServiceModel;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Core.Security.Wcf
 {
@@ -85,13 +87,13 @@ namespace OpenIZ.Core.Security.Wcf
 
 
                 // Add claims made by the client
-                HttpRequestMessageProperty httpRequest = (HttpRequestMessageProperty)evaluationContext.Properties[HttpRequestMessageProperty.Name];
+                HttpRequestMessageProperty httpRequest = (HttpRequestMessageProperty)OperationContext.Current.IncomingMessageProperties[HttpRequestMessageProperty.Name];
                 if (httpRequest != null)
                 {
                     var clientClaims = OpenIzClaimTypes.ExtractClaims(httpRequest.Headers);
-                    foreach(var claim in clientClaims)
+                    foreach (var claim in clientClaims)
                     {
-                        if (this.m_configuration.Security?.BasicAuth?.AllowedClientClaims?.Contains(claim.Type) == false)
+                        if (this.m_configuration?.Security?.BasicAuth?.AllowedClientClaims?.Contains(claim.Type) == false)
                             throw new SecurityException(ApplicationContext.Current.GetLocaleString("SECE001"));
                         else
                         {
@@ -107,8 +109,23 @@ namespace OpenIZ.Core.Security.Wcf
 
                 // Claim headers built in
                 if (pipService != null)
-                    claims.AddRange(pipService.GetActivePolicies(identities[0]).Select(o => new System.Security.Claims.Claim(OpenIzClaimTypes.OpenIzGrantedPolicyClaim, o.Policy.Oid)));
+                    claims.AddRange(pipService.GetActivePolicies(identities[0]).Where(o => o.Rule == PolicyDecisionOutcomeType.Grant).Select(o => new System.Security.Claims.Claim(OpenIzClaimTypes.OpenIzGrantedPolicyClaim, o.Policy.Oid)));
 
+                // Finally validate the client 
+                if (this.m_configuration?.Security?.BasicAuth?.RequireClientAuth == true)
+                {
+                    var clientAuth = httpRequest.Headers[OpenIzConstants.BasicHttpClientCredentialHeaderName];
+                    if (clientAuth == null ||
+                        !clientAuth.StartsWith("basic", StringComparison.InvariantCultureIgnoreCase))
+                        throw new SecurityException("Client credentials invalid");
+                    else
+                    {
+                        String clientAuthString = clientAuth.Substring(clientAuth.IndexOf("basic", StringComparison.InvariantCultureIgnoreCase) + 5).Trim();
+                        String[] authComps = Encoding.UTF8.GetString(Convert.FromBase64String(clientAuthString)).Split(':');
+                        var applicationPrincipal = ApplicationContext.Current.GetApplicationProviderService().Authenticate(authComps[0], authComps[1]);
+                        claims.Add(new System.Security.Claims.Claim(OpenIzClaimTypes.OpenIzApplicationIdentifierClaim, applicationPrincipal.Identity.Name));
+                    }
+                }
                 var principal = new ClaimsPrincipal(new ClaimsIdentity(identities[0], claims));
                 
                 evaluationContext.Properties["Principal"] = principal;

@@ -33,6 +33,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security;
+using System.Security.Authentication;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -78,7 +79,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
                     userName == AuthenticationContext.SystemPrincipal.Identity.Name)
                     throw new PolicyViolationException(PermissionPolicyIdentifiers.Login, PolicyDecisionOutcomeType.Deny);
 
-                lock(s_lockObject)
+                lock (s_lockObject)
                     using (var dataContext = new Data.ModelDataContext(s_configuration.ReadWriteConnectionString))
                     {
                         // Attempt to get a user
@@ -109,14 +110,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
                             }
                         }
                         else if (user == null)
-                            throw new SecurityException("Invalid username/password");
+                            throw new AuthenticationException("Invalid username/password");
                         else if ((bool)user?.LockoutEnabled)
                         {
                             user.FailedLoginAttempts++;
                             user.UpdatedBy = Guid.Parse(AuthenticationContext.SystemUserSid);
                             user.UpdatedTime = DateTimeOffset.Now;
                             dataContext.SubmitChanges();
-                            throw new SecurityException("Account is locked");
+                            throw new AuthenticationException("Account is locked");
                         }
                         else if (user != null)
                         {
@@ -126,23 +127,28 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
                             if (user.FailedLoginAttempts > 3) // TODO: Add this to configuration
                                 user.LockoutEnabled = true;
                             dataContext.SubmitChanges();
-                            throw new SecurityException("Invalid username/password");
+                            throw new AuthenticationException("Invalid username/password");
                         }
                         else
                             throw new InvalidOperationException("Shouldn't be here");
 
                     }
-                }
-                catch(SecurityException)
-                {
-                    // TODO: Audit this
-                    throw;
-                }
-                catch(Exception e)
-                {
-                    s_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
-                    throw new Exception("Creating identity failed", e);
-                }
+            }
+            catch (AuthenticationException)
+            {
+                // TODO: Audit this
+                throw;
+            }
+            catch (SecurityException)
+            {
+                // TODO: Audit this
+                throw;
+            }
+            catch (Exception e)
+            {
+                s_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                throw new Exception("Creating identity failed", e);
+            }
         }
 
         /// <summary>

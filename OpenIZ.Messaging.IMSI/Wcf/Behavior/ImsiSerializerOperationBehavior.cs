@@ -22,7 +22,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 
-namespace OpenIZ.Messaging.IMSI.Wcf
+namespace OpenIZ.Messaging.IMSI.Wcf.Behavior
 {
     /// <summary>
     /// IMSI Serializer operation behavior

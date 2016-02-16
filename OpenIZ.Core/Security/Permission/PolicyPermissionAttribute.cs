@@ -59,9 +59,9 @@ namespace OpenIZ.Core.Security.Attribute
             
             // TODO: Configure this 
             if (ApplicationContext.Current.GetService(typeof(IPolicyDecisionService)) == null)
-                return new PolicyPermission(PermissionState.Unrestricted, this.PolicyId);
-            else
                 return new PolicyPermission(PermissionState.None, this.PolicyId);
+            else
+                return new PolicyPermission(PermissionState.Unrestricted, this.PolicyId);
 
         }
     }
@@ -123,7 +123,7 @@ namespace OpenIZ.Core.Security.Attribute
 
             PolicyDecisionOutcomeType action = PolicyDecisionOutcomeType.Deny;
             if (pdp == null) // No way to verify 
-                action = PolicyDecisionOutcomeType.Grant;
+                action = PolicyDecisionOutcomeType.Deny;
             else if (pdp != null)
                 action = pdp.GetPolicyOutcome(this.m_principal, this.m_policyId);
 
