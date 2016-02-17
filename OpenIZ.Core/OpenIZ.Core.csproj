@@ -59,6 +59,7 @@
     <Compile Include="ApplicationContextExtensions.cs" />
     <Compile Include="Configuration\ConfigurationSectionHandler.cs" />
     <Compile Include="Configuration\OpenIZBasicAuthorization.cs" />
+    <Compile Include="Configuration\OpenIzClaimsAuthorization.cs" />
     <Compile Include="Configuration\OpenIZSecurityConfiguration.cs" />
     <Compile Include="Exceptions\ModelMapValidationException.cs" />
     <Compile Include="Exceptions\ModelValidationException.cs" />
@@ -84,9 +85,13 @@
     <Compile Include="Security\LocalPolicyEnforcementService.cs" />
     <Compile Include="Security\Claims\OpenIzClaimTypes.cs" />
     <Compile Include="Security\PermissionPolicyIdentifiers.cs" />
+    <Compile Include="Security\SecurityUtils.cs" />
     <Compile Include="Security\SHA256PasswordHashingService.cs" />
     <Compile Include="Security\Wcf\BasicAuthorizationAccessPolicy.cs" />
     <Compile Include="Security\Wcf\BasicAuthorizationCredentialValidator.cs" />
+    <Compile Include="Security\Wcf\JwtTokenAuthorizationPolicy.cs" />
+    <Compile Include="Security\Wcf\JwtTokenServiceAuthorizationManager.cs" />
+    <Compile Include="Security\Wcf\UnauthorizedRequestException.cs" />
     <Compile Include="Services\IApplicationIdentityProviderService.cs" />
     <Compile Include="Services\IConceptService.cs" />
     <Compile Include="Services\IDeviceIdentityProviderService.cs" />

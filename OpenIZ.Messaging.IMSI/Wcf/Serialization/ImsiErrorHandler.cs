@@ -1,8 +1,10 @@
 ﻿using MARC.HI.EHRS.SVC.Core.Exceptions;
 using OpenIZ.Core.Security;
+using OpenIZ.Core.Security.Wcf;
 using OpenIZ.Messaging.IMSI.Model;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Security;
@@ -38,13 +40,21 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
             // Formulate appropriate response
             if (error is PolicyViolationException || error is SecurityException || (error as FaultException)?.Code.SubCode?.Name == "FailedAuthentication")
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Forbidden;
+            else if (error is SecurityTokenException)
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Unauthorized;
+                WebOperationContext.Current.OutgoingResponse.Headers.Add("WWW-Authenticate", "Bearer");
+            }
             else if (error is WebFaultException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = (error as WebFaultException).StatusCode;
-            else if (error is AuthenticationException)
-                WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Unauthorized;
-            else if(error is Newtonsoft.Json.JsonException ||
+            else if (error is Newtonsoft.Json.JsonException ||
                 error is System.Xml.XmlException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
+            else if (error is UnauthorizedRequestException)
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Unauthorized;
+                WebOperationContext.Current.OutgoingResponse.Headers.Add("WWW-Authenticate", (error as UnauthorizedRequestException).AuthenticateChallenge);
+            }
             else
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.InternalServerError;
 

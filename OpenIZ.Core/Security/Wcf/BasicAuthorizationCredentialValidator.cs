@@ -31,7 +31,7 @@ namespace OpenIZ.Core.Security.Wcf
                 var authService = ApplicationContext.Current.GetService<IIdentityProviderService>();
                 var principal = authService.Authenticate(userName, password);
                 if (principal == null)
-                    throw new SecurityException("Invalid username/password");
+                    throw new UnauthorizedRequestException("Invalid username/password", "Basic", "openiz.org", null);
             }
             catch(Exception e)
             {

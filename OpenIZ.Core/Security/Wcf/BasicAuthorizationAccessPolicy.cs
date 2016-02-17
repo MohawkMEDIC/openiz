@@ -85,7 +85,6 @@ namespace OpenIZ.Core.Security.Wcf
                     roles.Select(o => new System.Security.Claims.Claim(ClaimsIdentity.DefaultRoleClaimType, o))
                     );
 
-
                 // Add claims made by the client
                 HttpRequestMessageProperty httpRequest = (HttpRequestMessageProperty)OperationContext.Current.IncomingMessageProperties[HttpRequestMessageProperty.Name];
                 if (httpRequest != null)
@@ -137,7 +136,7 @@ namespace OpenIZ.Core.Security.Wcf
             catch (Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
-                throw;
+                return false;
             }
         }
     }

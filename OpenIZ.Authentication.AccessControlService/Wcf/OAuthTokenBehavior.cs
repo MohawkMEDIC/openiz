@@ -29,6 +29,7 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Authentication.OAuth2.Configuration;
 using Newtonsoft.Json.Converters;
 using OpenIZ.Core.Security.Claims;
+using System.Security.Authentication;
 
 namespace OpenIZ.Authentication.OAuth2.Wcf
 {
@@ -109,7 +110,11 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
                         return this.CreateTokenResponse(principal, clientPrincipal, appliesTo, this.ValidateClaims(principal));
                     }
                 }
-                catch(SecurityException e)
+                catch (AuthenticationException e)
+                {
+                    return this.CreateErrorCondition(OAuthErrorType.invalid_grant, e.Message);
+                }
+                catch (SecurityException e)
                 {
                     return this.CreateErrorCondition(OAuthErrorType.invalid_grant, e.Message);
                 }
@@ -168,6 +173,7 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
                     roleProvider.GetAllRoles(oizPrincipal.Identity.Name).Select(r => new Claim(ClaimsIdentity.DefaultRoleClaimType, r))
             )
             {
+                new Claim("iss", this.m_configuration.IssuerName),
                 new Claim(ClaimTypes.AuthenticationInstant, issued.ToString("o")), 
                 new Claim(ClaimTypes.AuthenticationMethod, "OAuth2"),
                 new Claim(ClaimTypes.Expiration, expires.ToString("o")), 
@@ -205,7 +211,7 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             {
                 var sha = SHA256.Create();
                 credentials = new SigningCredentials(
-                    new InMemorySymmetricSecurityKey(sha.ComputeHash(Encoding.UTF8.GetBytes(this.m_configuration.ServerSecret))),
+                    new InMemorySymmetricSecurityKey(this.m_configuration.ServerKey ?? sha.ComputeHash(Encoding.UTF8.GetBytes(this.m_configuration.ServerSecret))),
                     "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256",
                     "http://www.w3.org/2001/04/xmlenc#sha256"
                 );
