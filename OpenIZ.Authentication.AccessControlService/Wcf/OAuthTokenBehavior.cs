@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenIZ.Core;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -27,6 +28,8 @@ using MARC.HI.EHRS.SVC.Core.Exceptions;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Authentication.OAuth2.Configuration;
 using Newtonsoft.Json.Converters;
+using OpenIZ.Core.Security.Claims;
+using System.Security.Authentication;
 
 namespace OpenIZ.Authentication.OAuth2.Wcf
 {
@@ -107,7 +110,11 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
                         return this.CreateTokenResponse(principal, clientPrincipal, appliesTo, this.ValidateClaims(principal));
                     }
                 }
-                catch(SecurityException e)
+                catch (AuthenticationException e)
+                {
+                    return this.CreateErrorCondition(OAuthErrorType.invalid_grant, e.Message);
+                }
+                catch (SecurityException e)
                 {
                     return this.CreateErrorCondition(OAuthErrorType.invalid_grant, e.Message);
                 }
@@ -125,20 +132,23 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
 
             // HACK: Find a better way to make claims
             // Claims are stored as X-OpenIZACS-Claim headers
-            var claims = WebOperationContext.Current.IncomingRequest.Headers.GetValues("X-OpenIZ-Claim");
-            if(claims != null)
-                foreach (var itm in claims.Select(o=>Encoding.UTF8.GetString(Convert.FromBase64String(o))))
+            foreach (var itm in OpenIzClaimTypes.ExtractClaims(WebOperationContext.Current.IncomingRequest.Headers))
+            {
+
+                // Claim allowed
+                if (this.m_configuration.AllowedClientClaims == null ||
+                    !this.m_configuration.AllowedClientClaims.Contains(itm.Type))
+                    throw new SecurityException(ApplicationContext.Current.GetLocaleString("SECE001"));
+                else
                 {
-
-                    var claim = itm.Split('=');
-
-                    // Claim allowed
-                    if (this.m_configuration.AllowedClientClaims == null ||
-                        !this.m_configuration.AllowedClientClaims.Contains(claim[0]))
-                        throw new SecurityException("Client claims are not allowed on this endpoint");
+                    // Validate the claim
+                    var handler = OpenIzClaimTypes.GetHandler(itm.Type);
+                    if (handler == null || handler.Validate(userPrincipal, itm.Value))
+                        retVal.Add(itm);
                     else
-                        retVal.Add(new Claim(claim[0], claim[1]));
+                        throw new SecurityException(String.Format(ApplicationContext.Current.GetLocaleString("SECE002"), itm.Type));
                 }
+            }
 
             return retVal;
         }
@@ -160,9 +170,10 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
 
             // System claims
             List<Claim> claims = new List<Claim>(
-                    roleProvider.GetAllRoles(oizPrincipal.Identity.Name).Select(r => new Claim(ClaimsIdentity.DefaultRoleClaimType, r, "xs:string", ApplicationContext.Current.Configuration.Custodianship.Name))
+                    roleProvider.GetAllRoles(oizPrincipal.Identity.Name).Select(r => new Claim(ClaimsIdentity.DefaultRoleClaimType, r))
             )
             {
+                new Claim("iss", this.m_configuration.IssuerName),
                 new Claim(ClaimTypes.AuthenticationInstant, issued.ToString("o")), 
                 new Claim(ClaimTypes.AuthenticationMethod, "OAuth2"),
                 new Claim(ClaimTypes.Expiration, expires.ToString("o")), 
@@ -181,6 +192,15 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             // Additional claims
             claims.AddRange(additionalClaims);
 
+            // Add claims made by the IdP
+            if(oizPrincipal is ClaimsPrincipal)
+                claims.AddRange((oizPrincipal as ClaimsPrincipal).Claims.Where(o => !claims.Any(c => c.Type == o.Type)));
+
+            // Find the nameid
+            var nameId = claims.Find(o => o.Type == ClaimTypes.NameIdentifier);
+            if (nameId != null)
+                claims.Add(new Claim("sub", nameId.Value));
+
             var principal = new ClaimsPrincipal(new ClaimsIdentity(oizPrincipal.Identity, claims));
 
             SigningCredentials credentials = null;
@@ -191,7 +211,7 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             {
                 var sha = SHA256.Create();
                 credentials = new SigningCredentials(
-                    new InMemorySymmetricSecurityKey(sha.ComputeHash(Encoding.UTF8.GetBytes(this.m_configuration.ServerSecret))),
+                    new InMemorySymmetricSecurityKey(this.m_configuration.ServerKey ?? sha.ComputeHash(Encoding.UTF8.GetBytes(this.m_configuration.ServerSecret))),
                     "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256",
                     "http://www.w3.org/2001/04/xmlenc#sha256"
                 );

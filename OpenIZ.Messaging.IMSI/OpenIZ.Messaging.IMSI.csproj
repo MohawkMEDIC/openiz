@@ -70,6 +70,7 @@
     <Compile Include="ResourceHandler\ResourceHandlerUtil.cs" />
     <Compile Include="Util\BundleUtil.cs" />
     <Compile Include="Util\QueryParameterLinqExpressionBuilder.cs" />
+    <Compile Include="Wcf\Behavior\ImsiErrorEndpointBehavior.cs" />
     <Compile Include="Wcf\Compression\CompressionUtil.cs" />
     <Compile Include="Wcf\Compression\CompressionBodyWriter.cs" />
     <Compile Include="Wcf\Compression\DeflateCompressionScheme.cs" />
@@ -79,9 +80,10 @@
     <Compile Include="Wcf\IImsiServiceContract.cs" />
     <Compile Include="Wcf\ImsiContentTypeHandler.cs" />
     <Compile Include="Wcf\ImsiMessageInspector.cs" />
-    <Compile Include="Wcf\ImsiRestEndpointBehavior.cs" />
-    <Compile Include="Wcf\ImsiSerializerOperationBehavior.cs" />
+    <Compile Include="Wcf\Behavior\ImsiRestEndpointBehavior.cs" />
+    <Compile Include="Wcf\Behavior\ImsiSerializerOperationBehavior.cs" />
     <Compile Include="Wcf\ImsiServiceBehavior.cs" />
+    <Compile Include="Wcf\Serialization\ImsiErrorHandler.cs" />
     <Compile Include="Wcf\Serialization\ImsiMessageDispatchFormatter.cs" />
   </ItemGroup>
   <ItemGroup>

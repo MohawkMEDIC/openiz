@@ -23,6 +23,7 @@ using MARC.HI.EHRS.SVC.Core.Services.Policy;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using OpenIZ.Core.Security;
 using OpenIZ.Core.Security.Attribute;
+using OpenIZ.Core.Security.Claims;
 using OpenIZ.Persistence.Data.MSSQL.Configuration;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using System;
@@ -32,6 +33,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security;
+using System.Security.Authentication;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -48,7 +50,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
     {
         // Trace source
         private static TraceSource s_traceSource = new TraceSource(SqlServerConstants.IdentityTraceSourceName);
-        
+
+        // Lock object
+        private static Object s_lockObject = new object();
+
         // Whether the user is authenticated
         private bool m_isAuthenticated;
         // The security user
@@ -70,61 +75,76 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
         {
             try
             {
-                using (var dataContext = new Data.ModelDataContext(s_configuration.ReadWriteConnectionString))
-                {
-                    // Attempt to get a user
-                    var hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
+                if (userName == AuthenticationContext.AnonymousPrincipal.Identity.Name ||
+                    userName == AuthenticationContext.SystemPrincipal.Identity.Name)
+                    throw new PolicyViolationException(PermissionPolicyIdentifiers.Login, PolicyDecisionOutcomeType.Deny);
 
-                    var passwordHash = hashingService.EncodePassword(password);
-                    var user = dataContext.SecurityUsers.SingleOrDefault(u => u.UserName == userName && u.ObsoletionTime == null);
-                    if (user?.UserPassword == passwordHash && (bool)!user?.TwoFactorEnabled &&
-                        (bool)!user?.LockoutEnabled)
+                lock (s_lockObject)
+                    using (var dataContext = new Data.ModelDataContext(s_configuration.ReadWriteConnectionString))
                     {
-                        var userIdentity = new SqlClaimsIdentity(user, true) { m_authenticationType = "Password" };
+                        // Attempt to get a user
+                        var hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
 
-                        // Is user allowed to login?
-                        try
+                        var passwordHash = hashingService.EncodePassword(password);
+                        var user = dataContext.SecurityUsers.SingleOrDefault(u => u.UserName == userName && u.ObsoletionTime == null);
+                        if (user?.UserPassword == passwordHash && (bool)!user?.TwoFactorEnabled &&
+                            (bool)!user?.LockoutEnabled)
                         {
-                            new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.Login, new GenericPrincipal(userIdentity, null)).Demand();
-                            user.LastSuccessfulLogin = DateTimeOffset.Now;
-                            user.FailedLoginAttempts = 0;
-                            dataContext.SubmitChanges();
-                            return userIdentity;
+                            var userIdentity = new SqlClaimsIdentity(user, true) { m_authenticationType = "Password" };
+
+                            // Is user allowed to login?
+                            try
+                            {
+                                new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.Login, new GenericPrincipal(userIdentity, null)).Demand();
+
+                                user.LastSuccessfulLogin = DateTimeOffset.Now;
+                                user.FailedLoginAttempts = 0;
+                                user.UpdatedBy = Guid.Parse(AuthenticationContext.SystemUserSid);
+                                user.UpdatedTime = DateTimeOffset.Now;
+                                dataContext.SubmitChanges();
+                                return userIdentity;
+                            }
+                            catch (PolicyViolationException e)
+                            {
+                                throw;
+                            }
                         }
-                        catch (PolicyViolationException e)
+                        else if (user == null)
+                            throw new AuthenticationException("Invalid username/password");
+                        else if ((bool)user?.LockoutEnabled)
                         {
                             user.FailedLoginAttempts++;
+                            user.UpdatedBy = Guid.Parse(AuthenticationContext.SystemUserSid);
+                            user.UpdatedTime = DateTimeOffset.Now;
                             dataContext.SubmitChanges();
-                            throw;
+                            throw new AuthenticationException("Account is locked");
                         }
-                    }
-                    else if (user == null)
-                        throw new SecurityException("Invalid username/password");
-                    else if ((bool)user?.LockoutEnabled)
-                    {
-                        user.FailedLoginAttempts++;
-                        dataContext.SubmitChanges();
-                        throw new SecurityException("Account is locked");
-                    }
-                    else if (user != null)
-                    {
-                        user.FailedLoginAttempts++;
-                        if (user.FailedLoginAttempts > 3) // TODO: Add this to configuration
-                            user.LockoutEnabled = true;
-                        dataContext.SubmitChanges();
-                        throw new SecurityException("Invalid username/password");
-                    }
-                    else
-                        throw new InvalidOperationException("Shouldn't be here");
+                        else if (user != null)
+                        {
+                            user.FailedLoginAttempts++;
+                            user.UpdatedBy = Guid.Parse(AuthenticationContext.SystemUserSid);
+                            user.UpdatedTime = DateTimeOffset.Now;
+                            if (user.FailedLoginAttempts > 3) // TODO: Add this to configuration
+                                user.LockoutEnabled = true;
+                            dataContext.SubmitChanges();
+                            throw new AuthenticationException("Invalid username/password");
+                        }
+                        else
+                            throw new InvalidOperationException("Shouldn't be here");
 
-                }
+                    }
             }
-            catch(SecurityException)
+            catch (AuthenticationException)
             {
                 // TODO: Audit this
                 throw;
             }
-            catch(Exception e)
+            catch (SecurityException)
+            {
+                // TODO: Audit this
+                throw;
+            }
+            catch (Exception e)
             {
                 s_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
                 throw new Exception("Creating identity failed", e);
@@ -248,21 +268,25 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
                     this.m_roles.Select(r => new Claim(ClaimsIdentity.DefaultRoleClaimType, r.Name))
                 )
                 {
-                    new Claim(ClaimTypes.Authentication, this.m_isAuthenticated.ToString()),
+                    new Claim(ClaimTypes.Authentication, nameof(SqlClaimsIdentity)),
+                    new Claim(ClaimTypes.AuthorizationDecision, this.m_isAuthenticated ? "GRANT" : "DENY"),
                     new Claim(ClaimTypes.AuthenticationInstant, this.m_issuedOn.ToString("o")), // TODO: Fix this
                     new Claim(ClaimTypes.AuthenticationMethod, this.m_authenticationType),
                     new Claim(ClaimTypes.Expiration, this.m_issuedOn.AddMinutes(30).ToString("o")), // TODO: Move this to configuration
                     new Claim(ClaimTypes.Name, this.m_securityUser.UserName),
                     new Claim(ClaimTypes.Sid, this.m_securityUser.UserId.ToString()),
-                    new Claim(OpenIzClaimTypes.XspaUserIdentifierClaim, this.m_securityUser.UserId.ToString())
+                    new Claim(ClaimTypes.NameIdentifier, this.m_securityUser.UserId.ToString())
                 };
 
                 if (this.m_securityUser.Email != null && this.m_securityUser.EmailConfirmed)
                     claims.Add(new Claim(ClaimTypes.Email, this.m_securityUser.Email));
 
+                // TODO: Demographic data for the user
+
                 var retVal = new ClaimsPrincipal(
                         new ClaimsIdentity[] { new ClaimsIdentity(this, claims.AsReadOnly()) }
                     );
+
                 s_traceSource.TraceInformation("Created security principal from identity {0} > {1}", this, SqlClaimsIdentity.PrincipalToString(retVal));
                 return retVal;
             }

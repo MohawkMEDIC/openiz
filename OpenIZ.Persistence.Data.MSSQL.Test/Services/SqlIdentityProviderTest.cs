@@ -29,6 +29,7 @@ using MARC.HI.EHRS.SVC.Core.Services.Security;
 using System.Security;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Security;
+using System.Security.Authentication;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 {
@@ -119,7 +120,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 var principal = provider.Authenticate("user@identitytest.com", "passwordz");
                 Assert.Fail("Should throw SecurityException");
             }
-            catch (SecurityException)
+            catch (AuthenticationException)
             {
                 // We should have a lockout
                 user = dataPersistence.Get(user.Id(), null, false);
@@ -156,7 +157,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                     var principal = provider.Authenticate("user@identitytest.com", "passwordz");
                     Assert.Fail("Should throw SecurityException");
                 }
-                catch (SecurityException)
+                catch (AuthenticationException)
                 { }
 
             // We should have a lockout
@@ -180,7 +181,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 var principal = provider.Authenticate("admin@identitytest.com", "passwordz");
                 Assert.Fail("Should throw SecurityException");
             }
-            catch(SecurityException)
+            catch(AuthenticationException)
             { }
         }
 

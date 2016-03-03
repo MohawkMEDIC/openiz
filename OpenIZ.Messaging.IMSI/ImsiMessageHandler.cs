@@ -20,12 +20,16 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Messaging.IMSI.Configuration;
 using OpenIZ.Messaging.IMSI.Wcf;
+using OpenIZ.Messaging.IMSI.Wcf.Behavior;
+using OpenIZ.Messaging.IMSI.Wcf.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
+using System.ServiceModel.Description;
+using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
 using System.Text;
 using System.Threading.Tasks;
@@ -86,13 +90,13 @@ namespace OpenIZ.Messaging.IMSI
 
                 this.m_webHost = new WebServiceHost(typeof(ImsiServiceBehavior));
 
-                foreach(var endpoint in this.m_webHost.Description.Endpoints)
+                foreach(ServiceEndpoint endpoint in this.m_webHost.Description.Endpoints)
                 {
                     this.m_traceSource.TraceInformation("Starting IMSI on {0}...", endpoint.Address);
                     (endpoint.Binding as WebHttpBinding).ContentTypeMapper = new ImsiContentTypeHandler();
                     endpoint.EndpointBehaviors.Add(new ImsiRestEndpointBehavior());
+                    endpoint.EndpointBehaviors.Add(new ImsiErrorEndpointBehavior());
                 }
-
                 // Start the webhost
                 this.m_webHost.Open();
 

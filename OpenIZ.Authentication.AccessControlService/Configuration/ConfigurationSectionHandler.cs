@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Linq;
+using OpenIZ.Core.Security;
 
 namespace OpenIZ.Authentication.OAuth2.Configuration
 {
@@ -16,7 +17,7 @@ namespace OpenIZ.Authentication.OAuth2.Configuration
     /// <remarks>
     /// <![CDATA[
     /// <openiz.authentication.oauth2>
-    ///     <token expiry=""/>
+    ///     <token expiry="" issuerName=""/>
     ///     <signature>
     ///         <!-- If using X509 RSA certificates -->
     ///         <certificate storeLocation="" storeName="" x509FindType="" findValue=""/>
@@ -49,32 +50,21 @@ namespace OpenIZ.Authentication.OAuth2.Configuration
                 scopes = section.SelectNodes("./scopes/add/@name");
 
             retVal.ValidityTime = TimeSpan.Parse(tokenElement?.Attributes["expiry"]?.Value ?? "00:00:10:00");
+            retVal.IssuerName = tokenElement?.Attributes["issuerName"]?.Value ?? "http://localhost/oauth2_token";
+
             if (x509Signature != null)
             {
-                X509Store store = new X509Store(
-                    (StoreName)Enum.Parse(typeof(StoreName), x509Signature.Attributes["storeName"]?.Value),
-                    (StoreLocation)Enum.Parse(typeof(StoreLocation), x509Signature.Attributes["storeLocation"]?.Value)
-                );
-                try
-                {
-                    store.Open(OpenFlags.ReadOnly);
-                    // Now find the certificate
-                    var matches = store.Certificates.Find((X509FindType)Enum.Parse(typeof(X509FindType), x509Signature.Attributes["x509FindType"]?.Value), x509Signature.Attributes["value"]?.Value, false);
-                    if (matches.Count > 1)
-                        throw new ConfigurationErrorsException("More than one candidate certificate found", x509Signature);
-                    else if (matches.Count == 0)
-                        throw new ConfigurationErrorsException("No matching certificates found", x509Signature);
-                    else
-                        retVal.Certificate = matches[0];
-                }
-                finally
-                {
-                    store.Close();
-                }
+                retVal.Certificate = SecurityUtils.FindCertificate(x509Signature.Attributes["storeLocation"]?.Value,
+                    x509Signature.Attributes["storeName"]?.Value,
+                    x509Signature.Attributes["x509FindType"]?.Value,
+                    x509Signature.Attributes["findValue"]?.Value);
             }
             else if (symmSignature != null)
             {
                 retVal.ServerSecret = symmSignature.Attributes["secret"]?.Value;
+                if(symmSignature.Attributes["key"] != null)
+                    retVal.ServerKey = Convert.FromBase64String(symmSignature.Attributes["key"].Value);
+                
             }
             else
                 throw new ConfigurationErrorsException("One of certificate or symmetric key must be selected", null, section);

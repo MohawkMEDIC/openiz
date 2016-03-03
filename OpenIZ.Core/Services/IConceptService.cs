@@ -35,7 +35,12 @@ namespace OpenIZ.Core.Services
         /// Saves a concept class
         /// </summary>
         Concept SaveConceptClass(ConceptClass clazz);
-        
+
+        /// <summary>
+        /// Get the concept set by mnemonic
+        /// </summary>
+        ConceptSet GetConceptSet(string mnemonic);
+
         /// <summary>
         /// Get a concept by its mnemonic
         /// </summary>
@@ -65,7 +70,7 @@ namespace OpenIZ.Core.Services
         /// <param name="code">The code</param>
         /// <param name="codeSystemOid">The oid of the code system</param>
         IEnumerable<Concept> FindConceptsByReferenceTerm(String code, String codeSystemOid);
-
+        
         /// <summary>
         /// Returns a value which indicates whether <paramref name="a"/> implies <paramref name="b"/>
         /// </summary>

@@ -15,6 +15,11 @@ namespace OpenIZ.Core.Security
     {
 
         /// <summary>
+        /// SYSTEM user's SID
+        /// </summary>
+        public const String SystemUserSid = "fadca076-3690-4a6e-af9e-f1cd68e8c7e8";
+
+        /// <summary>
         /// System identity
         /// </summary>
         private static readonly IPrincipal s_system = new GenericPrincipal(new GenericIdentity("SYSTEM"), new string[] { });

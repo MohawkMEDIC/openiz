@@ -68,6 +68,11 @@ namespace OpenIZ.Core.Services.Impl
             
         }
 
+        public ConceptSet GetConceptSet(string mnemonic)
+        {
+            throw new NotImplementedException();
+        }
+
         public ReferenceTerm GetReferenceTerm(Concept concept, string codeSystemOid)
         {
             throw new NotImplementedException();

@@ -69,6 +69,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// Search for the specified resource type
         /// </summary>
         [WebGet(UriTemplate = "/{resourceType}", BodyStyle = WebMessageBodyStyle.Bare)]
+        [FaultContract(typeof(ErrorResult))]
         IdentifiedData Search(string resourceType);
 
         /// <summary>

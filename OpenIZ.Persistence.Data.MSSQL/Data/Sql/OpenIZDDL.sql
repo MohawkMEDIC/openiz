@@ -167,18 +167,18 @@ CREATE TABLE Policy
 CREATE UNIQUE INDEX IX_PolicyOid ON Policy(PolicyOid);
 
 -- BUILT IN OPENIZ POLICIES
-INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('ea73c05a-3159-48c8-bbcb-741911d91cd2', '1.3.6.1.4.1.33349.3.5.9.2.0', 'Access Administrative Function', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
-INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('d80ac1cf-3d6e-429f-a4a0-88c0bbbc839d', '1.3.6.1.4.1.33349.3.5.9.2.0.1', 'Change Password', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
-INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('9c0d65ac-613e-4a67-8bc6-5ce2c0b42160', '1.3.6.1.4.1.33349.3.5.9.2.0.2', 'Create Role', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
-INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('79bcc227-0d13-4fbf-a83e-f2b9fce34151', '1.3.6.1.4.1.33349.3.5.9.2.0.3', 'Alter Role', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
-INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('ab8642cb-28e4-4e9e-bd7b-d6dc72b729b2', '1.3.6.1.4.1.33349.3.5.9.2.0.4', 'Create Identity', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
-INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('d15b96ab-646c-4c00-9a58-ea09eee67d7c', '1.3.6.1.4.1.33349.3.5.9.2.1', 'Login', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
-INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('f6840336-4e20-4bc0-b965-baa6d7c80be3', '1.3.6.1.4.1.33349.3.5.9.2.2', 'Unrestricted Clinical Data', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
-INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('b81daf47-17a5-465e-a5fd-706b168b0265', '1.3.6.1.4.1.33349.3.5.9.2.2.0', 'Query Clinical Data', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
-INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('d7276921-a078-4348-95f2-ed3cde83e607', '1.3.6.1.4.1.33349.3.5.9.2.2.1', 'Write Clinical Data', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
-INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('2e027dee-ede4-4731-b7fa-cb67ae0586be', '1.3.6.1.4.1.33349.3.5.9.2.2.2', 'Delete Clinical Data', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
-INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('5fb731bf-4e59-4863-80bd-51757d58ea3b', '1.3.6.1.4.1.33349.3.5.9.2.2.3', 'Read Clinical Data', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
-INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('dea891aa-224d-4859-81b3-c1eb2750067e', '1.3.6.1.4.1.33349.3.5.9.2.3', 'Override Disclosure', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('ea73c05a-3159-48c8-bbcb-741911d91cd2', '1.3.6.1.4.1.33349.3.1.5.9.2.0', 'Access Administrative Function', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('d80ac1cf-3d6e-429f-a4a0-88c0bbbc839d', '1.3.6.1.4.1.33349.3.1.5.9.2.0.1', 'Change Password', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('9c0d65ac-613e-4a67-8bc6-5ce2c0b42160', '1.3.6.1.4.1.33349.3.1.5.9.2.0.2', 'Create Role', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('79bcc227-0d13-4fbf-a83e-f2b9fce34151', '1.3.6.1.4.1.33349.3.1.5.9.2.0.3', 'Alter Role', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('ab8642cb-28e4-4e9e-bd7b-d6dc72b729b2', '1.3.6.1.4.1.33349.3.1.5.9.2.0.4', 'Create Identity', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('d15b96ab-646c-4c00-9a58-ea09eee67d7c', '1.3.6.1.4.1.33349.3.1.5.9.2.1', 'Login', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('f6840336-4e20-4bc0-b965-baa6d7c80be3', '1.3.6.1.4.1.33349.3.1.5.9.2.2', 'Unrestricted Clinical Data', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('b81daf47-17a5-465e-a5fd-706b168b0265', '1.3.6.1.4.1.33349.3.1.5.9.2.2.0', 'Query Clinical Data', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('d7276921-a078-4348-95f2-ed3cde83e607', '1.3.6.1.4.1.33349.3.1.5.9.2.2.1', 'Write Clinical Data', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('2e027dee-ede4-4731-b7fa-cb67ae0586be', '1.3.6.1.4.1.33349.3.1.5.9.2.2.2', 'Delete Clinical Data', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('5fb731bf-4e59-4863-80bd-51757d58ea3b', '1.3.6.1.4.1.33349.3.1.5.9.2.2.3', 'Read Clinical Data', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('dea891aa-224d-4859-81b3-c1eb2750067e', '1.3.6.1.4.1.33349.3.1.5.9.2.3', 'Override Disclosure', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 
 /*
  ASSOCIATIVE ENTITY TABLE BETWEEN SecurityRole AND Policy TABLES.

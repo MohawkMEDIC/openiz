@@ -24,6 +24,7 @@ using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Security;
+using OpenIZ.Core.Security.Claims;
 using OpenIZ.Persistence.Data.MSSQL.Configuration;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using OpenIZ.Persistence.Data.MSSQL.Security;
@@ -55,15 +56,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             using (ModelDataContext context = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
                 // Security device
                 if (securable is Core.Model.Security.SecurityDevice)
-                    return context.SecurityDevicePolicies.Where(o => o.DeviceId == (securable as IdentifiedData).Key && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o));
+                    return context.SecurityDevicePolicies.Where(o => o.DeviceId == (securable as IdentifiedData).Key && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o)).ToList();
                 else if (securable is Core.Model.Security.SecurityRole)
-                    return context.SecurityRolePolicies.Where(o => o.RoleId == (securable as IdentifiedData).Key && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o));
+                    return context.SecurityRolePolicies.Where(o => o.RoleId == (securable as IdentifiedData).Key && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o)).ToList();
                 else if (securable is Core.Model.Security.SecurityApplication)
-                    return context.SecurityApplicationPolicies.Where(o => o.ApplicationId == (securable as IdentifiedData).Key && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o));
+                    return context.SecurityApplicationPolicies.Where(o => o.ApplicationId == (securable as IdentifiedData).Key && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o)).ToList();
                 else if (securable is ApplicationPrincipal)
                 {
                     Guid appId = Guid.Parse((securable as ApplicationPrincipal).Identity.Name);
-                    return context.SecurityApplicationPolicies.Where(o => o.ApplicationId == appId && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o));
+                    return context.SecurityApplicationPolicies.Where(o => o.ApplicationId == appId && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o)).ToList();
                 }
                 else if (securable is IPrincipal || securable is IIdentity)
                 {

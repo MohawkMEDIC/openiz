@@ -39,6 +39,10 @@ namespace OpenIZ.Authentication.OAuth2.Configuration
         public List<String> AllowedClientClaims { get; set; }
 
         /// <summary>
+        /// Issuer name
+        /// </summary>
+        public String IssuerName { get; set; }
+        /// <summary>
         /// When using HMAC256 signing this represents the server's secret
         /// </summary>
         public String ServerSecret { get; set; }
@@ -49,11 +53,16 @@ namespace OpenIZ.Authentication.OAuth2.Configuration
         public List<String> AllowedScopes { get; set; }
 
         /// <summary>
+        /// Raw server key
+        /// </summary>
+        public byte[] ServerKey { get; internal set; }
+
+        /// <summary>
         /// Validate
         /// </summary>
         internal void Validate()
         {
-            if (String.IsNullOrEmpty(this.ServerSecret) &&
+            if ((String.IsNullOrEmpty(this.ServerSecret) || this.ServerKey != null) &&
                 this.Certificate == null)
                 throw new ConfigurationErrorsException("Configuration must use symmetric key or certificate");
 
