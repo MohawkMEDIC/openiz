@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<locale name="en" xmlns="urn:marc-hi:ca/localization">
+  
+  <!-- MESSAGE VALIDATION ERRORS -->
+  
+  <!-- PERSISTENCE ERRORS -->
+  
+  <!-- FORMAL CONSTRAINTS -->
+  <string name="DBCE001">Attempt to insert an entity with KEY specified</string>
+  <string name="DBCE002">Attempt to update an entity with no KEY specified</string>
+  <string name="DBCE003">Attempt to update a readonly object</string>
+  <string name="DBCE004">Attempt to create an association to a versioned entity with no EffectiveVersion specified</string>
+  <string name="DBCE005">Attempt to create an association to an entity with no source KEY</string>
+
+  <!-- SECURITY ERRORS -->
+  <string name="SECE001">Client made claim which it is not permitted to make</string>
+  <string name="SECE002">Claim {0} is not valid</string>
+</locale>
