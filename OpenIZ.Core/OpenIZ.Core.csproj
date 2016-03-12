@@ -61,15 +61,7 @@
     <Compile Include="Configuration\OpenIZBasicAuthorization.cs" />
     <Compile Include="Configuration\OpenIzClaimsAuthorization.cs" />
     <Compile Include="Configuration\OpenIZSecurityConfiguration.cs" />
-    <Compile Include="Exceptions\ModelMapValidationException.cs" />
-    <Compile Include="Exceptions\ModelValidationException.cs" />
     <Compile Include="Model\EntityLoader\PersistenceServiceEntitySource.cs" />
-    <Compile Include="Model\Map\ClassMap.cs" />
-    <Compile Include="Model\Map\CollapseKey.cs" />
-    <Compile Include="Model\Map\ModelExpressionVisitor.cs" />
-    <Compile Include="Model\Map\ModelMap.cs" />
-    <Compile Include="Model\Map\ModelMapper.cs" />
-    <Compile Include="Model\Map\PropertyMap.cs" />
     <Compile Include="Model\ModelExtensions.cs" />
     <Compile Include="Configuration\OpenIZConfiguration.cs" />
     <Compile Include="OpenIZConstants.cs" />

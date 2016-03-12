@@ -177,6 +177,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
                 return null;
 
             var user = dataContext.SecurityUsers.Single(o => o.UserName == principal.Identity.Name && !o.ObsoletionTime.HasValue);
+            // TODO: Enable auto-creation of users via configuration
             if (user == null)
                 throw new SecurityException("User in authorization context does not exist or is obsolete");
 
