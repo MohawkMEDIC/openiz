@@ -16,7 +16,7 @@
  * User: fyfej
  * Date: 2016-1-19
  */
-using MARC.Everest.Connectors;
+using OpenIZ.Core.Model.Map;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,31 +26,25 @@ using System.Threading.Tasks;
 namespace OpenIZ.Core.Exceptions
 {
     /// <summary>
-    /// Model validation exception
+    /// Represents a validation exception of a model map
     /// </summary>
-    [Serializable]
-    public class ModelValidationException : Exception
+    public class ModelMapValidationException : ModelValidationException
     {
+
         /// <summary>
         /// Creates a new model validation exception
         /// </summary>
-        public ModelValidationException(IEnumerable<IResultDetail> errors) : this(null, errors)
+        public ModelMapValidationException(IEnumerable<ValidationResultDetail> errors) : this(null, errors)
         {
         }
 
         /// <summary>
         /// Creates a new model validation exception
         /// </summary>
-        public ModelValidationException(String message, IEnumerable<IResultDetail> errors) : base(message)
+        public ModelMapValidationException(String message, IEnumerable<ValidationResultDetail> errors) : base(message, errors)
         {
-            this.ValidationDetails = errors;
         }
 
-
-        /// <summary>
-        /// The errors from validation
-        /// </summary>
-        public IEnumerable<IResultDetail> ValidationDetails { get; private set; }
 
     }
 }

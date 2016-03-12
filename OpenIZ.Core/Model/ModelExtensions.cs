@@ -16,10 +16,10 @@
  * User: fyfej
  * Date: 2016-1-24
  */
-using MARC.Everest.Connectors;
 using MARC.HI.EHRS.SVC.Core.Data;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.Core.Model.Map;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,20 +54,20 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Validates that this object has a target entity
         /// </summary>
-        public static IEnumerable<IResultDetail> Validate<TSourceType>(this VersionedAssociation<TSourceType> me) where TSourceType : VersionedEntityData<TSourceType>
+        public static IEnumerable<ValidationResultDetail> Validate<TSourceType>(this VersionedAssociation<TSourceType> me) where TSourceType : VersionedEntityData<TSourceType>
         {
-            var validResults = new List<IResultDetail>();
+            var validResults = new List<ValidationResultDetail>();
             if (me.SourceEntityKey == Guid.Empty)
-                validResults.Add(new RequiredElementMissingResultDetail(ResultDetailType.Error, String.Format("({0}).{1} required", me.GetType().Name, "SourceEntityKey"), null));
+                validResults.Add(new ValidationResultDetail(ResultDetailType.Error, String.Format("({0}).{1} required", me.GetType().Name, "SourceEntityKey"), null, null));
             return validResults;
         }
 
         /// <summary>
         /// Validate the state of this object
         /// </summary>
-        public static IEnumerable<IResultDetail> Validate(this IdentifiedData me)
+        public static IEnumerable<ValidationResultDetail> Validate(this IdentifiedData me)
         {
-            return new List<IResultDetail>();
+            return new List<ValidationResultDetail>();
         }
 
         /// <summary>

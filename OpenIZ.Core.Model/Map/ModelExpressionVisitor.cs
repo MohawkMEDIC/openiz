@@ -83,11 +83,12 @@ namespace OpenIZ.Core.Model.Map
                             MemberExpression memberExpression = node as MemberExpression;
                             if ((memberExpression.Expression as ParameterExpression)?.Name == this.m_originalParameter.Name)
                             {
-                                var memInfo = this.m_memberAccess.Type.GetMember(memberExpression.Member.Name, memberExpression.Member.MemberType, BindingFlags.Public | BindingFlags.Instance);
-                                if(memInfo.Length == 0)
+
+                                var memInfo = this.m_memberAccess.Type.GetRuntimeProperty(memberExpression.Member.Name);
+                                if(memInfo == null)
                                     return memberExpression;
                                 else
-                                    return Expression.MakeMemberAccess(this.m_memberAccess, memInfo.FirstOrDefault() ?? memberExpression.Member);
+                                    return Expression.MakeMemberAccess(this.m_memberAccess, memInfo ?? memberExpression.Member);
                             }
                             else
                                 return base.Visit(node);
@@ -185,7 +186,7 @@ namespace OpenIZ.Core.Model.Map
             Expression newBody = this.Visit(node.Body);
             if (newBody != node.Body)
             {
-                var parameters = this.VisitExpressionList(node.Parameters.OfType<Expression>().ToList().AsReadOnly()).OfType<ParameterExpression>().ToArray();
+                var parameters = this.VisitExpressionList(node.Parameters.OfType<Expression>().ToList()).OfType<ParameterExpression>().ToArray();
                 var lambdaType = node.Type;
                 if (lambdaType.GetGenericTypeDefinition() == typeof(Func<,>))
                     lambdaType = typeof(Func<,>).MakeGenericType(parameters.Select(p => p.Type).Union(new Type[] { newBody.Type }).ToArray());
@@ -221,7 +222,7 @@ namespace OpenIZ.Core.Model.Map
         /// <summary>
         /// Visit each expression in the args
         /// </summary>
-        protected virtual ReadOnlyCollection<Expression> VisitExpressionList(ReadOnlyCollection<Expression> args)
+        protected virtual ICollection<Expression> VisitExpressionList(ICollection<Expression> args)
         {
             List<Expression> retVal = new List<Expression>();
             bool isDifferent = false;
@@ -252,7 +253,7 @@ namespace OpenIZ.Core.Model.Map
                     retVal.Add(exp);
             }
             if (isDifferent)
-                return retVal.AsReadOnly();
+                return retVal;
             else
                 return args;
         }
@@ -265,7 +266,7 @@ namespace OpenIZ.Core.Model.Map
             Expression right = this.Visit(node.Right),
                 left = this.Visit(node.Left);
             // Are the types compatible?
-            if (!right.Type.IsAssignableFrom(left.Type))
+            if (!right.Type.GetTypeInfo().IsAssignableFrom(left.Type.GetTypeInfo()))
             {
                 // Convert
                 return Expression.MakeBinary(node.NodeType, left, Expression.Convert(right, left.Type));
@@ -309,7 +310,7 @@ namespace OpenIZ.Core.Model.Map
                 if (node.Expression.NodeType == ExpressionType.Convert)
                 {
                     UnaryExpression convertExpression = node.Expression as UnaryExpression;
-                    if (convertExpression.Type.IsAssignableFrom(convertExpression.Operand.Type))
+                    if (convertExpression.Type.GetTypeInfo().IsAssignableFrom(convertExpression.Operand.Type.GetTypeInfo()))
                         node = Expression.MakeMemberAccess(convertExpression.Operand, node.Member);
                 }
                 return this.m_mapper.MapModelMember(node, newExpression);

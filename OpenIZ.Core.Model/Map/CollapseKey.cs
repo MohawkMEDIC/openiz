@@ -22,7 +22,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using MARC.Everest.Connectors;
+using System.Reflection;
 
 namespace OpenIZ.Core.Model.Map
 {
@@ -48,17 +48,18 @@ namespace OpenIZ.Core.Model.Map
         /// <summary>
         /// Validate the collapse key
         /// </summary>
-        public IEnumerable<IResultDetail> Validate(Type domainClass)
+        public IEnumerable<ValidationResultDetail> Validate(Type domainClass)
         {
-            List<IResultDetail> retVal = new List<IResultDetail>();
-            if (domainClass?.GetProperty(this.PropertyName) == null)
+            List<ValidationResultDetail> retVal = new List<ValidationResultDetail>();
+            if (domainClass?.GetRuntimeProperty(this.PropertyName) == null)
                 retVal.Add(new ValidationResultDetail(ResultDetailType.Error, String.Format("({0}).{1} not found", domainClass?.Name, this.PropertyName), null, null));
-            if (domainClass?.GetProperty(this.KeyName) == null)
+            if (domainClass?.GetRuntimeProperty(this.KeyName) == null)
                 retVal.Add(new ValidationResultDetail(ResultDetailType.Error, String.Format("({0}).{1} not found", domainClass?.Name, this.KeyName), null, null));
-            if(domainClass?.GetProperty(this.KeyName)?.PropertyType != typeof(Guid) &&
-                domainClass?.GetProperty(this.KeyName)?.PropertyType != typeof(Guid?) &&
-                domainClass?.GetProperty(this.KeyName)?.PropertyType != typeof(Decimal) &&
-                domainClass?.GetProperty(this.KeyName)?.PropertyType != typeof(Decimal?))
+            var runtimeProperty = domainClass?.GetRuntimeProperty(this.KeyName);
+            if (runtimeProperty?.PropertyType != typeof(Guid) &&
+                runtimeProperty?.PropertyType != typeof(Guid?) &&
+                runtimeProperty?.PropertyType != typeof(Decimal) &&
+                runtimeProperty?.PropertyType != typeof(Decimal?))
                 retVal.Add(new ValidationResultDetail(ResultDetailType.Error, String.Format("({0}).{1} must be one of [Guid, Nullable<Guid>, Decimal, Nullable<Decimal>]", domainClass?.Name, this.KeyName), null, null));
             return retVal;
         }

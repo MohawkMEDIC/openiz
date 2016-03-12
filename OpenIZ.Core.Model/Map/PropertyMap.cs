@@ -18,11 +18,11 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using MARC.Everest.Connectors;
 
 namespace OpenIZ.Core.Model.Map
 {
@@ -59,28 +59,28 @@ namespace OpenIZ.Core.Model.Map
         /// <summary>
         /// Validate the property type
         /// </summary>
-        public IEnumerable<IResultDetail> Validate(Type modelClass, Type domainClass)
+        public IEnumerable<ValidationResultDetail> Validate(Type modelClass, Type domainClass)
         {
+            
+            if (domainClass?.IsConstructedGenericType == true)
+                domainClass = domainClass.GenericTypeArguments[0];
+            if (modelClass?.IsConstructedGenericType == true)
+                modelClass = modelClass.GenericTypeArguments[0];
 
-            if (domainClass?.IsGenericType == true)
-                domainClass = domainClass.GetGenericArguments()[0];
-            if (modelClass?.IsGenericType == true)
-                modelClass = modelClass.GetGenericArguments()[0];
-
-            List<IResultDetail> retVal = new List<IResultDetail>();
+            List<ValidationResultDetail> retVal = new List<ValidationResultDetail>();
             // 0. Property and model names should exist
             if (String.IsNullOrEmpty(this.DomainName))
-                retVal.Add(new RequiredElementMissingResultDetail(ResultDetailType.Error, "@domainName not set", null));
+                retVal.Add(new ValidationResultDetail(ResultDetailType.Error, "@domainName not set", null, null));
 
             // 1. The property should exist
-            if (!String.IsNullOrEmpty(this.ModelName) && modelClass?.GetProperty(this.ModelName ?? "") == null)
+            if (!String.IsNullOrEmpty(this.ModelName) && modelClass?.GetRuntimeProperty(this.ModelName ?? "") == null)
                 retVal.Add(new ValidationResultDetail(ResultDetailType.Error, String.Format("({0}).{1} not found", modelClass?.Name, this.ModelName), null, null));
-            if (domainClass?.GetProperty(this.DomainName ?? "") == null)
+            if (domainClass?.GetRuntimeProperty(this.DomainName ?? "") == null)
                 retVal.Add(new ValidationResultDetail(ResultDetailType.Error, String.Format("({0}).{1} not found", domainClass?.Name, this.DomainName), null, null));
 
             // 2. All property maps should exist
             if (this.Via != null)
-                retVal.AddRange(this.Via.Validate(modelClass?.GetProperty(this.ModelName ?? "")?.PropertyType ?? modelClass, domainClass?.GetProperty(this.DomainName)?.PropertyType));
+                retVal.AddRange(this.Via.Validate(modelClass?.GetRuntimeProperty(this.ModelName ?? "")?.PropertyType ?? modelClass, domainClass?.GetRuntimeProperty(this.DomainName)?.PropertyType));
 
             return retVal;
 

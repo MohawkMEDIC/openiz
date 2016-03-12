@@ -206,8 +206,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         private void ThrowIfInvalid(TModel storageData)
         {
             
-            IEnumerable<MARC.Everest.Connectors.IResultDetail> details = storageData.Validate();
-            if (details.Any(d => d.Type == MARC.Everest.Connectors.ResultDetailType.Error))
+            var details = storageData.Validate();
+            if (details.Any(d => d.Level == ResultDetailType.Error))
                 throw new ModelValidationException("Will not persist invalid model data", details);
         }
 

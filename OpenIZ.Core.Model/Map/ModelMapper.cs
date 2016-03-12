@@ -16,7 +16,6 @@
  * User: fyfej
  * Date: 2016-1-19
  */
-using MARC.Everest.Connectors;
 using OpenIZ.Core.Exceptions;
 using OpenIZ.Core.Model.Attributes;
 using System;
@@ -38,23 +37,9 @@ namespace OpenIZ.Core.Model.Map
     public sealed class ModelMapper
     {
 
-        // Model map source
-        private TraceSource m_traceSource = new TraceSource(OpenIzConstants.MapTraceSourceName);
-
         // The map file
         private ModelMap m_mapFile;
-
-        /// <summary>
-        /// Creates a new mapper from a file
-        /// </summary>
-        public ModelMapper(String mapFile)
-        {
-            using (FileStream fs = File.OpenRead(mapFile))
-            {
-                this.Load(fs);
-            }
-        }
-
+        
         /// <summary>
         /// Creates a new mapper from source stream
         /// </summary>
@@ -71,14 +56,14 @@ namespace OpenIZ.Core.Model.Map
             XmlSerializer xsz = new XmlSerializer(typeof(ModelMap));
             this.m_mapFile = xsz.Deserialize(sourceStream) as ModelMap;
             var validation = this.Validate(this.m_mapFile);
-            if (validation.Any(o => o.Type == ResultDetailType.Error))
+            if (validation.Any(o => o.Level == ResultDetailType.Error))
                 throw new ModelMapValidationException(validation);
         }
 
         /// <summary>
         /// Validate the map
         /// </summary>
-        public IEnumerable<IResultDetail> Validate(ModelMap map)
+        public IEnumerable<ValidationResultDetail> Validate(ModelMap map)
         {
             return map.Validate();
         }
@@ -99,18 +84,18 @@ namespace OpenIZ.Core.Model.Map
             PropertyMap propertyMap = null;
 
             if (memberExpression.Member.Name == "Key" && classMap.TryGetCollapseKey(accessExpressionAsMember?.Member.Name, out collapseKey))
-                return Expression.MakeMemberAccess(accessExpressionAsMember.Expression, accessExpressionAsMember.Expression.Type.GetProperty(collapseKey.KeyName));
+                return Expression.MakeMemberAccess(accessExpressionAsMember.Expression, accessExpressionAsMember.Expression.Type.GetRuntimeProperty(collapseKey.KeyName));
             else if (classMap.TryGetModelProperty(memberExpression.Member.Name, out propertyMap))
             {
                 // We have to map through an associative table
                 if(propertyMap.Via != null )
                 {
-                    MemberExpression viaExpression = Expression.MakeMemberAccess(accessExpression, accessExpression.Type.GetProperty(propertyMap.DomainName));
+                    MemberExpression viaExpression = Expression.MakeMemberAccess(accessExpression, accessExpression.Type.GetRuntimeProperty(propertyMap.DomainName));
                     var via = propertyMap.Via;
                     while (via != null)
                     {
                         
-                        MemberInfo viaMember = viaExpression.Type.GetProperty(via.DomainName);
+                        MemberInfo viaMember = viaExpression.Type.GetRuntimeProperty(via.DomainName);
                         if (viaMember == null)
                             break;
                         viaExpression = Expression.MakeMemberAccess(viaExpression, viaMember);
@@ -119,7 +104,7 @@ namespace OpenIZ.Core.Model.Map
                     return viaExpression;
                 }
                 else
-                    return Expression.MakeMemberAccess(accessExpression, this.ExtractDomainType(accessExpression.Type).GetProperty(propertyMap.DomainName));
+                    return Expression.MakeMemberAccess(accessExpression, this.ExtractDomainType(accessExpression.Type).GetRuntimeProperty(propertyMap.DomainName));
             }
             else
             {
@@ -127,7 +112,7 @@ namespace OpenIZ.Core.Model.Map
                 Type domainType = this.MapModelType(memberExpression.Expression.Type);
 
                 // Get domain member and map
-                MemberInfo domainMember = domainType.GetProperty(memberExpression.Member.Name);
+                MemberInfo domainMember = domainType.GetRuntimeProperty(memberExpression.Member.Name);
                 if (domainMember != null)
                     return Expression.MakeMemberAccess(accessExpression, domainMember);
                 else
@@ -140,9 +125,9 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         public Type ExtractDomainType(Type domainType)
         {
-            if (!domainType.IsGenericType) return domainType;
-            else if (domainType.GetGenericArguments().Length == 1)
-                return this.ExtractDomainType(domainType.GetGenericArguments()[0]);
+            if (!domainType.IsConstructedGenericType) return domainType;
+            else if (domainType.GenericTypeArguments.Length == 1)
+                return this.ExtractDomainType(domainType.GenericTypeArguments[0]);
             else
                 throw new InvalidOperationException("Cannot determine domain model type");
         }
@@ -183,7 +168,7 @@ namespace OpenIZ.Core.Model.Map
                 while (via != null)
                 {
 
-                    MemberInfo viaMember = viaExpression.Type.GetProperty(via.DomainName);
+                    MemberInfo viaMember = viaExpression.Type.GetRuntimeProperty(via.DomainName);
                     if (viaMember == null)
                         break;
                     viaExpression = Expression.MakeMemberAccess(viaExpression, viaMember);
@@ -208,12 +193,12 @@ namespace OpenIZ.Core.Model.Map
                 var parameter = Expression.Parameter(typeof(TTo), expression.Parameters[0].Name);
                 Expression expr = new ModelExpressionVisitor(this, parameter).Visit(expression.Body);
                 var retVal = Expression.Lambda<Func<TTo, bool>>(expr, parameter);
-                this.m_traceSource.TraceInformation("Map Expression: {0} > {1}", expression, retVal);
+                Debug.WriteLine("Map Expression: {0} > {1}", expression, retVal);
                 return retVal;
             }
             catch(Exception e)
             {
-                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, "Error converting {0}. {1}", expression, e.ToString());
+                Debug.WriteLine("Error converting {0}. {1}", expression, e.ToString());
                 throw;
             }
         }
@@ -230,7 +215,7 @@ namespace OpenIZ.Core.Model.Map
 
             // Now the property maps
             TDomain retVal = new TDomain();
-            foreach(var propInfo in typeof(TModel).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            foreach(var propInfo in typeof(TModel).GetRuntimeProperties())
             {
 
                 // Property info
@@ -238,8 +223,8 @@ namespace OpenIZ.Core.Model.Map
                     propInfo.GetValue(modelInstance) == null)
                     continue;
 
-                if (!propInfo.PropertyType.IsPrimitive && propInfo.PropertyType != typeof(Guid) &&
-                    (!propInfo.PropertyType.IsGenericType || propInfo.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) &&
+                if (!propInfo.PropertyType.GetTypeInfo().IsPrimitive && propInfo.PropertyType != typeof(Guid) &&
+                    (!propInfo.PropertyType.GetTypeInfo().IsGenericType || propInfo.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) &&
                     propInfo.PropertyType != typeof(String) &&
                     propInfo.PropertyType != typeof(DateTime) &&
                     propInfo.PropertyType != typeof(DateTimeOffset) &&
@@ -255,19 +240,19 @@ namespace OpenIZ.Core.Model.Map
 
                 // Set 
                 if (propMap == null)
-                    domainProperty = typeof(TDomain).GetProperty(propInfo.Name);
+                    domainProperty = typeof(TDomain).GetRuntimeProperty(propInfo.Name);
                 else
-                    domainProperty = typeof(TDomain).GetProperty(propMap.DomainName);
+                    domainProperty = typeof(TDomain).GetRuntimeProperty(propMap.DomainName);
 
                 object domainValue = null;
                     // Set value
                 if (domainProperty == null)
-                    this.m_traceSource.TraceInformation("Unmapped property ({0}).{1}", typeof(TModel).Name, propInfo.Name);
-                else if (domainProperty.PropertyType.IsAssignableFrom(propInfo.PropertyType))
+                    Debug.WriteLine("Unmapped property ({0}).{1}", typeof(TModel).Name, propInfo.Name);
+                else if (domainProperty.PropertyType.GetTypeInfo().IsAssignableFrom(propInfo.PropertyType.GetTypeInfo()))
                     domainProperty.SetValue(targetObject, propInfo.GetValue(modelInstance));
                 else if (propInfo.PropertyType == typeof(Type) && domainProperty.PropertyType == typeof(String))
                     domainProperty.SetValue(targetObject, (propInfo.GetValue(modelInstance) as Type).AssemblyQualifiedName);
-                else if (MARC.Everest.Connectors.Util.TryFromWireFormat(propInfo.GetValue(modelInstance), domainProperty.PropertyType, out domainValue))
+                else if (MapUtil.TryConvert(propInfo.GetValue(modelInstance), domainProperty.PropertyType, out domainValue))
                     domainProperty.SetValue(targetObject, domainValue);
 
             }
@@ -287,7 +272,7 @@ namespace OpenIZ.Core.Model.Map
 
             // Now the property maps
             TModel retVal = new TModel();
-            foreach (var propInfo in typeof(TDomain).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            foreach (var propInfo in typeof(TDomain).GetRuntimeProperties())
             {
 
                 // Map property
@@ -305,7 +290,7 @@ namespace OpenIZ.Core.Model.Map
                 }
                 catch(Exception e) // HACK: For some reason, some LINQ providers will return NULL on EntityReferences with no value
                 {
-                    this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                    Debug.WriteLine(e.ToString());
                 }
 
                 // Traversal stuff
@@ -315,10 +300,10 @@ namespace OpenIZ.Core.Model.Map
 
                 // Set 
                 if (propMap == null)
-                    modelProperty = typeof(TModel).GetProperty(propInfo.Name);
+                    modelProperty = typeof(TModel).GetRuntimeProperty(propInfo.Name);
                 else
                 {
-                    modelProperty = typeof(TModel).GetProperty(propMap.ModelName);
+                    modelProperty = typeof(TModel).GetRuntimeProperty(propMap.ModelName);
                     // Go through the via elements in the object map. This code traces a path 
                     // through the domain class instantiating any necessary associative entity
                     // classes. Example when a model entity is really two or three tables in the DB..
@@ -337,13 +322,13 @@ namespace OpenIZ.Core.Model.Map
                     foreach (var p in viaWalk.Select(o=>o).Reverse())
                     {
                         sourceObject = sourceProperty.GetValue(sourceObject);
-                        sourceProperty = this.ExtractDomainType(sourceProperty.PropertyType).GetProperty(p.DomainName);
+                        sourceProperty = this.ExtractDomainType(sourceProperty.PropertyType).GetRuntimeProperty(p.DomainName);
                     }
                 }
 
                 // validate property type
-                if (!sourceProperty.PropertyType.IsPrimitive && sourceProperty.PropertyType != typeof(Guid) &&
-                    (!sourceProperty.PropertyType.IsGenericType || sourceProperty.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) &&
+                if (!sourceProperty.PropertyType.GetTypeInfo().IsPrimitive && sourceProperty.PropertyType != typeof(Guid) &&
+                    (!sourceProperty.PropertyType.GetTypeInfo().IsGenericType || sourceProperty.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) &&
                     sourceProperty.PropertyType != typeof(String) &&
                     sourceProperty.PropertyType != typeof(DateTime) &&
                     sourceProperty.PropertyType != typeof(DateTimeOffset) &&
@@ -352,16 +337,17 @@ namespace OpenIZ.Core.Model.Map
 
 
                 // Set value
+                object pValue = null;
                 if (modelProperty == null)
-                    Trace.TraceInformation("Unmapped property ({0}).{1}", typeof(TDomain).Name, propInfo.Name);
+                    Debug.WriteLine("Unmapped property ({0}).{1}", typeof(TDomain).Name, propInfo.Name);
                 else if (modelProperty.GetCustomAttribute<DelayLoadAttribute>() != null)
                     continue;
-                else if (modelProperty.PropertyType.IsAssignableFrom(sourceProperty.PropertyType))
+                else if (modelProperty.PropertyType.GetTypeInfo().IsAssignableFrom(sourceProperty.PropertyType.GetTypeInfo()))
                     modelProperty.SetValue(retVal, sourceProperty.GetValue(sourceObject));
                 else if (sourceProperty.PropertyType == typeof(String) && modelProperty.PropertyType == typeof(Type))
                     modelProperty.SetValue(retVal, Type.GetType(sourceProperty.GetValue(sourceObject) as String));
-                else
-                    modelProperty.SetValue(retVal, MARC.Everest.Connectors.Util.FromWireFormat(sourceProperty.GetValue(sourceObject), modelProperty.PropertyType));
+                else if(MapUtil.TryConvert(sourceProperty.GetValue(sourceObject), modelProperty.PropertyType, out pValue))
+                    modelProperty.SetValue(retVal, pValue);
 
             }
 

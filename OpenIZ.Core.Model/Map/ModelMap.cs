@@ -22,7 +22,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using MARC.Everest.Connectors;
 
 namespace OpenIZ.Core.Model.Map
 {
@@ -65,9 +64,9 @@ namespace OpenIZ.Core.Model.Map
         /// <summary>
         /// Validate the map
         /// </summary>
-        public IEnumerable<IResultDetail> Validate()
+        public IEnumerable<ValidationResultDetail> Validate()
         {
-            List<IResultDetail> retVal = new List<IResultDetail>();
+            List<ValidationResultDetail> retVal = new List<ValidationResultDetail>();
             foreach(var cls in this.Class)
                 retVal.AddRange(cls.Validate());
             return retVal;

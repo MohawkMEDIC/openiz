@@ -22,7 +22,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using MARC.Everest.Connectors;
 
 namespace OpenIZ.Core.Model.Map
 {
@@ -89,9 +88,9 @@ namespace OpenIZ.Core.Model.Map
         /// <summary>
         /// Validate the class map
         /// </summary>
-        public IEnumerable<IResultDetail> Validate()
+        public IEnumerable<ValidationResultDetail> Validate()
         {
-            List<IResultDetail> retVal = new List<IResultDetail>();
+            List<ValidationResultDetail> retVal = new List<ValidationResultDetail>();
             Type modelClass = Type.GetType(this.ModelClass),
                 domainClass = Type.GetType(this.DomainClass);
             if (modelClass == null)
