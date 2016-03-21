@@ -16,6 +16,7 @@
  * User: fyfej
  * Date: 2016-1-24
  */
+using OpenIZ.Core.Model.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,16 +35,16 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Get the specified object
         /// </summary>
-        TObject Get<TObject>(Guid key);
+        TObject Get<TObject>(Guid key) where TObject : IdentifiedData;
 
         /// <summary>
         /// Get the specified object
         /// </summary>
-        TObject Get<TObject>(Guid key, Guid versionKey);
+        TObject Get<TObject>(Guid key, Guid versionKey) where TObject : IdentifiedData, IVersionedEntity;
 
         /// <summary>
         /// Query the specified data from the delay load provider
         /// </summary>
-        IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query);
+        IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData;
     }
 }

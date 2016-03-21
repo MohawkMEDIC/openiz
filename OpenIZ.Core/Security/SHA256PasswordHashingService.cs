@@ -37,7 +37,7 @@ namespace OpenIZ.Core.Security
         public string EncodePassword(string password)
         {
             SHA256 hasher = SHA256.Create();
-            return BitConverter.ToString(hasher.ComputeHash(Encoding.UTF8.GetBytes(password)));
+            return BitConverter.ToString(hasher.ComputeHash(Encoding.UTF8.GetBytes(password))).Replace("-","").ToLower();
         }
     }
 }

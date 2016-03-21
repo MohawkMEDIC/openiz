@@ -105,11 +105,11 @@ namespace OpenIZ.Core.Security.Claims
         /// </summary>
         public static List<Claim> ExtractClaims(NameValueCollection headers)
         {
-            var claimsHeaders = headers.GetValues(OpenIzConstants.BasicHttpClientClaimHeaderName);
+            var claimsHeaders = headers[OpenIzConstants.BasicHttpClientClaimHeaderName];
             if (claimsHeaders == null)
                 return new List<Claim>();
             else
-                return claimsHeaders.Select(o => Encoding.UTF8.GetString(Convert.FromBase64String(o)).Split('=')).Select(c => new Claim(c[0], c[1])).ToList();
+                return claimsHeaders.Split(',').Select(o => Encoding.UTF8.GetString(Convert.FromBase64String(o)).Split('=')).Select(c => new Claim(c[0], c[1])).ToList();
         } 
     }
 }

@@ -35,18 +35,21 @@ namespace OpenIZ.Core.Model.Map
         /// <returns></returns>
         internal static MethodInfo FindConverter(Type scanType, Type sourceType, Type destType)
         {
+
             MethodInfo retVal = null;
-            lock (scanType)
-                foreach (MethodInfo mi in scanType.GetRuntimeMethods())
-                    if (mi.GetParameters().Length == 2 &&
-                        (mi.ReturnType.GetTypeInfo().IsSubclassOf(destType) || destType == mi.ReturnType) &&
-                        mi.GetParameters()[0].ParameterType.FullName == sourceType.FullName &&
-                        mi.GetParameters()[1].ParameterType.FullName == typeof(IFormatProvider).FullName)
-                        retVal = mi;
-                    else if (mi.GetParameters().Length == 1 &&
-                        (mi.ReturnType.GetTypeInfo().IsSubclassOf(destType) || destType == mi.ReturnType) &&
-                        mi.GetParameters()[0].ParameterType.FullName == sourceType.FullName && retVal == null)
-                        retVal = mi;
+			lock (scanType) {
+				var rtm = scanType.GetRuntimeMethods ();
+				foreach (MethodInfo mi in rtm)
+					if (mi.GetParameters ().Length == 2 &&
+					                   (mi.ReturnType.GetTypeInfo ().IsSubclassOf (destType) || destType == mi.ReturnType) &&
+					                   mi.GetParameters () [0].ParameterType.FullName == sourceType.FullName &&
+					                   mi.GetParameters () [1].ParameterType.FullName == typeof(IFormatProvider).FullName)
+						retVal = mi;
+					else if (mi.GetParameters ().Length == 1 &&
+					                        (mi.ReturnType.GetTypeInfo ().IsSubclassOf (destType) || destType == mi.ReturnType) &&
+					                        mi.GetParameters () [0].ParameterType.FullName == sourceType.FullName && retVal == null)
+						retVal = mi;
+			}
             return retVal;
 
         }

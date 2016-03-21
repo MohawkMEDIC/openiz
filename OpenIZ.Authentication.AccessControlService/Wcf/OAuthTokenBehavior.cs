@@ -80,7 +80,10 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             // Password grant needs well formed scope
             Uri scope = null;
             if (String.IsNullOrWhiteSpace(tokenRequest["scope"]) || !Uri.TryCreate(tokenRequest["scope"], UriKind.Absolute, out scope))
+            {
+                this.m_traceSource.TraceEvent(TraceEventType.Warning, 0, "Scope:{0} is not well formed", tokenRequest["scope"]);
                 return this.CreateErrorCondition(OAuthErrorType.invalid_scope, "Password grant must have well known scope");
+            }
 
             IPrincipal clientPrincipal = ClaimsPrincipal.Current;
             

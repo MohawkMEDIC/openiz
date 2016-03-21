@@ -229,7 +229,8 @@ namespace OpenIZ.Core.Model.Map
                     propInfo.PropertyType != typeof(DateTime) &&
                     propInfo.PropertyType != typeof(DateTimeOffset) &&
                     propInfo.PropertyType != typeof(Type) &&
-                    propInfo.PropertyType != typeof(Decimal))
+                    propInfo.PropertyType != typeof(Decimal) &&
+					propInfo.PropertyType != typeof(byte[]))
                     continue;
 
                 // Map property
@@ -246,9 +247,16 @@ namespace OpenIZ.Core.Model.Map
 
                 object domainValue = null;
                     // Set value
-                if (domainProperty == null)
-                    Debug.WriteLine("Unmapped property ({0}).{1}", typeof(TModel).Name, propInfo.Name);
-                else if (domainProperty.PropertyType.GetTypeInfo().IsAssignableFrom(propInfo.PropertyType.GetTypeInfo()))
+				if (domainProperty == null)
+					Debug.WriteLine ("Unmapped property ({0}).{1}", typeof(TModel).Name, propInfo.Name);
+				else if (domainProperty.PropertyType == typeof(byte[]) && propInfo.PropertyType == typeof(Guid))
+					domainProperty.SetValue (targetObject, ((Guid)propInfo.GetValue (modelInstance)).ToByteArray ());
+				else if (
+					(domainProperty.PropertyType == typeof(DateTime) || domainProperty.PropertyType == typeof(DateTime?))
+					&& (propInfo.PropertyType == typeof(DateTimeOffset) || propInfo.PropertyType == typeof(DateTimeOffset?))) {
+					domainProperty.SetValue (targetObject, ((DateTimeOffset)propInfo.GetValue (modelInstance)).DateTime);
+				}
+				else if (domainProperty.PropertyType.GetTypeInfo().IsAssignableFrom(propInfo.PropertyType.GetTypeInfo()))
                     domainProperty.SetValue(targetObject, propInfo.GetValue(modelInstance));
                 else if (propInfo.PropertyType == typeof(Type) && domainProperty.PropertyType == typeof(String))
                     domainProperty.SetValue(targetObject, (propInfo.GetValue(modelInstance) as Type).AssemblyQualifiedName);
@@ -332,7 +340,8 @@ namespace OpenIZ.Core.Model.Map
                     sourceProperty.PropertyType != typeof(String) &&
                     sourceProperty.PropertyType != typeof(DateTime) &&
                     sourceProperty.PropertyType != typeof(DateTimeOffset) &&
-                    sourceProperty.PropertyType != typeof(Decimal))
+                    sourceProperty.PropertyType != typeof(Decimal) &&
+					sourceProperty.PropertyType != typeof(byte[]))
                     continue;
 
 
@@ -342,6 +351,8 @@ namespace OpenIZ.Core.Model.Map
                     Debug.WriteLine("Unmapped property ({0}).{1}", typeof(TDomain).Name, propInfo.Name);
                 else if (modelProperty.GetCustomAttribute<DelayLoadAttribute>() != null)
                     continue;
+				else if(sourceProperty.PropertyType == typeof(byte[]) && modelProperty.PropertyType == typeof(Guid)) // Guid to BA
+					modelProperty.SetValue(retVal, new Guid((byte[])sourceProperty.GetValue(sourceObject)));
                 else if (modelProperty.PropertyType.GetTypeInfo().IsAssignableFrom(sourceProperty.PropertyType.GetTypeInfo()))
                     modelProperty.SetValue(retVal, sourceProperty.GetValue(sourceObject));
                 else if (sourceProperty.PropertyType == typeof(String) && modelProperty.PropertyType == typeof(Type))

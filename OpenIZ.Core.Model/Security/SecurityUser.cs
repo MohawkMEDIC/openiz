@@ -128,7 +128,7 @@ namespace OpenIZ.Core.Model.Security
         /// The last login time
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        public DateTimeOffset LastLoginTime { get; set; }
+        public DateTimeOffset? LastLoginTime { get; set; }
        
         /// <summary>
         /// Gets or sets the creation time in XML format
@@ -136,7 +136,7 @@ namespace OpenIZ.Core.Model.Security
         [XmlElement("lastLoginTime"), JsonProperty("lastLoginTime")]
         public String LastLoginTimeXml
         {
-            get { return this.LastLoginTime.ToString("o", CultureInfo.InvariantCulture); }
+            get { return this.LastLoginTime?.ToString("o", CultureInfo.InvariantCulture); }
             set
             {
                 if (value != null)

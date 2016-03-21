@@ -156,6 +156,8 @@ namespace OpenIZ.Core.Model.Map
                     return this.VisitLambdaGeneric((LambdaExpression)node);
                 case ExpressionType.Convert:
                     return this.VisitConvert((UnaryExpression)node);
+                case ExpressionType.Constant:
+                    return this.VisitConstant((ConstantExpression)node);
                 default:
                     return base.Visit(node);
             }
@@ -173,6 +175,7 @@ namespace OpenIZ.Core.Model.Map
                 Type targetType = m_mapper.MapModelType(convert.Type);
                 if (targetType == convert.Type) // No map
                     return newOperand;
+                
                 return Expression.Convert(newOperand, targetType);
             }
             return convert;
@@ -268,7 +271,27 @@ namespace OpenIZ.Core.Model.Map
             // Are the types compatible?
             if (!right.Type.GetTypeInfo().IsAssignableFrom(left.Type.GetTypeInfo()))
             {
-                // Convert
+                // Convert byte[] <= Guid
+                if (right.Type == typeof(Guid) && left.Type == typeof(Byte[]))
+                {
+                    switch(right.NodeType)
+                    {
+                        case ExpressionType.MemberAccess:
+                            var memberExpr = (MemberExpression)right;
+                            var scope = ((ConstantExpression)memberExpr.Expression).Value;
+                            if (memberExpr.Member is FieldInfo)
+                                right = Expression.Constant(((Guid)(memberExpr.Member as FieldInfo).GetValue(scope)).ToByteArray());
+                            else if(memberExpr.Member is MethodInfo)
+                                right = Expression.Constant(((Guid)(memberExpr.Member as MethodInfo).Invoke(scope, null)).ToByteArray());
+                            else if(memberExpr.Member is PropertyInfo)
+                                right = Expression.Constant(((Guid)(memberExpr.Member as PropertyInfo).GetValue(scope)).ToByteArray());
+
+                            break;
+                        case ExpressionType.Constant:
+                            right = Expression.Constant(((Guid)((ConstantExpression)right).Value).ToByteArray());
+                            break;
+                    }
+                }
                 return Expression.MakeBinary(node.NodeType, left, Expression.Convert(right, left.Type));
             }
             else if (right != node.Right || left != node.Left)

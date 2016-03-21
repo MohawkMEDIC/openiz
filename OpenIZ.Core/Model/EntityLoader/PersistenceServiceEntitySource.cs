@@ -19,6 +19,7 @@
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Get the persistence service source
         /// </summary>
-        public TObject Get<TObject>(Guid key)
+        public TObject Get<TObject>(Guid key) where TObject : IdentifiedData
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>();
             if(persistenceService != null)
@@ -48,7 +49,7 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Get the specified version
         /// </summary>
-        public TObject Get<TObject>(Guid key, Guid versionKey)
+        public TObject Get<TObject>(Guid key, Guid versionKey) where TObject : IdentifiedData, IVersionedEntity
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>();
             if (persistenceService != null)
@@ -59,7 +60,7 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Query the specified object
         /// </summary>
-        public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query)
+        public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>();
             if(persistenceService != null)

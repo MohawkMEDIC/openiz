@@ -14,6 +14,7 @@ using System.Security;
 using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Core.Security;
 using MARC.HI.EHRS.SVC.Core.Services;
+using MARC.HI.EHRS.SVC.Core.Services.Security;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services
 {
@@ -46,7 +47,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
             {
                 Guid appId = Guid.Parse(applicationId);
-                var client = dataContext.SecurityApplications.SingleOrDefault(o => o.ApplicationId == appId && o.ApplicationSecret == applicationSecret);
+                IPasswordHashingService hashService = ApplicationContext.Current.GetService<IPasswordHashingService>();
+                var client = dataContext.SecurityApplications.SingleOrDefault(o => o.ApplicationId == appId && o.ApplicationSecret == hashService.EncodePassword(applicationSecret));
                 if (client == null)
                     throw new SecurityException("Invalid application credentials");
 
