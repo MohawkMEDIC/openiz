@@ -14,6 +14,7 @@ namespace OpenIZ.Core.Model.Map
     /// </summary>
     public static class MapUtil
     {
+        
         /// <summary>
         /// Flavor validation
         /// </summary>
@@ -25,6 +26,27 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         private static Dictionary<string, MethodInfo> s_wireMaps = new Dictionary<string, MethodInfo>();
         
+        /// <summary>
+        /// Register a map
+        /// </summary>
+        /// <param name="sourceType"></param>
+        /// <param name="destType"></param>
+        /// <param name="method"></param>
+        public static void RegisterMap(Type sourceType, Type destType, MethodInfo method)
+        {
+            lock(s_wireMaps)
+                s_wireMaps.Add(String.Format("{0}>{1}", sourceType, destType), method);
+        }
+
+        /// <summary>
+        /// Returns true if the maps contains 
+        /// </summary>
+        public static bool HasMap(Type sourceType, Type destType)
+        {
+            if (sourceType == null || destType == null) return false;
+
+            return s_wireMaps.ContainsKey(String.Format("{0}>{1}", sourceType, destType));
+        }
 
         /// <summary>
         /// Find the converter for the types specified

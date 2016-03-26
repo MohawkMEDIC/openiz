@@ -29,12 +29,12 @@ namespace OpenIZ.Core.Services
         /// <summary>
         /// Saves a reference term
         /// </summary>
-        Concept SaveReferenceTerm(ReferenceTerm term);
+        ReferenceTerm SaveReferenceTerm(ReferenceTerm term);
 
         /// <summary>
         /// Saves a concept class
         /// </summary>
-        Concept SaveConceptClass(ConceptClass clazz);
+        ConceptClass SaveConceptClass(ConceptClass clazz);
 
         /// <summary>
         /// Get the concept set by mnemonic
@@ -48,16 +48,26 @@ namespace OpenIZ.Core.Services
         Concept GetConcept(String mnemonic);
 
         /// <summary>
-        /// Performs an arbirary query 
+        /// Find concepts 
         /// </summary>
-        /// <param name="query">The query to execute</param>
+        /// <returns></returns>
         IEnumerable<Concept> FindConcepts(Expression<Func<Concept, bool>> query);
+
+        /// <summary>
+        /// Find concept set
+        /// </summary>
+        IEnumerable<ConceptSet> FindConceptSet(Expression<Func<ConceptSet, bool>> query);
 
         /// <summary>
         /// Find concepts 
         /// </summary>
         /// <returns></returns>
-        IEnumerable<Concept> FindConcepts(Expression<Func<Concept, bool>> query, int offset, int count, out int totalResults);
+        IEnumerable<Concept> FindConcepts(Expression<Func<Concept, bool>> query, int offset, int? count, out int totalResults);
+
+        /// <summary>
+        /// Find concept set
+        /// </summary>
+        IEnumerable<ConceptSet> FindConceptSet(Expression<Func<ConceptSet, bool>> query, int offset, int? count, out int totalResults);
 
         /// <summary>
         /// Finds a series of concepts by name

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Persistence", "Persistence", "{2914F4AD-4661-4C73-ADB6-B1D91C11C569}"
 EndProject
@@ -28,6 +28,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Auth", "Auth", "{0EE3D33B-99BE-4BED-A19C-93FD5086C60E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Authentication.OAuth2", "OpenIZ.Authentication.AccessControlService\OpenIZ.Authentication.OAuth2.csproj", "{A3975C6F-4FDB-43BE-81AB-3357B86173F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Messaging.FHIR", "OpenIZ.Messaging.FHIR\OpenIZ.Messaging.FHIR.csproj", "{33836324-C699-4139-AB9C-7524570A04D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +73,10 @@ Global
 		{A3975C6F-4FDB-43BE-81AB-3357B86173F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3975C6F-4FDB-43BE-81AB-3357B86173F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3975C6F-4FDB-43BE-81AB-3357B86173F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33836324-C699-4139-AB9C-7524570A04D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33836324-C699-4139-AB9C-7524570A04D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33836324-C699-4139-AB9C-7524570A04D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33836324-C699-4139-AB9C-7524570A04D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,5 +91,6 @@ Global
 		{B25778DB-97DA-4BA1-BF77-72838658B148} = {A1C82EDF-C27A-4A7A-A186-09E88BF63F36}
 		{F38ED54C-E4E4-499A-882E-736289F332C0} = {2914F4AD-4661-4C73-ADB6-B1D91C11C569}
 		{A3975C6F-4FDB-43BE-81AB-3357B86173F1} = {0EE3D33B-99BE-4BED-A19C-93FD5086C60E}
+		{33836324-C699-4139-AB9C-7524570A04D5} = {A1C82EDF-C27A-4A7A-A186-09E88BF63F36}
 	EndGlobalSection
 EndGlobal

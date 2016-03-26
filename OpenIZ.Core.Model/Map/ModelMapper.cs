@@ -223,16 +223,6 @@ namespace OpenIZ.Core.Model.Map
                     propInfo.GetValue(modelInstance) == null)
                     continue;
 
-                if (!propInfo.PropertyType.GetTypeInfo().IsPrimitive && propInfo.PropertyType != typeof(Guid) &&
-                    (!propInfo.PropertyType.GetTypeInfo().IsGenericType || propInfo.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) &&
-                    propInfo.PropertyType != typeof(String) &&
-                    propInfo.PropertyType != typeof(DateTime) &&
-                    propInfo.PropertyType != typeof(DateTimeOffset) &&
-                    propInfo.PropertyType != typeof(Type) &&
-                    propInfo.PropertyType != typeof(Decimal) &&
-					propInfo.PropertyType != typeof(byte[]))
-                    continue;
-
                 // Map property
                 PropertyMap propMap = null;
                 classMap.TryGetModelProperty(propInfo.Name, out propMap);
@@ -244,6 +234,18 @@ namespace OpenIZ.Core.Model.Map
                     domainProperty = typeof(TDomain).GetRuntimeProperty(propInfo.Name);
                 else
                     domainProperty = typeof(TDomain).GetRuntimeProperty(propMap.DomainName);
+
+                // Only map
+                if (!propInfo.PropertyType.GetTypeInfo().IsPrimitive && propInfo.PropertyType != typeof(Guid) &&
+                    (!propInfo.PropertyType.GetTypeInfo().IsGenericType || propInfo.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) &&
+                    propInfo.PropertyType != typeof(String) &&
+                    propInfo.PropertyType != typeof(DateTime) &&
+                    propInfo.PropertyType != typeof(DateTimeOffset) &&
+                    propInfo.PropertyType != typeof(Type) &&
+                    propInfo.PropertyType != typeof(Decimal) &&
+					propInfo.PropertyType != typeof(byte[]) &&
+                    !MapUtil.HasMap(propInfo.PropertyType, domainProperty.PropertyType))
+                    continue;
 
                 object domainValue = null;
                     // Set value
@@ -341,7 +343,8 @@ namespace OpenIZ.Core.Model.Map
                     sourceProperty.PropertyType != typeof(DateTime) &&
                     sourceProperty.PropertyType != typeof(DateTimeOffset) &&
                     sourceProperty.PropertyType != typeof(Decimal) &&
-					sourceProperty.PropertyType != typeof(byte[]))
+					sourceProperty.PropertyType != typeof(byte[]) &&
+                    !MapUtil.HasMap(sourceProperty?.PropertyType, modelProperty?.PropertyType))
                     continue;
 
 

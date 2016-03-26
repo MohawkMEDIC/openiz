@@ -83,7 +83,6 @@
     <Compile Include="Security\Wcf\BasicAuthorizationCredentialValidator.cs" />
     <Compile Include="Security\Wcf\JwtTokenAuthorizationPolicy.cs" />
     <Compile Include="Security\Wcf\JwtTokenServiceAuthorizationManager.cs" />
-    <Compile Include="Security\Wcf\UnauthorizedRequestException.cs" />
     <Compile Include="Services\IApplicationIdentityProviderService.cs" />
     <Compile Include="Services\IConceptService.cs" />
     <Compile Include="Services\IDeviceIdentityProviderService.cs" />

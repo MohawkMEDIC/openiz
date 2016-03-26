@@ -54,7 +54,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 return null;
 
             var concept = data as ConceptVersion;
-
+            
             var retVal = DataCache.Current.Get(concept.ConceptVersionId) as Core.Model.DataTypes.Concept;
             if (retVal == null)
             {

@@ -35,7 +35,7 @@ namespace OpenIZ.Core.Model.DataTypes
     [XmlType("ConceptSet", Namespace = "http://openiz.org/model")]
     [XmlRoot("ConceptSet", Namespace = "http://openiz.org/model")]
     [JsonObject("ConceptSet")]
-    public class ConceptSet : BaseEntityData
+    public class ConceptSet : NonVersionedEntityData
     {
 
         // Set members

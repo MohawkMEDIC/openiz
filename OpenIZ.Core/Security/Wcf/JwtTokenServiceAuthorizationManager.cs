@@ -1,4 +1,5 @@
 ﻿using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Exceptions;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Configuration;
 using System;

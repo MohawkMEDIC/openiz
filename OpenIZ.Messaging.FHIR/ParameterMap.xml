@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<QueryParameterType xmlns="http://openiz.org/model/fhir">
+  
+  <type model="OpenIZ.Core.Model.DataTypes.ConceptSet, OpenIZ.Core.Model, Version=1.0.0.0">
+    <map fhir="code" model="Concepts.Mnemonic"/>
+    <map fhir="date" model="CreationTime"/>
+    <map fhir="description" model="Name"/>
+    <map fhir="identifier" model="Oid" type="token"/>
+    <map fhir="name" model="Mnemonic"/>
+    <map fhir="url" model="Url" type="uri"/>
+    <map fhir="_lastUpdated" model="UpdatedTime"/>
+  </type>
+  
+</QueryParameterType>

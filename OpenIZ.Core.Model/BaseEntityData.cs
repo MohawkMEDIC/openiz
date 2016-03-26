@@ -43,12 +43,10 @@ namespace OpenIZ.Core.Model
         // Created by identifier
         private Guid m_createdById;
         // Created by
-        
         private SecurityUser m_createdBy;
         // Obsoleted by
         private Guid? m_obsoletedById;
         // Obsoleted by user
-        
         private SecurityUser m_obsoletedBy;
         
         /// <summary>
