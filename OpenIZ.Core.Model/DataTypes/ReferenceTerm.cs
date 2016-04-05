@@ -32,7 +32,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents a basic reference term
     /// </summary>
-    
+    [Classifier(nameof(Mnemonic))]
     [XmlType("ReferenceTerm",  Namespace = "http://openiz.org/model"), JsonObject("ReferenceTerm")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "ReferenceTerm")]
     public class ReferenceTerm : NonVersionedEntityData

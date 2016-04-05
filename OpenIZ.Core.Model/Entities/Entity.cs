@@ -36,7 +36,7 @@ namespace OpenIZ.Core.Model.Entities
     /// </summary>
     [XmlType("Entity",  Namespace = "http://openiz.org/model"), JsonObject("Entity")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Entity")]
-    
+    [Classifier(nameof(ClassConcept))]
     public class Entity : VersionedEntityData<Entity>
     {
 

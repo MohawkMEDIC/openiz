@@ -28,7 +28,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Display name of a code system or reference term
     /// </summary>
     [XmlType("ReferenceTermName",  Namespace = "http://openiz.org/model"), JsonObject("ReferenceTermName")]
-    
+    [Classifier(nameof(Language))]
     public abstract class ReferenceTermName : BaseEntityData
     {
 

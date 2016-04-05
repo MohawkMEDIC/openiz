@@ -29,7 +29,7 @@ namespace OpenIZ.Core.Model.Entities
     /// A generic class representing components of a larger item (i.e. address, name, etc);
     /// </summary>
     /// <typeparam name="TBoundModel"></typeparam>
-    
+    [Classifier(nameof(Type))]
     [XmlType(Namespace = "http://openiz.org/model")]
     public abstract class GenericComponentValues<TBoundModel> : Association<TBoundModel> where TBoundModel : IdentifiedData
     {
@@ -45,7 +45,7 @@ namespace OpenIZ.Core.Model.Entities
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("type"), JsonProperty("type")]
-        public Guid TypeKey
+        public Guid ComponentTypeKey
         {
             get { return this.m_componentTypeKey; }
             set
@@ -59,8 +59,8 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the type of address component
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(TypeKey))]
-        public Concept Type
+        [DelayLoad(nameof(ComponentTypeKey))]
+        public Concept ComponentType
         {
             get {
                 this.m_componentType = base.DelayLoad(this.m_componentTypeKey, this.m_componentType);

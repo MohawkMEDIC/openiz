@@ -28,7 +28,7 @@ namespace OpenIZ.Core.Model.Entities
     /// <summary>
     /// Represents an association between two entities
     /// </summary>
-    
+    [Classifier(nameof(RelationshipType))]
     [XmlType("EntityRelationship",  Namespace = "http://openiz.org/model"), JsonObject("EntityRelationship")]
     public class EntityRelationship : VersionedAssociation<Entity>
     {

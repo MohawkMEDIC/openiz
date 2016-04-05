@@ -17,6 +17,7 @@
  * Date: 2016-1-24
  */
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.Attributes;
 using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -26,6 +27,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Concept relationship type
     /// </summary>
+    [Classifier(nameof(Mnemonic))]
     [XmlRoot("ConceptRelationshipType", Namespace = "http://openiz.org/model")]
     [XmlType("ConceptRelationshipType",  Namespace = "http://openiz.org/model"), JsonObject("ConceptRelationshipType")]
     public class ConceptRelationshipType : NonVersionedEntityData

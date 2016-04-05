@@ -28,7 +28,6 @@ namespace OpenIZ.Core.Model.Entities
     /// <summary>
     /// A single address component
     /// </summary>
-    
     [XmlType("AddressComponent",  Namespace = "http://openiz.org/model"), JsonObject("AddressComponent")]
     public class EntityAddressComponent : GenericComponentValues<EntityAddress>
     {

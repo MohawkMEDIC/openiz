@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenIZ.Messaging.IMSI.Util;
 using System.Collections.Specialized;
 using OpenIZ.Core.Model.DataTypes;
 using System.Linq.Expressions;
 using OpenIZ.Core.Model.Security;
+using OpenIZ.Core.Model.Roles;
 
 namespace OpenIZ.Messaging.IMSI.Test
 {
@@ -105,7 +107,41 @@ namespace OpenIZ.Messaging.IMSI.Test
 
         }
 
+        /// <summary>
+        /// Test tht building of a simple AND & OR method
+        /// </summary>
+        [TestMethod]
+        public void TestAnyCondition()
+        {
 
+            var dtString = DateTime.Now;
+            Expression<Func<Patient, bool>> expected = (o => o.Names.Any(name => name.NameUse.Mnemonic == "L"));
+
+            var builder = new QueryParameterLinqExpressionBuilder();
+            NameValueCollection httpQueryParameters = new NameValueCollection();
+            httpQueryParameters.Add("name.use.mnemonic", "L");
+            var expr = builder.BuildLinqExpression<Patient>(httpQueryParameters);
+            Assert.AreEqual(expected.ToString(), expr.ToString());
+
+        }
+
+        /// <summary>
+        /// Test tht building of a simple AND & OR method
+        /// </summary>
+        [TestMethod]
+        public void TestGuardCondition()
+        {
+
+            var dtString = DateTime.Now;
+            String expected = "o => o.Names.Where(guard => (guard.NameUse.Mnemonic == \"L\")).Any(name => name.Component.Where(guard => (guard.Type == \"GIV\")).Any(component => (component.Value == \"John\")))";
+
+            var builder = new QueryParameterLinqExpressionBuilder();
+            NameValueCollection httpQueryParameters = new NameValueCollection();
+            httpQueryParameters.Add("name[L].component[GIV].value", "John");
+            var expr = builder.BuildLinqExpression<Patient>(httpQueryParameters);
+            Assert.AreEqual(expected, expr.ToString());
+
+        }
 
 
     }

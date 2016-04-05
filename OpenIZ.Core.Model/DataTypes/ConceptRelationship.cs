@@ -28,7 +28,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents a relationship between two concepts
     /// </summary>
-    
+    [Classifier(nameof(RelationshipType))]
     [XmlType("ConceptRelationship",  Namespace = "http://openiz.org/model"), JsonObject("ConceptRelationship")]
     public class ConceptRelationship : VersionedAssociation<Concept>
     {

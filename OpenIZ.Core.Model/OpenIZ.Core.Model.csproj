@@ -40,6 +40,7 @@
     <Compile Include="Acts\Observation.cs" />
     <Compile Include="Acts\PatientEncounter.cs" />
     <Compile Include="Acts\SubstanceAdministration.cs" />
+    <Compile Include="Attributes\ClassifierAttribute.cs" />
     <Compile Include="Attributes\DelayLoadAttribute.cs" />
     <Compile Include="BaseEntityData.cs" />
     <Compile Include="Association.cs" />

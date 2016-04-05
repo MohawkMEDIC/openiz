@@ -36,6 +36,7 @@ namespace OpenIZ.Core.Model.Acts
     /// </summary>
     [XmlType(Namespace ="http://openiz.org/model", TypeName ="Act")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Act")]
+    [Classifier(nameof(ClassConcept))]
     public class Act : VersionedEntityData<Act>
     {
 
