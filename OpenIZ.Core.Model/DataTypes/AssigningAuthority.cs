@@ -27,7 +27,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents a model class which is an assigning authority
     /// </summary>
-    
+    [Classifier(nameof(Oid))]
     [XmlType("AssigningAuthority",  Namespace = "http://openiz.org/model"), JsonObject("AssigningAuthority")]
     public  class AssigningAuthority : BaseEntityData
     {

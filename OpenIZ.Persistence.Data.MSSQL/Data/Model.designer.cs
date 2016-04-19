@@ -1842,7 +1842,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary ExtensionValue
 		{
 			get
@@ -12310,7 +12310,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary ExtensionValue
 		{
 			get
@@ -14513,9 +14513,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.Guid> _CreatedBy;
 		
-		private System.DateTimeOffset _CreationTimestamp;
+		private System.DateTimeOffset _CreationTime;
 		
-		private System.Nullable<System.DateTimeOffset> _ObsoletionTimestamp;
+		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
 		
 		private System.Nullable<System.Guid> _ObsoletedBy;
 		
@@ -14563,10 +14563,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnStatusConceptIdChanged();
     partial void OnCreatedByChanging(System.Nullable<System.Guid> value);
     partial void OnCreatedByChanged();
-    partial void OnCreationTimestampChanging(System.DateTimeOffset value);
-    partial void OnCreationTimestampChanged();
-    partial void OnObsoletionTimestampChanging(System.Nullable<System.DateTimeOffset> value);
-    partial void OnObsoletionTimestampChanged();
+    partial void OnCreationTimeChanging(System.DateTimeOffset value);
+    partial void OnCreationTimeChanged();
+    partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnObsoletionTimeChanged();
     partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
     partial void OnObsoletedByChanged();
     partial void OnTypeConceptIdChanging(System.Nullable<System.Guid> value);
@@ -14727,42 +14727,42 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTimestamp", DbType="DateTimeOffset NOT NULL")]
-		public System.DateTimeOffset CreationTimestamp
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", DbType="DateTimeOffset NOT NULL")]
+		public System.DateTimeOffset CreationTime
 		{
 			get
 			{
-				return this._CreationTimestamp;
+				return this._CreationTime;
 			}
 			set
 			{
-				if ((this._CreationTimestamp != value))
+				if ((this._CreationTime != value))
 				{
-					this.OnCreationTimestampChanging(value);
+					this.OnCreationTimeChanging(value);
 					this.SendPropertyChanging();
-					this._CreationTimestamp = value;
-					this.SendPropertyChanged("CreationTimestamp");
-					this.OnCreationTimestampChanged();
+					this._CreationTime = value;
+					this.SendPropertyChanged("CreationTime");
+					this.OnCreationTimeChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTimestamp", DbType="DateTimeOffset")]
-		public System.Nullable<System.DateTimeOffset> ObsoletionTimestamp
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> ObsoletionTime
 		{
 			get
 			{
-				return this._ObsoletionTimestamp;
+				return this._ObsoletionTime;
 			}
 			set
 			{
-				if ((this._ObsoletionTimestamp != value))
+				if ((this._ObsoletionTime != value))
 				{
-					this.OnObsoletionTimestampChanging(value);
+					this.OnObsoletionTimeChanging(value);
 					this.SendPropertyChanging();
-					this._ObsoletionTimestamp = value;
-					this.SendPropertyChanged("ObsoletionTimestamp");
-					this.OnObsoletionTimestampChanged();
+					this._ObsoletionTime = value;
+					this.SendPropertyChanged("ObsoletionTime");
+					this.OnObsoletionTimeChanged();
 				}
 			}
 		}

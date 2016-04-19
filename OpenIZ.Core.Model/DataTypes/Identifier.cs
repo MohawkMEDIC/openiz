@@ -55,7 +55,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents an external assigned identifier
     /// </summary>
     [XmlType(Namespace = "http://openiz.org/model")]
-    
+    [Classifier(nameof(Authority))]
     public abstract class IdentifierBase<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
     {
 

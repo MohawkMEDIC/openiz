@@ -25,73 +25,28 @@ using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using OpenIZ.Persistence.Data.MSSQL.Exceptions;
 using System.Collections.Generic;
+using System.Data.Linq;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
     /// <summary>
     /// Concept name persistence service
     /// </summary>
-    public class ConceptNamePersistenceService : BaseDataPersistenceService<Core.Model.DataTypes.ConceptName>
+    public class ConceptNamePersistenceService : VersionedAssociationPersistenceService<Core.Model.DataTypes.ConceptName, Core.Model.DataTypes.Concept, Data.ConceptName>
     {
         /// <summary>
-        /// Convert from model into domain class
+        /// Get the data table
         /// </summary>
-        internal override object ConvertFromModel(Core.Model.DataTypes.ConceptName model)
+        protected override Table<Data.ConceptName> GetDataTable(ModelDataContext context)
         {
-            return s_mapper.MapModelInstance<Core.Model.DataTypes.ConceptName, Data.ConceptName>(model);
-        }
-
-        /// <summary>
-        /// Convert from domain to model
-        /// </summary>
-        internal override Core.Model.DataTypes.ConceptName ConvertToModel(object data)
-        {
-            return this.ConvertToModel(data as Data.ConceptName);
-        }
-
-        /// <summary>
-        /// Convert to model
-        /// </summary>
-        internal Core.Model.DataTypes.ConceptName ConvertToModel(Data.ConceptName data)
-        {
-            return this.ConvertItem(data);
-
-        }
-
-        /// <summary>
-        /// Get the specified concept name
-        /// </summary>
-        internal override Core.Model.DataTypes.ConceptName Get(Identifier<Guid> containerId, IPrincipal principal, bool loadFast, ModelDataContext dataContext)
-        {
-            var domainConceptName = dataContext.ConceptNames.SingleOrDefault(o => o.ConceptNameId == containerId.Id);
-            if (domainConceptName == null)
-                return null;
-            else
-                return this.ConvertToModel(domainConceptName);
-
-        }
-
-        /// <summary>
-        /// Insert component name
-        /// </summary>
-        internal override Core.Model.DataTypes.ConceptName Insert(Core.Model.DataTypes.ConceptName storageData, IPrincipal principal, ModelDataContext dataContext)
-        {
-            return this.Insert(storageData, principal, dataContext, true);
+            return context.ConceptNames;
         }
 
         /// <summary>
         /// Insert a concept name
         /// </summary>
-        internal Core.Model.DataTypes.ConceptName Insert(Core.Model.DataTypes.ConceptName storageData, IPrincipal principal, ModelDataContext dataContext, bool newVersion)
+        internal override Core.Model.DataTypes.ConceptName Insert(Core.Model.DataTypes.ConceptName storageData, IPrincipal principal, ModelDataContext dataContext, bool newVersion)
         {
-            // Verify data
-            if (storageData.Key != Guid.Empty)
-                throw new SqlFormalConstraintException(SqlFormalConstraintType.IdentityInsert);
-            else if (principal == null)
-                throw new ArgumentNullException(nameof(principal));
-            else if (storageData.SourceEntityKey == Guid.Empty)
-                throw new SqlFormalConstraintException(SqlFormalConstraintType.AssociatedEntityWithoutSourceKey);
-
             var domainConceptName = this.ConvertFromModel(storageData) as Data.ConceptName;
 
             // Ensure traversable properties exist if they're objects
@@ -118,17 +73,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         }
 
         /// <summary>
-        /// Obsolete specified component name
-        /// </summary>
-        internal override Core.Model.DataTypes.ConceptName Obsolete(Core.Model.DataTypes.ConceptName storageData, IPrincipal principal, ModelDataContext dataContext)
-        {
-            return this.Obsolete(storageData, principal, dataContext, true);
-        }
-
-        /// <summary>
         /// Obsolete the specified concept name
         /// </summary>
-        internal Core.Model.DataTypes.ConceptName Obsolete(Core.Model.DataTypes.ConceptName storageData, IPrincipal principal, ModelDataContext dataContext, bool newVersion)
+        internal override Core.Model.DataTypes.ConceptName Obsolete(Core.Model.DataTypes.ConceptName storageData, IPrincipal principal, ModelDataContext dataContext, bool newVersion)
         {
             if (storageData.Key == Guid.Empty)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.NonIdentityUpdate);
@@ -158,27 +105,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         }
 
         /// <summary>
-        /// Query a concept name
-        /// </summary>
-        internal override IQueryable<Core.Model.DataTypes.ConceptName> Query(Expression<Func<Core.Model.DataTypes.ConceptName, bool>> query, IPrincipal principal, ModelDataContext dataContext)
-        {
-            var domainQuery = s_mapper.MapModelExpression<Core.Model.DataTypes.ConceptName, Data.ConceptName>(query);
-            return dataContext.ConceptNames.Where(domainQuery).Select(o => this.ConvertToModel(o));
-        }
-
-        /// <summary>
-        /// Update concept name 
-        /// </summary>
-        internal override Core.Model.DataTypes.ConceptName Update(Core.Model.DataTypes.ConceptName storageData, IPrincipal principal, ModelDataContext dataContext)
-        {
-            return this.Update(storageData, principal, dataContext, true);
-        }
-
-        /// <summary>
         /// Update the concept name. An update occurs by creating (if necessary) a new version of the concept 
         /// to which the name is associated and obsoleting the old record
         /// </summary>
-        internal Core.Model.DataTypes.ConceptName Update(Core.Model.DataTypes.ConceptName storageData, IPrincipal principal, ModelDataContext dataContext, bool newVersion)
+        internal override Core.Model.DataTypes.ConceptName Update(Core.Model.DataTypes.ConceptName storageData, IPrincipal principal, ModelDataContext dataContext, bool newVersion)
         {
             if (principal == null)
                 throw new ArgumentNullException(nameof(principal));

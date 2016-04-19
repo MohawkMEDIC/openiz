@@ -31,7 +31,7 @@ namespace OpenIZ.Core.Model.Entities
     /// <summary>
     /// Entity address
     /// </summary>
-    
+    [Classifier(nameof(AddressUse))]
     [XmlType("EntityAddress",  Namespace = "http://openiz.org/model"), JsonObject("EntityAddress")]
     public class EntityAddress : VersionedAssociation<Entity>
     {
@@ -48,7 +48,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the address use key
         /// </summary>
-        [XmlElement("addressUse"), JsonProperty("addressUse")]
+        [XmlElement("use"), JsonProperty("use")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         public Guid? AddressUseKey

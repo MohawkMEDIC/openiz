@@ -28,7 +28,7 @@ namespace OpenIZ.Core.Model.Entities
     /// <summary>
     /// Represents an entity telecom address
     /// </summary>
-    
+    [Classifier(nameof(AddressUse))]
     [XmlType("EntityTelecomAddress",  Namespace = "http://openiz.org/model"), JsonObject("EntityTelecomAddress")]
     public class EntityTelecomAddress : VersionedAssociation<Entity>
     {
@@ -42,7 +42,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the name use key
         /// </summary>
-        [XmlElement("addressUse"), JsonProperty("addressUse")]
+        [XmlElement("use"), JsonProperty("use")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         public Guid? AddressUseKey

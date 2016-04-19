@@ -34,6 +34,7 @@ namespace OpenIZ.Core.Model.DataTypes
     
     [XmlType("Concept",  Namespace = "http://openiz.org/model"), JsonObject("Concept")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Concept")]
+    [Classifier(nameof(Mnemonic))]
     public class Concept : VersionedEntityData<Concept>
     {
 
@@ -89,7 +90,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [DelayLoad(nameof(StatusConceptKey))]
         [XmlIgnore, JsonIgnore]
-        public Concept Status
+        public Concept StatusConcept
         {
             get
             {

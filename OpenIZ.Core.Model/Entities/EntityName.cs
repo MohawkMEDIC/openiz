@@ -25,13 +25,14 @@ using System.Xml.Serialization;
 using System.Linq;
 using OpenIZ.Core.Model.EntityLoader;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Core.Model.Entities
 {
     /// <summary>
     /// Represents a name for an entity
     /// </summary>
-    
+    [Classifier(nameof(NameUse))]
     [XmlType("EntityName",  Namespace = "http://openiz.org/model"), JsonObject("EntityName")]
     public class EntityName : VersionedAssociation<Entity>
     {
@@ -45,9 +46,45 @@ namespace OpenIZ.Core.Model.Entities
         private List<EntityNameComponent> m_nameComponents;
 
         /// <summary>
+        /// Creates a new name
+        /// </summary>
+        public EntityName(Guid nameUse, String family, params String[] given)
+        {
+            this.m_nameUseKey = nameUse;
+            this.m_nameComponents = new List<EntityNameComponent>();
+
+            if (!String.IsNullOrEmpty(family))
+                this.m_nameComponents.Add(new EntityNameComponent(NameComponentKeys.Family, family));
+            foreach (var nm in given)
+                this.m_nameComponents.Add(new EntityNameComponent(NameComponentKeys.Given, nm));
+        }
+
+        /// <summary>
+        /// Creates a new simple name
+        /// </summary>
+        /// <param name="nameUse"></param>
+        /// <param name="name"></param>
+        public EntityName(Guid nameUse, String name)
+        {
+            this.m_nameUseKey = nameUse;
+            this.m_nameComponents = new List<EntityNameComponent>()
+            {
+                new EntityNameComponent(name)
+            };
+        }
+
+        /// <summary>
+        /// Default ctor
+        /// </summary>
+        public EntityName()
+        {
+
+        }
+
+        /// <summary>
         /// Gets or sets the name use key
         /// </summary>
-        [XmlElement("nameUse"), JsonProperty("nameUse")]
+        [XmlElement("use"), JsonProperty("use")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         public Guid? NameUseKey
@@ -90,6 +127,10 @@ namespace OpenIZ.Core.Model.Entities
                 if (this.IsDelayLoadEnabled)
                     this.m_nameComponents = EntitySource.Current.GetRelations(this.Key, this.m_nameComponents);
                 return this.m_nameComponents;
+            }
+            set
+            {
+                this.m_nameComponents = value;
             }
         }
 

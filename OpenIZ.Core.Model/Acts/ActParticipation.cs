@@ -33,7 +33,7 @@ namespace OpenIZ.Core.Model.Acts
     /// <summary>
     /// Associates an entity which participates in an act
     /// </summary>
-    
+    [Classifier(nameof(ParticipationRole))]
     [XmlType(Namespace = "http://openiz.org/model", TypeName = "ActParticipation")]
     public class ActParticipation : VersionedAssociation<Act>
     {

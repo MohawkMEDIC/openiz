@@ -64,7 +64,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 if (retVal != null && concept.Concept != null)
                 {
                     retVal.IsSystemConcept = concept.Concept.IsSystemConcept;
-                    retVal.Status = base.ConvertItem(concept.StatusConcept.ConceptVersions.SingleOrDefault(o => o.ObsoletionTime == null));
+                    retVal.StatusConcept = base.ConvertItem(concept.StatusConcept.ConceptVersions.SingleOrDefault(o => o.ObsoletionTime == null));
                     retVal.Class = s_mapper.MapDomainInstance<Data.ConceptClass, Core.Model.DataTypes.ConceptClass>(concept.ConceptClass);
                     // Concept delay load
                     retVal.SetDelayLoadProperties(
@@ -85,7 +85,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var retVal = this.ConvertToModel(data);
             if(retVal != null)
                 retVal.IsSystemConcept = concept.IsSystemConcept;
-            retVal.Status = this.ConvertToModel(status);
+            retVal.StatusConcept = this.ConvertToModel(status);
             retVal.Class = s_mapper.MapDomainInstance<Data.ConceptClass, Core.Model.DataTypes.ConceptClass>(clazz);
             
             return retVal;
@@ -118,13 +118,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         internal override Core.Model.DataTypes.Concept Insert(Core.Model.DataTypes.Concept storageData, IPrincipal principal, ModelDataContext dataContext)
         {
-            if (storageData.Key != Guid.Empty)
-                throw new SqlFormalConstraintException(SqlFormalConstraintType.IdentityInsert);
-            else if (storageData == null)
-                throw new ArgumentNullException(nameof(storageData));
-            else if (principal == null)
-                throw new ArgumentNullException(nameof(principal));
-
+            
             // Store the data
             var dataConceptVersion = this.ConvertFromModel(storageData) as Data.ConceptVersion;
             dataConceptVersion.Concept = new Data.Concept() { IsSystemConcept = storageData.IsSystemConcept };
