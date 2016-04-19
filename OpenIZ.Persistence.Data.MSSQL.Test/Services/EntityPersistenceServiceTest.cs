@@ -84,7 +84,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 
             var afterTest = base.DoTestInsert(strawberry, s_authorization);
             Assert.AreEqual(1, afterTest.Names.Count);
-            Assert.AreEqual(DeterminerKeys.Described, afterTest.DeterminerConceptKey);
+            Assert.AreEqual(DeterminerKeys.Specific, afterTest.DeterminerConceptKey);
             Assert.AreEqual(EntityClassKeys.Food, afterTest.ClassConceptKey);
             Assert.IsTrue(afterTest.Names.Exists(o => o.Component.Exists(c => c.Value == "Strawberries")));
             Assert.AreEqual(1, afterTest.Addresses.Count);
