@@ -136,25 +136,23 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Concept names
             if (storageData.ConceptNames != null)
-            {
-                ConceptNamePersistenceService namePersister = new ConceptNamePersistenceService();
-                foreach (var cn in storageData.ConceptNames)
-                {
-                    cn.SourceEntityKey = dataConceptVersion.ConceptId; // Ohhh... The year was 1778
-                    namePersister.Insert(cn, principal, dataContext, false); // How I wish I was in sherbrooke now!!!
-                }
-            }
+                base.UpdateAssociatedItems<Core.Model.DataTypes.ConceptName, Core.Model.DataTypes.Concept, Data.ConceptName>(
+                    new List<Core.Model.DataTypes.ConceptName>(),
+                    storageData.ConceptNames,
+                    dataConceptVersion.ConceptId,
+                    principal,
+                    dataContext
+                );
 
             // Reference terms
             if (storageData.ReferenceTerms != null)
-            {
-                ConceptReferenceTermPersistenceService referencePersister = new ConceptReferenceTermPersistenceService();
-                foreach (var rt in storageData.ReferenceTerms)
-                {
-                    rt.SourceEntityKey = dataConceptVersion.ConceptId; // Oh Elcid Barrett cried the town!!!
-                    referencePersister.Insert(rt, principal, dataContext, false); // How I wish I was in sherbrooke now!!!
-                }
-            }
+                base.UpdateAssociatedItems<Core.Model.DataTypes.ConceptReferenceTerm, Core.Model.DataTypes.Concept, Data.ConceptReferenceTerm>(
+                    new List<Core.Model.DataTypes.ConceptReferenceTerm>(),
+                    storageData.ReferenceTerms,
+                    dataConceptVersion.ConceptId,
+                    principal,
+                    dataContext
+                );
 
             // Storage data 
             //if (storageData.Relationship != null)
@@ -164,7 +162,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             //    {
             //        rel.EffectiveVersionSequenceId = storageData.VersionSequence;
             //        rel.SourceEntityKey = storageData.Key; // The Antelope's sloop wa a sickening sight
-            //        relationshipPersister.Insert(rel, principal, dataContext); // How I wish I was in sherbrooke now!!!
+            //        relationshipPersister.Insert(rel, principal, dataContext, false); // How I wish I was in sherbrooke now!!!
             //    }
             //}
 
@@ -260,55 +258,24 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // First thing, we want to remove any names that no longer appear in the storageData and/or update those 
             if (storageData.ConceptNames != null)
-            {
-                var existingNames = domainConceptVersion.Concept.ConceptNames.Where(o => oldVersionSequenceId >= o.EffectiveVersionSequenceId && o.ObsoleteVersionSequenceId == null).Select(o => cnPersistenceService.ConvertToModel(o)).ToList(); // active names
-
-                // Remove old
-                var obsoleteRecords = existingNames.Where(o => !storageData.ConceptNames.Exists(ecn => ecn.Key == o.Key));
-                foreach (var del in obsoleteRecords)
-                    cnPersistenceService.Obsolete(del, principal, dataContext, false);
-
-                // Update those that need it
-                var updateRecords = storageData.ConceptNames.Where(o => existingNames.Exists(ecn => ecn.Key == o.Key && o != ecn));
-                foreach(var upd in updateRecords)
-                    cnPersistenceService.Update(upd, principal, dataContext, false);
-
-                // Insert those that do not exist
-                var insertRecords = storageData.ConceptNames.Where(o => !existingNames.Exists(ecn => ecn.Key == o.Key));
-                foreach (var ins in insertRecords)
-                {
-                    ins.SourceEntityKey = domainConceptVersion.ConceptId;
-                    cnPersistenceService.Insert(ins, principal, dataContext, false);
-                }
-
-
-            }
+                base.UpdateAssociatedItems<Core.Model.DataTypes.ConceptName, Core.Model.DataTypes.Concept, Data.ConceptName>(
+                    domainConceptVersion.Concept.ConceptNames.Where(o => oldVersionSequenceId >= o.EffectiveVersionSequenceId && o.ObsoleteVersionSequenceId == null).Select(o => cnPersistenceService.ConvertToModel(o)).ToList(),
+                    storageData.ConceptNames,
+                    domainConceptVersion.ConceptId,
+                    principal,
+                    dataContext
+                    );
 
             // Next thing, we want to remove any reference terms that no longer appear
             if (storageData.ReferenceTerms != null)
-            {
-                var existingTerms = domainConceptVersion.Concept.ConceptReferenceTerms.Where(o => oldVersionSequenceId >= o.EffectiveVersionSequenceId && o.ObsoleteVersionSequenceId == null).Select(o => rtPersistenceService.ConvertToModel(o)).ToList(); // active names
-
-                // Remove old
-                var obsoleteRecords = existingTerms.Where(o => !storageData.ReferenceTerms.Exists(ecn => ecn.Key == o.Key));
-                foreach (var del in obsoleteRecords)
-                    rtPersistenceService.Obsolete(del, principal, dataContext, false);
-
-                // Update those that need it
-                var updateRecords = storageData.ReferenceTerms.Where(o => existingTerms.Exists(ecn => ecn.Key == o.Key && o != ecn));
-                foreach (var upd in updateRecords)
-                    rtPersistenceService.Update(upd, principal, dataContext, false);
-
-                // Insert those that do not exist
-                var insertRecords = storageData.ReferenceTerms.Where(o => !existingTerms.Exists(ecn => ecn.Key == o.Key));
-                foreach (var ins in insertRecords)
-                {
-                    ins.SourceEntityKey = domainConceptVersion.ConceptId;
-                    rtPersistenceService.Insert(ins, principal, dataContext, false);
-                }
-
-
-            }
+                base.UpdateAssociatedItems<Core.Model.DataTypes.ConceptReferenceTerm, Core.Model.DataTypes.Concept, Data.ConceptReferenceTerm>(
+                   domainConceptVersion.Concept.ConceptReferenceTerms.Where(o => oldVersionSequenceId >= o.EffectiveVersionSequenceId && o.ObsoleteVersionSequenceId == null).Select(o => rtPersistenceService.ConvertToModel(o)).ToList(),
+                   storageData.ReferenceTerms,
+                   domainConceptVersion.ConceptId,
+                   principal,
+                   dataContext
+                   );
+           
 
             var retVal = this.ConvertToModel(domainConceptVersion);
             return retVal;

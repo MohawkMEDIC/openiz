@@ -552,6 +552,37 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         }
         
         /// <summary>
+        /// Existing item
+        /// </summary>
+        protected void UpdateAssociatedItems<TAssociation, TModelEx, TDomain>(List<TAssociation> existing, List<TAssociation> storage, Guid sourceKey, IPrincipal principal, ModelDataContext dataContext)
+            where TDomain : class, new()
+            where TAssociation : VersionedAssociation<TModelEx>, new()
+            where TModelEx : VersionedEntityData<TModelEx>
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAssociation>>() as VersionedAssociationPersistenceService<TAssociation, TModelEx, TDomain>;
+
+            // Remove old
+            var obsoleteRecords = existing.Where(o => !storage.Exists(ecn => ecn.Key == o.Key));
+            foreach (var del in obsoleteRecords)
+                persistenceService.Obsolete(del, principal, dataContext, false);
+
+            // Update those that need it
+            var updateRecords = storage.Where(o => existing.Any(ecn => ecn.Key == o.Key && o != ecn));
+            foreach (var upd in updateRecords)
+                persistenceService.Update(upd, principal, dataContext, false);
+
+            // Insert those that do not exist
+            var insertRecords = storage.Where(o => !existing.Any(ecn => ecn.Key == o.Key));
+            foreach (var ins in insertRecords)
+            {
+                ins.SourceEntityKey = sourceKey;
+                persistenceService.Insert(ins, principal, dataContext, false);
+            }
+
+
+        }
+
+        /// <summary>
         /// Convert a data type into the model class
         /// </summary>
         /// <param name="data">The data instance to be converted</param>

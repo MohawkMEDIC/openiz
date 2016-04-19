@@ -133,24 +133,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Ensure that the addresses / names / etc for the entity exist
             if (storageData.Addresses != null)
-            {
-                EntityAddressPersistenceService eaps = new EntityAddressPersistenceService();
-                foreach (var ad in storageData.Addresses)
-                {
-                    ad.SourceEntityKey = domainValue.EntityId;
-                    eaps.Insert(ad, principal, dataContext, false);
-                }
-            }
-
+                base.UpdateAssociatedItems<Core.Model.Entities.EntityAddress, Core.Model.Entities.Entity, Data.EntityAddress>(
+                    new List<Core.Model.Entities.EntityAddress>(),
+                    storageData.Addresses,
+                    domainValue.EntityId,
+                    principal,
+                    dataContext
+                    );
             if (storageData.Names != null)
-            {
-                EntityNamePersistenceService enps = new EntityNamePersistenceService();
-                foreach (var nm in storageData.Names)
-                {
-                    nm.SourceEntityKey = domainValue.EntityId;
-                    enps.Insert(nm, principal, dataContext, false);
-                }
-            }
+                base.UpdateAssociatedItems<Core.Model.Entities.EntityName, Core.Model.Entities.Entity, Data.EntityName>(
+                    new List<Core.Model.Entities.EntityName>(),
+                    storageData.Names,
+                    domainValue.EntityId,
+                    principal,
+                    dataContext
+                    );
+           
 
             return storageData;
             

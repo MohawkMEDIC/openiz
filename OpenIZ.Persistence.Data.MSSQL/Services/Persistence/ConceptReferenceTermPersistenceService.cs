@@ -25,58 +25,29 @@ using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using OpenIZ.Persistence.Data.MSSQL.Exceptions;
 using System.Collections.Generic;
+using System.Data.Linq;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
     /// <summary>
     /// Concept reference terms persistence service
     /// </summary> 
-    public class ConceptReferenceTermPersistenceService : BaseDataPersistenceService<Core.Model.DataTypes.ConceptReferenceTerm>
+    public class ConceptReferenceTermPersistenceService : VersionedAssociationPersistenceService<Core.Model.DataTypes.ConceptReferenceTerm, Core.Model.DataTypes.Concept, Data.ConceptReferenceTerm>
     {
         /// <summary>
-        /// Convert the reference term from model to domain model
+        /// Gets the datatables
         /// </summary>
-        internal override object ConvertFromModel(Core.Model.DataTypes.ConceptReferenceTerm model)
+        /// <param name="context"></param>
+        /// <returns></returns>
+        protected override Table<Data.ConceptReferenceTerm> GetDataTable(ModelDataContext context)
         {
-            return s_mapper.MapModelInstance<Core.Model.DataTypes.ConceptReferenceTerm, Data.ConceptReferenceTerm>(model);
-        }
-
-        /// <summary>
-        /// Convert to model
-        /// </summary>
-        internal override Core.Model.DataTypes.ConceptReferenceTerm ConvertToModel(object data)
-        {
-            return this.ConvertToModel(data as Data.ConceptReferenceTerm);
-        }
-
-        /// <summary>
-        /// Convert to model
-        /// </summary>
-        internal Core.Model.DataTypes.ConceptReferenceTerm ConvertToModel(Data.ConceptReferenceTerm data)
-        {
-            return this.ConvertItem(data);
-        }
-
-        /// <summary>
-        /// Get the specified reference term association
-        /// </summary>
-        internal override Core.Model.DataTypes.ConceptReferenceTerm Get(Identifier<Guid> containerId, IPrincipal principal, bool loadFast, ModelDataContext dataContext)
-        {
-            return this.ConvertToModel(dataContext.ConceptReferenceTerms.SingleOrDefault(o => o.ConceptReferenceTermId == containerId.Id));
-        }
-
-        /// <summary>
-        /// Inserts specified reference term creating version 
-        /// </summary>
-        internal override Core.Model.DataTypes.ConceptReferenceTerm Insert(Core.Model.DataTypes.ConceptReferenceTerm storageData, IPrincipal principal, ModelDataContext dataContext)
-        {
-            return this.Insert(storageData, principal, dataContext, true);
+            return context.ConceptReferenceTerms;
         }
 
         /// <summary>
         /// Insert a concept reference term
         /// </summary>
-        internal Core.Model.DataTypes.ConceptReferenceTerm Insert(Core.Model.DataTypes.ConceptReferenceTerm storageData, IPrincipal principal, ModelDataContext dataContext, bool newVersion)
+        internal override Core.Model.DataTypes.ConceptReferenceTerm Insert(Core.Model.DataTypes.ConceptReferenceTerm storageData, IPrincipal principal, ModelDataContext dataContext, bool newVersion)
         {
             if (storageData.Key != Guid.Empty)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.IdentityInsert);
@@ -114,18 +85,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             return storageData;
         }
 
-        /// <summary>
-        /// Obsolete the specified reference term creating a new version of the target entity
-        /// </summary>
-        internal override Core.Model.DataTypes.ConceptReferenceTerm Obsolete(Core.Model.DataTypes.ConceptReferenceTerm storageData, IPrincipal principal, ModelDataContext dataContext)
-        {
-            return this.Obsolete(storageData, principal, dataContext, true);
-        }
-
+      
         /// <summary>
         /// Obsolete the specified reference term optionally creating a new version
         /// </summary>
-        internal Core.Model.DataTypes.ConceptReferenceTerm Obsolete(Core.Model.DataTypes.ConceptReferenceTerm storageData, IPrincipal principal, ModelDataContext dataContext, bool newVersion)
+        internal override Core.Model.DataTypes.ConceptReferenceTerm Obsolete(Core.Model.DataTypes.ConceptReferenceTerm storageData, IPrincipal principal, ModelDataContext dataContext, bool newVersion)
         {
             if (storageData.Key == Guid.Empty)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.NonIdentityUpdate);
@@ -154,27 +118,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             return storageData;
         }
 
-        /// <summary>
-        /// Query for the specified reference term
-        /// </summary>
-        internal override IQueryable<Core.Model.DataTypes.ConceptReferenceTerm> Query(Expression<Func<Core.Model.DataTypes.ConceptReferenceTerm, bool>> query, IPrincipal principal, ModelDataContext dataContext)
-        {
-            var domainQuery = s_mapper.MapModelExpression<Core.Model.DataTypes.ConceptReferenceTerm, Data.ConceptReferenceTerm>(query);
-            return dataContext.ConceptReferenceTerms.Where(domainQuery).Select(o => this.ConvertToModel(o));
-        }
-
-        /// <summary>
-        /// Update the reference term creating a new version of the target entity
-        /// </summary>
-        internal override Core.Model.DataTypes.ConceptReferenceTerm Update(Core.Model.DataTypes.ConceptReferenceTerm storageData, IPrincipal principal, ModelDataContext dataContext)
-        {
-            return this.Update(storageData, principal, dataContext, true);
-        }
-
+      
+    
         /// <summary>
         /// Update the specified concept reference term
         /// </summary>
-        internal Core.Model.DataTypes.ConceptReferenceTerm Update(Core.Model.DataTypes.ConceptReferenceTerm storageData, IPrincipal principal, ModelDataContext dataContext, bool newVersion)
+        internal override Core.Model.DataTypes.ConceptReferenceTerm Update(Core.Model.DataTypes.ConceptReferenceTerm storageData, IPrincipal principal, ModelDataContext dataContext, bool newVersion)
         {
             if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
