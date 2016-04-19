@@ -65,7 +65,10 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         public IEnumerable<ValidationResultDetail> Validate(ModelMap map)
         {
-            return map.Validate();
+            var validate = map.Validate();
+            foreach (var v in validate)
+                Debug.WriteLine("{0} [{1}]", v.Message, v.Level);
+            return validate;
         }
         /// <summary>
         /// Map member 

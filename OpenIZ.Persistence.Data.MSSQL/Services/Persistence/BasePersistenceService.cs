@@ -140,7 +140,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             if (storageData == null)
                 throw new ArgumentNullException(nameof(storageData));
-            else if (storageData.Key != Guid.Empty)
+            else if (storageData.Key != Guid.Empty &&
+                !s_configuration.AllowKeyedInsert)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.IdentityInsert);
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
@@ -529,7 +530,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <summary>
         /// Gets a cache item
         /// </summary>
-        protected TModel ConvertItem<TDomainClass>(TDomainClass domainItem) where TDomainClass : class, new()
+        internal TModel ConvertItem<TDomainClass>(TDomainClass domainItem) where TDomainClass : class, new()
         {
             // Get PK
             PropertyInfo pkProperty = null;

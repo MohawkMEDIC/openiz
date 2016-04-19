@@ -90,7 +90,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [DelayLoad(nameof(StatusConceptKey))]
         [XmlIgnore, JsonIgnore]
-        public Concept Status
+        public Concept StatusConcept
         {
             get
             {

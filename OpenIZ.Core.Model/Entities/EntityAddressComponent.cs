@@ -32,11 +32,6 @@ namespace OpenIZ.Core.Model.Entities
     public class EntityAddressComponent : GenericComponentValues<EntityAddress>
     {
        
-        /// <summary>
-        /// Gets or sets the value of the component
-        /// </summary>
-        [XmlElement("value"), JsonProperty("value")]
-        public String Value { get; set; }
-
+  
     }
 }

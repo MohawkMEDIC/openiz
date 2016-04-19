@@ -90,7 +90,7 @@
     <property modelName="ClassKey" domainName="ConceptClassId"/>
     <property modelName="Class" domainName="ConceptClass"  dontLoad="true"/>
     <property modelName="PreviousVersionKey" domainName="ReplacesVersionId"/>
-    <property modelName="Status" domainName="StatusConcept" dontLoad="true" />
+    <property modelName="StatusConcept" domainName="StatusConcept" dontLoad="true" />
     <property modelName="StatusConceptKey" domainName="StatusConceptId"/>
     <property modelName="IsSystemConcept" domainName="Concept" dontLoad="true">
       <via domainName="IsSystemConcept"/>
@@ -205,4 +205,100 @@
     <property modelName="PhoneticAlgorithmKey" domainName="PhoneticAlgorithmId"/>
     <property modelName="PhoneticAlgorithm" domainName="PhoneticAlgorithm"/>
   </class>
+  <class modelClass="OpenIZ.Core.Model.Entities.Entity, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.EntityVersion, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="EntityId"/>
+    <property modelName="VersionKey" domainName="EntityVersionId"/>
+    <property modelName="VersionSequence" domainName="VersionSequenceId"/>
+    <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
+    <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
+    <collapseKey propertyName="TypeConcept" keyName="TypeConceptId"/>
+    <collapseKey propertyName="StatusConcept" keyName="StatusConceptId"/>
+    <property modelName="StatusConceptKey" domainName="StatusConceptId"/>
+    <property modelName="TypeConceptKey" domainName="TypeConceptId"/>
+    <property modelName="CreatedBy" domainName="CreatedByEntity"  dontLoad="true"/>
+    <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"  dontLoad="true"/>
+    <property modelName="CreatedByKey" domainName="CreatedBy"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedBy" />
+    <property modelName="PreviousVersionKey" domainName="ReplacesVersionId"/>
+    <property modelName="StatusConcept" domainName="StatusConcept" dontLoad="true" />
+    <property modelName="StatusConceptKey" domainName="StatusConceptId"/>
+    <property modelName="ClassConceptKey" domainName="Entity" dontLoad="true">
+      <via domainName="ClassConceptId"/>
+    </property>
+    <property modelName="DeterminerConcept" domainName="Entity" dontLoad="true">
+      <via domainName="DeterminerConceptId"/>
+    </property>
+    <property modelName="Names" domainName="Entity" dontLoad="true">
+      <via domainName="EntityNames"/>
+    </property>
+    <property modelName="Addresses" domainName="Entity" dontLoad="true">
+      <via domainName="EntityAddresses"/>
+    </property>
+    <property modelName="Telecom" domainName="Entity" dontLoad="true">
+      <via domainName="EntityTelecomAddresses"/>
+    </property>
+    <property modelName="Tags" domainName="Entity" dontLoad="true">
+      <via domainName="EntityTags"/>
+    </property>
+    <property modelName="Extensions" domainName="Entity" dontLoad="true">
+      <via domainName="EntityExtensions"/>
+    </property>
+    <property modelName="Notes" domainName="Entity" dontLoad="true">
+      <via domainName="EntityNotes"/>
+    </property>
+    <property modelName="Identifiers" domainName="Entity" dontLoad="true">
+      <via domainName="EntityIdentifiers"/>
+    </property>
+
+  </class>
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityName, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.EntityName, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="EntityNameId"/>
+    <property modelName="SourceEntityKey" domainName="EntityId"/>
+    <property modelName="NameUseKey" domainName="NameUseConceptId"/>
+    <property modelName="NameUse" domainName="NameUseConcept"/>
+  </class>
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityNameComponent, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.EntityNameComponent, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="EntityNameComponentId"/>
+    <property modelName="ComponentTypeKey" domainName="ComponentTypeConceptId"/>
+    <property modelName="Value" domainName="PhoneticValue">
+      <via domainName="Value"/>
+    </property>
+    <property modelName="PhoneticCode" domainName="PhoneticValue">
+      <via domainName="PhoneticCode"/>
+    </property>
+    <property modelName="PhoneticAlgorithm" domainName="PhoneticValue">
+      <via domainName="PhoneticAlgorithm"/>
+    </property>
+    <property modelName="PhoneticAlgorithmKey" domainName="PhoneticValue">
+      <via domainName="PhoneticAlgorithmId"/>
+    </property>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.EntityIdentifier, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.EntityIdentifier, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="EntityIdentifierId"/>
+    <property modelName="SourceEntityKey" domainName="EntityId"/>
+  </class>
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityAddress, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.EntityAddress, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="EntityAddressId"/>
+    <property modelName="SourceEntityKey" domainName="EntityId"/>
+    <property modelName="AddressUseKey" domainName="AddressUseConceptId"/>
+
+  </class>
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityTelecomAddress, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.EntityTelecomAddress, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="EntityTelecomAddressId"/>
+    <property modelName="SourceEntityKey" domainName="EntityId"/>
+  </class>
+  <class modelClass="OpenIZ.Core.Model.DataTypes.EntityTag, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.EntityTag, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="EntityTagId"/>
+    <property modelName="SourceEntityKey" domainName="EntityId"/>
+  </class>
+  <class modelClass="OpenIZ.Core.Model.DataTypes.EntityExtension, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.EntityExtension, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="EntityExtensionId"/>
+    <property modelName="SourceEntityKey" domainName="EntityId"/>
+  </class>
+  <class modelClass="OpenIZ.Core.Model.DataTypes.EntityNote, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.EntityNote, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="EntityNoteId"/>
+    <property modelName="SourceEntityKey" domainName="EntityId"/>
+  </class>
+
 </modelMap>
