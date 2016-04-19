@@ -115,11 +115,18 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
                 }
                 catch (AuthenticationException e)
                 {
+                    this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, "Error generating token: {0}", e);
                     return this.CreateErrorCondition(OAuthErrorType.invalid_grant, e.Message);
                 }
                 catch (SecurityException e)
                 {
+                    this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, "Error generating token: {0}", e);
                     return this.CreateErrorCondition(OAuthErrorType.invalid_grant, e.Message);
+                }
+                catch(Exception e)
+                {
+                    this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, "Error generating token: {0}", e);
+                    return this.CreateErrorCondition(OAuthErrorType.invalid_request, e.Message);
                 }
             }
         }
