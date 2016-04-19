@@ -31,7 +31,24 @@ namespace OpenIZ.Core.Model.Entities
     [XmlType("AddressComponent",  Namespace = "http://openiz.org/model"), JsonObject("AddressComponent")]
     public class EntityAddressComponent : GenericComponentValues<EntityAddress>
     {
-       
+
+        /// <summary>
+        /// Creates a new address component type.
+        /// </summary>
+        /// <param name="componentType"></param>
+        /// <param name="value"></param>
+        public EntityAddressComponent(Guid componentType, String value) : base(componentType, value)
+        {
+            
+        }
+
+        /// <summary>
+        /// Default ctor
+        /// </summary>
+        public EntityAddressComponent()
+        {
+
+        }     
   
     }
 }

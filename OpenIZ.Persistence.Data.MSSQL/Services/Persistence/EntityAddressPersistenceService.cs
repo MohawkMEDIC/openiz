@@ -33,6 +33,44 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     /// </summary>
     public class EntityAddressPersistenceService : VersionedAssociationPersistenceService<Core.Model.Entities.EntityAddress, Core.Model.Entities.Entity, Data.EntityAddress>
     {
+
+        /// <summary>
+        /// Convert to model
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        internal override Core.Model.Entities.EntityAddress ConvertToModel(object data)
+        {
+            if (data == null)
+                return null;
+
+            var address = data as Data.EntityAddress;
+
+            var retVal = DataCache.Current.Get(address.EntityAddressId) as Core.Model.Entities.EntityAddress;
+            if (retVal == null)
+            {
+                retVal = this.ConvertItem(address);
+
+                ConceptPersistenceService cp = new ConceptPersistenceService();
+                if (address.AddressUseConcept != null)
+                    retVal.AddressUse = cp.ConvertItem(address.AddressUseConcept.CurrentVersion());
+                if (address.EntityAddressComponents != null)
+                {
+                    retVal.Component = new List<Core.Model.Entities.EntityAddressComponent>();
+                    retVal.Component.AddRange(
+                        address.EntityAddressComponents.Select(o => new Core.Model.Entities.EntityAddressComponent()
+                        {
+                            ComponentTypeKey = o.ComponentTypeConceptId,
+                            Key = o.EntityAddressComponentId,
+                            Value = o.EntityAddressComponentValue.Value,
+                            SourceEntityKey = retVal.Key
+                        }));
+                }
+            }
+
+            return retVal;
+        }
+
         /// <summary>
         /// Get the data table
         /// </summary>

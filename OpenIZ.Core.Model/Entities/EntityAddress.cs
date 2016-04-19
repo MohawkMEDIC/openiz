@@ -25,6 +25,7 @@ using System.Xml.Serialization;
 using System.Linq;
 using OpenIZ.Core.Model.EntityLoader;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -36,6 +37,31 @@ namespace OpenIZ.Core.Model.Entities
     public class EntityAddress : VersionedAssociation<Entity>
     {
 
+        /// <summary>
+        /// Create the address from components
+        /// </summary>
+        public EntityAddress(Guid useKey, String streetAddressLine, String city, String province, String country, String zipCode)
+        {
+            this.m_addressUseKey = useKey;
+            this.m_addressComponents = new List<EntityAddressComponent>();
+            if (!String.IsNullOrEmpty(streetAddressLine))
+                this.m_addressComponents.Add(new EntityAddressComponent(AddressComponentKeys.StreetAddressLine, streetAddressLine));
+            if (!String.IsNullOrEmpty(city))
+                this.m_addressComponents.Add(new EntityAddressComponent(AddressComponentKeys.City, city));
+            if (!String.IsNullOrEmpty(province))
+                this.m_addressComponents.Add(new EntityAddressComponent(AddressComponentKeys.State, province));
+            if (!String.IsNullOrEmpty(country))
+                this.m_addressComponents.Add(new EntityAddressComponent(AddressComponentKeys.Country, country));
+            if (!String.IsNullOrEmpty(zipCode))
+                this.m_addressComponents.Add(new EntityAddressComponent(AddressComponentKeys.PostalCode, zipCode));
+        }
+        /// <summary>
+        /// Default CTOR
+        /// </summary>
+        public EntityAddress()
+        {
+
+        }
         // Address use key
         private Guid? m_addressUseKey;
         // Address use concept
@@ -91,6 +117,10 @@ namespace OpenIZ.Core.Model.Entities
                 if (this.IsDelayLoadEnabled)
                     this.m_addressComponents = EntitySource.Current.GetRelations(this.Key, this.m_addressComponents);
                 return this.m_addressComponents;
+            }
+            set
+            {
+                this.m_addressComponents = value;
             }
         }
 
