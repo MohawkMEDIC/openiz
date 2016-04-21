@@ -26,6 +26,8 @@ using System.Linq.Expressions;
 using System.Security.Principal;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Persistence.Data.MSSQL.Data;
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -148,7 +150,64 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     principal,
                     dataContext
                     );
-           
+            if (storageData.Extensions != null)
+                base.UpdateAssociatedItems<Core.Model.DataTypes.EntityExtension, Core.Model.Entities.Entity, Data.EntityExtension>(
+                    new List<Core.Model.DataTypes.EntityExtension>(),
+                    storageData.Extensions,
+                    domainValue.EntityId, 
+                    principal, 
+                    dataContext
+                    );
+            if(storageData.Identifiers != null)
+                base.UpdateAssociatedItems<Core.Model.DataTypes.EntityIdentifier, Core.Model.Entities.Entity, Data.EntityIdentifier>(
+                    new List<Core.Model.DataTypes.EntityIdentifier>(),
+                    storageData.Identifiers,
+                    domainValue.EntityId,
+                    principal,
+                    dataContext
+                    );
+            if(storageData.Notes != null)
+                base.UpdateAssociatedItems<Core.Model.DataTypes.EntityNote, Core.Model.Entities.Entity, Data.EntityNote>(
+                    new List<Core.Model.DataTypes.EntityNote>(),
+                    storageData.Notes,
+                    domainValue.EntityId,
+                    principal,
+                    dataContext
+                    );
+            if (storageData.Participations != null)
+                base.UpdateAssociatedItems<Core.Model.Acts.ActParticipation, Core.Model.Acts.Act, Data.ActParticipation>(
+                    new List<Core.Model.Acts.ActParticipation>(),
+                    storageData.Participations,
+                    domainValue.EntityId,
+                    principal,
+                    dataContext
+                    );
+            if (storageData.Relationships != null)
+                base.UpdateAssociatedItems<Core.Model.Entities.EntityRelationship, Core.Model.Entities.Entity, Data.EntityAssociation>(
+                    new List<Core.Model.Entities.EntityRelationship>(),
+                    storageData.Relationships,
+                    domainValue.EntityId,
+                    principal,
+                    dataContext
+                    );
+            if(storageData.Telecom != null)
+                base.UpdateAssociatedItems<Core.Model.Entities.EntityTelecomAddress, Core.Model.Entities.Entity, Data.EntityTelecomAddress>(
+                    new List<Core.Model.Entities.EntityTelecomAddress>(),
+                    storageData.Telecom,
+                    domainValue.EntityId,
+                    principal,
+                    dataContext
+                    );
+            if (storageData.Tags != null)
+            {
+                var tagPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Core.Model.DataTypes.EntityTag>>() as BaseDataPersistenceService<Core.Model.DataTypes.EntityTag>;
+                if(tagPersistenceService != null)
+                    foreach(var t in storageData.Tags)
+                    {
+                        t.SourceEntityKey = domainValue.EntityId;
+                        tagPersistenceService.Insert(t, principal, dataContext);
+                    }
+            }
 
             return storageData;
             
