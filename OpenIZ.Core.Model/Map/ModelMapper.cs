@@ -247,7 +247,7 @@ namespace OpenIZ.Core.Model.Map
                     propInfo.PropertyType != typeof(Type) &&
                     propInfo.PropertyType != typeof(Decimal) &&
 					propInfo.PropertyType != typeof(byte[]) &&
-                    !MapUtil.HasMap(propInfo.PropertyType, domainProperty.PropertyType))
+                    !MapUtil.HasMap(propInfo?.PropertyType, domainProperty?.PropertyType))
                     continue;
 
                 object domainValue = null;

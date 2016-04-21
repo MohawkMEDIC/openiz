@@ -79,8 +79,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             if (evt.Cancel)
                 throw new SecurityException("Authentication cancelled");
 
-            this.m_traceSource.TraceInformation("Authenticating {0}/{1}", userName, password);
-
             try
             {
                 var principal = SqlClaimsIdentity.Create(userName, password).CreateClaimsPrincipal();
@@ -89,6 +87,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             }
             catch(SecurityException e)
             {
+                this.m_traceSource.TraceEvent(TraceEventType.Verbose, e.HResult, "Invalid credentials : {0}/{1}", userName, password);
+
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
                 this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(userName, null, false));
                 throw;
