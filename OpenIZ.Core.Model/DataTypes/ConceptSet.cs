@@ -14,7 +14,7 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-24
+ * Date: 2016-2-1
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
@@ -35,7 +35,8 @@ namespace OpenIZ.Core.Model.DataTypes
     [XmlType("ConceptSet", Namespace = "http://openiz.org/model")]
     [XmlRoot("ConceptSet", Namespace = "http://openiz.org/model")]
     [JsonObject("ConceptSet")]
-    public class ConceptSet : NonVersionedEntityData
+    [Classifier(nameof(Mnemonic))]
+    public class ConceptSet : BaseEntityData
     {
 
         // Set members

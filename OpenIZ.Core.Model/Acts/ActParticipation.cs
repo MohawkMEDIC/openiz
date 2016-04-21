@@ -14,7 +14,7 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-24
+ * Date: 2016-2-1
  */
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
@@ -33,7 +33,7 @@ namespace OpenIZ.Core.Model.Acts
     /// <summary>
     /// Associates an entity which participates in an act
     /// </summary>
-    
+    [Classifier(nameof(ParticipationRole))]
     [XmlType(Namespace = "http://openiz.org/model", TypeName = "ActParticipation")]
     public class ActParticipation : VersionedAssociation<Act>
     {

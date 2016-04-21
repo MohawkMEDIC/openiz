@@ -722,15 +722,6 @@ CREATE TABLE ExtensionType
 
 CREATE INDEX IX_PhoneticValuesPhoneticCode ON PhoneticValues(PhoneticCode, PhoneticAlgorithmId);
 
-CREATE TABLE EntityNameUse
-(
-	EntityNameUseId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(), -- THE UNIQUE IDENTIFIER FOR THE USE
-	NameUseConceptId UNIQUEIDENTIFIER NOT NULL, -- THE USE CONCEPT CODE
-	EntityClassScopeConceptId UNIQUEIDENTIFIER NOT NULL, -- ENTITY CLASS WHICH THE USE CAN BE USED ON A NAME
-	CONSTRAINT PK_EntityNameUse PRIMARY KEY (EntityNameUseId),
-	CONSTRAINT FK_EntityNameUseNameUseConceptId FOREIGN KEY (NameUseConceptId) REFERENCES Concept(ConceptId),
-	CONSTRAINT FK_EntityNameUseEntityClassScopeConceptId FOREIGN KEY (EntityClassScopeConceptId) REFERENCES Concept(ConceptId)
-);
 
 CREATE TABLE AssigningAuthority
 (
@@ -965,12 +956,13 @@ CREATE INDEX IX_ActPolicyEffectiveVersion ON ActPolicy(EffectiveVersionSequenceI
 CREATE TABLE Entity
 (
 	EntityId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(), -- THE UNIQUE IDENTIFIER FOR THE ENTITY
-	ClassConceptId UNIQUEIDENTIFIER, -- IDENTIFIES THE CONCEPT IDENTIFIER
+	ClassConceptId UNIQUEIDENTIFIER NOT NULL, -- IDENTIFIES THE CONCEPT IDENTIFIER
 	DeterminerConceptId UNIQUEIDENTIFIER NOT NULL, -- IDENTIFIES WHETHER THE ENTITY IS A CLASS OF THING OR AN ACTUAL THING
 	CONSTRAINT PK_Entity PRIMARY KEY (EntityId),
 	CONSTRAINT FK_EntityClassConceptId FOREIGN KEY (ClassConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_EntityDeterminerConceptId FOREIGN KEY (DeterminerConceptId) REFERENCES Concept(ConceptId),
-	CONSTRAINT CK_EntityClassConceptSet CHECK (dbo.fn_IsConceptSetMember(ClassConceptId, 'EntityClass') = 1)
+	CONSTRAINT CK_EntityClassConceptSet CHECK (dbo.fn_IsConceptSetMember(ClassConceptId, 'EntityClass') = 1),
+	CONSTRAINT CK_EntityDeterminerConceptSet CHECK (dbo.fn_IsConceptSetMember(DeterminerConceptId, 'EntityDeterminer') = 1)
 );
 
 CREATE TABLE EntityTag
@@ -1000,8 +992,8 @@ CREATE TABLE EntityVersion
 	ReplacesVersionId UNIQUEIDENTIFIER, -- THE VERSION OF THE ENTITY THAT THIS VERSION REPLACES
 	StatusConceptId UNIQUEIDENTIFIER NOT NULL, -- THE STATUS OF THE ENTITY AT THIS VERSION
 	CreatedBy UNIQUEIDENTIFIER, -- THE USER THAT CREATED THE TAG
-	CreationTimestamp DATETIMEOFFSET NOT NULL DEFAULT CURRENT_TIMESTAMP, -- A TIMESTAMP WHEN THE ENTITY WAS CREATED
-	ObsoletionTimestamp DATETIMEOFFSET, -- THE TIME WHEN THE ENTITY VERSION WAS OBSOLETED
+	CreationTime DATETIMEOFFSET NOT NULL DEFAULT CURRENT_TIMESTAMP, -- A TIMESTAMP WHEN THE ENTITY WAS CREATED
+	ObsoletionTime DATETIMEOFFSET, -- THE TIME WHEN THE ENTITY VERSION WAS OBSOLETED
 	ObsoletedBy UNIQUEIDENTIFIER, -- THE USER WHO OBSOLETED THE TAG
 	TypeConceptId UNIQUEIDENTIFIER
 	CONSTRAINT PK_EntityVersion PRIMARY KEY (EntityVersionId),
@@ -1093,8 +1085,8 @@ CREATE TABLE EntityName
 	CONSTRAINT FK_EntityNameEntityId FOREIGN KEY (EntityId) REFERENCES Entity(EntityId),
 	CONSTRAINT FK_EntityNameEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
 	CONSTRAINT FK_EntityNameObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
-	CONSTRAINT FK_EntityNameAddressUseConceptId FOREIGN KEY (NameUseConceptId) REFERENCES Concept(ConceptId),
-	CONSTRAINT FK_EntityNameAddressUseConceptConceptSet CHECK (dbo.fn_IsConceptSetMember(NameUseConceptId, 'NameUse') = 1)
+	CONSTRAINT FK_EntityNameUseConceptId FOREIGN KEY (NameUseConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT FK_EntityNameUseConceptConceptSet CHECK (dbo.fn_IsConceptSetMember(NameUseConceptId, 'NameUse') = 1)
 );
 
 CREATE INDEX IX_EntityNameEffectiveVersion ON EntityName(EffectiveVersionSequenceId, ObsoleteVersionSequenceId);
@@ -1109,7 +1101,7 @@ CREATE TABLE EntityNameComponent
 	CONSTRAINT FK_EntityNameComponentTypeConceptId FOREIGN KEY (ComponentTypeConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_EntityNameComponentValueId FOREIGN KEY (PhoneticValueId) REFERENCES PhoneticValues(PhoneticValueId),
 	CONSTRAINT FK_EntityNameComponentEntityNameId FOREIGN KEY (EntityNameId) REFERENCES EntityName(EntityNameId),
-	CONSTRAINT CK_EntityNameComponentTypeConceptId CHECK (dbo.fn_IsConceptSetMember(ComponentTypeConceptId, 'NameComponentType') = 1)
+	CONSTRAINT CK_EntityNameComponentTypeConceptId CHECK (ComponentTypeConceptId IS NULL OR dbo.fn_IsConceptSetMember(ComponentTypeConceptId, 'NameComponentType') = 1)
 );
 
 CREATE TABLE EntityExtension

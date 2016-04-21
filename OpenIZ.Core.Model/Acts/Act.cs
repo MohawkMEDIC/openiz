@@ -14,7 +14,7 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-24
+ * Date: 2016-2-1
  */
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
@@ -36,6 +36,7 @@ namespace OpenIZ.Core.Model.Acts
     /// </summary>
     [XmlType(Namespace ="http://openiz.org/model", TypeName ="Act")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Act")]
+    [Classifier(nameof(ClassConcept))]
     public class Act : VersionedEntityData<Act>
     {
 
@@ -323,6 +324,10 @@ namespace OpenIZ.Core.Model.Acts
 
                 return this.m_identifiers;
             }
+            set
+            {
+                this.m_identifiers = value;
+            }
         }
 
         /// <summary>
@@ -338,6 +343,10 @@ namespace OpenIZ.Core.Model.Acts
                     this.m_relationships = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_relationships);
 
                 return this.m_relationships;
+            }
+            set
+            {
+                this.m_relationships = value;
             }
         }
 
@@ -355,6 +364,10 @@ namespace OpenIZ.Core.Model.Acts
 
                 return this.m_extensions;
             }
+            set
+            {
+                this.m_extensions = value;
+            }
         }
 
         /// <summary>
@@ -370,6 +383,10 @@ namespace OpenIZ.Core.Model.Acts
                     this.m_notes = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_notes);
                 return this.m_notes;
             }
+            set
+            {
+                this.m_notes = value;
+            }
         }
 
         /// <summary>
@@ -384,6 +401,27 @@ namespace OpenIZ.Core.Model.Acts
                 if (this.IsDelayLoadEnabled)
                     this.m_tags = EntitySource.Current.GetRelations(this.Key, this.m_tags);
                 return this.m_tags;
+            }
+            set
+            {
+                this.m_tags = value;
+            }
+        }
+
+        /// <summary>
+        /// Participations
+        /// </summary>
+        public List<ActParticipation> Participations
+        {
+            get
+            {
+                if (this.IsDelayLoadEnabled)
+                    this.m_participations = EntitySource.Current.GetRelations(this.Key, this.m_participations);
+                return this.m_participations;
+            }
+            set
+            {
+                this.m_participations = value;
             }
         }
 

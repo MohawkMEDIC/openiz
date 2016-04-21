@@ -14,7 +14,7 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-19
+ * Date: 2016-1-13
  */
 using System;
 using System.Collections.Generic;
@@ -49,5 +49,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Configuration
         /// Trace SQL enabled
         /// </summary>
         public bool TraceSql { get; set; }
+
+        /// <summary>
+        /// When true, indicates that inserts can allow keyed inserts
+        /// </summary>
+        public bool AllowKeyedInsert { get; set; }
     }
 }

@@ -14,7 +14,7 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-24
+ * Date: 2016-2-1
  */
 using System.Linq;
 
@@ -32,7 +32,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents a basic reference term
     /// </summary>
-    
+    [Classifier(nameof(Mnemonic))]
     [XmlType("ReferenceTerm",  Namespace = "http://openiz.org/model"), JsonObject("ReferenceTerm")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "ReferenceTerm")]
     public class ReferenceTerm : NonVersionedEntityData

@@ -14,7 +14,7 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-19
+ * Date: 2016-1-13
  */
 using MARC.HI.EHRS.SVC.Core.Services;
 using System;
@@ -140,7 +140,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             if (storageData == null)
                 throw new ArgumentNullException(nameof(storageData));
-            else if (storageData.Key != Guid.Empty)
+            else if (storageData.Key != Guid.Empty &&
+                !s_configuration.AllowKeyedInsert)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.IdentityInsert);
             else if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
@@ -529,7 +530,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <summary>
         /// Gets a cache item
         /// </summary>
-        protected TModel ConvertItem<TDomainClass>(TDomainClass domainItem) where TDomainClass : class, new()
+        internal TModel ConvertItem<TDomainClass>(TDomainClass domainItem) where TDomainClass : class, new()
         {
             // Get PK
             PropertyInfo pkProperty = null;
@@ -550,6 +551,41 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             return existingItem;
         }
         
+        /// <summary>
+        /// Existing item
+        /// </summary>
+        protected void UpdateAssociatedItems<TAssociation, TModelEx, TDomain>(List<TAssociation> existing, List<TAssociation> storage, Guid sourceKey, IPrincipal principal, ModelDataContext dataContext)
+            where TDomain : class, new()
+            where TAssociation : VersionedAssociation<TModelEx>, new()
+            where TModelEx : VersionedEntityData<TModelEx>
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAssociation>>() as VersionedAssociationPersistenceService<TAssociation, TModelEx, TDomain>;
+            if (persistenceService == null)
+            {
+                this.m_traceSource.TraceInformation("Missing persister for type {0}", typeof(TAssociation).Name);
+                return;
+            }
+            // Remove old
+            var obsoleteRecords = existing.Where(o => !storage.Exists(ecn => ecn.Key == o.Key));
+            foreach (var del in obsoleteRecords)
+                persistenceService.Obsolete(del, principal, dataContext, false);
+
+            // Update those that need it
+            var updateRecords = storage.Where(o => existing.Any(ecn => ecn.Key == o.Key && o != ecn));
+            foreach (var upd in updateRecords)
+                persistenceService.Update(upd, principal, dataContext, false);
+
+            // Insert those that do not exist
+            var insertRecords = storage.Where(o => !existing.Any(ecn => ecn.Key == o.Key));
+            foreach (var ins in insertRecords)
+            {
+                ins.SourceEntityKey = sourceKey;
+                persistenceService.Insert(ins, principal, dataContext, false);
+            }
+
+
+        }
+
         /// <summary>
         /// Convert a data type into the model class
         /// </summary>

@@ -14,7 +14,7 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-24
+ * Date: 2016-2-1
  */
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Entities;
@@ -25,13 +25,14 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.Attributes;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
     /// <summary>
     /// Represents the base class for tags
     /// </summary>
-    
+    [Classifier(nameof(TagKey))]
     [XmlType(Namespace = "http://openiz.org/model")]
     public abstract class Tag<TSourceType> : Association<TSourceType> where TSourceType : IdentifiedData
     {

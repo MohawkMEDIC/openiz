@@ -70,6 +70,7 @@
     <Compile Include="Services\SecurityUserPersistenceServiceTest.cs" />
     <Compile Include="Services\SqlIdentityProviderTest.cs" />
     <Compile Include="Services\SqlRoleProviderTest.cs" />
+    <Compile Include="Services\EntityPersistenceServiceTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">

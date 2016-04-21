@@ -14,7 +14,7 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-24
+ * Date: 2016-2-1
  */
 using System;
 using System.Collections.Generic;
@@ -23,13 +23,14 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.Attributes;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
     /// <summary>
     /// Instructions on how an extensionshould be handled
     /// </summary>
-    
+    [Classifier(nameof(Name))]
     [XmlType("ExtensionType",  Namespace = "http://openiz.org/model"), JsonObject("ExtensionType")]
     public class ExtensionType : BaseEntityData
     {

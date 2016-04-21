@@ -14,7 +14,7 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-24
+ * Date: 2016-2-1
  */
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Attributes;
@@ -36,7 +36,7 @@ namespace OpenIZ.Core.Model.Entities
     /// </summary>
     [XmlType("Entity",  Namespace = "http://openiz.org/model"), JsonObject("Entity")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Entity")]
-    
+    [Classifier(nameof(ClassConcept))]
     public class Entity : VersionedEntityData<Entity>
     {
 
@@ -173,6 +173,14 @@ namespace OpenIZ.Core.Model.Entities
                 this.m_classConcept = base.DelayLoad(this.m_classConceptId, this.m_classConcept);
                 return this.m_classConcept;
             }
+            set
+            {
+                this.m_classConcept = value;
+                if (value == null)
+                    this.m_classConceptId = Guid.Empty;
+                else
+                    this.m_classConceptId = value.Key;
+            }
         }
 
         /// <summary>
@@ -186,6 +194,14 @@ namespace OpenIZ.Core.Model.Entities
             {
                 this.m_determinerConcept = base.DelayLoad(this.m_determinerConceptId, this.m_determinerConcept);
                 return this.m_determinerConcept;
+            }
+            set
+            {
+                this.m_determinerConcept = value;
+                if (value == null)
+                    this.m_determinerConceptId = Guid.Empty;
+                else
+                    this.m_determinerConceptId = value.Key;
             }
         }
 
@@ -391,6 +407,20 @@ namespace OpenIZ.Core.Model.Entities
 
                 return this.m_participations;
             }
+        }
+
+        /// <summary>
+        /// Set common delay load properties
+        /// </summary>
+        public void SetDelayLoadProperties(List<EntityName> names,
+            List<EntityAddress> address,
+            List<EntityIdentifier> identifiers,
+            List<EntityTelecomAddress> telecoms)
+        {
+            this.m_names = names;
+            this.m_addresses = address;
+            this.m_identifiers = identifiers;
+            this.m_telecomAddresses = telecoms;
         }
 
         /// <summary>

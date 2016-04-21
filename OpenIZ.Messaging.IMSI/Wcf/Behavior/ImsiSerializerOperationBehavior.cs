@@ -14,7 +14,7 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-29
+ * Date: 2016-4-19
  */
 using OpenIZ.Messaging.IMSI.Wcf.Serialization;
 using System;

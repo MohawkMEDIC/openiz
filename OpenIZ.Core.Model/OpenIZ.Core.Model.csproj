@@ -40,11 +40,13 @@
     <Compile Include="Acts\Observation.cs" />
     <Compile Include="Acts\PatientEncounter.cs" />
     <Compile Include="Acts\SubstanceAdministration.cs" />
+    <Compile Include="Attributes\ClassifierAttribute.cs" />
     <Compile Include="Attributes\DelayLoadAttribute.cs" />
     <Compile Include="BaseEntityData.cs" />
     <Compile Include="Association.cs" />
     <Compile Include="Collection\Bundle.cs" />
     <Compile Include="Constants\ActClassKeys.cs" />
+    <Compile Include="Constants\AddressKeys.cs" />
     <Compile Include="Constants\CodeSystemKeys.cs" />
     <Compile Include="Constants\ConceptClassKeys.cs" />
     <Compile Include="Constants\ConceptRelationshipTypeKeys.cs" />
@@ -52,6 +54,7 @@
     <Compile Include="Constants\DeterminerConceptKeys.cs" />
     <Compile Include="Constants\EntityClassConceptKeys.cs" />
     <Compile Include="Constants\EntityRelationshipTypeKeys.cs" />
+    <Compile Include="Constants\NameKeys.cs" />
     <Compile Include="Constants\StatusConceptKeys.cs" />
     <Compile Include="DataTypes\AssigningAuthority.cs" />
     <Compile Include="DataTypes\CodeSystem.cs" />

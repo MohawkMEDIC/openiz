@@ -14,7 +14,7 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-27
+ * Date: 2016-2-1
  */
 using System;
 using System.Collections.Generic;
@@ -81,9 +81,22 @@ namespace OpenIZ.Messaging.IMSI.Util
                 Expression accessExpression = parameterExpression;
                 String[] memberPath = nvc.Split('.');
                 String path = "";
-                foreach(var pMember in memberPath)
+                foreach(var rawMember in memberPath)
                 {
+                    var pMember = rawMember;
+                    String guard = String.Empty;
+
+                    // Update path
                     path += pMember + ".";
+
+                    // Guard token?
+                    if (pMember.Contains("[") && pMember.EndsWith("]"))
+                    {
+                        guard = pMember.Substring(pMember.IndexOf("[") + 1, pMember.Length - pMember.IndexOf("[") - 2);
+                        pMember = pMember.Substring(0, pMember.IndexOf("["));
+                    }
+
+                    // Get member info
                     var memberInfo = accessExpression.Type.GetProperties().SingleOrDefault(p => p.GetCustomAttribute<XmlElementAttribute>()?.ElementName == pMember);
                     if (memberInfo == null)
                         throw new ArgumentOutOfRangeException(nvc);
@@ -99,9 +112,40 @@ namespace OpenIZ.Messaging.IMSI.Util
                             memberInfo = backingFor;
                     }
                     accessExpression = Expression.MakeMemberAccess(accessExpression, memberInfo);
+                    
+                    // Guard on classifier?
+                    if(!String.IsNullOrEmpty(guard))
+                    {
+                        Type itemType = accessExpression.Type.GetGenericArguments()[0];
+                        Type predicateType = typeof(Func<,>).MakeGenericType(itemType, typeof(bool));
+                        ParameterExpression guardParameter = Expression.Parameter(itemType, "guard");
 
+                        // Cascade the Classifiers to get the access
+                        ClassifierAttribute classAttr = itemType.GetCustomAttribute<ClassifierAttribute>();
+                        if (classAttr == null)
+                            throw new InvalidOperationException("No classifier found for guard expression");
+                        PropertyInfo classifierProperty = itemType.GetProperty(classAttr.ClassifierProperty);
+                        Expression guardAccessor = guardParameter;
+                        while (classifierProperty != null && classAttr != null)
+                        {
+                            guardAccessor = Expression.MakeMemberAccess(guardAccessor, classifierProperty);
+                            classAttr = classifierProperty.PropertyType.GetCustomAttribute<ClassifierAttribute>();
+                            if(classAttr != null)
+                                classifierProperty = classifierProperty.PropertyType.GetProperty(classAttr.ClassifierProperty);
+                        }
+
+                        var whereMethod = this.GetGenericMethod(typeof(Enumerable), "Where",
+                            new Type[] { itemType },
+                            new Type[] { accessExpression.Type, predicateType }, BindingFlags.Static) as MethodInfo;
+
+                        // Now make expression
+                        var guardLambda = Expression.Lambda(Expression.MakeBinary(ExpressionType.Equal, guardAccessor, Expression.Constant(guard)), guardParameter);
+                        accessExpression = Expression.Call(whereMethod, accessExpression, guardLambda);
+
+                    }
                     // List expression, we want the Any() operator
-                    if(accessExpression.Type.GetInterface(typeof(IList).FullName) != null)
+                    if (accessExpression.Type.GetInterface(typeof(IEnumerable).FullName) != null &&
+                        accessExpression.Type.IsGenericType)
                     {
 
                         Type itemType = accessExpression.Type.GetGenericArguments()[0];

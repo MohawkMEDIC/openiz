@@ -14,7 +14,7 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-19
+ * Date: 2016-1-13
  */
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
@@ -79,6 +79,29 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
                 return retVal;
             }
             return me;
+        }
+
+        /// <summary>
+        /// Create a new version of the entity
+        /// </summary>
+        public static Data.EntityVersion NewVersion(this Data.EntityVersion me, IPrincipal principal, ModelDataContext dataContext)
+        {
+
+            var newEntityVersion = new Data.EntityVersion();
+            var user = principal.GetUser(dataContext);
+            newEntityVersion.CopyObjectData(me);
+            newEntityVersion.VersionSequenceId = default(Decimal);
+            newEntityVersion.EntityVersionId = default(Guid);
+            newEntityVersion.Entity = me.Entity;
+            newEntityVersion.ReplacesVersionId = me.EntityVersionId;
+            newEntityVersion.CreatedByEntity = user;
+            // Obsolete the old version 
+            me.ObsoletedByEntity = user;
+            me.ObsoletionTime = DateTime.Now;
+
+            dataContext.EntityVersions.InsertOnSubmit(newEntityVersion);
+
+            return newEntityVersion;
         }
 
         /// <summary>
@@ -185,5 +208,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 
         }
 
+        /// <summary>
+        /// Get the current version of the concept
+        /// </summary>
+        /// <param name="me"></param>
+        /// <returns></returns>
+        public static Data.ConceptVersion CurrentVersion(this Concept me)
+        {
+            return me.ConceptVersions.SingleOrDefault(o => o.ObsoletionTime == null);
+        }
     }
 }
