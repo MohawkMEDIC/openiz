@@ -560,7 +560,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             where TModelEx : VersionedEntityData<TModelEx>
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAssociation>>() as VersionedAssociationPersistenceService<TAssociation, TModelEx, TDomain>;
-
+            if (persistenceService == null)
+            {
+                this.m_traceSource.TraceInformation("Missing persister for type {0}", typeof(TAssociation).Name);
+                return;
+            }
             // Remove old
             var obsoleteRecords = existing.Where(o => !storage.Exists(ecn => ecn.Key == o.Key));
             foreach (var del in obsoleteRecords)
