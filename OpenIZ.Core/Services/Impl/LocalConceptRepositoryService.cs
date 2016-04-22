@@ -34,7 +34,7 @@ namespace OpenIZ.Core.Services.Impl
     /// <summary>
     /// Concept service
     /// </summary>
-    internal class LocalConceptService : IConceptService
+    internal class LocalConceptRepositoryService : IConceptRepositoryService
     {
 
         /// <summary>
@@ -42,13 +42,14 @@ namespace OpenIZ.Core.Services.Impl
         /// </summary>
         public IEnumerable<Concept> FindConcepts(Expression<Func<Concept, bool>> query)
         {
-            throw new NotImplementedException();
+            int total = 0;
+            return this.FindConcepts(query, 0, null, out total);
         }
 
         /// <summary>
         /// Find concepts
         /// </summary>
-        public IEnumerable<Concept> FindConcepts(Expression<Func<Concept, bool>> query, int offset, int count, out int totalResults)
+        public IEnumerable<Concept> FindConcepts(Expression<Func<Concept, bool>> query, int offset, int? count, out int totalResults)
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
             if (persistenceService == null)

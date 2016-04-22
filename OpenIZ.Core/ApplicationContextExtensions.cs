@@ -48,9 +48,9 @@ namespace OpenIZ.Core
         /// <summary>
         /// Get the concept service
         /// </summary>
-        public static IConceptService GetConceptService(this ApplicationContext me)
+        public static IConceptRepositoryService GetConceptService(this ApplicationContext me)
         {
-            return me.GetService<IConceptService>();
+            return me.GetService<IConceptRepositoryService>();
         }
 
         /// <summary>

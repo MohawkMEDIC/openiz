@@ -16,6 +16,15 @@ namespace OpenIZ.Messaging.AMI.Wcf
     /// Administrative management interface contract
     /// </summary>
     [ServiceContract(ConfigurationName = "AMI_1.0", Name = "AMI"), XmlSerializerFormat]
+    [ServiceKnownType(typeof(SubmissionRequest))]
+    [ServiceKnownType(typeof(SubmissionResult))]
+    [ServiceKnownType(typeof(SubmissionInfo))]
+    [ServiceKnownType(typeof(X509Certificate2Info))]
+    [ServiceKnownType(typeof(SecurityUserInfo))]
+    [ServiceKnownType(typeof(SecurityRoleInfo))]
+    [ServiceKnownType(typeof(AmiCollection<SubmissionInfo>))]
+    [ServiceKnownType(typeof(AmiCollection<X509Certificate2Info>))]
+    [ServiceKnownType(typeof(AmiCollection<SecurityUserInfo>))]
     public interface IAmiContract
     {
         

@@ -14,6 +14,12 @@ using System.Configuration;
 using System.Reflection;
 using System.Security.Cryptography.Pkcs;
 using System.ServiceModel.Web;
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services.Security;
+using OpenIZ.Core.Security;
+using OpenIZ.Core.Services;
+using System.Xml.Serialization;
+using System.Diagnostics;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -28,6 +34,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
         // Configuration
         private AmiConfiguration m_configuration = ConfigurationManager.GetSection("openiz.messaging.ami") as AmiConfiguration;
+
+        // Trace source
+        private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.AMI");
 
         /// <summary>
         /// Creates the AMI behavior
@@ -50,9 +59,23 @@ namespace OpenIZ.Messaging.AMI.Wcf
             return result;
         }
 
+        /// <summary>
+        /// Create the specified user
+        /// </summary>
         public SecurityUserInfo CreateUser(SecurityUserInfo user)
         {
-            throw new NotImplementedException();
+            var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+            var roleProviderService = ApplicationContext.Current.GetService<IRoleProviderService>();
+
+            var securityUser = userRepository.CreateUser(new Core.Model.Security.SecurityUser()
+            {
+                Email = user.Email,
+                LockoutEnabled = user.Lockout
+            }, user.Password);
+            if (user.Roles != null)
+                roleProviderService.AddUsersToRoles(new String[] { user.UserName }, user.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
+
+            return new SecurityUserInfo(securityUser);
         }
 
         /// <summary>
@@ -77,9 +100,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
             return new SubmissionResult(result);
         }
 
+        /// <summary>
+        /// Deletes the specified user
+        /// </summary>
         public SecurityUserInfo DeleteUser(Guid userId)
         {
-            throw new NotImplementedException();
+            var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+            return new SecurityUserInfo(userRepository.ObsoleteUser(userId));
+            
         }
 
         /// <summary>
@@ -153,16 +181,55 @@ namespace OpenIZ.Messaging.AMI.Wcf
             return result;
         }
 
+        /// <summary>
+        /// Get the schema for the AMI
+        /// </summary>
+        /// <param name="schemaId"></param>
+        /// <returns></returns>
         public XmlSchema GetSchema(int schemaId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                XmlSchemas schemaCollection = new XmlSchemas();
+
+                XmlReflectionImporter importer = new XmlReflectionImporter("http://openiz.org/ami");
+                XmlSchemaExporter exporter = new XmlSchemaExporter(schemaCollection);
+
+                foreach (var cls in typeof(IAmiContract).GetCustomAttributes<ServiceKnownTypeAttribute>().Select(o => o.Type))
+                    exporter.ExportTypeMapping(importer.ImportTypeMapping(cls, "http://openiz.org/ami"));
+
+                if (schemaId > schemaCollection.Count)
+                {
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NotFound;
+                    return null;
+                }
+                else
+                {
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.OK;
+                    WebOperationContext.Current.OutgoingResponse.ContentType = "text/xml";
+                    return schemaCollection[schemaId];
+                }
+            }
+            catch (Exception e)
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.InternalServerError;
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                return null;
+            }
         }
 
+        /// <summary>
+        /// Gets the specified user information
+        /// </summary>
         public SecurityUserInfo GetUser(Guid userId)
         {
-            throw new NotImplementedException();
+            var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+            return new SecurityUserInfo(userRepository.GetUser(userId));
         }
 
+        /// <summary>
+        /// Get all users matching the query parameter
+        /// </summary>
         public AmiCollection<SecurityUserInfo> GetUsers()
         {
             throw new NotImplementedException();
@@ -195,9 +262,22 @@ namespace OpenIZ.Messaging.AMI.Wcf
                 return result;
         }
 
+        /// <summary>
+        /// Update a user
+        /// </summary>
         public SecurityUserInfo UpdateUser(Guid userId, SecurityUserInfo info)
         {
-            throw new NotImplementedException();
+            // First change password if needed
+            var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+            if (!String.IsNullOrEmpty(info.Password))
+                userRepository.ChangePassword(userId, info.Password);
+
+            return new SecurityUserInfo(userRepository.SaveUser(new Core.Model.Security.SecurityUser()
+            {
+                Key = userId,
+                Email = info.Email,
+                LockoutEnabled = info.Lockout
+            }));
         }
     }
 }

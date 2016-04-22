@@ -17,6 +17,7 @@
  * Date: 2016-4-19
  */
 using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Exceptions;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using System;
 using System.Collections.Generic;
