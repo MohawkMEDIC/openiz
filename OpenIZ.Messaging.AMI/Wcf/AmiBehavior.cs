@@ -20,20 +20,21 @@ using OpenIZ.Core.Security;
 using OpenIZ.Core.Services;
 using System.Xml.Serialization;
 using System.Diagnostics;
+using MARC.HI.EHRS.SVC.Core.Services;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
     /// <summary>
     /// Represents the AMI behavior
     /// </summary>
-    [ServiceBehavior(ConfigurationName = "AMI_1.0")]
+    [ServiceBehavior(ConfigurationName = "AMI")]
     public class AmiBehavior : IAmiContract
     {
         // Certificate tool
         private CertTool m_certTool;
 
         // Configuration
-        private AmiConfiguration m_configuration = ConfigurationManager.GetSection("openiz.messaging.ami") as AmiConfiguration;
+        private AmiConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.ami") as AmiConfiguration;
 
         // Trace source
         private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.AMI");
@@ -44,15 +45,16 @@ namespace OpenIZ.Messaging.AMI.Wcf
         public AmiBehavior()
         {
             this.m_certTool = new CertTool();
-            this.m_certTool.CertificationAuthorityName = this.m_configuration.CaConfiguration.Name;
-            this.m_certTool.ServerName = this.m_configuration.CaConfiguration.ServerName;
+            this.m_certTool.CertificationAuthorityName = this.m_configuration?.CaConfiguration.Name;
+            this.m_certTool.ServerName = this.m_configuration?.CaConfiguration.ServerName;
         }
 
         /// <summary>
         /// Accept the signing request
         /// </summary>
-        public SubmissionResult AcceptCsr(int id)
+        public SubmissionResult AcceptCsr(string rawId)
         {
+            int id = Int32.Parse(rawId);
             this.m_certTool.Approve(id);
             var result = new SubmissionResult(this.m_certTool.GetRequestStatus(id));
             result.Certificate = null;
@@ -69,6 +71,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
             var securityUser = userRepository.CreateUser(new Core.Model.Security.SecurityUser()
             {
+                UserName = user.UserName,
                 Email = user.Email,
                 LockoutEnabled = user.Lockout
             }, user.Password);
@@ -81,8 +84,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// <summary>
         /// Revokes a certificate
         /// </summary>
-        public SubmissionResult DeleteCertificate(Int32 id , Model.Security.RevokeReason reason)
+        public SubmissionResult DeleteCertificate(string rawId , Model.Security.RevokeReason reason)
         {
+            int id = Int32.Parse(rawId);
             var result = this.m_certTool.GetRequestStatus(id);
             
             if (String.IsNullOrEmpty(result.AuthorityResponse))
@@ -103,8 +107,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// <summary>
         /// Deletes the specified user
         /// </summary>
-        public SecurityUserInfo DeleteUser(Guid userId)
+        public SecurityUserInfo DeleteUser(string rawUserId)
         {
+            Guid userId = Guid.Parse(rawUserId);
             var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
             return new SecurityUserInfo(userRepository.ObsoleteUser(userId));
             
@@ -113,8 +118,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// <summary>
         /// Get the certificate in PKCS certificate
         /// </summary>
-        public byte[] GetCertificate(int id)
+        public byte[] GetCertificate(string rawId)
         {
+            int id = Int32.Parse(rawId);
             WebOperationContext.Current.OutgoingResponse.ContentType = "application/x-pkcs12";
             WebOperationContext.Current.OutgoingResponse.Headers.Add("Content-Disposition", String.Format("attachment; filename=\"crt-{0}.p12\"", id));
             var result = this.m_certTool.GetRequestStatus(id);
@@ -148,7 +154,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// Get submissions
         /// </summary>
         /// <returns></returns>
-        public AmiCollection<SubmissionInfo> GetCsr()
+        public AmiCollection<SubmissionInfo> GetCsrs()
         {
             AmiCollection<SubmissionInfo> collection = new AmiCollection<SubmissionInfo>();
             var certs = this.m_certTool.GetCertificates();
@@ -175,8 +181,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public SubmissionResult GetCsr(int id)
+        public SubmissionResult GetCsr(string rawId)
         {
+            int id = Int32.Parse(rawId);
+
             var result = new SubmissionResult(this.m_certTool.GetRequestStatus(id));
             return result;
         }
@@ -221,8 +229,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// <summary>
         /// Gets the specified user information
         /// </summary>
-        public SecurityUserInfo GetUser(Guid userId)
+        public SecurityUserInfo GetUser(string rawUserId)
         {
+            Guid userId = Guid.Parse(rawUserId);
             var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
             return new SecurityUserInfo(userRepository.GetUser(userId));
         }
@@ -241,8 +250,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// <param name="id"></param>
         /// <param name="reason"></param>
         /// <returns></returns>
-        public SubmissionResult RejectCsr(int id, Model.Security.RevokeReason reason)
+        public SubmissionResult RejectCsr(string rawId, Model.Security.RevokeReason reason)
         {
+            int id = Int32.Parse(rawId);
             this.m_certTool.DenyRequest(id);
             var result = new SubmissionResult(this.m_certTool.GetRequestStatus(id));
             result.Certificate = null;
@@ -257,7 +267,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
             var result = new SubmissionResult(this.m_certTool.SubmitRequest(s.CmcRequest, s.AdminContactName, s.AdminAddress));
             if (this.m_configuration.CaConfiguration.AutoApprove)
-                return this.AcceptCsr(result.RequestId);
+                return this.AcceptCsr(result.RequestId.ToString());
             else
                 return result;
         }
@@ -265,8 +275,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// <summary>
         /// Update a user
         /// </summary>
-        public SecurityUserInfo UpdateUser(Guid userId, SecurityUserInfo info)
+        public SecurityUserInfo UpdateUser(string rawUserId, SecurityUserInfo info)
         {
+            Guid userId = Guid.Parse(rawUserId);
             // First change password if needed
             var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
             if (!String.IsNullOrEmpty(info.Password))

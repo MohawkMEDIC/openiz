@@ -28,7 +28,7 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Core.Security.Wcf
+namespace OpenIZ.Core.Wcf.Security
 {
     /// <summary>
     /// Basic authorization credential validator for OpenIZ basic auth

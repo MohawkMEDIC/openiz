@@ -40,6 +40,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.IdentityModel" />
@@ -47,13 +51,16 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\System.IdentityModel.Tokens.Jwt.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationContextExtensions.cs" />
@@ -79,10 +86,10 @@
     <Compile Include="Security\PermissionPolicyIdentifiers.cs" />
     <Compile Include="Security\SecurityUtils.cs" />
     <Compile Include="Security\SHA256PasswordHashingService.cs" />
-    <Compile Include="Security\Wcf\BasicAuthorizationAccessPolicy.cs" />
-    <Compile Include="Security\Wcf\BasicAuthorizationCredentialValidator.cs" />
-    <Compile Include="Security\Wcf\JwtTokenAuthorizationPolicy.cs" />
-    <Compile Include="Security\Wcf\JwtTokenServiceAuthorizationManager.cs" />
+    <Compile Include="Wcf\Security\BasicAuthorizationAccessPolicy.cs" />
+    <Compile Include="Wcf\Security\BasicAuthorizationCredentialValidator.cs" />
+    <Compile Include="Wcf\Security\JwtTokenAuthorizationPolicy.cs" />
+    <Compile Include="Wcf\Security\JwtTokenServiceAuthorizationManager.cs" />
     <Compile Include="Services\IApplicationIdentityProviderService.cs" />
     <Compile Include="Services\IConceptRepositoryService.cs" />
     <Compile Include="Services\IDeviceIdentityProviderService.cs" />
@@ -91,8 +98,12 @@
     <Compile Include="Services\IPatientRepositoryService.cs" />
     <Compile Include="Services\IPhoneticAlgorithmHandler.cs" />
     <Compile Include="Services\ISecurityRepositoryService.cs" />
+    <Compile Include="Wcf\Serialization\RawBodyWriter.cs" />
+    <Compile Include="Wcf\Serialization\WcfMessageDispatchFormatter.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Security\Wcf\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>

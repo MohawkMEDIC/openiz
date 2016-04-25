@@ -37,8 +37,9 @@ using System.Threading.Tasks;
 using OpenIZ.Core;
 using System.ServiceModel;
 using OpenIZ.Core.Services;
+using OpenIZ.Core.Security;
 
-namespace OpenIZ.Core.Security.Wcf
+namespace OpenIZ.Core.Wcf.Security
 {
     /// <summary>
     /// Basic authorization policy

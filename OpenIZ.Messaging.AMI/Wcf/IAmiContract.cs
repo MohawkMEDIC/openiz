@@ -38,25 +38,25 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// Get the submissions
         /// </summary>
         [WebGet(UriTemplate = "csr/", BodyStyle = WebMessageBodyStyle.Bare)]
-        AmiCollection<SubmissionInfo> GetCsr();
+        AmiCollection<SubmissionInfo> GetCsrs();
 
         /// <summary>
         /// Reject the specified CSR
         /// </summary>
-        [WebInvoke(UriTemplate = "csr/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-        SubmissionResult RejectCsr(Int32 id, RevokeReason reason);
+        [WebInvoke(UriTemplate = "csr/{certId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+        SubmissionResult RejectCsr(string certId, RevokeReason reason);
 
         /// <summary>
         /// Gets the specified CSR request
         /// </summary>
         [WebGet(UriTemplate = "csr/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
-        SubmissionResult GetCsr(Int32 id);
+        SubmissionResult GetCsr(string id);
 
         /// <summary>
         /// Accept the CSR
         /// </summary>
         [WebInvoke(UriTemplate = "csr/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
-        SubmissionResult AcceptCsr(Int32 id);
+        SubmissionResult AcceptCsr(string id);
 
         /// <summary>
         /// Get the CRL
@@ -75,13 +75,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// Get the specified certificate
         /// </summary>
         [WebGet(UriTemplate = "certificate/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
-        byte[] GetCertificate(Int32 id);
+        byte[] GetCertificate(string id);
 
         /// <summary>
         /// Reject the specified CSR
         /// </summary>
         [WebInvoke(UriTemplate = "certificate/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-        SubmissionResult DeleteCertificate(Int32 id, RevokeReason reason);
+        SubmissionResult DeleteCertificate(string id, RevokeReason reason);
 
         /// <summary>
         /// Security user information
@@ -100,19 +100,19 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// Get a security user
         /// </summary>
         [WebGet(UriTemplate = "user/{userId}", BodyStyle = WebMessageBodyStyle.Bare)]
-        SecurityUserInfo GetUser(Guid userId);
+        SecurityUserInfo GetUser(string userId);
 
         /// <summary>
         /// Get a security user
         /// </summary>
         [WebInvoke(UriTemplate = "user/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
-        SecurityUserInfo UpdateUser(Guid userId, SecurityUserInfo info);
+        SecurityUserInfo UpdateUser(string userId, SecurityUserInfo info);
 
         /// <summary>
         /// Delete a security user
         /// </summary>
         [WebInvoke(UriTemplate = "user/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-        SecurityUserInfo DeleteUser(Guid userId);
+        SecurityUserInfo DeleteUser(string userId);
 
         /// <summary>
         /// Get the schema

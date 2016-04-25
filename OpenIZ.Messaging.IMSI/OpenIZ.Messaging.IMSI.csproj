@@ -76,7 +76,6 @@
     <Compile Include="Wcf\Compression\DeflateCompressionScheme.cs" />
     <Compile Include="Wcf\Compression\GzipCompressionScheme.cs" />
     <Compile Include="Wcf\Compression\ICompressionScheme.cs" />
-    <Compile Include="Wcf\Compression\RawBodyWriter.cs" />
     <Compile Include="Wcf\IImsiServiceContract.cs" />
     <Compile Include="Wcf\ImsiContentTypeHandler.cs" />
     <Compile Include="Wcf\ImsiMessageInspector.cs" />
@@ -84,7 +83,6 @@
     <Compile Include="Wcf\Behavior\ImsiSerializerOperationBehavior.cs" />
     <Compile Include="Wcf\ImsiServiceBehavior.cs" />
     <Compile Include="Wcf\Serialization\ImsiErrorHandler.cs" />
-    <Compile Include="Wcf\Serialization\ImsiMessageDispatchFormatter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">

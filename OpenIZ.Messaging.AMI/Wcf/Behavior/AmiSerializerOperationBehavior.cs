@@ -17,18 +17,17 @@
  * Date: 2016-4-19
  */
 using OpenIZ.Core.Wcf.Serialization;
-using OpenIZ.Messaging.IMSI.Wcf.Serialization;
 using System;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 
-namespace OpenIZ.Messaging.IMSI.Wcf.Behavior
+namespace OpenIZ.Messaging.AMI.Wcf.Behavior
 {
     /// <summary>
     /// IMSI Serializer operation behavior
     /// </summary>
-    internal class ImsiSerializerOperationBehavior : IOperationBehavior
+    internal class AmiSerializerOperationBehavior : IOperationBehavior
     {
         public void AddBindingParameters(OperationDescription operationDescription, BindingParameterCollection bindingParameters)
         {
@@ -45,7 +44,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Behavior
         /// <param name="dispatchOperation"></param>
         public void ApplyDispatchBehavior(OperationDescription operationDescription, DispatchOperation dispatchOperation)
         {
-            dispatchOperation.Formatter = new WcfMessageDispatchFormatter<IImsiServiceContract>(operationDescription);
+            dispatchOperation.Formatter = new WcfMessageDispatchFormatter<IAmiContract>(operationDescription);
         }
 
         public void Validate(OperationDescription operationDescription)

@@ -10,7 +10,7 @@ namespace OpenIZ.Messaging.AMI.Model
     /// <summary>
     /// AMI collection base
     /// </summary>
-    [XmlType(nameof(AmiCollection<T>), Namespace = "http://openiz.org/ami")]
+    [XmlType(Namespace = "http://openiz.org/ami")]
     public class AmiCollection<T>
     {
         /// <summary>

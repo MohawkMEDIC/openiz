@@ -17,7 +17,6 @@
  * Date: 2016-2-1
  */
 using Newtonsoft.Json;
-using OpenIZ.Messaging.IMSI.Wcf.Compression;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,19 +34,18 @@ using System.Reflection;
 using System.ServiceModel.Web;
 using OpenIZ.Core.Model;
 using System.Xml.Schema;
-using OpenIZ.Messaging.IMSI.ResourceHandler;
 using OpenIZ.Core.Model.Serialization;
 using OpenIZ.Core.Security;
 using System.Diagnostics;
 using OpenIZ.Core.Model.Collection;
 using Newtonsoft.Json.Converters;
 
-namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
+namespace OpenIZ.Core.Wcf.Serialization
 {
     /// <summary>
     /// Represents a dispatch message formatter which uses the JSON.NET serialization
     /// </summary>
-    public class ImsiMessageDispatchFormatter : IDispatchMessageFormatter
+    public class WcfMessageDispatchFormatter<TContract> : IDispatchMessageFormatter
     {
         // The operation description
         private OperationDescription m_operationDescription;
@@ -55,25 +53,25 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
         // Trace source
         private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.IMSI");
         // Known types
-        private static Type[] s_knownTypes = typeof(IImsiServiceContract).GetCustomAttributes<ServiceKnownTypeAttribute>().Select(t => t.Type).ToArray();
+        private static Type[] s_knownTypes = typeof(TContract).GetCustomAttributes<ServiceKnownTypeAttribute>().Select(t => t.Type).ToArray();
         // Serializers
         private static Dictionary<Type, XmlSerializer> s_serializers = new Dictionary<Type, XmlSerializer>();
 
         // Static ctor
-        static ImsiMessageDispatchFormatter()
+        static WcfMessageDispatchFormatter()
         {
             foreach (var s in s_knownTypes)
                 s_serializers.Add(s, new XmlSerializer(s,  s.GetCustomAttributes<XmlIncludeAttribute>().Select(o => o.Type).ToArray()));
         }
 
-        public ImsiMessageDispatchFormatter()
+        public WcfMessageDispatchFormatter()
         {
 
         }
         /// <summary>
         /// Creates a new json dispatch message formatter
         /// </summary>
-        public ImsiMessageDispatchFormatter(OperationDescription operationDescription)
+        public WcfMessageDispatchFormatter(OperationDescription operationDescription)
         {
             this.m_operationDescription = operationDescription;
         }
@@ -132,7 +130,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
                             TypeNameHandling = TypeNameHandling.All
                         };
                         jsz.Converters.Add(new StringEnumConverter());
-                        var dserType = ResourceHandlerUtil.Current.GetResourceHandler(templateMatch.BoundVariables["resourceType"])?.Type ?? parm.Type;
+                        var dserType = parm.Type;
                         parameters[0] = jsz.Deserialize(sr, dserType);
                     }
                     else if (contentType != null)// TODO: Binaries
