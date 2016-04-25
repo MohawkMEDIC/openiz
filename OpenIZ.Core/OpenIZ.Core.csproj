@@ -86,6 +86,7 @@
     <Compile Include="Security\PermissionPolicyIdentifiers.cs" />
     <Compile Include="Security\SecurityUtils.cs" />
     <Compile Include="Security\SHA256PasswordHashingService.cs" />
+    <Compile Include="Wcf\Behavior\WcfErrorEndpointBehavior.cs" />
     <Compile Include="Wcf\Security\BasicAuthorizationAccessPolicy.cs" />
     <Compile Include="Wcf\Security\BasicAuthorizationCredentialValidator.cs" />
     <Compile Include="Wcf\Security\JwtTokenAuthorizationPolicy.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Services\IPatientRepositoryService.cs" />
     <Compile Include="Services\IPhoneticAlgorithmHandler.cs" />
     <Compile Include="Services\ISecurityRepositoryService.cs" />
+    <Compile Include="Wcf\Serialization\WcfErrorHandler.cs" />
     <Compile Include="Wcf\Serialization\RawBodyWriter.cs" />
     <Compile Include="Wcf\Serialization\WcfMessageDispatchFormatter.cs" />
   </ItemGroup>

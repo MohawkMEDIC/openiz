@@ -1,5 +1,6 @@
 ﻿using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Wcf.Behavior;
 using OpenIZ.Messaging.AMI.Configuration;
 using OpenIZ.Messaging.AMI.Wcf;
 using OpenIZ.Messaging.AMI.Wcf.Behavior;
@@ -70,6 +71,7 @@ namespace OpenIZ.Messaging.AMI
                 foreach (ServiceEndpoint endpoint in this.m_webHost.Description.Endpoints)
                 {
                     this.m_traceSource.TraceInformation("Starting AMI on {0}...", endpoint.Address);
+                    endpoint.EndpointBehaviors.Add(new WcfErrorEndpointBehavior());
                 }
                 // Start the webhost
                 this.m_webHost.Open();

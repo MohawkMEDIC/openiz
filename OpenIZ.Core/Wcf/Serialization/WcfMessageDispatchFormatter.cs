@@ -51,7 +51,7 @@ namespace OpenIZ.Core.Wcf.Serialization
         private OperationDescription m_operationDescription;
 
         // Trace source
-        private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.IMSI");
+        private TraceSource m_traceSource = new TraceSource(OpenIzConstants.WcfTraceSourceName);
         // Known types
         private static Type[] s_knownTypes = typeof(TContract).GetCustomAttributes<ServiceKnownTypeAttribute>().Select(t => t.Type).ToArray();
         // Serializers
