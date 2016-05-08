@@ -14,7 +14,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
     /// <summary>
     /// Resource handler for patient classes
     /// </summary>
-    public class PatientResourceHandler : ResourceHandlerBase<Patient>
+    public class PatientResourceHandler : ResourceHandlerBase<Patient, Core.Model.Roles.Patient>
     {
        
     }
