@@ -20,9 +20,11 @@
 <locale name="en" xmlns="urn:marc-hi:ca/localization">
   
   <!-- MESSAGE VALIDATION ERRORS -->
-  
+  <string name="MSGE001">Cannot locate map between domain and model instances.</string>
+  <string name="MSGE002">Invalid query parameter format. Expected format is UUID</string>
+  <string name="MSGE003">Path indicates update for resource different than message content</string>
   <!-- PERSISTENCE ERRORS -->
-  
+  <string name="DBPE001">Unable to locate appropriate persistence handler</string>
   <!-- FORMAL CONSTRAINTS -->
   <string name="DBCE001">Attempt to insert an entity with KEY specified</string>
   <string name="DBCE002">Attempt to update an entity with no KEY specified</string>
