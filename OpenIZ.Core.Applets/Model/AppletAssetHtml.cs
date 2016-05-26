@@ -31,7 +31,9 @@ namespace OpenIZ.Core.Applets.Model
         /// </summary>
         public AppletAssetHtml()
         {
-            this.Reference = new List<string>();
+            this.Bundle = new List<string>();
+            this.Script = new List<string>();
+            this.Style = new List<string>();
         }
 
         /// <summary>
@@ -43,8 +45,20 @@ namespace OpenIZ.Core.Applets.Model
         /// <summary>
         /// Gets or sets the references for the assets
         /// </summary>
-        [XmlElement("reference")]
-        public List<String> Reference { get; set; }
+        [XmlElement("bundle")]
+        public List<String> Bundle { get; set; }
+
+        /// <summary>
+        /// Gets or sets the script
+        /// </summary>
+        [XmlElement("script")]
+        public List<String> Script { get; set; }
+
+        /// <summary>
+        /// Gets or sets the script
+        /// </summary>
+        [XmlElement("style")]
+        public List<String> Style { get; set; }
 
         /// <summary>
         /// Content of the element

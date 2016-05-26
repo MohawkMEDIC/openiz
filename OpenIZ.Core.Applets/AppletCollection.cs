@@ -216,18 +216,30 @@ namespace OpenIZ.Core.Applets
 
                         List<XElement> headerInjection = new List<XElement>();
                         // Inject special headers
-                        foreach (var itm in htmlAsset.Reference)
+                        foreach (var itm in htmlAsset.Bundle)
                         {
                             var bundle = this.m_referenceBundles.Find(o => o.Name == itm);
                             if (bundle == null)
                                 throw new FileNotFoundException(String.Format("Bundle {0} not found", itm));
                             headerInjection.AddRange(bundle.Content.SelectMany(o => o.HeaderElement));
                         }
+                        foreach (var itm in htmlAsset.Script)
+                            headerInjection.AddRange(new ScriptBundleContent(itm).HeaderElement);
+                        foreach (var itm in htmlAsset.Style)
+                            headerInjection.AddRange(new StyleBundleContent(itm).HeaderElement);
+
                         if (this.m_referenceBundles.Exists(o => o.Name == RenderBundle.BUNDLE_ANGULAR))
                             headerInjection.Add(new XElement(xs_xhtml + "script", new XAttribute("src", asset.Name + "-controller"), new XAttribute("type", "text/javascript"), new XText("// Imported data")));
 
                         // Render the bundles
-                        htmlContent = new XElement(xs_xhtml + "html", new XAttribute("ng-app", asset.Name), new XElement(xs_xhtml + "head", headerInjection), htmlAsset.Html as XElement);
+                        var bodyElement = htmlAsset.Html as XElement;
+                        
+                        // Inject the OpenIZ JS shim
+                        var openizJS = new XElement(xs_xhtml + "script", new XAttribute("src", "app://openiz.org/asset/js/openiz.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data"));
+                        bodyElement.Add(openizJS);
+
+                        htmlContent = new XElement(xs_xhtml + "html", new XAttribute("ng-app", asset.Name), new XElement(xs_xhtml + "head", headerInjection), bodyElement);
+
                         break;
                     case HtmlTagName.Div: // The content is a simple DIV
 
@@ -235,6 +247,8 @@ namespace OpenIZ.Core.Applets
                             htmlContent = htmlAsset.Html as XElement;
                         else
                         {
+
+                            // TODO: Rewrite the angular JS reference
                             // Get the layout
                             var layoutAsset = this.ResolveAsset(htmlAsset.Layout, asset);
                             if (layoutAsset == null)
