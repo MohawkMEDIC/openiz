@@ -20,15 +20,7 @@ namespace OpenIZ.Core.Applets
         public const string BUNDLE_METRO = "metro-ui";
         public const string BUNDLE_SELECT2 = "select2";
         public const string BUNDLE_CHART = "chart-js";
-
-        //public static readonly RenderBundle JqueryBundle = new RenderBundle("jquery", new ScriptBundleContent("app://openiz.org/asset/js/jquery.min.js"), new ScriptBundleContent("app://openiz.org/asset/js/jquery.mobile.min.js"));
-        //public static readonly RenderBundle BootstrapBundle = new RenderBundle("bootstrap", new ScriptBundleContent("app://openiz.org/asset/js/bootstrap.js"), new StyleBundleContent("app://openiz.org/asset/css/bootstrap.css"));
-        //public static readonly RenderBundle AngularBundle = new RenderBundle("angular", new ScriptBundleContent("app://openiz.org/asset/js/angular.min.js"));
-        //public static readonly RenderBundle MetroUiBundle = new RenderBundle("metro-ui", new ScriptBundleContent("app://openiz.org/asset/js/jquery.metro.js"), new StyleBundleContent("app://openiz.org/asset/css/jquery.metro.css"));
-        //public static readonly RenderBundle Select2Bundle = new RenderBundle("select2", new StyleBundleContent("app://openiz.org/asset/css/select2.min.css"), new ScriptBundleContent("app://openiz.org/asset/js/select2.min.js"));
-        //public static readonly RenderBundle ChartJsBundle = new RenderBundle("chart-js", new ScriptBundleContent("app://openiz.org/asset/js/chart.js"));
-
-
+        
         /// <summary>
         /// Asset bundle
         /// </summary>

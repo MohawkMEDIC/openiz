@@ -23,7 +23,15 @@ namespace OpenIZ.Core.Applets
         private readonly XNamespace xs_xhtml = "http://www.w3.org/1999/xhtml";
 
         // Reference bundles
-        private List<RenderBundle> m_referenceBundles = new List<RenderBundle>();
+        private List<RenderBundle> m_referenceBundles = new List<RenderBundle>()
+        {
+            new RenderBundle(RenderBundle.BUNDLE_JQUERY, new ScriptBundleContent("app://openiz.org/asset/js/jquery.min.js"), new ScriptBundleContent("app://openiz.org/asset/js/jquery.mobile.min.js")),
+            new RenderBundle(RenderBundle.BUNDLE_BOOTSTRAP, new ScriptBundleContent("app://openiz.org/asset/js/bootstrap.js"), new StyleBundleContent("app://openiz.org/asset/css/bootstrap.css")),
+            new RenderBundle(RenderBundle.BUNDLE_ANGULAR, new ScriptBundleContent("app://openiz.org/asset/js/angular.min.js")),
+            new RenderBundle(RenderBundle.BUNDLE_METRO, new ScriptBundleContent("app://openiz.org/asset/js/jquery.metro.js"), new StyleBundleContent("app://openiz.org/asset/css/jquery.metro.css")),
+            new RenderBundle(RenderBundle.BUNDLE_SELECT2, new StyleBundleContent("app://openiz.org/asset/css/select2.min.css"), new ScriptBundleContent("app://openiz.org/asset/js/select2.min.js")),
+            new RenderBundle(RenderBundle.BUNDLE_CHART, new ScriptBundleContent("app://openiz.org/asset/js/chart.js"))
+        };
 
         // Applet manifest
         private List<AppletManifest> m_appletManifest = new List<AppletManifest>();
@@ -163,7 +171,7 @@ namespace OpenIZ.Core.Applets
             else if (relative == null) // Relative
                 throw new KeyNotFoundException("Unbound relative reference");
             else
-                return relative.Manifest.Assets.SingleOrDefault(o => o.Name == targetApplet && o.Language == (language ?? relative.Language));
+                return relative.Manifest.Assets.FirstOrDefault(o => o.Name == targetApplet && o.Language == (language ?? o.Language));
 
             // Page in the target applet
             if (targetApplet.Contains("/"))
@@ -177,7 +185,7 @@ namespace OpenIZ.Core.Applets
                 path = "index";
 
             // Now we have the target applet, and path, so retrieve
-            return this.m_appletManifest.SingleOrDefault(o => o.Info.Id == targetApplet)?.Assets.SingleOrDefault(o => o.Name == path && o.Language == (language ?? relative?.Language));
+            return this.m_appletManifest.SingleOrDefault(o => o.Info.Id == targetApplet)?.Assets.FirstOrDefault(o => o.Name == path && o.Language == (language ?? o.Language));
         }
 
         /// <summary>
@@ -207,65 +215,102 @@ namespace OpenIZ.Core.Applets
                 XElement htmlContent = null;
 
                 // Type of tag to render basic content
-                switch (htmlAsset.HtmlTag)
+                switch (htmlAsset.Html.Name.LocalName)
                 {
-                    case HtmlTagName.Html: // The content is a complete HTML page
+                    case "html": // The content is a complete HTML page
                         htmlContent = htmlAsset.Html as XElement;
                         break;
-                    case HtmlTagName.Body: // The content is an HTML Body element, we must inject the HTML header
-
-                        List<XElement> headerInjection = new List<XElement>();
-                        // Inject special headers
-                        foreach (var itm in htmlAsset.Bundle)
+                    case "body": // The content is an HTML Body element, we must inject the HTML header
                         {
-                            var bundle = this.m_referenceBundles.Find(o => o.Name == itm);
-                            if (bundle == null)
-                                throw new FileNotFoundException(String.Format("Bundle {0} not found", itm));
-                            headerInjection.AddRange(bundle.Content.SelectMany(o => o.HeaderElement));
-                        }
-                        foreach (var itm in htmlAsset.Script)
-                            headerInjection.AddRange(new ScriptBundleContent(itm).HeaderElement);
-                        foreach (var itm in htmlAsset.Style)
-                            headerInjection.AddRange(new StyleBundleContent(itm).HeaderElement);
-
-                        if (this.m_referenceBundles.Exists(o => o.Name == RenderBundle.BUNDLE_ANGULAR))
-                            headerInjection.Add(new XElement(xs_xhtml + "script", new XAttribute("src", asset.Name + "-controller"), new XAttribute("type", "text/javascript"), new XText("// Imported data")));
-
-                        // Render the bundles
-                        var bodyElement = htmlAsset.Html as XElement;
-                        
-                        // Inject the OpenIZ JS shim
-                        var openizJS = new XElement(xs_xhtml + "script", new XAttribute("src", "app://openiz.org/asset/js/openiz.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data"));
-                        bodyElement.Add(openizJS);
-
-                        htmlContent = new XElement(xs_xhtml + "html", new XAttribute("ng-app", asset.Name), new XElement(xs_xhtml + "head", headerInjection), bodyElement);
-
-                        break;
-                    case HtmlTagName.Div: // The content is a simple DIV
-
-                        if (String.IsNullOrEmpty(htmlAsset.Layout))
-                            htmlContent = htmlAsset.Html as XElement;
-                        else
-                        {
-
-                            // TODO: Rewrite the angular JS reference
-                            // Get the layout
-                            var layoutAsset = this.ResolveAsset(htmlAsset.Layout, asset);
-                            if (layoutAsset == null)
-                                throw new FileNotFoundException(String.Format("Layout asset {0} not found", htmlAsset.Layout));
-
-                            using (MemoryStream ms = new MemoryStream(this.RenderAssetContent(layoutAsset)))
-                                htmlContent = XDocument.Load(ms).Element(xs_xhtml + "html") as XElement;
-
-                            // Find the <!--#include virtual="content" --> tag
-                            var contentNode = htmlContent.DescendantNodes().OfType<XComment>().SingleOrDefault(o => o.Value.Trim() == "#include virtual=\"content\"");
-                            if (contentNode != null)
+                            List<XElement> headerInjection = new List<XElement>();
+                            // Inject special headers
+                            foreach (var itm in htmlAsset.Bundle)
                             {
-                                contentNode.AddAfterSelf(htmlAsset.Html as XElement);
-                                contentNode.Remove();
+                                var bundle = this.m_referenceBundles.Find(o => o.Name == itm);
+                                if (bundle == null)
+                                    throw new FileNotFoundException(String.Format("Bundle {0} not found", itm));
+                                headerInjection.AddRange(bundle.Content.SelectMany(o => o.HeaderElement));
+                            }
+                            foreach (var itm in htmlAsset.Script)
+                            {
+                                var incAsset = this.ResolveAsset(itm, asset);
+                                if (incAsset != null)
+                                    headerInjection.AddRange(new ScriptBundleContent(String.Format("{0}{1}/{2}", APPLET_SCHEME, incAsset.Manifest.Info.Id, incAsset.Name)).HeaderElement);
+                                else if (itm.StartsWith(ASSET_SCHEME))
+                                    headerInjection.AddRange(new ScriptBundleContent(itm).HeaderElement);
+                                else
+                                    throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
+                            }
+                            foreach (var itm in htmlAsset.Style)
+                            {
+                                var incAsset = this.ResolveAsset(itm, asset);
+                                if (incAsset != null)
+                                    headerInjection.AddRange(new StyleBundleContent(String.Format("{0}{1}/{2}", APPLET_SCHEME, incAsset.Manifest.Info.Id, incAsset.Name)).HeaderElement);
+                                else if (itm.StartsWith(ASSET_SCHEME))
+                                    headerInjection.AddRange(new StyleBundleContent(itm).HeaderElement);
+                                else
+                                    throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
+                            }
+
+                            // Render the bundles
+                            var bodyElement = htmlAsset.Html as XElement;
+
+                            // Inject the OpenIZ JS shim
+                            var openizJS = new XElement(xs_xhtml + "script", new XAttribute("src", "app://openiz.org/asset/js/openiz.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data"));
+                            bodyElement.Add(openizJS);
+
+                            htmlContent = new XElement(xs_xhtml + "html", new XAttribute("ng-app", asset.Name), new XElement(xs_xhtml + "head", headerInjection), bodyElement);
+                        }
+                        break;
+                    case "div": // The content is a simple DIV
+                        {
+                            if (String.IsNullOrEmpty(htmlAsset.Layout))
+                                htmlContent = htmlAsset.Html as XElement;
+                            else
+                            {
+
+                                // Insert scripts & Styles
+                                List<XElement> headerInjection = new List<XElement>();
+                                foreach (var itm in htmlAsset.Script)
+                                {
+                                    var incAsset = this.ResolveAsset(itm, asset);
+                                    if (incAsset != null)
+                                        headerInjection.AddRange(new ScriptBundleContent(String.Format("{0}{1}/{2}", APPLET_SCHEME, incAsset.Manifest.Info.Id, incAsset.Name)).HeaderElement);
+                                    else if(itm.StartsWith(ASSET_SCHEME))
+                                        headerInjection.AddRange(new ScriptBundleContent(itm).HeaderElement);
+                                    else
+                                        throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
+                                }
+                                foreach (var itm in htmlAsset.Style)
+                                {
+                                    var incAsset = this.ResolveAsset(itm, asset);
+                                    if (incAsset != null)
+                                        headerInjection.AddRange(new StyleBundleContent(String.Format("{0}{1}/{2}", APPLET_SCHEME, incAsset.Manifest.Info.Id, incAsset.Name)).HeaderElement);
+                                    else if (itm.StartsWith(ASSET_SCHEME))
+                                        headerInjection.AddRange(new StyleBundleContent(itm).HeaderElement);
+                                    else
+                                        throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
+                                }
+
+                                // Get the layout
+                                var layoutAsset = this.ResolveAsset(htmlAsset.Layout, asset);
+                                if (layoutAsset == null)
+                                    throw new FileNotFoundException(String.Format("Layout asset {0} not found", htmlAsset.Layout));
+
+                                using (MemoryStream ms = new MemoryStream(this.RenderAssetContent(layoutAsset)))
+                                    htmlContent = XDocument.Load(ms).Element(xs_xhtml + "html") as XElement;
+
+                                (htmlContent.Element(xs_xhtml + "head") as XElement).Add(headerInjection);
+
+                                // Find the <!--#include virtual="content" --> tag
+                                var contentNode = htmlContent.DescendantNodes().OfType<XComment>().SingleOrDefault(o => o.Value.Trim() == "#include virtual=\"content\"");
+                                if (contentNode != null)
+                                {
+                                    contentNode.AddAfterSelf(htmlAsset.Html as XElement);
+                                    contentNode.Remove();
+                                }
                             }
                         }
-
                         break;
                 }
 
@@ -276,6 +321,8 @@ namespace OpenIZ.Core.Applets
                     String assetName = inc.Value.Trim().Substring(18); // HACK: Should be a REGEX
                     if (assetName.EndsWith("\""))
                         assetName = assetName.Substring(0, assetName.Length - 1);
+                    if (assetName == "content")
+                        continue;
                     var includeAsset = this.ResolveAsset(assetName, asset);
                     using (MemoryStream ms = new MemoryStream(this.RenderAssetContent(includeAsset)))
                     {
@@ -288,7 +335,7 @@ namespace OpenIZ.Core.Applets
                 using (MemoryStream ms = new MemoryStream())
                 using (XmlWriter xw = XmlWriter.Create(ms, new XmlWriterSettings() { Indent = true }))
                 {
-                    (asset.Content as XElement).WriteTo(xw);
+                    htmlContent.WriteTo(xw);
                     xw.Flush();
                     ms.Flush();
                     return ms.ToArray();

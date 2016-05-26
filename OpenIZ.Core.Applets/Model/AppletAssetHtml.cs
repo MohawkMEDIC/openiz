@@ -6,18 +6,6 @@ using System.Xml.Serialization;
 namespace OpenIZ.Core.Applets.Model
 {
 
-    /// <summary>
-    /// The tag name
-    /// </summary>
-    public enum HtmlTagName
-    {
-        [XmlEnum("http://www.w3.org/1999/xhtml:div")]
-        Div,
-        [XmlEnum("http://www.w3.org/1999/xhtml:html")]
-        Html,
-        [XmlEnum("http://www.w3.org/1999/xhtml:body")]
-        Body
-    }
 
     /// <summary>
     /// Applet asset XML 
@@ -63,16 +51,11 @@ namespace OpenIZ.Core.Applets.Model
         /// <summary>
         /// Content of the element
         /// </summary>
-        [XmlElement("body", Type = typeof(XElement), Namespace = "http://www.w3.org/1999/xhtml")]
-        [XmlElement("html", Type = typeof(XElement), Namespace = "http://www.w3.org/1999/xhtml")]
-        [XmlElement("div", Type = typeof(XElement), Namespace = "http://www.w3.org/1999/xhtml")]
-        [XmlChoiceIdentifier("HtmlTag")]
+        //[XmlAnyElement("body", Namespace = "http://www.w3.org/1999/xhtml")]
+        //[XmlAnyElement("html", Namespace = "http://www.w3.org/1999/xhtml")]
+        //[XmlAnyElement("div", Namespace = "http://www.w3.org/1999/xhtml")]
+        [XmlAnyElement]
         public XElement Html { get; set; }
 
-        /// <summary>
-        /// Tag name
-        /// </summary>
-        [XmlIgnore]
-        public HtmlTagName HtmlTag { get; set; }
     }
 }
