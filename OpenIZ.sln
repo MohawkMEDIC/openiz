@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Auth", "Auth", "{0EE3D33B-9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Authentication.OAuth2", "OpenIZ.Authentication.AccessControlService\OpenIZ.Authentication.OAuth2.csproj", "{A3975C6F-4FDB-43BE-81AB-3357B86173F1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Core.Applets", "OpenIZ.Core.Applets\OpenIZ.Core.Applets.csproj", "{39E61451-F4FE-493D-B754-5F06EB284AAC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{A3975C6F-4FDB-43BE-81AB-3357B86173F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3975C6F-4FDB-43BE-81AB-3357B86173F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3975C6F-4FDB-43BE-81AB-3357B86173F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39E61451-F4FE-493D-B754-5F06EB284AAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39E61451-F4FE-493D-B754-5F06EB284AAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39E61451-F4FE-493D-B754-5F06EB284AAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39E61451-F4FE-493D-B754-5F06EB284AAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,5 +91,6 @@ Global
 		{B25778DB-97DA-4BA1-BF77-72838658B148} = {A1C82EDF-C27A-4A7A-A186-09E88BF63F36}
 		{F38ED54C-E4E4-499A-882E-736289F332C0} = {2914F4AD-4661-4C73-ADB6-B1D91C11C569}
 		{A3975C6F-4FDB-43BE-81AB-3357B86173F1} = {0EE3D33B-99BE-4BED-A19C-93FD5086C60E}
+		{39E61451-F4FE-493D-B754-5F06EB284AAC} = {3D1B75E7-2CFB-4FA6-92A0-F91EB884D0E4}
 	EndGlobalSection
 EndGlobal
