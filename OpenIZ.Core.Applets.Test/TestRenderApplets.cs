@@ -64,6 +64,22 @@ namespace OpenIZ.Core.Applets.Test
         }
 
         [TestMethod]
+        public void TestResolveSettingLanguage()
+        {
+            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.applets.core.settings", language: "en");
+            Assert.IsNotNull(asset);
+        }
+
+
+        [TestMethod]
+        public void TestRenderSettingsHtml()
+        {
+            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.applets.core.settings");
+            var render = this.m_appletCollection.RenderAssetContent(asset);
+            Trace.WriteLine(Encoding.UTF8.GetString(render));
+        }
+
+        [TestMethod]
         public void TestRenderHtml()
         {
             var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.sample.helloworld/index");

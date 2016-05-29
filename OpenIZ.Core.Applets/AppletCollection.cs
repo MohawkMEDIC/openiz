@@ -171,7 +171,15 @@ namespace OpenIZ.Core.Applets
             else if (relative == null) // Relative
                 throw new KeyNotFoundException("Unbound relative reference");
             else
-                return relative.Manifest.Assets.FirstOrDefault(o => o.Name == targetApplet && o.Language == (language ?? o.Language));
+            {
+                var appletCandidate = relative.Manifest.Assets.Where(o => o.Name == targetApplet);
+                if (String.IsNullOrEmpty(language))
+                    return appletCandidate.FirstOrDefault();
+                else {
+                    return appletCandidate.FirstOrDefault(o=>o.Language == (language ?? relative?.Language)) ??
+                        appletCandidate.FirstOrDefault();
+                }
+            }
 
             // Page in the target applet
             if (targetApplet.Contains("/"))
@@ -185,7 +193,14 @@ namespace OpenIZ.Core.Applets
                 path = "index";
 
             // Now we have the target applet, and path, so retrieve
-            return this.m_appletManifest.SingleOrDefault(o => o.Info.Id == targetApplet)?.Assets.FirstOrDefault(o => o.Name == path && o.Language == (language ?? o.Language));
+            var candidates = this.m_appletManifest.SingleOrDefault(o => o.Info.Id == targetApplet)?.Assets.Where(o => o.Name == path);
+            if (String.IsNullOrEmpty(language))
+                return candidates?.FirstOrDefault();
+            else
+            {
+                return candidates?.FirstOrDefault(o => o.Language == (language ?? relative?.Language)) ??
+                    candidates?.FirstOrDefault();
+            }
         }
 
         /// <summary>
@@ -213,7 +228,7 @@ namespace OpenIZ.Core.Applets
                 // Is the content HTML?
                 var htmlAsset = asset.Content as AppletAssetHtml;
                 XElement htmlContent = null;
-
+                
                 // Type of tag to render basic content
                 switch (htmlAsset.Html.Name.LocalName)
                 {
