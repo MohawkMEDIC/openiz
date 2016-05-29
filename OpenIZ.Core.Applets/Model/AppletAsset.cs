@@ -23,7 +23,7 @@ namespace OpenIZ.Core.Applets.Model
         /// Gets the or sets the manifest to which the asset belongs
         /// </summary>
         [XmlIgnore]
-        internal AppletManifest Manifest { get; set; }
+        public AppletManifest Manifest { get; internal set; }
 
         /// <summary>
         /// Gets or sets the name of the asset

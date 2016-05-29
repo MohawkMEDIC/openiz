@@ -54,7 +54,7 @@ namespace OpenIZ.Core.Applets.Model
         //[XmlAnyElement("body", Namespace = "http://www.w3.org/1999/xhtml")]
         //[XmlAnyElement("html", Namespace = "http://www.w3.org/1999/xhtml")]
         //[XmlAnyElement("div", Namespace = "http://www.w3.org/1999/xhtml")]
-        [XmlAnyElement]
+        [XmlElement("content")]
         public XElement Html { get; set; }
 
     }

@@ -20,6 +20,15 @@ namespace OpenIZ.Core.Applets.Test
         public void Initialize()
         {
             this.m_appletCollection.Add(AppletManifest.Load(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.HelloWorldApplet.xml")));
+            this.m_appletCollection.Add(AppletManifest.Load(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.SettingsApplet.xml")));
+        }
+
+        [TestMethod]
+        public void TestCreatePackage()
+        {
+            var package = this.m_appletCollection[1].CreatePackage();
+            Assert.IsNotNull(package);
+
         }
 
         [TestMethod]

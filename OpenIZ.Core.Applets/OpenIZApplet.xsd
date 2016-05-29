@@ -84,11 +84,15 @@
 			<xs:element name="bundle" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="script" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="style" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:choice minOccurs="1" maxOccurs="1">
-				<xs:element ref="q1:body" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="q2:html" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="q3:div" minOccurs="0" maxOccurs="1"/>
-			</xs:choice>
+      <xs:element name="content">
+        <xs:complexType>
+          <xs:choice minOccurs="1" maxOccurs="1">
+            <xs:element ref="q1:body" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="q2:html" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="q3:div" minOccurs="0" maxOccurs="1"/>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:element name="AppletManifest" type="tns:AppletManifest" nillable="true"/>
