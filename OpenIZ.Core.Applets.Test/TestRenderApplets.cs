@@ -61,5 +61,21 @@ namespace OpenIZ.Core.Applets.Test
             var render = this.m_appletCollection.RenderAssetContent(asset);
             Trace.WriteLine(Encoding.UTF8.GetString(render));
         }
+
+        /// <summary>
+        /// Test re-write of URLS
+        /// </summary>
+        [TestMethod]
+        public void TestRewriteUrl()
+        {
+            this.m_appletCollection.AssetBase = "http://test.com/assets/";
+            this.m_appletCollection.AppletBase = "http://test.com/applets/";
+            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.sample.helloworld/index");
+            Assert.IsNotNull(asset);
+            var render = this.m_appletCollection.RenderAssetContent(asset);
+            String renderString = Encoding.UTF8.GetString(render);
+            Assert.IsTrue(renderString.Contains("http://test.com/assets/css/bootstrap.css"));
+            Assert.IsTrue(renderString.Contains("http://test.com/applets/org.openiz.sample.helloworld/index-controller"));
+        }
     }
 }

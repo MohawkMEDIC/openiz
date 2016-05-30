@@ -67,8 +67,15 @@ namespace OpenIZ.Core.Applets.Model
 			set;
 		}
 
-
-	}
+        /// <summary>
+        /// Represent the asset as a string
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return String.Format("{0}/{1}{2}", AppletCollection.APPLET_SCHEME, this.Manifest?.Info?.Id, this.Name);
+        }
+    }
 
 }
 

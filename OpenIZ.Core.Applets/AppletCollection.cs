@@ -17,9 +17,14 @@ namespace OpenIZ.Core.Applets
     public class AppletCollection : IList<AppletManifest>
     {
 
-        public const string APPLET_SCHEME = "app://openiz.org/applet/";
-        public const string ASSET_SCHEME = "app://openiz.org/asset/";
-        public const string DRAWABLE_SCHEME = "app://openiz.org/drawable/";
+        // A cache of rendered assets
+        private static Dictionary<String, Byte[]> s_cache = new Dictionary<string, byte[]>();
+        private static Object s_syncLock = new object();
+
+        public const string BASE_SCHEME = "app://openiz.org/";
+        public const string APPLET_SCHEME = BASE_SCHEME + "applet/";
+        public const string ASSET_SCHEME = BASE_SCHEME + "asset/";
+        public const string DRAWABLE_SCHEME = BASE_SCHEME + "drawable/";
         private readonly XNamespace xs_xhtml = "http://www.w3.org/1999/xhtml";
 
         // Reference bundles
@@ -33,9 +38,34 @@ namespace OpenIZ.Core.Applets
             new RenderBundle(RenderBundle.BUNDLE_CHART, new ScriptBundleContent("app://openiz.org/asset/js/chart.js"))
         };
 
+        /// <summary>
+        /// Constructs a new instance of the applet collection
+        /// </summary>
+        public AppletCollection()
+        {
+            this.AssetBase = ASSET_SCHEME;
+            this.AppletBase = APPLET_SCHEME;
+            this.DrawableBase = DRAWABLE_SCHEME;
+        }
+
         // Applet manifest
         private List<AppletManifest> m_appletManifest = new List<AppletManifest>();
-        
+
+        /// <summary>
+        /// The asset base to re-write to
+        /// </summary>
+        public String AssetBase { get; set; }
+
+        /// <summary>
+        /// The applet base to re-write to
+        /// </summary>
+        public String AppletBase { get; set; }
+
+        /// <summary>
+        /// The drawable base to rewrite to
+        /// </summary>
+        public String DrawableBase { get; set; }
+
         /// <summary>
         /// Gets or sets the item at the specified element
         /// </summary>
@@ -193,6 +223,12 @@ namespace OpenIZ.Core.Applets
         /// </summary>
         public byte[] RenderAssetContent(AppletAsset asset)
         {
+
+            // First, is there an object already
+            byte[] cacheObject = null;
+            if (s_cache.TryGetValue(asset.ToString(), out cacheObject))
+                return cacheObject;
+
             if (asset.Content is String) // Content is a string
                 return Encoding.UTF8.GetBytes(asset.Content as String);
             else if (asset.Content is byte[]) // Content is a binary asset
@@ -331,6 +367,9 @@ namespace OpenIZ.Core.Applets
                     }
                 }
 
+                // Re-write
+                foreach(var itm in htmlContent.DescendantNodes().OfType<XElement>().SelectMany(o => o.Attributes()).Where(o => o.Value.StartsWith(BASE_SCHEME)))
+                    itm.Value = itm.Value.Replace(APPLET_SCHEME, this.AppletBase).Replace(ASSET_SCHEME, this.AssetBase).Replace(DRAWABLE_SCHEME, this.DrawableBase);
                 // Render out the content
                 using (MemoryStream ms = new MemoryStream())
                 using (XmlWriter xw = XmlWriter.Create(ms, new XmlWriterSettings() { Indent = true }))
@@ -338,6 +377,11 @@ namespace OpenIZ.Core.Applets
                     htmlContent.WriteTo(xw);
                     xw.Flush();
                     ms.Flush();
+
+                    // Add to cache
+                    lock(s_syncLock)
+                        s_cache.Add(asset.ToString(), ms.ToArray());
+
                     return ms.ToArray();
                 }
 
