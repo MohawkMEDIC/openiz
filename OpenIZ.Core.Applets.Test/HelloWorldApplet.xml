@@ -58,11 +58,13 @@
       <bundle>angular</bundle>
       <bundle>bootstrap</bundle>
       <bundle>select2</bundle>
-      <!-- This is the start of the actual body of the asset -->
-      <body ng-controller="mainController" xmlns="http://www.w3.org/1999/xhtml">
-        <!-- The following comment is a content marker -->
-        <!--#include virtual="content" -->
-      </body>
+      <content>
+        <!-- This is the start of the actual body of the asset -->
+        <body ng-controller="mainController" xmlns="http://www.w3.org/1999/xhtml">
+          <!-- The following comment is a content marker -->
+          <!--#include virtual="content" -->
+        </body>
+      </content>
     </contentHtml>
   </asset>
   <!-- The following is an asset which is in the English language which uses the layout we created above.-->
@@ -72,9 +74,11 @@
       <layout>layout</layout>
       <script>index-controller</script>
       <!-- This is the main content which will be injected at the content marker -->
-      <div xmlns="http://www.w3.org/1999/xhtml">
-        <p>Hi in English!</p>
-      </div>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+          <p>Hi in English!</p>
+        </div>
+      </content>
     </contentHtml>
   </asset>
   <!-- An example of the index page in french mode -->
@@ -83,9 +87,11 @@
       <!-- absolute reference to the layout -->
       <layout>app://openiz.org/applet/org.openiz.sample.helloworld/layout</layout>
       <script>index-controller</script>
-      <div xmlns="http://www.w3.org/1999/xhtml">
-        <p>Salut en Francais!</p>
-      </div>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+          <p>Salut en Francais!</p>
+        </div>
+      </content>
     </contentHtml>
   </asset>
   <!-- This is an example of a javascript file. The appropriate way to use Angular controllers in 

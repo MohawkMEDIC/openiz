@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -13,6 +14,9 @@ namespace OpenIZ.Core.Applets.Model
     [XmlType(nameof(AppletAssetHtml), Namespace = "http://openiz.org/applet")]
     public class AppletAssetHtml
     {
+
+        // Backing element for HTML
+        private XElement m_html;
 
         /// <summary>
         /// Applet asset html
@@ -54,8 +58,22 @@ namespace OpenIZ.Core.Applets.Model
         //[XmlAnyElement("body", Namespace = "http://www.w3.org/1999/xhtml")]
         //[XmlAnyElement("html", Namespace = "http://www.w3.org/1999/xhtml")]
         //[XmlAnyElement("div", Namespace = "http://www.w3.org/1999/xhtml")]
-        [XmlAnyElement]
-        public XElement Html { get; set; }
+        [XmlElement("content")]
+        public XElement Html
+        {
+            get
+            {
+                return this.m_html;
+            }
+            set
+            {
+                // HACK: In mono XElement is serialized differently than .NET let's detect that
+                if (value.Name.LocalName == "content" && value.Name.Namespace == "http://openiz.org/applet")
+                    this.m_html = value.Elements().FirstOrDefault(o => o.Name.Namespace == "http://www.w3.org/1999/xhtml");
+                else
+                    this.m_html = value;
+            }
+        }
 
     }
 }

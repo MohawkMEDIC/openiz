@@ -20,6 +20,15 @@ namespace OpenIZ.Core.Applets.Test
         public void Initialize()
         {
             this.m_appletCollection.Add(AppletManifest.Load(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.HelloWorldApplet.xml")));
+            this.m_appletCollection.Add(AppletManifest.Load(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.SettingsApplet.xml")));
+        }
+
+        [TestMethod]
+        public void TestCreatePackage()
+        {
+            var package = this.m_appletCollection[1].CreatePackage();
+            Assert.IsNotNull(package);
+
         }
 
         [TestMethod]
@@ -52,6 +61,22 @@ namespace OpenIZ.Core.Applets.Test
             var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.sample.helloworld/index");
             Assert.IsNotNull(asset);
             Assert.IsNotNull(this.m_appletCollection.ResolveAsset("layout", asset));
+        }
+
+        [TestMethod]
+        public void TestResolveSettingLanguage()
+        {
+            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.applets.core.settings", language: "en");
+            Assert.IsNotNull(asset);
+        }
+
+
+        [TestMethod]
+        public void TestRenderSettingsHtml()
+        {
+            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.applets.core.settings");
+            var render = this.m_appletCollection.RenderAssetContent(asset);
+            Trace.WriteLine(Encoding.UTF8.GetString(render));
         }
 
         [TestMethod]
