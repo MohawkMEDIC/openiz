@@ -26,6 +26,7 @@ namespace OpenIZ.Core.Applets
         public const string ASSET_SCHEME = BASE_SCHEME + "asset/";
         public const string DRAWABLE_SCHEME = BASE_SCHEME + "drawable/";
         private readonly XNamespace xs_xhtml = "http://www.w3.org/1999/xhtml";
+        private readonly RenderBundle m_defaultBundle = new RenderBundle(String.Empty, new ScriptBundleContent("app://openiz.org/asset/js/openiz-model.js"));
 
         // Reference bundles
         private List<RenderBundle> m_referenceBundles = new List<RenderBundle>()
@@ -274,6 +275,7 @@ namespace OpenIZ.Core.Applets
                     case "body": // The content is an HTML Body element, we must inject the HTML header
                         {
                             List<XElement> headerInjection = new List<XElement>();
+                            headerInjection.AddRange(m_defaultBundle.Content.SelectMany(o => o.HeaderElement));
                             // Inject special headers
                             foreach (var itm in htmlAsset.Bundle)
                             {
