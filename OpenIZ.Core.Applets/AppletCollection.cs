@@ -309,7 +309,7 @@ namespace OpenIZ.Core.Applets
                             var bodyElement = htmlAsset.Html as XElement;
 
                             // Inject the OpenIZ JS shim
-                            var openizJS = new XElement(xs_xhtml + "script", new XAttribute("src", "app://openiz.org/asset/js/openiz.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data"));
+                            var openizJS = new XElement(xs_xhtml + "script", new XAttribute("src", "app://openiz.org/asset/js/openiz.js"), new XAttribute("type", "text/javascript"), new XComment("Imported data"));
                             bodyElement.Add(openizJS);
 
                             htmlContent = new XElement(xs_xhtml + "html", new XAttribute("ng-app", asset.Name), new XElement(xs_xhtml + "head", headerInjection), bodyElement);
@@ -389,7 +389,7 @@ namespace OpenIZ.Core.Applets
                     itm.Value = itm.Value.Replace(APPLET_SCHEME, this.AppletBase).Replace(ASSET_SCHEME, this.AssetBase).Replace(DRAWABLE_SCHEME, this.DrawableBase);
                 // Render out the content
                 using (MemoryStream ms = new MemoryStream())
-                using (XmlWriter xw = XmlWriter.Create(ms, new XmlWriterSettings() { Indent = true }))
+                using (XmlWriter xw = XmlWriter.Create(ms, new XmlWriterSettings() { Indent = true, OmitXmlDeclaration = true }))
                 {
                     htmlContent.WriteTo(xw);
                     xw.Flush();
