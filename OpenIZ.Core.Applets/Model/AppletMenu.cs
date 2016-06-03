@@ -28,16 +28,6 @@ namespace OpenIZ.Core.Applets.Model
         [XmlAttribute("launch")]
         public String Launcher { get; set; }
 
-        /// <summary>
-        /// The live source indicates the data source from which live information should be given
-        /// </summary>
-        /// <value>The live source SQL query to execute.</value>
-        [XmlElement("liveSourceSql")]
-		public String LiveSourceSql {
-			get;
-			set;
-		}
-
 		/// <summary>
 		/// Gets the specified name
 		/// </summary>

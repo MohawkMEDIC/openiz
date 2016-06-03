@@ -93,12 +93,17 @@ namespace OpenIZ.Core.Applets.Test
         [TestMethod]
         public void TestRewriteUrl()
         {
-            this.m_appletCollection.AssetBase = "http://test.com/assets/";
-            this.m_appletCollection.AppletBase = "http://test.com/applets/";
-            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.sample.helloworld/index");
+            var coll = new AppletCollection();
+            coll.Add(AppletManifest.Load(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.HelloWorldApplet.xml")));
+            coll.Add(AppletManifest.Load(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.SettingsApplet.xml")));
+
+            coll.AssetBase = "http://test.com/assets/";
+            coll.AppletBase = "http://test.com/applets/";
+            var asset = coll.ResolveAsset("app://openiz.org/applet/org.openiz.sample.helloworld/index");
             Assert.IsNotNull(asset);
-            var render = this.m_appletCollection.RenderAssetContent(asset);
+            var render = coll.RenderAssetContent(asset);
             String renderString = Encoding.UTF8.GetString(render);
+            Trace.WriteLine(renderString);
             Assert.IsTrue(renderString.Contains("http://test.com/assets/css/bootstrap.css"));
             Assert.IsTrue(renderString.Contains("http://test.com/applets/org.openiz.sample.helloworld/index-controller"));
         }

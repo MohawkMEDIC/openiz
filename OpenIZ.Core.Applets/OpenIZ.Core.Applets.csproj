@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppletCollection.cs" />
+    <Compile Include="Model\AppletPanel.cs" />
     <Compile Include="RenderBundle.cs" />
     <Compile Include="Model\AppletAsset.cs" />
     <Compile Include="Model\AppletAssetHtml.cs" />
@@ -53,6 +54,11 @@
     <Compile Include="Model\AppletMenu.cs" />
     <Compile Include="Model\LocaleString.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

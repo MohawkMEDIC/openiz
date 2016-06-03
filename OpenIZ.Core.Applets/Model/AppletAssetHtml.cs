@@ -29,6 +29,24 @@ namespace OpenIZ.Core.Applets.Model
         }
 
         /// <summary>
+        /// Gets or sets the title of the applet asset
+        /// </summary>
+        [XmlElement("title")]
+        public List<LocaleString> Titles { get; set; }
+
+
+        /// <summary>
+        /// Gets the specified name
+        /// </summary>
+        public String GetTitle(String language, bool returnNuetralIfNotFound = true)
+        {
+            var str = this.Titles?.Find(o => o.Language == language);
+            if (str == null && returnNuetralIfNotFound)
+                str = this.Titles?.Find(o => o.Language == null);
+            return str?.Value;
+        }
+
+        /// <summary>
         /// Gets or sets the master asset for this asset
         /// </summary>
         [XmlElement("layout")]

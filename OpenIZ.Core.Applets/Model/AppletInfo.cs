@@ -2,6 +2,7 @@ using System;
 using System.Xml.Serialization;
 using System.Xml.Linq;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Applets.Model
 {
@@ -9,6 +10,7 @@ namespace OpenIZ.Core.Applets.Model
 	/// Represents applet information
 	/// </summary>
 	[XmlType(nameof(AppletInfo), Namespace = "http://openiz.org/applet")]
+    [JsonObject]
 	public class AppletInfo : AppletName
 	{
 
@@ -39,6 +41,7 @@ namespace OpenIZ.Core.Applets.Model
 		/// </summary>
 		/// <value>The icon.</value>
 		[XmlElement("icon")]
+        [JsonProperty("icon")]
 		public String Icon {
 			get;
 			set;
@@ -49,6 +52,7 @@ namespace OpenIZ.Core.Applets.Model
 		/// </summary>
 		/// <value>The name.</value>
 		[XmlElement("name")]
+        [JsonProperty("name")]
 		public List<LocaleString> Names {
 			get;
 			set;
@@ -59,6 +63,7 @@ namespace OpenIZ.Core.Applets.Model
 		/// </summary>
 		/// <value>The name.</value>
 		[XmlElement("groupName")]
+        [JsonProperty("groupName")]
 		public List<LocaleString> GroupNames {
 			get;
 			set;
@@ -68,6 +73,7 @@ namespace OpenIZ.Core.Applets.Model
 		/// Gets or sets the author of the applet
 		/// </summary>
 		[XmlElement("author")]
+        [JsonProperty("author")]
 		public String Author {
 			get;
 			set;
@@ -86,6 +92,7 @@ namespace OpenIZ.Core.Applets.Model
 		/// Gets or sets the applets required policies for a user to run
 		/// </summary>
 		[XmlElement("demand")]
+        [JsonProperty("demand")]
 		public List<String> Policies {
 			get;
 			set;

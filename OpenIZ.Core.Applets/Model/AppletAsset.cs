@@ -34,10 +34,10 @@ namespace OpenIZ.Core.Applets.Model
 			set;
 		}
 
-		/// <summary>
-		/// Language
-		/// </summary>
-		[XmlAttribute("lang")]
+        /// <summary>
+        /// Language
+        /// </summary>
+        [XmlAttribute("lang")]
 		public String Language {
 			get;
 			set;

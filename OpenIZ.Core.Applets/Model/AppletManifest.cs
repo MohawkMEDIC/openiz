@@ -53,23 +53,15 @@ namespace OpenIZ.Core.Applets.Model
 
 		}
 
-		/// <summary>
-		/// Gets or sets the tile sizes the applet can have
-		/// </summary>
-		[XmlElement("menuItem")]
-		public List<AppletMenu> Menus {
-			get;
-			set;
-		}
-
-		/// <summary>
-		/// Applet information itself
-		/// </summary>
-		[XmlElement("info")]
-		public AppletInfo Info {
-			get;
-			set;
-		}
+        /// <summary>
+        /// Applet information itself
+        /// </summary>
+        [XmlElement("info")]
+        public AppletInfo Info
+        {
+            get;
+            set;
+        }
 
 		/// <summary>
 		/// Initial applet configuration
@@ -81,10 +73,30 @@ namespace OpenIZ.Core.Applets.Model
 			set;
 		}
 
-		/// <summary>
-		/// Gets or sets the assets which are to be used in the applet
-		/// </summary>
-		[XmlElement("asset")]
+        /// <summary>
+        /// Gets or sets the tile sizes the applet can have
+        /// </summary>
+        [XmlElement("menuItem")]
+        public List<AppletMenu> Menus
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the applet panels
+        /// </summary>
+        [XmlElement("panel")]
+        public List<AppletPanel> Panels
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the assets which are to be used in the applet
+        /// </summary>
+        [XmlElement("asset")]
 		public List<AppletAsset> Assets {
 			get;
 			set;

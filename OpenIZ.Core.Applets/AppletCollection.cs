@@ -28,6 +28,10 @@ namespace OpenIZ.Core.Applets
         private readonly XNamespace xs_xhtml = "http://www.w3.org/1999/xhtml";
         private readonly RenderBundle m_defaultBundle = new RenderBundle(String.Empty, new ScriptBundleContent("app://openiz.org/asset/js/openiz-model.js"));
 
+        private string m_appletBase = APPLET_SCHEME;
+        private string m_assetBase = ASSET_SCHEME;
+        private string m_drawableBase = DRAWABLE_SCHEME;
+
         // Reference bundles
         private List<RenderBundle> m_referenceBundles = new List<RenderBundle>()
         {
@@ -44,9 +48,6 @@ namespace OpenIZ.Core.Applets
         /// </summary>
         public AppletCollection()
         {
-            this.AssetBase = ASSET_SCHEME;
-            this.AppletBase = APPLET_SCHEME;
-            this.DrawableBase = DRAWABLE_SCHEME;
         }
 
         // Applet manifest
@@ -55,17 +56,42 @@ namespace OpenIZ.Core.Applets
         /// <summary>
         /// The asset base to re-write to
         /// </summary>
-        public String AssetBase { get; set; }
+        public String AssetBase
+        {
+            get { return this.m_assetBase; }
+            set
+            {
+                this.m_assetBase = value;
+                lock (s_syncLock)
+                    s_cache.Clear();
+            }
+        }
 
         /// <summary>
         /// The applet base to re-write to
         /// </summary>
-        public String AppletBase { get; set; }
+        public String AppletBase {
+            get { return this.m_appletBase; }
+            set
+            {
+                this.m_appletBase = value;
+                lock (s_syncLock)
+                    s_cache.Clear();
+            }
+        }
 
         /// <summary>
         /// The drawable base to rewrite to
         /// </summary>
-        public String DrawableBase { get; set; }
+        public String DrawableBase {
+            get { return this.m_drawableBase; }
+            set
+            {
+                this.m_drawableBase = value;
+                lock (s_syncLock)
+                    s_cache.Clear();
+            }
+        }
 
         /// <summary>
         /// Gets or sets the item at the specified element
