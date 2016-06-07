@@ -188,7 +188,13 @@ namespace OpenIZ.Core.Model.Security
         /// </summary>
         [XmlElement("phoneNumberConfirmed"), JsonProperty("phoneNumberConfirmed")]
         public Boolean PhoneNumberConfirmed { get; set; }
-        
+
+        /// <summary>
+        /// Gets or sets the user class key
+        /// </summary>
+        [XmlElement("userClass"), JsonProperty("userClass")]
+        public Guid UserClass { get; set; }
+
         /// <summary>
         /// Forces delay load properties to be from the database
         /// </summary>

@@ -29,6 +29,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using OpenIZ.Core.Security;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 {
@@ -61,7 +62,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 EmailConfirmed = true,
                 PasswordHash = "test_user_hash_store",
                 SecurityHash = "test_security_hash",
-                UserName = "admin"
+                UserName = "admin",
+                UserClass = UserClassKeys.HumanUser
             };
 
             var userAfterTest = base.DoTestInsert(userUnderTest);
@@ -83,7 +85,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 EmailConfirmed = false,
                 PasswordHash = hashingService.EncodePassword("password"),
                 SecurityHash = "cert",
-                UserName = "updateTest"
+                UserName = "updateTest",
+                UserClass = UserClassKeys.HumanUser
+
             };
             
             // Store user
@@ -113,7 +117,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 EmailConfirmed = false,
                 PasswordHash = hashingService.EncodePassword("password"),
                 SecurityHash = securityHash,
-                UserName = "queryTest"
+                UserName = "queryTest",
+                UserClass = UserClassKeys.HumanUser
+
             };
 
             var testUser = base.DoTestInsert(userUnderTest);
@@ -137,7 +143,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 EmailConfirmed = false,
                 PasswordHash = hashingService.EncodePassword("password"),
                 SecurityHash = securityHash,
-                UserName = "delayLoadTest"
+                UserName = "delayLoadTest",
+                UserClass = UserClassKeys.HumanUser
             };
 
 

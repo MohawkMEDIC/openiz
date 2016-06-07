@@ -39,6 +39,7 @@ using MARC.HI.EHRS.SVC.Core.Exceptions;
 using MARC.HI.EHRS.SVC.Core.Event;
 using System.Diagnostics;
 using OpenIZ.Core.Security.Attribute;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services
 {
@@ -191,7 +192,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     {
                         UserName = userName,
                         UserPassword = hashingService.EncodePassword(password),
-                        SecurityStamp = Guid.NewGuid().ToString()
+                        SecurityStamp = Guid.NewGuid().ToString(),
+                        UserClass = UserClassKeys.HumanUser
                     };
 
                     if (authContext != null)

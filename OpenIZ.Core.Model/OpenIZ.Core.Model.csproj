@@ -56,6 +56,7 @@
     <Compile Include="Constants\EntityRelationshipTypeKeys.cs" />
     <Compile Include="Constants\NameKeys.cs" />
     <Compile Include="Constants\StatusConceptKeys.cs" />
+    <Compile Include="Constants\UserClassKeys.cs" />
     <Compile Include="DataTypes\AssigningAuthority.cs" />
     <Compile Include="DataTypes\CodeSystem.cs" />
     <Compile Include="DataTypes\Concept.cs" />

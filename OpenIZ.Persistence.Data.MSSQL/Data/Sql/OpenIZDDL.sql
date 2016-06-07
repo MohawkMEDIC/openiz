@@ -55,7 +55,8 @@ CREATE TABLE SecurityUser
 	CONSTRAINT CK_SecurityUserObsoletedBy CHECK(ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletedBy IS NULL AND ObsoletionTime IS NULL),
 	CONSTRAINT FK_SecurityUserCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT FK_SecurityUserUpdatedBy FOREIGN KEY (UpdatedBy) REFERENCES SecurityUser(UserId),
-	CONSTRAINT CK_SecurityUserUpdatedBy CHECK(UpdatedBy IS NOT NULL AND UpdatedTime IS NOT NULL OR UpdatedBy IS NULL AND UpdatedTime IS NULL)
+	CONSTRAINT CK_SecurityUserUpdatedBy CHECK(UpdatedBy IS NOT NULL AND UpdatedTime IS NOT NULL OR UpdatedBy IS NULL AND UpdatedTime IS NULL),
+	CONSTRAINT FK_SecurityUserClass FOREIGN KEY (UserClass) REFERENCES SecurityUserClass(ClassId)
 );
 
 -- Create a system user

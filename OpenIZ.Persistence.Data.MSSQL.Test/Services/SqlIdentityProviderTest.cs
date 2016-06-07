@@ -30,6 +30,7 @@ using System.Security;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Security;
 using System.Security.Authentication;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 {
@@ -55,12 +56,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 UserName = "admin@identitytest.com",
                 Email = "admin@identitytest.com",
                 PasswordHash = hashingService.EncodePassword("password"),
+                UserClass = UserClassKeys.HumanUser
             }, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
             dataService.Insert(new SecurityUser()
             {
                 UserName = "user@identitytest.com",
                 Email = "user@identitytest.com",
                 PasswordHash = hashingService.EncodePassword("password"),
+                UserClass = UserClassKeys.HumanUser
+
             }, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
 
             IRoleProviderService roleService = ApplicationContext.Current.GetService<IRoleProviderService>();
