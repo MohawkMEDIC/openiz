@@ -70,6 +70,7 @@
     <Compile Include="Services\SecurityUserPersistenceServiceTest.cs" />
     <Compile Include="Services\SqlIdentityProviderTest.cs" />
     <Compile Include="Services\SqlRoleProviderTest.cs" />
+    <Compile Include="Services\EntityPersistenceServiceTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
@@ -95,6 +96,7 @@
     <Content Include="OpenIZ_Test.mdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Readme.txt" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

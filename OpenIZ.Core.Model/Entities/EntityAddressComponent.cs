@@ -14,7 +14,7 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-24
+ * Date: 2016-2-1
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
@@ -31,12 +31,24 @@ namespace OpenIZ.Core.Model.Entities
     [XmlType("AddressComponent",  Namespace = "http://openiz.org/model"), JsonObject("AddressComponent")]
     public class EntityAddressComponent : GenericComponentValues<EntityAddress>
     {
-       
-        /// <summary>
-        /// Gets or sets the value of the component
-        /// </summary>
-        [XmlElement("value"), JsonProperty("value")]
-        public String Value { get; set; }
 
+        /// <summary>
+        /// Creates a new address component type.
+        /// </summary>
+        /// <param name="componentType"></param>
+        /// <param name="value"></param>
+        public EntityAddressComponent(Guid componentType, String value) : base(componentType, value)
+        {
+            
+        }
+
+        /// <summary>
+        /// Default ctor
+        /// </summary>
+        public EntityAddressComponent()
+        {
+
+        }     
+  
     }
 }

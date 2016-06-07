@@ -82,10 +82,14 @@
     <Compile Include="Data\ModelExtensions.cs" />
     <Compile Include="Security\SqlSecurityPolicy.cs" />
     <Compile Include="Security\SqlSecurityPolicyInstance.cs" />
+    <Compile Include="Services\Persistence\EntityAddressPersistenceService.cs" />
+    <Compile Include="Services\Persistence\EntityNamePersistenceService.cs" />
+    <Compile Include="Services\Persistence\VersionedAssociationPersistenceService.cs" />
     <Compile Include="Services\Persistence\CodeSystemPersistenceService.cs" />
     <Compile Include="Services\Persistence\ConceptClassPersistenceService.cs" />
     <Compile Include="Services\Persistence\ConceptRelationshipTypePersistenceService.cs" />
     <Compile Include="Services\Persistence\ConceptSetPersistenceService.cs" />
+    <Compile Include="Services\Persistence\EntityPersistenceService.cs" />
     <Compile Include="Services\Persistence\PhoneticAlgorithmPersistenceService.cs" />
     <Compile Include="Exceptions\SqlFormalConstraintException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

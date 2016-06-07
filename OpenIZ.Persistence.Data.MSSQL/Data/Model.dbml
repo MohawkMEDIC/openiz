@@ -575,8 +575,8 @@
       <Column Name="ReplacesVersionId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="StatusConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
-      <Column Name="CreationTimestamp" Type="System.DateTimeOffset" DbType="DateTimeOffset NOT NULL" CanBeNull="false" />
-      <Column Name="ObsoletionTimestamp" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
+      <Column Name="CreationTime" Type="System.DateTimeOffset" DbType="DateTimeOffset NOT NULL" CanBeNull="false" />
+      <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="TypeConceptId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Association Name="EntityVersion_ApplicationEntity" Member="ApplicationEntity" ThisKey="EntityVersionId" OtherKey="EntityVersionId" Type="ApplicationEntity" Cardinality="One" />

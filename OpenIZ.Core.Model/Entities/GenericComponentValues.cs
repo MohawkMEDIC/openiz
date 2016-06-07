@@ -14,7 +14,7 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-1-24
+ * Date: 2016-2-1
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
@@ -34,10 +34,35 @@ namespace OpenIZ.Core.Model.Entities
     public abstract class GenericComponentValues<TBoundModel> : Association<TBoundModel> where TBoundModel : IdentifiedData
     {
         // Component type
-        private Guid m_componentTypeKey;
+        private Guid? m_componentTypeKey;
         // Component type
         
         private Concept m_componentType;
+
+        /// <summary>
+        /// Default ctor
+        /// </summary>
+        public GenericComponentValues()
+        {
+
+        }
+
+        /// <summary>
+        /// Creates a generic component value with the specified classifier
+        /// </summary>
+        public GenericComponentValues(Guid partType, String value)
+        {
+            this.m_componentTypeKey = partType;
+            this.Value = value;
+        }
+
+        /// <summary>
+        /// Constructor with the specified identifier
+        /// </summary>
+        public GenericComponentValues(String value)
+        {
+            this.Value = value;
+        }
 
         /// <summary>
         /// Component type key
@@ -45,7 +70,7 @@ namespace OpenIZ.Core.Model.Entities
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("type"), JsonProperty("type")]
-        public Guid ComponentTypeKey
+        public Guid? ComponentTypeKey
         {
             get { return this.m_componentTypeKey; }
             set
@@ -69,12 +94,16 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 this.m_componentType = value;
-                if (value == null)
-                    this.m_componentTypeKey = Guid.Empty;
-                else
-                    this.m_componentTypeKey = value.Key;
+                this.m_componentTypeKey = value?.Key;
             }
         }
+
+
+        /// <summary>
+        /// Gets or sets the value of the name component
+        /// </summary>
+        [XmlElement("value"), JsonProperty("value")]
+        public String Value { get; set; }
 
         /// <summary>
         /// Forces refreshing of delay load properties

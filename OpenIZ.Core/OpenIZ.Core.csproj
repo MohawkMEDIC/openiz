@@ -88,6 +88,8 @@
     <Compile Include="Services\IConceptService.cs" />
     <Compile Include="Services\IDeviceIdentityProviderService.cs" />
     <Compile Include="Services\Impl\LocalConceptService.cs" />
+    <Compile Include="Services\IPatientRepositoryService.cs" />
+    <Compile Include="Services\IPhoneticAlgorithmHandler.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

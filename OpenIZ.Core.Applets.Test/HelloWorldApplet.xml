@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!-- An applet is a collection of HTML pages, Java Script snippets, and other data which represent a sub-unit of
+     functionality in the TImR application (or rather OpenIZ). An applet manifest allows us to package together
+     these assets into a single manifest with a single version.
+-->
+<AppletManifest xmlns="http://openiz.org/applet">
+
+  <!-- 
+    The first part of an applet manifest is the informational header. This header allows OpenIZ to 
+    identify the applet to establish dependencies, etc.
+    
+    @id = The unique identifier (think of this as a package name)
+    @version = A semantic version 
+  -->
+  <info id="org.openiz.sample.helloworld" version="1.0.0.0">
+    <!-- The icon is a pointer to an asset which is used to give the applet a graphical representation. The format of this
+          URL is an application reference which is used on the mobile application to hijack Chrome. The web container should 
+          re-write these urls to something more meaningful
+    -->
+    <icon>app://openiz.org/asset/img/hello.png</icon>
+    <!-- The name of the applet is a human readable name for the applet -->
+    <name lang="en">Hello World</name>
+    <name lang="fr">Bonjour tout-la-monde!</name>
+    <!-- A group name is a logical grouping of the applet -->
+    <groupName lang="en">Tutorials</groupName>
+    <groupName lang="fr">Tutoriels</groupName>
+    <author>Mohawk College of Applied Arts and Technology</author>
+    <!-- This applet depends on the OpenIZ Core 0.5 -->
+    <dependency id="org.openiz.core" version="0.5.0.0"/>
+    <!-- One or more permissions which are demanded by the app can be placed here. Nothing in the app should be shown unless
+    the user has these permissions. This permission ID is "Query Clinical Data".
+    
+    <demand>1.3.6.1.4.1.33349.3.1.5.9.2.2.0</demand>
+    -->
+  </info>
+
+  <!-- An applet may optionally set initial configuration parameters which it can later retrieve -->
+  <configuration applet="org.openiz.sample.helloworld">
+    <appSetting name="isHelloWorld" value="true"/>
+    <appSetting name="isNotHelloWorld" value="false"/>
+  </configuration>
+
+  <!-- Next, an applet may add one or more items to the main menu of the application
+    @launch = The applet to be launched
+  -->
+  <menuItem launch="app://openiz.org/applet/org.openiz.sample.helloworld/index">
+    <icon>app://openiz.org/asset/img/hello-sm.png</icon>
+    <text lang="en">Launch Hello World!</text>
+    <text lang="fr">Lancement 'bonjour tout-la-monde!'</text>
+  </menuItem>
+
+  <!-- The applet contains one or more assets, this is an example of an asset which is just an HTML body (i.e. OpenIZ
+       will inject its own HTML header) -->
+  <asset name="layout" mimeType="text/html">
+    <contentHtml>
+      <!-- These are libraries that this layout references -->
+      <!-- Note: Whenever 'angular' is injected, the OpenIZ renderer will inject ng-app="xxxxxx" where xxxx matches the asset name -->
+      <bundle>angular</bundle>
+      <bundle>bootstrap</bundle>
+      <bundle>select2</bundle>
+      <content>
+        <!-- This is the start of the actual body of the asset -->
+        <body ng-controller="mainController" xmlns="http://www.w3.org/1999/xhtml">
+          <!-- The following comment is a content marker -->
+          <!--#include virtual="content" -->
+        </body>
+      </content>
+    </contentHtml>
+  </asset>
+  <!-- The following is an asset which is in the English language which uses the layout we created above.-->
+  <asset name="index" mimeType="text/html" lang="en">
+    <contentHtml>
+      <!-- The layout reference can be relative (i.e. this is in the same manifest) or absolute -->
+      <layout>layout</layout>
+      <script>index-controller</script>
+      <!-- This is the main content which will be injected at the content marker -->
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+          <p>Hi in English!</p>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <!-- An example of the index page in french mode -->
+  <asset name="index" mimeType="text/html" lang="fr">
+    <contentHtml>
+      <!-- absolute reference to the layout -->
+      <layout>app://openiz.org/applet/org.openiz.sample.helloworld/layout</layout>
+      <script>index-controller</script>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+          <p>Salut en Francais!</p>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <!-- This is an example of a javascript file. The appropriate way to use Angular controllers in 
+       the context of OpenIZ app is to append asset-controller (example: index-controller is included as controller) -->
+  <asset name="index-controller" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+      var helloApp = angular.module('layout', []);
+
+			searchApp.controller('mainController', ['$scope', function ($scope) 
+      {
+      }]);
+      ]]>
+    </contentText>
+  </asset>
+
+
+</AppletManifest>
