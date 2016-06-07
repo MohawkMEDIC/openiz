@@ -116,7 +116,8 @@ namespace OpenIZ.Core.Model.Map
                     mi = FindConverter(typeof(System.Xml.XmlConvert), value.GetType(), destType);
                 if (mi == null) // Using System.Convert as a last resort
                     mi = FindConverter(typeof(System.Convert), value.GetType(), destType);
-
+                if (mi == null)
+                    mi = FindConverter(typeof(OpenIZConvert), value.GetType(), destType);
                 if (mi != null)
                 {
                     lock (s_wireMaps)

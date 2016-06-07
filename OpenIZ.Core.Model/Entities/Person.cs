@@ -64,8 +64,8 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the precision ofthe date of birth
         /// </summary>
-        [XmlElement("datePrecision"), JsonProperty("datePrecision")]
-        public DatePrecision DatePrecision { get; set; }
+        [XmlElement("dateOfBirthPrecision"), JsonProperty("dateOfBirthPrecision")]
+        public DatePrecision DateOfBirthPrecision { get; set; }
 
         /// <summary>
         /// Gets the person's languages of communication

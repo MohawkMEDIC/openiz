@@ -107,6 +107,7 @@
     <Compile Include="Map\ModelExpressionVisitor.cs" />
     <Compile Include="Map\ModelMap.cs" />
     <Compile Include="Map\ModelMapper.cs" />
+    <Compile Include="Map\OpenIZConvert.cs" />
     <Compile Include="Map\PropertyMap.cs" />
     <Compile Include="Map\ValidationResultDetail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

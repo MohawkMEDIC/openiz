@@ -133,6 +133,7 @@
     <Content Include="Data\CorrectDbml.xslt">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Data\Sql\OpenIZFn.sql" />
     <EmbeddedResource Include="Data\dbfeatures.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>

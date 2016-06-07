@@ -64,8 +64,25 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets or sets whether the account is locked out
         /// </summary>
-        [XmlElement("lockoutEnabled"), JsonProperty("lockoutEnabled")]
-        public Boolean LockoutEnabled { get; set; }
+        [XmlIgnore, JsonIgnore]
+        public DateTime? Lockout { get; set; }
+
+        /// <summary>
+        /// Gets or sets the creation time in XML format
+        /// </summary>
+        [XmlElement("lockout"), JsonProperty("lockout")]
+        public String LockoutXml
+        {
+            get { return this.LastLoginTime?.ToString("o", CultureInfo.InvariantCulture); }
+            set
+            {
+                if (value != null)
+                    this.LastLoginTime = DateTimeOffset.ParseExact(value, "o", CultureInfo.InvariantCulture);
+                else
+                    this.LastLoginTime = default(DateTimeOffset);
+            }
+        }
+
         /// <summary>
         /// Gets or sets whether the password hash is enabled
         /// </summary>

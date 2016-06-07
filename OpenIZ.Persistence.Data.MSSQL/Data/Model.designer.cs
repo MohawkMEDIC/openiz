@@ -22,7 +22,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 	using System;
 	
 	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="OpenIZ")]
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="OpenIZ_Test")]
 	public partial class ModelDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -30,12 +30,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertAct(Act instance);
-    partial void UpdateAct(Act instance);
-    partial void DeleteAct(Act instance);
     partial void InsertUserEntity(UserEntity instance);
     partial void UpdateUserEntity(UserEntity instance);
     partial void DeleteUserEntity(UserEntity instance);
+    partial void InsertAct(Act instance);
+    partial void UpdateAct(Act instance);
+    partial void DeleteAct(Act instance);
     partial void InsertActExtension(ActExtension instance);
     partial void UpdateActExtension(ActExtension instance);
     partial void DeleteActExtension(ActExtension instance);
@@ -240,6 +240,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void InsertSecurityUserClaim(SecurityUserClaim instance);
     partial void UpdateSecurityUserClaim(SecurityUserClaim instance);
     partial void DeleteSecurityUserClaim(SecurityUserClaim instance);
+    partial void InsertSecurityUserClass(SecurityUserClass instance);
+    partial void UpdateSecurityUserClass(SecurityUserClass instance);
+    partial void DeleteSecurityUserClass(SecurityUserClass instance);
     partial void InsertSecurityUserLogin(SecurityUserLogin instance);
     partial void UpdateSecurityUserLogin(SecurityUserLogin instance);
     partial void DeleteSecurityUserLogin(SecurityUserLogin instance);
@@ -255,7 +258,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     #endregion
 		
 		public ModelDataContext() : 
-				base(global::OpenIZ.Persistence.Data.MSSQL.Properties.Settings.Default.OpenIZConnectionString, mappingSource)
+				base(global::OpenIZ.Persistence.Data.MSSQL.Properties.Settings.Default.OpenIZ_TestConnectionString, mappingSource)
 		{
 			OnCreated();
 		}
@@ -284,19 +287,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		public System.Data.Linq.Table<Act> Acts
-		{
-			get
-			{
-				return this.GetTable<Act>();
-			}
-		}
-		
 		public System.Data.Linq.Table<UserEntity> UserEntities
 		{
 			get
 			{
 				return this.GetTable<UserEntity>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Act> Acts
+		{
+			get
+			{
+				return this.GetTable<Act>();
 			}
 		}
 		
@@ -844,6 +847,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		public System.Data.Linq.Table<SecurityUserClass> SecurityUserClasses
+		{
+			get
+			{
+				return this.GetTable<SecurityUserClass>();
+			}
+		}
+		
 		public System.Data.Linq.Table<SecurityUserLogin> SecurityUserLogins
 		{
 			get
@@ -873,6 +884,182 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			get
 			{
 				return this.GetTable<TextObservation>();
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Authenticate")]
+		public int sp_Authenticate([global::System.Data.Linq.Mapping.ParameterAttribute(Name="UserName", DbType="NVarChar(128)")] string userName, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="PasswordHash", DbType="NVarChar(128)")] string passwordHash, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="MaxInvalidLoginAttempts", DbType="Int")] System.Nullable<int> maxInvalidLoginAttempts, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="SecurityUserId", DbType="UniqueIdentifier")] ref System.Nullable<System.Guid> securityUserId)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), userName, passwordHash, maxInvalidLoginAttempts, securityUserId);
+			securityUserId = ((System.Nullable<System.Guid>)(result.GetParameterValue(3)));
+			return ((int)(result.ReturnValue));
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.UserEntity")]
+	public partial class UserEntity : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _EntityVersionId;
+		
+		private System.Guid _UserId;
+		
+		private EntityRef<Person> _Person;
+		
+		private EntityRef<SecurityUser> _SecurityUser;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnEntityVersionIdChanging(System.Guid value);
+    partial void OnEntityVersionIdChanged();
+    partial void OnUserIdChanging(System.Guid value);
+    partial void OnUserIdChanged();
+    #endregion
+		
+		public UserEntity()
+		{
+			this._Person = default(EntityRef<Person>);
+			this._SecurityUser = default(EntityRef<SecurityUser>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		public System.Guid EntityVersionId
+		{
+			get
+			{
+				return this._EntityVersionId;
+			}
+			set
+			{
+				if ((this._EntityVersionId != value))
+				{
+					if (this._Person.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnEntityVersionIdChanging(value);
+					this.SendPropertyChanging();
+					this._EntityVersionId = value;
+					this.SendPropertyChanged("EntityVersionId");
+					this.OnEntityVersionIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid UserId
+		{
+			get
+			{
+				return this._UserId;
+			}
+			set
+			{
+				if ((this._UserId != value))
+				{
+					if (this._SecurityUser.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUserIdChanging(value);
+					this.SendPropertyChanging();
+					this._UserId = value;
+					this.SendPropertyChanged("UserId");
+					this.OnUserIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Person_UserEntity", Storage="_Person", ThisKey="EntityVersionId", OtherKey="EntityVersionId", IsForeignKey=true)]
+		public Person Person
+		{
+			get
+			{
+				return this._Person.Entity;
+			}
+			set
+			{
+				Person previousValue = this._Person.Entity;
+				if (((previousValue != value) 
+							|| (this._Person.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Person.Entity = null;
+						previousValue.UserEntity = null;
+					}
+					this._Person.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntity = this;
+						this._EntityVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EntityVersionId = default(System.Guid);
+					}
+					this.SendPropertyChanged("Person");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity", Storage="_SecurityUser", ThisKey="UserId", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser SecurityUser
+		{
+			get
+			{
+				return this._SecurityUser.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._SecurityUser.Entity;
+				if (((previousValue != value) 
+							|| (this._SecurityUser.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SecurityUser.Entity = null;
+						previousValue.UserEntities.Remove(this);
+					}
+					this._SecurityUser.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntities.Add(this);
+						this._UserId = value.UserId;
+					}
+					else
+					{
+						this._UserId = default(System.Guid);
+					}
+					this.SendPropertyChanged("SecurityUser");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
 	}
@@ -1350,376 +1537,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this.SendPropertyChanging();
 			entity.Act = null;
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.UserEntity")]
-	public partial class UserEntity : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private System.Guid _UserEntityId;
-		
-		private System.Guid _UserId;
-		
-		private System.Guid _EntityId;
-		
-		private System.DateTimeOffset _CreationTime;
-		
-		private System.Guid _CreatedBy;
-		
-		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
-		
-		private System.Nullable<System.Guid> _ObsoletedBy;
-		
-		private EntityRef<Entity> _Entity;
-		
-		private EntityRef<SecurityUser> _CreatedByEntity;
-		
-		private EntityRef<SecurityUser> _ObsoletedByEntity;
-		
-		private EntityRef<SecurityUser> _SecurityUser;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnUserEntityIdChanging(System.Guid value);
-    partial void OnUserEntityIdChanged();
-    partial void OnUserIdChanging(System.Guid value);
-    partial void OnUserIdChanged();
-    partial void OnEntityIdChanging(System.Guid value);
-    partial void OnEntityIdChanged();
-    partial void OnCreationTimeChanging(System.DateTimeOffset value);
-    partial void OnCreationTimeChanged();
-    partial void OnCreatedByChanging(System.Guid value);
-    partial void OnCreatedByChanged();
-    partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
-    partial void OnObsoletionTimeChanged();
-    partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
-    partial void OnObsoletedByChanged();
-    #endregion
-		
-		public UserEntity()
-		{
-			this._Entity = default(EntityRef<Entity>);
-			this._CreatedByEntity = default(EntityRef<SecurityUser>);
-			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
-			this._SecurityUser = default(EntityRef<SecurityUser>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserEntityId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
-		public System.Guid UserEntityId
-		{
-			get
-			{
-				return this._UserEntityId;
-			}
-			set
-			{
-				if ((this._UserEntityId != value))
-				{
-					this.OnUserEntityIdChanging(value);
-					this.SendPropertyChanging();
-					this._UserEntityId = value;
-					this.SendPropertyChanged("UserEntityId");
-					this.OnUserEntityIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid UserId
-		{
-			get
-			{
-				return this._UserId;
-			}
-			set
-			{
-				if ((this._UserId != value))
-				{
-					if (this._SecurityUser.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnUserIdChanging(value);
-					this.SendPropertyChanging();
-					this._UserId = value;
-					this.SendPropertyChanged("UserId");
-					this.OnUserIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityId", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid EntityId
-		{
-			get
-			{
-				return this._EntityId;
-			}
-			set
-			{
-				if ((this._EntityId != value))
-				{
-					if (this._Entity.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnEntityIdChanging(value);
-					this.SendPropertyChanging();
-					this._EntityId = value;
-					this.SendPropertyChanged("EntityId");
-					this.OnEntityIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", AutoSync=AutoSync.Always, DbType="DateTimeOffset NOT NULL", IsDbGenerated=true)]
-		public System.DateTimeOffset CreationTime
-		{
-			get
-			{
-				return this._CreationTime;
-			}
-			set
-			{
-				if ((this._CreationTime != value))
-				{
-					this.OnCreationTimeChanging(value);
-					this.SendPropertyChanging();
-					this._CreationTime = value;
-					this.SendPropertyChanged("CreationTime");
-					this.OnCreationTimeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid CreatedBy
-		{
-			get
-			{
-				return this._CreatedBy;
-			}
-			set
-			{
-				if ((this._CreatedBy != value))
-				{
-					if (this._CreatedByEntity.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnCreatedByChanging(value);
-					this.SendPropertyChanging();
-					this._CreatedBy = value;
-					this.SendPropertyChanged("CreatedBy");
-					this.OnCreatedByChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTime", DbType="DateTimeOffset")]
-		public System.Nullable<System.DateTimeOffset> ObsoletionTime
-		{
-			get
-			{
-				return this._ObsoletionTime;
-			}
-			set
-			{
-				if ((this._ObsoletionTime != value))
-				{
-					this.OnObsoletionTimeChanging(value);
-					this.SendPropertyChanging();
-					this._ObsoletionTime = value;
-					this.SendPropertyChanged("ObsoletionTime");
-					this.OnObsoletionTimeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletedBy", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> ObsoletedBy
-		{
-			get
-			{
-				return this._ObsoletedBy;
-			}
-			set
-			{
-				if ((this._ObsoletedBy != value))
-				{
-					if (this._ObsoletedByEntity.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnObsoletedByChanging(value);
-					this.SendPropertyChanging();
-					this._ObsoletedBy = value;
-					this.SendPropertyChanged("ObsoletedBy");
-					this.OnObsoletedByChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_UserEntity", Storage="_Entity", ThisKey="EntityId", OtherKey="EntityId", IsForeignKey=true)]
-		public Entity Entity
-		{
-			get
-			{
-				return this._Entity.Entity;
-			}
-			set
-			{
-				Entity previousValue = this._Entity.Entity;
-				if (((previousValue != value) 
-							|| (this._Entity.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Entity.Entity = null;
-						previousValue.UserEntities.Remove(this);
-					}
-					this._Entity.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntities.Add(this);
-						this._EntityId = value.EntityId;
-					}
-					else
-					{
-						this._EntityId = default(System.Guid);
-					}
-					this.SendPropertyChanged("Entity");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser CreatedByEntity
-		{
-			get
-			{
-				return this._CreatedByEntity.Entity;
-			}
-			set
-			{
-				SecurityUser previousValue = this._CreatedByEntity.Entity;
-				if (((previousValue != value) 
-							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._CreatedByEntity.Entity = null;
-						previousValue.UserEntitiesCreatedBy.Remove(this);
-					}
-					this._CreatedByEntity.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntitiesCreatedBy.Add(this);
-						this._CreatedBy = value.UserId;
-					}
-					else
-					{
-						this._CreatedBy = default(System.Guid);
-					}
-					this.SendPropertyChanged("CreatedByEntity");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity1", Storage="_ObsoletedByEntity", ThisKey="ObsoletedBy", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser ObsoletedByEntity
-		{
-			get
-			{
-				return this._ObsoletedByEntity.Entity;
-			}
-			set
-			{
-				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoletedByEntity.Entity = null;
-						previousValue.UserEntitiesObsoletedBy.Remove(this);
-					}
-					this._ObsoletedByEntity.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntitiesObsoletedBy.Add(this);
-						this._ObsoletedBy = value.UserId;
-					}
-					else
-					{
-						this._ObsoletedBy = default(Nullable<System.Guid>);
-					}
-					this.SendPropertyChanged("ObsoletedByEntity");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity2", Storage="_SecurityUser", ThisKey="UserId", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser SecurityUser
-		{
-			get
-			{
-				return this._SecurityUser.Entity;
-			}
-			set
-			{
-				SecurityUser previousValue = this._SecurityUser.Entity;
-				if (((previousValue != value) 
-							|| (this._SecurityUser.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._SecurityUser.Entity = null;
-						previousValue.UserEntities.Remove(this);
-					}
-					this._SecurityUser.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntities.Add(this);
-						this._UserId = value.UserId;
-					}
-					else
-					{
-						this._UserId = default(System.Guid);
-					}
-					this.SendPropertyChanged("SecurityUser");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
 		}
 	}
 	
@@ -10611,8 +10428,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _DeterminerConceptId;
 		
-		private EntitySet<UserEntity> _UserEntities;
-		
 		private EntitySet<ActNote> _ActNotesAuthorEntityId;
 		
 		private EntitySet<ActParticipation> _ActParticipations;
@@ -10661,7 +10476,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public Entity()
 		{
-			this._UserEntities = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntities), new Action<UserEntity>(this.detach_UserEntities));
 			this._ActNotesAuthorEntityId = new EntitySet<ActNote>(new Action<ActNote>(this.attach_ActNotesAuthorEntityId), new Action<ActNote>(this.detach_ActNotesAuthorEntityId));
 			this._ActParticipations = new EntitySet<ActParticipation>(new Action<ActParticipation>(this.attach_ActParticipations), new Action<ActParticipation>(this.detach_ActParticipations));
 			this._EntityAddresses = new EntitySet<EntityAddress>(new Action<EntityAddress>(this.attach_EntityAddresses), new Action<EntityAddress>(this.detach_EntityAddresses));
@@ -10747,19 +10561,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this.SendPropertyChanged("DeterminerConceptId");
 					this.OnDeterminerConceptIdChanged();
 				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_UserEntity", Storage="_UserEntities", ThisKey="EntityId", OtherKey="EntityId")]
-		public EntitySet<UserEntity> UserEntities
-		{
-			get
-			{
-				return this._UserEntities;
-			}
-			set
-			{
-				this._UserEntities.Assign(value);
 			}
 		}
 		
@@ -11044,18 +10845,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
-		}
-		
-		private void attach_UserEntities(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.Entity = this;
-		}
-		
-		private void detach_UserEntities(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.Entity = null;
 		}
 		
 		private void attach_ActNotesAuthorEntityId(ActNote entity)
@@ -17284,6 +17073,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<char> _DateOfBirthPrecision;
 		
+		private EntityRef<UserEntity> _UserEntity;
+		
 		private EntityRef<Patient> _Patient;
 		
 		private EntityRef<Provider> _Provider;
@@ -17304,6 +17095,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public Person()
 		{
+			this._UserEntity = default(EntityRef<UserEntity>);
 			this._Patient = default(EntityRef<Patient>);
 			this._Provider = default(EntityRef<Provider>);
 			this._EntityVersion = default(EntityRef<EntityVersion>);
@@ -17370,6 +17162,35 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this._DateOfBirthPrecision = value;
 					this.SendPropertyChanged("DateOfBirthPrecision");
 					this.OnDateOfBirthPrecisionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Person_UserEntity", Storage="_UserEntity", ThisKey="EntityVersionId", OtherKey="EntityVersionId", IsUnique=true, IsForeignKey=false)]
+		public UserEntity UserEntity
+		{
+			get
+			{
+				return this._UserEntity.Entity;
+			}
+			set
+			{
+				UserEntity previousValue = this._UserEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._UserEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._UserEntity.Entity = null;
+						previousValue.Person = null;
+					}
+					this._UserEntity.Entity = value;
+					if ((value != null))
+					{
+						value.Person = this;
+					}
+					this.SendPropertyChanged("UserEntity");
 				}
 			}
 		}
@@ -21685,6 +21506,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _ApplicationId;
 		
+		private string _ApplicationPublicId;
+		
 		private string _ApplicationSecret;
 		
 		private System.DateTimeOffset _CreationTime;
@@ -21709,6 +21532,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnCreated();
     partial void OnApplicationIdChanging(System.Guid value);
     partial void OnApplicationIdChanged();
+    partial void OnApplicationPublicIdChanging(string value);
+    partial void OnApplicationPublicIdChanged();
     partial void OnApplicationSecretChanging(string value);
     partial void OnApplicationSecretChanged();
     partial void OnCreationTimeChanging(System.DateTimeOffset value);
@@ -21747,6 +21572,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this._ApplicationId = value;
 					this.SendPropertyChanged("ApplicationId");
 					this.OnApplicationIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ApplicationPublicId", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
+		public string ApplicationPublicId
+		{
+			get
+			{
+				return this._ApplicationPublicId;
+			}
+			set
+			{
+				if ((this._ApplicationPublicId != value))
+				{
+					this.OnApplicationPublicIdChanging(value);
+					this.SendPropertyChanging();
+					this._ApplicationPublicId = value;
+					this.SendPropertyChanged("ApplicationPublicId");
+					this.OnApplicationPublicIdChanged();
 				}
 			}
 		}
@@ -22195,7 +22040,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private string _DeviceSecret;
 		
-		private string _DeviceEvidence;
+		private string _DevicePublicId;
 		
 		private System.DateTimeOffset _CreationTime;
 		
@@ -22225,8 +22070,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnDeviceIdChanged();
     partial void OnDeviceSecretChanging(string value);
     partial void OnDeviceSecretChanged();
-    partial void OnDeviceEvidenceChanging(string value);
-    partial void OnDeviceEvidenceChanged();
+    partial void OnDevicePublicIdChanging(string value);
+    partial void OnDevicePublicIdChanged();
     partial void OnCreationTimeChanging(System.DateTimeOffset value);
     partial void OnCreationTimeChanged();
     partial void OnCreatedByChanging(System.Guid value);
@@ -22289,22 +22134,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeviceEvidence", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
-		public string DeviceEvidence
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DevicePublicId", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
+		public string DevicePublicId
 		{
 			get
 			{
-				return this._DeviceEvidence;
+				return this._DevicePublicId;
 			}
 			set
 			{
-				if ((this._DeviceEvidence != value))
+				if ((this._DevicePublicId != value))
 				{
-					this.OnDeviceEvidenceChanging(value);
+					this.OnDevicePublicIdChanging(value);
 					this.SendPropertyChanging();
-					this._DeviceEvidence = value;
-					this.SendPropertyChanged("DeviceEvidence");
-					this.OnDeviceEvidenceChanged();
+					this._DevicePublicId = value;
+					this.SendPropertyChanged("DevicePublicId");
+					this.OnDevicePublicIdChanged();
 				}
 			}
 		}
@@ -23406,6 +23251,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _UserId;
 		
+		private System.Guid _UserClass;
+		
 		private string _UserName;
 		
 		private string _Email;
@@ -23418,7 +23265,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private bool _TwoFactorEnabled;
 		
-		private bool _LockoutEnabled;
+		private System.Nullable<System.DateTimeOffset> _Lockout;
 		
 		private string _UserPassword;
 		
@@ -23439,10 +23286,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private System.Nullable<System.DateTimeOffset> _UpdatedTime;
 		
 		private System.Nullable<System.Guid> _UpdatedBy;
-		
-		private EntitySet<UserEntity> _UserEntitiesCreatedBy;
-		
-		private EntitySet<UserEntity> _UserEntitiesObsoletedBy;
 		
 		private EntitySet<UserEntity> _UserEntities;
 		
@@ -23566,6 +23409,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnCreated();
     partial void OnUserIdChanging(System.Guid value);
     partial void OnUserIdChanged();
+    partial void OnUserClassChanging(System.Guid value);
+    partial void OnUserClassChanged();
     partial void OnUserNameChanging(string value);
     partial void OnUserNameChanged();
     partial void OnEmailChanging(string value);
@@ -23578,8 +23423,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnPhoneNumberConfirmedChanged();
     partial void OnTwoFactorEnabledChanging(bool value);
     partial void OnTwoFactorEnabledChanged();
-    partial void OnLockoutEnabledChanging(bool value);
-    partial void OnLockoutEnabledChanged();
+    partial void OnLockoutChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnLockoutChanged();
     partial void OnUserPasswordChanging(string value);
     partial void OnUserPasswordChanged();
     partial void OnSecurityStampChanging(string value);
@@ -23604,8 +23449,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public SecurityUser()
 		{
-			this._UserEntitiesCreatedBy = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntitiesCreatedBy), new Action<UserEntity>(this.detach_UserEntitiesCreatedBy));
-			this._UserEntitiesObsoletedBy = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntitiesObsoletedBy), new Action<UserEntity>(this.detach_UserEntitiesObsoletedBy));
 			this._UserEntities = new EntitySet<UserEntity>(new Action<UserEntity>(this.attach_UserEntities), new Action<UserEntity>(this.detach_UserEntities));
 			this._ActTagsCreatedBy = new EntitySet<ActTag>(new Action<ActTag>(this.attach_ActTagsCreatedBy), new Action<ActTag>(this.detach_ActTagsCreatedBy));
 			this._ActTagsObsoletedBy = new EntitySet<ActTag>(new Action<ActTag>(this.attach_ActTagsObsoletedBy), new Action<ActTag>(this.detach_ActTagsObsoletedBy));
@@ -23683,6 +23526,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this._UserId = value;
 					this.SendPropertyChanged("UserId");
 					this.OnUserIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserClass", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid UserClass
+		{
+			get
+			{
+				return this._UserClass;
+			}
+			set
+			{
+				if ((this._UserClass != value))
+				{
+					this.OnUserClassChanging(value);
+					this.SendPropertyChanging();
+					this._UserClass = value;
+					this.SendPropertyChanged("UserClass");
+					this.OnUserClassChanged();
 				}
 			}
 		}
@@ -23807,22 +23670,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LockoutEnabled", DbType="Bit NOT NULL")]
-		public bool LockoutEnabled
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Lockout", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> Lockout
 		{
 			get
 			{
-				return this._LockoutEnabled;
+				return this._Lockout;
 			}
 			set
 			{
-				if ((this._LockoutEnabled != value))
+				if ((this._Lockout != value))
 				{
-					this.OnLockoutEnabledChanging(value);
+					this.OnLockoutChanging(value);
 					this.SendPropertyChanging();
-					this._LockoutEnabled = value;
-					this.SendPropertyChanged("LockoutEnabled");
-					this.OnLockoutEnabledChanged();
+					this._Lockout = value;
+					this.SendPropertyChanged("Lockout");
+					this.OnLockoutChanged();
 				}
 			}
 		}
@@ -24039,33 +23902,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity", Storage="_UserEntitiesCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
-		public EntitySet<UserEntity> UserEntitiesCreatedBy
-		{
-			get
-			{
-				return this._UserEntitiesCreatedBy;
-			}
-			set
-			{
-				this._UserEntitiesCreatedBy.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity1", Storage="_UserEntitiesObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
-		public EntitySet<UserEntity> UserEntitiesObsoletedBy
-		{
-			get
-			{
-				return this._UserEntitiesObsoletedBy;
-			}
-			set
-			{
-				this._UserEntitiesObsoletedBy.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity2", Storage="_UserEntities", ThisKey="UserId", OtherKey="UserId")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity", Storage="_UserEntities", ThisKey="UserId", OtherKey="UserId")]
 		public EntitySet<UserEntity> UserEntities
 		{
 			get
@@ -24902,30 +24739,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		private void attach_UserEntitiesCreatedBy(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.CreatedByEntity = this;
-		}
-		
-		private void detach_UserEntitiesCreatedBy(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.CreatedByEntity = null;
-		}
-		
-		private void attach_UserEntitiesObsoletedBy(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoletedByEntity = this;
-		}
-		
-		private void detach_UserEntitiesObsoletedBy(UserEntity entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoletedByEntity = null;
-		}
-		
 		private void attach_UserEntities(UserEntity entity)
 		{
 			this.SendPropertyChanging();
@@ -25737,6 +25550,92 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._UserId = default(System.Guid);
 					}
 					this.SendPropertyChanged("SecurityUser");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.SecurityUserClass")]
+	public partial class SecurityUserClass : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _ClassId;
+		
+		private string _Mnemonic;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnClassIdChanging(System.Guid value);
+    partial void OnClassIdChanged();
+    partial void OnMnemonicChanging(string value);
+    partial void OnMnemonicChanged();
+    #endregion
+		
+		public SecurityUserClass()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClassId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		public System.Guid ClassId
+		{
+			get
+			{
+				return this._ClassId;
+			}
+			set
+			{
+				if ((this._ClassId != value))
+				{
+					this.OnClassIdChanging(value);
+					this.SendPropertyChanging();
+					this._ClassId = value;
+					this.SendPropertyChanged("ClassId");
+					this.OnClassIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Mnemonic", DbType="VarChar(32) NOT NULL", CanBeNull=false)]
+		public string Mnemonic
+		{
+			get
+			{
+				return this._Mnemonic;
+			}
+			set
+			{
+				if ((this._Mnemonic != value))
+				{
+					this.OnMnemonicChanging(value);
+					this.SendPropertyChanging();
+					this._Mnemonic = value;
+					this.SendPropertyChanged("Mnemonic");
+					this.OnMnemonicChanged();
 				}
 			}
 		}
