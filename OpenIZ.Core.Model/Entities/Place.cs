@@ -108,6 +108,10 @@ namespace OpenIZ.Core.Model.Entities
                     this.m_services = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, m_services);
                 return this.m_services;
             }
+            set
+            {
+                this.m_services = value;
+            }
         }
 
         /// <summary>

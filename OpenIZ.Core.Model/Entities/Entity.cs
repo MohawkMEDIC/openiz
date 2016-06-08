@@ -279,6 +279,10 @@ namespace OpenIZ.Core.Model.Entities
                     this.m_identifiers = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_identifiers);
                 return this.m_identifiers;
             }
+            set
+            {
+                this.m_identifiers = value;
+            }
         }
 
         /// <summary>
@@ -294,6 +298,10 @@ namespace OpenIZ.Core.Model.Entities
                     this.m_relationships = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_relationships);
 
                 return this.m_relationships;
+            }
+            set
+            {
+                this.m_relationships = value;
             }
         }
 
@@ -311,6 +319,10 @@ namespace OpenIZ.Core.Model.Entities
 
                 return this.m_telecomAddresses;
             }
+            set
+            {
+                this.m_telecomAddresses = value;
+            }
         }
 
         /// <summary>
@@ -326,6 +338,10 @@ namespace OpenIZ.Core.Model.Entities
                     this.m_extensions = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_extensions);
 
                 return this.m_extensions;
+            }
+            set
+            {
+                this.m_extensions = value;
             }
         }
 
@@ -343,6 +359,10 @@ namespace OpenIZ.Core.Model.Entities
 
                 return this.m_names;
             }
+            set
+            {
+                this.m_names = value;
+            }
         }
 
         /// <summary>
@@ -358,6 +378,10 @@ namespace OpenIZ.Core.Model.Entities
                     this.m_addresses = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_addresses);
 
                 return this.m_addresses;
+            }
+            set
+            {
+                this.m_addresses = value;
             }
         }
 
@@ -375,6 +399,10 @@ namespace OpenIZ.Core.Model.Entities
 
                 return this.m_notes;
             }
+            set
+            {
+                this.m_notes = value;
+            }
         }
 
         /// <summary>
@@ -391,6 +419,10 @@ namespace OpenIZ.Core.Model.Entities
 
                 return this.m_tags;
             }
+            set
+            {
+                this.m_tags = value;
+            }
         }
 
         /// <summary>
@@ -406,6 +438,10 @@ namespace OpenIZ.Core.Model.Entities
                     this.m_participations = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_participations);
 
                 return this.m_participations;
+            }
+            set
+            {
+                this.m_participations = value;
             }
         }
 

@@ -81,6 +81,10 @@ namespace OpenIZ.Core.Model.Entities
 
                 return this.m_languageCommunication;
             }
+            set
+            {
+                this.m_languageCommunication = value;
+            }
         }
 
         /// <summary>

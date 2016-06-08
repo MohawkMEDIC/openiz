@@ -58,6 +58,14 @@ namespace OpenIZ.Core.Model.EntityLoader
         }
 
         /// <summary>
+        /// Get versioned relationships
+        /// </summary>
+        public List<TObject> GetRelations<TObject>(Guid sourceKey, decimal sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation
+        {
+            return this.Query<TObject>(o => sourceKey == o.SourceEntityKey && sourceVersionSequence >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || sourceVersionSequence < o.ObsoleteVersionSequenceId)).ToList();
+        }
+
+        /// <summary>
         /// Query the specified object
         /// </summary>
         public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData
