@@ -83,7 +83,7 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// </summary>
         public TObject Get<TObject>(Guid key, TObject currentInstance) where TObject : IdentifiedData
         {
-            if (currentInstance == null && key)
+            if (currentInstance == null)
                 return this.m_provider.Get<TObject>(key);
             return currentInstance;
         }
