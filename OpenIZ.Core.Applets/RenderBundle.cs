@@ -111,7 +111,7 @@ namespace OpenIZ.Core.Applets
         {
             get
             {
-                return new XElement[] { new XElement(xs_xhtml + "script", new XAttribute("src", this.m_href), new XAttribute("type", "text/javascript"), new XComment("Script Reference")) };
+                return new XElement[] { new XElement(xs_xhtml + "script", new XAttribute("src", this.m_href), new XAttribute("type", "text/javascript"), new XText("// Script Reference")) };
             }
         }
     }
