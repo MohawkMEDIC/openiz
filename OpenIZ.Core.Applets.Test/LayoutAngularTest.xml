@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AppletManifest xmlns="http://openiz.org/applet">
+  <info id="org.openiz.applet.test.layout" version="1.0.0.0">
+    <name lang="en">Test Layout</name>
+    <author>OpenIZ Community</author>
+  </info>
+  <asset name="layout" mimeType="text/html">
+    <contentHtml>
+      <bundle>jquery</bundle>
+      <bundle>bootstrap</bundle>
+      <bundle>angular</bundle>
+      <script>layout-controller</script>
+      <style>layout-style</style>
+      <content>
+        <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="LayoutController">
+          <h1>{{someVariable}}</h1>
+          <div class="container">
+            <a href="#" ng-click="someAction()">Do Something</a>
+            <!-- #include virtual="content" -->
+          </div>
+        </body>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="index" mimeType="text/html">
+    <contentHtml>
+      <layout>layout</layout>
+      <bundle>chart-js</bundle>
+      <script>index-controller</script>
+      <style>index-style</style>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" ng-controller="IndexController">
+          <a href="#" ng-click="someAction();">{{someLocalVariable}}</a>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="layout-controller" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+        var layoutApp = angular.module('layout', []);
+        
+        layoutApp.controller('LayoutController', ['$scope', function ($scope)
+			  {
+
+				  $scope.someVariable = "Hello!";
+          $scope.someAction = function() { alert("Hi from layout!"); }
+        }]);
+      ]]>
+    </contentText>
+  </asset>
+  <asset name="index-controller" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+        layoutApp.controller('IndexController', ['$scope', function ($scope)
+			  {
+				  $scope.someLocalVariable = "Hello Index!";
+          $scope.someAction = function() { alert("Hi from Index!"); }
+        }]);
+      ]]>
+    </contentText>
+  </asset>
+  <asset name="layout-style" mimeType="text/css">
+    <contentText>
+      <![CDATA[
+        body { background-color: #fdd }
+      ]]>
+    </contentText>
+  </asset>
+  <asset name="index-style" mimeType="text/css">
+    <contentText>
+      <![CDATA[
+        .container a { background-color: #ddf }
+      ]]>
+    </contentText>
+  </asset>
+</AppletManifest>

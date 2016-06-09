@@ -345,6 +345,14 @@ namespace OpenIZ.Core.Applets
 
                                 // Insert scripts & Styles
                                 List<XElement> headerInjection = new List<XElement>();
+                                // Inject special headers
+                                foreach (var itm in htmlAsset.Bundle)
+                                {
+                                    var bundle = this.m_referenceBundles.Find(o => o.Name == itm);
+                                    if (bundle == null)
+                                        throw new FileNotFoundException(String.Format("Bundle {0} not found", itm));
+                                    headerInjection.AddRange(bundle.Content.SelectMany(o => o.HeaderElement));
+                                }
                                 foreach (var itm in htmlAsset.Script)
                                 {
                                     var incAsset = this.ResolveAsset(itm, asset);
