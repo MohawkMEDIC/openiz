@@ -21,6 +21,7 @@ namespace OpenIZ.Core.Applets.Test
         {
             this.m_appletCollection.Add(AppletManifest.Load(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.HelloWorldApplet.xml")));
             this.m_appletCollection.Add(AppletManifest.Load(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.SettingsApplet.xml")));
+            this.m_appletCollection.Add(AppletManifest.Load(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.LocalizationWithJavascript.xml")));
         }
 
         [TestMethod]
@@ -106,6 +107,25 @@ namespace OpenIZ.Core.Applets.Test
             Trace.WriteLine(renderString);
             Assert.IsTrue(renderString.Contains("http://test.com/assets/css/bootstrap.css"));
             Assert.IsTrue(renderString.Contains("http://test.com/applets/org.openiz.sample.helloworld/index-controller"));
+        }
+
+        /// <summary>
+        /// Test localization in javascript
+        /// </summary>
+        [TestMethod]
+        public void TestLocalizationJavascript()
+        {
+            var assetEn = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.applet.sample.localization.js/strings", language: "en");
+            var assetFr = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.applet.sample.localization.js/strings", language: "fr");
+            var assetIndex = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.applet.sample.localization.js/index", language: "fr");
+
+            var render = this.m_appletCollection.RenderAssetContent(assetEn);
+            Assert.IsTrue(Encoding.UTF8.GetString(render).Contains("Click Me!"));
+            render = this.m_appletCollection.RenderAssetContent(assetFr);
+            Assert.IsTrue(Encoding.UTF8.GetString(render).Contains("Cliquez Moi!"));
+            render = this.m_appletCollection.RenderAssetContent(assetIndex);
+            Assert.IsTrue(Encoding.UTF8.GetString(render).Contains("app://openiz.org/applet/org.openiz.applet.sample.localization.js/strings"));
+            Trace.WriteLine(Encoding.UTF8.GetString(render));
         }
     }
 }

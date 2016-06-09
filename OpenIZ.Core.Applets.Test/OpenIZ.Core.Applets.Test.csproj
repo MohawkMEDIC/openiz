@@ -66,6 +66,11 @@
   <ItemGroup>
     <EmbeddedResource Include="SettingsApplet.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LocalizationWithJavascript.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
