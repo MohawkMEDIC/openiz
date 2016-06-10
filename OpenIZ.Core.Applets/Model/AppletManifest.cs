@@ -101,6 +101,12 @@ namespace OpenIZ.Core.Applets.Model
 			get;
 			set;
 		}
-	}
+
+        /// <summary>
+        /// Gets or sets the applet strings
+        /// </summary>
+        [XmlElement("strings")]
+        public List<AppletStrings> Strings { get; set; }
+    }
 }
 
