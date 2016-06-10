@@ -19,25 +19,37 @@ namespace OpenIZ.Core.Applets
 
         // A cache of rendered assets
         private static Dictionary<String, Byte[]> s_cache = new Dictionary<string, byte[]>();
+        private static Dictionary<String, List<KeyValuePair<String, String>>> s_stringCache = new Dictionary<string, List<KeyValuePair<string, string>>>();
         private static Object s_syncLock = new object();
 
+        // Schemes
         public const string BASE_SCHEME = "app://openiz.org/";
         public const string APPLET_SCHEME = BASE_SCHEME + "applet/";
         public const string ASSET_SCHEME = BASE_SCHEME + "asset/";
         public const string DRAWABLE_SCHEME = BASE_SCHEME + "drawable/";
-        private readonly XNamespace xs_xhtml = "http://www.w3.org/1999/xhtml";
-        private readonly RenderBundle m_defaultBundle = new RenderBundle(String.Empty, new ScriptBundleContent("app://openiz.org/asset/js/openiz-model.js"));
 
+        // XMLNS stuff
+        private readonly XNamespace xs_xhtml = "http://www.w3.org/1999/xhtml";
+        private readonly RenderBundle m_defaultBundle = new RenderBundle(String.Empty, 
+            new ScriptBundleContent("app://openiz.org/asset/js/openiz.js"), 
+            new ScriptBundleContent("app://openiz.org/asset/js/openiz-model.js")
+        );
+
+        // Override schemes
         private string m_appletBase = APPLET_SCHEME;
         private string m_assetBase = ASSET_SCHEME;
         private string m_drawableBase = DRAWABLE_SCHEME;
+
 
         // Reference bundles
         private List<RenderBundle> m_referenceBundles = new List<RenderBundle>()
         {
             new RenderBundle(RenderBundle.BUNDLE_JQUERY, new ScriptBundleContent("app://openiz.org/asset/js/jquery.min.js"), new ScriptBundleContent("app://openiz.org/asset/js/jquery.mobile.min.js")),
             new RenderBundle(RenderBundle.BUNDLE_BOOTSTRAP, new ScriptBundleContent("app://openiz.org/asset/js/bootstrap.js"), new StyleBundleContent("app://openiz.org/asset/css/bootstrap.css")),
-            new RenderBundle(RenderBundle.BUNDLE_ANGULAR, new ScriptBundleContent("app://openiz.org/asset/js/angular.min.js")),
+            new RenderBundle(RenderBundle.BUNDLE_ANGULAR, 
+                new ScriptBundleContent("app://openiz.org/asset/js/angular.min.js"), 
+                new ScriptBundleContent("app://openiz.org/asset/js/angular-route.min.js"),
+                new ScriptBundleContent("app://openiz.org/asset/js/openiz-localize.js")),
             new RenderBundle(RenderBundle.BUNDLE_METRO, new ScriptBundleContent("app://openiz.org/asset/js/jquery.metro.js"), new StyleBundleContent("app://openiz.org/asset/css/jquery.metro.css")),
             new RenderBundle(RenderBundle.BUNDLE_SELECT2, new StyleBundleContent("app://openiz.org/asset/css/select2.min.css"), new ScriptBundleContent("app://openiz.org/asset/js/select2.min.js")),
             new RenderBundle(RenderBundle.BUNDLE_CHART, new ScriptBundleContent("app://openiz.org/asset/js/chart.js"))
@@ -211,6 +223,24 @@ namespace OpenIZ.Core.Applets
         }
 
         /// <summary>
+        /// Get the list of strings from all the loaded applets
+        /// </summary>
+        public List<KeyValuePair<String, String>> GetStrings(String locale)
+        {
+            List<KeyValuePair<String, String>> retVal = null;
+            if (!s_stringCache.TryGetValue(locale, out retVal))
+                lock (s_syncLock)
+                {
+                    retVal = this.m_appletManifest.SelectMany(o => o.Strings).
+                        Where(o=>o.Language == locale).
+                        SelectMany(o => o.String).
+                        Select(o => new KeyValuePair<String, String>(o.Key, o.Value)).ToList();
+                    s_stringCache.Add(locale, retVal);
+                }
+            return retVal;
+        }
+
+        /// <summary>
         /// Resolve the asset 
         /// </summary>
         public AppletAsset ResolveAsset(String assetPath, AppletAsset relative = null, String language = null) 
@@ -301,7 +331,6 @@ namespace OpenIZ.Core.Applets
                     case "body": // The content is an HTML Body element, we must inject the HTML header
                         {
                             List<XElement> headerInjection = new List<XElement>();
-                            headerInjection.AddRange(m_defaultBundle.Content.SelectMany(o => o.HeaderElement));
                             // Inject special headers
                             foreach (var itm in htmlAsset.Bundle)
                             {
@@ -330,13 +359,9 @@ namespace OpenIZ.Core.Applets
                                 else
                                     throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
                             }
-
+                            headerInjection.AddRange(m_defaultBundle.Content.SelectMany(o => o.HeaderElement));
                             // Render the bundles
                             var bodyElement = htmlAsset.Html as XElement;
-
-                            // Inject the OpenIZ JS shim
-                            var openizJS = new XElement(xs_xhtml + "script", new XAttribute("src", "app://openiz.org/asset/js/openiz.js"), new XAttribute("type", "text/javascript"), new XComment("Imported data"));
-                            bodyElement.Add(openizJS);
 
                             htmlContent = new XElement(xs_xhtml + "html", new XAttribute("ng-app", asset.Name), new XElement(xs_xhtml + "head", headerInjection), bodyElement);
                         }
@@ -350,6 +375,14 @@ namespace OpenIZ.Core.Applets
 
                                 // Insert scripts & Styles
                                 List<XElement> headerInjection = new List<XElement>();
+                                // Inject special headers
+                                foreach (var itm in htmlAsset.Bundle)
+                                {
+                                    var bundle = this.m_referenceBundles.Find(o => o.Name == itm);
+                                    if (bundle == null)
+                                        throw new FileNotFoundException(String.Format("Bundle {0} not found", itm));
+                                    headerInjection.AddRange(bundle.Content.SelectMany(o => o.HeaderElement));
+                                }
                                 foreach (var itm in htmlAsset.Script)
                                 {
                                     var incAsset = this.ResolveAsset(itm, asset);

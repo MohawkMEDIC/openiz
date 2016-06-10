@@ -93,6 +93,10 @@ namespace OpenIZ.Core.Model.DataTypes
                     this.m_setMembers = EntitySource.Current.Provider.Query<Concept>(o=>o.ConceptSets.Any(s=>s.Key == this.Key)).ToList();
                 return this.m_setMembers;
             }
+            set
+            {
+                this.m_setMembers = value;
+            }
         }
 
         /// <summary>

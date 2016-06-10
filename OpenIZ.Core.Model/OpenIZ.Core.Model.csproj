@@ -20,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -56,6 +56,7 @@
     <Compile Include="Constants\EntityRelationshipTypeKeys.cs" />
     <Compile Include="Constants\NameKeys.cs" />
     <Compile Include="Constants\StatusConceptKeys.cs" />
+    <Compile Include="Constants\UserClassKeys.cs" />
     <Compile Include="DataTypes\AssigningAuthority.cs" />
     <Compile Include="DataTypes\CodeSystem.cs" />
     <Compile Include="DataTypes\Concept.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="Map\ModelExpressionVisitor.cs" />
     <Compile Include="Map\ModelMap.cs" />
     <Compile Include="Map\ModelMapper.cs" />
+    <Compile Include="Map\OpenIZConvert.cs" />
     <Compile Include="Map\PropertyMap.cs" />
     <Compile Include="Map\ValidationResultDetail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

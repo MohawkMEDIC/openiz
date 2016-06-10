@@ -16,7 +16,8 @@
  * User: fyfej
  * Date: 2016-1-13
  */
-using MARC.HI.EHRS.SVC.Core;
+using OpenIZ.Core.Services;
+ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Exceptions;
 using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Core.Services.Policy;
@@ -29,6 +30,7 @@ using OpenIZ.Persistence.Data.MSSQL.Data;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -79,60 +81,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
                     userName == AuthenticationContext.SystemPrincipal.Identity.Name)
                     throw new PolicyViolationException(PermissionPolicyIdentifiers.Login, PolicyDecisionOutcomeType.Deny);
 
-                lock (s_lockObject)
-                    using (var dataContext = new Data.ModelDataContext(s_configuration.ReadWriteConnectionString))
-                    {
-                        // Attempt to get a user
-                        var hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
+                Guid? userId = Guid.Empty;
 
-                        var passwordHash = hashingService.EncodePassword(password);
-                        var user = dataContext.SecurityUsers.SingleOrDefault(u => u.UserName == userName && u.ObsoletionTime == null);
-                        if (user?.UserPassword == passwordHash && (bool)!user?.TwoFactorEnabled &&
-                            (bool)!user?.LockoutEnabled)
-                        {
-                            var userIdentity = new SqlClaimsIdentity(user, true) { m_authenticationType = "Password" };
+                using (var dataContext = new Data.ModelDataContext(s_configuration.ReadWriteConnectionString))
+                {
+                    // Attempt to get a user
+                    var hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
 
-                            // Is user allowed to login?
-                            try
-                            {
-                                new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.Login, new GenericPrincipal(userIdentity, null)).Demand();
+                    var passwordHash = hashingService.EncodePassword(password);
+                    dataContext.sp_Authenticate(userName, passwordHash, 3, ref userId);
+                }
 
-                                user.LastSuccessfulLogin = DateTimeOffset.Now;
-                                user.FailedLoginAttempts = 0;
-                                user.UpdatedBy = Guid.Parse(AuthenticationContext.SystemUserSid);
-                                user.UpdatedTime = DateTimeOffset.Now;
-                                dataContext.SubmitChanges();
-                                return userIdentity;
-                            }
-                            catch (PolicyViolationException e)
-                            {
-                                throw;
-                            }
-                        }
-                        else if (user == null)
-                            throw new AuthenticationException("Invalid username/password");
-                        else if ((bool)user?.LockoutEnabled)
-                        {
-                            user.FailedLoginAttempts++;
-                            user.UpdatedBy = Guid.Parse(AuthenticationContext.SystemUserSid);
-                            user.UpdatedTime = DateTimeOffset.Now;
-                            dataContext.SubmitChanges();
-                            throw new AuthenticationException("Account is locked");
-                        }
-                        else if (user != null)
-                        {
-                            user.FailedLoginAttempts++;
-                            user.UpdatedBy = Guid.Parse(AuthenticationContext.SystemUserSid);
-                            user.UpdatedTime = DateTimeOffset.Now;
-                            if (user.FailedLoginAttempts > 3) // TODO: Add this to configuration
-                                user.LockoutEnabled = true;
-                            dataContext.SubmitChanges();
-                            throw new AuthenticationException("Invalid username/password");
-                        }
-                        else
-                            throw new InvalidOperationException("Shouldn't be here");
+                using (var dataContext = new Data.ModelDataContext(s_configuration.ReadonlyConnectionString))
+                {
+                    var user = dataContext.SecurityUsers.SingleOrDefault(u => u.UserId == userId);
+                    var userIdentity = new SqlClaimsIdentity(user, true) { m_authenticationType = "Password" };
 
-                    }
+                    // Is user allowed to login?
+                    new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.Login, new GenericPrincipal(userIdentity, null)).Demand();
+                    return userIdentity;
+                }
             }
             catch (AuthenticationException)
             {
@@ -143,6 +111,20 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
             {
                 // TODO: Audit this
                 throw;
+            }
+            catch(SqlException e)
+            {
+                switch(e.Number)
+                {
+                    case 51900:
+                        throw new AuthenticationException("Account is locked");
+                    case 51901:
+                        throw new AuthenticationException("Invalid username/password");
+                    case 51902:
+                        throw new AuthenticationException("User requires two-factor authentication");
+                    default:
+                        throw e;
+                }
             }
             catch (Exception e)
             {

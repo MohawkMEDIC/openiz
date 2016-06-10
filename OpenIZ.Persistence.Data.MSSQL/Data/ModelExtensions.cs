@@ -177,7 +177,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
             if ((me == null) ^ (other == null)) return false;
             foreach(var pi in GetFields(me.GetType()))
             {
-                if (pi.FieldType.IsGenericType) continue; /// Skip generics
+                if (pi.FieldType.IsGenericType && !pi.FieldType.GetGenericTypeDefinition().Equals(typeof(Nullable<>))) continue; /// Skip generics
                 object meValue = pi.GetValue(me),
                     otherValue = pi.GetValue(other);
 

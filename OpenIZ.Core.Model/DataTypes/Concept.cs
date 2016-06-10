@@ -120,6 +120,10 @@ namespace OpenIZ.Core.Model.DataTypes
 
                 return this.m_relationships;
             }
+            set
+            {
+                this.m_relationships = value;
+            }
         }
 
         /// <summary>
@@ -174,6 +178,10 @@ namespace OpenIZ.Core.Model.DataTypes
 
                 return this.m_referenceTerms;
             }
+            set
+            {
+                this.m_referenceTerms = value;
+            }
         }
 
         /// <summary>
@@ -189,6 +197,10 @@ namespace OpenIZ.Core.Model.DataTypes
                     this.m_conceptNames = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_conceptNames);
 
                 return this.m_conceptNames;
+            }
+            set
+            {
+                this.m_conceptNames = value;
             }
         }
 
@@ -223,6 +235,10 @@ namespace OpenIZ.Core.Model.DataTypes
                     this.IsDelayLoadEnabled)
                     this.m_conceptSet = EntitySource.Current.Provider.Query<ConceptSet>(s => s.Concepts.Any(c => c.Key == this.Key)).ToList();
                 return this.m_conceptSet;
+            }
+            set
+            {
+                this.m_conceptSet = value;
             }
         }
 

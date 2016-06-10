@@ -100,6 +100,10 @@ namespace OpenIZ.Core.Model.DataTypes
                     this.m_displayNames = EntitySource.Current.Provider.Query<ReferenceTermName>(o => o.ReferenceTermKey == this.Key && o.ObsoletionTime == null).ToList();
                 return this.m_displayNames;
             }
+            set
+            {
+                this.m_displayNames = value;
+            }
         }
 
         /// <summary>
