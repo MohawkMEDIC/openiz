@@ -190,10 +190,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     principal,
                     dataContext
                     );
-            if(storageData.Telecom != null)
+            if(storageData.Telecoms != null)
                 base.UpdateAssociatedItems<Core.Model.Entities.EntityTelecomAddress, Core.Model.Entities.Entity, Data.EntityTelecomAddress>(
                     new List<Core.Model.Entities.EntityTelecomAddress>(),
-                    storageData.Telecom,
+                    storageData.Telecoms,
                     domainValue.EntityId,
                     principal,
                     dataContext

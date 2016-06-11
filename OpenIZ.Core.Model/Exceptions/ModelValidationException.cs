@@ -51,5 +51,16 @@ namespace OpenIZ.Core.Exceptions
         /// </summary>
         public IEnumerable<ValidationResultDetail> ValidationDetails { get; private set; }
 
+        /// <summary>
+        /// Output model map exception as string
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder("Model Validation Exception:\r\n");
+            foreach (var itm in this.ValidationDetails)
+                sb.AppendFormat("{0}: {1} @ {2}\r\n", itm.Level, itm.Message, itm.Location);
+            return sb.ToString();
+        }
     }
 }

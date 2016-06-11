@@ -86,7 +86,6 @@ namespace OpenIZ.Core.Model.Entities
         /// Class concept
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         [XmlElement("classConcept"), JsonProperty("classConcept")]
         public virtual Guid ClassConceptKey
         {
@@ -310,7 +309,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [DelayLoad(null)]
         [XmlElement("telecom"), JsonProperty("telecom")]
-        public List<EntityTelecomAddress> Telecom
+        public List<EntityTelecomAddress> Telecoms
         {
             get
             {
