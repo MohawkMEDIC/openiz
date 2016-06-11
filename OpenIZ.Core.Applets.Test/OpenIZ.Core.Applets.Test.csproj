@@ -67,6 +67,11 @@
     <EmbeddedResource Include="SettingsApplet.xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="LocalizationWithJavascript.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="LayoutAngularTest.xml" />
   </ItemGroup>
   <Choose>

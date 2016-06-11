@@ -105,7 +105,7 @@ namespace OpenIZ.Core.Model.EntityLoader
         public List<TObject> GetRelations<TObject>(Guid sourceKey, List<TObject> currentInstance) where TObject : IdentifiedData, ISimpleAssociation
         {
             if (currentInstance == null)
-                return this.m_provider.Query<TObject>(o => sourceKey == o.SourceEntityKey).ToList();
+                return this.m_provider.Query<TObject>(o => o.SourceEntityKey == sourceKey).ToList();
             return currentInstance;
         }
 

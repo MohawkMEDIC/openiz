@@ -77,7 +77,7 @@ namespace OpenIZ.Core.Model.Roles
         [XmlElement("genderConcept"), JsonProperty("genderConcept")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        public Guid GenderCocneptKey
+        public Guid GenderConceptKey
         {
             get { return this.m_genderConceptKey; }
             set
@@ -90,7 +90,7 @@ namespace OpenIZ.Core.Model.Roles
         /// <summary>
         /// Gets or sets the gender concept
         /// </summary>
-        [DelayLoad(nameof(GenderCocneptKey))]
+        [DelayLoad(nameof(GenderConceptKey))]
         [XmlIgnore, JsonIgnore]
         public Concept GenderConcept
         {

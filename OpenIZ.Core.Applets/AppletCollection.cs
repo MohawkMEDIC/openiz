@@ -48,7 +48,6 @@ namespace OpenIZ.Core.Applets
             new RenderBundle(RenderBundle.BUNDLE_BOOTSTRAP, new ScriptBundleContent("app://openiz.org/asset/js/bootstrap.js"), new StyleBundleContent("app://openiz.org/asset/css/bootstrap.css")),
             new RenderBundle(RenderBundle.BUNDLE_ANGULAR, 
                 new ScriptBundleContent("app://openiz.org/asset/js/angular.min.js"), 
-                new ScriptBundleContent("app://openiz.org/asset/js/angular-route.min.js"),
                 new ScriptBundleContent("app://openiz.org/asset/js/openiz-localize.js")),
             new RenderBundle(RenderBundle.BUNDLE_METRO, new ScriptBundleContent("app://openiz.org/asset/js/jquery.metro.js"), new StyleBundleContent("app://openiz.org/asset/css/jquery.metro.css")),
             new RenderBundle(RenderBundle.BUNDLE_SELECT2, new StyleBundleContent("app://openiz.org/asset/css/select2.min.css"), new ScriptBundleContent("app://openiz.org/asset/js/select2.min.js")),

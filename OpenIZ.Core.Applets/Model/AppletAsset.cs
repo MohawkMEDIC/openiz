@@ -73,7 +73,7 @@ namespace OpenIZ.Core.Applets.Model
         /// <returns></returns>
         public override string ToString()
         {
-            return String.Format("{0}{1}/{2}", AppletCollection.APPLET_SCHEME, this.Manifest?.Info?.Id, this.Name);
+            return String.Format("{0}{1}/{2}?lang={3}", AppletCollection.APPLET_SCHEME, this.Manifest?.Info?.Id, this.Name, this.Language);
         }
     }
 
