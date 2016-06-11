@@ -16,8 +16,10 @@
  * User: fyfej
  * Date: 2016-4-19
  */
+using OpenIZ.Core.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,6 +39,22 @@ namespace OpenIZ.Core.Model.Map
         private Dictionary<Type, ClassMap> m_classCache = new Dictionary<Type, ClassMap>();
         // Lock object
         private Object m_lockObject = new Object();
+
+
+        /// <summary>
+        /// Creates the specified model mmap
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public static ModelMap Load(Stream sourceStream)
+        {
+            XmlSerializer xsz = new XmlSerializer(typeof(ModelMap));
+            var retVal = xsz.Deserialize(sourceStream) as ModelMap;
+            var validation = retVal.Validate();
+            if (validation.Any(o => o.Level == ResultDetailType.Error))
+                throw new ModelMapValidationException(validation);
+            return retVal;
+        }
 
         /// <summary>
         /// Gets or sets the class mapping

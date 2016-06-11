@@ -53,23 +53,9 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         private void Load(Stream sourceStream)
         {
-            XmlSerializer xsz = new XmlSerializer(typeof(ModelMap));
-            this.m_mapFile = xsz.Deserialize(sourceStream) as ModelMap;
-            var validation = this.Validate(this.m_mapFile);
-            if (validation.Any(o => o.Level == ResultDetailType.Error))
-                throw new ModelMapValidationException(validation);
+            this.m_mapFile = ModelMap.Load(sourceStream);
         }
 
-        /// <summary>
-        /// Validate the map
-        /// </summary>
-        public IEnumerable<ValidationResultDetail> Validate(ModelMap map)
-        {
-            var validate = map.Validate();
-            foreach (var v in validate)
-                Debug.WriteLine("{0} [{1}]", v.Message, v.Level);
-            return validate;
-        }
         /// <summary>
         /// Map member 
         /// </summary>
