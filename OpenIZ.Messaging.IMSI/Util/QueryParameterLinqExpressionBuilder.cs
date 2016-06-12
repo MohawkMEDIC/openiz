@@ -73,13 +73,21 @@ namespace OpenIZ.Messaging.IMSI.Util
         { 
             var parameterExpression = Expression.Parameter(typeof(TModelType), parameterName);
             Expression retVal = null;
+            List<KeyValuePair<String, String[]>> workingValues = new List<KeyValuePair<string, string[]>>();
             // Iterate 
             foreach (var nvc in httpQueryParameters.AllKeys.Where(p=>!p.StartsWith("_")).Distinct())
+                workingValues.Add(new KeyValuePair<string, string[]>(nvc, httpQueryParameters.GetValues(nvc)));
+
+            // Get the first values
+            while(workingValues.Count > 0)
             {
+                var currentValue = workingValues.FirstOrDefault();
+                workingValues.Remove(currentValue);
+
                 // Create accessor expression
                 Expression keyExpression = null;
                 Expression accessExpression = parameterExpression;
-                String[] memberPath = nvc.Split('.');
+                String[] memberPath = currentValue.Key.Split('.');
                 String path = "";
                 foreach(var rawMember in memberPath)
                 {
@@ -99,7 +107,7 @@ namespace OpenIZ.Messaging.IMSI.Util
                     // Get member info
                     var memberInfo = accessExpression.Type.GetProperties().SingleOrDefault(p => p.GetCustomAttribute<XmlElementAttribute>()?.ElementName == pMember);
                     if (memberInfo == null)
-                        throw new ArgumentOutOfRangeException(nvc);
+                        throw new ArgumentOutOfRangeException(currentValue.Key);
 
 
                     // Handle XML props
@@ -157,20 +165,28 @@ namespace OpenIZ.Messaging.IMSI.Util
                         
                         // Add sub-filter
                         NameValueCollection subFilter = new NameValueCollection();
-                        foreach(var val in httpQueryParameters.GetValues(nvc))
-                            subFilter.Add(nvc.Substring(path.Length), val);
+                        foreach(var val in currentValue.Value)
+                            subFilter.Add(currentValue.Key.Substring(path.Length), val);
+                        // Add collect other parameters
+                        foreach (var wv in workingValues.Where(o => o.Key.StartsWith(path)).ToList())
+                        {
+                            foreach (var val in wv.Value)
+                                subFilter.Add(wv.Key.Substring(path.Length), val);
+                            workingValues.Remove(wv);
+                        }
+
                         var builderMethod = this.GetGenericMethod(typeof(QueryParameterLinqExpressionBuilder), nameof(BuildLinqExpression), new Type[] { itemType }, new Type[] { typeof(NameValueCollection), typeof(String) }, BindingFlags.Instance | BindingFlags.Public);
 
                         Expression predicate = (builderMethod.Invoke(this, new object[] { subFilter, pMember }) as LambdaExpression);
                         keyExpression = Expression.Call(anyMethod, accessExpression, predicate);
-                        httpQueryParameters.Remove(nvc);
+                        currentValue = new KeyValuePair<string, string[]>();
                         break;  // skip
                     }
 
                 }
 
                 // Now expression
-                var kp = httpQueryParameters.GetValues(nvc);
+                var kp = currentValue.Value;
                 if(kp != null)
                     foreach(var value in kp)
                     {

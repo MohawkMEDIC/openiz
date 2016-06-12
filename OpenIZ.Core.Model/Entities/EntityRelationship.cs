@@ -45,15 +45,31 @@ namespace OpenIZ.Core.Model.Entities
         private Concept m_relationshipType;
 
         /// <summary>
+        /// Default constructor for entity relationship
+        /// </summary>
+        public EntityRelationship()
+        {
+        }
+
+        /// <summary>
+        /// Entity relationship between <paramref name="source"/> and <paramref name="target"/>
+        /// </summary>
+        public EntityRelationship(Guid relationshipType, Entity target)
+        {
+            this.RelationshipTypeKey = relationshipType;
+            this.TargetEntity = target;
+        }
+
+        /// <summary>
         /// The target of the association
         /// </summary>
         [XmlElement("target"), JsonProperty("target")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         public Guid TargetEntityKey
         {
             get { return this.m_targetEntityKey; }
-            set { this.m_targetEntityKey = value;
+            set {
+                this.m_targetEntityKey = value;
                 this.m_targetEntity = null;
             }
         }

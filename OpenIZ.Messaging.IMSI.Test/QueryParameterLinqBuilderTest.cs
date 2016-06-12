@@ -25,6 +25,7 @@ using OpenIZ.Core.Model.DataTypes;
 using System.Linq.Expressions;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Model.Roles;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Messaging.IMSI.Test
 {
@@ -144,6 +145,23 @@ namespace OpenIZ.Messaging.IMSI.Test
         }
 
         /// <summary>
+        /// Test query by entity identifier
+        /// </summary>
+        [TestMethod]
+        public void TestEntityIdentifierChain()
+        {
+            var dtString = DateTime.Now;
+            Expression<Func<Entity, bool>> expected = (o => o.Identifiers.Any(identifier => identifier.Authority.Oid == "1.2.3.4" && identifier.Value == "123"));
+
+            var builder = new QueryParameterLinqExpressionBuilder();
+            NameValueCollection httpQueryParameters = new NameValueCollection();
+            httpQueryParameters.Add("identifier.authority.oid", "1.2.3.4");
+            httpQueryParameters.Add("identifier.value", "123");
+            var expr = builder.BuildLinqExpression<Patient>(httpQueryParameters);
+            Assert.AreEqual(expected.ToString(), expr.ToString());
+        }
+
+        /// <summary>
         /// Test tht building of a simple AND & OR method
         /// </summary>
         [TestMethod]
@@ -151,7 +169,7 @@ namespace OpenIZ.Messaging.IMSI.Test
         {
 
             var dtString = DateTime.Now;
-            String expected = "o => o.Names.Where(guard => (guard.NameUse.Mnemonic == \"L\")).Any(name => name.Component.Where(guard => (guard.Type == \"GIV\")).Any(component => (component.Value == \"John\")))";
+            String expected = "o => o.Names.Where(guard => (guard.NameUse.Mnemonic == \"L\")).Any(name => name.Component.Where(guard => (guard.ComponentType.Mnemonic == \"GIV\")).Any(component => (component.Value == \"John\")))";
 
             var builder = new QueryParameterLinqExpressionBuilder();
             NameValueCollection httpQueryParameters = new NameValueCollection();
@@ -161,6 +179,24 @@ namespace OpenIZ.Messaging.IMSI.Test
 
         }
 
+        /// <summary>
+        /// Test tht building of a simple AND & OR method
+        /// </summary>
+        [TestMethod]
+        public void TestGuardAndCondition()
+        {
+
+            var dtString = DateTime.Now;
+            String expected = "{o => o.Names.Where(guard => (guard.NameUse.Mnemonic == \"L\")).Any(name => (name.Component.Where(guard => (guard.ComponentType.Mnemonic == \"GIV\")).Any(component => (component.Value == \"John\")) AndAlso name.Component.Where(guard => (guard.ComponentType.Mnemonic == \"FAM\")).Any(component => (component.Value == \"Smith\"))))}";
+
+        var builder = new QueryParameterLinqExpressionBuilder();
+            NameValueCollection httpQueryParameters = new NameValueCollection();
+            httpQueryParameters.Add("name[L].component[GIV].value", "John");
+            httpQueryParameters.Add("name[L].component[FAM].value", "Smith");
+            var expr = builder.BuildLinqExpression<Patient>(httpQueryParameters);
+            Assert.AreEqual(expected, expr.ToString());
+
+        }
 
     }
 }

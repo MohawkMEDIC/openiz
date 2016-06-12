@@ -39,12 +39,29 @@ namespace OpenIZ.Core.Model.Entities
         
         private Concept m_nameUseConcept;
 
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public EntityTelecomAddress()
+        {
+
+        }
+
+        /// <summary>
+        /// Creates a new entity telecom address with specified use and value
+        /// </summary>
+        public EntityTelecomAddress(Guid addressUseKey, String value)
+        {
+            this.AddressUseKey = addressUseKey;
+            this.Value = value;
+        }
+
         /// <summary>
         /// Gets or sets the name use key
         /// </summary>
         [XmlElement("use"), JsonProperty("use")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         public Guid? AddressUseKey
         {
             get { return this.m_nameUseKey; }

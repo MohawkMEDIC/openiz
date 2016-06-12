@@ -104,6 +104,23 @@ namespace OpenIZ.Core.Model.DataTypes
     public class EntityExtension : Extension<Entity>
     {
 
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public EntityExtension()
+        {
+
+        }
+
+        /// <summary>
+        /// Creates an entity extension
+        /// </summary>
+        public EntityExtension(Guid extensionType, byte[] value)
+        {
+            this.ExtensionTypeKey = extensionType;
+            this.ExtensionValue = value;
+        }
+        
     }
 
     /// <summary>

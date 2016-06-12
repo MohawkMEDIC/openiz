@@ -79,6 +79,7 @@ namespace OpenIZ.Core.Model
                 if (value is IdentifiedData)
                     (value as IdentifiedData).SetDelayLoad(v); // Let it go
                 else if (value is IList &&
+                    fi.FieldType.GenericTypeArguments.Length > 0 &&
                     typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(fi.FieldType.GenericTypeArguments[0].GetTypeInfo()))
                 {
                     foreach (IdentifiedData itm in value as IList)

@@ -27,6 +27,7 @@ using System.Xml.Serialization;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Acts;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -38,6 +39,31 @@ namespace OpenIZ.Core.Model.DataTypes
     public class EntityIdentifier : IdentifierBase<Entity>
     {
 
+        /// <summary>
+        /// Default ctor
+        /// </summary>
+        public EntityIdentifier()
+        {
+                    
+        }
+
+        /// <summary>
+        /// Creates a new entity identifier with specified authority
+        /// </summary>
+        public EntityIdentifier(Guid authorityId, String value)
+        {
+            this.AuthorityKey = authorityId;
+            this.Value = value;
+        }
+
+        /// <summary>
+        /// Creates a new entity identifier
+        /// </summary>
+        public EntityIdentifier(AssigningAuthority authority, String value)
+        {
+            this.Authority = authority;
+            this.Value = value;
+        }
     }
 
 
