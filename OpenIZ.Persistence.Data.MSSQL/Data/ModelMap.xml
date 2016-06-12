@@ -233,7 +233,7 @@
     <property modelName="Addresses" domainName="Entity" dontLoad="true">
       <via domainName="EntityAddresses"/>
     </property>
-    <property modelName="Telecom" domainName="Entity" dontLoad="true">
+    <property modelName="Telecoms" domainName="Entity" dontLoad="true">
       <via domainName="EntityTelecomAddresses"/>
     </property>
     <property modelName="Tags" domainName="Entity" dontLoad="true">
