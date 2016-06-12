@@ -264,8 +264,17 @@ namespace OpenIZ.Core.Model.Map
         {
             ClassMap classMap = this.m_mapFile.GetModelClassMap(typeof(TModel));
 
-            if (classMap == null || domainInstance == null)
+            if (domainInstance == null)
                 return default(TModel);
+            else
+            {
+                var cType = typeof(TModel);
+                while (classMap == null)
+                {
+                    cType = cType.GetTypeInfo().BaseType;
+                    classMap = this.m_mapFile.GetModelClassMap(cType);
+                } // work up the tree
+            }
 
             // Now the property maps
             TModel retVal = new TModel();
