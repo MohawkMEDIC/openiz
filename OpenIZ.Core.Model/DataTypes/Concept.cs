@@ -64,6 +64,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the unchanging mnemonic for the concept
         /// </summary>
         [XmlElement("mnemonic"), JsonProperty("mnemonic")]
+        [Unique]
         public String Mnemonic { get; set; }
 
         /// <summary>

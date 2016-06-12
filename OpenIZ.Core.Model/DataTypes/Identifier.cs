@@ -102,6 +102,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the value of the identifier
         /// </summary>
         [XmlElement("value"), JsonProperty("value")]
+        [Unique]
         public String Value { get; set; }
 
         /// <summary>
@@ -151,6 +152,7 @@ namespace OpenIZ.Core.Model.DataTypes
         
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlIgnore, JsonIgnore]
+        [Unique]
         public Guid  AuthorityKey {
             get { return this.m_authorityId; }
             set

@@ -59,6 +59,22 @@ namespace OpenIZ.Core.Model.DataTypes
     public class EntityTag : Tag<Entity>
     {
 
+        /// <summary>
+        /// Default ctor
+        /// </summary>
+        public EntityTag()
+        {
+
+        }
+
+        /// <summary>
+        /// Construtor setting key and tag
+        /// </summary>
+        public EntityTag(String key, String value)
+        {
+            this.TagKey = key;
+            this.Value = value;
+        }
     }
 
 

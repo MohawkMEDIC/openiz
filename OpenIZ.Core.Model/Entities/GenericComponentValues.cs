@@ -69,6 +69,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("type"), JsonProperty("type")]
+        [Unique]
         public Guid? ComponentTypeKey
         {
             get { return this.m_componentTypeKey; }
@@ -102,6 +103,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the value of the name component
         /// </summary>
         [XmlElement("value"), JsonProperty("value")]
+        [Unique]
         public String Value { get; set; }
 
         /// <summary>

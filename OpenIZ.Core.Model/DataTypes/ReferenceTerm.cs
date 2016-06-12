@@ -51,6 +51,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the mnemonic for the reference term
         /// </summary>
         [XmlElement("mnemonic"), JsonProperty("mnemonic")]
+        [Unique]
         public string Mnemonic { get; set; }
 
         /// <summary>
@@ -79,6 +80,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("codeSystem"), JsonProperty("codeSystem")]
+        [Unique]
         public Guid  CodeSystemKey {
             get { return this.m_codeSystemId; }
             set

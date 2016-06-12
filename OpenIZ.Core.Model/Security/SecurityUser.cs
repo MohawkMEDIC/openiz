@@ -102,6 +102,7 @@ namespace OpenIZ.Core.Model.Security
         /// Gets or sets the logical user name ofthe user
         /// </summary>
         [XmlElement("userName"), JsonProperty("userName")]
+        [Unique(ErrorOnInsert = true)]
         public String UserName { get; set; }
         /// <summary>
         /// Gets or sets the binary representation of the user's photo

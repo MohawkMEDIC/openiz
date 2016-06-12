@@ -44,6 +44,23 @@ namespace OpenIZ.Core.Model.DataTypes
         private Entity m_author;
 
         /// <summary>
+        /// Default ctor
+        /// </summary>
+        public Note()
+        {
+
+        }
+
+        /// <summary>
+        /// Creates a new instance of the entity note
+        /// </summary>
+        public Note(Guid authorKey, String text)
+        {
+            this.AuthorKey = authorKey;
+            this.Text = text;
+        }
+
+        /// <summary>
         /// Gets or sets the note text
         /// </summary>
         [XmlElement("text"), JsonProperty("text")]
@@ -104,6 +121,20 @@ namespace OpenIZ.Core.Model.DataTypes
     [XmlType("EntityNote",  Namespace = "http://openiz.org/model"), JsonObject("EntityNote")]
     public class EntityNote : Note<Entity>
     {
+        /// <summary>
+        /// Default ctor
+        /// </summary>
+        public EntityNote()
+        {
+
+        }
+
+        /// <summary>
+        /// Creates a new instance of the entity note
+        /// </summary>
+        public EntityNote(Guid authorKey, String text) : base(authorKey, text)
+        {
+        }
 
     }
 
