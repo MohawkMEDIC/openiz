@@ -19,10 +19,10 @@
 using OpenIZ.Core.Model;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIZ.Core.Model.Query;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {

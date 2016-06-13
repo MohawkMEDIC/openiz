@@ -69,7 +69,7 @@ namespace OpenIZ.Core.Model.DataTypes
         [XmlElement("concept"), JsonProperty("concept")]
         [DelayLoad(null)]
         //[Bundle(nameof(Concepts))]
-        public List<Guid> ConceptSetsXml
+        public List<Guid> ConceptsXml
         {
             get
             {

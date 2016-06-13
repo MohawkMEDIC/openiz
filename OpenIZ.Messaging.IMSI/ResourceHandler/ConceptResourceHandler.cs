@@ -29,10 +29,10 @@ using MARC.HI.EHRS.SVC.Core.Data;
 using System.ServiceModel.Web;
 using System.ServiceModel;
 using System.Security.Claims;
-using System.Collections.Specialized;
 using OpenIZ.Messaging.IMSI.Util;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Services;
+using OpenIZ.Core.Model.Query;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {
@@ -106,7 +106,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
         {
             var conceptService = ApplicationContext.Current.GetService<IConceptService>();
-            return conceptService.FindConcepts(new QueryParameterLinqExpressionBuilder().BuildLinqExpression<Concept>(queryParameters));
+            return conceptService.FindConcepts(new QueryExpressionParser().BuildLinqExpression<Concept>(queryParameters));
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out Int32 totalCount)
         {
             var conceptService = ApplicationContext.Current.GetService<IConceptService>();
-            return conceptService.FindConcepts(new QueryParameterLinqExpressionBuilder().BuildLinqExpression<Concept>(queryParameters), offset, count, out totalCount);
+            return conceptService.FindConcepts(new QueryExpressionParser().BuildLinqExpression<Concept>(queryParameters), offset, count, out totalCount);
         }
 
         /// <summary>

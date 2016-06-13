@@ -115,6 +115,9 @@
     <Compile Include="Map\PropertyMap.cs" />
     <Compile Include="Map\ValidationResultDetail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Query\NameValueCollection.cs" />
+    <Compile Include="Query\QueryExpressionBuilder.cs" />
+    <Compile Include="Query\QueryExpressionParser.cs" />
     <Compile Include="Roles\Patient.cs" />
     <Compile Include="Roles\Provider.cs" />
     <Compile Include="Security\SecurityApplication.cs" />

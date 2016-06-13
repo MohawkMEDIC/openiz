@@ -20,7 +20,7 @@ using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenIZ.Messaging.IMSI.Util;
-using System.Collections.Specialized;
+using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.DataTypes;
 using System.Linq.Expressions;
 using OpenIZ.Core.Model.Security;
@@ -41,7 +41,7 @@ namespace OpenIZ.Messaging.IMSI.Test
 
             Expression<Func<Concept, bool>> expected = (o=>o.Mnemonic == "ENT");
 
-            var builder = new QueryParameterLinqExpressionBuilder();
+            var builder = new QueryExpressionParser();
             NameValueCollection httpQueryParameters = new NameValueCollection();
             httpQueryParameters.Add("mnemonic", "ENT");
             var expr = builder.BuildLinqExpression<Concept>(httpQueryParameters);
@@ -58,7 +58,7 @@ namespace OpenIZ.Messaging.IMSI.Test
 
             Expression<Func<Concept, bool>> expected = (o => o.Mnemonic == "EVN" || o.Mnemonic == "INT");
 
-            var builder = new QueryParameterLinqExpressionBuilder();
+            var builder = new QueryExpressionParser();
             NameValueCollection httpQueryParameters = new NameValueCollection();
             httpQueryParameters.Add("mnemonic", "EVN");
             httpQueryParameters.Add("mnemonic", "INT");
@@ -78,7 +78,7 @@ namespace OpenIZ.Messaging.IMSI.Test
             
             Expression<Func<SecurityUser, bool>> expected = (o => o.UserName == "Charles" && o.PasswordHash == "20329132");
 
-            var builder = new QueryParameterLinqExpressionBuilder();
+            var builder = new QueryExpressionParser();
             NameValueCollection httpQueryParameters = new NameValueCollection();
             httpQueryParameters.Add("userName", "Charles");
             httpQueryParameters.Add("passwordHash", "20329132");
@@ -98,7 +98,7 @@ namespace OpenIZ.Messaging.IMSI.Test
             var dtString = DateTime.Now;
             Expression<Func<SecurityUser, bool>> expected = (o => (o.UserName == "Charles" || o.UserName == "Charles2") && o.PasswordHash == "XXX");
 
-            var builder = new QueryParameterLinqExpressionBuilder();
+            var builder = new QueryExpressionParser();
             NameValueCollection httpQueryParameters = new NameValueCollection();
             httpQueryParameters.Add("userName", "Charles");
             httpQueryParameters.Add("userName", "Charles2");
@@ -118,7 +118,7 @@ namespace OpenIZ.Messaging.IMSI.Test
             var dtString = DateTime.Now;
             Expression<Func<SecurityUser, bool>> expected = (o => o.InvalidLoginAttempts < 4);
 
-            var builder = new QueryParameterLinqExpressionBuilder();
+            var builder = new QueryExpressionParser();
             NameValueCollection httpQueryParameters = new NameValueCollection();
             httpQueryParameters.Add("invalidLoginAttempts", "<4");
             var expr = builder.BuildLinqExpression<SecurityUser>(httpQueryParameters);
@@ -136,7 +136,7 @@ namespace OpenIZ.Messaging.IMSI.Test
             var dtString = DateTime.Now;
             Expression<Func<Patient, bool>> expected = (o => o.Names.Any(name => name.NameUse.Mnemonic == "L"));
 
-            var builder = new QueryParameterLinqExpressionBuilder();
+            var builder = new QueryExpressionParser();
             NameValueCollection httpQueryParameters = new NameValueCollection();
             httpQueryParameters.Add("name.use.mnemonic", "L");
             var expr = builder.BuildLinqExpression<Patient>(httpQueryParameters);
@@ -153,7 +153,7 @@ namespace OpenIZ.Messaging.IMSI.Test
             var dtString = DateTime.Now;
             Expression<Func<Entity, bool>> expected = (o => o.Identifiers.Any(identifier => identifier.Authority.Oid == "1.2.3.4" && identifier.Value == "123"));
 
-            var builder = new QueryParameterLinqExpressionBuilder();
+            var builder = new QueryExpressionParser();
             NameValueCollection httpQueryParameters = new NameValueCollection();
             httpQueryParameters.Add("identifier.authority.oid", "1.2.3.4");
             httpQueryParameters.Add("identifier.value", "123");
@@ -171,7 +171,7 @@ namespace OpenIZ.Messaging.IMSI.Test
             var dtString = DateTime.Now;
             String expected = "o => o.Names.Where(guard => (guard.NameUse.Mnemonic == \"L\")).Any(name => name.Component.Where(guard => (guard.ComponentType.Mnemonic == \"GIV\")).Any(component => (component.Value == \"John\")))";
 
-            var builder = new QueryParameterLinqExpressionBuilder();
+            var builder = new QueryExpressionParser();
             NameValueCollection httpQueryParameters = new NameValueCollection();
             httpQueryParameters.Add("name[L].component[GIV].value", "John");
             var expr = builder.BuildLinqExpression<Patient>(httpQueryParameters);
@@ -189,7 +189,7 @@ namespace OpenIZ.Messaging.IMSI.Test
             var dtString = DateTime.Now;
             String expected = "o => o.Names.Where(guard => (guard.NameUse.Mnemonic == \"L\")).Any(name => (name.Component.Where(guard => (guard.ComponentType.Mnemonic == \"GIV\")).Any(component => (component.Value == \"John\")) AndAlso name.Component.Where(guard => (guard.ComponentType.Mnemonic == \"FAM\")).Any(component => (component.Value == \"Smith\"))))";
 
-        var builder = new QueryParameterLinqExpressionBuilder();
+            var builder = new QueryExpressionParser();
             NameValueCollection httpQueryParameters = new NameValueCollection();
             httpQueryParameters.Add("name[L].component[GIV].value", "John");
             httpQueryParameters.Add("name[L].component[FAM].value", "Smith");
@@ -197,6 +197,7 @@ namespace OpenIZ.Messaging.IMSI.Test
             Assert.AreEqual(expected, expr.ToString());
 
         }
+
 
     }
 }

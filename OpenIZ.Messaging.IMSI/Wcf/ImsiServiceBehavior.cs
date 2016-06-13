@@ -316,7 +316,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     String offset = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_offset"],
                         count = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_count"];
                     int totalResults = 0;
-                    IEnumerable<IdentifiedData> retVal = handler.Query(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters, Int32.Parse(offset ?? "0"), Int32.Parse(count ?? "100"), out totalResults);
+                    IEnumerable<IdentifiedData> retVal = handler.Query(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters.ToQuery(), Int32.Parse(offset ?? "0"), Int32.Parse(count ?? "100"), out totalResults);
 
                     using (WaitThreadPool wtp = new WaitThreadPool(Environment.ProcessorCount * 4))
                     {

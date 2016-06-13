@@ -32,6 +32,7 @@ using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Model.Security;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace OpenIZ.Core.Model.Collection
 {
@@ -132,6 +133,34 @@ namespace OpenIZ.Core.Model.Collection
             
             retVal.Item.Add(resourceRoot);
             ProcessModel(resourceRoot, retVal);
+            return retVal;
+        }
+
+        /// <summary>
+        /// Create a bundle
+        /// </summary>
+        public static Bundle CreateBundle(IEnumerable<IdentifiedData> resourceRoot, int totalResults, int offset)
+        {
+            Bundle retVal = new Bundle();
+            retVal.Key = Guid.NewGuid();
+            retVal.Count = resourceRoot.Count();
+            retVal.Offset = offset;
+            retVal.TotalResults = totalResults;
+            if (resourceRoot == null)
+                return retVal;
+
+            // Resource root
+            foreach (var itm in resourceRoot)
+            {
+                if (itm == null)
+                    continue;
+                if (!retVal.Item.Exists(o => o.Key == itm.Key))
+                {
+                    retVal.Item.Add(itm.GetLocked());
+                    Bundle.ProcessModel(itm.GetLocked() as IdentifiedData, retVal);
+                }
+            }
+
             return retVal;
         }
 

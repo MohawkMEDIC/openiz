@@ -30,7 +30,7 @@ using System.Globalization;
 using OpenIZ.Core.Model.Attributes;
 using System.Collections;
 
-namespace OpenIZ.Messaging.IMSI.Util
+namespace OpenIZ.Core.Model.Query
 {
 
    
@@ -38,22 +38,25 @@ namespace OpenIZ.Messaging.IMSI.Util
     /// A class which is responsible for translating a series of Query Parmaeters to a LINQ expression
     /// to be passed to the persistence layer
     /// </summary>
-    public class QueryParameterLinqExpressionBuilder
+    public class QueryExpressionParser
     {
-        private TraceSource m_tracer = new TraceSource("OpenIZ.Messaging.IMSI");
 
         /// <summary>
         /// Get generic method
         /// </summary>
-        private MethodBase GetGenericMethod(Type type, string name, Type[] typeArgs, Type[] argTypes, BindingFlags flags)
+        private MethodBase GetGenericMethod(Type type, string name, Type[] typeArgs, Type[] argTypes)
         {
             int typeArity = typeArgs.Length;
-            var methods = type.GetMethods()
+            var methods = type.GetRuntimeMethods()
                 .Where(m => m.Name == name)
                 .Where(m => m.GetGenericArguments().Length == typeArity)
-                .Select(m => m.MakeGenericMethod(typeArgs));
+                .Where(m=>m.GetParameters().Length == argTypes.Length)
+                .Select(m => m.MakeGenericMethod(typeArgs)).ToList()
+                .Where(m => m.GetParameters().All(o => argTypes.Any(p => o.ParameterType.GetTypeInfo().IsAssignableFrom(p.GetTypeInfo()))));
 
-            return Type.DefaultBinder.SelectMethod(flags, methods.ToArray(), argTypes, null);
+
+            return methods.SingleOrDefault();
+            //return Type.DefaultBinder.SelectMethod(flags, methods.ToArray(), argTypes, null);
         }
 
 
@@ -75,8 +78,8 @@ namespace OpenIZ.Messaging.IMSI.Util
             Expression retVal = null;
             List<KeyValuePair<String, String[]>> workingValues = new List<KeyValuePair<string, string[]>>();
             // Iterate 
-            foreach (var nvc in httpQueryParameters.AllKeys.Where(p=>!p.StartsWith("_")).Distinct())
-                workingValues.Add(new KeyValuePair<string, string[]>(nvc, httpQueryParameters.GetValues(nvc)));
+            foreach (var nvc in httpQueryParameters.Where(p=>!p.Key.StartsWith("_")).Distinct())
+                workingValues.Add(new KeyValuePair<string, string[]>(nvc.Key, nvc.Value.ToArray()));
 
             // Get the first values
             while(workingValues.Count > 0)
@@ -105,17 +108,17 @@ namespace OpenIZ.Messaging.IMSI.Util
                     }
 
                     // Get member info
-                    var memberInfo = accessExpression.Type.GetProperties().SingleOrDefault(p => p.GetCustomAttribute<XmlElementAttribute>()?.ElementName == pMember);
+                    var memberInfo = accessExpression.Type.GetRuntimeProperties().SingleOrDefault(p => p.GetCustomAttribute<XmlElementAttribute>()?.ElementName == pMember);
                     if (memberInfo == null)
                         throw new ArgumentOutOfRangeException(currentValue.Key);
 
 
                     // Handle XML props
                     if (memberInfo.Name.EndsWith("Xml"))
-                        memberInfo = accessExpression.Type.GetProperty(memberInfo.Name.Replace("Xml", ""));
+                        memberInfo = accessExpression.Type.GetRuntimeProperty(memberInfo.Name.Replace("Xml", ""));
                     else if (pMember != memberPath.Last())
                     {
-                        var backingFor = accessExpression.Type.GetProperties().SingleOrDefault(p => p.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == memberInfo.Name);
+                        var backingFor = accessExpression.Type.GetRuntimeProperties().SingleOrDefault(p => p.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == memberInfo.Name);
                         if (backingFor != null)
                             memberInfo = backingFor;
                     }
@@ -124,27 +127,27 @@ namespace OpenIZ.Messaging.IMSI.Util
                     // Guard on classifier?
                     if(!String.IsNullOrEmpty(guard))
                     {
-                        Type itemType = accessExpression.Type.GetGenericArguments()[0];
+                        Type itemType = accessExpression.Type.GenericTypeArguments[0];
                         Type predicateType = typeof(Func<,>).MakeGenericType(itemType, typeof(bool));
                         ParameterExpression guardParameter = Expression.Parameter(itemType, "guard");
 
                         // Cascade the Classifiers to get the access
-                        ClassifierAttribute classAttr = itemType.GetCustomAttribute<ClassifierAttribute>();
+                        ClassifierAttribute classAttr = itemType.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
                         if (classAttr == null)
                             throw new InvalidOperationException("No classifier found for guard expression");
-                        PropertyInfo classifierProperty = itemType.GetProperty(classAttr.ClassifierProperty);
+                        PropertyInfo classifierProperty = itemType.GetRuntimeProperty(classAttr.ClassifierProperty);
                         Expression guardAccessor = guardParameter;
                         while (classifierProperty != null && classAttr != null)
                         {
                             guardAccessor = Expression.MakeMemberAccess(guardAccessor, classifierProperty);
-                            classAttr = classifierProperty.PropertyType.GetCustomAttribute<ClassifierAttribute>();
+                            classAttr = classifierProperty.PropertyType.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
                             if(classAttr != null)
-                                classifierProperty = classifierProperty.PropertyType.GetProperty(classAttr.ClassifierProperty);
+                                classifierProperty = classifierProperty.PropertyType.GetRuntimeProperty(classAttr.ClassifierProperty);
                         }
 
                         var whereMethod = this.GetGenericMethod(typeof(Enumerable), "Where",
                             new Type[] { itemType },
-                            new Type[] { accessExpression.Type, predicateType }, BindingFlags.Static) as MethodInfo;
+                            new Type[] { accessExpression.Type, predicateType }) as MethodInfo;
 
                         // Now make expression
                         var guardLambda = Expression.Lambda(Expression.MakeBinary(ExpressionType.Equal, guardAccessor, Expression.Constant(guard)), guardParameter);
@@ -152,30 +155,29 @@ namespace OpenIZ.Messaging.IMSI.Util
 
                     }
                     // List expression, we want the Any() operator
-                    if (accessExpression.Type.GetInterface(typeof(IEnumerable).FullName) != null &&
-                        accessExpression.Type.IsGenericType)
+                    if (accessExpression.Type.GetTypeInfo().ImplementedInterfaces.Any(o=>o == typeof(IEnumerable)) &&
+                        accessExpression.Type.GetTypeInfo().IsGenericType)
                     {
 
-                        Type itemType = accessExpression.Type.GetGenericArguments()[0];
+                        Type itemType = accessExpression.Type.GenericTypeArguments[0];
                         Type predicateType = typeof(Func<,>).MakeGenericType(itemType, typeof(bool));
 
                         var anyMethod = this.GetGenericMethod(typeof(Enumerable), "Any",
                             new Type[] { itemType },
-                            new Type[] { accessExpression.Type, predicateType }, BindingFlags.Static) as MethodInfo;
+                            new Type[] { accessExpression.Type, predicateType }) as MethodInfo;
                         
                         // Add sub-filter
                         NameValueCollection subFilter = new NameValueCollection();
-                        foreach(var val in currentValue.Value)
-                            subFilter.Add(currentValue.Key.Substring(path.Length), val);
+                        subFilter.Add(currentValue.Key.Substring(path.Length), new List<String>(currentValue.Value));
+
                         // Add collect other parameters
                         foreach (var wv in workingValues.Where(o => o.Key.StartsWith(path)).ToList())
                         {
-                            foreach (var val in wv.Value)
-                                subFilter.Add(wv.Key.Substring(path.Length), val);
+                            subFilter.Add(wv.Key.Substring(path.Length), new List<String>(wv.Value));
                             workingValues.Remove(wv);
                         }
 
-                        var builderMethod = this.GetGenericMethod(typeof(QueryParameterLinqExpressionBuilder), nameof(BuildLinqExpression), new Type[] { itemType }, new Type[] { typeof(NameValueCollection), typeof(String) }, BindingFlags.Instance | BindingFlags.Public);
+                        var builderMethod = this.GetGenericMethod(typeof(QueryExpressionParser), nameof(BuildLinqExpression), new Type[] { itemType }, new Type[] { typeof(NameValueCollection), typeof(String) });
 
                         Expression predicate = (builderMethod.Invoke(this, new object[] { subFilter, pMember }) as LambdaExpression);
                         keyExpression = Expression.Call(anyMethod, accessExpression, predicate);
@@ -206,7 +208,7 @@ namespace OpenIZ.Messaging.IMSI.Util
                                 et = ExpressionType.Equal;
                                 if (accessExpression.Type != typeof(String))
                                     throw new InvalidOperationException("~ can only be applied to string properties");
-                                accessExpression = Expression.Call(accessExpression, typeof(String).GetMethod("Contains"), Expression.Constant(pValue.Substring(1).Replace("*","/")));
+                                accessExpression = Expression.Call(accessExpression, typeof(String).GetRuntimeMethod("Contains", new Type[] { typeof(String) }), Expression.Constant(pValue.Substring(1).Replace("*","/")));
                                 pValue = "true";
                                 break;
                             case '=':
@@ -259,7 +261,7 @@ namespace OpenIZ.Messaging.IMSI.Util
 
             }
 
-            this.m_tracer.TraceInformation("Converted {0} to {1}", httpQueryParameters, retVal);
+            Debug.WriteLine(String.Format("Converted {0} to {1}", httpQueryParameters, retVal));
             return Expression.Lambda(retVal, parameterExpression);
 
         }
