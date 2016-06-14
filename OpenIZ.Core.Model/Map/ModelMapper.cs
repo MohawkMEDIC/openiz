@@ -269,7 +269,8 @@ namespace OpenIZ.Core.Model.Map
             else
             {
                 var cType = typeof(TModel);
-                while (classMap == null)
+                var cDomain = Type.GetType(classMap.DomainClass).GetTypeInfo();
+                while (classMap == null || !typeof(TDomain).GetTypeInfo().IsAssignableFrom(cDomain))
                 {
                     cType = cType.GetTypeInfo().BaseType;
                     classMap = this.m_mapFile.GetModelClassMap(cType);

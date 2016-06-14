@@ -99,12 +99,13 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets the security user account associated with this person if applicable
         /// </summary>
+        [XmlIgnore, JsonIgnore]
         public SecurityUser AsSecurityUser
         {
             get
             {
                 if(this.IsDelayLoadEnabled && this.m_securityUser == null)
-                    this.m_securityUser = EntitySource.Current.Get<UserEntity>(this.Key, this.VersionKey, null).SecurityUser;
+                    this.m_securityUser = EntitySource.Current.Get<UserEntity>(this.Key, this.VersionKey, null)?.SecurityUser;
                 return this.m_securityUser;
             }
         }

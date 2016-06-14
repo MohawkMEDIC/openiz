@@ -172,6 +172,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
                     {
                         // Prepare the serializer
                         JsonSerializer jsz = new JsonSerializer();
+                        jsz.Converters.Add(new StringEnumConverter());
 
                         // Write json data
                         byte[] body = null;

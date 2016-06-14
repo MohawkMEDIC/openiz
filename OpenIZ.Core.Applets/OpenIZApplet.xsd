@@ -7,8 +7,19 @@
       <xs:element name="configuration" type="tns:AppletInitialConfiguration" minOccurs="0" maxOccurs="1"/>
       <xs:element name="menuItem" type="tns:AppletMenu" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="panel" type="tns:AppletPanel" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="strings" type="tns:AppletStrings" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="asset" type="tns:AppletAsset" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="AppletStrings" mixed="true">
+    <xs:sequence>
+      <xs:element name="string" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType mixed="true">
+          <xs:attribute name="key" type="xs:string"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="lang" type="xs:string"/>
   </xs:complexType>
   <xs:complexType name="AppletInfo" mixed="false">
     <xs:complexContent>

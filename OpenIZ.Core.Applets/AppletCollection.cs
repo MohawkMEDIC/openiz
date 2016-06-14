@@ -426,7 +426,7 @@ namespace OpenIZ.Core.Applets
                 }
 
                 // Now process SSI directives - <!--#include virtual="XXXXXXX" -->
-                var includes = htmlContent.DescendantNodes().OfType<XComment>().Where(o => o.Value.StartsWith("#include virtual=\""));
+                var includes = htmlContent.DescendantNodes().OfType<XComment>().Where(o => o?.Value?.Trim().StartsWith("#include virtual=\"") == true).ToList();
                 foreach (var inc in includes)
                 {
                     String assetName = inc.Value.Trim().Substring(18); // HACK: Should be a REGEX
@@ -437,7 +437,11 @@ namespace OpenIZ.Core.Applets
                     var includeAsset = this.ResolveAsset(assetName, asset);
                     using (MemoryStream ms = new MemoryStream(this.RenderAssetContent(includeAsset)))
                     {
-                        inc.AddAfterSelf(XDocument.Load(ms).Element(xs_xhtml + "html") as XElement);
+                        var xel = XDocument.Load(ms).Elements().First() as XElement;
+                        if (xel.Name == xs_xhtml + "html")
+                            inc.AddAfterSelf(xel.Element(xs_xhtml + "body").Elements());
+                        else
+                            inc.AddAfterSelf(xel);
                         inc.Remove();
                     }
                 }

@@ -77,6 +77,7 @@
       <content>
         <div xmlns="http://www.w3.org/1999/xhtml">
           <p>Hi in English!</p>
+          <!-- #include virtual="common" -->
         </div>
       </content>
     </contentHtml>
@@ -90,7 +91,15 @@
       <content>
         <div xmlns="http://www.w3.org/1999/xhtml">
           <p>Salut en Francais!</p>
+          <!-- #include virtual="common" -->
         </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="common" mimeType="text/html">
+    <contentHtml>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml">I am common!</div>
       </content>
     </contentHtml>
   </asset>

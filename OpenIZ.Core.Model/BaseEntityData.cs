@@ -61,7 +61,6 @@ namespace OpenIZ.Core.Model
         /// Gets or sets the creation time in XML format
         /// </summary>
         [XmlElement("creationTime"), JsonProperty("creationTime")]
-        [JsonRequired]
         public String CreationTimeXml
         {
             get { return this.CreationTime.ToString("o", CultureInfo.InvariantCulture); }
@@ -142,7 +141,6 @@ namespace OpenIZ.Core.Model
         
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("createdBy"), JsonProperty("createdBy")]
-        [JsonRequired]
         public virtual Guid CreatedByKey
         {
             get { return this.m_createdById; }
