@@ -81,8 +81,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (storageData.CodeSystem != null)
                 storageData.CodeSystemKey = storageData.CodeSystem.EnsureExists(principal, dataContext).Key;
 
+            // Update properties
+            domainReferenceTerm.CreationTime = storageData.CreationTime = DateTime.Now;
+            domainReferenceTerm.CreatedByEntity = principal.GetUser(dataContext);
+
             // Display names
-            if(storageData.DisplayNames != null)
+            if (storageData.DisplayNames != null)
                 foreach(var itm in storageData.DisplayNames)
                 {
                     var refDisplayName = s_mapper.MapModelInstance<Core.Model.DataTypes.ReferenceTermName, Data.ReferenceTermDisplayName>(itm);

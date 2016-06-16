@@ -38,6 +38,11 @@ namespace OpenIZ.Core.Security
         public const String SystemUserSid = "fadca076-3690-4a6e-af9e-f1cd68e8c7e8";
 
         /// <summary>
+        /// ANONYMOUS user's SID
+        /// </summary>
+        public const String AnonymousUserSid = "C96859F0-043C-4480-8DAB-F69D6E86696C";
+
+        /// <summary>
         /// System identity
         /// </summary>
         private static readonly IPrincipal s_system = new GenericPrincipal(new GenericIdentity("SYSTEM"), new string[] { });

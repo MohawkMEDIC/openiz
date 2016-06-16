@@ -184,7 +184,7 @@
     <property modelName="CodeSystemKey" domainName="CodeSystemId"/>
     
     <collapseKey propertyName="CodeSystem" keyName="CodeSystemId"/>
-        <property modelName="CreatedBy" domainName="CreatedByEntity"/>
+    <property modelName="CreatedBy" domainName="CreatedByEntity"/>
     <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
     <property modelName="UpdatedBy" domainName="UpdatedByEntity"/>
     <property modelName="CreatedByKey" domainName="CreatedBy"/>

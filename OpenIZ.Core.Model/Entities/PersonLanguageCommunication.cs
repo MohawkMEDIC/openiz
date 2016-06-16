@@ -29,6 +29,22 @@ namespace OpenIZ.Core.Model.Entities
     [XmlType("PersonLanguageCommunication",  Namespace ="http://openiz.org/model"), JsonObject("PersonLanguageCommunication")]
     public class PersonLanguageCommunication : VersionedAssociation<Entity>
     {
+        /// <summary>
+        /// Default ctor
+        /// </summary>
+        public PersonLanguageCommunication()
+        {
+
+        }
+
+        /// <summary>
+        /// Language communication code ctor with specified code and preference
+        /// </summary>
+        public PersonLanguageCommunication(String languageCode, bool isPreferred)
+        {
+            this.LanguageCode = languageCode;
+            this.IsPreferred = isPreferred;
+        }
 
         /// <summary>
         /// Gets or sets the language code

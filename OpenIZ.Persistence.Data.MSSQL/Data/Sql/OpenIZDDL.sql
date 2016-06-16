@@ -62,7 +62,7 @@ CREATE TABLE SecurityUser
 -- Create a system user
 INSERT INTO SecurityUser (UserId, UserName, UserPassword, SecurityStamp, UserClass) VALUES ('fadca076-3690-4a6e-af9e-f1cd68e8c7e8', 'SYSTEM','XXXX','XXXX', '9F71BB34-9691-440F-8249-9C831EA16D58');
 -- Create the anonymous user
-INSERT INTO SecurityUser (UserId, UserName, UserPassword, SecurityStamp, UserClass) VALUES ('00000000-0000-0000-0000-000000000000', 'ANONYMOUS','XXXX','XXXX', '9F71BB34-9691-440F-8249-9C831EA16D58');
+INSERT INTO SecurityUser (UserId, UserName, UserPassword, SecurityStamp, UserClass) VALUES ('C96859F0-043C-4480-8DAB-F69D6E86696C', 'ANONYMOUS','XXXX','XXXX', '9F71BB34-9691-440F-8249-9C831EA16D58');
 
 /*
  THE FOLLOWING INDEXING PROVIDES LOOKUP BY USERNAME AND USERNAME/PASSWORD COMBINATION
@@ -235,7 +235,7 @@ INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('dea891a
 
 -- CREATE ROLE ANONYMOUS WHICH IS DENIED ALL CLINICAL 
 INSERT INTO SecurityRole (RoleId, Name, [Description], CreatedBy) VALUES ('dadbd858-13c5-44a3-ad7d-1c44cecaa4b6', 'ANONYMOUS', 'Group for user ANONYMOUS. Identifies the functions that non-logged in users have access to. EDITING THIS ROLE MAY INTRODUCE SECURITY BREACHES', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
-INSERT INTO SecurityUserRole (RoleId, UserId) VALUES ('dadbd858-13c5-44a3-ad7d-1c44cecaa4b6', '00000000-0000-0000-0000-000000000000');
+INSERT INTO SecurityUserRole (RoleId, UserId) VALUES ('dadbd858-13c5-44a3-ad7d-1c44cecaa4b6', 'C96859F0-043C-4480-8DAB-F69D6E86696C');
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('ea73c05a-3159-48c8-bbcb-741911d91cd2', 'dadbd858-13c5-44a3-ad7d-1c44cecaa4b6', 0); -- DENYAccess Administrative Function
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('d15b96ab-646c-4c00-9a58-ea09eee67d7c', 'dadbd858-13c5-44a3-ad7d-1c44cecaa4b6', 0); -- DENY Login
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('f6840336-4e20-4bc0-b965-baa6d7c80be3', 'dadbd858-13c5-44a3-ad7d-1c44cecaa4b6', 0); -- DENY Unrestricted Clinical Data
