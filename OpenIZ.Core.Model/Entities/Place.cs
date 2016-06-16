@@ -70,7 +70,9 @@ namespace OpenIZ.Core.Model.Entities
                 if (value == EntityClassKeys.Place ||
                     value == EntityClassKeys.ServiceDeliveryLocation ||
                     value == EntityClassKeys.State ||
-                    value == EntityClassKeys.CityOrTown)
+                    value == EntityClassKeys.CityOrTown ||
+                    value == EntityClassKeys.Country ||
+                    value == EntityClassKeys.CountyOrParish)
                     base.ClassConceptKey = value;
                 else throw new ArgumentOutOfRangeException("Invalid ClassConceptKey value");
             }
