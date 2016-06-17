@@ -17,8 +17,10 @@
  * Date: 2016-4-19
  */
 using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Exceptions;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Configuration;
+using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -33,7 +35,7 @@ using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Core.Security.Wcf
+namespace OpenIZ.Core.Wcf.Security
 {
     /// <summary>
     /// JwtToken SAM
@@ -81,7 +83,7 @@ namespace OpenIZ.Core.Security.Wcf
 
             operationContext.ServiceSecurityContext.AuthorizationContext.Properties["Identities"] = identities.Identities;
             operationContext.ServiceSecurityContext.AuthorizationContext.Properties["Principal"] = identities;
-            AuthenticationContext.Current = new AuthenticationContext(identities);
+            Core.Security.AuthenticationContext.Current = new Core.Security.AuthenticationContext(identities);
             return base.CheckAccess(operationContext);
         }
     }

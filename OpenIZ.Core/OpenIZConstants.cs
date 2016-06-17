@@ -43,5 +43,7 @@ namespace OpenIZ.Core
         internal const string BasicHttpClientClaimHeaderName = "X-OpenIZClient-Claim";
         // Client auth header
         internal const string BasicHttpClientCredentialHeaderName = "X-OpenIZClient-Authorization";
+        // WCF trace source
+        internal const string WcfTraceSourceName = "OpenIZ.Core.Wcf";
     }
 }

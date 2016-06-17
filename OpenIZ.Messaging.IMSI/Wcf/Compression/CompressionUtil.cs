@@ -16,6 +16,7 @@
  * User: fyfej
  * Date: 2016-1-22
  */
+using OpenIZ.Core.Wcf.Serialization;
 using System;
 using System.Collections.Generic;
 using System.IO;

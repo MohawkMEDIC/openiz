@@ -31,7 +31,7 @@ namespace OpenIZ.Core.Services
     /// Represents a service which is responsible for the
     /// maintenance of concepts
     /// </summary>
-    public interface IConceptService
+    public interface IConceptRepositoryService
     {
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace OpenIZ.Core.Services
         /// Find concepts 
         /// </summary>
         /// <returns></returns>
-        IEnumerable<Concept> FindConcepts(Expression<Func<Concept, bool>> query, int offset, int count, out int totalResults);
+        IEnumerable<Concept> FindConcepts(Expression<Func<Concept, bool>> query, int offset, int? count, out int totalResults);
 
         /// <summary>
         /// Finds a series of concepts by name

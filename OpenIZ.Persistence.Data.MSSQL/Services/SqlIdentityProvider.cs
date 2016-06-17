@@ -213,5 +213,80 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             }
 
         }
+
+        /// <summary>
+        /// Delete the specified identity
+        /// </summary>
+        public void DeleteIdentity(string userName, IPrincipal authContext)
+        {
+            if (String.IsNullOrEmpty(userName))
+                throw new ArgumentNullException(nameof(userName));
+
+            this.m_traceSource.TraceInformation("Delete identity {0}", userName);
+            try
+            {
+                // submit the changes
+                using (var dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
+                {
+                    new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.AccessAdministrativeFunction, authContext).Demand();
+
+                    var user = dataContext.SecurityUsers.FirstOrDefault(o => o.UserName == userName);
+                    if (user == null)
+                        throw new KeyNotFoundException("Specified user does not exist!");
+
+                    // Obsolete
+                    user.ObsoletionTime = DateTimeOffset.Now;
+                    user.ObsoletedByEntity = authContext.GetUser(dataContext);
+                    user.SecurityStamp = Guid.NewGuid().ToString();
+
+                    dataContext.SubmitChanges();
+                }
+
+            }
+            catch(Exception e)
+            {
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Set the lockout status
+        /// </summary>
+        public void SetLockout(string userName, bool lockout, IPrincipal authContext)
+        {
+            if (String.IsNullOrEmpty(userName))
+                throw new ArgumentNullException(nameof(userName));
+
+            this.m_traceSource.TraceInformation("Lockout identity {0} = {1}", userName, lockout);
+            try
+            {
+                // submit the changes
+                using (var dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
+                {
+                    new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.AccessAdministrativeFunction, authContext).Demand();
+
+                    var user = dataContext.SecurityUsers.FirstOrDefault(o => o.UserName == userName);
+                    if (user == null)
+                        throw new KeyNotFoundException("Specified user does not exist!");
+
+                    // Obsolete
+                    user.LockoutEnabled = lockout;
+                    user.ObsoletionTime = null;
+                    user.ObsoletedBy = null;
+                    user.UpdatedByEntity = authContext.GetUser(dataContext);
+                    user.UpdatedTime = DateTimeOffset.Now;
+                    user.SecurityStamp = Guid.NewGuid().ToString();
+
+                    dataContext.SubmitChanges();
+                }
+
+            }
+            catch (Exception e)
+            {
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                throw;
+            }
+        }
     }
 }

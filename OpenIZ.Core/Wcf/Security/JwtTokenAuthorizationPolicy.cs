@@ -16,6 +16,7 @@
  * User: fyfej
  * Date: 2016-4-19
  */
+using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Claims;
@@ -24,7 +25,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Core.Security.Wcf
+namespace OpenIZ.Core.Wcf.Security
 {
     /// <summary>
     /// Set the authorization policy

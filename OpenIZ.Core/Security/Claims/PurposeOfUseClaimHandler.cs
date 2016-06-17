@@ -55,7 +55,7 @@ namespace OpenIZ.Core.Security.Claims
         /// </summary>
         public bool Validate(IPrincipal principal, String value)
         {
-            IConceptService conceptService = ApplicationContext.Current.GetService<IConceptService>();
+            IConceptRepositoryService conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
 
             try
             {

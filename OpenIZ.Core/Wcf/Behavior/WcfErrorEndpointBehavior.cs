@@ -16,37 +16,39 @@
  * User: fyfej
  * Date: 2016-4-19
  */
+using OpenIZ.Core.Wcf.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Security.Authentication;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
+using System.ServiceModel.Configuration;
+using System.ServiceModel.Description;
+using System.ServiceModel.Dispatcher;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Core.Security.Wcf
+namespace OpenIZ.Core.Wcf.Behavior
 {
     /// <summary>
-    /// Unauthorized access
+    /// Service behavior
     /// </summary>
-    public class UnauthorizedRequestException : AuthenticationException
+    public class WcfErrorEndpointBehavior : WebHttpBehavior
     {
 
         /// <summary>
-        /// Authenticate challenge
+        /// Error handlers
         /// </summary>
-        public String AuthenticateChallenge { get; set; }
-
-        /// <summary>
-        /// Unauthorized access exception
-        /// </summary>
-        public UnauthorizedRequestException(String message, String scheme, String realm, String scope) : base(message)
+        protected override void AddServerErrorHandlers(ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
         {
-            StringBuilder authenticateString = new StringBuilder();
-            authenticateString.AppendFormat("{0} realm=\"{1}\"", scheme, realm ?? "anonymous");
-            if(!String.IsNullOrEmpty(scope))
-                authenticateString.AppendFormat(", scope=\"{0}\"", scope);
-            this.AuthenticateChallenge = authenticateString.ToString();
-        }
+            base.AddServerErrorHandlers(endpoint, endpointDispatcher);
 
+            //Remove all other error handlers
+            endpointDispatcher.ChannelDispatcher.ErrorHandlers.Clear();
+            //Add our own
+            endpointDispatcher.ChannelDispatcher.ErrorHandlers.Add(new WcfErrorHandler());
+
+        }
     }
 }

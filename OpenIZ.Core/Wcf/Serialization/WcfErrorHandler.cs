@@ -18,9 +18,9 @@
  */
 using MARC.HI.EHRS.SVC.Core.Exceptions;
 using OpenIZ.Core.Wcf.Serialization;
-using OpenIZ.Messaging.IMSI.Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IdentityModel.Tokens;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -34,13 +34,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
+namespace OpenIZ.Core.Wcf.Serialization
 {
     /// <summary>
     /// Error handler
     /// </summary>
-    public class ImsiErrorHandler : IErrorHandler
+    public class WcfErrorHandler : IErrorHandler
     {
+        private TraceSource m_traceSource = new TraceSource(OpenIzConstants.WcfTraceSourceName);
         /// <summary>
         /// Handle error
         /// </summary>
@@ -54,46 +55,47 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
         /// </summary>
         public void ProvideFault(Exception error, MessageVersion version, ref Message fault)
         {
+
+            FaultCode code = FaultCode.CreateSenderFaultCode("GENERR", "http://openiz.org/model");
+            FaultReason reason = new FaultReason(error.Message);
+            this.m_traceSource.TraceEvent(TraceEventType.Error, error.HResult, "Error on WCF pipeline: {0}", error);
+
             // Formulate appropriate response
             if (error is PolicyViolationException || error is SecurityException || (error as FaultException)?.Code.SubCode?.Name == "FailedAuthentication")
+            {
+                code = FaultCode.CreateSenderFaultCode("POLICY", "http://openiz.org/model");
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Forbidden;
+            }
             else if (error is SecurityTokenException)
             {
+                code = FaultCode.CreateSenderFaultCode("TOKEN", "http://openiz.org/model");
+
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Unauthorized;
                 WebOperationContext.Current.OutgoingResponse.Headers.Add("WWW-Authenticate", "Bearer");
             }
             else if (error is WebFaultException)
+            {
+                code = FaultCode.CreateSenderFaultCode("FAULT", "http://openiz.org/model");
                 WebOperationContext.Current.OutgoingResponse.StatusCode = (error as WebFaultException).StatusCode;
+            }
             else if (error is Newtonsoft.Json.JsonException ||
                 error is System.Xml.XmlException)
+            {
+                code = FaultCode.CreateSenderFaultCode("BAD_REQUEST", "http://openiz.org/model");
+
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
+            }
             else if (error is UnauthorizedRequestException)
             {
+                code = FaultCode.CreateSenderFaultCode("POLICY", "http://openiz.org/model");
+
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Unauthorized;
                 WebOperationContext.Current.OutgoingResponse.Headers.Add("WWW-Authenticate", (error as UnauthorizedRequestException).AuthenticateChallenge);
             }
             else
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.InternalServerError;
-
-            // Construct an error result
-            var errorResult = new ErrorResult()
-            {
-                Key = Guid.NewGuid(),
-                Type = error.GetType().Name,
-                Details = new List<ResultDetail>()
-                    {
-                        new ResultDetail(DetailType.Error, error.Message)
-                    }
-            };
-
-            // Cascade inner exceptions
-            var ie = error.InnerException;
-            while (ie != null)
-                errorResult.Details.Add(new ResultDetail(DetailType.Error, String.Format("Caused By: {0}", ie.Message)));
-
-            // Return error in XML only at this point
-            fault = new WcfMessageDispatchFormatter<IImsiServiceContract>().SerializeReply(version, null, errorResult);
-
+           
+            fault = Message.CreateMessage(version, MessageFault.CreateFault(code, reason), String.Empty);
             
         }
     }

@@ -17,6 +17,7 @@
  * Date: 2016-4-19
  */
 using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Exceptions;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Core.Security.Wcf
+namespace OpenIZ.Core.Wcf.Security
 {
     /// <summary>
     /// Basic authorization credential validator for OpenIZ basic auth

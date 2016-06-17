@@ -25,7 +25,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace OpenIZ.Messaging.IMSI.Wcf.Compression
+namespace OpenIZ.Core.Wcf.Serialization
 {
     /// <summary>
     /// Text body writer
