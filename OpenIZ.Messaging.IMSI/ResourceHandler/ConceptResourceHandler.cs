@@ -62,7 +62,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
         {
-            var conceptService = ApplicationContext.Current.GetService<IConceptService>();
+            var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
 
             Bundle bundleData = data as Bundle;
             bundleData?.Reconstitute();
@@ -87,7 +87,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         public IdentifiedData Get(Guid id, Guid versionId)
         {
-            var conceptService = ApplicationContext.Current.GetService<IConceptService>();
+            var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
             return conceptService.GetConcept(id, versionId);
         }
 
@@ -96,7 +96,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         public IdentifiedData Obsolete(Guid key)
         {
-            var conceptService = ApplicationContext.Current.GetService<IConceptService>();
+            var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
             return conceptService.ObsoleteConcept(key);
         }
 
@@ -105,7 +105,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
         {
-            var conceptService = ApplicationContext.Current.GetService<IConceptService>();
+            var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
             return conceptService.FindConcepts(new QueryExpressionParser().BuildLinqExpression<Concept>(queryParameters));
         }
 
@@ -114,7 +114,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out Int32 totalCount)
         {
-            var conceptService = ApplicationContext.Current.GetService<IConceptService>();
+            var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
             return conceptService.FindConcepts(new QueryExpressionParser().BuildLinqExpression<Concept>(queryParameters), offset, count, out totalCount);
         }
 
@@ -123,7 +123,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         public IdentifiedData Update(IdentifiedData data)
         {
-            var conceptService = ApplicationContext.Current.GetService<IConceptService>();
+            var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
 
             Bundle bundleData = data as Bundle;
             bundleData?.Reconstitute();

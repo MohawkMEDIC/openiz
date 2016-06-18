@@ -69,12 +69,19 @@ namespace OpenIZ.Messaging.AMI.Wcf
             var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
             var roleProviderService = ApplicationContext.Current.GetService<IRoleProviderService>();
 
-            var securityUser = userRepository.CreateUser(new Core.Model.Security.SecurityUser()
-            {
-                UserName = user.UserName,
-                Email = user.Email,
-                LockoutEnabled = user.Lockout
-            }, user.Password);
+			var userToCreate = new Core.Model.Security.SecurityUser()
+			{
+				UserName = user.UserName,
+				Email = user.Email
+			};
+
+			if (user.Lockout)
+			{
+				userToCreate.Lockout = DateTime.UtcNow;
+			}
+
+			var securityUser = userRepository.CreateUser(userToCreate, user.Password);
+
             if (user.Roles != null)
                 roleProviderService.AddUsersToRoles(new String[] { user.UserName }, user.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
 
@@ -283,12 +290,19 @@ namespace OpenIZ.Messaging.AMI.Wcf
             if (!String.IsNullOrEmpty(info.Password))
                 userRepository.ChangePassword(userId, info.Password);
 
-            return new SecurityUserInfo(userRepository.SaveUser(new Core.Model.Security.SecurityUser()
+            SecurityUserInfo userInfo = new SecurityUserInfo(userRepository.SaveUser(new Core.Model.Security.SecurityUser()
             {
                 Key = userId,
-                Email = info.Email,
-                LockoutEnabled = info.Lockout
+                Email = info.Email
             }));
-        }
+
+			if (info.Lockout)
+			{
+				userInfo.Lockout = true;
+			}
+
+			return userInfo;
+
+		}
     }
 }

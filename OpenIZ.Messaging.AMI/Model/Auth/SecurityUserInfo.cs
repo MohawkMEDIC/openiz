@@ -32,7 +32,7 @@ namespace OpenIZ.Messaging.AMI.Model.Auth
             this.UserId = u.Key;
             this.UserName = u.UserName;
             this.Email = u.Email;
-            this.Lockout = u.LockoutEnabled;
+            this.Lockout = u.Lockout != null;
             this.Roles = u.Roles.Select(o => new SecurityRoleInfo(o)).ToList();
             this.User = u;
         }

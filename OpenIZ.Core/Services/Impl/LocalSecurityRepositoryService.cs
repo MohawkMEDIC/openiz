@@ -56,7 +56,7 @@ namespace OpenIZ.Core.Services.Impl
                 retVal.EmailConfirmed = userInfo.EmailConfirmed;
                 retVal.InvalidLoginAttempts = userInfo.InvalidLoginAttempts;
                 retVal.LastLoginTime = userInfo.LastLoginTime;
-                retVal.LockoutEnabled = userInfo.LockoutEnabled;
+				retVal.Lockout = userInfo.Lockout;
                 retVal.PhoneNumber = userInfo.PhoneNumber;
                 retVal.PhoneNumberConfirmed = userInfo.PhoneNumberConfirmed;
                 retVal.SecurityHash = userInfo.SecurityHash;

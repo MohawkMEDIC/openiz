@@ -271,7 +271,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                         throw new KeyNotFoundException("Specified user does not exist!");
 
                     // Obsolete
-                    user.LockoutEnabled = lockout;
+					if (lockout)
+					{
+						user.Lockout = DateTimeOffset.Now;
+					}
                     user.ObsoletionTime = null;
                     user.ObsoletedBy = null;
                     user.UpdatedByEntity = authContext.GetUser(dataContext);
