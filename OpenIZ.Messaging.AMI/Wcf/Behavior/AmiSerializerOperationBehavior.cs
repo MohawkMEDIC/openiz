@@ -13,8 +13,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-4-19
+ * User: Nityan
+ * Date: 2016-6-17
  */
 using OpenIZ.Core.Wcf.Serialization;
 using System;
