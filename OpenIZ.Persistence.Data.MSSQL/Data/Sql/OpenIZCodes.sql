@@ -3763,6 +3763,7 @@ INSERT INTO ConceptReferenceTerm(ReferenceTermId, ConceptId, EffectiveVersionSeq
 INSERT INTO ReferenceTermDisplayName(ReferenceTermId, LanguageCode, DisplayName, CreatedBy, PhoneticAlgorithmId) VALUES('8f88ff32-da99-4e16-bb1a-633d04a05e1a', 'en', 'Search', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8', '402CD339-D0E4-46CE-8FC2-12A4B0E17226');
 INSERT INTO ConceptName(ConceptId, EffectiveVersionSequenceId, LanguageCode, Name, PhoneticAlgorithmId) SELECT '87964bff-e442-481d-9749-69b2a84a1fbe', VersionSequenceId, 'en', 'Search', '402CD339-D0E4-46CE-8FC2-12A4B0E17226' FROM ConceptVersion WHERE ConceptId = '87964bff-e442-481d-9749-69b2a84a1fbe' AND ObsoletionTime IS NULL;
 INSERT INTO CodeSystem (CodeSystemId, Name, Oid, CreatedBy, Url) VALUES ('0c4d091e-8701-4953-b16d-b8ca8e85de46','PostalAddressUse','2.16.840.1.113883.5.1012','fadca076-3690-4a6e-af9e-f1cd68e8c7e8','http://openiz.org/valueset/v3-PostalAddressUse');
+
 INSERT INTO Concept VALUES('493c3e9d-4f65-4e4d-9582-c9008f4f2eb4',1);
 INSERT INTO ConceptVersion (ConceptId, StatusConceptId, CreatedBy, Mnemonic, ConceptClassId) VALUES ('493c3e9d-4f65-4e4d-9582-c9008f4f2eb4', 'c8064cbd-fa06-4530-b430-1a52f1530c27', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8', 'HomeAddress', '0d6b3439-c9be-4480-af39-eeb457c052d0');
 INSERT INTO ReferenceTerm(ReferenceTermId, CodeSystemId, Mnemonic, CreatedBy)  VALUES('2ec2061f-64d6-47db-a319-1b68f126a866', '0c4d091e-8701-4953-b16d-b8ca8e85de46', 'H', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
@@ -4040,7 +4041,6 @@ INSERT INTO ConceptReferenceTerm(ReferenceTermId, ConceptId, EffectiveVersionSeq
 INSERT INTO ReferenceTermDisplayName(ReferenceTermId, LanguageCode, DisplayName, CreatedBy, PhoneticAlgorithmId) VALUES('5f81675a-475c-4490-b0e9-20495e55e270', 'en', 'PostalCode', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8', '402CD339-D0E4-46CE-8FC2-12A4B0E17226');
 INSERT INTO ConceptName(ConceptId, EffectiveVersionSequenceId, LanguageCode, Name, PhoneticAlgorithmId) SELECT '78a47122-f9bf-450f-a93f-90a103c5f1e8', VersionSequenceId, 'en', 'PostalCode', '402CD339-D0E4-46CE-8FC2-12A4B0E17226' FROM ConceptVersion WHERE ConceptId = '78a47122-f9bf-450f-a93f-90a103c5f1e8' AND ObsoletionTime IS NULL;
 
-
 INSERT INTO ConceptSetMember(ConceptId, ConceptSetId) SELECT ConceptId, '5CCA5869-8A7B-47A3-83DB-041D5AF5C9DA' from ReferenceTerm INNER JOIN CodeSystem ON (CodeSystem.CodeSystemId = ReferenceTerm.CodeSystemId)
 	LEFT JOIN ConceptReferenceTerm ON (ConceptReferenceTerm.ReferenceTermId = ReferenceTerm.ReferenceTermId)
 	WHERE CodeSystem.Name = 'AddressPartType';
@@ -4056,3 +4056,44 @@ INSERT INTO ConceptSetMember(ConceptId, ConceptSetId) SELECT ConceptId, 'C68A769
 INSERT INTO ConceptSetMember(ConceptId, ConceptSetId) SELECT ConceptId, '8DF14280-3D05-45A6-BFAE-15B63DFC379F' from ReferenceTerm INNER JOIN CodeSystem ON (CodeSystem.CodeSystemId = ReferenceTerm.CodeSystemId)
 	LEFT JOIN ConceptReferenceTerm ON (ConceptReferenceTerm.ReferenceTermId = ReferenceTerm.ReferenceTermId)
 	WHERE CodeSystem.Name = 'EntityNameUse';
+
+
+INSERT INTO CodeSystem (CodeSystemId, Name, Oid, CreatedBy, Url) VALUES ('59b60ec6-f1d0-4c7f-8e3b-a7b809dc26cf','TelecommunicationAddressUse','2.16.840.1.113883.5.1011','fadca076-3690-4a6e-af9e-f1cd68e8c7e8','http://openiz.org/valueset/v3-PostalAddressUse');
+
+INSERT INTO Concept VALUES('1ecd7b17-b5ff-4cae-9c3b-c1258132d137',1);
+INSERT INTO ConceptVersion (ConceptId, StatusConceptId, CreatedBy, Mnemonic, ConceptClassId) VALUES ('1ecd7b17-b5ff-4cae-9c3b-c1258132d137', 'c8064cbd-fa06-4530-b430-1a52f1530c27', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8', 'AnsweringService', '0d6b3439-c9be-4480-af39-eeb457c052d0');
+INSERT INTO ReferenceTerm(ReferenceTermId, CodeSystemId, Mnemonic, CreatedBy)  VALUES('8917551f-137c-4cd4-9b70-d036f2a44f60', '59b60ec6-f1d0-4c7f-8e3b-a7b809dc26cf', 'AS', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO ConceptReferenceTerm(ReferenceTermId, ConceptId, EffectiveVersionSequenceId, ConceptRelationshipTypeId) SELECT '8917551f-137c-4cd4-9b70-d036f2a44f60', '78a47122-f9bf-450f-a93f-90a103c5f1e8', VersionSequenceId, '2c4dafc2-566a-41ae-9ebc-3097d7d22f4a' FROM ConceptVersion WHERE ConceptId = '1ecd7b17-b5ff-4cae-9c3b-c1258132d137' AND ObsoletionTime IS NULL;
+INSERT INTO ReferenceTermDisplayName(ReferenceTermId, LanguageCode, DisplayName, CreatedBy, PhoneticAlgorithmId) VALUES('8917551f-137c-4cd4-9b70-d036f2a44f60', 'en', 'Answering Service', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8', '402CD339-D0E4-46CE-8FC2-12A4B0E17226');
+INSERT INTO ConceptName(ConceptId, EffectiveVersionSequenceId, LanguageCode, Name, PhoneticAlgorithmId) SELECT ConceptId, VersionSequenceId, 'en', 'Answering Service', '402CD339-D0E4-46CE-8FC2-12A4B0E17226' FROM ConceptVersion WHERE ConceptId = '1ecd7b17-b5ff-4cae-9c3b-c1258132d137' AND ObsoletionTime IS NULL;
+
+INSERT INTO Concept VALUES('25985f42-476a-4455-a977-4e97a554d710',1);
+INSERT INTO ConceptVersion (ConceptId, StatusConceptId, CreatedBy, Mnemonic, ConceptClassId) VALUES ('25985f42-476a-4455-a977-4e97a554d710', 'c8064cbd-fa06-4530-b430-1a52f1530c27', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8', 'EmergencyContact', '0d6b3439-c9be-4480-af39-eeb457c052d0');
+INSERT INTO ReferenceTerm(ReferenceTermId, CodeSystemId, Mnemonic, CreatedBy)  VALUES('b5c7f3e3-5ec9-4ae4-acb1-aac6700fb516', '59b60ec6-f1d0-4c7f-8e3b-a7b809dc26cf', 'EC', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO ConceptReferenceTerm(ReferenceTermId, ConceptId, EffectiveVersionSequenceId, ConceptRelationshipTypeId) SELECT 'b5c7f3e3-5ec9-4ae4-acb1-aac6700fb516', '78a47122-f9bf-450f-a93f-90a103c5f1e8', VersionSequenceId, '2c4dafc2-566a-41ae-9ebc-3097d7d22f4a' FROM ConceptVersion WHERE ConceptId = '25985f42-476a-4455-a977-4e97a554d710' AND ObsoletionTime IS NULL;
+INSERT INTO ReferenceTermDisplayName(ReferenceTermId, LanguageCode, DisplayName, CreatedBy, PhoneticAlgorithmId) VALUES('b5c7f3e3-5ec9-4ae4-acb1-aac6700fb516', 'en', 'Emergency Contact', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8', '402CD339-D0E4-46CE-8FC2-12A4B0E17226');
+INSERT INTO ConceptName(ConceptId, EffectiveVersionSequenceId, LanguageCode, Name, PhoneticAlgorithmId) SELECT ConceptId, VersionSequenceId, 'en', 'Emergency Contact', '402CD339-D0E4-46CE-8FC2-12A4B0E17226' FROM ConceptVersion WHERE ConceptId = '25985f42-476a-4455-a977-4e97a554d710' AND ObsoletionTime IS NULL;
+
+
+INSERT INTO Concept VALUES('e161f90e-5939-430e-861a-f8e885cc353d',1);
+INSERT INTO ConceptVersion (ConceptId, StatusConceptId, CreatedBy, Mnemonic, ConceptClassId) VALUES ('e161f90e-5939-430e-861a-f8e885cc353d', 'c8064cbd-fa06-4530-b430-1a52f1530c27', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8', 'MobileContact', '0d6b3439-c9be-4480-af39-eeb457c052d0');
+INSERT INTO ReferenceTerm(ReferenceTermId, CodeSystemId, Mnemonic, CreatedBy)  VALUES('ee8979bd-970c-4c30-8c6a-61f6d91f767f', '59b60ec6-f1d0-4c7f-8e3b-a7b809dc26cf', 'MC', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO ConceptReferenceTerm(ReferenceTermId, ConceptId, EffectiveVersionSequenceId, ConceptRelationshipTypeId) SELECT 'ee8979bd-970c-4c30-8c6a-61f6d91f767f', '78a47122-f9bf-450f-a93f-90a103c5f1e8', VersionSequenceId, '2c4dafc2-566a-41ae-9ebc-3097d7d22f4a' FROM ConceptVersion WHERE ConceptId = 'e161f90e-5939-430e-861a-f8e885cc353d' AND ObsoletionTime IS NULL;
+INSERT INTO ReferenceTermDisplayName(ReferenceTermId, LanguageCode, DisplayName, CreatedBy, PhoneticAlgorithmId) VALUES('ee8979bd-970c-4c30-8c6a-61f6d91f767f', 'en', 'Mobile Phone', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8', '402CD339-D0E4-46CE-8FC2-12A4B0E17226');
+INSERT INTO ConceptName(ConceptId, EffectiveVersionSequenceId, LanguageCode, Name, PhoneticAlgorithmId) SELECT ConceptId, VersionSequenceId, 'en', 'Mobile Phone', '402CD339-D0E4-46CE-8FC2-12A4B0E17226' FROM ConceptVersion WHERE ConceptId = 'e161f90e-5939-430e-861a-f8e885cc353d' AND ObsoletionTime IS NULL;
+
+INSERT INTO Concept VALUES('788000b4-e37a-4055-a2aa-c650089ce3b1',1);
+INSERT INTO ConceptVersion (ConceptId, StatusConceptId, CreatedBy, Mnemonic, ConceptClassId) VALUES ('788000b4-e37a-4055-a2aa-c650089ce3b1', 'c8064cbd-fa06-4530-b430-1a52f1530c27', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8', 'Pager', '0d6b3439-c9be-4480-af39-eeb457c052d0');
+INSERT INTO ReferenceTerm(ReferenceTermId, CodeSystemId, Mnemonic, CreatedBy)  VALUES('806c2a3a-4317-4a46-92bb-0fb953a61e40', '59b60ec6-f1d0-4c7f-8e3b-a7b809dc26cf', 'PG', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO ConceptReferenceTerm(ReferenceTermId, ConceptId, EffectiveVersionSequenceId, ConceptRelationshipTypeId) SELECT '806c2a3a-4317-4a46-92bb-0fb953a61e40', '78a47122-f9bf-450f-a93f-90a103c5f1e8', VersionSequenceId, '2c4dafc2-566a-41ae-9ebc-3097d7d22f4a' FROM ConceptVersion WHERE ConceptId = '788000b4-e37a-4055-a2aa-c650089ce3b1' AND ObsoletionTime IS NULL;
+INSERT INTO ReferenceTermDisplayName(ReferenceTermId, LanguageCode, DisplayName, CreatedBy, PhoneticAlgorithmId) VALUES('806c2a3a-4317-4a46-92bb-0fb953a61e40', 'en', 'Pager', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8', '402CD339-D0E4-46CE-8FC2-12A4B0E17226');
+INSERT INTO ConceptName(ConceptId, EffectiveVersionSequenceId, LanguageCode, Name, PhoneticAlgorithmId) SELECT ConceptId, VersionSequenceId, 'en', 'Pager', '402CD339-D0E4-46CE-8FC2-12A4B0E17226' FROM ConceptVersion WHERE ConceptId = '788000b4-e37a-4055-a2aa-c650089ce3b1' AND ObsoletionTime IS NULL;
+
+INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES('1ecd7b17-b5ff-4cae-9c3b-c1258132d137','1dabe3e2-44b8-4c45-9102-25ea147e5710');
+INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES('25985f42-476a-4455-a977-4e97a554d710','1dabe3e2-44b8-4c45-9102-25ea147e5710');
+INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES('e161f90e-5939-430e-861a-f8e885cc353d','1dabe3e2-44b8-4c45-9102-25ea147e5710');
+INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES('788000b4-e37a-4055-a2aa-c650089ce3b1','1dabe3e2-44b8-4c45-9102-25ea147e5710');
+
+INSERT INTO ConceptSetMember (ConceptSetId, ConceptId) VALUES ('1DABE3E2-44B8-4C45-9102-25EA147E5710', 'EAA6F08E-BB8E-4457-9DC0-3A1555FADF5C');
+INSERT INTO ConceptSetMember (ConceptSetId, ConceptId) VALUES ('1DABE3E2-44B8-4C45-9102-25EA147E5710', 'CEF6EA31-A097-4F59-8723-A38C727C6597');
+INSERT INTO ConceptSetMember (ConceptSetId, ConceptId) VALUES ('1DABE3E2-44B8-4C45-9102-25EA147E5710', 'EC35EA7C-55D2-4619-A56B-F7A986412F7F');

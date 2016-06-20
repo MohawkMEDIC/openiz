@@ -83,6 +83,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             {
                 retVal.EntityAddressComponentValue = new EntityAddressComponentValue()
                 {
+                    ValueId = Guid.NewGuid(),
                     Value = modelInstance.Value
                 };
             }

@@ -23,15 +23,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         public override TModel Insert (ModelDataContext context, TModel data, IPrincipal principal)
 		{
 			var domainObject = this.FromModelInstance (data, context, principal) as TDomain;
-            
+
+            if (domainObject.Id == Guid.Empty)
+                data.Key = domainObject.Id = Guid.NewGuid();
+
             // Ensure created by exists
             data.CreatedBy?.EnsureExists(context, principal);
 			data.CreatedByKey = domainObject.CreatedBy = domainObject.CreatedBy == Guid.Empty ? principal.GetUser (context).UserId : domainObject.CreatedBy;
 			context.GetTable<TDomain>().InsertOnSubmit (domainObject);
 
             context.SubmitChanges();
-
-            data.Key = domainObject.Id;
             data.CreationTime = (DateTimeOffset)domainObject.CreationTime;
 
             return data;
@@ -87,6 +88,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             data.ObsoletedBy?.EnsureExists(context, principal);
             data.ObsoletedByKey = currentObject.ObsoletedBy = data.ObsoletedBy?.Key ?? principal.GetUser(context).UserId;
             data.ObsoletionTime = currentObject.ObsoletionTime = currentObject.ObsoletionTime ?? DateTimeOffset.Now;
+            context.SubmitChanges();
 			return data;
 		}
 

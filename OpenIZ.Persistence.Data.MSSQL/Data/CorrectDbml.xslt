@@ -37,15 +37,19 @@
     ]]>
   </msxsl:script>
   <xsl:template match="linq:Column">
-    
     <xsl:copy>
       <xsl:apply-templates select="@*"/>
-      <xsl:if test="(@IsPrimaryKey = 'true' and count(../linq:Column[@IsPrimaryKey = 'true']) = 1) or @Name = 'CreationTime' or @Name = 'VersionSequenceId'">
-        <xsl:attribute name="IsDbGenerated">
-          <xsl:value-of select="'true'"/> 
-        </xsl:attribute>
-      </xsl:if>
+      <xsl:choose>
+        <xsl:when test="@Name = 'EntityVersionId' and ../../linq:Type/@Name = 'EntityVersion' or @Name = 'ActVersionId' and ../../linq:Type/@Name = 'ActVersion' or @Name != 'ActVersionId' and @Name != 'EntityVersionId'">
+          <xsl:if test="@Name = 'CreationTime' or @Name = 'VersionSequenceId'">
+            <xsl:attribute name="IsDbGenerated">
+              <xsl:value-of select="'true'"/>
+            </xsl:attribute>
+          </xsl:if>
+        </xsl:when>
+      </xsl:choose>
     </xsl:copy>
+
   </xsl:template>
   <xsl:template match="linq:Association">
     <xsl:if test="@ThisKey != 'VersionSequenceId' and @OtherKey != 'VersionSequenceId'">

@@ -37,10 +37,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var domainObject = this.FromModelInstance(data, context, principal) as TDomain;
             domainObject.NonVersionedObject = nonVersionedPortion;
 
-            if (data.Key != Guid.Empty)
-                domainObject.Id = nonVersionedPortion.Id = data.Key;
-            if (data.VersionKey != Guid.Empty)
-                domainObject.VersionId = data.VersionKey;
+            if (nonVersionedPortion.Id == Guid.Empty)
+                nonVersionedPortion.Id = data.Key = Guid.NewGuid();
+            if (domainObject.VersionId == Guid.Empty)
+                domainObject.VersionId = data.VersionKey = Guid.NewGuid();
 
             // Ensure created by exists
             data.CreatedBy?.EnsureExists(context, principal);
@@ -82,7 +82,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var newEntityVersion = new TDomain();
             newEntityVersion.CopyObjectData(storageInstance);
             data.VersionSequence = newEntityVersion.VersionSequenceId = default(Decimal);
-           // data.VersionKey = newEntityVersion.VersionKey = Guid.NewGuid();
+            data.VersionKey = newEntityVersion.VersionId = Guid.NewGuid();
             newEntityVersion.Id = data.Key;
             data.PreviousVersionKey = newEntityVersion.ReplacesVersionId = existingObject.VersionId;
             data.CreatedByKey = newEntityVersion.CreatedBy = user.UserId;
@@ -93,8 +93,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             context.GetTable<TDomain>().InsertOnSubmit(newEntityVersion);
             context.SubmitChanges();
 
+            // Pull database generated fields
             data.VersionSequence = newEntityVersion.VersionSequenceId;
-            data.VersionKey = newEntityVersion.VersionId;
             data.CreationTime = newEntityVersion.CreationTime;
 
             return data;

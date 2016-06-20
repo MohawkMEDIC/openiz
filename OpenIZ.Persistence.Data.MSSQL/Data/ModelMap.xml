@@ -322,6 +322,33 @@
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
     <property modelName="CreatedBy" domainName="CreatedByEntity"/>
     <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
+    <property modelName="Names" domainName="Entity">
+      <via domainName="EntityNames"/>
+    </property>
+    <property modelName="Names" domainName="Entity">
+      <via domainName="EntityNames"/>
+    </property>
+    <property modelName="Addresses" domainName="Entity">
+      <via domainName="EntityAddresses"/>
+    </property>
+    <property modelName="Identifiers" domainName="Entity">
+      <via domainName="EntityIdentifiers"/>
+    </property>
+    <property modelName="Notes" domainName="Entity">
+      <via domainName="EntityNotes"/>
+    </property>
+    <property modelName="Tags" domainName="Entity">
+      <via domainName="EntityTags"/>
+    </property>
+    <property modelName="Telecoms" domainName="Entity">
+      <via domainName="EntityTelecomAddresses"/>
+    </property>
+    <property modelName="Extensions" domainName="Entity">
+      <via domainName="EntityExtensions"/>
+    </property>
+    <property modelName="Relationships" domainName="Entity">
+      <via domainName="EntityAssociationsSourceEntityId"/>
+    </property>
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="TypeConcept" keyName="TypeConceptId"/>
@@ -333,6 +360,7 @@
     <property modelName="ClassConceptKey" domainName="ClassConceptId"/>
     <property modelName="ClassConcept" domainName="ClassConcept"/>
     <property modelName="DeterminerConceptKey" domainName="DeterminerConceptId"/>
+    <property modelName="Names" domainName="EntityNames"/>
     <property modelName="DeterminerConcept" domainName="DeterminerConcept"/>
     <collapseKey propertyName="ClassConcept" keyName="ClassConceptId"/>
     <collapseKey propertyName="DeterminerConcept" keyName="DeterminerConceptId"/>
@@ -464,6 +492,7 @@
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
     <property modelName="UpdatedByKey" domainName="UpdatedBy"/>
+    <property modelName="ExtensionHandler" domainName="HandlerClass"/>
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="UpdatedByEntity" keyName="UpdatedBy"/>

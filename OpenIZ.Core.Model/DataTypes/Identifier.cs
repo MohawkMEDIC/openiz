@@ -157,8 +157,6 @@ namespace OpenIZ.Core.Model.DataTypes
             get { return this.m_authorityId; }
             set
             {
-                if (this.m_authority?.Key == value)
-                    return;
                 this.m_authority = null;
                 this.m_authorityId = value;
             }

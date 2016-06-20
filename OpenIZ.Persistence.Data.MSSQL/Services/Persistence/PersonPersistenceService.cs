@@ -21,10 +21,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         // Map
         public static readonly Dictionary<DatePrecision, Char> PrecisionMap = new Dictionary<DatePrecision, Char>()
         {
-            { DatePrecision.Day, 'd' },
-            { DatePrecision.Hour, 'H' },
-            { DatePrecision.Minute, 'M' },
-            { DatePrecision.Month, 'm' },
+            { DatePrecision.Day, 'D' },
+            { DatePrecision.Hour, 'h' },
+            { DatePrecision.Minute, 'm' },
+            { DatePrecision.Month, 'M' },
             { DatePrecision.Second, 's' },
             { DatePrecision.Year, 'Y' }
         };

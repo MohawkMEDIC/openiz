@@ -105,7 +105,7 @@ namespace OpenIZ.Core.Model.Map
                 if (domainMember != null)
                     return Expression.MakeMemberAccess(accessExpression, domainMember);
                 else
-                    throw new NotSupportedException(String.Format("Cannot find property information for {0}", memberExpression.Member.Name));
+                    throw new NotSupportedException(String.Format("Cannot find property information for {0}({1}).{2}", memberExpression.Expression, memberExpression.Expression.Type.Name, memberExpression.Member.Name));
             }
         }
 

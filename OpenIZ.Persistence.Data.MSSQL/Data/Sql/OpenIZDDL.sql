@@ -986,7 +986,7 @@ CREATE TABLE EntityTag
 	Name NVARCHAR(64) NOT NULL, -- THE NAME OF THE TAG
 	Value NVARCHAR(MAX), -- THE VALUE OF THE TAG
 	CreationTime DATETIMEOFFSET NOT NULL DEFAULT CURRENT_TIMESTAMP, -- THE TIME THAT THE TAG WAS ATTACHED
-	CreatedBy UNIQUEIDENTIFIER, -- THE USER THAT CREATED THE TAG
+	CreatedBy UNIQUEIDENTIFIER NOT NULL, -- THE USER THAT CREATED THE TAG
 	ObsoletionTime DATETIMEOFFSET, -- THE TIME WHEN THE TAG WAS OBSOLETED
 	ObsoletedBy UNIQUEIDENTIFIER, -- THE USER WHO OBSOLETED THE TAG
 	CONSTRAINT PK_EntityTag PRIMARY KEY (EntityTagId),
@@ -1140,7 +1140,7 @@ CREATE TABLE EntityIdentifier
 (
 	EntityIdentifierId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(), -- THE UNIQUE IDENTIFIER FOR THE ENTITY IDENTIFIER 
 	EntityId UNIQUEIDENTIFIER NOT NULL, -- THE ENTITY TO WHICH THE ASSOCIATION BELONGS
-	IdentifierTypeId UNIQUEIDENTIFIER NOT NULL, -- THE TYPE OF IDENTIFIER
+	IdentifierTypeId UNIQUEIDENTIFIER, -- THE TYPE OF IDENTIFIER
 	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE VERSION WHERE THE IDENTIFIER BECAME ACTIVE
 	ObsoleteVersionSequenceId NUMERIC(20), -- THE OBSOLETION VERSION IDENTIFIER
 	AssigningAuthorityId UNIQUEIDENTIFIER NOT NULL, -- THE ASSIGNING AUTHORITY OF THE IDENTIFIER
@@ -1172,7 +1172,7 @@ CREATE TABLE EntityTelecomAddress
 	CONSTRAINT FK_EntityTelecomAddressUseConceptId FOREIGN KEY (TelecomUseConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_EntityTelecomAddressEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
 	CONSTRAINT FK_EntityTelecomAddressObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
-	CONSTRAINT CK_EntityTelecomAddressTelecomAddressTypeConceptId CHECK (dbo.fn_IsConceptSetMember(TelecomAddressTypeConceptId, 'TelecomAddressType') = 1),
+	CONSTRAINT CK_EntityTelecomAddressTelecomAddressTypeConceptId CHECK (TelecomAddressTypeConceptId IS NULL OR dbo.fn_IsConceptSetMember(TelecomAddressTypeConceptId, 'TelecomAddressType') = 1),
 	CONSTRAINT CK_EntityTelecomAddressTelecomAddressUseConceptId CHECK (dbo.fn_IsConceptSetMember(TelecomUseConceptId, 'TelecomAddressUse') = 1)
 );
 
@@ -1306,7 +1306,7 @@ CREATE TABLE Patient
 	CONSTRAINT PK_Patient PRIMARY KEY (EntityVersionId),
 	CONSTRAINT FK_PatientEntityVersionId FOREIGN KEY (EntityVersionId) REFERENCES Person(EntityVersionId),
 	CONSTRAINT FK_PatientGenderConceptId FOREIGN KEY (GenderConceptId) REFERENCES Concept(ConceptId),
-	CONSTRAINT CL_PatientGenderConceptClass CHECK (dbo.fn_IsConceptSetMember(GenderConceptId, 'AdministrativeGender') = 1)
+	CONSTRAINT CK_PatientGenderConceptClass CHECK (dbo.fn_IsConceptSetMember(GenderConceptId, 'AdministrativeGenderCode') = 1)
 );
 
 CREATE TABLE Provider

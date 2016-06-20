@@ -53,14 +53,17 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 		/// </summary>
 		/// <param name="context">Context.</param>
 		/// <param name="data">Data.</param>
-		public override TModel Insert (ModelDataContext context, TModel data, IPrincipal princial)
+		public override TModel Insert (ModelDataContext context, TModel data, IPrincipal principal)
 		{
-			var domainObject = this.FromModelInstance (data, context, princial) as TDomain;
+			var domainObject = this.FromModelInstance (data, context, principal) as TDomain;
 
-			context.GetTable<TDomain>().InsertOnSubmit (domainObject);
+            if (domainObject.Id == Guid.Empty)
+                data.Key = domainObject.Id = Guid.NewGuid();
+
+            context.GetTable<TDomain>().InsertOnSubmit (domainObject);
             context.SubmitChanges();
-            data.Key = domainObject.Id;
-			return data;
+
+            return data;
 		}
 
         /// <summary>

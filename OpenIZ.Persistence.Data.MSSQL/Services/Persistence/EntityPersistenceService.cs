@@ -39,6 +39,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             data.DeterminerConcept?.EnsureExists(context, principal);
             data.StatusConcept?.EnsureExists(context, principal);
             data.TypeConcept?.EnsureExists(context, principal);
+            data.TypeConceptKey = data.TypeConcept?.Key ?? data.TypeConceptKey;
+            data.DeterminerConceptKey = data.DeterminerConcept?.Key ?? data.DeterminerConceptKey;
+            data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
             data.StatusConceptKey = data.StatusConceptKey == Guid.Empty ? StatusKeys.New : data.StatusConceptKey;
 
             var retVal = base.Insert(context, data, principal);
@@ -197,7 +200,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         public override Core.Model.Entities.Entity Obsolete(ModelDataContext context, Core.Model.Entities.Entity data, IPrincipal principal)
         {
             data.StatusConceptKey = StatusKeys.Obsolete;
-            return base.Obsolete(context, data, principal);
+            return base.Update(context, data, principal);
         }
     }
 }

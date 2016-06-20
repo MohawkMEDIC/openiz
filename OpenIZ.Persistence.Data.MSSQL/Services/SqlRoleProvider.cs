@@ -107,6 +107,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                 // Insert
                 dataContext.SecurityRoles.InsertOnSubmit(new SecurityRole()
                 {
+                    RoleId = Guid.NewGuid(),
                     CreatedByEntity = user,
                     Name = roleName
                 });

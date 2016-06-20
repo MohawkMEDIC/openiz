@@ -58,6 +58,7 @@
     <Compile Include="Constants\NameKeys.cs" />
     <Compile Include="Constants\PhoneticAlgorithmKeys.cs" />
     <Compile Include="Constants\StatusConceptKeys.cs" />
+    <Compile Include="Constants\TelecomAddressUseKeys.cs" />
     <Compile Include="Constants\UserClassKeys.cs" />
     <Compile Include="DataTypes\AssigningAuthority.cs" />
     <Compile Include="DataTypes\CodeSystem.cs" />

@@ -438,7 +438,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     /// <summary>
     /// Partial implementing entity Tag
     /// </summary>
-    public partial class EntityTag : IDbAssociation
+    public partial class EntityTag : IDbAssociation, IDbBaseData
     {
         /// <summary>
         /// Gets the associated item key

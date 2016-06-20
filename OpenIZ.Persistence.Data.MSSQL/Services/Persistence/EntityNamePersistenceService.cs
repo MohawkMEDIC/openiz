@@ -86,6 +86,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 var phoneticCoder = ApplicationContext.Current.GetService<IPhoneticAlgorithmHandler>();
                 retVal.PhoneticValue = new PhoneticValue()
                 {
+                    PhoneticValueId = Guid.NewGuid(),
                     Value = modelInstance.Value,
                     PhoneticAlgorithmId = phoneticCoder?.AlgorithmId ?? PhoneticAlgorithmKeys.None,
                     PhoneticCode = phoneticCoder?.GenerateCode(modelInstance.Value)
