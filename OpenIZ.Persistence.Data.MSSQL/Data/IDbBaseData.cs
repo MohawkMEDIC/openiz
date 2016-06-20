@@ -38,7 +38,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [Column(Name = "ReferenceTermDisplayNameId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("ReferenceTermDisplayNameId")]
         public Guid Id
         {
             get
@@ -61,7 +61,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [Column(Name = "ExtensionTypeId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("ExtensionTypeId")]
         public Guid Id
         {
             get
@@ -84,7 +84,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [Column(Name = "ReferenceTermId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("ReferenceTermId")]
         public Guid Id
         {
             get
@@ -107,7 +107,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [Column(Name = "PhoneticAlgorithmId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("PhoneticAlgorithmId")]
         public Guid Id
         {
             get
@@ -130,7 +130,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [Column(Name = "CodeSystemId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("CodeSystemId")]
         public Guid Id
         {
             get
@@ -153,7 +153,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [Column(Name = "CodeSystemId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("CodeSystemId")]
         public Guid Id
         {
             get
@@ -177,7 +177,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [Column(Name = "AssigningAuthorityId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("AssigningAuthorityId")]
         public Guid Id
         {
             get
@@ -201,7 +201,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [Column(Name = "ConceptClassId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("ConceptClassId")]
         public Guid Id
         {
             get
@@ -225,7 +225,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [Column(Name = "ConceptSetId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("ConceptSetId")]
         public Guid Id
         {
             get
@@ -248,7 +248,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [Column(Name = "PolicyId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("PolicyId")]
         public Guid Id
         {
             get
@@ -272,7 +272,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [Column(Name = "ApplicationId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("ApplicationId")]
         public Guid Id
         {
             get
@@ -296,7 +296,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [Column(Name = "DeviceId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("DeviceId")]
         public Guid Id
         {
             get
@@ -320,7 +320,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [Column(Name = "RoleId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("RoleId")]
         public Guid Id
         {
             get
@@ -344,7 +344,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [Column(Name = "UserId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("UserId")]
         public Guid Id
         {
             get

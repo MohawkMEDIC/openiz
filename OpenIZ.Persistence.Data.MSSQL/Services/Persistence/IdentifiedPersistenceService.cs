@@ -56,11 +56,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 		{
 			var domainObject = this.FromModelInstance (data, context, princial) as TDomain;
 
-			if (domainObject.Id == Guid.Empty)
-				data.Key = domainObject.Id = Guid.NewGuid ();
-			
 			context.GetTable<TDomain>().InsertOnSubmit (domainObject);
-
+            context.SubmitChanges();
+            data.Key = domainObject.Id;
 			return data;
 		}
 
@@ -77,11 +75,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Map and copy
             var newDomainObject = this.FromModelInstance (data, context, principal) as TDomain;
-            var oldDomainObject = context.GetTable<TDomain>().First(o => o.Id == newDomainObject.Id);
+            var oldDomainObject = context.GetTable<TDomain>().Single(ExpressionRewriter.Rewrite<TDomain>(o => o.Id == newDomainObject.Id));
             if (oldDomainObject == null)
                 throw new KeyNotFoundException(data.Key.ToString());
 
             oldDomainObject.CopyObjectData(newDomainObject);
+
 			return data;
 		}
 
@@ -95,7 +94,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (data.Key == Guid.Empty)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.NonIdentityUpdate);
 
-            var domainObject = context.GetTable<TDomain>().FirstOrDefault(o => o.Id == data.Key);
+            var domainObject = context.GetTable<TDomain>().FirstOrDefault(ExpressionRewriter.Rewrite<TDomain>(o => o.Id == data.Key));
 
             if (domainObject == null)
                 throw new KeyNotFoundException(data.Key.ToString());
@@ -140,7 +139,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     itm.SourceEntityKey = source.Key;
 
             // Get existing
-            var existing = context.GetTable<TDomainAssociation>().Where(o => o.AssociatedItemKey == source.Key).Select(o=>m_mapper.MapDomainInstance<TDomainAssociation, TAssociation>(o));
+            var existing = context.GetTable<TDomainAssociation>().Where(ExpressionRewriter.Rewrite<TDomainAssociation>(o => o.AssociatedItemKey == source.Key)).ToList().AsParallel().Select(o=>m_mapper.MapDomainInstance<TDomainAssociation, TAssociation>(o).GetLocked() as TAssociation);
             // Remove old
             var obsoleteRecords = existing.Where(o => !storage.Exists(ecn => ecn.Key == o.Key));
             foreach (var del in obsoleteRecords)

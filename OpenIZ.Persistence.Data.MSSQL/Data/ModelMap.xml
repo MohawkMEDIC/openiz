@@ -93,9 +93,10 @@
     <property modelName="Concepts" domainName="ConceptSetMembers">
       <via domainName="Concept"/>
     </property>
+    
   </class>
   
-  <class modelClass="OpenIZ.Core.Model.DataTypes.Concept, OpenIZ.Core.Model, Version=1.0.0.0"
+    <class modelClass="OpenIZ.Core.Model.DataTypes.Concept, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptVersion, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
 
     <property modelName="Key" domainName="ConceptId"/>
@@ -131,6 +132,13 @@
 
   </class>
 
+  <class modelClass="OpenIZ.Core.Model.DataTypes.Concept, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.MSSQL.Data.Concept, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="ConceptSets" domainName="ConceptSetMembers" dontLoad="true">
+      <via domainName="Concept"/>
+    </property>
+  </class>
+  
   <!-- Concept Class -->
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptClass, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptClass, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">

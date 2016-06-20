@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Linq;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Security;
 using System.Security.Claims;
@@ -38,14 +39,88 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 {
 
     
+    /// <summary>
+    /// An attribute used by the LINQ expression rewriter to handle the queries on interface properties
+    /// </summary>
+    public class LinqPropertyMapAttribute : Attribute
+    {
 
-    
-   
+        /// <summary>
+        /// Creates a new instance of the concept map attribute
+        /// </summary>
+        public LinqPropertyMapAttribute(String linqMember)
+        {
+            this.LinqMember = linqMember;
+        }
+
+        /// <summary>
+        /// Gets or sets the name of the column which is the source for this
+        /// </summary>
+        public String LinqMember { get; set; }
+    }
+
+    /// <summary>
+    /// Http query expression visitor.
+    /// </summary>
+    public class ExpressionRewriter : ExpressionVisitor
+    {
+      
+        /// <summary>
+        /// Visit a query expression
+        /// </summary>
+        /// <returns>The modified expression list, if any one of the elements were modified; otherwise, returns the original
+        /// expression list.</returns>
+        /// <param name="nodes">The expressions to visit.</param>
+        /// <param name="node">Node.</param>
+        public override Expression Visit(Expression node)
+        {
+            if (node == null)
+                return node;
+
+            // Convert node type
+            switch (node.NodeType)
+            {
+                case ExpressionType.MemberAccess:
+                    return this.VisitMemberAccess((MemberExpression)node);
+                default:
+                    return base.Visit(node);
+            }
+        }
+
+        /// <summary>
+        /// Visits the member access.
+        /// </summary>
+        /// <returns>The member access.</returns>
+        /// <param name="expr">Expr.</param>
+        protected virtual Expression VisitMemberAccess(MemberExpression node)
+        {
+            var cma = node.Expression.Type.GetMember(node.Member.Name)[0].GetCustomAttribute<LinqPropertyMapAttribute>();
+            if (cma != null)
+            {
+                var rwMember = node.Expression.Type.GetMember(cma.LinqMember).Single();
+                node = Expression.MakeMemberAccess(this.Visit(node.Expression), rwMember);
+            }
+            return node;
+        }
+
+        /// <summary>
+        /// Rewrites the query mapping any mapped data elements 
+        /// </summary>
+        public static Expression<Func<TDomain, bool>> Rewrite<TDomain>(Expression<Func<TDomain, bool>> expr)
+        {
+            ExpressionRewriter rw = new ExpressionRewriter();
+            var rwExpr = rw.Visit(expr.Body);
+            return Expression.Lambda<Func<TDomain, bool>>(rwExpr, expr.Parameters);
+        }
+    }
+
     /// <summary>
     /// Model extension methods
     /// </summary>
     public static class DataModelExtensions
     {
+
+
 
         // Field cache
         private static Dictionary<Type, FieldInfo[]> s_fieldCache = new Dictionary<Type, FieldInfo[]>();
@@ -73,18 +148,54 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Ensures a model has been persisted
         /// </summary>
-        public static TModel EnsureExists<TModel>(this TModel me, ModelDataContext dataContext, IPrincipal principal) where TModel : IdentifiedData
+        public static void EnsureExists(this IIdentifiedEntity me, ModelDataContext context, IPrincipal principal) 
         {
-            var dataService = ApplicationContext.Current.GetService<IDataPersistenceService<TModel>>() as SqlServerBasePersistenceService<TModel>;
-            if (dataService == null)
-                throw new InvalidOperationException(String.Format("Cannot locate SQL storage provider for {0}", typeof(TModel).FullName));
-            if(me.Key == Guid.Empty || dataService.Get(dataContext, me.Key, principal) == null)
+            // Me
+            var vMe = me as IVersionedEntity;
+            String dkey = String.Format("{0}.{1}", me.GetType().FullName, me.Key);
+
+            // We have to find it
+            var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
+            var idpInstance = ApplicationContext.Current.GetService(idpType);
+            var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 3 && o.GetParameters()[0].ParameterType == typeof(ModelDataContext));
+            if (getMethod == null) return;
+            var existing = getMethod.Invoke(idpInstance, new object[] { context, me.Key, principal }) as IIdentifiedEntity;
+
+            // Existing exists?
+            if (existing != null)
             {
-                var retVal = dataService.Insert(dataContext, me, principal);
-                me.Key = retVal.Key; // prevents future loading
-                return retVal;
+                // Exists but is an old version
+                if ((existing as IVersionedEntity)?.VersionKey != vMe?.VersionKey)
+                {
+                    // Update method
+                    var updateMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Update" && o.GetParameters().Length == 3 && o.GetParameters()[0].ParameterType == typeof(ModelDataContext));
+                    if (updateMethod != null)
+                    {
+                        IVersionedEntity updated = updateMethod.Invoke(idpInstance, new object[] { context, me, principal }) as IVersionedEntity;
+                        me.Key = updated.Key;
+                        if (vMe != null)
+                            vMe.VersionKey = (updated as IVersionedEntity).VersionKey;
+                    }
+                }
+
+                // Add
+                dkey = String.Format("{0}.{1}", me.GetType().FullName, existing.Key);
+
             }
-            return me;
+            else // Insert
+            {
+                var insertMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Insert" && o.GetParameters().Length == 3 && o.GetParameters()[0].ParameterType == typeof(ModelDataContext));
+                if (insertMethod != null)
+                {
+                    IIdentifiedEntity inserted = insertMethod.Invoke(idpInstance, new object[] { context, me, principal }) as IIdentifiedEntity;
+                    me.Key = inserted.Key;
+
+                    if (vMe != null)
+                        vMe.VersionKey = (inserted as IVersionedEntity).VersionKey;
+                }
+                dkey = String.Format("{0}.{1}", me.GetType().FullName, me.Key);
+
+            }
         }
 
         /// <summary>

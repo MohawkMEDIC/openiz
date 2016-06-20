@@ -82,7 +82,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Model.dbml</DependentUpon>
     </Compile>
-    <Compile Include="Data\ModelExtensions.cs" />
+    <Compile Include="Data\DataModelExtensions.cs" />
     <Compile Include="Data\IDbIdentified.cs" />
     <Compile Include="Security\SqlSecurityPolicy.cs" />
     <Compile Include="Security\SqlSecurityPolicyInstance.cs" />

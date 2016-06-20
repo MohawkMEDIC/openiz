@@ -43,7 +43,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
 
             try
             {
-                s_mapper = new ModelMapper(typeof(SqlServerBasePersistenceService<TData>).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Persistence.Data.MSSQL.Data.ModelMap.xml"));
+                s_mapper = new ModelMapper(typeof(SqlServerPersistenceService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Persistence.Data.MSSQL.Data.ModelMap.xml"));
             }
             catch (ModelMapValidationException ex)
             {

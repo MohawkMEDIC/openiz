@@ -37,6 +37,34 @@ namespace OpenIZ.Core.Model.Map
         private Dictionary<String, PropertyMap> m_modelPropertyMap = new Dictionary<String, PropertyMap>();
         private Dictionary<String, PropertyMap> m_domainPropertyMap = new Dictionary<String, PropertyMap>();
         private Object m_lockObject = new Object();
+        private Type m_domainType = null;
+        private Type m_modelType = null;
+
+        /// <summary>
+        /// Gets the domain CLR type
+        /// </summary>
+        [XmlIgnore]
+        public Type DomainType
+        {
+            get
+            {
+                if (this.m_domainType == null)
+                    this.m_domainType = Type.GetType(this.DomainClass);
+                return this.m_domainType;
+            }
+        }
+
+        /// <summary>
+        /// Gets the model CLR type
+        /// </summary>
+        [XmlIgnore]
+        public Type ModelType { get
+            {
+                if (this.m_modelType == null)
+                    this.m_modelType = Type.GetType(this.ModelClass);
+                return this.m_modelType;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the model class for the mapper

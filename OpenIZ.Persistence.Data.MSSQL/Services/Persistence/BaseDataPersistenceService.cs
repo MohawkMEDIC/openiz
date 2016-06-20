@@ -23,18 +23,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         public override TModel Insert (ModelDataContext context, TModel data, IPrincipal principal)
 		{
 			var domainObject = this.FromModelInstance (data, context, principal) as TDomain;
-
-			if (data.Key == Guid.Empty)
-				data.Key = domainObject.Id = Guid.NewGuid ();
-
+            
             // Ensure created by exists
             data.CreatedBy?.EnsureExists(context, principal);
 			data.CreatedByKey = domainObject.CreatedBy = domainObject.CreatedBy == Guid.Empty ? principal.GetUser (context).UserId : domainObject.CreatedBy;
-			domainObject.CreationTime = domainObject.CreationTime == DateTime.MinValue || domainObject.CreationTime == null ? DateTime.Now : domainObject.CreationTime;
-			data.CreationTime = (DateTimeOffset)domainObject.CreationTime;
 			context.GetTable<TDomain>().InsertOnSubmit (domainObject);
 
-			return data;
+            context.SubmitChanges();
+
+            data.Key = domainObject.Id;
+            data.CreationTime = (DateTimeOffset)domainObject.CreationTime;
+
+            return data;
 		}
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Get current object
 			var domainObject = this.FromModelInstance (data, context, principal) as TDomain;
-            var currentObject = context.GetTable<TDomain>().FirstOrDefault(o => o.Id == data.Key);
+            var currentObject = context.GetTable<TDomain>().FirstOrDefault(ExpressionRewriter.Rewrite<TDomain>(o => o.Id == data.Key));
             // Not found
             if (currentObject == null)
                 throw new KeyNotFoundException(data.Key.ToString());
@@ -72,7 +72,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.NonIdentityUpdate);
 
             // Current object
-            var currentObject = context.GetTable<TDomain>().FirstOrDefault(o => o.Id == data.Key);
+            var currentObject = context.GetTable<TDomain>().FirstOrDefault(ExpressionRewriter.Rewrite<TDomain>(o => o.Id == data.Key));
             if (currentObject == null)
                 throw new KeyNotFoundException(data.Key.ToString());
 

@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using OpenIZ.Core.Model.DataTypes;
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
+using System.ComponentModel;
+using MARC.HI.EHRS.SVC.Core.Data;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -17,7 +19,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     /// Versioned domain data
     /// </summary>
     public abstract class VersionedDataPersistenceService<TModel, TDomain, TDomainKey> : BaseDataPersistenceService<TModel, TDomain> 
-        where TDomain : class, IDbVersionedData, new() 
+        where TDomain : class, IDbVersionedData<TDomainKey>, new() 
         where TModel : VersionedEntityData<TModel>, new()
         where TDomainKey : class, IDbIdentified, new()
     {
@@ -27,26 +29,30 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public override TModel Insert(ModelDataContext context, TModel data, IPrincipal principal)
         {
+
             // first we map the TDataKey entity
             var nonVersionedPortion = m_mapper.MapModelInstance<TModel, TDomainKey>(data);
-            if (nonVersionedPortion.Id == Guid.Empty)
-                nonVersionedPortion.Id = data.Key = Guid.NewGuid();
-            context.GetTable<TDomainKey>().InsertOnSubmit(nonVersionedPortion);
-
+            
             // Domain object
             var domainObject = this.FromModelInstance(data, context, principal) as TDomain;
-            data.Key = domainObject.Id = nonVersionedPortion.Id;
+            domainObject.NonVersionedObject = nonVersionedPortion;
+
+            if (data.Key != Guid.Empty)
+                domainObject.Id = nonVersionedPortion.Id = data.Key;
+            if (data.VersionKey != Guid.Empty)
+                domainObject.VersionId = data.VersionKey;
+
             // Ensure created by exists
             data.CreatedBy?.EnsureExists(context, principal);
             data.CreatedByKey = domainObject.CreatedBy = domainObject.CreatedBy == Guid.Empty ? principal.GetUser(context).UserId : domainObject.CreatedBy;
-            domainObject.CreationTime = domainObject.CreationTime == DateTime.MinValue || domainObject.CreationTime == null ? DateTime.Now : domainObject.CreationTime;
-            data.CreationTime = (DateTimeOffset)domainObject.CreationTime;
             context.GetTable<TDomain>().InsertOnSubmit(domainObject);
 
-            // Submit and parse
             context.SubmitChanges();
+
             data.VersionSequence = domainObject.VersionSequenceId;
             data.VersionKey = domainObject.VersionId;
+            data.Key = domainObject.Id;
+            data.CreationTime = (DateTimeOffset)domainObject.CreationTime;
 
             return data;
 
@@ -62,7 +68,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.NonIdentityUpdate);
 
             // This is technically an insert and not an update
-            var existingObject = context.GetTable<TDomain>().FirstOrDefault(o => o.Id == data.Key && !o.ObsoletionTime.HasValue); // Get the last version (current)
+            var existingObject = context.GetTable<TDomain>().FirstOrDefault(ExpressionRewriter.Rewrite<TDomain>(o => o.Id == data.Key && !o.ObsoletionTime.HasValue)); // Get the last version (current)
             if (existingObject == null)
                 throw new KeyNotFoundException(data.Key.ToString());
             else if (existingObject.IsReadonly)
@@ -80,7 +86,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             newEntityVersion.Id = data.Key;
             data.PreviousVersionKey = newEntityVersion.ReplacesVersionId = existingObject.VersionId;
             data.CreatedByKey = newEntityVersion.CreatedBy = user.UserId;
-            data.CreationTime = newEntityVersion.CreationTime = DateTimeOffset.Now;
             // Obsolete the old version 
             existingObject.ObsoletedBy = user.UserId;
             existingObject.ObsoletionTime = DateTime.Now;
@@ -89,10 +94,24 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             context.SubmitChanges();
 
             data.VersionSequence = newEntityVersion.VersionSequenceId;
-            data.VersionKey = newEntityVersion.Id;
+            data.VersionKey = newEntityVersion.VersionId;
+            data.CreationTime = newEntityVersion.CreationTime;
 
             return data;
             //return base.Update(context, data, principal);
+        }
+
+        /// <summary>
+        /// Gets the specified object
+        /// </summary>
+        public override TModel Get<TIdentifier>(MARC.HI.EHRS.SVC.Core.Data.Identifier<TIdentifier> containerId, IPrincipal principal, bool loadFast)
+        {
+            var tr = 0;
+            var uuid = containerId as Identifier<Guid>;
+            if (uuid.VersionId == Guid.Empty)
+                return base.Get<TIdentifier>(containerId, principal, loadFast);
+            else
+                return base.Query(o => o.Key == uuid.Id && o.VersionKey == uuid.VersionId, 0, 1, principal, out tr).FirstOrDefault();
         }
 
         /// <summary>
@@ -114,7 +133,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     itm.SourceEntityKey = source.Key;
 
             // Get existing
-            var existing = context.GetTable<TDomainAssociation>().Where(o => o.AssociatedItemKey == source.Key && source.VersionSequence >= o.EffectiveVersionSequenceId && (source.VersionSequence < o.ObsoleteVersionSequenceId || !o.ObsoleteVersionSequenceId.HasValue)).Select(o => m_mapper.MapDomainInstance<TDomainAssociation, TAssociation>(o));
+            var existing = context.GetTable<TDomainAssociation>().Where(ExpressionRewriter.Rewrite<TDomainAssociation>(o => o.AssociatedItemKey == source.Key && source.VersionSequence >= o.EffectiveVersionSequenceId && (source.VersionSequence < o.ObsoleteVersionSequenceId || !o.ObsoleteVersionSequenceId.HasValue))).ToList().Select(o => m_mapper.MapDomainInstance<TDomainAssociation, TAssociation>(o).GetLocked() as TAssociation);
             
             // Remove old
             var obsoleteRecords = existing.Where(o => !storage.Exists(ecn => ecn.Key == o.Key));
@@ -136,9 +155,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 ins.EffectiveVersionSequenceId = source.VersionSequence;
                 persistenceService.Insert(context, ins, principal);
             }
-
-
-
         }
     }
 }

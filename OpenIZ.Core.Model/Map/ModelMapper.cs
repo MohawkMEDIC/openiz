@@ -197,7 +197,9 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         public TDomain MapModelInstance<TModel, TDomain>(TModel modelInstance) where TDomain : new()
         {
-            ClassMap classMap = this.m_mapFile.GetModelClassMap(typeof(TModel));
+            ClassMap classMap = this.m_mapFile.GetModelClassMap(typeof(TModel), typeof(TDomain));
+            if (classMap == null)
+                classMap = this.m_mapFile.GetModelClassMap(typeof(TModel));
 
             if (classMap == null || modelInstance == null)
                 return default(TDomain);

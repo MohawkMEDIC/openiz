@@ -133,6 +133,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
 
                     data.SetDelayLoad(false);
                     data = this.Insert(connection, data, principal);
+                    connection.SubmitChanges();
+
                     data.SetDelayLoad(true);
 
                     if (mode == TransactionMode.Commit)
@@ -189,6 +191,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
 
                     data.SetDelayLoad(false);
                     data = this.Update(connection, data, principal);
+                    connection.SubmitChanges();
+
                     data.SetDelayLoad(true);
 
                     if (mode == TransactionMode.Commit)
@@ -242,6 +246,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
 
                     data.SetDelayLoad(false);
                     data = this.Obsolete(connection, data, principal);
+                    connection.SubmitChanges();
+
                     data.SetDelayLoad(true);
 
                     if (mode == TransactionMode.Commit)
@@ -265,7 +271,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// <summary>
         /// Gets the specified object
         /// </summary>
-        public TData Get<TIdentifier>(MARC.HI.EHRS.SVC.Core.Data.Identifier<TIdentifier> containerId, IPrincipal principal, bool loadFast)
+        public virtual TData Get<TIdentifier>(MARC.HI.EHRS.SVC.Core.Data.Identifier<TIdentifier> containerId, IPrincipal principal, bool loadFast)
         {
             var tr = 0;
             var guidIdentifier = containerId as Identifier<Guid>;
@@ -285,7 +291,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// <summary>
         /// Performs query returning all results
         /// </summary>
-        public IEnumerable<TData> Query(Expression<Func<TData, bool>> query, IPrincipal authContext)
+        public virtual IEnumerable<TData> Query(Expression<Func<TData, bool>> query, IPrincipal authContext)
         {
             var tr = 0;
             return this.Query(query, 0, null, authContext, out tr);
@@ -294,7 +300,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// <summary>
         /// Performs the specified query
         /// </summary>
-        public IEnumerable<TData> Query(Expression<Func<TData, bool>> query, int offset, int? count, IPrincipal authContext, out int totalCount)
+        public virtual IEnumerable<TData> Query(Expression<Func<TData, bool>> query, int offset, int? count, IPrincipal authContext, out int totalCount)
         {
             if (query == null)
                 throw new ArgumentNullException(nameof(query));

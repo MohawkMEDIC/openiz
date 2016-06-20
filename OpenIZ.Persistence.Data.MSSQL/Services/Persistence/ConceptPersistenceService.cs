@@ -33,7 +33,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Concept names
             if (retVal.ConceptNames != null)
-                base.UpdateAssociatedItems<Core.Model.DataTypes.ConceptName, Data.ConceptName>(
+                base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ConceptName, Data.ConceptName>(
                     retVal.ConceptNames,
                     data,
                     context,
@@ -53,7 +53,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             var sourceKey = data.Key.ToByteArray();
             if (retVal.ConceptNames != null)
-                base.UpdateAssociatedItems<Core.Model.DataTypes.ConceptName, Data.ConceptName>(
+                base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ConceptName, Data.ConceptName>(
                      retVal.ConceptNames,
                      data,
                      context,

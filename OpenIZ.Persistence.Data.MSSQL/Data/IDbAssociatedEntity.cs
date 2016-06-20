@@ -42,7 +42,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Get the associated item key
         /// </summary>
-        [Column(Name = "EntityAddressId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("EntityAddressId")]
         public Guid AssociatedItemKey
         {
             get
@@ -82,6 +82,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Represents the associated item key
         /// </summary>
+        [LinqPropertyMap(nameof(ConceptId))]
         public Guid AssociatedItemKey
         {
             get
@@ -98,6 +99,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the unique identifier
         /// </summary>
+        [LinqPropertyMap(nameof(ConceptNameId))]
         public Guid Id
         {
             get
@@ -538,7 +540,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the item key
         /// </summary>
-        [Column(Name = "ConceptId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("ConceptId")]
         public Guid AssociatedItemKey
         {
             get

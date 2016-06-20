@@ -31,13 +31,24 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// Gets or sets teh version of the object this replaces
         /// </summary>
         Guid? ReplacesVersionId { get; set; }
+    }
 
+    /// <summary>
+    /// Versioned data with chained property
+    /// </summary>
+    /// <typeparam name="TDomainKey"></typeparam>
+    public interface IDbVersionedData<TDomainKey> : IDbVersionedData
+    { 
+        /// <summary>
+        /// Gets or sets the non versioned object
+        /// </summary>
+        TDomainKey NonVersionedObject { get; set; }
     }
 
     /// <summary>
     /// Represents the implementation of interfaces for entity version
     /// </summary>
-    public partial class EntityVersion : IDbVersionedData
+    public partial class EntityVersion : IDbVersionedData<Entity>
     {
         /// <summary>
         /// Indication whether value is readonly 
@@ -53,7 +64,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [Column(Name = "EntityId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("EntityId")]
         public Guid Id
         {
             get
@@ -70,7 +81,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the version id
         /// </summary>
-        [Column(Name = "EntityVersionId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("EntityVersionId")]
         public Guid VersionId
         {
             get
@@ -83,13 +94,28 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
                 this.EntityVersionId = value;
             }
         }
-        
+
+        /// <summary>
+        /// Gets or sets the non versioned object
+        /// </summary>
+        public Entity NonVersionedObject
+        {
+            get
+            {
+                return this.Entity;
+            }
+
+            set
+            {
+                this.Entity = value;
+            }
+        }
     }
 
     /// <summary>
     /// Represents the implementation of interfaces for act version
     /// </summary>
-    public partial class ActVersion : IDbVersionedData
+    public partial class ActVersion : IDbVersionedData<Act>
     {
         /// <summary>
         /// Indication whether value is readonly 
@@ -105,7 +131,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [Column(Name = "ActId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("ActId")]
         public Guid Id
         {
             get
@@ -122,7 +148,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the version id
         /// </summary>
-        [Column(Name = "ActVersionId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("ActVersionId")]
         public Guid VersionId
         {
             get
@@ -136,12 +162,27 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
             }
         }
 
+        /// <summary>
+        /// Gets or sets the non versioned object
+        /// </summary>
+        public Act NonVersionedObject
+        {
+            get
+            {
+                return this.Act;
+            }
+
+            set
+            {
+                this.Act = value;
+            }
+        }
     }
 
     /// <summary>
     /// Concept version 
     /// </summary>
-    public partial class ConceptVersion : IDbVersionedData
+    public partial class ConceptVersion : IDbVersionedData<Concept>
     {
         /// <summary>
         /// Gets readonly status
@@ -157,7 +198,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [Column(Name = "ConceptId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("ConceptId")]
         public Guid Id
         {
             get
@@ -174,7 +215,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the version key
         /// </summary>
-        [Column(Name = "ConceptVersionId", AutoSync = AutoSync.Never)]
+        [LinqPropertyMap("ConceptVersionId")]
         public Guid VersionId
         {
             get
@@ -185,6 +226,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
             set
             {
                 this.ConceptVersionId = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the non versioned object
+        /// </summary>
+        public Concept NonVersionedObject
+        {
+            get
+            {
+                return this.Concept;
+            }
+
+            set
+            {
+                this.Concept = value;
             }
         }
 
