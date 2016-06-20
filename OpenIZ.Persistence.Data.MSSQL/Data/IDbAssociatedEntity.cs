@@ -42,7 +42,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Get the associated item key
         /// </summary>
-        [LinqPropertyMap("EntityAddressId")]
+        [LinqPropertyMap(nameof(EntityAddressId))]
         public Guid AssociatedItemKey
         {
             get
@@ -59,6 +59,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the identifier
         /// </summary>
+        [LinqPropertyMap(nameof(EntityAddressComponentId))]
         public Guid Id
         {
             get
@@ -122,6 +123,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Get the associated item key
         /// </summary>
+        [LinqPropertyMap(nameof(EntityNameId))]
         public Guid AssociatedItemKey
         {
             get
@@ -138,6 +140,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the identifier
         /// </summary>
+        [LinqPropertyMap(nameof(EntityNameComponentId))]
         public Guid Id
         {
             get
@@ -161,6 +164,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets the associated item key
         /// </summary>
+        [LinqPropertyMap(nameof(EntityId))]
         public Guid AssociatedItemKey
         {
             get
@@ -177,6 +181,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the id
         /// </summary>
+        [LinqPropertyMap(nameof(EntityAddressId))]
         public Guid Id
         {
             get
@@ -199,6 +204,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets the associated item key
         /// </summary>
+        [LinqPropertyMap(nameof(EntityId))]
         public Guid AssociatedItemKey
         {
             get
@@ -215,6 +221,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the id
         /// </summary>
+        [LinqPropertyMap(nameof(EntityNameId))]
         public Guid Id
         {
             get
@@ -237,6 +244,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets the associated item key
         /// </summary>
+        [LinqPropertyMap(nameof(SourceEntityId))]
         public Guid AssociatedItemKey
         {
             get
@@ -253,6 +261,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the id
         /// </summary>
+        [LinqPropertyMap(nameof(EntityAssociationId))]
         public Guid Id
         {
             get
@@ -274,6 +283,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets the associated item key
         /// </summary>
+        [LinqPropertyMap(nameof(EntityId))]
         public Guid AssociatedItemKey
         {
             get
@@ -290,6 +300,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the id
         /// </summary>
+        [LinqPropertyMap(nameof(EntityNoteId))]
         public Guid Id
         {
             get
@@ -312,6 +323,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets the associated item key
         /// </summary>
+        [LinqPropertyMap(nameof(EntityId))]
         public Guid AssociatedItemKey
         {
             get
@@ -328,6 +340,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the id
         /// </summary>
+        [LinqPropertyMap(nameof(EntityIdentifierId))]
         public Guid Id
         {
             get
@@ -350,6 +363,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets the associated item key
         /// </summary>
+        [LinqPropertyMap(nameof(EntityId))]
         public Guid AssociatedItemKey
         {
             get
@@ -366,6 +380,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the id
         /// </summary>
+        [LinqPropertyMap(nameof(EntityExtensionId))]
         public Guid Id
         {
             get
@@ -388,6 +403,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets the associated item key
         /// </summary>
+        [LinqPropertyMap(nameof(EntityId))]
         public Guid AssociatedItemKey
         {
             get
@@ -404,6 +420,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the id
         /// </summary>
+        [LinqPropertyMap(nameof(EntityTelecomAddressId))]
         public Guid Id
         {
             get
@@ -426,6 +443,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets the associated item key
         /// </summary>
+        [LinqPropertyMap(nameof(EntityId))]
         public Guid AssociatedItemKey
         {
             get
@@ -442,6 +460,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the id
         /// </summary>
+        [LinqPropertyMap(nameof(EntityTagId))]
         public Guid Id
         {
             get
@@ -464,6 +483,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets the associated item key
         /// </summary>
+        [LinqPropertyMap(nameof(PersonEntityId))]
         public Guid AssociatedItemKey
         {
             get
@@ -480,6 +500,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the id
         /// </summary>
+        [LinqPropertyMap(nameof(PersonLanguageCommunicationId))]
         public Guid Id
         {
             get
@@ -502,6 +523,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the item key
         /// </summary>
+        [LinqPropertyMap(nameof(PlaceEntityId))]
         public Guid AssociatedItemKey
         {
             get
@@ -518,6 +540,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the unique identifier
         /// </summary>
+        [LinqPropertyMap(nameof(PlaceServiceId))]
         public Guid Id
         {
             get
@@ -540,7 +563,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the item key
         /// </summary>
-        [LinqPropertyMap("ConceptId")]
+        [LinqPropertyMap(nameof(ConceptId))]
         public Guid AssociatedItemKey
         {
             get
@@ -557,6 +580,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the unique identifier
         /// </summary>
+        [LinqPropertyMap(nameof(ConceptReferenceTermId))]
         public Guid Id
         {
             get

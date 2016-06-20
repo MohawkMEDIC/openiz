@@ -288,6 +288,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                 throw e;
             }
 
+            // Bind some basic service stuff
+            ApplicationContext.Current.GetService<IDataPersistenceService<Core.Model.Security.SecurityUser>>().Inserting += (o, e) => {
+                if(String.IsNullOrEmpty(e.Data.SecurityHash))
+                    e.Data.SecurityHash = Guid.NewGuid().ToString();
+            };
+            ApplicationContext.Current.GetService<IDataPersistenceService<Core.Model.Security.SecurityUser>>().Updating += (o, e) => {
+                e.Data.SecurityHash = Guid.NewGuid().ToString();
+            };
+
             this.m_running = true;
             this.Started?.Invoke(this, EventArgs.Empty);
 

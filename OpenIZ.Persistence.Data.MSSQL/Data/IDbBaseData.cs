@@ -38,7 +38,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [LinqPropertyMap("ReferenceTermDisplayNameId")]
+        [LinqPropertyMap(nameof(ReferenceTermDisplayNameId))]
         public Guid Id
         {
             get
@@ -61,7 +61,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [LinqPropertyMap("ExtensionTypeId")]
+        [LinqPropertyMap(nameof(ExtensionTypeId))]
         public Guid Id
         {
             get
@@ -84,7 +84,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [LinqPropertyMap("ReferenceTermId")]
+        [LinqPropertyMap(nameof(ReferenceTermId))]
         public Guid Id
         {
             get
@@ -107,7 +107,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [LinqPropertyMap("PhoneticAlgorithmId")]
+        [LinqPropertyMap(nameof(PhoneticAlgorithmId))]
         public Guid Id
         {
             get
@@ -130,7 +130,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [LinqPropertyMap("CodeSystemId")]
+        [LinqPropertyMap(nameof(ConceptRelationshipTypeId))]
         public Guid Id
         {
             get
@@ -153,7 +153,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [LinqPropertyMap("CodeSystemId")]
+        [LinqPropertyMap(nameof(CodeSystemId))]
         public Guid Id
         {
             get
@@ -177,7 +177,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [LinqPropertyMap("AssigningAuthorityId")]
+        [LinqPropertyMap(nameof(AssigningAuthorityId))]
         public Guid Id
         {
             get
@@ -201,7 +201,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [LinqPropertyMap("ConceptClassId")]
+        [LinqPropertyMap(nameof(ConceptClassId))]
         public Guid Id
         {
             get
@@ -225,7 +225,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [LinqPropertyMap("ConceptSetId")]
+        [LinqPropertyMap(nameof(ConceptSetId))]
         public Guid Id
         {
             get
@@ -248,7 +248,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [LinqPropertyMap("PolicyId")]
+        [LinqPropertyMap(nameof(PolicyId))]
         public Guid Id
         {
             get
@@ -272,7 +272,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [LinqPropertyMap("ApplicationId")]
+        [LinqPropertyMap(nameof(ApplicationId))]
         public Guid Id
         {
             get
@@ -296,7 +296,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [LinqPropertyMap("DeviceId")]
+        [LinqPropertyMap(nameof(DeviceId))]
         public Guid Id
         {
             get
@@ -320,7 +320,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [LinqPropertyMap("RoleId")]
+        [LinqPropertyMap(nameof(RoleId))]
         public Guid Id
         {
             get
@@ -344,7 +344,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Identification for object
         /// </summary>
-        [LinqPropertyMap("UserId")]
+        [LinqPropertyMap(nameof(UserId))]
         public Guid Id
         {
             get

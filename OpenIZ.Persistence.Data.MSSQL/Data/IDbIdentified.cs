@@ -26,7 +26,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the key for the interface
         /// </summary>
-        [LinqPropertyMap("EntityVersionId")]
+        [LinqPropertyMap(nameof(EntityVersionId))]
         public Guid Id
         {
             get { return this.EntityVersionId; }
@@ -42,7 +42,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the key for the interface
         /// </summary>
-        [LinqPropertyMap("EntityVersionId")]
+        [LinqPropertyMap(nameof(EntityVersionId))]
         public Guid Id
         {
             get { return this.EntityVersionId; }
@@ -58,7 +58,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the key for the interface
         /// </summary>
-        [LinqPropertyMap("EntityVersionId")]
+        [LinqPropertyMap(nameof(EntityVersionId))]
         public Guid Id
         {
             get { return this.EntityVersionId; }
@@ -74,7 +74,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the key for the interface
         /// </summary>
-        [LinqPropertyMap("EntityVersionId")]
+        [LinqPropertyMap(nameof(EntityVersionId))]
         public Guid Id
         {
             get { return this.EntityVersionId; }
@@ -90,7 +90,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the key for the interface
         /// </summary>
-        [LinqPropertyMap("EntityVersionId")]
+        [LinqPropertyMap(nameof(EntityVersionId))]
         public Guid Id
         {
             get { return this.EntityVersionId; }
@@ -106,7 +106,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the key for the interface
         /// </summary>
-        [LinqPropertyMap("EntityVersionId")]
+        [LinqPropertyMap(nameof(EntityVersionId))]
         public Guid Id
         {
             get { return this.EntityVersionId; }
@@ -122,7 +122,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the key for the interface
         /// </summary>
-        [LinqPropertyMap("EntityVersionId")]
+        [LinqPropertyMap(nameof(EntityVersionId))]
         public Guid Id
         {
             get { return this.EntityVersionId; }
@@ -138,7 +138,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the key for the interface
         /// </summary>
-        [LinqPropertyMap("EntityVersionId")]
+        [LinqPropertyMap(nameof(EntityVersionId))]
         public Guid Id
         {
             get { return this.EntityVersionId;  }
@@ -154,7 +154,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the key 
         /// </summary>
-        [LinqPropertyMap("ConceptId")]
+        [LinqPropertyMap(nameof(ConceptId))]
         public Guid Id
         {
             get
@@ -177,7 +177,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [LinqPropertyMap("EntityId")]
+        [LinqPropertyMap(nameof(EntityId))]
         public Guid Id
         {
             get
@@ -201,7 +201,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [LinqPropertyMap("EntityVersionId")]
+        [LinqPropertyMap(nameof(EntityVersionId))]
         public Guid Id
         {
             get
@@ -224,7 +224,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [LinqPropertyMap("IdentifierTypeId")]
+        [LinqPropertyMap(nameof(IdentifierTypeId))]
         public Guid Id
         {
             get

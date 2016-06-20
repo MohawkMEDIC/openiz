@@ -64,7 +64,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [LinqPropertyMap("EntityId")]
+        [LinqPropertyMap(nameof(EntityId))]
         public Guid Id
         {
             get
@@ -81,7 +81,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the version id
         /// </summary>
-        [LinqPropertyMap("EntityVersionId")]
+        [LinqPropertyMap(nameof(EntityVersionId))]
         public Guid VersionId
         {
             get
@@ -98,6 +98,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the non versioned object
         /// </summary>
+        [LinqPropertyMap(nameof(Entity))]
+
         public Entity NonVersionedObject
         {
             get
@@ -131,7 +133,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [LinqPropertyMap("ActId")]
+        [LinqPropertyMap(nameof(ActId))]
         public Guid Id
         {
             get
@@ -148,7 +150,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the version id
         /// </summary>
-        [LinqPropertyMap("ActVersionId")]
+        [LinqPropertyMap(nameof(ActVersionId))]
         public Guid VersionId
         {
             get
@@ -165,6 +167,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the non versioned object
         /// </summary>
+        [LinqPropertyMap(nameof(Act))]
         public Act NonVersionedObject
         {
             get
@@ -198,7 +201,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [LinqPropertyMap("ConceptId")]
+        [LinqPropertyMap(nameof(ConceptId))]
         public Guid Id
         {
             get
@@ -215,7 +218,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the version key
         /// </summary>
-        [LinqPropertyMap("ConceptVersionId")]
+        [LinqPropertyMap(nameof(ConceptVersionId))]
         public Guid VersionId
         {
             get
@@ -232,6 +235,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Gets or sets the non versioned object
         /// </summary>
+        [LinqPropertyMap(nameof(Concept))]
         public Concept NonVersionedObject
         {
             get

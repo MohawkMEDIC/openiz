@@ -14,7 +14,11 @@
     <property modelName="Roles" domainName="SecurityUserRoles">
       <via domainName="SecurityRole"/>
     </property>
-    
+    <property modelName="PasswordHash" domainName="UserPassword"/>
+    <property modelName="UserClass" domainName="UserClass"/>
+    <property modelName="SecurityHash" domainName="SecurityStamp"/>
+    <property modelName="InvalidLoginAttempts" domainName="FailedLoginAttempts"/>
+    <property modelName="LastLoginTime" domainName="LastSuccessfulLogin"/>
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="UpdatedByEntity" keyName="UpdatedBy"/>
@@ -295,6 +299,16 @@
     <collapseKey propertyName="StatusConcept" keyName="StatusConceptId"/>
   </class>
 
+  <class modelClass="OpenIZ.Core.Model.Entities.Entity, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.MSSQL.Data.Entity, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="ClassConceptKey" domainName="ClassConceptId"/>
+    <property modelName="ClassConcept" domainName="ClassConcept"/>
+    <property modelName="DeterminerConceptKey" domainName="DeterminerConceptId"/>
+    <property modelName="DeterminerConcept" domainName="DeterminerConcept"/>
+    <collapseKey propertyName="ClassConcept" keyName="ClassConceptId"/>
+    <collapseKey propertyName="DeterminerConcept" keyName="DeterminerConceptId"/>
+  </class>
+  
   <class modelClass="OpenIZ.Core.Model.Entities.EntityName, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.EntityName, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="EntityNameId"/>
