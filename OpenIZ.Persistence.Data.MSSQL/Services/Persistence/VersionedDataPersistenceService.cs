@@ -108,8 +108,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var tr = 0;
             var uuid = containerId as Identifier<Guid>;
+            
+            // Get most recent version
             if (uuid.VersionId == Guid.Empty)
-                return base.Get<TIdentifier>(containerId, principal, loadFast);
+                return base.Query(o => o.Key == uuid.Id && o.ObsoletionTime == null, 0, 1, principal, out tr).FirstOrDefault();
             else
                 return base.Query(o => o.Key == uuid.Id && o.VersionKey == uuid.VersionId, 0, 1, principal, out tr).FirstOrDefault();
         }
