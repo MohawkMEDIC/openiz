@@ -137,5 +137,31 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// </summary>
         [WebGet(UriTemplate = "/?xsd={schemaId}")]
         XmlSchema GetSchema(int schemaId);
+
+        /// <summary>
+        /// Security Role information
+        /// </summary>
+        /// <returns></returns>
+        [WebGet(UriTemplate = "role/", BodyStyle = WebMessageBodyStyle.Bare)]
+        AmiCollection<SecurityRoleInfo> GetRoles();
+
+        /// <summary>
+        /// Create a security Role 
+        /// </summary>
+        [WebInvoke(UriTemplate = "role/", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+        SecurityRoleInfo CreateRole(SecurityRoleInfo Role);
+
+        /// <summary>
+        /// Get a security Role
+        /// </summary>
+        [WebGet(UriTemplate = "role/{roleId}", BodyStyle = WebMessageBodyStyle.Bare)]
+        SecurityRoleInfo GetRole(string roleId);
+
+        /// <summary>
+        /// Delete a security Role
+        /// </summary>
+        [WebInvoke(UriTemplate = "role/{roleId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+        SecurityRoleInfo DeleteRole(string roleId);
+
     }
 }
