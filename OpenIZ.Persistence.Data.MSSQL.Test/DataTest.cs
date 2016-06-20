@@ -20,7 +20,7 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenIZ.Core.Model.EntityLoader;
-using OpenIZ.Persistence.Data.MSSQL.Services.Persistence;
+using OpenIZ.Persistence.Data.MSSQL.Services;
 using System;
 using System.IO;
 
@@ -37,7 +37,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test
                 EntitySource.Current = new EntitySource(new PersistenceServiceEntitySource());
 
             // Start the daemon services
-            var sqlPersistenceService = ApplicationContext.Current.GetService<SqlPersistenceService>();
+            var sqlPersistenceService = ApplicationContext.Current.GetService<SqlServerPersistenceService>();
             if (!sqlPersistenceService.IsRunning)
             {
                 ApplicationContext.Current.Configuration.ServiceProviders.Add(typeof(LocalConfigurationManager));

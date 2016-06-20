@@ -17,13 +17,15 @@
  * Date: 2016-2-1
  */
 using MARC.HI.EHRS.SVC.Core.Services.Policy;
+using OpenIZ.Core.Model.Map;
 using OpenIZ.Core.Model.Security;
-using OpenIZ.Persistence.Data.MSSQL.Services.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIZ.Persistence.Data.MSSQL.Data;
+using OpenIZ.Persistence.Data.MSSQL.Services;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Security
 {
@@ -32,7 +34,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
     /// </summary>
     public class SqlSecurityPolicyInstance : IPolicyInstance
     {
-
+        // Model mapper instance
+        private static ModelMapper s_mapper = SqlServerPersistenceService.GetMapper();
 
         /// <summary>
         /// Local security policy instance
@@ -41,7 +44,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
         {
             this.Policy = new SqlSecurityPolicy(rolePolicy.Policy);
             this.Rule = (PolicyDecisionOutcomeType)rolePolicy.PolicyAction;
-            this.Securable = new SecurityRolePersistenceService().ConvertToModel(rolePolicy.SecurityRole);
+            this.Securable = s_mapper.MapDomainInstance<Data.SecurityRole, Core.Model.Security.SecurityRole>(rolePolicy.SecurityRole);
         }
 
         /// <summary>
@@ -51,7 +54,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
         {
             this.Policy = new SqlSecurityPolicy(devicePolicy.Policy);
             this.Rule = (PolicyDecisionOutcomeType)devicePolicy.PolicyAction;
-            // TODO: Securable
+            this.Securable = s_mapper.MapDomainInstance<Data.SecurityDevice, Core.Model.Security.SecurityDevice>(devicePolicy.SecurityDevice);
         }
 
         /// <summary>
@@ -61,7 +64,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
         {
             this.Policy = new SqlSecurityPolicy(applicationPolicy.Policy);
             this.Rule = (PolicyDecisionOutcomeType)applicationPolicy.PolicyAction;
-            // TODO: Securable
+            this.Securable = s_mapper.MapDomainInstance<Data.SecurityApplication, Core.Model.Security.SecurityApplication>(applicationPolicy.SecurityApplication);
+
         }
 
         /// <summary>
@@ -72,7 +76,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
             this.Policy = new SqlSecurityPolicy(actPolicy.Policy);
             // TODO: Configuration of the policy as opt-in / opt-out
             this.Rule = PolicyDecisionOutcomeType.Grant;
-            // TODO: Securable
+            this.Securable = s_mapper.MapDomainInstance<Data.ActVersion, Core.Model.Acts.Act>(actPolicy.Act.ActVersions.CurrentVersion());
         }
 
         /// <summary>

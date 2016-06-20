@@ -78,6 +78,11 @@ namespace OpenIZ.Core.Model
                 this.m_updatedBy = base.DelayLoad(this.m_updatedById, this.m_updatedBy);
                 return m_updatedBy;
             }
+            set
+            {
+                this.m_updatedBy = value;
+                this.m_updatedById = value?.Key;
+            }
         }
 
         /// <summary>

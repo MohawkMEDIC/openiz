@@ -18,6 +18,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +37,34 @@ namespace OpenIZ.Core.Model.Map
         private Dictionary<String, PropertyMap> m_modelPropertyMap = new Dictionary<String, PropertyMap>();
         private Dictionary<String, PropertyMap> m_domainPropertyMap = new Dictionary<String, PropertyMap>();
         private Object m_lockObject = new Object();
+        private Type m_domainType = null;
+        private Type m_modelType = null;
+
+        /// <summary>
+        /// Gets the domain CLR type
+        /// </summary>
+        [XmlIgnore]
+        public Type DomainType
+        {
+            get
+            {
+                if (this.m_domainType == null)
+                    this.m_domainType = Type.GetType(this.DomainClass);
+                return this.m_domainType;
+            }
+        }
+
+        /// <summary>
+        /// Gets the model CLR type
+        /// </summary>
+        [XmlIgnore]
+        public Type ModelType { get
+            {
+                if (this.m_modelType == null)
+                    this.m_modelType = Type.GetType(this.ModelClass);
+                return this.m_modelType;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the model class for the mapper
@@ -90,6 +119,9 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         public IEnumerable<ValidationResultDetail> Validate()
         {
+#if DEBUG
+            Debug.WriteLine(String.Format("Validating {0}>{1}", this.ModelClass, this.DomainClass));
+#endif
             List<ValidationResultDetail> retVal = new List<ValidationResultDetail>();
             Type modelClass = Type.GetType(this.ModelClass),
                 domainClass = Type.GetType(this.DomainClass);
@@ -99,9 +131,9 @@ namespace OpenIZ.Core.Model.Map
                 retVal.Add(new ValidationResultDetail(ResultDetailType.Error, String.Format("Class {0} not found", this.DomainClass), null, null));
 
             foreach(var p in this.Property)
-                retVal.AddRange(p.Validate(modelClass, domainClass));
+                retVal.AddRange(p.Validate(modelClass, domainClass).Select(o => { o.Location = this.ModelClass; return o; }));
             foreach (var k in this.CollapseKey)
-                retVal.AddRange(k.Validate(domainClass));
+                retVal.AddRange(k.Validate(domainClass).Select(o => { o.Location = this.ModelClass; return o; }));
 
             return retVal;
         }

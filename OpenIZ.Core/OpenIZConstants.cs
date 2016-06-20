@@ -45,5 +45,10 @@ namespace OpenIZ.Core
         internal const string BasicHttpClientCredentialHeaderName = "X-OpenIZClient-Authorization";
         // WCF trace source
         internal const string WcfTraceSourceName = "OpenIZ.Core.Wcf";
+
+        // Panic error code
+        internal const string GeneralPanicErrorCode = "01189998819991197253";
+        // General panic error text
+        internal const string GeneralPanicErrorText = "0118 999 881 999 119 7253 - FATAL ERROR: {0}";
     }
 }

@@ -51,6 +51,11 @@ namespace OpenIZ.Core.Model.DataTypes
         public byte[] ExtensionValue { get; set; }
 
         /// <summary>
+        /// Gets or sets an extension displayable value
+        /// </summary>
+        public String ExtensionDisplay { get; set; }
+
+        /// <summary>
         /// Gets or sets the extension type key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]

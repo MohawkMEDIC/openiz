@@ -39,7 +39,9 @@ namespace OpenIZ.Core
         public static String GetLocaleString(this ApplicationContext me, String stringId)
         {
             var locale = me.GetService<ILocalizationService>();
-            if (locale == null)
+            if (stringId == OpenIzConstants.GeneralPanicErrorCode)
+                return OpenIzConstants.GeneralPanicErrorText;
+            else if (locale == null)
                 return stringId;
             else
                 return locale.GetString(stringId);

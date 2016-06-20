@@ -30,12 +30,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertUserEntity(UserEntity instance);
-    partial void UpdateUserEntity(UserEntity instance);
-    partial void DeleteUserEntity(UserEntity instance);
     partial void InsertAct(Act instance);
     partial void UpdateAct(Act instance);
     partial void DeleteAct(Act instance);
+    partial void InsertUserEntity(UserEntity instance);
+    partial void UpdateUserEntity(UserEntity instance);
+    partial void DeleteUserEntity(UserEntity instance);
     partial void InsertActExtension(ActExtension instance);
     partial void UpdateActExtension(ActExtension instance);
     partial void DeleteActExtension(ActExtension instance);
@@ -132,9 +132,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void InsertEntityNameComponent(EntityNameComponent instance);
     partial void UpdateEntityNameComponent(EntityNameComponent instance);
     partial void DeleteEntityNameComponent(EntityNameComponent instance);
-    partial void InsertEntityNameUse(EntityNameUse instance);
-    partial void UpdateEntityNameUse(EntityNameUse instance);
-    partial void DeleteEntityNameUse(EntityNameUse instance);
     partial void InsertEntityNote(EntityNote instance);
     partial void UpdateEntityNote(EntityNote instance);
     partial void DeleteEntityNote(EntityNote instance);
@@ -258,7 +255,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     #endregion
 		
 		public ModelDataContext() : 
-				base(global::OpenIZ.Persistence.Data.MSSQL.Properties.Settings.Default.OpenIZ_TestConnectionString, mappingSource)
+				base(global::OpenIZ.Persistence.Data.MSSQL.Properties.Settings.Default.OpenIZ_TestConnectionString1, mappingSource)
 		{
 			OnCreated();
 		}
@@ -287,19 +284,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		public System.Data.Linq.Table<UserEntity> UserEntities
-		{
-			get
-			{
-				return this.GetTable<UserEntity>();
-			}
-		}
-		
 		public System.Data.Linq.Table<Act> Acts
 		{
 			get
 			{
 				return this.GetTable<Act>();
+			}
+		}
+		
+		public System.Data.Linq.Table<UserEntity> UserEntities
+		{
+			get
+			{
+				return this.GetTable<UserEntity>();
 			}
 		}
 		
@@ -556,14 +553,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			get
 			{
 				return this.GetTable<EntityNameComponent>();
-			}
-		}
-		
-		public System.Data.Linq.Table<EntityNameUse> EntityNameUses
-		{
-			get
-			{
-				return this.GetTable<EntityNameUse>();
 			}
 		}
 		
@@ -896,174 +885,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.UserEntity")]
-	public partial class UserEntity : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private System.Guid _EntityVersionId;
-		
-		private System.Guid _UserId;
-		
-		private EntityRef<Person> _Person;
-		
-		private EntityRef<SecurityUser> _SecurityUser;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnEntityVersionIdChanging(System.Guid value);
-    partial void OnEntityVersionIdChanged();
-    partial void OnUserIdChanging(System.Guid value);
-    partial void OnUserIdChanged();
-    #endregion
-		
-		public UserEntity()
-		{
-			this._Person = default(EntityRef<Person>);
-			this._SecurityUser = default(EntityRef<SecurityUser>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
-		public System.Guid EntityVersionId
-		{
-			get
-			{
-				return this._EntityVersionId;
-			}
-			set
-			{
-				if ((this._EntityVersionId != value))
-				{
-					if (this._Person.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnEntityVersionIdChanging(value);
-					this.SendPropertyChanging();
-					this._EntityVersionId = value;
-					this.SendPropertyChanged("EntityVersionId");
-					this.OnEntityVersionIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid UserId
-		{
-			get
-			{
-				return this._UserId;
-			}
-			set
-			{
-				if ((this._UserId != value))
-				{
-					if (this._SecurityUser.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnUserIdChanging(value);
-					this.SendPropertyChanging();
-					this._UserId = value;
-					this.SendPropertyChanged("UserId");
-					this.OnUserIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Person_UserEntity", Storage="_Person", ThisKey="EntityVersionId", OtherKey="EntityVersionId", IsForeignKey=true)]
-		public Person Person
-		{
-			get
-			{
-				return this._Person.Entity;
-			}
-			set
-			{
-				Person previousValue = this._Person.Entity;
-				if (((previousValue != value) 
-							|| (this._Person.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Person.Entity = null;
-						previousValue.UserEntity = null;
-					}
-					this._Person.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntity = this;
-						this._EntityVersionId = value.EntityVersionId;
-					}
-					else
-					{
-						this._EntityVersionId = default(System.Guid);
-					}
-					this.SendPropertyChanged("Person");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity", Storage="_SecurityUser", ThisKey="UserId", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser SecurityUser
-		{
-			get
-			{
-				return this._SecurityUser.Entity;
-			}
-			set
-			{
-				SecurityUser previousValue = this._SecurityUser.Entity;
-				if (((previousValue != value) 
-							|| (this._SecurityUser.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._SecurityUser.Entity = null;
-						previousValue.UserEntities.Remove(this);
-					}
-					this._SecurityUser.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntities.Add(this);
-						this._UserId = value.UserId;
-					}
-					else
-					{
-						this._UserId = default(System.Guid);
-					}
-					this.SendPropertyChanged("SecurityUser");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Act")]
 	public partial class Act : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -1129,7 +950,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ActId
 		{
 			get
@@ -1540,6 +1361,174 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.UserEntity")]
+	public partial class UserEntity : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _EntityVersionId;
+		
+		private System.Guid _UserId;
+		
+		private EntityRef<Person> _Person;
+		
+		private EntityRef<SecurityUser> _SecurityUser;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnEntityVersionIdChanging(System.Guid value);
+    partial void OnEntityVersionIdChanged();
+    partial void OnUserIdChanging(System.Guid value);
+    partial void OnUserIdChanged();
+    #endregion
+		
+		public UserEntity()
+		{
+			this._Person = default(EntityRef<Person>);
+			this._SecurityUser = default(EntityRef<SecurityUser>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		public System.Guid EntityVersionId
+		{
+			get
+			{
+				return this._EntityVersionId;
+			}
+			set
+			{
+				if ((this._EntityVersionId != value))
+				{
+					if (this._Person.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnEntityVersionIdChanging(value);
+					this.SendPropertyChanging();
+					this._EntityVersionId = value;
+					this.SendPropertyChanged("EntityVersionId");
+					this.OnEntityVersionIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid UserId
+		{
+			get
+			{
+				return this._UserId;
+			}
+			set
+			{
+				if ((this._UserId != value))
+				{
+					if (this._SecurityUser.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUserIdChanging(value);
+					this.SendPropertyChanging();
+					this._UserId = value;
+					this.SendPropertyChanged("UserId");
+					this.OnUserIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Person_UserEntity", Storage="_Person", ThisKey="EntityVersionId", OtherKey="EntityVersionId", IsForeignKey=true)]
+		public Person Person
+		{
+			get
+			{
+				return this._Person.Entity;
+			}
+			set
+			{
+				Person previousValue = this._Person.Entity;
+				if (((previousValue != value) 
+							|| (this._Person.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Person.Entity = null;
+						previousValue.UserEntity = null;
+					}
+					this._Person.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntity = this;
+						this._EntityVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EntityVersionId = default(System.Guid);
+					}
+					this.SendPropertyChanged("Person");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity", Storage="_SecurityUser", ThisKey="UserId", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser SecurityUser
+		{
+			get
+			{
+				return this._SecurityUser.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._SecurityUser.Entity;
+				if (((previousValue != value) 
+							|| (this._SecurityUser.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SecurityUser.Entity = null;
+						previousValue.UserEntities.Remove(this);
+					}
+					this._SecurityUser.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntities.Add(this);
+						this._UserId = value.UserId;
+					}
+					else
+					{
+						this._UserId = default(System.Guid);
+					}
+					this.SendPropertyChanged("SecurityUser");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ActExtension")]
 	public partial class ActExtension : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -1591,7 +1580,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActExtensionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActExtensionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ActExtensionId
 		{
 			get
@@ -1882,7 +1871,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActIdentifierId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActIdentifierId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ActIdentifierId
 		{
 			get
@@ -2204,7 +2193,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActNoteId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActNoteId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ActNoteId
 		{
 			get
@@ -2474,7 +2463,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActParticipationId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActParticipationId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ActParticipationId
 		{
 			get
@@ -2801,7 +2790,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActPolicyId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActPolicyId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ActPolicyId
 		{
 			get
@@ -3264,7 +3253,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActRelationshipId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActRelationshipId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ActRelationshipId
 		{
 			get
@@ -3577,7 +3566,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActTagId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActTagId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ActTagId
 		{
 			get
@@ -3979,7 +3968,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ActVersionId
 		{
 			get
@@ -4658,6 +4647,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<EntityVersion> _EntityVersion;
 		
+		private EntityRef<SecurityApplication> _SecurityApplication;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -4677,10 +4668,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		public ApplicationEntity()
 		{
 			this._EntityVersion = default(EntityRef<EntityVersion>);
+			this._SecurityApplication = default(EntityRef<SecurityApplication>);
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityVersionId
 		{
 			get
@@ -4715,6 +4707,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._ApplicationId != value))
 				{
+					if (this._SecurityApplication.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
 					this.OnApplicationIdChanging(value);
 					this.SendPropertyChanging();
 					this._ApplicationId = value;
@@ -4818,6 +4814,40 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityApplication_ApplicationEntity", Storage="_SecurityApplication", ThisKey="ApplicationId", OtherKey="ApplicationId", IsForeignKey=true)]
+		public SecurityApplication SecurityApplication
+		{
+			get
+			{
+				return this._SecurityApplication.Entity;
+			}
+			set
+			{
+				SecurityApplication previousValue = this._SecurityApplication.Entity;
+				if (((previousValue != value) 
+							|| (this._SecurityApplication.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SecurityApplication.Entity = null;
+						previousValue.ApplicationEntities.Remove(this);
+					}
+					this._SecurityApplication.Entity = value;
+					if ((value != null))
+					{
+						value.ApplicationEntities.Add(this);
+						this._ApplicationId = value.ApplicationId;
+					}
+					else
+					{
+						this._ApplicationId = default(System.Guid);
+					}
+					this.SendPropertyChanged("SecurityApplication");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -4863,7 +4893,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _CreatedBy;
 		
-		private System.Nullable<System.DateTimeOffset> _ObsoleteTime;
+		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
 		
 		private System.Nullable<System.Guid> _ObsoletedBy;
 		
@@ -4899,8 +4929,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnCreationTimeChanged();
     partial void OnCreatedByChanging(System.Guid value);
     partial void OnCreatedByChanged();
-    partial void OnObsoleteTimeChanging(System.Nullable<System.DateTimeOffset> value);
-    partial void OnObsoleteTimeChanged();
+    partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnObsoletionTimeChanged();
     partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
     partial void OnObsoletedByChanged();
     #endregion
@@ -4915,7 +4945,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AssigningAuthorityId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AssigningAuthorityId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid AssigningAuthorityId
 		{
 			get
@@ -5103,22 +5133,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoleteTime", DbType="DateTimeOffset")]
-		public System.Nullable<System.DateTimeOffset> ObsoleteTime
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> ObsoletionTime
 		{
 			get
 			{
-				return this._ObsoleteTime;
+				return this._ObsoletionTime;
 			}
 			set
 			{
-				if ((this._ObsoleteTime != value))
+				if ((this._ObsoletionTime != value))
 				{
-					this.OnObsoleteTimeChanging(value);
+					this.OnObsoletionTimeChanging(value);
 					this.SendPropertyChanging();
-					this._ObsoleteTime = value;
-					this.SendPropertyChanged("ObsoleteTime");
-					this.OnObsoleteTimeChanged();
+					this._ObsoletionTime = value;
+					this.SendPropertyChanged("ObsoletionTime");
+					this.OnObsoletionTimeChanged();
 				}
 			}
 		}
@@ -5351,7 +5381,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ActVersionId
 		{
 			get
@@ -5573,7 +5603,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CodeSystemId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CodeSystemId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid CodeSystemId
 		{
 			get
@@ -6065,10 +6095,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<EntityNameComponent> _EntityNameComponentsComponentTypeConceptId;
 		
-		private EntitySet<EntityNameUse> _EntityNameUsesEntityClassScopeConceptId;
-		
-		private EntitySet<EntityNameUse> _EntityNameUsesNameUseConceptId;
-		
 		private EntitySet<EntityTelecomAddress> _EntityTelecomAddressesTelecomAddressTypeConceptId;
 		
 		private EntitySet<EntityTelecomAddress> _EntityTelecomAddressesTelecomUseConceptId;
@@ -6136,8 +6162,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._EntityAssociationsAssociationTypeConceptId = new EntitySet<EntityAssociation>(new Action<EntityAssociation>(this.attach_EntityAssociationsAssociationTypeConceptId), new Action<EntityAssociation>(this.detach_EntityAssociationsAssociationTypeConceptId));
 			this._EntityNamesNameUseConceptId = new EntitySet<EntityName>(new Action<EntityName>(this.attach_EntityNamesNameUseConceptId), new Action<EntityName>(this.detach_EntityNamesNameUseConceptId));
 			this._EntityNameComponentsComponentTypeConceptId = new EntitySet<EntityNameComponent>(new Action<EntityNameComponent>(this.attach_EntityNameComponentsComponentTypeConceptId), new Action<EntityNameComponent>(this.detach_EntityNameComponentsComponentTypeConceptId));
-			this._EntityNameUsesEntityClassScopeConceptId = new EntitySet<EntityNameUse>(new Action<EntityNameUse>(this.attach_EntityNameUsesEntityClassScopeConceptId), new Action<EntityNameUse>(this.detach_EntityNameUsesEntityClassScopeConceptId));
-			this._EntityNameUsesNameUseConceptId = new EntitySet<EntityNameUse>(new Action<EntityNameUse>(this.attach_EntityNameUsesNameUseConceptId), new Action<EntityNameUse>(this.detach_EntityNameUsesNameUseConceptId));
 			this._EntityTelecomAddressesTelecomAddressTypeConceptId = new EntitySet<EntityTelecomAddress>(new Action<EntityTelecomAddress>(this.attach_EntityTelecomAddressesTelecomAddressTypeConceptId), new Action<EntityTelecomAddress>(this.detach_EntityTelecomAddressesTelecomAddressTypeConceptId));
 			this._EntityTelecomAddressesTelecomUseConceptId = new EntitySet<EntityTelecomAddress>(new Action<EntityTelecomAddress>(this.attach_EntityTelecomAddressesTelecomUseConceptId), new Action<EntityTelecomAddress>(this.detach_EntityTelecomAddressesTelecomUseConceptId));
 			this._EntityVersionsStatusConceptId = new EntitySet<EntityVersion>(new Action<EntityVersion>(this.attach_EntityVersionsStatusConceptId), new Action<EntityVersion>(this.detach_EntityVersionsStatusConceptId));
@@ -6158,7 +6182,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ConceptId
 		{
 			get
@@ -6468,32 +6492,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			set
 			{
 				this._EntityNameComponentsComponentTypeConceptId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityNameUse", Storage="_EntityNameUsesEntityClassScopeConceptId", ThisKey="ConceptId", OtherKey="EntityClassScopeConceptId")]
-		public EntitySet<EntityNameUse> EntityNameUsesEntityClassScopeConceptId
-		{
-			get
-			{
-				return this._EntityNameUsesEntityClassScopeConceptId;
-			}
-			set
-			{
-				this._EntityNameUsesEntityClassScopeConceptId.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityNameUse1", Storage="_EntityNameUsesNameUseConceptId", ThisKey="ConceptId", OtherKey="NameUseConceptId")]
-		public EntitySet<EntityNameUse> EntityNameUsesNameUseConceptId
-		{
-			get
-			{
-				return this._EntityNameUsesNameUseConceptId;
-			}
-			set
-			{
-				this._EntityNameUsesNameUseConceptId.Assign(value);
 			}
 		}
 		
@@ -6990,30 +6988,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			entity.ComponentTypeConcept = null;
 		}
 		
-		private void attach_EntityNameUsesEntityClassScopeConceptId(EntityNameUse entity)
-		{
-			this.SendPropertyChanging();
-			entity.EntityClassScopeConcept = this;
-		}
-		
-		private void detach_EntityNameUsesEntityClassScopeConceptId(EntityNameUse entity)
-		{
-			this.SendPropertyChanging();
-			entity.EntityClassScopeConcept = null;
-		}
-		
-		private void attach_EntityNameUsesNameUseConceptId(EntityNameUse entity)
-		{
-			this.SendPropertyChanging();
-			entity.NameUseConcept = this;
-		}
-		
-		private void detach_EntityNameUsesNameUseConceptId(EntityNameUse entity)
-		{
-			this.SendPropertyChanging();
-			entity.NameUseConcept = null;
-		}
-		
 		private void attach_EntityTelecomAddressesTelecomAddressTypeConceptId(EntityTelecomAddress entity)
 		{
 			this.SendPropertyChanging();
@@ -7284,7 +7258,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptClassId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptClassId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ConceptClassId
 		{
 			get
@@ -7679,7 +7653,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptNameId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptNameId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ConceptNameId
 		{
 			get
@@ -7986,7 +7960,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptReferenceTermId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptReferenceTermId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ConceptReferenceTermId
 		{
 			get
@@ -8291,7 +8265,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptRelationshipId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptRelationshipId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ConceptRelationshipId
 		{
 			get
@@ -8614,7 +8588,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptRelationshipTypeId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptRelationshipTypeId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ConceptRelationshipTypeId
 		{
 			get
@@ -9056,7 +9030,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptSetId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptSetId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ConceptSetId
 		{
 			get
@@ -9706,7 +9680,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConceptVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ConceptVersionId
 		{
 			get
@@ -10239,7 +10213,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityVersionId
 		{
 			get
@@ -10424,7 +10398,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _EntityId;
 		
-		private System.Nullable<System.Guid> _ClassConceptId;
+		private System.Guid _ClassConceptId;
 		
 		private System.Guid _DeterminerConceptId;
 		
@@ -10468,7 +10442,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnCreated();
     partial void OnEntityIdChanging(System.Guid value);
     partial void OnEntityIdChanged();
-    partial void OnClassConceptIdChanging(System.Nullable<System.Guid> value);
+    partial void OnClassConceptIdChanging(System.Guid value);
     partial void OnClassConceptIdChanged();
     partial void OnDeterminerConceptIdChanging(System.Guid value);
     partial void OnDeterminerConceptIdChanged();
@@ -10496,7 +10470,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityId
 		{
 			get
@@ -10516,8 +10490,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClassConceptId", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> ClassConceptId
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClassConceptId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid ClassConceptId
 		{
 			get
 			{
@@ -10786,7 +10760,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					}
 					else
 					{
-						this._ClassConceptId = default(Nullable<System.Guid>);
+						this._ClassConceptId = default(System.Guid);
 					}
 					this.SendPropertyChanged("ClassConcept");
 				}
@@ -11074,7 +11048,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityAddressId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityAddressId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityAddressId
 		{
 			get
@@ -11338,7 +11312,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityAddressComponentId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityAddressComponentId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityAddressComponentId
 		{
 			get
@@ -11581,7 +11555,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ValueId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ValueId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ValueId
 		{
 			get
@@ -11720,7 +11694,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityAssociationId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityAssociationId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityAssociationId
 		{
 			get
@@ -12055,7 +12029,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityExtensionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityExtensionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityExtensionId
 		{
 			get
@@ -12302,7 +12276,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _EntityId;
 		
-		private System.Guid _IdentifierTypeId;
+		private System.Nullable<System.Guid> _IdentifierTypeId;
 		
 		private decimal _EffectiveVersionSequenceId;
 		
@@ -12326,7 +12300,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnEntityIdentifierIdChanged();
     partial void OnEntityIdChanging(System.Guid value);
     partial void OnEntityIdChanged();
-    partial void OnIdentifierTypeIdChanging(System.Guid value);
+    partial void OnIdentifierTypeIdChanging(System.Nullable<System.Guid> value);
     partial void OnIdentifierTypeIdChanged();
     partial void OnEffectiveVersionSequenceIdChanging(decimal value);
     partial void OnEffectiveVersionSequenceIdChanged();
@@ -12346,7 +12320,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityIdentifierId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityIdentifierId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityIdentifierId
 		{
 			get
@@ -12390,8 +12364,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdentifierTypeId", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid IdentifierTypeId
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdentifierTypeId", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> IdentifierTypeId
 		{
 			get
 			{
@@ -12593,7 +12567,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					}
 					else
 					{
-						this._IdentifierTypeId = default(System.Guid);
+						this._IdentifierTypeId = default(Nullable<System.Guid>);
 					}
 					this.SendPropertyChanged("IdentifierType");
 				}
@@ -12639,9 +12613,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<EntityNameComponent> _EntityNameComponents;
 		
-		private EntityRef<Concept> _NameUseConcept;
-		
 		private EntityRef<Entity> _Entity;
+		
+		private EntityRef<Concept> _NameUseConcept;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -12662,12 +12636,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		public EntityName()
 		{
 			this._EntityNameComponents = new EntitySet<EntityNameComponent>(new Action<EntityNameComponent>(this.attach_EntityNameComponents), new Action<EntityNameComponent>(this.detach_EntityNameComponents));
-			this._NameUseConcept = default(EntityRef<Concept>);
 			this._Entity = default(EntityRef<Entity>);
+			this._NameUseConcept = default(EntityRef<Concept>);
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityNameId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityNameId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityNameId
 		{
 			get
@@ -12788,40 +12762,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityName", Storage="_NameUseConcept", ThisKey="NameUseConceptId", OtherKey="ConceptId", IsForeignKey=true)]
-		public Concept NameUseConcept
-		{
-			get
-			{
-				return this._NameUseConcept.Entity;
-			}
-			set
-			{
-				Concept previousValue = this._NameUseConcept.Entity;
-				if (((previousValue != value) 
-							|| (this._NameUseConcept.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._NameUseConcept.Entity = null;
-						previousValue.EntityNamesNameUseConceptId.Remove(this);
-					}
-					this._NameUseConcept.Entity = value;
-					if ((value != null))
-					{
-						value.EntityNamesNameUseConceptId.Add(this);
-						this._NameUseConceptId = value.ConceptId;
-					}
-					else
-					{
-						this._NameUseConceptId = default(Nullable<System.Guid>);
-					}
-					this.SendPropertyChanged("NameUseConcept");
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_EntityName", Storage="_Entity", ThisKey="EntityId", OtherKey="EntityId", IsForeignKey=true)]
 		public Entity Entity
 		{
@@ -12852,6 +12792,40 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._EntityId = default(System.Guid);
 					}
 					this.SendPropertyChanged("Entity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityName", Storage="_NameUseConcept", ThisKey="NameUseConceptId", OtherKey="ConceptId", IsForeignKey=true)]
+		public Concept NameUseConcept
+		{
+			get
+			{
+				return this._NameUseConcept.Entity;
+			}
+			set
+			{
+				Concept previousValue = this._NameUseConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._NameUseConcept.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._NameUseConcept.Entity = null;
+						previousValue.EntityNamesNameUseConceptId.Remove(this);
+					}
+					this._NameUseConcept.Entity = value;
+					if ((value != null))
+					{
+						value.EntityNamesNameUseConceptId.Add(this);
+						this._NameUseConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._NameUseConceptId = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("NameUseConcept");
 				}
 			}
 		}
@@ -12931,7 +12905,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityNameComponentId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityNameComponentId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityNameComponentId
 		{
 			get
@@ -13146,198 +13120,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.EntityNameUse")]
-	public partial class EntityNameUse : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private System.Guid _EntityNameUseId;
-		
-		private System.Guid _NameUseConceptId;
-		
-		private System.Guid _EntityClassScopeConceptId;
-		
-		private EntityRef<Concept> _EntityClassScopeConcept;
-		
-		private EntityRef<Concept> _NameUseConcept;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnEntityNameUseIdChanging(System.Guid value);
-    partial void OnEntityNameUseIdChanged();
-    partial void OnNameUseConceptIdChanging(System.Guid value);
-    partial void OnNameUseConceptIdChanged();
-    partial void OnEntityClassScopeConceptIdChanging(System.Guid value);
-    partial void OnEntityClassScopeConceptIdChanged();
-    #endregion
-		
-		public EntityNameUse()
-		{
-			this._EntityClassScopeConcept = default(EntityRef<Concept>);
-			this._NameUseConcept = default(EntityRef<Concept>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityNameUseId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
-		public System.Guid EntityNameUseId
-		{
-			get
-			{
-				return this._EntityNameUseId;
-			}
-			set
-			{
-				if ((this._EntityNameUseId != value))
-				{
-					this.OnEntityNameUseIdChanging(value);
-					this.SendPropertyChanging();
-					this._EntityNameUseId = value;
-					this.SendPropertyChanged("EntityNameUseId");
-					this.OnEntityNameUseIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NameUseConceptId", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid NameUseConceptId
-		{
-			get
-			{
-				return this._NameUseConceptId;
-			}
-			set
-			{
-				if ((this._NameUseConceptId != value))
-				{
-					if (this._NameUseConcept.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnNameUseConceptIdChanging(value);
-					this.SendPropertyChanging();
-					this._NameUseConceptId = value;
-					this.SendPropertyChanged("NameUseConceptId");
-					this.OnNameUseConceptIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityClassScopeConceptId", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid EntityClassScopeConceptId
-		{
-			get
-			{
-				return this._EntityClassScopeConceptId;
-			}
-			set
-			{
-				if ((this._EntityClassScopeConceptId != value))
-				{
-					if (this._EntityClassScopeConcept.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnEntityClassScopeConceptIdChanging(value);
-					this.SendPropertyChanging();
-					this._EntityClassScopeConceptId = value;
-					this.SendPropertyChanged("EntityClassScopeConceptId");
-					this.OnEntityClassScopeConceptIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityNameUse", Storage="_EntityClassScopeConcept", ThisKey="EntityClassScopeConceptId", OtherKey="ConceptId", IsForeignKey=true)]
-		public Concept EntityClassScopeConcept
-		{
-			get
-			{
-				return this._EntityClassScopeConcept.Entity;
-			}
-			set
-			{
-				Concept previousValue = this._EntityClassScopeConcept.Entity;
-				if (((previousValue != value) 
-							|| (this._EntityClassScopeConcept.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._EntityClassScopeConcept.Entity = null;
-						previousValue.EntityNameUsesEntityClassScopeConceptId.Remove(this);
-					}
-					this._EntityClassScopeConcept.Entity = value;
-					if ((value != null))
-					{
-						value.EntityNameUsesEntityClassScopeConceptId.Add(this);
-						this._EntityClassScopeConceptId = value.ConceptId;
-					}
-					else
-					{
-						this._EntityClassScopeConceptId = default(System.Guid);
-					}
-					this.SendPropertyChanged("EntityClassScopeConcept");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_EntityNameUse1", Storage="_NameUseConcept", ThisKey="NameUseConceptId", OtherKey="ConceptId", IsForeignKey=true)]
-		public Concept NameUseConcept
-		{
-			get
-			{
-				return this._NameUseConcept.Entity;
-			}
-			set
-			{
-				Concept previousValue = this._NameUseConcept.Entity;
-				if (((previousValue != value) 
-							|| (this._NameUseConcept.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._NameUseConcept.Entity = null;
-						previousValue.EntityNameUsesNameUseConceptId.Remove(this);
-					}
-					this._NameUseConcept.Entity = value;
-					if ((value != null))
-					{
-						value.EntityNameUsesNameUseConceptId.Add(this);
-						this._NameUseConceptId = value.ConceptId;
-					}
-					else
-					{
-						this._NameUseConceptId = default(System.Guid);
-					}
-					this.SendPropertyChanged("NameUseConcept");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.EntityNote")]
 	public partial class EntityNote : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -13385,7 +13167,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityNoteId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityNoteId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityNoteId
 		{
 			get
@@ -13618,7 +13400,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.DateTimeOffset _CreationTime;
 		
-		private System.Nullable<System.Guid> _CreatedBy;
+		private System.Guid _CreatedBy;
 		
 		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
 		
@@ -13644,7 +13426,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnValueChanged();
     partial void OnCreationTimeChanging(System.DateTimeOffset value);
     partial void OnCreationTimeChanged();
-    partial void OnCreatedByChanging(System.Nullable<System.Guid> value);
+    partial void OnCreatedByChanging(System.Guid value);
     partial void OnCreatedByChanged();
     partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
     partial void OnObsoletionTimeChanged();
@@ -13660,7 +13442,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityTagId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityTagId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityTagId
 		{
 			get
@@ -13765,7 +13547,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> CreatedBy
+		public System.Guid CreatedBy
 		{
 			get
 			{
@@ -13893,7 +13675,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					}
 					else
 					{
-						this._CreatedBy = default(Nullable<System.Guid>);
+						this._CreatedBy = default(System.Guid);
 					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
@@ -14009,7 +13791,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityTelecomAddressId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityTelecomAddressId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityTelecomAddressId
 		{
 			get
@@ -14300,7 +14082,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _StatusConceptId;
 		
-		private System.Nullable<System.Guid> _CreatedBy;
+		private System.Guid _CreatedBy;
 		
 		private System.DateTimeOffset _CreationTime;
 		
@@ -14350,7 +14132,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnReplacesVersionIdChanged();
     partial void OnStatusConceptIdChanging(System.Guid value);
     partial void OnStatusConceptIdChanged();
-    partial void OnCreatedByChanging(System.Nullable<System.Guid> value);
+    partial void OnCreatedByChanging(System.Guid value);
     partial void OnCreatedByChanged();
     partial void OnCreationTimeChanging(System.DateTimeOffset value);
     partial void OnCreationTimeChanged();
@@ -14380,7 +14162,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityVersionId
 		{
 			get
@@ -14492,8 +14274,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> CreatedBy
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid CreatedBy
 		{
 			get
 			{
@@ -14516,7 +14298,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", DbType="DateTimeOffset NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", AutoSync=AutoSync.Always, DbType="DateTimeOffset NOT NULL", IsDbGenerated=true)]
 		public System.DateTimeOffset CreationTime
 		{
 			get
@@ -14954,7 +14736,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					}
 					else
 					{
-						this._CreatedBy = default(Nullable<System.Guid>);
+						this._CreatedBy = default(System.Guid);
 					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
@@ -15044,7 +14826,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.DateTimeOffset _CreationTime;
 		
-		private System.Guid _EnabledBy;
+		private System.Guid _CreatedBy;
 		
 		private System.Nullable<System.DateTimeOffset> _UpdatedTime;
 		
@@ -15058,7 +14840,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<EntityExtension> _EntityExtensions;
 		
-		private EntityRef<SecurityUser> _EnabledByEntity;
+		private EntityRef<SecurityUser> _CreatedByEntity;
 		
 		private EntityRef<SecurityUser> _ObsoletedByEntity;
 		
@@ -15078,8 +14860,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnIsEnabledChanged();
     partial void OnCreationTimeChanging(System.DateTimeOffset value);
     partial void OnCreationTimeChanged();
-    partial void OnEnabledByChanging(System.Guid value);
-    partial void OnEnabledByChanged();
+    partial void OnCreatedByChanging(System.Guid value);
+    partial void OnCreatedByChanged();
     partial void OnUpdatedTimeChanging(System.Nullable<System.DateTimeOffset> value);
     partial void OnUpdatedTimeChanged();
     partial void OnUpdatedByChanging(System.Nullable<System.Guid> value);
@@ -15094,13 +14876,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this._ActExtensions = new EntitySet<ActExtension>(new Action<ActExtension>(this.attach_ActExtensions), new Action<ActExtension>(this.detach_ActExtensions));
 			this._EntityExtensions = new EntitySet<EntityExtension>(new Action<EntityExtension>(this.attach_EntityExtensions), new Action<EntityExtension>(this.detach_EntityExtensions));
-			this._EnabledByEntity = default(EntityRef<SecurityUser>);
+			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
 			this._UpdatedByEntity = default(EntityRef<SecurityUser>);
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionTypeId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionTypeId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ExtensionTypeId
 		{
 			get
@@ -15200,26 +14982,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EnabledBy", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid EnabledBy
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid CreatedBy
 		{
 			get
 			{
-				return this._EnabledBy;
+				return this._CreatedBy;
 			}
 			set
 			{
-				if ((this._EnabledBy != value))
+				if ((this._CreatedBy != value))
 				{
-					if (this._EnabledByEntity.HasLoadedOrAssignedValue)
+					if (this._CreatedByEntity.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
-					this.OnEnabledByChanging(value);
+					this.OnCreatedByChanging(value);
 					this.SendPropertyChanging();
-					this._EnabledBy = value;
-					this.SendPropertyChanged("EnabledBy");
-					this.OnEnabledByChanged();
+					this._CreatedBy = value;
+					this.SendPropertyChanged("CreatedBy");
+					this.OnCreatedByChanged();
 				}
 			}
 		}
@@ -15338,36 +15120,36 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ExtensionType", Storage="_EnabledByEntity", ThisKey="EnabledBy", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser EnabledByEntity
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ExtensionType", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser CreatedByEntity
 		{
 			get
 			{
-				return this._EnabledByEntity.Entity;
+				return this._CreatedByEntity.Entity;
 			}
 			set
 			{
-				SecurityUser previousValue = this._EnabledByEntity.Entity;
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
 				if (((previousValue != value) 
-							|| (this._EnabledByEntity.HasLoadedOrAssignedValue == false)))
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
 					if ((previousValue != null))
 					{
-						this._EnabledByEntity.Entity = null;
-						previousValue.ExtensionTypesEnabledBy.Remove(this);
+						this._CreatedByEntity.Entity = null;
+						previousValue.ExtensionTypesCreatedBy.Remove(this);
 					}
-					this._EnabledByEntity.Entity = value;
+					this._CreatedByEntity.Entity = value;
 					if ((value != null))
 					{
-						value.ExtensionTypesEnabledBy.Add(this);
-						this._EnabledBy = value.UserId;
+						value.ExtensionTypesCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
 					}
 					else
 					{
-						this._EnabledBy = default(System.Guid);
+						this._CreatedBy = default(System.Guid);
 					}
-					this.SendPropertyChanged("EnabledByEntity");
+					this.SendPropertyChanged("CreatedByEntity");
 				}
 			}
 		}
@@ -15526,7 +15308,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdentifierTypeId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IdentifierTypeId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid IdentifierTypeId
 		{
 			get
@@ -15761,7 +15543,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityVersionId
 		{
 			get
@@ -15913,7 +15695,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityVersionId
 		{
 			get
@@ -16241,7 +16023,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ActVersionId
 		{
 			get
@@ -16516,7 +16298,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityVersionId
 		{
 			get
@@ -16696,7 +16478,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityVersionId
 		{
 			get
@@ -16924,7 +16706,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ActVersionId
 		{
 			get
@@ -17102,7 +16884,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityVersionId
 		{
 			get
@@ -17352,7 +17134,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PersonLanguageCommunicationId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PersonLanguageCommunicationId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid PersonLanguageCommunicationId
 		{
 			get
@@ -17602,7 +17384,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PhoneticAlgorithmId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PhoneticAlgorithmId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid PhoneticAlgorithmId
 		{
 			get
@@ -18031,7 +17813,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PhoneticValueId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PhoneticValueId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid PhoneticValueId
 		{
 			get
@@ -18231,7 +18013,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityVersionId
 		{
 			get
@@ -18417,7 +18199,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlaceServiceId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlaceServiceId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid PlaceServiceId
 		{
 			get
@@ -18709,7 +18491,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PolicyId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PolicyId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid PolicyId
 		{
 			get
@@ -19177,7 +18959,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProtocolId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProtocolId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ProtocolId
 		{
 			get
@@ -19638,7 +19420,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProtocolHandlerId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProtocolHandlerId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ProtocolHandlerId
 		{
 			get
@@ -19951,7 +19733,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityVersionId
 		{
 			get
@@ -20116,7 +19898,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActParticipationId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActParticipationId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ActParticipationId
 		{
 			get
@@ -20243,7 +20025,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityAssociationId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityAssociationId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid EntityAssociationId
 		{
 			get
@@ -20381,7 +20163,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ActVersionId
 		{
 			get
@@ -20629,7 +20411,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReferenceTermId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReferenceTermId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ReferenceTermId
 		{
 			get
@@ -21105,7 +20887,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReferenceTermDisplayNameId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReferenceTermDisplayNameId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ReferenceTermDisplayNameId
 		{
 			get
@@ -21520,6 +21302,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.Guid> _ReplacesApplicationId;
 		
+		private EntitySet<ApplicationEntity> _ApplicationEntities;
+		
 		private EntitySet<SecurityApplicationPolicy> _SecurityApplicationPolicies;
 		
 		private EntityRef<SecurityUser> _CreatedByEntity;
@@ -21550,13 +21334,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public SecurityApplication()
 		{
+			this._ApplicationEntities = new EntitySet<ApplicationEntity>(new Action<ApplicationEntity>(this.attach_ApplicationEntities), new Action<ApplicationEntity>(this.detach_ApplicationEntities));
 			this._SecurityApplicationPolicies = new EntitySet<SecurityApplicationPolicy>(new Action<SecurityApplicationPolicy>(this.attach_SecurityApplicationPolicies), new Action<SecurityApplicationPolicy>(this.detach_SecurityApplicationPolicies));
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ApplicationId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ApplicationId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ApplicationId
 		{
 			get
@@ -21724,6 +21509,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityApplication_ApplicationEntity", Storage="_ApplicationEntities", ThisKey="ApplicationId", OtherKey="ApplicationId")]
+		public EntitySet<ApplicationEntity> ApplicationEntities
+		{
+			get
+			{
+				return this._ApplicationEntities;
+			}
+			set
+			{
+				this._ApplicationEntities.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityApplication_SecurityApplicationPolicy", Storage="_SecurityApplicationPolicies", ThisKey="ApplicationId", OtherKey="ApplicationId")]
 		public EntitySet<SecurityApplicationPolicy> SecurityApplicationPolicies
 		{
@@ -21825,6 +21623,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		private void attach_ApplicationEntities(ApplicationEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityApplication = this;
+		}
+		
+		private void detach_ApplicationEntities(ApplicationEntity entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityApplication = null;
+		}
+		
 		private void attach_SecurityApplicationPolicies(SecurityApplicationPolicy entity)
 		{
 			this.SendPropertyChanging();
@@ -21844,6 +21654,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
+		private System.Guid _SecurityPolicyInstanceId;
+		
 		private System.Guid _ApplicationId;
 		
 		private System.Guid _PolicyId;
@@ -21858,6 +21670,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
+    partial void OnSecurityPolicyInstanceIdChanging(System.Guid value);
+    partial void OnSecurityPolicyInstanceIdChanged();
     partial void OnApplicationIdChanging(System.Guid value);
     partial void OnApplicationIdChanged();
     partial void OnPolicyIdChanging(System.Guid value);
@@ -21873,7 +21687,27 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ApplicationId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SecurityPolicyInstanceId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		public System.Guid SecurityPolicyInstanceId
+		{
+			get
+			{
+				return this._SecurityPolicyInstanceId;
+			}
+			set
+			{
+				if ((this._SecurityPolicyInstanceId != value))
+				{
+					this.OnSecurityPolicyInstanceIdChanging(value);
+					this.SendPropertyChanging();
+					this._SecurityPolicyInstanceId = value;
+					this.SendPropertyChanged("SecurityPolicyInstanceId");
+					this.OnSecurityPolicyInstanceIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ApplicationId", DbType="UniqueIdentifier NOT NULL")]
 		public System.Guid ApplicationId
 		{
 			get
@@ -21897,7 +21731,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PolicyId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PolicyId", DbType="UniqueIdentifier NOT NULL")]
 		public System.Guid PolicyId
 		{
 			get
@@ -22094,7 +21928,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeviceId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeviceId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid DeviceId
 		{
 			get
@@ -22432,6 +22266,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
+		private System.Guid _SecurityPolicyInstanceId;
+		
 		private System.Guid _DeviceId;
 		
 		private System.Guid _PolicyId;
@@ -22446,6 +22282,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
+    partial void OnSecurityPolicyInstanceIdChanging(System.Guid value);
+    partial void OnSecurityPolicyInstanceIdChanged();
     partial void OnDeviceIdChanging(System.Guid value);
     partial void OnDeviceIdChanged();
     partial void OnPolicyIdChanging(System.Guid value);
@@ -22461,7 +22299,27 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeviceId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SecurityPolicyInstanceId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		public System.Guid SecurityPolicyInstanceId
+		{
+			get
+			{
+				return this._SecurityPolicyInstanceId;
+			}
+			set
+			{
+				if ((this._SecurityPolicyInstanceId != value))
+				{
+					this.OnSecurityPolicyInstanceIdChanging(value);
+					this.SendPropertyChanging();
+					this._SecurityPolicyInstanceId = value;
+					this.SendPropertyChanged("SecurityPolicyInstanceId");
+					this.OnSecurityPolicyInstanceIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeviceId", DbType="UniqueIdentifier NOT NULL")]
 		public System.Guid DeviceId
 		{
 			get
@@ -22485,7 +22343,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PolicyId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PolicyId", DbType="UniqueIdentifier NOT NULL")]
 		public System.Guid PolicyId
 		{
 			get
@@ -22686,7 +22544,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoleId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoleId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid RoleId
 		{
 			get
@@ -23057,6 +22915,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
+		private System.Guid _SecurityPolicyInstanceId;
+		
 		private System.Guid _RoleId;
 		
 		private System.Guid _PolicyId;
@@ -23071,6 +22931,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
+    partial void OnSecurityPolicyInstanceIdChanging(System.Guid value);
+    partial void OnSecurityPolicyInstanceIdChanged();
     partial void OnRoleIdChanging(System.Guid value);
     partial void OnRoleIdChanged();
     partial void OnPolicyIdChanging(System.Guid value);
@@ -23086,7 +22948,27 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoleId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SecurityPolicyInstanceId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		public System.Guid SecurityPolicyInstanceId
+		{
+			get
+			{
+				return this._SecurityPolicyInstanceId;
+			}
+			set
+			{
+				if ((this._SecurityPolicyInstanceId != value))
+				{
+					this.OnSecurityPolicyInstanceIdChanging(value);
+					this.SendPropertyChanging();
+					this._SecurityPolicyInstanceId = value;
+					this.SendPropertyChanged("SecurityPolicyInstanceId");
+					this.OnSecurityPolicyInstanceIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoleId", DbType="UniqueIdentifier NOT NULL")]
 		public System.Guid RoleId
 		{
 			get
@@ -23110,7 +22992,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PolicyId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PolicyId", DbType="UniqueIdentifier NOT NULL")]
 		public System.Guid PolicyId
 		{
 			get
@@ -23277,7 +23159,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.DateTimeOffset _CreationTime;
 		
-		private System.Nullable<System.Guid> _CreatedBy;
+		private System.Guid _CreatedBy;
 		
 		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
 		
@@ -23337,7 +23219,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<EntityVersion> _EntityVersionsObsoletedBy;
 		
-		private EntitySet<ExtensionType> _ExtensionTypesEnabledBy;
+		private EntitySet<ExtensionType> _ExtensionTypesCreatedBy;
 		
 		private EntitySet<ExtensionType> _ExtensionTypesObsoletedBy;
 		
@@ -23403,6 +23285,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<SecurityUser> _UpdatedByEntity;
 		
+		private EntityRef<SecurityUserClass> _UserClassEntity;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -23435,7 +23319,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnLastSuccessfulLoginChanged();
     partial void OnCreationTimeChanging(System.DateTimeOffset value);
     partial void OnCreationTimeChanged();
-    partial void OnCreatedByChanging(System.Nullable<System.Guid> value);
+    partial void OnCreatedByChanging(System.Guid value);
     partial void OnCreatedByChanged();
     partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
     partial void OnObsoletionTimeChanged();
@@ -23474,7 +23358,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._EntityTagsObsoletedBy = new EntitySet<EntityTag>(new Action<EntityTag>(this.attach_EntityTagsObsoletedBy), new Action<EntityTag>(this.detach_EntityTagsObsoletedBy));
 			this._EntityVersionsCreatedBy = new EntitySet<EntityVersion>(new Action<EntityVersion>(this.attach_EntityVersionsCreatedBy), new Action<EntityVersion>(this.detach_EntityVersionsCreatedBy));
 			this._EntityVersionsObsoletedBy = new EntitySet<EntityVersion>(new Action<EntityVersion>(this.attach_EntityVersionsObsoletedBy), new Action<EntityVersion>(this.detach_EntityVersionsObsoletedBy));
-			this._ExtensionTypesEnabledBy = new EntitySet<ExtensionType>(new Action<ExtensionType>(this.attach_ExtensionTypesEnabledBy), new Action<ExtensionType>(this.detach_ExtensionTypesEnabledBy));
+			this._ExtensionTypesCreatedBy = new EntitySet<ExtensionType>(new Action<ExtensionType>(this.attach_ExtensionTypesCreatedBy), new Action<ExtensionType>(this.detach_ExtensionTypesCreatedBy));
 			this._ExtensionTypesObsoletedBy = new EntitySet<ExtensionType>(new Action<ExtensionType>(this.attach_ExtensionTypesObsoletedBy), new Action<ExtensionType>(this.detach_ExtensionTypesObsoletedBy));
 			this._ExtensionTypesUpdatedBy = new EntitySet<ExtensionType>(new Action<ExtensionType>(this.attach_ExtensionTypesUpdatedBy), new Action<ExtensionType>(this.detach_ExtensionTypesUpdatedBy));
 			this._PhoneticAlgorithmsCreatedBy = new EntitySet<PhoneticAlgorithm>(new Action<PhoneticAlgorithm>(this.attach_PhoneticAlgorithmsCreatedBy), new Action<PhoneticAlgorithm>(this.detach_PhoneticAlgorithmsCreatedBy));
@@ -23507,10 +23391,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
 			this._UpdatedByEntity = default(EntityRef<SecurityUser>);
+			this._UserClassEntity = default(EntityRef<SecurityUserClass>);
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid UserId
 		{
 			get
@@ -23541,6 +23426,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				if ((this._UserClass != value))
 				{
+					if (this._UserClassEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
 					this.OnUserClassChanging(value);
 					this.SendPropertyChanging();
 					this._UserClass = value;
@@ -23790,8 +23679,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> CreatedBy
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid CreatedBy
 		{
 			get
 			{
@@ -24227,16 +24116,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ExtensionType", Storage="_ExtensionTypesEnabledBy", ThisKey="UserId", OtherKey="EnabledBy")]
-		public EntitySet<ExtensionType> ExtensionTypesEnabledBy
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ExtensionType", Storage="_ExtensionTypesCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<ExtensionType> ExtensionTypesCreatedBy
 		{
 			get
 			{
-				return this._ExtensionTypesEnabledBy;
+				return this._ExtensionTypesCreatedBy;
 			}
 			set
 			{
-				this._ExtensionTypesEnabledBy.Assign(value);
+				this._ExtensionTypesCreatedBy.Assign(value);
 			}
 		}
 		
@@ -24644,7 +24533,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					}
 					else
 					{
-						this._CreatedBy = default(Nullable<System.Guid>);
+						this._CreatedBy = default(System.Guid);
 					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
@@ -24715,6 +24604,40 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._UpdatedBy = default(Nullable<System.Guid>);
 					}
 					this.SendPropertyChanged("UpdatedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUserClass_SecurityUser", Storage="_UserClassEntity", ThisKey="UserClass", OtherKey="ClassId", IsForeignKey=true)]
+		public SecurityUserClass UserClassEntity
+		{
+			get
+			{
+				return this._UserClassEntity.Entity;
+			}
+			set
+			{
+				SecurityUserClass previousValue = this._UserClassEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._UserClassEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._UserClassEntity.Entity = null;
+						previousValue.SecurityUsersUserClass.Remove(this);
+					}
+					this._UserClassEntity.Entity = value;
+					if ((value != null))
+					{
+						value.SecurityUsersUserClass.Add(this);
+						this._UserClass = value.ClassId;
+					}
+					else
+					{
+						this._UserClass = default(System.Guid);
+					}
+					this.SendPropertyChanged("UserClassEntity");
 				}
 			}
 		}
@@ -25039,16 +24962,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			entity.ObsoletedByEntity = null;
 		}
 		
-		private void attach_ExtensionTypesEnabledBy(ExtensionType entity)
+		private void attach_ExtensionTypesCreatedBy(ExtensionType entity)
 		{
 			this.SendPropertyChanging();
-			entity.EnabledByEntity = this;
+			entity.CreatedByEntity = this;
 		}
 		
-		private void detach_ExtensionTypesEnabledBy(ExtensionType entity)
+		private void detach_ExtensionTypesCreatedBy(ExtensionType entity)
 		{
 			this.SendPropertyChanging();
-			entity.EnabledByEntity = null;
+			entity.CreatedByEntity = null;
 		}
 		
 		private void attach_ExtensionTypesObsoletedBy(ExtensionType entity)
@@ -25436,7 +25359,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClaimId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClaimId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ClaimId
 		{
 			get
@@ -25585,6 +25508,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private string _Mnemonic;
 		
+		private EntitySet<SecurityUser> _SecurityUsersUserClass;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -25597,10 +25522,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		public SecurityUserClass()
 		{
+			this._SecurityUsersUserClass = new EntitySet<SecurityUser>(new Action<SecurityUser>(this.attach_SecurityUsersUserClass), new Action<SecurityUser>(this.detach_SecurityUsersUserClass));
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClassId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClassId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ClassId
 		{
 			get
@@ -25640,6 +25566,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUserClass_SecurityUser", Storage="_SecurityUsersUserClass", ThisKey="ClassId", OtherKey="UserClass")]
+		public EntitySet<SecurityUser> SecurityUsersUserClass
+		{
+			get
+			{
+				return this._SecurityUsersUserClass;
+			}
+			set
+			{
+				this._SecurityUsersUserClass.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -25658,6 +25597,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_SecurityUsersUserClass(SecurityUser entity)
+		{
+			this.SendPropertyChanging();
+			entity.UserClassEntity = this;
+		}
+		
+		private void detach_SecurityUsersUserClass(SecurityUser entity)
+		{
+			this.SendPropertyChanging();
+			entity.UserClassEntity = null;
 		}
 	}
 	
@@ -26026,7 +25977,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ActVersionId
 		{
 			get
@@ -26289,7 +26240,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActVersionId", AutoSync=AutoSync.OnInsert, DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
 		public System.Guid ActVersionId
 		{
 			get

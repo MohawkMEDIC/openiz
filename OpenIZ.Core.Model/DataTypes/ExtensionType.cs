@@ -32,7 +32,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// </summary>
     [Classifier(nameof(Name))]
     [XmlType("ExtensionType",  Namespace = "http://openiz.org/model"), JsonObject("ExtensionType")]
-    public class ExtensionType : BaseEntityData
+    public class ExtensionType : NonVersionedEntityData
     {
 
         /// <summary>
@@ -46,6 +46,13 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [XmlElement("name"), JsonProperty("name")]
         public String Name { get; set; }
+
+        /// <summary>
+        /// Whether the extension is enabled
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public bool IsEnabled { get; set; }
+
 
     }
 }

@@ -26,7 +26,7 @@ using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Model.Map;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
-using OpenIZ.Persistence.Data.MSSQL.Services.Persistence;
+using OpenIZ.Persistence.Data.MSSQL.Services;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Test.Map
 {
@@ -34,7 +34,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Map
     public class ModelMapTest : DataTest
     {
         // Mapper
-        private ModelMapper m_mapper = new ModelMapper(typeof(SecurityUserPersistenceService).Assembly.GetManifestResourceStream("OpenIZ.Persistence.Data.MSSQL.Data.ModelMap.xml"));
+        private ModelMapper m_mapper = new ModelMapper(typeof(SqlServerPersistenceService).Assembly.GetManifestResourceStream("OpenIZ.Persistence.Data.MSSQL.Data.ModelMap.xml"));
 
         /// <summary>
         /// This test ensures that the model conversion visitor is capable of converting 

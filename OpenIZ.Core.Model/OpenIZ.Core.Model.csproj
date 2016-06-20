@@ -56,7 +56,9 @@
     <Compile Include="Constants\EntityClassConceptKeys.cs" />
     <Compile Include="Constants\EntityRelationshipTypeKeys.cs" />
     <Compile Include="Constants\NameKeys.cs" />
+    <Compile Include="Constants\PhoneticAlgorithmKeys.cs" />
     <Compile Include="Constants\StatusConceptKeys.cs" />
+    <Compile Include="Constants\TelecomAddressUseKeys.cs" />
     <Compile Include="Constants\UserClassKeys.cs" />
     <Compile Include="DataTypes\AssigningAuthority.cs" />
     <Compile Include="DataTypes\CodeSystem.cs" />
@@ -100,6 +102,7 @@
     <Compile Include="Exceptions\ModelMapValidationException.cs" />
     <Compile Include="Exceptions\ModelValidationException.cs" />
     <Compile Include="IdentifiedData.cs" />
+    <Compile Include="Interfaces\IBaseEntityData.cs" />
     <Compile Include="Interfaces\IIdentifiedEntity.cs" />
     <Compile Include="Interfaces\ISimpleAssociation.cs" />
     <Compile Include="Interfaces\ISecurable.cs" />

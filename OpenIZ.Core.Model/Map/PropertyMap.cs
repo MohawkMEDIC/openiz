@@ -23,6 +23,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using System.Diagnostics;
 
 namespace OpenIZ.Core.Model.Map
 {
@@ -61,7 +62,9 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         public IEnumerable<ValidationResultDetail> Validate(Type modelClass, Type domainClass)
         {
-            
+#if DEBUG
+            Debug.WriteLine(String.Format("\t Property {0}>{1}", this.ModelName, this.DomainName));
+#endif
             if (domainClass?.IsConstructedGenericType == true)
                 domainClass = domainClass.GenericTypeArguments[0];
             if (modelClass?.IsConstructedGenericType == true)

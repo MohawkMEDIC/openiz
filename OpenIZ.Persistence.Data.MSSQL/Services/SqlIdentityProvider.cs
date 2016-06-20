@@ -190,6 +190,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     // Does this principal have the ability to 
                     Data.SecurityUser newIdentityUser = new Data.SecurityUser()
                     {
+                        UserId = Guid.NewGuid(),
                         UserName = userName,
                         UserPassword = hashingService.EncodePassword(password),
                         SecurityStamp = Guid.NewGuid().ToString(),

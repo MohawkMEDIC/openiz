@@ -29,6 +29,7 @@ using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIZ.Core;
 
 namespace OpenIZ
 {
@@ -48,6 +49,13 @@ namespace OpenIZ
                "DataDirectory",
                Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location), "Data"));
 
+            // Handle Unahndled exception
+            AppDomain.CurrentDomain.UnhandledException += (o, e) => {
+                var emergencyString = ApplicationContext.Current?.GetLocaleString("01189998819991197253");
+                Trace.TraceError(emergencyString ?? "FATAL ERROR", e.ExceptionObject);
+                Environment.Exit(999);
+            };
+
             // Parser
             ParameterParser<ConsoleParameters> parser = new ParameterParser<ConsoleParameters>();
 
@@ -62,6 +70,7 @@ namespace OpenIZ
             Trace.TraceInformation("Operating System: {0} {1}", Environment.OSVersion.Platform, Environment.OSVersion.VersionString);
             Trace.TraceInformation("CLI Version: {0}", Environment.Version);
 
+            throw new InvalidOperationException("Some Test!");
             try
             {
                 var parameters = parser.Parse(args);
@@ -96,6 +105,8 @@ namespace OpenIZ
 #else
                 Trace.TraceError("Error encountered: {0}. Will terminate", e.Message);
 #endif
+                Environment.Exit(911);
+
             }
 
         }

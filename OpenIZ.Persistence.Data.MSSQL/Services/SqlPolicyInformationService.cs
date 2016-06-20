@@ -28,7 +28,6 @@ using OpenIZ.Core.Security.Claims;
 using OpenIZ.Persistence.Data.MSSQL.Configuration;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using OpenIZ.Persistence.Data.MSSQL.Security;
-using OpenIZ.Persistence.Data.MSSQL.Services.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Configuration;

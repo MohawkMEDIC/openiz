@@ -108,9 +108,9 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the identifier type
         /// </summary>
-        [DelayLoad(nameof(TypeKey))]
+        [DelayLoad(nameof(IdentifierTypeKey))]
         [XmlElement("type"), JsonProperty("type")]
-        public IdentifierType Type
+        public IdentifierType IdentifierType
         {
             get
             {
@@ -157,8 +157,6 @@ namespace OpenIZ.Core.Model.DataTypes
             get { return this.m_authorityId; }
             set
             {
-                if (this.m_authority?.Key == value)
-                    return;
                 this.m_authority = null;
                 this.m_authorityId = value;
             }
@@ -170,7 +168,7 @@ namespace OpenIZ.Core.Model.DataTypes
         
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlIgnore, JsonIgnore]
-        public Guid?  TypeKey
+        public Guid? IdentifierTypeKey
         {
             get { return this.m_identifierTypeId; }
             set

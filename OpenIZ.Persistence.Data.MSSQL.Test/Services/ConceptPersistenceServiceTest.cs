@@ -91,8 +91,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             {
                 Name = "Test Code",
                 Language = "en",
-                PhoneticAlgorithm = PhoneticAlgorithm.EmptyAlgorithm,
-                PhoneticCode = "E"
+                PhoneticAlgorithm = PhoneticAlgorithm.EmptyAlgorithm
             });
 
             // Insert
@@ -103,7 +102,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual(1, afterTest.ConceptNames.Count);
             Assert.AreEqual("en", afterTest.ConceptNames[0].Language);
             Assert.AreEqual("Test Code", afterTest.ConceptNames[0].Name);
-            Assert.AreEqual("E", afterTest.ConceptNames[0].PhoneticCode);
         }
 
         /// <summary>
@@ -197,9 +195,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             refTermConcept.ConceptNames.Add(new ConceptName()
             {
                 Name = "Test Code",
-                Language = "en",
-                PhoneticAlgorithm = PhoneticAlgorithm.EmptyAlgorithm,
-                PhoneticCode = "E"
+                Language = "en"
             });
 
             // Reference term
@@ -226,7 +222,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.IsNotNull(afterTest.ReferenceTerms[0].ReferenceTerm);
             Assert.AreEqual(CodeSystemKeys.LOINC, afterTest.ReferenceTerms[0].ReferenceTerm.CodeSystem.Key);
             Assert.AreEqual("Test Code", afterTest.ConceptNames[0].Name);
-            Assert.AreEqual("E", afterTest.ConceptNames[0].PhoneticCode);
         }
 
 

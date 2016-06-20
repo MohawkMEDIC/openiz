@@ -18,6 +18,7 @@
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Security;
 using System;
 using System.Collections.Generic;
@@ -37,18 +38,16 @@ namespace OpenIZ.Core.Model
     /// </summary>
     
     [XmlType("BaseEntityData",  Namespace = "http://openiz.org/model"), JsonObject("BaseEntityData")]
-    public abstract class BaseEntityData : IdentifiedData
+    public abstract class BaseEntityData : IdentifiedData, IBaseEntityData
     {
 
         // Created by identifier
         private Guid m_createdById;
         // Created by
-        
         private SecurityUser m_createdBy;
         // Obsoleted by
         private Guid? m_obsoletedById;
         // Obsoleted by user
-        
         private SecurityUser m_obsoletedBy;
         
         /// <summary>

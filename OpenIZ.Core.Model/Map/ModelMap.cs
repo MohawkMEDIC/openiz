@@ -70,7 +70,7 @@ namespace OpenIZ.Core.Model.Map
             ClassMap retVal = null;
             if(!this.m_classCache.TryGetValue(type, out retVal))
             {
-                retVal = this.Class.Find(o => Type.GetType(o.ModelClass) == type);
+                retVal = this.Class.Find(o => o.ModelType == type);
                 if(retVal != null)
                     lock(this.m_lockObject)
                         if(!this.m_classCache.ContainsKey(type))
@@ -88,6 +88,18 @@ namespace OpenIZ.Core.Model.Map
             foreach(var cls in this.Class)
                 retVal.AddRange(cls.Validate());
             return retVal;
+        }
+
+        /// <summary>
+        /// Get the model class map between two types
+        /// </summary>
+        internal ClassMap GetModelClassMap(Type modelType, Type domainType)
+        {
+            var retVal = this.GetModelClassMap(modelType);
+            if (retVal?.DomainType == domainType)
+                return retVal;
+            else
+                return this.Class.Find(o => o.ModelType == modelType && o.DomainType == domainType);
         }
     }
 }

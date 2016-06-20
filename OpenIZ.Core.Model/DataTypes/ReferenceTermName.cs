@@ -29,7 +29,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// </summary>
     [XmlType("ReferenceTermName",  Namespace = "http://openiz.org/model"), JsonObject("ReferenceTermName")]
     [Classifier(nameof(Language))]
-    public abstract class ReferenceTermName : BaseEntityData
+    public class ReferenceTermName : BaseEntityData
     {
 
         // Id of the algorithm used to generate phonetic code

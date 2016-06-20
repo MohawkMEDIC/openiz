@@ -64,6 +64,9 @@ INSERT INTO SecurityUser (UserId, UserName, UserPassword, SecurityStamp, UserCla
 -- Create the anonymous user
 INSERT INTO SecurityUser (UserId, UserName, UserPassword, SecurityStamp, UserClass) VALUES ('C96859F0-043C-4480-8DAB-F69D6E86696C', 'ANONYMOUS','XXXX','XXXX', '9F71BB34-9691-440F-8249-9C831EA16D58');
 
+-- Enforce SecurityUser
+UPDATE SecurityUser SET CreatedBy = 'C96859F0-043C-4480-8DAB-F69D6E86696C';
+ALTER TABLE SecurityUser ALTER COLUMN CreatedBy UNIQUEIDENTIFIER NOT NULL;
 /*
  THE FOLLOWING INDEXING PROVIDES LOOKUP BY USERNAME AND USERNAME/PASSWORD COMBINATION
 */
@@ -204,15 +207,17 @@ INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('dea891aa-224d
 */
 CREATE TABLE SecurityRolePolicy 
 (
+	SecurityPolicyInstanceId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(), -- UNIQUE ID 
 	RoleId UNIQUEIDENTIFIER NOT NULL, -- THE ROLE TO WHICH THE POLICY APPLIES
 	PolicyId UNIQUEIDENTIFIER NOT NULL, -- THE POLICY TO WHICH THE ASSOCIATION APPLIES
 	PolicyAction INT NOT NULL DEFAULT 0 CHECK (PolicyAction < 3),
-	CONSTRAINT PK_SecurityRolePolicy PRIMARY KEY (RoleId, PolicyId),
+	CONSTRAINT PK_SecurityRolePolicy PRIMARY KEY (SecurityPolicyInstanceId),
 	CONSTRAINT FK_SecurityRolePolicyRoleId FOREIGN KEY (RoleId) REFERENCES SecurityRole(RoleId),
 	CONSTRAINT FK_SecurityRolePolicyPolicyId FOREIGN KEY (PolicyId) REFERENCES Policy(PolicyId)
 );
 
 CREATE INDEX IX_SecurityPolicyRoleId ON SecurityRolePolicy(RoleId);
+CREATE UNIQUE INDEX IX_SecurityPolicyRolePolicy ON SecurityRolePolicy(RoleId, PolicyId);
 
 -- CREATE USERS ROLE
 INSERT INTO SecurityRole (RoleId, Name, [Description], CreatedBy) VALUES ('f4e58ae8-8bbd-4635-a6d4-8a195b143436', 'USERS', 'Group for users who have login access', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
@@ -291,26 +296,32 @@ CREATE INDEX IX_SecurityApplicationSecret ON SecurityApplication(ApplicationId);
 */
 CREATE TABLE SecurityDevicePolicy
 (
+	SecurityPolicyInstanceId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(), -- UNIQUE ID 
 	DeviceId UNIQUEIDENTIFIER NOT NULL, -- THE DEVICE TO WHICH THE POLICY ASSOCIATION APPLIES 
 	PolicyId UNIQUEIDENTIFIER NOT NULL, -- THE POLICY IDENTIFIER TO WHICH THE POLICY ASSOCIATION APPLIES
 	PolicyAction INT NOT NULL DEFAULT 0 CHECK (PolicyAction < 3),	
-	CONSTRAINT PK_SecurityDevicePolicy PRIMARY KEY (DeviceId, PolicyId),
+	CONSTRAINT PK_SecurityDevicePolicy PRIMARY KEY (SecurityPolicyInstanceId),
 	CONSTRAINT FK_SecurityDevicePolicyDeviceId FOREIGN KEY (DeviceId) REFERENCES SecurityDevice(DeviceId),
 	CONSTRAINT FK_SecurityDevicePolicyPolicyId FOREIGN KEY (PolicyId) REFERENCES Policy(PolicyId)
 );
+
+CREATE UNIQUE INDEX IX_SecurityDevicePolicy ON SecurityDevicePolicy(DeviceId, PolicyId);
 
 /*
  ASSOCIATIVE ENTITY TABLE BETWEEN SECURITY APLICATION AND POLICY
 */
 CREATE TABLE SecurityApplicationPolicy
 (
+	SecurityPolicyInstanceId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(), -- UNIQUE ID 
 	ApplicationId UNIQUEIDENTIFIER NOT NULL, -- THE Application TO WHICH THE POLICY ASSOCIATION APPLIES 
 	PolicyId UNIQUEIDENTIFIER NOT NULL, -- THE POLICY IDENTIFIER TO WHICH THE POLICY ASSOCIATION APPLIES
 	PolicyAction INT NOT NULL DEFAULT 0 CHECK (PolicyAction < 3),
-	CONSTRAINT PK_SecurityApplicationPolicy PRIMARY KEY (ApplicationId, PolicyId),
+	CONSTRAINT PK_SecurityApplicationPolicy PRIMARY KEY (SecurityPolicyInstanceId),
 	CONSTRAINT FK_SecurityApplicationPolicyApplicationId FOREIGN KEY (ApplicationId) REFERENCES SecurityApplication(ApplicationId),
 	CONSTRAINT FK_SecurityApplicationPolicyPolicyId FOREIGN KEY (PolicyId) REFERENCES Policy(PolicyId)
 );
+
+CREATE UNIQUE INDEX IX_SecurityApplicationPolicy ON SecurityApplicationPolicy(ApplicationId, PolicyId);
 
 /* 
  END SECTION: SECURITY TABLES
@@ -345,6 +356,8 @@ CREATE TABLE PhoneticAlgorithm
 );
 
 INSERT INTO PhoneticAlgorithm (PhoneticAlgorithmId, Name, HandlerClass, CreatedBy) VALUES ('402CD339-D0E4-46CE-8FC2-12A4B0E17226', 'NONE', NULL, 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO PhoneticAlgorithm (PhoneticAlgorithmId, Name, HandlerClass, CreatedBy) VALUES ('3352a79a-d2e0-4e0c-9b48-6fd2a202c681', 'SOUNDEX', 'OpenIZ.Core.Services.Impl.PhoneticAlgorithms.SoundexPhoneticAlgorithmHandler, OpenIZ.Core, Version=1.0.0.0', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO PhoneticAlgorithm (PhoneticAlgorithmId, Name, HandlerClass, CreatedBy) VALUES ('d79a4dc6-66a6-4602-8fcb-7dc09a895793', 'METAPHONE', 'OpenIZ.Core.Services.Impl.PhoneticAlgorithms.MetaphonePhoneticAlgorithmHandler, OpenIZ.Core, Version=1.0.0.0', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 
 /*
  * A TABLE RESPONSIBLE FOR THE STORAGE OF PHONETIC VALUES
@@ -708,13 +721,13 @@ CREATE TABLE ExtensionType
 	Name NVARCHAR(64) NOT NULL, -- THE HUMAN NAME FOR THE EXTENSION
 	IsEnabled BIT NOT NULL DEFAULT 0, -- INDICATES WHETHER THE EXTENSION IS ENABLED
 	CreationTime DATETIMEOFFSET NOT NULL DEFAULT CURRENT_TIMESTAMP, -- THE TIME THE EXTENSION WAS CREATE
-	EnabledBy UNIQUEIDENTIFIER NOT NULL, -- THE USER THAT CREATED THE EXTENSION, OR IF IT WAS INSTALLED, THE USER THAT INSTALLED THE EXTENSION
+	CreatedBy UNIQUEIDENTIFIER NOT NULL, -- THE USER THAT CREATED THE EXTENSION, OR IF IT WAS INSTALLED, THE USER THAT INSTALLED THE EXTENSION
 	UpdatedTime DATETIMEOFFSET, -- THE TIME THE EXTENSION WAS UPDATED
 	UpdatedBy UNIQUEIDENTIFIER, -- THE PERSON WHO LAST UPDATED THE EXTENSION
 	ObsoletionTime DATETIMEOFFSET, -- THE TIME THE EXTENSION WAS OBSOLETED
 	ObsoletedBy UNIQUEIDENTIFIER, -- THE PERSON WHO OBSOLETED THE EXTENSION
 	CONSTRAINT PK_ExtensionType PRIMARY KEY (ExtensionTypeId),
-	CONSTRAINT FK_ExtensionTypeEnabledBy FOREIGN KEY (EnabledBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT FK_ExtensionTypeEnabledBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT FK_ExtensionTypeUpdatedBy FOREIGN KEY (UpdatedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT FK_ExtensionTypeObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT CK_ExtensionTypeObsoletedBy CHECK(ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletedBy IS NULL AND ObsoletionTime IS NULL),
@@ -735,12 +748,12 @@ CREATE TABLE AssigningAuthority
 	[Description] NVARCHAR(MAX), -- HUMAN DESCRIPTION FOR THE VALUE
 	CreationTime DATETIMEOFFSET NOT NULL DEFAULT CURRENT_TIMESTAMP, -- THE TIME THE AUTHORITY WAS CREATED
 	CreatedBy UNIQUEIDENTIFIER NOT NULL, -- THE USER WHO CREATED THE AA
-	ObsoleteTime DATETIMEOFFSET, -- THE TIME WHEN THE ASSINGING AUTHORITY IS OBSOLETE
+	ObsoletionTime DATETIMEOFFSET, -- THE TIME WHEN THE ASSINGING AUTHORITY IS OBSOLETE
 	ObsoletedBy UNIQUEIDENTIFIER, -- THE USER WHO OBSOLETED THE AA
 	CONSTRAINT PK_AssigningAuthority PRIMARY KEY (AssigningAuthorityId),
 	CONSTRAINT FK_AssigningAuthorityCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT FK_AssigningAuthorityObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UserId),
-	CONSTRAINT CK_AssigningAuthorityObsoletedBy CHECK (ObsoleteTime IS NOT NULL AND ObsoletedBy IS NOT NULL OR ObsoleteTime IS NULL AND ObsoletedBy IS NULL),
+	CONSTRAINT CK_AssigningAuthorityObsoletedBy CHECK (ObsoletionTime IS NOT NULL AND ObsoletedBy IS NOT NULL OR ObsoletionTime IS NULL AND ObsoletedBy IS NULL),
 	CONSTRAINT FK_AssigningAuthorityAssigningDeviceId FOREIGN KEY (AssigningDeviceId) REFERENCES SecurityDevice(DeviceId)
 );
 
@@ -973,7 +986,7 @@ CREATE TABLE EntityTag
 	Name NVARCHAR(64) NOT NULL, -- THE NAME OF THE TAG
 	Value NVARCHAR(MAX), -- THE VALUE OF THE TAG
 	CreationTime DATETIMEOFFSET NOT NULL DEFAULT CURRENT_TIMESTAMP, -- THE TIME THAT THE TAG WAS ATTACHED
-	CreatedBy UNIQUEIDENTIFIER, -- THE USER THAT CREATED THE TAG
+	CreatedBy UNIQUEIDENTIFIER NOT NULL, -- THE USER THAT CREATED THE TAG
 	ObsoletionTime DATETIMEOFFSET, -- THE TIME WHEN THE TAG WAS OBSOLETED
 	ObsoletedBy UNIQUEIDENTIFIER, -- THE USER WHO OBSOLETED THE TAG
 	CONSTRAINT PK_EntityTag PRIMARY KEY (EntityTagId),
@@ -992,7 +1005,7 @@ CREATE TABLE EntityVersion
 	EntityId UNIQUEIDENTIFIER NOT NULL, -- THE ENTITY TO WHICH THE VERSION APPLIES
 	ReplacesVersionId UNIQUEIDENTIFIER, -- THE VERSION OF THE ENTITY THAT THIS VERSION REPLACES
 	StatusConceptId UNIQUEIDENTIFIER NOT NULL, -- THE STATUS OF THE ENTITY AT THIS VERSION
-	CreatedBy UNIQUEIDENTIFIER, -- THE USER THAT CREATED THE TAG
+	CreatedBy UNIQUEIDENTIFIER NOT NULL, -- THE USER THAT CREATED THE TAG
 	CreationTime DATETIMEOFFSET NOT NULL DEFAULT CURRENT_TIMESTAMP, -- A TIMESTAMP WHEN THE ENTITY WAS CREATED
 	ObsoletionTime DATETIMEOFFSET, -- THE TIME WHEN THE ENTITY VERSION WAS OBSOLETED
 	ObsoletedBy UNIQUEIDENTIFIER, -- THE USER WHO OBSOLETED THE TAG
@@ -1127,7 +1140,7 @@ CREATE TABLE EntityIdentifier
 (
 	EntityIdentifierId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(), -- THE UNIQUE IDENTIFIER FOR THE ENTITY IDENTIFIER 
 	EntityId UNIQUEIDENTIFIER NOT NULL, -- THE ENTITY TO WHICH THE ASSOCIATION BELONGS
-	IdentifierTypeId UNIQUEIDENTIFIER NOT NULL, -- THE TYPE OF IDENTIFIER
+	IdentifierTypeId UNIQUEIDENTIFIER, -- THE TYPE OF IDENTIFIER
 	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE VERSION WHERE THE IDENTIFIER BECAME ACTIVE
 	ObsoleteVersionSequenceId NUMERIC(20), -- THE OBSOLETION VERSION IDENTIFIER
 	AssigningAuthorityId UNIQUEIDENTIFIER NOT NULL, -- THE ASSIGNING AUTHORITY OF THE IDENTIFIER
@@ -1159,7 +1172,7 @@ CREATE TABLE EntityTelecomAddress
 	CONSTRAINT FK_EntityTelecomAddressUseConceptId FOREIGN KEY (TelecomUseConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_EntityTelecomAddressEffectiveVersionSequenceId FOREIGN KEY (EffectiveVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
 	CONSTRAINT FK_EntityTelecomAddressObsoleteVersionSequenceId FOREIGN KEY (ObsoleteVersionSequenceId) REFERENCES EntityVersion(VersionSequenceId),
-	CONSTRAINT CK_EntityTelecomAddressTelecomAddressTypeConceptId CHECK (dbo.fn_IsConceptSetMember(TelecomAddressTypeConceptId, 'TelecomAddressType') = 1),
+	CONSTRAINT CK_EntityTelecomAddressTelecomAddressTypeConceptId CHECK (TelecomAddressTypeConceptId IS NULL OR dbo.fn_IsConceptSetMember(TelecomAddressTypeConceptId, 'TelecomAddressType') = 1),
 	CONSTRAINT CK_EntityTelecomAddressTelecomAddressUseConceptId CHECK (dbo.fn_IsConceptSetMember(TelecomUseConceptId, 'TelecomAddressUse') = 1)
 );
 
@@ -1209,7 +1222,8 @@ CREATE TABLE ApplicationEntity
 	VersionName NVARCHAR(64), -- THE VERSION OF THE SOFTWARE PRODUCT
 	VendorName NVARCHAR(64), -- THE VENDOR OF THE SOFTWARE PRODUCT
 	CONSTRAINT PK_Application PRIMARY KEY (EntityVersionId),
-	CONSTRAINT FK_ApplicationEntityVersionId FOREIGN KEY (EntityVersionId) REFERENCES EntityVersion(EntityVersionId)
+	CONSTRAINT FK_ApplicationEntityVersionId FOREIGN KEY (EntityVersionId) REFERENCES EntityVersion(EntityVersionId),
+	CONSTRAINT FK_ApplicationEntitySecurityApplication FOREIGN KEY (ApplicationId) REFERENCES SecurityApplication(ApplicationId)
 );
 
 CREATE TABLE DeviceEntity
@@ -1292,7 +1306,7 @@ CREATE TABLE Patient
 	CONSTRAINT PK_Patient PRIMARY KEY (EntityVersionId),
 	CONSTRAINT FK_PatientEntityVersionId FOREIGN KEY (EntityVersionId) REFERENCES Person(EntityVersionId),
 	CONSTRAINT FK_PatientGenderConceptId FOREIGN KEY (GenderConceptId) REFERENCES Concept(ConceptId),
-	CONSTRAINT CL_PatientGenderConceptClass CHECK (dbo.fn_IsConceptSetMember(GenderConceptId, 'AdministrativeGender') = 1)
+	CONSTRAINT CK_PatientGenderConceptClass CHECK (dbo.fn_IsConceptSetMember(GenderConceptId, 'AdministrativeGenderCode') = 1)
 );
 
 CREATE TABLE Provider

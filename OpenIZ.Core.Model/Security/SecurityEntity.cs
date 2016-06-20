@@ -36,7 +36,7 @@ namespace OpenIZ.Core.Model.Security
     {
 
         // Policies
-        private List<SecurityPolicyInstance> m_policies = new List<SecurityPolicyInstance>();
+        protected List<SecurityPolicyInstance> m_policies = new List<SecurityPolicyInstance>();
 
         /// <summary>
         /// Policies associated with the entity

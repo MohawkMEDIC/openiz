@@ -105,7 +105,7 @@ namespace OpenIZ.Core.Model.Map
                 if (domainMember != null)
                     return Expression.MakeMemberAccess(accessExpression, domainMember);
                 else
-                    throw new NotSupportedException(String.Format("Cannot find property information for {0}", memberExpression.Member.Name));
+                    throw new NotSupportedException(String.Format("Cannot find property information for {0}({1}).{2}", memberExpression.Expression, memberExpression.Expression.Type.Name, memberExpression.Member.Name));
             }
         }
 
@@ -197,7 +197,9 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         public TDomain MapModelInstance<TModel, TDomain>(TModel modelInstance) where TDomain : new()
         {
-            ClassMap classMap = this.m_mapFile.GetModelClassMap(typeof(TModel));
+            ClassMap classMap = this.m_mapFile.GetModelClassMap(typeof(TModel), typeof(TDomain));
+            if (classMap == null)
+                classMap = this.m_mapFile.GetModelClassMap(typeof(TModel));
 
             if (classMap == null || modelInstance == null)
                 return default(TDomain);
@@ -219,7 +221,8 @@ namespace OpenIZ.Core.Model.Map
                     propInfo.PropertyType != typeof(DateTimeOffset) &&
                     propInfo.PropertyType != typeof(Type) &&
                     propInfo.PropertyType != typeof(Decimal) &&
-					propInfo.PropertyType != typeof(byte[]))
+					propInfo.PropertyType != typeof(byte[]) &&
+                    !propInfo.PropertyType.GetTypeInfo().IsEnum)
                     continue;
 
                 // Map property
@@ -278,15 +281,21 @@ namespace OpenIZ.Core.Model.Map
 
             // Now the property maps
             TModel retVal = new TModel();
-            foreach (var propInfo in typeof(TDomain).GetRuntimeProperties())
+            foreach (var modelPropertyInfo in typeof(TModel).GetRuntimeProperties())
             {
 
                 // Map property
                 PropertyMap propMap = null;
-                classMap.TryGetDomainProperty(propInfo.Name, out propMap);
+                classMap.TryGetModelProperty(modelPropertyInfo.Name, out propMap);
 
                 if (propMap?.DontLoad == true)
                     continue;
+                var propInfo = typeof(TDomain).GetRuntimeProperty(propMap?.DomainName ?? modelPropertyInfo.Name);
+                if (propInfo == null)
+                {
+                    Debug.WriteLine("Unmapped property ({0}).{1}", typeof(TDomain).Name, modelPropertyInfo.Name);
+                    continue;
+                }
 
                 // Property info
                 try

@@ -89,13 +89,13 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the latitude
         /// </summary>
         [XmlElement("lat"), JsonProperty("lat")]
-        public float Lat { get; set; }
+        public double? Lat { get; set; }
 
         /// <summary>
         /// Gets or sets the longitude
         /// </summary>
         [XmlElement("lng"), JsonProperty("lng")]
-        public float Lng { get; set; }
+        public double? Lng { get; set; }
 
         /// <summary>
         /// Gets the services
