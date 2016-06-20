@@ -101,7 +101,17 @@ namespace OpenIZ.Core.Model.Map
                 result = value;
                 return true;
             }
-            else if (m_destType.GetTypeInfo().IsEnum) // No map exists yet
+            else if (m_destType == typeof(int) && value.GetType().GetTypeInfo().IsEnum)
+            {
+                result = (int)value;
+                return true;
+            }
+            else if (m_destType.GetTypeInfo().IsEnum && value.GetType() == typeof(int))
+            {
+                result = value;
+                return true;
+            }
+            else if (m_destType.GetTypeInfo().IsEnum && value.GetType() == typeof(String)) // No map exists yet
             {
                 try
                 {

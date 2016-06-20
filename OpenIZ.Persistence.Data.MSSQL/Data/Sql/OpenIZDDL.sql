@@ -45,7 +45,7 @@ CREATE TABLE SecurityUser
 	FailedLoginAttempts INT NOT NULL DEFAULT 0, -- THE NUMBER OF FAILED LOGIN ATTEMPTS
 	LastSuccessfulLogin DATETIMEOFFSET, -- THE LAST TIME WHEN THE USER SUCCESSFULLLY LOGGED IN
 	CreationTime DATETIMEOFFSET NOT NULL DEFAULT CURRENT_TIMESTAMP, -- THE TIME THE USER WAS CREATED
-	CreatedBy UNIQUEIDENTIFIER NOT NULL DEFAULT 'C96859F0-043C-4480-8DAB-F69D6E86696C', -- THE USER THAT CREATED THE USER
+	CreatedBy UNIQUEIDENTIFIER, -- THE USER THAT CREATED THE USER
 	ObsoletionTime DATETIMEOFFSET, -- WHEN PRESENT, INDICATES THE DATE THE USER ACCOUNT IS NOT LONGER ACTIVE
 	ObsoletedBy UNIQUEIDENTIFIER, -- THE USER WHO OBSOLETED THIS RECORD
 	UpdatedTime DATETIMEOFFSET, -- THE TIME THE RECORD WAS UPDATED
@@ -64,6 +64,9 @@ INSERT INTO SecurityUser (UserId, UserName, UserPassword, SecurityStamp, UserCla
 -- Create the anonymous user
 INSERT INTO SecurityUser (UserId, UserName, UserPassword, SecurityStamp, UserClass) VALUES ('C96859F0-043C-4480-8DAB-F69D6E86696C', 'ANONYMOUS','XXXX','XXXX', '9F71BB34-9691-440F-8249-9C831EA16D58');
 
+-- Enforce SecurityUser
+UPDATE SecurityUser SET CreatedBy = 'C96859F0-043C-4480-8DAB-F69D6E86696C';
+ALTER TABLE SecurityUser ALTER COLUMN CreatedBy UNIQUEIDENTIFIER NOT NULL;
 /*
  THE FOLLOWING INDEXING PROVIDES LOOKUP BY USERNAME AND USERNAME/PASSWORD COMBINATION
 */
@@ -204,15 +207,17 @@ INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('dea891aa-224d
 */
 CREATE TABLE SecurityRolePolicy 
 (
+	SecurityPolicyInstanceId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(), -- UNIQUE ID 
 	RoleId UNIQUEIDENTIFIER NOT NULL, -- THE ROLE TO WHICH THE POLICY APPLIES
 	PolicyId UNIQUEIDENTIFIER NOT NULL, -- THE POLICY TO WHICH THE ASSOCIATION APPLIES
 	PolicyAction INT NOT NULL DEFAULT 0 CHECK (PolicyAction < 3),
-	CONSTRAINT PK_SecurityRolePolicy PRIMARY KEY (RoleId, PolicyId),
+	CONSTRAINT PK_SecurityRolePolicy PRIMARY KEY (SecurityPolicyInstanceId),
 	CONSTRAINT FK_SecurityRolePolicyRoleId FOREIGN KEY (RoleId) REFERENCES SecurityRole(RoleId),
 	CONSTRAINT FK_SecurityRolePolicyPolicyId FOREIGN KEY (PolicyId) REFERENCES Policy(PolicyId)
 );
 
 CREATE INDEX IX_SecurityPolicyRoleId ON SecurityRolePolicy(RoleId);
+CREATE UNIQUE INDEX IX_SecurityPolicyRolePolicy ON SecurityRolePolicy(RoleId, PolicyId);
 
 -- CREATE USERS ROLE
 INSERT INTO SecurityRole (RoleId, Name, [Description], CreatedBy) VALUES ('f4e58ae8-8bbd-4635-a6d4-8a195b143436', 'USERS', 'Group for users who have login access', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
@@ -291,26 +296,32 @@ CREATE INDEX IX_SecurityApplicationSecret ON SecurityApplication(ApplicationId);
 */
 CREATE TABLE SecurityDevicePolicy
 (
+	SecurityPolicyInstanceId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(), -- UNIQUE ID 
 	DeviceId UNIQUEIDENTIFIER NOT NULL, -- THE DEVICE TO WHICH THE POLICY ASSOCIATION APPLIES 
 	PolicyId UNIQUEIDENTIFIER NOT NULL, -- THE POLICY IDENTIFIER TO WHICH THE POLICY ASSOCIATION APPLIES
 	PolicyAction INT NOT NULL DEFAULT 0 CHECK (PolicyAction < 3),	
-	CONSTRAINT PK_SecurityDevicePolicy PRIMARY KEY (DeviceId, PolicyId),
+	CONSTRAINT PK_SecurityDevicePolicy PRIMARY KEY (SecurityPolicyInstanceId),
 	CONSTRAINT FK_SecurityDevicePolicyDeviceId FOREIGN KEY (DeviceId) REFERENCES SecurityDevice(DeviceId),
 	CONSTRAINT FK_SecurityDevicePolicyPolicyId FOREIGN KEY (PolicyId) REFERENCES Policy(PolicyId)
 );
+
+CREATE UNIQUE INDEX IX_SecurityDevicePolicy ON SecurityDevicePolicy(DeviceId, PolicyId);
 
 /*
  ASSOCIATIVE ENTITY TABLE BETWEEN SECURITY APLICATION AND POLICY
 */
 CREATE TABLE SecurityApplicationPolicy
 (
+	SecurityPolicyInstanceId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(), -- UNIQUE ID 
 	ApplicationId UNIQUEIDENTIFIER NOT NULL, -- THE Application TO WHICH THE POLICY ASSOCIATION APPLIES 
 	PolicyId UNIQUEIDENTIFIER NOT NULL, -- THE POLICY IDENTIFIER TO WHICH THE POLICY ASSOCIATION APPLIES
 	PolicyAction INT NOT NULL DEFAULT 0 CHECK (PolicyAction < 3),
-	CONSTRAINT PK_SecurityApplicationPolicy PRIMARY KEY (ApplicationId, PolicyId),
+	CONSTRAINT PK_SecurityApplicationPolicy PRIMARY KEY (SecurityPolicyInstanceId),
 	CONSTRAINT FK_SecurityApplicationPolicyApplicationId FOREIGN KEY (ApplicationId) REFERENCES SecurityApplication(ApplicationId),
 	CONSTRAINT FK_SecurityApplicationPolicyPolicyId FOREIGN KEY (PolicyId) REFERENCES Policy(PolicyId)
 );
+
+CREATE UNIQUE INDEX IX_SecurityApplicationPolicy ON SecurityApplicationPolicy(ApplicationId, PolicyId);
 
 /* 
  END SECTION: SECURITY TABLES
@@ -345,6 +356,8 @@ CREATE TABLE PhoneticAlgorithm
 );
 
 INSERT INTO PhoneticAlgorithm (PhoneticAlgorithmId, Name, HandlerClass, CreatedBy) VALUES ('402CD339-D0E4-46CE-8FC2-12A4B0E17226', 'NONE', NULL, 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO PhoneticAlgorithm (PhoneticAlgorithmId, Name, HandlerClass, CreatedBy) VALUES ('3352a79a-d2e0-4e0c-9b48-6fd2a202c681', 'SOUNDEX', 'OpenIZ.Core.Services.Impl.PhoneticAlgorithms.SoundexPhoneticAlgorithmHandler, OpenIZ.Core, Version=1.0.0.0', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO PhoneticAlgorithm (PhoneticAlgorithmId, Name, HandlerClass, CreatedBy) VALUES ('d79a4dc6-66a6-4602-8fcb-7dc09a895793', 'METAPHONE', 'OpenIZ.Core.Services.Impl.PhoneticAlgorithms.MetaphonePhoneticAlgorithmHandler, OpenIZ.Core, Version=1.0.0.0', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 
 /*
  * A TABLE RESPONSIBLE FOR THE STORAGE OF PHONETIC VALUES
@@ -714,7 +727,7 @@ CREATE TABLE ExtensionType
 	ObsoletionTime DATETIMEOFFSET, -- THE TIME THE EXTENSION WAS OBSOLETED
 	ObsoletedBy UNIQUEIDENTIFIER, -- THE PERSON WHO OBSOLETED THE EXTENSION
 	CONSTRAINT PK_ExtensionType PRIMARY KEY (ExtensionTypeId),
-	CONSTRAINT FK_ExtensionTypeEnabledBy FOREIGN KEY (EnabledBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT FK_ExtensionTypeEnabledBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT FK_ExtensionTypeUpdatedBy FOREIGN KEY (UpdatedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT FK_ExtensionTypeObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT CK_ExtensionTypeObsoletedBy CHECK(ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletedBy IS NULL AND ObsoletionTime IS NULL),

@@ -55,9 +55,17 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (currentObject == null)
                 throw new KeyNotFoundException(data.Key.ToString());
 
-            domainObject.CreatedBy = principal.GetUser(context).UserId;
+            // VObject
+            var vobject = domainObject as IDbNonVersionedBaseData;
+            if(vobject != null)
+            {
+                vobject.UpdatedBy = principal.GetUser(context).UserId;
+                vobject.UpdatedTime = DateTimeOffset.Now;
+            }
+
             currentObject.CopyObjectData(domainObject);
-			
+            context.SubmitChanges();
+
 			return data;
 		}
 

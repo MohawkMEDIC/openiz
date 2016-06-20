@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using System.Security.Principal;
+using MARC.HI.EHRS.SVC.Core;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -40,6 +42,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     principal
                 );
 
+            if (retVal.ReferenceTerms != null)
+                base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ConceptReferenceTerm, Data.ConceptReferenceTerm>(
+                     retVal.ReferenceTerms,
+                     data,
+                     context,
+                     principal
+                 );
+
             return retVal;
         }
 
@@ -60,6 +70,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                      principal
                  );
 
+            if(retVal.ReferenceTerms != null)
+                base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ConceptReferenceTerm, Data.ConceptReferenceTerm>(
+                     retVal.ReferenceTerms,
+                     data,
+                     context,
+                     principal
+                 );
+
+
             return retVal;
         }
 
@@ -70,6 +89,24 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             data.StatusConceptKey = StatusKeys.Obsolete;
             return base.Update(context, data, principal);
+        }
+    }
+
+    /// <summary>
+    /// Persistence service for concept names
+    /// </summary>
+    public class ConceptNamePersistenceService : IdentifiedPersistenceService<Core.Model.DataTypes.ConceptName, Data.ConceptName>
+    {
+        /// <summary>
+        /// Concept name service
+        /// </summary>
+        public override object FromModelInstance(Core.Model.DataTypes.ConceptName modelInstance, ModelDataContext context, IPrincipal princpal)
+        {
+            var retVal = base.FromModelInstance(modelInstance, context, princpal) as Data.ConceptName;
+            var phoneticCoder = ApplicationContext.Current.GetService<IPhoneticAlgorithmHandler>();
+            retVal.PhoneticAlgorithmId = phoneticCoder?.AlgorithmId ?? PhoneticAlgorithmKeys.None;
+            retVal.PhoneticCode = phoneticCoder?.GenerateCode(modelInstance.Name);
+            return retVal;
         }
     }
 }

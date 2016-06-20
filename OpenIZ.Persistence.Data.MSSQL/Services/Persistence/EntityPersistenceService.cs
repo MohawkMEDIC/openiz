@@ -22,9 +22,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public virtual TEntityType ToModelInstance<TEntityType>(Data.EntityVersion dbInstance, Data.ModelDataContext context, IPrincipal principal) where TEntityType : Core.Model.Entities.Entity, new()
         {
-            return m_mapper.MapDomainInstance<Data.EntityVersion, TEntityType>(dbInstance);
+            var retVal = m_mapper.MapDomainInstance<Data.EntityVersion, TEntityType>(dbInstance);
+            retVal.ClassConceptKey = dbInstance.Entity.ClassConceptId;
+            retVal.DeterminerConceptKey = dbInstance.Entity.DeterminerConceptId;
+            return retVal;
         }
-
+        
         /// <summary>
         /// Insert the specified entity into the data context
         /// </summary>

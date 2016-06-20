@@ -221,7 +221,8 @@ namespace OpenIZ.Core.Model.Map
                     propInfo.PropertyType != typeof(DateTimeOffset) &&
                     propInfo.PropertyType != typeof(Type) &&
                     propInfo.PropertyType != typeof(Decimal) &&
-					propInfo.PropertyType != typeof(byte[]))
+					propInfo.PropertyType != typeof(byte[]) &&
+                    !propInfo.PropertyType.GetTypeInfo().IsEnum)
                     continue;
 
                 // Map property
@@ -280,15 +281,21 @@ namespace OpenIZ.Core.Model.Map
 
             // Now the property maps
             TModel retVal = new TModel();
-            foreach (var propInfo in typeof(TDomain).GetRuntimeProperties())
+            foreach (var modelPropertyInfo in typeof(TModel).GetRuntimeProperties())
             {
 
                 // Map property
                 PropertyMap propMap = null;
-                classMap.TryGetDomainProperty(propInfo.Name, out propMap);
+                classMap.TryGetModelProperty(modelPropertyInfo.Name, out propMap);
 
                 if (propMap?.DontLoad == true)
                     continue;
+                var propInfo = typeof(TDomain).GetRuntimeProperty(propMap?.DomainName ?? modelPropertyInfo.Name);
+                if (propInfo == null)
+                {
+                    Debug.WriteLine("Unmapped property ({0}).{1}", typeof(TDomain).Name, modelPropertyInfo.Name);
+                    continue;
+                }
 
                 // Property info
                 try

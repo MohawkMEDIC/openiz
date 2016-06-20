@@ -84,6 +84,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 
             // Update
             var propertyInfo = typeof(TModel).GetProperty(propertyToChange);
+            object originalValue = propertyInfo.GetValue(objectUnderTest);
+
             if (propertyInfo.PropertyType == typeof(String))
                 propertyInfo.SetValue(objectAfterInsert, "NEW_VALUE");
             else if (propertyInfo.PropertyType == typeof(Nullable<DateTimeOffset>) ||
@@ -97,7 +99,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual(objectAfterInsert.Key, objectAfterUpdate.Key);
             objectAfterUpdate = persistenceService.Get(objectAfterUpdate.Id(), authContext, false);
             // Update attributes should be set
-            Assert.AreNotEqual(propertyInfo.GetValue(objectUnderTest), propertyInfo.GetValue(objectAfterUpdate));
+            Assert.AreNotEqual(originalValue, propertyInfo.GetValue(objectAfterUpdate));
             Assert.AreEqual(objectAfterInsert.Key, objectAfterUpdate.Key);
 
             return objectAfterUpdate;

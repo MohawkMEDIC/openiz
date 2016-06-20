@@ -77,13 +77,13 @@
     <Compile Include="Data\IDbBaseData.cs" />
     <Compile Include="Data\IDbVersionedData.cs" />
     <Compile Include="Data\LinqTraceWriter.cs" />
+    <Compile Include="Data\DataModelExtensions.cs" />
+    <Compile Include="Data\IDbIdentified.cs" />
     <Compile Include="Data\Model.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Model.dbml</DependentUpon>
     </Compile>
-    <Compile Include="Data\DataModelExtensions.cs" />
-    <Compile Include="Data\IDbIdentified.cs" />
     <Compile Include="Security\SqlSecurityPolicy.cs" />
     <Compile Include="Security\SqlSecurityPolicyInstance.cs" />
     <Compile Include="Exceptions\SqlFormalConstraintException.cs" />
@@ -93,6 +93,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Services\Persistence\SecurityPersistenceServices.cs" />
     <Compile Include="Services\SqlServerPersistenceService.cs" />
     <Compile Include="Services\Persistence\ApplicationEntityPersistenceService.cs" />
     <Compile Include="Services\Persistence\BaseDataPersistenceService.cs" />

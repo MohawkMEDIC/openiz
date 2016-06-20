@@ -1,4 +1,7 @@
-﻿using OpenIZ.Core.Model.Entities;
+﻿using MARC.HI.EHRS.SVC.Core;
+using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Services;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using System;
 using System.Collections.Generic;
@@ -62,4 +65,34 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
     }
 
+    /// <summary>
+    /// Represents an entity name component persistence service
+    /// </summary>
+    public class EntityNameComponentPersistenceService : IdentifiedPersistenceService<Core.Model.Entities.EntityNameComponent, Data.EntityNameComponent>
+    {
+        /// <summary>
+        /// From model instance
+        /// </summary>
+        public override object FromModelInstance(Core.Model.Entities.EntityNameComponent modelInstance, ModelDataContext context, IPrincipal princpal)
+        {
+            var retVal = base.FromModelInstance(modelInstance, context, princpal) as Data.EntityNameComponent;
+
+            // Duplicate name?
+            var existing = context.PhoneticValues.FirstOrDefault(o => o.Value == modelInstance.Value);
+            if (existing != null)
+                retVal.PhoneticValue = existing;
+            else
+            {
+                var phoneticCoder = ApplicationContext.Current.GetService<IPhoneticAlgorithmHandler>();
+                retVal.PhoneticValue = new PhoneticValue()
+                {
+                    Value = modelInstance.Value,
+                    PhoneticAlgorithmId = phoneticCoder?.AlgorithmId ?? PhoneticAlgorithmKeys.None,
+                    PhoneticCode = phoneticCoder?.GenerateCode(modelInstance.Value)
+                };
+            }
+
+            return retVal;
+        }
+    }
 }

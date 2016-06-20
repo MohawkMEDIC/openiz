@@ -184,8 +184,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                 try
                 {
                     connection.Connection.Open();
-
                     connection.Transaction = tx = connection.Connection.BeginTransaction();
+
+                    // Tracer
+                    if (m_configuration.TraceSql)
+                        connection.Log = new LinqTraceWriter();
 
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "UPDATE {0}", data);
 
@@ -241,6 +244,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     connection.Connection.Open();
 
                     tx = connection.Transaction = connection.Connection.BeginTransaction();
+
+                    // Tracer
+                    if (m_configuration.TraceSql)
+                        connection.Log = new LinqTraceWriter();
 
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "OBSOLETE {0}", data);
 
@@ -319,6 +326,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                 try
                 {
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "QUERY {0}", query);
+
+                    // Tracer
+                    if (m_configuration.TraceSql)
+                        connection.Log = new LinqTraceWriter();
 
                     var results = this.Query(connection, query, offset, count ?? -1, authContext, out totalCount);
 

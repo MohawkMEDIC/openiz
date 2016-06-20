@@ -63,5 +63,31 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
     }
 
+    /// <summary>
+    /// Entity address component persistence service
+    /// </summary>
+    public class EntityAddressComponentPersistenceService : IdentifiedPersistenceService<Core.Model.Entities.EntityAddressComponent, Data.EntityAddressComponent>
+    {
+        /// <summary>
+        /// From the model instance
+        /// </summary>
+        public override object FromModelInstance(Core.Model.Entities.EntityAddressComponent modelInstance, ModelDataContext context, IPrincipal princpal)
+        {
+            var retVal = base.FromModelInstance(modelInstance, context, princpal) as Data.EntityAddressComponent;
 
+            // Address component already exists?
+            var existing = context.EntityAddressComponentValues.FirstOrDefault(o => o.Value == modelInstance.Value);
+            if (existing != null)
+                retVal.EntityAddressComponentValue = existing;
+            else
+            {
+                retVal.EntityAddressComponentValue = new EntityAddressComponentValue()
+                {
+                    Value = modelInstance.Value
+                };
+            }
+
+            return retVal;
+        }
+    }
 }

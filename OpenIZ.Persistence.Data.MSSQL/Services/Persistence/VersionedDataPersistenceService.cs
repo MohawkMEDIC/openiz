@@ -23,7 +23,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         where TModel : VersionedEntityData<TModel>, new()
         where TDomainKey : class, IDbIdentified, new()
     {
-
+        
         /// <summary>
         /// Insert the data
         /// </summary>

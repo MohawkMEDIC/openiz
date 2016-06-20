@@ -83,6 +83,10 @@ namespace OpenIZ.Core.Model.Security
     /// </summary>
     public class SecurityPolicyInstance : Association<SecurityEntity>
     {
+        // Policy id
+        private Guid m_policyId;
+        // Policy
+        private SecurityPolicy m_policy;
 
         /// <summary>
         /// Default ctor
@@ -102,9 +106,38 @@ namespace OpenIZ.Core.Model.Security
         }
 
         /// <summary>
+        /// Gets or sets the policy key
+        /// </summary>
+        public Guid PolicyKey {
+            get
+            {
+                return this.m_policyId;
+            }
+            set
+            {
+                this.m_policyId = value;
+                this.m_policy = null;
+            }
+        }
+
+        /// <summary>
         /// The policy
         /// </summary>
-        public SecurityPolicy Policy { get; set; }
+        public SecurityPolicy Policy {
+            get
+            {
+                this.m_policy = base.DelayLoad(this.m_policyId, this.m_policy);
+                return m_policy;
+            }
+            set
+            {
+                this.m_policy = value;
+                if (value == null)
+                    this.m_policyId = Guid.Empty;
+                else
+                    this.m_policyId = value.Key;
+            }
+        }
 
         /// <summary>
         /// Gets or sets whether the policy is a Deny

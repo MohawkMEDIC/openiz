@@ -31,7 +31,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <param name="dataInstance">Data instance.</param>
         public override TModel ToModelInstance (object dataInstance, ModelDataContext context, IPrincipal principal)
 		{
-			return m_mapper.MapDomainInstance<TDomain, TModel> (dataInstance as TDomain);
+			var retVal = m_mapper.MapDomainInstance<TDomain, TModel> (dataInstance as TDomain);
+            return retVal;
 		}
 
 
@@ -80,7 +81,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new KeyNotFoundException(data.Key.ToString());
 
             oldDomainObject.CopyObjectData(newDomainObject);
-
+            context.SubmitChanges();
 			return data;
 		}
 
@@ -139,7 +140,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     itm.SourceEntityKey = source.Key;
 
             // Get existing
-            var existing = context.GetTable<TDomainAssociation>().Where(ExpressionRewriter.Rewrite<TDomainAssociation>(o => o.AssociatedItemKey == source.Key)).ToList().AsParallel().Select(o=>m_mapper.MapDomainInstance<TDomainAssociation, TAssociation>(o).GetLocked() as TAssociation);
+            var existing = context.GetTable<TDomainAssociation>().Where(ExpressionRewriter.Rewrite<TDomainAssociation>(o => o.AssociatedItemKey == source.Key)).ToList().Select(o=>m_mapper.MapDomainInstance<TDomainAssociation, TAssociation>(o).GetLocked() as TAssociation);
             // Remove old
             var obsoleteRecords = existing.Where(o => !storage.Exists(ecn => ecn.Key == o.Key));
             foreach (var del in obsoleteRecords)

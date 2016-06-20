@@ -31,6 +31,23 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     }
 
     /// <summary>
+    /// Non-versioned base data
+    /// </summary>
+    public interface IDbNonVersionedBaseData : IDbBaseData
+    {
+
+        /// <summary>
+        /// Gets or sets the updated user
+        /// </summary>
+        Guid? UpdatedBy { get; set; }
+
+        /// <summary>
+        /// Gets or sets the time of updating
+        /// </summary>
+        DateTimeOffset? UpdatedTime { get; set; }
+    }
+
+    /// <summary>
     /// Interface definition
     /// </summary>
     public partial class ReferenceTermDisplayName : IDbBaseData
@@ -56,7 +73,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     /// <summary>
     /// Interface definition
     /// </summary>
-    public partial class ExtensionType : IDbBaseData
+    public partial class ExtensionType : IDbNonVersionedBaseData
     {
         /// <summary>
         /// Identification for object
@@ -79,7 +96,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     /// <summary>
     /// Interface definition
     /// </summary>
-    public partial class ReferenceTerm : IDbBaseData
+    public partial class ReferenceTerm : IDbNonVersionedBaseData
     {
         /// <summary>
         /// Identification for object
@@ -102,7 +119,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     /// <summary>
     /// Interface definition
     /// </summary>
-    public partial class PhoneticAlgorithm : IDbBaseData
+    public partial class PhoneticAlgorithm : IDbNonVersionedBaseData
     {
         /// <summary>
         /// Identification for object
@@ -125,7 +142,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     /// <summary>
     /// Interface definition
     /// </summary>
-    public partial class ConceptRelationshipType : IDbBaseData
+    public partial class ConceptRelationshipType : IDbNonVersionedBaseData
     {
         /// <summary>
         /// Identification for object
@@ -148,7 +165,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     /// <summary>
     /// Interface definition
     /// </summary>
-    public partial class CodeSystem : IDbBaseData
+    public partial class CodeSystem : IDbNonVersionedBaseData
     {
         /// <summary>
         /// Identification for object
@@ -196,7 +213,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     /// <summary>
     /// Interface definition
     /// </summary>
-    public partial class ConceptClass : IDbBaseData
+    public partial class ConceptClass : IDbNonVersionedBaseData
     {
         /// <summary>
         /// Identification for object
@@ -220,7 +237,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     /// <summary>
     /// Interface definition
     /// </summary>
-    public partial class ConceptSet : IDbBaseData
+    public partial class ConceptSet : IDbNonVersionedBaseData
     {
         /// <summary>
         /// Identification for object
@@ -315,7 +332,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     /// <summary>
     /// Interface definition for security user
     /// </summary>
-    public partial class SecurityRole : IDbBaseData
+    public partial class SecurityRole : IDbNonVersionedBaseData
     {
         /// <summary>
         /// Identification for object
@@ -339,7 +356,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     /// <summary>
     /// Interface definition for security user
     /// </summary>
-    public partial class SecurityUser : IDbBaseData
+    public partial class SecurityUser : IDbNonVersionedBaseData
     {
         /// <summary>
         /// Identification for object

@@ -83,6 +83,33 @@
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
   </class>
 
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityPolicyInstance, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SecurityRolePolicy, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="SecurityPolicyInstanceId"/>
+    <property modelName="SourceEntityKey" domainName="RoleId"/>
+    <property modelName="PolicyKey" domainName="PolicyId"/>
+    <property modelName="SourceEntity" domainName="SecurityRole"/>
+    <property modelName="GrantType" domainName="PolicyAction"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityPolicyInstance, OpenIZ.Core.Model, Version=1.0.0.0"
+  domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SecurityApplicationPolicy, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="SecurityPolicyInstanceId"/>
+    <property modelName="SourceEntityKey" domainName="ApplicationId"/>
+    <property modelName="PolicyKey" domainName="PolicyId"/>
+    <property modelName="SourceEntity" domainName="SecurityApplication"/>
+    <property modelName="GrantType" domainName="PolicyAction"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityPolicyInstance, OpenIZ.Core.Model, Version=1.0.0.0"
+  domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SecurityDevicePolicy, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="SecurityPolicyInstanceId"/>
+    <property modelName="SourceEntityKey" domainName="DeviceId"/>
+    <property modelName="PolicyKey" domainName="PolicyId"/>
+    <property modelName="SourceEntity" domainName="SecurityDevice"/>
+    <property modelName="GrantType" domainName="PolicyAction"/>
+  </class>
+
   <!-- Concepts -->
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptSet, OpenIZ.Core.Model, Version=1.0.0.0"
 		domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptSet, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
@@ -106,7 +133,8 @@
     <property modelName="Key" domainName="ConceptId"/>
     <property modelName="VersionKey" domainName="ConceptVersionId"/>
     <property modelName="PreviousVersionKey" domainName="ReplacesVersionId"/>
-    <property modelName="StatusConceptKey" domainName="StatusConceptId"/>
+      <property modelName="VersionSequence" domainName="VersionSequenceId"/>
+      <property modelName="StatusConceptKey" domainName="StatusConceptId"/>
     <property modelName="StatusConcept" domainName="StatusConcept" dontLoad="true" />
 
     <property modelName="ClassKey" domainName="ConceptClassId"/>
@@ -275,6 +303,7 @@
     <property modelName="Key" domainName="EntityId"/>
     <property modelName="VersionKey" domainName="EntityVersionId"/>
     <property modelName="PreviousVersionKey" domainName="ReplacesVersionId"/>
+    <property modelName="VersionSequence" domainName="VersionSequenceId"/>
     <property modelName="StatusConceptKey" domainName="StatusConceptId"/>
     <property modelName="ClassConceptKey" domainName="Entity">
       <via domainName="ClassConceptId"/>

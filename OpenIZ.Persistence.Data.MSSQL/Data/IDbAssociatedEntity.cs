@@ -595,4 +595,163 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         }
     }
 
+    /// <summary>
+    /// Implementation of interfaces for policy
+    /// </summary>
+    public partial class SecurityRolePolicy : IDbAssociation
+    {
+        /// <summary>
+        /// Gets or sets the item key
+        /// </summary>
+        [LinqPropertyMap(nameof(RoleId))]
+        public Guid AssociatedItemKey
+        {
+            get
+            {
+                return this.RoleId;
+            }
+
+            set
+            {
+                this.RoleId = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the unique identifier
+        /// </summary>
+        [LinqPropertyMap(nameof(SecurityPolicyInstanceId))]
+        public Guid Id
+        {
+            get
+            {
+                return this.SecurityPolicyInstanceId;
+            }
+
+            set
+            {
+                this.SecurityPolicyInstanceId = value;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Implementation of interfaces for policy
+    /// </summary>
+    public partial class SecurityDevicePolicy : IDbAssociation
+    {
+        /// <summary>
+        /// Gets or sets the item key
+        /// </summary>
+        [LinqPropertyMap(nameof(DeviceId))]
+        public Guid AssociatedItemKey
+        {
+            get
+            {
+                return this.DeviceId;
+            }
+
+            set
+            {
+                this.DeviceId = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the unique identifier
+        /// </summary>
+        [LinqPropertyMap(nameof(SecurityPolicyInstanceId))]
+        public Guid Id
+        {
+            get
+            {
+                return this.SecurityPolicyInstanceId;
+            }
+
+            set
+            {
+                this.SecurityPolicyInstanceId = value;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Implementation of interfaces for policy
+    /// </summary>
+    public partial class SecurityApplicationPolicy : IDbAssociation
+    {
+        /// <summary>
+        /// Gets or sets the item key
+        /// </summary>
+        [LinqPropertyMap(nameof(ApplicationId))]
+        public Guid AssociatedItemKey
+        {
+            get
+            {
+                return this.ApplicationId;
+            }
+
+            set
+            {
+                this.ApplicationId = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the unique identifier
+        /// </summary>
+        [LinqPropertyMap(nameof(SecurityPolicyInstanceId))]
+        public Guid Id
+        {
+            get
+            {
+                return this.SecurityPolicyInstanceId;
+            }
+
+            set
+            {
+                this.SecurityPolicyInstanceId = value;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Implementation of interfaces for policy
+    /// </summary>
+    public partial class ActPolicy : IDbVersionedAssociation
+    {
+        /// <summary>
+        /// Gets or sets the item key
+        /// </summary>
+        [LinqPropertyMap(nameof(ActId))]
+        public Guid AssociatedItemKey
+        {
+            get
+            {
+                return this.ActId;
+            }
+
+            set
+            {
+                this.ActId = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the unique identifier
+        /// </summary>
+        [LinqPropertyMap(nameof(ActPolicyId))]
+        public Guid Id
+        {
+            get
+            {
+                return this.ActPolicyId;
+            }
+
+            set
+            {
+                this.ActPolicyId = value;
+            }
+        }
+    }
 }
