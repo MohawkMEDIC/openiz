@@ -179,7 +179,7 @@
       <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
       <Column Name="CreationTime" Type="System.DateTimeOffset" DbType="DateTimeOffset NOT NULL" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
-      <Column Name="ObsoleteTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
+      <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Association Name="AssigningAuthority_ActIdentifier" Member="ActIdentifiers" ThisKey="AssigningAuthorityId" OtherKey="AssigningAuthorityId" Type="ActIdentifier" />
       <Association Name="AssigningAuthority_EntityIdentifier" Member="EntityIdentifiers" ThisKey="AssigningAuthorityId" OtherKey="AssigningAuthorityId" Type="EntityIdentifier" />
@@ -574,7 +574,7 @@
       <Column Name="EntityId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="ReplacesVersionId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="StatusConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
-      <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="false" />
       <Column Name="CreationTime" Type="System.DateTimeOffset" DbType="DateTimeOffset NOT NULL" CanBeNull="false" />
       <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
@@ -601,14 +601,14 @@
       <Column Name="Name" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
       <Column Name="IsEnabled" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="CreationTime" Type="System.DateTimeOffset" DbType="DateTimeOffset NOT NULL" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="EnabledBy" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="UpdatedTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="UpdatedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Association Name="ExtensionType_ActExtension" Member="ActExtensions" ThisKey="ExtensionTypeId" OtherKey="ExtensionTypeId" Type="ActExtension" />
       <Association Name="ExtensionType_EntityExtension" Member="EntityExtensions" ThisKey="ExtensionTypeId" OtherKey="ExtensionTypeId" Type="EntityExtension" />
-      <Association Name="SecurityUser_ExtensionType" Member="EnabledByEntity" ThisKey="EnabledBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
+      <Association Name="SecurityUser_ExtensionType" Member="CreatedByEntity" ThisKey="CreatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
       <Association Name="SecurityUser_ExtensionType1" Member="ObsoletedByEntity" ThisKey="ObsoletedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
       <Association Name="SecurityUser_ExtensionType2" Member="UpdatedByEntity" ThisKey="UpdatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
     </Type>
@@ -973,7 +973,7 @@
       <Column Name="FailedLoginAttempts" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="LastSuccessfulLogin" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="CreationTime" Type="System.DateTimeOffset" DbType="DateTimeOffset NOT NULL" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="false" />
       <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="UpdatedTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
@@ -1003,7 +1003,7 @@
       <Association Name="SecurityUser_EntityTag1" Member="EntityTagsObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="EntityTag" />
       <Association Name="SecurityUser_EntityVersion" Member="EntityVersionsCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="EntityVersion" />
       <Association Name="SecurityUser_EntityVersion1" Member="EntityVersionsObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="EntityVersion" />
-      <Association Name="SecurityUser_ExtensionType" Member="ExtensionTypesEnabledBy" ThisKey="UserId" OtherKey="EnabledBy" Type="ExtensionType" />
+      <Association Name="SecurityUser_ExtensionType" Member="ExtensionTypesCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="ExtensionType" />
       <Association Name="SecurityUser_ExtensionType1" Member="ExtensionTypesObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="ExtensionType" />
       <Association Name="SecurityUser_ExtensionType2" Member="ExtensionTypesUpdatedBy" ThisKey="UserId" OtherKey="UpdatedBy" Type="ExtensionType" />
       <Association Name="SecurityUser_PhoneticAlgorithm" Member="PhoneticAlgorithmsCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="PhoneticAlgorithm" />

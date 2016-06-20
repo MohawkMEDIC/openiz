@@ -20,8 +20,9 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Persistence.Data.MSSQL.Exceptions;
-using OpenIZ.Persistence.Data.MSSQL.Services.Persistence;
+using OpenIZ.Persistence.Data.MSSQL.Services;
 using System;
 using System.Collections.Generic;
 using System.Data.Linq;
@@ -35,10 +36,15 @@ using System.Threading.Tasks;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Data
 {
+
+    
+
+    
+   
     /// <summary>
     /// Model extension methods
     /// </summary>
-    public static class ModelExtensions
+    public static class DataModelExtensions
     {
 
         // Field cache
@@ -67,14 +73,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// <summary>
         /// Ensures a model has been persisted
         /// </summary>
-        public static TModel EnsureExists<TModel>(this TModel me, IPrincipal principal, ModelDataContext dataContext) where TModel : IdentifiedData, new()
+        public static TModel EnsureExists<TModel>(this TModel me, ModelDataContext dataContext, IPrincipal principal) where TModel : IdentifiedData
         {
-            var dataService = ApplicationContext.Current.GetService<IDataPersistenceService<TModel>>() as BaseDataPersistenceService<TModel>;
+            var dataService = ApplicationContext.Current.GetService<IDataPersistenceService<TModel>>() as SqlServerBasePersistenceService<TModel>;
             if (dataService == null)
                 throw new InvalidOperationException(String.Format("Cannot locate SQL storage provider for {0}", typeof(TModel).FullName));
-            if(me.Key == Guid.Empty)
+            if(me.Key == Guid.Empty || dataService.Get(dataContext, me.Key, principal) == null)
             {
-                var retVal = dataService.Insert(me, principal, dataContext);
+                var retVal = dataService.Insert(dataContext, me, principal);
                 me.Key = retVal.Key; // prevents future loading
                 return retVal;
             }
@@ -82,53 +88,20 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         }
 
         /// <summary>
-        /// Create a new version of the entity
+        /// Updates a keyed delay load field if needed
         /// </summary>
-        public static Data.EntityVersion NewVersion(this Data.EntityVersion me, IPrincipal principal, ModelDataContext dataContext)
+        public static void UpdateParentKeys(this IIdentifiedEntity instance, PropertyInfo field)
         {
-
-            var newEntityVersion = new Data.EntityVersion();
-            var user = principal.GetUser(dataContext);
-            newEntityVersion.CopyObjectData(me);
-            newEntityVersion.VersionSequenceId = default(Decimal);
-            newEntityVersion.EntityVersionId = default(Guid);
-            newEntityVersion.Entity = me.Entity;
-            newEntityVersion.ReplacesVersionId = me.EntityVersionId;
-            newEntityVersion.CreatedByEntity = user;
-            // Obsolete the old version 
-            me.ObsoletedByEntity = user;
-            me.ObsoletionTime = DateTime.Now;
-
-            dataContext.EntityVersions.InsertOnSubmit(newEntityVersion);
-
-            return newEntityVersion;
+            var delayLoadProperty = field.GetCustomAttribute<DelayLoadAttribute>();
+            if (delayLoadProperty == null || String.IsNullOrEmpty(delayLoadProperty.KeyPropertyName))
+                return;
+            var value = field.GetValue(instance) as IIdentifiedEntity;
+            if (value == null)
+                return;
+            // Get the delay load key property!
+            var keyField = instance.GetType().GetRuntimeProperty(delayLoadProperty.KeyPropertyName);
+            keyField.SetValue(instance, value.Key);
         }
-
-        /// <summary>
-        /// Create a new version of the concept
-        /// </summary>
-        public static Data.ConceptVersion NewVersion(this Data.ConceptVersion me, IPrincipal principal, ModelDataContext dataContext)
-        {
-            if (me.Concept.IsSystemConcept)
-                throw new SqlFormalConstraintException(SqlFormalConstraintType.UpdatedReadonlyObject);
-
-            var newConceptVersion = new Data.ConceptVersion();
-            var user = principal.GetUser(dataContext);
-            newConceptVersion.CopyObjectData(me);
-            newConceptVersion.VersionSequenceId = default(Decimal);
-            newConceptVersion.ConceptVersionId = default(Guid);
-            newConceptVersion.Concept = me.Concept;
-            newConceptVersion.ReplacesVersionId = me.ConceptVersionId;
-            newConceptVersion.CreatedByEntity = user;
-            // Obsolete the old version 
-            me.ObsoletedByEntity = user;
-            me.ObsoletionTime = DateTime.Now;
-
-            dataContext.ConceptVersions.InsertOnSubmit(newConceptVersion);
-
-            return newConceptVersion;
-        }
-
         /// <summary>
         /// Update property data if required
         /// </summary>
@@ -213,9 +186,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// </summary>
         /// <param name="me"></param>
         /// <returns></returns>
-        public static Data.ConceptVersion CurrentVersion(this Concept me)
+        public static TData CurrentVersion<TData>(this EntitySet<TData> me)
+            where TData : class, IDbVersionedData, new()
         {
-            return me.ConceptVersions.SingleOrDefault(o => o.ObsoletionTime == null);
+            return me.Where(o => !o.ObsoletionTime.HasValue).OrderByDescending(o => o.VersionSequenceId).FirstOrDefault();
         }
     }
 }

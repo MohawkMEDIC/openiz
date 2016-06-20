@@ -4863,7 +4863,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _CreatedBy;
 		
-		private System.Nullable<System.DateTimeOffset> _ObsoleteTime;
+		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
 		
 		private System.Nullable<System.Guid> _ObsoletedBy;
 		
@@ -4899,8 +4899,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnCreationTimeChanged();
     partial void OnCreatedByChanging(System.Guid value);
     partial void OnCreatedByChanged();
-    partial void OnObsoleteTimeChanging(System.Nullable<System.DateTimeOffset> value);
-    partial void OnObsoleteTimeChanged();
+    partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnObsoletionTimeChanged();
     partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
     partial void OnObsoletedByChanged();
     #endregion
@@ -5103,22 +5103,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoleteTime", DbType="DateTimeOffset")]
-		public System.Nullable<System.DateTimeOffset> ObsoleteTime
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> ObsoletionTime
 		{
 			get
 			{
-				return this._ObsoleteTime;
+				return this._ObsoletionTime;
 			}
 			set
 			{
-				if ((this._ObsoleteTime != value))
+				if ((this._ObsoletionTime != value))
 				{
-					this.OnObsoleteTimeChanging(value);
+					this.OnObsoletionTimeChanging(value);
 					this.SendPropertyChanging();
-					this._ObsoleteTime = value;
-					this.SendPropertyChanged("ObsoleteTime");
-					this.OnObsoleteTimeChanged();
+					this._ObsoletionTime = value;
+					this.SendPropertyChanged("ObsoletionTime");
+					this.OnObsoletionTimeChanged();
 				}
 			}
 		}
@@ -14300,7 +14300,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _StatusConceptId;
 		
-		private System.Nullable<System.Guid> _CreatedBy;
+		private System.Guid _CreatedBy;
 		
 		private System.DateTimeOffset _CreationTime;
 		
@@ -14350,7 +14350,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnReplacesVersionIdChanged();
     partial void OnStatusConceptIdChanging(System.Guid value);
     partial void OnStatusConceptIdChanged();
-    partial void OnCreatedByChanging(System.Nullable<System.Guid> value);
+    partial void OnCreatedByChanging(System.Guid value);
     partial void OnCreatedByChanged();
     partial void OnCreationTimeChanging(System.DateTimeOffset value);
     partial void OnCreationTimeChanged();
@@ -14493,7 +14493,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> CreatedBy
+		public System.Guid CreatedBy
 		{
 			get
 			{
@@ -14954,7 +14954,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					}
 					else
 					{
-						this._CreatedBy = default(Nullable<System.Guid>);
+						this._CreatedBy = default(System.Guid);
 					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
@@ -15044,7 +15044,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.DateTimeOffset _CreationTime;
 		
-		private System.Guid _EnabledBy;
+		private System.Guid _CreatedBy;
 		
 		private System.Nullable<System.DateTimeOffset> _UpdatedTime;
 		
@@ -15058,7 +15058,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<EntityExtension> _EntityExtensions;
 		
-		private EntityRef<SecurityUser> _EnabledByEntity;
+		private EntityRef<SecurityUser> _CreatedByEntity;
 		
 		private EntityRef<SecurityUser> _ObsoletedByEntity;
 		
@@ -15078,8 +15078,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnIsEnabledChanged();
     partial void OnCreationTimeChanging(System.DateTimeOffset value);
     partial void OnCreationTimeChanged();
-    partial void OnEnabledByChanging(System.Guid value);
-    partial void OnEnabledByChanged();
+    partial void OnCreatedByChanging(System.Guid value);
+    partial void OnCreatedByChanged();
     partial void OnUpdatedTimeChanging(System.Nullable<System.DateTimeOffset> value);
     partial void OnUpdatedTimeChanged();
     partial void OnUpdatedByChanging(System.Nullable<System.Guid> value);
@@ -15094,7 +15094,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this._ActExtensions = new EntitySet<ActExtension>(new Action<ActExtension>(this.attach_ActExtensions), new Action<ActExtension>(this.detach_ActExtensions));
 			this._EntityExtensions = new EntitySet<EntityExtension>(new Action<EntityExtension>(this.attach_EntityExtensions), new Action<EntityExtension>(this.detach_EntityExtensions));
-			this._EnabledByEntity = default(EntityRef<SecurityUser>);
+			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
 			this._UpdatedByEntity = default(EntityRef<SecurityUser>);
 			OnCreated();
@@ -15200,26 +15200,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EnabledBy", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid EnabledBy
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid CreatedBy
 		{
 			get
 			{
-				return this._EnabledBy;
+				return this._CreatedBy;
 			}
 			set
 			{
-				if ((this._EnabledBy != value))
+				if ((this._CreatedBy != value))
 				{
-					if (this._EnabledByEntity.HasLoadedOrAssignedValue)
+					if (this._CreatedByEntity.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
-					this.OnEnabledByChanging(value);
+					this.OnCreatedByChanging(value);
 					this.SendPropertyChanging();
-					this._EnabledBy = value;
-					this.SendPropertyChanged("EnabledBy");
-					this.OnEnabledByChanged();
+					this._CreatedBy = value;
+					this.SendPropertyChanged("CreatedBy");
+					this.OnCreatedByChanged();
 				}
 			}
 		}
@@ -15338,36 +15338,36 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ExtensionType", Storage="_EnabledByEntity", ThisKey="EnabledBy", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser EnabledByEntity
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ExtensionType", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser CreatedByEntity
 		{
 			get
 			{
-				return this._EnabledByEntity.Entity;
+				return this._CreatedByEntity.Entity;
 			}
 			set
 			{
-				SecurityUser previousValue = this._EnabledByEntity.Entity;
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
 				if (((previousValue != value) 
-							|| (this._EnabledByEntity.HasLoadedOrAssignedValue == false)))
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
 					if ((previousValue != null))
 					{
-						this._EnabledByEntity.Entity = null;
-						previousValue.ExtensionTypesEnabledBy.Remove(this);
+						this._CreatedByEntity.Entity = null;
+						previousValue.ExtensionTypesCreatedBy.Remove(this);
 					}
-					this._EnabledByEntity.Entity = value;
+					this._CreatedByEntity.Entity = value;
 					if ((value != null))
 					{
-						value.ExtensionTypesEnabledBy.Add(this);
-						this._EnabledBy = value.UserId;
+						value.ExtensionTypesCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
 					}
 					else
 					{
-						this._EnabledBy = default(System.Guid);
+						this._CreatedBy = default(System.Guid);
 					}
-					this.SendPropertyChanged("EnabledByEntity");
+					this.SendPropertyChanged("CreatedByEntity");
 				}
 			}
 		}
@@ -23277,7 +23277,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.DateTimeOffset _CreationTime;
 		
-		private System.Nullable<System.Guid> _CreatedBy;
+		private System.Guid _CreatedBy;
 		
 		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
 		
@@ -23337,7 +23337,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<EntityVersion> _EntityVersionsObsoletedBy;
 		
-		private EntitySet<ExtensionType> _ExtensionTypesEnabledBy;
+		private EntitySet<ExtensionType> _ExtensionTypesCreatedBy;
 		
 		private EntitySet<ExtensionType> _ExtensionTypesObsoletedBy;
 		
@@ -23435,7 +23435,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnLastSuccessfulLoginChanged();
     partial void OnCreationTimeChanging(System.DateTimeOffset value);
     partial void OnCreationTimeChanged();
-    partial void OnCreatedByChanging(System.Nullable<System.Guid> value);
+    partial void OnCreatedByChanging(System.Guid value);
     partial void OnCreatedByChanged();
     partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
     partial void OnObsoletionTimeChanged();
@@ -23474,7 +23474,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._EntityTagsObsoletedBy = new EntitySet<EntityTag>(new Action<EntityTag>(this.attach_EntityTagsObsoletedBy), new Action<EntityTag>(this.detach_EntityTagsObsoletedBy));
 			this._EntityVersionsCreatedBy = new EntitySet<EntityVersion>(new Action<EntityVersion>(this.attach_EntityVersionsCreatedBy), new Action<EntityVersion>(this.detach_EntityVersionsCreatedBy));
 			this._EntityVersionsObsoletedBy = new EntitySet<EntityVersion>(new Action<EntityVersion>(this.attach_EntityVersionsObsoletedBy), new Action<EntityVersion>(this.detach_EntityVersionsObsoletedBy));
-			this._ExtensionTypesEnabledBy = new EntitySet<ExtensionType>(new Action<ExtensionType>(this.attach_ExtensionTypesEnabledBy), new Action<ExtensionType>(this.detach_ExtensionTypesEnabledBy));
+			this._ExtensionTypesCreatedBy = new EntitySet<ExtensionType>(new Action<ExtensionType>(this.attach_ExtensionTypesCreatedBy), new Action<ExtensionType>(this.detach_ExtensionTypesCreatedBy));
 			this._ExtensionTypesObsoletedBy = new EntitySet<ExtensionType>(new Action<ExtensionType>(this.attach_ExtensionTypesObsoletedBy), new Action<ExtensionType>(this.detach_ExtensionTypesObsoletedBy));
 			this._ExtensionTypesUpdatedBy = new EntitySet<ExtensionType>(new Action<ExtensionType>(this.attach_ExtensionTypesUpdatedBy), new Action<ExtensionType>(this.detach_ExtensionTypesUpdatedBy));
 			this._PhoneticAlgorithmsCreatedBy = new EntitySet<PhoneticAlgorithm>(new Action<PhoneticAlgorithm>(this.attach_PhoneticAlgorithmsCreatedBy), new Action<PhoneticAlgorithm>(this.detach_PhoneticAlgorithmsCreatedBy));
@@ -23791,7 +23791,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> CreatedBy
+		public System.Guid CreatedBy
 		{
 			get
 			{
@@ -24227,16 +24227,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ExtensionType", Storage="_ExtensionTypesEnabledBy", ThisKey="UserId", OtherKey="EnabledBy")]
-		public EntitySet<ExtensionType> ExtensionTypesEnabledBy
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_ExtensionType", Storage="_ExtensionTypesCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<ExtensionType> ExtensionTypesCreatedBy
 		{
 			get
 			{
-				return this._ExtensionTypesEnabledBy;
+				return this._ExtensionTypesCreatedBy;
 			}
 			set
 			{
-				this._ExtensionTypesEnabledBy.Assign(value);
+				this._ExtensionTypesCreatedBy.Assign(value);
 			}
 		}
 		
@@ -24644,7 +24644,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					}
 					else
 					{
-						this._CreatedBy = default(Nullable<System.Guid>);
+						this._CreatedBy = default(System.Guid);
 					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
@@ -25039,16 +25039,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			entity.ObsoletedByEntity = null;
 		}
 		
-		private void attach_ExtensionTypesEnabledBy(ExtensionType entity)
+		private void attach_ExtensionTypesCreatedBy(ExtensionType entity)
 		{
 			this.SendPropertyChanging();
-			entity.EnabledByEntity = this;
+			entity.CreatedByEntity = this;
 		}
 		
-		private void detach_ExtensionTypesEnabledBy(ExtensionType entity)
+		private void detach_ExtensionTypesCreatedBy(ExtensionType entity)
 		{
 			this.SendPropertyChanging();
-			entity.EnabledByEntity = null;
+			entity.CreatedByEntity = null;
 		}
 		
 		private void attach_ExtensionTypesObsoletedBy(ExtensionType entity)

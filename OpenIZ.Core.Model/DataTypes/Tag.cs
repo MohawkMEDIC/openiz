@@ -26,6 +26,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -34,7 +35,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// </summary>
     [Classifier(nameof(TagKey))]
     [XmlType(Namespace = "http://openiz.org/model")]
-    public abstract class Tag<TSourceType> : Association<TSourceType> where TSourceType : IdentifiedData
+    public abstract class Tag<TSourceType> : BaseEntityData, ISimpleAssociation where TSourceType : IdentifiedData
     {
 
         /// <summary>
@@ -49,6 +50,50 @@ namespace OpenIZ.Core.Model.DataTypes
         [XmlElement("value"), JsonProperty("value")]
         public String Value { get; set; }
 
+        // Target entity key
+        private Guid m_sourceEntityKey;
+        // The target entity
+
+        private TSourceType m_sourceEntity;
+
+        /// <summary>
+        /// Gets or sets the source entity's key (where the relationship is FROM)
+        /// </summary>
+        [XmlElement("source"), JsonProperty("source")]
+        public virtual Guid SourceEntityKey
+        {
+            get
+            {
+                return this.m_sourceEntityKey;
+            }
+            set
+            {
+                this.m_sourceEntityKey = value;
+                this.m_sourceEntity = null;
+            }
+        }
+
+        /// <summary>
+        /// The entity that this relationship targets
+        /// </summary>
+        [DelayLoad(nameof(SourceEntityKey))]
+        [XmlIgnore, JsonIgnore]
+        public TSourceType SourceEntity
+        {
+            get
+            {
+                this.m_sourceEntity = this.DelayLoad(this.m_sourceEntityKey, this.m_sourceEntity);
+                return this.m_sourceEntity;
+            }
+            set
+            {
+                this.m_sourceEntity = value;
+                if (value == null)
+                    this.m_sourceEntityKey = default(Guid);
+                else
+                    this.m_sourceEntityKey = value.Key;
+            }
+        }
     }
 
     /// <summary>
