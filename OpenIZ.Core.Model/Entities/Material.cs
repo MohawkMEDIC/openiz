@@ -60,7 +60,7 @@ namespace OpenIZ.Core.Model.Entities
         /// which is a /per ... 
         /// </summary>
         [XmlElement("quantity"), JsonProperty("quantity")]
-        public Decimal Quantity { get; set; }
+        public Decimal? Quantity { get; set; }
 
         /// <summary>
         /// Gets or sets the form concept's key
@@ -137,7 +137,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the expiry date of the material
         /// </summary>
         [XmlElement("expiryDate"), JsonProperty("expiryDate")]
-        public DateTime ExpiryDate { get; set; }
+        public DateTime? ExpiryDate { get; set; }
 
         /// <summary>
         /// True if the material is simply administrative

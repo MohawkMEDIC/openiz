@@ -244,6 +244,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     throw new InvalidOperationException(String.Format("Invalid Schema Version. OpenIZ version {0} is older than the database schema version {1}", oizVer, dbVer));
                 this.m_tracer.TraceInformation("OpenIZ Schema Version {0}", dbVer);
             }
+
             // Iterate the persistence services
             foreach (var t in typeof(SqlServerPersistenceService).GetTypeInfo().Assembly.ExportedTypes.Where(o => o.Namespace == "OpenIZ.Persistence.Data.MSSQL.Services.Persistence" && !o.GetTypeInfo().IsAbstract))
             {
