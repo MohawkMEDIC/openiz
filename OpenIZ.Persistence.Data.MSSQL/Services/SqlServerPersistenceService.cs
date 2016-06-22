@@ -15,6 +15,7 @@ using System.Diagnostics;
 using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Persistence.Data.MSSQL.Services.Persistence;
 using OpenIZ.Core.Exceptions;
+using OpenIZ.Persistence.Data.MSSQL.Configuration;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services
 {
@@ -192,6 +193,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         private bool m_running = false;
 
         /// <summary>
+        /// SqlConfiguration
+        /// </summary>
+        private SqlConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection(SqlServerConstants.ConfigurationSectionName) as SqlConfiguration;
+
+        /// <summary>
         /// Service is starting
         /// </summary>
         public event EventHandler Starting;
@@ -228,6 +234,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             this.Starting?.Invoke(this, EventArgs.Empty);
             if (this.m_running) return true;
 
+            // Verify schema version
+            using(ModelDataContext mdc = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
+            {
+                Version dbVer = new Version(mdc.fn_OpenIzSchemaVersion()),
+                    oizVer = typeof(SqlServerPersistenceService).Assembly.GetName().Version;
+
+                if (oizVer < dbVer)
+                    throw new InvalidOperationException(String.Format("Invalid Schema Version. OpenIZ version {0} is older than the database schema version {1}", oizVer, dbVer));
+                this.m_tracer.TraceInformation("OpenIZ Schema Version {0}", dbVer);
+            }
             // Iterate the persistence services
             foreach (var t in typeof(SqlServerPersistenceService).GetTypeInfo().Assembly.ExportedTypes.Where(o => o.Namespace == "OpenIZ.Persistence.Data.MSSQL.Services.Persistence" && !o.GetTypeInfo().IsAbstract))
             {

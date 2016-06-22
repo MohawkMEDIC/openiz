@@ -70,7 +70,6 @@ namespace OpenIZ
             Trace.TraceInformation("Operating System: {0} {1}", Environment.OSVersion.Platform, Environment.OSVersion.VersionString);
             Trace.TraceInformation("CLI Version: {0}", Environment.Version);
 
-            throw new InvalidOperationException("Some Test!");
             try
             {
                 var parameters = parser.Parse(args);

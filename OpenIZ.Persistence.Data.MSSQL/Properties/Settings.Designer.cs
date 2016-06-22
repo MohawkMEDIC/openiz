@@ -67,5 +67,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Properties {
                 return ((string)(this["OpenIZ_TestConnectionString1"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\justi\\Source\\Repos\\o" +
+            "peniz\\OpenIZ\\Data\\OpenIZ.mdf;Integrated Security=True")]
+        public string OpenIZConnectionString2 {
+            get {
+                return ((string)(this["OpenIZConnectionString2"]));
+            }
+        }
     }
 }

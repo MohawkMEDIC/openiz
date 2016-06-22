@@ -123,7 +123,6 @@
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
     </None>
-    <None Include="app.config" />
     <None Include="Data\Model.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>Model.designer.cs</LastGenOutput>
