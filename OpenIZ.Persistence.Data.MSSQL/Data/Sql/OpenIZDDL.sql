@@ -230,6 +230,13 @@ INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('d15b96a
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('f6840336-4e20-4bc0-b965-baa6d7c80be3', 'f6d2ba1d-5bb5-41e3-b7fb-2ec32418b2e1', 0); -- DENY Unrestricted Clinical Data
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('dea891aa-224d-4859-81b3-c1eb2750067e', 'f6d2ba1d-5bb5-41e3-b7fb-2ec32418b2e1', 0); -- DENY Override disclosure
 
+-- CLINICAL STAFF
+INSERT INTO SecurityRole (RoleId, Name, [Description], CreatedBy) VALUES ('43167DCB-6F77-4F37-8222-133E675B4434', 'CLINICAL_STAFF', 'Group for clinic staff', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('ea73c05a-3159-48c8-bbcb-741911d91cd2', '43167DCB-6F77-4F37-8222-133E675B4434', 0); -- GRANT Access Administrative Function
+INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('d15b96ab-646c-4c00-9a58-ea09eee67d7c', '43167DCB-6F77-4F37-8222-133E675B4434', 2); -- GRANT Login
+INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('f6840336-4e20-4bc0-b965-baa6d7c80be3', '43167DCB-6F77-4F37-8222-133E675B4434', 2); -- GRANT Unrestricted Clinical Data
+INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('dea891aa-224d-4859-81b3-c1eb2750067e', '43167DCB-6F77-4F37-8222-133E675B4434', 0); -- DENY Override disclosure
+
 -- CREATE ROLE SYSTEM WHICH IS DENIED LOGIN
 INSERT INTO SecurityRole (RoleId, Name, [Description], CreatedBy) VALUES ('c3ae21d2-fc23-4133-ba42-b0e0a3b817d7', 'SYSTEM', 'Group for user SYSTEM. Identifies the functions that internal system functions have access to. EDITING THIS ROLE MAY CAUSE SYSTEM FAILURE', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 INSERT INTO SecurityUserRole (RoleId, UserId) VALUES ('c3ae21d2-fc23-4133-ba42-b0e0a3b817d7', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
