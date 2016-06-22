@@ -143,6 +143,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Data\Sql\OpenIZFn.sql" />
+    <Content Include="Data\Sql\Testing\OpenIZTestData.sql" />
     <EmbeddedResource Include="Data\dbfeatures.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>

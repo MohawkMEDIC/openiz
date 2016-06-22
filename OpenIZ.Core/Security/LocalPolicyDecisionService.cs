@@ -56,7 +56,7 @@ namespace OpenIZ.Core.Security
                 throw new ArgumentNullException(nameof(policyId));
 
             // Can we make this decision based on the claims? 
-            if (principal is ClaimsPrincipal && (principal as ClaimsPrincipal).HasClaim(c => c.Type == OpenIzClaimTypes.OpenIzGrantedPolicyClaim && c.Value == policyId))
+            if (principal is ClaimsPrincipal && (principal as ClaimsPrincipal).HasClaim(c => c.Type == OpenIzClaimTypes.OpenIzGrantedPolicyClaim && policyId.StartsWith(c.Value)))
                 return PolicyDecisionOutcomeType.Grant;
             
             // Get the user object from the principal

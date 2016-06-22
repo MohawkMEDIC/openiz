@@ -62,7 +62,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     return context.SecurityApplicationPolicies.Where(o => o.ApplicationId == (securable as IdentifiedData).Key && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o)).ToList();
                 else if (securable is ApplicationPrincipal)
                 {
-                    Guid appId = Guid.Parse((securable as ApplicationPrincipal).Identity.Name);
+                    var sid = (securable as ApplicationPrincipal).FindFirst(ClaimTypes.Sid);
+                    Guid appId = Guid.Parse(sid.Value);
                     return context.SecurityApplicationPolicies.Where(o => o.ApplicationId == appId && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o)).ToList();
                 }
                 else if (securable is IPrincipal || securable is IIdentity)

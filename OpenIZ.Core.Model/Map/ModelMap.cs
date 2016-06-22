@@ -63,6 +63,12 @@ namespace OpenIZ.Core.Model.Map
         public List<ClassMap> Class { get; set; }
 
         /// <summary>
+        /// Redirect the elements
+        /// </summary>
+        [XmlElement("redirect")]
+        public List<ClassRedirect> Redirect { get; set; }
+
+        /// <summary>
         /// Get a class map for the specified type
         /// </summary>
         public ClassMap GetModelClassMap(Type type)

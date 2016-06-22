@@ -147,6 +147,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the classification of the concept
         /// </summary>
         [DelayLoad(nameof(ClassKey))]
+        [AutoLoad]
         [XmlIgnore, JsonIgnore]
         public ConceptClass Class
         {
@@ -188,7 +189,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets the concept names
         /// </summary>
-        [DelayLoad(null)]
+        //[DelayLoad(null)]
         [XmlElement("name"), JsonProperty("name")]
         public List<ConceptName> ConceptNames
         {

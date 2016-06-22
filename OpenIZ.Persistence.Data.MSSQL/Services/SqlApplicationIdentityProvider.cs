@@ -64,17 +64,30 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             // Data context
             using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
             {
-                Guid appId = Guid.Parse(applicationId);
                 IPasswordHashingService hashService = ApplicationContext.Current.GetService<IPasswordHashingService>();
-                var client = dataContext.SecurityApplications.SingleOrDefault(o => o.ApplicationId == appId && o.ApplicationSecret == hashService.EncodePassword(applicationSecret));
+                var client = dataContext.SecurityApplications.SingleOrDefault(o => o.ApplicationPublicId == applicationId && o.ApplicationSecret == hashService.EncodePassword(applicationSecret));
                 if (client == null)
                     throw new SecurityException("Invalid application credentials");
 
-                IPrincipal applicationPrincipal = new ApplicationPrincipal(new OpenIZ.Core.Security.ApplicationIdentity(client.ApplicationId, true));
+                IPrincipal applicationPrincipal = new ApplicationPrincipal(new OpenIZ.Core.Security.ApplicationIdentity(client.ApplicationId, client.ApplicationPublicId, true));
                 new PolicyPermission(System.Security.Permissions.PermissionState.None, PermissionPolicyIdentifiers.Login, applicationPrincipal).Demand();
                 return applicationPrincipal;
             }
 
+        }
+
+        /// <summary>
+        /// Gets the specified identity
+        /// </summary>
+        public IIdentity GetIdentity(string name)
+        {
+            // Data context
+            using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
+            {
+                var client = dataContext.SecurityApplications.SingleOrDefault(o => o.ApplicationPublicId == name);
+                return new OpenIZ.Core.Security.ApplicationIdentity(client.ApplicationId, client.ApplicationPublicId, false);
+
+            }
         }
     }
 }

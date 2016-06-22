@@ -19,6 +19,7 @@
 using OpenIZ.Core.Exceptions;
 using OpenIZ.Core.Model.Attributes;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -28,6 +29,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using OpenIZ.Core.Model.Reflection;
+using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.Core.Model.Map
 {
@@ -59,7 +62,7 @@ namespace OpenIZ.Core.Model.Map
         /// <summary>
         /// Map member 
         /// </summary>
-        public MemberExpression MapModelMember(MemberExpression memberExpression, Expression accessExpression)
+        public Expression MapModelMember(MemberExpression memberExpression, Expression accessExpression)
         {
             
             ClassMap classMap = this.m_mapFile.GetModelClassMap(memberExpression.Expression.Type);
@@ -79,7 +82,7 @@ namespace OpenIZ.Core.Model.Map
                 // We have to map through an associative table
                 if(propertyMap.Via != null )
                 {
-                    MemberExpression viaExpression = Expression.MakeMemberAccess(accessExpression, accessExpression.Type.GetRuntimeProperty(propertyMap.DomainName));
+                    Expression viaExpression = Expression.MakeMemberAccess(accessExpression, accessExpression.Type.GetRuntimeProperty(propertyMap.DomainName));
                     var via = propertyMap.Via;
                     while (via != null)
                     {
@@ -88,6 +91,11 @@ namespace OpenIZ.Core.Model.Map
                         if (viaMember == null)
                             break;
                         viaExpression = Expression.MakeMemberAccess(viaExpression, viaMember);
+
+                        if (via.OrderBy != null && viaExpression.Type.GetTypeInfo().ImplementedInterfaces.Any(o=>o == typeof(IEnumerable)))
+                            viaExpression = this.CreateSortExpression(viaExpression, via);
+                        if (via.Aggregate != AggregationFunctionType.None)
+                            viaExpression = this.CreateAggregateFunction(viaExpression, via);
                         via = via.Via;
                     }
                     return viaExpression;
@@ -107,6 +115,37 @@ namespace OpenIZ.Core.Model.Map
                 else
                     throw new NotSupportedException(String.Format("Cannot find property information for {0}({1}).{2}", memberExpression.Expression, memberExpression.Expression.Type.Name, memberExpression.Member.Name));
             }
+        }
+
+        /// <summary>
+        /// Create aggregation functions
+        /// </summary>
+        private Expression CreateAggregateFunction(Expression viaExpression, PropertyMap via)
+        {
+            var aggregateMethod = typeof(Enumerable).GetGenericMethod(via.Aggregate.ToString(),
+               new Type[] { viaExpression.Type.GetTypeInfo().GenericTypeArguments[0] },
+               new Type[] { viaExpression.Type });
+            return Expression.Call(aggregateMethod as MethodInfo, viaExpression);
+
+        }
+
+        /// <summary>
+        /// Create sort expression
+        /// </summary>
+        private Expression CreateSortExpression(Expression viaExpression, PropertyMap via)
+        {
+            // Get sort property
+            var sortProperty = viaExpression.Type.GenericTypeArguments[0].GetRuntimeProperty(via.OrderBy);
+            Type predicateType = typeof(Func<,>).MakeGenericType(viaExpression.Type.GetTypeInfo().GenericTypeArguments[0], sortProperty.PropertyType);
+            var sortMethod = typeof(Enumerable).GetGenericMethod(via.SortOrder.ToString(),
+                new Type[] { viaExpression.Type.GetTypeInfo().GenericTypeArguments[0], sortProperty.PropertyType },
+                new Type[] { viaExpression.Type, predicateType });
+
+            // Get builder methods
+            var sortParameter = Expression.Parameter(viaExpression.Type.GetTypeInfo().GenericTypeArguments[0], "sort");
+            var builderMethod = typeof(Expression).GetGenericMethod(nameof(Expression.Lambda), new Type[] { predicateType }, new Type[] { typeof(Expression), typeof(ParameterExpression[]) });
+            var sortLambda = builderMethod.Invoke(null, new object[] { Expression.MakeMemberAccess(sortParameter, sortProperty), new ParameterExpression[] { sortParameter } }) as Expression;
+            return Expression.Call(sortMethod as MethodInfo, viaExpression, sortLambda);
         }
 
         /// <summary>
@@ -158,9 +197,8 @@ namespace OpenIZ.Core.Model.Map
                 {
 
                     MemberInfo viaMember = viaExpression.Type.GetRuntimeProperty(via.DomainName);
-                    if (viaMember == null)
-                        break;
-                    viaExpression = Expression.MakeMemberAccess(viaExpression, viaMember);
+                    if (viaMember != null)
+                        viaExpression = Expression.MakeMemberAccess(viaExpression, viaMember);
                     via = via.Via;
                 }
                 return viaExpression;
@@ -182,12 +220,12 @@ namespace OpenIZ.Core.Model.Map
                 var parameter = Expression.Parameter(typeof(TTo), expression.Parameters[0].Name);
                 Expression expr = new ModelExpressionVisitor(this, parameter).Visit(expression.Body);
                 var retVal = Expression.Lambda<Func<TTo, bool>>(expr, parameter);
-                Debug.WriteLine("Map Expression: {0} > {1}", expression, retVal);
+                //Debug.WriteLine("Map Expression: {0} > {1}", expression, retVal);
                 return retVal;
             }
             catch(Exception e)
             {
-                Debug.WriteLine("Error converting {0}. {1}", expression, e.ToString());
+                //Debug.WriteLine("Error converting {0}. {1}", expression, e.ToString());
                 throw;
             }
         }
@@ -238,9 +276,10 @@ namespace OpenIZ.Core.Model.Map
                     domainProperty = typeof(TDomain).GetRuntimeProperty(propMap.DomainName);
 
                 object domainValue = null;
-                    // Set value
-				if (domainProperty == null)
-					Debug.WriteLine ("Unmapped property ({0}).{1}", typeof(TModel).Name, propInfo.Name);
+                // Set value
+                if (domainProperty == null)
+                    continue;
+					//Debug.WriteLine ("Unmapped property ({0}).{1}", typeof(TModel).Name, propInfo.Name);
 				else if (domainProperty.PropertyType == typeof(byte[]) && propInfo.PropertyType == typeof(Guid))
 					domainProperty.SetValue (targetObject, ((Guid)propInfo.GetValue (modelInstance)).ToByteArray ());
 				else if (
@@ -293,14 +332,15 @@ namespace OpenIZ.Core.Model.Map
                 var propInfo = typeof(TDomain).GetRuntimeProperty(propMap?.DomainName ?? modelPropertyInfo.Name);
                 if (propInfo == null)
                 {
-                    Debug.WriteLine("Unmapped property ({0}).{1}", typeof(TDomain).Name, modelPropertyInfo.Name);
+                    //Debug.WriteLine("Unmapped property ({0}).{1}", typeof(TDomain).Name, modelPropertyInfo.Name);
                     continue;
                 }
 
+                var originalValue = propInfo.GetValue(domainInstance);
                 // Property info
                 try
                 {
-                    if (propInfo.GetValue(domainInstance) == null)
+                    if (originalValue == null)
                         continue;
                 }
                 catch(Exception e) // HACK: For some reason, some LINQ providers will return NULL on EntityReferences with no value
@@ -334,39 +374,73 @@ namespace OpenIZ.Core.Model.Map
                         via = via.Via;
                     }
 
-                    foreach (var p in viaWalk.Select(o=>o).Reverse())
+                    sourceProperty = propInfo;
+                    foreach (var p in viaWalk.Select(o=>o))
                     {
-                        sourceObject = sourceProperty.GetValue(sourceObject);
+                        if(!(sourceObject is IList))
+                            sourceObject = sourceProperty.GetValue(sourceObject);
                         sourceProperty = this.ExtractDomainType(sourceProperty.PropertyType).GetRuntimeProperty(p.DomainName);
                     }
                 }
 
                 // validate property type
-                if (!sourceProperty.PropertyType.GetTypeInfo().IsPrimitive && sourceProperty.PropertyType != typeof(Guid) &&
-                    (!sourceProperty.PropertyType.GetTypeInfo().IsGenericType || sourceProperty.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) &&
-                    sourceProperty.PropertyType != typeof(String) &&
-                    sourceProperty.PropertyType != typeof(DateTime) &&
-                    sourceProperty.PropertyType != typeof(DateTimeOffset) &&
-                    sourceProperty.PropertyType != typeof(Decimal) &&
-					sourceProperty.PropertyType != typeof(byte[]))
+                if (propMap?.DontLoad == true)
                     continue;
-
-
+                
                 // Set value
                 object pValue = null;
                 if (modelProperty == null)
-                    Debug.WriteLine("Unmapped property ({0}).{1}", typeof(TDomain).Name, propInfo.Name);
-                else if (modelProperty.GetCustomAttribute<DelayLoadAttribute>() != null)
                     continue;
-				else if(sourceProperty.PropertyType == typeof(byte[]) && modelProperty.PropertyType == typeof(Guid)) // Guid to BA
-					modelProperty.SetValue(retVal, new Guid((byte[])sourceProperty.GetValue(sourceObject)));
+                //DebugWriteLine("Unmapped property ({0}).{1}", typeof(TDomain).Name, propInfo.Name);
+                else if (modelProperty.GetCustomAttribute<DelayLoadAttribute>() != null &&
+                    modelProperty.GetCustomAttribute<AutoLoadAttribute>() == null)
+                    continue;
+                else if (sourceProperty.PropertyType == typeof(byte[]) && modelProperty.PropertyType == typeof(Guid)) // Guid to BA
+                    modelProperty.SetValue(retVal, new Guid((byte[])sourceProperty.GetValue(sourceObject)));
                 else if (modelProperty.PropertyType.GetTypeInfo().IsAssignableFrom(sourceProperty.PropertyType.GetTypeInfo()))
                     modelProperty.SetValue(retVal, sourceProperty.GetValue(sourceObject));
                 else if (sourceProperty.PropertyType == typeof(String) && modelProperty.PropertyType == typeof(Type))
                     modelProperty.SetValue(retVal, Type.GetType(sourceProperty.GetValue(sourceObject) as String));
-                else if(MapUtil.TryConvert(sourceProperty.GetValue(sourceObject), modelProperty.PropertyType, out pValue))
+                else if (MapUtil.TryConvert(originalValue, modelProperty.PropertyType, out pValue))
                     modelProperty.SetValue(retVal, pValue);
+                else if (originalValue is IList)
+                {
+                    var modelInstance = Activator.CreateInstance(modelProperty.PropertyType) as IList;
+                    modelProperty.SetValue(retVal, modelInstance);
+                    var instanceMapFunction = typeof(ModelMapper).GetGenericMethod("MapDomainInstance", new Type[] { sourceProperty.PropertyType.GenericTypeArguments[0], modelProperty.PropertyType.GenericTypeArguments[0] },
+                        new Type[] { sourceProperty.PropertyType.GenericTypeArguments[0] });
+                    foreach (var itm in originalValue as IList)
+                    {
+                        // Traverse?
+                        var instance = itm;
+                        var via = propMap.Via;
+                        while (via != null)
+                        {
+                            instance = instance?.GetType().GetRuntimeProperty(via.DomainName)?.GetValue(instance);
+                            if (instance is IList)
+                            {
+                                var parm = Expression.Parameter(instance.GetType());
+                                Expression aggregateExpr = null;
+                                if (!String.IsNullOrEmpty(via.OrderBy))
+                                    aggregateExpr = this.CreateSortExpression(parm, via);
+                                aggregateExpr = this.CreateAggregateFunction(aggregateExpr, via);
 
+                                // Get the generic method for LIST to be widdled down
+                                instance = Expression.Lambda(aggregateExpr, parm).Compile().DynamicInvoke(instance);
+
+                            }
+                            via = via.Via;
+                        }
+                        modelInstance.Add(instanceMapFunction.Invoke(this, new object[] { instance }));
+                    }
+                }
+                else if (originalValue is IIdentifiedEntity)
+                {
+                    var instanceMapFunction = typeof(ModelMapper).GetGenericMethod("MapDomainInstance", new Type[] { sourceProperty.PropertyType, modelProperty.PropertyType },
+                       new Type[] { sourceProperty.PropertyType });
+                    modelProperty.SetValue(retVal, instanceMapFunction.Invoke(this, new object[] { sourceProperty.GetValue(sourceObject) }));
+
+                }
             }
 
             return retVal;

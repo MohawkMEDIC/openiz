@@ -246,6 +246,11 @@ INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('d15b96a
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('f6840336-4e20-4bc0-b965-baa6d7c80be3', 'dadbd858-13c5-44a3-ad7d-1c44cecaa4b6', 0); -- DENY Unrestricted Clinical Data
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('dea891aa-224d-4859-81b3-c1eb2750067e', 'dadbd858-13c5-44a3-ad7d-1c44cecaa4b6', 0); -- DENY Override disclosure
 
+-- CREATE SYNCHRONIZERS ROLE
+INSERT INTO SecurityRole (RoleId, Name, [Description], CreatedBy) VALUES ('54B7677C-682B-425F-A937-3AA03D5951F1', 'SYNCHRONIZERS', 'Group for user SYNCHRONIZERS. Identifies the functions that are used for synchronization. EDITING THIS ROLE MAY INTRODUCE SECURITY BREACHES', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('d15b96ab-646c-4c00-9a58-ea09eee67d7c', '54B7677C-682B-425F-A937-3AA03D5951F1', 2); -- GRANT Login
+INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('f6840336-4e20-4bc0-b965-baa6d7c80be3', '54B7677C-682B-425F-A937-3AA03D5951F1', 2); -- GRANT Unrestricted Clinical Data
+INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('dea891aa-224d-4859-81b3-c1eb2750067e', '54B7677C-682B-425F-A937-3AA03D5951F1', 0); -- DENY Override disclosure
 /*
  A SECURITY DEVICE TABLE IS USED TO TRACK THE SECRETS FOR DEVICES DEPLOYED IN THE FIELD
  AND ALLOWS THE OPEN IZ BACKBONE TO DENY AND/OR ALERT THE USER OF NEW SIGN INS FROM

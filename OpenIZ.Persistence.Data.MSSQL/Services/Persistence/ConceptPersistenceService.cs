@@ -9,6 +9,8 @@ using OpenIZ.Persistence.Data.MSSQL.Data;
 using System.Security.Principal;
 using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Services;
+using System.Linq.Expressions;
+using System.Data.Linq;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -89,6 +91,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             data.StatusConceptKey = StatusKeys.Obsolete;
             return base.Update(context, data, principal);
+        }
+
+        /// <summary>
+        /// Get data load options
+        /// </summary>
+        protected override DataLoadOptions GetDataLoadOptions()
+        {
+            var loadOptions = base.GetDataLoadOptions();
+            loadOptions.LoadWith<Data.ConceptVersion>(c => c.Concept);
+            loadOptions.LoadWith<Data.Concept>(c => c.ConceptNames);
+            loadOptions.LoadWith<Data.ConceptVersion>(c => c.ConceptClass);
+
+            return loadOptions;
         }
     }
 

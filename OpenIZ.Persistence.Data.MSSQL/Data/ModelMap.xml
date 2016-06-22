@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 
 <modelMap xmlns="http://openiz.org/model/map">
+
   <!-- Security Users -->
   <class modelClass="OpenIZ.Core.Model.Security.SecurityUser, OpenIZ.Core.Model, Version=1.0.0.0"
 		domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SecurityUser, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
@@ -22,7 +23,7 @@
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="UpdatedByEntity" keyName="UpdatedBy"/>
-    
+
   </class>
 
   <class modelClass="OpenIZ.Core.Model.Security.SecurityRole, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SecurityRole, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
@@ -40,7 +41,7 @@
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
   </class>
-  
+
   <class modelClass="OpenIZ.Core.Model.Security.SecurityPolicy, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.Policy, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="PolicyId"/>
     <property modelName="Handler" domainName="HandlerClass"/>
@@ -54,7 +55,7 @@
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
   </class>
-  
+
   <!-- Security Application -->
   <class modelClass="OpenIZ.Core.Model.Security.SecurityApplication, OpenIZ.Core.Model, Version=1.0.0.0"
 		domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SecurityApplication, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
@@ -110,6 +111,7 @@
     <property modelName="GrantType" domainName="PolicyAction"/>
   </class>
 
+
   <!-- Concepts -->
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptSet, OpenIZ.Core.Model, Version=1.0.0.0"
 		domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptSet, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
@@ -122,23 +124,27 @@
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
 
     <property modelName="Concepts" domainName="ConceptSetMembers">
-      <via domainName="Concept"/>
+      <via domainName="Concept">
+        <via domainName="ConceptVersions" aggregate="first" orderBy="VersionSequenceId" sortOrder="desc"/>
+      </via>
     </property>
-    
+
   </class>
-  
-    <class modelClass="OpenIZ.Core.Model.DataTypes.Concept, OpenIZ.Core.Model, Version=1.0.0.0"
-         domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptVersion, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.Concept, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptVersion, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
 
     <property modelName="Key" domainName="ConceptId"/>
     <property modelName="VersionKey" domainName="ConceptVersionId"/>
     <property modelName="PreviousVersionKey" domainName="ReplacesVersionId"/>
-      <property modelName="VersionSequence" domainName="VersionSequenceId"/>
-      <property modelName="StatusConceptKey" domainName="StatusConceptId"/>
-    <property modelName="StatusConcept" domainName="StatusConcept" dontLoad="true" />
+    <property modelName="VersionSequence" domainName="VersionSequenceId"/>
+    <property modelName="StatusConceptKey" domainName="StatusConceptId"/>
+    <property modelName="StatusConcept" domainName="StatusConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+    </property>
 
     <property modelName="ClassKey" domainName="ConceptClassId"/>
-    <property modelName="Class" domainName="ConceptClass"  dontLoad="true"/>
+    <property modelName="Class" domainName="ConceptClass" />
 
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
@@ -152,7 +158,7 @@
     </property>
     <property modelName="ConceptSets" domainName="Concept" dontLoad="true">
       <via domainName="ConceptSetMembers" >
-        <via domainName="Concept"/>
+        <via domainName="ConceptSet"/>
       </via>
     </property>
     <property modelName="VersionSequence" domainName="VersionSequenceId"/>
@@ -165,12 +171,11 @@
   </class>
 
   <class modelClass="OpenIZ.Core.Model.DataTypes.Concept, OpenIZ.Core.Model, Version=1.0.0.0"
-       domainClass="OpenIZ.Persistence.Data.MSSQL.Data.Concept, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+     domainClass="OpenIZ.Persistence.Data.MSSQL.Data.Concept, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="ConceptSets" domainName="ConceptSetMembers" dontLoad="true">
       <via domainName="Concept"/>
     </property>
   </class>
-  
   <!-- Concept Class -->
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptClass, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptClass, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
@@ -201,7 +206,7 @@
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
 
   </class>
-  
+
   <class modelClass="OpenIZ.Core.Model.DataTypes.CodeSystem, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.CodeSystem, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="CodeSystemId"/>
@@ -216,7 +221,7 @@
     <collapseKey propertyName="UpdatedByEntity" keyName="UpdatedBy"/>
   </class>
 
-  <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptRelationshipType, OpenIZ.Core.Model, Version=1.0.0.0" 
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptRelationshipType, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptRelationshipType, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ConceptRelationshipTypeId"/>
     <property modelName="CreatedBy" domainName="CreatedByEntity"/>
@@ -229,8 +234,8 @@
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="UpdatedByEntity" keyName="UpdatedBy"/>
   </class>
-  
-  <class modelClass="OpenIZ.Core.Model.DataTypes.PhoneticAlgorithm, OpenIZ.Core.Model, Version=1.0.0.0" 
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.PhoneticAlgorithm, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.PhoneticAlgorithm, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="PhoneticAlgorithmId"/>
     <property modelName="Handler" domainName="HandlerClass"/>
@@ -244,8 +249,8 @@
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="UpdatedByEntity" keyName="UpdatedBy"/>
   </class>
-  
-  <class modelClass="OpenIZ.Core.Model.DataTypes.ReferenceTerm, OpenIZ.Core.Model, Version=1.0.0.0" 
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ReferenceTerm, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ReferenceTerm, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ReferenceTermId"/>
     <property modelName="CodeSystemKey" domainName="CodeSystemId"/>
@@ -260,7 +265,7 @@
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="UpdatedByEntity" keyName="UpdatedBy"/>
   </class>
-  
+
   <class modelClass="OpenIZ.Core.Model.DataTypes.ReferenceTermName, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ReferenceTermDisplayName, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ReferenceTermDisplayNameId"/>
@@ -275,7 +280,7 @@
     <property modelName="PhoneticAlgorithmKey" domainName="PhoneticAlgorithmId"/>
     <property modelName="PhoneticAlgorithm" domainName="PhoneticAlgorithm"/>
   </class>
-  
+
   <!-- Concept Names -->
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptName, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptName, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
@@ -296,7 +301,7 @@
     <collapseKey propertyName="ConceptRelationshipType" keyName="ConceptRelationshipTypeId"/>
     <property modelName="RelationshipTypeKey" domainName="ConceptRelationshipTypeId"/>
   </class>
-  
+
   <!-- Entity Maps -->
   <class modelClass="OpenIZ.Core.Model.Entities.Entity, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.EntityVersion, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
@@ -365,7 +370,7 @@
     <collapseKey propertyName="ClassConcept" keyName="ClassConceptId"/>
     <collapseKey propertyName="DeterminerConcept" keyName="DeterminerConceptId"/>
   </class>
-  
+
   <class modelClass="OpenIZ.Core.Model.Entities.EntityName, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.EntityName, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="EntityNameId"/>
@@ -480,7 +485,7 @@
     <property modelName="ExtensionTypeKey" domainName="ExtensionTypeId"/>
     <collapseKey propertyName="ExtensionType" keyName="ExtensionTypeId"/>
     <property modelName="SourceEntityKey" domainName="EntityId"/>
-    
+
   </class>
 
   <class modelClass="OpenIZ.Core.Model.DataTypes.ExtensionType, OpenIZ.Core.Model, Version=1.0.0.0"
@@ -497,7 +502,7 @@
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="UpdatedByEntity" keyName="UpdatedBy"/>
     <propertyName modelName="ExtensionHandler" domainName="HandlerClass"/>
-    
+
   </class>
 
   <class modelClass="OpenIZ.Core.Model.DataTypes.EntityNote, OpenIZ.Core.Model, Version=1.0.0.0"
@@ -551,7 +556,7 @@
     <property modelName="VersionKey" domainName="EntityVersionId"/>
     <property modelName="GenderConceptKey" domainName="GenderConceptId"/>
     <collapseKey propertyName="GenderConcept" keyName="GenderConceptId"/>
-    
+
   </class>
 
   <!-- Industry Maps -->

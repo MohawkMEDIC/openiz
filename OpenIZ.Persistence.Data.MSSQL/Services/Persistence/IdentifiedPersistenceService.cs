@@ -110,17 +110,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <summary>
         /// Performs the actual query
         /// </summary>
-        public override IQueryable<TModel> Query (ModelDataContext context, Expression<Func<TModel, bool>> query, int offset, int count, IPrincipal principal, out int totalResults)
+        public override IQueryable<TModel> Query (ModelDataContext context, Expression<Func<TModel, bool>> query, IPrincipal principal)
 		{
 			var domainQuery = m_mapper.MapModelExpression<TModel, TDomain> (query);
 			var retVal = context.GetTable<TDomain> ().Where (domainQuery);
-            // Total count
-            totalResults = retVal.Count();
-            // Skip
-            retVal = retVal.Skip(offset);
-            if (count > 0)
-				retVal = retVal.Take (count);
-            
 			return retVal.Select(o=>this.ToModelInstance(o, context, principal));
 		}
 

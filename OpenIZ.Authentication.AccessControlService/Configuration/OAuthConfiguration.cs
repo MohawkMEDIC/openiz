@@ -80,7 +80,7 @@ namespace OpenIZ.Authentication.OAuth2.Configuration
         /// </summary>
         internal void Validate()
         {
-            if ((String.IsNullOrEmpty(this.ServerSecret) || this.ServerKey != null) &&
+            if (String.IsNullOrEmpty(this.ServerSecret) && this.ServerKey == null &&
                 this.Certificate == null)
                 throw new ConfigurationErrorsException("Configuration must use symmetric key or certificate");
 
