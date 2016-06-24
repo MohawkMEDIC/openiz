@@ -225,7 +225,7 @@ namespace OpenIZ.Core.Model.Query
                             valueExpr = Expression.Constant(DateTime.Parse(pValue));
                         else if (accessExpression.Type == typeof(DateTimeOffset))
                             valueExpr = Expression.Constant(DateTimeOffset.Parse(pValue));
-                        else if (accessExpression.Type == typeof(Guid))
+                        else if (accessExpression.Type == typeof(Guid) || accessExpression.Type == typeof(Guid?))
                             valueExpr = Expression.Constant(Guid.Parse(pValue));
                         else
                             valueExpr = Expression.Constant(Convert.ChangeType(pValue, accessExpression.Type));

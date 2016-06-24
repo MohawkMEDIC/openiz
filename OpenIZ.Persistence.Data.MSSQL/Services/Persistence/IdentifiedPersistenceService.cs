@@ -32,6 +32,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         public override TModel ToModelInstance (object dataInstance, ModelDataContext context, IPrincipal principal)
 		{
 			var retVal = m_mapper.MapDomainInstance<TDomain, TModel> (dataInstance as TDomain);
+            this.m_tracer.TraceEvent(System.Diagnostics.TraceEventType.Verbose, 0, "Model instance {0} created", dataInstance);
+
             return retVal;
 		}
 
