@@ -93,6 +93,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Services\Persistence\ManufacturedMaterialPersistenceService.cs" />
+    <Compile Include="Services\Persistence\MaterialPersistenceService.cs" />
     <Compile Include="Services\Persistence\SecurityPersistenceServices.cs" />
     <Compile Include="Services\SqlServerPersistenceService.cs" />
     <Compile Include="Services\Persistence\ApplicationEntityPersistenceService.cs" />
@@ -123,7 +125,6 @@
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
     </None>
-    <None Include="app.config" />
     <None Include="Data\Model.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>Model.designer.cs</LastGenOutput>
@@ -142,6 +143,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Data\Sql\OpenIZFn.sql" />
+    <Content Include="Data\Sql\Testing\OpenIZTestData.sql" />
     <EmbeddedResource Include="Data\dbfeatures.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>

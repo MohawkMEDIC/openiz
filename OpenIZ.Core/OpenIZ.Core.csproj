@@ -86,6 +86,7 @@
     <Compile Include="Security\PermissionPolicyIdentifiers.cs" />
     <Compile Include="Security\SecurityUtils.cs" />
     <Compile Include="Security\SHA256PasswordHashingService.cs" />
+    <Compile Include="Services\Impl\LocalPatientRepositoryService.cs" />
     <Compile Include="Wcf\Behavior\WcfErrorEndpointBehavior.cs" />
     <Compile Include="Wcf\Security\BasicAuthorizationAccessPolicy.cs" />
     <Compile Include="Wcf\Security\BasicAuthorizationCredentialValidator.cs" />

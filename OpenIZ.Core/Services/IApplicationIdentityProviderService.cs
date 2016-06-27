@@ -46,5 +46,10 @@ namespace OpenIZ.Core.Services
         /// Authenticate the application identity
         /// </summary>
         IPrincipal Authenticate(String applicationId, String applicationSecret);
+
+        /// <summary>
+        /// Gets the specified identity
+        /// </summary>
+        IIdentity GetIdentity(string name);
     }
 }

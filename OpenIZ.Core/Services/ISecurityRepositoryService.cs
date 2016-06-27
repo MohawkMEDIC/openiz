@@ -65,5 +65,35 @@ namespace OpenIZ.Core.Services
         /// </summary>
         SecurityUser SaveUser(SecurityUser user);
 
+
+        /// <summary>
+        /// Create the specified Role with specified password
+        /// </summary>
+        SecurityRole CreateRole(SecurityRole roleInfo);
+
+        /// <summary>
+        /// Obsolete a Role
+        /// </summary>
+        SecurityRole ObsoleteRole(Guid roleId);
+
+        /// <summary>
+        /// Get the specified Role
+        /// </summary>
+        SecurityRole GetRole(Guid roleId);
+
+        /// <summary>
+        /// Finds the specified Roles
+        /// </summary>
+        IEnumerable<SecurityRole> FindRoles(Expression<Func<SecurityRole, bool>> query);
+
+        /// <summary>
+        /// Finds the specified Roles matching the query 
+        /// </summary>
+        IEnumerable<SecurityRole> FindRoles(Expression<Func<SecurityRole, bool>> query, int offset, int? count, out int total);
+
+        /// <summary>
+        /// Save the specified security Role
+        /// </summary>
+        SecurityRole SaveRole(SecurityRole role);
     }
 }

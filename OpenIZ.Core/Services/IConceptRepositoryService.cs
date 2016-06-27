@@ -113,5 +113,38 @@ namespace OpenIZ.Core.Services
         /// Obsoletes the specified concept
         /// </summary>
         IdentifiedData ObsoleteConcept(Guid key);
+
+        /// <summary>
+        /// Creates the specified concept set
+        /// </summary>
+        ConceptSet InsertConceptSet(ConceptSet set);
+
+        /// <summary>
+        /// Saves or updates the existing concept set
+        /// </summary>
+        ConceptSet SaveConceptSet(ConceptSet set);
+
+        /// <summary>
+        /// Obsoletes the concept set
+        /// </summary>
+        ConceptSet ObsoleteConceptSet(Guid key);
+
+        /// <summary>
+        /// Gets the specified concept set.
+        /// </summary>
+        ConceptSet GetConceptSet(Guid id);
+
+        /// <summary>
+        /// Performs an arbirary query 
+        /// </summary>
+        /// <param name="query">The query to execute</param>
+        IEnumerable<ConceptSet> FindConceptSets(Expression<Func<ConceptSet, bool>> query);
+
+        /// <summary>
+        /// Find concepts 
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<ConceptSet> FindConceptSets(Expression<Func<ConceptSet, bool>> query, int offset, int? count, out int totalResults);
+
     }
 }

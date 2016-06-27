@@ -23,6 +23,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Core.Services
 {
@@ -63,6 +64,11 @@ namespace OpenIZ.Core.Services
         Patient Merge(Patient survivor, Patient victim);
 
         /// <summary>
+        /// Gets the specified patient
+        /// </summary>
+        IdentifiedData Get(Guid id, Guid versionId);
+
+        /// <summary>
         /// Un-merges two patients from each other
         /// </summary>
         /// <param name="patient">The patient which is to be un-merged</param>
@@ -76,7 +82,11 @@ namespace OpenIZ.Core.Services
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        IEnumerable<Patient> Search(Expression<Func<Patient, bool>> predicate);
+        IEnumerable<Patient> Find(Expression<Func<Patient, bool>> predicate);
 
+        /// <summary>
+        /// Searches the database for the specified patient
+        /// </summary>
+        IEnumerable<Patient> Find(Expression<Func<Patient, bool>> predicate, int offset, int? count, out int totalCount);
     }
 }

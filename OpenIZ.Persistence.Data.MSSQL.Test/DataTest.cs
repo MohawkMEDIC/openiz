@@ -35,6 +35,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test
         {
             if(EntitySource.Current == null)
                 EntitySource.Current = new EntitySource(new PersistenceServiceEntitySource());
+            ApplicationContext.Current.Start();
 
             // Start the daemon services
             var sqlPersistenceService = ApplicationContext.Current.GetService<SqlServerPersistenceService>();

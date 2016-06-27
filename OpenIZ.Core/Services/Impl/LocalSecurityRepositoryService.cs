@@ -32,6 +32,17 @@ namespace OpenIZ.Core.Services.Impl
         }
 
         /// <summary>
+        /// Creates the provided role
+        /// </summary>
+        public SecurityRole CreateRole(SecurityRole roleInfo)
+        {
+            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
+            if (pers == null)
+                throw new InvalidOperationException("Misisng role provider service");
+            return pers.Insert(roleInfo, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+        }
+
+        /// <summary>
         /// Create a user
         /// </summary>
         public SecurityUser CreateUser(SecurityUser userInfo, string password)
@@ -68,6 +79,26 @@ namespace OpenIZ.Core.Services.Impl
         }
 
         /// <summary>
+        /// Finds the roles matching the specified queried
+        /// </summary>
+        public IEnumerable<SecurityRole> FindRoles(Expression<Func<SecurityRole, bool>> query)
+        {
+            int total = 0;
+            return this.FindRoles(query, 0, null, out total);
+        }
+
+        /// <summary>
+        /// Find all roles specified 
+        /// </summary>
+        public IEnumerable<SecurityRole> FindRoles(Expression<Func<SecurityRole, bool>> query, int offset, int? count, out int total)
+        {
+            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
+            if (pers == null)
+                throw new InvalidOperationException("Missing role persistence service");
+            return pers.Query(query, offset, count, AuthenticationContext.Current.Principal, out total);
+        }
+
+        /// <summary>
         /// Find users matching the specified query
         /// </summary>
         public IEnumerable<SecurityUser> FindUsers(Expression<Func<SecurityUser, bool>> query)
@@ -85,6 +116,17 @@ namespace OpenIZ.Core.Services.Impl
             if (pers == null)
                 throw new InvalidOperationException("Missing persistence service");
             return pers.Query(query, offset, count, AuthenticationContext.Current.Principal, out total);
+        }
+
+        /// <summary>
+        /// Gets the specified role
+        /// </summary>
+        public SecurityRole GetRole(Guid roleId)
+        {
+            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
+            if (pers == null)
+                throw new InvalidOperationException("Missing role persistence service");
+            return pers.Get<Guid>(new Identifier<Guid>(roleId), AuthenticationContext.Current.Principal, false);
         }
 
         /// <summary>
@@ -124,6 +166,18 @@ namespace OpenIZ.Core.Services.Impl
         }
 
         /// <summary>
+        /// Obsoletes the specified role
+        /// </summary>
+        public SecurityRole ObsoleteRole(Guid roleId)
+        {
+            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
+            if (pers == null)
+                throw new InvalidOperationException("Missing role provider service");
+            return pers.Obsolete(this.GetRole(roleId), AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+        }
+
+        /// <summary>
         /// Obsolete the specified user
         /// </summary>
         public SecurityUser ObsoleteUser(Guid userId)
@@ -139,6 +193,17 @@ namespace OpenIZ.Core.Services.Impl
             var retVal = pers.Obsolete(this.GetUser(userId), AuthenticationContext.Current.Principal, TransactionMode.Commit);
             iids.DeleteIdentity(retVal.UserName, AuthenticationContext.Current.Principal);
             return retVal;
+        }
+
+        /// <summary>
+        /// Saves the specified role
+        /// </summary>
+        public SecurityRole SaveRole(SecurityRole role)
+        {
+            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
+            if (pers == null)
+                throw new InvalidOperationException("Missing role persistence service");
+            return pers.Update(role, AuthenticationContext.Current.Principal, TransactionMode.Commit);
         }
 
         /// <summary>

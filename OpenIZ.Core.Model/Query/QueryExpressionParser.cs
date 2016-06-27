@@ -29,6 +29,7 @@ using System.Diagnostics;
 using System.Globalization;
 using OpenIZ.Core.Model.Attributes;
 using System.Collections;
+using OpenIZ.Core.Model.Reflection;
 
 namespace OpenIZ.Core.Model.Query
 {
@@ -40,25 +41,6 @@ namespace OpenIZ.Core.Model.Query
     /// </summary>
     public class QueryExpressionParser
     {
-
-        /// <summary>
-        /// Get generic method
-        /// </summary>
-        private MethodBase GetGenericMethod(Type type, string name, Type[] typeArgs, Type[] argTypes)
-        {
-            int typeArity = typeArgs.Length;
-            var methods = type.GetRuntimeMethods()
-                .Where(m => m.Name == name)
-                .Where(m => m.GetGenericArguments().Length == typeArity)
-                .Where(m=>m.GetParameters().Length == argTypes.Length)
-                .Select(m => m.MakeGenericMethod(typeArgs)).ToList()
-                .Where(m => m.GetParameters().All(o => argTypes.Any(p => o.ParameterType.GetTypeInfo().IsAssignableFrom(p.GetTypeInfo()))));
-
-
-            return methods.SingleOrDefault();
-            //return Type.DefaultBinder.SelectMethod(flags, methods.ToArray(), argTypes, null);
-        }
-
 
         /// <summary>
         /// Build a LINQ expression
@@ -145,7 +127,7 @@ namespace OpenIZ.Core.Model.Query
                                 classifierProperty = classifierProperty.PropertyType.GetRuntimeProperty(classAttr.ClassifierProperty);
                         }
 
-                        var whereMethod = this.GetGenericMethod(typeof(Enumerable), "Where",
+                        var whereMethod = typeof(Enumerable).GetGenericMethod("Where",
                             new Type[] { itemType },
                             new Type[] { accessExpression.Type, predicateType }) as MethodInfo;
 
@@ -162,7 +144,7 @@ namespace OpenIZ.Core.Model.Query
                         Type itemType = accessExpression.Type.GenericTypeArguments[0];
                         Type predicateType = typeof(Func<,>).MakeGenericType(itemType, typeof(bool));
 
-                        var anyMethod = this.GetGenericMethod(typeof(Enumerable), "Any",
+                        var anyMethod = typeof(Enumerable).GetGenericMethod("Any",
                             new Type[] { itemType },
                             new Type[] { accessExpression.Type, predicateType }) as MethodInfo;
                         
@@ -177,7 +159,7 @@ namespace OpenIZ.Core.Model.Query
                             workingValues.Remove(wv);
                         }
 
-                        var builderMethod = this.GetGenericMethod(typeof(QueryExpressionParser), nameof(BuildLinqExpression), new Type[] { itemType }, new Type[] { typeof(NameValueCollection), typeof(String) });
+                        var builderMethod = typeof(QueryExpressionParser).GetGenericMethod(nameof(BuildLinqExpression), new Type[] { itemType }, new Type[] { typeof(NameValueCollection), typeof(String) });
 
                         Expression predicate = (builderMethod.Invoke(this, new object[] { subFilter, pMember }) as LambdaExpression);
                         keyExpression = Expression.Call(anyMethod, accessExpression, predicate);
@@ -243,7 +225,7 @@ namespace OpenIZ.Core.Model.Query
                             valueExpr = Expression.Constant(DateTime.Parse(pValue));
                         else if (accessExpression.Type == typeof(DateTimeOffset))
                             valueExpr = Expression.Constant(DateTimeOffset.Parse(pValue));
-                        else if (accessExpression.Type == typeof(Guid))
+                        else if (accessExpression.Type == typeof(Guid) || accessExpression.Type == typeof(Guid?))
                             valueExpr = Expression.Constant(Guid.Parse(pValue));
                         else
                             valueExpr = Expression.Constant(Convert.ChangeType(pValue, accessExpression.Type));

@@ -33,6 +33,7 @@ using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Model.Security;
 using Newtonsoft.Json;
 using System.Threading;
+using System.Diagnostics;
 
 namespace OpenIZ.Core.Model.Collection
 {
@@ -45,6 +46,7 @@ namespace OpenIZ.Core.Model.Collection
     [XmlInclude(typeof(ReferenceTerm))]
     [XmlInclude(typeof(Act))]
     [XmlInclude(typeof(TextObservation))]
+    [XmlInclude(typeof(ConceptSet))]
     [XmlInclude(typeof(CodedObservation))]
     [XmlInclude(typeof(QuantityObservation))]
     [XmlInclude(typeof(PatientEncounter))]
@@ -62,7 +64,6 @@ namespace OpenIZ.Core.Model.Collection
     [XmlInclude(typeof(PhoneticAlgorithm))]
     [XmlInclude(typeof(Bundle))]
     [XmlInclude(typeof(ConceptClass))]
-    [XmlInclude(typeof(Bundle))]
     [XmlInclude(typeof(ConceptRelationship))]
     [XmlInclude(typeof(ConceptRelationshipType))]
     [XmlInclude(typeof(SecurityUser))]
@@ -208,52 +209,59 @@ namespace OpenIZ.Core.Model.Collection
         /// </summary>
         public static void ProcessModel(IdentifiedData model, Bundle currentBundle, bool followList = true)
         {
-            foreach(var pi in model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<DelayLoadAttribute>() != null))
+            try
             {
-                try
+                foreach (var pi in model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<DelayLoadAttribute>() != null))
                 {
-                    object rawValue = pi.GetValue(model);
-                    if (rawValue == null) continue;
-
-                    if (rawValue is IList && followList)
+                    try
                     {
-                        foreach (var itm in rawValue as IList)
+                        object rawValue = pi.GetValue(model);
+                        if (rawValue == null) continue;
+
+                        if (rawValue is IList && followList)
                         {
-
-                            if (itm is IdentifiedData)
+                            foreach (var itm in rawValue as IList)
                             {
-                                if (currentBundle.Item.Exists(o => o.Key == (itm as IdentifiedData).Key))
-                                    continue;
 
+                                if (itm is IdentifiedData)
+                                {
+                                    if (currentBundle.Item.Exists(o => o.Key == (itm as IdentifiedData).Key))
+                                        continue;
+
+                                    if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null)
+                                        lock (currentBundle.m_lockObject)
+                                            if (!currentBundle.Item.Exists(o => o.Key == (itm as IdentifiedData).Key))
+                                                currentBundle.Item.Add(itm as IdentifiedData);
+
+                                    ProcessModel(itm as IdentifiedData, currentBundle, false);
+                                }
+                            }
+                        }
+                        else if (rawValue is IdentifiedData)
+                        {
+                            var iValue = rawValue as IdentifiedData;
+                            var versionedValue = rawValue as IVersionedEntity;
+
+                            // Check for existing item
+                            if (!currentBundle.Item.Exists(i => i.Key == iValue.Key && versionedValue?.VersionKey == (i as IVersionedEntity)?.VersionKey))
+                            {
                                 if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null)
-                                    lock(currentBundle.m_lockObject)
-                                        if (!currentBundle.Item.Exists(o => o.Key == (itm as IdentifiedData).Key))
-                                            currentBundle.Item.Add(itm as IdentifiedData);
-
-                                ProcessModel(itm as IdentifiedData, currentBundle, false);
+                                    lock (currentBundle.m_lockObject)
+                                        if (!currentBundle.Item.Exists(o => o.Key == iValue.Key))
+                                            currentBundle.Item.Add(iValue);
+                                ProcessModel(iValue, currentBundle);
                             }
                         }
                     }
-                    else if (rawValue is IdentifiedData)
+                    catch (Exception e)
                     {
-                        var iValue = rawValue as IdentifiedData;
-                        var versionedValue = rawValue as IVersionedEntity;
-
-                        // Check for existing item
-                        if (!currentBundle.Item.Exists(i => i.Key == iValue.Key && versionedValue?.VersionKey == (i as IVersionedEntity)?.VersionKey))
-                        {
-                            if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null)
-                                lock (currentBundle.m_lockObject)
-                                    if (!currentBundle.Item.Exists(o => o.Key == iValue.Key))
-                                        currentBundle.Item.Add(iValue);
-                            ProcessModel(iValue, currentBundle);
-                        }
+                        Debug.WriteLine("Instance error: {0}", e);
                     }
                 }
-                catch(Exception e)
-                {
-                    // TODO: LOG
-                }
+            }
+            catch(Exception e)
+            {
+                Debug.WriteLine("Error: {0}", e);
             }
         }
 

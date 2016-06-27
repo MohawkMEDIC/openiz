@@ -231,7 +231,9 @@ namespace OpenIZ.Core.Wcf.Serialization
             catch (Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
-                throw;
+                Message reply = null;
+                new WcfErrorHandler().ProvideFault(e, messageVersion, ref reply);
+                return reply;
             }
         }
     }

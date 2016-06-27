@@ -80,7 +80,12 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
                 if (identities == null || identities.Count <= 0)
                     throw new Exception("No Identity found");
 
-                evaluationContext.Properties["Principal"] = new GenericPrincipal(identities[0], null);
+                // Add SID claim
+                var principal = new GenericPrincipal(identities[0], null);
+                var applicationProvider = ApplicationContext.Current.GetService<IApplicationIdentityProviderService>();
+                var applicationPrincipal = applicationProvider.GetIdentity(principal.Identity.Name);
+                principal.AddIdentity(applicationPrincipal as Core.Security.ApplicationIdentity);
+                evaluationContext.Properties["Principal"] = principal;
                 return true;
             }
             catch(Exception e)

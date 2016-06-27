@@ -36,6 +36,13 @@ namespace OpenIZ.Core.Services.Impl
     /// </summary>
     internal class LocalConceptRepositoryService : IConceptRepositoryService
     {
+        /// <summary>
+        /// Create the specified concept st
+        /// </summary>
+        public ConceptSet InsertConceptSet(ConceptSet set)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Find concepts
@@ -59,19 +66,49 @@ namespace OpenIZ.Core.Services.Impl
 
         }
 
+        /// <summary>
+        /// Locates the specified concepts by name
+        /// </summary>
         public IEnumerable<Concept> FindConceptsByName(string name, string language)
         {
-            throw new NotImplementedException();
+            return this.FindConcepts(o => o.ConceptNames.Any(n => n.Name == name && n.Language == language));
         }
 
+        /// <summary>
+        /// Find concepts by a reference term
+        /// </summary>
         public IEnumerable<Concept> FindConceptsByReferenceTerm(string code, string codeSystemOid)
         {
-            throw new NotImplementedException();
+            return this.FindConcepts(o => o.ReferenceTerms.Any(r => r.ReferenceTerm.CodeSystem.Oid == codeSystemOid && r.ReferenceTerm.Mnemonic == code));
         }
 
+        /// <summary>
+        /// Find concept sets that match the specified query
+        /// </summary>
+        public IEnumerable<ConceptSet> FindConceptSets(Expression<Func<ConceptSet, bool>> query)
+        {
+            int total = 0;
+            return this.FindConceptSets(query, 0, null, out total);
+        }
+
+        /// <summary>
+        /// Find the specified concept sts
+        /// </summary>
+        public IEnumerable<ConceptSet> FindConceptSets(Expression<Func<ConceptSet, bool>> query, int offset, int? count, out int totalResults)
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptSet>>();
+            if (persistenceService == null)
+                throw new InvalidOperationException("No concept set persistence service found");
+
+            return persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
+        }
+
+        /// <summary>
+        /// Gets the specified concept by mnemonic
+        /// </summary>
         public Concept GetConcept(string mnemonic)
         {
-            throw new NotImplementedException();
+            return this.FindConcepts(o => o.Mnemonic == mnemonic).FirstOrDefault();
         }
 
         /// <summary>
@@ -87,14 +124,36 @@ namespace OpenIZ.Core.Services.Impl
             
         }
 
-        public ConceptSet GetConceptSet(string mnemonic)
+        /// <summary>
+        /// Get the specified concept set by identifier
+        /// </summary>
+        public ConceptSet GetConceptSet(Guid id)
         {
-            throw new NotImplementedException();
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptSet>>();
+            if (persistenceService == null)
+                throw new InvalidOperationException("No concept set persistence service found");
+
+            return persistenceService.Get(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, false);
+
         }
 
+        /// <summary>
+        /// Get the specified concept set by mnemonic
+        /// </summary>
+        public ConceptSet GetConceptSet(string mnemonic)
+        {
+            return this.FindConceptSets(o => o.Mnemonic == mnemonic).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Get the specified reference term for the concept
+        /// </summary>
         public ReferenceTerm GetReferenceTerm(Concept concept, string codeSystemOid)
         {
-            throw new NotImplementedException();
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptReferenceTerm>>();
+            if (persistenceService == null)
+                throw new InvalidOperationException("No reference term persistence service found");
+            return persistenceService.Query(o => o.SourceEntityKey == concept.Key && o.ReferenceTerm.CodeSystem.Oid == codeSystemOid, AuthenticationContext.Current.Principal).FirstOrDefault()?.ReferenceTerm;
         }
 
         public bool Implies(Concept a, Concept b)
@@ -107,12 +166,23 @@ namespace OpenIZ.Core.Services.Impl
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Determine if the concept set contains the specified concept
+        /// </summary>
         public bool IsMember(ConceptSet set, Concept concept)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptSet>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Cannot locate concept set persistence service");
+            return persistence.Count(o => o.Concepts.Any(c=>c.Key == concept.Key), AuthenticationContext.Current.Principal) > 0;
+        }
+
+        public IdentifiedData ObsoleteConcept(Guid key)
         {
             throw new NotImplementedException();
         }
 
-        public IdentifiedData ObsoleteConcept(Guid key)
+        public ConceptSet ObsoleteConceptSet(Guid key)
         {
             throw new NotImplementedException();
         }
@@ -123,6 +193,11 @@ namespace OpenIZ.Core.Services.Impl
         }
 
         public Concept SaveConceptClass(ConceptClass clazz)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ConceptSet SaveConceptSet(ConceptSet set)
         {
             throw new NotImplementedException();
         }

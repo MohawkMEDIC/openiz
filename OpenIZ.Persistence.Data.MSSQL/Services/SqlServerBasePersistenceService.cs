@@ -87,7 +87,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        public abstract IQueryable<TData> Query(ModelDataContext context, Expression<Func<TData, bool>> query, int offset, int count, IPrincipal principal,  out int totalResults);
+        public abstract IQueryable<TData> Query(ModelDataContext context, Expression<Func<TData, bool>> query, IPrincipal principal);
+
+        /// <summary>
+        /// Get data load options
+        /// </summary>
+        protected virtual DataLoadOptions GetDataLoadOptions()
+        {
+            return new DataLoadOptions();
+        }
 
         /// <summary>
         /// Get the specified key.
@@ -95,8 +103,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// <param name="key">Key.</param>
         internal TData Get(ModelDataContext context, Guid key, IPrincipal principal)
         {
-            int totalResults = 0;
-            return this.Query(context, o => o.Key == key, 0, -1, principal, out totalResults)?.SingleOrDefault();
+            return this.Query(context, o => o.Key == key, principal)?.SingleOrDefault();
         }
 
         /// <summary>
@@ -325,19 +332,28 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             using (var connection = new ModelDataContext(m_configuration.ReadonlyConnectionString))
                 try
                 {
+                    connection.LoadOptions = this.GetDataLoadOptions();
+                    
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "QUERY {0}", query);
 
                     // Tracer
                     if (m_configuration.TraceSql)
                         connection.Log = new LinqTraceWriter();
 
-                    var results = this.Query(connection, query, offset, count ?? -1, authContext, out totalCount);
+                    var results = this.Query(connection, query, authContext);
 
                     var postData = new PostQueryEventArgs<TData>(query, results, authContext);
                     this.Queried?.Invoke(this, postData);
-                    
+
                     totalCount = postData.Results.Count();
-                    return postData.Results.ToList();
+
+                    // Skip
+                    postData.Results = postData.Results.Skip(offset);
+                    if (count.HasValue)
+                        postData.Results = postData.Results.Take(count.Value);
+
+                    this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Returning {0}..{1} or {2} resuts", offset, offset + (count ?? 1000), totalCount);
+                    return postData.Results.AsParallel().ToList();
 
                 }
                 catch (NotSupportedException e)

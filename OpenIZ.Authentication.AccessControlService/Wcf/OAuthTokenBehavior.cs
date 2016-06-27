@@ -206,7 +206,7 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
                 new Claim(ClaimTypes.AuthenticationMethod, "OAuth2"),
                 new Claim(ClaimTypes.Expiration, expires.ToString("o")), 
                 new Claim(ClaimTypes.Name, oizPrincipal.Identity.Name),
-                new Claim(OpenIzClaimTypes.OpenIzApplicationIdentifierClaim, clientPrincipal.Identity.Name)
+                new Claim(OpenIzClaimTypes.OpenIzApplicationIdentifierClaim,  (clientPrincipal as ClaimsPrincipal).FindFirst(ClaimTypes.Sid).Value)
             };
 
             // Get policies
@@ -235,7 +235,8 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             // Signing credentials
             if (this.m_configuration.Certificate != null)
                 credentials = new X509SigningCredentials(this.m_configuration.Certificate);
-            else if (!String.IsNullOrEmpty(this.m_configuration.ServerSecret))
+            else if (!String.IsNullOrEmpty(this.m_configuration.ServerSecret) ||
+                this.m_configuration.ServerKey != null)
             {
                 var sha = SHA256.Create();
                 credentials = new SigningCredentials(

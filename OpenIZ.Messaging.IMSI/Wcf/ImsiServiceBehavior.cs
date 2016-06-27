@@ -106,6 +106,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
             catch (Exception e)
             {
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+
                 return this.ErrorHelper(e, false);
             }
         }
@@ -146,6 +148,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
             catch (Exception e)
             {
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+
                 return this.ErrorHelper(e, false);
             }
         }
@@ -221,6 +225,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
             catch (Exception e)
             {
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+
                 return this.ErrorHelper(e, false);
             }
         }
@@ -298,6 +304,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
             catch (Exception e)
             {
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+
                 return this.ErrorHelper(e, false);
             }
         }
@@ -332,6 +340,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
             catch(Exception e)
             {
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+
                 return this.ErrorHelper(e, false);
             }
         }
@@ -380,6 +390,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
             catch (Exception e)
             {
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+
                 return this.ErrorHelper(e, false);
             }
         }
@@ -416,7 +428,6 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             WebOperationContext.Current.OutgoingResponse.StatusCode = retCode;
             //WebOperationContext.Current.OutgoingResponse.Format = WebMessageFormat.Xml;
 
-            this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
 
             return result;
 
@@ -427,6 +438,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// </summary>
         private void ExpandProperties(IdentifiedData returnValue, NameValueCollection qp)
         {
+            this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Expanding properties on {0}", returnValue);
             if (qp["_expand"] == null)
                 return;
 

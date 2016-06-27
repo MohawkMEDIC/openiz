@@ -22,7 +22,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 	using System;
 	
 	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="OpenIZ_Test")]
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="OpenIZ")]
 	public partial class ModelDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -255,7 +255,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     #endregion
 		
 		public ModelDataContext() : 
-				base(global::OpenIZ.Persistence.Data.MSSQL.Properties.Settings.Default.OpenIZ_TestConnectionString1, mappingSource)
+				base(global::OpenIZ.Persistence.Data.MSSQL.Properties.Settings.Default.OpenIZConnectionString2, mappingSource)
 		{
 			OnCreated();
 		}
@@ -882,6 +882,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), userName, passwordHash, maxInvalidLoginAttempts, securityUserId);
 			securityUserId = ((System.Nullable<System.Guid>)(result.GetParameterValue(3)));
 			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.fn_OpenIzSchemaVersion", IsComposable=true)]
+		public string fn_OpenIzSchemaVersion()
+		{
+			return ((string)(this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod()))).ReturnValue));
 		}
 	}
 	

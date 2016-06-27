@@ -1,0 +1,129 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Query;
+using OpenIZ.Core.Model.Roles;
+using OpenIZ.Core.Model.Collection;
+using MARC.HI.EHRS.SVC.Core;
+using OpenIZ.Core.Services;
+
+namespace OpenIZ.Messaging.IMSI.ResourceHandler
+{
+    /// <summary>
+    /// Resource handler for patients
+    /// </summary>
+    public class PatientResourceHandler : IResourceHandler
+    {
+        // repository
+        private IPatientRepositoryService m_repository;
+
+        public PatientResourceHandler()
+        {
+            ApplicationContext.Current.Started += (o,e) => this.m_repository = ApplicationContext.Current.GetService<IPatientRepositoryService>();
+        }
+
+        /// <summary>
+        /// Gets the resource name
+        /// </summary>
+        public string ResourceName
+        {
+            get
+            {
+                return "Patient";
+            }
+        }
+
+        /// <summary>
+        /// Gets the type 
+        /// </summary>
+        public Type Type
+        {
+            get
+            {
+                return typeof(Patient);
+            }
+        }
+
+        /// <summary>
+        /// Create the specified patient
+        /// </summary>
+        public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
+        {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
+            Bundle bundleData = data as Bundle;
+            bundleData?.Reconstitute();
+            var processData = bundleData?.Entry ?? data;
+
+            if (processData is Bundle)
+                throw new InvalidOperationException("Bundle must have entry of type Patient");
+            else if (processData is Patient)
+            {
+                var patientData = data as Patient;
+                if (updateIfExists)
+                    return this.m_repository.Save(patientData);
+                else
+                    return this.m_repository.Insert(patientData);
+            }
+            else
+                throw new ArgumentException("Invalid persistence type");
+        }
+
+        /// <summary>
+        /// Gets the specified patient data
+        /// </summary>
+        public IdentifiedData Get(Guid id, Guid versionId)
+        {
+            return this.m_repository.Get(id, versionId);
+        }
+
+        /// <summary>
+        /// Obsolete the specified patient
+        /// </summary>
+        public IdentifiedData Obsolete(Guid key)
+        {
+            return this.m_repository.Obsolete(key);
+        }
+
+        /// <summary>
+        /// Query the specified patient
+        /// </summary>
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
+        {
+            return this.m_repository.Find(new QueryExpressionParser().BuildLinqExpression<Patient>(queryParameters));
+        }
+
+        /// <summary>
+        /// Query specified patient
+        /// </summary>
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
+        {
+            return this.m_repository.Find(new QueryExpressionParser().BuildLinqExpression<Patient>(queryParameters), offset, count, out totalCount);
+
+        }
+
+        /// <summary>
+        /// Update the specified patient data
+        /// </summary>
+        public IdentifiedData Update(IdentifiedData data)
+        {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
+            var bundleData = data as Bundle;
+            bundleData?.Reconstitute();
+            var saveData = bundleData?.Entry ?? data;
+
+            if (saveData is Bundle)
+                throw new InvalidOperationException("Bundle must have entry point of Patient");
+            else if (saveData is Patient)
+                return this.m_repository.Save(saveData as Patient);
+            else
+                throw new InvalidOperationException("Invalid storage type");
+        }
+    }
+}

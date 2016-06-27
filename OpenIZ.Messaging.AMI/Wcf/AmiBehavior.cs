@@ -39,6 +39,8 @@ using OpenIZ.Core.Services;
 using System.Xml.Serialization;
 using System.Diagnostics;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model.Query;
+using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -56,6 +58,17 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
         // Trace source
         private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.AMI");
+
+        /// <summary>
+        /// Create a query
+        /// </summary>
+        private NameValueCollection CreateQuery(System.Collections.Specialized.NameValueCollection nvc)
+        {
+            var retVal = new OpenIZ.Core.Model.Query.NameValueCollection();
+            foreach (var k in nvc.AllKeys)
+                retVal.Add(k, new List<String>(nvc.GetValues(k)));
+            return retVal;
+        }
 
         /// <summary>
         /// Creates the AMI behavior
@@ -256,7 +269,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// </summary>
         public SecurityUserInfo GetUser(string rawUserId)
         {
-            Guid userId = Guid.Parse(rawUserId);
+            Guid userId = Guid.Empty;
+            if (!Guid.TryParse(rawUserId, out userId))
+                throw new ArgumentException(nameof(rawUserId));
             var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
             return new SecurityUserInfo(userRepository.GetUser(userId));
         }
@@ -266,7 +281,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// </summary>
         public AmiCollection<SecurityUserInfo> GetUsers()
         {
-            throw new NotImplementedException();
+            var expression = new QueryExpressionParser().BuildLinqExpression<SecurityUser>(this.CreateQuery(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters));
+            var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+            return new AmiCollection<SecurityUserInfo>() { CollectionItem = userRepository.FindUsers(expression).Select(o => new SecurityUserInfo(o)).ToList() };
         }
 
         /// <summary>
@@ -319,8 +336,64 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				userInfo.Lockout = true;
 			}
 
+            // First, we remove the roles
+            if(userInfo.Roles != null)
+            {
+                var irps = ApplicationContext.Current.GetService<IRoleProviderService>();
+                irps.RemoveUsersFromRoles(new String[] { userInfo.UserName }, userInfo.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
+                irps.AddUsersToRoles(new String[] { userInfo.UserName }, userInfo.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
+            }
+
 			return userInfo;
 
 		}
+
+        /// <summary>
+        /// Get all roles according to the filter
+        /// </summary>
+        /// <returns></returns>
+        public AmiCollection<SecurityRoleInfo> GetRoles()
+        {
+            var expression = new QueryExpressionParser().BuildLinqExpression<SecurityRole>(this.CreateQuery(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters));
+            var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+            return new AmiCollection<SecurityRoleInfo>() { CollectionItem = userRepository.FindRoles(expression).Select(o => new SecurityRoleInfo(o)).ToList() };
+        }
+
+        /// <summary>
+        /// Creates the specified role in the database
+        /// </summary>
+        public SecurityRoleInfo CreateRole(SecurityRoleInfo role)
+        {
+            var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+            var roleToCreate = new SecurityRole()
+            {
+                Name = role.Name
+            };
+            return new SecurityRoleInfo(roleRepository.CreateRole(roleToCreate));
+        }
+
+        /// <summary>
+        /// Gets the specified role
+        /// </summary>
+        public SecurityRoleInfo GetRole(string rawRoleId)
+        {
+            Guid roleId = Guid.Empty;
+            if (!Guid.TryParse(rawRoleId, out roleId))
+                throw new ArgumentException(nameof(rawRoleId));
+            var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+            return new SecurityRoleInfo(roleRepository.GetRole(roleId));
+        }
+
+        /// <summary>
+        /// Delete a role
+        /// </summary>
+        public SecurityRoleInfo DeleteRole(string rawRoleId)
+        {
+            Guid roleId = Guid.Empty;
+            if (!Guid.TryParse(rawRoleId, out roleId))
+                throw new ArgumentException(nameof(rawRoleId));
+            var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+            return new SecurityRoleInfo(roleRepository.ObsoleteRole(roleId));
+        }
     }
 }
