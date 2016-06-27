@@ -46,21 +46,13 @@ namespace OpenIZ.Core.Model.Entities
         public ApplicationEntity()
         {
             this.ClassConceptKey = EntityClassKeys.NonLivingSubject;
+            this.DeterminerConceptKey = DeterminerKeys.Specific;
         }
 
         // Security application key
         private Guid m_securityApplicationKey;
         // Security application
         private SecurityApplication m_securityApplication;
-
-        /// <summary>
-        /// Application entity
-        /// </summary>
-        public ApplicationEntity()
-        {
-            base.DeterminerConceptKey = DeterminerKeys.Specific;
-            base.ClassConceptKey = EntityClassKeys.Entity;
-        }
 
         /// <summary>
         /// Gets or sets the security application
