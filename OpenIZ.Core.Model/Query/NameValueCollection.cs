@@ -36,6 +36,15 @@ namespace OpenIZ.Core.Model.Query
         }
 
         /// <summary>
+        /// Creates a new name value collection from the kvp array
+        /// </summary>
+        public NameValueCollection(KeyValuePair<string, object>[] kvpa)
+        {
+            foreach (var kv in kvpa)
+                this.Add(kv.Key, kv.Value?.ToString());
+        }
+
+        /// <summary>
         /// Parse a query string
         /// </summary>
         public static NameValueCollection ParseQueryString(String qstring)

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Persistence", "Persistence", "{2914F4AD-4661-4C73-ADB6-B1D91C11C569}"
 EndProject
@@ -34,6 +34,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Core.Applets", "OpenIZ.Core.Applets\OpenIZ.Core.Applets.csproj", "{39E61451-F4FE-493D-B754-5F06EB284AAC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Core.Applets.Test", "OpenIZ.Core.Applets.Test\OpenIZ.Core.Applets.Test.csproj", "{F322715B-FBAD-4C8C-B523-AA723490C05E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Messaging.IMSI.Client", "OpenIZ.Messaging.IMSI.Client\OpenIZ.Messaging.IMSI.Client.csproj", "{C222B929-6E9E-4B2E-A98E-CC23EE681047}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Core.PCL", "OpenIZ.Core.PCL\OpenIZ.Core.PCL.csproj", "{3A45F695-47A2-464C-ACE6-BDABBFA39FBC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +93,14 @@ Global
 		{F322715B-FBAD-4C8C-B523-AA723490C05E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F322715B-FBAD-4C8C-B523-AA723490C05E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F322715B-FBAD-4C8C-B523-AA723490C05E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C222B929-6E9E-4B2E-A98E-CC23EE681047}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C222B929-6E9E-4B2E-A98E-CC23EE681047}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C222B929-6E9E-4B2E-A98E-CC23EE681047}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C222B929-6E9E-4B2E-A98E-CC23EE681047}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A45F695-47A2-464C-ACE6-BDABBFA39FBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A45F695-47A2-464C-ACE6-BDABBFA39FBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A45F695-47A2-464C-ACE6-BDABBFA39FBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A45F695-47A2-464C-ACE6-BDABBFA39FBC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -106,5 +118,7 @@ Global
 		{D882323C-2BC9-4A1D-B70F-D833CF2E91A1} = {A1C82EDF-C27A-4A7A-A186-09E88BF63F36}
 		{39E61451-F4FE-493D-B754-5F06EB284AAC} = {3D1B75E7-2CFB-4FA6-92A0-F91EB884D0E4}
 		{F322715B-FBAD-4C8C-B523-AA723490C05E} = {3D1B75E7-2CFB-4FA6-92A0-F91EB884D0E4}
+		{C222B929-6E9E-4B2E-A98E-CC23EE681047} = {A1C82EDF-C27A-4A7A-A186-09E88BF63F36}
+		{3A45F695-47A2-464C-ACE6-BDABBFA39FBC} = {3D1B75E7-2CFB-4FA6-92A0-F91EB884D0E4}
 	EndGlobalSection
 EndGlobal
