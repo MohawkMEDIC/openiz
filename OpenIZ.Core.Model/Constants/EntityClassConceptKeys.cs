@@ -97,7 +97,17 @@ namespace OpenIZ.Core.Model.Constants
         /// Service delivery location
         /// </summary>
         public static readonly Guid Provider = Guid.Parse("6B04FED8-C164-469C-910B-F824C2BDA4F0");
+        /// <summary>
+        /// County or parish
+        /// </summary>
         public static readonly Guid CountyOrParish = Guid.Parse("D9489D56-DDAC-4596-B5C6-8F41D73D8DC5");
+        /// <summary>
+        /// Country or nation
+        /// </summary>
         public static readonly Guid Country = Guid.Parse("48B2FFB3-07DB-47BA-AD73-FC8FB8502471");
+        /// <summary>
+        /// Non living subject
+        /// </summary>
+        public static readonly Guid NonLivingSubject = Guid.Parse("9025E5C9-693B-49D4-973C-D7010F3A23EE");
     }
 }

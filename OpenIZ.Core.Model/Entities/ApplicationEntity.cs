@@ -39,10 +39,18 @@ namespace OpenIZ.Core.Model.Entities
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "ApplicationEntity")]
     public class ApplicationEntity : Entity
     {
+
+        /// <summary>
+        /// Creates application entity
+        /// </summary>
+        public ApplicationEntity()
+        {
+            this.ClassConceptKey = EntityClassKeys.NonLivingSubject;
+        }
+
         // Security application key
         private Guid m_securityApplicationKey;
         // Security application
-        
         private SecurityApplication m_securityApplication;
 
         /// <summary>
