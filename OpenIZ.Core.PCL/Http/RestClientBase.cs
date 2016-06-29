@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Net;
 using System.Linq;
 using OpenIZ.Core.Diagnostics;
-using OpenIZ.Core.PCL.Http.Description;
+using OpenIZ.Core.Http.Description;
 using OpenIZ.Core.Model.Query;
 
-namespace OpenIZ.Core.PCL.Http
+namespace OpenIZ.Core.Http
 {
 	/// <summary>
 	/// Represents a simple rest client 
@@ -30,14 +30,14 @@ namespace OpenIZ.Core.PCL.Http
         public event EventHandler<RestResponseEventArgs> Responded;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OpenIZ.Core.PCL.Http.RestClient"/> class.
+        /// Initializes a new instance of the <see cref="OpenIZ.Core.Http.RestClient"/> class.
         /// </summary>
         public RestClientBase ()
 		{
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="OpenIZ.Core.PCL.Http.RestClient"/> class.
+		/// Initializes a new instance of the <see cref="OpenIZ.Core.Http.RestClient"/> class.
 		/// </summary>
 		/// <param name="binder">The serialization binder to use.</param>
 		public RestClientBase (IRestClientDescription config)
@@ -83,7 +83,7 @@ namespace OpenIZ.Core.PCL.Http
 			if (query != null) 
 				uriBuilder.Query = CreateQueryString(query);
 			
-
+            
 			Uri uri = uriBuilder.Uri;
 
 
@@ -100,11 +100,13 @@ namespace OpenIZ.Core.PCL.Http
 			}
 
 
-			// Compress?
+            // Return type?
 			if (!String.IsNullOrEmpty(this.Accept)) {
 				this.m_tracer.TraceVerbose ("Accepts {0}", this.Accept);
 				retVal.Headers ["Accept"] = this.Accept;
 			}
+
+            
 					
 			return retVal;
 		}
@@ -200,7 +202,7 @@ namespace OpenIZ.Core.PCL.Http
         /// <param name="query">Query.</param>
         /// <typeparam name="TBody">The 1st type parameter.</typeparam>
         /// <typeparam name="TResult">The 2nd type parameter.</typeparam>
-        protected abstract TResult InvokeInternal<TBody, TResult> (string method, string url, string contentType, TBody body, params KeyValuePair<string, object>[] query);
+        protected abstract TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, TBody body, params KeyValuePair<string, object>[] query);
 
 		/// <summary>
 		/// Executes a post against the url
@@ -316,11 +318,11 @@ namespace OpenIZ.Core.PCL.Http
 		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
 		/// </summary>
 		/// <filterpriority>2</filterpriority>
-		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="OpenIZ.Core.PCL.Http.RestClientBase"/>.
-		/// The <see cref="Dispose"/> method leaves the <see cref="OpenIZ.Core.PCL.Http.RestClientBase"/> in an unusable
+		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="OpenIZ.Core.Http.RestClientBase"/>.
+		/// The <see cref="Dispose"/> method leaves the <see cref="OpenIZ.Core.Http.RestClientBase"/> in an unusable
 		/// state. After calling <see cref="Dispose"/>, you must release all references to the
-		/// <see cref="OpenIZ.Core.PCL.Http.RestClientBase"/> so the garbage collector can reclaim the memory that the
-		/// <see cref="OpenIZ.Core.PCL.Http.RestClientBase"/> was occupying.</remarks>
+		/// <see cref="OpenIZ.Core.Http.RestClientBase"/> so the garbage collector can reclaim the memory that the
+		/// <see cref="OpenIZ.Core.Http.RestClientBase"/> was occupying.</remarks>
 		public void Dispose() {
 		}
 	}

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.IO;
 
-namespace OpenIZ.Core.PCL.Http
+namespace OpenIZ.Core.Http
 {
 	/// <summary>
 	/// Represents a body serializer that uses JSON
@@ -18,7 +18,7 @@ namespace OpenIZ.Core.PCL.Http
 		private Type m_type;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="OpenIZ.Core.PCL.Http.JsonBodySerializer"/> class.
+		/// Initializes a new instance of the <see cref="OpenIZ.Core.Http.JsonBodySerializer"/> class.
 		/// </summary>
 		public JsonBodySerializer (Type type)
 		{

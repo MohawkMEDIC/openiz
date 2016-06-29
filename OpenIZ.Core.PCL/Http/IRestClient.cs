@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Net;
 using System.Collections.Generic;
-using OpenIZ.Core.PCL.Http.Description;
+using OpenIZ.Core.Http.Description;
 
-namespace OpenIZ.Core.PCL.Http
+namespace OpenIZ.Core.Http
 {
 	/// <summary>
 	/// Represents a RESTFul client which encapsulates some of the functions of the request

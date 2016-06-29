@@ -7,8 +7,9 @@ using OpenIZ.Core.Model;
 using System.Linq.Expressions;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Query;
-using OpenIZ.Core.PCL.Interop.Clients;
-using OpenIZ.Core.PCL.Http;
+using OpenIZ.Core.Interop.Clients;
+using OpenIZ.Core.Http;
+using System.Text;
 
 namespace OpenIZ.Mobile.Core.Interop.Clients
 {
@@ -24,7 +25,7 @@ namespace OpenIZ.Mobile.Core.Interop.Clients
 		/// <param name="clientName">Client name.</param>
 		public ImsiServiceClient (IRestClient client) : base(client)
 		{
-			this.Client.Accept = "application/json";
+			this.Client.Accept = "application/xml";
 		}
 
 		/// <summary>
@@ -46,6 +47,100 @@ namespace OpenIZ.Mobile.Core.Interop.Clients
 			return retVal;
 		}
 
-	}
+        /// <summary>
+        /// Gets the specified object from the IMS
+        /// </summary>
+        public IdentifiedData Get<TModel>(Guid key, Guid? versionKey)
+            where TModel : IdentifiedData
+        {
+
+            // Resource name
+            String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+
+            // URL
+            StringBuilder url = new StringBuilder(resourceName);
+            url.AppendFormat("/{0}", key);
+            if (versionKey.HasValue)
+                url.AppendFormat("/history/{0}", versionKey);
+
+            // Request
+            if (this.Client.Description.Binding.Optimize) // bundle
+                return this.Client.Get<Bundle>(url.ToString(), new KeyValuePair<string, object>("_bundle", true));
+            else
+                return this.Client.Get<TModel>(url.ToString());
+        }
+
+        /// <summary>
+        /// Gets history of the specified object
+        /// </summary>
+        public Bundle History<TModel>(Guid key)
+            where TModel : IdentifiedData
+        {
+
+            // Resource name
+            String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+
+            // URL
+            StringBuilder url = new StringBuilder(resourceName);
+            url.AppendFormat("/{0}/history", key);
+
+            // Request
+            return this.Client.Get<Bundle>(url.ToString());
+        }
+
+        /// <summary>
+        /// Creates the specified object on the server
+        /// </summary>
+        public TModel Create<TModel>(TModel data) where TModel : IdentifiedData
+        {
+
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+            // Resource name
+            String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+
+            // Create with version?
+            if (data.Key != Guid.Empty)
+                return this.Client.Post<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key), "application/xml", data);
+            else
+                return this.Client.Post<TModel, TModel>(resourceName, "application/xml", data);
+        }
+
+        /// <summary>
+        /// Update the specified data
+        /// </summary>
+        public TModel Update<TModel>(TModel data) where TModel : IdentifiedData
+        {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+            // Resource name
+            String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+
+            // Create with version?
+            if (data.Key != Guid.Empty)
+                return this.Client.Put<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key), "application/xml", data);
+            else
+                throw new KeyNotFoundException(data.Key.ToString());
+
+        }
+
+        /// <summary>
+        /// Obsolete the specified data
+        /// </summary>
+        public TModel Obsolete<TModel>(TModel data) where TModel : IdentifiedData
+        {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+            // Resource name
+            String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+
+            // Create with version?
+            if (data.Key != Guid.Empty)
+                return this.Client.Delete<TModel>(String.Format("{0}/{1}", resourceName, data.Key));
+            else
+                throw new KeyNotFoundException(data.Key.ToString());
+        }
+
+    }
 }
 

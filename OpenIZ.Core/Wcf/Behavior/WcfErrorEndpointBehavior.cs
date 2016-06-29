@@ -48,7 +48,7 @@ namespace OpenIZ.Core.Wcf.Behavior
             endpointDispatcher.ChannelDispatcher.ErrorHandlers.Clear();
             //Add our own
             endpointDispatcher.ChannelDispatcher.ErrorHandlers.Add(new WcfErrorHandler());
-
+            
         }
     }
 }

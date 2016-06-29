@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Core.PCL.Http.Description
+namespace OpenIZ.Core.Http.Description
 {
     /// <summary>
     /// Represents a description of a service

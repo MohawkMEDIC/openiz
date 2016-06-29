@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 using System.IO;
 using OpenIZ.Core.Diagnostics;
 
-namespace OpenIZ.Core.PCL.Http
+namespace OpenIZ.Core.Http
 {
 
 	/// <summary>
@@ -15,7 +15,7 @@ namespace OpenIZ.Core.PCL.Http
 	public class FormElementAttribute : Attribute
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="OpenIZ.Core.PCL.Http.FormElementAttribute"/> class.
+		/// Initializes a new instance of the <see cref="OpenIZ.Core.Http.FormElementAttribute"/> class.
 		/// </summary>
 		/// <param name="name">Name.</param>
 		public FormElementAttribute (String name)

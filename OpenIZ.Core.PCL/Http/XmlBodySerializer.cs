@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 
-namespace OpenIZ.Core.PCL.Http
+namespace OpenIZ.Core.Http
 {
 	/// <summary>
 	/// Represents a body serializer that uses XmlSerializer

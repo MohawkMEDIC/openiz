@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace OpenIZ.Core.PCL.Http
+namespace OpenIZ.Core.Http
 {
 	/// <summary>
 	/// Rest client exception.

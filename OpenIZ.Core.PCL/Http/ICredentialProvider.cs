@@ -1,6 +1,6 @@
 using System;
 
-namespace OpenIZ.Core.PCL.Http
+namespace OpenIZ.Core.Http
 {
 	/// <summary>
 	/// Authorization event args

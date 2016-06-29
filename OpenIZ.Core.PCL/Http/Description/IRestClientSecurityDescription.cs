@@ -1,4 +1,4 @@
-﻿namespace OpenIZ.Core.PCL.Http.Description
+﻿namespace OpenIZ.Core.Http.Description
 {
     /// <summary>
     /// Represtens REST client security description

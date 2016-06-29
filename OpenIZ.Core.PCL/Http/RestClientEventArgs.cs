@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace OpenIZ.Core.PCL.Http
+namespace OpenIZ.Core.Http
 {
 
     /// <summary>

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Collections.Generic;
-using OpenIZ.Core.PCL.Http.Description;
-using OpenIZ.Core.PCL.Http;
+using OpenIZ.Core.Http.Description;
+using OpenIZ.Core.Http;
 
-namespace OpenIZ.Core.PCL.Interop.Clients
+namespace OpenIZ.Core.Interop.Clients
 {
 	/// <summary>
 	/// Represents a basic service client

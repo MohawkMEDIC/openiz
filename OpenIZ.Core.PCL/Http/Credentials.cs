@@ -3,7 +3,7 @@ using System.Security.Principal;
 using System.Net;
 using System.Collections.Generic;
 
-namespace OpenIZ.Core.PCL.Http
+namespace OpenIZ.Core.Http
 {
 	/// <summary>
 	/// Represents a series of credentials which are used when accessing the mobile core

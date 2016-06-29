@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace OpenIZ.Core.PCL.Http
+namespace OpenIZ.Core.Http
 {
 	/// <summary>
 	/// Defines behavior of a content/type mapper
