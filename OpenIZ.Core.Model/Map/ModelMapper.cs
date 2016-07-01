@@ -427,7 +427,7 @@ namespace OpenIZ.Core.Model.Map
 
                                 // Get the generic method for LIST to be widdled down
                                 instance = Expression.Lambda(aggregateExpr, parm).Compile().DynamicInvoke(instance);
-
+                                
                             }
                             via = via.Via;
                         }

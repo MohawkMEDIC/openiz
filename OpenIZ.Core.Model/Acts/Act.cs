@@ -411,6 +411,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Participations
         /// </summary>
+        [XmlElement("participation"), JsonProperty("participation")]
         public List<ActParticipation> Participations
         {
             get
