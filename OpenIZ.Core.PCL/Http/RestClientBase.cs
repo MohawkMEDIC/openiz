@@ -91,7 +91,7 @@ namespace OpenIZ.Core.Http
 			this.m_tracer.TraceVerbose ("Constructing WebRequest to {0}", uriBuilder);
 
 			// Add headers
-			WebRequest retVal = HttpWebRequest.Create(uri.ToString());
+			HttpWebRequest retVal = (HttpWebRequest)HttpWebRequest.Create(uri.ToString());
 			if (this.Credentials != null) {
 				foreach (var kv in this.Credentials.GetHttpHeaders ()) {
 					this.m_tracer.TraceVerbose ("Adding header {0}:{1}", kv.Key, kv.Value);
@@ -103,7 +103,7 @@ namespace OpenIZ.Core.Http
             // Return type?
 			if (!String.IsNullOrEmpty(this.Accept)) {
 				this.m_tracer.TraceVerbose ("Accepts {0}", this.Accept);
-				retVal.Headers ["Accept"] = this.Accept;
+				retVal.Accept = this.Accept;
 			}
 
             
