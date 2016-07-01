@@ -8,36 +8,35 @@ namespace OpenIZ.Core.Http
 	/// </summary>
 	internal class XmlBodySerializer : IBodySerializer
 	{
-
 		// Serializer
 		private XmlSerializer m_serializer;
 
 		/// <summary>
 		/// Creates a new body serializer
 		/// </summary>
-		public XmlBodySerializer (Type type)
+		public XmlBodySerializer(Type type)
 		{
-			this.m_serializer = new XmlSerializer (type);
+			this.m_serializer = new XmlSerializer(type);
 		}
 
-
 		#region IBodySerializer implementation
+
 		/// <summary>
 		/// Serialize the object
 		/// </summary>
-		public void Serialize (System.IO.Stream s, object o)
+		public void Serialize(System.IO.Stream s, object o)
 		{
-			this.m_serializer.Serialize (s, o);
+			this.m_serializer.Serialize(s, o);
 		}
 
 		/// <summary>
 		/// Serialize the reply stream
 		/// </summary>
-		public object DeSerialize (System.IO.Stream s)
+		public object DeSerialize(System.IO.Stream s)
 		{
-			return this.m_serializer.Deserialize (s);
+			return this.m_serializer.Deserialize(s);
 		}
-		#endregion
+
+		#endregion IBodySerializer implementation
 	}
 }
-

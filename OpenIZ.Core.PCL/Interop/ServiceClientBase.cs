@@ -1,8 +1,5 @@
-﻿using System;
-using System.Linq.Expressions;
-using System.Collections.Generic;
+﻿using OpenIZ.Core.Http;
 using OpenIZ.Core.Http.Description;
-using OpenIZ.Core.Http;
 
 namespace OpenIZ.Core.Interop.Clients
 {
@@ -13,6 +10,7 @@ namespace OpenIZ.Core.Interop.Clients
 	{
 		// The configuration
 		private IRestClientDescription m_configuration;
+
 		// The rest client
 		private IRestClient m_restClient;
 
@@ -20,8 +18,11 @@ namespace OpenIZ.Core.Interop.Clients
 		/// Gets the client.
 		/// </summary>
 		/// <value>The client.</value>
-		protected IRestClient Client { 
-			get { return this.m_restClient;
+		protected IRestClient Client
+		{
+			get
+			{
+				return this.m_restClient;
 			}
 		}
 
@@ -34,7 +35,5 @@ namespace OpenIZ.Core.Interop.Clients
 			this.m_restClient = restClient;
 			this.m_configuration = this.m_restClient.Description;
 		}
-
 	}
 }
-
