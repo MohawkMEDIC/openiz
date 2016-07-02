@@ -24,8 +24,11 @@ namespace OpenIZ.Core.Http
 			this.m_serializer = new JsonSerializer()
 			{
 				DateFormatHandling = DateFormatHandling.IsoDateFormat,
-				NullValueHandling = NullValueHandling.Ignore
+				NullValueHandling = NullValueHandling.Ignore,
+				ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+				TypeNameHandling = TypeNameHandling.Auto
 			};
+
 			this.m_serializer.Converters.Add(new StringEnumConverter());
 			this.m_type = type;
 		}
