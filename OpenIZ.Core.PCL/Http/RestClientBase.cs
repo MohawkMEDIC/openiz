@@ -165,9 +165,16 @@ namespace OpenIZ.Core.Http
 		/// <returns></returns>
 		public TResult Invoke<TBody, TResult>(string method, string url, string contentType, TBody body, params KeyValuePair<string, object>[] query)
 		{
+			NameValueCollection parameters = new NameValueCollection();
+
 			try
 			{
-				var requestEventArgs = new RestRequestEventArgs(method, url, new NameValueCollection(query), contentType, body);
+				if (query != null)
+				{
+					parameters = new NameValueCollection(query);
+				}
+
+				var requestEventArgs = new RestRequestEventArgs(method, url, parameters, contentType, body);
 				this.Requesting?.Invoke(this, requestEventArgs);
 				if (requestEventArgs.Cancel)
 				{
@@ -178,14 +185,14 @@ namespace OpenIZ.Core.Http
 				// Invoke
 				var retVal = this.InvokeInternal<TBody, TResult>(method, url, contentType, body, query);
 
-				this.Responded?.Invoke(this, new RestResponseEventArgs(method, url, new NameValueCollection(query), contentType, retVal, 200));
+				this.Responded?.Invoke(this, new RestResponseEventArgs(method, url, parameters, contentType, retVal, 200));
 
 				return retVal;
 			}
 			catch (Exception e)
 			{
 				this.m_tracer.TraceError("Error invoking HTTP: {0}", e);
-				this.Responded?.Invoke(this, new RestResponseEventArgs(method, url, new NameValueCollection(query), contentType, null, 500));
+				this.Responded?.Invoke(this, new RestResponseEventArgs(method, url, parameters, contentType, null, 500));
 				throw;
 			}
 		}
