@@ -119,6 +119,7 @@ namespace OpenIZ.Messaging.IMSI.Test
             Assert.AreEqual("dateOfBirth=%3C0001-01-01T00%3A00%3A00.0000000", expression);
 
         }
+       
 
         /// <summary>
         /// Test write of lookup greater than equal to
@@ -162,6 +163,17 @@ namespace OpenIZ.Messaging.IMSI.Test
             var query = QueryExpressionBuilder.BuildQuery<Patient>(o => o.Names.Any(p => p.NameUse.Mnemonic == "Legal" && p.Component.Any(n=>n.Value == "Smith")));
             var expression = CreateQueryString(query.ToArray());
             Assert.AreEqual("name.use.mnemonic=Legal&name.component.value=Smith", expression);
+        }
+
+        /// <summary>
+        /// Test write of Any correctly
+        /// </summary>
+        [TestMethod]
+        public void TestWriteLookupWhereAnd()
+        {
+            var query = QueryExpressionBuilder.BuildQuery<Patient>(o => o.Names.Where(p => p.NameUse.Mnemonic == "Legal").Any(p => p.Component.Any(n => n.Value == "Smith")));
+            var expression = CreateQueryString(query.ToArray());
+            Assert.AreEqual("name[Legal].component.value=Smith", expression);
         }
     }
 }

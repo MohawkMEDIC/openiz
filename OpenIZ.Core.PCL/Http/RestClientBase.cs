@@ -168,7 +168,7 @@ namespace OpenIZ.Core.Http
         {
             try
             {
-                var requestEventArgs = new RestRequestEventArgs(method, url, new NameValueCollection(query), contentType, body);
+                var requestEventArgs = new RestRequestEventArgs(method, url, query == null ? null : new NameValueCollection(query), contentType, body);
                 this.Requesting?.Invoke(this, requestEventArgs);
                 if (requestEventArgs.Cancel)
                 {

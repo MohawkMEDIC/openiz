@@ -113,6 +113,21 @@ namespace OpenIZ.Core.Applets.Test
         }
 
         /// <summary>
+        /// Test pre-processing of localization
+        /// </summary>
+        [TestMethod]
+        public void TestPreProcessLocalization()
+        {
+            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.applet.test.layout/index");
+            var render = this.m_appletCollection.RenderAssetContent(asset, "en");
+
+            string html = Encoding.UTF8.GetString(render);
+            Assert.IsFalse(html.Contains("{{ 'some_string' | i18n }}"));
+            Assert.IsTrue(html.Contains("SOME STRING!"));
+
+        }
+
+        /// <summary>
         /// Test rendering
         /// </summary>
         [TestMethod]

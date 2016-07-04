@@ -48,7 +48,13 @@ namespace OpenIZ.Core.Applets.Model
 			get;
 			set;
 		}
-	}
+
+        /// <summary>
+        /// One or more menu items
+        /// </summary>
+        [XmlElement("menuItem")]
+        public List<AppletMenu> Menus { get; set; }
+    }
 
 }
 

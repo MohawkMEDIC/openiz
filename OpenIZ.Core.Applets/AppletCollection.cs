@@ -8,6 +8,7 @@ using System.Collections;
 using System.Xml.Linq;
 using System.IO;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace OpenIZ.Core.Applets
 {
@@ -51,7 +52,9 @@ namespace OpenIZ.Core.Applets
                 new ScriptBundleContent("app://openiz.org/asset/js/openiz-localize.js")),
             new RenderBundle(RenderBundle.BUNDLE_METRO, new ScriptBundleContent("app://openiz.org/asset/js/jquery.metro.js"), new StyleBundleContent("app://openiz.org/asset/css/jquery.metro.css")),
             new RenderBundle(RenderBundle.BUNDLE_SELECT2, new StyleBundleContent("app://openiz.org/asset/css/select2.min.css"), new ScriptBundleContent("app://openiz.org/asset/js/select2.min.js")),
-            new RenderBundle(RenderBundle.BUNDLE_CHART, new ScriptBundleContent("app://openiz.org/asset/js/chart.js"))
+            new RenderBundle(RenderBundle.BUNDLE_CHART, new ScriptBundleContent("app://openiz.org/asset/js/chart.js")),
+            new RenderBundle(RenderBundle.BUNDLE_TOASTR, new ScriptBundleContent("app://openiz.org/asset/js/toastr.min.js"), new StyleBundleContent("app://openiz.org/asset/css/toastr.min.css"))
+
         };
 
         /// <summary>
@@ -137,6 +140,8 @@ namespace OpenIZ.Core.Applets
         /// <param name="item"></param>
         public void Add(AppletManifest item)
         {
+            s_stringCache.Clear();
+            
             this.m_appletManifest.Add(item);
         }
 
@@ -227,7 +232,7 @@ namespace OpenIZ.Core.Applets
         public List<KeyValuePair<String, String>> GetStrings(String locale)
         {
             List<KeyValuePair<String, String>> retVal = null;
-            if (!s_stringCache.TryGetValue(locale, out retVal))
+            if (!s_stringCache.TryGetValue(locale ?? "", out retVal))
                 lock (s_syncLock)
                 {
                     retVal = this.m_appletManifest.SelectMany(o => o.Strings).
@@ -292,12 +297,13 @@ namespace OpenIZ.Core.Applets
         /// <summary>
         /// Render asset content
         /// </summary>
-        public byte[] RenderAssetContent(AppletAsset asset)
+        public byte[] RenderAssetContent(AppletAsset asset, string preProcessLocalization = null)
         {
 
             // First, is there an object already
             byte[] cacheObject = null;
-            if (s_cache.TryGetValue(asset.ToString(), out cacheObject))
+            string assetPath = String.Format("{0}?lang={1}", asset.ToString(), preProcessLocalization);
+            if (s_cache.TryGetValue(assetPath, out cacheObject))
                 return cacheObject;
 
             if (asset.Content is String) // Content is a string
@@ -366,6 +372,7 @@ namespace OpenIZ.Core.Applets
                         }
                         break;
                     case "div": // The content is a simple DIV
+                    case "table":
                         {
                             if (String.IsNullOrEmpty(htmlAsset.Layout))
                                 htmlContent = htmlAsset.Html as XElement;
@@ -408,7 +415,7 @@ namespace OpenIZ.Core.Applets
                                 if (layoutAsset == null)
                                     throw new FileNotFoundException(String.Format("Layout asset {0} not found", htmlAsset.Layout));
 
-                                using (MemoryStream ms = new MemoryStream(this.RenderAssetContent(layoutAsset)))
+                                using (MemoryStream ms = new MemoryStream(this.RenderAssetContent(layoutAsset, preProcessLocalization)))
                                     htmlContent = XDocument.Load(ms).Element(xs_xhtml + "html") as XElement;
 
                                 (htmlContent.Element(xs_xhtml + "head") as XElement).Add(headerInjection);
@@ -435,7 +442,7 @@ namespace OpenIZ.Core.Applets
                     if (assetName == "content")
                         continue;
                     var includeAsset = this.ResolveAsset(assetName, asset);
-                    using (MemoryStream ms = new MemoryStream(this.RenderAssetContent(includeAsset)))
+                    using (MemoryStream ms = new MemoryStream(this.RenderAssetContent(includeAsset, preProcessLocalization)))
                     {
                         var xel = XDocument.Load(ms).Elements().First() as XElement;
                         if (xel.Name == xs_xhtml + "html")
@@ -446,22 +453,33 @@ namespace OpenIZ.Core.Applets
                     }
                 }
 
-                // Re-write
+                // Re-write URLS
                 foreach(var itm in htmlContent.DescendantNodes().OfType<XElement>().SelectMany(o => o.Attributes()).Where(o => o.Value.StartsWith(BASE_SCHEME)))
                     itm.Value = itm.Value.Replace(APPLET_SCHEME, this.AppletBase).Replace(ASSET_SCHEME, this.AssetBase).Replace(DRAWABLE_SCHEME, this.DrawableBase);
                 // Render out the content
-                using (MemoryStream ms = new MemoryStream())
-                using (XmlWriter xw = XmlWriter.Create(ms, new XmlWriterSettings() { Indent = true, OmitXmlDeclaration = true }))
+                using (StringWriter sw = new StringWriter())
+                using (XmlWriter xw = XmlWriter.Create(sw, new XmlWriterSettings() { Indent = true, OmitXmlDeclaration = true }))
                 {
                     htmlContent.WriteTo(xw);
                     xw.Flush();
-                    ms.Flush();
+
+                    byte[] renderBuffer = null;
+
+                    // Process localization
+                    if (!String.IsNullOrEmpty(preProcessLocalization))
+                    {
+                        Regex re = new Regex("{{\\s?'(.*)'\\s?\\|\\s?i18n\\s?}}");
+                        var assetString = this.GetStrings(preProcessLocalization);
+                        renderBuffer = Encoding.UTF8.GetBytes(re.Replace(sw.ToString(), (m) => assetString.FirstOrDefault(o => o.Key == m.Groups[1].Value).Value ?? m.Groups[1].Value));
+                    }
+                    else
+                        renderBuffer = Encoding.UTF8.GetBytes(sw.ToString());
 
                     // Add to cache
                     lock(s_syncLock)
-                        s_cache.Add(asset.ToString(), ms.ToArray());
+                        s_cache.Add(assetPath, renderBuffer);
 
-                    return ms.ToArray();
+                    return renderBuffer;
                 }
 
             }

@@ -188,10 +188,32 @@ namespace OpenIZ.Core.Model.Query
                                 break;
                             case '~':
                                 et = ExpressionType.Equal;
-                                if (accessExpression.Type != typeof(String))
+                                if (accessExpression.Type == typeof(String))
+                                {
+                                    accessExpression = Expression.Call(accessExpression, typeof(String).GetRuntimeMethod("Contains", new Type[] { typeof(String) }), Expression.Constant(pValue.Substring(1).Replace("*", "/")));
+                                    pValue = "true";
+                                }
+                                else if(accessExpression.Type == typeof(DateTime) ||
+                                    accessExpression.Type == typeof(DateTime?))
+                                {
+                                    pValue = value.Substring(1);
+                                    DateTime dateLow = DateTime.ParseExact(pValue, "yyyy-MM-dd".Substring(0, pValue.Length), CultureInfo.InvariantCulture), dateHigh = DateTime.MaxValue;
+                                    if (pValue.Length == 4) // Year
+                                        dateHigh = new DateTime(dateLow.Year, 12, 31, 23, 59, 59);
+                                    else if (pValue.Length == 7)
+                                        dateHigh = new DateTime(dateLow.Year, dateLow.Month, DateTime.DaysInMonth(dateLow.Year, dateLow.Month), 23, 59, 59);
+                                    else if (pValue.Length == 10)
+                                        dateHigh = new DateTime(dateLow.Year, dateLow.Month, dateLow.Day, 23, 59, 59);
+                                    if (accessExpression.Type == typeof(DateTime?))
+                                        accessExpression = Expression.MakeMemberAccess(accessExpression, accessExpression.Type.GetRuntimeProperty("Value"));
+                                    Expression lowerBound = Expression.MakeBinary(ExpressionType.GreaterThanOrEqual, accessExpression, Expression.Constant(dateLow)),
+                                        upperBound = Expression.MakeBinary(ExpressionType.LessThanOrEqual, accessExpression, Expression.Constant(dateHigh));
+                                    accessExpression = Expression.MakeBinary(ExpressionType.AndAlso, lowerBound, upperBound);
+                                    pValue = "true"; 
+                                }
+                                else
                                     throw new InvalidOperationException("~ can only be applied to string properties");
-                                accessExpression = Expression.Call(accessExpression, typeof(String).GetRuntimeMethod("Contains", new Type[] { typeof(String) }), Expression.Constant(pValue.Substring(1).Replace("*","/")));
-                                pValue = "true";
+
                                 break;
                             case '=':
                                 switch(value[1])
@@ -221,9 +243,9 @@ namespace OpenIZ.Core.Model.Query
                         Expression valueExpr = null;
                         if (accessExpression.Type == typeof(String))
                             valueExpr = Expression.Constant(pValue);
-                        else if (accessExpression.Type == typeof(DateTime))
+                        else if (accessExpression.Type == typeof(DateTime) || accessExpression.Type == typeof(DateTime?))
                             valueExpr = Expression.Constant(DateTime.Parse(pValue));
-                        else if (accessExpression.Type == typeof(DateTimeOffset))
+                        else if (accessExpression.Type == typeof(DateTimeOffset) || accessExpression.Type == typeof(DateTimeOffset?))
                             valueExpr = Expression.Constant(DateTimeOffset.Parse(pValue));
                         else if (accessExpression.Type == typeof(Guid) || accessExpression.Type == typeof(Guid?))
                             valueExpr = Expression.Constant(Guid.Parse(pValue));

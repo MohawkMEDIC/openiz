@@ -4,6 +4,9 @@
     <name lang="en">Test Layout</name>
     <author>OpenIZ Community</author>
   </info>
+  <strings lang="en">
+    <string key="some_string">SOME STRING!</string>
+  </strings>
   <asset name="layout" mimeType="text/html">
     <contentHtml>
       <bundle>jquery</bundle>
@@ -14,8 +17,9 @@
       <content>
         <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="LayoutController">
           <h1>{{someVariable}}</h1>
+          
           <div class="container">
-            <a href="#" ng-click="someAction()">Do Something</a>
+            <a href="#" ng-click="someAction()">{{ 'some_string' | i18n }}</a>
             <!-- #include virtual="content" -->
           </div>
         </body>

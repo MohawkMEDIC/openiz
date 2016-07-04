@@ -67,6 +67,22 @@ namespace OpenIZ.Messaging.IMSI.Test
 
         }
 
+        /// <summary>
+        /// Test tht building of a fuzzy date match
+        /// </summary>
+        [TestMethod]
+        public void TestBuildFuzzyDate()
+        {
+
+            Expression<Func<Concept, bool>> expected = (o => o.Mnemonic == "EVN" || o.Mnemonic == "INT");
+
+            var builder = new QueryExpressionParser();
+            NameValueCollection httpQueryParameters = new NameValueCollection();
+            httpQueryParameters.Add("dateOfBirth", "~2015");
+            var expr = builder.BuildLinqExpression<Patient>(httpQueryParameters);
+            Assert.AreEqual(expected.ToString(), expr.ToString());
+
+        }
 
         /// <summary>
         /// Test tht building of a simple AND method

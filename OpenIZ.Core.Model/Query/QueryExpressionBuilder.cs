@@ -210,6 +210,8 @@ namespace OpenIZ.Core.Model.Query
 				if (access.NodeType == ExpressionType.MemberAccess) {
 					MemberExpression memberExpr = access as MemberExpression;
 					String path = this.ExtractPath (memberExpr.Expression); // get the chain if required
+                    if (memberExpr.Expression.Type.GetTypeInfo().IsGenericType && memberExpr.Expression.Type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                        return path;
 
 					// XML property?
 					var memberInfo = memberExpr.Expression.Type.GetRuntimeProperty (memberExpr.Member.Name + "Xml") ??
@@ -234,7 +236,30 @@ namespace OpenIZ.Core.Model.Query
                     else
                         return String.Format("{0}.{1}", path, memberXattribute.ElementName);
 				}
-				return null;
+                else if(access.NodeType == ExpressionType.Call)
+                {
+                    //CallExpression callExpr = access as MemberExpression;
+                    MethodCallExpression callExpr = access as MethodCallExpression;
+
+                    if (callExpr.Method.Name == "Where")
+                    {
+                        String path = this.ExtractPath(callExpr.Arguments[0]); // get the chain if required
+                        var guardExpression = callExpr.Arguments[1] as LambdaExpression;
+                        // Where should be a guard so we just grab the unary equals only!
+                        var binaryExpression = guardExpression.Body as BinaryExpression;
+                        if (binaryExpression == null)
+                            throw new InvalidOperationException("Cannot translate non-binary expression guards");
+
+                        // Is the expression the guard?
+                        var expressionMember = binaryExpression.Left as MemberExpression;
+                        var valueExpression = binaryExpression.Right as ConstantExpression;
+                        if (expressionMember.Member.DeclaringType.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty != expressionMember.Member.Name)
+                            throw new InvalidOperationException("Guards must be on classifier");
+                        return String.Format("{0}[{1}]", path, valueExpression.Value);
+
+                    }
+                }
+                return null;
 			}
 		}
 

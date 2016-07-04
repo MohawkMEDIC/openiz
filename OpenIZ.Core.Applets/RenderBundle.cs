@@ -20,7 +20,8 @@ namespace OpenIZ.Core.Applets
         public const string BUNDLE_METRO = "metro-ui";
         public const string BUNDLE_SELECT2 = "select2";
         public const string BUNDLE_CHART = "chart-js";
-        
+        public const string BUNDLE_TOASTR = "toastr";
+
         /// <summary>
         /// Asset bundle
         /// </summary>

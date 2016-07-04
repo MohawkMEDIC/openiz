@@ -220,7 +220,9 @@ namespace OpenIZ.Core.Model.Map
                 var parameter = Expression.Parameter(typeof(TTo), expression.Parameters[0].Name);
                 Expression expr = new ModelExpressionVisitor(this, parameter).Visit(expression.Body);
                 var retVal = Expression.Lambda<Func<TTo, bool>>(expr, parameter);
+#if VERBOSE_DEBUG
                 Debug.WriteLine("Map Expression: {0} > {1}", expression, retVal);
+#endif
                 return retVal;
             }
             catch(Exception e)
@@ -332,7 +334,9 @@ namespace OpenIZ.Core.Model.Map
                 var propInfo = typeof(TDomain).GetRuntimeProperty(propMap?.DomainName ?? modelPropertyInfo.Name);
                 if (propInfo == null)
                 {
+#if VERBOSE_DEBUG
                     Debug.WriteLine("Unmapped property ({0}).{1}", typeof(TDomain).Name, modelPropertyInfo.Name);
+#endif
                     continue;
                 }
 
@@ -443,7 +447,9 @@ namespace OpenIZ.Core.Model.Map
                 }
             }
 
+#if VERBOSE_DEBUG
             Debug.WriteLine("Leaving: {0}>{1}", typeof(TDomain).FullName, typeof(TModel).FullName);
+#endif
             return retVal;
         }
     }
