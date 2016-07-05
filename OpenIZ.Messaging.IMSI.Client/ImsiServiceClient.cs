@@ -11,14 +11,13 @@ using OpenIZ.Core.Interop.Clients;
 using OpenIZ.Core.Http;
 using System.Text;
 
-namespace OpenIZ.Mobile.Core.Interop.Clients
+namespace OpenIZ.Messaging.IMSI.Client
 {
 	/// <summary>
 	/// Represents the IMSI service client 
 	/// </summary>
 	public class ImsiServiceClient : ServiceClientBase
 	{
-
 		/// <summary>
 		/// Creates a new service client
 		/// </summary>
