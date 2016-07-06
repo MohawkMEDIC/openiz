@@ -24,7 +24,7 @@ namespace OpenIZ.Messaging.IMSI.Client
 		/// <param name="clientName">Client name.</param>
 		public ImsiServiceClient (IRestClient client) : base(client)
 		{
-			this.Client.Accept = "application/xml";
+			this.Client.Accept = this.Client.Accept ?? "application/xml";
 		}
 
 		/// <summary>
@@ -100,9 +100,9 @@ namespace OpenIZ.Messaging.IMSI.Client
 
             // Create with version?
             if (data.Key != Guid.Empty)
-                return this.Client.Post<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key), "application/xml", data);
+                return this.Client.Post<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key), this.Client.Accept, data);
             else
-                return this.Client.Post<TModel, TModel>(resourceName, "application/xml", data);
+                return this.Client.Post<TModel, TModel>(resourceName, this.Client.Accept, data);
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace OpenIZ.Messaging.IMSI.Client
 
             // Create with version?
             if (data.Key != Guid.Empty)
-                return this.Client.Put<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key), "application/xml", data);
+                return this.Client.Put<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key), this.Client.Accept, data);
             else
                 throw new KeyNotFoundException(data.Key.ToString());
 
