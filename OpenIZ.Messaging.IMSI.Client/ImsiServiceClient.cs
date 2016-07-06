@@ -11,21 +11,20 @@ using OpenIZ.Core.Interop.Clients;
 using OpenIZ.Core.Http;
 using System.Text;
 
-namespace OpenIZ.Mobile.Core.Interop.Clients
+namespace OpenIZ.Messaging.IMSI.Client
 {
 	/// <summary>
 	/// Represents the IMSI service client 
 	/// </summary>
 	public class ImsiServiceClient : ServiceClientBase
 	{
-
 		/// <summary>
 		/// Creates a new service client
 		/// </summary>
 		/// <param name="clientName">Client name.</param>
 		public ImsiServiceClient (IRestClient client) : base(client)
 		{
-			this.Client.Accept = "application/xml";
+			this.Client.Accept = this.Client.Accept ?? "application/xml";
 		}
 
 		/// <summary>
@@ -101,9 +100,9 @@ namespace OpenIZ.Mobile.Core.Interop.Clients
 
             // Create with version?
             if (data.Key != Guid.Empty)
-                return this.Client.Post<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key), "application/xml", data);
+                return this.Client.Post<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key), this.Client.Accept, data);
             else
-                return this.Client.Post<TModel, TModel>(resourceName, "application/xml", data);
+                return this.Client.Post<TModel, TModel>(resourceName, this.Client.Accept, data);
         }
 
         /// <summary>
@@ -118,7 +117,7 @@ namespace OpenIZ.Mobile.Core.Interop.Clients
 
             // Create with version?
             if (data.Key != Guid.Empty)
-                return this.Client.Put<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key), "application/xml", data);
+                return this.Client.Put<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key), this.Client.Accept, data);
             else
                 throw new KeyNotFoundException(data.Key.ToString());
 
