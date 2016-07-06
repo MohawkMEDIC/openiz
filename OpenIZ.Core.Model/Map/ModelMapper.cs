@@ -347,7 +347,7 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         public TModel MapDomainInstance<TDomain, TModel>(TDomain domainInstance) where TModel : new()
         {
-            ClassMap classMap = this.m_mapFile.GetModelClassMap(typeof(TModel));
+            ClassMap classMap = this.m_mapFile.GetModelClassMap(typeof(TModel), typeof(TDomain));
 
             if (domainInstance == null)
                 return default(TModel);
@@ -459,7 +459,7 @@ namespace OpenIZ.Core.Model.Map
                     {
                         // Traverse?
                         var instance = itm;
-                        var via = propMap.Via;
+                        var via = propMap?.Via;
                         while (via != null)
                         {
                             instance = instance?.GetType().GetRuntimeProperty(via.DomainName)?.GetValue(instance);

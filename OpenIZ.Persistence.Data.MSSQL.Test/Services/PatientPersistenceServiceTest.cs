@@ -118,27 +118,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual(DeterminerKeys.Specific, p.DeterminerConceptKey);
             Assert.AreEqual(StatusKeys.Active, p.StatusConceptKey);
 
-            // Test serialization for model
-            afterInsert.SetDelayLoad(false);
-            var testBundle = Bundle.CreateBundle(afterInsert);
 
-            // Simulate receive
-            String json = JsonConvert.SerializeObject(testBundle, new JsonSerializerSettings()
-            {
-                NullValueHandling = NullValueHandling.Ignore,
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                TypeNameHandling = TypeNameHandling.Auto
-            });
-            testBundle = JsonConvert.DeserializeObject<Bundle>(json, new JsonSerializerSettings()
-            {
-                NullValueHandling = NullValueHandling.Ignore,
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                TypeNameHandling = TypeNameHandling.Auto
-            });
-            testBundle.Reconstitute();
-            ViewModelSerializer vms = new ViewModelSerializer();
-            var jsonSimple = vms.Serialize(testBundle.Entry);
-            Assert.IsNotNull(json);
         }
     }
 }

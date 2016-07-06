@@ -31,19 +31,35 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test
     public abstract class DataTest
     {
 
+        public static class DataTestUtil
+        {
+            static bool started = false;
+
+            /// <summary>
+            /// Start the test context
+            /// </summary>
+            public static void Start()
+            {
+                if (started) return;
+
+                if (EntitySource.Current == null)
+                    EntitySource.Current = new EntitySource(new PersistenceServiceEntitySource());
+                ApplicationContext.Current.Start();
+
+                // Start the daemon services
+                var sqlPersistenceService = ApplicationContext.Current.GetService<SqlServerPersistenceService>();
+                if (!sqlPersistenceService.IsRunning)
+                {
+                    ApplicationContext.Current.Configuration.ServiceProviders.Add(typeof(LocalConfigurationManager));
+                    sqlPersistenceService.Start();
+                }
+                started = true;
+            }
+        }
+
         public DataTest()
         {
-            if(EntitySource.Current == null)
-                EntitySource.Current = new EntitySource(new PersistenceServiceEntitySource());
-            ApplicationContext.Current.Start();
-
-            // Start the daemon services
-            var sqlPersistenceService = ApplicationContext.Current.GetService<SqlServerPersistenceService>();
-            if (!sqlPersistenceService.IsRunning)
-            {
-                ApplicationContext.Current.Configuration.ServiceProviders.Add(typeof(LocalConfigurationManager));
-                sqlPersistenceService.Start();
-            }
+            DataTestUtil.Start();
         }
     }
 }
