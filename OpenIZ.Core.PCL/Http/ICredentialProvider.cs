@@ -1,13 +1,10 @@
-using System;
-
 namespace OpenIZ.Core.Http
 {
 	/// <summary>
 	/// Authorization event args
 	/// </summary>
-	public interface ICredentialProvider 
+	public interface ICredentialProvider
 	{
-
 		/// <summary>
 		/// Gets or sets the credentials which are used to authenticate
 		/// </summary>
@@ -19,6 +16,4 @@ namespace OpenIZ.Core.Http
 		/// <param name="context">Context.</param>
 		Credentials Authenticate(IRestClient context);
 	}
-
 }
-

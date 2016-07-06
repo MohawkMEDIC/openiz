@@ -15,6 +15,4 @@ namespace OpenIZ.Core.Http
 		/// <param name="chain">Chain.</param>
 		bool ValidateCertificate(Object certificate, Object chain);
 	}
-
 }
-

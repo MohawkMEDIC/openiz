@@ -178,7 +178,10 @@ namespace OpenIZ.Core.Wcf.Serialization
                         using (StreamWriter sw = new StreamWriter(ms, Encoding.UTF8))
                         using (JsonWriter jsw = new JsonTextWriter(sw))
                         {
-                            jsz.NullValueHandling = NullValueHandling.Ignore;
+							jsz.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+							jsz.NullValueHandling = NullValueHandling.Ignore;
+							jsz.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+							jsz.TypeNameHandling = TypeNameHandling.Auto;
                             jsz.Converters.Add(new StringEnumConverter());
                             jsz.Serialize(jsw, result);
                             sw.Flush();

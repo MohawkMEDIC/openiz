@@ -1,7 +1,6 @@
 using System;
-using System.Security.Principal;
-using System.Net;
 using System.Collections.Generic;
+using System.Security.Principal;
 
 namespace OpenIZ.Core.Http
 {
@@ -10,7 +9,6 @@ namespace OpenIZ.Core.Http
 	/// </summary>
 	public abstract class Credentials
 	{
-
 		// Principal
 		private IPrincipal m_principal;
 
@@ -34,6 +32,4 @@ namespace OpenIZ.Core.Http
 		/// </summary>
 		public abstract Dictionary<String, String> GetHttpHeaders();
 	}
-
 }
-

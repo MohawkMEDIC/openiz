@@ -14,21 +14,25 @@ namespace OpenIZ.Core.Http
 		/// </summary>
 		/// <returns>The serializer.</returns>
 		/// <param name="contentType">Content type.</param>
-		public IBodySerializer GetSerializer (string contentType, Type typeHint)
+		public IBodySerializer GetSerializer(string contentType, Type typeHint)
 		{
-			switch (contentType) {
+			switch (contentType)
+			{
 				case "text/xml":
 				case "application/xml":
-					return new XmlBodySerializer (typeHint);
+					return new XmlBodySerializer(typeHint);
+
 				case "application/json":
-					return new JsonBodySerializer (typeHint);
+					return new JsonBodySerializer(typeHint);
+
 				case "application/x-www-urlform-encoded":
-					return new FormBodySerializer ();
+					return new FormBodySerializer();
+
 				default:
-					throw new InvalidOperationException ();
+					throw new InvalidOperationException();
 			}
 		}
-		#endregion
+
+		#endregion IBodySerializerBinder implementation
 	}
 }
-

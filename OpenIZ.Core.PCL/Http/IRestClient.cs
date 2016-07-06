@@ -1,7 +1,6 @@
-﻿using System;
-using System.Net;
+﻿using OpenIZ.Core.Http.Description;
+using System;
 using System.Collections.Generic;
-using OpenIZ.Core.Http.Description;
 
 namespace OpenIZ.Core.Http
 {
@@ -10,11 +9,11 @@ namespace OpenIZ.Core.Http
 	/// </summary>
 	public interface IRestClient : IDisposable
 	{
-		
 		/// <summary>
 		/// Gets or sets the credentials to be used for this client
 		/// </summary>
-		Credentials Credentials {
+		Credentials Credentials
+		{
 			get;
 			set;
 		}
@@ -50,7 +49,7 @@ namespace OpenIZ.Core.Http
 		/// <param name="body">Body.</param>
 		/// <typeparam name="TBody">The 1st type parameter.</typeparam>
 		/// <typeparam name="TResult">The 2nd type parameter.</typeparam>
-		TResult Invoke<TBody,TResult>(String method, String url, String contentType, TBody body);
+		TResult Invoke<TBody, TResult>(String method, String url, String contentType, TBody body);
 
 		/// <summary>
 		/// Invokes the specified method against the url provided
@@ -62,7 +61,7 @@ namespace OpenIZ.Core.Http
 		/// <param name="query">Query.</param>
 		/// <typeparam name="TBody">The 1st type parameter.</typeparam>
 		/// <typeparam name="TResult">The 2nd type parameter.</typeparam>
-		TResult Invoke<TBody, TResult> (String method, String url, String contentType, TBody body, params KeyValuePair<String,Object>[] query);
+		TResult Invoke<TBody, TResult>(String method, String url, String contentType, TBody body, params KeyValuePair<String, Object>[] query);
 
 		/// <summary>
 		/// Executes a post against the url
@@ -72,14 +71,14 @@ namespace OpenIZ.Core.Http
 		/// <param name="body">Body.</param>
 		/// <typeparam name="TBody">The 1st type parameter.</typeparam>
 		/// <typeparam name="TResult">The 2nd type parameter.</typeparam>
-		TResult Post<TBody, TResult> (String url, String contentType, TBody body);
+		TResult Post<TBody, TResult>(String url, String contentType, TBody body);
 
 		/// <summary>
 		/// Deletes the specified object
 		/// </summary>
 		/// <param name="url">URL.</param>
 		/// <typeparam name="TResult">The 1st type parameter.</typeparam>
-		TResult Delete<TResult> (String url);
+		TResult Delete<TResult>(String url);
 
 		/// <summary>
 		/// Executes a PUT for the specified object
@@ -89,14 +88,14 @@ namespace OpenIZ.Core.Http
 		/// <param name="body">Body.</param>
 		/// <typeparam name="TBody">The 1st type parameter.</typeparam>
 		/// <typeparam name="TResult">The 2nd type parameter.</typeparam>
-		TResult Put<TBody, TResult> (String url, String contentType, TBody body);
+		TResult Put<TBody, TResult>(String url, String contentType, TBody body);
 
 		/// <summary>
 		/// Executes an Options against the URL
 		/// </summary>
 		/// <param name="url">URL.</param>
 		/// <typeparam name="TResult">The 1st type parameter.</typeparam>
-		TResult Options<TResult> (String url);
+		TResult Options<TResult>(String url);
 
 		/// <summary>
 		/// Gets the service client description
@@ -104,15 +103,14 @@ namespace OpenIZ.Core.Http
 		/// <value>The description.</value>
 		IRestClientDescription Description { get; }
 
-        /// <summary>
-        /// Fired prior to rest client invoking a method
-        /// </summary>
-        event EventHandler<RestRequestEventArgs> Requesting;
+		/// <summary>
+		/// Fired prior to rest client invoking a method
+		/// </summary>
+		event EventHandler<RestRequestEventArgs> Requesting;
 
-        /// <summary>
-        /// Fired after the request has been finished
-        /// </summary>
-        event EventHandler<RestResponseEventArgs> Responded;
+		/// <summary>
+		/// Fired after the request has been finished
+		/// </summary>
+		event EventHandler<RestResponseEventArgs> Responded;
 	}
 }
-
