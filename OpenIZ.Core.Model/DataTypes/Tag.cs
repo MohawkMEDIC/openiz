@@ -33,7 +33,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents the base class for tags
     /// </summary>
-    [Classifier(nameof(TagKey))]
+    [Classifier(nameof(TagKey)), SimpleValue(nameof(Value))]
     [XmlType(Namespace = "http://openiz.org/model")]
     public abstract class Tag<TSourceType> : BaseEntityData, ISimpleAssociation where TSourceType : IdentifiedData
     {

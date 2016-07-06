@@ -1,4 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
+using OpenIZ.Core.Applets.ViewModel;
+using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
@@ -42,7 +45,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 StatusConceptKey = StatusKeys.Active,
                 Names = new List<EntityName>()
                 {
-                    new EntityName(NameUseKeys.Legal, "Johnson", "William")
+                    new EntityName(NameUseKeys.OfficialRecord, "Johnson", "William", "P.", "Bear")
                 },
                 Addresses = new List<EntityAddress>()
                 {
@@ -67,6 +70,17 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                         Author = new Person()
                     }
                 },
+                Extensions = new List<EntityExtension>() {
+                    new EntityExtension()
+                    {
+                        ExtensionType = new ExtensionType()
+                        {
+                            Name = "http://openiz.org/oiz/birthcertificate",
+                            ExtensionHandler = typeof(EntityPersistenceServiceTest)
+                        },
+                        ExtensionValue = new byte[] { 1 }
+                    }
+                },
                 GenderConceptKey = Guid.Parse("f4e3a6bb-612e-46b2-9f77-ff844d971198"),
                 DateOfBirth = new DateTime(1984, 03, 22),
                 MultipleBirthOrder = 2,
@@ -74,6 +88,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 DeceasedDatePrecision = DatePrecision.Day,
                 DateOfBirthPrecision = DatePrecision.Day
             };
+
+            Person mother = new Person()
+            {
+                StatusConceptKey = StatusKeys.Active,
+                Names = new List<EntityName>()
+                {
+                    new EntityName(NameUseKeys.Legal, "Johnson", "Martha")
+                },
+            };
+
+            // Associate: PARENT > CHILD
+            p.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Mother, mother));
 
             var afterInsert = base.DoTestInsert(p, s_authorization);
             Assert.AreEqual(DatePrecision.Day, afterInsert.DateOfBirthPrecision);
@@ -91,6 +117,28 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual(EntityClassKeys.Patient, p.ClassConceptKey);
             Assert.AreEqual(DeterminerKeys.Specific, p.DeterminerConceptKey);
             Assert.AreEqual(StatusKeys.Active, p.StatusConceptKey);
+
+            // Test serialization for model
+            afterInsert.SetDelayLoad(false);
+            var testBundle = Bundle.CreateBundle(afterInsert);
+
+            // Simulate receive
+            String json = JsonConvert.SerializeObject(testBundle, new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                TypeNameHandling = TypeNameHandling.Auto
+            });
+            testBundle = JsonConvert.DeserializeObject<Bundle>(json, new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                TypeNameHandling = TypeNameHandling.Auto
+            });
+            testBundle.Reconstitute();
+            ViewModelSerializer vms = new ViewModelSerializer();
+            var jsonSimple = vms.Serialize(testBundle.Entry);
+            Assert.IsNotNull(json);
         }
     }
 }

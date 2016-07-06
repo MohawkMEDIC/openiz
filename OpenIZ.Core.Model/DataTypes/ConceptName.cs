@@ -29,7 +29,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents a name (human name) that a concept may have
     /// </summary>
-    [Classifier(nameof(Language))]
+    [Classifier(nameof(Language)), SimpleValue(nameof(Name))]
     [XmlType("ConceptName",  Namespace = "http://openiz.org/model"), JsonObject("ConceptName")]
     public class ConceptName : VersionedAssociation<Concept>
     {

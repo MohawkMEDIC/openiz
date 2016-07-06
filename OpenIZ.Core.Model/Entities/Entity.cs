@@ -165,6 +165,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Class concept datal load property
         /// </summary>
         [XmlIgnore, JsonIgnore]
+        [AutoLoad()]
         [DelayLoad(nameof(ClassConceptKey))]
         public Concept ClassConcept
         {
@@ -187,6 +188,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [DelayLoad(nameof(DeterminerConceptKey))]
         [XmlIgnore, JsonIgnore]
+        [AutoLoad()]   
         public virtual Concept DeterminerConcept
         {
             get
@@ -209,6 +211,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [DelayLoad(nameof(StatusConceptKey))]
         [XmlIgnore, JsonIgnore]
+        [AutoLoad()]
         public Concept StatusConcept
         {
             get
@@ -251,6 +254,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Type concept identifier
         /// </summary>
         [DelayLoad(nameof(TypeConceptKey))]
+        [AutoLoad()]
         [XmlIgnore, JsonIgnore]
         public Concept TypeConcept
         {
@@ -269,6 +273,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets the identifiers associated with this entity
         /// </summary>
         [DelayLoad(null)]
+        [AutoLoad()]
         [XmlElement("identifier"), JsonProperty("identifier")]
         public List<EntityIdentifier> Identifiers
         {
@@ -288,6 +293,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all associated entities for this entity
         /// </summary>
         [DelayLoad(null)]
+        [AutoLoad()]
         [XmlElement("relationship"), JsonProperty("relationship")]
         public List<EntityRelationship> Relationships
         {
@@ -308,6 +314,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all telecommunications addresses associated with the entity
         /// </summary>
         [DelayLoad(null)]
+        [AutoLoad()]
         [XmlElement("telecom"), JsonProperty("telecom")]
         public List<EntityTelecomAddress> Telecoms
         {
@@ -328,6 +335,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all extensions associated with the entity
         /// </summary>
         [DelayLoad(null)]
+        [AutoLoad()]
         [XmlElement("extension"), JsonProperty("extension")]
         public List<EntityExtension> Extensions
         {
@@ -348,6 +356,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all names associated with the entity
         /// </summary>
         [DelayLoad(null)]
+        [AutoLoad()]
         [XmlElement("name"), JsonProperty("name")]
         public List<EntityName> Names
         {
@@ -368,6 +377,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all addresses associated with the entity
         /// </summary>
         [DelayLoad(null)]
+        [AutoLoad()]
         [XmlElement("address"), JsonProperty("address")]
         public List<EntityAddress> Addresses
         {
@@ -388,6 +398,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all notes associated with the entity
         /// </summary>
         [DelayLoad(null)]
+        [AutoLoad()]
         [XmlElement("note"), JsonProperty("note")]
         public List<EntityNote> Notes
         {
@@ -408,6 +419,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all tags associated with the entity
         /// </summary>
         [DelayLoad(null)]
+        [AutoLoad()]
         [XmlElement("tag"), JsonProperty("tag")]
         public List<EntityTag> Tags
         {
@@ -428,6 +440,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets the acts in which this entity participates
         /// </summary>
         [DelayLoad(null)]
+        [AutoLoad()]
         [XmlElement("participation"), JsonProperty("participation")]
         public List<ActParticipation> Participations
         {

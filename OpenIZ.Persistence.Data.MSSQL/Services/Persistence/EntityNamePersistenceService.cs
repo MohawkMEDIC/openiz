@@ -9,6 +9,7 @@ using System.Linq;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.Linq;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -63,6 +64,20 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             return retVal;
         }
 
+        /// <summary>
+        /// Data load options
+        /// </summary>
+        /// <returns></returns>
+        protected override DataLoadOptions GetDataLoadOptions()
+        {
+            DataLoadOptions dlo = new DataLoadOptions();
+            dlo.LoadWith<Data.EntityName>(c => c.NameUseConcept);
+            dlo.LoadWith<Data.EntityName>(c => c.EntityNameComponents);
+            dlo.LoadWith<Data.EntityNameComponent>(c => c.ComponentTypeConcept);
+            dlo.LoadWith<Data.EntityNameComponent>(c => c.PhoneticValue);
+
+            return dlo;
+        }
     }
 
     /// <summary>

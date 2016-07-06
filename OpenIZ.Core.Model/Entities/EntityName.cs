@@ -102,6 +102,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [DelayLoad(nameof(NameUseKey))]
         [XmlIgnore, JsonIgnore]
+        [AutoLoad]
         public Concept NameUse
         {
             get {
@@ -120,6 +121,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [DelayLoad(null)]
         [XmlElement("component"), JsonProperty("component")]
+        [AutoLoad]
         public List<EntityNameComponent> Component
         {
             get

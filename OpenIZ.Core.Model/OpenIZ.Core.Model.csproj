@@ -44,6 +44,7 @@
     <Compile Include="Attributes\ClassifierAttribute.cs" />
     <Compile Include="Attributes\DelayLoadAttribute.cs" />
     <Compile Include="Attributes\UniqueAttribute.cs" />
+    <Compile Include="Attributes\SimpleValueAttribute.cs" />
     <Compile Include="BaseEntityData.cs" />
     <Compile Include="Association.cs" />
     <Compile Include="Collection\Bundle.cs" />

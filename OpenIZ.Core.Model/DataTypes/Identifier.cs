@@ -105,6 +105,44 @@ namespace OpenIZ.Core.Model.DataTypes
         [Unique]
         public String Value { get; set; }
 
+
+        /// <summary>
+        /// Gets or sets the assinging authority id
+        /// </summary>
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [XmlIgnore, JsonIgnore]
+        [Unique]
+        public Guid AuthorityKey
+        {
+            get { return this.m_authorityId; }
+            set
+            {
+                if (this.m_authorityId == value)
+                    return;
+                this.m_authority = null;
+                this.m_authorityId = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the type identifier
+        /// </summary>
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [XmlIgnore, JsonIgnore]
+        public Guid? IdentifierTypeKey
+        {
+            get { return this.m_identifierTypeId; }
+            set
+            {
+                if (this.m_identifierTypeId == value)
+                    return;
+                this.m_identifierType = null;
+                this.m_identifierTypeId = value;
+            }
+        }
+
         /// <summary>
         /// Gets or sets the identifier type
         /// </summary>
@@ -129,6 +167,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [DelayLoad(nameof(AuthorityKey))]
         [XmlElement("authority"), JsonProperty("authority")]
+        [AutoLoad]
         public AssigningAuthority Authority
         {
             get
@@ -143,40 +182,6 @@ namespace OpenIZ.Core.Model.DataTypes
                     this.m_authorityId = value.Key;
                 else
                     this.m_authorityId = Guid.Empty;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the assinging authority id
-        /// </summary>
-        
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlIgnore, JsonIgnore]
-        [Unique]
-        public Guid  AuthorityKey {
-            get { return this.m_authorityId; }
-            set
-            {
-                this.m_authority = null;
-                this.m_authorityId = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the type identifier
-        /// </summary>
-        
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlIgnore, JsonIgnore]
-        public Guid? IdentifierTypeKey
-        {
-            get { return this.m_identifierTypeId; }
-            set
-            {
-                if (this.m_identifierType?.Key == value)
-                    return;
-                this.m_identifierType = null;
-                this.m_identifierTypeId = value;
             }
         }
 

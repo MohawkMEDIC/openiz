@@ -33,7 +33,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents a base entity extension
     /// </summary>
-    [Classifier(nameof(ExtensionType))]
+    [Classifier(nameof(ExtensionType)), SimpleValue(nameof(ExtensionValue))]
     [XmlType(Namespace = "http://openiz.org/model")]
     public abstract class Extension<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
     {
@@ -53,6 +53,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets an extension displayable value
         /// </summary>
+        [XmlIgnore, JsonIgnore]
         public String ExtensionDisplay { get; set; }
 
         /// <summary>
@@ -75,6 +76,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [DelayLoad(nameof(ExtensionTypeKey))]
         [XmlElement("extensionType"), JsonProperty("extensionType")]
+        [AutoLoad]
         public ExtensionType ExtensionType
         {
             get {

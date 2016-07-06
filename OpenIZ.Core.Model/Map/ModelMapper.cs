@@ -118,6 +118,47 @@ namespace OpenIZ.Core.Model.Map
         }
 
         /// <summary>
+        /// Create a version filter
+        /// </summary>
+        /// <typeparam name="TDomain"></typeparam>
+        /// <param name="parm"></param>
+        /// <param name="domainInstance"></param>
+        /// <returns></returns>
+        private Expression CreateVersionFilter<TDomain>(Expression viaExpression , TDomain domainInstance)
+        {
+            // Extract boundary properties
+            var effectiveVersionMethod = viaExpression.Type.GetTypeInfo().GenericTypeArguments[0].GetRuntimeProperty("EffectiveVersionSequenceId");
+            var obsoleteVersionMethod = viaExpression.Type.GetTypeInfo().GenericTypeArguments[0].GetRuntimeProperty("ObsoleteVersionSequenceId");
+            if (effectiveVersionMethod == null || obsoleteVersionMethod == null)
+                return viaExpression;
+
+            // Create predicate type and find WHERE method
+            Type predicateType = typeof(Func<,>).MakeGenericType(viaExpression.Type.GetTypeInfo().GenericTypeArguments[0], typeof(bool));
+            var whereMethod = typeof(Enumerable).GetGenericMethod("Where",
+                new Type[] { viaExpression.Type.GetTypeInfo().GenericTypeArguments[0] },
+                new Type[] { viaExpression.Type, predicateType });
+
+            // Create Where Expression
+            var guardParameter = Expression.Parameter(viaExpression.Type.GetTypeInfo().GenericTypeArguments[0], "x");
+            var currentSequenceId = typeof(TDomain).GetRuntimeProperty("VersionSequenceId").GetValue(domainInstance);
+            var bodyExpression = Expression.MakeBinary(ExpressionType.AndAlso,
+                Expression.MakeBinary(ExpressionType.GreaterThanOrEqual, Expression.MakeMemberAccess(guardParameter, effectiveVersionMethod), Expression.Constant(currentSequenceId)),
+                Expression.MakeBinary(ExpressionType.OrElse,
+                    Expression.MakeBinary(ExpressionType.Equal, Expression.MakeMemberAccess(guardParameter, obsoleteVersionMethod), Expression.Constant(null)),
+                    Expression.MakeBinary(ExpressionType.LessThanOrEqual, Expression.MakeMemberAccess(
+                        Expression.MakeMemberAccess(guardParameter, obsoleteVersionMethod), 
+                        typeof(Nullable<Decimal>).GetRuntimeProperty("Value")), Expression.Constant(currentSequenceId))
+                )
+            );
+            
+            // Build strongly typed lambda
+            var builderMethod = typeof(Expression).GetGenericMethod(nameof(Expression.Lambda), new Type[] { predicateType }, new Type[] { typeof(Expression), typeof(ParameterExpression[]) });
+            var sortLambda = builderMethod.Invoke(null, new object[] { bodyExpression, new ParameterExpression[] { guardParameter } }) as Expression;
+            return Expression.Call(whereMethod as MethodInfo, viaExpression, sortLambda);
+
+        }
+
+        /// <summary>
         /// Create aggregation functions
         /// </summary>
         private Expression CreateAggregateFunction(Expression viaExpression, PropertyMap via)
@@ -407,6 +448,7 @@ namespace OpenIZ.Core.Model.Map
                     modelProperty.SetValue(retVal, Type.GetType(sourceProperty.GetValue(sourceObject) as String));
                 else if (MapUtil.TryConvert(originalValue, modelProperty.PropertyType, out pValue))
                     modelProperty.SetValue(retVal, pValue);
+                // Handles when a map is a list for example doing a VIA over a version relationship
                 else if (originalValue is IList)
                 {
                     var modelInstance = Activator.CreateInstance(modelProperty.PropertyType) as IList;
@@ -426,7 +468,7 @@ namespace OpenIZ.Core.Model.Map
                                 var parm = Expression.Parameter(instance.GetType());
                                 Expression aggregateExpr = null;
                                 if (!String.IsNullOrEmpty(via.OrderBy))
-                                    aggregateExpr = this.CreateSortExpression(parm, via);
+                                    aggregateExpr = this.CreateSortExpression(aggregateExpr ?? parm, via);
                                 aggregateExpr = this.CreateAggregateFunction(aggregateExpr, via);
 
                                 // Get the generic method for LIST to be widdled down
@@ -438,11 +480,54 @@ namespace OpenIZ.Core.Model.Map
                         modelInstance.Add(instanceMapFunction.Invoke(this, new object[] { instance }));
                     }
                 }
-                else if (originalValue is IIdentifiedEntity)
+                // Flat map list 1..1
+                else if (typeof(IList).GetTypeInfo().IsAssignableFrom(modelProperty.PropertyType.GetTypeInfo()) &&
+                    typeof(IList).GetTypeInfo().IsAssignableFrom(sourceProperty.PropertyType.GetTypeInfo()))
                 {
-                    var instanceMapFunction = typeof(ModelMapper).GetGenericMethod("MapDomainInstance", new Type[] { sourceProperty.PropertyType, modelProperty.PropertyType },
-                       new Type[] { sourceProperty.PropertyType });
-                    modelProperty.SetValue(retVal, instanceMapFunction.Invoke(this, new object[] { sourceProperty.GetValue(sourceObject) }));
+                    var modelInstance = Activator.CreateInstance(modelProperty.PropertyType) as IList;
+                    modelProperty.SetValue(retVal, modelInstance);
+                    var instanceMapFunction = typeof(ModelMapper).GetGenericMethod("MapDomainInstance", new Type[] { sourceProperty.PropertyType.GenericTypeArguments[0], modelProperty.PropertyType.GenericTypeArguments[0] },
+                        new Type[] { sourceProperty.PropertyType.GenericTypeArguments[0] });
+                    var listValue = sourceProperty.GetValue(sourceObject);
+
+                    // Is this list a versioned association??
+                    if (typeof(TDomain).GetRuntimeProperty("VersionSequenceId") != null &&
+                        sourceProperty.PropertyType.GenericTypeArguments[0].GetRuntimeProperty("EffectiveVersionSequenceId") != null) // Filter!!! Yay!
+                    {
+                        var parm = Expression.Parameter(listValue.GetType());
+                        Expression aggregateExpr = null;
+                        aggregateExpr = this.CreateVersionFilter(parm, domainInstance);
+                        listValue = Expression.Lambda(aggregateExpr, parm).Compile().DynamicInvoke(listValue);
+                    }
+
+                    foreach (var itm in listValue as IEnumerable)
+                        modelInstance.Add(instanceMapFunction.Invoke(this, new object[] { itm }));
+                }
+                else if (m_mapFile.GetModelClassMap(modelProperty.PropertyType) != null)
+                {
+                    // TODO: Clean this up
+                    var instance = originalValue; //sourceProperty.GetValue(sourceObject);
+                    var via = propMap?.Via;
+                    while (via != null)
+                    {
+                        instance = instance?.GetType().GetRuntimeProperty(via.DomainName)?.GetValue(instance);
+                        if (instance is IList)
+                        {
+                            var parm = Expression.Parameter(instance.GetType());
+                            Expression aggregateExpr = null;
+                            if (!String.IsNullOrEmpty(via.OrderBy))
+                                aggregateExpr = this.CreateSortExpression(aggregateExpr ?? parm, via);
+                            aggregateExpr = this.CreateAggregateFunction(aggregateExpr, via);
+
+                            // Get the generic method for LIST to be widdled down
+                            instance = Expression.Lambda(aggregateExpr, parm).Compile().DynamicInvoke(instance);
+
+                        }
+                        via = via.Via;
+                    }
+                    var instanceMapFunction = typeof(ModelMapper).GetGenericMethod("MapDomainInstance", new Type[] { instance?.GetType(), modelProperty.PropertyType },
+                       new Type[] { instance.GetType() });
+                    modelProperty.SetValue(retVal, instanceMapFunction.Invoke(this, new object[] { instance }));
 
                 }
             }
@@ -452,5 +537,6 @@ namespace OpenIZ.Core.Model.Map
 #endif
             return retVal;
         }
+
     }
 }

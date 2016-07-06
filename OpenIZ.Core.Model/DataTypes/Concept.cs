@@ -132,7 +132,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("class"), JsonProperty("class")]
+        [XmlElement("conceptClass"), JsonProperty("conceptClass")]
         public Guid  ClassKey
         {
             get { return this.m_classId; }

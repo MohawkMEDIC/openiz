@@ -114,6 +114,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the association type
         /// </summary>
+        [AutoLoad]
         [XmlIgnore, JsonIgnore]
         [DelayLoad(nameof(RelationshipTypeKey))]
         public Concept RelationshipType

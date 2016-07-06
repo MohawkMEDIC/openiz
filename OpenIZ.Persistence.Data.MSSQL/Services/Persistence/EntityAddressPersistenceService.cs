@@ -2,6 +2,7 @@
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
@@ -61,6 +62,20 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             return retVal;
         }
 
+        /// <summary>
+        /// Data load options
+        /// </summary>
+        /// <returns></returns>
+        protected override DataLoadOptions GetDataLoadOptions()
+        {
+            DataLoadOptions dlo = new DataLoadOptions();
+            dlo.LoadWith<Data.EntityAddress>(c => c.AddressUseConcept);
+            dlo.LoadWith<Data.EntityAddress>(c => c.EntityAddressComponents);
+            dlo.LoadWith<Data.EntityAddressComponent>(c => c.ComponentTypeConcept);
+            dlo.LoadWith<Data.EntityAddressComponent>(c => c.EntityAddressComponentValue);
+
+            return dlo;
+        }
     }
 
     /// <summary>

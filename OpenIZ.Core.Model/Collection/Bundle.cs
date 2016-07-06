@@ -131,7 +131,7 @@ namespace OpenIZ.Core.Model.Collection
             retVal.Count = retVal.TotalResults = 1;
             if (resourceRoot == null)
                 return retVal;
-            
+            retVal.EntryKey = resourceRoot.Key;
             retVal.Item.Add(resourceRoot);
             ProcessModel(resourceRoot, retVal);
             return retVal;
@@ -181,11 +181,24 @@ namespace OpenIZ.Core.Model.Collection
         private void Reconstitute(IdentifiedData data)
         {
             // Prevent delay loading from EntitySource (we're doing that right now)
-            data = data.GetLocked();
+            bool originalDelayLoad = data.IsDelayLoadEnabled;
+            data.SetDelayLoad(false);
 
             // Iterate over properties
-            foreach(var pi in data.GetType().GetRuntimeProperties())
+            foreach (var pi in data.GetType().GetRuntimeProperties())
             {
+
+                // Is this property not null? If so, we want to iterate
+                object value = pi.GetValue(data);
+                if (value is IList)
+                {
+                    foreach (var itm in value as IList)
+                        if (itm is IdentifiedData)
+                            this.Reconstitute(itm as IdentifiedData);
+                }
+                else if (value is IdentifiedData)
+                    this.Reconstitute(value as IdentifiedData);
+
                 // Is the pi a delay load? if so then get the key property
                 var keyName = pi.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName;
                 if (keyName == null || pi.SetMethod == null)
@@ -197,11 +210,15 @@ namespace OpenIZ.Core.Model.Collection
                     continue; // Invalid key link name
 
                 // Get the key and find a match
-                var key = (Guid)keyPi.GetValue(data);
+                var key = (Guid?)keyPi.GetValue(data);
                 var bundleItem = this.Item.Find(o => o.Key == key);
-                pi.SetValue(data, bundleItem);
+                if(bundleItem != null)
+                    pi.SetValue(data, bundleItem);
                 
             }
+
+            data.SetDelayLoad(originalDelayLoad);
+
         }
 
         /// <summary>
@@ -233,7 +250,7 @@ namespace OpenIZ.Core.Model.Collection
                                             if (!currentBundle.Item.Exists(o => o.Key == (itm as IdentifiedData).Key))
                                                 currentBundle.Item.Add(itm as IdentifiedData);
 
-                                    ProcessModel(itm as IdentifiedData, currentBundle, false);
+                                    ProcessModel(itm as IdentifiedData, currentBundle, true);
                                 }
                             }
                         }

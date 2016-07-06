@@ -32,7 +32,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Generic note class
     /// </summary>
-    
+    [SimpleValue(nameof(Text))]
     [XmlType(Namespace = "http://openiz.org/model")]
     public abstract class Note<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
     {

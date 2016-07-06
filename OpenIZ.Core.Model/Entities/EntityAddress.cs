@@ -92,6 +92,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [DelayLoad(nameof(AddressUseKey))]
         [XmlIgnore, JsonIgnore]
+        [AutoLoad]
         public Concept AddressUse
         {
             get {
@@ -110,6 +111,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [DelayLoad(null)]
         [XmlElement("component"), JsonProperty("component")]
+        [AutoLoad]
         public List<EntityAddressComponent> Component
         {
             get

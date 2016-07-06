@@ -81,7 +81,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the effective version
         /// </summary>
-        [DelayLoad(nameof(EffectiveVersionSequenceId))]
+        [DelayLoad(null)]
         [XmlIgnore, JsonIgnore]
         public TSourceType EffectiveVersion
         {
@@ -106,7 +106,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets the obsoletion version
         /// </summary>
-        [DelayLoad(nameof(ObsoleteVersionSequenceId))]
+        [DelayLoad(null)]
         [XmlIgnore, JsonIgnore]
         public TSourceType ObsoleteVersion
         {

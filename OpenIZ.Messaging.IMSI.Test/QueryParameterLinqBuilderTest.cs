@@ -74,7 +74,7 @@ namespace OpenIZ.Messaging.IMSI.Test
         public void TestBuildFuzzyDate()
         {
 
-            Expression<Func<Concept, bool>> expected = (o => o.Mnemonic == "EVN" || o.Mnemonic == "INT");
+            String expected = "o => (((o.DateOfBirth.Value >= 2015-01-01 12:00:00 AM) AndAlso (o.DateOfBirth.Value <= 2015-12-31 11:59:59 PM)) == True)";
 
             var builder = new QueryExpressionParser();
             NameValueCollection httpQueryParameters = new NameValueCollection();

@@ -2,6 +2,7 @@
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
@@ -86,6 +87,32 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = this.m_personPersister.Obsolete(context, data, principal);
             return data;
+        }
+
+        /// <summary>
+        /// Get data load options
+        /// </summary>
+        /// <returns></returns>
+        protected override DataLoadOptions GetDataLoadOptions()
+        {
+            var loadOptions = base.GetDataLoadOptions();
+            loadOptions.LoadWith<Data.EntityVersion>(cs => cs.StatusConcept);
+            loadOptions.LoadWith<Data.EntityVersion>(cs => cs.TypeConcept);
+            loadOptions.LoadWith<Data.Entity>(cs => cs.EntityTags);
+            loadOptions.LoadWith<Data.Entity>(cs => cs.EntityNames);
+            loadOptions.LoadWith<Data.Entity>(cs => cs.EntityIdentifiers);
+            loadOptions.LoadWith<Data.Entity>(cs => cs.EntityAddresses);
+            loadOptions.LoadWith<Data.Entity>(cs => cs.EntityTelecomAddresses);
+            loadOptions.LoadWith<Data.EntityName>(cs => cs.EntityNameComponents);
+            loadOptions.LoadWith<Data.EntityAddress>(cs => cs.EntityAddressComponents);
+            loadOptions.LoadWith<Data.EntityNameComponent>(cs => cs.PhoneticValue);
+            loadOptions.LoadWith<Data.EntityAddressComponent>(cs => cs.EntityAddressComponentValue);
+            loadOptions.LoadWith<Data.EntityIdentifier>(cs => cs.AssigningAuthority);
+            loadOptions.LoadWith<Data.EntityTelecomAddress>(cs => cs.TelecomUseConcept);
+            loadOptions.LoadWith<Data.EntityAssociation>(cs => cs.AssociationTypeConcept);
+            loadOptions.LoadWith<Data.EntityExtension>(cs => cs.ExtensionType);
+
+            return loadOptions;
         }
     }
 }
