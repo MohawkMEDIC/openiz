@@ -24,7 +24,7 @@ namespace OpenIZ.Messaging.IMSI.Client
 		/// <param name="clientName">Client name.</param>
 		public ImsiServiceClient (IRestClient client) : base(client)
 		{
-			this.Client.Accept = this.Client.Accept ?? "application/xml";
+			this.Client.Accept = client.Accept ?? "application/xml";
 		}
 
 		/// <summary>
