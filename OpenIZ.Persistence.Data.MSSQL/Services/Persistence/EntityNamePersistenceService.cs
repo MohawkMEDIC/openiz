@@ -27,7 +27,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Ensure exists
             data.NameUse?.EnsureExists(context, principal);
-
+            data.NameUseKey = data.NameUse?.Key ?? data.NameUseKey;
             var retVal = base.Insert(context, data, principal);
 
             // Data component
@@ -48,6 +48,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             // Ensure exists
             data.NameUse?.EnsureExists(context, principal);
+            data.NameUseKey = data.NameUse?.Key ?? data.NameUseKey;
 
             var retVal = base.Update(context, data, principal);
 
@@ -109,6 +110,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             }
 
             return retVal;
+        }
+
+        /// <summary>
+        /// Insert context
+        /// </summary>
+        public override Core.Model.Entities.EntityNameComponent Insert(ModelDataContext context, Core.Model.Entities.EntityNameComponent data, IPrincipal principal)
+        {
+            data.ComponentType?.EnsureExists(context, principal);
+            data.ComponentTypeKey = data.ComponentType?.Key ?? data.ComponentTypeKey;
+            return base.Insert(context, data, principal);
+        }
+
+        /// <summary>
+        /// Update
+        /// </summary>
+        public override Core.Model.Entities.EntityNameComponent Update(ModelDataContext context, Core.Model.Entities.EntityNameComponent data, IPrincipal principal)
+        {
+            data.ComponentType?.EnsureExists(context, principal);
+            data.ComponentTypeKey = data.ComponentType?.Key ?? data.ComponentTypeKey;
+            return base.Update(context, data, principal);
         }
     }
 }

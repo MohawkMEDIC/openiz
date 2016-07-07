@@ -27,7 +27,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Concept relationship type
     /// </summary>
-    [Classifier(nameof(Mnemonic))]
+    [Classifier(nameof(Mnemonic)), KeyLookup(nameof(Mnemonic))]
     [XmlRoot("ConceptRelationshipType", Namespace = "http://openiz.org/model")]
     [XmlType("ConceptRelationshipType",  Namespace = "http://openiz.org/model"), JsonObject("ConceptRelationshipType")]
     public class ConceptRelationshipType : NonVersionedEntityData

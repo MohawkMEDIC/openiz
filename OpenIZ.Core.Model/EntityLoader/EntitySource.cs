@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace OpenIZ.Core.Model.EntityLoader
 {
@@ -31,10 +32,48 @@ namespace OpenIZ.Core.Model.EntityLoader
     public sealed class EntitySource
     {
 
+        /// <summary>
+        /// Dummy entity source
+        /// </summary>
+        private class DummyEntitySource : IEntitySourceProvider
+        {
+            /// <summary>
+            /// Gets the specified object
+            /// </summary>
+            public TObject Get<TObject>(Guid key) where TObject : IdentifiedData
+            {
+                throw new NotImplementedException();
+            }
+
+            /// <summary>
+            /// Gets the specified object
+            /// </summary>
+            public TObject Get<TObject>(Guid key, Guid versionKey) where TObject : IdentifiedData, IVersionedEntity
+            {
+                throw new NotImplementedException();
+            }
+
+            /// <summary>
+            /// Gets the specified relations
+            /// </summary>
+            public List<TObject> GetRelations<TObject>(Guid sourceKey, decimal sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation
+            {
+                throw new NotImplementedException();
+            }
+
+            /// <summary>
+            /// Query 
+            /// </summary>
+            public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         // Load object
         private static Object s_lockObject = new object();
         // Current instance
-        private static EntitySource s_instance;
+        private static EntitySource s_instance = new EntitySource(new DummyEntitySource());
 
         /// <summary>
         /// Delay load provider
@@ -59,11 +98,8 @@ namespace OpenIZ.Core.Model.EntityLoader
             }
             set
             {
-                if (s_instance == null)
-                    lock (s_lockObject)
-                        s_instance = value;
-                else
-                    throw new InvalidOperationException("Current context already set");
+                lock (s_lockObject)
+                    s_instance = value;
             }
         }
 

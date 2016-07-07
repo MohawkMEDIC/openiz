@@ -81,7 +81,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents an external assigned identifier
     /// </summary>
     [XmlType(Namespace = "http://openiz.org/model")]
-    [Classifier(nameof(Authority))]
+    [Classifier(nameof(Authority)), SimpleValue(nameof(Value))] 
     public abstract class IdentifierBase<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
     {
 
@@ -102,7 +102,6 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the value of the identifier
         /// </summary>
         [XmlElement("value"), JsonProperty("value")]
-        [Unique]
         public String Value { get; set; }
 
 
@@ -112,7 +111,6 @@ namespace OpenIZ.Core.Model.DataTypes
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlIgnore, JsonIgnore]
-        [Unique]
         public Guid AuthorityKey
         {
             get { return this.m_authorityId; }

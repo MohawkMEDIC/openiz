@@ -42,6 +42,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             data.TypeConceptKey = data.TypeConcept?.Key ?? data.TypeConceptKey;
             data.DeterminerConceptKey = data.DeterminerConcept?.Key ?? data.DeterminerConceptKey;
             data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
+            data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
             data.StatusConceptKey = data.StatusConceptKey == Guid.Empty ? StatusKeys.New : data.StatusConceptKey;
 
             var retVal = base.Insert(context, data, principal);

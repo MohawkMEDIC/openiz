@@ -112,7 +112,8 @@ namespace OpenIZ.Core.Model
         /// </summary>
         protected TEntity DelayLoad<TEntity>(Guid? keyReference, TEntity currentInstance) where TEntity : IdentifiedData
         {
-            if (this.m_delayLoad &&
+            if (currentInstance == null &&
+                this.m_delayLoad &&
                 keyReference.HasValue)
                 currentInstance = EntitySource.Current.Get(keyReference.Value, currentInstance);
             return currentInstance;

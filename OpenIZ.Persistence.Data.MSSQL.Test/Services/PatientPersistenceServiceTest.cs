@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using OpenIZ.Core.Applets.ViewModel;
 using OpenIZ.Core.Model.Collection;
@@ -118,6 +120,94 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual(DeterminerKeys.Specific, p.DeterminerConceptKey);
             Assert.AreEqual(StatusKeys.Active, p.StatusConceptKey);
 
+            ViewModelSerializer vms = new ViewModelSerializer();
+            String json = vms.Serialize(afterInsert);
+            Assert.IsNotNull(json);
+
+        }
+
+        /// <summary>
+        /// Test the persistence of a person
+        /// </summary>
+        [TestMethod]
+        public void TestShouldAdhereToClassifierCodes()
+        {
+            AssigningAuthority aa = new AssigningAuthority()
+            {
+                Name = "Ontario Health Insurance Card",
+                DomainName = "OHIPCARD",
+                Oid = "1.2.3.4.5.67"
+            };
+            var aaPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>();
+            var ohipAuth = aaPersistence.Insert(aa, s_authorization, TransactionMode.Commit);
+
+            Patient p = new Patient()
+            {
+                StatusConcept = new Concept()
+                {
+                    Mnemonic = "Active"
+                },
+                Names = new List<EntityName>()
+                {
+                    new EntityName() {
+                        NameUse = new Concept() { Mnemonic = "OfficialRecord" },
+                        Component = new List<EntityNameComponent>() {
+                            new EntityNameComponent() {
+                                ComponentType = new Concept() { Mnemonic = "Family" },
+                                Value = "Johnson"
+                            },
+                            new EntityNameComponent() {
+                                ComponentType = new Concept() { Mnemonic = "Given" },
+                                Value = "William"
+                            },
+                            new EntityNameComponent() {
+                                ComponentType = new Concept() { Mnemonic = "Given" },
+                                Value = "P."
+                            },
+                            new EntityNameComponent() {
+                                ComponentType = new Concept() { Mnemonic = "Given" },
+                                Value = "Bear"
+                            }
+                        }
+                    }
+                },
+                Identifiers = new List<EntityIdentifier>()
+                {
+                    new EntityIdentifier(
+                        new AssigningAuthority() { DomainName = "OHIPCARD" }, "12343120423")
+                },
+                Tags = new List<EntityTag>()
+                {
+                    new EntityTag("hasBirthCertificate", "true")
+                },
+                Extensions = new List<EntityExtension>() {
+                    new EntityExtension()
+                    {
+                        ExtensionType = new ExtensionType()
+                        {
+                            Name = "http://openiz.org/oiz/birthcertificate",
+                            ExtensionHandler = typeof(EntityPersistenceServiceTest)
+                        },
+                        ExtensionValue = new byte[] { 1 }
+                    }
+                },
+                GenderConcept = new Concept() {  Mnemonic = "Male" },
+                DateOfBirth = new DateTime(1984, 03, 22),
+                MultipleBirthOrder = 2,
+                DeceasedDate = new DateTime(2016, 05, 02),
+                DeceasedDatePrecision = DatePrecision.Day,
+                DateOfBirthPrecision = DatePrecision.Day
+            };
+
+            var afterInsert = base.DoTestInsert(p, s_authorization);
+            Assert.AreEqual("Male", afterInsert.GenderConcept.Mnemonic);
+            Assert.AreEqual(EntityClassKeys.Patient, p.ClassConceptKey);
+            Assert.AreEqual(DeterminerKeys.Specific, p.DeterminerConceptKey);
+            Assert.AreEqual(StatusKeys.Active, p.StatusConceptKey);
+            Assert.AreEqual(aa.Key, afterInsert.Identifiers[0].AuthorityKey);
+            ViewModelSerializer vms = new ViewModelSerializer();
+            String json = vms.Serialize(afterInsert);
+            Assert.IsNotNull(json);
 
         }
     }

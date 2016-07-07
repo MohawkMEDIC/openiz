@@ -32,7 +32,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents a basic reference term
     /// </summary>
-    [Classifier(nameof(Mnemonic))]
+    [Classifier(nameof(Mnemonic)), KeyLookup(nameof(Mnemonic))]
     [XmlType("ReferenceTerm",  Namespace = "http://openiz.org/model"), JsonObject("ReferenceTerm")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "ReferenceTerm")]
     public class ReferenceTerm : NonVersionedEntityData
@@ -51,7 +51,6 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the mnemonic for the reference term
         /// </summary>
         [XmlElement("mnemonic"), JsonProperty("mnemonic")]
-        [Unique]
         public string Mnemonic { get; set; }
 
         /// <summary>
@@ -80,7 +79,6 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("codeSystem"), JsonProperty("codeSystem")]
-        [Unique]
         public Guid  CodeSystemKey {
             get { return this.m_codeSystemId; }
             set

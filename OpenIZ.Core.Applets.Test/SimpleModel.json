@@ -1,0 +1,47 @@
+﻿{
+  "deceasedDate": "2016-05-02T00:00:00",
+  "deceasedDatePrecision": 2,
+  "multipleBirthOrder": 2,
+  "genderConceptModel": {
+    "mnemonic": "Male"
+  },
+  "dateOfBirth": "1984-03-22T00:00:00",
+  "dateOfBirthPrecision": 2,
+  "statusConceptModel": {
+    "mnemonic": "ACTIVE"
+  },
+  "identifier": { "OHIPCARD": [ "12343120423" ] },
+  "relationship": { "Mother": [ "6d6dac87-5c37-4bb3-a880-2627f6144ce8" ] },
+  "telecom": { "WorkPlace": [ "mailto:will@johnson.com" ] },
+  "extension": { "http://openiz.org/oiz/birthcertificate": [ null ] },
+  "name": {
+    "OfficialRecord": [
+      {
+        "component": {
+          "Given": [ "William", "P.", "Bear" ],
+          "Family": [ "Johnson" ]
+        }
+      }
+    ]
+  },
+  "address": {
+    "HomeAddress": [
+      {
+        "component": {
+          "Country": [ "CA" ],
+          "State": [ "ON" ],
+          "StreetAddressLine": [ "123 Main Street West" ],
+          "City": [ "Hamilton" ],
+          "PostalCode": [ "L8K5N2" ]
+        }
+      }
+    ]
+  },
+  "note": [
+    {
+      "text": "William is a test patient",
+      "author": "23296e67-f230-421a-a5f4-a6fb99c28b98"
+    }
+  ],
+  "tag": { "hasBirthCertificate": [ "true" ] }
+}

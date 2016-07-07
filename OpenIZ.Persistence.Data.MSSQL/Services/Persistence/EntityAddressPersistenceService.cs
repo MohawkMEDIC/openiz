@@ -24,6 +24,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Ensure exists
             data.AddressUse?.EnsureExists(context, principal);
+            data.AddressUseKey = data.AddressUse?.Key ?? data.AddressUseKey;
 
             var retVal = base.Insert(context, data, principal);
 
@@ -46,6 +47,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Ensure exists
             data.AddressUse?.EnsureExists(context, principal);
+            data.AddressUseKey = data.AddressUse?.Key ?? data.AddressUseKey;
 
             var retVal = base.Update(context, data, principal);
 
@@ -104,6 +106,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             }
 
             return retVal;
+        }
+
+        /// <summary>
+        /// Entity address component
+        /// </summary>
+        public override Core.Model.Entities.EntityAddressComponent Insert(ModelDataContext context, Core.Model.Entities.EntityAddressComponent data, IPrincipal principal)
+        {
+            data.ComponentType?.EnsureExists(context, principal);
+            data.ComponentTypeKey = data.ComponentType?.Key ?? data.ComponentTypeKey;
+            return base.Insert(context, data, principal);
+        }
+
+        /// <summary>
+        /// Update 
+        /// </summary>
+        public override Core.Model.Entities.EntityAddressComponent Update(ModelDataContext context, Core.Model.Entities.EntityAddressComponent data, IPrincipal principal)
+        {
+            data.ComponentType?.EnsureExists(context, principal);
+            data.ComponentTypeKey = data.ComponentType?.Key ?? data.ComponentTypeKey;
+            return base.Update(context, data, principal);
         }
     }
 }

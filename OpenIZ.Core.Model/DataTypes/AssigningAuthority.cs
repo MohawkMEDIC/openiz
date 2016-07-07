@@ -27,7 +27,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents a model class which is an assigning authority
     /// </summary>
-    [Classifier(nameof(DomainName))]
+    [Classifier(nameof(DomainName)), KeyLookup(nameof(DomainName))]
     [XmlType("AssigningAuthority",  Namespace = "http://openiz.org/model"), JsonObject("AssigningAuthority")]
     public  class AssigningAuthority : BaseEntityData
     {
@@ -46,7 +46,6 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the domain name of the assigning authority
         /// </summary>
         [XmlElement("domainName"), JsonProperty("domainName")]
-        [Unique]
         public String DomainName { get; set; }
         /// <summary>
         /// Gets or sets the description of the assigning authority
@@ -57,7 +56,6 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the oid of the assigning authority
         /// </summary>
         [XmlElement("oid"), JsonProperty("oid")]
-        [Unique]
         public String Oid { get; set; }
         /// <summary>
         /// The URL of the assigning authority

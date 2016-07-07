@@ -30,7 +30,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Instructions on how an extensionshould be handled
     /// </summary>
-    [Classifier(nameof(Name))]
+    [Classifier(nameof(Name)), KeyLookup(nameof(Name))]
     [XmlType("ExtensionType",  Namespace = "http://openiz.org/model"), JsonObject("ExtensionType")]
     public class ExtensionType : NonVersionedEntityData
     {

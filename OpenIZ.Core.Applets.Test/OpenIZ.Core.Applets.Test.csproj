@@ -85,6 +85,7 @@
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
     </None>
+    <EmbeddedResource Include="SimpleModel.json" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

@@ -34,7 +34,7 @@ namespace OpenIZ.Core.Model.DataTypes
     
     [XmlType("Concept",  Namespace = "http://openiz.org/model"), JsonObject("Concept")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Concept")]
-    [Classifier(nameof(Mnemonic))]
+    [Classifier(nameof(Mnemonic)), KeyLookup(nameof(Mnemonic))]
     public class Concept : VersionedEntityData<Concept>
     {
 
@@ -64,7 +64,6 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the unchanging mnemonic for the concept
         /// </summary>
         [XmlElement("mnemonic"), JsonProperty("mnemonic")]
-        [Unique]
         public String Mnemonic { get; set; }
 
         /// <summary>

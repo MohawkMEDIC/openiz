@@ -44,6 +44,7 @@ namespace OpenIZ.Core.Model.Security
     /// </summary>
     [XmlType("SecurityPolicy",   Namespace = "http://openiz.org/model"), JsonObject("SecurityPolicy")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "SecurityPolicy")]
+    [KeyLookup(nameof(Name)), SimpleValue(nameof(Name))]
     public class SecurityPolicy : BaseEntityData
     {
         

@@ -6,6 +6,7 @@ using OpenIZ.Core.Model.Entities;
 using System.Collections.Generic;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Applets.ViewModel;
+using System.IO;
 
 namespace OpenIZ.Core.Applets.Test
 {
@@ -80,6 +81,22 @@ namespace OpenIZ.Core.Applets.Test
             String json = vms.Serialize(this.m_patientUnderTest);
             Assert.IsNotNull(json);
 
+        }
+
+        /// <summary>
+        /// Test de-serialization of the IMS patient object
+        /// </summary>
+        [TestMethod]
+        public void TestDeSerializeComplexIMSObject()
+        {
+
+            ViewModelSerializer vms = new ViewModelSerializer();
+            using (var sr = new StreamReader(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.SimpleModel.json")))
+            {
+                var json = sr.ReadToEnd();
+                var patient = vms.DeSerialize<Patient>(json);
+                Assert.AreEqual(this.m_patientUnderTest.ClassConceptKey, patient.ClassConceptKey);
+            }
         }
     }
 }
