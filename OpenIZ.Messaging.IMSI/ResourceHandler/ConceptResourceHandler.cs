@@ -106,7 +106,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
         {
             var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
-            return conceptService.FindConcepts(new QueryExpressionParser().BuildLinqExpression<Concept>(queryParameters));
+            return conceptService.FindConcepts(QueryExpressionParser.BuildLinqExpression<Concept>(queryParameters));
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out Int32 totalCount)
         {
             var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
-            return conceptService.FindConcepts(new QueryExpressionParser().BuildLinqExpression<Concept>(queryParameters), offset, count, out totalCount);
+            return conceptService.FindConcepts(QueryExpressionParser.BuildLinqExpression<Concept>(queryParameters), offset, count, out totalCount);
         }
 
         /// <summary>

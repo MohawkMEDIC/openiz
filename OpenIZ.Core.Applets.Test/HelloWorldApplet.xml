@@ -3,7 +3,7 @@
      functionality in the TImR application (or rather OpenIZ). An applet manifest allows us to package together
      these assets into a single manifest with a single version.
 -->
-<AppletManifest xmlns="http://openiz.org/applet">
+<AppletManifest xmlns="http://openiz.org/applet" >
 
   <!-- 
     The first part of an applet manifest is the informational header. This header allows OpenIZ to 
@@ -49,6 +49,21 @@
     <text lang="fr">Lancement 'bonjour tout-la-monde!'</text>
   </menuItem>
 
+  <asset name="bindingTest" mimeType="text/html">
+    <contentHtml>
+      <content>
+        <body xmlns="http://www.w3.org/1999/xhtml" xmlns:bind="http://openiz.org/applet/binding">
+          <form action="foo">
+            <p>
+              English: <select name="EnName" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGender" bind:key="mnemonic" bind:value="name[en].value"></select><br/>
+              Swahili: <select name="SwName" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGender" bind:value="name[sw].value" bind:orderBy="mnemonic"></select><br/>
+              Default: <select name="SimpleBind" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGender"></select>
+            </p>
+          </form>
+          </body> 
+      </content>
+    </contentHtml>
+  </asset>
   <!-- The applet contains one or more assets, this is an example of an asset which is just an HTML body (i.e. OpenIZ
        will inject its own HTML header) -->
   <asset name="layout" mimeType="text/html">

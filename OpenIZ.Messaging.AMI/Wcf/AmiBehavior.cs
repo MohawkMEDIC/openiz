@@ -281,7 +281,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// </summary>
         public AmiCollection<SecurityUserInfo> GetUsers()
         {
-            var expression = new QueryExpressionParser().BuildLinqExpression<SecurityUser>(this.CreateQuery(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters));
+            var expression = QueryExpressionParser.BuildLinqExpression<SecurityUser>(this.CreateQuery(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters));
             var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
             return new AmiCollection<SecurityUserInfo>() { CollectionItem = userRepository.FindUsers(expression).Select(o => new SecurityUserInfo(o)).ToList() };
         }
@@ -354,7 +354,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// <returns></returns>
         public AmiCollection<SecurityRoleInfo> GetRoles()
         {
-            var expression = new QueryExpressionParser().BuildLinqExpression<SecurityRole>(this.CreateQuery(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters));
+            var expression = QueryExpressionParser.BuildLinqExpression<SecurityRole>(this.CreateQuery(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters));
             var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
             return new AmiCollection<SecurityRoleInfo>() { CollectionItem = userRepository.FindRoles(expression).Select(o => new SecurityRoleInfo(o)).ToList() };
         }

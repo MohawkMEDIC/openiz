@@ -45,16 +45,16 @@ namespace OpenIZ.Core.Model.Query
         /// <summary>
         /// Build a LINQ expression
         /// </summary>
-        public Expression<Func<TModelType, bool>> BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters)
+        public static Expression<Func<TModelType, bool>> BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters)
         {
-            var expression = this.BuildLinqExpression<TModelType>(httpQueryParameters, "o");
+            var expression = BuildLinqExpression<TModelType>(httpQueryParameters, "o");
             return Expression.Lambda<Func<TModelType, bool>>(expression.Body, expression.Parameters);
         }
 
         /// <summary>
         /// Build LINQ expression
         /// </summary>
-        public LambdaExpression BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters, String parameterName)
+        public static LambdaExpression BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters, String parameterName)
         { 
             var parameterExpression = Expression.Parameter(typeof(TModelType), parameterName);
             Expression retVal = null;
@@ -161,7 +161,7 @@ namespace OpenIZ.Core.Model.Query
 
                         var builderMethod = typeof(QueryExpressionParser).GetGenericMethod(nameof(BuildLinqExpression), new Type[] { itemType }, new Type[] { typeof(NameValueCollection), typeof(String) });
 
-                        Expression predicate = (builderMethod.Invoke(this, new object[] { subFilter, pMember }) as LambdaExpression);
+                        Expression predicate = (builderMethod.Invoke(null, new object[] { subFilter, pMember }) as LambdaExpression);
                         keyExpression = Expression.Call(anyMethod, accessExpression, predicate);
                         currentValue = new KeyValuePair<string, string[]>();
                         break;  // skip

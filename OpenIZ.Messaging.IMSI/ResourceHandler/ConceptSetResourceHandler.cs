@@ -102,7 +102,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
         {
-            return this.m_repositoryService.FindConceptSets(new QueryExpressionParser().BuildLinqExpression<ConceptSet>(queryParameters));
+            return this.m_repositoryService.FindConceptSets(QueryExpressionParser.BuildLinqExpression<ConceptSet>(queryParameters));
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
         {
-            return this.m_repositoryService.FindConceptSets(new QueryExpressionParser().BuildLinqExpression<ConceptSet>(queryParameters), offset, count, out totalCount);
+            return this.m_repositoryService.FindConceptSets(QueryExpressionParser.BuildLinqExpression<ConceptSet>(queryParameters), offset, count, out totalCount);
         }
 
         /// <summary>

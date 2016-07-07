@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppletCollection.cs" />
+    <Compile Include="BindingExpressionVisitor.cs" />
     <Compile Include="Model\AppletPanel.cs" />
     <Compile Include="Model\AppletStrings.cs" />
     <Compile Include="RenderBundle.cs" />

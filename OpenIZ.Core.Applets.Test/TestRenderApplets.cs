@@ -4,6 +4,13 @@ using OpenIZ.Core.Applets.Model;
 using System.Diagnostics;
 using System.Text;
 using System.IO;
+using OpenIZ.Core.Model.EntityLoader;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Interfaces;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using OpenIZ.Core.Model.DataTypes;
+using System.Linq;
 
 namespace OpenIZ.Core.Applets.Test
 {
@@ -25,6 +32,90 @@ namespace OpenIZ.Core.Applets.Test
             this.m_appletCollection.Add(AppletManifest.Load(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.LocalizationWithJavascript.xml")));
             this.m_appletCollection.Add(AppletManifest.Load(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.LayoutAngularTest.xml")));
 
+        }
+
+        /// <summary>
+        /// Entity source provider test
+        /// </summary>
+        private class TestEntitySource : IEntitySourceProvider
+        {
+
+            public TObject Get<TObject>(Guid key) where TObject : IdentifiedData
+            {
+                throw new NotImplementedException();
+            }
+
+            public TObject Get<TObject>(Guid key, Guid versionKey) where TObject : IdentifiedData, IVersionedEntity
+            {
+                throw new NotImplementedException();
+            }
+
+            public List<TObject> GetRelations<TObject>(Guid sourceKey, decimal sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation
+            {
+                throw new NotImplementedException();
+            }
+
+            /// <summary>
+            /// Query the specified object
+            /// </summary>
+            public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData
+            {
+                if (typeof(TObject) == typeof(Concept))
+                {
+                    // Add list of concepts
+                    return new List<Concept>()
+                    {
+                        new Concept()
+                        {
+                            Key = Guid.NewGuid(),
+                            Mnemonic = "Male",
+                            ConceptNames = new List<ConceptName>()
+                            {
+                                new ConceptName() { Language = "en" ,Name = "Male" },
+                                new ConceptName() { Language = "sw" , Name = "Kiume" }
+                            },
+                            ConceptSets = new List<ConceptSet>()
+                            {
+                                new ConceptSet() { Mnemonic = "AdministrativeGenderCode" }
+                            }
+                        },
+                        new Concept()
+                        {
+                            Key = Guid.NewGuid(),
+                            Mnemonic = "Female",
+                            ConceptNames = new List<ConceptName>()
+                            {
+                                new ConceptName() { Language = "en" ,Name = "Female" },
+                                new ConceptName() { Language = "sw" , Name = "Kike" }
+                            },
+                            ConceptSets = new List<ConceptSet>()
+                            {
+                                new ConceptSet() { Mnemonic = "AdministrativeGenderCode" }
+                            }
+                        },
+                    }.OfType<TObject>();
+                }
+                else
+                {
+                    Assert.Fail();
+                    return null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Test binding of elements
+        /// </summary>
+        [TestMethod]
+        public void TestBinding()
+        {
+            EntitySource currentEs = EntitySource.Current;
+            EntitySource.Current = new EntitySource(new TestEntitySource());
+            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.sample.helloworld/bindingTest");
+            Assert.IsNotNull(asset);
+            var html = System.Text.Encoding.UTF8.GetString(this.m_appletCollection.RenderAssetContent(asset));
+            Assert.IsTrue(html.Contains("Male"));
+            EntitySource.Current = currentEs;
         }
 
         [TestMethod]

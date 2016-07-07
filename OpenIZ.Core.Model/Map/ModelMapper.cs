@@ -93,9 +93,9 @@ namespace OpenIZ.Core.Model.Map
                         viaExpression = Expression.MakeMemberAccess(viaExpression, viaMember);
 
                         if (via.OrderBy != null && viaExpression.Type.GetTypeInfo().ImplementedInterfaces.Any(o=>o == typeof(IEnumerable)))
-                            viaExpression = this.CreateSortExpression(viaExpression, via);
+                            viaExpression = viaExpression.Sort(via.OrderBy, via.SortOrder);
                         if (via.Aggregate != AggregationFunctionType.None)
-                            viaExpression = this.CreateAggregateFunction(viaExpression, via);
+                            viaExpression = viaExpression.Aggregate(via.Aggregate);
                         via = via.Via;
                     }
                     return viaExpression;
@@ -117,78 +117,7 @@ namespace OpenIZ.Core.Model.Map
             }
         }
 
-        /// <summary>
-        /// Create a version filter
-        /// </summary>
-        /// <typeparam name="TDomain"></typeparam>
-        /// <param name="parm"></param>
-        /// <param name="domainInstance"></param>
-        /// <returns></returns>
-        private Expression CreateVersionFilter<TDomain>(Expression viaExpression , TDomain domainInstance)
-        {
-            // Extract boundary properties
-            var effectiveVersionMethod = viaExpression.Type.GetTypeInfo().GenericTypeArguments[0].GetRuntimeProperty("EffectiveVersionSequenceId");
-            var obsoleteVersionMethod = viaExpression.Type.GetTypeInfo().GenericTypeArguments[0].GetRuntimeProperty("ObsoleteVersionSequenceId");
-            if (effectiveVersionMethod == null || obsoleteVersionMethod == null)
-                return viaExpression;
-
-            // Create predicate type and find WHERE method
-            Type predicateType = typeof(Func<,>).MakeGenericType(viaExpression.Type.GetTypeInfo().GenericTypeArguments[0], typeof(bool));
-            var whereMethod = typeof(Enumerable).GetGenericMethod("Where",
-                new Type[] { viaExpression.Type.GetTypeInfo().GenericTypeArguments[0] },
-                new Type[] { viaExpression.Type, predicateType });
-
-            // Create Where Expression
-            var guardParameter = Expression.Parameter(viaExpression.Type.GetTypeInfo().GenericTypeArguments[0], "x");
-            var currentSequenceId = typeof(TDomain).GetRuntimeProperty("VersionSequenceId").GetValue(domainInstance);
-            var bodyExpression = Expression.MakeBinary(ExpressionType.AndAlso,
-                Expression.MakeBinary(ExpressionType.GreaterThanOrEqual, Expression.MakeMemberAccess(guardParameter, effectiveVersionMethod), Expression.Constant(currentSequenceId)),
-                Expression.MakeBinary(ExpressionType.OrElse,
-                    Expression.MakeBinary(ExpressionType.Equal, Expression.MakeMemberAccess(guardParameter, obsoleteVersionMethod), Expression.Constant(null)),
-                    Expression.MakeBinary(ExpressionType.LessThanOrEqual, Expression.MakeMemberAccess(
-                        Expression.MakeMemberAccess(guardParameter, obsoleteVersionMethod), 
-                        typeof(Nullable<Decimal>).GetRuntimeProperty("Value")), Expression.Constant(currentSequenceId))
-                )
-            );
-            
-            // Build strongly typed lambda
-            var builderMethod = typeof(Expression).GetGenericMethod(nameof(Expression.Lambda), new Type[] { predicateType }, new Type[] { typeof(Expression), typeof(ParameterExpression[]) });
-            var sortLambda = builderMethod.Invoke(null, new object[] { bodyExpression, new ParameterExpression[] { guardParameter } }) as Expression;
-            return Expression.Call(whereMethod as MethodInfo, viaExpression, sortLambda);
-
-        }
-
-        /// <summary>
-        /// Create aggregation functions
-        /// </summary>
-        private Expression CreateAggregateFunction(Expression viaExpression, PropertyMap via)
-        {
-            var aggregateMethod = typeof(Enumerable).GetGenericMethod(via.Aggregate.ToString(),
-               new Type[] { viaExpression.Type.GetTypeInfo().GenericTypeArguments[0] },
-               new Type[] { viaExpression.Type });
-            return Expression.Call(aggregateMethod as MethodInfo, viaExpression);
-
-        }
-
-        /// <summary>
-        /// Create sort expression
-        /// </summary>
-        private Expression CreateSortExpression(Expression viaExpression, PropertyMap via)
-        {
-            // Get sort property
-            var sortProperty = viaExpression.Type.GenericTypeArguments[0].GetRuntimeProperty(via.OrderBy);
-            Type predicateType = typeof(Func<,>).MakeGenericType(viaExpression.Type.GetTypeInfo().GenericTypeArguments[0], sortProperty.PropertyType);
-            var sortMethod = typeof(Enumerable).GetGenericMethod(via.SortOrder.ToString(),
-                new Type[] { viaExpression.Type.GetTypeInfo().GenericTypeArguments[0], sortProperty.PropertyType },
-                new Type[] { viaExpression.Type, predicateType });
-
-            // Get builder methods
-            var sortParameter = Expression.Parameter(viaExpression.Type.GetTypeInfo().GenericTypeArguments[0], "sort");
-            var builderMethod = typeof(Expression).GetGenericMethod(nameof(Expression.Lambda), new Type[] { predicateType }, new Type[] { typeof(Expression), typeof(ParameterExpression[]) });
-            var sortLambda = builderMethod.Invoke(null, new object[] { Expression.MakeMemberAccess(sortParameter, sortProperty), new ParameterExpression[] { sortParameter } }) as Expression;
-            return Expression.Call(sortMethod as MethodInfo, viaExpression, sortLambda);
-        }
-
+        
         /// <summary>
         /// Extracts a domain type from a generic if needed
         /// </summary>
@@ -466,10 +395,10 @@ namespace OpenIZ.Core.Model.Map
                             if (instance is IList)
                             {
                                 var parm = Expression.Parameter(instance.GetType());
-                                Expression aggregateExpr = null;
+                                Expression aggregateExpr = parm;
                                 if (!String.IsNullOrEmpty(via.OrderBy))
-                                    aggregateExpr = this.CreateSortExpression(aggregateExpr ?? parm, via);
-                                aggregateExpr = this.CreateAggregateFunction(aggregateExpr, via);
+                                    aggregateExpr = parm.Sort(via.OrderBy, via.SortOrder);
+                                aggregateExpr = aggregateExpr.Aggregate(via.Aggregate);
 
                                 // Get the generic method for LIST to be widdled down
                                 instance = Expression.Lambda(aggregateExpr, parm).Compile().DynamicInvoke(instance);
@@ -496,7 +425,7 @@ namespace OpenIZ.Core.Model.Map
                     {
                         var parm = Expression.Parameter(listValue.GetType());
                         Expression aggregateExpr = null;
-                        aggregateExpr = this.CreateVersionFilter(parm, domainInstance);
+                        aggregateExpr = parm.IsActive(domainInstance);
                         listValue = Expression.Lambda(aggregateExpr, parm).Compile().DynamicInvoke(listValue);
                     }
 
@@ -514,10 +443,10 @@ namespace OpenIZ.Core.Model.Map
                         if (instance is IList)
                         {
                             var parm = Expression.Parameter(instance.GetType());
-                            Expression aggregateExpr = null;
+                            Expression aggregateExpr = parm;
                             if (!String.IsNullOrEmpty(via.OrderBy))
-                                aggregateExpr = this.CreateSortExpression(aggregateExpr ?? parm, via);
-                            aggregateExpr = this.CreateAggregateFunction(aggregateExpr, via);
+                                aggregateExpr = parm.Sort(via.OrderBy, via.SortOrder);
+                            aggregateExpr = aggregateExpr.Aggregate(via.Aggregate);
 
                             // Get the generic method for LIST to be widdled down
                             instance = Expression.Lambda(aggregateExpr, parm).Compile().DynamicInvoke(instance);
