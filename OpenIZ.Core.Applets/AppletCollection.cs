@@ -544,7 +544,7 @@ namespace OpenIZ.Core.Applets
                     // Process localization
                     if (!String.IsNullOrEmpty(preProcessLocalization))
                     {
-                        Regex re = new Regex("{{\\s?'(.*)'\\s?\\|\\s?i18n\\s?}}");
+                        Regex re = new Regex("{{\\s?:?:?'(.*)'\\s?\\|\\s?i18n\\s?}}");
                         var assetString = this.GetStrings(preProcessLocalization);
                         renderBuffer = Encoding.UTF8.GetBytes(re.Replace(sw.ToString(), (m) => assetString.FirstOrDefault(o => o.Key == m.Groups[1].Value).Value ?? m.Groups[1].Value));
                     }

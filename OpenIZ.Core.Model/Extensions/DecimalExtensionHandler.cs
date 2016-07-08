@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Core.Extension
+namespace OpenIZ.Core.Extensions
 {
     /// <summary>
     /// Extension handler that can handle decimal values

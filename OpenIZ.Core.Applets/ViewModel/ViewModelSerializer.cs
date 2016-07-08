@@ -11,6 +11,7 @@ using System.Collections;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Map;
+using OpenIZ.Core.Extensions;
 
 namespace OpenIZ.Core.Applets.ViewModel
 {
@@ -152,15 +153,37 @@ namespace OpenIZ.Core.Applets.ViewModel
 
                                                     // Construct the object
                                                     Object contained = null;
+                                                    bool isSimple = false;
                                                     if (jreader.TokenType == JsonToken.StartObject)
                                                         contained = DeSerializeInternal(jreader, elementType);
                                                     else // simple value
                                                     {
                                                         contained = Activator.CreateInstance(elementType);
+                                                        isSimple = true;
                                                         // Get the simple value property
                                                         var simpleProperty = elementType.GetRuntimeProperty(elementType.GetTypeInfo().GetCustomAttribute<SimpleValueAttribute>().ValueProperty);
                                                         if(StripNullable(simpleProperty.PropertyType) == typeof(Guid))
                                                             simpleProperty.SetValue(contained, Guid.Parse((String)jreader.Value));
+                                                        else if(simpleProperty.PropertyType == typeof(byte[]))
+                                                        {
+                                                            switch(jreader.TokenType)
+                                                            {
+                                                                case JsonToken.Boolean:
+                                                                    simpleProperty.SetValue(contained, new BooleanExtensionHandler().Serialize(jreader.Value));
+                                                                    break;
+                                                                case JsonToken.String:
+                                                                    simpleProperty.SetValue(contained, new StringExtensionHandler().Serialize(jreader.Value));
+                                                                    break;
+                                                                case JsonToken.Integer:
+                                                                case JsonToken.Float:
+                                                                    simpleProperty.SetValue(contained, new DecimalExtensionHandler().Serialize(Convert.ToDecimal(jreader.Value)));
+                                                                    break;
+                                                                default:
+                                                                    simpleProperty.SetValue(contained, jreader.Value);
+                                                                    break;
+
+                                                            }
+                                                        }
                                                         else
                                                             simpleProperty.SetValue(contained, jreader.Value);
 

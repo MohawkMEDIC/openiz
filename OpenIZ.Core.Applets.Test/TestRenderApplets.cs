@@ -214,6 +214,8 @@ namespace OpenIZ.Core.Applets.Test
 
             string html = Encoding.UTF8.GetString(render);
             Assert.IsFalse(html.Contains("{{ 'some_string' | i18n }}"));
+            Assert.IsFalse(html.Contains("{{ ::'some_string' | i18n }}"));
+
             Assert.IsTrue(html.Contains("SOME STRING!"));
 
         }
