@@ -4,7 +4,30 @@
      these assets into a single manifest with a single version.
 -->
 <AppletManifest xmlns="http://openiz.org/applet" >
-
+  <data>
+    <insert>
+      <extensionType xmlns="http://openiz.org/model">
+        <createdBy xsi:nil="true"/>
+        <name>http://openiz.org/oiz/timr/tetanusStatus</name>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core, Version=1.0.0.0</handlerClass>
+      </extensionType>
+      <extensionType xmlns="http://openiz.org/model">
+        <createdBy xsi:nil="true"/>
+        <name>http://openiz.org/oiz/timr/birthPlaceType</name>
+        <handlerClass>OpenIZ.Core.Extensions.StringExtensionHandler, OpenIZ.Core, Version=1.0.0.0</handlerClass>
+      </extensionType>
+      <extensionType xmlns="http://openiz.org/model">
+        <createdBy xsi:nil="true"/>
+        <name>http://openiz.org/oiz/timr/birthCertificateStatus</name>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core, Version=1.0.0.0</handlerClass>
+      </extensionType>
+      <extensionType xmlns="http://openiz.org/model">
+        <createdBy xsi:nil="true"/>
+        <name>http://openiz.org/oiz/timr/breastFeedingStatus</name>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core, Version=1.0.0.0</handlerClass>
+      </extensionType>
+    </insert>
+  </data>
   <!-- 
     The first part of an applet manifest is the informational header. This header allows OpenIZ to 
     identify the applet to establish dependencies, etc.
@@ -48,7 +71,7 @@
     <text lang="en">Launch Hello World!</text>
     <text lang="fr">Lancement 'bonjour tout-la-monde!'</text>
   </menuItem>
-
+  
   <asset name="bindingTest" mimeType="text/html">
     <contentHtml>
       <content>

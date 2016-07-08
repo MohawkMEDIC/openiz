@@ -8,7 +8,7 @@
     <ProjectGuid>{3A45F695-47A2-464C-ACE6-BDABBFA39FBC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenIZ.Core.PCL</RootNamespace>
+    <RootNamespace>OpenIZ.Core</RootNamespace>
     <AssemblyName>OpenIZ.Core.PCL</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
@@ -55,6 +55,10 @@
     <Compile Include="Http\XmlBodySerializer.cs" />
     <Compile Include="Interop\ServiceClientBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IConceptRepositoryService.cs" />
+    <Compile Include="Services\IPatientRepositoryService.cs" />
+    <Compile Include="Services\IPhoneticAlgorithmHandler.cs" />
+    <Compile Include="Services\ISecurityRepositoryService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

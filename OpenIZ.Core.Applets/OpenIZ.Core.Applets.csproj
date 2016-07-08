@@ -38,9 +38,15 @@
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
     </None>
+    <None Include="BaseTypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="OpenIZApplet.xsd">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="OpenIZModel.xsd">
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -48,6 +54,7 @@
     <Compile Include="BindingExpressionVisitor.cs" />
     <Compile Include="Model\AppletPanel.cs" />
     <Compile Include="Model\AppletStrings.cs" />
+    <Compile Include="Model\AssetData.cs" />
     <Compile Include="RenderBundle.cs" />
     <Compile Include="Model\AppletAsset.cs" />
     <Compile Include="Model\AppletAssetHtml.cs" />

@@ -76,6 +76,7 @@
     <Compile Include="Security\ApplicationPrincipal.cs" />
     <Compile Include="Security\Claims\PurposeOfUseClaimHandler.cs" />
     <Compile Include="Security\Claims\IClaimTypeHandler.cs" />
+    <Compile Include="Services\IApplicationIdentityProviderService.cs" />
     <Compile Include="Security\Permission\PolicyPermissionAttribute.cs" />
     <Compile Include="Security\AuthenticationContext.cs" />
     <Compile Include="Security\ILocalPolicy.cs" />
@@ -86,20 +87,15 @@
     <Compile Include="Security\PermissionPolicyIdentifiers.cs" />
     <Compile Include="Security\SecurityUtils.cs" />
     <Compile Include="Security\SHA256PasswordHashingService.cs" />
+    <Compile Include="Services\IDeviceIdentityProviderService.cs" />
     <Compile Include="Services\Impl\LocalPatientRepositoryService.cs" />
     <Compile Include="Wcf\Behavior\WcfErrorEndpointBehavior.cs" />
     <Compile Include="Wcf\Security\BasicAuthorizationAccessPolicy.cs" />
     <Compile Include="Wcf\Security\BasicAuthorizationCredentialValidator.cs" />
     <Compile Include="Wcf\Security\JwtTokenAuthorizationPolicy.cs" />
     <Compile Include="Wcf\Security\JwtTokenServiceAuthorizationManager.cs" />
-    <Compile Include="Services\IApplicationIdentityProviderService.cs" />
-    <Compile Include="Services\IConceptRepositoryService.cs" />
-    <Compile Include="Services\IDeviceIdentityProviderService.cs" />
     <Compile Include="Services\Impl\LocalConceptRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalSecurityRepositoryService.cs" />
-    <Compile Include="Services\IPatientRepositoryService.cs" />
-    <Compile Include="Services\IPhoneticAlgorithmHandler.cs" />
-    <Compile Include="Services\ISecurityRepositoryService.cs" />
     <Compile Include="Wcf\Serialization\WcfErrorHandler.cs" />
     <Compile Include="Wcf\Serialization\RawBodyWriter.cs" />
     <Compile Include="Wcf\Serialization\WcfMessageDispatchFormatter.cs" />
@@ -116,6 +112,10 @@
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
       <Project>{f1a82a4f-4a57-47d7-ae76-444c8a4ff54a}</Project>
       <Name>OpenIZ.Core.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.PCL\OpenIZ.Core.PCL.csproj">
+      <Project>{3a45f695-47a2-464c-ace6-bdabbfa39fbc}</Project>
+      <Name>OpenIZ.Core.PCL</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

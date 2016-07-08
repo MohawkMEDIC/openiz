@@ -19,24 +19,16 @@ namespace OpenIZ.Core.Services.Impl
     public class LocalPatientRepositoryService : IPatientRepositoryService
     {
 
-
-        // Repository service
-        private IDataPersistenceService<Patient> m_persistenceService;
-
-        /// <summary>
-        /// Concept set ctor
-        /// </summary>
-        public LocalPatientRepositoryService()
-        {
-            ApplicationContext.Current.Started += (o, e) => this.m_persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
-        }
-
+        
         /// <summary>
         /// Locates the specified patient
         /// </summary>
         public IEnumerable<Patient> Find(Expression<Func<Patient, bool>> predicate)
         {
-            return this.m_persistenceService.Query(predicate, AuthenticationContext.Current.Principal);
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+            if (persistenceService == null)
+                throw new InvalidOperationException("No persistence service found");
+            return persistenceService.Query(predicate, AuthenticationContext.Current.Principal);
         }
 
         /// <summary>
@@ -44,7 +36,10 @@ namespace OpenIZ.Core.Services.Impl
         /// </summary>
         public IEnumerable<Patient> Find(Expression<Func<Patient, bool>> predicate, int offset, int? count, out int totalCount)
         {
-            return this.m_persistenceService.Query(predicate, offset, count, AuthenticationContext.Current.Principal, out totalCount);
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+            if (persistenceService == null)
+                throw new InvalidOperationException("No persistence service found");
+            return persistenceService.Query(predicate, offset, count, AuthenticationContext.Current.Principal, out totalCount);
         }
 
         /// <summary>
@@ -52,7 +47,10 @@ namespace OpenIZ.Core.Services.Impl
         /// </summary>
         public IdentifiedData Get(Guid id, Guid versionId)
         {
-            return this.m_persistenceService.Get<Guid>(new Identifier<Guid>(id, versionId), AuthenticationContext.Current.Principal, false);
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+            if (persistenceService == null)
+                throw new InvalidOperationException("No persistence service found");
+            return persistenceService.Get<Guid>(new Identifier<Guid>(id, versionId), AuthenticationContext.Current.Principal, false);
         }
 
         /// <summary>
@@ -60,7 +58,10 @@ namespace OpenIZ.Core.Services.Impl
         /// </summary>
         public Patient Insert(Patient p)
         {
-            return this.m_persistenceService.Insert(p, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+            if (persistenceService == null)
+                throw new InvalidOperationException("No persistence service found");
+            return persistenceService.Insert(p, AuthenticationContext.Current.Principal, TransactionMode.Commit);
         }
 
         /// <summary>
@@ -68,6 +69,9 @@ namespace OpenIZ.Core.Services.Impl
         /// </summary>
         public Patient Merge(Patient survivor, Patient victim)
         {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+            if (persistenceService == null)
+                throw new InvalidOperationException("No persistence service found");
             // TODO: Do this
             throw new NotImplementedException();
         }
@@ -77,7 +81,10 @@ namespace OpenIZ.Core.Services.Impl
         /// </summary>
         public Patient Obsolete(Guid key)
         {
-            return this.m_persistenceService.Obsolete(new Patient() { Key = key }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+            if (persistenceService == null)
+                throw new InvalidOperationException("No persistence service found");
+            return persistenceService.Obsolete(new Patient() { Key = key }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
         }
 
         /// <summary>
@@ -85,13 +92,16 @@ namespace OpenIZ.Core.Services.Impl
         /// </summary>
         public Patient Save(Patient p)
         {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+            if (persistenceService == null)
+                throw new InvalidOperationException("No persistence service found");
             try
             {
-                return this.m_persistenceService.Update(p, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+                return persistenceService.Update(p, AuthenticationContext.Current.Principal, TransactionMode.Commit);
             }
             catch (KeyNotFoundException)
             {
-                return this.m_persistenceService.Insert(p, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+                return persistenceService.Insert(p, AuthenticationContext.Current.Principal, TransactionMode.Commit);
             }
         }
 
@@ -100,6 +110,10 @@ namespace OpenIZ.Core.Services.Impl
         /// </summary>
         public Patient UnMerge(Patient patient, Guid versionKey)
         {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+            if (persistenceService == null)
+                throw new InvalidOperationException("No persistence service found");
+
             throw new NotImplementedException();
         }
     }

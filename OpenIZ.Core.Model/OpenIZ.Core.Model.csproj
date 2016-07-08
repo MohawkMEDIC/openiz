@@ -103,8 +103,12 @@
     <Compile Include="Entities\PlaceService.cs" />
     <Compile Include="Exceptions\ModelMapValidationException.cs" />
     <Compile Include="Exceptions\ModelValidationException.cs" />
+    <Compile Include="Extensions\BooleanExtensionHandler.cs" />
+    <Compile Include="Extensions\DecimalExtensionHandler.cs" />
+    <Compile Include="Extensions\StringExtensionHandler.cs" />
     <Compile Include="IdentifiedData.cs" />
     <Compile Include="Interfaces\IBaseEntityData.cs" />
+    <Compile Include="Interfaces\IExtensionHandler.cs" />
     <Compile Include="Interfaces\IIdentifiedEntity.cs" />
     <Compile Include="Interfaces\ISimpleAssociation.cs" />
     <Compile Include="Interfaces\ISecurable.cs" />

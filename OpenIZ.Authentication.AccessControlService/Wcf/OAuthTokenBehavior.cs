@@ -202,12 +202,18 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             )
             {
                 new Claim("iss", this.m_configuration.IssuerName),
+                new Claim("SubjectID", oizPrincipal.Identity.Name),
                 new Claim(ClaimTypes.AuthenticationInstant, issued.ToString("o")), 
                 new Claim(ClaimTypes.AuthenticationMethod, "OAuth2"),
                 new Claim(ClaimTypes.Expiration, expires.ToString("o")), 
                 new Claim(ClaimTypes.Name, oizPrincipal.Identity.Name),
-                new Claim(OpenIzClaimTypes.OpenIzApplicationIdentifierClaim,  (clientPrincipal as ClaimsPrincipal).FindFirst(ClaimTypes.Sid).Value)
+                new Claim(OpenIzClaimTypes.OpenIzApplicationIdentifierClaim,  
+                (clientPrincipal as ClaimsPrincipal).FindFirst(ClaimTypes.Sid).Value)
             };
+
+
+            // Additional claims
+            claims.AddRange(additionalClaims);
 
             // Get policies
             var oizPrincipalPolicies = pip.GetActivePolicies(oizPrincipal);
@@ -217,8 +223,6 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             if(claims.Exists(o=>o.Type == OpenIzClaimTypes.XspaPurposeOfUseClaim))
                 claims.AddRange(oizPrincipalPolicies.Where(o => o.Rule == PolicyDecisionOutcomeType.Elevate).Select(o => new Claim(OpenIzClaimTypes.OpenIzGrantedPolicyClaim, o.Policy.Oid)));
 
-            // Additional claims
-            claims.AddRange(additionalClaims);
 
             // Add claims made by the IdP
             if(oizPrincipal is ClaimsPrincipal)

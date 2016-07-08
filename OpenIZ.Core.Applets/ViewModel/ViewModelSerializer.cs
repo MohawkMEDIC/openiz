@@ -18,7 +18,7 @@ namespace OpenIZ.Core.Applets.ViewModel
     /// View model class for Applets turns the core business model objects into
     /// a more sane, flat model to be given to applets as JSON
     /// </summary>
-    public class ViewModelSerializer 
+    public static class ViewModelSerializer 
     {
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace OpenIZ.Core.Applets.ViewModel
         ///     - Delay load are also expanded to keynameModel which is the model
         ///     - Collections are expanded to classifier class model[classifier] = value
         /// </remarks>
-        public String Serialize(IdentifiedData data)
+        public static String Serialize(IdentifiedData data)
         {
             data.SetDelayLoad(false);
             try
@@ -39,7 +39,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                 {
                     JsonWriter jwriter = new JsonTextWriter(sw);
                     // Iterate over properties
-                    this.SerializeInternal(data, jwriter);
+                    SerializeInternal(data, jwriter);
 
                     return sw.ToString();
                 }
@@ -52,7 +52,7 @@ namespace OpenIZ.Core.Applets.ViewModel
         /// <summary>
         /// Parses the specified json string into <typeparamref name="TModel"/>
         /// </summary>
-        public TModel DeSerialize<TModel>(String jsonString) where TModel : IdentifiedData, new()
+        public static TModel DeSerialize<TModel>(String jsonString) where TModel : IdentifiedData, new()
         {
             
             using (StringReader sr = new StringReader(jsonString))
@@ -62,7 +62,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                 // Iterate over the object properties
                 while (jreader.TokenType != JsonToken.StartObject && jreader.Read()) ;
 
-                return this.DeSerializeInternal(jreader, typeof(TModel)) as TModel;
+                return DeSerializeInternal(jreader, typeof(TModel)) as TModel;
             }
 
         }
@@ -70,7 +70,7 @@ namespace OpenIZ.Core.Applets.ViewModel
         /// <summary>
         /// Strips any nullable typing
         /// </summary>
-        private Type StripNullable(Type t)
+        private static Type StripNullable(Type t)
         {
             if (t.GetTypeInfo().IsGenericType &&
                 t.GetTypeInfo().GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -81,7 +81,7 @@ namespace OpenIZ.Core.Applets.ViewModel
         /// <summary>
         /// Perform the work of de-serializing
         /// </summary>
-        private IdentifiedData DeSerializeInternal(JsonReader jreader, Type serializationType)
+        private static IdentifiedData DeSerializeInternal(JsonReader jreader, Type serializationType)
         {
             // Must be at start object
             if (jreader.TokenType != JsonToken.StartObject)
@@ -119,7 +119,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                                 }
                                 else if (typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(propertyInfo.PropertyType.GetTypeInfo()))
                                 {
-                                    var value = this.DeSerializeInternal(jreader, propertyInfo.PropertyType);
+                                    var value = DeSerializeInternal(jreader, propertyInfo.PropertyType);
                                     propertyInfo.SetValue(retVal, value);
                                 }
                                 else if (typeof(IList).GetTypeInfo().IsAssignableFrom(propertyInfo?.PropertyType.GetTypeInfo()))
@@ -153,13 +153,13 @@ namespace OpenIZ.Core.Applets.ViewModel
                                                     // Construct the object
                                                     Object contained = null;
                                                     if (jreader.TokenType == JsonToken.StartObject)
-                                                        contained = this.DeSerializeInternal(jreader, elementType);
+                                                        contained = DeSerializeInternal(jreader, elementType);
                                                     else // simple value
                                                     {
                                                         contained = Activator.CreateInstance(elementType);
                                                         // Get the simple value property
                                                         var simpleProperty = elementType.GetRuntimeProperty(elementType.GetTypeInfo().GetCustomAttribute<SimpleValueAttribute>().ValueProperty);
-                                                        if(this.StripNullable(simpleProperty.PropertyType) == typeof(Guid))
+                                                        if(StripNullable(simpleProperty.PropertyType) == typeof(Guid))
                                                             simpleProperty.SetValue(contained, Guid.Parse((String)jreader.Value));
                                                         else
                                                             simpleProperty.SetValue(contained, jreader.Value);
@@ -214,7 +214,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                                         {
                                             if (cDepth == jreader.Depth && jreader.TokenType == JsonToken.EndArray)
                                                 break;
-                                            (modelInstance as IList).Add(this.DeSerializeInternal(jreader, elementType));
+                                            (modelInstance as IList).Add(DeSerializeInternal(jreader, elementType));
                                         }
                                         propertyInfo.SetValue(retVal, modelInstance);
                                     }
@@ -231,14 +231,14 @@ namespace OpenIZ.Core.Applets.ViewModel
                                     switch (jreader.TokenType)
                                     {
                                         case JsonToken.Integer:
-                                            if (this.StripNullable(propertyInfo.PropertyType).GetTypeInfo().IsEnum)
-                                                propertyInfo.SetValue(retVal, Enum.ToObject(this.StripNullable(propertyInfo.PropertyType), jreader.Value));
-                                            else if (this.StripNullable(propertyInfo.PropertyType) == typeof(Int32))
+                                            if (StripNullable(propertyInfo.PropertyType).GetTypeInfo().IsEnum)
+                                                propertyInfo.SetValue(retVal, Enum.ToObject(StripNullable(propertyInfo.PropertyType), jreader.Value));
+                                            else if (StripNullable(propertyInfo.PropertyType) == typeof(Int32))
                                                 propertyInfo.SetValue(retVal, Convert.ToInt32(jreader.Value));
 
                                             break;
                                         case JsonToken.Date:
-                                            if (this.StripNullable(propertyInfo.PropertyType) == typeof(DateTime))
+                                            if (StripNullable(propertyInfo.PropertyType) == typeof(DateTime))
                                                 propertyInfo.SetValue(retVal, (DateTime)jreader.Value);
                                             else if (propertyInfo.PropertyType == typeof(String))
                                                 propertyInfo.SetValue(retVal, ((DateTime)jreader.Value).ToString("o"));
@@ -246,13 +246,13 @@ namespace OpenIZ.Core.Applets.ViewModel
                                                 propertyInfo.SetValue(retVal, (DateTimeOffset)jreader.Value);
                                             break;
                                         case JsonToken.Float:
-                                            if (this.StripNullable(propertyInfo.PropertyType) == typeof(Decimal))
+                                            if (StripNullable(propertyInfo.PropertyType) == typeof(Decimal))
                                                 propertyInfo.SetValue(retVal, Convert.ToDecimal(jreader.Value));
                                             else
                                                 propertyInfo.SetValue(retVal, (Double)jreader.Value);
                                             break;
                                         case JsonToken.String:
-                                            if (this.StripNullable(propertyInfo.PropertyType) == typeof(Guid))
+                                            if (StripNullable(propertyInfo.PropertyType) == typeof(Guid))
                                                 propertyInfo.SetValue(retVal, Guid.Parse((String)jreader.Value));
                                             break;
 
@@ -272,7 +272,7 @@ namespace OpenIZ.Core.Applets.ViewModel
         /// <summary>
         /// Serialize the specified object
         /// </summary>
-        private void SerializeInternal(IdentifiedData data, JsonWriter jwriter, HashSet<Guid> writeStack = null)
+        private static void SerializeInternal(IdentifiedData data, JsonWriter jwriter, HashSet<Guid> writeStack = null)
         {
             // Prevent infinite loop
             IVersionedEntity ver = data as IVersionedEntity;
@@ -318,7 +318,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                         foreach (var litm in value as IList)
                         {
                             if (litm is IdentifiedData)
-                                this.SerializeInternal(litm as IdentifiedData, jwriter, writeStack);
+                                SerializeInternal(litm as IdentifiedData, jwriter, writeStack);
                             else
                                 jwriter.WriteValue(value);
                         }
@@ -367,7 +367,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                                     svalue = vitm.GetType().GetRuntimeProperty(simpleAttribute.ValueProperty).GetValue(vitm);
 
                                 if (svalue is IdentifiedData)
-                                    this.SerializeInternal(vitm as IdentifiedData, jwriter, writeStack);
+                                    SerializeInternal(vitm as IdentifiedData, jwriter, writeStack);
                                 else
                                     jwriter.WriteValue(svalue);
                             }
@@ -378,7 +378,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                     }
                 }
                 else if (value is IdentifiedData)
-                    this.SerializeInternal(value as IdentifiedData, jwriter, writeStack);
+                    SerializeInternal(value as IdentifiedData, jwriter, writeStack);
                 else
                     jwriter.WriteValue(value);
             }

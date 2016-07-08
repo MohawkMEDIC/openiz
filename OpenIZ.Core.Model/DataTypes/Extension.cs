@@ -27,13 +27,14 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using OpenIZ.Core.Interfaces;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
     /// <summary>
     /// Represents a base entity extension
     /// </summary>
-    [Classifier(nameof(ExtensionType)), SimpleValue(nameof(ExtensionValue))]
+    [Classifier(nameof(ExtensionType)), SimpleValue(nameof(Value))]
     [XmlType(Namespace = "http://openiz.org/model")]
     public abstract class Extension<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
     {
@@ -41,8 +42,9 @@ namespace OpenIZ.Core.Model.DataTypes
         // Extension type key
         private Guid m_extensionTypeKey;
         // Extension type
-        
         private ExtensionType m_extensionType;
+        // Extension handler
+        private IExtensionHandler m_extensionHandler;
 
         /// <summary>
         /// Gets or sets the value of the extension
@@ -55,6 +57,24 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [XmlIgnore, JsonIgnore]
         public String ExtensionDisplay { get; set; }
+
+        /// <summary>
+        /// Gets or sets the extension value
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public Object Value
+        {
+            get
+            {
+                this.m_extensionHandler = this.m_extensionHandler ?? Activator.CreateInstance(this.ExtensionType.ExtensionHandler) as IExtensionHandler;
+                return this.m_extensionHandler?.DeSerialize(this.ExtensionValue);
+            }
+            set
+            {
+                this.m_extensionHandler = this.m_extensionHandler ?? Activator.CreateInstance(this.ExtensionType.ExtensionHandler) as IExtensionHandler;
+                this.ExtensionValue = this.m_extensionHandler?.Serialize(value);
+            }
+        }
 
         /// <summary>
         /// Gets or sets the extension type key

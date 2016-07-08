@@ -120,8 +120,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual(DeterminerKeys.Specific, p.DeterminerConceptKey);
             Assert.AreEqual(StatusKeys.Active, p.StatusConceptKey);
 
-            ViewModelSerializer vms = new ViewModelSerializer();
-            String json = vms.Serialize(afterInsert);
+            String json = ViewModelSerializer.Serialize(afterInsert);
             Assert.IsNotNull(json);
 
         }
@@ -205,8 +204,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual(DeterminerKeys.Specific, p.DeterminerConceptKey);
             Assert.AreEqual(StatusKeys.Active, p.StatusConceptKey);
             Assert.AreEqual(aa.Key, afterInsert.Identifiers[0].AuthorityKey);
-            ViewModelSerializer vms = new ViewModelSerializer();
-            String json = vms.Serialize(afterInsert);
+            String json = ViewModelSerializer.Serialize(afterInsert);
             Assert.IsNotNull(json);
 
         }

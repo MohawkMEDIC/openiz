@@ -1,0 +1,816 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2015 rel. 4 (http://www.altova.com) by Justin Fyfe (Mohawk College) -->
+<xs:schema xmlns:tns="http://openiz.org/model" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:q1="http://microsoft.com/wsdl/types/" xmlns:q2="http://microsoft.com/wsdl/types/" xmlns:q3="http://microsoft.com/wsdl/types/" xmlns:q4="http://microsoft.com/wsdl/types/" xmlns:q5="http://microsoft.com/wsdl/types/" xmlns:q6="http://microsoft.com/wsdl/types/" xmlns:q7="http://microsoft.com/wsdl/types/" xmlns:q8="http://microsoft.com/wsdl/types/" xmlns:q9="http://microsoft.com/wsdl/types/" xmlns:q10="http://microsoft.com/wsdl/types/" xmlns:q11="http://microsoft.com/wsdl/types/" xmlns:q12="http://microsoft.com/wsdl/types/" xmlns:q13="http://microsoft.com/wsdl/types/" xmlns:q14="http://microsoft.com/wsdl/types/" xmlns:q15="http://microsoft.com/wsdl/types/" xmlns:q16="http://microsoft.com/wsdl/types/" xmlns:q17="http://microsoft.com/wsdl/types/" xmlns:q18="http://microsoft.com/wsdl/types/" xmlns:q19="http://microsoft.com/wsdl/types/" xmlns:q20="http://microsoft.com/wsdl/types/" xmlns:q21="http://microsoft.com/wsdl/types/" xmlns:q22="http://microsoft.com/wsdl/types/" xmlns:q23="http://microsoft.com/wsdl/types/" xmlns:q24="http://microsoft.com/wsdl/types/" xmlns:q25="http://microsoft.com/wsdl/types/" xmlns:q26="http://microsoft.com/wsdl/types/" xmlns:q27="http://microsoft.com/wsdl/types/" xmlns:q28="http://microsoft.com/wsdl/types/" xmlns:q29="http://microsoft.com/wsdl/types/" xmlns:q30="http://microsoft.com/wsdl/types/" xmlns:q31="http://microsoft.com/wsdl/types/" xmlns:q32="http://microsoft.com/wsdl/types/" xmlns:q33="http://microsoft.com/wsdl/types/" xmlns:q34="http://microsoft.com/wsdl/types/" xmlns:q35="http://microsoft.com/wsdl/types/" xmlns:q36="http://microsoft.com/wsdl/types/" xmlns:q37="http://microsoft.com/wsdl/types/" xmlns:q38="http://microsoft.com/wsdl/types/" xmlns:q39="http://microsoft.com/wsdl/types/" xmlns:q40="http://microsoft.com/wsdl/types/" xmlns:q41="http://microsoft.com/wsdl/types/" xmlns:q42="http://microsoft.com/wsdl/types/" xmlns:q43="http://microsoft.com/wsdl/types/" xmlns:q44="http://microsoft.com/wsdl/types/" xmlns:q45="http://microsoft.com/wsdl/types/" xmlns:q46="http://microsoft.com/wsdl/types/" xmlns:q47="http://microsoft.com/wsdl/types/" xmlns:q48="http://microsoft.com/wsdl/types/" xmlns:q49="http://microsoft.com/wsdl/types/" xmlns:q50="http://microsoft.com/wsdl/types/" xmlns:q51="http://microsoft.com/wsdl/types/" xmlns:q52="http://microsoft.com/wsdl/types/" xmlns:q53="http://microsoft.com/wsdl/types/" xmlns:q54="http://microsoft.com/wsdl/types/" xmlns:q55="http://microsoft.com/wsdl/types/" xmlns:q56="http://microsoft.com/wsdl/types/" xmlns:q57="http://microsoft.com/wsdl/types/" xmlns:q58="http://microsoft.com/wsdl/types/" xmlns:q59="http://microsoft.com/wsdl/types/" xmlns:q60="http://microsoft.com/wsdl/types/" xmlns:q61="http://microsoft.com/wsdl/types/" xmlns:q62="http://microsoft.com/wsdl/types/" xmlns:q63="http://microsoft.com/wsdl/types/" xmlns:q64="http://microsoft.com/wsdl/types/" xmlns:q65="http://microsoft.com/wsdl/types/" xmlns:q66="http://microsoft.com/wsdl/types/" xmlns:q67="http://microsoft.com/wsdl/types/" xmlns:q68="http://microsoft.com/wsdl/types/" xmlns:q69="http://microsoft.com/wsdl/types/" xmlns:q70="http://microsoft.com/wsdl/types/" xmlns:q71="http://microsoft.com/wsdl/types/" xmlns:q72="http://microsoft.com/wsdl/types/" targetNamespace="http://openiz.org/model" elementFormDefault="qualified">
+	<xs:import namespace="http://microsoft.com/wsdl/types/" schemaLocation="BaseTypes.xsd"/>
+	<xs:element name="concept" type="tns:Concept"/>
+	<xs:complexType name="Concept" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedEntityDataOfConcept">
+				<xs:sequence>
+					<xs:element name="isReadonly" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="mnemonic" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="statusConcept" type="q1:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="relationship" type="tns:ConceptRelationship" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="conceptClass" type="q2:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="referenceTerm" type="tns:ConceptReferenceTerm" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="name" type="tns:ConceptName" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="conceptSet" type="q3:guid" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="VersionedEntityDataOfConcept" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseEntityData">
+				<xs:sequence>
+					<xs:element name="previousVersion" type="q4:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="version" type="q5:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="sequence" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="BaseEntityData" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:IdentifiedData">
+				<xs:sequence>
+					<xs:element name="creationTime" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="obsoletionTime" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="createdBy" type="q6:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="obsoletedBy" type="q7:guid" nillable="true" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="IdentifiedData" abstract="true">
+		<xs:sequence>
+			<xs:element name="id" type="q8:guid" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AssociationOfEntityAddress" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:IdentifiedData">
+				<xs:sequence>
+					<xs:element name="source" type="q9:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GenericComponentValuesOfEntityAddress" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:AssociationOfEntityAddress">
+				<xs:sequence>
+					<xs:element name="type" type="q10:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AddressComponent" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:GenericComponentValuesOfEntityAddress"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AssociationOfEntityName" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:IdentifiedData">
+				<xs:sequence>
+					<xs:element name="source" type="q11:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GenericComponentValuesOfEntityName" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:AssociationOfEntityName">
+				<xs:sequence>
+					<xs:element name="type" type="q12:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="EntityNameComponent" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:GenericComponentValuesOfEntityName">
+				<xs:sequence>
+					<xs:element name="phoneticCode" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="phoneticAlgorithm" type="q13:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AssociationOfEntity" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:IdentifiedData">
+				<xs:sequence>
+					<xs:element name="source" type="q14:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="VersionedAssociationOfEntity" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:AssociationOfEntity">
+				<xs:sequence>
+					<xs:element name="effectiveVersionSequence" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="obsoleteVersionSequence" type="xs:decimal" nillable="true" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PlaceService" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedAssociationOfEntity">
+				<xs:sequence>
+					<xs:element name="serviceSchedule" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="serviceConcept" type="q15:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PersonLanguageCommunication" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedAssociationOfEntity">
+				<xs:sequence>
+					<xs:element name="languageCode" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="isPreferred" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="NoteOfEntity" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedAssociationOfEntity">
+				<xs:sequence>
+					<xs:element name="text" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="author" type="q16:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="EntityNote" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:NoteOfEntity"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="EntityAddress" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedAssociationOfEntity">
+				<xs:sequence>
+					<xs:element name="use" type="q17:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="component" type="tns:AddressComponent" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="EntityName" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedAssociationOfEntity">
+				<xs:sequence>
+					<xs:element name="use" type="q18:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="component" type="tns:EntityNameComponent" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ExtensionOfEntity" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedAssociationOfEntity">
+				<xs:sequence>
+					<xs:element name="value" type="xs:base64Binary" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="extensionType" type="tns:ExtensionType" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ExtensionType" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:NonVersionedEntityData">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string" maxOccurs="1"/>
+					<xs:element name="handlerClass" type="xs:string"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="NonVersionedEntityData" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseEntityData">
+				<xs:sequence>
+					<xs:element name="updatedTime" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="updatedBy" type="q19:guid" nillable="true" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ConceptRelationshipType" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:NonVersionedEntityData">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="mnemonic" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PhoneticAlgorithm" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:NonVersionedEntityData">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="handler" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ReferenceTerm" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:NonVersionedEntityData">
+				<xs:sequence>
+					<xs:element name="mnemonic" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="codeSystem" type="q20:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="name" type="tns:ReferenceTermName" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ReferenceTermName" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseEntityData">
+				<xs:sequence>
+					<xs:element name="language" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="phoneticCode" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="phoneticAlgorithm" type="q21:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SecurityEntity" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:NonVersionedEntityData"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SecurityUser" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:SecurityEntity">
+				<xs:sequence>
+					<xs:element name="email" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="emailConfirmed" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="invalidLoginAttempts" type="xs:int" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="lockout" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="passwordHash" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="securityStamp" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="twoFactorEnabled" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="userName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="photo" type="xs:base64Binary" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="entity" type="q22:guid" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="lastLoginTime" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="phoneNumber" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="phoneNumberConfirmed" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="userClass" type="q23:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SecurityRole" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:SecurityEntity">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ConceptClass" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:NonVersionedEntityData">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="mnemonic" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="EntityExtension" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:ExtensionOfEntity"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="EntityTelecomAddress" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedAssociationOfEntity">
+				<xs:sequence>
+					<xs:element name="use" type="q24:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="EntityRelationship" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedAssociationOfEntity">
+				<xs:sequence>
+					<xs:element name="target" type="q25:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="relationshipType" type="q26:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="IdentifierBaseOfEntity" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedAssociationOfEntity">
+				<xs:sequence>
+					<xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="type" type="tns:IdentifierType" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="authority" type="tns:AssigningAuthority" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="IdentifierType" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseEntityData">
+				<xs:sequence>
+					<xs:element name="scopeConcept" type="q27:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="typeConcept" type="q28:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AssigningAuthority" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseEntityData">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="domainName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="oid" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="url" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="assigningDevice" type="q29:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="EntityIdentifier" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:IdentifierBaseOfEntity"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AssociationOfAct" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:IdentifiedData">
+				<xs:sequence>
+					<xs:element name="source" type="q30:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="VersionedAssociationOfAct" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:AssociationOfAct">
+				<xs:sequence>
+					<xs:element name="effectiveVersionSequence" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="obsoleteVersionSequence" type="xs:decimal" nillable="true" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ActParticipation" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedAssociationOfAct">
+				<xs:sequence>
+					<xs:element name="player" type="q31:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="participationRole" type="q32:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="NoteOfAct" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedAssociationOfAct">
+				<xs:sequence>
+					<xs:element name="text" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="author" type="q33:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ActNote" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:NoteOfAct"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ExtensionOfAct" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedAssociationOfAct">
+				<xs:sequence>
+					<xs:element name="value" type="xs:base64Binary" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="extensionType" type="tns:ExtensionType" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ActExtension" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:ExtensionOfAct"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ActRelationship" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedAssociationOfAct">
+				<xs:sequence>
+					<xs:element name="target" type="q34:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="relationshipType" type="q35:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="IdentifierBaseOfAct" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedAssociationOfAct">
+				<xs:sequence>
+					<xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="type" type="tns:IdentifierType" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="authority" type="tns:AssigningAuthority" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ActIdentifier" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:IdentifierBaseOfAct"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Bundle" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:IdentifiedData">
+				<xs:sequence>
+					<xs:element name="item" type="tns:IdentifiedData" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="entry" type="q36:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="offset" type="xs:int" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="count" type="xs:int" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="totalResults" type="xs:int" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AssociationOfConcept" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:IdentifiedData">
+				<xs:sequence>
+					<xs:element name="source" type="q37:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="VersionedAssociationOfConcept" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:AssociationOfConcept">
+				<xs:sequence>
+					<xs:element name="effectiveVersionSequence" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="obsoleteVersionSequence" type="xs:decimal" nillable="true" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ConceptName" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedAssociationOfConcept">
+				<xs:sequence>
+					<xs:element name="language" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="phoneticCode" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="phoneticAlgorithm" type="q38:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ConceptReferenceTerm" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedAssociationOfConcept">
+				<xs:sequence>
+					<xs:element name="referenceTerm" type="q39:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="relationshipType" type="q40:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ConceptRelationship" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedAssociationOfConcept">
+				<xs:sequence>
+					<xs:element name="targetConcept" type="q41:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="relationshipType" type="q42:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="TagOfEntity" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseEntityData">
+				<xs:sequence>
+					<xs:element name="key" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="source" type="q43:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="EntityTag" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:TagOfEntity"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="VersionedEntityDataOfEntity" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseEntityData">
+				<xs:sequence>
+					<xs:element name="previousVersion" type="q44:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="version" type="q45:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="sequence" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Entity" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedEntityDataOfEntity">
+				<xs:sequence>
+					<xs:element name="classConcept" type="q46:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="determinerConcept" type="q47:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="statusConcept" type="q48:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="creationAct" type="q49:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="typeConcept" type="q50:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="identifier" type="tns:EntityIdentifier" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="relationship" type="tns:EntityRelationship" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="telecom" type="tns:EntityTelecomAddress" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="extension" type="tns:EntityExtension" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="name" type="tns:EntityName" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="address" type="tns:EntityAddress" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="note" type="tns:EntityNote" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="tag" type="tns:EntityTag" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="participation" type="tns:ActParticipation" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ApplicationEntity" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Entity">
+				<xs:sequence>
+					<xs:element name="securityApplication" type="q51:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="softwareName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="versionName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="vendorName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="DeviceEntity" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Entity">
+				<xs:sequence>
+					<xs:element name="securityDevice" type="q52:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="manufacturerModelName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="operatingSystemName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Material" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Entity">
+				<xs:sequence>
+					<xs:element name="quantity" type="xs:decimal" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="formConcept" type="q53:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="quantityConcept" type="q54:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="expiryDate" type="xs:dateTime" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="isAdministrative" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ManufacturedMaterial" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Material">
+				<xs:sequence>
+					<xs:element name="lotNumber" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Place" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Entity">
+				<xs:sequence>
+					<xs:element name="isMobile" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="lat" type="xs:double" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="lng" type="xs:double" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="service" type="tns:PlaceService" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Organization" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Entity">
+				<xs:sequence>
+					<xs:element name="industryConcept" type="q55:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Person" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Entity">
+				<xs:sequence>
+					<xs:element name="dateOfBirth" type="xs:dateTime" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="dateOfBirthPrecision" type="tns:DatePrecision" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="language" type="tns:PersonLanguageCommunication" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:simpleType name="DatePrecision">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Y"/>
+			<xs:enumeration value="m"/>
+			<xs:enumeration value="D"/>
+			<xs:enumeration value="H"/>
+			<xs:enumeration value="M"/>
+			<xs:enumeration value="S"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="Provider" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Person">
+				<xs:sequence>
+					<xs:element name="providerSpecialty" type="q56:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Patient" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Person">
+				<xs:sequence>
+					<xs:element name="deceasedDate" type="xs:dateTime" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="deceasedDatePrecision" type="tns:DatePrecision" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="multipleBirthOrder" type="xs:int" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="genderConcept" type="q57:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="TagOfAct" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseEntityData">
+				<xs:sequence>
+					<xs:element name="key" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="source" type="q58:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ActTag" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:TagOfAct"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="VersionedEntityDataOfAct" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseEntityData">
+				<xs:sequence>
+					<xs:element name="previousVersion" type="q59:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="version" type="q60:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="sequence" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Act" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:VersionedEntityDataOfAct">
+				<xs:sequence>
+					<xs:element name="isNegated" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="actTime" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="startTime" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="stopTime" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="classConcept" type="q61:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="moodConcept" type="q62:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="reasonConcept" type="q63:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="statusConcept" type="q64:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="typeConcept" type="q65:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="identifier" type="tns:ActIdentifier" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="relationship" type="tns:ActRelationship" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="extension" type="tns:ActExtension" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="note" type="tns:ActNote" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="tag" type="tns:ActTag" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="Participations" type="tns:ArrayOfActParticipation" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfActParticipation">
+		<xs:sequence>
+			<xs:element name="ActParticipation" type="tns:ActParticipation" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SubstanceAdministration" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Act">
+				<xs:sequence>
+					<xs:element name="route" type="q66:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="doseUnit" type="q67:guid" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="doseQuantity" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="doseSequence" type="xs:unsignedInt" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PatientEncounter" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Act">
+				<xs:sequence>
+					<xs:element name="dischargeDisposition" type="q68:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Observation" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Act">
+				<xs:sequence>
+					<xs:element name="interpretationConcept" type="q69:guid" nillable="true" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="QuantityObservation" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Observation">
+				<xs:sequence>
+					<xs:element name="value" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="unitOfMeasure" type="q70:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CodedObservation" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Observation">
+				<xs:sequence>
+					<xs:element name="value" type="q71:guid" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="TextObservation" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:Observation">
+				<xs:sequence>
+					<xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SecurityPolicy" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseEntityData">
+				<xs:sequence>
+					<xs:element name="handler" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="o" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="isPublic" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="canOverride" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ConceptSet" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:BaseEntityData">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="mnemonic" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="oid" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="url" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="concept" type="q72:guid" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="obsoletionReason" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="conceptSet" type="tns:ConceptSet"/>
+	<xs:element name="assigningAuthority" type="tns:AssigningAuthority"/>
+	<xs:element name="conceptClass" type="tns:ConceptClass"/>
+	<xs:element name="securityPolicy" type="tns:SecurityPolicy"/>
+	<xs:element name="securityRole" type="tns:SecurityRole"/>
+	<xs:element name="extensionType" type="tns:ExtensionType"/>
+	<xs:element name="identifierType" type="tns:IdentifierType"/>
+	<xs:element name="bundle" type="tns:Bundle"/>
+</xs:schema>

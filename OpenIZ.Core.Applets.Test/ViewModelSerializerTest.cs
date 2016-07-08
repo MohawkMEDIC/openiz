@@ -77,8 +77,7 @@ namespace OpenIZ.Core.Applets.Test
         public void TestSerializeComplexIMSObject()
         {
 
-            ViewModelSerializer vms = new ViewModelSerializer();
-            String json = vms.Serialize(this.m_patientUnderTest);
+            String json = ViewModelSerializer.Serialize(this.m_patientUnderTest);
             Assert.IsNotNull(json);
 
         }
@@ -90,11 +89,10 @@ namespace OpenIZ.Core.Applets.Test
         public void TestDeSerializeComplexIMSObject()
         {
 
-            ViewModelSerializer vms = new ViewModelSerializer();
             using (var sr = new StreamReader(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.SimpleModel.json")))
             {
                 var json = sr.ReadToEnd();
-                var patient = vms.DeSerialize<Patient>(json);
+                var patient = ViewModelSerializer.DeSerialize<Patient>(json);
                 Assert.AreEqual(this.m_patientUnderTest.ClassConceptKey, patient.ClassConceptKey);
             }
         }

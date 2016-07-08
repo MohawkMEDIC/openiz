@@ -108,9 +108,14 @@ namespace OpenIZ.Core.Wcf.Serialization
                     // Use XML Serializer
                     else if (contentType?.StartsWith("application/xml") == true)
                     {
-                        XmlSerializer xsz = s_serializers[parm.Type];
                         XmlDictionaryReader bodyReader = request.GetReaderAtBodyContents();
-                        parameters[0] = xsz.Deserialize(bodyReader);
+                        while (bodyReader.NodeType != XmlNodeType.Element)
+                            bodyReader.Read();
+
+                        Type eType = s_knownTypes.FirstOrDefault(o => o.GetCustomAttribute<XmlRootAttribute>()?.ElementName == bodyReader.LocalName &&
+                            o.GetCustomAttribute<XmlRootAttribute>()?.Namespace == bodyReader.NamespaceURI);
+                        XmlSerializer xsz = s_serializers[eType];
+                        parameters[pNumber] = xsz.Deserialize(bodyReader);
                     }
                     // Use JSON Serializer
                     else if (contentType?.StartsWith("application/json") == true)
@@ -131,7 +136,7 @@ namespace OpenIZ.Core.Wcf.Serialization
                         };
                         jsz.Converters.Add(new StringEnumConverter());
                         var dserType = parm.Type;
-                        parameters[0] = jsz.Deserialize(sr, dserType);
+                        parameters[pNumber] = jsz.Deserialize(sr, dserType);
                     }
                     else if (contentType != null)// TODO: Binaries
                         throw new InvalidOperationException("Invalid request format");
