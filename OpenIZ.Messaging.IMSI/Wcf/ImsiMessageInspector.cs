@@ -105,7 +105,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 }
 
 
-                var httpResponse = (HttpResponseMessageProperty)reply.Properties[HttpResponseMessageProperty.Name];
+                //var httpResponse = (HttpResponseMessageProperty)reply.Properties[HttpResponseMessageProperty.Name];
                 // CORS
                 // TODO: Add a configuration option to disable this
                 Dictionary<String, String> requiredHeaders = new Dictionary<string, string>() {

@@ -87,13 +87,13 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     var versioned = retVal as IVersionedEntity;
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Created;
                     if(versioned != null)
-                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpRequestHeader.ContentLocation, String.Format("{0}/{1}/{2}/history/{3}",
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpResponseHeader.ContentLocation, String.Format("{0}/{1}/{2}/history/{3}",
                             WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
                             resourceType,
                             retVal.Key,
                             versioned.Key));
                     else
-                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpRequestHeader.ContentLocation, String.Format("{0}/{1}/{2}",
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpResponseHeader.ContentLocation, String.Format("{0}/{1}/{2}",
                             WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
                             resourceType,
                             retVal.Key));
@@ -129,13 +129,13 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     var versioned = retVal as IVersionedEntity;
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Created;
                     if (versioned != null)
-                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpRequestHeader.ContentLocation, String.Format("{0}/{1}/{2}/history/{3}",
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpResponseHeader.ContentLocation, String.Format("{0}/{1}/{2}/history/{3}",
                             WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
                             resourceType,
                             retVal.Key,
                             versioned.Key));
                     else
-                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpRequestHeader.ContentLocation, String.Format("{0}/{1}/{2}",
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpResponseHeader.ContentLocation, String.Format("{0}/{1}/{2}",
                             WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
                             resourceType,
                             retVal.Key));
@@ -371,13 +371,13 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     var versioned = retVal as IVersionedEntity;
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
                     if (versioned != null)
-                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpRequestHeader.ContentLocation, String.Format("{0}/{1}/{2}/history/{3}",
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpResponseHeader.ContentLocation, String.Format("{0}/{1}/{2}/history/{3}",
                             WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
                             resourceType,
                             retVal.Key,
                             versioned.Key));
                     else
-                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpRequestHeader.ContentLocation, String.Format("{0}/{1}/{2}",
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpResponseHeader.ContentLocation, String.Format("{0}/{1}/{2}",
                             WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
                             resourceType,
                             retVal.Key));
@@ -518,13 +518,13 @@ namespace OpenIZ.Messaging.IMSI.Wcf
 
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Created;
                     if (versioned != null)
-                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpRequestHeader.ContentLocation, String.Format("{0}/{1}/{2}/history/{3}",
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpResponseHeader.ContentLocation, String.Format("{0}/{1}/{2}/history/{3}",
                             WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
                             resourceType,
                             retVal.Key,
                             versioned.Key));
                     else
-                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpRequestHeader.ContentLocation, String.Format("{0}/{1}/{2}",
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpResponseHeader.ContentLocation, String.Format("{0}/{1}/{2}",
                             WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
                             resourceType,
                             retVal.Key));

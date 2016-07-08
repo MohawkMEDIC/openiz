@@ -228,10 +228,13 @@ namespace OpenIZ.Core.Wcf.Serialization
                 }
 
                 reply.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(format));
-                WebOperationContext.Current.OutgoingResponse.ContentType = contentType;
-                WebOperationContext.Current.OutgoingResponse.Headers.Add("X-PoweredBy", "OpenIZIMSI");
-                WebOperationContext.Current.OutgoingResponse.Headers.Add("X-GeneratedOn", DateTime.Now.ToString("o"));
+                var responseProperty = (HttpResponseMessageProperty)OperationContext.Current.OutgoingMessageProperties[HttpResponseMessageProperty.Name];
+                //var responseProperty = new HttpResponseMessageProperty();
 
+                responseProperty.Headers.Add(HttpResponseHeader.ContentType, contentType);
+                responseProperty.Headers.Add("X-PoweredBy", "OpenIZIMSI");
+                responseProperty.Headers.Add("X-GeneratedOn", DateTime.Now.ToString("o"));
+                //reply.Properties.Add(HttpResponseMessageProperty.Name, responseProperty);
                 // TODO: Determine best way to clear current authentication context
                 AuthenticationContext.Current = null;
                 return reply;
