@@ -134,7 +134,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             }
             // Ensure the source key is set
             foreach (var itm in storage)
-                if (itm.SourceEntityKey == Guid.Empty)
+                if (itm.SourceEntityKey == Guid.Empty ||
+                    itm.SourceEntityKey == null)
                     itm.SourceEntityKey = source.Key;
 
             // Get existing

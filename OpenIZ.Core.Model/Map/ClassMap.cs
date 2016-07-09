@@ -91,6 +91,12 @@ namespace OpenIZ.Core.Model.Map
         public List<PropertyMap> Property { get; set; }
 
         /// <summary>
+        /// Gets or sets the base proeprty 
+        /// </summary>
+        [XmlElement("base")]
+        public PropertyMap ParentDomainProperty { get; set; }
+
+        /// <summary>
         /// Try to get a collapse key
         /// </summary>
         public bool TryGetCollapseKey(string propertyName, out CollapseKey retVal)

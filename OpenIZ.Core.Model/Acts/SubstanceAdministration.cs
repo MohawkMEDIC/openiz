@@ -39,9 +39,9 @@ namespace OpenIZ.Core.Model.Acts
     public class SubstanceAdministration : Act
     {
         // Route key
-        private Guid m_routeKey;
+        private Guid? m_routeKey;
         // Dose unit key
-        private Guid m_doseUnitKey;
+        private Guid? m_doseUnitKey;
         // Route
         private Concept m_route;
         // Dose unit
@@ -61,7 +61,7 @@ namespace OpenIZ.Core.Model.Acts
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("route"), JsonProperty("route")]
-        public Guid RouteKey
+        public Guid? RouteKey
         {
             get { return this.m_routeKey; }
             set
@@ -77,7 +77,7 @@ namespace OpenIZ.Core.Model.Acts
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("doseUnit"), JsonProperty("doseUnit")]
-        public Guid DoseUnitKey
+        public Guid? DoseUnitKey
         {
             get { return this.m_doseUnitKey; }
             set
@@ -102,10 +102,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 this.m_route = value;
-                if (value == null)
-                    this.m_routeKey = Guid.Empty;
-                else
-                    this.m_routeKey = value.Key;
+                this.m_routeKey = value?.Key;
             }
         }
 
@@ -124,10 +121,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 this.m_doseUnit = value;
-                if (value == null)
-                    this.m_doseUnitKey = Guid.Empty;
-                else
-                    this.m_doseUnitKey = value.Key;
+                this.m_doseUnitKey = value?.Key;
             }
         }
 

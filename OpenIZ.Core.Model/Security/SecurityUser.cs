@@ -122,6 +122,10 @@ namespace OpenIZ.Core.Model.Security
                     this.m_userEntities = EntitySource.Current.Provider.Query<UserEntity>(o => o.SecurityUserKey == this.Key && o.ObsoletionTime == null).OfType<Person>().ToList();
                 return this.m_userEntities;
             }
+            set
+            {
+                this.m_userEntities = value;
+            }
         }
 
         /// <summary>
@@ -129,15 +133,15 @@ namespace OpenIZ.Core.Model.Security
         /// </summary>
         [XmlElement("entity"), JsonProperty("entity")]
         [DelayLoad(null)]
-        //[Bundle(nameof(Concepts))]
         public List<Guid> EntitiesXml
         {
             get
             {
-                return this.Entities?.Select(o => o.Key).ToList();
+                return this.Entities?.Where(o=>o.Key.HasValue).Select(o => o.Key.Value).ToList();
             }
             set
             {
+                this.Entities = new List<Person>(value.Select(o => new Person() { Key = o }));
                 ; // nothing
             }
         }

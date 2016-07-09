@@ -33,6 +33,6 @@ namespace OpenIZ.Core.Model.Interfaces
         /// <summary>
         /// Gets or sets the source entity key
         /// </summary>
-        Guid SourceEntityKey { get; set; }
+        Guid? SourceEntityKey { get; set; }
     }
 }

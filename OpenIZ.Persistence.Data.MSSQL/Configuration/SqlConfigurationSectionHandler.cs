@@ -55,6 +55,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Configuration
                     retVal.MaxCacheSize = Int32.Parse(connectionNode.Attributes["maxCacheSize"].Value);
                 else
                     retVal.MaxCacheSize = ushort.MaxValue;
+                if (connectionNode.Attributes["keyedInserts"] != null)
+                    retVal.AllowKeyedInsert = bool.Parse(connectionNode.Attributes["keyedInserts"].Value);
                 if (connectionNode.Attributes["traceSql"] != null)
                     retVal.TraceSql = Boolean.Parse(connectionNode.Attributes["traceSql"].Value);
             }

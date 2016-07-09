@@ -39,6 +39,11 @@ namespace OpenIZ.Core
         // Map trace source
         internal const string MapTraceSourceName= "OpenIZ.Core.Map";
 
+        /// <summary>
+        /// OpenIZ dataset installation source name
+        /// </summary>
+        internal const string DatasetInstallSourceName = "OpenIZ.Core.DataSet";
+
         // Client claim header
         internal const string BasicHttpClientClaimHeaderName = "X-OpenIZClient-Claim";
         // Client auth header

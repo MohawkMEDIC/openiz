@@ -33,12 +33,12 @@ namespace OpenIZ.Core.Model.Interfaces
         /// <summary>
         /// Gets the version sequence
         /// </summary>
-        decimal VersionSequence { get; set; }
+        decimal? VersionSequence { get; set; }
 
         /// <summary>
         /// Gets the version key
         /// </summary>
-        Guid VersionKey { get; set; }
+        Guid? VersionKey { get; set; }
 
         /// <summary>
         /// Gets the previous version's key

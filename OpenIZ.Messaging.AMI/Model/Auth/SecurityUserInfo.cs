@@ -58,13 +58,13 @@ namespace OpenIZ.Messaging.AMI.Model.Auth
         /// <summary>
         /// Gets the user identifier
         /// </summary>
-        [XmlAttribute("id")]
-        public Guid UserId { get; set; }
+        [XmlElement("id")]
+        public Guid? UserId { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the user
         /// </summary>
-        [XmlAttribute("name")]
+        [XmlElement("name")]
         public String UserName { get; set; }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace OpenIZ.Messaging.AMI.Model.Auth
         /// <summary>
         /// Lockout
         /// </summary>
-        [XmlAttribute("lockout")]
+        [XmlElement("lockout")]
         public bool Lockout { get; set; }
 
         /// <summary>

@@ -25,6 +25,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         public override object FromModelInstance(Core.Model.Roles.Patient modelInstance, ModelDataContext context, IPrincipal principal)
         {
             var dbPatient = base.FromModelInstance(modelInstance, context, principal) as Data.Patient;
+            
             if (modelInstance.DeceasedDatePrecision.HasValue)
                 dbPatient.DeceasedDatePrecision = PersonPersistenceService.PrecisionMap[modelInstance.DeceasedDatePrecision.Value];
             return dbPatient;

@@ -73,11 +73,17 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                return this.Concepts?.Select(o => o.Key).ToList();
+                if (this.Concepts != null)
+                    foreach (var itm in this.Concepts.Where(o => o.Key == null))
+                        if (itm.Mnemonic != null)
+                            itm.Key = EntitySource.Current.Provider.Query<Concept>(o => o.Mnemonic == itm.Mnemonic).FirstOrDefault()?.Key;
+                        else
+                            itm.Key = Guid.NewGuid();
+
+                return this.Concepts?.Select(o => o.Key.Value).ToList();
             }
             set
             {
-                ; // nothing
             }
         }
 

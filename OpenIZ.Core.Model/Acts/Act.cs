@@ -41,9 +41,9 @@ namespace OpenIZ.Core.Model.Acts
     {
 
         private Guid m_classConceptKey;
-        private Guid m_typeConceptKey;
-        private Guid m_statusConceptKey;
-        private Guid m_moodConceptKey;
+        private Guid? m_typeConceptKey;
+        private Guid? m_statusConceptKey;
+        private Guid? m_moodConceptKey;
         private Guid? m_reasonConceptKey;
         
         private Concept m_classConcept;
@@ -154,7 +154,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("moodConcept"), JsonProperty("moodConcept")]
-        public virtual Guid MoodConceptKey
+        public virtual Guid? MoodConceptKey
         {
             get { return this.m_moodConceptKey; }
             set
@@ -185,7 +185,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("statusConcept"), JsonProperty("statusConcept")]
-        public Guid StatusConceptKey
+        public Guid? StatusConceptKey
         {
             get { return this.m_statusConceptKey; }
             set
@@ -200,7 +200,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("typeConcept"), JsonProperty("typeConcept")]
-        public Guid TypeConceptKey
+        public Guid? TypeConceptKey
         {
             get { return this.m_typeConceptKey; }
             set
@@ -240,10 +240,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 this.m_moodConcept = value;
-                if (value == null)
-                    this.m_moodConceptKey = Guid.Empty;
-                else
-                    this.m_moodConceptKey = value.Key;
+                this.m_moodConceptKey = value?.Key;
             }
         }
 

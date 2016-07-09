@@ -108,7 +108,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         /// <summary>
         /// Perform a query
         /// </summary>
-        public IEnumerable<TModel> DoTestQuery(Expression<Func<TModel, bool>> predicate, Guid knownResultKey, IPrincipal authContext)
+        public IEnumerable<TModel> DoTestQuery(Expression<Func<TModel, bool>> predicate, Guid? knownResultKey, IPrincipal authContext)
         {
 
             // Auth context

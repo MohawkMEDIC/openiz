@@ -34,12 +34,12 @@ namespace OpenIZ.Core.Model.Entities
     {
 
         // The entity key
-        private Guid m_targetEntityKey;
+        private Guid? m_targetEntityKey;
         // The target entity
         
         private Entity m_targetEntity;
         // The association type key
-        private Guid m_associationTypeKey;
+        private Guid? m_associationTypeKey;
         // The association type
         
         private Concept m_relationshipType;
@@ -65,7 +65,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [XmlElement("target"), JsonProperty("target")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public Guid TargetEntityKey
+        public Guid? TargetEntityKey
         {
             get { return this.m_targetEntityKey; }
             set {
@@ -88,10 +88,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 this.m_targetEntity = value;
-                if (value == null)
-                    this.m_targetEntityKey = Guid.Empty;
-                else
-                    this.m_targetEntityKey = value.Key;
+                    this.m_targetEntityKey = value?.Key;
             }
         }
 
@@ -101,7 +98,7 @@ namespace OpenIZ.Core.Model.Entities
         [XmlElement("relationshipType"), JsonProperty("relationshipType")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        public Guid RelationshipTypeKey
+        public Guid? RelationshipTypeKey
         {
             get { return this.m_associationTypeKey; }
             set
@@ -126,10 +123,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 this.m_relationshipType = value;
-                if (value == null)
-                    this.m_associationTypeKey = Guid.Empty;
-                else
-                    this.m_associationTypeKey = value.Key;
+                this.m_associationTypeKey = value?.Key;
             }
         }
 

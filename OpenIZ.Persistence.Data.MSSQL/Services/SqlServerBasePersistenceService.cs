@@ -114,7 +114,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
             else if (!m_configuration.AllowKeyedInsert &&
-                data.Key != Guid.Empty)
+                data.Key != null)
                 throw new SqlFormalConstraintException(SqlFormalConstraintType.IdentityInsert);
 
             PrePersistenceEventArgs<TData> preArgs = new PrePersistenceEventArgs<TData>(data, principal);

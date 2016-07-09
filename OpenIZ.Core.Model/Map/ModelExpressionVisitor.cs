@@ -296,6 +296,27 @@ namespace OpenIZ.Core.Model.Map
             }
             else if (right != node.Right || left != node.Left)
             {
+                if (right.Type != left.Type)
+                {
+
+                    if (right.Type.GetTypeInfo().IsGenericType &&
+                        right.Type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                    {
+                        if (right.NodeType == ExpressionType.Convert &&
+                            (right as UnaryExpression).Operand.Type == left.Type)
+                            right = (right as UnaryExpression).Operand;
+                        else
+                            right = Expression.Coalesce(right, Expression.Constant(Activator.CreateInstance(right.Type.GetTypeInfo().GenericTypeArguments[0])));
+                    }
+                    if (left.Type.GetTypeInfo().IsGenericType &&
+                        left.Type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                        if (left.NodeType == ExpressionType.Convert &&
+                            (left as UnaryExpression).Operand.Type == right.Type)
+                            left = (left as UnaryExpression).Operand;
+                        else
+                            left = Expression.Coalesce(left, Expression.Constant(Activator.CreateInstance(left.Type.GetTypeInfo().GenericTypeArguments[0])));
+
+                }
                 return Expression.MakeBinary(node.NodeType, left, right);
             }
             return node;

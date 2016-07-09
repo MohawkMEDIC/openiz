@@ -28,12 +28,13 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a basic information class which classifies the use of an identifier
     /// </summary>
     
-    [XmlType("IdentifierType",  Namespace = "http://openiz.org/model"), JsonObject("IdentifierType")]
+    [XmlType(nameof(IdentifierType),  Namespace = "http://openiz.org/model"), JsonObject("IdentifierType")]
+    [XmlRoot(nameof(IdentifierType), Namespace = "http://openiz.org/model")]
     public class IdentifierType : BaseEntityData
     {
 
         // Type concept id
-        private Guid m_typeConceptId;
+        private Guid? m_typeConceptId;
         // Scope concept identifier
         private Guid? m_scopeConceptId;
         // Type concept
@@ -65,7 +66,7 @@ namespace OpenIZ.Core.Model.DataTypes
         
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("typeConcept"), JsonProperty("typeConcept")]
-        public Guid  TypeConceptKey
+        public Guid?  TypeConceptKey
         {
             get { return this.m_typeConceptId; }
             set
@@ -90,10 +91,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_typeConcept = value;
-                if (value == null)
-                    this.m_typeConceptId = Guid.Empty;
-                else
-                    this.m_typeConceptId = value.Key;
+                this.m_typeConceptId = value?.Key;
             }
         }
 

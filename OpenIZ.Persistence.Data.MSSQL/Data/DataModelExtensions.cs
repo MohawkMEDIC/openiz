@@ -160,7 +160,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
             var idpInstance = ApplicationContext.Current.GetService(idpType);
 
             // Is the key null? 
-            if (me.Key == Guid.Empty) 
+            if (me.Key == Guid.Empty || me.Key == null) 
             {
                 // Is there a classifier?
                 var classAtt = me.GetType().GetCustomAttribute<KeyLookupAttribute>();

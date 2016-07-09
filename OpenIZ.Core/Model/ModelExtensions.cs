@@ -40,7 +40,7 @@ namespace OpenIZ.Core.Model
         public static Identifier<Guid> Id(this IIdentifiedEntity me)
         {
             // TODO: My AA
-            return new Identifier<Guid>(me.Key);
+            return new Identifier<Guid>(me.Key.Value);
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace OpenIZ.Core.Model
         /// </summary>
         public static Identifier<Guid> Id(this IVersionedEntity me)
         {
-            return new Identifier<Guid>(me.Key, me.VersionKey);
+            return new Identifier<Guid>(me.Key.Value, me.VersionKey.Value);
         }
 
         /// <summary>

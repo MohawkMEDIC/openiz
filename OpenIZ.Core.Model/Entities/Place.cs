@@ -58,7 +58,7 @@ namespace OpenIZ.Core.Model.Entities
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("classConcept"), JsonProperty("classConcept")]
-        public override Guid ClassConceptKey
+        public override Guid? ClassConceptKey
         {
             get
             {

@@ -105,7 +105,7 @@ namespace OpenIZ.Core.Model.Acts
     {
 
         // UOM key
-        private Guid m_unitOfMeasureKey;
+        private Guid? m_unitOfMeasureKey;
         // UOM
         private Concept m_unitOfMeasure;
 
@@ -121,7 +121,7 @@ namespace OpenIZ.Core.Model.Acts
         [XmlElement("unitOfMeasure"), JsonProperty("unitOfMeasure")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        public Guid UnitOfMeasureKey
+        public Guid? UnitOfMeasureKey
         {
             get { return this.m_unitOfMeasureKey; }
             set
@@ -146,10 +146,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 this.m_unitOfMeasure = value;
-                if (value != null)
-                    this.m_unitOfMeasureKey = value.Key;
-                else
-                    this.m_unitOfMeasureKey = Guid.Empty;
+                this.m_unitOfMeasureKey = value?.Key;
             }
         }
 
@@ -188,7 +185,7 @@ namespace OpenIZ.Core.Model.Acts
     {
 
         // Value key
-        private Guid m_valueKey;
+        private Guid? m_valueKey;
         // Value
         private Concept m_value;
 
@@ -198,7 +195,7 @@ namespace OpenIZ.Core.Model.Acts
         [XmlElement("value"), JsonProperty("value")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        public Guid ValueKey
+        public Guid? ValueKey
         {
             get { return this.m_valueKey; }
             set
@@ -223,10 +220,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 this.m_value = value;
-                if (value == null)
-                    this.m_valueKey = Guid.Empty;
-                else
-                    this.m_valueKey = value.Key;
+                this.m_valueKey = value?.Key;
             }
         }
 

@@ -38,29 +38,32 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Get the persistence service source
         /// </summary>
-        public TObject Get<TObject>(Guid key) where TObject : IdentifiedData
+        public TObject Get<TObject>(Guid? key) where TObject : IdentifiedData
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>();
-            if(persistenceService != null)
-                return persistenceService.Get(new Identifier<Guid>(key), null, true);
+            if(persistenceService != null  && key.HasValue)
+                return persistenceService.Get(new Identifier<Guid>(key.Value), null, true);
             return default(TObject);
         }
 
         /// <summary>
         /// Get the specified version
         /// </summary>
-        public TObject Get<TObject>(Guid key, Guid versionKey) where TObject : IdentifiedData, IVersionedEntity
+        public TObject Get<TObject>(Guid? key, Guid? versionKey) where TObject : IdentifiedData, IVersionedEntity
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>();
-            if (persistenceService != null)
-                return persistenceService.Get(new Identifier<Guid>(key, versionKey), null, true);
+            if (persistenceService != null && key.HasValue && versionKey.HasValue)
+                return persistenceService.Get(new Identifier<Guid>(key.Value, versionKey.Value), null, true);
+            else if(persistenceService != null && key.HasValue)
+                return persistenceService.Get(new Identifier<Guid>(key.Value), null, true);
+
             return default(TObject);
         }
 
         /// <summary>
         /// Get versioned relationships
         /// </summary>
-        public List<TObject> GetRelations<TObject>(Guid sourceKey, decimal sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation
+        public List<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation
         {
             return this.Query<TObject>(o => sourceKey == o.SourceEntityKey && sourceVersionSequence >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || sourceVersionSequence < o.ObsoleteVersionSequenceId)).ToList();
         }

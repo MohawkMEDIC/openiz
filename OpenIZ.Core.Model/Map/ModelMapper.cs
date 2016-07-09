@@ -62,10 +62,10 @@ namespace OpenIZ.Core.Model.Map
         /// <summary>
         /// Map member 
         /// </summary>
-        public Expression MapModelMember(MemberExpression memberExpression, Expression accessExpression)
+        public Expression MapModelMember(MemberExpression memberExpression, Expression accessExpression, Type modelType = null)
         {
             
-            ClassMap classMap = this.m_mapFile.GetModelClassMap(memberExpression.Expression.Type);
+            ClassMap classMap = this.m_mapFile.GetModelClassMap(modelType ?? memberExpression.Expression.Type);
 
             if (classMap == null)
                 return memberExpression;
@@ -106,14 +106,23 @@ namespace OpenIZ.Core.Model.Map
             else
             {
                 // look for idenical named property
-                Type domainType = this.MapModelType(memberExpression.Expression.Type);
+                Type domainType = this.MapModelType(modelType ?? memberExpression.Expression.Type);
 
                 // Get domain member and map
                 MemberInfo domainMember = domainType.GetRuntimeProperty(memberExpression.Member.Name);
                 if (domainMember != null)
                     return Expression.MakeMemberAccess(accessExpression, domainMember);
                 else
-                    throw new NotSupportedException(String.Format("Cannot find property information for {0}({1}).{2}", memberExpression.Expression, memberExpression.Expression.Type.Name, memberExpression.Member.Name));
+                {
+                    // Try on the base? 
+                    if(classMap.ParentDomainProperty != null)
+                    {
+                        domainMember = domainType.GetRuntimeProperty(classMap.ParentDomainProperty.DomainName);
+                        return MapModelMember(memberExpression, Expression.MakeMemberAccess(accessExpression, domainMember), (modelType ?? memberExpression.Expression.Type).GetTypeInfo().BaseType);
+                    }
+                    else
+                        throw new NotSupportedException(String.Format("Cannot find property information for {0}({1}).{2}", memberExpression.Expression, memberExpression.Expression.Type.Name, memberExpression.Member.Name));
+                }
             }
         }
 

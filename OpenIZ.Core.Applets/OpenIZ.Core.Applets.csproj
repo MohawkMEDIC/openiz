@@ -38,15 +38,9 @@
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
     </None>
-    <None Include="BaseTypes.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="OpenIZApplet.xsd">
+    <None Include="Schema\OpenIZApplet.xsd">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="OpenIZModel.xsd">
-      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -66,7 +60,7 @@
     <Compile Include="Model\AppletMenu.cs" />
     <Compile Include="Model\LocaleString.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModel\ViewModelSerializer.cs" />
+    <Compile Include="ViewModel\JsonViewModelSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

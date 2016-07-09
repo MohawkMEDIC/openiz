@@ -28,7 +28,8 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a model class which is an assigning authority
     /// </summary>
     [Classifier(nameof(DomainName)), KeyLookup(nameof(DomainName))]
-    [XmlType("AssigningAuthority",  Namespace = "http://openiz.org/model"), JsonObject("AssigningAuthority")]
+    [XmlType(nameof(AssigningAuthority),  Namespace = "http://openiz.org/model"), JsonObject("AssigningAuthority")]
+    [XmlRoot(nameof(AssigningAuthority), Namespace = "http://openiz.org/model")]
     public  class AssigningAuthority : BaseEntityData
     {
         // Assigning device id

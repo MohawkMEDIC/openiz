@@ -72,6 +72,8 @@
     <Compile Include="Model\ModelExtensions.cs" />
     <Compile Include="Configuration\OpenIZConfiguration.cs" />
     <Compile Include="OpenIZConstants.cs" />
+    <Compile Include="Persistence\DataInitializationService.cs" />
+    <Compile Include="Persistence\DatasetInstall.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\ApplicationPrincipal.cs" />
     <Compile Include="Security\Claims\PurposeOfUseClaimHandler.cs" />
@@ -106,6 +108,10 @@
   <ItemGroup>
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
+    </None>
+    <None Include="Schema\DataSet.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>

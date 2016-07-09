@@ -51,7 +51,7 @@ namespace OpenIZ.Core.Model.DataTypes
         public String Value { get; set; }
 
         // Target entity key
-        private Guid m_sourceEntityKey;
+        private Guid? m_sourceEntityKey;
         // The target entity
 
         private TSourceType m_sourceEntity;
@@ -60,7 +60,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the source entity's key (where the relationship is FROM)
         /// </summary>
         [XmlElement("source"), JsonProperty("source")]
-        public virtual Guid SourceEntityKey
+        public virtual Guid? SourceEntityKey
         {
             get
             {
@@ -88,10 +88,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_sourceEntity = value;
-                if (value == null)
-                    this.m_sourceEntityKey = default(Guid);
-                else
-                    this.m_sourceEntityKey = value.Key;
+                this.m_sourceEntityKey = value?.Key;
             }
         }
     }

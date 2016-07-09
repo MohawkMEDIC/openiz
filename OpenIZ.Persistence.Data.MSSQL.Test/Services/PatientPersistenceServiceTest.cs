@@ -120,7 +120,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual(DeterminerKeys.Specific, p.DeterminerConceptKey);
             Assert.AreEqual(StatusKeys.Active, p.StatusConceptKey);
 
-            String json = ViewModelSerializer.Serialize(afterInsert);
+            String json = JsonViewModelSerializer.Serialize(afterInsert);
             Assert.IsNotNull(json);
 
         }
@@ -204,8 +204,135 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual(DeterminerKeys.Specific, p.DeterminerConceptKey);
             Assert.AreEqual(StatusKeys.Active, p.StatusConceptKey);
             Assert.AreEqual(aa.Key, afterInsert.Identifiers[0].AuthorityKey);
-            String json = ViewModelSerializer.Serialize(afterInsert);
+            String json = JsonViewModelSerializer.Serialize(afterInsert);
             Assert.IsNotNull(json);
+
+        }
+
+        /// <summary>
+        /// Test the persistence of a person
+        /// </summary>
+        [TestMethod]
+        public void TestQueryByGender()
+        {
+            Patient p = new Patient()
+            {
+                StatusConcept = new Concept()
+                {
+                    Mnemonic = "ACTIVE"
+                },
+                Names = new List<EntityName>()
+                {
+                    new EntityName() {
+                        NameUse = new Concept() { Mnemonic = "OfficialRecord" },
+                        Component = new List<EntityNameComponent>() {
+                            new EntityNameComponent() {
+                                ComponentType = new Concept() { Mnemonic = "Given" },
+                                Value = "Allison"
+                            },
+                            new EntityNameComponent() {
+                                ComponentType = new Concept() { Mnemonic = "Given" },
+                                Value = "P."
+                            },
+                            new EntityNameComponent() {
+                                ComponentType = new Concept() { Mnemonic = "Family" },
+                                Value = "Bear"
+                            }
+                        }
+                    }
+                },
+                Identifiers = new List<EntityIdentifier>()
+                {
+                    new EntityIdentifier(
+                        new AssigningAuthority() { DomainName = "OHIPCARD" }, "3242342323")
+                },
+                Tags = new List<EntityTag>()
+                {
+                    new EntityTag("hasBirthCertificate", "false")
+                },
+                Extensions = new List<EntityExtension>() {
+                    new EntityExtension()
+                    {
+                        ExtensionType = new ExtensionType()
+                        {
+                            Name = "http://openiz.org/oiz/birthcertificate",
+                            ExtensionHandler = typeof(EntityPersistenceServiceTest)
+                        },
+                        ExtensionValue = BitConverter.GetBytes(true)
+                    }
+                },
+                GenderConcept = new Concept() { Mnemonic = "Female" },
+                DateOfBirth = new DateTime(1990, 03, 22),
+                MultipleBirthOrder = 2,
+                DateOfBirthPrecision = DatePrecision.Day
+            };
+
+            var afterInsert = base.DoTestInsert(p, s_authorization);
+
+            var result = base.DoTestQuery(o => o.GenderConcept.Mnemonic == "Female", afterInsert.Key, s_authorization);
+            
+        }
+
+        /// <summary>
+        /// Test the persistence of a person
+        /// </summary>
+        [TestMethod]
+        public void TestQueryByCreationDate()
+        {
+            Patient p = new Patient()
+            {
+                StatusConcept = new Concept()
+                {
+                    Mnemonic = "ACTIVE"
+                },
+                Names = new List<EntityName>()
+                {
+                    new EntityName() {
+                        NameUse = new Concept() { Mnemonic = "OfficialRecord" },
+                        Component = new List<EntityNameComponent>() {
+                            new EntityNameComponent() {
+                                ComponentType = new Concept() { Mnemonic = "Given" },
+                                Value = "Jamie"
+                            },
+                            new EntityNameComponent() {
+                                ComponentType = new Concept() { Mnemonic = "Given" },
+                                Value = "A."
+                            },
+                            new EntityNameComponent() {
+                                ComponentType = new Concept() { Mnemonic = "Family" },
+                                Value = "Bear"
+                            }
+                        }
+                    }
+                },
+                Identifiers = new List<EntityIdentifier>()
+                {
+                    new EntityIdentifier(
+                        new AssigningAuthority() { Name="OHIP", Oid="1.2.3.4.5.6", DomainName = "OHIPCARD" }, "43234453453")
+                },
+                Tags = new List<EntityTag>()
+                {
+                    new EntityTag("hasBirthCertificate", "false")
+                },
+                Extensions = new List<EntityExtension>() {
+                    new EntityExtension()
+                    {
+                        ExtensionType = new ExtensionType()
+                        {
+                            Name = "http://openiz.org/oiz/birthcertificate",
+                            ExtensionHandler = typeof(EntityPersistenceServiceTest)
+                        },
+                        ExtensionValue = BitConverter.GetBytes(true)
+                    }
+                },
+                GenderConcept = new Concept() { Mnemonic = "Female" },
+                DateOfBirth = new DateTime(1999, 07, 22),
+                DateOfBirthPrecision = DatePrecision.Day
+            };
+
+            var afterInsert = base.DoTestInsert(p, s_authorization);
+
+            var result = base.DoTestQuery(o => o.CreationTime < DateTimeOffset.Now.AddDays(2), afterInsert.Key, s_authorization);
 
         }
     }

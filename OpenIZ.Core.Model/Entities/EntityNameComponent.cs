@@ -59,7 +59,7 @@ namespace OpenIZ.Core.Model.Entities
 
         }
         // Id of the algorithm used to generate phonetic code
-        private Guid m_phoneticAlgorithmId;
+        private Guid? m_phoneticAlgorithmId;
         // Algorithm used to generate the code
         
         private PhoneticAlgorithm m_phoneticAlgorithm;
@@ -76,7 +76,7 @@ namespace OpenIZ.Core.Model.Entities
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("phoneticAlgorithm"), JsonProperty("phoneticAlgorithm")]
-        public Guid PhoneticAlgorithmKey
+        public Guid? PhoneticAlgorithmKey
         {
             get { return this.m_phoneticAlgorithmId; }
             set
@@ -101,10 +101,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 this.m_phoneticAlgorithm = value;
-                if (value == null)
-                    this.m_phoneticAlgorithmId = Guid.Empty;
-                else
-                    this.m_phoneticAlgorithmId = value.Key;
+                    this.m_phoneticAlgorithmId = value?.Key;
             }
         }
 

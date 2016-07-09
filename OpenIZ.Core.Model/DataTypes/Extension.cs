@@ -40,7 +40,7 @@ namespace OpenIZ.Core.Model.DataTypes
     {
 
         // Extension type key
-        private Guid m_extensionTypeKey;
+        private Guid? m_extensionTypeKey;
         // Extension type
         private ExtensionType m_extensionType;
         // Extension handler
@@ -59,29 +59,11 @@ namespace OpenIZ.Core.Model.DataTypes
         public String ExtensionDisplay { get; set; }
 
         /// <summary>
-        /// Gets or sets the extension value
-        /// </summary>
-        [XmlIgnore, JsonIgnore]
-        public Object Value
-        {
-            get
-            {
-                this.m_extensionHandler = this.m_extensionHandler ?? Activator.CreateInstance(this.ExtensionType.ExtensionHandler) as IExtensionHandler;
-                return this.m_extensionHandler?.DeSerialize(this.ExtensionValue);
-            }
-            set
-            {
-                this.m_extensionHandler = this.m_extensionHandler ?? Activator.CreateInstance(this.ExtensionType.ExtensionHandler) as IExtensionHandler;
-                this.ExtensionValue = this.m_extensionHandler?.Serialize(value);
-            }
-        }
-
-        /// <summary>
         /// Gets or sets the extension type key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlIgnore, JsonIgnore]
-        public Guid ExtensionTypeKey
+        public Guid? ExtensionTypeKey
         {
             get { return this.m_extensionTypeKey; }
             set
@@ -106,10 +88,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_extensionType = value;
-                if (value == null)
-                    this.m_extensionTypeKey = Guid.Empty;
-                else
-                    this.m_extensionTypeKey = value.Key;
+                this.m_extensionTypeKey = value?.Key;
             }
         }
 

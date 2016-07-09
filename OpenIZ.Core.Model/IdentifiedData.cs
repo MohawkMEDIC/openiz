@@ -92,7 +92,7 @@ namespace OpenIZ.Core.Model
         /// The internal primary key value of the entity
         /// </summary>
         [XmlElement("id"), JsonProperty("id")]
-        public Guid Key { get; set; }
+        public Guid? Key { get; set; }
 
         /// <summary>
         /// Gets the type

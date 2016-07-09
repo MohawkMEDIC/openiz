@@ -37,10 +37,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var domainObject = this.FromModelInstance(data, context, principal) as TDomain;
             domainObject.NonVersionedObject = nonVersionedPortion;
 
-            if (nonVersionedPortion.Id == Guid.Empty)
-                nonVersionedPortion.Id = data.Key = Guid.NewGuid();
-            if (domainObject.VersionId == Guid.Empty)
-                domainObject.VersionId = data.VersionKey = Guid.NewGuid();
+            if (nonVersionedPortion.Id == null ||
+                nonVersionedPortion.Id == Guid.Empty)
+            {
+                data.Key = Guid.NewGuid();
+                nonVersionedPortion.Id = data.Key.Value;
+            }
+            if (domainObject.VersionId == null ||
+                domainObject.VersionId == Guid.Empty)
+            {
+                data.VersionKey = Guid.NewGuid();
+                domainObject.VersionId = data.VersionKey.Value;
+            }
 
             // Ensure created by exists
             data.CreatedBy?.EnsureExists(context, principal);
@@ -83,7 +91,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             newEntityVersion.CopyObjectData(storageInstance);
             data.VersionSequence = newEntityVersion.VersionSequenceId = default(Decimal);
             data.VersionKey = newEntityVersion.VersionId = Guid.NewGuid();
-            newEntityVersion.Id = data.Key;
+            newEntityVersion.Id = data.Key.Value;
             data.PreviousVersionKey = newEntityVersion.ReplacesVersionId = existingObject.VersionId;
             data.CreatedByKey = newEntityVersion.CreatedBy = user.UserId;
             // Obsolete the old version 
@@ -131,7 +139,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             }
             // Ensure the source key is set
             foreach (var itm in storage)
-                if (itm.SourceEntityKey == Guid.Empty)
+                if (itm.SourceEntityKey == Guid.Empty ||
+                    itm.SourceEntityKey == null)
                     itm.SourceEntityKey = source.Key;
 
             // Get existing

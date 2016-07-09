@@ -39,7 +39,7 @@ namespace OpenIZ.Core.Model.DataTypes
     {
 
         // Backing field for code system identifier
-        private Guid m_codeSystemId;
+        private Guid? m_codeSystemId;
         // Code system
         
         private CodeSystem m_codeSystem;
@@ -67,10 +67,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_codeSystem = value;
-                if (value == null)
-                    this.m_codeSystemId = Guid.Empty;
-                else
-                    this.m_codeSystemId = value.Key;
+                this.m_codeSystemId = value?.Key;
             }
         }
         
@@ -79,7 +76,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("codeSystem"), JsonProperty("codeSystem")]
-        public Guid  CodeSystemKey {
+        public Guid?  CodeSystemKey {
             get { return this.m_codeSystemId; }
             set
             {

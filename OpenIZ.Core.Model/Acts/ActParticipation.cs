@@ -38,10 +38,10 @@ namespace OpenIZ.Core.Model.Acts
     public class ActParticipation : VersionedAssociation<Act>
     {
 
-        private Guid m_playerKey;
+        private Guid? m_playerKey;
         
         private Entity m_player;
-        private Guid m_participationRoleKey;
+        private Guid? m_participationRoleKey;
         
         private Concept m_participationRole;
 
@@ -51,7 +51,7 @@ namespace OpenIZ.Core.Model.Acts
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("player"), JsonProperty("player")]
-        public Guid PlayerEntityKey
+        public Guid? PlayerEntityKey
         {
             get { return this.m_playerKey; }
             set
@@ -67,7 +67,7 @@ namespace OpenIZ.Core.Model.Acts
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("participationRole"), JsonProperty("participationRole")]
-        public Guid ParticipationRoleKey
+        public Guid? ParticipationRoleKey
         {
             get { return this.m_participationRoleKey; }
             set
@@ -92,10 +92,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 this.m_player = value;
-                if (value == null)
-                    this.m_playerKey = Guid.Empty;
-                else
-                    this.m_playerKey = value.Key;
+                this.m_playerKey = value?.Key;
             }
         }
 
@@ -114,10 +111,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 this.m_participationRole = value;
-                if (value == null)
-                    this.m_participationRoleKey = Guid.Empty;
-                else
-                    this.m_participationRoleKey = value.Key;
+                this.m_participationRoleKey = value?.Key;
             }
         }
 

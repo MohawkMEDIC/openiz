@@ -41,7 +41,7 @@ namespace OpenIZ.Core.Model.Entities
     {
 
         // Security device key
-        private Guid m_securityDeviceKey;
+        private Guid? m_securityDeviceKey;
         // Security device
         private SecurityDevice m_securityDevice;
 
@@ -60,7 +60,7 @@ namespace OpenIZ.Core.Model.Entities
         [XmlElement("securityDevice"), JsonProperty("securityDevice")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        public Guid SecurityDeviceKey
+        public Guid? SecurityDeviceKey
         {
             get { return this.m_securityDeviceKey; }
             set
@@ -84,10 +84,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 this.m_securityDevice = value;
-                if (value == null)
-                    this.m_securityDeviceKey = Guid.Empty;
-                else
-                    this.m_securityDeviceKey = value.Key;
+                this.m_securityDeviceKey = value?.Key;
             }
         }
         /// <summary>

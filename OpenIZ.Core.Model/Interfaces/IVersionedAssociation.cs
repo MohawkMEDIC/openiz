@@ -33,7 +33,7 @@ namespace OpenIZ.Core.Model.Interfaces
         /// <summary>
         /// Effective version sequence
         /// </summary>
-        Decimal EffectiveVersionSequenceId { get; set; }
+        Decimal? EffectiveVersionSequenceId { get; set; }
 
         /// <summary>
         /// Obsolete version sequence

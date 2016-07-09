@@ -51,7 +51,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             var retVal = base.Update(context, data, principal);
 
-            var sourceKey = data.Key.ToByteArray();
+            var sourceKey = data.Key.Value.ToByteArray();
 
             // Data component
             if (data.Component != null)

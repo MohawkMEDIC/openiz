@@ -38,7 +38,7 @@ namespace OpenIZ.Core.Model.DataTypes
     {
 
         // Author id
-        private Guid m_authorKey;
+        private Guid? m_authorKey;
         // Author entity
         
         private Entity m_author;
@@ -72,7 +72,7 @@ namespace OpenIZ.Core.Model.DataTypes
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("author"), JsonProperty("author")]
-        public Guid AuthorKey
+        public Guid? AuthorKey
         {
             get { return this.m_authorKey; }
             set
@@ -97,10 +97,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_author = value;
-                if (value == null)
-                    this.m_authorKey = Guid.Empty;
-                else
-                    this.m_authorKey = value.Key;
+                this.m_authorKey = value?.Key;
             }
         }
 

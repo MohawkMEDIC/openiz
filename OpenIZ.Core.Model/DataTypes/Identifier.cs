@@ -89,7 +89,7 @@ namespace OpenIZ.Core.Model.DataTypes
         private Guid? m_identifierTypeId;
         // Authority id
         
-        private Guid m_authorityId;
+        private Guid? m_authorityId;
 
         // Identifier type backing type
         
@@ -111,7 +111,7 @@ namespace OpenIZ.Core.Model.DataTypes
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlIgnore, JsonIgnore]
-        public Guid AuthorityKey
+        public Guid? AuthorityKey
         {
             get { return this.m_authorityId; }
             set
@@ -176,10 +176,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_authority = value;
-                if (value != null)
-                    this.m_authorityId = value.Key;
-                else
-                    this.m_authorityId = Guid.Empty;
+                this.m_authorityId = value?.Key;
             }
         }
 

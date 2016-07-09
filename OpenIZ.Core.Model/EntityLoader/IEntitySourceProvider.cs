@@ -35,12 +35,12 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Get the specified object
         /// </summary>
-        TObject Get<TObject>(Guid key) where TObject : IdentifiedData;
+        TObject Get<TObject>(Guid? key) where TObject : IdentifiedData;
 
         /// <summary>
         /// Get the specified object
         /// </summary>
-        TObject Get<TObject>(Guid key, Guid versionKey) where TObject : IdentifiedData, IVersionedEntity;
+        TObject Get<TObject>(Guid? key, Guid? versionKey) where TObject : IdentifiedData, IVersionedEntity;
 
         /// <summary>
         /// Query the specified data from the delay load provider
@@ -50,7 +50,7 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Get relationships
         /// </summary>
-        List<TObject> GetRelations<TObject>(Guid sourceKey, decimal sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation;
+        List<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation;
 
 
     }

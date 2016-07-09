@@ -175,7 +175,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             // Obsolete
             var idp = ApplicationContext.Current.GetService<IDataPersistenceService<Entity>>();
             var afterObsolete = idp.Obsolete(afterTest, s_authorization, TransactionMode.Commit);
-            afterObsolete = idp.Get(new Identifier<Guid>(id), s_authorization, false);
+            afterObsolete = idp.Get(new Identifier<Guid>(id.Value), s_authorization, false);
 
             // Assert
             Assert.AreEqual(StatusKeys.Obsolete, afterObsolete.StatusConcept.Key);

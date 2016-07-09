@@ -50,7 +50,7 @@ namespace OpenIZ.Core.Model.Entities
         }
 
         // Security application key
-        private Guid m_securityApplicationKey;
+        private Guid? m_securityApplicationKey;
         // Security application
         private SecurityApplication m_securityApplication;
 
@@ -60,7 +60,7 @@ namespace OpenIZ.Core.Model.Entities
         [XmlElement("securityApplication"), JsonProperty("securityApplication")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        public Guid SecurityApplicationKey
+        public Guid? SecurityApplicationKey
         {
             get { return this.m_securityApplicationKey; }
             set
@@ -84,10 +84,8 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 this.m_securityApplication = value;
-                if (value == null)
-                    this.m_securityApplicationKey = Guid.Empty;
-                else
-                    this.m_securityApplicationKey = value.Key;
+
+                    this.m_securityApplicationKey = value?.Key;
             }
         }
 

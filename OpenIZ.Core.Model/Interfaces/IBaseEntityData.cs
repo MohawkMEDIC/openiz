@@ -14,7 +14,7 @@ namespace OpenIZ.Core.Model.Interfaces
         /// <summary>
         /// Gets or sets the creator of the data
         /// </summary>
-        Guid CreatedByKey { get; set; }
+        Guid? CreatedByKey { get; set; }
 
         /// <summary>
         /// Gets or sets teh obsoletor of the data

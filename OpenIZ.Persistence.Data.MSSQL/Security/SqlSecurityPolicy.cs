@@ -78,7 +78,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
         /// <summary>
         /// Gets or sets the policy identifier
         /// </summary>
-        public Guid Key { get; set; }
+        public Guid? Key { get; set; }
 
         /// <summary>
         /// Gets the name of the policy

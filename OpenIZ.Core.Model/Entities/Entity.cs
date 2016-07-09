@@ -41,13 +41,13 @@ namespace OpenIZ.Core.Model.Entities
     {
 
         // Classe concept
-        private Guid m_classConceptId;
+        private Guid? m_classConceptId;
         // Determiner concept id
-        private Guid m_determinerConceptId;
+        private Guid? m_determinerConceptId;
         // Status 
-        private Guid m_statusConceptId;
+        private Guid? m_statusConceptId;
         // Control act which created this
-        private Guid m_creationActId;
+        private Guid? m_creationActId;
         // Type concept
         private Guid? m_typeConceptId;
 
@@ -87,7 +87,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("classConcept"), JsonProperty("classConcept")]
-        public virtual Guid ClassConceptKey
+        public virtual Guid? ClassConceptKey
         {
             get { return this.m_classConceptId; }
             set
@@ -103,7 +103,7 @@ namespace OpenIZ.Core.Model.Entities
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("determinerConcept"), JsonProperty("determinerConcept")]
-        public virtual Guid DeterminerConceptKey
+        public virtual Guid? DeterminerConceptKey
         {
             get { return this.m_determinerConceptId; }
             set
@@ -119,7 +119,7 @@ namespace OpenIZ.Core.Model.Entities
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("statusConcept"), JsonProperty("statusConcept")]
-        public Guid  StatusConceptKey
+        public Guid?  StatusConceptKey
         {
             get { return this.m_statusConceptId; }
             set
@@ -135,7 +135,7 @@ namespace OpenIZ.Core.Model.Entities
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("creationAct"), JsonProperty("creationAct")]
-        public Guid  CreationActKey
+        public Guid?  CreationActKey
         {
             get { return this.m_creationActId; }
             set
@@ -176,10 +176,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 this.m_classConcept = value;
-                if (value == null)
-                    this.m_classConceptId = Guid.Empty;
-                else
-                    this.m_classConceptId = value.Key;
+                this.m_classConceptId = value?.Key;
             }
         }
 
@@ -243,10 +240,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 this.m_creationAct = value;
-                if (value != null)
-                    this.m_creationActId = value.Key;
-                else
-                    this.m_creationActId = Guid.Empty;
+                this.m_creationActId = value?.Key;
             }
         }
 

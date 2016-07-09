@@ -41,7 +41,7 @@ namespace OpenIZ.Core.Model.Roles
     {
 
         // Gender concept key
-        private Guid m_genderConceptKey;
+        private Guid? m_genderConceptKey;
         // Gender concept
         
         private Concept m_genderConcept;
@@ -77,7 +77,7 @@ namespace OpenIZ.Core.Model.Roles
         [XmlElement("genderConcept"), JsonProperty("genderConcept")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        public Guid GenderConceptKey
+        public Guid? GenderConceptKey
         {
             get { return this.m_genderConceptKey; }
             set
@@ -102,10 +102,7 @@ namespace OpenIZ.Core.Model.Roles
             set
             {
                 this.m_genderConcept = value;
-                if (value == null)
-                    this.m_genderConceptKey = Guid.Empty;
-                else
-                    this.m_genderConceptKey = value.Key;
+                this.m_genderConceptKey = value?.Key;
             }
         }
         

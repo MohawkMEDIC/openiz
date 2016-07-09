@@ -33,7 +33,8 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Instructions on how an extensionshould be handled
     /// </summary>
     [Classifier(nameof(Name)), KeyLookup(nameof(Name))]
-    [XmlType("ExtensionType",  Namespace = "http://openiz.org/model"), JsonObject("ExtensionType")]
+    [XmlType(nameof(ExtensionType),  Namespace = "http://openiz.org/model"), JsonObject("ExtensionType")]
+    [XmlRoot(nameof(ExtensionType), Namespace = "http://openiz.org/model")]
     public class ExtensionType : NonVersionedEntityData
     {
 

@@ -35,7 +35,7 @@ namespace OpenIZ.Core.Model.Entities
     {
 
         // Service key
-        private Guid m_serviceConceptKey;
+        private Guid? m_serviceConceptKey;
         // Service
         
         private Concept m_service;
@@ -51,7 +51,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("serviceConcept"), JsonProperty("serviceConcept")]
-        public Guid ServiceConceptKey
+        public Guid? ServiceConceptKey
         {
             get { return this.m_serviceConceptKey; }
             set
@@ -75,10 +75,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 this.m_service = value;
-                if (value == null)
-                    this.m_serviceConceptKey = Guid.Empty;
-                else
-                    this.m_serviceConceptKey = value.Key;
+                this.m_serviceConceptKey = value?.Key;
             }
         }
 

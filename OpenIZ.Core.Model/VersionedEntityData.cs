@@ -110,13 +110,13 @@ namespace OpenIZ.Core.Model
         /// Gets or sets the key which represents the version of the entity
         /// </summary>
         [XmlElement("version"), JsonProperty("version")]
-        public Guid VersionKey { get; set; }
+        public Guid? VersionKey { get; set; }
 
         /// <summary>
         /// The sequence number of the version (for ordering)
         /// </summary>
         [XmlElement("sequence"), JsonProperty("sequence")]
-        public Decimal VersionSequence { get; set; }
+        public Decimal? VersionSequence { get; set; }
 
         /// <summary>
         /// Represent the versioned data as a string

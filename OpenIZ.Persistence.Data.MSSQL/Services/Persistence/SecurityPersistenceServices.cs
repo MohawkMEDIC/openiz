@@ -30,8 +30,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     r.EnsureExists(context, principal);
                     context.SecurityUserRoles.InsertOnSubmit(new SecurityUserRole()
                     {
-                        UserId = retVal.Key,
-                        RoleId = r.Key
+                        UserId = retVal.Key.Value,
+                        RoleId = r.Key.Value
                     });
                 }
 
@@ -53,8 +53,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     r.EnsureExists(context, principal);
                     context.SecurityUserRoles.InsertOnSubmit(new SecurityUserRole()
                     {
-                        UserId = retVal.Key,
-                        RoleId = r.Key
+                        UserId = retVal.Key.Value,
+                        RoleId = r.Key.Value
                     });
                 }
             }

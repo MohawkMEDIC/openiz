@@ -47,15 +47,15 @@ namespace OpenIZ.Core.Applets.Model
         /// <summary>
         /// Gets the elements to be performed
         /// </summary>
-        [XmlElement("concept", typeof(Concept), Namespace = "http://openiz.org/model")]
-        [XmlElement("conceptSet", typeof(ConceptSet), Namespace = "http://openiz.org/model")]
-        [XmlElement("assigningAuthority", typeof(AssigningAuthority), Namespace = "http://openiz.org/model")]
-        [XmlElement("conceptClass", typeof(ConceptClass), Namespace = "http://openiz.org/model")]
-        [XmlElement("securityPolicy", typeof(SecurityPolicy), Namespace = "http://openiz.org/model")]
-        [XmlElement("securityRole", typeof(SecurityRole), Namespace = "http://openiz.org/model")]
-        [XmlElement("extensionType", typeof(ExtensionType), Namespace = "http://openiz.org/model")]
-        [XmlElement("identifierType", typeof(IdentifierType), Namespace = "http://openiz.org/model")]
-        [XmlElement("bundle", typeof(Bundle), Namespace = "http://openiz.org/model")]
+        [XmlElement("Concept", typeof(Concept), Namespace = "http://openiz.org/model")]
+        [XmlElement("ConceptSet", typeof(ConceptSet), Namespace = "http://openiz.org/model")]
+        [XmlElement("AssigningAuthority", typeof(AssigningAuthority), Namespace = "http://openiz.org/model")]
+        [XmlElement("ConceptClass", typeof(ConceptClass), Namespace = "http://openiz.org/model")]
+        [XmlElement("SecurityPolicy", typeof(SecurityPolicy), Namespace = "http://openiz.org/model")]
+        [XmlElement("SecurityRole", typeof(SecurityRole), Namespace = "http://openiz.org/model")]
+        [XmlElement("ExtensionType", typeof(ExtensionType), Namespace = "http://openiz.org/model")]
+        [XmlElement("IdentifierType", typeof(IdentifierType), Namespace = "http://openiz.org/model")]
+        [XmlElement("Bundle", typeof(Bundle), Namespace = "http://openiz.org/model")]
         public IdentifiedData Element { get; set; }
     }
     /// <summary>

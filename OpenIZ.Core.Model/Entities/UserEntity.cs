@@ -38,7 +38,7 @@ namespace OpenIZ.Core.Model.Entities
     {
 
         // Security user key
-        private Guid m_securityUserKey;
+        private Guid? m_securityUserKey;
         // Security user
         private SecurityUser m_securityUser;
 
@@ -46,7 +46,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the security user key
         /// </summary>
         [XmlElement("securityUser"), JsonProperty("securityUser")]
-        public Guid SecurityUserKey
+        public Guid? SecurityUserKey
         {
             get
             {
@@ -75,7 +75,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 this.m_securityUser = value;
-                this.m_securityUserKey = value.Key;
+                this.m_securityUserKey = value?.Key;
             }
         }
 

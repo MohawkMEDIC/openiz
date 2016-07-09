@@ -40,7 +40,7 @@ namespace OpenIZ.Core.Model.DataTypes
 
       
         // Concept class id
-        private Guid m_classId;
+        private Guid? m_classId;
         // Backing field for relationships
         private List<ConceptRelationship> m_relationships;
         // Concept class
@@ -55,6 +55,7 @@ namespace OpenIZ.Core.Model.DataTypes
         private Concept m_conceptStatus;
         // Concept set
         private List<ConceptSet> m_conceptSet;
+
         /// <summary>
         /// Gets or sets an indicator which dictates whether the concept is a system concept
         /// </summary>
@@ -132,7 +133,7 @@ namespace OpenIZ.Core.Model.DataTypes
         
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("conceptClass"), JsonProperty("conceptClass")]
-        public Guid  ClassKey
+        public Guid?  ClassKey
         {
             get { return this.m_classId; }
             set
@@ -158,10 +159,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_class = value;
-                if (value == null)
-                    this.m_classId = Guid.Empty;
-                else
-                    this.m_classId = value.Key;
+                this.m_classId = value?.Key;
             }
         }
 
@@ -215,11 +213,18 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                return this.ConceptSets?.Select(o => o.Key).ToList();
+                if(this.ConceptSets != null)
+                    foreach (var itm in this.ConceptSets.Where(o => o.Key == null))
+                    {
+                        if (itm.Mnemonic != null)
+                            itm.Key = EntitySource.Current.Provider.Query<ConceptSet>(o => o.Mnemonic == itm.Mnemonic).FirstOrDefault()?.Key;
+                        else
+                            itm.Key = Guid.NewGuid();
+                    }
+                return this.ConceptSets?.Select(o => o.Key.Value).ToList();
             }
             set
             {
-                ; // nothing
             }
         }
 
@@ -233,7 +238,8 @@ namespace OpenIZ.Core.Model.DataTypes
             get
             {
                 if(this.m_conceptSet == null &&
-                    this.IsDelayLoadEnabled)
+                    this.IsDelayLoadEnabled && 
+                    this.Key.HasValue)
                     this.m_conceptSet = EntitySource.Current.Provider.Query<ConceptSet>(s => s.Concepts.Any(c => c.Key == this.Key)).ToList();
                 return this.m_conceptSet;
             }

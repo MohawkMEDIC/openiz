@@ -52,8 +52,8 @@ namespace OpenIZ.Messaging.AMI.Model.Auth
         /// <summary>
         /// Gets or sets the identifier of the message
         /// </summary>
-        [XmlAttribute("id")]
-        public Guid Id { get; set; }
+        [XmlElement("id")]
+        public Guid? Id { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the group

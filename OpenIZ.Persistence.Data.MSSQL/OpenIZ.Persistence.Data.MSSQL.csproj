@@ -72,7 +72,6 @@
   <ItemGroup>
     <Compile Include="Configuration\SqlConfigurationSectionHandler.cs" />
     <Compile Include="Configuration\SqlConfiguration.cs" />
-    <Compile Include="Data\DataCache.cs" />
     <Compile Include="Data\IDbAssociatedEntity.cs" />
     <Compile Include="Data\IDbBaseData.cs" />
     <Compile Include="Data\IDbVersionedData.cs" />

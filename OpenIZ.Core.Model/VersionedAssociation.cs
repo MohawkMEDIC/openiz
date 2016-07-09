@@ -40,7 +40,7 @@ namespace OpenIZ.Core.Model
     {
 
         // The identifier of the version where this data is effective
-        private Decimal m_effectiveVersionSequenceId;
+        private Decimal? m_effectiveVersionSequenceId;
         // The identifier of the version where this data is no longer effective
         private Decimal? m_obsoleteVersionSequenceId;
         // The version where this data is effective
@@ -54,7 +54,7 @@ namespace OpenIZ.Core.Model
         /// Gets or sets the effective version of this type
         /// </summary>
         [XmlElement("effectiveVersionSequence"), JsonProperty("effectiveVersionSequence")]
-        public Decimal EffectiveVersionSequenceId
+        public Decimal? EffectiveVersionSequenceId
         {
             get { return this.m_effectiveVersionSequenceId; }
             set
@@ -89,17 +89,14 @@ namespace OpenIZ.Core.Model
             {
                 if(this.m_effectiveVersion == null &&
                     this.IsDelayLoadEnabled &&
-                    this.m_effectiveVersionSequenceId != default(Decimal))
+                    this.m_effectiveVersionSequenceId.HasValue)
                     this.m_effectiveVersion = EntitySource.Current.Provider.Query<TSourceType>(t => t.VersionSequence == this.m_effectiveVersionSequenceId).FirstOrDefault();
                 return this.m_effectiveVersion;
             }
             set
             {
                 this.m_effectiveVersion = value;
-                if (value == null)
-                    this.m_effectiveVersionSequenceId = default(Decimal);
-                else
-                    this.m_effectiveVersionSequenceId = value.VersionSequence;
+                this.m_effectiveVersionSequenceId = value?.VersionSequence;
             }
         }
 

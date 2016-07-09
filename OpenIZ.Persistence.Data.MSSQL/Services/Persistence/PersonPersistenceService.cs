@@ -67,7 +67,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         public override Core.Model.Entities.Person Insert(ModelDataContext context, Core.Model.Entities.Person data, IPrincipal principal)
         {
             var retVal = base.Insert(context, data, principal);
-            byte[] sourceKey = retVal.Key.ToByteArray();
+            byte[] sourceKey = retVal.Key.Value.ToByteArray();
 
             // Language communication
             if (data.LanguageCommunication != null)
@@ -85,7 +85,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         public override Core.Model.Entities.Person Update(ModelDataContext context, Core.Model.Entities.Person data, IPrincipal principal)
         {
             var retVal = base.Update(context, data, principal);
-            var sourceKey = retVal.Key.ToByteArray();
+            var sourceKey = retVal.Key.Value.ToByteArray();
 
             // Language communication
             if (data.LanguageCommunication != null)

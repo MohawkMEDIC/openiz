@@ -42,7 +42,7 @@ namespace OpenIZ.Core.Model
     {
 
         // Created by identifier
-        private Guid m_createdById;
+        private Guid? m_createdById;
         // Created by
         private SecurityUser m_createdBy;
         // Obsoleted by
@@ -105,10 +105,7 @@ namespace OpenIZ.Core.Model
             set
             {
                 this.m_createdBy = value;
-                if (value == null)
-                    this.m_createdById = Guid.Empty;
-                else
-                    this.m_createdById = value.Key;
+                this.m_createdById = value?.Key;
             }
          }
 
@@ -140,7 +137,7 @@ namespace OpenIZ.Core.Model
         
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("createdBy"), JsonProperty("createdBy")]
-        public virtual Guid CreatedByKey
+        public virtual Guid? CreatedByKey
         {
             get { return this.m_createdById; }
             set

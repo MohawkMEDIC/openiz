@@ -85,7 +85,7 @@ namespace OpenIZ.Core.Model.Security
     public class SecurityPolicyInstance : Association<SecurityEntity>
     {
         // Policy id
-        private Guid m_policyId;
+        private Guid? m_policyId;
         // Policy
         private SecurityPolicy m_policy;
 
@@ -109,7 +109,7 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets or sets the policy key
         /// </summary>
-        public Guid PolicyKey {
+        public Guid? PolicyKey {
             get
             {
                 return this.m_policyId;
@@ -133,10 +133,7 @@ namespace OpenIZ.Core.Model.Security
             set
             {
                 this.m_policy = value;
-                if (value == null)
-                    this.m_policyId = Guid.Empty;
-                else
-                    this.m_policyId = value.Key;
+                this.m_policyId = value?.Key;
             }
         }
 

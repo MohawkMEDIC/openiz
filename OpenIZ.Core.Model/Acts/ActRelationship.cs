@@ -37,12 +37,12 @@ namespace OpenIZ.Core.Model.Acts
     public class ActRelationship : VersionedAssociation<Act>
     {
         // The entity key
-        private Guid m_targetActKey;
+        private Guid? m_targetActKey;
         // The target entity
         
         private Act m_targetAct;
         // The association type key
-        private Guid m_relationshipTypeKey;
+        private Guid? m_relationshipTypeKey;
         // The association type
         
         private Concept m_relationshipType;
@@ -53,7 +53,7 @@ namespace OpenIZ.Core.Model.Acts
         [XmlElement("target"), JsonProperty("target")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        public Guid TargetActKey
+        public Guid? TargetActKey
         {
             get { return this.m_targetActKey; }
             set
@@ -78,10 +78,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 this.m_targetAct = value;
-                if (value == null)
-                    this.m_targetActKey = Guid.Empty;
-                else
-                    this.m_targetActKey = value.Key;
+                this.m_targetActKey = value?.Key;
             }
         }
 
@@ -91,7 +88,7 @@ namespace OpenIZ.Core.Model.Acts
         [XmlElement("relationshipType"), JsonProperty("relationshipType")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        public Guid RelationshipTypeKey
+        public Guid? RelationshipTypeKey
         {
             get { return this.m_relationshipTypeKey; }
             set

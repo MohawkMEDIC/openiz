@@ -32,12 +32,12 @@ namespace OpenIZ.Core.Model.DataTypes
     public class ConceptReferenceTerm : VersionedAssociation<Concept>
     {
         // Reference term id
-        private Guid m_referenceTermId;
+        private Guid? m_referenceTermId;
         // Reference term
         
         private ReferenceTerm m_referenceTerm;
         // ConceptRelationship type
-        private Guid m_relationshipTypeId;
+        private Guid? m_relationshipTypeId;
         // Relationship type
         
         private ConceptRelationshipType m_relationshipType;
@@ -48,7 +48,7 @@ namespace OpenIZ.Core.Model.DataTypes
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("referenceTerm"), JsonProperty("referenceTerm")]
-        public Guid  ReferenceTermKey {
+        public Guid?  ReferenceTermKey {
             get { return this.m_referenceTermId; }
             set
             {
@@ -72,10 +72,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_referenceTerm = value;
-                if (value == null)
-                    this.m_referenceTermId = Guid.Empty;
-                else
-                    this.m_referenceTermId = value.Key;
+                this.m_referenceTermId = value?.Key;
             }
         }
 
@@ -84,7 +81,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("relationshipType"), JsonProperty("relationshipType")]
-        public Guid  RelationshipTypeKey {
+        public Guid?  RelationshipTypeKey {
             get { return this.m_relationshipTypeId; }
             set
             {
@@ -107,10 +104,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_relationshipType = value;
-                if (value == null)
-                    this.m_relationshipTypeId = Guid.Empty;
-                else
-                    this.m_relationshipTypeId = value.Key;
+                this.m_relationshipTypeId = value?.Key;
             }
         }
 

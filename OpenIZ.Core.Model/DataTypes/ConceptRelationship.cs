@@ -34,12 +34,12 @@ namespace OpenIZ.Core.Model.DataTypes
     {
 
         // Target concept id
-        private Guid m_targetConceptId;
+        private Guid? m_targetConceptId;
         // Target concept
         
         private Concept m_targetConcept;
         // Relaltionship type id
-        private Guid m_relationshipTypeId;
+        private Guid? m_relationshipTypeId;
         // Relationship type
         
         private ConceptRelationshipType m_relationshipType;
@@ -50,7 +50,7 @@ namespace OpenIZ.Core.Model.DataTypes
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("targetConcept"), JsonProperty("targetConcept")]
-        public Guid  TargetConceptKey
+        public Guid? TargetConceptKey
         {
             get { return this.m_targetConceptId; }
             set
@@ -75,10 +75,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_targetConcept = value;
-                if (value != null)
-                    this.m_targetConceptId = value.Key;
-                else
-                    this.m_targetConceptId = Guid.Empty;
+                this.m_targetConceptId = value?.Key;
             }
         }
 
@@ -87,7 +84,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("relationshipType"), JsonProperty("relationshipType")]
-        public Guid  RelationshipTypeKey {
+        public Guid?  RelationshipTypeKey {
             get { return this.m_relationshipTypeId; }
             set
             {
@@ -111,10 +108,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_relationshipType = value;
-                if (value == null)
-                    this.m_relationshipTypeId = Guid.Empty;
-                else
-                    this.m_relationshipTypeId = value.Key;
+                this.m_relationshipTypeId = value?.Key;
             }
         }
 

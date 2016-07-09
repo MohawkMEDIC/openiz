@@ -40,7 +40,7 @@ namespace OpenIZ.Core.Model.EntityLoader
             /// <summary>
             /// Gets the specified object
             /// </summary>
-            public TObject Get<TObject>(Guid key) where TObject : IdentifiedData
+            public TObject Get<TObject>(Guid? key) where TObject : IdentifiedData
             {
                 throw new NotImplementedException();
             }
@@ -48,7 +48,7 @@ namespace OpenIZ.Core.Model.EntityLoader
             /// <summary>
             /// Gets the specified object
             /// </summary>
-            public TObject Get<TObject>(Guid key, Guid versionKey) where TObject : IdentifiedData, IVersionedEntity
+            public TObject Get<TObject>(Guid? key, Guid? versionKey) where TObject : IdentifiedData, IVersionedEntity
             {
                 throw new NotImplementedException();
             }
@@ -56,7 +56,7 @@ namespace OpenIZ.Core.Model.EntityLoader
             /// <summary>
             /// Gets the specified relations
             /// </summary>
-            public List<TObject> GetRelations<TObject>(Guid sourceKey, decimal sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation
+            public List<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation
             {
                 throw new NotImplementedException();
             }
@@ -106,10 +106,11 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Get the specified object / version
         /// </summary>
-        public TObject Get<TObject>(Guid key, Guid version, TObject currentInstance) where TObject : IdentifiedData, IVersionedEntity
+        public TObject Get<TObject>(Guid? key, Guid? version, TObject currentInstance) where TObject : IdentifiedData, IVersionedEntity
         {
             if (currentInstance == null &&
-                version != Guid.Empty)
+                version.HasValue && 
+                key.HasValue)
                 return this.m_provider.Get<TObject>(key, version);
             return currentInstance;
         }
@@ -117,9 +118,9 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Get the current version of the specified object
         /// </summary>
-        public TObject Get<TObject>(Guid key, TObject currentInstance) where TObject : IdentifiedData
+        public TObject Get<TObject>(Guid? key, TObject currentInstance) where TObject : IdentifiedData
         {
-            if (currentInstance == null)
+            if (currentInstance == null && key.HasValue)
                 return this.m_provider.Get<TObject>(key);
             return currentInstance;
         }
@@ -127,7 +128,7 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Get version bound relations
         /// </summary>
-        public List<TObject> GetRelations<TObject>(Guid sourceKey, Decimal sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation
+        public List<TObject> GetRelations<TObject>(Guid? sourceKey, Decimal? sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation
         {
             if (currentInstance == null)
                 return this.m_provider.GetRelations<TObject>(sourceKey, sourceVersionSequence, currentInstance);
@@ -138,7 +139,7 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Get bound relations
         /// </summary>
-        public List<TObject> GetRelations<TObject>(Guid sourceKey, List<TObject> currentInstance) where TObject : IdentifiedData, ISimpleAssociation
+        public List<TObject> GetRelations<TObject>(Guid? sourceKey, List<TObject> currentInstance) where TObject : IdentifiedData, ISimpleAssociation
         {
             if (currentInstance == null)
                 return this.m_provider.Query<TObject>(o => o.SourceEntityKey == sourceKey).ToList();

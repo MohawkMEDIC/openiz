@@ -28,6 +28,8 @@ namespace OpenIZ.Core.Model.DataTypes
     /// </summary>
     
     [XmlType("ConceptClass",  Namespace = "http://openiz.org/model"), JsonObject("ConceptClass")]
+    [XmlRoot(nameof(ConceptClass), Namespace = "http://openiz.org/model")]
+
     [Classifier(nameof(Mnemonic)), KeyLookup(nameof(Mnemonic))]
     public class ConceptClass : NonVersionedEntityData
     {

@@ -33,7 +33,7 @@ namespace OpenIZ.Core.Model.Interfaces
         /// <summary>
         /// Gets the identifier for the entity
         /// </summary>
-        Guid Key { get; set; }
+        Guid? Key { get; set; }
 
     }
 }

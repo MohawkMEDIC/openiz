@@ -40,17 +40,17 @@ namespace OpenIZ.Core.Applets.Test
         private class TestEntitySource : IEntitySourceProvider
         {
 
-            public TObject Get<TObject>(Guid key) where TObject : IdentifiedData
+            public TObject Get<TObject>(Guid? key) where TObject : IdentifiedData
             {
                 throw new NotImplementedException();
             }
 
-            public TObject Get<TObject>(Guid key, Guid versionKey) where TObject : IdentifiedData, IVersionedEntity
+            public TObject Get<TObject>(Guid? key, Guid? versionKey) where TObject : IdentifiedData, IVersionedEntity
             {
                 throw new NotImplementedException();
             }
 
-            public List<TObject> GetRelations<TObject>(Guid sourceKey, decimal sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation
+            public List<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation
             {
                 throw new NotImplementedException();
             }
