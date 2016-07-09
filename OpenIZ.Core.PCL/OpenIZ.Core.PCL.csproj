@@ -59,6 +59,7 @@
     <Compile Include="Services\Impl\NullPhoneticAlgorithmHandler.cs" />
     <Compile Include="Services\IPatientRepositoryService.cs" />
     <Compile Include="Services\IPhoneticAlgorithmHandler.cs" />
+    <Compile Include="Services\IPlaceRepositoryService.cs" />
     <Compile Include="Services\ISecurityRepositoryService.cs" />
   </ItemGroup>
   <ItemGroup>
