@@ -112,6 +112,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             loadOptions.LoadWith<Data.EntityTelecomAddress>(cs => cs.TelecomUseConcept);
             loadOptions.LoadWith<Data.EntityAssociation>(cs => cs.AssociationTypeConcept);
             loadOptions.LoadWith<Data.EntityExtension>(cs => cs.ExtensionType);
+            loadOptions.LoadWith<Data.Patient>(cs => cs.GenderConcept);
 
             return loadOptions;
         }

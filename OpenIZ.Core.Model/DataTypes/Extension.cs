@@ -39,6 +39,7 @@ namespace OpenIZ.Core.Model.DataTypes
     public abstract class Extension<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
     {
 
+
         // Extension type key
         private Guid? m_extensionTypeKey;
         // Extension type

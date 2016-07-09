@@ -36,6 +36,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Domain object
             var domainObject = this.FromModelInstance(data, context, principal) as TDomain;
             domainObject.NonVersionedObject = nonVersionedPortion;
+            if (nonVersionedPortion.Id == Guid.Empty &&
+                domainObject.Id != Guid.Empty)
+                nonVersionedPortion.Id = domainObject.Id;
 
             if (nonVersionedPortion.Id == null ||
                 nonVersionedPortion.Id == Guid.Empty)

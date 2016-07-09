@@ -76,6 +76,11 @@ namespace OpenIZ.Core.Model.EntityLoader
         private static EntitySource s_instance = new EntitySource(new DummyEntitySource());
 
         /// <summary>
+        /// Global delay load settings
+        /// </summary>
+        public bool DelayLoadProperties { get; set; }
+
+        /// <summary>
         /// Delay load provider
         /// </summary>
         private IEntitySourceProvider m_provider;
@@ -86,6 +91,7 @@ namespace OpenIZ.Core.Model.EntityLoader
         public EntitySource(IEntitySourceProvider provider)
         {
             m_provider = provider;
+            this.DelayLoadProperties = true;
         }
 
         /// <summary>
@@ -108,6 +114,7 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// </summary>
         public TObject Get<TObject>(Guid? key, Guid? version, TObject currentInstance) where TObject : IdentifiedData, IVersionedEntity
         {
+            if (!this.DelayLoadProperties) return currentInstance;
             if (currentInstance == null &&
                 version.HasValue && 
                 key.HasValue)
@@ -120,6 +127,8 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// </summary>
         public TObject Get<TObject>(Guid? key, TObject currentInstance) where TObject : IdentifiedData
         {
+            if (!this.DelayLoadProperties) return currentInstance;
+
             if (currentInstance == null && key.HasValue)
                 return this.m_provider.Get<TObject>(key);
             return currentInstance;
@@ -130,6 +139,8 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// </summary>
         public List<TObject> GetRelations<TObject>(Guid? sourceKey, Decimal? sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation
         {
+            if (!this.DelayLoadProperties) return currentInstance ?? new List<TObject>();
+
             if (currentInstance == null)
                 return this.m_provider.GetRelations<TObject>(sourceKey, sourceVersionSequence, currentInstance);
             return currentInstance;
@@ -141,6 +152,8 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// </summary>
         public List<TObject> GetRelations<TObject>(Guid? sourceKey, List<TObject> currentInstance) where TObject : IdentifiedData, ISimpleAssociation
         {
+            if (!this.DelayLoadProperties) return currentInstance ?? new List<TObject>();
+
             if (currentInstance == null)
                 return this.m_provider.Query<TObject>(o => o.SourceEntityKey == sourceKey).ToList();
             return currentInstance;

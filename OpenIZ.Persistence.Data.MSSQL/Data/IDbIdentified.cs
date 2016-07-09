@@ -217,6 +217,29 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     }
 
     /// <summary>
+    /// Interface implementation for provider
+    /// </summary>
+    public partial class Provider : IDbIdentified
+    {
+        /// <summary>
+        /// Gets or sets the key
+        /// </summary>
+        [LinqPropertyMap(nameof(EntityVersionId))]
+        public Guid Id
+        {
+            get
+            {
+                return this.EntityVersionId;
+            }
+
+            set
+            {
+                this.EntityVersionId = value;
+            }
+        }
+    }
+
+    /// <summary>
     /// Interface implementation
     /// </summary>
     public partial class IdentifierType : IDbIdentified

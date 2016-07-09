@@ -1,6 +1,7 @@
 ﻿using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
@@ -64,54 +65,74 @@ namespace OpenIZ.Core.Persistence
         {
             this.m_persistenceHandler = (o, e) => {
 
-                String dataDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Data");
-                this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Scanning Directory {0} for datasets", dataDirectory);
-
-                XmlSerializer xsz = new XmlSerializer(typeof(DatasetInstall));
-                // Perform migrations
-                foreach(var f in Directory.GetFiles(dataDirectory, "*.dataset"))
+                try
                 {
-                    try
+                    EntitySource.Current.DelayLoadProperties = false;
+                    String dataDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Data");
+                    this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Scanning Directory {0} for datasets", dataDirectory);
+
+                    XmlSerializer xsz = new XmlSerializer(typeof(DatasetInstall));
+                    var datasetFiles = Directory.GetFiles(dataDirectory, "*.dataset");
+                    Array.Sort(datasetFiles);
+                    // Perform migrations
+                    foreach (var f in datasetFiles)
                     {
-                        using (var fs = File.OpenRead(f))
+                        try
                         {
-                            var ds = xsz.Deserialize(fs) as DatasetInstall;
-                            this.m_traceSource.TraceInformation("Applying {0}...", ds.Id);
-
-                            foreach (var itm in ds.Action)
+                            using (var fs = File.OpenRead(f))
                             {
-                                // Association
-                                if(itm.Association != null)
-                                    foreach(var ascn in itm.Association)
-                                    {
-                                        var pi = itm.Element.GetType().GetRuntimeProperty(ascn.PropertyName);
-                                        var mi = pi.PropertyType.GetRuntimeMethod("Add", new Type[] { ascn.Element.GetType() });
-                                        mi.Invoke(pi.GetValue(itm.Element), new object[] { ascn.Element });
-                                    }
+                                var ds = xsz.Deserialize(fs) as DatasetInstall;
+                                this.m_traceSource.TraceInformation("Applying {0} ({1} objects)...", ds.Id, ds.Action.Count);
 
-                                // IDP Type
-                                Type idpType = typeof(IDataPersistenceService<>);
-                                idpType = idpType.MakeGenericType(new Type[] { itm.Element.GetType() });
-                                var svc = ApplicationContext.Current.GetService(idpType);
+                                foreach (var itm in ds.Action)
+                                {
+                                    // Association
+                                    if (itm.Association != null)
+                                        foreach (var ascn in itm.Association)
+                                        {
+                                            var pi = itm.Element.GetType().GetRuntimeProperty(ascn.PropertyName);
+                                            var mi = pi.PropertyType.GetRuntimeMethod("Add", new Type[] { ascn.Element.GetType() });
+                                            mi.Invoke(pi.GetValue(itm.Element), new object[] { ascn.Element });
+                                        }
 
-                                // Don't insert duplicates
-                                var getMethod = idpType.GetMethod("Get");
-                                var existing = getMethod.MakeGenericMethod(new Type[] { typeof(Guid) }).Invoke(svc, new object[] { new Identifier<Guid>(itm.Element.Key.Value), AuthenticationContext.SystemPrincipal, false });
-                                if(existing == null && (itm is DataInsert || (itm is DataUpdate && (itm as DataUpdate).InsertIfNotExists)))
-                                    idpType.GetMethod("Insert", new Type[] { itm.Element.GetType(), typeof(IPrincipal), typeof(TransactionMode) }).Invoke(svc, new object[] { itm.Element, AuthenticationContext.SystemPrincipal, TransactionMode.Commit });
-                                else if(!(itm is DataInsert))
-                                    idpType.GetMethod(itm.ActionName, new Type[] { itm.Element.GetType(), typeof(IPrincipal), typeof(TransactionMode) }).Invoke(svc, new object[] { itm.Element, AuthenticationContext.SystemPrincipal, TransactionMode.Commit });
+                                    // IDP Type
+                                    Type idpType = typeof(IDataPersistenceService<>);
+                                    idpType = idpType.MakeGenericType(new Type[] { itm.Element.GetType() });
+                                    var svc = ApplicationContext.Current.GetService(idpType);
+
+                                    // Don't insert duplicates
+                                    var getMethod = idpType.GetMethod("Get");
+
+                                    this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "{0} {1}", itm.ActionName, itm.Element);
+
+                                    Object existing = null;
+                                    if(itm.Element.Key.HasValue)
+                                        existing = getMethod.MakeGenericMethod(new Type[] { typeof(Guid) }).Invoke(svc, new object[] { new Identifier<Guid>(itm.Element.Key.Value), AuthenticationContext.SystemPrincipal, false });
+                                    if (existing == null && (itm is DataInsert || (itm is DataUpdate && (itm as DataUpdate).InsertIfNotExists)))
+                                        idpType.GetMethod("Insert", new Type[] { itm.Element.GetType(), typeof(IPrincipal), typeof(TransactionMode) }).Invoke(svc, new object[] { itm.Element, AuthenticationContext.SystemPrincipal, TransactionMode.Commit });
+                                    else if (!(itm is DataInsert))
+                                        idpType.GetMethod(itm.ActionName, new Type[] { itm.Element.GetType(), typeof(IPrincipal), typeof(TransactionMode) }).Invoke(svc, new object[] { itm.Element, AuthenticationContext.SystemPrincipal, TransactionMode.Commit });
+
+                                }
+                                this.m_traceSource.TraceInformation("Applied {0} changes", ds.Action.Count);
 
                             }
+
+
+                            File.Move(f, Path.ChangeExtension(f, "log"));
+                        }
+                        catch (Exception ex)
+                        {
+                            this.m_traceSource.TraceEvent(TraceEventType.Error, ex.HResult, "Error applying {0}: {1}", f, ex);
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        this.m_traceSource.TraceEvent(TraceEventType.Error, ex.HResult, "Error applying {0}: {1}", f, ex);
-                    }
                 }
-                this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Un-binding event handler");
-                ApplicationContext.Current.Started -= this.m_persistenceHandler;
+                finally
+                {
+                    this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Un-binding event handler");
+                    ApplicationContext.Current.Started -= this.m_persistenceHandler;
+                    EntitySource.Current.DelayLoadProperties = true;
+                }
             };
         }
 

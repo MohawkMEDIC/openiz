@@ -32,6 +32,25 @@ namespace OpenIZ.Core.Model.DataTypes
     [XmlRoot(nameof(AssigningAuthority), Namespace = "http://openiz.org/model")]
     public  class AssigningAuthority : BaseEntityData
     {
+
+        /// <summary>
+        /// Assigning authority
+        /// </summary>
+        public AssigningAuthority()
+        {
+
+        }
+
+        /// <summary>
+        /// Creates a new assigning authority 
+        /// </summary>
+        public AssigningAuthority(String domainName, String name, String oid)
+        {
+            this.DomainName = domainName;
+            this.Name = name;
+            this.Oid = oid;
+        }
+
         // Assigning device id
         private Guid? m_assigningDeviceId;
 

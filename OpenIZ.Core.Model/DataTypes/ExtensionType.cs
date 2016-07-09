@@ -39,6 +39,23 @@ namespace OpenIZ.Core.Model.DataTypes
     {
 
         /// <summary>
+        /// Extension type ctor
+        /// </summary>
+        public ExtensionType()
+        {
+
+        }
+
+        /// <summary>
+        /// Creates  a new extension type
+        /// </summary>
+        public ExtensionType(String name, Type handlerClass)
+        {
+            this.Name = name;
+            this.ExtensionHandler = handlerClass;
+        }
+
+        /// <summary>
         /// Gets or sets the extension handler
         /// </summary>
         [XmlIgnore, JsonIgnore]

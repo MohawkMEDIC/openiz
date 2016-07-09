@@ -59,7 +59,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 		{
 			var domainObject = this.FromModelInstance (data, context, principal) as TDomain;
 
-            if (domainObject.Id == Guid.Empty)
+            if (domainObject.Id == null ||
+                domainObject.Id == Guid.Empty)
                 data.Key = domainObject.Id = Guid.NewGuid();
 
             context.GetTable<TDomain>().InsertOnSubmit (domainObject);

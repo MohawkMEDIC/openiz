@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using OpenIZ.Core.Model.Interfaces;
+using System.Data.Linq;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -15,7 +16,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     /// </summary>
     public class SecurityUserPersistenceService : BaseDataPersistenceService<Core.Model.Security.SecurityUser, Data.SecurityUser>
     {
-
+        public override Core.Model.Security.SecurityUser ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
+        {
+            var dbUser = dataInstance as Data.SecurityUser;
+            var retVal = base.ToModelInstance(dataInstance, context, principal);
+            retVal.Roles = dbUser.SecurityUserRoles.Select(o => m_mapper.MapDomainInstance<Data.SecurityRole, Core.Model.Security.SecurityRole>(o.SecurityRole)).ToList();
+            return retVal;
+        }
         /// <summary>
         /// Insert the specified object
         /// </summary>
@@ -62,6 +69,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             return retVal;
         }
 
+        /// <summary>
+        /// Data load options
+        /// </summary>
+        /// <returns></returns>
+        protected override DataLoadOptions GetDataLoadOptions()
+        {
+            var baseOptions = base.GetDataLoadOptions();
+            baseOptions.LoadWith<Data.SecurityUser>(o => o.SecurityUserRoles);
+            return baseOptions;
+        }
     }
 
     /// <summary>

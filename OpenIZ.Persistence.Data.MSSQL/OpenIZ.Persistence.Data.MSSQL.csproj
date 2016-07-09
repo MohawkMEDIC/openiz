@@ -94,6 +94,7 @@
     </Compile>
     <Compile Include="Services\Persistence\ManufacturedMaterialPersistenceService.cs" />
     <Compile Include="Services\Persistence\MaterialPersistenceService.cs" />
+    <Compile Include="Services\Persistence\ProviderPersistenceService.cs" />
     <Compile Include="Services\Persistence\SecurityPersistenceServices.cs" />
     <Compile Include="Services\SqlServerPersistenceService.cs" />
     <Compile Include="Services\Persistence\ApplicationEntityPersistenceService.cs" />

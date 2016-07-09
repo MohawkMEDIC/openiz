@@ -180,6 +180,10 @@ namespace OpenIZ.Core.Model.Security
                     this.m_roles = EntitySource.Current.Provider.Query<SecurityRole>(r => r.Users.Any(u => u.Key == this.Key)).ToList();
                 return this.m_roles;
             }
+            set
+            {
+                this.m_roles = value;
+            }
         }
       
         /// <summary>

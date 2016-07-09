@@ -49,7 +49,15 @@ namespace OpenIZ.Core.Model
         private Guid? m_obsoletedById;
         // Obsoleted by user
         private SecurityUser m_obsoletedBy;
-        
+
+        /// <summary>
+        /// Constructs a new base entity data
+        /// </summary>
+        public BaseEntityData()
+        {
+            this.CreationTime = DateTimeOffset.Now;
+        }
+
         /// <summary>
         /// Creation Time
         /// </summary>

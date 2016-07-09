@@ -1,6 +1,8 @@
 ﻿using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Model.Security;
 using System;
 using System.Collections.Generic;
@@ -60,10 +62,18 @@ namespace OpenIZ.Core.Persistence
         [XmlElement("ConceptClass", typeof(ConceptClass), Namespace = "http://openiz.org/model")]
         [XmlElement("SecurityPolicy", typeof(SecurityPolicy), Namespace = "http://openiz.org/model")]
         [XmlElement("SecurityRole", typeof(SecurityRole), Namespace = "http://openiz.org/model")]
+        [XmlElement("SecurityUser", typeof(SecurityUser), Namespace = "http://openiz.org/model")]
         [XmlElement("ExtensionType", typeof(ExtensionType), Namespace = "http://openiz.org/model")]
         [XmlElement("CodeSystem", typeof(CodeSystem), Namespace = "http://openiz.org/model")]
         [XmlElement("ReferenceTerm", typeof(ReferenceTerm), Namespace = "http://openiz.org/model")]
         [XmlElement("IdentifierType", typeof(IdentifierType), Namespace = "http://openiz.org/model")]
+        [XmlElement("UserEntity", typeof(UserEntity), Namespace = "http://openiz.org/model")]
+        [XmlElement("Entity", typeof(Entity), Namespace = "http://openiz.org/model")]
+        [XmlElement("Organization", typeof(Organization), Namespace = "http://openiz.org/model")]
+        [XmlElement("Person", typeof(Person), Namespace = "http://openiz.org/model")]
+        [XmlElement("Provider", typeof(Provider), Namespace = "http://openiz.org/model")]
+        [XmlElement("Patient", typeof(Patient), Namespace = "http://openiz.org/model")]
+        [XmlElement("Place", typeof(Place), Namespace = "http://openiz.org/model")]
         [XmlElement("Bundle", typeof(Bundle), Namespace = "http://openiz.org/model")]
         public IdentifiedData Element { get; set; }
 

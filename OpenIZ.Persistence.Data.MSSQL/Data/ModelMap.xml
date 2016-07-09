@@ -175,6 +175,8 @@
     <property modelName="ConceptSets" domainName="ConceptSetMembers" dontLoad="true">
       <via domainName="Concept"/>
     </property>
+    <property modelName="Key" domainName="ConceptId"/>
+  
   </class>
   <!-- Concept Class -->
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptClass, OpenIZ.Core.Model, Version=1.0.0.0"
@@ -368,6 +370,7 @@
 
   <class modelClass="OpenIZ.Core.Model.Entities.Entity, OpenIZ.Core.Model, Version=1.0.0.0"
        domainClass="OpenIZ.Persistence.Data.MSSQL.Data.Entity, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="EntityId"/>
     <property modelName="ClassConceptKey" domainName="ClassConceptId"/>
     <property modelName="ClassConcept" domainName="ClassConcept">
       <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
@@ -585,6 +588,24 @@
       <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
     </property>
     <collapseKey propertyName="GenderConcept" keyName="GenderConceptId"/>
+
+  </class>
+
+  <!-- Provider Maps -->
+  <class modelClass="OpenIZ.Core.Model.Roles.Provider, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.MSSQL.Data.Provider, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <base domainName="Person"/>
+    <property modelName="Key" domainName="Person">
+      <via domainName="EntityVersion">
+        <via domainName="EntityId"/>
+      </via>
+    </property>
+    <property modelName="VersionKey" domainName="EntityVersionId"/>
+    <property modelName="ProviderSpecialtyKey" domainName="ProviderSpecialtyConceptId"/>
+    <property modelName="ProviderSpecialty" domainName="ProviderSpecialtyConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+    </property>
+    <collapseKey propertyName="ProviderSpecialtyConcept" keyName="ProviderSpecialtyConceptId"/>
 
   </class>
 

@@ -111,7 +111,7 @@ namespace OpenIZ.Core.Model.Map
                 retVal.AddRange(this.Via.Validate(modelClass?.GetRuntimeProperty(this.ModelName ?? "")?.PropertyType ?? modelClass, domainClass?.GetRuntimeProperty(this.DomainName)?.PropertyType));
 
             // Order by?
-            if(!String.IsNullOrEmpty(this.OrderBy))
+            if(!String.IsNullOrEmpty(this.OrderBy) && domainClass != null)
             {
 
                 var orderProperty = domainClass.GetRuntimeProperty(this.DomainName);
