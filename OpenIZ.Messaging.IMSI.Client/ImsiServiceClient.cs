@@ -1,15 +1,15 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using System.Xml.Serialization;
-using System.Collections.Generic;
+﻿using OpenIZ.Core.Http;
+using OpenIZ.Core.Interop.Clients;
 using OpenIZ.Core.Model;
-using System.Linq.Expressions;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Query;
-using OpenIZ.Core.Interop.Clients;
-using OpenIZ.Core.Http;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Messaging.IMSI.Client
 {
@@ -19,11 +19,11 @@ namespace OpenIZ.Messaging.IMSI.Client
 	public class ImsiServiceClient : ServiceClientBase, IDisposable
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="OpenIZ.Messaging.IMSI.Client.ImsiServiceClient"/> class 
+		/// Initializes a new instance of the <see cref="OpenIZ.Messaging.IMSI.Client.ImsiServiceClient"/> class
 		/// with a specified <see cref="OpenIZ.Core.Http.IRestClient"/> instance.
 		/// </summary>
 		/// <param name="client">The <see cref="OpenIZ.Core.Http.IRestClient"/> instance.</param>
-		public ImsiServiceClient (IRestClient client) : base(client)
+		public ImsiServiceClient(IRestClient client) : base(client)
 		{
 			this.Client.Accept = client.Accept ?? "application/xml";
 		}
@@ -155,34 +155,35 @@ namespace OpenIZ.Messaging.IMSI.Client
 			return retVal;
 		}
 
-        /// <summary>
+		/// <summary>
 		/// Updates a specified object.
 		/// </summary>
 		/// <typeparam name="TModel">The type of data to be updated.</typeparam>
 		/// <param name="data">The data to be updated.</param>
 		/// <returns>Returns the updated data.</returns>
-        public TModel Update<TModel>(TModel data) where TModel : IdentifiedData
-        {
-            if (data == null)
+		public TModel Update<TModel>(TModel data) where TModel : IdentifiedData
+		{
+			if (data == null)
 			{
 				throw new ArgumentNullException(nameof(data));
 			}
 
-            // Resource name
-            String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+			// Resource name
+			String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
 
-            // Create with version?
-            if (data.Key != null)
+			// Create with version?
+			if (data.Key != null)
 			{
 				return this.Client.Put<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key.Value), this.Client.Accept, data);
 			}
-            else
+			else
 			{
 				throw new KeyNotFoundException();
 			}
-        }
+		}
 
 		#region IDisposable Support
+
 		private bool disposedValue = false; // To detect redundant calls
 
 		/// <summary>
@@ -222,7 +223,6 @@ namespace OpenIZ.Messaging.IMSI.Client
 			// GC.SuppressFinalize(this);
 		}
 
-		#endregion
+		#endregion IDisposable Support
 	}
 }
-
