@@ -111,7 +111,6 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
         {
             return this.m_repository.Find(QueryExpressionParser.BuildLinqExpression<Patient>(queryParameters), offset, count, out totalCount);
-
         }
 
         /// <summary>
