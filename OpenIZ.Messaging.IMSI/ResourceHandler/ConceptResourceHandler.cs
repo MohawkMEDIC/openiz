@@ -33,6 +33,9 @@ using OpenIZ.Messaging.IMSI.Util;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Model.Query;
+using OpenIZ.Core.Security;
+using System.Security.Permissions;
+using OpenIZ.Core.Security.Attribute;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {
@@ -60,6 +63,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <summary>
         /// Create the specified object in the database
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
         public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
         {
             var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
@@ -94,6 +98,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <summary>
         /// Obsolete the specified concept
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
         public IdentifiedData Obsolete(Guid key)
         {
             var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
@@ -121,6 +126,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <summary>
         /// Update the specified data
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
         public IdentifiedData Update(IdentifiedData data)
         {
             var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();

@@ -9,6 +9,9 @@ using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Model.Collection;
 using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Services;
+using OpenIZ.Core.Security.Attribute;
+using OpenIZ.Core.Security;
+using System.Security.Permissions;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {
@@ -50,6 +53,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <summary>
         /// Create the specified patient
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
         public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
         {
             if (data == null)
@@ -76,6 +80,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <summary>
         /// Gets the specified patient data
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
         public IdentifiedData Get(Guid id, Guid versionId)
         {
             return this.m_repository.Get(id, versionId);
@@ -84,6 +89,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <summary>
         /// Obsolete the specified patient
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.DeleteClinicalData)]
         public IdentifiedData Obsolete(Guid key)
         {
             return this.m_repository.Obsolete(key);
@@ -92,6 +98,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <summary>
         /// Query the specified patient
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryClinicalData)]
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
         {
             return this.m_repository.Find(QueryExpressionParser.BuildLinqExpression<Patient>(queryParameters));
@@ -100,6 +107,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <summary>
         /// Query specified patient
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryClinicalData)]
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
         {
             return this.m_repository.Find(QueryExpressionParser.BuildLinqExpression<Patient>(queryParameters), offset, count, out totalCount);
@@ -109,6 +117,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <summary>
         /// Update the specified patient data
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
         public IdentifiedData Update(IdentifiedData data)
         {
             if (data == null)

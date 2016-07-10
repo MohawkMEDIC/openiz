@@ -67,6 +67,10 @@ namespace OpenIZ.Core.Security
         public const string CreateApplication = "1.3.6.1.4.1.33349.3.1.5.9.2.0.6";
 
         /// <summary>
+        /// Administer the concept dictionary
+        /// </summary>
+        public const string AdministerConceptDictionary = "1.3.6.1.4.1.33349.3.1.5.9.2.0.7";
+        /// <summary>
         /// Policy identifier for allowance of login
         /// </summary>
         public const string Login = "1.3.6.1.4.1.33349.3.1.5.9.2.1";

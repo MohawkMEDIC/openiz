@@ -73,7 +73,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Create the specified resource
         /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
         public IdentifiedData Create(string resourceType, IdentifiedData body)
         {
             try
@@ -115,7 +115,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Create or update the specified object
         /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
         public IdentifiedData CreateUpdate(string resourceType, string id, IdentifiedData body)
         {
             try
@@ -157,7 +157,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Get the specified object
         /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
         public IdentifiedData Get(string resourceType, string id)
         {
 
@@ -198,7 +198,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Gets a specific version of a resource
         /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
         public IdentifiedData GetVersion(string resourceType, string id, string versionId)
         {
             try
@@ -270,7 +270,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Gets the recent history an object
         /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
         public IdentifiedData History(string resourceType, string id)
         {
             try
@@ -313,7 +313,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Perform a search on the specified resource type
         /// </summary>
-        [PolicyPermissionAttribute(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryClinicalData)]
+        [PolicyPermissionAttribute(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
         public IdentifiedData Search(string resourceType)
         {
             try
@@ -357,7 +357,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Update the specified resource
         /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
         public IdentifiedData Update(string resourceType, string id, IdentifiedData body)
         {
             try
@@ -503,7 +503,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Obsolete the specified data
         /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.DeleteClinicalData)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
         public IdentifiedData Delete(string resourceType, string id)
         {
             try

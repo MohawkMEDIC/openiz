@@ -9,6 +9,9 @@ using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Services;
 using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Security;
+using OpenIZ.Core.Security.Attribute;
+using System.Security.Permissions;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {
@@ -54,6 +57,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <summary>
         /// Creates the specified data
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
         public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
         {
             if (data == null)
@@ -92,6 +96,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <summary>
         /// Obsolete the specified concept set
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
         public IdentifiedData Obsolete(Guid key)
         {
             return this.m_repositoryService.ObsoleteConceptSet(key);
@@ -118,6 +123,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
         public IdentifiedData Update(IdentifiedData data)
         {
 
