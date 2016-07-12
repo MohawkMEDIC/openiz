@@ -142,26 +142,39 @@ namespace OpenIZ.Messaging.IMSI.Client
 		/// <returns>Returns a Bundle containing the data.</returns>
 		public Bundle Query<TModel>(Expression<Func<TModel, bool>> query) where TModel : IdentifiedData
 		{
-			// Map the query to HTTP parameters
-			var queryParms = QueryExpressionBuilder.BuildQuery(query);
-
-			// Resource name
-			String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
-
-			// The IMSI uses the XMLName as the root of the request
-			var retVal = this.Client.Get<Bundle>(resourceName, queryParms.ToArray());
-
-			// Return value
-			return retVal;
+            return this.Query(query, 0, null);
 		}
 
-		/// <summary>
-		/// Updates a specified object.
-		/// </summary>
-		/// <typeparam name="TModel">The type of data to be updated.</typeparam>
-		/// <param name="data">The data to be updated.</param>
-		/// <returns>Returns the updated data.</returns>
-		public TModel Update<TModel>(TModel data) where TModel : IdentifiedData
+        /// <summary>
+        /// Performs a query.
+        /// </summary>
+        /// <typeparam name="TModel">The type of object to query.</typeparam>
+        /// <param name="query">The query parameters as a LINQ expression.</param>
+        /// <returns>Returns a Bundle containing the data.</returns>
+        public Bundle Query<TModel>(Expression<Func<TModel, bool>> query, int offset, int? count) where TModel : IdentifiedData
+        {
+            // Map the query to HTTP parameters
+            var queryParms = QueryExpressionBuilder.BuildQuery(query).ToList();
+            queryParms.Add(new KeyValuePair<string, object>("_offset", offset));
+            if(count.HasValue)
+                queryParms.Add(new KeyValuePair<string, object>("_count", count));
+            // Resource name
+            String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+
+            // The IMSI uses the XMLName as the root of the request
+            var retVal = this.Client.Get<Bundle>(resourceName, queryParms.ToArray());
+
+            // Return value
+            return retVal;
+        }
+
+        /// <summary>
+        /// Updates a specified object.
+        /// </summary>
+        /// <typeparam name="TModel">The type of data to be updated.</typeparam>
+        /// <param name="data">The data to be updated.</param>
+        /// <returns>Returns the updated data.</returns>
+        public TModel Update<TModel>(TModel data) where TModel : IdentifiedData
 		{
 			if (data == null)
 			{

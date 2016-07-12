@@ -41,6 +41,7 @@
     <Compile Include="Http\Description\IRestClientCertificateDescription.cs" />
     <Compile Include="Http\Description\IRestClientEndpointDescription.cs" />
     <Compile Include="Http\FormBodySerializer.cs" />
+    <Compile Include="Http\HttpBasicCredentials.cs" />
     <Compile Include="Http\IBodySerializer.cs" />
     <Compile Include="Http\ICertificateValidator.cs" />
     <Compile Include="Http\Description\IRestClientBindingDescription.cs" />

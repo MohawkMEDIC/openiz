@@ -342,7 +342,56 @@ namespace OpenIZ.Core.Http
 		public void Dispose()
 		{
 		}
-	}
+
+        /// <summary>
+        /// Perform a head operation against the specified url
+        /// </summary>
+        public IDictionary<string, string> Head(string resourceName, params KeyValuePair<String, Object>[] query)
+        {
+            NameValueCollection parameters = new NameValueCollection();
+
+            try
+            {
+                if (query != null)
+                {
+                    parameters = new NameValueCollection(query);
+                }
+
+                var requestEventArgs = new RestRequestEventArgs("HEAD", resourceName, parameters, null, null);
+                this.Requesting?.Invoke(this, requestEventArgs);
+                if (requestEventArgs.Cancel)
+                {
+                    this.m_tracer.TraceVerbose("HTTP request cancelled");
+                    return null;
+                }
+
+                // Invoke
+                var httpWebReq = this.CreateHttpRequest(resourceName, query);
+                httpWebReq.Method = "HEAD";
+
+                // Get the responst
+                Dictionary<String, String> retVal = new Dictionary<string, string>();
+                var httpTask = httpWebReq.GetResponseAsync();
+                httpTask.ContinueWith(o =>
+                {
+                    foreach (var itm in o.Result.Headers.AllKeys)
+                        retVal.Add(itm, o.Result.Headers[itm]);
+                });
+                httpTask.Start(); 
+                httpTask.Wait();
+
+                this.Responded?.Invoke(this, new RestResponseEventArgs("HEAD", resourceName, parameters, null, null, 200));
+
+                return retVal;
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error invoking HTTP: {0}", e);
+                this.Responded?.Invoke(this, new RestResponseEventArgs("HEAD", resourceName, parameters, null, null, 500));
+                throw;
+            }
+        }
+    }
 
 	/// <summary>
 	/// Service client error type

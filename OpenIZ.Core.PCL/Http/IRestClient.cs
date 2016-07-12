@@ -97,11 +97,18 @@ namespace OpenIZ.Core.Http
 		/// <typeparam name="TResult">The 1st type parameter.</typeparam>
 		TResult Options<TResult>(String url);
 
-		/// <summary>
-		/// Gets the service client description
-		/// </summary>
-		/// <value>The description.</value>
-		IRestClientDescription Description { get; }
+        /// <summary>
+        /// Executes a HEAD operation against the URL
+        /// </summary>
+        /// <param name="url">URL.</param>
+        /// <typeparam name="TResult">The 1st type parameter.</typeparam>
+        IDictionary<String, String> Head(String resourceName, params KeyValuePair<String, Object>[] query);
+
+        /// <summary>
+        /// Gets the service client description
+        /// </summary>
+        /// <value>The description.</value>
+        IRestClientDescription Description { get; }
 
 		/// <summary>
 		/// Fired prior to rest client invoking a method

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AppletManifest xmlns="http://openiz.org/applet">
+  <info id="org.openiz.applet.test.layout" version="1.0.0.0">
+    <name lang="en">Test Layout</name>
+    <author>OpenIZ Community</author>
+  </info>
+  <menuItem launch="index">
+    <text>Some Menu Text</text>
+  </menuItem>
+  <strings lang="en">
+    <string key="myString">String</string>
+  </strings>
+</AppletManifest>
