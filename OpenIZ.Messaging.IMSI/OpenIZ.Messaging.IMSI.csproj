@@ -70,6 +70,7 @@
     <Compile Include="ResourceHandler\IResourceHandler.cs" />
     <Compile Include="ResourceHandler\PatientResourceHandler.cs" />
     <Compile Include="ResourceHandler\PlaceResourceHandler.cs" />
+    <Compile Include="ResourceHandler\ProviderResourceHandler.cs" />
     <Compile Include="ResourceHandler\ResourceHandlerUtil.cs" />
     <Compile Include="Util\BundleUtil.cs" />
     <Compile Include="Wcf\Behavior\ImsiErrorEndpointBehavior.cs" />
