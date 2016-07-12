@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\bin\Debug\OpenIZ.Core.PCL.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -61,6 +62,7 @@
     <Compile Include="Services\IPatientRepositoryService.cs" />
     <Compile Include="Services\IPhoneticAlgorithmHandler.cs" />
     <Compile Include="Services\IPlaceRepositoryService.cs" />
+    <Compile Include="Services\IProviderRepositoryService.cs" />
     <Compile Include="Services\ISecurityRepositoryService.cs" />
   </ItemGroup>
   <ItemGroup>
