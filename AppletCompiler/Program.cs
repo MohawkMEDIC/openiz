@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -53,26 +54,50 @@ namespace AppletCompiler
                         i.Name = i.Name.Substring(1);
                     using (var ofs = File.Create(parameters.Output ?? "out.xml"))
                         xsz.Serialize(ofs, mfst);
+
+                    var pkg = mfst.CreatePackage();
+                    pkg.Meta.Hash = SHA256.Create().ComputeHash(pkg.Manifest);
+                    pkg.Meta.PublicKeyToken = pkg.Meta.PublicKeyToken ?? BitConverter.ToString(Guid.NewGuid().ToByteArray()).Replace("-", "");
+                    if (pkg.Meta.Version.Contains("*"))
+                        pkg.Meta.Version = pkg.Meta.Version.Replace("*", DateTime.Now.Subtract(new DateTime(DateTime.Now.Year, 1, 1)).TotalMinutes.ToString("00000"));
+
                     using (var ofs = File.Create(Path.ChangeExtension(parameters.Output ?? "out.xml", ".pak.raw")))
-                        packXsz.Serialize(ofs, mfst.CreatePackage());
+                        packXsz.Serialize(ofs, pkg);
                     using (var ofs = File.Create(Path.ChangeExtension(parameters.Output ?? "out.xml", ".pak.gz")))
                     using (var gzs = new GZipStream(ofs, CompressionMode.Compress))
-                        packXsz.Serialize(gzs, mfst.CreatePackage());
-
+                    {
+                                                packXsz.Serialize(gzs, pkg);
+                    }
                     // Render the build directory
+
+
                     var bindir = Path.Combine(Path.GetDirectoryName(parameters.Output), "bin");
-                    if (Directory.Exists(bindir) && parameters.Clean)
-                        Directory.Delete(bindir, true);
-                    bindir = Path.Combine(bindir, mfst.Info.Id);
-                    Directory.CreateDirectory(bindir);
+
+                    if (String.IsNullOrEmpty(parameters.Deploy))
+                    {
+                        if (Directory.Exists(bindir) && parameters.Clean)
+                            Directory.Delete(bindir, true);
+                        bindir = Path.Combine(bindir, mfst.Info.Id);
+                        Directory.CreateDirectory(bindir);
+                    }
+                    else
+                        bindir = parameters.Deploy;
+
                     AppletCollection ac = new AppletCollection();
                     mfst.Initialize();
                     ac.Add(mfst);
 
                     foreach (var lang in mfst.Strings)
                     {
+                        
                         string wd = Path.Combine(bindir, lang.Language);
-                        Directory.CreateDirectory(wd);
+                        if (String.IsNullOrEmpty(parameters.Lang))
+                            Directory.CreateDirectory(wd);
+                        else if (parameters.Lang == lang.Language)
+                            wd = bindir;
+                        else
+                            continue;
+
                         foreach(var itm in mfst.Assets)
                         {
                             try

@@ -14,8 +14,8 @@ namespace OpenIZ.Core.Applets.Model
 		/// <summary>
 		/// Applet reference metadata
 		/// </summary>
-		[XmlElement("meta")]
-		public AppletName Meta {
+		[XmlElement("info")]
+		public AppletInfo Meta {
 			get;
 			set;
 		}

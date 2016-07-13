@@ -32,6 +32,8 @@ namespace OpenIZ.Core.Model.DataTypes
     [XmlType("DatePrecision",  Namespace = "http://openiz.org/model")]
     public enum DatePrecision
     {
+        [XmlEnum("F")]
+        Full, 
         [XmlEnum("Y")]
         Year,
         [XmlEnum("m")]

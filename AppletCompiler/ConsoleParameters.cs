@@ -16,6 +16,18 @@ namespace AppletCompiler
     {
 
         /// <summary>
+        /// Deploy
+        /// </summary>
+        [Parameter("deploy")]
+        public string Deploy { get; set; }
+        
+        /// <summary>
+        /// Language
+        /// </summary>
+        [Parameter("lang")]
+        public string Lang { get; set; }
+
+        /// <summary>
         /// Clean
         /// </summary>
         [Parameter("c")]

@@ -42,7 +42,7 @@ namespace OpenIZ.Core.Applets.Model
 		public AppletPackage CreatePackage()
 		{
 			AppletPackage retVal = new AppletPackage () {
-				Meta = this.Info.AsReference ()
+				Meta = this.Info
 			};
 			using (MemoryStream ms = new MemoryStream ()) {
 				XmlSerializer xsz = new XmlSerializer (typeof(AppletManifest));
