@@ -183,27 +183,6 @@ namespace OpenIZ.Core.Applets.Test
         }
 
         /// <summary>
-        /// Test re-write of URLS
-        /// </summary>
-        [TestMethod]
-        public void TestRewriteUrl()
-        {
-            var coll = new AppletCollection();
-            coll.Add(AppletManifest.Load(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.HelloWorldApplet.xml")));
-            coll.Add(AppletManifest.Load(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.SettingsApplet.xml")));
-
-            coll.AssetBase = "http://test.com/assets/";
-            coll.AppletBase = "http://test.com/applets/";
-            var asset = coll.ResolveAsset("app://openiz.org/applet/org.openiz.sample.helloworld/index");
-            Assert.IsNotNull(asset);
-            var render = coll.RenderAssetContent(asset);
-            String renderString = Encoding.UTF8.GetString(render);
-            Trace.WriteLine(renderString);
-            Assert.IsTrue(renderString.Contains("http://test.com/assets/css/bootstrap.css"));
-            Assert.IsTrue(renderString.Contains("http://test.com/applets/org.openiz.sample.helloworld/index-controller"));
-        }
-
-        /// <summary>
         /// Test pre-processing of localization
         /// </summary>
         [TestMethod]
@@ -228,18 +207,7 @@ namespace OpenIZ.Core.Applets.Test
         {
             var coll = new AppletCollection();
             coll.Add(AppletManifest.Load(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.LayoutAngularTest.xml")));
-            coll.AssetBase = "file:///C:/Users/fyfej/Source/Repos/openizdc/OpenIZMobile/Assets/";
-            var path = Path.GetDirectoryName(Path.GetTempFileName());
-            coll.AppletBase = "file:///" + path.Replace("\\","/") + "/";
-
-            if (!Directory.Exists(Path.Combine(path, "org.openiz.applet.test.layout")))
-                Directory.CreateDirectory(Path.Combine(path, "org.openiz.applet.test.layout"));
-
-            File.WriteAllText(Path.Combine(path, "org.openiz.applet.test.layout", "index-controller"), Encoding.UTF8.GetString(coll.RenderAssetContent(coll.ResolveAsset("app://openiz.org/applet/org.openiz.applet.test.layout/index-controller"))));
-            File.WriteAllText(Path.Combine(path, "org.openiz.applet.test.layout", "index-style"), Encoding.UTF8.GetString(coll.RenderAssetContent(coll.ResolveAsset("app://openiz.org/applet/org.openiz.applet.test.layout/index-style"))));
-            File.WriteAllText(Path.Combine(path, "org.openiz.applet.test.layout", "layout-style"), Encoding.UTF8.GetString(coll.RenderAssetContent(coll.ResolveAsset("app://openiz.org/applet/org.openiz.applet.test.layout/layout-style"))));
-            File.WriteAllText(Path.Combine(path, "org.openiz.applet.test.layout", "layout-controller"), Encoding.UTF8.GetString(coll.RenderAssetContent(coll.ResolveAsset("app://openiz.org/applet/org.openiz.applet.test.layout/layout-controller"))));
-
+            
             var asset = coll.ResolveAsset("app://openiz.org/applet/org.openiz.applet.test.layout/index");
             var render = coll.RenderAssetContent(asset);
             string html = Encoding.UTF8.GetString(render);

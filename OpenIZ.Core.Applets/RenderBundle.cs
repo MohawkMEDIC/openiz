@@ -13,11 +13,6 @@ namespace OpenIZ.Core.Applets
     public class RenderBundle
     {
 
-        // Mobile meta bundle content
-        public const string BUNDLE_JQUERY = "jquery";
-        public const string BUNDLE_BOOTSTRAP = "bootstrap";
-        public const string BUNDLE_ANGULAR = "angular";
-        public const string BUNDLE_SELECT2 = "select2";
 
         /// <summary>
         /// Asset bundle

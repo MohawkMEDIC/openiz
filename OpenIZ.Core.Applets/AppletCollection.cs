@@ -34,35 +34,22 @@ namespace OpenIZ.Core.Applets
         private static Dictionary<String, List<KeyValuePair<String, String>>> s_stringCache = new Dictionary<string, List<KeyValuePair<string, string>>>();
         private static Object s_syncLock = new object();
 
-        // Schemes
-        public const string BASE_SCHEME = "app://openiz.org/";
-        public const string APPLET_SCHEME = BASE_SCHEME + "applet/";
-        public const string ASSET_SCHEME = BASE_SCHEME + "asset/";
-        public const string DRAWABLE_SCHEME = BASE_SCHEME + "drawable/";
+        public const string APPLET_SCHEME = "app://";
+
         // XMLNS stuff
         private readonly XNamespace xs_xhtml = "http://www.w3.org/1999/xhtml";
         private readonly XNamespace xs_binding = "http://openiz.org/applet/binding";
         private readonly RenderBundle m_defaultBundle = new RenderBundle(String.Empty, 
-            new ScriptBundleContent("app://openiz.org/asset/js/openiz.js"), 
-            new ScriptBundleContent("app://openiz.org/asset/js/openiz-model.js")
-        );
+            new ScriptBundleContent("/js/openiz.js"), 
+            new ScriptBundleContent("/js/openiz-model.js"),
+            new ScriptBundleContent("/js/openiz-localize.js")
 
-        // Override schemes
-        private string m_appletBase = APPLET_SCHEME;
-        private string m_assetBase = ASSET_SCHEME;
-        private string m_drawableBase = DRAWABLE_SCHEME;
+        );
 
 
         // Reference bundles
         private List<RenderBundle> m_referenceBundles = new List<RenderBundle>()
         {
-            new RenderBundle(RenderBundle.BUNDLE_JQUERY, new ScriptBundleContent("app://openiz.org/asset/js/jquery.min.js"), new ScriptBundleContent("app://openiz.org/asset/js/jquery.mobile.min.js")),
-            new RenderBundle(RenderBundle.BUNDLE_BOOTSTRAP, new ScriptBundleContent("app://openiz.org/asset/js/bootstrap.js"), new StyleBundleContent("app://openiz.org/asset/css/bootstrap.css")),
-            new RenderBundle(RenderBundle.BUNDLE_ANGULAR, 
-                new ScriptBundleContent("app://openiz.org/asset/js/angular.min.js"), 
-                new ScriptBundleContent("app://openiz.org/asset/js/openiz-localize.js")),
-            new RenderBundle(RenderBundle.BUNDLE_SELECT2, new StyleBundleContent("app://openiz.org/asset/css/select2.min.css"), new ScriptBundleContent("app://openiz.org/asset/js/select2.min.js")),
-
         };
 
         /// <summary>
@@ -74,46 +61,6 @@ namespace OpenIZ.Core.Applets
 
         // Applet manifest
         private List<AppletManifest> m_appletManifest = new List<AppletManifest>();
-
-        /// <summary>
-        /// The asset base to re-write to
-        /// </summary>
-        public String AssetBase
-        {
-            get { return this.m_assetBase; }
-            set
-            {
-                this.m_assetBase = value;
-                lock (s_syncLock)
-                    s_cache.Clear();
-            }
-        }
-
-        /// <summary>
-        /// The applet base to re-write to
-        /// </summary>
-        public String AppletBase {
-            get { return this.m_appletBase; }
-            set
-            {
-                this.m_appletBase = value;
-                lock (s_syncLock)
-                    s_cache.Clear();
-            }
-        }
-
-        /// <summary>
-        /// The drawable base to rewrite to
-        /// </summary>
-        public String DrawableBase {
-            get { return this.m_drawableBase; }
-            set
-            {
-                this.m_drawableBase = value;
-                lock (s_syncLock)
-                    s_cache.Clear();
-            }
-        }
 
         /// <summary>
         /// Gets or sets the item at the specified element
@@ -342,8 +289,25 @@ namespace OpenIZ.Core.Applets
                 switch (htmlAsset.Html.Name.LocalName)
                 {
                     case "html": // The content is a complete HTML page
-                        htmlContent = htmlAsset.Html as XElement;
-                        break;
+                        {
+                            List<XElement> headerInjection = new List<XElement>();
+                            headerInjection.AddRange(m_defaultBundle.Content.SelectMany(o => o.HeaderElement));
+                            htmlContent = htmlAsset.Html as XElement;
+
+                            // STRIP - OPENIZJS references
+                            var xel = htmlContent.Descendants().OfType<XElement>().Where(o => o.Name == xs_xhtml + "script" && o.Attribute("src")?.Value.Contains("openiz") == true).ToArray();
+                            foreach (var x in xel)
+                                if(x.Attribute("src").Value.EndsWith("openiz.js") || x.Attribute("src").Value.EndsWith("openiz-model.js") || x.Attribute("src").Value.EndsWith("openiz-localize.js"))
+                                    x.Remove();
+                            var head = htmlContent.DescendantNodes().OfType<XElement>().FirstOrDefault(o=>o.Name == xs_xhtml + "head");
+                            if(head == null)
+                            {
+                                head = new XElement(xs_xhtml + "head");
+                                htmlContent.Add(head);
+                            }
+                            head.Add(headerInjection);
+                            break;
+                        }
                     case "body": // The content is an HTML Body element, we must inject the HTML header
                         {
                             List<XElement> headerInjection = new List<XElement>();
@@ -359,8 +323,6 @@ namespace OpenIZ.Core.Applets
                             {
                                 var incAsset = this.ResolveAsset(itm, asset);
                                 if (incAsset != null)
-                                    headerInjection.AddRange(new ScriptBundleContent(String.Format("{0}{1}/{2}", APPLET_SCHEME, incAsset.Manifest.Info.Id, incAsset.Name)).HeaderElement);
-                                else if (itm.StartsWith(ASSET_SCHEME))
                                     headerInjection.AddRange(new ScriptBundleContent(itm).HeaderElement);
                                 else
                                     throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
@@ -369,9 +331,7 @@ namespace OpenIZ.Core.Applets
                             {
                                 var incAsset = this.ResolveAsset(itm, asset);
                                 if (incAsset != null)
-                                    headerInjection.AddRange(new StyleBundleContent(String.Format("{0}{1}/{2}", APPLET_SCHEME, incAsset.Manifest.Info.Id, incAsset.Name)).HeaderElement);
-                                else if (itm.StartsWith(ASSET_SCHEME))
-                                    headerInjection.AddRange(new StyleBundleContent(itm).HeaderElement);
+                                    headerInjection.AddRange(new StyleBundleContent( itm).HeaderElement);
                                 else
                                     throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
                             }
@@ -404,8 +364,6 @@ namespace OpenIZ.Core.Applets
                                 {
                                     var incAsset = this.ResolveAsset(itm, asset);
                                     if (incAsset != null)
-                                        headerInjection.AddRange(new ScriptBundleContent(String.Format("{0}{1}/{2}", APPLET_SCHEME, incAsset.Manifest.Info.Id, incAsset.Name)).HeaderElement);
-                                    else if(itm.StartsWith(ASSET_SCHEME))
                                         headerInjection.AddRange(new ScriptBundleContent(itm).HeaderElement);
                                     else
                                         throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
@@ -414,8 +372,6 @@ namespace OpenIZ.Core.Applets
                                 {
                                     var incAsset = this.ResolveAsset(itm, asset);
                                     if (incAsset != null)
-                                        headerInjection.AddRange(new StyleBundleContent(String.Format("{0}{1}/{2}", APPLET_SCHEME, incAsset.Manifest.Info.Id, incAsset.Name)).HeaderElement);
-                                    else if (itm.StartsWith(ASSET_SCHEME))
                                         headerInjection.AddRange(new StyleBundleContent(itm).HeaderElement);
                                     else
                                         throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
@@ -531,9 +487,6 @@ namespace OpenIZ.Core.Applets
                     }
                 }
 
-                // Re-write URLS
-                foreach(var itm in htmlContent.DescendantNodes().OfType<XElement>().SelectMany(o => o.Attributes()).Where(o => o.Value.StartsWith(BASE_SCHEME)))
-                    itm.Value = itm.Value.Replace(APPLET_SCHEME, this.AppletBase).Replace(ASSET_SCHEME, this.AssetBase).Replace(DRAWABLE_SCHEME, this.DrawableBase);
                 // Render out the content
                 using (StringWriter sw = new StringWriter())
                 using (XmlWriter xw = XmlWriter.Create(sw, new XmlWriterSettings() { Indent = true, OmitXmlDeclaration = true }))

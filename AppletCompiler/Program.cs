@@ -96,6 +96,21 @@ namespace AppletCompiler
             }
         }
 
+        private static Dictionary<String, String> mime = new Dictionary<string, string>()
+        {
+            { ".eot", "application/vnd.ms-fontobject" },
+            { ".woff", "application/font-woff" },
+            { ".woff2", "application/font-woff2" },
+            { ".ttf", "application/octet-stream" },
+            { ".svg", "image/svg+xml" },
+            { ".jpg", "image/jpeg" },
+            { ".jpeg", "image/jpeg" },
+            { ".gif", "image/gif" },
+            { ".png", "image/png" },
+            { ".bmp", "image/bmp" }
+
+        };
+
         /// <summary>
         /// Process the specified directory
         /// </summary>
@@ -150,39 +165,6 @@ namespace AppletCompiler
                                 Policies = demand
                             });
                             break;
-                        case ".jpg":
-                        case ".jpeg":
-                            retVal.Add(new AppletAsset()
-                            {
-                                Name = ResolveName(itm.Replace(path, "")),
-                                MimeType = "image/jpeg",
-                                Content = File.ReadAllBytes(itm)
-                            });
-                            break;
-                        case ".bmp":
-                            retVal.Add(new AppletAsset()
-                            {
-                                Name = ResolveName(itm.Replace(path, "")),
-                                MimeType = "image/bmp",
-                                Content = File.ReadAllBytes(itm)
-                            });
-                            break;
-                        case ".gif":
-                            retVal.Add(new AppletAsset()
-                            {
-                                Name = ResolveName(itm.Replace(path, "")),
-                                MimeType = "image/gif",
-                                Content = File.ReadAllBytes(itm)
-                            });
-                            break;
-                        case ".png":
-                            retVal.Add(new AppletAsset()
-                            {
-                                Name = ResolveName(itm.Replace(path, "")),
-                                MimeType = "image/png",
-                                Content = File.ReadAllBytes(itm)
-                            });
-                            break;
                         case ".css":
                             retVal.Add(new AppletAsset()
                             {
@@ -199,6 +181,16 @@ namespace AppletCompiler
                                 Content = File.ReadAllText(itm)
                             });
                             break;
+                        default:
+                            string mt = null;
+                            retVal.Add(new AppletAsset()
+                            {
+                                Name = ResolveName(itm.Replace(path, "")),
+                                MimeType = mime.TryGetValue(Path.GetExtension(itm), out mt) ? mt : "application/octet-stream",
+                                Content = File.ReadAllBytes(itm)
+                            });
+                            break;
+
                     }
             }
 
