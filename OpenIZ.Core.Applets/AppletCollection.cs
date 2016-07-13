@@ -61,10 +61,7 @@ namespace OpenIZ.Core.Applets
             new RenderBundle(RenderBundle.BUNDLE_ANGULAR, 
                 new ScriptBundleContent("app://openiz.org/asset/js/angular.min.js"), 
                 new ScriptBundleContent("app://openiz.org/asset/js/openiz-localize.js")),
-            new RenderBundle(RenderBundle.BUNDLE_METRO, new ScriptBundleContent("app://openiz.org/asset/js/jquery.metro.js"), new StyleBundleContent("app://openiz.org/asset/css/jquery.metro.css")),
             new RenderBundle(RenderBundle.BUNDLE_SELECT2, new StyleBundleContent("app://openiz.org/asset/css/select2.min.css"), new ScriptBundleContent("app://openiz.org/asset/js/select2.min.js")),
-            new RenderBundle(RenderBundle.BUNDLE_CHART, new ScriptBundleContent("app://openiz.org/asset/js/chart.js")),
-            new RenderBundle(RenderBundle.BUNDLE_TOASTR, new ScriptBundleContent("app://openiz.org/asset/js/toastr.min.js"), new StyleBundleContent("app://openiz.org/asset/css/toastr.min.css"))
 
         };
 
@@ -266,7 +263,10 @@ namespace OpenIZ.Core.Applets
             // Query? We want to remove those
             if (targetApplet.Contains("?"))
                 targetApplet = targetApplet.Substring(0, targetApplet.IndexOf("?"));
-
+            if (targetApplet.Contains("#"))
+                targetApplet = targetApplet.Substring(0, targetApplet.IndexOf("#"));
+            if (targetApplet.StartsWith("/"))
+                targetApplet = targetApplet.Substring(1);
             // Starts with app:// so we can find it in here
             if (assetPath.StartsWith(APPLET_SCHEME))
                 targetApplet = targetApplet.Substring(APPLET_SCHEME.Length);
@@ -518,6 +518,8 @@ namespace OpenIZ.Core.Applets
                     if (assetName == "content")
                         continue;
                     var includeAsset = this.ResolveAsset(assetName, asset);
+                    if (includeAsset == null)
+                        throw new FileNotFoundException(assetName);
                     using (MemoryStream ms = new MemoryStream(this.RenderAssetContent(includeAsset, preProcessLocalization)))
                     {
                         var xel = XDocument.Load(ms).Elements().First() as XElement;

@@ -52,13 +52,23 @@ namespace OpenIZ.Core.Applets.Model
 			set;
 		}
 
-		/// <summary>
-		/// Gets or sets the content of the asset
-		/// </summary>
+        /// <summary>
+        /// Gets or sets the applets required policies for a user to run
+        /// </summary>
+        [XmlElement("demand")]
+        public List<String> Policies
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the content of the asset
+        /// </summary>
         /// <remarks>
         /// Assets of type contentXml 
         /// </remarks>
-		[XmlElement("contentText", Type = typeof(String))]
+        [XmlElement("contentText", Type = typeof(String))]
 		[XmlElement("contentBin", Type = typeof(byte[]))]
 		[XmlElement("contentXml", Type = typeof(XElement))]
         [XmlElement("contentHtml", Type = typeof(AppletAssetHtml))]

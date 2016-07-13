@@ -1,4 +1,5 @@
 ﻿using MohawkCollege.Util.Console.Parameters;
+using OpenIZ.Core.Applets;
 using OpenIZ.Core.Applets.Model;
 using System;
 using System.Collections.Generic;
@@ -48,6 +49,8 @@ namespace AppletCompiler
                 {
                     AppletManifest mfst = xsz.Deserialize(fs) as AppletManifest;
                     mfst.Assets.AddRange(ProcessDirectory(parameters.Source, parameters.Source));
+                    foreach (var i in mfst.Assets)
+                        i.Name = i.Name.Substring(1);
                     using (var ofs = File.Create(parameters.Output ?? "out.xml"))
                         xsz.Serialize(ofs, mfst);
                     using (var ofs = File.Create(Path.ChangeExtension(parameters.Output ?? "out.xml", ".pak.raw")))
@@ -55,7 +58,40 @@ namespace AppletCompiler
                     using (var ofs = File.Create(Path.ChangeExtension(parameters.Output ?? "out.xml", ".pak.gz")))
                     using (var gzs = new GZipStream(ofs, CompressionMode.Compress))
                         packXsz.Serialize(gzs, mfst.CreatePackage());
+
+                    // Render the build directory
+                    var bindir = Path.Combine(Path.GetDirectoryName(parameters.Output), "bin");
+                    if (Directory.Exists(bindir) && parameters.Clean)
+                        Directory.Delete(bindir, true);
+                    bindir = Path.Combine(bindir, mfst.Info.Id);
+                    Directory.CreateDirectory(bindir);
+                    AppletCollection ac = new AppletCollection();
+                    mfst.Initialize();
+                    ac.Add(mfst);
+
+                    foreach (var lang in mfst.Strings)
+                    {
+                        string wd = Path.Combine(bindir, lang.Language);
+                        Directory.CreateDirectory(wd);
+                        foreach(var itm in mfst.Assets)
+                        {
+                            try
+                            {
+                                String fn = Path.Combine(wd, itm.Name.Replace("/", "\\"));
+                                if (!Directory.Exists(Path.GetDirectoryName(fn)))
+                                    Directory.CreateDirectory(Path.GetDirectoryName(fn));
+                                File.WriteAllBytes(fn, ac.RenderAssetContent(itm, lang.Language));
+                            }
+                            catch(Exception e)
+                            {
+                                Console.WriteLine("E: {0}: {1} {2}", itm, e.GetType().Name, e.Message);
+                            }
+                        }
+                    }
                 }
+
+
+                
 
             }
         }
@@ -85,6 +121,7 @@ namespace AppletCompiler
                             htmlAsset.Bundle = new List<string>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "bundle").Select(o=> ResolveName(o.Value)));
                             htmlAsset.Script = new List<string>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "script").Select(o=> ResolveName(o.Value)));
                             htmlAsset.Style = new List<string>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "style").Select(o => ResolveName(o.Value)));
+                            var demand = new List<String>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "demand").Select(o=>o.Value));
 
                             var includes = xe.DescendantNodes().OfType<XComment>().Where(o => o?.Value?.Trim().StartsWith("#include virtual=\"") == true).ToList();
                             foreach (var inc in includes)
@@ -109,7 +146,8 @@ namespace AppletCompiler
                             {
                                 Name = ResolveName(itm.Replace(path, "")),
                                 MimeType = "text/html",
-                                Content = htmlAsset
+                                Content = htmlAsset,
+                                Policies = demand
                             });
                             break;
                         case ".jpg":
@@ -176,7 +214,8 @@ namespace AppletCompiler
         /// </summary>
         private static String ResolveName(string value)
         {
-            return Path.GetFileNameWithoutExtension(value?.ToLower().Replace("/", "-").Replace("\\","-"));
+
+            return value?.ToLower().Replace("\\","/");
         }
     }
 }

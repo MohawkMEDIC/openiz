@@ -16,6 +16,12 @@ namespace AppletCompiler
     {
 
         /// <summary>
+        /// Clean
+        /// </summary>
+        [Parameter("c")]
+        public bool Clean { get; set; }
+
+        /// <summary>
         /// Source files
         /// </summary>
         [Parameter("s")]

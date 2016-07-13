@@ -88,15 +88,6 @@ namespace OpenIZ.Core.Applets.Model
 			set;
 		}
 
-		/// <summary>
-		/// Gets or sets the applets required policies for a user to run
-		/// </summary>
-		[XmlElement("demand")]
-        [JsonProperty("demand")]
-		public List<String> Policies {
-			get;
-			set;
-		}
 
 		/// <summary>
 		/// Return this applet reference
