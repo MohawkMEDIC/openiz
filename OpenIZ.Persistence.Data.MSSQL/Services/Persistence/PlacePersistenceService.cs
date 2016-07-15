@@ -2,6 +2,7 @@
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
@@ -19,8 +20,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.Place ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
         {
-            var place = dataInstance as Data.Place;
-            var dbe = context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == place.EntityVersionId).First();
+
+            var iddat = dataInstance as IDbVersionedData;
+            var place = dataInstance as Data.Place ?? context.GetTable<Data.Place>().Where(o => o.EntityVersionId == iddat.VersionId).First();
+            var dbe = dataInstance as Data.EntityVersion ?? context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == place.EntityVersionId).First();
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Entities.Place>(dbe, context, principal);
             retVal.IsMobile = place.MobileInd;
             retVal.Lat = place.Lat;
@@ -60,6 +63,17 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     principal);
 
             return retVal;
+        }
+
+        /// <summary>
+        /// Get data load options
+        /// </summary>
+        /// <returns></returns>
+        internal override DataLoadOptions GetDataLoadOptions()
+        {
+            var loadOptions = m_entityPersister.GetDataLoadOptions();
+
+            return loadOptions;
         }
     }
 }

@@ -92,7 +92,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// <summary>
         /// Get data load options
         /// </summary>
-        protected virtual DataLoadOptions GetDataLoadOptions()
+        internal virtual DataLoadOptions GetDataLoadOptions()
         {
             return new DataLoadOptions();
         }

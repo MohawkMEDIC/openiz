@@ -36,8 +36,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public override Core.Model.Roles.Patient ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
         {
-            var patient = dataInstance as Data.Patient;
-            var dbe = context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == patient.EntityVersionId).First();
+            var iddat = dataInstance as IDbVersionedData;
+            var patient = dataInstance as Data.Patient ?? context.GetTable<Data.Patient>().Where(o => o.EntityVersionId == iddat.Id).First();
+            var dbe = dataInstance as Data.EntityVersion ?? context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == patient.EntityVersionId).First();
             var dbp = context.GetTable<Data.Person>().Where(o => o.EntityVersionId == patient.EntityVersionId).First();
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Roles.Patient>(dbe, context, principal);
 
@@ -94,24 +95,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// Get data load options
         /// </summary>
         /// <returns></returns>
-        protected override DataLoadOptions GetDataLoadOptions()
+        internal override DataLoadOptions GetDataLoadOptions()
         {
-            var loadOptions = base.GetDataLoadOptions();
-            loadOptions.LoadWith<Data.EntityVersion>(cs => cs.StatusConcept);
-            loadOptions.LoadWith<Data.EntityVersion>(cs => cs.TypeConcept);
-            loadOptions.LoadWith<Data.Entity>(cs => cs.EntityTags);
-            loadOptions.LoadWith<Data.Entity>(cs => cs.EntityNames);
-            loadOptions.LoadWith<Data.Entity>(cs => cs.EntityIdentifiers);
-            loadOptions.LoadWith<Data.Entity>(cs => cs.EntityAddresses);
-            loadOptions.LoadWith<Data.Entity>(cs => cs.EntityTelecomAddresses);
-            loadOptions.LoadWith<Data.EntityName>(cs => cs.EntityNameComponents);
-            loadOptions.LoadWith<Data.EntityAddress>(cs => cs.EntityAddressComponents);
-            loadOptions.LoadWith<Data.EntityNameComponent>(cs => cs.PhoneticValue);
-            loadOptions.LoadWith<Data.EntityAddressComponent>(cs => cs.EntityAddressComponentValue);
-            loadOptions.LoadWith<Data.EntityIdentifier>(cs => cs.AssigningAuthority);
-            loadOptions.LoadWith<Data.EntityTelecomAddress>(cs => cs.TelecomUseConcept);
-            loadOptions.LoadWith<Data.EntityAssociation>(cs => cs.AssociationTypeConcept);
-            loadOptions.LoadWith<Data.EntityExtension>(cs => cs.ExtensionType);
+            var loadOptions = this.m_entityPersister.GetDataLoadOptions();
             loadOptions.LoadWith<Data.Patient>(cs => cs.GenderConcept);
 
             return loadOptions;

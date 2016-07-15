@@ -79,6 +79,11 @@ namespace OpenIZ.Core.Persistence
                     {
                         try
                         {
+
+                            var logFile = Path.ChangeExtension(f, "completed");
+                            if (File.Exists(logFile))
+                                continue; // skip
+
                             using (var fs = File.OpenRead(f))
                             {
                                 var ds = xsz.Deserialize(fs) as DatasetInstall;
@@ -119,7 +124,7 @@ namespace OpenIZ.Core.Persistence
                             }
 
 
-                            File.Move(f, Path.ChangeExtension(f, "log"));
+                            File.Move(f, logFile);
                         }
                         catch (Exception ex)
                         {

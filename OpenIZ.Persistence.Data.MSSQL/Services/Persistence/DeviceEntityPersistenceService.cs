@@ -19,8 +19,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.DeviceEntity ToModelInstance(object dataInstance, Data.ModelDataContext context, IPrincipal principal)
         {
-            var deviceEntity = dataInstance as Data.DeviceEntity;
-            var dbe = context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == deviceEntity.EntityVersionId).First();
+            var idp = dataInstance as IDbVersionedData;
+            var deviceEntity = dataInstance as Data.DeviceEntity ?? context.GetTable<Data.DeviceEntity>().Where(o => o.EntityVersionId == idp.VersionId).First();
+            var dbe = dataInstance as Data.EntityVersion ?? context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == deviceEntity.EntityVersionId).First();
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Entities.DeviceEntity>(dbe, context, principal);
             retVal.SecurityDeviceKey = deviceEntity.DeviceId;
             retVal.ManufacturedModelName = deviceEntity.ManufacturedModelName;

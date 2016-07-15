@@ -109,6 +109,12 @@ namespace OpenIZ.Core.Model.Entities
         }
 
         /// <summary>
+        /// The inversion indicator
+        /// </summary>
+        [XmlElement("inversionInd"), JsonProperty("inversionInd")]
+        public bool InversionIndicator { get; set; }
+
+        /// <summary>
         /// Gets or sets the association type
         /// </summary>
         [AutoLoad]

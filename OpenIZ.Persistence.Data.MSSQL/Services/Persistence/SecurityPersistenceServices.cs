@@ -73,7 +73,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// Data load options
         /// </summary>
         /// <returns></returns>
-        protected override DataLoadOptions GetDataLoadOptions()
+        internal override DataLoadOptions GetDataLoadOptions()
         {
             var baseOptions = base.GetDataLoadOptions();
             baseOptions.LoadWith<Data.SecurityUser>(o => o.SecurityUserRoles);

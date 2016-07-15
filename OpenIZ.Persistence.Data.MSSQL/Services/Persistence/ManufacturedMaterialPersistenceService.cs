@@ -27,11 +27,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         public override Core.Model.Entities.ManufacturedMaterial ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
         {
 
-            var domainMmat = dataInstance as Data.ManufacturedMaterial;
-            var domainMat = dataInstance as Data.Material;
-            var dbm = context.GetTable<Data.Material>().FirstOrDefault(o => o.EntityVersionId == domainMat.EntityVersionId);
+            var idp = dataInstance as IDbVersionedData;
+            var domainMat = dataInstance as Data.ManufacturedMaterial ?? context.GetTable<Data.ManufacturedMaterial>().Where(o => o.EntityVersionId == idp.VersionId).First();
+            var dbm = context.GetTable<Data.Material>().FirstOrDefault(o => o.EntityVersionId == idp.Id);
             var retVal = this.m_materialPersister.ToModelInstance<Core.Model.Entities.ManufacturedMaterial>(dbm, context, principal);
-            retVal.LotNumber = domainMmat.LotNumber;
+            retVal.LotNumber = domainMat.LotNumber;
             return base.ToModelInstance(dataInstance, context, principal);
 
         }

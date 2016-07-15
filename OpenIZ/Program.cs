@@ -45,6 +45,7 @@ namespace OpenIZ
         /// </summary>
         static void Main(String[] args)
         {
+            
             AppDomain.CurrentDomain.SetData(
                "DataDirectory",
                Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location), "Data"));

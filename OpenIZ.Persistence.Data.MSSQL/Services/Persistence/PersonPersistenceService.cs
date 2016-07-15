@@ -46,8 +46,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.Person ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
         {
-            var person = dataInstance as Data.Person;
-            var dbe = context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == person.EntityVersionId).First();
+
+            var iddat = dataInstance as IDbVersionedData;
+            var person = dataInstance as Data.Person ?? context.GetTable<Data.Person>().Where(o => o.EntityVersionId == iddat.VersionId).First();
+            var dbe = dataInstance as Data.EntityVersion ?? context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == person.EntityVersionId).First();
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Entities.Person>(dbe, context, principal);
             retVal.DateOfBirth = person.DateOfBirth;
 

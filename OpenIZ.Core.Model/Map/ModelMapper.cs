@@ -165,7 +165,16 @@ namespace OpenIZ.Core.Model.Map
 
             // Expression is the same class? Collapse if it is a key
             PropertyMap propertyMap = null;
-            classMap.TryGetModelProperty(rootExpression.Member.Name, out propertyMap);
+            while (propertyMap == null && classMap != null)
+            {
+                classMap.TryGetModelProperty(rootExpression.Member.Name, out propertyMap);
+                if(propertyMap == null)
+                {
+                    classMap = this.m_mapFile.GetModelClassMap(classMap.ModelType.GetTypeInfo().BaseType);
+//                    var tDomain = rootExpression.Expression.Type.GetRuntimeProperty(classMap.ParentDomainProperty.DomainName);
+
+                }    
+            }
 
             // Is there a VIA that we need to express?
             if (propertyMap.Via != null)

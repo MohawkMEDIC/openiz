@@ -90,7 +90,7 @@ namespace OpenIZ.Core.Model.Query
                     }
 
                     // Get member info
-                    var memberInfo = accessExpression.Type.GetRuntimeProperties().SingleOrDefault(p => p.GetCustomAttribute<XmlElementAttribute>()?.ElementName == pMember);
+                    var memberInfo = accessExpression.Type.GetRuntimeProperties().SingleOrDefault(p => p.GetCustomAttributes<XmlElementAttribute>()?.Any(a=>a.ElementName == pMember) == true);
                     if (memberInfo == null)
                         throw new ArgumentOutOfRangeException(currentValue.Key);
 

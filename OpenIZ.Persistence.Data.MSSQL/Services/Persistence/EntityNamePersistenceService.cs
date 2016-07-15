@@ -69,7 +69,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// Data load options
         /// </summary>
         /// <returns></returns>
-        protected override DataLoadOptions GetDataLoadOptions()
+        internal override DataLoadOptions GetDataLoadOptions()
         {
             DataLoadOptions dlo = new DataLoadOptions();
             dlo.LoadWith<Data.EntityName>(c => c.NameUseConcept);

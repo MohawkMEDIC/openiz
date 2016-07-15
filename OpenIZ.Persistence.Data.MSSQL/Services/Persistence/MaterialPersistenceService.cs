@@ -26,10 +26,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <summary>
         /// Creates the specified model instance
         /// </summary>
-        internal TModel ToModelInstance<TModel>(Data.Material dataInstance, ModelDataContext context, IPrincipal principal)
+        internal TModel ToModelInstance<TModel>(Object rawInstance, ModelDataContext context, IPrincipal principal)
             where TModel : Core.Model.Entities.Material, new()
         {
-            var dbe = context.GetTable<Data.EntityVersion>().FirstOrDefault(o => o.EntityVersionId == dataInstance.EntityVersionId);
+            var iddat = rawInstance as IDbVersionedData;
+            var dataInstance = rawInstance as Data.Material ?? context.GetTable<Data.Material>().Where(o => o.EntityVersionId == iddat.VersionId).First();
+            var dbe = rawInstance as Data.EntityVersion ?? context.GetTable<Data.EntityVersion>().FirstOrDefault(o => o.EntityVersionId == dataInstance.EntityVersionId);
             var retVal = this.m_entityPersister.ToModelInstance<TModel>(dbe, context, principal);
             retVal.ExpiryDate = dataInstance.ExpiryDate;
             retVal.IsAdministrative = dataInstance.IsAdministrative;

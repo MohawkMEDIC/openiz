@@ -17,7 +17,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// Get data load options
         /// </summary>
         /// <returns></returns>
-        protected override DataLoadOptions GetDataLoadOptions()
+        internal override DataLoadOptions GetDataLoadOptions()
         {
             var loadOptions = base.GetDataLoadOptions();
             loadOptions.LoadWith<Data.ConceptSet>(cs => cs.ConceptSetMembers);

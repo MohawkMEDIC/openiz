@@ -2,6 +2,7 @@
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
@@ -21,8 +22,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.Organization ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
         {
-            var organization = dataInstance as Data.Organization;
-            var dbe = context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == organization.EntityVersionId).First();
+
+            var iddat = dataInstance as IDbVersionedData;
+            var organization = dataInstance as Data.Organization ?? context.GetTable<Data.Organization>().Where(o => o.EntityVersionId == iddat.VersionId).First();
+            var dbe = dataInstance as Data.EntityVersion ?? context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == organization.EntityVersionId).First();
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Entities.Organization>(dbe, context, principal);
             retVal.IndustryConceptKey = organization.IndustryConceptId;
             return retVal;
@@ -48,6 +51,17 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             data.IndustryConcept?.EnsureExists(context, principal);
             data.IndustryConceptKey = data.IndustryConcept?.Key ?? data.IndustryConceptKey;
             return base.Update(context, data, principal);
+        }
+
+        /// <summary>
+        /// Get data load options
+        /// </summary>
+        /// <returns></returns>
+        internal override DataLoadOptions GetDataLoadOptions()
+        {
+            var loadOptions = m_entityPersister.GetDataLoadOptions();
+
+            return loadOptions;
         }
 
     }

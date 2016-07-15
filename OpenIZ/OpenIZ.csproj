@@ -113,8 +113,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\OpenIZ_log.ldf">
-      <DependentUpon>OpenIZ.mdf</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <DependentUpon>OpenIZ.mdf</DependentUpon>
     </Content>
     <Content Include="OpenIZ.en.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

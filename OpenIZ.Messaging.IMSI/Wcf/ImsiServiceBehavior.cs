@@ -466,7 +466,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     }
                     else
                     {
-                        PropertyInfo keyPi = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<XmlElementAttribute>()?.ElementName == property);
+                        PropertyInfo keyPi = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>()?.Any(a=>a.ElementName == property) == true);
                         if (keyPi == null)
                             continue;
                         // Get the backing property

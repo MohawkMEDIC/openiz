@@ -19,8 +19,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.ApplicationEntity ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
         {
-            var applicationEntity = dataInstance as Data.ApplicationEntity;
-            var dbe = context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == applicationEntity.EntityVersionId).First();
+
+            var idp = dataInstance as IDbVersionedData;
+            var applicationEntity = dataInstance as Data.ApplicationEntity ?? context.GetTable<Data.ApplicationEntity>().Where(o => o.EntityVersionId == idp.VersionId).First();
+            var dbe = dataInstance as Data.EntityVersion ?? context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == applicationEntity.EntityVersionId).First();
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Entities.ApplicationEntity>(dbe, context, principal);
             retVal.SecurityApplicationKey = applicationEntity.ApplicationId;
             retVal.SoftwareName = applicationEntity.SoftwareName;
