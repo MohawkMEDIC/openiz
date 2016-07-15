@@ -48,13 +48,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
 
             var iddat = dataInstance as IDbVersionedData;
-            var person = dataInstance as Data.Person ?? context.GetTable<Data.Person>().Where(o => o.EntityVersionId == iddat.VersionId).First();
+            var person = dataInstance as Data.Person ?? context.GetTable<Data.Person>().Where(o => o.EntityVersionId == iddat.VersionId).FirstOrDefault();
             var dbe = dataInstance as Data.EntityVersion ?? context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == person.EntityVersionId).First();
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Entities.Person>(dbe, context, principal);
-            retVal.DateOfBirth = person.DateOfBirth;
+            retVal.DateOfBirth = person?.DateOfBirth;
 
             // Reverse lookup
-            if (person.DateOfBirthPrecision.HasValue)
+            if (person?.DateOfBirthPrecision.HasValue == true)
                 retVal.DateOfBirthPrecision = PrecisionMap.Where(o => o.Value == person.DateOfBirthPrecision).Select(o => o.Key).First();
 
             return retVal;

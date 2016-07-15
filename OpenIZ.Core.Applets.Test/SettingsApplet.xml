@@ -11,7 +11,7 @@
     <icon>app://openiz.org/drawable/cogs.png</icon>
     <text lang="en">Settings</text>
   </menuItem>
-	<asset name="index" mimeType="text/html">
+	<asset name="index.html" mimeType="text/html">
 		<contentHtml>
       <script>index-controller</script>
       <content>

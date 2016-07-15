@@ -15,7 +15,7 @@ namespace OpenIZ.Core.Http
 	{
 		// Configuration
 		private IRestClientDescription m_configuration;
-
+        private ICredentialProvider m_credentialProvider;
 		// Get tracer
 		private Tracer m_tracer = Tracer.GetTracer(typeof(RestClientBase));
 
@@ -90,6 +90,11 @@ namespace OpenIZ.Core.Http
 
 			// Add headers
 			HttpWebRequest retVal = (HttpWebRequest)HttpWebRequest.Create(uri.ToString());
+            if (this.Credentials == null && 
+                this.Description.Binding.Security?.CredentialProvider != null &&
+                this.Description.Binding.Security?.PreemtiveAuthentication == true)
+                this.Credentials = this.Description.Binding.Security.CredentialProvider.GetCredentials(this);
+
 			if (this.Credentials != null)
 			{
 				foreach (var kv in this.Credentials.GetHttpHeaders())

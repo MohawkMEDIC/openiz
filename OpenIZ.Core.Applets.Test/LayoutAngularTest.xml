@@ -9,9 +9,6 @@
   </strings>
   <asset name="layout" mimeType="text/html">
     <contentHtml>
-      <bundle>jquery</bundle>
-      <bundle>bootstrap</bundle>
-      <bundle>angular</bundle>
       <script>layout-controller</script>
       <style>layout-style</style>
       <content>
@@ -28,10 +25,9 @@
       </content>
     </contentHtml>
   </asset>
-  <asset name="index" mimeType="text/html">
+  <asset name="index.html" mimeType="text/html">
     <contentHtml>
       <layout>layout</layout>
-      <bundle>chart-js</bundle>
       <script>index-controller</script>
       <style>index-style</style>
       <content>

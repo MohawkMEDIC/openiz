@@ -35,13 +35,13 @@ namespace OpenIZ.Core.Configuration
     /// <![CDATA[
     /// <openiz.core>
     ///     <security>
-    ///         <basic requireClientAuth="true">
+    ///         <basic requireClientAuth="true" realm="">
     ///             <!-- Claims allowed to be made by clients on basic auth -->
     ///             <allowedClaims>
     ///                 <add claimType=""/>
     ///             </allowedClaims>
     ///         </basic>
-    ///         <token>
+    ///         <token realm="">
     ///             <audience>
     ///                 <add name=""/>
     ///             </audience>
@@ -77,6 +77,7 @@ namespace OpenIZ.Core.Configuration
                 if(tokenSecurityNode != null)
                 {
                     retVal.Security.ClaimsAuth = new OpenIzClaimsAuthorization();
+                    retVal.Security.ClaimsAuth.Realm = tokenSecurityNode.Attributes["realm"]?.Value;
 
                     foreach (XmlNode aud in tokenSecurityNode.SelectNodes("./audience/add/@name"))
                         retVal.Security.ClaimsAuth.Audiences.Add(aud.Value);
@@ -110,7 +111,7 @@ namespace OpenIZ.Core.Configuration
                 {
                     retVal.Security.BasicAuth = new OpenIzBasicAuthorization();
                     retVal.Security.BasicAuth.RequireClientAuth = basicSecurityNode.Attributes["requireClientAuth"]?.Value == "true";
-
+                    retVal.Security.BasicAuth.Realm = basicSecurityNode.Attributes["realm"]?.Value;
                     // Allowed claims
                     XmlNodeList allowedClaims = basicSecurityNode.SelectNodes("./allowedClaims/add/@claimType");
                     retVal.Security.BasicAuth.AllowedClientClaims = new List<string>();

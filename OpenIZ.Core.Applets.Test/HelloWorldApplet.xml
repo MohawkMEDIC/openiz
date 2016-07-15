@@ -70,9 +70,6 @@
     <contentHtml>
       <!-- These are libraries that this layout references -->
       <!-- Note: Whenever 'angular' is injected, the OpenIZ renderer will inject ng-app="xxxxxx" where xxxx matches the asset name -->
-      <bundle>angular</bundle>
-      <bundle>bootstrap</bundle>
-      <bundle>select2</bundle>
       <content>
         <!-- This is the start of the actual body of the asset -->
         <body ng-controller="mainController" xmlns="http://www.w3.org/1999/xhtml">
@@ -83,7 +80,7 @@
     </contentHtml>
   </asset>
   <!-- The following is an asset which is in the English language which uses the layout we created above.-->
-  <asset name="index" mimeType="text/html" lang="en">
+  <asset name="index.html" mimeType="text/html" lang="en">
     <contentHtml>
       <!-- The layout reference can be relative (i.e. this is in the same manifest) or absolute -->
       <layout>layout</layout>
@@ -98,7 +95,7 @@
     </contentHtml>
   </asset>
   <!-- An example of the index page in french mode -->
-  <asset name="index" mimeType="text/html" lang="fr">
+  <asset name="index.html" mimeType="text/html" lang="fr">
     <contentHtml>
       <!-- absolute reference to the layout -->
       <layout>app://openiz.org/applet/org.openiz.sample.helloworld/layout</layout>

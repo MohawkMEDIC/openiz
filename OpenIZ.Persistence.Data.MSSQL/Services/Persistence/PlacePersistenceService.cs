@@ -22,12 +22,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
 
             var iddat = dataInstance as IDbVersionedData;
-            var place = dataInstance as Data.Place ?? context.GetTable<Data.Place>().Where(o => o.EntityVersionId == iddat.VersionId).First();
+            var place = dataInstance as Data.Place ?? context.GetTable<Data.Place>().Where(o => o.EntityVersionId == iddat.VersionId).FirstOrDefault();
             var dbe = dataInstance as Data.EntityVersion ?? context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == place.EntityVersionId).First();
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Entities.Place>(dbe, context, principal);
-            retVal.IsMobile = place.MobileInd;
-            retVal.Lat = place.Lat;
-            retVal.Lng = place.Lng;
+            retVal.IsMobile = place?.MobileInd == true;
+            retVal.Lat = place?.Lat;
+            retVal.Lng = place?.Lng;
             return retVal;
         }
 

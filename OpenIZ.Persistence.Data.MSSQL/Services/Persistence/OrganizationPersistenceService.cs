@@ -24,10 +24,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
 
             var iddat = dataInstance as IDbVersionedData;
-            var organization = dataInstance as Data.Organization ?? context.GetTable<Data.Organization>().Where(o => o.EntityVersionId == iddat.VersionId).First();
+            var organization = dataInstance as Data.Organization ?? context.GetTable<Data.Organization>().Where(o => o.EntityVersionId == iddat.VersionId).FirstOrDefault();
             var dbe = dataInstance as Data.EntityVersion ?? context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == organization.EntityVersionId).First();
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Entities.Organization>(dbe, context, principal);
-            retVal.IndustryConceptKey = organization.IndustryConceptId;
+            retVal.IndustryConceptKey = organization?.IndustryConceptId;
             return retVal;
         }
 

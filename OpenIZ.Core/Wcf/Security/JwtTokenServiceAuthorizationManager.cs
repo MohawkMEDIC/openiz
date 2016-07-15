@@ -62,9 +62,9 @@ namespace OpenIZ.Core.Wcf.Security
                 // Get the authorize header
                 String authorization = httpMessage.Headers[System.Net.HttpRequestHeader.Authorization];
                 if (authorization == null)
-                    throw new UnauthorizedRequestException("Missing Authorization header", "Bearer", "openiz.org", this.m_configuration.Security.ClaimsAuth.Audiences.FirstOrDefault());
+                    throw new UnauthorizedRequestException("Missing Authorization header", "Bearer", this.m_configuration.Security.ClaimsAuth.Realm, this.m_configuration.Security.ClaimsAuth.Audiences.FirstOrDefault());
                 else if (!authorization.Trim().StartsWith("bearer", StringComparison.InvariantCultureIgnoreCase))
-                    throw new UnauthorizedRequestException("Invalid authentication scheme", "Bearer", "openiz.org", this.m_configuration.Security.ClaimsAuth.Audiences.FirstOrDefault());
+                    throw new UnauthorizedRequestException("Invalid authentication scheme", "Bearer", this.m_configuration.Security.ClaimsAuth.Realm, this.m_configuration.Security.ClaimsAuth.Audiences.FirstOrDefault());
 
                 String authorizationToken = authorization.Substring(6).Trim();
                 JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();

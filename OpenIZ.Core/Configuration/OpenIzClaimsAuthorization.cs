@@ -58,6 +58,11 @@ namespace OpenIZ.Core.Configuration
         /// </summary>
         public List<String> Audiences { get; set; }
 
+        /// <summary>
+        /// Gets or sets the realm
+        /// </summary>
+        public string Realm { get; internal set; }
+
 
         /// <summary>
         /// Convert this to a STS handler config

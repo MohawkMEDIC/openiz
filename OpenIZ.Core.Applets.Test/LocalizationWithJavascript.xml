@@ -29,11 +29,8 @@
       ]]>
     </contentText>
   </asset>
-  <asset name="index" mimeType="text/html">
+  <asset name="index.html" mimeType="text/html">
     <contentHtml>
-      <bundle>jquery</bundle>
-      <bundle>bootstrap</bundle>
-      <bundle>angular</bundle>
       <script>strings</script>
       <script>index-controller</script>
     <content>

@@ -29,7 +29,11 @@
 		/// Gets the authentication realm
 		/// </summary>
 		string AuthRealm { get; }
-	}
+        /// <summary>
+        /// When true instructs the client to pre-emptively authenticate itself
+        /// </summary>
+        bool PreemtiveAuthentication { get; set; }
+    }
 
 	/// <summary>
 	/// Security scheme

@@ -111,7 +111,7 @@ namespace OpenIZ.Core.Applets.Test
         {
             EntitySource currentEs = EntitySource.Current;
             EntitySource.Current = new EntitySource(new TestEntitySource());
-            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.sample.helloworld/bindingTest");
+            var asset = this.m_appletCollection.ResolveAsset("app://org.openiz.sample.helloworld/bindingTest");
             Assert.IsNotNull(asset);
             var html = System.Text.Encoding.UTF8.GetString(this.m_appletCollection.RenderAssetContent(asset));
             Assert.IsTrue(html.Contains("Male"));
@@ -129,31 +129,31 @@ namespace OpenIZ.Core.Applets.Test
         [TestMethod]
         public void TestResolveAbsolute()
         {
-            Assert.IsNotNull(this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.sample.helloworld/layout"));
+            Assert.IsNotNull(this.m_appletCollection.ResolveAsset("app://org.openiz.sample.helloworld/layout"));
         }
 
         [TestMethod]
         public void TestResolveIndex()
         {
-            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.sample.helloworld");
+            var asset = this.m_appletCollection.ResolveAsset("app://org.openiz.sample.helloworld/");
             Assert.IsNotNull(asset);
-            Assert.AreEqual("index", asset.Name);
+            Assert.AreEqual("index.html", asset.Name);
             Assert.AreEqual("en", asset.Language);
         }
 
         [TestMethod]
         public void TestResolveLanguage()
         {
-            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.sample.helloworld/index", language: "fr");
+            var asset = this.m_appletCollection.ResolveAsset("app://org.openiz.sample.helloworld/index.html", language: "fr");
             Assert.IsNotNull(asset);
-            Assert.AreEqual("index", asset.Name);
+            Assert.AreEqual("index.html", asset.Name);
             Assert.AreEqual("fr", asset.Language);
         }
 
         [TestMethod]
         public void TestResolveRelative()
         {
-            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.sample.helloworld/index");
+            var asset = this.m_appletCollection.ResolveAsset("app://org.openiz.sample.helloworld/index.html");
             Assert.IsNotNull(asset);
             Assert.IsNotNull(this.m_appletCollection.ResolveAsset("layout", asset));
         }
@@ -161,7 +161,7 @@ namespace OpenIZ.Core.Applets.Test
         [TestMethod]
         public void TestResolveSettingLanguage()
         {
-            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.applets.core.settings", language: "en");
+            var asset = this.m_appletCollection.ResolveAsset("app://org.openiz.applets.core.settings/", language: "en");
             Assert.IsNotNull(asset);
         }
 
@@ -169,7 +169,7 @@ namespace OpenIZ.Core.Applets.Test
         [TestMethod]
         public void TestRenderSettingsHtml()
         {
-            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.applets.core.settings");
+            var asset = this.m_appletCollection.ResolveAsset("app://org.openiz.applets.core.settings/");
             var render = this.m_appletCollection.RenderAssetContent(asset);
             Trace.WriteLine(Encoding.UTF8.GetString(render));
         }
@@ -177,7 +177,7 @@ namespace OpenIZ.Core.Applets.Test
         [TestMethod]
         public void TestRenderHtml()
         {
-            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.sample.helloworld/index");
+            var asset = this.m_appletCollection.ResolveAsset("app://org.openiz.sample.helloworld/index.html");
             var render = this.m_appletCollection.RenderAssetContent(asset);
             Trace.WriteLine(Encoding.UTF8.GetString(render));
         }
@@ -188,7 +188,7 @@ namespace OpenIZ.Core.Applets.Test
         [TestMethod]
         public void TestPreProcessLocalization()
         {
-            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.applet.test.layout/index");
+            var asset = this.m_appletCollection.ResolveAsset("app://org.openiz.applet.test.layout/index.html");
             var render = this.m_appletCollection.RenderAssetContent(asset, "en");
 
             string html = Encoding.UTF8.GetString(render);
@@ -208,14 +208,13 @@ namespace OpenIZ.Core.Applets.Test
             var coll = new AppletCollection();
             coll.Add(AppletManifest.Load(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.LayoutAngularTest.xml")));
             
-            var asset = coll.ResolveAsset("app://openiz.org/applet/org.openiz.applet.test.layout/index");
+            var asset = coll.ResolveAsset("app://org.openiz.applet.test.layout/index.html");
             var render = coll.RenderAssetContent(asset);
             string html = Encoding.UTF8.GetString(render);
             Assert.IsTrue(html.Contains("index-controller"), "Missing index-controller");
             Assert.IsTrue(html.Contains("layout-controller"), "Missing layout-controller");
             Assert.IsTrue(html.Contains("index-style"), "Missing index-style");
             Assert.IsTrue(html.Contains("layout-controller"), "Missing layout-style");
-            Assert.IsTrue(html.Contains("chart"), "Missing chart-js");
 
 
         }
@@ -226,16 +225,15 @@ namespace OpenIZ.Core.Applets.Test
         [TestMethod]
         public void TestLocalizationJavascript()
         {
-            var assetEn = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.applet.sample.localization.js/strings", language: "en");
-            var assetFr = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.applet.sample.localization.js/strings", language: "fr");
-            var assetIndex = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.applet.sample.localization.js/index", language: "fr");
+            var assetEn = this.m_appletCollection.ResolveAsset("app://org.openiz.applet.sample.localization.js/strings", language: "en");
+            var assetFr = this.m_appletCollection.ResolveAsset("app://org.openiz.applet.sample.localization.js/strings", language: "fr");
+            var assetIndex = this.m_appletCollection.ResolveAsset("app://org.openiz.applet.sample.localization.js/index.html", language: "fr");
 
             var render = this.m_appletCollection.RenderAssetContent(assetEn);
             Assert.IsTrue(Encoding.UTF8.GetString(render).Contains("Click Me!"));
             render = this.m_appletCollection.RenderAssetContent(assetFr);
             Assert.IsTrue(Encoding.UTF8.GetString(render).Contains("Cliquez Moi!"));
             render = this.m_appletCollection.RenderAssetContent(assetIndex);
-            Assert.IsTrue(Encoding.UTF8.GetString(render).Contains("app://openiz.org/applet/org.openiz.applet.sample.localization.js/strings"));
             Trace.WriteLine(Encoding.UTF8.GetString(render));
         }
     }

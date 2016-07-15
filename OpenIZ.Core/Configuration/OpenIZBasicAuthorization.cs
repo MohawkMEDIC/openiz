@@ -36,5 +36,9 @@ namespace OpenIZ.Core.Configuration
         /// </summary>
         public List<string> AllowedClientClaims { get; set; }
 
+        /// <summary>
+        /// Realm of basic auth
+        /// </summary>
+        public string Realm { get; internal set; }
     }
 }
