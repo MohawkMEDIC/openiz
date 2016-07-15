@@ -33,6 +33,8 @@ namespace OpenIZ.Core.Applets.Model
         {
             foreach (var ast in this.Assets)
                 ast.Manifest = this;
+            foreach (var mnu in this.Menus)
+                mnu.Manifest = this;
         }
 
 		/// <summary>

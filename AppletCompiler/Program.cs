@@ -22,16 +22,16 @@ namespace AppletCompiler
         /// <summary>
         /// The main program
         /// </summary>
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
-
+            int retVal = 0;
             ParameterParser<ConsoleParameters> parser = new ParameterParser<ConsoleParameters>();
             var parameters = parser.Parse(args);
 
             if (parameters.Help)
             {
                 parser.WriteHelp(Console.Out);
-                return;
+                return 0;
             }
 
             // First is there a Manifest.xml?
@@ -44,6 +44,8 @@ namespace AppletCompiler
                 Console.WriteLine("Directory must have Manifest.xml");
             else
             {
+                Console.WriteLine("\t Reading Manifest...", parameters.Source);
+
                 XmlSerializer xsz = new XmlSerializer(typeof(AppletManifest));
                 XmlSerializer packXsz = new XmlSerializer(typeof(AppletPackage));
                 using (var fs = File.OpenRead(manifestFile))
@@ -110,6 +112,7 @@ namespace AppletCompiler
                             catch(Exception e)
                             {
                                 Console.WriteLine("E: {0}: {1} {2}", itm, e.GetType().Name, e.Message);
+                                retVal = -1000;
                             }
                         }
                     }
@@ -119,6 +122,8 @@ namespace AppletCompiler
                 
 
             }
+
+            return retVal;
         }
 
         private static Dictionary<String, String> mime = new Dictionary<string, string>()
@@ -144,6 +149,8 @@ namespace AppletCompiler
             List<AppletAsset> retVal = new List<AppletAsset>();
             foreach(var itm in Directory.GetFiles(source))
             {
+                Console.WriteLine("\t Processing {0}...", itm);
+
                 if (Path.GetFileName(itm).ToLower() == "manifest.xml")
                     continue;
                 else 

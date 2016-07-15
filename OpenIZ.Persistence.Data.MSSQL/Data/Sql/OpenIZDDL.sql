@@ -708,6 +708,82 @@ CREATE VIEW ConceptCurrentVersion AS
 		WHERE ConceptVersion.ObsoletionTime IS NULL;
 GO
 
+CREATE VIEW ConceptSetMembersView AS 
+	SELECT ConceptSet.ConceptSetId, ConceptSet.Mnemonic as ConceptSetMnemonic, ConceptCurrentVersion.ConceptId, ConceptCurrentVersion.ConceptVersionId, ConceptCurrentVersion.Mnemonic as ConceptMnemonic, ConceptCurrentVersion.ConceptClassMnemonic  FROM ConceptSet INNER JOIN ConceptSetMember ON (ConceptSet.ConceptSetId = ConceptSetMember.ConceptSetId)
+	INNER JOIN ConceptCurrentVersion ON (ConceptSetMember.ConceptId = ConceptCurrentVersion.ConceptId);
+
+GO 
+
+CREATE VIEW EntityCurrentVersion AS
+SELECT EntityVersion.*, StatusConcept.Mnemonic AS StatusMnemonic, 
+	ClassConcept.Mnemonic AS ClassMnemonic, 
+	DeterminerConcept.Mnemonic AS DeterminerMnemonic,
+	TypeConcept.Mnemonic AS TypeMnmeonic,
+	(SELECT NameUseMnemonic, CAST(Name AS XML) FROM EntityNameValue WHERE EntityNameValue.EntityId = Entity.EntityId AND EntityVersion.VersionSequenceId BETWEEN EntityNameValue.EffectiveVersionSequenceId AND COALESCE(EntityNameValue.ObsoleteVersionSequenceId, EntityVersion.VersionSequenceId) FOR XML PATH('EntityName')) AS Name,
+	(SELECT AddressUseMnemonic, CAST(Address AS XML) FROM EntityAddressValue WHERE EntityAddressValue.EntityId = Entity.EntityId AND EntityVersion.VersionSequenceId BETWEEN EntityAddressValue.EffectiveVersionSequenceId AND COALESCE(EntityAddressValue.ObsoleteVersionSequenceId, EntityVersion.VersionSequenceId) FOR XML PATH('EntityAddress')) AS Address,
+	(SELECT TelecomAddressUseMnemonic, TelecomAddress FROM EntityTelecomAddressValue WHERE EntityTelecomAddressValue.EntityId = Entity.EntityId AND EntityVersion.VersionSequenceId BETWEEN EntityTelecomAddressValue.EffectiveVersionSequenceId AND COALESCE(EntityTelecomAddressValue.ObsoleteVersionSequenceId, EntityVersion.VersionSequenceId) FOR XML PATH('EntityTelecomAddress')) AS Telecom
+FROM 
+	EntityVersion INNER JOIN Entity ON (EntityVersion.EntityId = Entity.EntityId)
+	INNER JOIN ConceptCurrentVersion StatusConcept ON (EntityVersion.StatusConceptId = StatusConcept.ConceptId)
+	INNER JOIN ConceptCurrentVersion ClassConcept ON (Entity.ClassConceptId = ClassConcept.ConceptId)
+	INNER JOIN ConceptCurrentVersion DeterminerConcept ON (Entity.DeterminerConceptId = DeterminerConcept.ConceptId)
+	LEFT JOIN ConceptCurrentVersion TypeConcept ON (EntityVersion.TypeConceptId = TypeConcept.ConceptId)
+WHERE EntityVersion.ObsoletionTime IS NULL;
+
+GO
+
+CREATE VIEW PlaceCurrentVersion AS 
+	SELECT EntityCurrentVersion.*, Place.MobileInd, Place.Lat, Place.Lng FROM Place INNER JOIN EntityCurrentVersion ON (Place.EntityVersionId = EntityCurrentVersion.EntityVersionId);
+
+GO
+
+CREATE VIEW PersonCurrentVersion AS 
+	SELECT EntityCurrentVersion.*, Person.DateOfBirth, Person.DateOfBirthPrecision FROM Person INNER JOIN EntityCurrentVersion ON (Person.EntityVersionId = EntityCurrentVersion.EntityVersionId)
+
+GO;
+
+CREATE VIEW ProviderCurrentVersion AS 
+	SELECT PersonCurrentVersion.*, Provider.ProviderSpecialtyConceptId, ConceptCurrentVersion.Mnemonic AS SpecialtyMnemonic 
+	FROM Provider INNER JOIN PersonCurrentVersion ON (Provider.EntityVersionId = PersonCurrentVersion.EntityVersionId)
+		LEFT JOIN ConceptCurrentVersion ON (ConceptCurrentVersion.ConceptId = Provider.ProviderSpecialtyConceptId);
+
+GO;
+
+CREATE VIEW UserEntityCurrentVersion AS 
+	SELECT PersonCurrentVersion.*, SecurityUser.UserName, SecurityUser.UserPassword, SecurityUser.LastSuccessfulLogin, SecurityUser.SecurityStamp, SecurityUser.TwoFactorEnabled, SecurityUser.FailedLoginAttempts
+	FROM UserEntity INNER JOIN PersonCurrentVersion ON (UserEntity.EntityVersionId = PersonCurrentVersion.EntityVersionId)
+		INNER JOIN SecurityUser ON (SecurityUser.UserId = UserEntity.UserId);
+GO;
+CREATE VIEW EntityNameValue AS 
+    SELECT EntityName.EntityNameId, EntityId, EntityName.NameUseConceptId, ConceptCurrentVersion.Mnemonic AS NameUseMnemonic, EffectiveVersionSequenceId, ObsoleteVersionSequenceId, 
+	(
+		SELECT Mnemonic, Value FROM 
+			EntityNameComponent INNER JOIN PhoneticValues ON (EntityNameComponent.PhoneticValueId = PhoneticValues.PhoneticValueId) 
+			LEFT JOIN ConceptCurrentVersion ON (EntityNameComponent.ComponentTypeConceptId = ConceptCurrentVersion.ConceptId)
+			WHERE EntityNameId = EntityName.EntityNameId FOR XML PATH ('Component')
+	) Name FROM 
+    EntityName INNER JOIN ConceptCurrentVersion ON (EntityName.NameUseConceptId = ConceptCurrentVersion.ConceptId) ;
+
+GO
+
+CREATE VIEW EntityAddressValue AS 
+    SELECT EntityAddress.EntityAddressId, EntityId, EntityAddress.AddressUseConceptId, ConceptCurrentVersion.Mnemonic AS AddressUseMnemonic, EffectiveVersionSequenceId, ObsoleteVersionSequenceId, 
+	(
+		SELECT Mnemonic, Value FROM 
+			EntityAddressComponent INNER JOIN EntityAddressComponentValue ON (EntityAddressComponent.ValueId = EntityAddressComponentValue.ValueId) 
+			LEFT JOIN ConceptCurrentVersion ON (EntityAddressComponent.ComponentTypeConceptId = ConceptCurrentVersion.ConceptId)
+			WHERE EntityAddressId = EntityAddress.EntityAddressId FOR XML PATH ('Component')
+	) Address FROM 
+    EntityAddress INNER JOIN ConceptCurrentVersion ON (EntityAddress.AddressUseConceptId = ConceptCurrentVersion.ConceptId) ;
+GO
+
+CREATE VIEW EntityTelecomAddressValue AS 
+    SELECT EntityTelecomAddress.EntityTelecomAddressId, EntityId, EntityTelecomAddress.TelecomUseConceptId, EntityTelecomAddress.TelecomAddressTypeConceptId, ConceptCurrentVersion.Mnemonic AS TelecomAddressUseMnemonic, TypeConcept.Mnemonic AS TelecomAddressTypeMnemonic, EffectiveVersionSequenceId, ObsoleteVersionSequenceId, TelecomAddress
+	FROM EntityTelecomAddress INNER JOIN ConceptCurrentVersion ON (EntityTelecomAddress.TelecomUseConceptId = ConceptCurrentVersion.ConceptId) 
+	LEFT JOIN ConceptCurrentVersion TypeConcept ON (EntityTelecomAddress.TelecomAddressTypeConceptId = TypeConcept.ConceptId) ;
+	;
+GO
+
 CREATE FUNCTION fn_AssertConceptClass (@ConceptId UNIQUEIDENTIFIER, @AssertClassMnemonic NVARCHAR(32))
 RETURNS BIT BEGIN
 	RETURN (SELECT COUNT(*) FROM ConceptCurrentVersion WHERE ConceptId = @ConceptId AND ConceptClassMnemonic = @AssertClassMnemonic);

@@ -102,6 +102,16 @@ namespace OpenIZ.Core.Model
             }
         }
 
+
+        /// <summary>
+        /// True if key should be serialized
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeUpdatedByKey()
+        {
+            return this.UpdatedByKey.HasValue;
+        }
+
         /// <summary>
         /// Forces refresh
         /// </summary>

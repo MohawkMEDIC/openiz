@@ -235,11 +235,11 @@ namespace OpenIZ.Core.Applets
             {
                 path = targetApplet.Substring(targetApplet.IndexOf("/") + 1);
                 if (String.IsNullOrEmpty(path))
-                    path = "index";
+                    path = "index.html";
                 targetApplet = targetApplet.Substring(0, targetApplet.IndexOf("/"));
             }
             else
-                path = "index";
+                path = "index.html";
 
             // Now we have the target applet, and path, so retrieve
             var candidates = this.m_appletManifest.SingleOrDefault(o => o.Info.Id == targetApplet)?.Assets.Where(o => o.Name == path);
@@ -290,7 +290,7 @@ namespace OpenIZ.Core.Applets
                 {
                     case "html": // The content is a complete HTML page
                         {
-                            List<XElement> headerInjection = new List<XElement>();
+                            var headerInjection = this.GetInjectionHeaders(asset);
                             headerInjection.AddRange(m_defaultBundle.Content.SelectMany(o => o.HeaderElement));
                             htmlContent = htmlAsset.Html as XElement;
 
@@ -310,31 +310,9 @@ namespace OpenIZ.Core.Applets
                         }
                     case "body": // The content is an HTML Body element, we must inject the HTML header
                         {
-                            List<XElement> headerInjection = new List<XElement>();
                             // Inject special headers
-                            foreach (var itm in htmlAsset.Bundle)
-                            {
-                                var bundle = this.m_referenceBundles.Find(o => o.Name == itm);
-                                if (bundle == null)
-                                    throw new FileNotFoundException(String.Format("Bundle {0} not found", itm));
-                                headerInjection.AddRange(bundle.Content.SelectMany(o => o.HeaderElement));
-                            }
-                            foreach (var itm in htmlAsset.Script)
-                            {
-                                var incAsset = this.ResolveAsset(itm, asset);
-                                if (incAsset != null)
-                                    headerInjection.AddRange(new ScriptBundleContent(itm).HeaderElement);
-                                else
-                                    throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
-                            }
-                            foreach (var itm in htmlAsset.Style)
-                            {
-                                var incAsset = this.ResolveAsset(itm, asset);
-                                if (incAsset != null)
-                                    headerInjection.AddRange(new StyleBundleContent( itm).HeaderElement);
-                                else
-                                    throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
-                            }
+                            var headerInjection = this.GetInjectionHeaders(asset);
+
                             headerInjection.AddRange(m_defaultBundle.Content.SelectMany(o => o.HeaderElement));
                             // Render the bundles
                             var bodyElement = htmlAsset.Html as XElement;
@@ -350,32 +328,7 @@ namespace OpenIZ.Core.Applets
                             else
                             {
 
-                                // Insert scripts & Styles
-                                List<XElement> headerInjection = new List<XElement>();
-                                // Inject special headers
-                                foreach (var itm in htmlAsset.Bundle)
-                                {
-                                    var bundle = this.m_referenceBundles.Find(o => o.Name == itm);
-                                    if (bundle == null)
-                                        throw new FileNotFoundException(String.Format("Bundle {0} not found", itm));
-                                    headerInjection.AddRange(bundle.Content.SelectMany(o => o.HeaderElement));
-                                }
-                                foreach (var itm in htmlAsset.Script)
-                                {
-                                    var incAsset = this.ResolveAsset(itm, asset);
-                                    if (incAsset != null)
-                                        headerInjection.AddRange(new ScriptBundleContent(itm).HeaderElement);
-                                    else
-                                        throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
-                                }
-                                foreach (var itm in htmlAsset.Style)
-                                {
-                                    var incAsset = this.ResolveAsset(itm, asset);
-                                    if (incAsset != null)
-                                        headerInjection.AddRange(new StyleBundleContent(itm).HeaderElement);
-                                    else
-                                        throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
-                                }
+                                var headerInjection = this.GetInjectionHeaders(asset);
 
                                 // Get the layout
                                 var layoutAsset = this.ResolveAsset(htmlAsset.Layout, asset);
@@ -482,7 +435,12 @@ namespace OpenIZ.Core.Applets
                         if (xel.Name == xs_xhtml + "html")
                             inc.AddAfterSelf(xel.Element(xs_xhtml + "body").Elements());
                         else
+                        {
+                            var headerInjection = this.GetInjectionHeaders(includeAsset);
+                            htmlContent.Element(xs_xhtml + "head")?.Add(headerInjection);
+
                             inc.AddAfterSelf(xel);
+                        }
                         inc.Remove();
                     }
                 }
@@ -520,6 +478,43 @@ namespace OpenIZ.Core.Applets
             
         }
 
+        /// <summary>
+        /// Injection for HTML headers
+        /// </summary>
+        private List<XElement> GetInjectionHeaders(AppletAsset asset)
+        {
+            var htmlAsset = asset.Content as AppletAssetHtml;
+            
+            // Insert scripts & Styles
+            List<XElement> headerInjection = new List<XElement>();
+            if (htmlAsset == null)
+                return headerInjection;
 
+            // Inject special headers
+            foreach (var itm in htmlAsset.Bundle)
+            {
+                var bundle = this.m_referenceBundles.Find(o => o.Name == itm);
+                if (bundle == null)
+                    throw new FileNotFoundException(String.Format("Bundle {0} not found", itm));
+                headerInjection.AddRange(bundle.Content.SelectMany(o => o.HeaderElement));
+            }
+            foreach (var itm in htmlAsset.Script)
+            {
+                var incAsset = this.ResolveAsset(itm, asset);
+                if (incAsset != null)
+                    headerInjection.AddRange(new ScriptBundleContent(itm).HeaderElement);
+                else
+                    throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
+            }
+            foreach (var itm in htmlAsset.Style)
+            {
+                var incAsset = this.ResolveAsset(itm, asset);
+                if (incAsset != null)
+                    headerInjection.AddRange(new StyleBundleContent(itm).HeaderElement);
+                else
+                    throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
+            }
+            return headerInjection;
+        }
     }
 }

@@ -55,7 +55,6 @@ namespace OpenIZ.Core.Model
         /// </summary>
         public BaseEntityData()
         {
-            this.CreationTime = DateTimeOffset.Now;
         }
 
         /// <summary>
@@ -116,6 +115,25 @@ namespace OpenIZ.Core.Model
                 this.m_createdById = value?.Key;
             }
          }
+
+        /// <summary>
+        /// True if key should be serialized
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeCreatedByKey()
+        {
+            return this.CreatedByKey.HasValue;
+        }
+
+        /// <summary>
+        /// True if key should be serialized
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeObsoletedByKey()
+        {
+            return this.ObsoletedByKey.HasValue;
+        }
+
 
         /// <summary>
         /// Gets or sets the user that obsoleted this base data

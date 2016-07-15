@@ -76,7 +76,7 @@ namespace OpenIZ.Core.Model.Constants
         /// <summary>
         /// State
         /// </summary>
-        public static readonly Guid State = Guid.Parse("6B82E7F0-08BF-46DB-BDCF-95F69592E3BF");
+        public static readonly Guid State = Guid.Parse("8CF4B0B0-84E5-4122-85FE-6AFA8240C218");
         /// <summary>
         /// Container
         /// </summary>

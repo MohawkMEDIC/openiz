@@ -95,6 +95,15 @@ namespace OpenIZ.Core.Model
         public Guid? Key { get; set; }
 
         /// <summary>
+        /// True if key should be serialized
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeKey()
+        {
+            return this.Key.HasValue;
+        }
+
+        /// <summary>
         /// Gets the type
         /// </summary>
         [XmlIgnore, JsonProperty("$type")]

@@ -28,10 +28,16 @@ namespace OpenIZ.Core.Applets.Model
         [XmlAttribute("launch")]
         public String Launcher { get; set; }
 
-		/// <summary>
-		/// Gets the specified name
-		/// </summary>
-		public String GetText(String language, bool returnNuetralIfNotFound = true)
+        /// <summary>
+        /// Applet manifest
+        /// </summary>
+        [XmlIgnore]
+        public AppletManifest Manifest { get; internal set; }
+
+        /// <summary>
+        /// Gets the specified name
+        /// </summary>
+        public String GetText(String language, bool returnNuetralIfNotFound = true)
 		{
 			var str = this.Text?.Find(o=>o.Language == language);
 			if(str == null && returnNuetralIfNotFound)

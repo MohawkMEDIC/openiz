@@ -271,8 +271,11 @@ namespace OpenIZ.Core.Model.Map
             // Are the types compatible?
             if (!right.Type.GetTypeInfo().IsAssignableFrom(left.Type.GetTypeInfo()))
             {
+                if(right.NodeType == ExpressionType.Convert)
+                    right = ((UnaryExpression)right).Operand;
+
                 // Convert byte[] <= Guid
-                if (right.Type == typeof(Guid) && left.Type == typeof(Byte[]))
+                if ((right.Type == typeof(Guid) || right.Type == typeof(Guid?)) && left.Type == typeof(Byte[]))
                 {
                     switch(right.NodeType)
                     {
