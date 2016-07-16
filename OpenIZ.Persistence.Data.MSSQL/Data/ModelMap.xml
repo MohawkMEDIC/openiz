@@ -316,15 +316,26 @@
     <property modelName="ClassConceptKey" domainName="Entity">
       <via domainName="ClassConceptId"/>
     </property>
-    <property modelName="ClassConcept" domainName="Entity" dontLoad="true">
-      <via domainName="ClassConcept"/>
+    <property modelName="StatusConcept" domainName="StatusConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+    </property>
+    <property modelName="TypeConcept" domainName="TypeConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+    </property>
+    <property modelName="ClassConcept" domainName="Entity">
+      <via domainName="ClassConcept">
+        <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+      </via>
     </property>
     <property modelName="DeterminerConceptKey" domainName="Entity">
       <via domainName="DeterminerConceptId"/>
     </property>
     <property modelName="DeterminerConcept" domainName="Entity" dontLoad="true">
-      <via domainName="DeterminerConcept"/>
+      <via domainName="DeterminerConcept">
+        <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+      </via>
     </property>
+    
     <property modelName="TypeConceptKey" domainName="TypeConceptId"/>
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
@@ -354,14 +365,7 @@
     <property modelName="Relationships" domainName="Entity">
       <via domainName="EntityAssociationsSourceEntityId"/>
     </property>
-    <property modelName="StatusConcept" domainName="StatusConcept">
-        <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
-    </property>
-    <property modelName="ClassConcept" domainName="Entity">
-      <via domainName="ClassConcept">
-        <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
-      </via>
-    </property>
+
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="TypeConcept" keyName="TypeConceptId"/>

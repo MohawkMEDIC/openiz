@@ -71,11 +71,17 @@ namespace OpenIZ.Core.Applets.Model
             set;
         }
 
-		/// <summary>
-		/// Initial applet configuration
-		/// </summary>
-		/// <value>The configuration.</value>
-		[XmlElement("configuration")]
+        /// <summary>
+        /// Instructs the host which asset can be used as a starting point
+        /// </summary>
+        [XmlElement("startup")]
+        public String StartAsset { get; set; }
+
+        /// <summary>
+        /// Initial applet configuration
+        /// </summary>
+        /// <value>The configuration.</value>
+        [XmlElement("configuration")]
 		public AppletInitialConfiguration Configuration {
 			get;
 			set;

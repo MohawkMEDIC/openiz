@@ -515,6 +515,7 @@ CREATE TABLE ConceptVersion
 -- INDEX: LOOKUP CONCEPT VERSION BY CONCEPT IDENTIFIER
 CREATE INDEX IX_ConceptVersionConceptId ON ConceptVersion(ConceptId);
 CREATE INDEX IX_ConceptVersionClassId ON ConceptVersion(ConceptClassId);
+CREATE INDEX IX_ConceptVersionMnemonic ON ConceptVersion(Mnemonic);
 
 /*
  THE CONCEPT NAME LOCALIZATION TABLE IS USED TO PROVIDE A LOCALIZED CONCEPT NAME FOR OPENIZ 
@@ -1044,6 +1045,10 @@ CREATE TABLE EntityVersion
 	CONSTRAINT FK_EntityVersionTypeConceptId FOREIGN KEY (TypeConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT CK_EntityVersionStatusConceptSet CHECK (dbo.fn_IsConceptSetMember(StatusConceptId, 'EntityStatus') = 1)
 );
+
+CREATE INDEX IX_EntityVersionStatus ON EntityVersion(StatusConceptId);
+CREATE INDEX IX_EntityVersionEntity ON EntityVersion(EntityId);
+CREATE INDEX IX_EntityClassConcept ON Entity(ClassConceptId);
 
 CREATE TABLE EntityAssociation
 (

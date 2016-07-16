@@ -90,6 +90,8 @@ namespace OpenIZ.Core.Http
 
 			// Add headers
 			HttpWebRequest retVal = (HttpWebRequest)HttpWebRequest.Create(uri.ToString());
+            retVal.ContinueTimeout = 3000;
+            
             if (this.Credentials == null && 
                 this.Description.Binding.Security?.CredentialProvider != null &&
                 this.Description.Binding.Security?.PreemtiveAuthentication == true)
@@ -308,9 +310,10 @@ namespace OpenIZ.Core.Http
 							{
 								// Validate the realm
 								string wwwAuth = response.Headers["WWW-Authenticate"];
-								int realmStart = wwwAuth.IndexOf("realm=\"") + 7;
+								int realmStart = wwwAuth.IndexOf("realm=\"") ;
 								if (realmStart < 0)
 									return ServiceClientErrorType.SecurityError; // No realm
+                                realmStart += 7;// skip realm
 								string realm = wwwAuth.Substring(realmStart, wwwAuth.IndexOf('"', realmStart) - realmStart);
 
 								if (!String.IsNullOrEmpty(this.Description.Binding.Security.AuthRealm) &&

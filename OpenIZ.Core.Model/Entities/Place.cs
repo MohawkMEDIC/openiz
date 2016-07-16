@@ -56,7 +56,6 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the class concept key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         [XmlElement("classConcept"), JsonProperty("classConcept")]
         public override Guid? ClassConceptKey
         {

@@ -16,7 +16,10 @@
  * User: fyfej
  * Date: 2016-3-8
  */
+using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Exceptions;
+using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Configuration;
 using OpenIZ.Core.Wcf.Serialization;
 using System;
 using System.Collections.Generic;
@@ -41,6 +44,9 @@ namespace OpenIZ.Core.Wcf.Serialization
     /// </summary>
     public class WcfErrorHandler : IErrorHandler
     {
+
+        private OpenIzConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection(OpenIzConstants.OpenIZConfigurationName) as OpenIzConfiguration;
+
         private TraceSource m_traceSource = new TraceSource(OpenIzConstants.WcfTraceSourceName);
         /// <summary>
         /// Handle error
@@ -71,7 +77,7 @@ namespace OpenIZ.Core.Wcf.Serialization
                 code = FaultCode.CreateSenderFaultCode("TOKEN", "http://openiz.org/model");
 
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Unauthorized;
-                WebOperationContext.Current.OutgoingResponse.Headers.Add("WWW-Authenticate", "Bearer");
+                WebOperationContext.Current.OutgoingResponse.Headers.Add("WWW-Authenticate", String.Format("Bearer realm=\"{0}\"", this.m_configuration.Security.ClaimsAuth.Realm));
             }
             else if (error is WebFaultException)
             {

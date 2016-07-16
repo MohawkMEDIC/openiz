@@ -284,7 +284,7 @@ namespace OpenIZ.Core.Applets
                 // Is the content HTML?
                 var htmlAsset = asset.Content as AppletAssetHtml;
                 XElement htmlContent = null;
-                
+
                 // Type of tag to render basic content
                 switch (htmlAsset.Html.Name.LocalName)
                 {
@@ -297,10 +297,10 @@ namespace OpenIZ.Core.Applets
                             // STRIP - OPENIZJS references
                             var xel = htmlContent.Descendants().OfType<XElement>().Where(o => o.Name == xs_xhtml + "script" && o.Attribute("src")?.Value.Contains("openiz") == true).ToArray();
                             foreach (var x in xel)
-                                if(x.Attribute("src").Value.EndsWith("openiz.js") || x.Attribute("src").Value.EndsWith("openiz-model.js") || x.Attribute("src").Value.EndsWith("openiz-localize.js"))
+                                if (x.Attribute("src").Value.EndsWith("openiz.js") || x.Attribute("src").Value.EndsWith("openiz-model.js") || x.Attribute("src").Value.EndsWith("openiz-localize.js"))
                                     x.Remove();
-                            var head = htmlContent.DescendantNodes().OfType<XElement>().FirstOrDefault(o=>o.Name == xs_xhtml + "head");
-                            if(head == null)
+                            var head = htmlContent.DescendantNodes().OfType<XElement>().FirstOrDefault(o => o.Name == xs_xhtml + "head");
+                            if (head == null)
                             {
                                 head = new XElement(xs_xhtml + "head");
                                 htmlContent.Add(head);
@@ -354,7 +354,7 @@ namespace OpenIZ.Core.Applets
 
                 // Process data bindings
                 var dataBindings = htmlContent.DescendantNodes().OfType<XElement>().Where(o => o.Name.LocalName == "select" && o.Attributes().Any(a => a.Name.Namespace == xs_binding));
-                foreach(var db in dataBindings)
+                foreach (var db in dataBindings)
                 {
 
                     // Get the databinding data
@@ -381,7 +381,7 @@ namespace OpenIZ.Core.Applets
                     var dataSource = (filterMethod.Invoke(EntitySource.Current.Provider, new object[] { expr }));
 
                     // Sort expression
-                    if(orderBy != null || orderByDescending != null)
+                    if (orderBy != null || orderByDescending != null)
                     {
                         var orderProperty = imsiType.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName == (orderBy ?? orderByDescending).Value);
                         ParameterExpression orderExpr = Expression.Parameter(dataSource.GetType());
@@ -397,7 +397,7 @@ namespace OpenIZ.Core.Applets
                     else
                     {
                         var rawExpr = new BindingExpressionVisitor().RewriteLambda(expressionBuilderMethod.Invoke(null, new object[] { NameValueCollection.ParseQueryString(key.Value + "=RemoveMe") }) as LambdaExpression);
-                        keyExpression = Expression.Lambda(new BindingExpressionVisitor().Visit(rawExpr.Body), rawExpr.Parameters).Compile(); 
+                        keyExpression = Expression.Lambda(new BindingExpressionVisitor().Visit(rawExpr.Body), rawExpr.Parameters).Compile();
                     }
                     if (value == null)
                         valueExpression = Expression.Lambda(Expression.Call(parameter, imsiType.GetRuntimeMethod("ToString", new Type[] { })), parameter).Compile();
@@ -414,7 +414,7 @@ namespace OpenIZ.Core.Applets
                         optAtt.Add(new XAttribute("value", keyExpression.DynamicInvoke(itm)), new XText(valueExpression.DynamicInvoke(itm)?.ToString()));
                         db.Add(optAtt);
                     }
-                    
+
                 }
 
                 // Now process SSI directives - <!--#include virtual="XXXXXXX" -->
@@ -465,7 +465,7 @@ namespace OpenIZ.Core.Applets
                         renderBuffer = Encoding.UTF8.GetBytes(sw.ToString());
 
                     // Add to cache
-                    lock(s_syncLock)
+                    lock (s_syncLock)
                         s_cache.Add(assetPath, renderBuffer);
 
                     return renderBuffer;
@@ -473,7 +473,7 @@ namespace OpenIZ.Core.Applets
 
             }
             else
-                throw new InvalidOperationException("Unknown asset content type");
+                return null;
 
             
         }

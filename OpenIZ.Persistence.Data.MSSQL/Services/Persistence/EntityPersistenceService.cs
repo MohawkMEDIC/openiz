@@ -284,17 +284,24 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var loadOptions = base.GetDataLoadOptions();
             loadOptions.LoadWith<Data.EntityVersion>(cs => cs.StatusConcept);
             loadOptions.LoadWith<Data.EntityVersion>(cs => cs.TypeConcept);
+            loadOptions.LoadWith<Data.EntityVersion>(cs => cs.Entity);
             loadOptions.LoadWith<Data.Entity>(cs => cs.EntityTags);
             loadOptions.LoadWith<Data.Entity>(cs => cs.EntityNames);
             loadOptions.LoadWith<Data.Entity>(cs => cs.EntityIdentifiers);
             loadOptions.LoadWith<Data.Entity>(cs => cs.EntityAddresses);
             loadOptions.LoadWith<Data.Entity>(cs => cs.EntityTelecomAddresses);
+            loadOptions.LoadWith<Data.Entity>(cs => cs.EntityNotes);
             loadOptions.LoadWith<Data.EntityName>(cs => cs.EntityNameComponents);
+            loadOptions.LoadWith<Data.EntityName>(cs => cs.NameUseConcept);
             loadOptions.LoadWith<Data.EntityAddress>(cs => cs.EntityAddressComponents);
+            loadOptions.LoadWith<Data.EntityAddress>(cs => cs.AddressUseConcept);
             loadOptions.LoadWith<Data.EntityNameComponent>(cs => cs.PhoneticValue);
+            loadOptions.LoadWith<Data.EntityNameComponent>(cs => cs.ComponentTypeConcept);
             loadOptions.LoadWith<Data.EntityAddressComponent>(cs => cs.EntityAddressComponentValue);
-            loadOptions.LoadWith<Data.EntityIdentifier>(cs => cs.AssigningAuthority);
+            loadOptions.LoadWith<Data.EntityAddressComponent>(cs => cs.ComponentTypeConcept);
             loadOptions.LoadWith<Data.EntityTelecomAddress>(cs => cs.TelecomUseConcept);
+
+            loadOptions.LoadWith<Data.EntityIdentifier>(cs => cs.AssigningAuthority);
             loadOptions.LoadWith<Data.EntityAssociation>(cs => cs.AssociationTypeConcept);
             loadOptions.LoadWith<Data.EntityExtension>(cs => cs.ExtensionType);
             return loadOptions;

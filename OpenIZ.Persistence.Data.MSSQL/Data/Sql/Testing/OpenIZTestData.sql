@@ -33,3 +33,12 @@ INSERT INTO SecurityApplicationPolicy(ApplicationId, PolicyId, PolicyAction)
 		SecurityApplication, Policy
 	WHERE
 		SecurityApplication.ApplicationPublicId = 'fiddler';
+
+INSERT INTO SecurityApplication (ApplicationPublicId, ApplicationSecret, CreatedBy)
+	VALUES ('org.openiz.openiz_mobile', ('ec1e5ef79b95cc1e8a5dec7492b9eb7e2b413ad7a45c5637d16c11bb68fcd53c'), 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+
+INSERT INTO SecurityApplicationPolicy(ApplicationId, PolicyId, PolicyAction)
+	SELECT ApplicationId, PolicyId, 2 FROM
+		SecurityApplication, Policy
+	WHERE
+		SecurityApplication.ApplicationPublicId = 'org.openiz.openiz_mobile';

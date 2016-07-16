@@ -88,6 +88,8 @@ namespace OpenIZ.Core.Wcf.Security
                 Core.Security.AuthenticationContext.Current = new Core.Security.AuthenticationContext(identities);
                 return base.CheckAccess(operationContext);
             }
+            catch(UnauthorizedAccessException) { throw; }
+            catch(UnauthorizedRequestException) { throw; }
             catch(Exception e)
             {
                 throw new SecurityTokenException(e.Message);

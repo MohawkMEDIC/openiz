@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using OpenIZ.Core.Model.Attributes;
+using System.Linq;
 
 namespace OpenIZ.Core.Model.Query
 {
@@ -224,7 +225,7 @@ namespace OpenIZ.Core.Model.Query
 						memberInfo = memberExpr.Expression.Type.GetRuntimeProperty (delayLoadAttribute.KeyPropertyName);
 
 					// TODO: Delay and bound properties!!
-					var memberXattribute = memberInfo.GetCustomAttribute<XmlElementAttribute>();
+					var memberXattribute = memberInfo.GetCustomAttributes<XmlElementAttribute>().FirstOrDefault();
 					if (memberXattribute == null)
 						return null; // TODO: When this occurs?
 

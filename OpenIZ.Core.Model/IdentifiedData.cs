@@ -38,8 +38,12 @@ namespace OpenIZ.Core.Model
     [XmlType("IdentifiedData",  Namespace = "http://openiz.org/model"), JsonObject("IdentifiedData")]
     public abstract class IdentifiedData : IIdentifiedEntity
     {
+
+        // Delay load is enabled
+        public static bool DelayLoadEnabled = true;
+
         // True when the data class is locked for storage
-        private bool m_delayLoad = true;
+        private bool m_delayLoad = IdentifiedData.DelayLoadEnabled;
 
         /// <summary>
         /// True if the class is currently loading associations when accessed

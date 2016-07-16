@@ -7,7 +7,8 @@
 		<xs:sequence>
 			<xs:element name="data" type="tns:AssetData" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="info" type="tns:AppletInfo" minOccurs="0" maxOccurs="1"/>
-			<xs:element name="configuration" type="tns:AppletInitialConfiguration" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="startup" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="configuration" type="tns:AppletInitialConfiguration" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="menuItem" type="tns:AppletMenu" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="panel" type="tns:AppletPanel" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="asset" type="tns:AppletAsset" minOccurs="0" maxOccurs="unbounded"/>

@@ -246,8 +246,10 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
                 credentials = new SigningCredentials(
                     new InMemorySymmetricSecurityKey(this.m_configuration.ServerKey ?? sha.ComputeHash(Encoding.UTF8.GetBytes(this.m_configuration.ServerSecret))),
                     "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256",
-                    "http://www.w3.org/2001/04/xmlenc#sha256"
+                    "http://www.w3.org/2001/04/xmlenc#sha256",
+                    new SecurityKeyIdentifier(new NamedKeySecurityKeyIdentifierClause("keyid", "0"))
                 );
+
             }
             else
                 throw new SecurityException("Invalid signing configuration");
@@ -279,6 +281,7 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
         /// </summary>
         private Stream CreateErrorCondition(OAuthErrorType errorType, String message)
         {
+            this.m_traceSource.TraceEvent(TraceEventType.Error, (int)errorType, message);
             WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
             OAuthError err = new OAuthError()
             {
