@@ -28,6 +28,7 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Model.Roles
 {
@@ -40,12 +41,7 @@ namespace OpenIZ.Core.Model.Roles
     public class Patient : Person
     {
 
-        // Gender concept key
-        private Guid? m_genderConceptKey;
-        // Gender concept
-        
-        private Concept m_genderConcept;
-
+     
         /// <summary>
         /// Represents a patient
         /// </summary>
@@ -74,46 +70,24 @@ namespace OpenIZ.Core.Model.Roles
         /// <summary>
         /// Gets or sets the gender concept key
         /// </summary>
-        [XmlElement("genderConcept"), JsonProperty("genderConcept")]
+        [DataIgnore, XmlElement("genderConcept"), JsonProperty("genderConcept")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         public Guid? GenderConceptKey
         {
-            get { return this.m_genderConceptKey; }
+            get { return this.GenderConcept?.Key; }
             set
             {
-                this.m_genderConceptKey = value;
-                this.m_genderConcept = null;
+                if (this.GenderConcept?.Key != value)
+                    this.GenderConcept = this.EntityProvider.Get<Concept>(value);
             }
         }
 
         /// <summary>
         /// Gets or sets the gender concept
         /// </summary>
-        [DelayLoad(nameof(GenderConceptKey))]
-        [XmlIgnore, JsonIgnore]
-        public Concept GenderConcept
-        {
-            get
-            {
-                this.m_genderConcept = base.DelayLoad(this.m_genderConceptKey, this.m_genderConcept);
-                return this.m_genderConcept;
-            }
-            set
-            {
-                this.m_genderConcept = value;
-                this.m_genderConceptKey = value?.Key;
-            }
-        }
-        
-        /// <summary>
-        /// Force a refresh of delay load properties
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_genderConcept = null;
-            
-        }
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(GenderConceptKey))]
+		public Concept GenderConcept { get; set; }
+
     }
 }

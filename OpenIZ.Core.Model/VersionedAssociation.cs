@@ -36,102 +36,38 @@ namespace OpenIZ.Core.Model
     /// </summary>
     
     [XmlType(Namespace = "http://openiz.org/model")]
-    public abstract class VersionedAssociation<TSourceType> : Association<TSourceType>, IVersionedAssociation where TSourceType : VersionedEntityData<TSourceType>
+    public abstract class VersionedAssociation<TSourceType> : Association<TSourceType>, IVersionedAssociation where TSourceType : VersionedEntityData<TSourceType>, new()
     {
 
-        // The identifier of the version where this data is effective
-        private Decimal? m_effectiveVersionSequenceId;
-        // The identifier of the version where this data is no longer effective
-        private Decimal? m_obsoleteVersionSequenceId;
-        // The version where this data is effective
-        
-        private TSourceType m_effectiveVersion;
-        // The version where this data is obsolete
-        
-        private TSourceType m_obsoleteVersion;
        
         /// <summary>
         /// Gets or sets the effective version of this type
         /// </summary>
         [XmlElement("effectiveVersionSequence"), JsonProperty("effectiveVersionSequence")]
-        public Decimal? EffectiveVersionSequenceId
-        {
-            get { return this.m_effectiveVersionSequenceId; }
-            set
-            {
-                this.m_effectiveVersionSequenceId = value;
-                this.m_effectiveVersion = null;
-            }
-        }
+        public Decimal? EffectiveVersionSequenceId { get; set; }
 
         /// <summary>
         /// Gets or sets the obsoleted version identifier
         /// </summary>
         [XmlElement("obsoleteVersionSequence"), JsonProperty("obsoleteVersionSequence")]
-        public Decimal? ObsoleteVersionSequenceId
-        {
-            get { return this.m_obsoleteVersionSequenceId; }
-            set
-            {
-                this.m_obsoleteVersionSequenceId = value;
-                this.m_obsoleteVersion = null;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the effective version
-        /// </summary>
-        [DelayLoad(null)]
-        [XmlIgnore, JsonIgnore]
-        public TSourceType EffectiveVersion
-        {
-            get
-            {
-                if(this.m_effectiveVersion == null &&
-                    this.IsDelayLoadEnabled &&
-                    this.m_effectiveVersionSequenceId.HasValue)
-                    this.m_effectiveVersion = EntitySource.Current.Provider.Query<TSourceType>(t => t.VersionSequence == this.m_effectiveVersionSequenceId).FirstOrDefault();
-                return this.m_effectiveVersion;
-            }
-            set
-            {
-                this.m_effectiveVersion = value;
-                this.m_effectiveVersionSequenceId = value?.VersionSequence;
-            }
-        }
-
-        /// <summary>
-        /// Gets the obsoletion version
-        /// </summary>
-        [DelayLoad(null)]
-        [XmlIgnore, JsonIgnore]
-        public TSourceType ObsoleteVersion
-        {
-            get
-            {
-                if(this.m_obsoleteVersion == null &&
-                    this.IsDelayLoadEnabled &&
-                    this.m_obsoleteVersionSequenceId.HasValue)
-                    this.m_obsoleteVersion = EntitySource.Current.Provider.Query<TSourceType>(t => t.VersionSequence == this.m_obsoleteVersionSequenceId).FirstOrDefault();
-                return this.m_obsoleteVersion;
-            }
-            set
-            {
-                this.m_obsoleteVersion = value;
-                if (value == null)
-                    this.m_obsoleteVersionSequenceId = null;
-                else
-                    this.m_obsoleteVersionSequenceId = value.VersionSequence;
-            }
-        }
+        public Decimal? ObsoleteVersionSequenceId { get; set; }
         
         /// <summary>
-        /// Refresh
+        /// Shoudl seralize
         /// </summary>
-        public override void Refresh()
+        /// <returns></returns>
+        public bool ShouldSerializeObsoleteVersionSequenceId()
         {
-            base.Refresh();
-            this.m_effectiveVersion = this.m_obsoleteVersion = null;
+            return this.ObsoleteVersionSequenceId.HasValue;
         }
+        /// <summary>
+        /// Should serialize
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeEffectiveVersionSequenceId()
+        {
+            return this.EffectiveVersionSequenceId.HasValue;
+        }
+
     }
 }

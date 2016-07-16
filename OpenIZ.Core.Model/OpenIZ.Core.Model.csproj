@@ -44,8 +44,9 @@
     <Compile Include="Acts\SubstanceAdministration.cs" />
     <Compile Include="Attributes\AutoLoadAttribute.cs" />
     <Compile Include="Attributes\ClassifierAttribute.cs" />
-    <Compile Include="Attributes\DelayLoadAttribute.cs" />
+    <Compile Include="Attributes\DataIgnoreAttribute.cs" />
     <Compile Include="Attributes\KeyLookupAttribute.cs" />
+    <Compile Include="Attributes\SerializationReferenceAttribute.cs" />
     <Compile Include="Attributes\SimpleValueAttribute.cs" />
     <Compile Include="BaseEntityData.cs" />
     <Compile Include="Association.cs" />

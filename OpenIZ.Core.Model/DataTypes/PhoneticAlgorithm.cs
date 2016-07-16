@@ -39,13 +39,14 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets the phonetic algorithm which is the "empty" algorithm
         /// </summary>
+        [DataIgnore, XmlIgnore, JsonIgnore]
         public static PhoneticAlgorithm EmptyAlgorithm
         {
             get
             {
                 if(s_nullPhoneticAlgorithm == null)
                     lock(s_lockObject)
-                        s_nullPhoneticAlgorithm = EntitySource.Current.Get(Guid.Parse("402CD339-D0E4-46CE-8FC2-12A4B0E17226"), s_nullPhoneticAlgorithm);
+                        s_nullPhoneticAlgorithm = EntitySource.Current.Get<PhoneticAlgorithm>(Guid.Parse("402CD339-D0E4-46CE-8FC2-12A4B0E17226"));
                 return s_nullPhoneticAlgorithm;
             }
         }

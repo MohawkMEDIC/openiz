@@ -55,6 +55,10 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         public Type ObjectType { get; set; }
 
+        /// <summary>
+        /// Gets or sets a cancel comand
+        /// </summary>
+        public bool Cancel { get; set; }
     }
 
     /// <summary>
@@ -62,6 +66,28 @@ namespace OpenIZ.Core.Model.Map
     /// </summary>
     public sealed class ModelMapper
     {
+
+        /// <summary>
+        /// Primitive types
+        /// </summary>
+        private static readonly HashSet<Type> primitives = new HashSet<Type>()
+        {
+            typeof(bool),
+            typeof(String),
+            typeof(int),
+            typeof(float),
+            typeof(double),
+            typeof(decimal),
+            typeof(Guid),
+            typeof(Guid?),
+            typeof(decimal?),
+            typeof(int?),
+            typeof(Type),
+            typeof(DateTime),
+            typeof(DateTime?),
+            typeof(DateTimeOffset),
+            typeof(DateTimeOffset?)
+        };
 
         // The map file
         private ModelMap m_mapFile;
@@ -94,11 +120,14 @@ namespace OpenIZ.Core.Model.Map
         /// <summary>
         /// Fires the pre map returning whether cancellation is necessary
         /// </summary>
-        private static object FireMappingToModel(object sender, Type domainType, Guid key)
+        private static object FireMappingToModel(object sender, Guid key, IdentifiedData modelInstance)
         {
-            ModelMapEventArgs e = new ModelMapEventArgs() { ObjectType = domainType, Key = key };
+            ModelMapEventArgs e = new ModelMapEventArgs() { ObjectType = modelInstance.GetType(), ModelObject = modelInstance, Key = key };
             MappingToModel?.Invoke(sender, e);
-            return e.ModelObject;
+            if (e.Cancel)
+                return e.ModelObject;
+            else
+                return null;
         }
 
         /// <summary>
@@ -288,9 +317,14 @@ namespace OpenIZ.Core.Model.Map
             foreach (var propInfo in typeof(TModel).GetRuntimeProperties())
             {
 
+                // no need to load?
+                if (propInfo == null)
+                    continue;
+                else if (!primitives.Contains(propInfo.PropertyType) && !propInfo.PropertyType.GetTypeInfo().IsEnum)
+                    continue;
+
                 // Property info
-                if (propInfo.GetCustomAttribute<DelayLoadAttribute>() != null ||
-                    propInfo.GetValue(modelInstance) == null)
+                if (propInfo.GetValue(modelInstance) == null)
                     continue;
 
                 if (!propInfo.PropertyType.GetTypeInfo().IsPrimitive && propInfo.PropertyType != typeof(Guid) &&
@@ -369,19 +403,20 @@ namespace OpenIZ.Core.Model.Map
                 return retVal;
 
             // Cache lookup
-            var verEnt = retVal as IVersionedEntity;
             var idEnt = retVal as IIdentifiedEntity;
-            PropertyMap keyMap = null;
-            if (verEnt != null)
-                classMap.TryGetModelProperty("VersionKey", out keyMap);
-            else if (idEnt != null)
-                classMap.TryGetModelProperty("Key", out keyMap);
-            if(keyMap != null)
+            PropertyMap iKeyMap = null;
+            if (idEnt != null)
+                classMap.TryGetModelProperty("Key", out iKeyMap);
+            if (iKeyMap != null)
             {
-                object keyValue = typeof(TDomain).GetRuntimeProperty(keyMap.DomainName).GetValue(domainInstance);
+                object keyValue = typeof(TDomain).GetRuntimeProperty(iKeyMap.DomainName).GetValue(domainInstance);
                 if (keyValue is byte[])
                     keyValue = new Guid(keyValue as byte[]);
-                var cache = FireMappingToModel(this, typeof(TModel), (Guid)keyValue);
+
+                // Set key vaue
+                idEnt.Key = (Guid)keyValue;
+
+                var cache = FireMappingToModel(this, (Guid)keyValue, retVal as IdentifiedData);
                 if (cache != null)
                     return (TModel)cache;
             }
@@ -389,6 +424,14 @@ namespace OpenIZ.Core.Model.Map
             // Iterate the properties and map
             foreach (var modelPropertyInfo in typeof(TModel).GetRuntimeProperties())
             {
+
+                // no need to load?
+                if (modelPropertyInfo == null)
+                    continue;
+                else if (modelPropertyInfo.GetCustomAttribute<DataIgnoreAttribute>() != null ||
+                    modelPropertyInfo.GetCustomAttribute<AutoLoadAttribute>() == null &&
+                    !primitives.Contains(modelPropertyInfo.PropertyType) && !modelPropertyInfo.PropertyType.GetTypeInfo().IsEnum)
+                    continue;
 
                 // Map property
                 PropertyMap propMap = null;
@@ -418,23 +461,19 @@ namespace OpenIZ.Core.Model.Map
                 }
 
                 // Traversal stuff
-                PropertyInfo modelProperty = null;
+                PropertyInfo modelProperty = propMap == null ? modelPropertyInfo : typeof(TModel).GetRuntimeProperty(propMap.ModelName); ;
                 object sourceObject = domainInstance;
                 PropertyInfo sourceProperty = propInfo;
 
-                // Set 
-                if (propMap == null)
-                    modelProperty = typeof(TModel).GetRuntimeProperty(propInfo.Name);
-                else
+                // Go through the via elements in the object map. This code traces a path 
+                // through the domain class instantiating any necessary associative entity
+                // classes. Example when a model entity is really two or three tables in the DB..
+                // 🎶 Ah for just one time, I would take the northwest passage
+                // To find the hand of Franklin reaching for the Beaufort Sea.
+                // Tracing one warm line, through a land so wide and savage
+                // And make a northwest passage to the sea. 🎶
+                if (propMap != null)
                 {
-                    modelProperty = typeof(TModel).GetRuntimeProperty(propMap.ModelName);
-                    // Go through the via elements in the object map. This code traces a path 
-                    // through the domain class instantiating any necessary associative entity
-                    // classes. Example when a model entity is really two or three tables in the DB..
-                    // 🎶 Ah for just one time, I would take the northwest passage
-                    // To find the hand of Franklin reaching for the Beaufort Sea.
-                    // Tracing one warm line, through a land so wide and savage
-                    // And make a northwest passage to the sea. 🎶
                     var via = propMap.Via;
                     List<PropertyMap> viaWalk = new List<PropertyMap>();
                     while (via?.DontLoad == false)
@@ -458,13 +497,9 @@ namespace OpenIZ.Core.Model.Map
 
                 // Set value
                 object pValue = null;
-                if (modelProperty == null)
-                    continue;
+                
                 //DebugWriteLine("Unmapped property ({0}).{1}", typeof(TDomain).Name, propInfo.Name);
-                else if (modelProperty.GetCustomAttribute<DelayLoadAttribute>() != null &&
-                    modelProperty.GetCustomAttribute<AutoLoadAttribute>() == null)
-                    continue;
-                else if (sourceProperty.PropertyType == typeof(byte[]) && modelProperty.PropertyType == typeof(Guid)) // Guid to BA
+                 if (sourceProperty.PropertyType == typeof(byte[]) && modelProperty.PropertyType == typeof(Guid)) // Guid to BA
                     modelProperty.SetValue(retVal, new Guid((byte[])sourceProperty.GetValue(sourceObject)));
                 else if (modelProperty.PropertyType.GetTypeInfo().IsAssignableFrom(sourceProperty.PropertyType.GetTypeInfo()))
                     modelProperty.SetValue(retVal, sourceProperty.GetValue(sourceObject));
@@ -477,8 +512,8 @@ namespace OpenIZ.Core.Model.Map
                 {
                     var modelInstance = Activator.CreateInstance(modelProperty.PropertyType) as IList;
                     modelProperty.SetValue(retVal, modelInstance);
-                    var instanceMapFunction = typeof(ModelMapper).GetGenericMethod("MapDomainInstance", new Type[] { sourceProperty.PropertyType.GenericTypeArguments[0], modelProperty.PropertyType.GenericTypeArguments[0] },
-                        new Type[] { sourceProperty.PropertyType.GenericTypeArguments[0] });
+                    var instanceMapFunction = typeof(ModelMapper).GetGenericMethod("MapDomainInstance", new Type[] { sourceProperty.PropertyType.GetTypeInfo().GenericTypeArguments[0], modelProperty.PropertyType.GetTypeInfo().GenericTypeArguments[0] },
+                        new Type[] { sourceProperty.PropertyType.GetTypeInfo().GenericTypeArguments[0] });
                     foreach (var itm in originalValue as IList)
                     {
                         // Traverse?
@@ -559,8 +594,8 @@ namespace OpenIZ.Core.Model.Map
 #if VERBOSE_DEBUG
             Debug.WriteLine("Leaving: {0}>{1}", typeof(TDomain).FullName, typeof(TModel).FullName);
 #endif
-            if(verEnt != null || idEnt != null)
-                FireMappedToModel(this, verEnt?.VersionKey ?? idEnt?.Key ?? Guid.Empty, retVal as IdentifiedData);
+            if (idEnt != null)
+                FireMappedToModel(this, idEnt.Key ?? Guid.Empty, retVal as IdentifiedData);
             return retVal;
         }
 

@@ -19,6 +19,7 @@
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.EntityLoader;
 using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -31,14 +32,9 @@ namespace OpenIZ.Core.Model.Entities
     /// <typeparam name="TBoundModel"></typeparam>
     [Classifier(nameof(ComponentType)), SimpleValue(nameof(Value))]
     [XmlType(Namespace = "http://openiz.org/model")]
-    public abstract class GenericComponentValues<TBoundModel> : Association<TBoundModel> where TBoundModel : IdentifiedData
+    public abstract class GenericComponentValues<TBoundModel> : Association<TBoundModel> where TBoundModel : IdentifiedData, new()
     {
-        // Component type
-        private Guid? m_componentTypeKey;
-        // Component type
-        
-        private Concept m_componentType;
-
+       
         /// <summary>
         /// Default ctor
         /// </summary>
@@ -52,7 +48,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         public GenericComponentValues(Guid partType, String value)
         {
-            this.m_componentTypeKey = partType;
+            this.ComponentTypeKey = partType;
             this.Value = value;
         }
 
@@ -68,34 +64,22 @@ namespace OpenIZ.Core.Model.Entities
         /// Component type key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("type"), JsonProperty("type")]
+        [DataIgnore, XmlElement("type"), JsonProperty("type")]
         public Guid? ComponentTypeKey
         {
-            get { return this.m_componentTypeKey; }
+            get { return this.ComponentType?.Key; }
             set
             {
-                this.m_componentTypeKey = value;
-                this.m_componentType = null;
+                if (this.ComponentType?.Key != value)
+                    this.ComponentType = this.EntityProvider.Get<Concept>(value);
             }
         }
 
         /// <summary>
         /// Gets or sets the type of address component
         /// </summary>
-        [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(ComponentTypeKey)), AutoLoad]
-        public Concept ComponentType
-        {
-            get {
-                this.m_componentType = base.DelayLoad(this.m_componentTypeKey, this.m_componentType);
-                return this.m_componentType;
-            }
-            set
-            {
-                this.m_componentType = value;
-                this.m_componentTypeKey = value?.Key;
-            }
-        }
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(ComponentTypeKey))]
+		public Concept ComponentType { get; set; }
 
 
         /// <summary>
@@ -104,13 +88,6 @@ namespace OpenIZ.Core.Model.Entities
         [XmlElement("value"), JsonProperty("value")]
         public String Value { get; set; }
 
-        /// <summary>
-        /// Forces refreshing of delay load properties
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_componentType = null;
-        }
+
     }
 }

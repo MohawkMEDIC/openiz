@@ -28,6 +28,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OpenIZ.Core.Interfaces;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -36,16 +37,8 @@ namespace OpenIZ.Core.Model.DataTypes
     /// </summary>
     [Classifier(nameof(ExtensionType)), SimpleValue(nameof(ExtensionValue))]
     [XmlType(Namespace = "http://openiz.org/model")]
-    public abstract class Extension<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
+    public abstract class Extension<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>, new()
     {
-
-
-        // Extension type key
-        private Guid? m_extensionTypeKey;
-        // Extension type
-        private ExtensionType m_extensionType;
-        // Extension handler
-        private IExtensionHandler m_extensionHandler;
 
         /// <summary>
         /// Gets or sets the value of the extension
@@ -57,50 +50,30 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets an extension displayable value
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        public String ExtensionDisplay { get; set; }
+		public String ExtensionDisplay { get; set; }
 
         /// <summary>
         /// Gets or sets the extension type key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlIgnore, JsonIgnore]
-        public Guid? ExtensionTypeKey
-        {
-            get { return this.m_extensionTypeKey; }
+        [DataIgnore, XmlIgnore, JsonIgnore]
+		public Guid? ExtensionTypeKey
+         {
+            get { return this.ExtensionType?.Key; }
             set
             {
-                this.m_extensionTypeKey = value;
-                this.m_extensionType = null;
+                if (this.ExtensionType?.Key != value)
+                    this.ExtensionType = this.EntityProvider.Get<ExtensionType>(value);
             }
         }
 
         /// <summary>
         /// Gets or sets the extension type
         /// </summary>
-        [DelayLoad(nameof(ExtensionTypeKey))]
         [XmlElement("extensionType"), JsonProperty("extensionType")]
         [AutoLoad]
-        public ExtensionType ExtensionType
-        {
-            get {
-                this.m_extensionType = base.DelayLoad(this.m_extensionTypeKey, this.m_extensionType);
-                return this.m_extensionType;
-            }
-            set
-            {
-                this.m_extensionType = value;
-                this.m_extensionTypeKey = value?.Key;
-            }
-        }
+        public ExtensionType ExtensionType { get; set; }
 
-        /// <summary>
-        /// Forces refresh 
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_extensionType = null;
-        }
     }
 
     /// <summary>

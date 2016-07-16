@@ -36,11 +36,14 @@ namespace OpenIZ.Core.Model.Security
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "SecurityRole")]
     public class SecurityRole : SecurityEntity
     {
+        /// <summary>
+        /// CTOR
+        /// </summary>
+        public SecurityRole()
+        {
+            this.Users = new List<SecurityUser>();
+        }
 
-        // User delay load
-        
-        private List<SecurityUser> m_users;
-        
         /// <summary>
         /// Gets or sets the name of the security role
         /// </summary>
@@ -54,27 +57,21 @@ namespace OpenIZ.Core.Model.Security
         public String Description { get; set; }
 
         /// <summary>
+        /// User list XML
+        /// </summary>
+        [XmlElement("user"), JsonProperty("user")]
+        public List<Guid> UsersXml
+        {
+            get { return this.Users?.Select(o => o.Key.Value).ToList(); }
+            set { this.Users = value.Select(o => this.EntityProvider.Get<SecurityUser>(o)).ToList(); }
+        }
+        /// <summary>
         /// Gets or sets the security users in the role
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DelayLoad(null)]
-        public List<SecurityUser> Users {
-            get
-            {
-                if (this.m_users == null && this.IsDelayLoadEnabled )
-                    this.m_users = EntitySource.Current.Provider.Query<SecurityUser>(u => u.Roles.Any(r => r.Key == this.Key)).ToList();
-                return this.m_users;
-            }
-        }
+		public List<SecurityUser> Users { get; set; }
 
-        /// <summary>
-        /// Force delay load properties to be reloaded from the data store
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_users = null;
-        }
+
 
     }
 }

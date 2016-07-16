@@ -36,14 +36,8 @@ namespace OpenIZ.Core.Model
     /// </summary>
     
     [XmlType(Namespace = "http://openiz.org/model")]
-    public abstract class VersionedEntityData<THistoryModelType> : BaseEntityData, IVersionedEntity where THistoryModelType : VersionedEntityData<THistoryModelType>
+    public abstract class VersionedEntityData<THistoryModelType> : BaseEntityData, IVersionedEntity where THistoryModelType : VersionedEntityData<THistoryModelType>, new()
     {
-
-        // Previous version id
-        private Guid? m_previousVersionId;
-        // Previous version
-        
-        private THistoryModelType m_previousVersion;
 
         /// <summary>
         /// Creates a new versioned base data class
@@ -69,42 +63,15 @@ namespace OpenIZ.Core.Model
         
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("previousVersion"), JsonProperty("previousVersion")]
-        public virtual Guid? PreviousVersionKey
-        {
-            get
-            {
-                return this.m_previousVersionId;
-            }
-            set
-            {
-                this.m_previousVersionId = value;
-                this.m_previousVersion = default(THistoryModelType);
-            }
-        }
+        public virtual Guid? PreviousVersionKey { get; set; }
 
         /// <summary>
         /// Gets or sets the previous version
         /// </summary>
-        [DelayLoad(nameof(PreviousVersionKey))]
-        [XmlIgnore, JsonIgnore]
-        public virtual THistoryModelType PreviousVersion
-        {
-            get
-            {
-                if(this.m_previousVersion == null && this.IsDelayLoadEnabled && 
-                    this.m_previousVersionId.HasValue)
-                    this.m_previousVersion = EntitySource.Current.Get(this.Key, this.m_previousVersionId.Value, this.m_previousVersion);
-                return this.m_previousVersion;
-            }
-            set
-            {
-                this.m_previousVersion = value;
-                if (value == default(THistoryModelType))
-                    this.m_previousVersionId = null;
-                else
-                    this.m_previousVersionId = value.VersionKey;
-            }
-        }
+        [DataIgnore, XmlIgnore, JsonIgnore, SerializationReference(nameof(PreviousVersionKey))]
+		public virtual THistoryModelType PreviousVersion { 
+                get { return this.EntityProvider.Get<THistoryModelType>(this.Key, this.PreviousVersionKey); }
+         }
 
         /// <summary>
         /// Gets or sets the key which represents the version of the entity
@@ -127,13 +94,9 @@ namespace OpenIZ.Core.Model
         }
 
         /// <summary>
-        /// Force bound attributes to reload
+        /// Should serialize previous version?
         /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_previousVersion = default(THistoryModelType);
-        }
+        public bool ShouldSerializePreviousVersionKey() { return this.PreviousVersionKey.HasValue; }
     }
 
 }

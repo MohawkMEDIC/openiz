@@ -39,9 +39,6 @@ namespace OpenIZ.Core.Model.Entities
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Place")]
     public class Place : Entity
     {
-        // Servics
-        
-        private List<PlaceService> m_services;
 
         /// <summary>
         /// Place ctor
@@ -56,7 +53,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the class concept key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("classConcept"), JsonProperty("classConcept")]
+        [DataIgnore, XmlElement("classConcept"), JsonProperty("classConcept")]
         public override Guid? ClassConceptKey
         {
             get
@@ -97,32 +94,23 @@ namespace OpenIZ.Core.Model.Entities
         public double? Lng { get; set; }
 
         /// <summary>
-        /// Gets the services
+        /// Should serialize Lat?
         /// </summary>
-        [DelayLoad(null)]
-        [XmlElement("service"), JsonProperty("service")]
-        public List<PlaceService> Services
-        {
-            get
-            {
-                if (this.m_services == null)
-                    this.m_services = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, m_services);
-                return this.m_services;
-            }
-            set
-            {
-                this.m_services = value;
-            }
-        }
+        public bool ShouldSerializeLat() { return this.Lat.HasValue;  }
 
         /// <summary>
-        /// Refresh the place entity
+        /// Should serialize longitude
         /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_services = null;
-        }
+        /// <returns></returns>
+        public bool ShouldSerializeLng() { return this.Lng.HasValue; }
+
+        /// <summary>
+        /// Gets the services
+        /// </summary>
+        [AutoLoad]
+        [XmlElement("service"), JsonProperty("service")]
+        public List<PlaceService> Services { get; set; }
+
 
     }
 }

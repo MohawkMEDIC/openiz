@@ -40,60 +40,39 @@ namespace OpenIZ.Core.Model.Entities
     public class Entity : VersionedEntityData<Entity>
     {
 
-        // Classe concept
-        private Guid? m_classConceptId;
-        // Determiner concept id
-        private Guid? m_determinerConceptId;
-        // Status 
-        private Guid? m_statusConceptId;
-        // Control act which created this
-        private Guid? m_creationActId;
-        // Type concept
-        private Guid? m_typeConceptId;
+        /// <summary>
+        /// Constructs a new entity
+        /// </summary>
+        public Entity()
+        {
+            this.Notes = new List<EntityNote>();
+            this.Identifiers = new List<EntityIdentifier>();
+            this.Addresses = new List<EntityAddress>();
+            this.Extensions = new List<EntityExtension>();
+            this.Names = new List<EntityName>();
+            this.Participations = new List<ActParticipation>();
+            this.Relationships = new List<EntityRelationship>();
+            this.Telecoms = new List<EntityTelecomAddress>();
+            this.Tags = new List<EntityTag>();
+        }
 
-        // Class concept
-        private Concept m_classConcept;
-        // Determiner concept
-        
-        private Concept m_determinerConcept;
-        // TODO: Change this to Act
-        private Act m_creationAct;
-        // Status concept
-        private Concept m_statusConcept;
-        // Type concept
-        private Concept m_typeConcept;
-
-        // Identifiers 
-        private List<EntityIdentifier> m_identifiers;
-        // Associations
-        private List<EntityRelationship> m_relationships;
-        // Telecom addresses
-        private List<EntityTelecomAddress> m_telecomAddresses;
-        // Extensions
-        private List<EntityExtension> m_extensions;
-        // Names
-        private List<EntityName> m_names;
-        // Addresses
-        private List<EntityAddress> m_addresses;
-        // Notes
-        private List<EntityNote> m_notes;
-        // Tags
-        private List<EntityTag> m_tags;
-        // Participations
-        private List<ActParticipation> m_participations;
+        /// <summary>
+        /// Should serialize previous version?
+        /// </summary>
+        public bool ShouldSerializeCreationAct() { return this.CreationActKey.HasValue; }
 
         /// <summary>
         /// Class concept
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("classConcept"), JsonProperty("classConcept")]
+        [DataIgnore, XmlElement("classConcept"), JsonProperty("classConcept")]
         public virtual Guid? ClassConceptKey
         {
-            get { return this.m_classConceptId; }
+            get { return this.ClassConcept?.Key; }
             set
             {
-                this.m_classConceptId = value;
-                this.m_classConcept = null;
+                if (this.ClassConcept?.Key != value)
+                    this.ClassConcept = this.EntityProvider.Get<Concept>(value);
             }
         }
 
@@ -101,15 +80,14 @@ namespace OpenIZ.Core.Model.Entities
         /// Determiner concept
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
-        [XmlElement("determinerConcept"), JsonProperty("determinerConcept")]
+        [DataIgnore, XmlElement("determinerConcept"), JsonProperty("determinerConcept")]
         public virtual Guid? DeterminerConceptKey
         {
-            get { return this.m_determinerConceptId; }
+            get { return this.DeterminerConcept?.Key; }
             set
             {
-                this.m_determinerConceptId = value;
-                this.m_determinerConcept = null;
+                if(this.DeterminerConcept?.Key != value)
+                    this.DeterminerConcept = this.EntityProvider.Get<Concept>(value);
             }
         }
 
@@ -117,15 +95,14 @@ namespace OpenIZ.Core.Model.Entities
         /// Status concept id
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
-        [XmlElement("statusConcept"), JsonProperty("statusConcept")]
+        [DataIgnore, XmlElement("statusConcept"), JsonProperty("statusConcept")]
         public Guid?  StatusConceptKey
         {
-            get { return this.m_statusConceptId; }
+            get { return this.StatusConcept?.Key; }
             set
             {
-                this.m_statusConceptId = value;
-                this.m_statusConcept = null;
+                if(this.StatusConcept?.Key != value)
+                    this.StatusConcept = this.EntityProvider.Get<Concept>(value);
             }
         }
         
@@ -133,15 +110,15 @@ namespace OpenIZ.Core.Model.Entities
         /// Creation act reference
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
-        [XmlElement("creationAct"), JsonProperty("creationAct")]
+        [DataIgnore, XmlElement("creationAct"), JsonProperty("creationAct")]
         public Guid?  CreationActKey
         {
-            get { return this.m_creationActId; }
+            get { return this.CreationAct?.Key; }
             set
             {
-                this.m_creationActId = value;
-                this.m_creationAct = null;
+                if (this.CreationAct?.Key != value)
+                    this.CreationAct = this.EntityProvider.Get<Act>(value);
+
             }
         }
 
@@ -149,15 +126,14 @@ namespace OpenIZ.Core.Model.Entities
         /// Type concept identifier
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
-        [XmlElement("typeConcept"), JsonProperty("typeConcept")]
+        [DataIgnore, XmlElement("typeConcept"), JsonProperty("typeConcept")]
         public Guid?  TypeConceptKey
         {
-            get { return this.m_typeConceptId; }
+            get { return this.TypeConcept?.Key; }
             set
             {
-                this.m_typeConceptId = value;
-                this.m_typeConcept = null;
+                if(this.TypeConcept?.Key != value)
+                    this.TypeConcept = this.EntityProvider.Get<Concept>(value);
             }
         }
 
@@ -166,322 +142,97 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [XmlIgnore, JsonIgnore]
         [AutoLoad()]
-        [DelayLoad(nameof(ClassConceptKey))]
-        public Concept ClassConcept
-        {
-            get {
-                this.m_classConcept = base.DelayLoad(this.m_classConceptId, this.m_classConcept);
-                return this.m_classConcept;
-            }
-            set
-            {
-                this.m_classConcept = value;
-                this.m_classConceptId = value?.Key;
-            }
-        }
+        public Concept ClassConcept { get; set; }
 
         /// <summary>
         /// Determiner concept
         /// </summary>
-        [DelayLoad(nameof(DeterminerConceptKey))]
         [XmlIgnore, JsonIgnore]
-        [AutoLoad()]   
-        public virtual Concept DeterminerConcept
-        {
-            get
-            {
-                this.m_determinerConcept = base.DelayLoad(this.m_determinerConceptId, this.m_determinerConcept);
-                return this.m_determinerConcept;
-            }
-            set
-            {
-                this.m_determinerConcept = value;
-                if (value == null)
-                    this.m_determinerConceptId = Guid.Empty;
-                else
-                    this.m_determinerConceptId = value.Key;
-            }
-        }
+        [AutoLoad()]
+        public virtual Concept DeterminerConcept { get; set; }
 
         /// <summary>
         /// Status concept id
         /// </summary>
-        [DelayLoad(nameof(StatusConceptKey))]
         [XmlIgnore, JsonIgnore]
         [AutoLoad()]
-        public Concept StatusConcept
-        {
-            get
-            {
-                this.m_statusConcept = base.DelayLoad(this.m_statusConceptId, this.m_statusConcept);
-                return this.m_statusConcept;
-            }
-            set
-            {
-                this.m_statusConcept = value;
-                if (value == null)
-                    this.m_statusConceptId = Guid.Empty;
-                else
-                    this.m_statusConceptId = value.Key;
-            }
-        }
+        public Concept StatusConcept { get; set; }
 
         /// <summary>
         /// Creation act reference
         /// </summary>
-        [DelayLoad(nameof(CreationActKey))]
-        [XmlIgnore, JsonIgnore]
-        public Act CreationAct
-        {
-            get {
-                this.m_creationAct = base.DelayLoad(this.m_creationActId, this.m_creationAct);
-                return this.m_creationAct;
-            }
-            set
-            {
-                this.m_creationAct = value;
-                this.m_creationActId = value?.Key;
-            }
-        }
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(CreationActKey))]
+		public Act CreationAct { get; set; }
 
         /// <summary>
         /// Type concept identifier
         /// </summary>
-        [DelayLoad(nameof(TypeConceptKey))]
         [AutoLoad()]
-        [XmlIgnore, JsonIgnore]
-        public Concept TypeConcept
-        {
-            get {
-                this.m_typeConcept = base.DelayLoad(this.m_typeConceptId, this.m_typeConcept);
-                return this.m_typeConcept;
-            }
-            set
-            {
-                this.m_typeConcept = value;
-                this.m_typeConceptId = value?.Key;
-            }
-        }
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(TypeConceptKey))]
+		public Concept TypeConcept { get; set; }
 
         /// <summary>
         /// Gets the identifiers associated with this entity
         /// </summary>
-        [DelayLoad(null)]
         [AutoLoad()]
         [XmlElement("identifier"), JsonProperty("identifier")]
-        public List<EntityIdentifier> Identifiers
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_identifiers = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_identifiers);
-                return this.m_identifiers;
-            }
-            set
-            {
-                this.m_identifiers = value;
-            }
-        }
+        public List<EntityIdentifier> Identifiers { get; set; }
 
         /// <summary>
         /// Gets a list of all associated entities for this entity
         /// </summary>
-        [DelayLoad(null)]
         [AutoLoad()]
         [XmlElement("relationship"), JsonProperty("relationship")]
-        public List<EntityRelationship> Relationships
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_relationships = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_relationships);
-
-                return this.m_relationships;
-            }
-            set
-            {
-                this.m_relationships = value;
-            }
-        }
+        public List<EntityRelationship> Relationships { get; set; }
 
         /// <summary>
         /// Gets a list of all telecommunications addresses associated with the entity
         /// </summary>
-        [DelayLoad(null)]
         [AutoLoad()]
         [XmlElement("telecom"), JsonProperty("telecom")]
-        public List<EntityTelecomAddress> Telecoms
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_telecomAddresses = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_telecomAddresses);
-
-                return this.m_telecomAddresses;
-            }
-            set
-            {
-                this.m_telecomAddresses = value;
-            }
-        }
+        public List<EntityTelecomAddress> Telecoms { get; set; }
 
         /// <summary>
         /// Gets a list of all extensions associated with the entity
         /// </summary>
-        [DelayLoad(null)]
         [AutoLoad()]
         [XmlElement("extension"), JsonProperty("extension")]
-        public List<EntityExtension> Extensions
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_extensions = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_extensions);
-
-                return this.m_extensions;
-            }
-            set
-            {
-                this.m_extensions = value;
-            }
-        }
+        public List<EntityExtension> Extensions { get; set; }
 
         /// <summary>
         /// Gets a list of all names associated with the entity
         /// </summary>
-        [DelayLoad(null)]
         [AutoLoad()]
         [XmlElement("name"), JsonProperty("name")]
-        public List<EntityName> Names
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_names = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_names);
-
-                return this.m_names;
-            }
-            set
-            {
-                this.m_names = value;
-            }
-        }
+        public List<EntityName> Names { get; set; }
 
         /// <summary>
         /// Gets a list of all addresses associated with the entity
         /// </summary>
-        [DelayLoad(null)]
         [AutoLoad()]
         [XmlElement("address"), JsonProperty("address")]
-        public List<EntityAddress> Addresses
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_addresses = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_addresses);
-
-                return this.m_addresses;
-            }
-            set
-            {
-                this.m_addresses = value;
-            }
-        }
+        public List<EntityAddress> Addresses { get; set; }
 
         /// <summary>
         /// Gets a list of all notes associated with the entity
         /// </summary>
-        [DelayLoad(null)]
         [AutoLoad()]
         [XmlElement("note"), JsonProperty("note")]
-        public List<EntityNote> Notes
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_notes = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_notes);
-
-                return this.m_notes;
-            }
-            set
-            {
-                this.m_notes = value;
-            }
-        }
+        public List<EntityNote> Notes { get; set; }
 
         /// <summary>
         /// Gets a list of all tags associated with the entity
         /// </summary>
-        [DelayLoad(null)]
         [AutoLoad()]
         [XmlElement("tag"), JsonProperty("tag")]
-        public List<EntityTag> Tags
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_tags = EntitySource.Current.GetRelations(this.Key, this.m_tags);
-
-                return this.m_tags;
-            }
-            set
-            {
-                this.m_tags = value;
-            }
-        }
+        public List<EntityTag> Tags { get; set; }
 
         /// <summary>
         /// Gets the acts in which this entity participates
         /// </summary>
-        [DelayLoad(null)]
         [AutoLoad()]
         [XmlElement("participation"), JsonProperty("participation")]
-        public List<ActParticipation> Participations
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_participations = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_participations);
-
-                return this.m_participations;
-            }
-            set
-            {
-                this.m_participations = value;
-            }
-        }
-
-        /// <summary>
-        /// Set common delay load properties
-        /// </summary>
-        public void SetDelayLoadProperties(List<EntityName> names,
-            List<EntityAddress> address,
-            List<EntityIdentifier> identifiers,
-            List<EntityTelecomAddress> telecoms)
-        {
-            this.m_names = names;
-            this.m_addresses = address;
-            this.m_identifiers = identifiers;
-            this.m_telecomAddresses = telecoms;
-        }
-
-        /// <summary>
-        /// Forces the delay load properties in this type to reload
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_classConcept = this.m_determinerConcept = this.m_statusConcept = this.m_typeConcept = null;
-            this.m_addresses = null;
-            this.m_relationships = null;
-            this.m_creationAct = null;
-            this.m_extensions = null;
-            this.m_identifiers = null;
-            this.m_names = null;
-            this.m_notes = null;
-            this.m_tags = null;
-            this.m_telecomAddresses = null;
-        }
-
+        public List<ActParticipation> Participations { get; set; }
+        
     }
 }

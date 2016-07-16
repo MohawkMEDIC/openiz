@@ -28,6 +28,7 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -49,45 +50,27 @@ namespace OpenIZ.Core.Model.Entities
             this.DeterminerConceptKey = DeterminerKeys.Specific;
         }
 
-        // Security application key
-        private Guid? m_securityApplicationKey;
-        // Security application
-        private SecurityApplication m_securityApplication;
-
         /// <summary>
         /// Gets or sets the security application
         /// </summary>
-        [XmlElement("securityApplication"), JsonProperty("securityApplication")]
+        [DataIgnore, XmlElement("securityApplication"), JsonProperty("securityApplication")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         public Guid? SecurityApplicationKey
         {
-            get { return this.m_securityApplicationKey; }
+            get { return this.SecurityApplication?.Key; }
             set
             {
-                this.m_securityApplicationKey = value;
-                this.m_securityApplication = null;
+                if (this.SecurityApplication?.Key != value)
+                    this.SecurityApplication = this.EntityProvider.Get<SecurityApplication>(value);
             }
         }
 
         /// <summary>
         /// Gets or sets the security application
         /// </summary>
-        [DelayLoad(nameof(SecurityApplicationKey))]
-        [XmlIgnore, JsonIgnore]
-        public SecurityApplication SecurityApplication
-        {
-            get {
-                this.m_securityApplication= base.DelayLoad(this.m_securityApplicationKey, this.m_securityApplication);
-                return this.m_securityApplication;
-            }
-            set
-            {
-                this.m_securityApplication = value;
-
-                    this.m_securityApplicationKey = value?.Key;
-            }
-        }
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(SecurityApplicationKey))]
+		public SecurityApplication SecurityApplication { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the software
@@ -107,13 +90,6 @@ namespace OpenIZ.Core.Model.Entities
         [XmlElement("vendorName"), JsonProperty("vendorName")]
         public String VendorName { get; set; }
 
-        /// <summary>
-        /// Force delay loading
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_securityApplication = null;
-        }
+
     }
 }

@@ -35,28 +35,28 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Dummy entity source
         /// </summary>
-        private class DummyEntitySource : IEntitySourceProvider
+        public class DummyEntitySource : IEntitySourceProvider
         {
             /// <summary>
             /// Gets the specified object
             /// </summary>
-            public TObject Get<TObject>(Guid? key) where TObject : IdentifiedData
+            public TObject Get<TObject>(Guid? key) where TObject : IdentifiedData, new()
             {
-                throw new NotImplementedException();
+                return new TObject() { Key = key, IsLogicalNull = true };
             }
 
             /// <summary>
             /// Gets the specified object
             /// </summary>
-            public TObject Get<TObject>(Guid? key, Guid? versionKey) where TObject : IdentifiedData, IVersionedEntity
+            public TObject Get<TObject>(Guid? key, Guid? versionKey) where TObject : IdentifiedData, IVersionedEntity, new()
             {
-                throw new NotImplementedException();
+                return new TObject() { Key = key, VersionKey = versionKey, IsLogicalNull = true };
             }
 
             /// <summary>
             /// Gets the specified relations
             /// </summary>
-            public List<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation
+            public List<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence) where TObject : IdentifiedData, IVersionedAssociation, new()
             {
                 throw new NotImplementedException();
             }
@@ -64,7 +64,7 @@ namespace OpenIZ.Core.Model.EntityLoader
             /// <summary>
             /// Query 
             /// </summary>
-            public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData
+            public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData, new()
             {
                 throw new NotImplementedException();
             }
@@ -72,13 +72,10 @@ namespace OpenIZ.Core.Model.EntityLoader
 
         // Load object
         private static Object s_lockObject = new object();
+  
         // Current instance
         private static EntitySource s_instance = new EntitySource(new DummyEntitySource());
-
-        /// <summary>
-        /// Global delay load settings
-        /// </summary>
-        public bool DelayLoadProperties { get; set; }
+        
 
         /// <summary>
         /// Delay load provider
@@ -91,7 +88,6 @@ namespace OpenIZ.Core.Model.EntityLoader
         public EntitySource(IEntitySourceProvider provider)
         {
             m_provider = provider;
-            this.DelayLoadProperties = true;
         }
 
         /// <summary>
@@ -112,51 +108,22 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Get the specified object / version
         /// </summary>
-        public TObject Get<TObject>(Guid? key, Guid? version, TObject currentInstance) where TObject : IdentifiedData, IVersionedEntity
+        public TObject Get<TObject>(Guid? key, Guid? version) where TObject : IdentifiedData, IVersionedEntity, new()
         {
-            if (!this.DelayLoadProperties) return currentInstance;
-            if (currentInstance == null &&
-                version.HasValue && 
-                key.HasValue)
-                return this.m_provider.Get<TObject>(key, version);
-            return currentInstance;
+            if (key == null)
+                return null;
+            return this.m_provider.Get<TObject>(key, version);
         }
 
         /// <summary>
         /// Get the current version of the specified object
         /// </summary>
-        public TObject Get<TObject>(Guid? key, TObject currentInstance) where TObject : IdentifiedData
+        public TObject Get<TObject>(Guid? key) where TObject : IdentifiedData, new()
         {
-            if (!this.DelayLoadProperties) return currentInstance;
-
-            if (currentInstance == null && key.HasValue)
+            if (key == null)
+                return null;
+            else
                 return this.m_provider.Get<TObject>(key);
-            return currentInstance;
-        }
-         
-        /// <summary>
-        /// Get version bound relations
-        /// </summary>
-        public List<TObject> GetRelations<TObject>(Guid? sourceKey, Decimal? sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation
-        {
-            if (!this.DelayLoadProperties) return currentInstance ?? new List<TObject>();
-
-            if (currentInstance == null)
-                return this.m_provider.GetRelations<TObject>(sourceKey, sourceVersionSequence, currentInstance);
-            return currentInstance;
-
-        }
-
-        /// <summary>
-        /// Get bound relations
-        /// </summary>
-        public List<TObject> GetRelations<TObject>(Guid? sourceKey, List<TObject> currentInstance) where TObject : IdentifiedData, ISimpleAssociation
-        {
-            if (!this.DelayLoadProperties) return currentInstance ?? new List<TObject>();
-
-            if (currentInstance == null)
-                return this.m_provider.Query<TObject>(o => o.SourceEntityKey == sourceKey).ToList();
-            return currentInstance;
         }
 
         /// <summary>

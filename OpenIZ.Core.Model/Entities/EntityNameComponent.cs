@@ -19,6 +19,7 @@
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.EntityLoader;
 using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -58,12 +59,7 @@ namespace OpenIZ.Core.Model.Entities
         {
 
         }
-        // Id of the algorithm used to generate phonetic code
-        private Guid? m_phoneticAlgorithmId;
-        // Algorithm used to generate the code
-        
-        private PhoneticAlgorithm m_phoneticAlgorithm;
-
+       
         /// <summary>
         /// Gets or sets the phonetic code of the reference term
         /// </summary>
@@ -75,35 +71,22 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("phoneticAlgorithm"), JsonProperty("phoneticAlgorithm")]
+        [DataIgnore, XmlElement("phoneticAlgorithm"), JsonProperty("phoneticAlgorithm")]
         public Guid? PhoneticAlgorithmKey
         {
-            get { return this.m_phoneticAlgorithmId; }
+            get { return this.PhoneticAlgorithm?.Key; }
             set
             {
-                this.m_phoneticAlgorithmId = value;
-                this.m_phoneticAlgorithm = null;
+                if (value != this.PhoneticAlgorithm?.Key)
+                    this.PhoneticAlgorithm = this.EntityProvider.Get<PhoneticAlgorithm>(value);
             }
         }
 
         /// <summary>
         /// Gets or sets the phonetic algorithm
         /// </summary>
-        [DelayLoad(nameof(PhoneticAlgorithmKey))]
-        [XmlIgnore, JsonIgnore]
-        public PhoneticAlgorithm PhoneticAlgorithm
-        {
-            get
-            {
-                this.m_phoneticAlgorithm = base.DelayLoad(this.m_phoneticAlgorithmId, this.m_phoneticAlgorithm);
-                return this.m_phoneticAlgorithm;
-            }
-            set
-            {
-                this.m_phoneticAlgorithm = value;
-                    this.m_phoneticAlgorithmId = value?.Key;
-            }
-        }
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(PhoneticAlgorithmKey))]
+		public PhoneticAlgorithm PhoneticAlgorithm { get; set; }
 
 
     }

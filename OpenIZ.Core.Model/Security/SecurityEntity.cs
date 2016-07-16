@@ -32,7 +32,7 @@ namespace OpenIZ.Core.Model.Security
     /// Security Entity base class
     /// </summary>
     [XmlType(Namespace = "http://openiz.org/model", TypeName = "SecurityEntity")]
-    public abstract class SecurityEntity : NonVersionedEntityData
+    public class SecurityEntity : NonVersionedEntityData
     {
 
         // Policies
@@ -41,9 +41,9 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Policies associated with the entity
         /// </summary>
-        [XmlIgnore, JsonIgnore]
-        public virtual List<SecurityPolicyInstance> Policies
-        {
+        [XmlElement("policy"), JsonProperty("policy")]
+		public virtual List<SecurityPolicyInstance> Policies
+         {
             get
             {
                 return this.m_policies;

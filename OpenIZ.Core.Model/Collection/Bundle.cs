@@ -34,6 +34,7 @@ using OpenIZ.Core.Model.Security;
 using Newtonsoft.Json;
 using System.Threading;
 using System.Diagnostics;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Model.Collection
 {
@@ -157,8 +158,8 @@ namespace OpenIZ.Core.Model.Collection
                     continue;
                 if (!retVal.Item.Exists(o => o.Key == itm.Key))
                 {
-                    retVal.Item.Add(itm.GetLocked());
-                    Bundle.ProcessModel(itm.GetLocked() as IdentifiedData, retVal);
+                    retVal.Item.Add(itm);
+                    Bundle.ProcessModel(itm as IdentifiedData, retVal);
                 }
             }
 
@@ -180,9 +181,6 @@ namespace OpenIZ.Core.Model.Collection
         /// <remarks>Basically this will find any refs and fill them in</remarks>
         private void Reconstitute(IdentifiedData data)
         {
-            // Prevent delay loading from EntitySource (we're doing that right now)
-            bool originalDelayLoad = data.IsDelayLoadEnabled;
-            data.SetDelayLoad(false);
 
             // Iterate over properties
             foreach (var pi in data.GetType().GetRuntimeProperties())
@@ -200,7 +198,7 @@ namespace OpenIZ.Core.Model.Collection
                     this.Reconstitute(value as IdentifiedData);
 
                 // Is the pi a delay load? if so then get the key property
-                var keyName = pi.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName;
+                var keyName = pi.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty;
                 if (keyName == null || pi.SetMethod == null)
                     continue; // Skip if there is no delay load or if we can't even set this property
 
@@ -217,8 +215,8 @@ namespace OpenIZ.Core.Model.Collection
                 
             }
 
-            data.SetDelayLoad(originalDelayLoad);
-
+            // Re-Bind the data to a delay loader before we go
+            data.EntityProvider = EntitySource.Current.Provider;
         }
 
         /// <summary>
@@ -228,7 +226,7 @@ namespace OpenIZ.Core.Model.Collection
         {
             try
             {
-                foreach (var pi in model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<DelayLoadAttribute>() != null))
+                foreach (var pi in model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<DataIgnoreAttribute>() == null))
                 {
                     try
                     {
@@ -257,6 +255,8 @@ namespace OpenIZ.Core.Model.Collection
                         else if (rawValue is IdentifiedData)
                         {
                             var iValue = rawValue as IdentifiedData;
+                            if (iValue.IsLogicalNull)
+                                continue;
                             var versionedValue = rawValue as IVersionedEntity;
 
                             // Check for existing item

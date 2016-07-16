@@ -82,112 +82,58 @@ namespace OpenIZ.Core.Model.DataTypes
     /// </summary>
     [XmlType(Namespace = "http://openiz.org/model")]
     [Classifier(nameof(Authority)), SimpleValue(nameof(Value))] 
-    public abstract class IdentifierBase<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
+    public abstract class IdentifierBase<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>, new()
     {
-
-        // Identifier id
-        private Guid? m_identifierTypeId;
-        // Authority id
         
-        private Guid? m_authorityId;
-
-        // Identifier type backing type
-        
-        private IdentifierType m_identifierType;
-        // Assigning authority
-        
-        private AssigningAuthority m_authority;
-
         /// <summary>
         /// Gets or sets the value of the identifier
         /// </summary>
         [XmlElement("value"), JsonProperty("value")]
         public String Value { get; set; }
-
-
+        
         /// <summary>
         /// Gets or sets the assinging authority id
         /// </summary>
-
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlIgnore, JsonIgnore]
-        public Guid? AuthorityKey
-        {
-            get { return this.m_authorityId; }
+        [DataIgnore, XmlIgnore, JsonIgnore]
+		public Guid? AuthorityKey
+         {
+            get { return this.Authority?.Key; }
             set
             {
-                if (this.m_authorityId == value)
-                    return;
-                this.m_authority = null;
-                this.m_authorityId = value;
+                if (this.Authority?.Key != value)
+                    this.Authority = this.EntityProvider.Get<AssigningAuthority>(value);
             }
         }
 
         /// <summary>
         /// Gets or sets the type identifier
         /// </summary>
-
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlIgnore, JsonIgnore]
-        public Guid? IdentifierTypeKey
-        {
-            get { return this.m_identifierTypeId; }
+        [DataIgnore, XmlIgnore, JsonIgnore, SerializationReference(nameof(       Key))]
+		public Guid? IdentifierTypeKey
+         {
+            get { return this.IdentifierType?.Key; }
             set
             {
-                if (this.m_identifierTypeId == value)
-                    return;
-                this.m_identifierType = null;
-                this.m_identifierTypeId = value;
+                if (this.IdentifierType?.Key != value)
+                    this.IdentifierType = this.EntityProvider.Get<IdentifierType>(value);
             }
         }
 
         /// <summary>
         /// Gets or sets the identifier type
         /// </summary>
-        [DelayLoad(nameof(IdentifierTypeKey))]
         [XmlElement("type"), JsonProperty("type")]
-        public IdentifierType IdentifierType
-        {
-            get
-            {
-                this.m_identifierType = base.DelayLoad(this.m_identifierTypeId, this.m_identifierType);
-                return this.m_identifierType;
-            }
-            set
-            {
-                this.m_identifierType = value;
-                this.m_identifierTypeId = value?.Key;
-            }
-        }
+        public IdentifierType IdentifierType { get; set; }
 
         /// <summary>
         /// Gets or sets the assigning authority 
         /// </summary>
-        [DelayLoad(nameof(AuthorityKey))]
         [XmlElement("authority"), JsonProperty("authority")]
         [AutoLoad]
-        public AssigningAuthority Authority
-        {
-            get
-            {
-                this.m_authority = base.DelayLoad(this.m_authorityId, this.m_authority);
-                return this.m_authority;
-            }
-            set
-            {
-                this.m_authority = value;
-                this.m_authorityId = value?.Key;
-            }
-        }
+        public AssigningAuthority Authority { get; set; }
 
-        /// <summary>
-        /// Force reloading of delay load properties
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_authority = null;
-            this.m_identifierType = null;
-        }
+
     }
 }

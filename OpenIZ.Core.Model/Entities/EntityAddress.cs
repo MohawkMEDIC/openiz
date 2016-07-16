@@ -42,98 +42,57 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         public EntityAddress(Guid useKey, String streetAddressLine, String city, String province, String country, String zipCode)
         {
-            this.m_addressUseKey = useKey;
-            this.m_addressComponents = new List<EntityAddressComponent>();
+            this.AddressUseKey = useKey;
+            this.Component = new List<EntityAddressComponent>();
             if (!String.IsNullOrEmpty(streetAddressLine))
-                this.m_addressComponents.Add(new EntityAddressComponent(AddressComponentKeys.StreetAddressLine, streetAddressLine));
+                this.Component.Add(new EntityAddressComponent(AddressComponentKeys.StreetAddressLine, streetAddressLine));
             if (!String.IsNullOrEmpty(city))
-                this.m_addressComponents.Add(new EntityAddressComponent(AddressComponentKeys.City, city));
+                this.Component.Add(new EntityAddressComponent(AddressComponentKeys.City, city));
             if (!String.IsNullOrEmpty(province))
-                this.m_addressComponents.Add(new EntityAddressComponent(AddressComponentKeys.State, province));
+                this.Component.Add(new EntityAddressComponent(AddressComponentKeys.State, province));
             if (!String.IsNullOrEmpty(country))
-                this.m_addressComponents.Add(new EntityAddressComponent(AddressComponentKeys.Country, country));
+                this.Component.Add(new EntityAddressComponent(AddressComponentKeys.Country, country));
             if (!String.IsNullOrEmpty(zipCode))
-                this.m_addressComponents.Add(new EntityAddressComponent(AddressComponentKeys.PostalCode, zipCode));
+                this.Component.Add(new EntityAddressComponent(AddressComponentKeys.PostalCode, zipCode));
         }
         /// <summary>
         /// Default CTOR
         /// </summary>
         public EntityAddress()
         {
-
+            this.Component = new List<EntityAddressComponent>();
         }
-        // Address use key
-        private Guid? m_addressUseKey;
-        // Address use concept
         
-        private Concept m_addressUseConcept;
-        // Address components
-        
-        private List<EntityAddressComponent> m_addressComponents;
 
         /// <summary>
         /// Gets or sets the address use key
         /// </summary>
-        [XmlElement("use"), JsonProperty("use")]
+        [DataIgnore, XmlElement("use"), JsonProperty("use")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         public Guid? AddressUseKey
         {
-            get { return this.m_addressUseKey; }
+            get { return this.AddressUse?.Key; }
             set
             {
-                this.m_addressUseKey = value;
-                this.m_addressUseConcept = null;
+                if (this.AddressUse?.Key != value)
+                    this.AddressUse = this.EntityProvider.Get<Concept>(value);
             }
         }
 
         /// <summary>
         /// Gets or sets the address use
         /// </summary>
-        [DelayLoad(nameof(AddressUseKey))]
         [XmlIgnore, JsonIgnore]
         [AutoLoad]
-        public Concept AddressUse
-        {
-            get {
-                this.m_addressUseConcept = base.DelayLoad(this.m_addressUseKey, this.m_addressUseConcept);
-                return this.m_addressUseConcept;
-            }
-            set
-            {
-                this.m_addressUseConcept = value;
-                this.m_addressUseKey = value?.Key;
-            }
-        }
+        public Concept AddressUse { get; set; }
 
         /// <summary>
         /// Gets or sets the component types
         /// </summary>
-        [DelayLoad(null)]
         [XmlElement("component"), JsonProperty("component")]
         [AutoLoad]
-        public List<EntityAddressComponent> Component
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_addressComponents = EntitySource.Current.GetRelations(this.Key, this.m_addressComponents);
-                return this.m_addressComponents;
-            }
-            set
-            {
-                this.m_addressComponents = value;
-            }
-        }
+        public List<EntityAddressComponent> Component { get; set; }
 
-        /// <summary>
-        /// Force linked properties to delay load
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_addressComponents = null;
-            this.m_addressUseKey = null;
-        }
+
     }
 }

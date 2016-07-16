@@ -100,7 +100,7 @@ namespace OpenIZ.Core.Model.Query
                         memberInfo = accessExpression.Type.GetRuntimeProperty(memberInfo.Name.Replace("Xml", ""));
                     else if (pMember != memberPath.Last())
                     {
-                        var backingFor = accessExpression.Type.GetRuntimeProperties().SingleOrDefault(p => p.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == memberInfo.Name);
+                        var backingFor = accessExpression.Type.GetRuntimeProperties().SingleOrDefault(p => p.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty == memberInfo.Name);
                         if (backingFor != null)
                             memberInfo = backingFor;
                     }

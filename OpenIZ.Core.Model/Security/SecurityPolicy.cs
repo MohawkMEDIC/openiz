@@ -109,37 +109,29 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets or sets the policy key
         /// </summary>
+        [DataIgnore, XmlElement("policy"), JsonProperty("policy")]
         public Guid? PolicyKey {
             get
             {
-                return this.m_policyId;
+                return this.Policy?.Key;
             }
             set
             {
-                this.m_policyId = value;
-                this.m_policy = null;
+                if (this.Policy?.Key != value)
+                    this.Policy = this.EntityProvider.Get<SecurityPolicy>(value);
             }
         }
 
         /// <summary>
         /// The policy
         /// </summary>
-        public SecurityPolicy Policy {
-            get
-            {
-                this.m_policy = base.DelayLoad(this.m_policyId, this.m_policy);
-                return m_policy;
-            }
-            set
-            {
-                this.m_policy = value;
-                this.m_policyId = value?.Key;
-            }
-        }
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(PolicyKey))]
+        public SecurityPolicy Policy { get; set; }
 
         /// <summary>
         /// Gets or sets whether the policy is a Deny
         /// </summary>
+        [XmlElement("grant"), JsonProperty("grant")]
         public PolicyGrantType GrantType { get; set; }
 
     }

@@ -27,6 +27,7 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Model.Acts
 {
@@ -38,11 +39,7 @@ namespace OpenIZ.Core.Model.Acts
     public abstract class Observation : Act
     {
 
-        // Interpreation concept key
-        private Guid? m_interpretationConceptKey;
-        // Interpretation concept
-        private Concept m_interpretationConcept;
-
+       
         /// <summary>
         /// Observation ctor
         /// </summary>
@@ -59,40 +56,20 @@ namespace OpenIZ.Core.Model.Acts
         [XmlElement("interpretationConcept"), JsonProperty("interpretationConcept")]
         public Guid? InterpretationConceptKey
         {
-            get { return this.m_interpretationConceptKey; }
+            get { return this.InterpretationConcept?.Key; }
             set
             {
-                this.m_interpretationConceptKey = value;
-                this.m_interpretationConcept = null;
+                if (value != this.InterpretationConcept?.Key)
+                    this.InterpretationConcept = this.EntityProvider.Get<Concept>(value);
             }
         }
 
         /// <summary>
         /// Gets or sets the concept which indicates the interpretation of the observtion
         /// </summary>
-        [DelayLoad(nameof(InterpretationConceptKey))]
-        [XmlIgnore, JsonIgnore]
-        public Concept InterpretationConcept
-        {
-            get {
-                this.m_interpretationConcept = base.DelayLoad(this.m_interpretationConceptKey, this.m_interpretationConcept);
-                return this.m_interpretationConcept;
-            }
-            set
-            {
-                this.m_interpretationConcept = value;
-                this.m_interpretationConceptKey = value?.Key;
-            }
-        }
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(InterpretationConceptKey))]
+		public Concept InterpretationConcept { get; set; }
 
-        /// <summary>
-        /// Refresh the object forcing delay load 
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_interpretationConcept = null;
-        }
     }
 
     /// <summary>
@@ -104,11 +81,7 @@ namespace OpenIZ.Core.Model.Acts
     public class QuantityObservation : Observation
     {
 
-        // UOM key
-        private Guid? m_unitOfMeasureKey;
-        // UOM
-        private Concept m_unitOfMeasure;
-
+      
         /// <summary>
         /// Gets or sets the observed quantity
         /// </summary>
@@ -123,41 +96,20 @@ namespace OpenIZ.Core.Model.Acts
         
         public Guid? UnitOfMeasureKey
         {
-            get { return this.m_unitOfMeasureKey; }
+            get { return this.UnitOfMeasure?.Key; }
             set
             {
-                this.m_unitOfMeasureKey = value;
-                this.m_unitOfMeasure = null;
+                if (this.UnitOfMeasure?.Key != value)
+                    this.UnitOfMeasure = this.EntityProvider.Get<Concept>(value);
             }
         }
 
         /// <summary>
         /// Gets or sets the unit of measure
         /// </summary>
-        [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(UnitOfMeasureKey))]
-        public Concept UnitOfMeasure
-        {
-            get
-            {
-                this.m_unitOfMeasure = base.DelayLoad(this.m_unitOfMeasureKey, this.m_unitOfMeasure);
-                return this.m_unitOfMeasure;
-            }
-            set
-            {
-                this.m_unitOfMeasure = value;
-                this.m_unitOfMeasureKey = value?.Key;
-            }
-        }
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(UnitOfMeasureKey))]
+		public Concept UnitOfMeasure { get; set; }
 
-        /// <summary>
-        /// Forces a refresh of the object
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_unitOfMeasure = null;
-        }
     }
 
     /// <summary>
@@ -184,54 +136,29 @@ namespace OpenIZ.Core.Model.Acts
     public class CodedObservation : Observation
     {
 
-        // Value key
-        private Guid? m_valueKey;
-        // Value
-        private Concept m_value;
-
+       
         /// <summary>
         /// Gets or sets the key of the uom concept
         /// </summary>
-        [XmlElement("value"), JsonProperty("value")]
+        [DataIgnore, XmlElement("value"), JsonProperty("value")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         public Guid? ValueKey
         {
-            get { return this.m_valueKey; }
+            get { return this.Value?.Key; }
             set
             {
-                this.m_valueKey = value;
-                this.m_value = null;
+                if (this.Value?.Key != value)
+                    this.Value = this.EntityProvider.Get<Concept>(value);
             }
         }
 
         /// <summary>
         /// Gets or sets the coded value of the observation
         /// </summary>
-        [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(ValueKey))]
-        public Concept Value
-        {
-            get
-            {
-                this.m_value = base.DelayLoad(this.m_valueKey, this.m_value);
-                return this.m_value;
-            }
-            set
-            {
-                this.m_value = value;
-                this.m_valueKey = value?.Key;
-            }
-        }
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(ValueKey))]
+		public Concept Value { get; set; }
 
-        /// <summary>
-        /// Forces a refresh of underlying data
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_value = null;
-        }
     }
 
 }

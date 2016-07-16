@@ -40,11 +40,6 @@ namespace OpenIZ.Core.Model.Entities
     public class Person : Entity
     {
 
-        // Security user
-        private SecurityUser m_securityUser;
-
-        // Language communication
-        private List<PersonLanguageCommunication> m_languageCommunication;
 
         /// <summary>
         /// Person constructor
@@ -70,43 +65,20 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets the person's languages of communication
         /// </summary>
-        [DelayLoad(null)]
+        [AutoLoad]
         [XmlElement("language"), JsonProperty("language")]
-        public List<PersonLanguageCommunication> LanguageCommunication
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_languageCommunication = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_languageCommunication);
+        public List<PersonLanguageCommunication> LanguageCommunication { get; set; }
 
-                return this.m_languageCommunication;
-            }
-            set
-            {
-                this.m_languageCommunication = value;
-            }
-        }
-
-        /// <summary>
-        /// Forces a refresh of delay load properties
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_languageCommunication = null;
-        }
 
         /// <summary>
         /// Gets the security user account associated with this person if applicable
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        public SecurityUser AsSecurityUser
-        {
+		public SecurityUser AsSecurityUser
+         {
             get
             {
-                if(this.IsDelayLoadEnabled && this.m_securityUser == null)
-                    this.m_securityUser = EntitySource.Current.Get<UserEntity>(this.Key, this.VersionKey, null)?.SecurityUser;
-                return this.m_securityUser;
+                return this.EntityProvider.Get<UserEntity>(this.Key, this.VersionKey)?.SecurityUser;
             }
         }
     }

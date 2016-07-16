@@ -19,6 +19,7 @@
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.EntityLoader;
 using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -33,16 +34,6 @@ namespace OpenIZ.Core.Model.Entities
     public class EntityRelationship : VersionedAssociation<Entity>
     {
 
-        // The entity key
-        private Guid? m_targetEntityKey;
-        // The target entity
-        
-        private Entity m_targetEntity;
-        // The association type key
-        private Guid? m_associationTypeKey;
-        // The association type
-        
-        private Concept m_relationshipType;
 
         /// <summary>
         /// Default constructor for entity relationship
@@ -61,50 +52,53 @@ namespace OpenIZ.Core.Model.Entities
         }
 
         /// <summary>
+        /// Entity relationship between <paramref name="source"/> and <paramref name="target"/>
+        /// </summary>
+        public EntityRelationship(Guid? relationshipType, Guid? targetId)
+        {
+            this.RelationshipTypeKey = relationshipType;
+            this.m_targetEntityKey = targetId;
+        }
+
+        /// <summary>
+        /// Raw target entity key
+        /// </summary>
+        private Guid? m_targetEntityKey;
+
+        /// <summary>
         /// The target of the association
         /// </summary>
-        [XmlElement("target"), JsonProperty("target")]
+        [ XmlElement("target"), JsonProperty("target")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public Guid? TargetEntityKey
         {
-            get { return this.m_targetEntityKey; }
+            get { return this.m_targetEntityKey ?? this.TargetEntity?.Key; }
             set {
-                this.m_targetEntityKey = value;
-                this.m_targetEntity = null;
+                if (this.TargetEntity?.Key != value)
+                    this.TargetEntity = this.EntityProvider.Get<Entity>(value);
+                if (this.m_targetEntityKey != value)
+                    this.m_targetEntityKey = value;
             }
         }
 
         /// <summary>
         /// Target entity reference
         /// </summary>
-        [DelayLoad(nameof(TargetEntityKey))]
-        [XmlIgnore, JsonIgnore]
-        public Entity TargetEntity
-        {
-            get {
-                this.m_targetEntity = base.DelayLoad(this.m_targetEntityKey, this.m_targetEntity);
-                return this.m_targetEntity;
-            }
-            set
-            {
-                this.m_targetEntity = value;
-                    this.m_targetEntityKey = value?.Key;
-            }
-        }
+        [AutoLoad, XmlIgnore, JsonIgnore, SerializationReference(nameof(TargetEntityKey))]
+		public Entity TargetEntity { get; set; }
 
         /// <summary>
         /// Association type key
         /// </summary>
-        [XmlElement("relationshipType"), JsonProperty("relationshipType")]
+        [DataIgnore, XmlElement("relationshipType"), JsonProperty("relationshipType")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         public Guid? RelationshipTypeKey
         {
-            get { return this.m_associationTypeKey; }
+            get { return this.RelationshipType?.Key; }
             set
             {
-                this.m_associationTypeKey = value;
-                this.m_relationshipType = null;
+                if (this.RelationshipType?.Key != value)
+                    this.RelationshipType = this.EntityProvider.Get<Concept>(value);
             }
         }
 
@@ -118,29 +112,9 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the association type
         /// </summary>
         [AutoLoad]
-        [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(RelationshipTypeKey))]
-        public Concept RelationshipType
-        {
-            get {
-                this.m_relationshipType = base.DelayLoad(this.m_associationTypeKey, this.m_relationshipType);
-                return this.m_relationshipType;
-            }
-            set
-            {
-                this.m_relationshipType = value;
-                this.m_associationTypeKey = value?.Key;
-            }
-        }
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(RelationshipTypeKey))]
+		public Concept RelationshipType { get; set; }
 
-        /// <summary>
-        /// Refresh this entity
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_relationshipType = null;
-            this.m_targetEntity = null;
-        }
+
     }
 }

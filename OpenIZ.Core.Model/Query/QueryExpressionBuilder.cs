@@ -219,10 +219,10 @@ namespace OpenIZ.Core.Model.Query
 					                 memberExpr.Member;
 
 					// Is this a delay load?
-					var delayLoadAttribute= memberExpr.Member.GetCustomAttribute<DelayLoadAttribute>();
+					var delayLoadAttribute= memberExpr.Member.GetCustomAttribute<SerializationReferenceAttribute>();
                     var xmlIgnoreAttribute = memberExpr.Member.GetCustomAttribute<XmlIgnoreAttribute>();
-					if (xmlIgnoreAttribute != null && delayLoadAttribute != null && !String.IsNullOrEmpty(delayLoadAttribute.KeyPropertyName))
-						memberInfo = memberExpr.Expression.Type.GetRuntimeProperty (delayLoadAttribute.KeyPropertyName);
+					if (xmlIgnoreAttribute != null && delayLoadAttribute != null && !String.IsNullOrEmpty(delayLoadAttribute.RedirectProperty))
+						memberInfo = memberExpr.Expression.Type.GetRuntimeProperty (delayLoadAttribute.RedirectProperty);
 
 					// TODO: Delay and bound properties!!
 					var memberXattribute = memberInfo.GetCustomAttributes<XmlElementAttribute>().FirstOrDefault();

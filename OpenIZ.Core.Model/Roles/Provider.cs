@@ -28,6 +28,7 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Model.Roles
 {
@@ -40,11 +41,7 @@ namespace OpenIZ.Core.Model.Roles
     public class Provider : Person
     {
 
-        // Specialty key
-        private Guid? m_providerSpecialtyKey;
-        // Specialty value
-        
-        private Concept m_providerSpeciality;
+      
 
         /// <summary>
         /// Creates a new provider
@@ -59,47 +56,25 @@ namespace OpenIZ.Core.Model.Roles
         /// Gets or sets the provider specialty key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
-        [XmlElement("providerSpecialty"), JsonProperty("providerSpecialty")]
+        [DataIgnore, XmlElement("providerSpecialty"), JsonProperty("providerSpecialty")]
         public Guid? ProviderSpecialtyKey
         {
             get
             {
-                return this.m_providerSpecialtyKey;
+                return this.ProviderSpecialty?.Key;
             }
             set
             {
-                this.m_providerSpecialtyKey = value;
-                this.m_providerSpeciality = null;
+                if (this.ProviderSpecialty?.Key != value)
+                    this.ProviderSpecialty = this.EntityProvider.Get<Concept>(value);
             }
         }
 
         /// <summary>
         /// Gets or sets the provider specialty
         /// </summary>
-        [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(ProviderSpecialtyKey))]
-        public Concept ProviderSpecialty
-        {
-            get
-            {
-                this.m_providerSpeciality = base.DelayLoad(this.m_providerSpecialtyKey, this.m_providerSpeciality);
-                return this.m_providerSpeciality;
-            }
-            set
-            {
-                this.m_providerSpeciality = value;
-                this.m_providerSpecialtyKey = value?.Key;
-            }
-        }
-
-        /// <summary>
-        /// Force a refresh of the delay load properties
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_providerSpeciality = null;
-        }
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(ProviderSpecialtyKey))]
+		public Concept ProviderSpecialty { get; set; }
+ 
     }
 }

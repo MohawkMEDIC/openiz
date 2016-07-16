@@ -26,6 +26,7 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -34,15 +35,9 @@ namespace OpenIZ.Core.Model.DataTypes
     /// </summary>
     [SimpleValue(nameof(Text))]
     [XmlType(Namespace = "http://openiz.org/model")]
-    public abstract class Note<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
+    public abstract class Note<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>, new()
     {
-
-        // Author id
-        private Guid? m_authorKey;
-        // Author entity
         
-        private Entity m_author;
-
         /// <summary>
         /// Default ctor
         /// </summary>
@@ -70,45 +65,23 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the author key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
-        [XmlElement("author"), JsonProperty("author")]
+        [DataIgnore, XmlElement("author"), JsonProperty("author")]
         public Guid? AuthorKey
         {
-            get { return this.m_authorKey; }
+            get { return this.Author?.Key; }
             set
             {
-                this.m_authorKey = value;
-                this.m_author = null;
+                if (this.Author?.Key != value)
+                    this.Author = this.EntityProvider.Get<Entity>(value);
             }
         }
 
         /// <summary>
         /// Gets or sets the author entity
         /// </summary>
-        [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(AuthorKey))]
-        public Entity Author
-        {
-            get
-            {
-                this.m_author = base.DelayLoad(this.m_authorKey, this.m_author);
-                return this.m_author;
-            }
-            set
-            {
-                this.m_author = value;
-                this.m_authorKey = value?.Key;
-            }
-        }
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(AuthorKey))]
+		public Entity Author { get; set; }
 
-        /// <summary>
-        /// Forces a refresh of the object
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_author = null;
-        }
 
     }
 

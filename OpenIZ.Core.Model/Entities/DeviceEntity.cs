@@ -28,6 +28,7 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -39,11 +40,6 @@ namespace OpenIZ.Core.Model.Entities
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "DeviceEntity")]
     public class DeviceEntity : Entity
     {
-
-        // Security device key
-        private Guid? m_securityDeviceKey;
-        // Security device
-        private SecurityDevice m_securityDevice;
 
         /// <summary>
         /// Device entity ctor
@@ -57,36 +53,25 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the security device key
         /// </summary>
-        [XmlElement("securityDevice"), JsonProperty("securityDevice")]
+        [DataIgnore, XmlElement("securityDevice"), JsonProperty("securityDevice")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         public Guid? SecurityDeviceKey
         {
-            get { return this.m_securityDeviceKey; }
+            get { return this.SecurityDevice?.Key; }
             set
             {
-                this.m_securityDeviceKey = value;
-                this.m_securityDevice = null;
+                if (this.SecurityDevice?.Key != value)
+                    this.SecurityDevice = this.EntityProvider.Get<SecurityDevice>(value);
             }
         }
 
         /// <summary>
         /// Gets or sets the security device
         /// </summary>
-        [DelayLoad(nameof(SecurityDeviceKey))]
-        [XmlIgnore, JsonIgnore]
-        public SecurityDevice SecurityDevice
-        {
-            get {
-                this.m_securityDevice = base.DelayLoad(this.m_securityDeviceKey, this.m_securityDevice);
-                return this.m_securityDevice;
-            }
-            set
-            {
-                this.m_securityDevice = value;
-                this.m_securityDeviceKey = value?.Key;
-            }
-        }
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(SecurityDeviceKey))]
+		public SecurityDevice SecurityDevice { get; set; }
+        
         /// <summary>
         /// Gets or sets the manufacturer model name
         /// </summary>
@@ -98,13 +83,6 @@ namespace OpenIZ.Core.Model.Entities
         [XmlElement("operatingSystemName"), JsonProperty("operatingSystemName")]
         public String OperatingSystemName { get; set; }
 
-        /// <summary>
-        /// Force refresh of data model
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_securityDevice = null;
-        }
+
     }
 }

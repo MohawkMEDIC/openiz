@@ -27,6 +27,7 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -38,15 +39,7 @@ namespace OpenIZ.Core.Model.Entities
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Material")]
     public class Material : Entity
     {
-        // Form concept key
-        private Guid? m_formConceptKey;
-        // Quantity concept key
-        private Guid? m_quantityConceptKey;
-        // Form concept
-        private Concept m_formConcept;
-        // Quantity concept
-        private Concept m_quantityConcept;
-
+       
         /// <summary>
         /// Material ctor
         /// </summary>
@@ -65,73 +58,45 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the form concept's key
         /// </summary>
-        [XmlElement("formConcept"), JsonProperty("formConcept")]
+        [DataIgnore, XmlElement("formConcept"), JsonProperty("formConcept")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         public Guid? FormConceptKey
         {
-            get { return this.m_formConceptKey; }
+            get { return this.FormConcept?.Key; }
             set
             {
-                this.m_formConceptKey = value;
-                this.m_formConcept = null;
+                if (this.FormConcept?.Key != value)
+                    this.FormConcept = this.EntityProvider.Get<Concept>(value);
             }
         }
 
         /// <summary>
         /// Gets or sets the quantity concept ref
         /// </summary>
-        [XmlElement("quantityConcept"), JsonProperty("quantityConcept")]
+        [DataIgnore, XmlElement("quantityConcept"), JsonProperty("quantityConcept")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         public Guid? QuantityConceptKey
         {
-            get { return this.m_quantityConceptKey; }
+            get { return this.QuantityConcept?.Key; }
             set
             {
-                this.m_quantityConceptKey = value;
-                this.m_quantityConcept = null;
+                if (this.QuantityConcept?.Key != value)
+                    this.QuantityConcept = this.EntityProvider.Get<Concept>(value);
             }
         }
 
         /// <summary>
         /// Gets or sets the concept which dictates the form of the material (solid, liquid, capsule, injection, etc.)
         /// </summary>
-        [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(FormConceptKey))]
-        public Concept FormConcept
-        {
-            get {
-                this.m_formConcept = base.DelayLoad(this.m_formConceptKey, this.m_formConcept);
-                return this.m_formConcept;
-            }
-            set
-            {
-                this.m_formConcept = value;
-                this.m_formConceptKey = value?.Key;
-            }
-
-        }
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(FormConceptKey))]
+		public Concept FormConcept { get; set; }
 
         /// <summary>
         /// Gets or sets the concept which dictates the unit of measure for a single instance of this entity
         /// </summary>
-        [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(QuantityConceptKey))]
-        public Concept QuantityConcept
-        {
-            get
-            {
-                this.m_quantityConcept = base.DelayLoad(this.m_quantityConceptKey, this.m_quantityConcept);
-                return this.m_quantityConcept;
-            }
-            set
-            {
-                this.m_quantityConcept = value;
-                this.m_quantityConceptKey = value?.Key;
-            }
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(QuantityConceptKey))]
+		public Concept QuantityConcept { get; set; }
 
-        }
 
         /// <summary>
         /// Gets or sets the expiry date of the material
@@ -145,14 +110,6 @@ namespace OpenIZ.Core.Model.Entities
         [XmlElement("isAdministrative"), JsonProperty("isAdministrative")]
         public Boolean IsAdministrative { get; set; }
 
-        /// <summary>
-        /// Forces refresh of the delay load properties
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_formConcept = null;
-            this.m_quantityConcept = null;
-        }
+
     }
 }

@@ -35,5 +35,9 @@ namespace OpenIZ.Core.Model.Interfaces
         /// </summary>
         Guid? Key { get; set; }
 
+        /// <summary>
+        /// Returns true if this object is null even though instantiated
+        /// </summary>
+        bool IsLogicalNull { get; }
     }
 }

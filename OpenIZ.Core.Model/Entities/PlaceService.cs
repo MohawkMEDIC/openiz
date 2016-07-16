@@ -23,6 +23,7 @@ using System.ComponentModel;
 using System.Xml.Serialization;
 using System.Xml;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -34,11 +35,6 @@ namespace OpenIZ.Core.Model.Entities
     public class PlaceService : VersionedAssociation<Entity>
     {
 
-        // Service key
-        private Guid? m_serviceConceptKey;
-        // Service
-        
-        private Concept m_service;
 
         /// <summary>
         /// The schedule that the service is offered
@@ -50,42 +46,23 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the service concept key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("serviceConcept"), JsonProperty("serviceConcept")]
+        [DataIgnore, XmlElement("serviceConcept"), JsonProperty("serviceConcept")]
         public Guid? ServiceConceptKey
         {
-            get { return this.m_serviceConceptKey; }
+            get { return this.ServiceConcept?.Key; }
             set
             {
-                this.m_serviceConceptKey = value;
-                this.m_service = null;
+                if (this.ServiceConcept?.Key != value)
+                    this.ServiceConcept = this.EntityProvider.Get<Concept>(value);
             }
         }
 
         /// <summary>
         /// Gets or sets the service concept
         /// </summary>
-        [DelayLoad(nameof(ServiceConceptKey))]
-        [XmlIgnore, JsonIgnore]
-        public Concept ServiceConcept
-        {
-            get {
-                this.m_service = base.DelayLoad(this.m_serviceConceptKey, this.m_service);
-                return this.m_service;
-            }
-            set
-            {
-                this.m_service = value;
-                this.m_serviceConceptKey = value?.Key;
-            }
-        }
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(ServiceConceptKey))]
+		public Concept ServiceConcept { get; set; }
 
-        /// <summary>
-        /// Refresh the delay load properties
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_service = null;
-        }
+
     }
 }
