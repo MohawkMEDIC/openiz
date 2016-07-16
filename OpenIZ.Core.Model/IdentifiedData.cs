@@ -40,7 +40,7 @@ namespace OpenIZ.Core.Model
     {
 
         // Delay load is enabled
-        public static bool DelayLoadEnabled = true;
+        public static bool DelayLoadEnabled = false;
 
         // True when the data class is locked for storage
         private bool m_delayLoad = IdentifiedData.DelayLoadEnabled;

@@ -72,6 +72,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         internal override DataLoadOptions GetDataLoadOptions()
         {
             var loadOptions = m_entityPersister.GetDataLoadOptions();
+           // loadOptions.LoadWith<Data.Entity>(o=>o.PlaceServicesPlaceEntityId);
 
             return loadOptions;
         }

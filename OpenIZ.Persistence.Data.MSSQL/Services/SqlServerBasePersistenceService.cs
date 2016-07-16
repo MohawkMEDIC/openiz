@@ -345,15 +345,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     var postData = new PostQueryEventArgs<TData>(query, results, authContext);
                     this.Queried?.Invoke(this, postData);
 
-                    totalCount = postData.Results.Count();
+                    if (count == 1 && offset == 0)
+                    {
+                        
+                        var result = postData.Results.Take(1).ToList();
+                        totalCount = result.Count;
+                        this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Returning {0}..{1} or {2} results", offset, offset + (count ?? 1000), totalCount);
+                        return result;
+                    }
+                    else
+                    {
+                        totalCount = postData.Results.Count();
 
-                    // Skip
-                    postData.Results = postData.Results.Skip(offset);
-                    if (count.HasValue)
-                        postData.Results = postData.Results.Take(count.Value);
+                        // Skip
+                        postData.Results = postData.Results.Skip(offset);
+                        if (count.HasValue)
+                            postData.Results = postData.Results.Take(count.Value);
 
-                    this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Returning {0}..{1} or {2} results", offset, offset + (count ?? 1000), totalCount);
-                    return postData.Results.AsParallel().ToList();
+                        this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Returning {0}..{1} or {2} results", offset, offset + (count ?? 1000), totalCount);
+                        return postData.Results.AsParallel().ToList();
+                    }
 
                 }
                 catch (NotSupportedException e)

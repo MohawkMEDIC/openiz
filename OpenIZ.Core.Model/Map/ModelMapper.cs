@@ -34,6 +34,29 @@ using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.Core.Model.Map
 {
+
+    /// <summary>
+    /// Represents model mapping event arguments
+    /// </summary>
+    public class ModelMapEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Domain object
+        /// </summary>
+        public Guid Key { get; set; }
+
+        /// <summary>
+        /// Identified data model object
+        /// </summary>
+        public IdentifiedData ModelObject { get; set; }
+
+        /// <summary>
+        /// Gets or sets the domain object type
+        /// </summary>
+        public Type ObjectType { get; set; }
+
+    }
+
     /// <summary>
     /// Model mapper
     /// </summary>
@@ -42,7 +65,7 @@ namespace OpenIZ.Core.Model.Map
 
         // The map file
         private ModelMap m_mapFile;
-        
+
         /// <summary>
         /// Creates a new mapper from source stream
         /// </summary>
@@ -60,11 +83,39 @@ namespace OpenIZ.Core.Model.Map
         }
 
         /// <summary>
+        /// Fired anytime any model mapper maps to a model
+        /// </summary>
+        public static event EventHandler<ModelMapEventArgs> MappingToModel;
+        /// <summary>
+        /// Fired anytime any model mapper maps finished
+        /// </summary>
+        public static event EventHandler<ModelMapEventArgs> MappedToModel;
+
+        /// <summary>
+        /// Fires the pre map returning whether cancellation is necessary
+        /// </summary>
+        private static object FireMappingToModel(object sender, Type domainType, Guid key)
+        {
+            ModelMapEventArgs e = new ModelMapEventArgs() { ObjectType = domainType, Key = key };
+            MappingToModel?.Invoke(sender, e);
+            return e.ModelObject;
+        }
+
+        /// <summary>
+        /// Fires that a map has occurred
+        /// </summary>
+        private static void FireMappedToModel(object sender, Guid key, IdentifiedData modelInstance)
+        {
+            ModelMapEventArgs e = new ModelMapEventArgs() { ObjectType = modelInstance.GetType(), Key = key, ModelObject = modelInstance };
+            MappedToModel?.BeginInvoke(sender, e, null, null);
+        }
+
+        /// <summary>
         /// Map member 
         /// </summary>
         public Expression MapModelMember(MemberExpression memberExpression, Expression accessExpression, Type modelType = null)
         {
-            
+
             ClassMap classMap = this.m_mapFile.GetModelClassMap(modelType ?? memberExpression.Expression.Type);
 
             if (classMap == null)
@@ -80,19 +131,19 @@ namespace OpenIZ.Core.Model.Map
             else if (classMap.TryGetModelProperty(memberExpression.Member.Name, out propertyMap))
             {
                 // We have to map through an associative table
-                if(propertyMap.Via != null )
+                if (propertyMap.Via != null)
                 {
                     Expression viaExpression = Expression.MakeMemberAccess(accessExpression, accessExpression.Type.GetRuntimeProperty(propertyMap.DomainName));
                     var via = propertyMap.Via;
                     while (via != null)
                     {
-                        
+
                         MemberInfo viaMember = viaExpression.Type.GetRuntimeProperty(via.DomainName);
                         if (viaMember == null)
                             break;
                         viaExpression = Expression.MakeMemberAccess(viaExpression, viaMember);
 
-                        if (via.OrderBy != null && viaExpression.Type.GetTypeInfo().ImplementedInterfaces.Any(o=>o == typeof(IEnumerable)))
+                        if (via.OrderBy != null && viaExpression.Type.GetTypeInfo().ImplementedInterfaces.Any(o => o == typeof(IEnumerable)))
                             viaExpression = viaExpression.Sort(via.OrderBy, via.SortOrder);
                         if (via.Aggregate != AggregationFunctionType.None)
                             viaExpression = viaExpression.Aggregate(via.Aggregate);
@@ -115,7 +166,7 @@ namespace OpenIZ.Core.Model.Map
                 else
                 {
                     // Try on the base? 
-                    if(classMap.ParentDomainProperty != null)
+                    if (classMap.ParentDomainProperty != null)
                     {
                         domainMember = domainType.GetRuntimeProperty(classMap.ParentDomainProperty.DomainName);
                         return MapModelMember(memberExpression, Expression.MakeMemberAccess(accessExpression, domainMember), (modelType ?? memberExpression.Expression.Type).GetTypeInfo().BaseType);
@@ -126,7 +177,7 @@ namespace OpenIZ.Core.Model.Map
             }
         }
 
-        
+
         /// <summary>
         /// Extracts a domain type from a generic if needed
         /// </summary>
@@ -168,12 +219,12 @@ namespace OpenIZ.Core.Model.Map
             while (propertyMap == null && classMap != null)
             {
                 classMap.TryGetModelProperty(rootExpression.Member.Name, out propertyMap);
-                if(propertyMap == null)
+                if (propertyMap == null)
                 {
                     classMap = this.m_mapFile.GetModelClassMap(classMap.ModelType.GetTypeInfo().BaseType);
-//                    var tDomain = rootExpression.Expression.Type.GetRuntimeProperty(classMap.ParentDomainProperty.DomainName);
+                    //                    var tDomain = rootExpression.Expression.Type.GetRuntimeProperty(classMap.ParentDomainProperty.DomainName);
 
-                }    
+                }
             }
 
             // Is there a VIA that we need to express?
@@ -213,7 +264,7 @@ namespace OpenIZ.Core.Model.Map
 #endif
                 return retVal;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Debug.WriteLine("Error converting {0}. {1}", expression, e.ToString());
                 throw;
@@ -234,7 +285,7 @@ namespace OpenIZ.Core.Model.Map
 
             // Now the property maps
             TDomain retVal = new TDomain();
-            foreach(var propInfo in typeof(TModel).GetRuntimeProperties())
+            foreach (var propInfo in typeof(TModel).GetRuntimeProperties())
             {
 
                 // Property info
@@ -249,7 +300,7 @@ namespace OpenIZ.Core.Model.Map
                     propInfo.PropertyType != typeof(DateTimeOffset) &&
                     propInfo.PropertyType != typeof(Type) &&
                     propInfo.PropertyType != typeof(Decimal) &&
-					propInfo.PropertyType != typeof(byte[]) &&
+                    propInfo.PropertyType != typeof(byte[]) &&
                     !propInfo.PropertyType.GetTypeInfo().IsEnum)
                     continue;
 
@@ -269,15 +320,16 @@ namespace OpenIZ.Core.Model.Map
                 // Set value
                 if (domainProperty == null)
                     continue;
-					//Debug.WriteLine ("Unmapped property ({0}).{1}", typeof(TModel).Name, propInfo.Name);
-				else if (domainProperty.PropertyType == typeof(byte[]) && propInfo.PropertyType == typeof(Guid))
-					domainProperty.SetValue (targetObject, ((Guid)propInfo.GetValue (modelInstance)).ToByteArray ());
-				else if (
-					(domainProperty.PropertyType == typeof(DateTime) || domainProperty.PropertyType == typeof(DateTime?))
-					&& (propInfo.PropertyType == typeof(DateTimeOffset) || propInfo.PropertyType == typeof(DateTimeOffset?))) {
-					domainProperty.SetValue (targetObject, ((DateTimeOffset)propInfo.GetValue (modelInstance)).DateTime);
-				}
-				else if (domainProperty.PropertyType.GetTypeInfo().IsAssignableFrom(propInfo.PropertyType.GetTypeInfo()))
+                //Debug.WriteLine ("Unmapped property ({0}).{1}", typeof(TModel).Name, propInfo.Name);
+                else if (domainProperty.PropertyType == typeof(byte[]) && propInfo.PropertyType == typeof(Guid))
+                    domainProperty.SetValue(targetObject, ((Guid)propInfo.GetValue(modelInstance)).ToByteArray());
+                else if (
+                    (domainProperty.PropertyType == typeof(DateTime) || domainProperty.PropertyType == typeof(DateTime?))
+                    && (propInfo.PropertyType == typeof(DateTimeOffset) || propInfo.PropertyType == typeof(DateTimeOffset?)))
+                {
+                    domainProperty.SetValue(targetObject, ((DateTimeOffset)propInfo.GetValue(modelInstance)).DateTime);
+                }
+                else if (domainProperty.PropertyType.GetTypeInfo().IsAssignableFrom(propInfo.PropertyType.GetTypeInfo()))
                     domainProperty.SetValue(targetObject, propInfo.GetValue(modelInstance));
                 else if (propInfo.PropertyType == typeof(Type) && domainProperty.PropertyType == typeof(String))
                     domainProperty.SetValue(targetObject, (propInfo.GetValue(modelInstance) as Type).AssemblyQualifiedName);
@@ -294,6 +346,7 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         public TModel MapDomainInstance<TDomain, TModel>(TDomain domainInstance) where TModel : new()
         {
+
             ClassMap classMap = this.m_mapFile.GetModelClassMap(typeof(TModel), typeof(TDomain));
 
             if (domainInstance == null)
@@ -310,6 +363,30 @@ namespace OpenIZ.Core.Model.Map
 
             // Now the property maps
             TModel retVal = new TModel();
+
+            // Key?
+            if (classMap == null)
+                return retVal;
+
+            // Cache lookup
+            var verEnt = retVal as IVersionedEntity;
+            var idEnt = retVal as IIdentifiedEntity;
+            PropertyMap keyMap = null;
+            if (verEnt != null)
+                classMap.TryGetModelProperty("VersionKey", out keyMap);
+            else if (idEnt != null)
+                classMap.TryGetModelProperty("Key", out keyMap);
+            if(keyMap != null)
+            {
+                object keyValue = typeof(TDomain).GetRuntimeProperty(keyMap.DomainName).GetValue(domainInstance);
+                if (keyValue is byte[])
+                    keyValue = new Guid(keyValue as byte[]);
+                var cache = FireMappingToModel(this, typeof(TModel), (Guid)keyValue);
+                if (cache != null)
+                    return (TModel)cache;
+            }
+
+            // Iterate the properties and map
             foreach (var modelPropertyInfo in typeof(TModel).GetRuntimeProperties())
             {
 
@@ -335,7 +412,7 @@ namespace OpenIZ.Core.Model.Map
                     if (originalValue == null)
                         continue;
                 }
-                catch(Exception e) // HACK: For some reason, some LINQ providers will return NULL on EntityReferences with no value
+                catch (Exception e) // HACK: For some reason, some LINQ providers will return NULL on EntityReferences with no value
                 {
                     Debug.WriteLine(e.ToString());
                 }
@@ -360,16 +437,16 @@ namespace OpenIZ.Core.Model.Map
                     // And make a northwest passage to the sea. 🎶
                     var via = propMap.Via;
                     List<PropertyMap> viaWalk = new List<PropertyMap>();
-                    while(via?.DontLoad == false)
+                    while (via?.DontLoad == false)
                     {
                         viaWalk.Add(via);
                         via = via.Via;
                     }
 
                     sourceProperty = propInfo;
-                    foreach (var p in viaWalk.Select(o=>o))
+                    foreach (var p in viaWalk.Select(o => o))
                     {
-                        if(!(sourceObject is IList))
+                        if (!(sourceObject is IList))
                             sourceObject = sourceProperty.GetValue(sourceObject);
                         sourceProperty = this.ExtractDomainType(sourceProperty.PropertyType).GetRuntimeProperty(p.DomainName);
                     }
@@ -378,7 +455,7 @@ namespace OpenIZ.Core.Model.Map
                 // validate property type
                 if (propMap?.DontLoad == true)
                     continue;
-                
+
                 // Set value
                 object pValue = null;
                 if (modelProperty == null)
@@ -482,6 +559,8 @@ namespace OpenIZ.Core.Model.Map
 #if VERBOSE_DEBUG
             Debug.WriteLine("Leaving: {0}>{1}", typeof(TDomain).FullName, typeof(TModel).FullName);
 #endif
+            if(verEnt != null || idEnt != null)
+                FireMappedToModel(this, verEnt?.VersionKey ?? idEnt?.Key ?? Guid.Empty, retVal as IdentifiedData);
             return retVal;
         }
 

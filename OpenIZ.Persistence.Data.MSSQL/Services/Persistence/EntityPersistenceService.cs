@@ -282,9 +282,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         internal override DataLoadOptions GetDataLoadOptions()
         {
             var loadOptions = base.GetDataLoadOptions();
+            /*
             loadOptions.LoadWith<Data.EntityVersion>(cs => cs.StatusConcept);
             loadOptions.LoadWith<Data.EntityVersion>(cs => cs.TypeConcept);
-            loadOptions.LoadWith<Data.EntityVersion>(cs => cs.Entity);
             loadOptions.LoadWith<Data.Entity>(cs => cs.EntityTags);
             loadOptions.LoadWith<Data.Entity>(cs => cs.EntityNames);
             loadOptions.LoadWith<Data.Entity>(cs => cs.EntityIdentifiers);
@@ -303,7 +303,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             loadOptions.LoadWith<Data.EntityIdentifier>(cs => cs.AssigningAuthority);
             loadOptions.LoadWith<Data.EntityAssociation>(cs => cs.AssociationTypeConcept);
-            loadOptions.LoadWith<Data.EntityExtension>(cs => cs.ExtensionType);
+            loadOptions.LoadWith<Data.EntityExtension>(cs => cs.ExtensionType);*/
             return loadOptions;
         }
     }

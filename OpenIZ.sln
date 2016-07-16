@@ -43,6 +43,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Util", "Util", "{AF52F0A3-6
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppletCompiler", "AppletCompiler\AppletCompiler.csproj", "{C83CABC0-A612-4F6D-AFDB-0E2B4C98CDEE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Caching.Memory", "OpenIZ.Caching.Memory\OpenIZ.Caching.Memory.csproj", "{8553ABC7-ABFA-4A21-B0E8-68B7DE76129D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -109,6 +111,10 @@ Global
 		{C83CABC0-A612-4F6D-AFDB-0E2B4C98CDEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C83CABC0-A612-4F6D-AFDB-0E2B4C98CDEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C83CABC0-A612-4F6D-AFDB-0E2B4C98CDEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8553ABC7-ABFA-4A21-B0E8-68B7DE76129D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8553ABC7-ABFA-4A21-B0E8-68B7DE76129D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8553ABC7-ABFA-4A21-B0E8-68B7DE76129D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8553ABC7-ABFA-4A21-B0E8-68B7DE76129D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -129,5 +135,6 @@ Global
 		{C222B929-6E9E-4B2E-A98E-CC23EE681047} = {A1C82EDF-C27A-4A7A-A186-09E88BF63F36}
 		{3A45F695-47A2-464C-ACE6-BDABBFA39FBC} = {3D1B75E7-2CFB-4FA6-92A0-F91EB884D0E4}
 		{C83CABC0-A612-4F6D-AFDB-0E2B4C98CDEE} = {AF52F0A3-6A45-4666-B973-80BE0159FAA2}
+		{8553ABC7-ABFA-4A21-B0E8-68B7DE76129D} = {2914F4AD-4661-4C73-ADB6-B1D91C11C569}
 	EndGlobalSection
 EndGlobal
