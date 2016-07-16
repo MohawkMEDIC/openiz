@@ -142,7 +142,9 @@
     <property modelName="StatusConcept" domainName="StatusConcept">
       <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
     </property>
-
+    <property modelName="ReferenceTerms" domainName="Concept">
+      <via domainName="ConceptReferenceTerms"/>
+    </property>
     <property modelName="ClassKey" domainName="ConceptClassId"/>
     <property modelName="Class" domainName="ConceptClass" />
 
@@ -256,6 +258,7 @@
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ReferenceTerm, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ReferenceTermId"/>
     <property modelName="CodeSystemKey" domainName="CodeSystemId"/>
+    <property modelName="CodeSystem" domainName="CodeSystem"/>
     <collapseKey propertyName="CodeSystem" keyName="CodeSystemId"/>
     <property modelName="CreatedBy" domainName="CreatedByEntity"/>
     <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
@@ -300,9 +303,13 @@
     <property modelName="Key" domainName="ConceptReferenceTermId"/>
     <property modelName="SourceEntityKey" domainName="ConceptId"/>
     <property modelName="ReferenceTermKey" domainName="ReferenceTermId"/>
+    <property modelName="ReferenceTerm" domainName="ReferenceTerm"/>
+    <property modelName="RelationshipTypeKey" domainName="ConceptRelationshipTypeId"/>
+
+    <property modelName="RelationshipType" domainName="ConceptRelationshipType"/>
+
     <collapseKey propertyName="ReferenceTerm" keyName="ReferenceTermId"/>
     <collapseKey propertyName="ConceptRelationshipType" keyName="ConceptRelationshipTypeId"/>
-    <property modelName="RelationshipTypeKey" domainName="ConceptRelationshipTypeId"/>
   </class>
 
   <!-- Entity Maps -->
@@ -330,7 +337,7 @@
     <property modelName="DeterminerConceptKey" domainName="Entity">
       <via domainName="DeterminerConceptId"/>
     </property>
-    <property modelName="DeterminerConcept" domainName="Entity" dontLoad="true">
+    <property modelName="DeterminerConcept" domainName="Entity">
       <via domainName="DeterminerConcept">
         <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
       </via>
@@ -467,7 +474,10 @@
     </property>
       <collapseKey propertyName="IdentifierTypeConcept" keyName="IdentifierTypeConceptId"/>
     <property modelName="ScopeConceptKey" domainName="EntityClassScopeConceptId"/>
-    <property modelName="Scope" domainName="EntityClassScopeConcept"/>
+    <property modelName="ScopeConcept" domainName="EntityClassScopeConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+      
+    </property>
     <collapseKey propertyName="EntityClassScopeConcept" keyName="EntityClassScopeConceptId"/>
   </class>
 

@@ -12,6 +12,7 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using System.ComponentModel;
 using MARC.HI.EHRS.SVC.Core.Data;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -119,7 +120,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var tr = 0;
             var uuid = containerId as Identifier<Guid>;
-            
+
+            if (uuid.Id != Guid.Empty)
+            {
+                var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(uuid.Id) as TModel;
+                if (cacheItem != null && (cacheItem.VersionKey.HasValue && uuid.VersionId == cacheItem.VersionKey.Value || uuid.VersionId == Guid.Empty))
+                    return cacheItem;
+            }
+
             // Get most recent version
             if (uuid.VersionId == Guid.Empty)
                 return base.Query(o => o.Key == uuid.Id && o.ObsoletionTime == null, 0, 1, principal, out tr).FirstOrDefault();
@@ -147,7 +155,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     itm.SourceEntityKey = source.Key;
 
             // Get existing
-            var existing = context.GetTable<TDomainAssociation>().Where(ExpressionRewriter.Rewrite<TDomainAssociation>(o => o.AssociatedItemKey == source.Key && source.VersionSequence >= o.EffectiveVersionSequenceId && (source.VersionSequence < o.ObsoleteVersionSequenceId || !o.ObsoleteVersionSequenceId.HasValue))).ToList().Select(o => m_mapper.MapDomainInstance<TDomainAssociation, TAssociation>(o).GetLocked() as TAssociation);
+            var existing = context.GetTable<TDomainAssociation>().Where(ExpressionRewriter.Rewrite<TDomainAssociation>(o => o.AssociatedItemKey == source.Key && source.VersionSequence >= o.EffectiveVersionSequenceId && (source.VersionSequence < o.ObsoleteVersionSequenceId || !o.ObsoleteVersionSequenceId.HasValue))).ToList().Select(o => m_mapper.MapDomainInstance<TDomainAssociation, TAssociation>(o) as TAssociation);
             
             // Remove old
             var obsoleteRecords = existing.Where(o => !storage.Exists(ecn => ecn.Key == o.Key));

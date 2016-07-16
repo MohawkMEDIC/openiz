@@ -73,14 +73,14 @@ namespace OpenIZ.Core.Applets.Test
         /// <summary>
         /// Test serialization of the IMS patient object
         /// </summary>
-        [TestMethod]
-        public void TestSerializeComplexIMSObject()
-        {
+        //[TestMethod]
+        //public void TestSerializeComplexIMSObject()
+        //{
 
-            String json = JsonViewModelSerializer.Serialize(this.m_patientUnderTest);
-            Assert.IsNotNull(json);
+        //    String json = JsonViewModelSerializer.Serialize(this.m_patientUnderTest);
+        //    Assert.IsNotNull(json);
 
-        }
+        //}
 
         /// <summary>
         /// Test de-serialization of the IMS patient object

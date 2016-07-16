@@ -54,7 +54,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Validates that this object has a target entity
         /// </summary>
-        public static IEnumerable<ValidationResultDetail> Validate<TSourceType>(this VersionedAssociation<TSourceType> me) where TSourceType : VersionedEntityData<TSourceType>
+        public static IEnumerable<ValidationResultDetail> Validate<TSourceType>(this VersionedAssociation<TSourceType> me) where TSourceType : VersionedEntityData<TSourceType>, new()
         {
             var validResults = new List<ValidationResultDetail>();
             if (me.SourceEntityKey == Guid.Empty)

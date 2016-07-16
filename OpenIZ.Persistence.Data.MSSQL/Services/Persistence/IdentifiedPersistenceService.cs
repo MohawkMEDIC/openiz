@@ -140,7 +140,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     itm.SourceEntityKey = source.Key;
 
             // Get existing
-            var existing = context.GetTable<TDomainAssociation>().Where(ExpressionRewriter.Rewrite<TDomainAssociation>(o => o.AssociatedItemKey == source.Key)).ToList().Select(o=>m_mapper.MapDomainInstance<TDomainAssociation, TAssociation>(o).GetLocked() as TAssociation);
+            var existing = context.GetTable<TDomainAssociation>().Where(ExpressionRewriter.Rewrite<TDomainAssociation>(o => o.AssociatedItemKey == source.Key)).ToList().Select(o=>m_mapper.MapDomainInstance<TDomainAssociation, TAssociation>(o) as TAssociation);
             // Remove old
             var obsoleteRecords = existing.Where(o => !storage.Exists(ecn => ecn.Key == o.Key));
             foreach (var del in obsoleteRecords)

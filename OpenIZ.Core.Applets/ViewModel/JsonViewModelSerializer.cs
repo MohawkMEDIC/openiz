@@ -19,7 +19,7 @@ namespace OpenIZ.Core.Applets.ViewModel
     /// View model class for Applets turns the core business model objects into
     /// a more sane, flat model to be given to applets as JSON
     /// </summary>
-    public static class JsonViewModelSerializer 
+    public static class JsonViewModelSerializer
     {
 
         /// <summary>
@@ -33,20 +33,13 @@ namespace OpenIZ.Core.Applets.ViewModel
         /// </remarks>
         public static String Serialize(IdentifiedData data)
         {
-            data.SetDelayLoad(false);
-            try
+            using (StringWriter sw = new StringWriter())
             {
-                using (StringWriter sw = new StringWriter())
-                {
-                    JsonWriter jwriter = new JsonTextWriter(sw);
-                    // Iterate over properties
-                    SerializeInternal(data, jwriter);
+                JsonWriter jwriter = new JsonTextWriter(sw);
+                // Iterate over properties
+                SerializeInternal(data, jwriter);
 
-                    return sw.ToString();
-                }
-            }
-            finally { 
-                data.SetDelayLoad(true);
+                return sw.ToString();
             }
         }
 
@@ -55,7 +48,7 @@ namespace OpenIZ.Core.Applets.ViewModel
         /// </summary>
         public static TModel DeSerialize<TModel>(String jsonString) where TModel : IdentifiedData, new()
         {
-            
+
             using (StringReader sr = new StringReader(jsonString))
             {
                 JsonReader jreader = new JsonTextReader(sr);
@@ -93,7 +86,7 @@ namespace OpenIZ.Core.Applets.ViewModel
             int depth = jreader.Depth;
 
             // Reader
-            while(jreader.Read())
+            while (jreader.Read())
             {
                 // Break condition
                 if (jreader.TokenType == JsonToken.EndObject && jreader.Depth == depth) break;
@@ -104,14 +97,14 @@ namespace OpenIZ.Core.Applets.ViewModel
                         // Find the property 
                         var propertyInfo = serializationType.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName == (String)jreader.Value);
                         if (propertyInfo == null)
-                            propertyInfo = serializationType.GetRuntimeProperties().FirstOrDefault(o => serializationType.GetRuntimeProperty(o.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName ?? o.Name)?.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName + "Model" == (String)jreader.Value);
+                            propertyInfo = serializationType.GetRuntimeProperties().FirstOrDefault(o => serializationType.GetRuntimeProperty(o.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty ?? o.Name)?.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName + "Model" == (String)jreader.Value);
                         jreader.Read();
                         // Token type switch
                         switch (jreader.TokenType)
                         {
                             case JsonToken.StartObject:
                                 // This may be a plain object or 
-                                if(propertyInfo == null)
+                                if (propertyInfo == null)
                                 {
                                     int cDepth = jreader.Depth;
                                     while (jreader.Read()) // Read object;
@@ -135,8 +128,8 @@ namespace OpenIZ.Core.Applets.ViewModel
                                     {
                                         if (cDepth == jreader.Depth && jreader.TokenType == JsonToken.EndObject)
                                             break;
-                                        
-                                        switch(jreader.TokenType)
+
+                                        switch (jreader.TokenType)
                                         {
                                             case JsonToken.PropertyName:
                                                 String classifier = (String)jreader.Value;
@@ -146,7 +139,7 @@ namespace OpenIZ.Core.Applets.ViewModel
 
                                                 // Read inner array
                                                 int iDepth = jreader.Depth;
-                                                while(jreader.Read())
+                                                while (jreader.Read())
                                                 {
                                                     if (iDepth == jreader.Depth && jreader.TokenType == JsonToken.EndArray)
                                                         break;
@@ -162,11 +155,11 @@ namespace OpenIZ.Core.Applets.ViewModel
                                                         isSimple = true;
                                                         // Get the simple value property
                                                         var simpleProperty = elementType.GetRuntimeProperty(elementType.GetTypeInfo().GetCustomAttribute<SimpleValueAttribute>().ValueProperty);
-                                                        if(StripNullable(simpleProperty.PropertyType) == typeof(Guid))
+                                                        if (StripNullable(simpleProperty.PropertyType) == typeof(Guid))
                                                             simpleProperty.SetValue(contained, Guid.Parse((String)jreader.Value));
-                                                        else if(simpleProperty.PropertyType == typeof(byte[]))
+                                                        else if (simpleProperty.PropertyType == typeof(byte[]))
                                                         {
-                                                            switch(jreader.TokenType)
+                                                            switch (jreader.TokenType)
                                                             {
                                                                 case JsonToken.Boolean:
                                                                     simpleProperty.SetValue(contained, new BooleanExtensionHandler().Serialize(jreader.Value));
@@ -216,7 +209,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                                         }
                                     }
 
-                                    propertyInfo.SetValue(retVal, modelInstance); 
+                                    propertyInfo.SetValue(retVal, modelInstance);
                                 }
                                 break;
                             case JsonToken.StartArray:
@@ -322,9 +315,9 @@ namespace OpenIZ.Core.Applets.ViewModel
                     continue;
 
                 String propertyName = itm.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName;
-                var delayLoadProperty = itm.GetCustomAttribute<DelayLoadAttribute>();
-                if (!String.IsNullOrEmpty(delayLoadProperty?.KeyPropertyName))
-                    propertyName = data.GetType().GetRuntimeProperty(delayLoadProperty?.KeyPropertyName).GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName + "Model";
+                var delayLoadProperty = itm.GetCustomAttribute<SerializationReferenceAttribute>();
+                if (!String.IsNullOrEmpty(delayLoadProperty?.RedirectProperty))
+                    propertyName = data.GetType().GetRuntimeProperty(delayLoadProperty?.RedirectProperty).GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName + "Model";
                 else if (propertyName == null && value is IdentifiedData)
                     propertyName = String.Format("{0}Model", itm.Name.ToLower());
                 else if (propertyName == null)
@@ -345,7 +338,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                             if (litm is IdentifiedData)
                                 SerializeInternal(litm as IdentifiedData, jwriter, writeStack);
                             else
-                                jwriter.WriteValue(value);
+                                jwriter.WriteValue(litm);
                         }
                         jwriter.WriteEndArray();
                     }
@@ -353,14 +346,14 @@ namespace OpenIZ.Core.Applets.ViewModel
                     {
                         // Classifier value 
                         jwriter.WriteStartObject();
-                        
+
                         // Group the clasisfied groups 
                         Dictionary<String, List<Object>> classifiedGroups = new Dictionary<String, List<Object>>();
                         foreach (var litm in value as IList)
                         {
                             var classifierObj = elementType.GetRuntimeProperty(classifierAttribute.ClassifierProperty).GetValue(litm);
                             var classifierPath = classifierObj?.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
-                            while(classifierPath != null)
+                            while (classifierPath != null)
                             {
                                 classifierObj = classifierObj.GetType().GetRuntimeProperty(classifierPath.ClassifierProperty).GetValue(classifierObj);
                                 classifierPath = classifierObj?.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
@@ -369,17 +362,17 @@ namespace OpenIZ.Core.Applets.ViewModel
                             // Classifier obj becomes the dictionary object
                             List<Object> values = null;
                             String classKey = classifierObj?.ToString() ?? "Other";
-                            if(!classifiedGroups.TryGetValue(classKey, out values))
+                            if (!classifiedGroups.TryGetValue(classKey, out values))
                             {
                                 values = new List<object>();
-                                classifiedGroups.Add(classKey , values);
+                                classifiedGroups.Add(classKey, values);
                             }
 
                             values.Add(litm);
                         }
 
                         // Write classified groups
-                        foreach(var kv in classifiedGroups)
+                        foreach (var kv in classifiedGroups)
                         {
                             jwriter.WritePropertyName(kv.Key);
                             jwriter.WriteStartArray();
@@ -408,7 +401,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                     jwriter.WriteValue(value);
             }
 
-            if(ver?.VersionKey.HasValue == true || data.Key.HasValue)
+            if (ver?.VersionKey.HasValue == true || data.Key.HasValue)
                 writeStack.Remove(ver?.VersionKey ?? data.Key.Value);
             jwriter.WriteEndObject();
 

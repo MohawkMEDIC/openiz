@@ -9,6 +9,8 @@ using OpenIZ.Core.Model.Constants;
 using System.Security.Principal;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using System.Data.Linq;
+using OpenIZ.Core.Model.EntityLoader;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -51,10 +53,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             retVal.DeterminerConceptKey = dbInstance.Entity.DeterminerConceptId;
 
             // Inversion relationships
-            retVal.Relationships.AddRange(context.EntityAssociations.Where(o => o.TargetEntityId == retVal.Key.Value).Select(o => new EntityRelationship()
+            retVal.Relationships.AddRange(context.EntityAssociations.Where(o => o.TargetEntityId == retVal.Key.Value).Select(o => new EntityRelationship(o.AssociationTypeConceptId, o.TargetEntityId)
             {
-                RelationshipTypeKey = o.AssociationTypeConceptId,
-                TargetEntityKey = o.SourceEntityId,
                 InversionIndicator = true
             }));
 
@@ -282,8 +282,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         internal override DataLoadOptions GetDataLoadOptions()
         {
             var loadOptions = base.GetDataLoadOptions();
-            /*
-            loadOptions.LoadWith<Data.EntityVersion>(cs => cs.StatusConcept);
+/*            loadOptions.LoadWith<Data.EntityVersion>(cs => cs.StatusConcept);
             loadOptions.LoadWith<Data.EntityVersion>(cs => cs.TypeConcept);
             loadOptions.LoadWith<Data.Entity>(cs => cs.EntityTags);
             loadOptions.LoadWith<Data.Entity>(cs => cs.EntityNames);

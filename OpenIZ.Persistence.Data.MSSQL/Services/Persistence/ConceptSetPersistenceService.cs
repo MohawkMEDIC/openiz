@@ -31,6 +31,17 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         }
 
         /// <summary>
+        /// Return value
+        /// </summary>
+        public override Core.Model.DataTypes.ConceptSet ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
+        {
+            var retVal = base.ToModelInstance(dataInstance, context, principal);
+            var de = dataInstance as Data.ConceptSet;
+            retVal.ConceptsXml = de.ConceptSetMembers.Select(o => o.ConceptId).ToList();
+            return retVal;
+        }
+
+        /// <summary>
         /// Inser the specified concept set
         /// </summary>
         public override Core.Model.DataTypes.ConceptSet Insert(ModelDataContext context, Core.Model.DataTypes.ConceptSet data, IPrincipal principal)

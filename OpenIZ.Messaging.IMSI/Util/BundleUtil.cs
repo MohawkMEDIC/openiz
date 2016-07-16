@@ -39,7 +39,7 @@ namespace OpenIZ.Messaging.IMSI.Util
         /// <summary>
         /// Create a bundle
         /// </summary>
-        public static Bundle CreateBundle(IEnumerable<IdentifiedData> resourceRoot, int totalResults, int offset)
+        public static Bundle CreateBundle(IEnumerable<IdentifiedData> resourceRoot, int totalResults, int offset, bool lean)
         {
             m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Creating bundle for results {0}..{1} of {2}", offset, offset + resourceRoot.Count(), totalResults);
             try
@@ -60,8 +60,9 @@ namespace OpenIZ.Messaging.IMSI.Util
                             continue;
                         if (!retVal.Item.Exists(o => o.Key == itm.Key))
                         {
-                            retVal.Item.Add(itm.GetLocked());
-                            wtp.QueueUserWorkItem((o) => Bundle.ProcessModel(o as IdentifiedData, retVal), itm.GetLocked());
+                            retVal.Item.Add(itm);
+                            if(!lean)
+                                wtp.QueueUserWorkItem((o) => Bundle.ProcessModel(o as IdentifiedData, retVal), itm);
                         }
                     }
                     wtp.WaitOne();

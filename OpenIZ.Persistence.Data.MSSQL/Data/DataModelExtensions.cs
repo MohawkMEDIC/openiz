@@ -151,6 +151,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// </summary>
         public static void EnsureExists(this IIdentifiedEntity me, ModelDataContext context, IPrincipal principal) 
         {
+            // Placeholders same as null
+            if (me.IsLogicalNull)
+            {
+                me = (me as IdentifiedData).Clone();
+                me.Key = Guid.Empty;
+            }
+
             // Me
             var vMe = me as IVersionedEntity;
             String dkey = String.Format("{0}.{1}", me.GetType().FullName, me.Key);
@@ -211,7 +218,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
             {
                 // Exists but is an old version
                 if ((existing as IVersionedEntity)?.VersionKey != vMe?.VersionKey &&
-                    vMe?.VersionKey != Guid.Empty)
+                    vMe?.VersionKey != null && vMe?.VersionKey != Guid.Empty)
                 {
                     // Update method
                     var updateMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Update" && o.GetParameters().Length == 3 && o.GetParameters()[0].ParameterType == typeof(ModelDataContext));
@@ -239,21 +246,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         }
 
         /// <summary>
-        /// Updates a keyed delay load field if needed
-        /// </summary>
-        public static void UpdateParentKeys(this IIdentifiedEntity instance, PropertyInfo field)
-        {
-            var delayLoadProperty = field.GetCustomAttribute<DelayLoadAttribute>();
-            if (delayLoadProperty == null || String.IsNullOrEmpty(delayLoadProperty.KeyPropertyName))
-                return;
-            var value = field.GetValue(instance) as IIdentifiedEntity;
-            if (value == null)
-                return;
-            // Get the delay load key property!
-            var keyField = instance.GetType().GetRuntimeProperty(delayLoadProperty.KeyPropertyName);
-            keyField.SetValue(instance, value.Key);
-        }
-        /// <summary>
         /// Update property data if required
         /// </summary>
         public static void CopyObjectData<TObject>(this TObject toEntity, TObject fromEntity)
@@ -267,8 +259,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
             foreach (var pi in toEntity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
                 
-                // Skip delay load 
-                if (pi.GetCustomAttribute<DelayLoadAttribute>() == null &&
+                // Skip data ignore
+                if (pi.GetCustomAttribute<DataIgnoreAttribute>() == null &&
                     pi.GetSetMethod() != null)
                 {
                     if (pi.PropertyType.IsGenericType &&

@@ -40,17 +40,18 @@ namespace OpenIZ.Core.Applets.Test
         private class TestEntitySource : IEntitySourceProvider
         {
 
-            public TObject Get<TObject>(Guid? key) where TObject : IdentifiedData
+            public TObject Get<TObject>(Guid? key) where TObject : IdentifiedData, new()
             {
-                throw new NotImplementedException();
+                return new TObject() { Key = key };
             }
 
-            public TObject Get<TObject>(Guid? key, Guid? versionKey) where TObject : IdentifiedData, IVersionedEntity
+            public TObject Get<TObject>(Guid? key, Guid? versionKey) where TObject : IdentifiedData, IVersionedEntity, new()
             {
-                throw new NotImplementedException();
+                return new TObject() { Key = key, VersionKey = versionKey };
+
             }
 
-            public List<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation
+            public List<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence) where TObject : IdentifiedData, IVersionedAssociation, new()
             {
                 throw new NotImplementedException();
             }
@@ -58,7 +59,7 @@ namespace OpenIZ.Core.Applets.Test
             /// <summary>
             /// Query the specified object
             /// </summary>
-            public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData
+            public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData, new()
             {
                 if (typeof(TObject) == typeof(Concept))
                 {

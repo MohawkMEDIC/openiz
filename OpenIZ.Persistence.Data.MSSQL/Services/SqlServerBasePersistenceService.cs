@@ -21,6 +21,7 @@ using OpenIZ.Core.Security;
 using MARC.HI.EHRS.SVC.Core.Data;
 using System.Data.Linq;
 using System.Data.Common;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services
 {
@@ -138,11 +139,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
 
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "INSERT {0}", data);
 
-                    data.SetDelayLoad(false);
                     data = this.Insert(connection, data, principal);
                     connection.SubmitChanges();
 
-                    data.SetDelayLoad(true);
 
                     if (mode == TransactionMode.Commit)
                         tx.Commit();
@@ -199,11 +198,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
 
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "UPDATE {0}", data);
 
-                    data.SetDelayLoad(false);
                     data = this.Update(connection, data, principal);
                     connection.SubmitChanges();
 
-                    data.SetDelayLoad(true);
 
                     if (mode == TransactionMode.Commit)
                         tx.Commit();
@@ -258,11 +255,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
 
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "OBSOLETE {0}", data);
 
-                    data.SetDelayLoad(false);
                     data = this.Obsolete(connection, data, principal);
                     connection.SubmitChanges();
 
-                    data.SetDelayLoad(true);
 
                     if (mode == TransactionMode.Commit)
                         tx.Commit();
@@ -287,9 +282,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// </summary>
         public virtual TData Get<TIdentifier>(MARC.HI.EHRS.SVC.Core.Data.Identifier<TIdentifier> containerId, IPrincipal principal, bool loadFast)
         {
-            var tr = 0;
+            // Try the cache if available
             var guidIdentifier = containerId as Identifier<Guid>;
-            return this.Query(o => o.Key == guidIdentifier.Id, 0, 1, principal, out tr)?.SingleOrDefault();
+            var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TData>(guidIdentifier.Id) as TData;
+            if (cacheItem != null)
+                return cacheItem;
+            else
+            {
+                var tr = 0;
+                return this.Query(o => o.Key == guidIdentifier.Id, 0, 1, principal, out tr)?.SingleOrDefault();
+            }
         }
 
         /// <summary>
@@ -362,8 +364,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                         if (count.HasValue)
                             postData.Results = postData.Results.Take(count.Value);
 
+                        var retVal = postData.Results.AsParallel().ToList();
                         this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Returning {0}..{1} or {2} results", offset, offset + (count ?? 1000), totalCount);
-                        return postData.Results.AsParallel().ToList();
+                        return retVal;
                     }
 
                 }

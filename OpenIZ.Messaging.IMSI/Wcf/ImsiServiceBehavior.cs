@@ -171,16 +171,11 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     if (retVal == null)
                         throw new FileNotFoundException(id);
 
-                    this.ExpandProperties(retVal, WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters);
-
-                    if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_all"] != "true")
-                        retVal = retVal.GetLocked();
 
                     if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_bundle"] == "true")
                         return Bundle.CreateBundle(retVal);
                     else
                     {
-                        retVal = retVal.GetLocked();
                         return retVal;
                     }
                 }
@@ -210,10 +205,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     if (retVal == null)
                         throw new FileNotFoundException(id);
 
-                    this.ExpandProperties(retVal, WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters);
 
-                    if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_all"] != "true")
-                        retVal = retVal.GetLocked();
+                   
                     if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_bundle"] == "true")
                         return Bundle.CreateBundle(retVal);
                     else
@@ -287,7 +280,6 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     var histItm = retVal;
                     while (histItm != null)
                     {
-                        this.ExpandProperties(histItm, WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters);
                         histItm = (histItm as IVersionedEntity)?.PreviousVersion as IdentifiedData;
 
                         // Should we stop fetching?
@@ -297,7 +289,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     }
 
                     // Lock the item
-                    return Bundle.CreateBundle(histItm.GetLocked());
+                    return Bundle.CreateBundle(histItm);
                 }
                 else
                     throw new FileNotFoundException(resourceType);
@@ -325,15 +317,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                         count = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_count"];
                     int totalResults = 0;
                     IEnumerable<IdentifiedData> retVal = handler.Query(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters.ToQuery(), Int32.Parse(offset ?? "0"), Int32.Parse(count ?? "100"), out totalResults);
-
-                    using (WaitThreadPool wtp = new WaitThreadPool(Environment.ProcessorCount * 4))
-                    {
-                        foreach (var itm in retVal)
-                            wtp.QueueUserWorkItem(o=>this.ExpandProperties(itm, o as NameValueCollection), WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters);
-                        wtp.WaitOne();
-                    }
-
-                    return BundleUtil.CreateBundle(retVal, totalResults, Int32.Parse(offset ?? "0"));
+                    
+                    return BundleUtil.CreateBundle(retVal, totalResults, Int32.Parse(offset ?? "0"), WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_lean"] != null);
                 }
                 else
                     throw new FileNotFoundException(resourceType);
@@ -432,74 +417,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             return result;
 
         }
-
-        /// <summary>
-        /// Expand properties
-        /// </summary>
-        private void ExpandProperties(IdentifiedData returnValue, NameValueCollection qp)
-        {
-            this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Expanding properties on {0}", returnValue);
-            if (qp["_expand"] == null)
-                return;
-
-            foreach (var nvs in qp["_expand"].Split(','))
-            {
-                // Get the property the user wants to expand
-                object scope = returnValue;
-                foreach (var property in nvs.Split('.'))
-                {
-                    if (scope is IList)
-                    {
-                        foreach (var sc in scope as IList)
-                        {
-                            PropertyInfo keyPi = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<XmlElementAttribute>()?.ElementName == property);
-                            if (keyPi == null)
-                                continue;
-                            // Get the backing property
-                            PropertyInfo expandProp = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == keyPi.Name);
-                            if (expandProp != null)
-                                scope = expandProp.GetValue(sc);
-                            else
-                                scope = keyPi.GetValue(sc);
-
-                        }
-                    }
-                    else
-                    {
-                        PropertyInfo keyPi = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>()?.Any(a=>a.ElementName == property) == true);
-                        if (keyPi == null)
-                            continue;
-                        // Get the backing property
-                        PropertyInfo expandProp = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == keyPi.Name);
-
-                        Object existing = null;
-                        Object keyValue = keyPi.GetValue(scope);
-
-                        if (expandProp != null && expandProp.CanWrite && this.m_loadCache.TryGetValue(keyValue, out existing))
-                        {
-                            expandProp.SetValue(scope, existing);
-                            scope = existing;
-                        }
-                        else
-                        {
-                            if (expandProp != null)
-                            {
-                                lock(this.m_lockObject)
-                                    if (!this.m_loadCache.ContainsKey(keyValue))
-                                    {
-                                        scope = expandProp.GetValue(scope);
-                                        this.m_loadCache.Add(keyValue, scope);
-                                    }
-                            }
-                            else
-                                scope = keyValue;
-                        }
-                    }
-                }
-            }
-        }
         
-
         /// <summary>
         /// Obsolete the specified data
         /// </summary>

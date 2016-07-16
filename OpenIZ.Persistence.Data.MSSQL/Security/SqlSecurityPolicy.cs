@@ -105,5 +105,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
         /// Is active?
         /// </summary>
         public bool IsActive { get; private set; }
+
+        /// <summary>
+        /// Will never be null
+        /// </summary>
+        public bool IsLogicalNull
+        {
+            get
+            {
+                return false;
+            }
+        }
     }
 }

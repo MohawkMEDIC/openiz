@@ -37,7 +37,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         public override Core.Model.Roles.Patient ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
         {
             var iddat = dataInstance as IDbVersionedData;
-            var patient = dataInstance as Data.Patient ?? context.GetTable<Data.Patient>().Where(o => o.EntityVersionId == iddat.Id).First();
+            var patient = dataInstance as Data.Patient ?? context.GetTable<Data.Patient>().Where(o => o.EntityVersionId == iddat.VersionId).First();
             var dbe = dataInstance as Data.EntityVersion ?? context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == patient.EntityVersionId).First();
             var dbp = context.GetTable<Data.Person>().Where(o => o.EntityVersionId == patient.EntityVersionId).First();
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Roles.Patient>(dbe, context, principal);

@@ -19,6 +19,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     /// </summary>
     public class ConceptPersistenceService : VersionedDataPersistenceService<Core.Model.DataTypes.Concept, ConceptVersion, Data.Concept>
     {
+        /// <summary>
+        /// To morel instance
+        /// </summary>
+        public override Core.Model.DataTypes.Concept ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
+        {
+            var retVal = base.ToModelInstance(dataInstance, context, principal);
+            var de = dataInstance as Data.ConceptVersion;
+            //retVal.ConceptSetsXml = de.Concept.ConceptSetMembers.Select(o => o.ConceptSetId).ToList();
+            return retVal; 
+        }
 
         /// <summary>
         /// Insert concept 

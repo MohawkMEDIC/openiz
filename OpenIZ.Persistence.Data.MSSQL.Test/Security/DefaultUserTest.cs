@@ -56,8 +56,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Security
         [TestMethod]
         public void TestSystemUserExists()
         {
-
-
+            
             var idService = ApplicationContext.Current.GetService<IIdentityProviderService>();
             var identity = idService.GetIdentity("SYSTEM");
             Assert.IsNotNull(identity);

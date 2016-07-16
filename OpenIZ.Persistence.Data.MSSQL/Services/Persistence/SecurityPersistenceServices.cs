@@ -94,6 +94,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = base.ToModelInstance(dataInstance, context, principal);
             retVal.Policies = (dataInstance as Data.SecurityRole).SecurityRolePolicies.Select(o => m_mapper.MapDomainInstance<Data.SecurityRolePolicy, Core.Model.Security.SecurityPolicyInstance>(o)).ToList();
+            retVal.Users = (dataInstance as Data.SecurityRole).SecurityUserRoles.Select(o => m_mapper.MapDomainInstance<Data.SecurityUser, Core.Model.Security.SecurityUser>(o.SecurityUser)).ToList();
             return retVal;
         }
 

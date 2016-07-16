@@ -79,6 +79,10 @@
     <Compile Include="Services\EntityPersistenceServiceTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.Caching.Memory\OpenIZ.Caching.Memory.csproj">
+      <Project>{8553abc7-abfa-4a21-b0e8-68b7de76129d}</Project>
+      <Name>OpenIZ.Caching.Memory</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core.Applets\OpenIZ.Core.Applets.csproj">
       <Project>{39E61451-F4FE-493D-B754-5F06EB284AAC}</Project>
       <Name>OpenIZ.Core.Applets</Name>

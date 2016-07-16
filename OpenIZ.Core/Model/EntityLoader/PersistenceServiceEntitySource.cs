@@ -38,7 +38,7 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Get the persistence service source
         /// </summary>
-        public TObject Get<TObject>(Guid? key) where TObject : IdentifiedData
+        public TObject Get<TObject>(Guid? key) where TObject : IdentifiedData, new()
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>();
             if(persistenceService != null  && key.HasValue)
@@ -49,7 +49,7 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Get the specified version
         /// </summary>
-        public TObject Get<TObject>(Guid? key, Guid? versionKey) where TObject : IdentifiedData, IVersionedEntity
+        public TObject Get<TObject>(Guid? key, Guid? versionKey) where TObject : IdentifiedData, IVersionedEntity, new()
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>();
             if (persistenceService != null && key.HasValue && versionKey.HasValue)
@@ -63,7 +63,7 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Get versioned relationships
         /// </summary>
-        public List<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation
+        public List<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence) where TObject : IdentifiedData, IVersionedAssociation,new()
         {
             return this.Query<TObject>(o => sourceKey == o.SourceEntityKey && sourceVersionSequence >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || sourceVersionSequence < o.ObsoleteVersionSequenceId)).ToList();
         }
@@ -71,7 +71,7 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Query the specified object
         /// </summary>
-        public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData
+        public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData, new()
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>();
             if(persistenceService != null)

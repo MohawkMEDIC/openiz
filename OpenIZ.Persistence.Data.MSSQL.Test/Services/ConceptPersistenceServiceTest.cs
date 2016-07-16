@@ -21,8 +21,10 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenIZ.Core;
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
@@ -111,6 +113,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         [TestMethod]
         public void TestUpdateNamedConcept()
         {
+            IdentifiedData.SourceProvider = EntitySource.Current.Provider;
+
             Concept namedConcept = new Concept()
             {
                 ClassKey = ConceptClassKeys.Other,

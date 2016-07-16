@@ -16,16 +16,18 @@ using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Persistence.Data.MSSQL.Services.Persistence;
 using OpenIZ.Core.Exceptions;
 using OpenIZ.Persistence.Data.MSSQL.Configuration;
+using System.Threading;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services
 {
-    
 
-	/// <summary>
-	/// Represents a dummy service which just adds the persistence services to the context
-	/// </summary>
-	public class SqlServerPersistenceService : IDaemonService
-	{
+
+    /// <summary>
+    /// Represents a dummy service which just adds the persistence services to the context
+    /// </summary>
+    public class SqlServerPersistenceService : IDaemonService
+    {
 
         private static ModelMapper s_mapper;
 
@@ -106,7 +108,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// </summary>
         internal class GenericBasePersistenceService<TModel, TDomain> : BaseDataPersistenceService<TModel, TDomain>
             where TDomain : class, IDbBaseData, new()
-            where TModel : BaseEntityData , new()
+            where TModel : BaseEntityData, new()
         {
 
             /// <summary>
@@ -116,12 +118,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
+                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null)
+                        continue;
+
                     var instance = rp.GetValue(data);
                     if (instance != null)
-                    {
                         DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal);
-                        data.UpdateParentKeys(rp);
-                    }
                 }
                 return base.Insert(context, data, principal);
             }
@@ -133,14 +135,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
+                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null)
+                        continue;
+
                     var instance = rp.GetValue(data);
                     if (instance != null)
-                    {
                         DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal);
-                        data.UpdateParentKeys(rp);
-                    }
-                    }
-                    return base.Update(context, data, principal);
+                }
+                return base.Update(context, data, principal);
             }
         }
 
@@ -158,12 +160,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
+                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null)
+                        continue;
+
                     var instance = rp.GetValue(data);
                     if (instance != null)
-                    {
                         DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal);
-                        data.UpdateParentKeys(rp);
-                    }
                 }
                 return base.Insert(context, data, principal);
             }
@@ -175,12 +177,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
+                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null)
+                        continue;
+
                     var instance = rp.GetValue(data);
                     if (instance != null)
-                    {
                         DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal);
-                        data.UpdateParentKeys(rp);
-                    }
                 }
                 return base.Update(context, data, principal);
             }
@@ -223,7 +225,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             {
                 return this.m_running;
             }
-        }      
+        }
 
         /// <summary>
         /// Start the service and bind all of the sub-services
@@ -235,7 +237,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             if (this.m_running) return true;
 
             // Verify schema version
-            using(ModelDataContext mdc = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
+            using (ModelDataContext mdc = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
             {
                 Version dbVer = new Version(mdc.fn_OpenIzSchemaVersion()),
                     oizVer = typeof(SqlServerPersistenceService).Assembly.GetName().Version;
@@ -306,20 +308,31 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             }
 
             // Bind some basic service stuff
-            ApplicationContext.Current.GetService<IDataPersistenceService<Core.Model.Security.SecurityUser>>().Inserting += (o, e) => {
-                if(String.IsNullOrEmpty(e.Data.SecurityHash))
+            ApplicationContext.Current.GetService<IDataPersistenceService<Core.Model.Security.SecurityUser>>().Inserting += (o, e) =>
+            {
+                if (String.IsNullOrEmpty(e.Data.SecurityHash))
                     e.Data.SecurityHash = Guid.NewGuid().ToString();
             };
-            ApplicationContext.Current.GetService<IDataPersistenceService<Core.Model.Security.SecurityUser>>().Updating += (o, e) => {
+            ApplicationContext.Current.GetService<IDataPersistenceService<Core.Model.Security.SecurityUser>>().Updating += (o, e) =>
+            {
                 e.Data.SecurityHash = Guid.NewGuid().ToString();
             };
 
+            // Attempt to cache concepts
+            this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Caching concept dictionary...");
+            if (ApplicationContext.Current.GetService<IDataCachingService>() != null) 
+                new Thread((o) => {
+                    int t;
+                    ApplicationContext.Current.GetService<IDataPersistenceService<Core.Model.DataTypes.Concept>>().Query(c => c.Key == c.Key, 0, 10000, null, out t);
+                    ApplicationContext.Current.GetService<IDataPersistenceService<Core.Model.DataTypes.ConceptSet>>().Query(c => c.Key == c.Key, 0, 1000, null, out t);
+
+                }).Start();
             this.m_running = true;
             this.Started?.Invoke(this, EventArgs.Empty);
 
             return true;
         }
-        
+
         /// <summary>
         /// Stop the service
         /// </summary>

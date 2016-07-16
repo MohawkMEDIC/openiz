@@ -39,6 +39,7 @@ using OpenIZ.Core.Security;
 using System.Diagnostics;
 using OpenIZ.Core.Model.Collection;
 using Newtonsoft.Json.Converters;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Wcf.Serialization
 {
@@ -86,7 +87,7 @@ namespace OpenIZ.Core.Wcf.Serialization
             {
                 HttpRequestMessageProperty httpRequest = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
                 string contentType = httpRequest.Headers[HttpRequestHeader.ContentType];
-
+                IdentifiedData.SourceProvider = new EntitySource.DummyEntitySource();
 
                 UriTemplateMatch templateMatch = (UriTemplateMatch)request.Properties.SingleOrDefault(o => o.Value is UriTemplateMatch).Value;
                 // Not found
