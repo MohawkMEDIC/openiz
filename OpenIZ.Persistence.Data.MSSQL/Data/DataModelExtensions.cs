@@ -147,6 +147,63 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         }
 
         /// <summary>
+        /// Try get by classifier
+        /// </summary>
+        public static IIdentifiedEntity TryGetExisting(this IIdentifiedEntity me, ModelDataContext context, IPrincipal principal)
+        {
+            // Is there a classifier?
+            var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
+            var idpInstance = ApplicationContext.Current.GetService(idpType);
+            IIdentifiedEntity existing = null;
+
+            // Is the key not null?
+            if (me.Key != Guid.Empty && me.Key != null)
+            {
+                // We have to find it
+                var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 3 && o.GetParameters()[0].ParameterType == typeof(ModelDataContext));
+                if (getMethod == null) return null;
+                existing = getMethod.Invoke(idpInstance, new object[] { context, me.Key, principal }) as IIdentifiedEntity;
+            }
+
+            var classAtt = me.GetType().GetCustomAttribute<KeyLookupAttribute>();
+            if (classAtt != null)
+            {
+
+                object classifierValue = me;// me.GetType().GetProperty(classAtt.ClassifierProperty).GetValue(me);
+                                            // Follow the classifier
+                Type predicateType = typeof(Func<,>).MakeGenericType(me.GetType(), typeof(bool));
+                ParameterExpression parameterExpr = Expression.Parameter(me.GetType(), "o");
+                Expression accessExpr = parameterExpr;
+                while (classAtt != null)
+                {
+                    var property = accessExpr.Type.GetRuntimeProperty(classAtt.UniqueProperty);
+                    accessExpr = Expression.MakeMemberAccess(accessExpr, property);
+                    classifierValue = property.GetValue(classifierValue);
+
+                    classAtt = accessExpr.Type.GetCustomAttribute<KeyLookupAttribute>();
+
+                }
+
+                // public abstract IQueryable<TData> Query(ModelDataContext context, Expression<Func<TData, bool>> query, IPrincipal principal);
+                var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 3 && o.GetParameters()[0].ParameterType == typeof(ModelDataContext));
+                var builderMethod = typeof(Expression).GetGenericMethod(nameof(Expression.Lambda), new Type[] { predicateType }, new Type[] { typeof(Expression), typeof(ParameterExpression[]) });
+                var expression = builderMethod.Invoke(null, new object[] { Expression.MakeBinary(ExpressionType.Equal, accessExpr, Expression.Constant(classifierValue)), new ParameterExpression[] { parameterExpr } }) as Expression;
+
+                if (queryMethod == null) return null;
+                var iq = queryMethod.Invoke(idpInstance, new object[] { context, expression, principal }) as IQueryable;
+                foreach (var i in iq)
+                {
+                    existing = i as IIdentifiedEntity;
+                    me.Key = existing.Key;
+                    if (me is IVersionedEntity)
+                        (me as IVersionedEntity).VersionKey = (existing as IVersionedEntity)?.VersionKey ?? Guid.Empty;
+                }
+            }
+            return existing;
+            
+        }
+
+        /// <summary>
         /// Ensures a model has been persisted
         /// </summary>
         public static void EnsureExists(this IIdentifiedEntity me, ModelDataContext context, IPrincipal principal) 
@@ -162,57 +219,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
             var vMe = me as IVersionedEntity;
             String dkey = String.Format("{0}.{1}", me.GetType().FullName, me.Key);
 
-            IIdentifiedEntity existing = null;
+            IIdentifiedEntity existing = me.TryGetExisting(context, principal);
             var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
             var idpInstance = ApplicationContext.Current.GetService(idpType);
-
-            // Is the key null? 
-            if (me.Key == Guid.Empty || me.Key == null) 
-            {
-                // Is there a classifier?
-                var classAtt = me.GetType().GetCustomAttribute<KeyLookupAttribute>();
-                if (classAtt != null)
-                {
-                    object classifierValue = me;// me.GetType().GetProperty(classAtt.ClassifierProperty).GetValue(me);
-                    // Follow the classifier
-                    Type predicateType = typeof(Func<,>).MakeGenericType(me.GetType(), typeof(bool));
-                    ParameterExpression parameterExpr = Expression.Parameter(me.GetType(), "o");
-                    Expression accessExpr = parameterExpr;
-                    while (classAtt != null)
-                    {
-                        var property = accessExpr.Type.GetRuntimeProperty(classAtt.UniqueProperty);
-                        accessExpr = Expression.MakeMemberAccess(accessExpr, property);
-                        classifierValue = property.GetValue(classifierValue);
-
-                        classAtt = accessExpr.Type.GetCustomAttribute<KeyLookupAttribute>();
-
-                    }
-
-                    // public abstract IQueryable<TData> Query(ModelDataContext context, Expression<Func<TData, bool>> query, IPrincipal principal);
-                    var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 3 && o.GetParameters()[0].ParameterType == typeof(ModelDataContext));
-                    var builderMethod = typeof(Expression).GetGenericMethod(nameof(Expression.Lambda), new Type[] { predicateType }, new Type[] { typeof(Expression), typeof(ParameterExpression[]) });
-                    var expression = builderMethod.Invoke(null, new object[] { Expression.MakeBinary(ExpressionType.Equal, accessExpr, Expression.Constant(classifierValue)), new ParameterExpression[] { parameterExpr } }) as Expression;
-
-                    if (queryMethod == null) return;
-                    var iq = queryMethod.Invoke(idpInstance, new object[] { context, expression, principal }) as IQueryable;
-                    foreach (var i in iq)
-                    {
-                        existing = i as IIdentifiedEntity;
-                        me.Key = existing.Key;
-                        if(vMe != null)
-                            vMe.VersionKey = (existing as IVersionedEntity)?.VersionKey ?? Guid.Empty;
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                // We have to find it
-                var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 3 && o.GetParameters()[0].ParameterType == typeof(ModelDataContext));
-                if (getMethod == null) return;
-                existing = getMethod.Invoke(idpInstance, new object[] { context, me.Key, principal }) as IIdentifiedEntity;
-            }
-
+            
             // Existing exists?
             if (existing != null)
             {

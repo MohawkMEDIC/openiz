@@ -34,6 +34,8 @@
     <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
+    <property modelName="UpdatedBy" domainName="UpdatedByEntity"/>
+    <property modelName="UpdatedByKey" domainName="UpdatedBy"/>
     <property modelName="Users" domainName="SecurityUserRoles">
       <via domainName="SecurityUser"/>
     </property>

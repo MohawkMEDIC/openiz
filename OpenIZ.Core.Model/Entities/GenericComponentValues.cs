@@ -78,7 +78,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the type of address component
         /// </summary>
-        [XmlIgnore, JsonIgnore, SerializationReference(nameof(ComponentTypeKey))]
+        [AutoLoad, XmlIgnore, JsonIgnore, SerializationReference(nameof(ComponentTypeKey))]
 		public Concept ComponentType { get; set; }
 
 

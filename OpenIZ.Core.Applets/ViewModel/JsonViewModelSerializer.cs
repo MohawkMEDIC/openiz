@@ -307,7 +307,7 @@ namespace OpenIZ.Core.Applets.ViewModel
             jwriter.WriteStartObject();
             var myClassifier = data.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
 
-            foreach (var itm in data.GetType().GetRuntimeProperties())
+            foreach (var itm in data.GetType().GetRuntimeProperties().Where(p=>p.CanRead && p.CanWrite))
             {
                 // Value is null
                 var value = itm.GetValue(data);

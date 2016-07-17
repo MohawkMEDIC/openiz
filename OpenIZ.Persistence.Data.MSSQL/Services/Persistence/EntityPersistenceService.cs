@@ -20,6 +20,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     public class EntityPersistenceService : VersionedDataPersistenceService<Core.Model.Entities.Entity, Data.EntityVersion, Data.Entity>
     {
 
+
+
         private const String Entity = "E29FCFAD-EC1D-4C60-A055-039A494248AE";
         private const String ManufacturedMaterial = "FAFEC286-89D5-420B-9085-054ACA9D1EEF";
         private const String Animal = "61FCBF42-B5E0-4FB5-9392-108A5C6DBEC7";
@@ -53,6 +55,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             retVal.DeterminerConceptKey = dbInstance.Entity.DeterminerConceptId;
 
             // Inversion relationships
+            //retVal.Relationships.RemoveAll(o => o.InversionIndicator);
             retVal.Relationships.AddRange(context.EntityAssociations.Where(o => o.TargetEntityId == retVal.Key.Value).Select(o => new EntityRelationship(o.AssociationTypeConceptId, o.TargetEntityId)
             {
                 InversionIndicator = true

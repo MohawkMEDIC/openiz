@@ -51,6 +51,7 @@ namespace OpenIZ.Core.Model
         public IdentifiedData()
         {
             this.EntityProvider = EntitySource.Current.Provider;
+            this.Key = Guid.NewGuid();
         }
 
         /// <summary>

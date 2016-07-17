@@ -179,11 +179,21 @@ namespace OpenIZ.Core.Model.Entities
         public List<EntityIdentifier> Identifiers { get; set; }
 
         /// <summary>
+        /// Should serialize identifiers
+        /// </summary>
+        public bool ShouldSerializeIdentifiers() { return this.Identifiers?.Count > 0; }
+
+        /// <summary>
         /// Gets a list of all associated entities for this entity
         /// </summary>
         [AutoLoad()]
         [XmlElement("relationship"), JsonProperty("relationship")]
         public List<EntityRelationship> Relationships { get; set; }
+        
+        /// <summary>
+        /// Should serialize identifiers
+        /// </summary>
+        public bool ShouldSerializeRelationships() { return this.Relationships?.Count > 0; }
 
         /// <summary>
         /// Gets a list of all telecommunications addresses associated with the entity
@@ -193,11 +203,21 @@ namespace OpenIZ.Core.Model.Entities
         public List<EntityTelecomAddress> Telecoms { get; set; }
 
         /// <summary>
+        /// Should serialize identifiers
+        /// </summary>
+        public bool ShouldSerializeTelecoms() { return this.Telecoms?.Count > 0; }
+
+        /// <summary>
         /// Gets a list of all extensions associated with the entity
         /// </summary>
         [AutoLoad()]
         [XmlElement("extension"), JsonProperty("extension")]
         public List<EntityExtension> Extensions { get; set; }
+
+        /// <summary>
+        /// Should serialize identifiers
+        /// </summary>
+        public bool ShouldSerializeExtensions() { return this.Extensions?.Count > 0; }
 
         /// <summary>
         /// Gets a list of all names associated with the entity
@@ -207,6 +227,11 @@ namespace OpenIZ.Core.Model.Entities
         public List<EntityName> Names { get; set; }
 
         /// <summary>
+        /// Should serialize identifiers
+        /// </summary>
+        public bool ShouldSerializeNames() { return this.Names?.Count > 0; }
+
+        /// <summary>
         /// Gets a list of all addresses associated with the entity
         /// </summary>
         [AutoLoad()]
@@ -214,11 +239,21 @@ namespace OpenIZ.Core.Model.Entities
         public List<EntityAddress> Addresses { get; set; }
 
         /// <summary>
+        /// Should serialize identifiers
+        /// </summary>
+        public bool ShouldSerializeAddresses() { return this.Addresses?.Count > 0; }
+
+        /// <summary>
         /// Gets a list of all notes associated with the entity
         /// </summary>
         [AutoLoad()]
         [XmlElement("note"), JsonProperty("note")]
         public List<EntityNote> Notes { get; set; }
+        
+        /// <summary>
+        /// Should serialize identifiers
+        /// </summary>
+        public bool ShouldSerializeNotes() { return this.Notes?.Count > 0; }
 
         /// <summary>
         /// Gets a list of all tags associated with the entity
@@ -226,6 +261,11 @@ namespace OpenIZ.Core.Model.Entities
         [AutoLoad()]
         [XmlElement("tag"), JsonProperty("tag")]
         public List<EntityTag> Tags { get; set; }
+        
+        /// <summary>
+        /// Should serialize identifiers
+        /// </summary>
+        public bool ShouldSerializeTags() { return this.Tags?.Count > 0; }
 
         /// <summary>
         /// Gets the acts in which this entity participates
@@ -233,6 +273,11 @@ namespace OpenIZ.Core.Model.Entities
         [AutoLoad()]
         [XmlElement("participation"), JsonProperty("participation")]
         public List<ActParticipation> Participations { get; set; }
-        
+
+        /// <summary>
+        /// Should serialize identifiers
+        /// </summary>
+        public bool ShouldSerializeParticipations() { return this.Participations?.Count > 0; }
+
     }
 }

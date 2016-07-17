@@ -31,6 +31,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
     public abstract class SqlServerBasePersistenceService<TData> : IDataPersistenceService<TData> where TData : IdentifiedData
     {
 
+        // Lock for editing 
+        protected object m_synkLock = new object();
+
         // Get tracer
         protected TraceSource m_tracer = new TraceSource("OpenIZ.Persistence.Data.MSSQL.Services.Persistence");
 
@@ -114,10 +117,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
-            else if (!m_configuration.AllowKeyedInsert &&
-                data.Key != null)
-                throw new SqlFormalConstraintException(SqlFormalConstraintType.IdentityInsert);
-
+           
             PrePersistenceEventArgs<TData> preArgs = new PrePersistenceEventArgs<TData>(data, principal);
             this.Inserting?.Invoke(this, preArgs);
             if (preArgs.Cancel)
@@ -134,12 +134,28 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                 {
                     connection.Connection.Open();
                     connection.Transaction = tx = connection.Connection.BeginTransaction();
+
                     if (m_configuration.TraceSql)
                         connection.Log = new LinqTraceWriter();
 
-                    this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "INSERT {0}", data);
+                    // Disable inserting duplicate classified objects
+                    var existing = data.TryGetExisting(connection, principal);
+                    if(existing != null)
+                    {
+                        if (m_configuration.AutoUpdateExisting)
+                        {
+                            this.m_tracer.TraceEvent(TraceEventType.Warning, 0, "INSERT WOULD RESULT IN DUPLICATE CLASSIFIER: UPDATING INSTEAD {0}", data);
+                            data = this.Update(connection, data, principal);
+                        }
+                        else
+                            throw new DuplicateKeyException(data);
+                    }
+                    else
+                    {
+                        this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "INSERT {0}", data);
+                        data = this.Insert(connection, data, principal);
+                    }
 
-                    data = this.Insert(connection, data, principal);
                     connection.SubmitChanges();
 
 

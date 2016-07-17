@@ -53,6 +53,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Configuration
         /// <summary>
         /// When true, indicates that inserts can allow keyed inserts
         /// </summary>
-        public bool AllowKeyedInsert { get; set; }
+        public bool AutoUpdateExisting { get; set; }
     }
 }

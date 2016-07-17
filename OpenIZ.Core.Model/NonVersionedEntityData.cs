@@ -66,14 +66,10 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the user that updated this base data
         /// </summary>
-        [XmlIgnore, JsonIgnore, SerializationReference(nameof(UpdatedByKey))]
+        [AutoLoad, XmlIgnore, JsonIgnore, SerializationReference(nameof(UpdatedByKey))]
 		public SecurityUser UpdatedBy
         {
-            get { return this.EntityProvider.Get<SecurityUser>(this.UpdatedByKey); }
-            set
-            {
-                this.UpdatedByKey = value?.Key;
-            }
+            get;set;
         }
 
         /// <summary>
@@ -81,9 +77,19 @@ namespace OpenIZ.Core.Model
         /// </summary>
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("updatedBy"), JsonProperty("updatedBy")]
-        public Guid? UpdatedByKey { get; set; }
-
+        [DataIgnore, XmlElement("updatedBy"), JsonProperty("updatedBy")]
+        public Guid? UpdatedByKey
+        {
+            get
+            {
+                return this.UpdatedBy?.Key;
+            }
+            set
+            {
+                if (this.UpdatedBy?.Key != value)
+                    this.UpdatedBy = this.EntityProvider.Get<SecurityUser>(value);
+            }
+        }
 
         /// <summary>
         /// True if key should be serialized

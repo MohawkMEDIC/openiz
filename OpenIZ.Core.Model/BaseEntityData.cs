@@ -94,14 +94,10 @@ namespace OpenIZ.Core.Model
         /// Gets or sets the user that created this base data
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DataIgnore, SerializationReference(nameof(CreatedByKey))]
+        [AutoLoad, SerializationReference(nameof(CreatedByKey))]
         public virtual SecurityUser CreatedBy
         {
-            get { return this.EntityProvider.Get<SecurityUser>(this.CreatedByKey); }
-            set
-            {
-                this.CreatedByKey = value?.Key;
-            }
+            get; set;
         }
 
         /// <summary>
@@ -126,14 +122,11 @@ namespace OpenIZ.Core.Model
         /// Gets or sets the user that obsoleted this base data
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DataIgnore, SerializationReference(nameof(ObsoletedByKey))]
+        [AutoLoad, SerializationReference(nameof(ObsoletedByKey))]
         public virtual SecurityUser ObsoletedBy
         {
-            get { return this.EntityProvider.Get<SecurityUser>(this.ObsoletedByKey); }
-            set
-            {
-                this.ObsoletedByKey = value?.Key;
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -141,15 +134,33 @@ namespace OpenIZ.Core.Model
         /// </summary>
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("createdBy"), JsonProperty("createdBy")]
-        public virtual Guid? CreatedByKey { get; set; }
+        [DataIgnore, XmlElement("createdBy"), JsonProperty("createdBy")]
+        public virtual Guid? CreatedByKey { get
+            {
+                return this.CreatedBy?.Key;
+            }
+            set
+            {
+                if (this.CreatedBy?.Key != value)
+                    this.CreatedBy = this.EntityProvider.Get<SecurityUser>(value);
+            }
+        }
 
         /// <summary>
         /// Gets or sets the obsoleted by identifier
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("obsoletedBy"), JsonProperty("obsoletedBy")]
-        public virtual Guid? ObsoletedByKey { get; set; }
+        [DataIgnore, XmlElement("obsoletedBy"), JsonProperty("obsoletedBy")]
+        public virtual Guid? ObsoletedByKey {
+            get {
+                return this.ObsoletedBy?.Key;
+            }
+            set
+            {
+                if (this.ObsoletedBy?.Key != value)
+                    this.ObsoletedBy = this.EntityProvider.Get<SecurityUser>(value);
+            }
+        }
 
         /// <summary>
         /// Represent the data as a string

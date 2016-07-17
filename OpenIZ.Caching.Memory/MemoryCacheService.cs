@@ -134,7 +134,7 @@ namespace OpenIZ.Caching.Memory
                 else
                 {
                     e.Cancel = true;
-                    e.ModelObject = cacheEntry;
+                    e.ModelObject = cacheEntry.Clone();
                 }
             }
             else
@@ -209,7 +209,7 @@ namespace OpenIZ.Caching.Memory
             {
                 IdentifiedData cacheEntry = null;
                 if (cache.TryGetValue(key, out cacheEntry))
-                    return (TData)cacheEntry; 
+                    return (TData)cacheEntry.Clone(); 
             }
             return default(TData);
         }
