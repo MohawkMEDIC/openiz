@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D882323C-2BC9-4A1D-B70F-D833CF2E91A1}</ProjectGuid>
+    <ProjectGuid>{CC7A7080-52DB-4C59-B652-57FA536A593F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenIZ.Messaging.AMI</RootNamespace>
-    <AssemblyName>OpenIZ.Messaging.AMI</AssemblyName>
+    <RootNamespace>OpenIZ.Core.Model.AMI</RootNamespace>
+    <AssemblyName>OpenIZ.Core.Model.AMI</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\bin\Debug\OpenIZ.Core.Model.AMI.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,18 +32,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MARC.HI.EHRS.SVC.Core">
-      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="MARC.Util.CertificateTools">
+    <Reference Include="MARC.Util.CertificateTools, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\MARC.Util.CertificateTools.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -51,21 +46,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AmiMessageHandler.cs" />
-    <Compile Include="Configuration\AmiConfiguration.cs" />
-    <Compile Include="Configuration\AmiConfigurationSectionHandler.cs" />
-    <Compile Include="Configuration\CertificationAuthorityConfiguration.cs" />
+    <Compile Include="AmiCollection.cs" />
+    <Compile Include="Auth\SecurityRoleInfo.cs" />
+    <Compile Include="Auth\SecurityUserInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Wcf\AmiBehavior.cs" />
-    <Compile Include="Wcf\Behavior\AmiRestEndpointBehavior.cs" />
-    <Compile Include="Wcf\Behavior\AmiSerializerOperationBehavior.cs" />
-    <Compile Include="Wcf\IAmiContract.cs" />
+    <Compile Include="Security\RevokeReason.cs" />
+    <Compile Include="Security\SubmissionInfo.cs" />
+    <Compile Include="Security\SubmissionRequest.cs" />
+    <Compile Include="Security\SubmissionResult.cs" />
+    <Compile Include="Security\SubmissionStatus.cs" />
+    <Compile Include="Security\X509Certificate2Info.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenIZ.Core.Model.AMI\OpenIZ.Core.Model.AMI.csproj">
-      <Project>{cc7a7080-52db-4c59-b652-57fa536a593f}</Project>
-      <Name>OpenIZ.Core.Model.AMI</Name>
-    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
       <Project>{f1a82a4f-4a57-47d7-ae76-444c8a4ff54a}</Project>
       <Name>OpenIZ.Core.Model</Name>
@@ -74,15 +66,6 @@
       <Project>{3a45f695-47a2-464c-ace6-bdabbfa39fbc}</Project>
       <Name>OpenIZ.Core.PCL</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OpenIZ.Core\OpenIZ.Core.csproj">
-      <Project>{db9bc05e-45f1-4f96-a161-f36bdecaf566}</Project>
-      <Name>OpenIZ.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\OpenIZ.licenseheader">
-      <Link>OpenIZ.licenseheader</Link>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

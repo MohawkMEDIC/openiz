@@ -19,7 +19,7 @@
 
 using System.Xml.Serialization;
 
-namespace OpenIZ.Messaging.AMI.Model.Security
+namespace OpenIZ.Core.Model.AMI.Security
 {
 	/// <summary>
 	/// The reason something is revoked

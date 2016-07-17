@@ -20,7 +20,7 @@
 using System;
 using System.Xml.Serialization;
 
-namespace OpenIZ.Messaging.AMI.Model.Security
+namespace OpenIZ.Core.Model.AMI.Security
 {
 	/// <summary>
 	/// Submission request

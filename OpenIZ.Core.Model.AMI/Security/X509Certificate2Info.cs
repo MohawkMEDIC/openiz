@@ -23,7 +23,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Serialization;
 
-namespace OpenIZ.Messaging.AMI.Model.Security
+namespace OpenIZ.Core.Model.AMI.Security
 {
 	/// <summary>
 	/// Certificate information

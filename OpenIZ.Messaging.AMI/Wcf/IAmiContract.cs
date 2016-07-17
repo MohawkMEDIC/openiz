@@ -17,9 +17,9 @@
  * Date: 2016-6-17
  */
 
-using OpenIZ.Messaging.AMI.Model;
-using OpenIZ.Messaging.AMI.Model.Auth;
-using OpenIZ.Messaging.AMI.Model.Security;
+using OpenIZ.Core.Model.AMI;
+using OpenIZ.Core.Model.AMI.Auth;
+using OpenIZ.Core.Model.AMI.Security;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Xml.Schema;
@@ -50,7 +50,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <summary>
 		/// Get the submissions
 		/// </summary>
-		[WebGet(UriTemplate = "csr/", BodyStyle = WebMessageBodyStyle.Bare)]
+		[WebGet(UriTemplate = "csrs/", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<SubmissionInfo> GetCsrs();
 
 		/// <summary>
@@ -81,7 +81,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <summary>
 		/// Get specified certificates
 		/// </summary>
-		[WebGet(UriTemplate = "certificate/", BodyStyle = WebMessageBodyStyle.Bare)]
+		[WebGet(UriTemplate = "certificates/", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<X509Certificate2Info> GetCertificates();
 
 		/// <summary>
@@ -100,7 +100,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// Security user information
 		/// </summary>
 		/// <returns></returns>
-		[WebGet(UriTemplate = "user/", BodyStyle = WebMessageBodyStyle.Bare)]
+		[WebGet(UriTemplate = "users/", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<SecurityUserInfo> GetUsers();
 
 		/// <summary>
@@ -137,7 +137,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// Security Role information
 		/// </summary>
 		/// <returns></returns>
-		[WebGet(UriTemplate = "role/", BodyStyle = WebMessageBodyStyle.Bare)]
+		[WebGet(UriTemplate = "roles/", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<SecurityRoleInfo> GetRoles();
 
 		/// <summary>

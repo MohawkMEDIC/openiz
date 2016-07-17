@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace OpenIZ.Messaging.AMI.Model
+namespace OpenIZ.Core.Model.AMI.Security
 {
 	/// <summary>
 	/// AMI collection base

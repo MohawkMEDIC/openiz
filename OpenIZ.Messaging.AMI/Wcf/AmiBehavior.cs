@@ -26,9 +26,8 @@ using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Security;
 using OpenIZ.Core.Services;
 using OpenIZ.Messaging.AMI.Configuration;
-using OpenIZ.Messaging.AMI.Model;
-using OpenIZ.Messaging.AMI.Model.Auth;
-using OpenIZ.Messaging.AMI.Model.Security;
+using OpenIZ.Core.Model.AMI.Auth;
+using OpenIZ.Core.Model.AMI.Security;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -121,7 +120,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <summary>
 		/// Revokes a certificate
 		/// </summary>
-		public SubmissionResult DeleteCertificate(string rawId, Model.Security.RevokeReason reason)
+		public SubmissionResult DeleteCertificate(string rawId, OpenIZ.Core.Model.AMI.Security.RevokeReason reason)
 		{
 			int id = Int32.Parse(rawId);
 			var result = this.m_certTool.GetRequestStatus(id);
@@ -289,7 +288,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="id"></param>
 		/// <param name="reason"></param>
 		/// <returns></returns>
-		public SubmissionResult RejectCsr(string rawId, Model.Security.RevokeReason reason)
+		public SubmissionResult RejectCsr(string rawId, OpenIZ.Core.Model.AMI.Security.RevokeReason reason)
 		{
 			int id = Int32.Parse(rawId);
 			this.m_certTool.DenyRequest(id);

@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
 
-namespace OpenIZ.Messaging.AMI.Model.Auth
+namespace OpenIZ.Core.Model.AMI.Auth
 {
 	/// <summary>
 	/// Gets or sets security user information

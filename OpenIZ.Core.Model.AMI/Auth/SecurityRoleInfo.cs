@@ -21,31 +21,32 @@ using OpenIZ.Core.Model.Security;
 using System;
 using System.Xml.Serialization;
 
-namespace OpenIZ.Messaging.AMI.Model.Auth
+namespace OpenIZ.Core.Model.AMI.Auth
 {
+
 	/// <summary>
-	/// Security role information
+	/// Represents security role information.
 	/// </summary>
 	[XmlRoot(nameof(SecurityRoleInfo), Namespace = "http://openiz.org/ami")]
 	[XmlType(nameof(SecurityRoleInfo), Namespace = "http://openiz.org/ami")]
 	public class SecurityRoleInfo
 	{
 		/// <summary>
-		/// Default ctor
+		/// Initializes a new instance of the <see cref="OpenIZ.Core.Model.AMI.Auth.SecurityRoleInfo"/> class.
 		/// </summary>
 		public SecurityRoleInfo()
 		{
 		}
 
 		/// <summary>
-		/// Creates a new security role information object from the specified security role
+		/// Creates a new security role information object from the specified security role.
 		/// </summary>
-		/// <param name="r"></param>
-		public SecurityRoleInfo(SecurityRole r)
+		/// <param name="role">The security role.</param>
+		public SecurityRoleInfo(SecurityRole role)
 		{
-			this.Id = r.Key;
-			this.Name = r.Name;
-			this.Role = r;
+			this.Id = role.Key;
+			this.Name = role.Name;
+			this.Role = role;
 		}
 
 		/// <summary>
