@@ -113,7 +113,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         [TestMethod]
         public void TestUpdateNamedConcept()
         {
-            IdentifiedData.SourceProvider = EntitySource.Current.Provider;
+            ModelSettings.SourceProvider = EntitySource.Current.Provider;
 
             Concept namedConcept = new Concept()
             {

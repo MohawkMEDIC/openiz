@@ -208,12 +208,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         /// </summary>
         public static void EnsureExists(this IIdentifiedEntity me, ModelDataContext context, IPrincipal principal) 
         {
-            // Placeholders same as null
-            if (me.IsLogicalNull)
-            {
-                me = (me as IdentifiedData).Clone();
-                me.Key = Guid.Empty;
-            }
+           
 
             // Me
             var vMe = me as IVersionedEntity;
@@ -224,7 +219,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
             var idpInstance = ApplicationContext.Current.GetService(idpType);
             
             // Existing exists?
-            if (existing != null)
+            if (existing != null && !me.IsLogicalNull)
             {
                 // Exists but is an old version
                 if ((existing as IVersionedEntity)?.VersionKey != vMe?.VersionKey &&
@@ -241,7 +236,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
                     }
                 }
             }
-            else // Insert
+            else if(!me.IsLogicalNull) // Insert
             {
                 var insertMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Insert" && o.GetParameters().Length == 3 && o.GetParameters()[0].ParameterType == typeof(ModelDataContext));
                 if (insertMethod != null)

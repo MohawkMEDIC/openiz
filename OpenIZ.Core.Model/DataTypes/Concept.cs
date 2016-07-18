@@ -46,6 +46,7 @@ namespace OpenIZ.Core.Model.DataTypes
             this.ConceptNames = new List<ConceptName>();
             this.ConceptSets = new List<ConceptSet>();
             this.ReferenceTerms = new List<ConceptReferenceTerm>();
+            this.Relationship = new List<ConceptRelationship>();
         }
 
         /// <summary>

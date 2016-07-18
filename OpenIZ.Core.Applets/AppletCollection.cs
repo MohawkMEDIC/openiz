@@ -35,16 +35,11 @@ namespace OpenIZ.Core.Applets
         private static Object s_syncLock = new object();
 
         public const string APPLET_SCHEME = "app://";
+        private string m_baseUrl = null;
 
         // XMLNS stuff
         private readonly XNamespace xs_xhtml = "http://www.w3.org/1999/xhtml";
         private readonly XNamespace xs_binding = "http://openiz.org/applet/binding";
-        private readonly RenderBundle m_defaultBundle = new RenderBundle(String.Empty, 
-            new ScriptBundleContent("/js/openiz.js"), 
-            new ScriptBundleContent("/js/openiz-model.js"),
-            new ScriptBundleContent("/js/openiz-localize.js")
-
-        );
 
 
         // Reference bundles
@@ -58,6 +53,19 @@ namespace OpenIZ.Core.Applets
         public AppletCollection()
         {
         }
+
+        /// <summary>
+        /// Applet collection rewrite to alternate url
+        /// </summary>
+        public AppletCollection(String baseUrl)
+        {
+            this.m_baseUrl = baseUrl;
+        }
+
+        /// <summary>
+        /// The current default scope applet
+        /// </summary>
+        public AppletManifest DefaultApplet { get; set; }
 
         // Applet manifest
         private List<AppletManifest> m_appletManifest = new List<AppletManifest>();
@@ -205,50 +213,48 @@ namespace OpenIZ.Core.Applets
         public AppletAsset ResolveAsset(String assetPath, AppletAsset relative = null, String language = null) 
         {
 
-            String targetApplet = assetPath, path = String.Empty;
+            if (assetPath == null)
+                return null;
 
-            // Query? We want to remove those
-            if (targetApplet.Contains("?"))
-                targetApplet = targetApplet.Substring(0, targetApplet.IndexOf("?"));
-            if (targetApplet.Contains("#"))
-                targetApplet = targetApplet.Substring(0, targetApplet.IndexOf("#"));
-            if (targetApplet.StartsWith("/"))
-                targetApplet = targetApplet.Substring(1);
-            // Starts with app:// so we can find it in here
-            if (assetPath.StartsWith(APPLET_SCHEME))
-                targetApplet = targetApplet.Substring(APPLET_SCHEME.Length);
-            else if (relative == null) // Relative
-                throw new KeyNotFoundException("Unbound relative reference");
+            // Is the asset start with ~
+            if (assetPath.StartsWith("~"))
+                assetPath = "/" + relative.Manifest.Info.Id + assetPath.Substring(1);
+
+            Uri path = null;
+            if (!Uri.TryCreate(assetPath, UriKind.RelativeOrAbsolute, out path))
+                return null;
             else
             {
-                var appletCandidate = relative.Manifest.Assets.Where(o => o.Name == targetApplet);
-                if (String.IsNullOrEmpty(language))
-                    return appletCandidate.FirstOrDefault();
-                else {
-                    return appletCandidate.FirstOrDefault(o=>o.Language == (language ?? relative?.Language)) ??
-                        appletCandidate.FirstOrDefault();
+
+                AppletManifest resolvedManifest = null;
+                String pathLeft = path.AbsolutePath.Substring(1);
+                // Is the host specified?
+                if (!String.IsNullOrEmpty(path.Host))
+                {
+
+                    resolvedManifest = this.FirstOrDefault(o => o.Info.Id == path.Host);
                 }
-            }
+                else
+                {
+                    // We can accept /org.x.y.z or /org/x/y/z
+                    StringBuilder applId = new StringBuilder();
+                    while (pathLeft.Contains("/"))
+                    {
+                        applId.AppendFormat("{0}.", pathLeft.Substring(0, pathLeft.IndexOf("/")));
+                        pathLeft = pathLeft.Substring(pathLeft.IndexOf("/") + 1);
+                        resolvedManifest = this.FirstOrDefault(o => o.Info.Id == applId.ToString(0, applId.Length - 1));
+                        if (resolvedManifest != null) break;
+                    }
+                }
 
-            // Page in the target applet
-            if (targetApplet.Contains("/"))
-            {
-                path = targetApplet.Substring(targetApplet.IndexOf("/") + 1);
-                if (String.IsNullOrEmpty(path))
-                    path = "index.html";
-                targetApplet = targetApplet.Substring(0, targetApplet.IndexOf("/"));
-            }
-            else
-                path = "index.html";
-
-            // Now we have the target applet, and path, so retrieve
-            var candidates = this.m_appletManifest.SingleOrDefault(o => o.Info.Id == targetApplet)?.Assets.Where(o => o.Name == path);
-            if (String.IsNullOrEmpty(language))
-                return candidates?.FirstOrDefault();
-            else
-            {
-                return candidates?.FirstOrDefault(o => o.Language == (language ?? relative?.Language)) ??
-                    candidates?.FirstOrDefault();
+                // Is there a resource?
+                if (resolvedManifest != null)
+                {
+                    if (pathLeft.EndsWith("/"))
+                        pathLeft += "index.html";
+                    return resolvedManifest.Assets.FirstOrDefault(o => o.Name == pathLeft);
+                }
+                return null;
             }
         }
 
@@ -291,14 +297,10 @@ namespace OpenIZ.Core.Applets
                     case "html": // The content is a complete HTML page
                         {
                             var headerInjection = this.GetInjectionHeaders(asset);
-                            headerInjection.AddRange(m_defaultBundle.Content.SelectMany(o => o.HeaderElement));
                             htmlContent = htmlAsset.Html as XElement;
 
                             // STRIP - OPENIZJS references
                             var xel = htmlContent.Descendants().OfType<XElement>().Where(o => o.Name == xs_xhtml + "script" && o.Attribute("src")?.Value.Contains("openiz") == true).ToArray();
-                            foreach (var x in xel)
-                                if (x.Attribute("src").Value.EndsWith("openiz.js") || x.Attribute("src").Value.EndsWith("openiz-model.js") || x.Attribute("src").Value.EndsWith("openiz-localize.js"))
-                                    x.Remove();
                             var head = htmlContent.DescendantNodes().OfType<XElement>().FirstOrDefault(o => o.Name == xs_xhtml + "head");
                             if (head == null)
                             {
@@ -313,7 +315,6 @@ namespace OpenIZ.Core.Applets
                             // Inject special headers
                             var headerInjection = this.GetInjectionHeaders(asset);
 
-                            headerInjection.AddRange(m_defaultBundle.Content.SelectMany(o => o.HeaderElement));
                             // Render the bundles
                             var bodyElement = htmlAsset.Html as XElement;
 
@@ -428,21 +429,33 @@ namespace OpenIZ.Core.Applets
                         continue;
                     var includeAsset = this.ResolveAsset(assetName, asset);
                     if (includeAsset == null)
-                        throw new FileNotFoundException(assetName);
-                    using (MemoryStream ms = new MemoryStream(this.RenderAssetContent(includeAsset, preProcessLocalization)))
                     {
-                        var xel = XDocument.Load(ms).Elements().First() as XElement;
-                        if (xel.Name == xs_xhtml + "html")
-                            inc.AddAfterSelf(xel.Element(xs_xhtml + "body").Elements());
-                        else
-                        {
-                            var headerInjection = this.GetInjectionHeaders(includeAsset);
-                            htmlContent.Element(xs_xhtml + "head")?.Add(headerInjection);
-
-                            inc.AddAfterSelf(xel);
-                        }
+                        inc.AddAfterSelf(new XElement(xs_xhtml + "strong", new XText(String.Format("{0} NOT FOUND", assetName))));
                         inc.Remove();
                     }
+                    else
+                        using (MemoryStream ms = new MemoryStream(this.RenderAssetContent(includeAsset, preProcessLocalization)))
+                        {
+                            var xel = XDocument.Load(ms).Elements().First() as XElement;
+                            if (xel.Name == xs_xhtml + "html")
+                                inc.AddAfterSelf(xel.Element(xs_xhtml + "body").Elements());
+                            else
+                            {
+                                var headerInjection = this.GetInjectionHeaders(includeAsset);
+                                htmlContent.Element(xs_xhtml + "head")?.Add(headerInjection);
+
+                                inc.AddAfterSelf(xel);
+                            }
+                            inc.Remove();
+                        }
+                }
+
+                // Re-write
+                foreach (var itm in htmlContent.DescendantNodes().OfType<XElement>().SelectMany(o => o.Attributes()).Where(o => o.Value.StartsWith("~")))
+                {
+                    
+                    itm.Value = String.Format("/{0}/{1}", asset.Manifest.Info.Id, itm.Value.Substring(2)); 
+                    //itm.Value = itm.Value.Replace(APPLET_SCHEME, this.AppletBase).Replace(ASSET_SCHEME, this.AssetBase).Replace(DRAWABLE_SCHEME, this.DrawableBase);
                 }
 
                 // Render out the content
@@ -466,7 +479,8 @@ namespace OpenIZ.Core.Applets
 
                     // Add to cache
                     lock (s_syncLock)
-                        s_cache.Add(assetPath, renderBuffer);
+                        if(!s_cache.ContainsKey(assetPath))
+                            s_cache.Add(assetPath, renderBuffer);
 
                     return renderBuffer;
                 }
@@ -476,6 +490,16 @@ namespace OpenIZ.Core.Applets
                 return null;
 
             
+        }
+
+        /// <summary>
+        /// Rewrte the url
+        /// </summary>
+        private string RewriteUrl(Uri appletUri)
+        {
+            Uri rewrite = new Uri(this.m_baseUrl);
+            return String.Format("{0}/{1}/{2}", rewrite, appletUri.Host, appletUri.PathAndQuery);
+
         }
 
         /// <summary>

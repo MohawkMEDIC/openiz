@@ -73,15 +73,18 @@ namespace OpenIZ.Core.Model.Map
         private static readonly HashSet<Type> primitives = new HashSet<Type>()
         {
             typeof(bool),
-            typeof(String),
+            typeof(bool?),
             typeof(int),
+            typeof(int?),
             typeof(float),
+            typeof(float?),
             typeof(double),
+            typeof(double?),
             typeof(decimal),
+            typeof(decimal?),
+            typeof(String),
             typeof(Guid),
             typeof(Guid?),
-            typeof(decimal?),
-            typeof(int?),
             typeof(Type),
             typeof(DateTime),
             typeof(DateTime?),
@@ -439,9 +442,14 @@ namespace OpenIZ.Core.Model.Map
                 // no need to load?
                 if (modelPropertyInfo == null)
                     continue;
-                else if (modelPropertyInfo.GetCustomAttribute<DataIgnoreAttribute>() != null ||
+                else if (ModelSettings.DeepLoadObject &&
+                    modelPropertyInfo.GetCustomAttribute<DataIgnoreAttribute>() != null ||
                     modelPropertyInfo.GetCustomAttribute<AutoLoadAttribute>() == null &&
                     !primitives.Contains(modelPropertyInfo.PropertyType) && !modelPropertyInfo.PropertyType.GetTypeInfo().IsEnum)
+                    continue;
+                else if (!ModelSettings.DeepLoadObject && 
+                    !primitives.Contains(modelPropertyInfo.PropertyType) &&
+                    modelPropertyInfo.GetCustomAttribute<AutoLoadAttribute>() == null)
                     continue;
 
                 // Map property
@@ -508,9 +516,9 @@ namespace OpenIZ.Core.Model.Map
 
                 // Set value
                 object pValue = null;
-                
+
                 //DebugWriteLine("Unmapped property ({0}).{1}", typeof(TDomain).Name, propInfo.Name);
-                 if (sourceProperty.PropertyType == typeof(byte[]) && modelProperty.PropertyType == typeof(Guid)) // Guid to BA
+                if (sourceProperty.PropertyType == typeof(byte[]) && modelProperty.PropertyType == typeof(Guid)) // Guid to BA
                     modelProperty.SetValue(retVal, new Guid((byte[])sourceProperty.GetValue(sourceObject)));
                 else if (modelProperty.PropertyType.GetTypeInfo().IsAssignableFrom(sourceProperty.PropertyType.GetTypeInfo()))
                     modelProperty.SetValue(retVal, sourceProperty.GetValue(sourceObject));

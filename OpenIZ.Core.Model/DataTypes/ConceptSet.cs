@@ -38,7 +38,16 @@ namespace OpenIZ.Core.Model.DataTypes
     [Classifier(nameof(Mnemonic)), KeyLookup(nameof(Mnemonic))]
     public class ConceptSet : BaseEntityData
     {
-        
+
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        public ConceptSet()
+        {
+            this.Concepts = new List<Concept>();
+            
+        }
+
         /// <summary>
         /// Gets or sets the name of the concept set
         /// </summary>

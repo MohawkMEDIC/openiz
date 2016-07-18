@@ -11,16 +11,18 @@ namespace OpenIZ.Core.Applets
     /// </summary>
     internal class BindingExpressionVisitor : ExpressionVisitor
     {
-
+        /// <summary>
+        /// 
+        /// </summary>
         public LambdaExpression RewriteLambda(LambdaExpression node)
         {
             return Expression.Lambda(this.Visit(node.Body), node.Parameters[0]);
         }
+
         /// <summary>
         /// Visit specific types of expressions
         /// </summary>
         /// <param name="node"></param>
-        /// <returns></returns>
         public override Expression Visit(Expression node)
         {
             if (node == null) return node;
@@ -51,6 +53,7 @@ namespace OpenIZ.Core.Applets
                                 {
                                     Expression bind = this.Visit(call.Arguments[0]);
                                     var lambda = call.Arguments[1] as LambdaExpression;
+                                    
                                     Expression leftExpression = (lambda.Body as BinaryExpression).Left as MemberExpression;
                                     Stack<Expression> accessExpression = new Stack<Expression>();
                                     while (leftExpression != lambda.Parameters[0])

@@ -48,6 +48,7 @@ namespace OpenIZ.Core.Model.Entities
         {
             base.DeterminerConceptKey = DeterminerKeys.Specific;
             base.ClassConceptKey = EntityClassKeys.Person;
+            this.LanguageCommunication = new List<PersonLanguageCommunication>();
         }
 
         /// <summary>
@@ -65,8 +66,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets the person's languages of communication
         /// </summary>
-        [AutoLoad]
-        [XmlElement("language"), JsonProperty("language")]
+        [AutoLoad, XmlElement("language"), JsonProperty("language")]
         public List<PersonLanguageCommunication> LanguageCommunication { get; set; }
 
 

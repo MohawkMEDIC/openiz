@@ -209,11 +209,14 @@ namespace OpenIZ.Core.Model.Collection
                     continue; // Invalid key link name
 
                 // Get the key and find a match
-                var key = (Guid?)keyPi.GetValue(data);
-                var bundleItem = this.Item.Find(o => o.Key == key);
-                if(bundleItem != null)
-                    pi.SetValue(data, bundleItem);
-                
+                if (keyPi.PropertyType == typeof(Guid) ||
+                    keyPi.PropertyType == typeof(Guid?))
+                {
+                    var key = (Guid?)keyPi.GetValue(data);
+                    var bundleItem = this.Item.Find(o => o.Key == key);
+                    if (bundleItem != null)
+                        pi.SetValue(data, bundleItem);
+                }
             }
 
             // Re-Bind the data to a delay loader before we go

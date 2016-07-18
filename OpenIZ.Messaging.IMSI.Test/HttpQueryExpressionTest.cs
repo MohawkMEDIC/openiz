@@ -1,4 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.Roles;
 using System;
@@ -45,6 +47,45 @@ namespace OpenIZ.Messaging.IMSI.Test
             Assert.AreEqual("id=00000000-0000-0000-0000-000000000000", expression);
         }
 
+        /// <summary>
+        /// Test query by key
+        /// </summary>
+        [TestMethod]
+        public void TestChainedParse()
+        {
+            Guid id = Guid.Empty;
+            var qstr = "classConcept.mnemonic=GenderCode&statusConcept.mnemonic=ACTIVE";
+            
+            var query = QueryExpressionParser.BuildLinqExpression<Place>(NameValueCollection.ParseQueryString(qstr));
+
+
+
+        }
+        /// <summary>
+        /// Test query by key
+        /// </summary>
+        [TestMethod]
+        public void TestChainedWriter()
+        {
+            Guid id = Guid.Empty;
+            var query = QueryExpressionBuilder.BuildQuery<Place>(o => o.ClassConcept.Mnemonic == "GenderCode" && o.StatusConcept.Mnemonic =="ACTIVE");
+            var expression = CreateQueryString(query.ToArray());
+            Assert.AreEqual("classConcept.mnemonic=GenderCode&statusConcept.mnemonic=ACTIVE", expression);
+
+
+        }
+        /// <summary>
+        /// Test query by key
+        /// </summary>
+        [TestMethod]
+        public void TestChainedWriter2()
+        {
+            Guid id = Guid.Empty;
+            var query = QueryExpressionBuilder.BuildQuery<Concept>(o => o.ConceptSets.Any(p=>p.Mnemonic == "GenderCode"));
+            var expression = CreateQueryString(query.ToArray());
+            Assert.AreEqual("conceptSet.mnemonic=GenderCode", expression);
+
+        }
         /// <summary>
         /// Test query by key
         /// </summary>

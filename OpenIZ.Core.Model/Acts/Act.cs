@@ -40,6 +40,19 @@ namespace OpenIZ.Core.Model.Acts
     public class Act : VersionedEntityData<Act>
     {
 
+        /// <summary>
+        /// Creates the act
+        /// </summary>
+        public Act()
+        {
+            this.Participations = new List<ActParticipation>();
+            this.Identifiers = new List<ActIdentifier>();
+            this.Extensions = new List<ActExtension>();
+            this.Relationships = new List<ActRelationship>();
+            this.Notes = new List<ActNote>();
+            this.Tags = new List<ActTag>();
+            
+        }
 
         /// <summary>
         /// Gets or sets an indicator which identifies whether the object is negated
@@ -151,7 +164,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [DataIgnore, XmlElement("reasonConcept"), JsonProperty("reasonConcept")]
-        public Guid? ReasonConceptKey
+        public virtual  Guid? ReasonConceptKey
         {
             get { return this.ReasonConcept?.Key; }
             set

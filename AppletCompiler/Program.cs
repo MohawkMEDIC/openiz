@@ -65,7 +65,7 @@ namespace AppletCompiler
 
                     using (var ofs = File.Create(Path.ChangeExtension(parameters.Output ?? "out.xml", ".pak.raw")))
                         packXsz.Serialize(ofs, pkg);
-                    using (var ofs = File.Create(Path.ChangeExtension(parameters.Output ?? "out.xml", ".pak.gz")))
+                    using (var ofs = File.Create(Path.ChangeExtension(parameters.Output ?? "out.xml", ".pak")))
                     using (var gzs = new GZipStream(ofs, CompressionMode.Compress))
                     {
                                                 packXsz.Serialize(gzs, pkg);

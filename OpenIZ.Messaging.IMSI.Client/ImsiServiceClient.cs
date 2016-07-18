@@ -98,7 +98,7 @@ namespace OpenIZ.Messaging.IMSI.Client
 			// Optimize?
 			if (this.Client.Description.Binding.Optimize)
 			{
-				return this.Client.Get<Bundle>(url.ToString(), new KeyValuePair<string, object>("_bundle", true));
+				return this.Client.Get<Bundle>(url.ToString(), new KeyValuePair<string, object>("_bundle", "true"));
 			}
 			else
 			{

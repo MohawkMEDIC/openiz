@@ -40,7 +40,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         public GenericComponentValues()
         {
-
+            
         }
 
         /// <summary>

@@ -90,7 +90,6 @@ namespace OpenIZ.Core.Http
 
 			// Add headers
 			HttpWebRequest retVal = (HttpWebRequest)HttpWebRequest.Create(uri.ToString());
-            retVal.ContinueTimeout = 3000;
             
             if (this.Credentials == null && 
                 this.Description.Binding.Security?.CredentialProvider != null &&

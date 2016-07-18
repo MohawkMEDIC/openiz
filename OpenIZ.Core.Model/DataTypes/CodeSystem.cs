@@ -45,7 +45,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// </summary>
     
     [XmlType("CodeSystem",  Namespace = "http://openiz.org/model"), JsonObject("CodeSystem")]
-    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "CodeSystem")]
+    [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "CodeSystem"), Classifier(nameof(Name))]
     public class CodeSystem : NonVersionedEntityData
     {
         /// <summary>

@@ -39,18 +39,14 @@ namespace OpenIZ.Core.Model
     [XmlType("IdentifiedData",  Namespace = "http://openiz.org/model"), JsonObject("IdentifiedData")]
     public abstract class IdentifiedData : IIdentifiedEntity
     {
-        /// <summary>
-        /// Threadstatic source provider so it can be overridden in serialization
-        /// </summary>
-        [ThreadStatic]
-        public static IEntitySourceProvider SourceProvider;
+       
 
         /// <summary>
         /// Entity source
         /// </summary>
         public IdentifiedData()
         {
-            this.EntityProvider = EntitySource.Current.Provider;
+            this.EntityProvider = ModelSettings.SourceProvider ?? EntitySource.Current.Provider;
             this.Key = Guid.NewGuid();
         }
 

@@ -12,6 +12,18 @@ namespace OpenIZ.Core.Applets.Model
 	public class AppletMenu
 	{
 
+        /// <summary>
+        /// Initialize
+        /// </summary>
+        /// <param name="host"></param>
+        internal void Initialize(AppletManifest host)
+        {
+            this.Manifest = host;
+            if (this.Menus != null)
+                foreach (var itm in this.Menus)
+                    itm.Initialize(host);
+            
+        }
 
 		/// <summary>
 		/// Gets or sets the icon file reference

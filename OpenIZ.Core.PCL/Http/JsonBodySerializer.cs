@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using OpenIZ.Core.Model;
 using System;
 using System.IO;
 

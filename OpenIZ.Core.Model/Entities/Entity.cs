@@ -141,21 +141,21 @@ namespace OpenIZ.Core.Model.Entities
         /// Class concept datal load property
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [AutoLoad()]
+        [AutoLoad(), SerializationReference(nameof(ClassConceptKey))]
         public Concept ClassConcept { get; set; }
 
         /// <summary>
         /// Determiner concept
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [AutoLoad()]
+        [AutoLoad(), SerializationReference(nameof(DeterminerConceptKey))]
         public virtual Concept DeterminerConcept { get; set; }
 
         /// <summary>
         /// Status concept id
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [AutoLoad()]
+        [AutoLoad(), SerializationReference(nameof(StatusConceptKey))]
         public Concept StatusConcept { get; set; }
 
         /// <summary>

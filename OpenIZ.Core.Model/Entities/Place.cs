@@ -47,6 +47,7 @@ namespace OpenIZ.Core.Model.Entities
         {
             base.ClassConceptKey = EntityClassKeys.Place;
             base.DeterminerConceptKey = DeterminerKeys.Specific;
+            this.Services = new List<PlaceService>();
         }
 
         /// <summary>

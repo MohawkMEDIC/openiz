@@ -39,7 +39,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         public EntityTelecomAddress()
         {
-
+            
         }
 
         /// <summary>
