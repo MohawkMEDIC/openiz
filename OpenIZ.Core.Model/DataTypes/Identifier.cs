@@ -102,7 +102,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 if (this.Authority?.Key != value)
-                    this.Authority = this.EntityProvider.Get<AssigningAuthority>(value);
+                    this.Authority = this.EntityProvider?.Get<AssigningAuthority>(value);
             }
         }
 
@@ -117,7 +117,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 if (this.IdentifierType?.Key != value)
-                    this.IdentifierType = this.EntityProvider.Get<IdentifierType>(value);
+                    this.IdentifierType = this.EntityProvider?.Get<IdentifierType>(value);
             }
         }
 

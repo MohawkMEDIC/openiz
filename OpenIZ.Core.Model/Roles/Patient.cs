@@ -79,7 +79,7 @@ namespace OpenIZ.Core.Model.Roles
             set
             {
                 if (this.GenderConcept?.Key != value)
-                    this.GenderConcept = this.EntityProvider.Get<Concept>(value);
+                    this.GenderConcept = this.EntityProvider?.Get<Concept>(value);
             }
         }
 

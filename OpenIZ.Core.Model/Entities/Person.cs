@@ -78,7 +78,7 @@ namespace OpenIZ.Core.Model.Entities
          {
             get
             {
-                return this.EntityProvider.Get<UserEntity>(this.Key, this.VersionKey)?.SecurityUser;
+                return this.EntityProvider?.Get<UserEntity>(this.Key, this.VersionKey)?.SecurityUser;
             }
         }
     }

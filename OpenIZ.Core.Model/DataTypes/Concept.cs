@@ -109,7 +109,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 if (this.Class?.Key != value)
-                    this.Class = this.EntityProvider.Get<ConceptClass>(value);
+                    this.Class = this.EntityProvider?.Get<ConceptClass>(value);
             }
         }
 
@@ -148,7 +148,7 @@ namespace OpenIZ.Core.Model.DataTypes
             }
             set
             {
-                this.ConceptSets = value?.Select(o => this.EntityProvider.Get<ConceptSet>(o)).ToList();
+                this.ConceptSets = value?.Select(o => this.EntityProvider?.Get<ConceptSet>(o)).ToList();
             }
         }
 

@@ -60,7 +60,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 if (this.Route?.Key != value)
-                    this.Route = this.EntityProvider.Get<Concept>(value);
+                    this.Route = this.EntityProvider?.Get<Concept>(value);
             }
         }
 
@@ -75,7 +75,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 if (this.DoseUnit?.Key != value)
-                    this.DoseUnit = this.EntityProvider.Get<Concept>(value);
+                    this.DoseUnit = this.EntityProvider?.Get<Concept>(value);
             }
         }
 

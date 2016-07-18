@@ -118,7 +118,7 @@ namespace OpenIZ.Core.Model.Security
             set
             {
                 if (this.Policy?.Key != value)
-                    this.Policy = this.EntityProvider.Get<SecurityPolicy>(value);
+                    this.Policy = this.EntityProvider?.Get<SecurityPolicy>(value);
             }
         }
 

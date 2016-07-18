@@ -53,7 +53,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 if (this.ServiceConcept?.Key != value)
-                    this.ServiceConcept = this.EntityProvider.Get<Concept>(value);
+                    this.ServiceConcept = this.EntityProvider?.Get<Concept>(value);
             }
         }
 

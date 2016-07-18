@@ -227,9 +227,9 @@ namespace OpenIZ.Core.Applets
             {
 
                 AppletManifest resolvedManifest = null;
-                String pathLeft = path.AbsolutePath.Substring(1);
+                String pathLeft = path.IsAbsoluteUri ? path.AbsolutePath.Substring(1) : path.OriginalString;
                 // Is the host specified?
-                if (!String.IsNullOrEmpty(path.Host))
+                if (path.IsAbsoluteUri && !String.IsNullOrEmpty(path.Host))
                 {
 
                     resolvedManifest = this.FirstOrDefault(o => o.Info.Id == path.Host);
@@ -246,14 +246,17 @@ namespace OpenIZ.Core.Applets
                         if (resolvedManifest != null) break;
                     }
                 }
+                if (resolvedManifest == null) resolvedManifest = relative.Manifest;
 
                 // Is there a resource?
                 if (resolvedManifest != null)
                 {
-                    if (pathLeft.EndsWith("/"))
+                    if (pathLeft.EndsWith("/") || String.IsNullOrEmpty(pathLeft) )
                         pathLeft += "index.html";
                     return resolvedManifest.Assets.FirstOrDefault(o => o.Name == pathLeft);
                 }
+                
+
                 return null;
             }
         }

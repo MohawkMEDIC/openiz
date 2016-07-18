@@ -123,7 +123,7 @@ namespace OpenIZ.Core.Model.Security
             set
             {
                 if (this.Entity?.Key != value)
-                    this.Entity = this.EntityProvider.Get<UserEntity>(value);
+                    this.Entity = this.EntityProvider?.Get<UserEntity>(value);
             }
         }
 
@@ -163,7 +163,7 @@ namespace OpenIZ.Core.Model.Security
             get { return this.Roles?.Select(o => o.Key.Value).ToList(); }
             set
             {
-                this.Roles = value?.Select(p => this.EntityProvider.Get<SecurityRole>(p)).ToList();
+                this.Roles = value?.Select(p => this.EntityProvider?.Get<SecurityRole>(p)).ToList();
             }
         }
 

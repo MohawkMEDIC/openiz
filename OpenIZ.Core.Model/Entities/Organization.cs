@@ -62,7 +62,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 if (this.IndustryConcept?.Key != value)
-                    this.IndustryConcept = this.EntityProvider.Get<Concept>(value);
+                    this.IndustryConcept = this.EntityProvider?.Get<Concept>(value);
             }
         }
 

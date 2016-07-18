@@ -62,7 +62,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 if (this.SecurityDevice?.Key != value)
-                    this.SecurityDevice = this.EntityProvider.Get<SecurityDevice>(value);
+                    this.SecurityDevice = this.EntityProvider?.Get<SecurityDevice>(value);
             }
         }
 

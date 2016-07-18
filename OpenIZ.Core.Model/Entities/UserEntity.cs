@@ -52,7 +52,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 if (this.SecurityUser?.Key != value)
-                    this.SecurityUser = this.EntityProvider.Get<SecurityUser>(value);
+                    this.SecurityUser = this.EntityProvider?.Get<SecurityUser>(value);
             }
         }
 

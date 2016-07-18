@@ -92,7 +92,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 if (this.AssigningDevice?.Key != value)
-                    this.AssigningDevice = this.EntityProvider.Get<SecurityDevice>(value);
+                    this.AssigningDevice = this.EntityProvider?.Get<SecurityDevice>(value);
             }
         }
         

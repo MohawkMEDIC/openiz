@@ -63,7 +63,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 if (this.ExtensionType?.Key != value)
-                    this.ExtensionType = this.EntityProvider.Get<ExtensionType>(value);
+                    this.ExtensionType = this.EntityProvider?.Get<ExtensionType>(value);
             }
         }
 

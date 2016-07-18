@@ -60,7 +60,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 if (this.CodeSystem?.Key != value)
-                    this.CodeSystem = this.EntityProvider.Get<CodeSystem>(value);
+                    this.CodeSystem = this.EntityProvider?.Get<CodeSystem>(value);
             }
         }
 

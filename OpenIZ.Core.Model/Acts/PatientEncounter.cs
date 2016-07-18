@@ -60,7 +60,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 if (this.DischargeDisposition?.Key != value)
-                    this.DischargeDisposition = this.EntityProvider.Get<Concept>(value);
+                    this.DischargeDisposition = this.EntityProvider?.Get<Concept>(value);
             }
         }
 

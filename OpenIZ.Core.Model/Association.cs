@@ -49,7 +49,7 @@ namespace OpenIZ.Core.Model
         [DataIgnore, XmlIgnore, JsonIgnore, SerializationReference(nameof(SourceEntityKey))]
         public TSourceType SourceEntity
         {
-            get { return this.EntityProvider.Get<TSourceType>(this.SourceEntityKey); }
+            get { return this.EntityProvider?.Get<TSourceType>(this.SourceEntityKey); }
             set { this.SourceEntityKey = value?.Key;  }
         }
 

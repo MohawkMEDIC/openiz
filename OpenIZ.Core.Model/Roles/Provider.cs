@@ -66,7 +66,7 @@ namespace OpenIZ.Core.Model.Roles
             set
             {
                 if (this.ProviderSpecialty?.Key != value)
-                    this.ProviderSpecialty = this.EntityProvider.Get<Concept>(value);
+                    this.ProviderSpecialty = this.EntityProvider?.Get<Concept>(value);
             }
         }
 

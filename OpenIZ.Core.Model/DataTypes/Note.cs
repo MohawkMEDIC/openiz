@@ -72,7 +72,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 if (this.Author?.Key != value)
-                    this.Author = this.EntityProvider.Get<Entity>(value);
+                    this.Author = this.EntityProvider?.Get<Entity>(value);
             }
         }
 

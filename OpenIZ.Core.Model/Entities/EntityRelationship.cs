@@ -75,7 +75,7 @@ namespace OpenIZ.Core.Model.Entities
             get { return this.m_targetEntityKey ?? this.TargetEntity?.Key; }
             set {
                 if (this.TargetEntity?.Key != value)
-                    this.TargetEntity = this.EntityProvider.Get<Entity>(value);
+                    this.TargetEntity = this.EntityProvider?.Get<Entity>(value);
                 if (this.m_targetEntityKey != value)
                     this.m_targetEntityKey = value;
             }
@@ -98,7 +98,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 if (this.RelationshipType?.Key != value)
-                    this.RelationshipType = this.EntityProvider.Get<Concept>(value);
+                    this.RelationshipType = this.EntityProvider?.Get<Concept>(value);
             }
         }
 

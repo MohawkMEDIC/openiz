@@ -78,7 +78,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 if (value != this.PhoneticAlgorithm?.Key)
-                    this.PhoneticAlgorithm = this.EntityProvider.Get<PhoneticAlgorithm>(value);
+                    this.PhoneticAlgorithm = this.EntityProvider?.Get<PhoneticAlgorithm>(value);
             }
         }
 

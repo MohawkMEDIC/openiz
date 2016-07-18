@@ -62,7 +62,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 if (this.SecurityApplication?.Key != value)
-                    this.SecurityApplication = this.EntityProvider.Get<SecurityApplication>(value);
+                    this.SecurityApplication = this.EntityProvider?.Get<SecurityApplication>(value);
             }
         }
 

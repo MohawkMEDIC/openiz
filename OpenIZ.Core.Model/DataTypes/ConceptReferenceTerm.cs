@@ -44,7 +44,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 if (this.ReferenceTerm?.Key != value)
-                    this.ReferenceTerm = this.EntityProvider.Get<ReferenceTerm>(value);
+                    this.ReferenceTerm = this.EntityProvider?.Get<ReferenceTerm>(value);
             }
         }
 
@@ -64,7 +64,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 if (this.RelationshipType?.Key != value)
-                    this.RelationshipType = this.EntityProvider.Get<ConceptRelationshipType>(value);
+                    this.RelationshipType = this.EntityProvider?.Get<ConceptRelationshipType>(value);
             }
         }
 

@@ -50,7 +50,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 if (this.TargetAct?.Key != value)
-                    this.TargetAct = this.EntityProvider.Get<Act>(value);
+                    this.TargetAct = this.EntityProvider?.Get<Act>(value);
             }
         }
 
@@ -71,7 +71,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 if (this.RelationshipType?.Key != value)
-                    this.RelationshipType = this.EntityProvider.Get<Concept>(value);
+                    this.RelationshipType = this.EntityProvider?.Get<Concept>(value);
 
             }
         }

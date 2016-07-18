@@ -87,7 +87,7 @@ namespace OpenIZ.Core.Model
             set
             {
                 if (this.UpdatedBy?.Key != value)
-                    this.UpdatedBy = this.EntityProvider.Get<SecurityUser>(value);
+                    this.UpdatedBy = this.EntityProvider?.Get<SecurityUser>(value);
             }
         }
 

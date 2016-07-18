@@ -60,7 +60,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 if (value != this.InterpretationConcept?.Key)
-                    this.InterpretationConcept = this.EntityProvider.Get<Concept>(value);
+                    this.InterpretationConcept = this.EntityProvider?.Get<Concept>(value);
             }
         }
 
@@ -100,7 +100,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 if (this.UnitOfMeasure?.Key != value)
-                    this.UnitOfMeasure = this.EntityProvider.Get<Concept>(value);
+                    this.UnitOfMeasure = this.EntityProvider?.Get<Concept>(value);
             }
         }
 
@@ -149,7 +149,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 if (this.Value?.Key != value)
-                    this.Value = this.EntityProvider.Get<Concept>(value);
+                    this.Value = this.EntityProvider?.Get<Concept>(value);
             }
         }
 

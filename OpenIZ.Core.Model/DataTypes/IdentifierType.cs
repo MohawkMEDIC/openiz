@@ -47,7 +47,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 if (this.ScopeConcept?.Key != value)
-                    this.ScopeConcept = this.EntityProvider.Get<Concept>(value);
+                    this.ScopeConcept = this.EntityProvider?.Get<Concept>(value);
             }
         }
 
@@ -63,7 +63,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 if (this.TypeConcept?.Key != value)
-                    this.TypeConcept = this.EntityProvider.Get<Concept>(value);
+                    this.TypeConcept = this.EntityProvider?.Get<Concept>(value);
             }
         }
 

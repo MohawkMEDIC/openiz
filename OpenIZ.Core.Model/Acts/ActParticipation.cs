@@ -50,7 +50,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 if (value != this.PlayerEntity?.Key)
-                    this.PlayerEntity = this.EntityProvider.Get<Entity>(value);
+                    this.PlayerEntity = this.EntityProvider?.Get<Entity>(value);
             }
         }
 
@@ -66,7 +66,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 if (value != this.ParticipationRole?.Key)
-                    this.ParticipationRole = this.EntityProvider.Get<Concept>(value);
+                    this.ParticipationRole = this.EntityProvider?.Get<Concept>(value);
             }
         }
 

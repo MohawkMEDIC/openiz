@@ -66,7 +66,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 if (this.FormConcept?.Key != value)
-                    this.FormConcept = this.EntityProvider.Get<Concept>(value);
+                    this.FormConcept = this.EntityProvider?.Get<Concept>(value);
             }
         }
 
@@ -81,7 +81,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 if (this.QuantityConcept?.Key != value)
-                    this.QuantityConcept = this.EntityProvider.Get<Concept>(value);
+                    this.QuantityConcept = this.EntityProvider?.Get<Concept>(value);
             }
         }
 

@@ -82,7 +82,7 @@ namespace OpenIZ.Core.Model.DataTypes
             }
             set
             {
-                this.Concepts = value.Select(o => this.EntityProvider.Get<Concept>(o)).ToList();
+                this.Concepts = value.Select(o => this.EntityProvider?.Get<Concept>(o)).ToList();
             }
         }
 

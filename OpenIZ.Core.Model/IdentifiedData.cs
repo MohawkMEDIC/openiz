@@ -39,14 +39,16 @@ namespace OpenIZ.Core.Model
     [XmlType("IdentifiedData",  Namespace = "http://openiz.org/model"), JsonObject("IdentifiedData")]
     public abstract class IdentifiedData : IIdentifiedEntity
     {
-       
+
+
+        // The source provider
+        private IEntitySourceProvider m_provider;
 
         /// <summary>
         /// Entity source
         /// </summary>
         public IdentifiedData()
         {
-            this.EntityProvider = ModelSettings.SourceProvider ?? EntitySource.Current.Provider;
             this.Key = Guid.NewGuid();
         }
 
@@ -54,7 +56,26 @@ namespace OpenIZ.Core.Model
         /// Gets or sets the entity source
         /// </summary>
         [DataIgnore, XmlIgnore, JsonIgnore]
-        public IEntitySourceProvider EntityProvider { get; set; }
+        public IEntitySourceProvider EntityProvider
+        {
+            get
+            {
+                return this.m_provider;
+            }
+            set
+            {
+                if (this.m_provider != value)
+                {
+                    foreach (var itm in this.GetType().GetRuntimeProperties().Where(p => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(p.PropertyType.GetTypeInfo())))
+                    {
+                        var cv = itm.GetValue(this) as IdentifiedData;
+                        if (cv != null)
+                            cv.m_provider = value;
+                    }
+                    this.m_provider = value;
+                }
+            }
+        }
 
         /// <summary>
         /// The internal primary key value of the entity

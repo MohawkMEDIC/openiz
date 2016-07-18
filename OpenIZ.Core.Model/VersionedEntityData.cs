@@ -70,7 +70,7 @@ namespace OpenIZ.Core.Model
         /// </summary>
         [DataIgnore, XmlIgnore, JsonIgnore, SerializationReference(nameof(PreviousVersionKey))]
 		public virtual THistoryModelType PreviousVersion { 
-                get { return this.EntityProvider.Get<THistoryModelType>(this.Key, this.PreviousVersionKey); }
+                get { return this.EntityProvider?.Get<THistoryModelType>(this.Key, this.PreviousVersionKey); }
          }
 
         /// <summary>

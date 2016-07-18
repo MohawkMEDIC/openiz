@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using OpenIZ.Core.Model.Reflection;
 using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Model.Map
 {
@@ -308,6 +309,13 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         public TDomain MapModelInstance<TModel, TDomain>(TModel modelInstance) where TDomain : new()
         {
+
+            // Set the identity source
+            IEntitySourceProvider currentProvider = null;
+            if (modelInstance is IdentifiedData)
+                currentProvider = (modelInstance as IdentifiedData).EntityProvider;
+
+
             ClassMap classMap = this.m_mapFile.GetModelClassMap(typeof(TModel), typeof(TDomain));
             if (classMap == null)
                 classMap = this.m_mapFile.GetModelClassMap(typeof(TModel));
@@ -374,6 +382,10 @@ namespace OpenIZ.Core.Model.Map
                     domainProperty.SetValue(targetObject, domainValue);
 
             }
+
+            // Entity provider re-assign
+            if (modelInstance is IdentifiedData)
+                (modelInstance as IdentifiedData).EntityProvider = currentProvider;
 
             return retVal;
         }
@@ -618,6 +630,11 @@ namespace OpenIZ.Core.Model.Map
                 keyStack.Remove(idEnt.Key.Value);
                 FireMappedToModel(this, idEnt.Key ?? Guid.Empty, retVal as IdentifiedData);
             }
+
+            // Set the identity source
+            if(retVal is IdentifiedData)
+                (retVal as IdentifiedData).EntityProvider = ModelSettings.SourceProvider;
+
             return retVal;
         }
 

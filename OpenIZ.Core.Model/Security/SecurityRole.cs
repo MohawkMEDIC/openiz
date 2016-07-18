@@ -63,7 +63,7 @@ namespace OpenIZ.Core.Model.Security
         public List<Guid> UsersXml
         {
             get { return this.Users?.Select(o => o.Key.Value).ToList(); }
-            set { this.Users = value.Select(o => this.EntityProvider.Get<SecurityUser>(o)).ToList(); }
+            set { this.Users = value.Select(o => this.EntityProvider?.Get<SecurityUser>(o)).ToList(); }
         }
         /// <summary>
         /// Gets or sets the security users in the role

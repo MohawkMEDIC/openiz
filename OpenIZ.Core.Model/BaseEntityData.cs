@@ -142,7 +142,7 @@ namespace OpenIZ.Core.Model
             set
             {
                 if (this.CreatedBy?.Key != value)
-                    this.CreatedBy = this.EntityProvider.Get<SecurityUser>(value);
+                    this.CreatedBy = this.EntityProvider?.Get<SecurityUser>(value);
             }
         }
 
@@ -158,7 +158,7 @@ namespace OpenIZ.Core.Model
             set
             {
                 if (this.ObsoletedBy?.Key != value)
-                    this.ObsoletedBy = this.EntityProvider.Get<SecurityUser>(value);
+                    this.ObsoletedBy = this.EntityProvider?.Get<SecurityUser>(value);
             }
         }
 

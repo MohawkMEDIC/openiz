@@ -71,7 +71,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 if (this.ComponentType?.Key != value)
-                    this.ComponentType = this.EntityProvider.Get<Concept>(value);
+                    this.ComponentType = this.EntityProvider?.Get<Concept>(value);
             }
         }
 

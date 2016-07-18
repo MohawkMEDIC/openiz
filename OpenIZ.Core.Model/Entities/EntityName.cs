@@ -85,7 +85,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 if (this.NameUse?.Key != value)
-                    this.NameUse = this.EntityProvider.Get<Concept>(value);
+                    this.NameUse = this.EntityProvider?.Get<Concept>(value);
             }
         }
 

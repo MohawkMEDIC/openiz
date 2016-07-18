@@ -139,7 +139,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 if (value != this.ClassConcept?.Key)
-                    this.ClassConcept = this.EntityProvider.Get<Concept>(value);
+                    this.ClassConcept = this.EntityProvider?.Get<Concept>(value);
             }
         }
 
@@ -154,7 +154,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 if (this.MoodConcept?.Key != value)
-                    this.MoodConcept = this.EntityProvider.Get<Concept>(value);
+                    this.MoodConcept = this.EntityProvider?.Get<Concept>(value);
             }
         }
 
@@ -170,7 +170,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 if (this.ReasonConcept?.Key != value)
-                    this.ReasonConcept = this.EntityProvider.Get<Concept>(value);
+                    this.ReasonConcept = this.EntityProvider?.Get<Concept>(value);
             }
         }
 
@@ -185,7 +185,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 if (this.StatusConcept?.Key != value)
-                    this.StatusConcept = this.EntityProvider.Get<Concept>(value);
+                    this.StatusConcept = this.EntityProvider?.Get<Concept>(value);
             }
         }
 
@@ -200,7 +200,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 if (this.TypeConcept?.Key != value)
-                    this.TypeConcept = this.EntityProvider.Get<Concept>(value);
+                    this.TypeConcept = this.EntityProvider?.Get<Concept>(value);
             }
         }
 
