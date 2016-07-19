@@ -123,7 +123,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
 
                     var instance = rp.GetValue(data);
                     if (instance != null)
+                    {
                         DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal);
+                        data.UpdateParentKeys(rp);
+                    }
                 }
                 return base.Insert(context, data, principal);
             }
@@ -140,7 +143,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
 
                     var instance = rp.GetValue(data);
                     if (instance != null)
+                    {
                         DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal);
+                        data.UpdateParentKeys(rp);
+                    }
                 }
                 return base.Update(context, data, principal);
             }
@@ -165,7 +171,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
 
                     var instance = rp.GetValue(data);
                     if (instance != null)
+                    {
                         DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal);
+                        data.UpdateParentKeys(rp);
+                    }
                 }
                 return base.Insert(context, data, principal);
             }
@@ -182,7 +191,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
 
                     var instance = rp.GetValue(data);
                     if (instance != null)
+                    {
                         DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal);
+                        data.UpdateParentKeys(rp);
+                    }
+
                 }
                 return base.Update(context, data, principal);
             }
@@ -320,8 +333,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
 
             // Attempt to cache concepts
             this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Caching concept dictionary...");
-            if (ApplicationContext.Current.GetService<IDataCachingService>() != null) 
-                new Thread((o) => {
+            if (ApplicationContext.Current.GetService<IDataCachingService>() != null)
+                new Thread((o) =>
+                {
                     int t;
                     ApplicationContext.Current.GetService<IDataPersistenceService<Core.Model.DataTypes.Concept>>().Query(c => c.Key == c.Key, 0, 10000, null, out t);
                     ApplicationContext.Current.GetService<IDataPersistenceService<Core.Model.DataTypes.ConceptSet>>().Query(c => c.Key == c.Key, 0, 1000, null, out t);

@@ -59,12 +59,12 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the extension handler
         /// </summary>
         [XmlIgnore, JsonIgnore]
-		public Type ExtensionHandler { get; set; }
+        public Type ExtensionHandler { get; set; }
 
         /// <summary>
         /// Gets or sets the description
         /// </summary>
-        [DataIgnore, XmlElement("handlerClass"), JsonProperty("handlerClass")]
+        [XmlElement("handlerClass"), JsonProperty("handlerClass")]
         public String ExtensionHandlerXml
         {
             get { return this.ExtensionHandler?.AssemblyQualifiedName; }
@@ -87,7 +87,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Whether the extension is enabled
         /// </summary>
         [XmlIgnore, JsonIgnore]
-		public bool IsEnabled { get; set; }
+        public bool IsEnabled { get; set; }
 
 
     }

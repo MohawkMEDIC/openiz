@@ -31,8 +31,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MARC.Everest, Version=1.5.0.0, Culture=neutral, PublicKeyToken=ba5b2480018546af, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\MARC.Everest.dll</HintPath>
+    </Reference>
     <Reference Include="MARC.HI.EHRS.SVC.Core">
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MARC.HI.EHRS.SVC.Core.Timer">
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.Timer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -44,6 +51,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CacheCleanupTimerJob.cs" />
+    <Compile Include="CacheEntry.cs" />
+    <Compile Include="CacheRegulatorTimerJob.cs" />
+    <Compile Include="Configuration\ConfigurationSectionHandler.cs" />
+    <Compile Include="Configuration\MemoryCacheConfiguration.cs" />
+    <Compile Include="Configuration\TypeCacheConfigurationInfo.cs" />
+    <Compile Include="MemoryCache.cs" />
     <Compile Include="MemoryCacheService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

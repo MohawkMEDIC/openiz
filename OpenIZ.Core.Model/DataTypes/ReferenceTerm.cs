@@ -32,11 +32,20 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents a basic reference term
     /// </summary>
-    [Classifier(nameof(CodeSystem))]
+    [Classifier(nameof(Mnemonic)), KeyLookup(nameof(Mnemonic))]
     [XmlType("ReferenceTerm",  Namespace = "http://openiz.org/model"), JsonObject("ReferenceTerm")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "ReferenceTerm")]
     public class ReferenceTerm : NonVersionedEntityData
     {
+
+        // Backing field for code system identifier
+        private Guid? m_codeSystemId;
+        // Code system
+        
+        private CodeSystem m_codeSystem;
+        // Display names
+        
+        private List<ReferenceTermName> m_displayNames;
 
         /// <summary>
         /// Gets or sets the mnemonic for the reference term
@@ -47,30 +56,61 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the code system 
         /// </summary>
-        [AutoLoad, XmlIgnore, JsonIgnore, SerializationReference(nameof(CodeSystemKey))]
-		public CodeSystem CodeSystem { get; set; }
+        [SerializationReference(nameof(CodeSystemKey))]
+        [XmlIgnore, JsonIgnore]
+        public CodeSystem CodeSystem {
+            get
+            {
+                this.m_codeSystem = base.DelayLoad(this.m_codeSystemId, this.m_codeSystem);
+                return this.m_codeSystem;
+            }
+            set
+            {
+                this.m_codeSystem = value;
+                this.m_codeSystemId = value?.Key;
+            }
+        }
         
         /// <summary>
         /// Gets or sets the code system identifier
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataIgnore, XmlElement("codeSystem"), JsonProperty("codeSystem")]
+        [XmlElement("codeSystem"), JsonProperty("codeSystem")]
         public Guid?  CodeSystemKey {
-            get { return this.CodeSystem?.Key; }
+            get { return this.m_codeSystemId; }
             set
             {
-                if (this.CodeSystem?.Key != value)
-                    this.CodeSystem = this.EntityProvider?.Get<CodeSystem>(value);
+                this.m_codeSystemId = value;
+                this.m_codeSystem = null;
             }
         }
 
         /// <summary>
         /// Gets display names associated with the reference term
         /// </summary>
-        [AutoLoad]
+        
         [XmlElement("name"), JsonProperty("name")]
-        public List<ReferenceTermName> DisplayNames { get; set; }
+        public List<ReferenceTermName> DisplayNames {
+            get
+            {
+                if(this.m_displayNames == null && this.IsDelayLoadEnabled)
+                    this.m_displayNames = EntitySource.Current.Provider.Query<ReferenceTermName>(o => o.ReferenceTermKey == this.Key && o.ObsoletionTime == null).ToList();
+                return this.m_displayNames;
+            }
+            set
+            {
+                this.m_displayNames = value;
+            }
+        }
 
+        /// <summary>
+        /// Force reloading of delay load properties
+        /// </summary>
+        public override void Refresh()
+        {
+            this.m_codeSystem = null;
+            this.m_displayNames = null;
+        }
 
     }
 }

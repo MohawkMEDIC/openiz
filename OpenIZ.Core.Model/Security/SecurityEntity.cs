@@ -41,9 +41,9 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Policies associated with the entity
         /// </summary>
-        [XmlElement("policy"), JsonProperty("policy")]
-		public virtual List<SecurityPolicyInstance> Policies
-         {
+        [XmlIgnore, JsonIgnore]
+        public virtual List<SecurityPolicyInstance> Policies
+        {
             get
             {
                 return this.m_policies;

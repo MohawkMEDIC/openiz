@@ -18,7 +18,6 @@
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
-using OpenIZ.Core.Model.EntityLoader;
 using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -34,7 +33,17 @@ namespace OpenIZ.Core.Model.DataTypes
     public class IdentifierType : BaseEntityData
     {
 
-       
+        // Type concept id
+        private Guid? m_typeConceptId;
+        // Scope concept identifier
+        private Guid? m_scopeConceptId;
+        // Type concept
+        
+        private Concept m_typeConcept;
+        // Scope concept
+        
+        private Concept m_scopeConcept;
+
         /// <summary>
         /// Gets or sets the id of the scope concept
         /// </summary>
@@ -43,11 +52,11 @@ namespace OpenIZ.Core.Model.DataTypes
         [XmlElement("scopeConcept"), JsonProperty("scopeConcept")]
         public Guid?  ScopeConceptKey
         {
-            get { return this.ScopeConcept?.Key; }
+            get { return this.m_scopeConceptId; }
             set
             {
-                if (this.ScopeConcept?.Key != value)
-                    this.ScopeConcept = this.EntityProvider?.Get<Concept>(value);
+                this.m_scopeConcept = null;
+                this.m_scopeConceptId = value;
             }
         }
 
@@ -59,26 +68,60 @@ namespace OpenIZ.Core.Model.DataTypes
         [XmlElement("typeConcept"), JsonProperty("typeConcept")]
         public Guid?  TypeConceptKey
         {
-            get { return this.TypeConcept?.Key; }
+            get { return this.m_typeConceptId; }
             set
             {
-                if (this.TypeConcept?.Key != value)
-                    this.TypeConcept = this.EntityProvider?.Get<Concept>(value);
+                this.m_typeConcept = null;
+                this.m_typeConceptId = value;
             }
         }
 
         /// <summary>
         /// Type concept
         /// </summary>
-        [XmlIgnore, JsonIgnore, SerializationReference(nameof(TypeConceptKey))]
-		public Concept TypeConcept { get; set; }
+        [SerializationReference(nameof(TypeConceptKey))]
+        [XmlIgnore, JsonIgnore]
+        public Concept TypeConcept
+        {
+            get
+            {
+                this.m_typeConcept = base.DelayLoad(this.m_typeConceptId, this.m_typeConcept);
+                return this.m_typeConcept;
+            }
+            set
+            {
+                this.m_typeConcept = value;
+                this.m_typeConceptId = value?.Key;
+            }
+        }
 
         /// <summary>
         /// Gets the scope of the identifier
         /// </summary>
-        [XmlIgnore, JsonIgnore, SerializationReference(nameof(ScopeConceptKey))]
-		public Concept ScopeConcept { get; set; }
+        [SerializationReference(nameof(ScopeConceptKey))]
+        [XmlIgnore, JsonIgnore]
+        public Concept ScopeConcept
+        {
+            get
+            {
+                this.m_typeConcept = base.DelayLoad(this.m_scopeConceptId, this.m_scopeConcept);
+                return this.m_typeConcept;
+            }
+            set
+            {
+                this.m_scopeConcept = value;
+                this.m_scopeConceptId = value?.Key;
+            }
+        }
 
-
+        /// <summary>
+        /// Force reloading of delay load properties
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_scopeConcept = null;
+            this.m_typeConcept = null;
+        }
     }
 }

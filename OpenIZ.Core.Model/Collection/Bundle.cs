@@ -34,7 +34,6 @@ using OpenIZ.Core.Model.Security;
 using Newtonsoft.Json;
 using System.Threading;
 using System.Diagnostics;
-using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Model.Collection
 {
@@ -68,7 +67,6 @@ namespace OpenIZ.Core.Model.Collection
     [XmlInclude(typeof(ConceptRelationship))]
     [XmlInclude(typeof(ConceptRelationshipType))]
     [XmlInclude(typeof(SecurityUser))]
-    [XmlInclude(typeof(CodeSystem))]
     public class Bundle : IdentifiedData
     {
 
@@ -159,8 +157,8 @@ namespace OpenIZ.Core.Model.Collection
                     continue;
                 if (!retVal.Item.Exists(o => o.Key == itm.Key))
                 {
-                    retVal.Item.Add(itm);
-                    Bundle.ProcessModel(itm as IdentifiedData, retVal);
+                    retVal.Item.Add(itm.GetLocked());
+                    Bundle.ProcessModel(itm.GetLocked() as IdentifiedData, retVal);
                 }
             }
 
@@ -182,6 +180,9 @@ namespace OpenIZ.Core.Model.Collection
         /// <remarks>Basically this will find any refs and fill them in</remarks>
         private void Reconstitute(IdentifiedData data)
         {
+            // Prevent delay loading from EntitySource (we're doing that right now)
+            bool originalDelayLoad = data.IsDelayLoadEnabled;
+            data.SetDelayLoad(false);
 
             // Iterate over properties
             foreach (var pi in data.GetType().GetRuntimeProperties())
@@ -209,18 +210,15 @@ namespace OpenIZ.Core.Model.Collection
                     continue; // Invalid key link name
 
                 // Get the key and find a match
-                if (keyPi.PropertyType == typeof(Guid) ||
-                    keyPi.PropertyType == typeof(Guid?))
-                {
-                    var key = (Guid?)keyPi.GetValue(data);
-                    var bundleItem = this.Item.Find(o => o.Key == key);
-                    if (bundleItem != null)
-                        pi.SetValue(data, bundleItem);
-                }
+                var key = (Guid?)keyPi.GetValue(data);
+                var bundleItem = this.Item.Find(o => o.Key == key);
+                if(bundleItem != null)
+                    pi.SetValue(data, bundleItem);
+                
             }
 
-            // Re-Bind the data to a delay loader before we go
-            data.EntityProvider = EntitySource.Current.Provider;
+            data.SetDelayLoad(originalDelayLoad);
+
         }
 
         /// <summary>
@@ -230,7 +228,7 @@ namespace OpenIZ.Core.Model.Collection
         {
             try
             {
-                foreach (var pi in model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<DataIgnoreAttribute>() == null))
+                foreach (var pi in model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<SerializationReferenceAttribute>() != null))
                 {
                     try
                     {
@@ -259,8 +257,6 @@ namespace OpenIZ.Core.Model.Collection
                         else if (rawValue is IdentifiedData)
                         {
                             var iValue = rawValue as IdentifiedData;
-                            if (iValue.IsLogicalNull)
-                                continue;
                             var versionedValue = rawValue as IVersionedEntity;
 
                             // Check for existing item

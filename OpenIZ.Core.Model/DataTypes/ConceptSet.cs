@@ -39,14 +39,8 @@ namespace OpenIZ.Core.Model.DataTypes
     public class ConceptSet : BaseEntityData
     {
 
-        /// <summary>
-        /// Ctor
-        /// </summary>
-        public ConceptSet()
-        {
-            this.Concepts = new List<Concept>();
-            
-        }
+        // Set members
+        private List<Concept> m_setMembers;
 
         /// <summary>
         /// Gets or sets the name of the concept set
@@ -72,25 +66,45 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Concepts as identifiers for XML purposes only
         /// </summary>
-        [DataIgnore, XmlElement("concept"), JsonProperty("concept")]
+        [XmlElement("concept"), JsonProperty("concept")]
+        
         //[Bundle(nameof(Concepts))]
         public List<Guid> ConceptsXml
         {
             get
             {
+                if (this.Concepts != null)
+                    foreach (var itm in this.Concepts.Where(o => o.Key == null))
+                        if (itm.Mnemonic != null)
+                            itm.Key = EntitySource.Current.Provider.Query<Concept>(o => o.Mnemonic == itm.Mnemonic).FirstOrDefault()?.Key;
+                        else
+                            itm.Key = Guid.NewGuid();
+
                 return this.Concepts?.Select(o => o.Key.Value).ToList();
             }
             set
             {
-                this.Concepts = value.Select(o => this.EntityProvider?.Get<Concept>(o)).ToList();
             }
         }
 
         /// <summary>
         /// Gets the concepts in the set
         /// </summary>
+        
+        [AutoLoad]
         [XmlIgnore, JsonIgnore]
-		public List<Concept> Concepts { get; set; }
+        public List<Concept> Concepts
+        {
+            get {
+                if(this.IsDelayLoadEnabled && this.m_setMembers == null)
+                    this.m_setMembers = EntitySource.Current.Provider.Query<Concept>(o=>o.ConceptSets.Any(s=>s.Key == this.Key)).ToList();
+                return this.m_setMembers;
+            }
+            set
+            {
+                this.m_setMembers = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the obsoletion reason

@@ -68,7 +68,6 @@ namespace OpenIZ.Core.Persistence
 
                 try
                 {
-                    ModelSettings.SourceProvider = new EntitySource.DummyEntitySource();
                     String dataDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Data");
                     this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Scanning Directory {0} for datasets", dataDirectory);
 
@@ -137,7 +136,6 @@ namespace OpenIZ.Core.Persistence
                 {
                     this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Un-binding event handler");
                     ApplicationContext.Current.Started -= this.m_persistenceHandler;
-                    ModelSettings.SourceProvider = EntitySource.Current.Provider;
                 }
             };
         }

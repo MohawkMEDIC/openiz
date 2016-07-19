@@ -113,7 +113,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         [TestMethod]
         public void TestUpdateNamedConcept()
         {
-            ModelSettings.SourceProvider = EntitySource.Current.Provider;
 
             Concept namedConcept = new Concept()
             {
@@ -234,7 +233,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         /// simple concept which has a display name
         /// </summary>
         [TestMethod]
-        public void TestUpdateConceprReferenceTerm()
+        public void TestUpdateConceptReferenceTerm()
         {
             Concept refTermConcept = new Concept()
             {

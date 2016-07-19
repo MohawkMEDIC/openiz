@@ -40,16 +40,38 @@ namespace OpenIZ.Core.Model.Entities
     public class Entity : VersionedEntityData<Entity>
     {
 
+        // Classe concept
+        private Guid? m_classConceptId;
+        // Determiner concept id
+        private Guid? m_determinerConceptId;
+        // Status 
+        private Guid? m_statusConceptId;
+        // Control act which created this
+        private Guid? m_creationActId;
+        // Type concept
+        private Guid? m_typeConceptId;
+
+        // Class concept
+        private Concept m_classConcept;
+        // Determiner concept
+        private Concept m_determinerConcept;
+        // TODO: Change this to Act
+        private Act m_creationAct;
+        // Status concept
+        private Concept m_statusConcept;
+        // Type concept
+        private Concept m_typeConcept;
+
         /// <summary>
-        /// Constructs a new entity
+        /// Creates a new instance of the entity class
         /// </summary>
         public Entity()
         {
-            this.Notes = new List<EntityNote>();
             this.Identifiers = new List<EntityIdentifier>();
             this.Addresses = new List<EntityAddress>();
             this.Extensions = new List<EntityExtension>();
             this.Names = new List<EntityName>();
+            this.Notes = new List<EntityNote>();
             this.Participations = new List<ActParticipation>();
             this.Relationships = new List<EntityRelationship>();
             this.Telecoms = new List<EntityTelecomAddress>();
@@ -57,22 +79,17 @@ namespace OpenIZ.Core.Model.Entities
         }
 
         /// <summary>
-        /// Should serialize previous version?
-        /// </summary>
-        public bool ShouldSerializeCreationAct() { return this.CreationActKey.HasValue; }
-
-        /// <summary>
         /// Class concept
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataIgnore, XmlElement("classConcept"), JsonProperty("classConcept")]
+        [XmlElement("classConcept"), JsonProperty("classConcept")]
         public virtual Guid? ClassConceptKey
         {
-            get { return this.ClassConcept?.Key; }
+            get { return this.m_classConceptId; }
             set
             {
-                if (this.ClassConcept?.Key != value)
-                    this.ClassConcept = this.EntityProvider?.Get<Concept>(value);
+                this.m_classConceptId = value;
+                this.m_classConcept = null;
             }
         }
 
@@ -80,14 +97,15 @@ namespace OpenIZ.Core.Model.Entities
         /// Determiner concept
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataIgnore, XmlElement("determinerConcept"), JsonProperty("determinerConcept")]
+        
+        [XmlElement("determinerConcept"), JsonProperty("determinerConcept")]
         public virtual Guid? DeterminerConceptKey
         {
-            get { return this.DeterminerConcept?.Key; }
+            get { return this.m_determinerConceptId; }
             set
             {
-                if(this.DeterminerConcept?.Key != value)
-                    this.DeterminerConcept = this.EntityProvider?.Get<Concept>(value);
+                this.m_determinerConceptId = value;
+                this.m_determinerConcept = null;
             }
         }
 
@@ -95,14 +113,15 @@ namespace OpenIZ.Core.Model.Entities
         /// Status concept id
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataIgnore, XmlElement("statusConcept"), JsonProperty("statusConcept")]
+        
+        [XmlElement("statusConcept"), JsonProperty("statusConcept")]
         public Guid?  StatusConceptKey
         {
-            get { return this.StatusConcept?.Key; }
+            get { return this.m_statusConceptId; }
             set
             {
-                if(this.StatusConcept?.Key != value)
-                    this.StatusConcept = this.EntityProvider?.Get<Concept>(value);
+                this.m_statusConceptId = value;
+                this.m_statusConcept = null;
             }
         }
         
@@ -110,15 +129,15 @@ namespace OpenIZ.Core.Model.Entities
         /// Creation act reference
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataIgnore, XmlElement("creationAct"), JsonProperty("creationAct")]
+        
+        [XmlElement("creationAct"), JsonProperty("creationAct")]
         public Guid?  CreationActKey
         {
-            get { return this.CreationAct?.Key; }
+            get { return this.m_creationActId; }
             set
             {
-                if (this.CreationAct?.Key != value)
-                    this.CreationAct = this.EntityProvider?.Get<Act>(value);
-
+                this.m_creationActId = value;
+                this.m_creationAct = null;
             }
         }
 
@@ -126,14 +145,15 @@ namespace OpenIZ.Core.Model.Entities
         /// Type concept identifier
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataIgnore, XmlElement("typeConcept"), JsonProperty("typeConcept")]
+        
+        [XmlElement("typeConcept"), JsonProperty("typeConcept")]
         public Guid?  TypeConceptKey
         {
-            get { return this.TypeConcept?.Key; }
+            get { return this.m_typeConceptId; }
             set
             {
-                if(this.TypeConcept?.Key != value)
-                    this.TypeConcept = this.EntityProvider?.Get<Concept>(value);
+                this.m_typeConceptId = value;
+                this.m_typeConcept = null;
             }
         }
 
@@ -141,35 +161,103 @@ namespace OpenIZ.Core.Model.Entities
         /// Class concept datal load property
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [AutoLoad(), SerializationReference(nameof(ClassConceptKey))]
-        public Concept ClassConcept { get; set; }
+        [AutoLoad()]
+        [SerializationReference(nameof(ClassConceptKey))]
+        public Concept ClassConcept
+        {
+            get {
+                this.m_classConcept = base.DelayLoad(this.m_classConceptId, this.m_classConcept);
+                return this.m_classConcept;
+            }
+            set
+            {
+                this.m_classConcept = value;
+                this.m_classConceptId = value?.Key;
+            }
+        }
 
         /// <summary>
         /// Determiner concept
         /// </summary>
+        [SerializationReference(nameof(DeterminerConceptKey))]
         [XmlIgnore, JsonIgnore]
-        [AutoLoad(), SerializationReference(nameof(DeterminerConceptKey))]
-        public virtual Concept DeterminerConcept { get; set; }
+        [AutoLoad()]   
+        public virtual Concept DeterminerConcept
+        {
+            get
+            {
+                this.m_determinerConcept = base.DelayLoad(this.m_determinerConceptId, this.m_determinerConcept);
+                return this.m_determinerConcept;
+            }
+            set
+            {
+                this.m_determinerConcept = value;
+                if (value == null)
+                    this.m_determinerConceptId = Guid.Empty;
+                else
+                    this.m_determinerConceptId = value.Key;
+            }
+        }
 
         /// <summary>
         /// Status concept id
         /// </summary>
+        [SerializationReference(nameof(StatusConceptKey))]
         [XmlIgnore, JsonIgnore]
-        [AutoLoad(), SerializationReference(nameof(StatusConceptKey))]
-        public Concept StatusConcept { get; set; }
+        [AutoLoad()]
+        public Concept StatusConcept
+        {
+            get
+            {
+                this.m_statusConcept = base.DelayLoad(this.m_statusConceptId, this.m_statusConcept);
+                return this.m_statusConcept;
+            }
+            set
+            {
+                this.m_statusConcept = value;
+                if (value == null)
+                    this.m_statusConceptId = Guid.Empty;
+                else
+                    this.m_statusConceptId = value.Key;
+            }
+        }
 
         /// <summary>
         /// Creation act reference
         /// </summary>
-        [XmlIgnore, JsonIgnore, SerializationReference(nameof(CreationActKey))]
-		public Act CreationAct { get; set; }
+        [SerializationReference(nameof(CreationActKey))]
+        [XmlIgnore, JsonIgnore]
+        public Act CreationAct
+        {
+            get {
+                this.m_creationAct = base.DelayLoad(this.m_creationActId, this.m_creationAct);
+                return this.m_creationAct;
+            }
+            set
+            {
+                this.m_creationAct = value;
+                this.m_creationActId = value?.Key;
+            }
+        }
 
         /// <summary>
         /// Type concept identifier
         /// </summary>
+        [SerializationReference(nameof(TypeConceptKey))]
         [AutoLoad()]
-        [XmlIgnore, JsonIgnore, SerializationReference(nameof(TypeConceptKey))]
-		public Concept TypeConcept { get; set; }
+        [XmlIgnore, JsonIgnore]
+        public Concept TypeConcept
+        {
+            get {
+                this.m_typeConcept = base.DelayLoad(this.m_typeConceptId, this.m_typeConcept);
+                return this.m_typeConcept;
+            }
+            set
+            {
+                this.m_typeConcept = value;
+                this.m_typeConceptId = value?.Key;
+            }
+        }
 
         /// <summary>
         /// Gets the identifiers associated with this entity
@@ -179,21 +267,11 @@ namespace OpenIZ.Core.Model.Entities
         public List<EntityIdentifier> Identifiers { get; set; }
 
         /// <summary>
-        /// Should serialize identifiers
-        /// </summary>
-        public bool ShouldSerializeIdentifiers() { return this.Identifiers?.Count > 0; }
-
-        /// <summary>
         /// Gets a list of all associated entities for this entity
         /// </summary>
         [AutoLoad()]
         [XmlElement("relationship"), JsonProperty("relationship")]
         public List<EntityRelationship> Relationships { get; set; }
-        
-        /// <summary>
-        /// Should serialize identifiers
-        /// </summary>
-        public bool ShouldSerializeRelationships() { return this.Relationships?.Count > 0; }
 
         /// <summary>
         /// Gets a list of all telecommunications addresses associated with the entity
@@ -203,21 +281,12 @@ namespace OpenIZ.Core.Model.Entities
         public List<EntityTelecomAddress> Telecoms { get; set; }
 
         /// <summary>
-        /// Should serialize identifiers
-        /// </summary>
-        public bool ShouldSerializeTelecoms() { return this.Telecoms?.Count > 0; }
-
-        /// <summary>
         /// Gets a list of all extensions associated with the entity
         /// </summary>
         [AutoLoad()]
         [XmlElement("extension"), JsonProperty("extension")]
         public List<EntityExtension> Extensions { get; set; }
 
-        /// <summary>
-        /// Should serialize identifiers
-        /// </summary>
-        public bool ShouldSerializeExtensions() { return this.Extensions?.Count > 0; }
 
         /// <summary>
         /// Gets a list of all names associated with the entity
@@ -227,11 +296,6 @@ namespace OpenIZ.Core.Model.Entities
         public List<EntityName> Names { get; set; }
 
         /// <summary>
-        /// Should serialize identifiers
-        /// </summary>
-        public bool ShouldSerializeNames() { return this.Names?.Count > 0; }
-
-        /// <summary>
         /// Gets a list of all addresses associated with the entity
         /// </summary>
         [AutoLoad()]
@@ -239,21 +303,11 @@ namespace OpenIZ.Core.Model.Entities
         public List<EntityAddress> Addresses { get; set; }
 
         /// <summary>
-        /// Should serialize identifiers
-        /// </summary>
-        public bool ShouldSerializeAddresses() { return this.Addresses?.Count > 0; }
-
-        /// <summary>
         /// Gets a list of all notes associated with the entity
         /// </summary>
         [AutoLoad()]
         [XmlElement("note"), JsonProperty("note")]
         public List<EntityNote> Notes { get; set; }
-        
-        /// <summary>
-        /// Should serialize identifiers
-        /// </summary>
-        public bool ShouldSerializeNotes() { return this.Notes?.Count > 0; }
 
         /// <summary>
         /// Gets a list of all tags associated with the entity
@@ -263,21 +317,11 @@ namespace OpenIZ.Core.Model.Entities
         public List<EntityTag> Tags { get; set; }
         
         /// <summary>
-        /// Should serialize identifiers
-        /// </summary>
-        public bool ShouldSerializeTags() { return this.Tags?.Count > 0; }
-
-        /// <summary>
         /// Gets the acts in which this entity participates
         /// </summary>
         [AutoLoad()]
         [XmlElement("participation"), JsonProperty("participation")]
         public List<ActParticipation> Participations { get; set; }
-
-        /// <summary>
-        /// Should serialize identifiers
-        /// </summary>
-        public bool ShouldSerializeParticipations() { return this.Participations?.Count > 0; }
 
     }
 }

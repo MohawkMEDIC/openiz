@@ -47,14 +47,13 @@ namespace OpenIZ.Core.Model.Entities
         {
             base.ClassConceptKey = EntityClassKeys.Place;
             base.DeterminerConceptKey = DeterminerKeys.Specific;
-            this.Services = new List<PlaceService>();
         }
 
         /// <summary>
         /// Gets or sets the class concept key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataIgnore, XmlElement("classConcept"), JsonProperty("classConcept")]
+        [XmlElement("classConcept"), JsonProperty("classConcept")]
         public override Guid? ClassConceptKey
         {
             get
@@ -95,23 +94,10 @@ namespace OpenIZ.Core.Model.Entities
         public double? Lng { get; set; }
 
         /// <summary>
-        /// Should serialize Lat?
-        /// </summary>
-        public bool ShouldSerializeLat() { return this.Lat.HasValue;  }
-
-        /// <summary>
-        /// Should serialize longitude
-        /// </summary>
-        /// <returns></returns>
-        public bool ShouldSerializeLng() { return this.Lng.HasValue; }
-
-        /// <summary>
         /// Gets the services
         /// </summary>
-        [AutoLoad]
-        [XmlElement("service"), JsonProperty("service")]
+        [AutoLoad, XmlElement("service"), JsonProperty("service")]
         public List<PlaceService> Services { get; set; }
-
 
     }
 }

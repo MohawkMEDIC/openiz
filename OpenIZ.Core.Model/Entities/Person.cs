@@ -48,7 +48,6 @@ namespace OpenIZ.Core.Model.Entities
         {
             base.DeterminerConceptKey = DeterminerKeys.Specific;
             base.ClassConceptKey = EntityClassKeys.Person;
-            this.LanguageCommunication = new List<PersonLanguageCommunication>();
         }
 
         /// <summary>
@@ -74,11 +73,11 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets the security user account associated with this person if applicable
         /// </summary>
         [XmlIgnore, JsonIgnore]
-		public SecurityUser AsSecurityUser
-         {
+        public SecurityUser AsSecurityUser
+        {
             get
             {
-                return this.EntityProvider?.Get<UserEntity>(this.Key, this.VersionKey)?.SecurityUser;
+                return EntitySource.Current.Get<UserEntity>(this.Key, this.VersionKey)?.SecurityUser;
             }
         }
     }

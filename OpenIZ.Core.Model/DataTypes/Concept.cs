@@ -38,16 +38,27 @@ namespace OpenIZ.Core.Model.DataTypes
     public class Concept : VersionedEntityData<Concept>
     {
 
+
         /// <summary>
-        /// Ctor
+        /// Creates a new concept
         /// </summary>
         public Concept()
         {
-            this.ConceptNames = new List<ConceptName>();
-            this.ConceptSets = new List<ConceptSet>();
             this.ReferenceTerms = new List<ConceptReferenceTerm>();
+            this.ConceptNames = new List<ConceptName>();
             this.Relationship = new List<ConceptRelationship>();
+            this.ConceptSets = new List<ConceptSet>();
         }
+
+        // Concept class id
+        private Guid? m_classId;
+        // Concept class
+        private ConceptClass m_class;
+        // Status id
+        private Guid? m_conceptStatusId;
+        // Status
+        private Concept m_conceptStatus;
+        
 
         /// <summary>
         /// Gets or sets an indicator which dictates whether the concept is a system concept
@@ -66,98 +77,117 @@ namespace OpenIZ.Core.Model.DataTypes
         
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("statusConcept"), JsonProperty("statusConcept")]
-        public Guid? StatusConceptKey { get; set; }
-       
-
-        /// <summary>
-        /// Gets or sets the status of the concept
-        /// </summary>
-        [DataIgnore, XmlIgnore, JsonIgnore, SerializationReference(nameof(StatusConceptKey))]
-		public Concept StatusConcept
+        public Guid?  StatusConceptKey
         {
             get
             {
-                if(this.StatusConceptKey.HasValue)
-                    return EntitySource.Current.Provider.Get<Concept>(this.StatusConceptKey);
-                return null;
+                return this.m_conceptStatusId;
             }
             set
             {
-                this.StatusConceptKey = value?.Key;
+                this.m_conceptStatusId = value;
+                this.m_conceptStatus = null;
             }
         }
 
         /// <summary>
+        /// Gets or sets the status of the concept
+        /// </summary>
+        [SerializationReference(nameof(StatusConceptKey))]
+        [XmlIgnore, JsonIgnore]
+        public Concept StatusConcept
+        {
+            get
+            {
+                this.m_conceptStatus = base.DelayLoad(this.m_conceptStatusId, this.m_conceptStatus);
+                return this.m_conceptStatus;
+            }
+            set
+            {
+                this.m_conceptStatus = value;
+                this.m_conceptStatusId = value?.Key;
+            }
+        }
+
+
+
+        /// <summary>
         /// Gets a list of concept relationships
         /// </summary>
-        [XmlElement("relationship"), JsonProperty("relationship")]
-        [AutoLoad]
+        [AutoLoad, XmlElement("relationship"), JsonProperty("relationship")]
         public List<ConceptRelationship> Relationship { get; set; }
 
         /// <summary>
         /// Gets or sets the class identifier
         /// </summary>
-
+        
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataIgnore, XmlElement("conceptClass"), JsonProperty("conceptClass")]
-        public Guid? ClassKey
-        {
-            get
+        [XmlElement("conceptClass"), JsonProperty("conceptClass")]
+        public Guid?  ClassKey { get
             {
-                return this.Class?.Key;
+                return this.m_classId;
             }
             set
             {
-                if (this.Class?.Key != value)
-                    this.Class = this.EntityProvider?.Get<ConceptClass>(value);
+                this.m_classId = value;
+                this.m_class = null;
             }
         }
 
         /// <summary>
         /// Gets or sets the classification of the concept
         /// </summary>
-        [AutoLoad]
-        [XmlIgnore, JsonIgnore, SerializationReference(nameof(ClassKey))]
-		public ConceptClass Class { get; set; }
+        [SerializationReference(nameof(ClassKey))]
+        [AutoLoad, XmlIgnore, JsonIgnore]
+        public ConceptClass Class
+        {
+            get
+            {
+                this.m_class = base.DelayLoad(this.m_classId, this.m_class);
+                return this.m_class;
+            }
+            set
+            {
+                this.m_class = value;
+                this.m_classId = value?.Key;
+            }
+        }
 
         /// <summary>
         /// Gets a list of concept reference terms
         /// </summary>
-        [XmlElement("referenceTerm"), JsonProperty("referenceTerm")]
-        [AutoLoad]
+        
+        [AutoLoad, XmlElement("referenceTerm"), JsonProperty("referenceTerm")]
         public List<ConceptReferenceTerm> ReferenceTerms { get; set; }
 
         /// <summary>
         /// Gets the concept names
         /// </summary>
-        //[DelayLoad(null)]
-        [XmlElement("name"), JsonProperty("name")]
-        [AutoLoad]
+        //
+        [AutoLoad, XmlElement("name"), JsonProperty("name")]
         public List<ConceptName> ConceptNames { get; set; }
 
         /// <summary>
         /// Concept sets as identifiers for XML purposes only
         /// </summary>
         [DataIgnore, XmlElement("conceptSet"), JsonProperty("conceptSet")]
-        //[Bundle(nameof(ConceptSets))]
-        public List<Guid> ConceptSetsXml
-        {
-            get
-            {
-                return this.ConceptSets?.Select(o => o.Key.Value).ToList();
-            }
-            set
-            {
-                this.ConceptSets = value?.Select(o => this.EntityProvider?.Get<ConceptSet>(o)).ToList();
-            }
-        }
+        public List<Guid> ConceptSetsXml { get; set; }
 
         /// <summary>
         /// Gets concept sets to which this concept is a member
         /// </summary>
-        [XmlIgnore, JsonIgnore, SerializationReference(nameof(ConceptSetsXml))]
-		public List<ConceptSet> ConceptSets { get; set; }
-
+        [DataIgnore, XmlIgnore, JsonIgnore, SerializationReference(nameof(ConceptSetsXml))]
+        public List<ConceptSet> ConceptSets
+        {
+            get
+            {
+                return this.ConceptSetsXml?.Select(o=>EntitySource.Current.Get<ConceptSet>(o)).ToList();
+            }
+            set
+            {
+                this.ConceptSetsXml = value?.Where(o=>o.Key.HasValue).Select(o => o.Key.Value).ToList();
+            }
+        }
 
     }
 }

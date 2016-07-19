@@ -139,6 +139,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                         connection.Log = new LinqTraceWriter();
 
                     // Disable inserting duplicate classified objects
+                    data.SetDelayLoad(false);
                     var existing = data.TryGetExisting(connection, principal);
                     if(existing != null)
                     {
@@ -173,6 +174,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
                     tx?.Rollback();
                     throw new Exception(e.Message, e);
+                }
+                finally
+                {
+                    data.SetDelayLoad(true);
                 }
             }
         }
@@ -214,6 +219,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
 
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "UPDATE {0}", data);
 
+                    data.SetDelayLoad(false);
                     data = this.Update(connection, data, principal);
                     connection.SubmitChanges();
 
@@ -234,6 +240,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     throw new Exception(e.Message, e);
 
                 }
+                finally
+                {
+                    data.SetDelayLoad(true);
+                }
+
             }
         }
 
@@ -271,6 +282,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
 
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "OBSOLETE {0}", data);
 
+                    data.SetDelayLoad(false);
                     data = this.Obsolete(connection, data, principal);
                     connection.SubmitChanges();
 
@@ -290,6 +302,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     tx?.Rollback();
                     throw new Exception(e.Message, e);
                 }
+                finally
+                {
+                    data.SetDelayLoad(true);
+                }
+
             }
         }
 
@@ -358,14 +375,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     if (m_configuration.TraceSql)
                         connection.Log = new LinqTraceWriter();
 
-                    var results = this.Query(connection, query, authContext);
 
+                    var results = this.Query(connection, query, authContext);
                     var postData = new PostQueryEventArgs<TData>(query, results, authContext);
                     this.Queried?.Invoke(this, postData);
 
                     if (count == 1 && offset == 0)
                     {
-                        
                         var result = postData.Results.Take(1).ToList();
                         totalCount = result.Count;
                         this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Returning {0}..{1} or {2} results", offset, offset + (count ?? 1000), totalCount);
@@ -381,6 +397,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                             postData.Results = postData.Results.Take(count.Value);
 
                         var retVal = postData.Results.AsParallel().ToList();
+                        retVal.ForEach((o) => o.SetDelayLoad(true)); // Enable delay load for items
                         this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Returning {0}..{1} or {2} results", offset, offset + (count ?? 1000), totalCount);
                         return retVal;
                     }

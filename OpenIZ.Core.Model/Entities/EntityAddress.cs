@@ -42,7 +42,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         public EntityAddress(Guid useKey, String streetAddressLine, String city, String province, String country, String zipCode)
         {
-            this.AddressUseKey = useKey;
+            this.m_addressUseKey = useKey;
             this.Component = new List<EntityAddressComponent>();
             if (!String.IsNullOrEmpty(streetAddressLine))
                 this.Component.Add(new EntityAddressComponent(AddressComponentKeys.StreetAddressLine, streetAddressLine));
@@ -60,31 +60,46 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         public EntityAddress()
         {
-            this.Component = new List<EntityAddressComponent>();
+
         }
-        
+        // Address use key
+        private Guid? m_addressUseKey;
+        // Address use concept
+        private Concept m_addressUseConcept;
 
         /// <summary>
         /// Gets or sets the address use key
         /// </summary>
-        [DataIgnore, XmlElement("use"), JsonProperty("use")]
+        [XmlElement("use"), JsonProperty("use")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public Guid? AddressUseKey
         {
-            get { return this.AddressUse?.Key; }
+            get { return this.m_addressUseKey; }
             set
             {
-                if (this.AddressUse?.Key != value)
-                    this.AddressUse = this.EntityProvider?.Get<Concept>(value);
+                this.m_addressUseKey = value;
+                this.m_addressUseConcept = null;
             }
         }
 
         /// <summary>
         /// Gets or sets the address use
         /// </summary>
+        [SerializationReference(nameof(AddressUseKey))]
         [XmlIgnore, JsonIgnore]
         [AutoLoad]
-        public Concept AddressUse { get; set; }
+        public Concept AddressUse
+        {
+            get {
+                this.m_addressUseConcept = base.DelayLoad(this.m_addressUseKey, this.m_addressUseConcept);
+                return this.m_addressUseConcept;
+            }
+            set
+            {
+                this.m_addressUseConcept = value;
+                this.m_addressUseKey = value?.Key;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the component types
@@ -92,7 +107,6 @@ namespace OpenIZ.Core.Model.Entities
         [XmlElement("component"), JsonProperty("component")]
         [AutoLoad]
         public List<EntityAddressComponent> Component { get; set; }
-
 
     }
 }

@@ -42,7 +42,7 @@ namespace OpenIZ.Core.Model.EntityLoader
             /// </summary>
             public TObject Get<TObject>(Guid? key) where TObject : IdentifiedData, new()
             {
-                return new TObject() { Key = key, IsLogicalNull = true };
+                return new TObject() { Key = key };
             }
 
             /// <summary>
@@ -50,7 +50,7 @@ namespace OpenIZ.Core.Model.EntityLoader
             /// </summary>
             public TObject Get<TObject>(Guid? key, Guid? versionKey) where TObject : IdentifiedData, IVersionedEntity, new()
             {
-                return new TObject() { Key = key, VersionKey = versionKey, IsLogicalNull = true };
+                return new TObject() { Key = key, VersionKey = versionKey };
             }
 
             /// <summary>

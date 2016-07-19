@@ -35,11 +35,17 @@ namespace OpenIZ.Core.Model.Security
     /// <summary>
     /// Security user represents a user for the purpose of security 
     /// </summary>
-    [XmlType("SecurityUser", Namespace = "http://openiz.org/model"), JsonObject("SecurityUser")]
+    [XmlType("SecurityUser",  Namespace = "http://openiz.org/model"), JsonObject("SecurityUser")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "SecurityUser")]
     [KeyLookup(nameof(UserName))]
     public class SecurityUser : SecurityEntity
     {
+
+        
+        // Roles
+        private List<SecurityRole> m_roles;
+        // User entities
+        private List<Person> m_userEntities;
 
         /// <summary>
         /// Gets or sets the email address of the user
@@ -60,12 +66,12 @@ namespace OpenIZ.Core.Model.Security
         /// Gets or sets whether the account is locked out
         /// </summary>
         [XmlIgnore, JsonIgnore]
-		public DateTime? Lockout { get; set; }
+        public DateTime? Lockout { get; set; }
 
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
-        [DataIgnore, XmlElement("lockout"), JsonProperty("lockout")]
+        [XmlElement("lockout"), JsonProperty("lockout")]
         public String LockoutXml
         {
             get { return this.LastLoginTime?.ToString("o", CultureInfo.InvariantCulture); }
@@ -107,23 +113,36 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets the list of entities associated with this security user
         /// </summary>
-        [XmlIgnore, JsonIgnore, SerializationReference(nameof(EntityXml))]
-		public UserEntity Entity { get; set; }
+        [XmlIgnore,JsonIgnore]
+        public List<Person> Entities
+        {
+            get
+            {
+                if (this.IsDelayLoadEnabled)
+                    this.m_userEntities = EntitySource.Current.Provider.Query<UserEntity>(o => o.SecurityUserKey == this.Key && o.ObsoletionTime == null).OfType<Person>().ToList();
+                return this.m_userEntities;
+            }
+            set
+            {
+                this.m_userEntities = value;
+            }
+        }
 
         /// <summary>
         /// Concepts as identifiers for XML purposes only
         /// </summary>
-        [DataIgnore, XmlElement("entity"), JsonProperty("entity")]
-        public Guid? EntityXml
+        [XmlElement("entity"), JsonProperty("entity")]
+        
+        public List<Guid> EntitiesXml
         {
             get
             {
-                return this.Entity?.Key;
+                return this.Entities?.Where(o=>o.Key.HasValue).Select(o => o.Key.Value).ToList();
             }
             set
             {
-                if (this.Entity?.Key != value)
-                    this.Entity = this.EntityProvider?.Get<UserEntity>(value);
+                this.Entities = new List<Person>(value.Select(o => new Person() { Key = o }));
+                ; // nothing
             }
         }
 
@@ -131,12 +150,12 @@ namespace OpenIZ.Core.Model.Security
         /// The last login time
         /// </summary>
         [XmlIgnore, JsonIgnore]
-		public DateTimeOffset? LastLoginTime { get; set; }
-
+        public DateTimeOffset? LastLoginTime { get; set; }
+       
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
-        [DataIgnore, XmlElement("lastLoginTime"), JsonProperty("lastLoginTime")]
+        [XmlElement("lastLoginTime"), JsonProperty("lastLoginTime")]
         public String LastLoginTimeXml
         {
             get { return this.LastLoginTime?.ToString("o", CultureInfo.InvariantCulture); }
@@ -152,21 +171,21 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Represents roles
         /// </summary>
-        [XmlIgnore, JsonIgnore, SerializationReference(nameof(RolesXml))]
-		public List<SecurityRole> Roles { get; set; }
-
-        /// <summary>
-        /// Gets or sets the roles for XML
-        /// </summary>
-        [DataIgnore, XmlElement("role"), JsonProperty("role")]
-        public List<Guid> RolesXml {
-            get { return this.Roles?.Select(o => o.Key.Value).ToList(); }
+        [XmlIgnore, JsonIgnore]
+        
+        public List<SecurityRole> Roles {
+            get
+            {
+                if(this.IsDelayLoadEnabled && this.m_roles == null)
+                    this.m_roles = EntitySource.Current.Provider.Query<SecurityRole>(r => r.Users.Any(u => u.Key == this.Key)).ToList();
+                return this.m_roles;
+            }
             set
             {
-                this.Roles = value?.Select(p => this.EntityProvider?.Get<SecurityRole>(p)).ToList();
+                this.m_roles = value;
             }
         }
-
+      
         /// <summary>
         /// Gets or sets the patient's phone number
         /// </summary>
@@ -185,7 +204,14 @@ namespace OpenIZ.Core.Model.Security
         [XmlElement("userClass"), JsonProperty("userClass")]
         public Guid UserClass { get; set; }
 
-
+        /// <summary>
+        /// Forces delay load properties to be from the database
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_roles = null;
+        }
 
     }
 }

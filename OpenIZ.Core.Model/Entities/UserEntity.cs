@@ -19,7 +19,6 @@
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Constants;
-using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Model.Security;
 using System;
 using System.Collections.Generic;
@@ -38,29 +37,47 @@ namespace OpenIZ.Core.Model.Entities
     public class UserEntity : Person
     {
 
+        // Security user key
+        private Guid? m_securityUserKey;
+        // Security user
+        private SecurityUser m_securityUser;
 
         /// <summary>
         /// Gets or sets the security user key
         /// </summary>
-        [DataIgnore, XmlElement("securityUser"), JsonProperty("securityUser")]
+        [XmlElement("securityUser"), JsonProperty("securityUser")]
         public Guid? SecurityUserKey
         {
             get
             {
-                return this.SecurityUser?.Key;
+                return this.m_securityUserKey;
             }
             set
             {
-                if (this.SecurityUser?.Key != value)
-                    this.SecurityUser = this.EntityProvider?.Get<SecurityUser>(value);
+                this.m_securityUserKey = value;
+                this.m_securityUser = null;
             }
         }
 
         /// <summary>
         /// Gets or sets the security user key
         /// </summary>
-        [XmlIgnore, JsonIgnore, SerializationReference(nameof(SecurityUserKey))]
-		public SecurityUser SecurityUser { get; set; }
+        [XmlIgnore, JsonIgnore]
+        [SerializationReference(nameof(SecurityUserKey))]
+        public SecurityUser SecurityUser
+        {
+            get
+            {
+                if (this.IsDelayLoadEnabled)
+                    this.m_securityUser = base.DelayLoad(this.m_securityUserKey, this.m_securityUser);
+                return this.m_securityUser;
+            }
+            set
+            {
+                this.m_securityUser = value;
+                this.m_securityUserKey = value?.Key;
+            }
+        }
 
     }
 }

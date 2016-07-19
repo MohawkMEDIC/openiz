@@ -18,7 +18,6 @@
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
-using OpenIZ.Core.Model.EntityLoader;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -34,48 +33,93 @@ namespace OpenIZ.Core.Model.DataTypes
     public class ConceptRelationship : VersionedAssociation<Concept>
     {
 
+        // Target concept id
+        private Guid? m_targetConceptId;
+        // Target concept
+        
+        private Concept m_targetConcept;
+        // Relaltionship type id
+        private Guid? m_relationshipTypeId;
+        // Relationship type
+        
+        private ConceptRelationshipType m_relationshipType;
 
         /// <summary>
         /// Gets or sets the target concept identifier
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataIgnore, XmlElement("targetConcept"), JsonProperty("targetConcept")]
+        
+        [XmlElement("targetConcept"), JsonProperty("targetConcept")]
         public Guid? TargetConceptKey
         {
-            get { return this.TargetConcept?.Key; }
+            get { return this.m_targetConceptId; }
             set
             {
-                if (this.TargetConcept?.Key != value)
-                    this.TargetConcept = this.EntityProvider?.Get<Concept>(value);
+                this.m_targetConceptId = value;
+                this.m_targetConcept = null;
             }
         }
 
         /// <summary>
         /// Gets or sets the target concept
         /// </summary>
-        [XmlIgnore, JsonIgnore, SerializationReference(nameof(TargetConceptKey))]
-		public Concept TargetConcept { get; set; }
+        [SerializationReference(nameof(TargetConceptKey))]
+        [XmlIgnore, JsonIgnore]
+        public Concept TargetConcept
+        {
+            get
+            {
+                this.m_targetConcept = base.DelayLoad(this.m_targetConceptId, this.m_targetConcept);
+                return this.m_targetConcept;
+            }
+            set
+            {
+                this.m_targetConcept = value;
+                this.m_targetConceptId = value?.Key;
+            }
+        }
 
         /// <summary>
         /// Relationship type
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataIgnore, XmlElement("relationshipType"), JsonProperty("relationshipType")]
+        [XmlElement("relationshipType"), JsonProperty("relationshipType")]
         public Guid?  RelationshipTypeKey {
-            get { return this.RelationshipType?.Key; }
+            get { return this.m_relationshipTypeId; }
             set
             {
-                if (this.RelationshipType?.Key != value)
-                    this.RelationshipType = this.EntityProvider?.Get<ConceptRelationshipType>(value);
+                this.m_relationshipTypeId = value;
+                this.m_relationshipType = null;
             }
         }
 
         /// <summary>
         /// Gets or sets the relationship type
         /// </summary>
-        [XmlIgnore, JsonIgnore, SerializationReference(nameof(RelationshipTypeKey))]
-		public ConceptRelationshipType RelationshipType { get; set; }
+        [SerializationReference(nameof(RelationshipTypeKey))]
+        [XmlIgnore, JsonIgnore]
+        public ConceptRelationshipType RelationshipType
+        {
+            get
+            {
+                this.m_relationshipType = base.DelayLoad(this.m_relationshipTypeId, this.m_relationshipType);
+                return this.m_relationshipType;
+            }
+            set
+            {
+                this.m_relationshipType = value;
+                this.m_relationshipTypeId = value?.Key;
+            }
+        }
 
-
+        /// <summary>
+        /// Force reloading of delay load properties
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_relationshipType = null;
+            this.m_targetConcept = null;
+        }
     }
 }

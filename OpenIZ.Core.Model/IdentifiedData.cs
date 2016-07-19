@@ -17,7 +17,6 @@
  * Date: 2016-2-1
  */
 using Newtonsoft.Json;
-using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Model.Interfaces;
 using System;
@@ -40,39 +39,52 @@ namespace OpenIZ.Core.Model
     public abstract class IdentifiedData : IIdentifiedEntity
     {
 
-
-        // The source provider
-        private IEntitySourceProvider m_provider;
-
-        /// <summary>
-        /// Entity source
-        /// </summary>
-        public IdentifiedData()
-        {
-            this.Key = Guid.NewGuid();
-        }
+        // True when the data class is locked for storage
+        private bool m_delayLoad = false;
 
         /// <summary>
-        /// Gets or sets the entity source
+        /// True if the class is currently loading associations when accessed
         /// </summary>
-        [DataIgnore, XmlIgnore, JsonIgnore]
-        public IEntitySourceProvider EntityProvider
+        [XmlIgnore, JsonIgnore]
+        public bool IsDelayLoadEnabled
         {
             get
             {
-                return this.m_provider;
+                return this.m_delayLoad;
             }
-            set
+        }
+
+        /// <summary>
+        /// Set delay load
+        /// </summary>
+        public void SetDelayLoad(bool v)
+        {
+
+            if (this.m_delayLoad == v)
+                return;
+
+            List<FieldInfo> fields = new List<FieldInfo>();
+
+            Type typ = this.GetType();
+            
+            while (typ != typeof(Object))
             {
-                if (this.m_provider != value)
+                fields.AddRange(typ.GetRuntimeFields().Where(o=>!o.IsStatic && o.IsPrivate)); // ... Well now they know..
+                typ = typ.GetTypeInfo().BaseType;
+            }
+
+            this.m_delayLoad = v;
+            foreach (FieldInfo fi in fields)
+            {
+                object value = fi.GetValue(this);
+                if (value is IdentifiedData)
+                    (value as IdentifiedData).SetDelayLoad(v); // Let it go
+                else if (value is IList &&
+                    fi.FieldType.GenericTypeArguments.Length > 0 &&
+                    typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(fi.FieldType.GenericTypeArguments[0].GetTypeInfo()))
                 {
-                    foreach (var itm in this.GetType().GetRuntimeProperties().Where(p => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(p.PropertyType.GetTypeInfo())))
-                    {
-                        var cv = itm.GetValue(this) as IdentifiedData;
-                        if (cv != null)
-                            cv.m_provider = value;
-                    }
-                    this.m_provider = value;
+                    foreach (IdentifiedData itm in value as IList)
+                        itm.SetDelayLoad(v);
                 }
             }
         }
@@ -80,7 +92,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// The internal primary key value of the entity
         /// </summary>
-        [AutoLoad, XmlElement("id"), JsonProperty("id")]
+        [XmlElement("id"), JsonProperty("id")]
         public Guid? Key { get; set; }
 
         /// <summary>
@@ -95,7 +107,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets the type
         /// </summary>
-        [DataIgnore, XmlIgnore, JsonProperty("$type")]
+        [XmlIgnore, JsonProperty("$type")]
         public virtual String Type
         {
             get
@@ -104,21 +116,47 @@ namespace OpenIZ.Core.Model
             }
             set { }
         }
-        
+
+        /// <summary>
+        /// Get associated entity
+        /// </summary>
+        protected TEntity DelayLoad<TEntity>(Guid? keyReference, TEntity currentInstance) where TEntity : IdentifiedData, new()
+        {
+            if (currentInstance == null &&
+                this.m_delayLoad &&
+                keyReference.HasValue)
+                currentInstance = EntitySource.Current.Get<TEntity>(keyReference.Value);
+            return currentInstance;
+        }
+
+        /// <summary>
+        /// Force reloading of delay load properties
+        /// </summary>
+        public virtual void Refresh() { }
+
         /// <summary>
         /// Clone the specified data
         /// </summary>
         public IdentifiedData Clone()
         {
             var retVal = this.MemberwiseClone() as IdentifiedData;
+            retVal.m_delayLoad = true;
             return retVal;
         }
 
         /// <summary>
-        /// True if this is a placeholder
+        /// Clone the specified data
         /// </summary>
-        [DataIgnore, XmlIgnore, JsonIgnore]
-        public bool IsLogicalNull { get; internal set;  }
-      
+        public IdentifiedData GetLocked()
+        {
+            // Locked already?
+            if (this.m_delayLoad)
+            {
+                var retVal = this.MemberwiseClone() as IdentifiedData;
+                retVal.SetDelayLoad(false);
+                return retVal;
+            }
+            return this;
+        }
     }
 }

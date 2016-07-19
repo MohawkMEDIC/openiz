@@ -87,7 +87,6 @@ namespace OpenIZ.Core.Wcf.Serialization
             {
                 HttpRequestMessageProperty httpRequest = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
                 string contentType = httpRequest.Headers[HttpRequestHeader.ContentType];
-                ModelSettings.SourceProvider = new EntitySource.DummyEntitySource();
 
                 UriTemplateMatch templateMatch = (UriTemplateMatch)request.Properties.SingleOrDefault(o => o.Value is UriTemplateMatch).Value;
                 // Not found

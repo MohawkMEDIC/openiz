@@ -39,34 +39,36 @@ namespace OpenIZ.Core.Model
     public abstract class VersionedAssociation<TSourceType> : Association<TSourceType>, IVersionedAssociation where TSourceType : VersionedEntityData<TSourceType>, new()
     {
 
+        // The identifier of the version where this data is effective
+        private Decimal? m_effectiveVersionSequenceId;
+        // The identifier of the version where this data is no longer effective
+        private Decimal? m_obsoleteVersionSequenceId;
+        // The version where this data is effective
        
         /// <summary>
         /// Gets or sets the effective version of this type
         /// </summary>
         [XmlElement("effectiveVersionSequence"), JsonProperty("effectiveVersionSequence")]
-        public Decimal? EffectiveVersionSequenceId { get; set; }
+        public Decimal? EffectiveVersionSequenceId
+        {
+            get { return this.m_effectiveVersionSequenceId; }
+            set
+            {
+                this.m_effectiveVersionSequenceId = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the obsoleted version identifier
         /// </summary>
         [XmlElement("obsoleteVersionSequence"), JsonProperty("obsoleteVersionSequence")]
-        public Decimal? ObsoleteVersionSequenceId { get; set; }
-        
-        /// <summary>
-        /// Shoudl seralize
-        /// </summary>
-        /// <returns></returns>
-        public bool ShouldSerializeObsoleteVersionSequenceId()
+        public Decimal? ObsoleteVersionSequenceId
         {
-            return this.ObsoleteVersionSequenceId.HasValue;
-        }
-        /// <summary>
-        /// Should serialize
-        /// </summary>
-        /// <returns></returns>
-        public bool ShouldSerializeEffectiveVersionSequenceId()
-        {
-            return this.EffectiveVersionSequenceId.HasValue;
+            get { return this.m_obsoleteVersionSequenceId; }
+            set
+            {
+                this.m_obsoleteVersionSequenceId = value;
+            }
         }
 
     }

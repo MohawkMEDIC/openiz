@@ -1,0 +1,80 @@
+﻿using OpenIZ.Caching.Memory;
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OpenIZ.Core.Model.DataTypes;
+using System.Threading;
+
+namespace OpenIZ.Caching.Memory.Test
+{
+    [TestClass]
+    public class MemoryCacheTests
+    {
+
+        /// <summary>
+        /// This test will fill the cache with some data and then reduce the pressure on the cache
+        /// </summary>
+        [TestMethod()]
+        public void ReduceMemoryCachePressureTest()
+        {
+            MemoryCache.Current.Clear();
+            MemoryCache.Current.RegisterCacheType(typeof(AssigningAuthority), 10);
+            // Add some assigning authorities to the cache
+            for(int i = 0; i < 100; i++)
+                MemoryCache.Current.AddUpdateEntry(new AssigningAuthority(i.ToString(), i.ToString(), i.ToString()) { Key = Guid.NewGuid() });
+            Assert.AreEqual(100, MemoryCache.Current.GetSize(typeof(AssigningAuthority)));
+
+            // Add an entry
+            Thread.Sleep(1000); // Let some time pass
+            Guid knownKey = Guid.NewGuid();
+            MemoryCache.Current.AddUpdateEntry(new AssigningAuthority("SOMENEW", "SOMENEW", "SOMENEW") { Key = knownKey });
+            // Ensure added
+            Assert.AreEqual(101, MemoryCache.Current.GetSize(typeof(AssigningAuthority)));
+            Assert.IsNotNull(MemoryCache.Current.TryGetEntry(typeof(AssigningAuthority), knownKey));
+
+            // Now reduce pressure, should *not* reduce the size of the cache as not enough time has passed
+            MemoryCache.Current.ReducePressure();
+            Thread.Sleep(3000); // Give the memory cache threads time to clean
+            Assert.AreEqual(101, MemoryCache.Current.GetSize(typeof(AssigningAuthority)));
+
+            // Now set the min age to 2 seconds
+            MemoryCache.Current.SetMinAge(new TimeSpan(0, 0, 1));
+            MemoryCache.Current.ReducePressure(); // this should reduce to 10
+            Thread.Sleep(3000); // Give the memory cache threads time to clean
+            Assert.AreEqual(10, MemoryCache.Current.GetSize(typeof(AssigningAuthority)));
+            MemoryCache.Current.SetMinAge(new TimeSpan(0, 0, 30));
+
+        }
+
+        /// <summary>
+        /// Clean memory cache after elapsed time
+        /// </summary>
+        [TestMethod()]
+        public void CleanMemoryCacheTest()
+        {
+            MemoryCache.Current.Clear();
+            MemoryCache.Current.RegisterCacheType(typeof(CodeSystem), 10, new TimeSpan(0,0,5).Ticks);
+            // Add some assigning authorities to the cache
+            for (int i = 0; i < 50; i++)
+                MemoryCache.Current.AddUpdateEntry(new CodeSystem(i.ToString(), i.ToString(), i.ToString()) { Key = Guid.NewGuid() });
+            Assert.AreEqual(50, MemoryCache.Current.GetSize(typeof(CodeSystem)));
+            Thread.Sleep(2000); // Let some time pass
+            Guid knownKey = Guid.NewGuid();
+            MemoryCache.Current.AddUpdateEntry(new CodeSystem("SOMENEW", "SOMENEW", "SOMENEW") { Key = knownKey });
+            // Ensure added
+            Assert.AreEqual(51, MemoryCache.Current.GetSize(typeof(CodeSystem)));
+            Assert.IsNotNull(MemoryCache.Current.TryGetEntry(typeof(CodeSystem), knownKey));
+
+            // Try to clean, shouldn't do anything everything still valid
+            MemoryCache.Current.Clean();
+            Thread.Sleep(3000); // Give the memory cache threads time to clean
+            Assert.AreEqual(51, MemoryCache.Current.GetSize(typeof(CodeSystem)));
+
+            // Now set the min age to 2 seconds
+            // Since we last cleaned there should now be some data to clean
+            MemoryCache.Current.Clean();
+            Thread.Sleep(2000); // Give the memory cache threads time to clean
+            Assert.AreEqual(1, MemoryCache.Current.GetSize(typeof(CodeSystem)));
+        }
+
+    }
+}

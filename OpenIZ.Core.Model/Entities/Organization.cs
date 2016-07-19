@@ -27,7 +27,6 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -40,7 +39,12 @@ namespace OpenIZ.Core.Model.Entities
     public class Organization : Entity
     {
 
-       
+        // Industry concept
+        private Guid? m_industryConceptKey;
+        // Industry Concept
+        
+        private Concept m_industryConcept;
+
         /// <summary>
         /// Organization ctor
         /// </summary>
@@ -55,22 +59,42 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataIgnore, XmlElement("industryConcept"), JsonProperty("industryConcept")]
+        [XmlElement("industryConcept"), JsonProperty("industryConcept")]
         public Guid? IndustryConceptKey
         {
-            get { return this.IndustryConcept?.Key; }
+            get { return this.m_industryConceptKey; }
             set
             {
-                if (this.IndustryConcept?.Key != value)
-                    this.IndustryConcept = this.EntityProvider?.Get<Concept>(value);
+                this.m_industryConceptKey = value;
+                this.m_industryConcept = null;
             }
         }
 
         /// <summary>
         /// Gets or sets the industry in which the organization operates
         /// </summary>
-        [XmlIgnore, JsonIgnore, SerializationReference(nameof(IndustryConceptKey))]
-		public Concept IndustryConcept { get; set; }
+        [SerializationReference(nameof(IndustryConceptKey))]
+        [XmlIgnore, JsonIgnore]
+        public Concept IndustryConcept
+        {
+            get {
+                this.m_industryConcept = base.DelayLoad(this.m_industryConceptKey, this.m_industryConcept);
+                return this.m_industryConcept;
+            }
+            set {
+                this.m_industryConcept = value;
+                this.m_industryConceptKey = value?.Key;
+            }
+        }
 
+
+        /// <summary>
+        /// Forces reload of delay load properties
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_industryConcept = null;
+        }
     }
 }

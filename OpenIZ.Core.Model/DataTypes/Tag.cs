@@ -27,7 +27,6 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Interfaces;
-using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -51,13 +50,47 @@ namespace OpenIZ.Core.Model.DataTypes
         [XmlElement("value"), JsonProperty("value")]
         public String Value { get; set; }
 
+        // Target entity key
+        private Guid? m_sourceEntityKey;
+        // The target entity
+
+        private TSourceType m_sourceEntity;
+
         /// <summary>
         /// Gets or sets the source entity's key (where the relationship is FROM)
         /// </summary>
         [XmlElement("source"), JsonProperty("source")]
-        public virtual Guid? SourceEntityKey { get; set; }
+        public virtual Guid? SourceEntityKey
+        {
+            get
+            {
+                return this.m_sourceEntityKey;
+            }
+            set
+            {
+                this.m_sourceEntityKey = value;
+                this.m_sourceEntity = null;
+            }
+        }
 
-      
+        /// <summary>
+        /// The entity that this relationship targets
+        /// </summary>
+        [SerializationReference(nameof(SourceEntityKey))]
+        [XmlIgnore, JsonIgnore]
+        public TSourceType SourceEntity
+        {
+            get
+            {
+                this.m_sourceEntity = this.DelayLoad(this.m_sourceEntityKey, this.m_sourceEntity);
+                return this.m_sourceEntity;
+            }
+            set
+            {
+                this.m_sourceEntity = value;
+                this.m_sourceEntityKey = value?.Key;
+            }
+        }
     }
 
     /// <summary>

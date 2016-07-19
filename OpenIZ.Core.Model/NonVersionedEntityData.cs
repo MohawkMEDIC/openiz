@@ -18,7 +18,6 @@
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
-using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Model.Security;
 using System;
 using System.Collections.Generic;
@@ -39,12 +38,16 @@ namespace OpenIZ.Core.Model
     public class NonVersionedEntityData : BaseEntityData
     {
 
+        // The updated by id
+        private Guid? m_updatedById;
+        // The updated by user
+        private SecurityUser m_updatedBy;
 
         /// <summary>
         /// Updated time
         /// </summary>
         [XmlIgnore, JsonIgnore]
-		public DateTimeOffset? UpdatedTime { get; set; }
+        public DateTimeOffset? UpdatedTime { get; set; }
 
 
         /// <summary>
@@ -66,10 +69,20 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the user that updated this base data
         /// </summary>
-        [AutoLoad, XmlIgnore, JsonIgnore, SerializationReference(nameof(UpdatedByKey))]
-		public SecurityUser UpdatedBy
+        
+        [XmlIgnore, JsonIgnore]
+        public SecurityUser UpdatedBy
         {
-            get;set;
+            get
+            {
+                this.m_updatedBy = base.DelayLoad(this.m_updatedById, this.m_updatedBy);
+                return m_updatedBy;
+            }
+            set
+            {
+                this.m_updatedBy = value;
+                this.m_updatedById = value?.Key;
+            }
         }
 
         /// <summary>
@@ -77,19 +90,18 @@ namespace OpenIZ.Core.Model
         /// </summary>
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataIgnore, XmlElement("updatedBy"), JsonProperty("updatedBy")]
+        [XmlElement("updatedBy"), JsonProperty("updatedBy")]
         public Guid? UpdatedByKey
         {
-            get
-            {
-                return this.UpdatedBy?.Key;
-            }
+            get { return this.m_updatedById; }
             set
             {
-                if (this.UpdatedBy?.Key != value)
-                    this.UpdatedBy = this.EntityProvider?.Get<SecurityUser>(value);
+                if (this.m_updatedById != value)
+                    this.m_updatedBy = null;
+                this.m_updatedById = value;
             }
         }
+
 
         /// <summary>
         /// True if key should be serialized
@@ -100,6 +112,13 @@ namespace OpenIZ.Core.Model
             return this.UpdatedByKey.HasValue;
         }
 
-
+        /// <summary>
+        /// Forces refresh
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_updatedBy = null;
+        }
     }
 }

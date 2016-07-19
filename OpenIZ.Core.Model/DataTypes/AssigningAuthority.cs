@@ -85,23 +85,41 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Assigning device identifier
         /// </summary>
-        [DataIgnore, XmlElement("assigningDevice"), JsonProperty("assigningDevice")]
+        [XmlElement("assigningDevice"), JsonProperty("assigningDevice")]
         public Guid? AssigningDeviceKey
         {
-            get { return this.AssigningDevice?.Key; }
+            get { return this.m_assigningDeviceId; }
             set
             {
-                if (this.AssigningDevice?.Key != value)
-                    this.AssigningDevice = this.EntityProvider?.Get<SecurityDevice>(value);
+                this.m_assigningDeviceId = value;
+                this.m_assigningDevice = null;
             }
         }
         
         /// <summary>
         /// Gets or sets the assigning device
         /// </summary>
-        [XmlIgnore, JsonIgnore, SerializationReference(nameof(AssigningDeviceKey))]
-		public SecurityDevice AssigningDevice { get; set; }
+        [XmlIgnore, JsonIgnore]
+        public SecurityDevice AssigningDevice {
+            get
+            {
+                this.m_assigningDevice = base.DelayLoad(this.m_assigningDeviceId, this.m_assigningDevice);
+                return this.m_assigningDevice;
+            }
+            set
+            {
+                this.m_assigningDevice = value;
+                this.m_assigningDeviceId = value?.Key;
+            }
+        }
 
-
+        /// <summary>
+        /// Force reloading of delay load properties
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_assigningDevice = null;
+        }
     }
 }

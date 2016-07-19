@@ -18,7 +18,6 @@
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
-using OpenIZ.Core.Model.EntityLoader;
 using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -32,47 +31,91 @@ namespace OpenIZ.Core.Model.DataTypes
     [XmlType("ConceptReferenceTerm",  Namespace = "http://openiz.org/model"), JsonObject("ConceptReferenceTerm")]
     public class ConceptReferenceTerm : VersionedAssociation<Concept>
     {
-     
+        // Reference term id
+        private Guid? m_referenceTermId;
+        // Reference term
+        
+        private ReferenceTerm m_referenceTerm;
+        // ConceptRelationship type
+        private Guid? m_relationshipTypeId;
+        // Relationship type
+        
+        private ConceptRelationshipType m_relationshipType;
 
         /// <summary>
         /// Gets or sets the reference term identifier
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataIgnore, XmlElement("referenceTerm"), JsonProperty("referenceTerm")]
+        
+        [XmlElement("referenceTerm"), JsonProperty("referenceTerm")]
         public Guid?  ReferenceTermKey {
-            get { return this.ReferenceTerm?.Key; }
+            get { return this.m_referenceTermId; }
             set
             {
-                if (this.ReferenceTerm?.Key != value)
-                    this.ReferenceTerm = this.EntityProvider?.Get<ReferenceTerm>(value);
+                this.m_referenceTerm = null;
+                this.m_referenceTermId = value;
             }
         }
 
         /// <summary>
         /// Gets or set the reference term
         /// </summary>
-        [AutoLoad, XmlIgnore, JsonIgnore, SerializationReference(nameof(ReferenceTermKey))]
-		public ReferenceTerm ReferenceTerm { get; set; }
+        [SerializationReference(nameof(ReferenceTermKey))]
+        [XmlIgnore, JsonIgnore]
+        public ReferenceTerm ReferenceTerm
+        {
+            get
+            {
+                this.m_referenceTerm = base.DelayLoad(this.m_referenceTermId, this.m_referenceTerm);
+                return this.m_referenceTerm;
+            }
+            set
+            {
+                this.m_referenceTerm = value;
+                this.m_referenceTermId = value?.Key;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the relationship type identifier
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataIgnore, XmlElement("relationshipType"), JsonProperty("relationshipType")]
+        [XmlElement("relationshipType"), JsonProperty("relationshipType")]
         public Guid?  RelationshipTypeKey {
-            get { return this.RelationshipType?.Key; }
+            get { return this.m_relationshipTypeId; }
             set
             {
-                if (this.RelationshipType?.Key != value)
-                    this.RelationshipType = this.EntityProvider?.Get<ConceptRelationshipType>(value);
+                this.m_relationshipTypeId = value;
+                this.m_relationshipType = null;
             }
         }
 
         /// <summary>
         /// Gets or sets the relationship type
         /// </summary>
-        [AutoLoad, XmlIgnore, JsonIgnore, SerializationReference(nameof(RelationshipTypeKey))]
-		public ConceptRelationshipType RelationshipType { get; set; }
+        [XmlIgnore, JsonIgnore]
+        [SerializationReference(nameof(RelationshipTypeKey))]
+        public ConceptRelationshipType RelationshipType {
+            get
+            {
+                this.m_relationshipType = base.DelayLoad(this.m_relationshipTypeId, this.m_relationshipType);
+                return this.m_relationshipType;
+            }
+            set
+            {
+                this.m_relationshipType = value;
+                this.m_relationshipTypeId = value?.Key;
+            }
+        }
 
+        /// <summary>
+        /// Refresh the specified object
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_referenceTerm = null;
+            this.m_relationshipType = null;
+        }
     }
 }

@@ -198,6 +198,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             data.DeterminerConcept?.EnsureExists(context, principal);
             data.StatusConcept?.EnsureExists(context, principal);
             data.TypeConcept?.EnsureExists(context, principal);
+            data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
+            data.DeterminerConceptKey = data.DeterminerConcept?.Key ?? data.DeterminerConceptKey;
+            data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
+            data.TypeConceptKey = data.TypeConcept?.Key ?? data.TypeConceptKey;
 
             var retVal = base.Update(context, data, principal);
 

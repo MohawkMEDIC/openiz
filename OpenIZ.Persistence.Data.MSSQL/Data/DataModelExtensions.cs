@@ -204,6 +204,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         }
 
         /// <summary>
+        /// Updates a keyed delay load field if needed
+        /// </summary>
+        public static void UpdateParentKeys(this IIdentifiedEntity instance, PropertyInfo field)
+        {
+            var delayLoadProperty = field.GetCustomAttribute<SerializationReferenceAttribute>();
+            if (delayLoadProperty == null || String.IsNullOrEmpty(delayLoadProperty.RedirectProperty))
+                return;
+            var value = field.GetValue(instance) as IIdentifiedEntity;
+            if (value == null)
+                return;
+            // Get the delay load key property!
+            var keyField = instance.GetType().GetRuntimeProperty(delayLoadProperty.RedirectProperty);
+            keyField.SetValue(instance, value.Key);
+        }
+
+        /// <summary>
         /// Ensures a model has been persisted
         /// </summary>
         public static void EnsureExists(this IIdentifiedEntity me, ModelDataContext context, IPrincipal principal) 
@@ -219,7 +235,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
             var idpInstance = ApplicationContext.Current.GetService(idpType);
             
             // Existing exists?
-            if (existing != null && !me.IsLogicalNull)
+            if (existing != null && me.Key.HasValue)
             {
                 // Exists but is an old version
                 if ((existing as IVersionedEntity)?.VersionKey != vMe?.VersionKey &&
@@ -236,7 +252,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
                     }
                 }
             }
-            else if(!me.IsLogicalNull) // Insert
+            else // Insert
             {
                 var insertMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Insert" && o.GetParameters().Length == 3 && o.GetParameters()[0].ParameterType == typeof(ModelDataContext));
                 if (insertMethod != null)

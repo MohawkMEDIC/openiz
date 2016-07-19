@@ -41,6 +41,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Ensure exists
             data.Class?.EnsureExists(context, principal);
             data.StatusConcept?.EnsureExists(context, principal);
+            data.ClassKey = data.Class?.Key ?? data.ClassKey;
+            data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
 
             // Persist
             var retVal = base.Insert(context, data, principal);

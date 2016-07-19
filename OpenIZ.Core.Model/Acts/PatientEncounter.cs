@@ -27,7 +27,6 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Model.Acts
 {
@@ -40,6 +39,10 @@ namespace OpenIZ.Core.Model.Acts
     public class PatientEncounter : Act
     {
 
+        // Disposition key
+        private Guid? m_dischargeDispositionKey;
+        // Disposition
+        private Concept m_dischargeDisposition;
 
         /// <summary>
         /// Patient encounter ctor
@@ -53,23 +56,44 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the key of discharge disposition
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [DataIgnore, XmlElement("dischargeDisposition"), JsonProperty("dischargeDisposition")]
+        
+        [XmlElement("dischargeDisposition"), JsonProperty("dischargeDisposition")]
         public Guid? DischargeDispositionKey
         {
-            get { return this.DischargeDisposition?.Key; }
+            get { return this.m_dischargeDispositionKey; }
             set
             {
-                if (this.DischargeDisposition?.Key != value)
-                    this.DischargeDisposition = this.EntityProvider?.Get<Concept>(value);
+                this.m_dischargeDispositionKey = value;
+                this.m_dischargeDisposition = null;
             }
         }
 
         /// <summary>
         /// Gets or sets the discharge disposition (how the patient left the encounter
         /// </summary>
-        [XmlIgnore, JsonIgnore, SerializationReference(nameof(DischargeDispositionKey))]
-		public Concept DischargeDisposition { get; set; }
+        [XmlIgnore, JsonIgnore]
+        [SerializationReference(nameof(DischargeDispositionKey))]
+        public Concept DischargeDisposition
+        {
+            get
+            {
+                this.m_dischargeDisposition = base.DelayLoad(this.m_dischargeDispositionKey, this.m_dischargeDisposition);
+                return this.m_dischargeDisposition;
+            }
+            set
+            {
+                this.m_dischargeDisposition = value;
+                this.m_dischargeDispositionKey = value?.Key;
+            }
+        }
 
-
+        /// <summary>
+        /// Refresh forcing delay load
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_dischargeDisposition = null;
+        }
     }
 }

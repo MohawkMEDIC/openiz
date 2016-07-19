@@ -39,7 +39,6 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets the phonetic algorithm which is the "empty" algorithm
         /// </summary>
-        [DataIgnore, XmlIgnore, JsonIgnore]
         public static PhoneticAlgorithm EmptyAlgorithm
         {
             get

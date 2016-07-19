@@ -312,8 +312,6 @@ namespace OpenIZ.Core.Model.Map
 
             // Set the identity source
             IEntitySourceProvider currentProvider = null;
-            if (modelInstance is IdentifiedData)
-                currentProvider = (modelInstance as IdentifiedData).EntityProvider;
 
 
             ClassMap classMap = this.m_mapFile.GetModelClassMap(typeof(TModel), typeof(TDomain));
@@ -383,10 +381,6 @@ namespace OpenIZ.Core.Model.Map
 
             }
 
-            // Entity provider re-assign
-            if (modelInstance is IdentifiedData)
-                (modelInstance as IdentifiedData).EntityProvider = currentProvider;
-
             return retVal;
         }
 
@@ -454,14 +448,10 @@ namespace OpenIZ.Core.Model.Map
                 // no need to load?
                 if (modelPropertyInfo == null)
                     continue;
-                else if (ModelSettings.DeepLoadObject &&
-                    modelPropertyInfo.GetCustomAttribute<DataIgnoreAttribute>() != null ||
+                else if (modelPropertyInfo.GetCustomAttribute<DataIgnoreAttribute>() != null ||
                     modelPropertyInfo.GetCustomAttribute<AutoLoadAttribute>() == null &&
-                    !primitives.Contains(modelPropertyInfo.PropertyType) && !modelPropertyInfo.PropertyType.GetTypeInfo().IsEnum)
-                    continue;
-                else if (!ModelSettings.DeepLoadObject && 
-                    !primitives.Contains(modelPropertyInfo.PropertyType) &&
-                    modelPropertyInfo.GetCustomAttribute<AutoLoadAttribute>() == null)
+                    !primitives.Contains(modelPropertyInfo.PropertyType) && !modelPropertyInfo.PropertyType.GetTypeInfo().IsEnum 
+                    || !modelPropertyInfo.CanWrite)
                     continue;
 
                 // Map property
@@ -630,10 +620,7 @@ namespace OpenIZ.Core.Model.Map
                 keyStack.Remove(idEnt.Key.Value);
                 FireMappedToModel(this, idEnt.Key ?? Guid.Empty, retVal as IdentifiedData);
             }
-
-            // Set the identity source
-            if(retVal is IdentifiedData)
-                (retVal as IdentifiedData).EntityProvider = ModelSettings.SourceProvider;
+            (retVal as IdentifiedData).SetDelayLoad(true);
 
             return retVal;
         }

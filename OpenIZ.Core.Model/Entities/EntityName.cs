@@ -36,13 +36,18 @@ namespace OpenIZ.Core.Model.Entities
     [XmlType("EntityName",  Namespace = "http://openiz.org/model"), JsonObject("EntityName")]
     public class EntityName : VersionedAssociation<Entity>
     {
-       
+        // Name use key
+        private Guid? m_nameUseKey;
+        // Name use concept
+        
+        private Concept m_nameUseConcept;
+
         /// <summary>
         /// Creates a new name
         /// </summary>
         public EntityName(Guid nameUse, String family, params String[] given)
         {
-            this.NameUseKey = nameUse;
+            this.m_nameUseKey = nameUse;
             this.Component = new List<EntityNameComponent>();
 
             if (!String.IsNullOrEmpty(family))
@@ -58,7 +63,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <param name="name"></param>
         public EntityName(Guid nameUse, String name)
         {
-            this.NameUseKey = nameUse;
+            this.m_nameUseKey = nameUse;
             this.Component = new List<EntityNameComponent>()
             {
                 new EntityNameComponent(name)
@@ -70,39 +75,58 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         public EntityName()
         {
-            this.Component = new List<EntityNameComponent>();
+
         }
 
         /// <summary>
         /// Gets or sets the name use key
         /// </summary>
-        [DataIgnore, XmlElement("use"), JsonProperty("use")]
+        [XmlElement("use"), JsonProperty("use")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         public Guid? NameUseKey
         {
-            get { return this.NameUse?.Key; }
+            get { return this.m_nameUseKey; }
             set
             {
-                if (this.NameUse?.Key != value)
-                    this.NameUse = this.EntityProvider?.Get<Concept>(value);
+                this.m_nameUseKey = value;
+                this.m_nameUseConcept = null;
             }
         }
 
         /// <summary>
         /// Gets or sets the name use
         /// </summary>
+        [SerializationReference(nameof(NameUseKey))]
         [XmlIgnore, JsonIgnore]
-        [AutoLoad, SerializationReference(nameof(NameUseKey))]
-        public Concept NameUse { get; set; }
+        [AutoLoad]
+        public Concept NameUse
+        {
+            get {
+                this.m_nameUseConcept = base.DelayLoad(this.m_nameUseKey, this.m_nameUseConcept);
+                return this.m_nameUseConcept;
+            }
+            set
+            {
+                this.m_nameUseConcept = value;
+                this.m_nameUseKey = value?.Key;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the component types
         /// </summary>
+        
         [XmlElement("component"), JsonProperty("component")]
         [AutoLoad]
         public List<EntityNameComponent> Component { get; set; }
 
-
+        /// <summary>
+        /// Refreshes the underlying content
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_nameUseKey = null;
+        }
     }
 }
