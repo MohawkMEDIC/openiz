@@ -93,7 +93,7 @@ namespace OpenIZ.Core.Http
             
             if (this.Credentials == null && 
                 this.Description.Binding.Security?.CredentialProvider != null &&
-                this.Description.Binding.Security?.PreemtiveAuthentication == true)
+                this.Description.Binding.Security?.PremptiveAuthentication == true)
                 this.Credentials = this.Description.Binding.Security.CredentialProvider.GetCredentials(this);
 
 			if (this.Credentials != null)

@@ -32,7 +32,7 @@
         /// <summary>
         /// When true instructs the client to pre-emptively authenticate itself
         /// </summary>
-        bool PreemtiveAuthentication { get; set; }
+        bool PremptiveAuthentication { get; set; }
     }
 
 	/// <summary>
