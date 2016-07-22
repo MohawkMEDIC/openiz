@@ -42,3 +42,9 @@ INSERT INTO SecurityApplicationPolicy(ApplicationId, PolicyId, PolicyAction)
 		SecurityApplication, Policy
 	WHERE
 		SecurityApplication.ApplicationPublicId = 'org.openiz.openiz_mobile';
+
+INSERT INTO SecurityDevice (DeviceId, DeviceSecret, DevicePublicId, CreatedBy)		
+	VALUES ('F90F1488-F3CC-4357-9462-7CE3AB12B148', 'device_secret', 'device_public_id', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+
+INSERT INTO AssigningAuthority (AssigningAuthorityId, Name, Oid, HL7CX4, Url, AssigningDeviceId, [Description], CreatedBy)
+		VALUES ('32904B2D-C287-478E-BE2C-0E365E672D96', 'Test', '1.3.6.1.4.1.33349.3.1.5.9.2.10000', 'Test', 'http://marc-hi.ca', 'F90F1488-F3CC-4357-9462-7CE3AB12B148', 'Testing Device', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
