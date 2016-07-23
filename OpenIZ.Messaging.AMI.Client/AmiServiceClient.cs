@@ -45,6 +45,11 @@ namespace OpenIZ.Messaging.AMI.Client
         {
         }
 
+		public SubmissionResult AcceptCertificateSigningRequest(string id)
+		{
+			return this.Client.Put<object, SubmissionResult>(string.Format("csr/{0}", id), this.Client.Accept, null);
+		}
+
 		/// <summary>
 		/// Creates a role in the IMS.
 		/// </summary>
