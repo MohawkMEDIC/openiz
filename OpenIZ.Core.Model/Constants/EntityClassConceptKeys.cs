@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using System.Collections.Generic;
@@ -76,7 +77,7 @@ namespace OpenIZ.Core.Model.Constants
         /// <summary>
         /// State
         /// </summary>
-        public static readonly Guid State = Guid.Parse("6B82E7F0-08BF-46DB-BDCF-95F69592E3BF");
+        public static readonly Guid State = Guid.Parse("8CF4B0B0-84E5-4122-85FE-6AFA8240C218");
         /// <summary>
         /// Container
         /// </summary>

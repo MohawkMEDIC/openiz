@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
@@ -29,9 +30,9 @@ namespace OpenIZ.Core.Model.Entities
     /// A generic class representing components of a larger item (i.e. address, name, etc);
     /// </summary>
     /// <typeparam name="TBoundModel"></typeparam>
-    [Classifier(nameof(ComponentType))]
+    [Classifier(nameof(ComponentType)), SimpleValue(nameof(Value))]
     [XmlType(Namespace = "http://openiz.org/model")]
-    public abstract class GenericComponentValues<TBoundModel> : Association<TBoundModel> where TBoundModel : IdentifiedData
+    public abstract class GenericComponentValues<TBoundModel> : Association<TBoundModel> where TBoundModel : IdentifiedData, new()
     {
         // Component type
         private Guid? m_componentTypeKey;
@@ -69,7 +70,6 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("type"), JsonProperty("type")]
-        [Unique]
         public Guid? ComponentTypeKey
         {
             get { return this.m_componentTypeKey; }
@@ -84,7 +84,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the type of address component
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(ComponentTypeKey))]
+        [SerializationReference(nameof(ComponentTypeKey)), AutoLoad]
         public Concept ComponentType
         {
             get {
@@ -103,7 +103,6 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the value of the name component
         /// </summary>
         [XmlElement("value"), JsonProperty("value")]
-        [Unique]
         public String Value { get; set; }
 
         /// <summary>

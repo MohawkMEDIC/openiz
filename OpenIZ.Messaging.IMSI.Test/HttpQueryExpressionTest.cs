@@ -1,4 +1,25 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-22
+ */
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.Roles;
 using System;
@@ -45,6 +66,45 @@ namespace OpenIZ.Messaging.IMSI.Test
             Assert.AreEqual("id=00000000-0000-0000-0000-000000000000", expression);
         }
 
+        /// <summary>
+        /// Test query by key
+        /// </summary>
+        [TestMethod]
+        public void TestChainedParse()
+        {
+            Guid id = Guid.Empty;
+            var qstr = "classConcept.mnemonic=GenderCode&statusConcept.mnemonic=ACTIVE";
+            
+            var query = QueryExpressionParser.BuildLinqExpression<Place>(NameValueCollection.ParseQueryString(qstr));
+
+
+
+        }
+        /// <summary>
+        /// Test query by key
+        /// </summary>
+        [TestMethod]
+        public void TestChainedWriter()
+        {
+            Guid id = Guid.Empty;
+            var query = QueryExpressionBuilder.BuildQuery<Place>(o => o.ClassConcept.Mnemonic == "GenderCode" && o.StatusConcept.Mnemonic =="ACTIVE");
+            var expression = CreateQueryString(query.ToArray());
+            Assert.AreEqual("classConcept.mnemonic=GenderCode&statusConcept.mnemonic=ACTIVE", expression);
+
+
+        }
+        /// <summary>
+        /// Test query by key
+        /// </summary>
+        [TestMethod]
+        public void TestChainedWriter2()
+        {
+            Guid id = Guid.Empty;
+            var query = QueryExpressionBuilder.BuildQuery<Concept>(o => o.ConceptSets.Any(p=>p.Mnemonic == "GenderCode"));
+            var expression = CreateQueryString(query.ToArray());
+            Assert.AreEqual("conceptSet.mnemonic=GenderCode", expression);
+
+        }
         /// <summary>
         /// Test query by key
         /// </summary>
@@ -119,6 +179,7 @@ namespace OpenIZ.Messaging.IMSI.Test
             Assert.AreEqual("dateOfBirth=%3C0001-01-01T00%3A00%3A00.0000000", expression);
 
         }
+       
 
         /// <summary>
         /// Test write of lookup greater than equal to
@@ -162,6 +223,17 @@ namespace OpenIZ.Messaging.IMSI.Test
             var query = QueryExpressionBuilder.BuildQuery<Patient>(o => o.Names.Any(p => p.NameUse.Mnemonic == "Legal" && p.Component.Any(n=>n.Value == "Smith")));
             var expression = CreateQueryString(query.ToArray());
             Assert.AreEqual("name.use.mnemonic=Legal&name.component.value=Smith", expression);
+        }
+
+        /// <summary>
+        /// Test write of Any correctly
+        /// </summary>
+        [TestMethod]
+        public void TestWriteLookupWhereAnd()
+        {
+            var query = QueryExpressionBuilder.BuildQuery<Patient>(o => o.Names.Where(p => p.NameUse.Mnemonic == "Legal").Any(p => p.Component.Any(n => n.Value == "Smith")));
+            var expression = CreateQueryString(query.ToArray());
+            Assert.AreEqual("name[Legal].component.value=Smith", expression);
         }
     }
 }

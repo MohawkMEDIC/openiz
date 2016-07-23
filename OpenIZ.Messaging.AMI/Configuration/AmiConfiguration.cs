@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,27 +14,19 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: Nityan
- * Date: 2016-6-17
+ * User: justi
+ * Date: 2016-6-22
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace OpenIZ.Messaging.AMI.Configuration
 {
-    /// <summary>
-    /// AMI Configuration
-    /// </summary>
-    public class AmiConfiguration
-    {
-
-        /// <summary>
-        /// Certification authority configuration
-        /// </summary>
-        public CertificationAuthorityConfiguration CaConfiguration { get; set; }
-
-    }
+	/// <summary>
+	/// AMI Configuration
+	/// </summary>
+	public class AmiConfiguration
+	{
+		/// <summary>
+		/// Certification authority configuration
+		/// </summary>
+		public CertificationAuthorityConfiguration CaConfiguration { get; set; }
+	}
 }

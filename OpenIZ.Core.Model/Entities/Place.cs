@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Constants;
@@ -39,9 +40,6 @@ namespace OpenIZ.Core.Model.Entities
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Place")]
     public class Place : Entity
     {
-        // Servics
-        
-        private List<PlaceService> m_services;
 
         /// <summary>
         /// Place ctor
@@ -50,15 +48,15 @@ namespace OpenIZ.Core.Model.Entities
         {
             base.ClassConceptKey = EntityClassKeys.Place;
             base.DeterminerConceptKey = DeterminerKeys.Specific;
+            this.Services = new List<PlaceService>();
         }
 
         /// <summary>
         /// Gets or sets the class concept key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         [XmlElement("classConcept"), JsonProperty("classConcept")]
-        public override Guid ClassConceptKey
+        public override Guid? ClassConceptKey
         {
             get
             {
@@ -100,30 +98,8 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets the services
         /// </summary>
-        [DelayLoad(null)]
-        [XmlElement("service"), JsonProperty("service")]
-        public List<PlaceService> Services
-        {
-            get
-            {
-                if (this.m_services == null)
-                    this.m_services = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, m_services);
-                return this.m_services;
-            }
-            set
-            {
-                this.m_services = value;
-            }
-        }
-
-        /// <summary>
-        /// Refresh the place entity
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_services = null;
-        }
+        [AutoLoad, XmlElement("service"), JsonProperty("service")]
+        public List<PlaceService> Services { get; set; }
 
     }
 }

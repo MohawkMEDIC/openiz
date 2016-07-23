@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
@@ -37,15 +38,40 @@ namespace OpenIZ.Core.Model.Acts
     public class ActRelationship : VersionedAssociation<Act>
     {
         // The entity key
-        private Guid m_targetActKey;
+        private Guid? m_targetActKey;
         // The target entity
         
         private Act m_targetAct;
         // The association type key
-        private Guid m_relationshipTypeKey;
+        private Guid? m_relationshipTypeKey;
         // The association type
         
         private Concept m_relationshipType;
+
+        /// <summary>
+        /// Default constructor for entity relationship
+        /// </summary>
+        public ActRelationship()
+        {
+        }
+
+        /// <summary>
+        /// Entity relationship between <paramref name="source"/> and <paramref name="target"/>
+        /// </summary>
+        public ActRelationship(Guid? relationshipType, Act target)
+        {
+            this.RelationshipTypeKey = relationshipType;
+            this.TargetAct = target;
+        }
+
+        /// <summary>
+        /// Entity relationship between <paramref name="source"/> and <paramref name="target"/>
+        /// </summary>
+        public ActRelationship(Guid? relationshipType, Guid? targetKey)
+        {
+            this.RelationshipTypeKey = relationshipType;
+            this.TargetActKey = targetKey;
+        }
 
         /// <summary>
         /// The target of the association
@@ -53,7 +79,7 @@ namespace OpenIZ.Core.Model.Acts
         [XmlElement("target"), JsonProperty("target")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        public Guid TargetActKey
+        public Guid? TargetActKey
         {
             get { return this.m_targetActKey; }
             set
@@ -66,7 +92,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Target act reference
         /// </summary>
-        [DelayLoad(nameof(TargetActKey))]
+        [SerializationReference(nameof(TargetActKey))]
         [XmlIgnore, JsonIgnore]
         public Act TargetAct
         {
@@ -78,10 +104,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 this.m_targetAct = value;
-                if (value == null)
-                    this.m_targetActKey = Guid.Empty;
-                else
-                    this.m_targetActKey = value.Key;
+                this.m_targetActKey = value?.Key;
             }
         }
 
@@ -91,7 +114,7 @@ namespace OpenIZ.Core.Model.Acts
         [XmlElement("relationshipType"), JsonProperty("relationshipType")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        public Guid RelationshipTypeKey
+        public Guid? RelationshipTypeKey
         {
             get { return this.m_relationshipTypeKey; }
             set
@@ -105,7 +128,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the association type
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(RelationshipTypeKey))]
+        [SerializationReference(nameof(RelationshipTypeKey))]
         public Concept RelationshipType
         {
             get

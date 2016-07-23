@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,30 +14,29 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: Nityan
- * Date: 2016-6-17
+ * User: justi
+ * Date: 2016-6-22
  */
 namespace OpenIZ.Messaging.AMI.Configuration
 {
-    /// <summary>
-    /// CA configuration information
-    /// </summary>
-    public class CertificationAuthorityConfiguration
-    {
+	/// <summary>
+	/// CA configuration information
+	/// </summary>
+	public class CertificationAuthorityConfiguration
+	{
+		/// <summary>
+		/// Gets or sets the name of the certification authority
+		/// </summary>
+		public string Name { get; set; }
 
-        /// <summary>
-        /// Gets or sets the name of the certification authority
-        /// </summary>
-        public string Name { get; set; }
+		/// <summary>
+		/// Gets or sets the name of the machine
+		/// </summary>
+		public string ServerName { get; set; }
 
-        /// <summary>
-        /// Gets or sets the name of the machine
-        /// </summary>
-        public string ServerName { get; set; }
-
-        /// <summary>
-        /// When true, automatically approve CA
-        /// </summary>
-        public bool AutoApprove { get; set; }
-    }
+		/// <summary>
+		/// When true, automatically approve CA
+		/// </summary>
+		public bool AutoApprove { get; set; }
+	}
 }

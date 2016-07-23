@@ -1,4 +1,23 @@
-﻿using System;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-22
+ */
+using System;
 using System.Linq;
 using OpenIZ.Core.Model.Map;
 using System.Reflection;
@@ -21,6 +40,7 @@ using OpenIZ.Core.Security;
 using MARC.HI.EHRS.SVC.Core.Data;
 using System.Data.Linq;
 using System.Data.Common;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services
 {
@@ -29,6 +49,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
     /// </summary>
     public abstract class SqlServerBasePersistenceService<TData> : IDataPersistenceService<TData> where TData : IdentifiedData
     {
+
+        // Lock for editing 
+        protected object m_synkLock = new object();
 
         // Get tracer
         protected TraceSource m_tracer = new TraceSource("OpenIZ.Persistence.Data.MSSQL.Services.Persistence");
@@ -92,7 +115,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// <summary>
         /// Get data load options
         /// </summary>
-        protected virtual DataLoadOptions GetDataLoadOptions()
+        internal virtual DataLoadOptions GetDataLoadOptions()
         {
             return new DataLoadOptions();
         }
@@ -113,10 +136,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
-            else if (!m_configuration.AllowKeyedInsert &&
-                data.Key != Guid.Empty)
-                throw new SqlFormalConstraintException(SqlFormalConstraintType.IdentityInsert);
-
+           
             PrePersistenceEventArgs<TData> preArgs = new PrePersistenceEventArgs<TData>(data, principal);
             this.Inserting?.Invoke(this, preArgs);
             if (preArgs.Cancel)
@@ -133,16 +153,31 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                 {
                     connection.Connection.Open();
                     connection.Transaction = tx = connection.Connection.BeginTransaction();
+
                     if (m_configuration.TraceSql)
                         connection.Log = new LinqTraceWriter();
 
-                    this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "INSERT {0}", data);
-
+                    // Disable inserting duplicate classified objects
                     data.SetDelayLoad(false);
-                    data = this.Insert(connection, data, principal);
+                    var existing = data.TryGetExisting(connection, principal);
+                    if(existing != null)
+                    {
+                        if (m_configuration.AutoUpdateExisting)
+                        {
+                            this.m_tracer.TraceEvent(TraceEventType.Warning, 0, "INSERT WOULD RESULT IN DUPLICATE CLASSIFIER: UPDATING INSTEAD {0}", data);
+                            data = this.Update(connection, data, principal);
+                        }
+                        else
+                            throw new DuplicateKeyException(data);
+                    }
+                    else
+                    {
+                        this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "INSERT {0}", data);
+                        data = this.Insert(connection, data, principal);
+                    }
+
                     connection.SubmitChanges();
 
-                    data.SetDelayLoad(true);
 
                     if (mode == TransactionMode.Commit)
                         tx.Commit();
@@ -158,6 +193,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
                     tx?.Rollback();
                     throw new Exception(e.Message, e);
+                }
+                finally
+                {
+                    data.SetDelayLoad(true);
                 }
             }
         }
@@ -203,7 +242,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     data = this.Update(connection, data, principal);
                     connection.SubmitChanges();
 
-                    data.SetDelayLoad(true);
 
                     if (mode == TransactionMode.Commit)
                         tx.Commit();
@@ -221,6 +259,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     throw new Exception(e.Message, e);
 
                 }
+                finally
+                {
+                    data.SetDelayLoad(true);
+                }
+
             }
         }
 
@@ -262,7 +305,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     data = this.Obsolete(connection, data, principal);
                     connection.SubmitChanges();
 
-                    data.SetDelayLoad(true);
 
                     if (mode == TransactionMode.Commit)
                         tx.Commit();
@@ -279,6 +321,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     tx?.Rollback();
                     throw new Exception(e.Message, e);
                 }
+                finally
+                {
+                    data.SetDelayLoad(true);
+                }
+
             }
         }
 
@@ -287,9 +334,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// </summary>
         public virtual TData Get<TIdentifier>(MARC.HI.EHRS.SVC.Core.Data.Identifier<TIdentifier> containerId, IPrincipal principal, bool loadFast)
         {
-            var tr = 0;
+            // Try the cache if available
             var guidIdentifier = containerId as Identifier<Guid>;
-            return this.Query(o => o.Key == guidIdentifier.Id, 0, 1, principal, out tr)?.SingleOrDefault();
+            var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TData>(guidIdentifier.Id) as TData;
+            if (cacheItem != null)
+                return cacheItem;
+            else
+            {
+                var tr = 0;
+                return this.Query(o => o.Key == guidIdentifier.Id, 0, 1, principal, out tr)?.SingleOrDefault();
+            }
         }
 
         /// <summary>
@@ -340,20 +394,32 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     if (m_configuration.TraceSql)
                         connection.Log = new LinqTraceWriter();
 
-                    var results = this.Query(connection, query, authContext);
 
+                    var results = this.Query(connection, query, authContext);
                     var postData = new PostQueryEventArgs<TData>(query, results, authContext);
                     this.Queried?.Invoke(this, postData);
 
-                    totalCount = postData.Results.Count();
+                    if (count == 1 && offset == 0)
+                    {
+                        var result = postData.Results.Take(1).ToList();
+                        totalCount = result.Count;
+                        this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Returning {0}..{1} or {2} results", offset, offset + (count ?? 1000), totalCount);
+                        return result;
+                    }
+                    else
+                    {
+                        totalCount = postData.Results.Count();
 
-                    // Skip
-                    postData.Results = postData.Results.Skip(offset);
-                    if (count.HasValue)
-                        postData.Results = postData.Results.Take(count.Value);
+                        // Skip
+                        postData.Results = postData.Results.Skip(offset);
+                        if (count.HasValue)
+                            postData.Results = postData.Results.Take(count.Value);
 
-                    this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Returning {0}..{1} or {2} resuts", offset, offset + (count ?? 1000), totalCount);
-                    return postData.Results.AsParallel().ToList();
+                        var retVal = postData.Results.AsParallel().ToList();
+                        retVal.ForEach((o) => o.SetDelayLoad(true)); // Enable delay load for items
+                        this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Returning {0}..{1} or {2} results", offset, offset + (count ?? 1000), totalCount);
+                        return retVal;
+                    }
 
                 }
                 catch (NotSupportedException e)

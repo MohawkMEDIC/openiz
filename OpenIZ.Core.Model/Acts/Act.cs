@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
@@ -40,10 +41,10 @@ namespace OpenIZ.Core.Model.Acts
     public class Act : VersionedEntityData<Act>
     {
 
-        private Guid m_classConceptKey;
-        private Guid m_typeConceptKey;
-        private Guid m_statusConceptKey;
-        private Guid m_moodConceptKey;
+        private Guid? m_classConceptKey;
+        private Guid? m_typeConceptKey;
+        private Guid? m_statusConceptKey;
+        private Guid? m_moodConceptKey;
         private Guid? m_reasonConceptKey;
         
         private Concept m_classConcept;
@@ -52,14 +53,19 @@ namespace OpenIZ.Core.Model.Acts
         private Concept m_moodConcept;
         private Concept m_reasonConcept;
 
-        
-        private List<ActRelationship> m_relationships;
-        private List<ActNote> m_notes;
-        private List<ActTag> m_tags;
-        private List<ActExtension> m_extensions;
-        private List<ActIdentifier> m_identifiers;
-        private List<ActParticipation> m_participations;
-        
+        /// <summary>
+        /// Constructor for ACT
+        /// </summary>
+        public Act()
+        {
+            this.Relationships = new List<ActRelationship>();
+            this.Identifiers = new List<ActIdentifier>();
+            this.Extensions = new List<ActExtension>();
+            this.Notes = new List<ActNote>();
+            this.Participations = new List<ActParticipation>();
+            this.Tags = new List<ActTag>();
+
+        }
         /// <summary>
         /// Gets or sets an indicator which identifies whether the object is negated
         /// </summary>
@@ -76,7 +82,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
-        [XmlElement("actTime"), JsonProperty("actTime")]
+        [DataIgnore, XmlElement("actTime"), JsonProperty("actTime")]
         public String ActTimeXml
         {
             get { return this.ActTime.ToString("o", CultureInfo.InvariantCulture); }
@@ -98,7 +104,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
-        [XmlElement("startTime"), JsonProperty("startTime")]
+        [DataIgnore, XmlElement("startTime"), JsonProperty("startTime")]
         public String StartTimeXml
         {
             get { return this.StartTime?.ToString("o", CultureInfo.InvariantCulture); }
@@ -121,7 +127,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
-        [XmlElement("stopTime"), JsonProperty("stopTime")]
+        [DataIgnore, XmlElement("stopTime"), JsonProperty("stopTime")]
         public String StopTimeXml
         {
             get { return this.StopTime?.ToString("o", CultureInfo.InvariantCulture); }
@@ -139,7 +145,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("classConcept"), JsonProperty("classConcept")]
-        public virtual Guid ClassConceptKey
+        public virtual Guid? ClassConceptKey
         {
             get { return this.m_classConceptKey; }
             set
@@ -154,7 +160,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("moodConcept"), JsonProperty("moodConcept")]
-        public virtual Guid MoodConceptKey
+        public virtual Guid? MoodConceptKey
         {
             get { return this.m_moodConceptKey; }
             set
@@ -185,7 +191,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("statusConcept"), JsonProperty("statusConcept")]
-        public Guid StatusConceptKey
+        public Guid? StatusConceptKey
         {
             get { return this.m_statusConceptKey; }
             set
@@ -200,7 +206,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("typeConcept"), JsonProperty("typeConcept")]
-        public Guid TypeConceptKey
+        public Guid? TypeConceptKey
         {
             get { return this.m_typeConceptKey; }
             set
@@ -215,7 +221,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Class concept datal load property
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(ClassConceptKey))]
+        [AutoLoad, SerializationReference(nameof(ClassConceptKey))]
         public Concept ClassConcept
         {
             get
@@ -223,13 +229,18 @@ namespace OpenIZ.Core.Model.Acts
                 this.m_classConcept = base.DelayLoad(this.m_classConceptKey, this.m_classConcept);
                 return this.m_classConcept;
             }
+            set
+            {
+                this.m_classConcept = value;
+                this.m_classConceptKey = value?.Key;
+            }
         }
 
         /// <summary>
         /// Mood concept data load property
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(MoodConceptKey))]
+        [AutoLoad, SerializationReference(nameof(MoodConceptKey))]
         public Concept MoodConcept
         {
             get
@@ -240,10 +251,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 this.m_moodConcept = value;
-                if (value == null)
-                    this.m_moodConceptKey = Guid.Empty;
-                else
-                    this.m_moodConceptKey = value.Key;
+                this.m_moodConceptKey = value?.Key;
             }
         }
 
@@ -251,7 +259,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Mood concept data load property
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(ReasonConceptKey))]
+        [AutoLoad, SerializationReference(nameof(ReasonConceptKey))]
         public Concept ReasonConcept
         {
             get
@@ -269,7 +277,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Status concept id
         /// </summary>
-        [DelayLoad(nameof(StatusConceptKey))]
+        [AutoLoad, SerializationReference(nameof(StatusConceptKey))]
         [XmlIgnore, JsonIgnore]
         public Concept StatusConcept
         {
@@ -291,7 +299,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Type concept identifier
         /// </summary>
-        [DelayLoad(nameof(TypeConceptKey))]
+        [AutoLoad, SerializationReference(nameof(TypeConceptKey))]
         [XmlIgnore, JsonIgnore]
         public Concept TypeConcept
         {
@@ -313,118 +321,42 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets the identifiers associated with this act
         /// </summary>
-        [DelayLoad(null)]
-        [XmlElement("identifier"), JsonProperty("identifier")]
-        public List<ActIdentifier> Identifiers
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_identifiers = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_identifiers);
-
-                return this.m_identifiers;
-            }
-            set
-            {
-                this.m_identifiers = value;
-            }
-        }
+        [AutoLoad, XmlElement("identifier"), JsonProperty("identifier")]
+        public List<ActIdentifier> Identifiers { get; set; }
 
         /// <summary>
         /// Gets a list of all associated acts for this act
         /// </summary>
-        [DelayLoad(null)]
-        [XmlElement("relationship"), JsonProperty("relationship")]
-        public List<ActRelationship> Relationships
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_relationships = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_relationships);
-
-                return this.m_relationships;
-            }
-            set
-            {
-                this.m_relationships = value;
-            }
-        }
+        [AutoLoad, XmlElement("relationship"), JsonProperty("relationship")]
+        public List<ActRelationship> Relationships { get; set; }
 
         /// <summary>
         /// Gets a list of all extensions associated with the act
         /// </summary>
-        [DelayLoad(null)]
-        [XmlElement("extension"), JsonProperty("extension")]
-        public List<ActExtension> Extensions
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_extensions = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_extensions);
-
-                return this.m_extensions;
-            }
-            set
-            {
-                this.m_extensions = value;
-            }
-        }
+        
+        [AutoLoad, XmlElement("extension"), JsonProperty("extension")]
+        public List<ActExtension> Extensions { get; set; }
 
         /// <summary>
         /// Gets a list of all notes associated with the act
         /// </summary>
-        [DelayLoad(null)]
-        [XmlElement("note"), JsonProperty("note")]
-        public List<ActNote> Notes
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_notes = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_notes);
-                return this.m_notes;
-            }
-            set
-            {
-                this.m_notes = value;
-            }
-        }
+        
+        [AutoLoad, XmlElement("note"), JsonProperty("note")]
+        public List<ActNote> Notes { get; set; }
 
         /// <summary>
         /// Gets a list of all tags associated with the act
         /// </summary>
-        [DelayLoad(null)]
-        [XmlElement("tag"), JsonProperty("tag")]
-        public List<ActTag> Tags
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_tags = EntitySource.Current.GetRelations(this.Key, this.m_tags);
-                return this.m_tags;
-            }
-            set
-            {
-                this.m_tags = value;
-            }
-        }
+        
+        [AutoLoad, XmlElement("tag"), JsonProperty("tag")]
+        public List<ActTag> Tags { get; set; }
 
         /// <summary>
         /// Participations
         /// </summary>
         [XmlElement("participation"), JsonProperty("participation")]
-        public List<ActParticipation> Participations
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_participations = EntitySource.Current.GetRelations(this.Key, this.m_participations);
-                return this.m_participations;
-            }
-            set
-            {
-                this.m_participations = value;
-            }
-        }
+        [AutoLoad]
+        public List<ActParticipation> Participations { get; set; }
 
         /// <summary>
         /// Forces the delay load properties in this type to reload
@@ -433,13 +365,6 @@ namespace OpenIZ.Core.Model.Acts
         {
             base.Refresh();
             this.m_moodConcept = this.m_reasonConcept  = this.m_classConcept = this.m_statusConcept = this.m_typeConcept = null;
-            this.m_relationships = null;
-            this.m_extensions = null;
-            this.m_identifiers = null;
-            this.m_notes = null;
-            this.m_tags = null;
-            this.m_participations = null;
-            this.m_reasonConcept = null;
         }
 
 

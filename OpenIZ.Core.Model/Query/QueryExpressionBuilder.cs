@@ -1,9 +1,29 @@
-﻿using System;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-22
+ */
+using System;
 using System.Reflection;
 using System.Linq.Expressions;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using OpenIZ.Core.Model.Attributes;
+using System.Linq;
 
 namespace OpenIZ.Core.Model.Query
 {
@@ -210,19 +230,21 @@ namespace OpenIZ.Core.Model.Query
 				if (access.NodeType == ExpressionType.MemberAccess) {
 					MemberExpression memberExpr = access as MemberExpression;
 					String path = this.ExtractPath (memberExpr.Expression); // get the chain if required
+                    if (memberExpr.Expression.Type.GetTypeInfo().IsGenericType && memberExpr.Expression.Type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                        return path;
 
 					// XML property?
 					var memberInfo = memberExpr.Expression.Type.GetRuntimeProperty (memberExpr.Member.Name + "Xml") ??
 					                 memberExpr.Member;
 
 					// Is this a delay load?
-					var delayLoadAttribute= memberExpr.Member.GetCustomAttribute<DelayLoadAttribute>();
+					var SerializationReferenceAttribute= memberExpr.Member.GetCustomAttribute<SerializationReferenceAttribute>();
                     var xmlIgnoreAttribute = memberExpr.Member.GetCustomAttribute<XmlIgnoreAttribute>();
-					if (xmlIgnoreAttribute != null && delayLoadAttribute != null && !String.IsNullOrEmpty(delayLoadAttribute.KeyPropertyName))
-						memberInfo = memberExpr.Expression.Type.GetRuntimeProperty (delayLoadAttribute.KeyPropertyName);
+					if (xmlIgnoreAttribute != null && SerializationReferenceAttribute != null && !String.IsNullOrEmpty(SerializationReferenceAttribute.RedirectProperty))
+						memberInfo = memberExpr.Expression.Type.GetRuntimeProperty (SerializationReferenceAttribute.RedirectProperty);
 
 					// TODO: Delay and bound properties!!
-					var memberXattribute = memberInfo.GetCustomAttribute<XmlElementAttribute>();
+					var memberXattribute = memberInfo.GetCustomAttributes<XmlElementAttribute>().FirstOrDefault();
 					if (memberXattribute == null)
 						return null; // TODO: When this occurs?
 
@@ -234,7 +256,32 @@ namespace OpenIZ.Core.Model.Query
                     else
                         return String.Format("{0}.{1}", path, memberXattribute.ElementName);
 				}
-				return null;
+                else if(access.NodeType == ExpressionType.Call)
+                {
+                    //CallExpression callExpr = access as MemberExpression;
+                    MethodCallExpression callExpr = access as MethodCallExpression;
+
+                    if (callExpr.Method.Name == "Where")
+                    {
+                        String path = this.ExtractPath(callExpr.Arguments[0]); // get the chain if required
+                        var guardExpression = callExpr.Arguments[1] as LambdaExpression;
+                        // Where should be a guard so we just grab the unary equals only!
+                        var binaryExpression = guardExpression.Body as BinaryExpression;
+                        if (binaryExpression == null)
+                            throw new InvalidOperationException("Cannot translate non-binary expression guards");
+
+                        // Is the expression the guard?
+                        var expressionMember = binaryExpression.Left as MemberExpression;
+                        var valueExpression = binaryExpression.Right as ConstantExpression;
+                        if (expressionMember.Member.DeclaringType.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty != expressionMember.Member.Name)
+                            throw new InvalidOperationException("Guards must be on classifier");
+                        if (valueExpression == null)
+                            throw new InvalidOperationException("Only constant expressions are supported on guards");
+                        return String.Format("{0}[{1}]", path, valueExpression.Value);
+
+                    }
+                }
+                return null;
 			}
 		}
 

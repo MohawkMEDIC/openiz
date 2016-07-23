@@ -1,4 +1,23 @@
-﻿using System;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-22
+ */
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
@@ -46,13 +65,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.Person ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
         {
-            var person = dataInstance as Data.Person;
-            var dbe = context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == person.EntityVersionId).First();
+
+            var iddat = dataInstance as IDbVersionedData;
+            var person = dataInstance as Data.Person ?? context.GetTable<Data.Person>().Where(o => o.EntityVersionId == iddat.VersionId).FirstOrDefault();
+            var dbe = dataInstance as Data.EntityVersion ?? context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == person.EntityVersionId).First();
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Entities.Person>(dbe, context, principal);
-            retVal.DateOfBirth = person.DateOfBirth;
+            retVal.DateOfBirth = person?.DateOfBirth;
 
             // Reverse lookup
-            if (person.DateOfBirthPrecision.HasValue)
+            if (person?.DateOfBirthPrecision.HasValue == true)
                 retVal.DateOfBirthPrecision = PrecisionMap.Where(o => o.Value == person.DateOfBirthPrecision).Select(o => o.Key).First();
 
             return retVal;
@@ -67,7 +88,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         public override Core.Model.Entities.Person Insert(ModelDataContext context, Core.Model.Entities.Person data, IPrincipal principal)
         {
             var retVal = base.Insert(context, data, principal);
-            byte[] sourceKey = retVal.Key.ToByteArray();
+            byte[] sourceKey = retVal.Key.Value.ToByteArray();
 
             // Language communication
             if (data.LanguageCommunication != null)
@@ -85,7 +106,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         public override Core.Model.Entities.Person Update(ModelDataContext context, Core.Model.Entities.Person data, IPrincipal principal)
         {
             var retVal = base.Update(context, data, principal);
-            var sourceKey = retVal.Key.ToByteArray();
+            var sourceKey = retVal.Key.Value.ToByteArray();
 
             // Language communication
             if (data.LanguageCommunication != null)

@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-6-14
  */
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
@@ -38,29 +39,32 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Get the persistence service source
         /// </summary>
-        public TObject Get<TObject>(Guid key) where TObject : IdentifiedData
+        public TObject Get<TObject>(Guid? key) where TObject : IdentifiedData, new()
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>();
-            if(persistenceService != null)
-                return persistenceService.Get(new Identifier<Guid>(key), null, true);
+            if(persistenceService != null  && key.HasValue)
+                return persistenceService.Get(new Identifier<Guid>(key.Value), null, true);
             return default(TObject);
         }
 
         /// <summary>
         /// Get the specified version
         /// </summary>
-        public TObject Get<TObject>(Guid key, Guid versionKey) where TObject : IdentifiedData, IVersionedEntity
+        public TObject Get<TObject>(Guid? key, Guid? versionKey) where TObject : IdentifiedData, IVersionedEntity, new()
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>();
-            if (persistenceService != null)
-                return persistenceService.Get(new Identifier<Guid>(key, versionKey), null, true);
+            if (persistenceService != null && key.HasValue && versionKey.HasValue)
+                return persistenceService.Get(new Identifier<Guid>(key.Value, versionKey.Value), null, true);
+            else if(persistenceService != null && key.HasValue)
+                return persistenceService.Get(new Identifier<Guid>(key.Value), null, true);
+
             return default(TObject);
         }
 
         /// <summary>
         /// Get versioned relationships
         /// </summary>
-        public List<TObject> GetRelations<TObject>(Guid sourceKey, decimal sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation
+        public List<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence) where TObject : IdentifiedData, IVersionedAssociation,new()
         {
             return this.Query<TObject>(o => sourceKey == o.SourceEntityKey && sourceVersionSequence >= o.EffectiveVersionSequenceId && (o.ObsoleteVersionSequenceId == null || sourceVersionSequence < o.ObsoleteVersionSequenceId)).ToList();
         }
@@ -68,7 +72,7 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Query the specified object
         /// </summary>
-        public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData
+        public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData, new()
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>();
             if(persistenceService != null)

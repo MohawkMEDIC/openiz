@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
@@ -32,12 +33,12 @@ namespace OpenIZ.Core.Model.DataTypes
     public class ConceptReferenceTerm : VersionedAssociation<Concept>
     {
         // Reference term id
-        private Guid m_referenceTermId;
+        private Guid? m_referenceTermId;
         // Reference term
         
         private ReferenceTerm m_referenceTerm;
         // ConceptRelationship type
-        private Guid m_relationshipTypeId;
+        private Guid? m_relationshipTypeId;
         // Relationship type
         
         private ConceptRelationshipType m_relationshipType;
@@ -48,7 +49,7 @@ namespace OpenIZ.Core.Model.DataTypes
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("referenceTerm"), JsonProperty("referenceTerm")]
-        public Guid  ReferenceTermKey {
+        public Guid?  ReferenceTermKey {
             get { return this.m_referenceTermId; }
             set
             {
@@ -60,7 +61,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or set the reference term
         /// </summary>
-        [DelayLoad(nameof(ReferenceTermKey))]
+        [SerializationReference(nameof(ReferenceTermKey))]
         [XmlIgnore, JsonIgnore]
         public ReferenceTerm ReferenceTerm
         {
@@ -72,10 +73,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_referenceTerm = value;
-                if (value == null)
-                    this.m_referenceTermId = Guid.Empty;
-                else
-                    this.m_referenceTermId = value.Key;
+                this.m_referenceTermId = value?.Key;
             }
         }
 
@@ -84,7 +82,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("relationshipType"), JsonProperty("relationshipType")]
-        public Guid  RelationshipTypeKey {
+        public Guid?  RelationshipTypeKey {
             get { return this.m_relationshipTypeId; }
             set
             {
@@ -97,7 +95,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the relationship type
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(RelationshipTypeKey))]
+        [SerializationReference(nameof(RelationshipTypeKey))]
         public ConceptRelationshipType RelationshipType {
             get
             {
@@ -107,10 +105,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_relationshipType = value;
-                if (value == null)
-                    this.m_relationshipTypeId = Guid.Empty;
-                else
-                    this.m_relationshipTypeId = value.Key;
+                this.m_relationshipTypeId = value?.Key;
             }
         }
 

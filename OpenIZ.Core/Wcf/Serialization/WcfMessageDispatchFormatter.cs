@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-6-22
  */
 using Newtonsoft.Json;
 using System;
@@ -39,6 +40,7 @@ using OpenIZ.Core.Security;
 using System.Diagnostics;
 using OpenIZ.Core.Model.Collection;
 using Newtonsoft.Json.Converters;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Wcf.Serialization
 {
@@ -87,7 +89,6 @@ namespace OpenIZ.Core.Wcf.Serialization
                 HttpRequestMessageProperty httpRequest = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
                 string contentType = httpRequest.Headers[HttpRequestHeader.ContentType];
 
-
                 UriTemplateMatch templateMatch = (UriTemplateMatch)request.Properties.SingleOrDefault(o => o.Value is UriTemplateMatch).Value;
                 // Not found
                 if (templateMatch == null)
@@ -108,9 +109,14 @@ namespace OpenIZ.Core.Wcf.Serialization
                     // Use XML Serializer
                     else if (contentType?.StartsWith("application/xml") == true)
                     {
-                        XmlSerializer xsz = s_serializers[parm.Type];
                         XmlDictionaryReader bodyReader = request.GetReaderAtBodyContents();
-                        parameters[0] = xsz.Deserialize(bodyReader);
+                        while (bodyReader.NodeType != XmlNodeType.Element)
+                            bodyReader.Read();
+
+                        Type eType = s_knownTypes.FirstOrDefault(o => o.GetCustomAttribute<XmlRootAttribute>()?.ElementName == bodyReader.LocalName &&
+                            o.GetCustomAttribute<XmlRootAttribute>()?.Namespace == bodyReader.NamespaceURI);
+                        XmlSerializer xsz = s_serializers[eType];
+                        parameters[pNumber] = xsz.Deserialize(bodyReader);
                     }
                     // Use JSON Serializer
                     else if (contentType?.StartsWith("application/json") == true)
@@ -131,7 +137,7 @@ namespace OpenIZ.Core.Wcf.Serialization
                         };
                         jsz.Converters.Add(new StringEnumConverter());
                         var dserType = parm.Type;
-                        parameters[0] = jsz.Deserialize(sr, dserType);
+                        parameters[pNumber] = jsz.Deserialize(sr, dserType);
                     }
                     else if (contentType != null)// TODO: Binaries
                         throw new InvalidOperationException("Invalid request format");
@@ -178,7 +184,10 @@ namespace OpenIZ.Core.Wcf.Serialization
                         using (StreamWriter sw = new StreamWriter(ms, Encoding.UTF8))
                         using (JsonWriter jsw = new JsonTextWriter(sw))
                         {
-                            jsz.NullValueHandling = NullValueHandling.Ignore;
+							jsz.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+							jsz.NullValueHandling = NullValueHandling.Ignore;
+							jsz.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+							jsz.TypeNameHandling = TypeNameHandling.Auto;
                             jsz.Converters.Add(new StringEnumConverter());
                             jsz.Serialize(jsw, result);
                             sw.Flush();
@@ -220,10 +229,12 @@ namespace OpenIZ.Core.Wcf.Serialization
                 }
 
                 reply.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(format));
-                WebOperationContext.Current.OutgoingResponse.ContentType = contentType;
+                //var responseProperty = (HttpResponseMessageProperty)OperationContext.Current.OutgoingMessageProperties[HttpResponseMessageProperty.Name];
+                //var responseProperty = new HttpResponseMessageProperty();
+                WebOperationContext.Current.OutgoingResponse.ContentType= contentType;
                 WebOperationContext.Current.OutgoingResponse.Headers.Add("X-PoweredBy", "OpenIZIMSI");
                 WebOperationContext.Current.OutgoingResponse.Headers.Add("X-GeneratedOn", DateTime.Now.ToString("o"));
-
+                //reply.Properties.Add(HttpResponseMessageProperty.Name, responseProperty);
                 // TODO: Determine best way to clear current authentication context
                 AuthenticationContext.Current = null;
                 return reply;

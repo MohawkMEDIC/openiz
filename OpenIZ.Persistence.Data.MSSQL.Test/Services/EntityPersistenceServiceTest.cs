@@ -1,4 +1,23 @@
-﻿using MARC.HI.EHRS.SVC.Core;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-14
+ */
+using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -175,7 +194,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             // Obsolete
             var idp = ApplicationContext.Current.GetService<IDataPersistenceService<Entity>>();
             var afterObsolete = idp.Obsolete(afterTest, s_authorization, TransactionMode.Commit);
-            afterObsolete = idp.Get(new Identifier<Guid>(id), s_authorization, false);
+            afterObsolete = idp.Get(new Identifier<Guid>(id.Value), s_authorization, false);
 
             // Assert
             Assert.AreEqual(StatusKeys.Obsolete, afterObsolete.StatusConcept.Key);
@@ -203,12 +222,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual(StatusKeys.Active, afterTest.StatusConcept.Key);
 
             // Query 
-            var query = base.DoTestQuery(o => o.CreationTime > DateTime.MinValue && o.ClassConcept.Key == EntityClassKeys.Place && o.Names.Any(n => n.NameUse.Key == NameUseKeys.Assigned && n.Component.Any(c => c.Value == "Some Clinic")), id, s_authorization);
+            var query = base.DoTestQuery(o => o.CreationTime > DateTimeOffset.MinValue && o.ClassConcept.Key == EntityClassKeys.Place && o.Names.Any(n => n.NameUse.Key == NameUseKeys.Assigned && n.Component.Any(c => c.Value == "Some Clinic")), id, s_authorization);
             Assert.AreEqual(1, query.Count());
 
             // No results
             var idp = ApplicationContext.Current.GetService<IDataPersistenceService<Entity>>();
-            query = idp.Query(o => o.CreationTime < DateTime.MinValue && o.ClassConcept.Key == EntityClassKeys.Place && o.Names.Any(n => n.NameUse.Key == NameUseKeys.Assigned && n.Component.Any(c => c.Value == "Some Clinic")), s_authorization);
+            query = idp.Query(o => o.CreationTime < DateTimeOffset.MinValue && o.ClassConcept.Key == EntityClassKeys.Place && o.Names.Any(n => n.NameUse.Key == NameUseKeys.Assigned && n.Component.Any(c => c.Value == "Some Clinic")), s_authorization);
             Assert.AreEqual(0, query.Count());
 
             // One result (like)

@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-7
  */
 using System;
 using System.Collections.Generic;
@@ -45,16 +46,16 @@ namespace OpenIZ.Core.Model.Query
         /// <summary>
         /// Build a LINQ expression
         /// </summary>
-        public Expression<Func<TModelType, bool>> BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters)
+        public static Expression<Func<TModelType, bool>> BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters)
         {
-            var expression = this.BuildLinqExpression<TModelType>(httpQueryParameters, "o");
+            var expression = BuildLinqExpression<TModelType>(httpQueryParameters, "o");
             return Expression.Lambda<Func<TModelType, bool>>(expression.Body, expression.Parameters);
         }
 
         /// <summary>
         /// Build LINQ expression
         /// </summary>
-        public LambdaExpression BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters, String parameterName)
+        public static LambdaExpression BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters, String parameterName)
         { 
             var parameterExpression = Expression.Parameter(typeof(TModelType), parameterName);
             Expression retVal = null;
@@ -90,7 +91,7 @@ namespace OpenIZ.Core.Model.Query
                     }
 
                     // Get member info
-                    var memberInfo = accessExpression.Type.GetRuntimeProperties().SingleOrDefault(p => p.GetCustomAttribute<XmlElementAttribute>()?.ElementName == pMember);
+                    var memberInfo = accessExpression.Type.GetRuntimeProperties().SingleOrDefault(p => p.GetCustomAttributes<XmlElementAttribute>()?.Any(a=>a.ElementName == pMember) == true);
                     if (memberInfo == null)
                         throw new ArgumentOutOfRangeException(currentValue.Key);
 
@@ -100,7 +101,7 @@ namespace OpenIZ.Core.Model.Query
                         memberInfo = accessExpression.Type.GetRuntimeProperty(memberInfo.Name.Replace("Xml", ""));
                     else if (pMember != memberPath.Last())
                     {
-                        var backingFor = accessExpression.Type.GetRuntimeProperties().SingleOrDefault(p => p.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == memberInfo.Name);
+                        var backingFor = accessExpression.Type.GetRuntimeProperties().SingleOrDefault(p => p.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty == memberInfo.Name);
                         if (backingFor != null)
                             memberInfo = backingFor;
                     }
@@ -161,7 +162,7 @@ namespace OpenIZ.Core.Model.Query
 
                         var builderMethod = typeof(QueryExpressionParser).GetGenericMethod(nameof(BuildLinqExpression), new Type[] { itemType }, new Type[] { typeof(NameValueCollection), typeof(String) });
 
-                        Expression predicate = (builderMethod.Invoke(this, new object[] { subFilter, pMember }) as LambdaExpression);
+                        Expression predicate = (builderMethod.Invoke(null, new object[] { subFilter, pMember }) as LambdaExpression);
                         keyExpression = Expression.Call(anyMethod, accessExpression, predicate);
                         currentValue = new KeyValuePair<string, string[]>();
                         break;  // skip
@@ -188,10 +189,32 @@ namespace OpenIZ.Core.Model.Query
                                 break;
                             case '~':
                                 et = ExpressionType.Equal;
-                                if (accessExpression.Type != typeof(String))
+                                if (accessExpression.Type == typeof(String))
+                                {
+                                    accessExpression = Expression.Call(accessExpression, typeof(String).GetRuntimeMethod("Contains", new Type[] { typeof(String) }), Expression.Constant(pValue.Substring(1).Replace("*", "/")));
+                                    pValue = "true";
+                                }
+                                else if(accessExpression.Type == typeof(DateTime) ||
+                                    accessExpression.Type == typeof(DateTime?))
+                                {
+                                    pValue = value.Substring(1);
+                                    DateTime dateLow = DateTime.ParseExact(pValue, "yyyy-MM-dd".Substring(0, pValue.Length), CultureInfo.InvariantCulture), dateHigh = DateTime.MaxValue;
+                                    if (pValue.Length == 4) // Year
+                                        dateHigh = new DateTime(dateLow.Year, 12, 31, 23, 59, 59);
+                                    else if (pValue.Length == 7)
+                                        dateHigh = new DateTime(dateLow.Year, dateLow.Month, DateTime.DaysInMonth(dateLow.Year, dateLow.Month), 23, 59, 59);
+                                    else if (pValue.Length == 10)
+                                        dateHigh = new DateTime(dateLow.Year, dateLow.Month, dateLow.Day, 23, 59, 59);
+                                    if (accessExpression.Type == typeof(DateTime?))
+                                        accessExpression = Expression.MakeMemberAccess(accessExpression, accessExpression.Type.GetRuntimeProperty("Value"));
+                                    Expression lowerBound = Expression.MakeBinary(ExpressionType.GreaterThanOrEqual, accessExpression, Expression.Constant(dateLow)),
+                                        upperBound = Expression.MakeBinary(ExpressionType.LessThanOrEqual, accessExpression, Expression.Constant(dateHigh));
+                                    accessExpression = Expression.MakeBinary(ExpressionType.AndAlso, lowerBound, upperBound);
+                                    pValue = "true"; 
+                                }
+                                else
                                     throw new InvalidOperationException("~ can only be applied to string properties");
-                                accessExpression = Expression.Call(accessExpression, typeof(String).GetRuntimeMethod("Contains", new Type[] { typeof(String) }), Expression.Constant(pValue.Substring(1).Replace("*","/")));
-                                pValue = "true";
+
                                 break;
                             case '=':
                                 switch(value[1])
@@ -221,12 +244,14 @@ namespace OpenIZ.Core.Model.Query
                         Expression valueExpr = null;
                         if (accessExpression.Type == typeof(String))
                             valueExpr = Expression.Constant(pValue);
-                        else if (accessExpression.Type == typeof(DateTime))
+                        else if (accessExpression.Type == typeof(DateTime) || accessExpression.Type == typeof(DateTime?))
                             valueExpr = Expression.Constant(DateTime.Parse(pValue));
-                        else if (accessExpression.Type == typeof(DateTimeOffset))
+                        else if (accessExpression.Type == typeof(DateTimeOffset) || accessExpression.Type == typeof(DateTimeOffset?))
                             valueExpr = Expression.Constant(DateTimeOffset.Parse(pValue));
-                        else if (accessExpression.Type == typeof(Guid) || accessExpression.Type == typeof(Guid?))
+                        else if (accessExpression.Type == typeof(Guid))
                             valueExpr = Expression.Constant(Guid.Parse(pValue));
+                        else if(accessExpression.Type == typeof(Guid?))
+                            valueExpr = Expression.Convert(Expression.Constant(Guid.Parse(pValue)), typeof(Guid?));
                         else
                             valueExpr = Expression.Constant(Convert.ChangeType(pValue, accessExpression.Type));
                         Expression singleExpression = Expression.MakeBinary(et, accessExpression, valueExpr);

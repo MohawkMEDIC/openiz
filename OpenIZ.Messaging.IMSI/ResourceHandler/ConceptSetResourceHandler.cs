@@ -1,4 +1,23 @@
-﻿using System;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-28
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +28,9 @@ using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Services;
 using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Security;
+using OpenIZ.Core.Security.Attribute;
+using System.Security.Permissions;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {
@@ -54,6 +76,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <summary>
         /// Creates the specified data
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
         public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
         {
             if (data == null)
@@ -92,6 +115,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <summary>
         /// Obsolete the specified concept set
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
         public IdentifiedData Obsolete(Guid key)
         {
             return this.m_repositoryService.ObsoleteConceptSet(key);
@@ -102,7 +126,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
         {
-            return this.m_repositoryService.FindConceptSets(new QueryExpressionParser().BuildLinqExpression<ConceptSet>(queryParameters));
+            return this.m_repositoryService.FindConceptSets(QueryExpressionParser.BuildLinqExpression<ConceptSet>(queryParameters));
         }
 
         /// <summary>
@@ -110,7 +134,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
         {
-            return this.m_repositoryService.FindConceptSets(new QueryExpressionParser().BuildLinqExpression<ConceptSet>(queryParameters), offset, count, out totalCount);
+            return this.m_repositoryService.FindConceptSets(QueryExpressionParser.BuildLinqExpression<ConceptSet>(queryParameters), offset, count, out totalCount);
         }
 
         /// <summary>
@@ -118,6 +142,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
         public IdentifiedData Update(IdentifiedData data)
         {
 

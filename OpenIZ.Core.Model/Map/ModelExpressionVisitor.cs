@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-4-19
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using System.Collections.Generic;
@@ -271,14 +272,19 @@ namespace OpenIZ.Core.Model.Map
             // Are the types compatible?
             if (!right.Type.GetTypeInfo().IsAssignableFrom(left.Type.GetTypeInfo()))
             {
+                if(right.NodeType == ExpressionType.Convert)
+                    right = ((UnaryExpression)right).Operand;
+
                 // Convert byte[] <= Guid
-                if (right.Type == typeof(Guid) && left.Type == typeof(Byte[]))
+                if ((right.Type == typeof(Guid) || right.Type == typeof(Guid?)) && left.Type == typeof(Byte[]))
                 {
                     switch(right.NodeType)
                     {
                         case ExpressionType.MemberAccess:
                             var memberExpr = (MemberExpression)right;
-                            var scope = ((ConstantExpression)memberExpr.Expression).Value;
+                            Object scope = null;
+                            if(memberExpr.Expression != null)
+                                scope = ((ConstantExpression)memberExpr.Expression).Value;
                             if (memberExpr.Member is FieldInfo)
                                 right = Expression.Constant(((Guid)(memberExpr.Member as FieldInfo).GetValue(scope)).ToByteArray());
                             else if(memberExpr.Member is MethodInfo)
@@ -296,6 +302,27 @@ namespace OpenIZ.Core.Model.Map
             }
             else if (right != node.Right || left != node.Left)
             {
+                if (right.Type != left.Type)
+                {
+
+                    if (right.Type.GetTypeInfo().IsGenericType &&
+                        right.Type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                    {
+                        if (right.NodeType == ExpressionType.Convert &&
+                            (right as UnaryExpression).Operand.Type == left.Type)
+                            right = (right as UnaryExpression).Operand;
+                        else
+                            right = Expression.Coalesce(right, Expression.Constant(Activator.CreateInstance(right.Type.GetTypeInfo().GenericTypeArguments[0])));
+                    }
+                    if (left.Type.GetTypeInfo().IsGenericType &&
+                        left.Type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                        if (left.NodeType == ExpressionType.Convert &&
+                            (left as UnaryExpression).Operand.Type == right.Type)
+                            left = (left as UnaryExpression).Operand;
+                        else
+                            left = Expression.Coalesce(left, Expression.Constant(Activator.CreateInstance(left.Type.GetTypeInfo().GenericTypeArguments[0])));
+
+                }
                 return Expression.MakeBinary(node.NodeType, left, right);
             }
             return node;

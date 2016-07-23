@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,113 +14,111 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: Nityan
- * Date: 2016-6-17
+ * User: justi
+ * Date: 2016-6-22
  */
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Wcf.Behavior;
 using OpenIZ.Messaging.AMI.Configuration;
 using OpenIZ.Messaging.AMI.Wcf;
-using OpenIZ.Messaging.AMI.Wcf.Behavior;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OpenIZ.Messaging.AMI
 {
-    /// <summary>
-    /// AMI Message handler
-    /// </summary>
-    public class AmiMessageHandler : IDaemonService
-    {
-        // IMSI Trace host
-        private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.AMI");
+	/// <summary>
+	/// AMI Message handler
+	/// </summary>
+	public class AmiMessageHandler : IDaemonService
+	{
+		// IMSI Trace host
+		private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.AMI");
 
-        // configuration
-        private AmiConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.ami") as AmiConfiguration;
+		// configuration
+		private AmiConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.ami") as AmiConfiguration;
 
-        // web host
-        private WebServiceHost m_webHost;
+		// web host
+		private WebServiceHost m_webHost;
 
-        /// <summary>
-        /// True if running
-        /// </summary>
-        public bool IsRunning
-        {
-            get
-            {
-                return this.m_webHost?.State == System.ServiceModel.CommunicationState.Opened;
-            }
-        }
+		/// <summary>
+		/// True if running
+		/// </summary>
+		public bool IsRunning
+		{
+			get
+			{
+				return this.m_webHost?.State == System.ServiceModel.CommunicationState.Opened;
+			}
+		}
 
-        /// <summary>
-        /// Fired when the object is starting up
-        /// </summary>
-        public event EventHandler Started;
-        /// <summary>
-        /// Fired when the object is starting
-        /// </summary>
-        public event EventHandler Starting;
-        /// <summary>
-        /// Fired when the service has stopped
-        /// </summary>
-        public event EventHandler Stopped;
-        /// <summary>
-        /// Fired when the service is stopping
-        /// </summary>
-        public event EventHandler Stopping;
+		/// <summary>
+		/// Fired when the object is starting up
+		/// </summary>
+		public event EventHandler Started;
 
-        /// <summary>
-        /// Start the service
-        /// </summary>
-        public bool Start()
-        {
-            try
-            {
-                this.Starting?.Invoke(this, EventArgs.Empty);
+		/// <summary>
+		/// Fired when the object is starting
+		/// </summary>
+		public event EventHandler Starting;
 
-                this.m_webHost = new WebServiceHost(typeof(AmiBehavior));
+		/// <summary>
+		/// Fired when the service has stopped
+		/// </summary>
+		public event EventHandler Stopped;
 
-                foreach (ServiceEndpoint endpoint in this.m_webHost.Description.Endpoints)
-                {
-                    this.m_traceSource.TraceInformation("Starting AMI on {0}...", endpoint.Address);
-                    endpoint.EndpointBehaviors.Add(new WcfErrorEndpointBehavior());
-                }
-                // Start the webhost
-                this.m_webHost.Open();
+		/// <summary>
+		/// Fired when the service is stopping
+		/// </summary>
+		public event EventHandler Stopping;
 
-                this.Started?.Invoke(this, EventArgs.Empty);
-                return true;
-            }
-            catch (Exception e)
-            {
-                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
-                return false;
-            }
-        }
+		/// <summary>
+		/// Start the service
+		/// </summary>
+		public bool Start()
+		{
+			try
+			{
+				this.Starting?.Invoke(this, EventArgs.Empty);
 
-        /// <summary>
-        /// Stop the IMSI service
-        /// </summary>
-        public bool Stop()
-        {
-            this.Stopping?.Invoke(this, EventArgs.Empty);
+				this.m_webHost = new WebServiceHost(typeof(AmiBehavior));
 
-            if (this.m_webHost != null)
-            {
-                this.m_webHost.Close();
-                this.m_webHost = null;
-            }
+				foreach (ServiceEndpoint endpoint in this.m_webHost.Description.Endpoints)
+				{
+					this.m_traceSource.TraceInformation("Starting AMI on {0}...", endpoint.Address);
+					endpoint.EndpointBehaviors.Add(new WcfErrorEndpointBehavior());
+				}
+				// Start the webhost
+				this.m_webHost.Open();
 
-            this.Stopped?.Invoke(this, EventArgs.Empty);
+				this.Started?.Invoke(this, EventArgs.Empty);
+				return true;
+			}
+			catch (Exception e)
+			{
+				this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+				return false;
+			}
+		}
 
-            return true;
-        }
-    }
+		/// <summary>
+		/// Stop the IMSI service
+		/// </summary>
+		public bool Stop()
+		{
+			this.Stopping?.Invoke(this, EventArgs.Empty);
+
+			if (this.m_webHost != null)
+			{
+				this.m_webHost.Close();
+				this.m_webHost = null;
+			}
+
+			this.Stopped?.Invoke(this, EventArgs.Empty);
+
+			return true;
+		}
+	}
 }

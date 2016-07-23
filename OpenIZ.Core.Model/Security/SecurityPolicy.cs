@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using System;
 using System.Collections.Generic;
@@ -44,6 +45,7 @@ namespace OpenIZ.Core.Model.Security
     /// </summary>
     [XmlType("SecurityPolicy",   Namespace = "http://openiz.org/model"), JsonObject("SecurityPolicy")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "SecurityPolicy")]
+    [KeyLookup(nameof(Name)), SimpleValue(nameof(Name))]
     public class SecurityPolicy : BaseEntityData
     {
         
@@ -62,7 +64,7 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets or sets the universal ID
         /// </summary>
-        [XmlElement("o"), JsonProperty("o")]
+        [XmlElement("oid"), JsonProperty("oid")]
         public String Oid { get; set; }
 
         /// <summary>
@@ -84,7 +86,7 @@ namespace OpenIZ.Core.Model.Security
     public class SecurityPolicyInstance : Association<SecurityEntity>
     {
         // Policy id
-        private Guid m_policyId;
+        private Guid? m_policyId;
         // Policy
         private SecurityPolicy m_policy;
 
@@ -108,7 +110,7 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets or sets the policy key
         /// </summary>
-        public Guid PolicyKey {
+        public Guid? PolicyKey {
             get
             {
                 return this.m_policyId;
@@ -132,10 +134,7 @@ namespace OpenIZ.Core.Model.Security
             set
             {
                 this.m_policy = value;
-                if (value == null)
-                    this.m_policyId = Guid.Empty;
-                else
-                    this.m_policyId = value.Key;
+                this.m_policyId = value?.Key;
             }
         }
 

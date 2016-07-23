@@ -1,4 +1,23 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ - 
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-6-14
+ -->
 
 <modelMap xmlns="http://openiz.org/model/map">
 
@@ -34,6 +53,8 @@
     <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
+    <property modelName="UpdatedBy" domainName="UpdatedByEntity"/>
+    <property modelName="UpdatedByKey" domainName="UpdatedBy"/>
     <property modelName="Users" domainName="SecurityUserRoles">
       <via domainName="SecurityUser"/>
     </property>
@@ -142,7 +163,9 @@
     <property modelName="StatusConcept" domainName="StatusConcept">
       <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
     </property>
-
+    <property modelName="ReferenceTerms" domainName="Concept">
+      <via domainName="ConceptReferenceTerms"/>
+    </property>
     <property modelName="ClassKey" domainName="ConceptClassId"/>
     <property modelName="Class" domainName="ConceptClass" />
 
@@ -175,6 +198,8 @@
     <property modelName="ConceptSets" domainName="ConceptSetMembers" dontLoad="true">
       <via domainName="Concept"/>
     </property>
+    <property modelName="Key" domainName="ConceptId"/>
+  
   </class>
   <!-- Concept Class -->
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptClass, OpenIZ.Core.Model, Version=1.0.0.0"
@@ -254,6 +279,7 @@
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ReferenceTerm, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ReferenceTermId"/>
     <property modelName="CodeSystemKey" domainName="CodeSystemId"/>
+    <property modelName="CodeSystem" domainName="CodeSystem"/>
     <collapseKey propertyName="CodeSystem" keyName="CodeSystemId"/>
     <property modelName="CreatedBy" domainName="CreatedByEntity"/>
     <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
@@ -269,6 +295,7 @@
   <class modelClass="OpenIZ.Core.Model.DataTypes.ReferenceTermName, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ReferenceTermDisplayName, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ReferenceTermDisplayNameId"/>
+    <property modelName="ReferenceTermKey" domainName="ReferenceTermId"/>
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="PhoneticAlgorithm" keyName="PhoneticAlgorithmId"/>
@@ -297,9 +324,13 @@
     <property modelName="Key" domainName="ConceptReferenceTermId"/>
     <property modelName="SourceEntityKey" domainName="ConceptId"/>
     <property modelName="ReferenceTermKey" domainName="ReferenceTermId"/>
+    <property modelName="ReferenceTerm" domainName="ReferenceTerm"/>
+    <property modelName="RelationshipTypeKey" domainName="ConceptRelationshipTypeId"/>
+
+    <property modelName="RelationshipType" domainName="ConceptRelationshipType"/>
+
     <collapseKey propertyName="ReferenceTerm" keyName="ReferenceTermId"/>
     <collapseKey propertyName="ConceptRelationshipType" keyName="ConceptRelationshipTypeId"/>
-    <property modelName="RelationshipTypeKey" domainName="ConceptRelationshipTypeId"/>
   </class>
 
   <!-- Entity Maps -->
@@ -313,25 +344,33 @@
     <property modelName="ClassConceptKey" domainName="Entity">
       <via domainName="ClassConceptId"/>
     </property>
-    <property modelName="ClassConcept" domainName="Entity" dontLoad="true">
-      <via domainName="ClassConcept"/>
+    <property modelName="StatusConcept" domainName="StatusConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+    </property>
+    <property modelName="TypeConcept" domainName="TypeConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+    </property>
+    <property modelName="ClassConcept" domainName="Entity">
+      <via domainName="ClassConcept">
+        <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+      </via>
     </property>
     <property modelName="DeterminerConceptKey" domainName="Entity">
       <via domainName="DeterminerConceptId"/>
     </property>
-    <property modelName="DeterminerConcept" domainName="Entity" dontLoad="true">
-      <via domainName="DeterminerConcept"/>
+    <property modelName="DeterminerConcept" domainName="Entity">
+      <via domainName="DeterminerConcept">
+        <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+      </via>
     </property>
+    
     <property modelName="TypeConceptKey" domainName="TypeConceptId"/>
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
     <property modelName="CreatedBy" domainName="CreatedByEntity"/>
     <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
     <property modelName="Names" domainName="Entity">
-      <via domainName="EntityNames"/>
-    </property>
-    <property modelName="Names" domainName="Entity">
-      <via domainName="EntityNames"/>
+      <via domainName="EntityNames" />
     </property>
     <property modelName="Addresses" domainName="Entity">
       <via domainName="EntityAddresses"/>
@@ -354,6 +393,7 @@
     <property modelName="Relationships" domainName="Entity">
       <via domainName="EntityAssociationsSourceEntityId"/>
     </property>
+
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="TypeConcept" keyName="TypeConceptId"/>
@@ -362,8 +402,11 @@
 
   <class modelClass="OpenIZ.Core.Model.Entities.Entity, OpenIZ.Core.Model, Version=1.0.0.0"
        domainClass="OpenIZ.Persistence.Data.MSSQL.Data.Entity, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="EntityId"/>
     <property modelName="ClassConceptKey" domainName="ClassConceptId"/>
-    <property modelName="ClassConcept" domainName="ClassConcept"/>
+    <property modelName="ClassConcept" domainName="ClassConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+    </property>
     <property modelName="DeterminerConceptKey" domainName="DeterminerConceptId"/>
     <property modelName="Names" domainName="EntityNames"/>
     <property modelName="DeterminerConcept" domainName="DeterminerConcept"/>
@@ -375,8 +418,10 @@
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.EntityName, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="EntityNameId"/>
     <property modelName="NameUseKey" domainName="NameUseConceptId"/>
-    <property modelName="NameUse" domainName="NameUseConcept"/>
-    <collapseKey propertyName="NameUseConcept" keyName="NameUseConceptId"/>
+    <property modelName="NameUse" domainName="NameUseConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+    </property>
+      <collapseKey propertyName="NameUseConcept" keyName="NameUseConceptId"/>
     <property modelName="SourceEntityKey" domainName="EntityId"/>
     <property modelName="Component" domainName="EntityNameComponents"/>
   </class>
@@ -386,7 +431,9 @@
     <property modelName="Key" domainName="EntityNameComponentId"/>
     <property modelName="SourceEntityKey" domainName="EntityNameId"/>
     <property modelName="ComponentTypeKey" domainName="ComponentTypeConceptId"/>
-    <property modelName="ComponentType" domainName="ComponentTypeConcept"/>
+    <property modelName="ComponentType" domainName="ComponentTypeConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+    </property>
     <collapseKey propertyName="ComponentTypeConcept" keyName="ComponentTypeConceptId"/>
     <property modelName="PhoneticAlgorithmKey" domainName="PhoneticValue">
       <via domainName="PhoneticAlgorithmId"/>
@@ -403,7 +450,9 @@
        domainClass="OpenIZ.Persistence.Data.MSSQL.Data.EntityAddress, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="EntityAddressId"/>
     <property modelName="AddressUseKey" domainName="AddressUseConceptId"/>
-    <property modelName="AddressUse" domainName="AddressUseConcept"/>
+    <property modelName="AddressUse" domainName="AddressUseConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+    </property>
     <collapseKey propertyName="AddressUseConcept" keyName="AddressUseConceptId"/>
     <property modelName="SourceEntityKey" domainName="EntityId"/>
     <property modelName="Component" domainName="EntityAddressComponents"/>
@@ -414,13 +463,16 @@
     <property modelName="Key" domainName="EntityAddressComponentId"/>
     <property modelName="SourceEntityKey" domainName="EntityAddressId"/>
     <property modelName="ComponentTypeKey" domainName="ComponentTypeConceptId"/>
-    <property modelName="ComponentType" domainName="ComponentTypeConcept"/>
-    <collapseKey propertyName="ComponentTypeConcept" keyName="ComponentTypeConceptId"/>
+    <property modelName="ComponentType" domainName="ComponentTypeConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+    </property>
+      <collapseKey propertyName="ComponentTypeConcept" keyName="ComponentTypeConceptId"/>
     <property modelName="Value" domainName="EntityAddressComponentValue">
       <via domainName="Value"/>
     </property>
   </class>
 
+  
   <class modelClass="OpenIZ.Core.Model.DataTypes.EntityIdentifier, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.EntityIdentifier, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="EntityIdentifierId"/>
@@ -438,10 +490,15 @@
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.IdentifierType, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="IdentifierTypeId"/>
     <property modelName="TypeConceptKey" domainName="IdentifierTypeConceptId"/>
-    <property modelName="TypeConcept" domainName="IdentifierTypeConcept"/>
-    <collapseKey propertyName="IdentifierTypeConcept" keyName="IdentifierTypeConceptId"/>
+    <property modelName="TypeConcept" domainName="IdentifierTypeConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+    </property>
+      <collapseKey propertyName="IdentifierTypeConcept" keyName="IdentifierTypeConceptId"/>
     <property modelName="ScopeConceptKey" domainName="EntityClassScopeConceptId"/>
-    <property modelName="Scope" domainName="EntityClassScopeConcept"/>
+    <property modelName="ScopeConcept" domainName="EntityClassScopeConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+      
+    </property>
     <collapseKey propertyName="EntityClassScopeConcept" keyName="EntityClassScopeConceptId"/>
   </class>
 
@@ -464,16 +521,20 @@
     <property modelName="SourceEntityKey" domainName="SourceEntityId"/>
     <property modelName="TargetEntityKey" domainName="TargetEntityId"/>
     <property modelName="RelationshipTypeKey" domainName="AssociationTypeConceptId"/>
-    <property modelName="RelationshipType" domainName="AssociationTypeConcept"/>
-    <collapseKey propertyName="AssociationTypeConcept" keyName="AssociationTypeConceptId"/>
+    <property modelName="RelationshipType" domainName="AssociationTypeConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+    </property>
+      <collapseKey propertyName="AssociationTypeConcept" keyName="AssociationTypeConceptId"/>
   </class>
 
   <class modelClass="OpenIZ.Core.Model.Entities.EntityTelecomAddress, OpenIZ.Core.Model, Version=1.0.0.0"
      domainClass="OpenIZ.Persistence.Data.MSSQL.Data.EntityTelecomAddress, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="EntityTelecomAddressId"/>
     <property modelName="AddressUseKey" domainName="TelecomUseConceptId"/>
-    <property modelName="AddressUse" domainName="TelecomUseConcept"/>
-    <collapseKey propertyName="TelecomUseConcept" keyName="TelecomUseConceptId"/>
+    <property modelName="AddressUse" domainName="TelecomUseConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+    </property>
+      <collapseKey propertyName="TelecomUseConcept" keyName="TelecomUseConceptId"/>
     <property modelName="SourceEntityKey" domainName="EntityId"/>
     <property modelName="Value" domainName="TelecomAddress"/>
   </class>
@@ -531,6 +592,8 @@
   <!-- Person Maps -->
   <class modelClass="OpenIZ.Core.Model.Entities.Person, OpenIZ.Core.Model, Version=1.0.0.0"
        domainClass="OpenIZ.Persistence.Data.MSSQL.Data.Person, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <base domainName="EntityVersion"/>
+
     <property modelName="Key" domainName="EntityVersion">
       <via domainName="EntityId"/>
     </property>
@@ -548,6 +611,7 @@
   <!-- Patient Maps -->
   <class modelClass="OpenIZ.Core.Model.Roles.Patient, OpenIZ.Core.Model, Version=1.0.0.0"
        domainClass="OpenIZ.Persistence.Data.MSSQL.Data.Patient, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <base domainName="Person"/>
     <property modelName="Key" domainName="Person">
       <via domainName="EntityVersion">
         <via domainName="EntityId"/>
@@ -555,13 +619,35 @@
     </property>
     <property modelName="VersionKey" domainName="EntityVersionId"/>
     <property modelName="GenderConceptKey" domainName="GenderConceptId"/>
+    <property modelName="GenderConcept" domainName="GenderConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+    </property>
     <collapseKey propertyName="GenderConcept" keyName="GenderConceptId"/>
+
+  </class>
+
+  <!-- Provider Maps -->
+  <class modelClass="OpenIZ.Core.Model.Roles.Provider, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.MSSQL.Data.Provider, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <base domainName="Person"/>
+    <property modelName="Key" domainName="Person">
+      <via domainName="EntityVersion">
+        <via domainName="EntityId"/>
+      </via>
+    </property>
+    <property modelName="VersionKey" domainName="EntityVersionId"/>
+    <property modelName="ProviderSpecialtyKey" domainName="ProviderSpecialtyConceptId"/>
+    <property modelName="ProviderSpecialty" domainName="ProviderSpecialtyConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+    </property>
+    <collapseKey propertyName="ProviderSpecialtyConcept" keyName="ProviderSpecialtyConceptId"/>
 
   </class>
 
   <!-- Industry Maps -->
   <class modelClass="OpenIZ.Core.Model.Entities.Organization, OpenIZ.Core.Model, Version=1.0.0.0"
        domainClass="OpenIZ.Persistence.Data.MSSQL.Data.Organization, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <base domainName="EntityVersion"/>
     <property modelName="Key" domainName="EntityVersion">
       <via domainName="EntityId"/>
     </property>
@@ -572,6 +658,8 @@
 
   <class modelClass="OpenIZ.Core.Model.Entities.Place, OpenIZ.Core.Model, Version=1.0.0.0"
        domainClass="OpenIZ.Persistence.Data.MSSQL.Data.Place, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <base domainName="EntityVersion"/>
+
     <property modelName="Key" domainName="EntityVersion">
       <via domainName="EntityId"/>
     </property>
@@ -590,6 +678,8 @@
   <!-- Security entities -->
   <class modelClass="OpenIZ.Core.Model.Entities.ApplicationEntity, OpenIZ.Core.Model, Version=1.0.0.0"
        domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ApplicationEntity, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <base domainName="EntityVersion"/>
+
     <property modelName="Key" domainName="EntityVersion">
       <via domainName="EntityId"/>
     </property>
@@ -600,6 +690,8 @@
 
   <class modelClass="OpenIZ.Core.Model.Entities.DeviceEntity, OpenIZ.Core.Model, Version=1.0.0.0"
        domainClass="OpenIZ.Persistence.Data.MSSQL.Data.DeviceEntity, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <base domainName="EntityVersion"/>
+
     <property modelName="Key" domainName="EntityVersion">
       <via domainName="EntityId"/>
     </property>
@@ -610,6 +702,8 @@
 
   <class modelClass="OpenIZ.Core.Model.Entities.UserEntity, OpenIZ.Core.Model, Version=1.0.0.0"
        domainClass="OpenIZ.Persistence.Data.MSSQL.Data.UserEntity, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <base domainName="Person"/>
+
     <property modelName="Key" domainName="Person">
       <via domainName="EntityVersion">
         <via domainName="EntityId"/>
@@ -619,5 +713,25 @@
     <property modelName="SecurityUserKey" domainName="UserId"/>
     <collapseKey propertyName="SecurityUser" keyName="UserId"/>
 
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.Material, OpenIZ.Core.Model, Version=1.0.0.0"
+     domainClass="OpenIZ.Persistence.Data.MSSQL.Data.Material, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <base domainName="EntityVersion"/>
+    <property modelName="Key" domainName="EntityVersion">
+        <via domainName="EntityId"/>
+    </property>
+    <property modelName="VersionKey" domainName="EntityVersionId"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.ManufacturedMaterial, OpenIZ.Core.Model, Version=1.0.0.0"
+   domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ManufacturedMaterial, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <base domainName="Material"/>
+    <property modelName="Key" domainName="Material">
+      <via domainName="EntityVersion">
+        <via domainName="EntityId"/>
+      </via>
+    </property>
+    <property modelName="VersionKey" domainName="EntityVersionId"/>
   </class>
 </modelMap>

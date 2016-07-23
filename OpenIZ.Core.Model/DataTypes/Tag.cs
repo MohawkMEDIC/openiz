@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Entities;
@@ -33,9 +34,9 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents the base class for tags
     /// </summary>
-    [Classifier(nameof(TagKey))]
+    [Classifier(nameof(TagKey)), SimpleValue(nameof(Value))]
     [XmlType(Namespace = "http://openiz.org/model")]
-    public abstract class Tag<TSourceType> : BaseEntityData, ISimpleAssociation where TSourceType : IdentifiedData
+    public abstract class Tag<TSourceType> : BaseEntityData, ISimpleAssociation where TSourceType : IdentifiedData, new()
     {
 
         /// <summary>
@@ -51,7 +52,7 @@ namespace OpenIZ.Core.Model.DataTypes
         public String Value { get; set; }
 
         // Target entity key
-        private Guid m_sourceEntityKey;
+        private Guid? m_sourceEntityKey;
         // The target entity
 
         private TSourceType m_sourceEntity;
@@ -60,7 +61,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the source entity's key (where the relationship is FROM)
         /// </summary>
         [XmlElement("source"), JsonProperty("source")]
-        public virtual Guid SourceEntityKey
+        public virtual Guid? SourceEntityKey
         {
             get
             {
@@ -76,7 +77,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// The entity that this relationship targets
         /// </summary>
-        [DelayLoad(nameof(SourceEntityKey))]
+        [SerializationReference(nameof(SourceEntityKey))]
         [XmlIgnore, JsonIgnore]
         public TSourceType SourceEntity
         {
@@ -88,10 +89,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_sourceEntity = value;
-                if (value == null)
-                    this.m_sourceEntityKey = default(Guid);
-                else
-                    this.m_sourceEntityKey = value.Key;
+                this.m_sourceEntityKey = value?.Key;
             }
         }
     }
@@ -130,7 +128,22 @@ namespace OpenIZ.Core.Model.DataTypes
     [XmlType("ActTag",  Namespace = "http://openiz.org/model"), JsonObject("ActTag")]
     public class ActTag : Tag<Act>
     {
+        /// <summary>
+        /// Default ctor
+        /// </summary>
+        public ActTag()
+        {
 
+        }
+
+        /// <summary>
+        /// Construtor setting key and tag
+        /// </summary>
+        public ActTag(String key, String value)
+        {
+            this.TagKey = key;
+            this.Value = value;
+        }
     }
 
 }

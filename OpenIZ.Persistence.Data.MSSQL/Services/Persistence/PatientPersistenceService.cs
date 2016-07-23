@@ -1,7 +1,27 @@
-﻿using OpenIZ.Core.Model.Roles;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-22
+ */
+using OpenIZ.Core.Model.Roles;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
@@ -24,6 +44,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         public override object FromModelInstance(Core.Model.Roles.Patient modelInstance, ModelDataContext context, IPrincipal principal)
         {
             var dbPatient = base.FromModelInstance(modelInstance, context, principal) as Data.Patient;
+            
             if (modelInstance.DeceasedDatePrecision.HasValue)
                 dbPatient.DeceasedDatePrecision = PersonPersistenceService.PrecisionMap[modelInstance.DeceasedDatePrecision.Value];
             return dbPatient;
@@ -34,8 +55,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public override Core.Model.Roles.Patient ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
         {
-            var patient = dataInstance as Data.Patient;
-            var dbe = context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == patient.EntityVersionId).First();
+            var iddat = dataInstance as IDbVersionedData;
+            var patient = dataInstance as Data.Patient ?? context.GetTable<Data.Patient>().Where(o => o.EntityVersionId == iddat.VersionId).First();
+            var dbe = dataInstance as Data.EntityVersion ?? context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == patient.EntityVersionId).First();
             var dbp = context.GetTable<Data.Person>().Where(o => o.EntityVersionId == patient.EntityVersionId).First();
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Roles.Patient>(dbe, context, principal);
 
@@ -86,6 +108,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = this.m_personPersister.Obsolete(context, data, principal);
             return data;
+        }
+
+        /// <summary>
+        /// Get data load options
+        /// </summary>
+        /// <returns></returns>
+        internal override DataLoadOptions GetDataLoadOptions()
+        {
+            var loadOptions = this.m_entityPersister.GetDataLoadOptions();
+            loadOptions.LoadWith<Data.Patient>(cs => cs.GenderConcept);
+
+            return loadOptions;
         }
     }
 }

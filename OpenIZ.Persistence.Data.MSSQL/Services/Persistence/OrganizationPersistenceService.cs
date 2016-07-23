@@ -1,7 +1,27 @@
-﻿using OpenIZ.Core.Model.Entities;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-22
+ */
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
@@ -21,10 +41,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.Organization ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
         {
-            var organization = dataInstance as Data.Organization;
-            var dbe = context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == organization.EntityVersionId).First();
+
+            var iddat = dataInstance as IDbVersionedData;
+            var organization = dataInstance as Data.Organization ?? context.GetTable<Data.Organization>().Where(o => o.EntityVersionId == iddat.VersionId).FirstOrDefault();
+            var dbe = dataInstance as Data.EntityVersion ?? context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == organization.EntityVersionId).First();
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Entities.Organization>(dbe, context, principal);
-            retVal.IndustryConceptKey = organization.IndustryConceptId;
+            retVal.IndustryConceptKey = organization?.IndustryConceptId;
             return retVal;
         }
 
@@ -48,6 +70,17 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             data.IndustryConcept?.EnsureExists(context, principal);
             data.IndustryConceptKey = data.IndustryConcept?.Key ?? data.IndustryConceptKey;
             return base.Update(context, data, principal);
+        }
+
+        /// <summary>
+        /// Get data load options
+        /// </summary>
+        /// <returns></returns>
+        internal override DataLoadOptions GetDataLoadOptions()
+        {
+            var loadOptions = m_entityPersister.GetDataLoadOptions();
+
+            return loadOptions;
         }
 
     }

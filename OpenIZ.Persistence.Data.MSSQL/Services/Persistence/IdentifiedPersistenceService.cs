@@ -1,4 +1,23 @@
-﻿using System;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-22
+ */
+using System;
 using OpenIZ.Core.Model.Security;
 using System.Linq.Expressions;
 using System.Linq;
@@ -12,6 +31,7 @@ using OpenIZ.Persistence.Data.MSSQL.Exceptions;
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.Core;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -59,7 +79,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 		{
 			var domainObject = this.FromModelInstance (data, context, principal) as TDomain;
 
-            if (domainObject.Id == Guid.Empty)
+            if (domainObject.Id == null ||
+                domainObject.Id == Guid.Empty)
                 data.Key = domainObject.Id = Guid.NewGuid();
 
             context.GetTable<TDomain>().InsertOnSubmit (domainObject);
@@ -134,11 +155,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             }
             // Ensure the source key is set
             foreach (var itm in storage)
-                if (itm.SourceEntityKey == Guid.Empty)
+                if (itm.SourceEntityKey == Guid.Empty ||
+                    itm.SourceEntityKey == null)
                     itm.SourceEntityKey = source.Key;
 
             // Get existing
-            var existing = context.GetTable<TDomainAssociation>().Where(ExpressionRewriter.Rewrite<TDomainAssociation>(o => o.AssociatedItemKey == source.Key)).ToList().Select(o=>m_mapper.MapDomainInstance<TDomainAssociation, TAssociation>(o).GetLocked() as TAssociation);
+            var existing = context.GetTable<TDomainAssociation>().Where(ExpressionRewriter.Rewrite<TDomainAssociation>(o => o.AssociatedItemKey == source.Key)).ToList().Select(o=>m_mapper.MapDomainInstance<TDomainAssociation, TAssociation>(o) as TAssociation);
             // Remove old
             var obsoleteRecords = existing.Where(o => !storage.Exists(ecn => ecn.Key == o.Key));
             foreach (var del in obsoleteRecords)

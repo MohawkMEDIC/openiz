@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,7 @@ namespace OpenIZ.Core.Model
     /// </summary>
     
     [XmlType(Namespace = "http://openiz.org/model")]
-    public abstract class VersionedEntityData<THistoryModelType> : BaseEntityData, IVersionedEntity where THistoryModelType : VersionedEntityData<THistoryModelType>
+    public abstract class VersionedEntityData<THistoryModelType> : BaseEntityData, IVersionedEntity where THistoryModelType : VersionedEntityData<THistoryModelType>, new()
     {
 
         // Previous version id
@@ -85,7 +86,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the previous version
         /// </summary>
-        [DelayLoad(nameof(PreviousVersionKey))]
+        [SerializationReference(nameof(PreviousVersionKey))]
         [XmlIgnore, JsonIgnore]
         public virtual THistoryModelType PreviousVersion
         {
@@ -93,7 +94,7 @@ namespace OpenIZ.Core.Model
             {
                 if(this.m_previousVersion == null && this.IsDelayLoadEnabled && 
                     this.m_previousVersionId.HasValue)
-                    this.m_previousVersion = EntitySource.Current.Get(this.Key, this.m_previousVersionId.Value, this.m_previousVersion);
+                    this.m_previousVersion = EntitySource.Current.Get<THistoryModelType>(this.Key, this.m_previousVersionId.Value);
                 return this.m_previousVersion;
             }
             set
@@ -110,13 +111,13 @@ namespace OpenIZ.Core.Model
         /// Gets or sets the key which represents the version of the entity
         /// </summary>
         [XmlElement("version"), JsonProperty("version")]
-        public Guid VersionKey { get; set; }
+        public Guid? VersionKey { get; set; }
 
         /// <summary>
         /// The sequence number of the version (for ordering)
         /// </summary>
         [XmlElement("sequence"), JsonProperty("sequence")]
-        public Decimal VersionSequence { get; set; }
+        public Decimal? VersionSequence { get; set; }
 
         /// <summary>
         /// Represent the versioned data as a string

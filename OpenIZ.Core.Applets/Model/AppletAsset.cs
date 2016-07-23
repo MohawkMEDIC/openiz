@@ -1,3 +1,22 @@
+/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-14
+ */
 using System;
 using System.Xml.Serialization;
 using System.Xml.Linq;
@@ -52,13 +71,23 @@ namespace OpenIZ.Core.Applets.Model
 			set;
 		}
 
-		/// <summary>
-		/// Gets or sets the content of the asset
-		/// </summary>
+        /// <summary>
+        /// Gets or sets the applets required policies for a user to run
+        /// </summary>
+        [XmlElement("demand")]
+        public List<String> Policies
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the content of the asset
+        /// </summary>
         /// <remarks>
         /// Assets of type contentXml 
         /// </remarks>
-		[XmlElement("contentText", Type = typeof(String))]
+        [XmlElement("contentText", Type = typeof(String))]
 		[XmlElement("contentBin", Type = typeof(byte[]))]
 		[XmlElement("contentXml", Type = typeof(XElement))]
         [XmlElement("contentHtml", Type = typeof(AppletAssetHtml))]

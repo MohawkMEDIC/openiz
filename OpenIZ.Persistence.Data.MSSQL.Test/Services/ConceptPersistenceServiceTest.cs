@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,16 +14,18 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-1-20
+ * User: justi
+ * Date: 2016-6-14
  */
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenIZ.Core;
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
@@ -111,6 +114,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         [TestMethod]
         public void TestUpdateNamedConcept()
         {
+
             Concept namedConcept = new Concept()
             {
                 ClassKey = ConceptClassKeys.Other,
@@ -230,7 +234,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         /// simple concept which has a display name
         /// </summary>
         [TestMethod]
-        public void TestUpdateConceprReferenceTerm()
+        public void TestUpdateConceptReferenceTerm()
         {
             Concept refTermConcept = new Concept()
             {

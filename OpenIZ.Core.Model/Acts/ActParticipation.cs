@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
@@ -38,12 +39,37 @@ namespace OpenIZ.Core.Model.Acts
     public class ActParticipation : VersionedAssociation<Act>
     {
 
-        private Guid m_playerKey;
+        private Guid? m_playerKey;
         
         private Entity m_player;
-        private Guid m_participationRoleKey;
+        private Guid? m_participationRoleKey;
         
         private Concept m_participationRole;
+
+        /// <summary>
+        /// Default constructor for act participation
+        /// </summary>
+        public ActParticipation()
+        {
+        }
+
+        /// <summary>
+        /// Act participation relationship between <paramref name="source"/> and <paramref name="player"/>
+        /// </summary>
+        public ActParticipation(Guid? roleType, Entity player)
+        {
+            this.ParticipationRoleKey = roleType;
+            this.PlayerEntity = player;
+        }
+
+        /// <summary>
+        /// Entity relationship between <paramref name="source"/> and <paramref name="playerKey"/>
+        /// </summary>
+        public ActParticipation(Guid? roleType, Guid? playerKey)
+        {
+            this.ParticipationRoleKey = roleType;
+            this.PlayerEntityKey = playerKey;
+        }
 
         /// <summary>
         /// Gets or sets the target entity reference
@@ -51,7 +77,7 @@ namespace OpenIZ.Core.Model.Acts
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("player"), JsonProperty("player")]
-        public Guid PlayerEntityKey
+        public Guid? PlayerEntityKey
         {
             get { return this.m_playerKey; }
             set
@@ -67,7 +93,7 @@ namespace OpenIZ.Core.Model.Acts
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("participationRole"), JsonProperty("participationRole")]
-        public Guid ParticipationRoleKey
+        public Guid? ParticipationRoleKey
         {
             get { return this.m_participationRoleKey; }
             set
@@ -81,7 +107,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the entity which participated in the act
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(PlayerEntityKey))]
+        [SerializationReference(nameof(PlayerEntityKey))]
         public Entity PlayerEntity
         {
             get
@@ -92,10 +118,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 this.m_player = value;
-                if (value == null)
-                    this.m_playerKey = Guid.Empty;
-                else
-                    this.m_playerKey = value.Key;
+                this.m_playerKey = value?.Key;
             }
         }
 
@@ -103,7 +126,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the role that the entity played in participating in the act
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(ParticipationRoleKey))]
+        [SerializationReference(nameof(ParticipationRoleKey))]
         public Concept ParticipationRole
         {
             get
@@ -114,10 +137,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 this.m_participationRole = value;
-                if (value == null)
-                    this.m_participationRoleKey = Guid.Empty;
-                else
-                    this.m_participationRoleKey = value.Key;
+                this.m_participationRoleKey = value?.Key;
             }
         }
 

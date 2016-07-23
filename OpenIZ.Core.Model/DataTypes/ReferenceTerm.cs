@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using System.Linq;
 
@@ -39,7 +40,7 @@ namespace OpenIZ.Core.Model.DataTypes
     {
 
         // Backing field for code system identifier
-        private Guid m_codeSystemId;
+        private Guid? m_codeSystemId;
         // Code system
         
         private CodeSystem m_codeSystem;
@@ -51,13 +52,12 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the mnemonic for the reference term
         /// </summary>
         [XmlElement("mnemonic"), JsonProperty("mnemonic")]
-        [Unique]
         public string Mnemonic { get; set; }
 
         /// <summary>
         /// Gets or sets the code system 
         /// </summary>
-        [DelayLoad(nameof(CodeSystemKey))]
+        [SerializationReference(nameof(CodeSystemKey))]
         [XmlIgnore, JsonIgnore]
         public CodeSystem CodeSystem {
             get
@@ -68,10 +68,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_codeSystem = value;
-                if (value == null)
-                    this.m_codeSystemId = Guid.Empty;
-                else
-                    this.m_codeSystemId = value.Key;
+                this.m_codeSystemId = value?.Key;
             }
         }
         
@@ -80,8 +77,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("codeSystem"), JsonProperty("codeSystem")]
-        [Unique]
-        public Guid  CodeSystemKey {
+        public Guid?  CodeSystemKey {
             get { return this.m_codeSystemId; }
             set
             {
@@ -93,7 +89,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets display names associated with the reference term
         /// </summary>
-        [DelayLoad(null)]
+        
         [XmlElement("name"), JsonProperty("name")]
         public List<ReferenceTermName> DisplayNames {
             get

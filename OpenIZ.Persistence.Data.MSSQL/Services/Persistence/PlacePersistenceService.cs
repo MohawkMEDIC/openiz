@@ -1,7 +1,27 @@
-﻿using OpenIZ.Core.Model.Entities;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-22
+ */
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
@@ -19,12 +39,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.Place ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
         {
-            var place = dataInstance as Data.Place;
-            var dbe = context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == place.EntityVersionId).First();
+
+            var iddat = dataInstance as IDbVersionedData;
+            var place = dataInstance as Data.Place ?? context.GetTable<Data.Place>().Where(o => o.EntityVersionId == iddat.VersionId).FirstOrDefault();
+            var dbe = dataInstance as Data.EntityVersion ?? context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == place.EntityVersionId).First();
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Entities.Place>(dbe, context, principal);
-            retVal.IsMobile = place.MobileInd;
-            retVal.Lat = place.Lat;
-            retVal.Lng = place.Lng;
+            retVal.IsMobile = place?.MobileInd == true;
+            retVal.Lat = place?.Lat;
+            retVal.Lng = place?.Lng;
             return retVal;
         }
 
@@ -60,6 +82,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     principal);
 
             return retVal;
+        }
+
+        /// <summary>
+        /// Get data load options
+        /// </summary>
+        /// <returns></returns>
+        internal override DataLoadOptions GetDataLoadOptions()
+        {
+            var loadOptions = m_entityPersister.GetDataLoadOptions();
+           // loadOptions.LoadWith<Data.Entity>(o=>o.PlaceServicesPlaceEntityId);
+
+            return loadOptions;
         }
     }
 }

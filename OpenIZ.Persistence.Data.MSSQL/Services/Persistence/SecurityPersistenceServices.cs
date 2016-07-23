@@ -1,4 +1,23 @@
-﻿using System;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-22
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
@@ -7,6 +26,7 @@ using System.Threading.Tasks;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using OpenIZ.Core.Model.Interfaces;
+using System.Data.Linq;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -15,7 +35,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     /// </summary>
     public class SecurityUserPersistenceService : BaseDataPersistenceService<Core.Model.Security.SecurityUser, Data.SecurityUser>
     {
-
+        public override Core.Model.Security.SecurityUser ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
+        {
+            var dbUser = dataInstance as Data.SecurityUser;
+            var retVal = base.ToModelInstance(dataInstance, context, principal);
+            retVal.Roles = dbUser.SecurityUserRoles.Select(o => m_mapper.MapDomainInstance<Data.SecurityRole, Core.Model.Security.SecurityRole>(o.SecurityRole)).ToList();
+            return retVal;
+        }
         /// <summary>
         /// Insert the specified object
         /// </summary>
@@ -30,8 +56,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     r.EnsureExists(context, principal);
                     context.SecurityUserRoles.InsertOnSubmit(new SecurityUserRole()
                     {
-                        UserId = retVal.Key,
-                        RoleId = r.Key
+                        UserId = retVal.Key.Value,
+                        RoleId = r.Key.Value
                     });
                 }
 
@@ -53,8 +79,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     r.EnsureExists(context, principal);
                     context.SecurityUserRoles.InsertOnSubmit(new SecurityUserRole()
                     {
-                        UserId = retVal.Key,
-                        RoleId = r.Key
+                        UserId = retVal.Key.Value,
+                        RoleId = r.Key.Value
                     });
                 }
             }
@@ -62,6 +88,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             return retVal;
         }
 
+        /// <summary>
+        /// Data load options
+        /// </summary>
+        /// <returns></returns>
+        internal override DataLoadOptions GetDataLoadOptions()
+        {
+            var baseOptions = base.GetDataLoadOptions();
+            baseOptions.LoadWith<Data.SecurityUser>(o => o.SecurityUserRoles);
+            return baseOptions;
+        }
     }
 
     /// <summary>
@@ -77,6 +113,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = base.ToModelInstance(dataInstance, context, principal);
             retVal.Policies = (dataInstance as Data.SecurityRole).SecurityRolePolicies.Select(o => m_mapper.MapDomainInstance<Data.SecurityRolePolicy, Core.Model.Security.SecurityPolicyInstance>(o)).ToList();
+            retVal.Users = (dataInstance as Data.SecurityRole).SecurityUserRoles.Select(o => m_mapper.MapDomainInstance<Data.SecurityUser, Core.Model.Security.SecurityUser>(o.SecurityUser)).ToList();
             return retVal;
         }
 

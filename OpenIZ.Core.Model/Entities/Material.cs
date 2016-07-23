@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Constants;
@@ -98,7 +99,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the concept which dictates the form of the material (solid, liquid, capsule, injection, etc.)
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(FormConceptKey))]
+        [SerializationReference(nameof(FormConceptKey))]
         public Concept FormConcept
         {
             get {
@@ -117,7 +118,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the concept which dictates the unit of measure for a single instance of this entity
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(QuantityConceptKey))]
+        [SerializationReference(nameof(QuantityConceptKey))]
         public Concept QuantityConcept
         {
             get

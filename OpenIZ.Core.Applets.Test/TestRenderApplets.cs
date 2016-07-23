@@ -1,9 +1,35 @@
-﻿using System;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-14
+ */
+using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenIZ.Core.Applets.Model;
 using System.Diagnostics;
 using System.Text;
 using System.IO;
+using OpenIZ.Core.Model.EntityLoader;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Interfaces;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using OpenIZ.Core.Model.DataTypes;
+using System.Linq;
 
 namespace OpenIZ.Core.Applets.Test
 {
@@ -27,6 +53,91 @@ namespace OpenIZ.Core.Applets.Test
 
         }
 
+        /// <summary>
+        /// Entity source provider test
+        /// </summary>
+        private class TestEntitySource : IEntitySourceProvider
+        {
+
+            public TObject Get<TObject>(Guid? key) where TObject : IdentifiedData, new()
+            {
+                return new TObject() { Key = key };
+            }
+
+            public TObject Get<TObject>(Guid? key, Guid? versionKey) where TObject : IdentifiedData, IVersionedEntity, new()
+            {
+                return new TObject() { Key = key, VersionKey = versionKey };
+
+            }
+
+            public List<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence) where TObject : IdentifiedData, IVersionedAssociation, new()
+            {
+                throw new NotImplementedException();
+            }
+
+            /// <summary>
+            /// Query the specified object
+            /// </summary>
+            public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData, new()
+            {
+                if (typeof(TObject) == typeof(Concept))
+                {
+                    // Add list of concepts
+                    return new List<Concept>()
+                    {
+                        new Concept()
+                        {
+                            Key = Guid.NewGuid(),
+                            Mnemonic = "Male",
+                            ConceptNames = new List<ConceptName>()
+                            {
+                                new ConceptName() { Language = "en" ,Name = "Male" },
+                                new ConceptName() { Language = "sw" , Name = "Kiume" }
+                            },
+                            ConceptSets = new List<ConceptSet>()
+                            {
+                                new ConceptSet() { Mnemonic = "AdministrativeGenderCode" }
+                            }
+                        },
+                        new Concept()
+                        {
+                            Key = Guid.NewGuid(),
+                            Mnemonic = "Female",
+                            ConceptNames = new List<ConceptName>()
+                            {
+                                new ConceptName() { Language = "en" ,Name = "Female" },
+                                new ConceptName() { Language = "sw" , Name = "Kike" }
+                            },
+                            ConceptSets = new List<ConceptSet>()
+                            {
+                                new ConceptSet() { Mnemonic = "AdministrativeGenderCode" }
+                            }
+                        },
+                    }.OfType<TObject>();
+                }
+                else
+                {
+                    Assert.Fail();
+                    return null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Test binding of elements
+        /// </summary>
+        [TestMethod]
+        public void TestBinding()
+        {
+            EntitySource currentEs = EntitySource.Current;
+            EntitySource.Current = new EntitySource(new TestEntitySource());
+            var asset = this.m_appletCollection.ResolveAsset("app://org.openiz.sample.helloworld/bindingTest");
+            Assert.IsNotNull(asset);
+            var html = System.Text.Encoding.UTF8.GetString(this.m_appletCollection.RenderAssetContent(asset));
+            Assert.IsTrue(html.Contains("Male"));
+            EntitySource.Current = currentEs;
+        }
+
         [TestMethod]
         public void TestCreatePackage()
         {
@@ -38,31 +149,22 @@ namespace OpenIZ.Core.Applets.Test
         [TestMethod]
         public void TestResolveAbsolute()
         {
-            Assert.IsNotNull(this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.sample.helloworld/layout"));
+            Assert.IsNotNull(this.m_appletCollection.ResolveAsset("app://org.openiz.sample.helloworld/layout"));
         }
 
         [TestMethod]
         public void TestResolveIndex()
         {
-            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.sample.helloworld");
+            var asset = this.m_appletCollection.ResolveAsset("app://org.openiz.sample.helloworld/");
             Assert.IsNotNull(asset);
-            Assert.AreEqual("index", asset.Name);
+            Assert.AreEqual("index.html", asset.Name);
             Assert.AreEqual("en", asset.Language);
-        }
-
-        [TestMethod]
-        public void TestResolveLanguage()
-        {
-            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.sample.helloworld/index", language: "fr");
-            Assert.IsNotNull(asset);
-            Assert.AreEqual("index", asset.Name);
-            Assert.AreEqual("fr", asset.Language);
         }
 
         [TestMethod]
         public void TestResolveRelative()
         {
-            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.sample.helloworld/index");
+            var asset = this.m_appletCollection.ResolveAsset("app://org.openiz.sample.helloworld/index.html");
             Assert.IsNotNull(asset);
             Assert.IsNotNull(this.m_appletCollection.ResolveAsset("layout", asset));
         }
@@ -70,7 +172,7 @@ namespace OpenIZ.Core.Applets.Test
         [TestMethod]
         public void TestResolveSettingLanguage()
         {
-            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.applets.core.settings", language: "en");
+            var asset = this.m_appletCollection.ResolveAsset("app://org.openiz.applets.core.settings/", language: "en");
             Assert.IsNotNull(asset);
         }
 
@@ -78,7 +180,7 @@ namespace OpenIZ.Core.Applets.Test
         [TestMethod]
         public void TestRenderSettingsHtml()
         {
-            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.applets.core.settings");
+            var asset = this.m_appletCollection.ResolveAsset("app://org.openiz.applets.core.settings/");
             var render = this.m_appletCollection.RenderAssetContent(asset);
             Trace.WriteLine(Encoding.UTF8.GetString(render));
         }
@@ -86,30 +188,26 @@ namespace OpenIZ.Core.Applets.Test
         [TestMethod]
         public void TestRenderHtml()
         {
-            var asset = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.sample.helloworld/index");
+            var asset = this.m_appletCollection.ResolveAsset("app://org.openiz.sample.helloworld/index.html");
             var render = this.m_appletCollection.RenderAssetContent(asset);
             Trace.WriteLine(Encoding.UTF8.GetString(render));
         }
 
         /// <summary>
-        /// Test re-write of URLS
+        /// Test pre-processing of localization
         /// </summary>
         [TestMethod]
-        public void TestRewriteUrl()
+        public void TestPreProcessLocalization()
         {
-            var coll = new AppletCollection();
-            coll.Add(AppletManifest.Load(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.HelloWorldApplet.xml")));
-            coll.Add(AppletManifest.Load(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.SettingsApplet.xml")));
+            var asset = this.m_appletCollection.ResolveAsset("app://org.openiz.applet.test.layout/index.html");
+            var render = this.m_appletCollection.RenderAssetContent(asset, "en");
 
-            coll.AssetBase = "http://test.com/assets/";
-            coll.AppletBase = "http://test.com/applets/";
-            var asset = coll.ResolveAsset("app://openiz.org/applet/org.openiz.sample.helloworld/index");
-            Assert.IsNotNull(asset);
-            var render = coll.RenderAssetContent(asset);
-            String renderString = Encoding.UTF8.GetString(render);
-            Trace.WriteLine(renderString);
-            Assert.IsTrue(renderString.Contains("http://test.com/assets/css/bootstrap.css"));
-            Assert.IsTrue(renderString.Contains("http://test.com/applets/org.openiz.sample.helloworld/index-controller"));
+            string html = Encoding.UTF8.GetString(render);
+            Assert.IsFalse(html.Contains("{{ 'some_string' | i18n }}"));
+            Assert.IsFalse(html.Contains("{{ ::'some_string' | i18n }}"));
+
+            Assert.IsTrue(html.Contains("SOME STRING!"));
+
         }
 
         /// <summary>
@@ -120,47 +218,16 @@ namespace OpenIZ.Core.Applets.Test
         {
             var coll = new AppletCollection();
             coll.Add(AppletManifest.Load(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.LayoutAngularTest.xml")));
-            coll.AssetBase = "file:///C:/Users/fyfej/Source/Repos/openizdc/OpenIZMobile/Assets/";
-            var path = Path.GetDirectoryName(Path.GetTempFileName());
-            coll.AppletBase = "file:///" + path.Replace("\\","/") + "/";
-
-            if (!Directory.Exists(Path.Combine(path, "org.openiz.applet.test.layout")))
-                Directory.CreateDirectory(Path.Combine(path, "org.openiz.applet.test.layout"));
-
-            File.WriteAllText(Path.Combine(path, "org.openiz.applet.test.layout", "index-controller"), Encoding.UTF8.GetString(coll.RenderAssetContent(coll.ResolveAsset("app://openiz.org/applet/org.openiz.applet.test.layout/index-controller"))));
-            File.WriteAllText(Path.Combine(path, "org.openiz.applet.test.layout", "index-style"), Encoding.UTF8.GetString(coll.RenderAssetContent(coll.ResolveAsset("app://openiz.org/applet/org.openiz.applet.test.layout/index-style"))));
-            File.WriteAllText(Path.Combine(path, "org.openiz.applet.test.layout", "layout-style"), Encoding.UTF8.GetString(coll.RenderAssetContent(coll.ResolveAsset("app://openiz.org/applet/org.openiz.applet.test.layout/layout-style"))));
-            File.WriteAllText(Path.Combine(path, "org.openiz.applet.test.layout", "layout-controller"), Encoding.UTF8.GetString(coll.RenderAssetContent(coll.ResolveAsset("app://openiz.org/applet/org.openiz.applet.test.layout/layout-controller"))));
-
-            var asset = coll.ResolveAsset("app://openiz.org/applet/org.openiz.applet.test.layout/index");
+            
+            var asset = coll.ResolveAsset("app://org.openiz.applet.test.layout/index.html");
             var render = coll.RenderAssetContent(asset);
             string html = Encoding.UTF8.GetString(render);
             Assert.IsTrue(html.Contains("index-controller"), "Missing index-controller");
             Assert.IsTrue(html.Contains("layout-controller"), "Missing layout-controller");
             Assert.IsTrue(html.Contains("index-style"), "Missing index-style");
             Assert.IsTrue(html.Contains("layout-controller"), "Missing layout-style");
-            Assert.IsTrue(html.Contains("chart"), "Missing chart-js");
 
 
-        }
-
-        /// <summary>
-        /// Test localization in javascript
-        /// </summary>
-        [TestMethod]
-        public void TestLocalizationJavascript()
-        {
-            var assetEn = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.applet.sample.localization.js/strings", language: "en");
-            var assetFr = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.applet.sample.localization.js/strings", language: "fr");
-            var assetIndex = this.m_appletCollection.ResolveAsset("app://openiz.org/applet/org.openiz.applet.sample.localization.js/index", language: "fr");
-
-            var render = this.m_appletCollection.RenderAssetContent(assetEn);
-            Assert.IsTrue(Encoding.UTF8.GetString(render).Contains("Click Me!"));
-            render = this.m_appletCollection.RenderAssetContent(assetFr);
-            Assert.IsTrue(Encoding.UTF8.GetString(render).Contains("Cliquez Moi!"));
-            render = this.m_appletCollection.RenderAssetContent(assetIndex);
-            Assert.IsTrue(Encoding.UTF8.GetString(render).Contains("app://openiz.org/applet/org.openiz.applet.sample.localization.js/strings"));
-            Trace.WriteLine(Encoding.UTF8.GetString(render));
         }
     }
 }

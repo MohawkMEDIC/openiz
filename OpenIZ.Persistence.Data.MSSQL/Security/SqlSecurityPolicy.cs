@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-6-14
  */
 using MARC.HI.EHRS.SVC.Core.Services.Policy;
 using OpenIZ.Core.Model.Interfaces;
@@ -78,7 +79,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
         /// <summary>
         /// Gets or sets the policy identifier
         /// </summary>
-        public Guid Key { get; set; }
+        public Guid? Key { get; set; }
 
         /// <summary>
         /// Gets the name of the policy
@@ -105,5 +106,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
         /// Is active?
         /// </summary>
         public bool IsActive { get; private set; }
+
+        /// <summary>
+        /// Will never be null
+        /// </summary>
+        public bool IsLogicalNull
+        {
+            get
+            {
+                return false;
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.EntityLoader;
@@ -32,14 +33,17 @@ using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model
 {
+    
+
     /// <summary>
     /// Represents data that is identified by a key
     /// </summary>
     [XmlType("IdentifiedData",  Namespace = "http://openiz.org/model"), JsonObject("IdentifiedData")]
     public abstract class IdentifiedData : IIdentifiedEntity
     {
+
         // True when the data class is locked for storage
-        private bool m_delayLoad = true;
+        private bool m_delayLoad = false;
 
         /// <summary>
         /// True if the class is currently loading associations when accessed
@@ -92,7 +96,16 @@ namespace OpenIZ.Core.Model
         /// The internal primary key value of the entity
         /// </summary>
         [XmlElement("id"), JsonProperty("id")]
-        public Guid Key { get; set; }
+        public Guid? Key { get; set; }
+
+        /// <summary>
+        /// True if key should be serialized
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeKey()
+        {
+            return this.Key.HasValue;
+        }
 
         /// <summary>
         /// Gets the type
@@ -110,11 +123,12 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Get associated entity
         /// </summary>
-        protected TEntity DelayLoad<TEntity>(Guid? keyReference, TEntity currentInstance) where TEntity : IdentifiedData
+        protected TEntity DelayLoad<TEntity>(Guid? keyReference, TEntity currentInstance) where TEntity : IdentifiedData, new()
         {
-            if (this.m_delayLoad &&
+            if (currentInstance == null &&
+                this.m_delayLoad &&
                 keyReference.HasValue)
-                currentInstance = EntitySource.Current.Get(keyReference.Value, currentInstance);
+                currentInstance = EntitySource.Current.Get<TEntity>(keyReference.Value);
             return currentInstance;
         }
 

@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using System;
@@ -74,22 +75,46 @@ namespace OpenIZ.Core.Model.DataTypes
     [XmlType(Namespace = "http://openiz.org/model", TypeName = "ActIdentifier")]
     public class ActIdentifier : IdentifierBase<Act>
     {
+        /// <summary>
+        /// Default ctor
+        /// </summary>
+        public ActIdentifier()
+        {
 
+        }
+
+        /// <summary>
+        /// Creates a new entity identifier with specified authority
+        /// </summary>
+        public ActIdentifier(Guid authorityId, String value)
+        {
+            this.AuthorityKey = authorityId;
+            this.Value = value;
+        }
+
+        /// <summary>
+        /// Creates a new entity identifier
+        /// </summary>
+        public ActIdentifier(AssigningAuthority authority, String value)
+        {
+            this.Authority = authority;
+            this.Value = value;
+        }
     }
 
     /// <summary>
     /// Represents an external assigned identifier
     /// </summary>
     [XmlType(Namespace = "http://openiz.org/model")]
-    [Classifier(nameof(Authority))]
-    public abstract class IdentifierBase<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
+    [Classifier(nameof(Authority)), SimpleValue(nameof(Value))] 
+    public abstract class IdentifierBase<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>, new()
     {
 
         // Identifier id
         private Guid? m_identifierTypeId;
         // Authority id
         
-        private Guid m_authorityId;
+        private Guid? m_authorityId;
 
         // Identifier type backing type
         
@@ -102,13 +127,49 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the value of the identifier
         /// </summary>
         [XmlElement("value"), JsonProperty("value")]
-        [Unique]
         public String Value { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the assinging authority id
+        /// </summary>
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [XmlIgnore, JsonIgnore]
+        public Guid? AuthorityKey
+        {
+            get { return this.m_authorityId; }
+            set
+            {
+                if (this.m_authorityId == value)
+                    return;
+                this.m_authority = null;
+                this.m_authorityId = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the type identifier
+        /// </summary>
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [XmlIgnore, JsonIgnore]
+        public Guid? IdentifierTypeKey
+        {
+            get { return this.m_identifierTypeId; }
+            set
+            {
+                if (this.m_identifierTypeId == value)
+                    return;
+                this.m_identifierType = null;
+                this.m_identifierTypeId = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the identifier type
         /// </summary>
-        [DelayLoad(nameof(IdentifierTypeKey))]
+        [SerializationReference(nameof(IdentifierTypeKey))]
         [XmlElement("type"), JsonProperty("type")]
         public IdentifierType IdentifierType
         {
@@ -127,8 +188,9 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the assigning authority 
         /// </summary>
-        [DelayLoad(nameof(AuthorityKey))]
+        [SerializationReference(nameof(AuthorityKey))]
         [XmlElement("authority"), JsonProperty("authority")]
+        [AutoLoad]
         public AssigningAuthority Authority
         {
             get
@@ -139,44 +201,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_authority = value;
-                if (value != null)
-                    this.m_authorityId = value.Key;
-                else
-                    this.m_authorityId = Guid.Empty;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the assinging authority id
-        /// </summary>
-        
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlIgnore, JsonIgnore]
-        [Unique]
-        public Guid  AuthorityKey {
-            get { return this.m_authorityId; }
-            set
-            {
-                this.m_authority = null;
-                this.m_authorityId = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the type identifier
-        /// </summary>
-        
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlIgnore, JsonIgnore]
-        public Guid? IdentifierTypeKey
-        {
-            get { return this.m_identifierTypeId; }
-            set
-            {
-                if (this.m_identifierType?.Key == value)
-                    return;
-                this.m_identifierType = null;
-                this.m_identifierTypeId = value;
+                this.m_authorityId = value?.Key;
             }
         }
 

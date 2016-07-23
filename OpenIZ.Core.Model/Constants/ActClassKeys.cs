@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using System.Collections.Generic;
@@ -78,5 +79,9 @@ namespace OpenIZ.Core.Model.Constants
         /// The act represents a supply of some material
         /// </summary>
         public static readonly Guid Supply = Guid.Parse("A064984F-9847-4480-8BEA-DDDF64B3C77C");
+        /// <summary>
+        /// Control act event
+        /// </summary>
+        public static readonly Guid ControlAct = Guid.Parse("B35488CE-B7CD-4DD4-B4DE-5F83DC55AF9F");
     }
 }

@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Constants;
@@ -40,11 +41,6 @@ namespace OpenIZ.Core.Model.Entities
     public class Person : Entity
     {
 
-        // Security user
-        private SecurityUser m_securityUser;
-
-        // Language communication
-        private List<PersonLanguageCommunication> m_languageCommunication;
 
         /// <summary>
         /// Person constructor
@@ -53,6 +49,7 @@ namespace OpenIZ.Core.Model.Entities
         {
             base.DeterminerConceptKey = DeterminerKeys.Specific;
             base.ClassConceptKey = EntityClassKeys.Person;
+            this.LanguageCommunication = new List<PersonLanguageCommunication>();
         }
 
         /// <summary>
@@ -70,31 +67,9 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets the person's languages of communication
         /// </summary>
-        [DelayLoad(null)]
-        [XmlElement("language"), JsonProperty("language")]
-        public List<PersonLanguageCommunication> LanguageCommunication
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_languageCommunication = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_languageCommunication);
+        [AutoLoad, XmlElement("language"), JsonProperty("language")]
+        public List<PersonLanguageCommunication> LanguageCommunication { get; set; }
 
-                return this.m_languageCommunication;
-            }
-            set
-            {
-                this.m_languageCommunication = value;
-            }
-        }
-
-        /// <summary>
-        /// Forces a refresh of delay load properties
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_languageCommunication = null;
-        }
 
         /// <summary>
         /// Gets the security user account associated with this person if applicable
@@ -104,9 +79,7 @@ namespace OpenIZ.Core.Model.Entities
         {
             get
             {
-                if(this.IsDelayLoadEnabled && this.m_securityUser == null)
-                    this.m_securityUser = EntitySource.Current.Get<UserEntity>(this.Key, this.VersionKey, null)?.SecurityUser;
-                return this.m_securityUser;
+                return EntitySource.Current.Get<UserEntity>(this.Key, this.VersionKey)?.SecurityUser;
             }
         }
     }

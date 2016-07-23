@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
@@ -42,14 +43,21 @@ namespace OpenIZ.Core.Model
     {
 
         // Created by identifier
-        private Guid m_createdById;
+        private Guid? m_createdById;
         // Created by
         private SecurityUser m_createdBy;
         // Obsoleted by
         private Guid? m_obsoletedById;
         // Obsoleted by user
         private SecurityUser m_obsoletedBy;
-        
+
+        /// <summary>
+        /// Constructs a new base entity data
+        /// </summary>
+        public BaseEntityData()
+        {
+        }
+
         /// <summary>
         /// Creation Time
         /// </summary>
@@ -59,7 +67,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
-        [XmlElement("creationTime"), JsonProperty("creationTime")]
+        [XmlElement("creationTime"), JsonProperty("creationTime"), DataIgnore()]
         public String CreationTimeXml
         {
             get { return this.CreationTime.ToString("o", CultureInfo.InvariantCulture); }
@@ -79,7 +87,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
-        [XmlElement("obsoletionTime", IsNullable = false), JsonProperty("obsoletionTime")]
+        [XmlElement("obsoletionTime", IsNullable = false), JsonProperty("obsoletionTime"), DataIgnore()]
         public String ObsoletionTimeXml
         {
             get { return this.ObsoletionTime?.ToString("o", CultureInfo.InvariantCulture); }
@@ -94,7 +102,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the user that created this base data
         /// </summary>
-        [DelayLoad(nameof(CreatedByKey))]
+        [SerializationReference(nameof(CreatedByKey))]
         [XmlIgnore, JsonIgnore]
         public virtual SecurityUser CreatedBy {
             get
@@ -105,17 +113,33 @@ namespace OpenIZ.Core.Model
             set
             {
                 this.m_createdBy = value;
-                if (value == null)
-                    this.m_createdById = Guid.Empty;
-                else
-                    this.m_createdById = value.Key;
+                this.m_createdById = value?.Key;
             }
          }
 
         /// <summary>
+        /// True if key should be serialized
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeCreatedByKey()
+        {
+            return this.CreatedByKey.HasValue;
+        }
+
+        /// <summary>
+        /// True if key should be serialized
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeObsoletedByKey()
+        {
+            return this.ObsoletedByKey.HasValue;
+        }
+
+
+        /// <summary>
         /// Gets or sets the user that obsoleted this base data
         /// </summary>
-        [DelayLoad(nameof(ObsoletedByKey))]
+        [SerializationReference(nameof(ObsoletedByKey))]
         [XmlIgnore, JsonIgnore]
         public virtual SecurityUser ObsoletedBy {
             get
@@ -140,7 +164,7 @@ namespace OpenIZ.Core.Model
         
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("createdBy"), JsonProperty("createdBy")]
-        public virtual Guid CreatedByKey
+        public virtual Guid? CreatedByKey
         {
             get { return this.m_createdById; }
             set

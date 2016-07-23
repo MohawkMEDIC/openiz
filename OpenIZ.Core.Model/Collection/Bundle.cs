@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using System;
 using System.Collections.Generic;
@@ -131,7 +132,7 @@ namespace OpenIZ.Core.Model.Collection
             retVal.Count = retVal.TotalResults = 1;
             if (resourceRoot == null)
                 return retVal;
-            
+            retVal.EntryKey = resourceRoot.Key;
             retVal.Item.Add(resourceRoot);
             ProcessModel(resourceRoot, retVal);
             return retVal;
@@ -181,13 +182,26 @@ namespace OpenIZ.Core.Model.Collection
         private void Reconstitute(IdentifiedData data)
         {
             // Prevent delay loading from EntitySource (we're doing that right now)
-            data = data.GetLocked();
+            bool originalDelayLoad = data.IsDelayLoadEnabled;
+            data.SetDelayLoad(false);
 
             // Iterate over properties
-            foreach(var pi in data.GetType().GetRuntimeProperties())
+            foreach (var pi in data.GetType().GetRuntimeProperties())
             {
+
+                // Is this property not null? If so, we want to iterate
+                object value = pi.GetValue(data);
+                if (value is IList)
+                {
+                    foreach (var itm in value as IList)
+                        if (itm is IdentifiedData)
+                            this.Reconstitute(itm as IdentifiedData);
+                }
+                else if (value is IdentifiedData)
+                    this.Reconstitute(value as IdentifiedData);
+
                 // Is the pi a delay load? if so then get the key property
-                var keyName = pi.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName;
+                var keyName = pi.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty;
                 if (keyName == null || pi.SetMethod == null)
                     continue; // Skip if there is no delay load or if we can't even set this property
 
@@ -197,11 +211,15 @@ namespace OpenIZ.Core.Model.Collection
                     continue; // Invalid key link name
 
                 // Get the key and find a match
-                var key = (Guid)keyPi.GetValue(data);
+                var key = (Guid?)keyPi.GetValue(data);
                 var bundleItem = this.Item.Find(o => o.Key == key);
-                pi.SetValue(data, bundleItem);
+                if(bundleItem != null)
+                    pi.SetValue(data, bundleItem);
                 
             }
+
+            data.SetDelayLoad(originalDelayLoad);
+
         }
 
         /// <summary>
@@ -211,7 +229,7 @@ namespace OpenIZ.Core.Model.Collection
         {
             try
             {
-                foreach (var pi in model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<DelayLoadAttribute>() != null))
+                foreach (var pi in model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<SerializationReferenceAttribute>() != null))
                 {
                     try
                     {
@@ -233,7 +251,7 @@ namespace OpenIZ.Core.Model.Collection
                                             if (!currentBundle.Item.Exists(o => o.Key == (itm as IdentifiedData).Key))
                                                 currentBundle.Item.Add(itm as IdentifiedData);
 
-                                    ProcessModel(itm as IdentifiedData, currentBundle, false);
+                                    ProcessModel(itm as IdentifiedData, currentBundle, true);
                                 }
                             }
                         }

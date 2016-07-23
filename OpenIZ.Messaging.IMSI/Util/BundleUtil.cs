@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-6-14
  */
 using MARC.Everest.Threading;
 using OpenIZ.Core.Model;
@@ -39,7 +40,7 @@ namespace OpenIZ.Messaging.IMSI.Util
         /// <summary>
         /// Create a bundle
         /// </summary>
-        public static Bundle CreateBundle(IEnumerable<IdentifiedData> resourceRoot, int totalResults, int offset)
+        public static Bundle CreateBundle(IEnumerable<IdentifiedData> resourceRoot, int totalResults, int offset, bool lean)
         {
             m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Creating bundle for results {0}..{1} of {2}", offset, offset + resourceRoot.Count(), totalResults);
             try
@@ -60,8 +61,9 @@ namespace OpenIZ.Messaging.IMSI.Util
                             continue;
                         if (!retVal.Item.Exists(o => o.Key == itm.Key))
                         {
-                            retVal.Item.Add(itm.GetLocked());
-                            wtp.QueueUserWorkItem((o) => Bundle.ProcessModel(o as IdentifiedData, retVal), itm.GetLocked());
+                            retVal.Item.Add(itm);
+                            if(!lean)
+                                wtp.QueueUserWorkItem((o) => Bundle.ProcessModel(o as IdentifiedData, retVal), itm);
                         }
                     }
                     wtp.WaitOne();

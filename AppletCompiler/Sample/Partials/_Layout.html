@@ -1,0 +1,14 @@
+﻿<body xmlns:openiz="http://openiz.org/applet" xmlns="http://www.w3.org/1999/xhtml" ng-controller="LayoutController">
+    <openiz:bundle>chart-js</openiz:bundle>
+    <openiz:bundle>jquery</openiz:bundle>
+    <openiz:script>/js/_layout-controller.js</openiz:script>
+
+    <h1>{{someVariable}}</h1>
+
+    <div class="container">
+        <a href="#" ng-click="someAction()">{{ 'some_string' | i18n }}</a>
+        <a href="#" ng-click="someAction()">{{ ::'some_string' | i18n }}</a>
+
+        <!-- #include virtual="content" -->
+    </div>
+</body>

@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
@@ -48,6 +49,25 @@ namespace OpenIZ.Core.Model.DataTypes
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "CodeSystem")]
     public class CodeSystem : NonVersionedEntityData
     {
+
+        /// <summary>
+        /// Creates a new code system
+        /// </summary>
+        public CodeSystem()
+        {
+
+        }
+
+        /// <summary>
+        /// Creates a new code system object
+        /// </summary>
+        public CodeSystem(String name, String oid, String authority)
+        {
+            this.Name = name;
+            this.Oid = oid;
+            this.Authority = authority;
+        }
+
         /// <summary>
         /// Gets or sets the name of the code system
         /// </summary>

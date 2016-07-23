@@ -1,4 +1,23 @@
-﻿using OpenIZ.Core.Model;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-22
+ */
+using OpenIZ.Core.Model;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using OpenIZ.Persistence.Data.MSSQL.Exceptions;
 using System;
@@ -12,6 +31,8 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using System.ComponentModel;
 using MARC.HI.EHRS.SVC.Core.Data;
+using OpenIZ.Core.Services;
+using OpenIZ.Core;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -36,11 +57,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Domain object
             var domainObject = this.FromModelInstance(data, context, principal) as TDomain;
             domainObject.NonVersionedObject = nonVersionedPortion;
+            if (nonVersionedPortion.Id == Guid.Empty &&
+                domainObject.Id != Guid.Empty)
+                nonVersionedPortion.Id = domainObject.Id;
 
-            if (nonVersionedPortion.Id == Guid.Empty)
-                nonVersionedPortion.Id = data.Key = Guid.NewGuid();
-            if (domainObject.VersionId == Guid.Empty)
-                domainObject.VersionId = data.VersionKey = Guid.NewGuid();
+            if (nonVersionedPortion.Id == null ||
+                nonVersionedPortion.Id == Guid.Empty)
+            {
+                data.Key = Guid.NewGuid();
+                nonVersionedPortion.Id = data.Key.Value;
+            }
+            if (domainObject.VersionId == null ||
+                domainObject.VersionId == Guid.Empty)
+            {
+                data.VersionKey = Guid.NewGuid();
+                domainObject.VersionId = data.VersionKey.Value;
+            }
 
             // Ensure created by exists
             data.CreatedBy?.EnsureExists(context, principal);
@@ -83,7 +115,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             newEntityVersion.CopyObjectData(storageInstance);
             data.VersionSequence = newEntityVersion.VersionSequenceId = default(Decimal);
             data.VersionKey = newEntityVersion.VersionId = Guid.NewGuid();
-            newEntityVersion.Id = data.Key;
+            newEntityVersion.Id = data.Key.Value;
             data.PreviousVersionKey = newEntityVersion.ReplacesVersionId = existingObject.VersionId;
             data.CreatedByKey = newEntityVersion.CreatedBy = user.UserId;
             // Obsolete the old version 
@@ -108,7 +140,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var tr = 0;
             var uuid = containerId as Identifier<Guid>;
-            
+
+            if (uuid.Id != Guid.Empty)
+            {
+                var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(uuid.Id) as TModel;
+                if (cacheItem != null && (cacheItem.VersionKey.HasValue && uuid.VersionId == cacheItem.VersionKey.Value || uuid.VersionId == Guid.Empty))
+                    return cacheItem;
+            }
+
             // Get most recent version
             if (uuid.VersionId == Guid.Empty)
                 return base.Query(o => o.Key == uuid.Id && o.ObsoletionTime == null, 0, 1, principal, out tr).FirstOrDefault();
@@ -131,11 +170,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             }
             // Ensure the source key is set
             foreach (var itm in storage)
-                if (itm.SourceEntityKey == Guid.Empty)
+                if (itm.SourceEntityKey == Guid.Empty ||
+                    itm.SourceEntityKey == null)
                     itm.SourceEntityKey = source.Key;
 
             // Get existing
-            var existing = context.GetTable<TDomainAssociation>().Where(ExpressionRewriter.Rewrite<TDomainAssociation>(o => o.AssociatedItemKey == source.Key && source.VersionSequence >= o.EffectiveVersionSequenceId && (source.VersionSequence < o.ObsoleteVersionSequenceId || !o.ObsoleteVersionSequenceId.HasValue))).ToList().Select(o => m_mapper.MapDomainInstance<TDomainAssociation, TAssociation>(o).GetLocked() as TAssociation);
+            var existing = context.GetTable<TDomainAssociation>().Where(ExpressionRewriter.Rewrite<TDomainAssociation>(o => o.AssociatedItemKey == source.Key && source.VersionSequence >= o.EffectiveVersionSequenceId && (source.VersionSequence < o.ObsoleteVersionSequenceId || !o.ObsoleteVersionSequenceId.HasValue))).ToList().Select(o => m_mapper.MapDomainInstance<TDomainAssociation, TAssociation>(o) as TAssociation);
             
             // Remove old
             var obsoleteRecords = existing.Where(o => !storage.Exists(ecn => ecn.Key == o.Key));

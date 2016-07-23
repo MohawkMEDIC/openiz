@@ -1,7 +1,27 @@
-﻿using OpenIZ.Core.Model.Entities;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-19
+ */
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
@@ -23,6 +43,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Ensure exists
             data.AddressUse?.EnsureExists(context, principal);
+            data.AddressUseKey = data.AddressUse?.Key ?? data.AddressUseKey;
 
             var retVal = base.Insert(context, data, principal);
 
@@ -45,10 +66,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Ensure exists
             data.AddressUse?.EnsureExists(context, principal);
+            data.AddressUseKey = data.AddressUse?.Key ?? data.AddressUseKey;
 
             var retVal = base.Update(context, data, principal);
 
-            var sourceKey = data.Key.ToByteArray();
+            var sourceKey = data.Key.Value.ToByteArray();
 
             // Data component
             if (data.Component != null)
@@ -61,6 +83,20 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             return retVal;
         }
 
+        /// <summary>
+        /// Data load options
+        /// </summary>
+        /// <returns></returns>
+        internal override DataLoadOptions GetDataLoadOptions()
+        {
+            DataLoadOptions dlo = new DataLoadOptions();
+            dlo.LoadWith<Data.EntityAddress>(c => c.AddressUseConcept);
+            dlo.LoadWith<Data.EntityAddress>(c => c.EntityAddressComponents);
+            dlo.LoadWith<Data.EntityAddressComponent>(c => c.ComponentTypeConcept);
+            dlo.LoadWith<Data.EntityAddressComponent>(c => c.EntityAddressComponentValue);
+
+            return dlo;
+        }
     }
 
     /// <summary>
@@ -89,6 +125,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             }
 
             return retVal;
+        }
+
+        /// <summary>
+        /// Entity address component
+        /// </summary>
+        public override Core.Model.Entities.EntityAddressComponent Insert(ModelDataContext context, Core.Model.Entities.EntityAddressComponent data, IPrincipal principal)
+        {
+            data.ComponentType?.EnsureExists(context, principal);
+            data.ComponentTypeKey = data.ComponentType?.Key ?? data.ComponentTypeKey;
+            return base.Insert(context, data, principal);
+        }
+
+        /// <summary>
+        /// Update 
+        /// </summary>
+        public override Core.Model.Entities.EntityAddressComponent Update(ModelDataContext context, Core.Model.Entities.EntityAddressComponent data, IPrincipal principal)
+        {
+            data.ComponentType?.EnsureExists(context, principal);
+            data.ComponentTypeKey = data.ComponentType?.Key ?? data.ComponentTypeKey;
+            return base.Update(context, data, principal);
         }
     }
 }

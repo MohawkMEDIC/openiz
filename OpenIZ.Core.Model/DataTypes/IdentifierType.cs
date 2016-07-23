@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
@@ -28,12 +29,13 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a basic information class which classifies the use of an identifier
     /// </summary>
     
-    [XmlType("IdentifierType",  Namespace = "http://openiz.org/model"), JsonObject("IdentifierType")]
+    [XmlType(nameof(IdentifierType),  Namespace = "http://openiz.org/model"), JsonObject("IdentifierType")]
+    [XmlRoot(nameof(IdentifierType), Namespace = "http://openiz.org/model")]
     public class IdentifierType : BaseEntityData
     {
 
         // Type concept id
-        private Guid m_typeConceptId;
+        private Guid? m_typeConceptId;
         // Scope concept identifier
         private Guid? m_scopeConceptId;
         // Type concept
@@ -65,7 +67,7 @@ namespace OpenIZ.Core.Model.DataTypes
         
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("typeConcept"), JsonProperty("typeConcept")]
-        public Guid  TypeConceptKey
+        public Guid?  TypeConceptKey
         {
             get { return this.m_typeConceptId; }
             set
@@ -78,7 +80,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Type concept
         /// </summary>
-        [DelayLoad(nameof(TypeConceptKey))]
+        [SerializationReference(nameof(TypeConceptKey))]
         [XmlIgnore, JsonIgnore]
         public Concept TypeConcept
         {
@@ -90,19 +92,16 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_typeConcept = value;
-                if (value == null)
-                    this.m_typeConceptId = Guid.Empty;
-                else
-                    this.m_typeConceptId = value.Key;
+                this.m_typeConceptId = value?.Key;
             }
         }
 
         /// <summary>
         /// Gets the scope of the identifier
         /// </summary>
-        [DelayLoad(nameof(ScopeConceptKey))]
+        [SerializationReference(nameof(ScopeConceptKey))]
         [XmlIgnore, JsonIgnore]
-        public Concept Scope
+        public Concept ScopeConcept
         {
             get
             {

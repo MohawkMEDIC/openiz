@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-4-19
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using System.Collections.Generic;
@@ -87,7 +88,7 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         public IEnumerable<ValidationResultDetail> Validate(Type modelClass, Type domainClass)
         {
-#if DEBUG
+#if VERBOSE_DEBUG
             Debug.WriteLine(String.Format("\t Property {0}>{1}", this.ModelName, this.DomainName));
 #endif
             if (domainClass?.IsConstructedGenericType == true)
@@ -111,7 +112,7 @@ namespace OpenIZ.Core.Model.Map
                 retVal.AddRange(this.Via.Validate(modelClass?.GetRuntimeProperty(this.ModelName ?? "")?.PropertyType ?? modelClass, domainClass?.GetRuntimeProperty(this.DomainName)?.PropertyType));
 
             // Order by?
-            if(!String.IsNullOrEmpty(this.OrderBy))
+            if(!String.IsNullOrEmpty(this.OrderBy) && domainClass != null)
             {
 
                 var orderProperty = domainClass.GetRuntimeProperty(this.DomainName);

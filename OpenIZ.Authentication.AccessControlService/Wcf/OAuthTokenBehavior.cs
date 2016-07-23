@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-4-19
+ * User: justi
+ * Date: 2016-6-14
  */
 using OpenIZ.Core;
 using System;
@@ -48,6 +49,7 @@ using OpenIZ.Authentication.OAuth2.Configuration;
 using Newtonsoft.Json.Converters;
 using OpenIZ.Core.Security.Claims;
 using System.Security.Authentication;
+using OpenIZ.Core.Security.Attribute;
 
 namespace OpenIZ.Authentication.OAuth2.Wcf
 {
@@ -124,6 +126,7 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
                 try
                 {
                     var principal = identityProvider.Authenticate(tokenRequest["username"], tokenRequest["password"]);
+
                     if (principal == null)
                         return this.CreateErrorCondition(OAuthErrorType.invalid_grant, "Invalid username or password");
                     else
@@ -202,12 +205,18 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             )
             {
                 new Claim("iss", this.m_configuration.IssuerName),
+                new Claim("SubjectID", oizPrincipal.Identity.Name),
                 new Claim(ClaimTypes.AuthenticationInstant, issued.ToString("o")), 
                 new Claim(ClaimTypes.AuthenticationMethod, "OAuth2"),
                 new Claim(ClaimTypes.Expiration, expires.ToString("o")), 
                 new Claim(ClaimTypes.Name, oizPrincipal.Identity.Name),
-                new Claim(OpenIzClaimTypes.OpenIzApplicationIdentifierClaim,  (clientPrincipal as ClaimsPrincipal).FindFirst(ClaimTypes.Sid).Value)
+                new Claim(OpenIzClaimTypes.OpenIzApplicationIdentifierClaim,  
+                (clientPrincipal as ClaimsPrincipal).FindFirst(ClaimTypes.Sid).Value)
             };
+
+
+            // Additional claims
+            claims.AddRange(additionalClaims);
 
             // Get policies
             var oizPrincipalPolicies = pip.GetActivePolicies(oizPrincipal);
@@ -217,8 +226,6 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             if(claims.Exists(o=>o.Type == OpenIzClaimTypes.XspaPurposeOfUseClaim))
                 claims.AddRange(oizPrincipalPolicies.Where(o => o.Rule == PolicyDecisionOutcomeType.Elevate).Select(o => new Claim(OpenIzClaimTypes.OpenIzGrantedPolicyClaim, o.Policy.Oid)));
 
-            // Additional claims
-            claims.AddRange(additionalClaims);
 
             // Add claims made by the IdP
             if(oizPrincipal is ClaimsPrincipal)
@@ -242,8 +249,10 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
                 credentials = new SigningCredentials(
                     new InMemorySymmetricSecurityKey(this.m_configuration.ServerKey ?? sha.ComputeHash(Encoding.UTF8.GetBytes(this.m_configuration.ServerSecret))),
                     "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256",
-                    "http://www.w3.org/2001/04/xmlenc#sha256"
+                    "http://www.w3.org/2001/04/xmlenc#sha256",
+                    new SecurityKeyIdentifier(new NamedKeySecurityKeyIdentifierClause("keyid", "0"))
                 );
+
             }
             else
                 throw new SecurityException("Invalid signing configuration");
@@ -275,6 +284,7 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
         /// </summary>
         private Stream CreateErrorCondition(OAuthErrorType errorType, String message)
         {
+            this.m_traceSource.TraceEvent(TraceEventType.Error, (int)errorType, message);
             WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
             OAuthError err = new OAuthError()
             {

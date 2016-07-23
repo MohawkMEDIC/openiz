@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-6-14
  */
 using OpenIZ.Core.Model.Interfaces;
 using System;
@@ -22,6 +23,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace OpenIZ.Core.Model.EntityLoader
 {
@@ -31,10 +33,50 @@ namespace OpenIZ.Core.Model.EntityLoader
     public sealed class EntitySource
     {
 
+        /// <summary>
+        /// Dummy entity source
+        /// </summary>
+        public class DummyEntitySource : IEntitySourceProvider
+        {
+            /// <summary>
+            /// Gets the specified object
+            /// </summary>
+            public TObject Get<TObject>(Guid? key) where TObject : IdentifiedData, new()
+            {
+                return new TObject() { Key = key };
+            }
+
+            /// <summary>
+            /// Gets the specified object
+            /// </summary>
+            public TObject Get<TObject>(Guid? key, Guid? versionKey) where TObject : IdentifiedData, IVersionedEntity, new()
+            {
+                return new TObject() { Key = key, VersionKey = versionKey };
+            }
+
+            /// <summary>
+            /// Gets the specified relations
+            /// </summary>
+            public List<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence) where TObject : IdentifiedData, IVersionedAssociation, new()
+            {
+                throw new NotImplementedException();
+            }
+
+            /// <summary>
+            /// Query 
+            /// </summary>
+            public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData, new()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         // Load object
         private static Object s_lockObject = new object();
+  
         // Current instance
-        private static EntitySource s_instance;
+        private static EntitySource s_instance = new EntitySource(new DummyEntitySource());
+        
 
         /// <summary>
         /// Delay load provider
@@ -59,54 +101,30 @@ namespace OpenIZ.Core.Model.EntityLoader
             }
             set
             {
-                if (s_instance == null)
-                    lock (s_lockObject)
-                        s_instance = value;
-                else
-                    throw new InvalidOperationException("Current context already set");
+                lock (s_lockObject)
+                    s_instance = value;
             }
         }
 
         /// <summary>
         /// Get the specified object / version
         /// </summary>
-        public TObject Get<TObject>(Guid key, Guid version, TObject currentInstance) where TObject : IdentifiedData, IVersionedEntity
+        public TObject Get<TObject>(Guid? key, Guid? version) where TObject : IdentifiedData, IVersionedEntity, new()
         {
-            if (currentInstance == null &&
-                version != Guid.Empty)
-                return this.m_provider.Get<TObject>(key, version);
-            return currentInstance;
+            if (key == null)
+                return null;
+            return this.m_provider.Get<TObject>(key, version);
         }
 
         /// <summary>
         /// Get the current version of the specified object
         /// </summary>
-        public TObject Get<TObject>(Guid key, TObject currentInstance) where TObject : IdentifiedData
+        public TObject Get<TObject>(Guid? key) where TObject : IdentifiedData, new()
         {
-            if (currentInstance == null)
+            if (key == null)
+                return null;
+            else
                 return this.m_provider.Get<TObject>(key);
-            return currentInstance;
-        }
-         
-        /// <summary>
-        /// Get version bound relations
-        /// </summary>
-        public List<TObject> GetRelations<TObject>(Guid sourceKey, Decimal sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation
-        {
-            if (currentInstance == null)
-                return this.m_provider.GetRelations<TObject>(sourceKey, sourceVersionSequence, currentInstance);
-            return currentInstance;
-
-        }
-
-        /// <summary>
-        /// Get bound relations
-        /// </summary>
-        public List<TObject> GetRelations<TObject>(Guid sourceKey, List<TObject> currentInstance) where TObject : IdentifiedData, ISimpleAssociation
-        {
-            if (currentInstance == null)
-                return this.m_provider.Query<TObject>(o => o.SourceEntityKey == sourceKey).ToList();
-            return currentInstance;
         }
 
         /// <summary>

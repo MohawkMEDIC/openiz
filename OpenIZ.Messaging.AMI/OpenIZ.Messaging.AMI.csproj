@@ -55,15 +55,6 @@
     <Compile Include="Configuration\AmiConfiguration.cs" />
     <Compile Include="Configuration\AmiConfigurationSectionHandler.cs" />
     <Compile Include="Configuration\CertificationAuthorityConfiguration.cs" />
-    <Compile Include="Model\AmiCollection.cs" />
-    <Compile Include="Model\Auth\SecurityRoleInfo.cs" />
-    <Compile Include="Model\Auth\SecurityUserInfo.cs" />
-    <Compile Include="Model\Security\RevokeReason.cs" />
-    <Compile Include="Model\Security\SubmissionInfo.cs" />
-    <Compile Include="Model\Security\SubmissionRequest.cs" />
-    <Compile Include="Model\Security\SubmissionResult.cs" />
-    <Compile Include="Model\Security\SubmissionStatus.cs" />
-    <Compile Include="Model\Security\X509Certificate2Info.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Wcf\AmiBehavior.cs" />
     <Compile Include="Wcf\Behavior\AmiRestEndpointBehavior.cs" />
@@ -71,9 +62,17 @@
     <Compile Include="Wcf\IAmiContract.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.Core.Model.AMI\OpenIZ.Core.Model.AMI.csproj">
+      <Project>{65ef51c6-5cb8-43b8-ae65-4a68f0b44ad2}</Project>
+      <Name>OpenIZ.Core.Model.AMI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
       <Project>{f1a82a4f-4a57-47d7-ae76-444c8a4ff54a}</Project>
       <Name>OpenIZ.Core.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.PCL\OpenIZ.Core.PCL.csproj">
+      <Project>{3a45f695-47a2-464c-ace6-bdabbfa39fbc}</Project>
+      <Name>OpenIZ.Core.PCL</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core\OpenIZ.Core.csproj">
       <Project>{db9bc05e-45f1-4f96-a161-f36bdecaf566}</Project>

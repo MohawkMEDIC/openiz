@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Entities;
@@ -32,13 +33,13 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Generic note class
     /// </summary>
-    
+    [SimpleValue(nameof(Text))]
     [XmlType(Namespace = "http://openiz.org/model")]
-    public abstract class Note<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
+    public abstract class Note<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>, new()
     {
 
         // Author id
-        private Guid m_authorKey;
+        private Guid? m_authorKey;
         // Author entity
         
         private Entity m_author;
@@ -72,7 +73,7 @@ namespace OpenIZ.Core.Model.DataTypes
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("author"), JsonProperty("author")]
-        public Guid AuthorKey
+        public Guid? AuthorKey
         {
             get { return this.m_authorKey; }
             set
@@ -86,7 +87,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the author entity
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(AuthorKey))]
+        [SerializationReference(nameof(AuthorKey))]
         public Entity Author
         {
             get
@@ -97,10 +98,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_author = value;
-                if (value == null)
-                    this.m_authorKey = Guid.Empty;
-                else
-                    this.m_authorKey = value.Key;
+                this.m_authorKey = value?.Key;
             }
         }
 
@@ -144,7 +142,20 @@ namespace OpenIZ.Core.Model.DataTypes
     [XmlType("ActNote",  Namespace = "http://openiz.org/model"), JsonObject("ActNote")]
     public class ActNote : Note<Acts.Act>
     {
+        /// <summary>
+        /// Default ctor
+        /// </summary>
+        public ActNote()
+        {
 
+        }
+
+        /// <summary>
+        /// Creates a new instance of the entity note
+        /// </summary>
+        public ActNote(Guid authorKey, String text) : base(authorKey, text)
+        {
+        }
     }
 
 }

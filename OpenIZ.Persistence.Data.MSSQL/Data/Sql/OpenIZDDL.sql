@@ -189,18 +189,30 @@ CREATE TABLE Policy
 CREATE UNIQUE INDEX IX_PolicyOid ON Policy(PolicyOid);
 
 -- BUILT IN OPENIZ POLICIES
-INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('ea73c05a-3159-48c8-bbcb-741911d91cd2', '1.3.6.1.4.1.33349.3.1.5.9.2.0', 'Access Administrative Function', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('da73c05a-3159-48c8-bbcb-741911d91cd2', '1.3.6.1.4.1.33349.3.1.5.9.2', 'Unrestricted All', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('ea73c05a-3159-48c8-bbcb-741911d91cd2', '1.3.6.1.4.1.33349.3.1.5.9.2.0', 'Unrestricted Administrative Function', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('d80ac1cf-3d6e-429f-a4a0-88c0bbbc839d', '1.3.6.1.4.1.33349.3.1.5.9.2.0.1', 'Change Password', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('9c0d65ac-613e-4a67-8bc6-5ce2c0b42160', '1.3.6.1.4.1.33349.3.1.5.9.2.0.2', 'Create Role', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('79bcc227-0d13-4fbf-a83e-f2b9fce34151', '1.3.6.1.4.1.33349.3.1.5.9.2.0.3', 'Alter Role', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('ab8642cb-28e4-4e9e-bd7b-d6dc72b729b2', '1.3.6.1.4.1.33349.3.1.5.9.2.0.4', 'Create Identity', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('bb8642cb-28e4-4e9e-bd7b-d6dc72b729b2', '1.3.6.1.4.1.33349.3.1.5.9.2.0.5', 'Create Device', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('cb8642cb-28e4-4e9e-bd7b-d6dc72b729b2', '1.3.6.1.4.1.33349.3.1.5.9.2.0.6', 'Create Application', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('db8642cb-28e4-4e9e-bd7b-d6dc72b729b2', '1.3.6.1.4.1.33349.3.1.5.9.2.0.7', 'Administer Concept Dictionary', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('eb8642cb-28e4-4e9e-bd7b-d6dc72b729b2', '1.3.6.1.4.1.33349.3.1.5.9.2.0.8', 'Alter Identity', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+
 INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('d15b96ab-646c-4c00-9a58-ea09eee67d7c', '1.3.6.1.4.1.33349.3.1.5.9.2.1', 'Login', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('e15b96ab-646c-4c00-9a58-ea09eee67d7c', '1.3.6.1.4.1.33349.3.1.5.9.2.1.0', 'Login as a Service', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+
 INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('f6840336-4e20-4bc0-b965-baa6d7c80be3', '1.3.6.1.4.1.33349.3.1.5.9.2.2', 'Unrestricted Clinical Data', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('b81daf47-17a5-465e-a5fd-706b168b0265', '1.3.6.1.4.1.33349.3.1.5.9.2.2.0', 'Query Clinical Data', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('d7276921-a078-4348-95f2-ed3cde83e607', '1.3.6.1.4.1.33349.3.1.5.9.2.2.1', 'Write Clinical Data', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('2e027dee-ede4-4731-b7fa-cb67ae0586be', '1.3.6.1.4.1.33349.3.1.5.9.2.2.2', 'Delete Clinical Data', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('5fb731bf-4e59-4863-80bd-51757d58ea3b', '1.3.6.1.4.1.33349.3.1.5.9.2.2.3', 'Read Clinical Data', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('dea891aa-224d-4859-81b3-c1eb2750067e', '1.3.6.1.4.1.33349.3.1.5.9.2.3', 'Override Disclosure', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('eea891aa-224d-4859-81b3-c1eb2750067e', '1.3.6.1.4.1.33349.3.1.5.9.2.4', 'Unrestricted Metadata', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('fea891aa-224d-4859-81b3-c1eb2750067e', '1.3.6.1.4.1.33349.3.1.5.9.2.4.0', 'Read Metadata', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+
+INSERT INTO Policy (PolicyId, PolicyOid, Name, CreatedBy) VALUES ('0ea891aa-224d-4859-81b3-c1eb2750067e', '1.3.6.1.4.1.33349.3.1.5.9.2.10', 'Access Client Administrative Function', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 
 /*
  ASSOCIATIVE ENTITY TABLE BETWEEN SecurityRole AND Policy TABLES.
@@ -229,6 +241,8 @@ INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('ea73c05
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('d15b96ab-646c-4c00-9a58-ea09eee67d7c', 'f6d2ba1d-5bb5-41e3-b7fb-2ec32418b2e1', 2); -- GRANT Login
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('f6840336-4e20-4bc0-b965-baa6d7c80be3', 'f6d2ba1d-5bb5-41e3-b7fb-2ec32418b2e1', 0); -- DENY Unrestricted Clinical Data
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('dea891aa-224d-4859-81b3-c1eb2750067e', 'f6d2ba1d-5bb5-41e3-b7fb-2ec32418b2e1', 0); -- DENY Override disclosure
+INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('0ea891aa-224d-4859-81b3-c1eb2750067e', 'f6d2ba1d-5bb5-41e3-b7fb-2ec32418b2e1', 2); -- GRANT Local Administrator
+INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('fea891aa-224d-4859-81b3-c1eb2750067e', 'f6d2ba1d-5bb5-41e3-b7fb-2ec32418b2e1', 2); -- GRANT Read Metadata Administrator
 
 -- CLINICAL STAFF
 INSERT INTO SecurityRole (RoleId, Name, [Description], CreatedBy) VALUES ('43167DCB-6F77-4F37-8222-133E675B4434', 'CLINICAL_STAFF', 'Group for clinic staff', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
@@ -236,6 +250,7 @@ INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('ea73c05
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('d15b96ab-646c-4c00-9a58-ea09eee67d7c', '43167DCB-6F77-4F37-8222-133E675B4434', 2); -- GRANT Login
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('f6840336-4e20-4bc0-b965-baa6d7c80be3', '43167DCB-6F77-4F37-8222-133E675B4434', 2); -- GRANT Unrestricted Clinical Data
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('dea891aa-224d-4859-81b3-c1eb2750067e', '43167DCB-6F77-4F37-8222-133E675B4434', 0); -- DENY Override disclosure
+INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('fea891aa-224d-4859-81b3-c1eb2750067e', '43167DCB-6F77-4F37-8222-133E675B4434', 2); -- GRANT Read Metadata Administrator
 
 -- CREATE ROLE SYSTEM WHICH IS DENIED LOGIN
 INSERT INTO SecurityRole (RoleId, Name, [Description], CreatedBy) VALUES ('c3ae21d2-fc23-4133-ba42-b0e0a3b817d7', 'SYSTEM', 'Group for user SYSTEM. Identifies the functions that internal system functions have access to. EDITING THIS ROLE MAY CAUSE SYSTEM FAILURE', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
@@ -244,6 +259,7 @@ INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('ea73c05
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('d15b96ab-646c-4c00-9a58-ea09eee67d7c', 'c3ae21d2-fc23-4133-ba42-b0e0a3b817d7', 0); -- DENY Login
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('f6840336-4e20-4bc0-b965-baa6d7c80be3', 'c3ae21d2-fc23-4133-ba42-b0e0a3b817d7', 2); -- GRANT Unrestricted Clinical Data
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('dea891aa-224d-4859-81b3-c1eb2750067e', 'c3ae21d2-fc23-4133-ba42-b0e0a3b817d7', 0); -- DENY Override disclosure
+INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('fea891aa-224d-4859-81b3-c1eb2750067e', 'c3ae21d2-fc23-4133-ba42-b0e0a3b817d7', 2); -- GRANT Read Metadata Administrator
 
 -- CREATE ROLE ANONYMOUS WHICH IS DENIED ALL CLINICAL 
 INSERT INTO SecurityRole (RoleId, Name, [Description], CreatedBy) VALUES ('dadbd858-13c5-44a3-ad7d-1c44cecaa4b6', 'ANONYMOUS', 'Group for user ANONYMOUS. Identifies the functions that non-logged in users have access to. EDITING THIS ROLE MAY INTRODUCE SECURITY BREACHES', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
@@ -252,12 +268,15 @@ INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('ea73c05
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('d15b96ab-646c-4c00-9a58-ea09eee67d7c', 'dadbd858-13c5-44a3-ad7d-1c44cecaa4b6', 0); -- DENY Login
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('f6840336-4e20-4bc0-b965-baa6d7c80be3', 'dadbd858-13c5-44a3-ad7d-1c44cecaa4b6', 0); -- DENY Unrestricted Clinical Data
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('dea891aa-224d-4859-81b3-c1eb2750067e', 'dadbd858-13c5-44a3-ad7d-1c44cecaa4b6', 0); -- DENY Override disclosure
+INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('fea891aa-224d-4859-81b3-c1eb2750067e', 'dadbd858-13c5-44a3-ad7d-1c44cecaa4b6', 0); -- GRANT Read Metadata Administrator
 
 -- CREATE SYNCHRONIZERS ROLE
 INSERT INTO SecurityRole (RoleId, Name, [Description], CreatedBy) VALUES ('54B7677C-682B-425F-A937-3AA03D5951F1', 'SYNCHRONIZERS', 'Group for user SYNCHRONIZERS. Identifies the functions that are used for synchronization. EDITING THIS ROLE MAY INTRODUCE SECURITY BREACHES', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
-INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('d15b96ab-646c-4c00-9a58-ea09eee67d7c', '54B7677C-682B-425F-A937-3AA03D5951F1', 2); -- GRANT Login
+INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('e15b96ab-646c-4c00-9a58-ea09eee67d7c', '54B7677C-682B-425F-A937-3AA03D5951F1', 2); -- GRANT AS Service Login
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('f6840336-4e20-4bc0-b965-baa6d7c80be3', '54B7677C-682B-425F-A937-3AA03D5951F1', 2); -- GRANT Unrestricted Clinical Data
+INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('fea891aa-224d-4859-81b3-c1eb2750067e', '54B7677C-682B-425F-A937-3AA03D5951F1', 2); -- GRANT Read Metadata
 INSERT INTO SecurityRolePolicy (PolicyId, RoleId, PolicyAction) VALUES ('dea891aa-224d-4859-81b3-c1eb2750067e', '54B7677C-682B-425F-A937-3AA03D5951F1', 0); -- DENY Override disclosure
+
 /*
  A SECURITY DEVICE TABLE IS USED TO TRACK THE SECRETS FOR DEVICES DEPLOYED IN THE FIELD
  AND ALLOWS THE OPEN IZ BACKBONE TO DENY AND/OR ALERT THE USER OF NEW SIGN INS FROM
@@ -515,6 +534,7 @@ CREATE TABLE ConceptVersion
 -- INDEX: LOOKUP CONCEPT VERSION BY CONCEPT IDENTIFIER
 CREATE INDEX IX_ConceptVersionConceptId ON ConceptVersion(ConceptId);
 CREATE INDEX IX_ConceptVersionClassId ON ConceptVersion(ConceptClassId);
+CREATE INDEX IX_ConceptVersionMnemonic ON ConceptVersion(Mnemonic);
 
 /*
  THE CONCEPT NAME LOCALIZATION TABLE IS USED TO PROVIDE A LOCALIZED CONCEPT NAME FOR OPENIZ 
@@ -708,6 +728,12 @@ CREATE VIEW ConceptCurrentVersion AS
 		WHERE ConceptVersion.ObsoletionTime IS NULL;
 GO
 
+CREATE VIEW ConceptSetMembersView AS 
+	SELECT ConceptSet.ConceptSetId, ConceptSet.Mnemonic as ConceptSetMnemonic, ConceptCurrentVersion.ConceptId, ConceptCurrentVersion.ConceptVersionId, ConceptCurrentVersion.Mnemonic as ConceptMnemonic, ConceptCurrentVersion.ConceptClassMnemonic  FROM ConceptSet INNER JOIN ConceptSetMember ON (ConceptSet.ConceptSetId = ConceptSetMember.ConceptSetId)
+	INNER JOIN ConceptCurrentVersion ON (ConceptSetMember.ConceptId = ConceptCurrentVersion.ConceptId);
+
+GO 
+
 CREATE FUNCTION fn_AssertConceptClass (@ConceptId UNIQUEIDENTIFIER, @AssertClassMnemonic NVARCHAR(32))
 RETURNS BIT BEGIN
 	RETURN (SELECT COUNT(*) FROM ConceptCurrentVersion WHERE ConceptId = @ConceptId AND ConceptClassMnemonic = @AssertClassMnemonic);
@@ -753,8 +779,8 @@ CREATE TABLE AssigningAuthority
 (
 	AssigningAuthorityId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(), -- UNIQUEIDENTIFIER FOR THE ASSIGING AUTHORITY
 	Name NVARCHAR(50) NOT NULL, -- THE NAME OF THE ASSIGNING AUTHORITY
-	Oid NVARCHAR(256) NOT NULL, -- THE OID OF THE ASSINGING AUTHORITY
-	HL7CX4 NVARCHAR(32) NOT NULL, -- THE HL7 v2 CX4 VALUE OF THE AUTHORITY
+	Oid NVARCHAR(256) NOT NULL UNIQUE, -- THE OID OF THE ASSINGING AUTHORITY
+	HL7CX4 NVARCHAR(32) NOT NULL UNIQUE, -- THE HL7 v2 CX4 VALUE OF THE AUTHORITY
 	Url NVARCHAR(250), -- THE URL OF THE AA IF APPLICABLE
 	AssigningDeviceId UNIQUEIDENTIFIER, -- DEVICE IDENTIFIER OF A DEVICE THAT IS PERMITTED TO ASSIGN IDS
 	[Description] NVARCHAR(MAX), -- HUMAN DESCRIPTION FOR THE VALUE
@@ -881,6 +907,13 @@ CREATE TABLE ActExtension
 );
 
 CREATE INDEX IX_ActExtensionEffectiveVersion ON ActExtension(EffectiveVersionSequenceId, ObsoleteVersionSequenceId);
+
+-- TABLE TO STORE DATA RELATED TO ACTS WHICH ARE CONTROL ACTS
+CREATE TABLE ControlAct (
+	ActVersionId UNIQUEIDENTIFIER NOT NULL, -- THE VERSION OF THE ACT TO WHICH THE CONTROL ACT DATA APPLIES
+	CONSTRAINT PK_ControlAct PRIMARY KEY (ActVersionId),
+	CONSTRAINT FK_ControlActActVersionId FOREIGN KEY (ActVersionId) REFERENCES ActVersion(ActVersionId)
+);
 
 CREATE TABLE Observation
 (
@@ -1031,6 +1064,10 @@ CREATE TABLE EntityVersion
 	CONSTRAINT FK_EntityVersionTypeConceptId FOREIGN KEY (TypeConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT CK_EntityVersionStatusConceptSet CHECK (dbo.fn_IsConceptSetMember(StatusConceptId, 'EntityStatus') = 1)
 );
+
+CREATE INDEX IX_EntityVersionStatus ON EntityVersion(StatusConceptId);
+CREATE INDEX IX_EntityVersionEntity ON EntityVersion(EntityId);
+CREATE INDEX IX_EntityClassConcept ON Entity(ClassConceptId);
 
 CREATE TABLE EntityAssociation
 (
@@ -1450,4 +1487,77 @@ GO
 CREATE VIEW ConceptView AS
 	SELECT c.IsSystemConcept, v.* FROM ConceptVersion v INNER JOIN Concept c ON (v.ConceptId = c.ConceptId);
 
+GO
+
+CREATE VIEW EntityNameValue AS 
+    SELECT EntityName.EntityNameId, EntityId, EntityName.NameUseConceptId, ConceptCurrentVersion.Mnemonic AS NameUseMnemonic, EffectiveVersionSequenceId, ObsoleteVersionSequenceId, 
+	(
+		SELECT Mnemonic, Value FROM 
+			EntityNameComponent INNER JOIN PhoneticValues ON (EntityNameComponent.PhoneticValueId = PhoneticValues.PhoneticValueId) 
+			LEFT JOIN ConceptCurrentVersion ON (EntityNameComponent.ComponentTypeConceptId = ConceptCurrentVersion.ConceptId)
+			WHERE EntityNameId = EntityName.EntityNameId FOR XML PATH ('Component')
+	) Name FROM 
+    EntityName INNER JOIN ConceptCurrentVersion ON (EntityName.NameUseConceptId = ConceptCurrentVersion.ConceptId) ;
+
+GO
+
+CREATE VIEW EntityAddressValue AS 
+    SELECT EntityAddress.EntityAddressId, EntityId, EntityAddress.AddressUseConceptId, ConceptCurrentVersion.Mnemonic AS AddressUseMnemonic, EffectiveVersionSequenceId, ObsoleteVersionSequenceId, 
+	(
+		SELECT Mnemonic, Value FROM 
+			EntityAddressComponent INNER JOIN EntityAddressComponentValue ON (EntityAddressComponent.ValueId = EntityAddressComponentValue.ValueId) 
+			LEFT JOIN ConceptCurrentVersion ON (EntityAddressComponent.ComponentTypeConceptId = ConceptCurrentVersion.ConceptId)
+			WHERE EntityAddressId = EntityAddress.EntityAddressId FOR XML PATH ('Component')
+	) Address FROM 
+    EntityAddress INNER JOIN ConceptCurrentVersion ON (EntityAddress.AddressUseConceptId = ConceptCurrentVersion.ConceptId) ;
+GO
+
+CREATE VIEW EntityTelecomAddressValue AS 
+    SELECT EntityTelecomAddress.EntityTelecomAddressId, EntityId, EntityTelecomAddress.TelecomUseConceptId, EntityTelecomAddress.TelecomAddressTypeConceptId, ConceptCurrentVersion.Mnemonic AS TelecomAddressUseMnemonic, TypeConcept.Mnemonic AS TelecomAddressTypeMnemonic, EffectiveVersionSequenceId, ObsoleteVersionSequenceId, TelecomAddress
+	FROM EntityTelecomAddress INNER JOIN ConceptCurrentVersion ON (EntityTelecomAddress.TelecomUseConceptId = ConceptCurrentVersion.ConceptId) 
+	LEFT JOIN ConceptCurrentVersion TypeConcept ON (EntityTelecomAddress.TelecomAddressTypeConceptId = TypeConcept.ConceptId) ;
+	;
+GO
+
+
+
+CREATE VIEW EntityCurrentVersion AS
+SELECT EntityVersion.*, StatusConcept.Mnemonic AS StatusMnemonic, 
+	ClassConcept.Mnemonic AS ClassMnemonic, 
+	DeterminerConcept.Mnemonic AS DeterminerMnemonic,
+	TypeConcept.Mnemonic AS TypeMnmeonic,
+	(SELECT NameUseMnemonic, CAST(Name AS XML) FROM EntityNameValue WHERE EntityNameValue.EntityId = Entity.EntityId AND EntityVersion.VersionSequenceId BETWEEN EntityNameValue.EffectiveVersionSequenceId AND COALESCE(EntityNameValue.ObsoleteVersionSequenceId, EntityVersion.VersionSequenceId) FOR XML PATH('EntityName')) AS Name,
+	(SELECT AddressUseMnemonic, CAST(Address AS XML) FROM EntityAddressValue WHERE EntityAddressValue.EntityId = Entity.EntityId AND EntityVersion.VersionSequenceId BETWEEN EntityAddressValue.EffectiveVersionSequenceId AND COALESCE(EntityAddressValue.ObsoleteVersionSequenceId, EntityVersion.VersionSequenceId) FOR XML PATH('EntityAddress')) AS Address,
+	(SELECT TelecomAddressUseMnemonic, TelecomAddress FROM EntityTelecomAddressValue WHERE EntityTelecomAddressValue.EntityId = Entity.EntityId AND EntityVersion.VersionSequenceId BETWEEN EntityTelecomAddressValue.EffectiveVersionSequenceId AND COALESCE(EntityTelecomAddressValue.ObsoleteVersionSequenceId, EntityVersion.VersionSequenceId) FOR XML PATH('EntityTelecomAddress')) AS Telecom
+FROM 
+	EntityVersion INNER JOIN Entity ON (EntityVersion.EntityId = Entity.EntityId)
+	INNER JOIN ConceptCurrentVersion StatusConcept ON (EntityVersion.StatusConceptId = StatusConcept.ConceptId)
+	INNER JOIN ConceptCurrentVersion ClassConcept ON (Entity.ClassConceptId = ClassConcept.ConceptId)
+	INNER JOIN ConceptCurrentVersion DeterminerConcept ON (Entity.DeterminerConceptId = DeterminerConcept.ConceptId)
+	LEFT JOIN ConceptCurrentVersion TypeConcept ON (EntityVersion.TypeConceptId = TypeConcept.ConceptId)
+WHERE EntityVersion.ObsoletionTime IS NULL;
+
+GO
+
+CREATE VIEW PlaceCurrentVersion AS 
+	SELECT EntityCurrentVersion.*, Place.MobileInd, Place.Lat, Place.Lng FROM Place INNER JOIN EntityCurrentVersion ON (Place.EntityVersionId = EntityCurrentVersion.EntityVersionId);
+
+GO
+
+CREATE VIEW PersonCurrentVersion AS 
+	SELECT EntityCurrentVersion.*, Person.DateOfBirth, Person.DateOfBirthPrecision FROM Person INNER JOIN EntityCurrentVersion ON (Person.EntityVersionId = EntityCurrentVersion.EntityVersionId)
+
+GO
+
+CREATE VIEW ProviderCurrentVersion AS 
+	SELECT PersonCurrentVersion.*, Provider.ProviderSpecialtyConceptId, ConceptCurrentVersion.Mnemonic AS SpecialtyMnemonic 
+	FROM Provider INNER JOIN PersonCurrentVersion ON (Provider.EntityVersionId = PersonCurrentVersion.EntityVersionId)
+		LEFT JOIN ConceptCurrentVersion ON (ConceptCurrentVersion.ConceptId = Provider.ProviderSpecialtyConceptId);
+
+GO
+
+CREATE VIEW UserEntityCurrentVersion AS 
+	SELECT PersonCurrentVersion.*, SecurityUser.UserName, SecurityUser.UserPassword, SecurityUser.LastSuccessfulLogin, SecurityUser.SecurityStamp, SecurityUser.TwoFactorEnabled, SecurityUser.FailedLoginAttempts
+	FROM UserEntity INNER JOIN PersonCurrentVersion ON (UserEntity.EntityVersionId = PersonCurrentVersion.EntityVersionId)
+		INNER JOIN SecurityUser ON (SecurityUser.UserId = UserEntity.UserId);
 GO

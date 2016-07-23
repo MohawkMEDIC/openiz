@@ -72,7 +72,6 @@
   <ItemGroup>
     <Compile Include="Configuration\SqlConfigurationSectionHandler.cs" />
     <Compile Include="Configuration\SqlConfiguration.cs" />
-    <Compile Include="Data\DataCache.cs" />
     <Compile Include="Data\IDbAssociatedEntity.cs" />
     <Compile Include="Data\IDbBaseData.cs" />
     <Compile Include="Data\IDbVersionedData.cs" />
@@ -95,6 +94,7 @@
     </Compile>
     <Compile Include="Services\Persistence\ManufacturedMaterialPersistenceService.cs" />
     <Compile Include="Services\Persistence\MaterialPersistenceService.cs" />
+    <Compile Include="Services\Persistence\ProviderPersistenceService.cs" />
     <Compile Include="Services\Persistence\SecurityPersistenceServices.cs" />
     <Compile Include="Services\SqlServerPersistenceService.cs" />
     <Compile Include="Services\Persistence\ApplicationEntityPersistenceService.cs" />
@@ -172,6 +172,10 @@
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
       <Project>{f1a82a4f-4a57-47d7-ae76-444c8a4ff54a}</Project>
       <Name>OpenIZ.Core.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.PCL\OpenIZ.Core.PCL.csproj">
+      <Project>{3a45f695-47a2-464c-ace6-bdabbfa39fbc}</Project>
+      <Name>OpenIZ.Core.PCL</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core\OpenIZ.Core.csproj">
       <Project>{db9bc05e-45f1-4f96-a161-f36bdecaf566}</Project>

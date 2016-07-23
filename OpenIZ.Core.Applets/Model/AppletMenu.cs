@@ -1,3 +1,22 @@
+/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-14
+ */
 using System;
 using System.Xml.Serialization;
 using System.Xml.Linq;
@@ -12,11 +31,29 @@ namespace OpenIZ.Core.Applets.Model
 	public class AppletMenu
 	{
 
+        /// <summary>
+        /// Initialize
+        /// </summary>
+        /// <param name="host"></param>
+        internal void Initialize(AppletManifest host)
+        {
+            this.Manifest = host;
+            if (this.Menus != null)
+                foreach (var itm in this.Menus)
+                    itm.Initialize(host);
+            
+        }
 
-		/// <summary>
-		/// Gets or sets the icon file reference
-		/// </summary>
-		[XmlElement("icon")]
+        /// <summary>
+        /// Gets or sets the order
+        /// </summary>
+        [XmlAttribute("order")]
+        public int Order { get; set; }
+
+        /// <summary>
+        /// Gets or sets the icon file reference
+        /// </summary>
+        [XmlElement("icon")]
 		public String Icon {
 			get;
 			set;
@@ -28,10 +65,16 @@ namespace OpenIZ.Core.Applets.Model
         [XmlAttribute("launch")]
         public String Launcher { get; set; }
 
-		/// <summary>
-		/// Gets the specified name
-		/// </summary>
-		public String GetText(String language, bool returnNuetralIfNotFound = true)
+        /// <summary>
+        /// Applet manifest
+        /// </summary>
+        [XmlIgnore]
+        public AppletManifest Manifest { get; internal set; }
+
+        /// <summary>
+        /// Gets the specified name
+        /// </summary>
+        public String GetText(String language, bool returnNuetralIfNotFound = true)
 		{
 			var str = this.Text?.Find(o=>o.Language == language);
 			if(str == null && returnNuetralIfNotFound)
@@ -48,7 +91,13 @@ namespace OpenIZ.Core.Applets.Model
 			get;
 			set;
 		}
-	}
+
+        /// <summary>
+        /// One or more menu items
+        /// </summary>
+        [XmlElement("menuItem")]
+        public List<AppletMenu> Menus { get; set; }
+    }
 
 }
 

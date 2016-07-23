@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,12 +14,13 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-1-13
+ * User: justi
+ * Date: 2016-6-22
  */
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Reflection;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Persistence.Data.MSSQL.Exceptions;
@@ -146,26 +148,99 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         }
 
         /// <summary>
+        /// Try get by classifier
+        /// </summary>
+        public static IIdentifiedEntity TryGetExisting(this IIdentifiedEntity me, ModelDataContext context, IPrincipal principal)
+        {
+            // Is there a classifier?
+            var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
+            var idpInstance = ApplicationContext.Current.GetService(idpType);
+            IIdentifiedEntity existing = null;
+
+            // Is the key not null?
+            if (me.Key != Guid.Empty && me.Key != null)
+            {
+                // We have to find it
+                var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 3 && o.GetParameters()[0].ParameterType == typeof(ModelDataContext));
+                if (getMethod == null) return null;
+                existing = getMethod.Invoke(idpInstance, new object[] { context, me.Key, principal }) as IIdentifiedEntity;
+            }
+
+            var classAtt = me.GetType().GetCustomAttribute<KeyLookupAttribute>();
+            if (classAtt != null)
+            {
+
+                object classifierValue = me;// me.GetType().GetProperty(classAtt.ClassifierProperty).GetValue(me);
+                                            // Follow the classifier
+                Type predicateType = typeof(Func<,>).MakeGenericType(me.GetType(), typeof(bool));
+                ParameterExpression parameterExpr = Expression.Parameter(me.GetType(), "o");
+                Expression accessExpr = parameterExpr;
+                while (classAtt != null)
+                {
+                    var property = accessExpr.Type.GetRuntimeProperty(classAtt.UniqueProperty);
+                    accessExpr = Expression.MakeMemberAccess(accessExpr, property);
+                    classifierValue = property.GetValue(classifierValue);
+
+                    classAtt = accessExpr.Type.GetCustomAttribute<KeyLookupAttribute>();
+
+                }
+
+                // public abstract IQueryable<TData> Query(ModelDataContext context, Expression<Func<TData, bool>> query, IPrincipal principal);
+                var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 3 && o.GetParameters()[0].ParameterType == typeof(ModelDataContext));
+                var builderMethod = typeof(Expression).GetGenericMethod(nameof(Expression.Lambda), new Type[] { predicateType }, new Type[] { typeof(Expression), typeof(ParameterExpression[]) });
+                var expression = builderMethod.Invoke(null, new object[] { Expression.MakeBinary(ExpressionType.Equal, accessExpr, Expression.Constant(classifierValue)), new ParameterExpression[] { parameterExpr } }) as Expression;
+
+                if (queryMethod == null) return null;
+                var iq = queryMethod.Invoke(idpInstance, new object[] { context, expression, principal }) as IQueryable;
+                foreach (var i in iq)
+                {
+                    existing = i as IIdentifiedEntity;
+                    me.Key = existing.Key;
+                    if (me is IVersionedEntity)
+                        (me as IVersionedEntity).VersionKey = (existing as IVersionedEntity)?.VersionKey ?? Guid.Empty;
+                }
+            }
+            return existing;
+            
+        }
+
+        /// <summary>
+        /// Updates a keyed delay load field if needed
+        /// </summary>
+        public static void UpdateParentKeys(this IIdentifiedEntity instance, PropertyInfo field)
+        {
+            var delayLoadProperty = field.GetCustomAttribute<SerializationReferenceAttribute>();
+            if (delayLoadProperty == null || String.IsNullOrEmpty(delayLoadProperty.RedirectProperty))
+                return;
+            var value = field.GetValue(instance) as IIdentifiedEntity;
+            if (value == null)
+                return;
+            // Get the delay load key property!
+            var keyField = instance.GetType().GetRuntimeProperty(delayLoadProperty.RedirectProperty);
+            keyField.SetValue(instance, value.Key);
+        }
+
+        /// <summary>
         /// Ensures a model has been persisted
         /// </summary>
         public static void EnsureExists(this IIdentifiedEntity me, ModelDataContext context, IPrincipal principal) 
         {
+           
+
             // Me
             var vMe = me as IVersionedEntity;
             String dkey = String.Format("{0}.{1}", me.GetType().FullName, me.Key);
 
-            // We have to find it
+            IIdentifiedEntity existing = me.TryGetExisting(context, principal);
             var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
             var idpInstance = ApplicationContext.Current.GetService(idpType);
-            var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 3 && o.GetParameters()[0].ParameterType == typeof(ModelDataContext));
-            if (getMethod == null) return;
-            var existing = getMethod.Invoke(idpInstance, new object[] { context, me.Key, principal }) as IIdentifiedEntity;
-
+            
             // Existing exists?
-            if (existing != null)
+            if (existing != null && me.Key.HasValue)
             {
                 // Exists but is an old version
-                if ((existing as IVersionedEntity)?.VersionKey != vMe?.VersionKey)
+                if ((existing as IVersionedEntity)?.VersionKey != vMe?.VersionKey &&
+                    vMe?.VersionKey != null && vMe?.VersionKey != Guid.Empty)
                 {
                     // Update method
                     var updateMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Update" && o.GetParameters().Length == 3 && o.GetParameters()[0].ParameterType == typeof(ModelDataContext));
@@ -177,10 +252,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
                             vMe.VersionKey = (updated as IVersionedEntity).VersionKey;
                     }
                 }
-
-                // Add
-                dkey = String.Format("{0}.{1}", me.GetType().FullName, existing.Key);
-
             }
             else // Insert
             {
@@ -193,65 +264,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
                     if (vMe != null)
                         vMe.VersionKey = (inserted as IVersionedEntity).VersionKey;
                 }
-                dkey = String.Format("{0}.{1}", me.GetType().FullName, me.Key);
-
             }
         }
-
-        /// <summary>
-        /// Updates a keyed delay load field if needed
-        /// </summary>
-        public static void UpdateParentKeys(this IIdentifiedEntity instance, PropertyInfo field)
-        {
-            var delayLoadProperty = field.GetCustomAttribute<DelayLoadAttribute>();
-            if (delayLoadProperty == null || String.IsNullOrEmpty(delayLoadProperty.KeyPropertyName))
-                return;
-            var value = field.GetValue(instance) as IIdentifiedEntity;
-            if (value == null)
-                return;
-            // Get the delay load key property!
-            var keyField = instance.GetType().GetRuntimeProperty(delayLoadProperty.KeyPropertyName);
-            keyField.SetValue(instance, value.Key);
-        }
-        /// <summary>
-        /// Update property data if required
-        /// </summary>
-        public static void CopyObjectData<TObject>(this TObject toEntity, TObject fromEntity)
-        {
-            if (toEntity == null)
-                throw new ArgumentNullException(nameof(toEntity));
-            else if (fromEntity == null)
-                throw new ArgumentNullException(nameof(fromEntity));
-            else if (fromEntity.GetType() != toEntity.GetType())
-                throw new ArgumentException("Type mismatch", nameof(fromEntity));
-            foreach (var pi in toEntity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {
-                
-                // Skip delay load 
-                if (pi.GetCustomAttribute<DelayLoadAttribute>() == null &&
-                    pi.GetSetMethod() != null)
-                {
-                    if (pi.PropertyType.IsGenericType &&
-                        pi.PropertyType.GetGenericTypeDefinition() == typeof(EntitySet<>) ||
-                        pi.PropertyType.Namespace.StartsWith("OpenIZ.Persistence"))
-                        continue;
-
-
-                    object newValue = pi.GetValue(fromEntity),
-                        oldValue = pi.GetValue(toEntity);
-
-                    // HACK: New value wrap for nullables
-                    if (newValue is Guid? && newValue != null)
-                        newValue = (newValue as Guid?).Value;
-
-                    if (newValue != null &&
-                        !newValue.Equals(oldValue) == true && 
-                        (pi.PropertyType.IsValueType && !newValue.Equals(Activator.CreateInstance(newValue.GetType())) || !pi.PropertyType.IsValueType))
-                        pi.SetValue(toEntity, newValue);
-                }
-            }
-        }
-
+        
         /// <summary>
         /// Has data changed
         /// </summary>

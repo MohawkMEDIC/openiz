@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-4-19
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -56,8 +57,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Security
         [TestMethod]
         public void TestSystemUserExists()
         {
-
-
+            
             var idService = ApplicationContext.Current.GetService<IIdentityProviderService>();
             var identity = idService.GetIdentity("SYSTEM");
             Assert.IsNotNull(identity);
@@ -169,7 +169,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Security
             var identity = idService.GetIdentity("ANONYMOUS");
 
             // Get the policies for identity
-            Assert.AreEqual(pdpService.GetPolicyOutcome(new GenericPrincipal(identity, null), PermissionPolicyIdentifiers.AccessAdministrativeFunction), PolicyDecisionOutcomeType.Deny);
+            Assert.AreEqual(pdpService.GetPolicyOutcome(new GenericPrincipal(identity, null), PermissionPolicyIdentifiers.UnrestrictedAdministration), PolicyDecisionOutcomeType.Deny);
             Assert.AreEqual(pdpService.GetPolicyOutcome(new GenericPrincipal(identity, null), PermissionPolicyIdentifiers.AlterRoles), PolicyDecisionOutcomeType.Deny);
             Assert.AreEqual(pdpService.GetPolicyOutcome(new GenericPrincipal(identity, null), PermissionPolicyIdentifiers.CreateRoles), PolicyDecisionOutcomeType.Deny);
             Assert.AreEqual(pdpService.GetPolicyOutcome(new GenericPrincipal(identity, null), PermissionPolicyIdentifiers.CreateIdentity), PolicyDecisionOutcomeType.Deny);
@@ -189,7 +189,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Security
             var identity = idService.GetIdentity("SYSTEM");
 
             // Get the policies for identity
-            Assert.AreEqual(pdpService.GetPolicyOutcome(new GenericPrincipal(identity, null), PermissionPolicyIdentifiers.AccessAdministrativeFunction), PolicyDecisionOutcomeType.Grant);
+            Assert.AreEqual(pdpService.GetPolicyOutcome(new GenericPrincipal(identity, null), PermissionPolicyIdentifiers.UnrestrictedAdministration), PolicyDecisionOutcomeType.Grant);
             Assert.AreEqual(pdpService.GetPolicyOutcome(new GenericPrincipal(identity, null), PermissionPolicyIdentifiers.AlterRoles), PolicyDecisionOutcomeType.Grant);
             Assert.AreEqual(pdpService.GetPolicyOutcome(new GenericPrincipal(identity, null), PermissionPolicyIdentifiers.CreateRoles), PolicyDecisionOutcomeType.Grant);
             Assert.AreEqual(pdpService.GetPolicyOutcome(new GenericPrincipal(identity, null), PermissionPolicyIdentifiers.CreateIdentity), PolicyDecisionOutcomeType.Grant);

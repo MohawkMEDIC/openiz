@@ -1,31 +1,52 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ - 
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-6-14
+ -->
 <AppletManifest xmlns="http://openiz.org/applet">
   <info id="org.openiz.applet.test.layout" version="1.0.0.0">
     <name lang="en">Test Layout</name>
     <author>OpenIZ Community</author>
   </info>
+  <strings lang="en">
+    <string key="some_string">SOME STRING!</string>
+  </strings>
   <asset name="layout" mimeType="text/html">
     <contentHtml>
-      <bundle>jquery</bundle>
-      <bundle>bootstrap</bundle>
-      <bundle>angular</bundle>
       <script>layout-controller</script>
       <style>layout-style</style>
       <content>
         <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="LayoutController">
           <h1>{{someVariable}}</h1>
+          
           <div class="container">
-            <a href="#" ng-click="someAction()">Do Something</a>
+            <a href="#" ng-click="someAction()">{{ 'some_string' | i18n }}</a>
+            <a href="#" ng-click="someAction()">{{ ::'some_string' | i18n }}</a>
+
             <!-- #include virtual="content" -->
           </div>
         </body>
       </content>
     </contentHtml>
   </asset>
-  <asset name="index" mimeType="text/html">
+  <asset name="index.html" mimeType="text/html">
     <contentHtml>
       <layout>layout</layout>
-      <bundle>chart-js</bundle>
       <script>index-controller</script>
       <style>index-style</style>
       <content>

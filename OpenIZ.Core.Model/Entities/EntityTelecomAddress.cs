@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
@@ -28,7 +29,7 @@ namespace OpenIZ.Core.Model.Entities
     /// <summary>
     /// Represents an entity telecom address
     /// </summary>
-    [Classifier(nameof(AddressUse))]
+    [Classifier(nameof(AddressUse)), SimpleValue(nameof(Value))]
     [XmlType("EntityTelecomAddress",  Namespace = "http://openiz.org/model"), JsonObject("EntityTelecomAddress")]
     public class EntityTelecomAddress : VersionedAssociation<Entity>
     {
@@ -75,7 +76,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the name use
         /// </summary>
-        [DelayLoad(nameof(AddressUseKey))]
+        [SerializationReference(nameof(AddressUseKey)), AutoLoad]
         [XmlIgnore, JsonIgnore]
         public Concept AddressUse
         {

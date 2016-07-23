@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-4-19
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using System.Collections.Generic;
@@ -89,6 +90,12 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         [XmlElement("property")]
         public List<PropertyMap> Property { get; set; }
+
+        /// <summary>
+        /// Gets or sets the base proeprty 
+        /// </summary>
+        [XmlElement("base")]
+        public PropertyMap ParentDomainProperty { get; set; }
 
         /// <summary>
         /// Try to get a collapse key
