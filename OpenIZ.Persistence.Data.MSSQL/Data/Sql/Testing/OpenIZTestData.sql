@@ -3,7 +3,6 @@ DELETE FROM SecurityUser WHERE UserName IN ('Bob','Lucy', 'SyncUser', 'Administr
 DELETE FROM SecurityApplicationPolicy WHERE ApplicationId IN (SELECT ApplicationId FROM SecurityApplication WHERE ApplicationPublicId = 'fiddler');
 DELETE FROM SecurityApplication WHERE ApplicationPublicId = 'fiddler';
 
-
 INSERT INTO SecurityUser (UserName, SecurityStamp, UserPassword, Email, PhoneNumber, EmailConfirmed, PhoneNumberConfirmed, CreatedBy)
 	VALUES ('Administrator', NEWID(), '59ff5973691ff75f8baa45f1e38fae24875f77ef00987ed22b02df075fb144f9', 'mailto:administrator@marc-hi.ca', 'tel:+19055751212;ext=4085', 1, 1, 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 
@@ -42,3 +41,9 @@ INSERT INTO SecurityApplicationPolicy(ApplicationId, PolicyId, PolicyAction)
 		SecurityApplication, Policy
 	WHERE
 		SecurityApplication.ApplicationPublicId = 'org.openiz.openiz_mobile';
+
+INSERT INTO SecurityDevice (DeviceId, DeviceSecret, DevicePublicId, CreatedBy)		
+	VALUES ('F90F1488-F3CC-4357-9462-7CE3AB12B148', 'device_secret', 'device_public_id', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+
+INSERT INTO AssigningAuthority (AssigningAuthorityId, Name, Oid, HL7CX4, Url, AssigningDeviceId, [Description], CreatedBy)
+		VALUES (NEWID(), 'Test', '1.3.6.1.4.1.33349.3.1.5.9.2.10000', 'Test', 'http://marc-hi.ca', 'F90F1488-F3CC-4357-9462-7CE3AB12B148', 'Testing Device', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
