@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
@@ -66,7 +67,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
-        [XmlElement("creationTime"), JsonProperty("creationTime")]
+        [XmlElement("creationTime"), JsonProperty("creationTime"), DataIgnore()]
         public String CreationTimeXml
         {
             get { return this.CreationTime.ToString("o", CultureInfo.InvariantCulture); }
@@ -86,7 +87,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
-        [XmlElement("obsoletionTime", IsNullable = false), JsonProperty("obsoletionTime")]
+        [XmlElement("obsoletionTime", IsNullable = false), JsonProperty("obsoletionTime"), DataIgnore()]
         public String ObsoletionTimeXml
         {
             get { return this.ObsoletionTime?.ToString("o", CultureInfo.InvariantCulture); }

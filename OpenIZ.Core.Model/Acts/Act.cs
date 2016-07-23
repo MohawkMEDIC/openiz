@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
@@ -51,7 +52,20 @@ namespace OpenIZ.Core.Model.Acts
         private Concept m_statusConcept;
         private Concept m_moodConcept;
         private Concept m_reasonConcept;
-        
+
+        /// <summary>
+        /// Constructor for ACT
+        /// </summary>
+        public Act()
+        {
+            this.Relationships = new List<ActRelationship>();
+            this.Identifiers = new List<ActIdentifier>();
+            this.Extensions = new List<ActExtension>();
+            this.Notes = new List<ActNote>();
+            this.Participations = new List<ActParticipation>();
+            this.Tags = new List<ActTag>();
+
+        }
         /// <summary>
         /// Gets or sets an indicator which identifies whether the object is negated
         /// </summary>

@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Constants;
@@ -47,6 +48,7 @@ namespace OpenIZ.Core.Model.Entities
         {
             base.ClassConceptKey = EntityClassKeys.Place;
             base.DeterminerConceptKey = DeterminerKeys.Specific;
+            this.Services = new List<PlaceService>();
         }
 
         /// <summary>

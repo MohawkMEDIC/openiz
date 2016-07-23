@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using System.Collections.Generic;
@@ -30,10 +31,16 @@ namespace OpenIZ.Core.Security
     public static class PermissionPolicyIdentifiers
     {
         #region IMS Policies in the 1.3.6.1.4.1.33349.3.1.5.9.2 namespace
+
         /// <summary>
         /// Access administrative function
         /// </summary>
-        public const string AccessAdministrativeFunction = "1.3.6.1.4.1.33349.3.1.5.9.2.0";
+        public const string UnrestrictedAll = "1.3.6.1.4.1.33349.3.1.5.9.2";
+
+        /// <summary>
+        /// Access administrative function
+        /// </summary>
+        public const string UnrestrictedAdministration = "1.3.6.1.4.1.33349.3.1.5.9.2.0";
 
         /// <summary>
         /// Policy identifier for allowance of changing passwords
@@ -70,10 +77,26 @@ namespace OpenIZ.Core.Security
         /// Administer the concept dictionary
         /// </summary>
         public const string AdministerConceptDictionary = "1.3.6.1.4.1.33349.3.1.5.9.2.0.7";
+
+        /// <summary>
+        /// Policy identifier for allowing of creating new identities
+        /// </summary>
+        public const string AlterIdentity = "1.3.6.1.4.1.33349.3.1.5.9.2.0.8";
+
         /// <summary>
         /// Policy identifier for allowance of login
         /// </summary>
         public const string Login = "1.3.6.1.4.1.33349.3.1.5.9.2.1";
+
+        /// <summary>
+        /// Login to an interactive session
+        /// </summary>
+        public const string LoginService = "1.3.6.1.4.1.33349.3.1.5.9.2.1.0";
+
+        /// <summary>
+        /// Login as a service right
+        /// </summary>
+        public const string RreadClinicalData = "1.3.6.1.4.1.33349.3.1.5.9.2.1.1";
 
         /// <summary>
         /// Access clinical data permission 
@@ -105,6 +128,11 @@ namespace OpenIZ.Core.Security
         /// </summary>
         public const string ElevateClinicalData = "1.3.6.1.4.1.33349.3.1.5.9.2.3";
 
+
+        /// <summary>
+        /// Indicates the user can elevate themselves (Break the glass)
+        /// </summary>
+        public const string ReadMetadata = "1.3.6.1.4.1.33349.3.1.5.9.2.4";
 
         #endregion
 

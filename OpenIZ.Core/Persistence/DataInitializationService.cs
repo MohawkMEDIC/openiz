@@ -1,4 +1,23 @@
-﻿using MARC.HI.EHRS.SVC.Core;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-7-18
+ */
+using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model;
@@ -91,15 +110,7 @@ namespace OpenIZ.Core.Persistence
 
                                 foreach (var itm in ds.Action)
                                 {
-                                    // Association
-                                    if (itm.Association != null)
-                                        foreach (var ascn in itm.Association)
-                                        {
-                                            var pi = itm.Element.GetType().GetRuntimeProperty(ascn.PropertyName);
-                                            var mi = pi.PropertyType.GetRuntimeMethod("Add", new Type[] { ascn.Element.GetType() });
-                                            mi.Invoke(pi.GetValue(itm.Element), new object[] { ascn.Element });
-                                        }
-
+                                   
                                     // IDP Type
                                     Type idpType = typeof(IDataPersistenceService<>);
                                     idpType = idpType.MakeGenericType(new Type[] { itm.Element.GetType() });
@@ -110,13 +121,30 @@ namespace OpenIZ.Core.Persistence
 
                                     this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "{0} {1}", itm.ActionName, itm.Element);
 
-                                    Object existing = null;
+                                    Object target = null, existing = null;
                                     if(itm.Element.Key.HasValue)
                                         existing = getMethod.MakeGenericMethod(new Type[] { typeof(Guid) }).Invoke(svc, new object[] { new Identifier<Guid>(itm.Element.Key.Value), AuthenticationContext.SystemPrincipal, false });
+                                    if (existing != null)
+                                    {
+                                        target = existing;
+                                        target.CopyObjectData(itm.Element);
+                                    }
+                                    else
+                                        target = itm.Element;
+
+                                    // Association
+                                    if (itm.Association != null)
+                                        foreach (var ascn in itm.Association)
+                                        {
+                                            var pi = target.GetType().GetRuntimeProperty(ascn.PropertyName);
+                                            var mi = pi.PropertyType.GetRuntimeMethod("Add", new Type[] { ascn.Element.GetType() });
+                                            mi.Invoke(pi.GetValue(target), new object[] { ascn.Element });
+                                        }
+
                                     if (existing == null && (itm is DataInsert || (itm is DataUpdate && (itm as DataUpdate).InsertIfNotExists)))
-                                        idpType.GetMethod("Insert", new Type[] { itm.Element.GetType(), typeof(IPrincipal), typeof(TransactionMode) }).Invoke(svc, new object[] { itm.Element, AuthenticationContext.SystemPrincipal, TransactionMode.Commit });
+                                        idpType.GetMethod("Insert", new Type[] { itm.Element.GetType(), typeof(IPrincipal), typeof(TransactionMode) }).Invoke(svc, new object[] { target, AuthenticationContext.SystemPrincipal, TransactionMode.Commit });
                                     else if (!(itm is DataInsert))
-                                        idpType.GetMethod(itm.ActionName, new Type[] { itm.Element.GetType(), typeof(IPrincipal), typeof(TransactionMode) }).Invoke(svc, new object[] { itm.Element, AuthenticationContext.SystemPrincipal, TransactionMode.Commit });
+                                        idpType.GetMethod(itm.ActionName, new Type[] { itm.Element.GetType(), typeof(IPrincipal), typeof(TransactionMode) }).Invoke(svc, new object[] { target, AuthenticationContext.SystemPrincipal, TransactionMode.Commit });
 
                                 }
                                 this.m_traceSource.TraceInformation("Applied {0} changes", ds.Action.Count);

@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using System;
@@ -36,10 +37,13 @@ namespace OpenIZ.Core.Model.Security
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "SecurityRole")]
     public class SecurityRole : SecurityEntity
     {
-
-        // User delay load
-        
-        private List<SecurityUser> m_users;
+        /// <summary>
+        /// Users in teh group
+        /// </summary>
+        public SecurityRole()
+        {
+            this.Users = new List<SecurityUser>();
+        }
         
         /// <summary>
         /// Gets or sets the name of the security role
@@ -58,15 +62,6 @@ namespace OpenIZ.Core.Model.Security
         /// </summary>
         [XmlIgnore, JsonIgnore]
         public List<SecurityUser> Users { get; set; }
-
-        /// <summary>
-        /// Force delay load properties to be reloaded from the data store
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_users = null;
-        }
 
     }
 }

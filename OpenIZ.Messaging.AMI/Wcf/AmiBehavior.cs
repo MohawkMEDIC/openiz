@@ -1,22 +1,22 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you
- * may not use this file except in compliance with the License. You may
- * obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
  * the License.
- *
- * User: Nityan
- * Date: 2016-6-17
+ * 
+ * User: justi
+ * Date: 2016-6-22
  */
-
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
@@ -39,6 +39,7 @@ using System.ServiceModel.Web;
 using System.Text;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using OpenIZ.Core.Security.Attribute;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -85,7 +86,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		{
 			int id = Int32.Parse(rawId);
 			this.m_certTool.Approve(id);
-			var result = new SubmissionResult(this.m_certTool.GetRequestStatus(id));
+            var submission = this.m_certTool.GetRequestStatus(id);
+
+            var result = new SubmissionResult(submission.Message, submission.RequestId, (SubmissionStatus)submission.Outcome, submission.AuthorityResponse);
 			result.Certificate = null;
 			return result;
 		}
@@ -137,7 +140,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			result.Outcome = SubmitOutcome.Revoked;
 			result.AuthorityResponse = null;
-			return new SubmissionResult(result);
+			return new SubmissionResult(result.Message, result.RequestId, (SubmissionStatus)result.Outcome, result.AuthorityResponse);
 		}
 
 		/// <summary>
@@ -218,8 +221,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		public SubmissionResult GetCsr(string rawId)
 		{
 			int id = Int32.Parse(rawId);
+            var submission = this.m_certTool.GetRequestStatus(id);
 
-			var result = new SubmissionResult(this.m_certTool.GetRequestStatus(id));
+            var result = new SubmissionResult(submission.Message, submission.RequestId, (SubmissionStatus)submission.Outcome, submission.AuthorityResponse);
 			return result;
 		}
 
@@ -292,7 +296,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		{
 			int id = Int32.Parse(rawId);
 			this.m_certTool.DenyRequest(id);
-			var result = new SubmissionResult(this.m_certTool.GetRequestStatus(id));
+            var status = this.m_certTool.GetRequestStatus(id);
+
+            var result = new SubmissionResult(status.Message, status.RequestId, (SubmissionStatus)status.Outcome, status.AuthorityResponse);
 			result.Certificate = null;
 			return result;
 		}
@@ -302,17 +308,19 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		public SubmissionResult SubmitCsr(SubmissionRequest s)
 		{
-			var result = new SubmissionResult(this.m_certTool.SubmitRequest(s.CmcRequest, s.AdminContactName, s.AdminAddress));
+            var submission = this.m_certTool.SubmitRequest(s.CmcRequest, s.AdminContactName, s.AdminAddress);
+
+            var result = new SubmissionResult(submission.Message, submission.RequestId, (SubmissionStatus)submission.Outcome, submission.AuthorityResponse);
 			if (this.m_configuration.CaConfiguration.AutoApprove)
 				return this.AcceptCsr(result.RequestId.ToString());
 			else
 				return result;
 		}
 
-		/// <summary>
-		/// Update a user
-		/// </summary>
-		public SecurityUserInfo UpdateUser(string rawUserId, SecurityUserInfo info)
+        /// <summary>
+        /// Update a user
+        /// </summary>
+        public SecurityUserInfo UpdateUser(string rawUserId, SecurityUserInfo info)
 		{
 			Guid userId = Guid.Parse(rawUserId);
 			// First change password if needed
@@ -345,7 +353,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <summary>
 		/// Get all roles according to the filter
 		/// </summary>
-		/// <returns></returns>
 		public AmiCollection<SecurityRoleInfo> GetRoles()
 		{
 			var expression = QueryExpressionParser.BuildLinqExpression<SecurityRole>(this.CreateQuery(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters));
@@ -353,10 +360,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			return new AmiCollection<SecurityRoleInfo>() { CollectionItem = userRepository.FindRoles(expression).Select(o => new SecurityRoleInfo(o)).ToList() };
 		}
 
-		/// <summary>
-		/// Creates the specified role in the database
-		/// </summary>
-		public SecurityRoleInfo CreateRole(SecurityRoleInfo role)
+        /// <summary>
+        /// Creates the specified role in the database
+        /// </summary>
+        public SecurityRoleInfo CreateRole(SecurityRoleInfo role)
 		{
 			var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 			var roleToCreate = new SecurityRole()
@@ -389,5 +396,39 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 			return new SecurityRoleInfo(roleRepository.ObsoleteRole(roleId));
 		}
-	}
+
+        /// <summary>
+        /// Get Policies
+        /// </summary>
+        public AmiCollection<SecurityPolicyInfo> GetPolicies()
+        {
+            var expression = QueryExpressionParser.BuildLinqExpression<SecurityPolicy>(this.CreateQuery(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters));
+            var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+            return new AmiCollection<SecurityPolicyInfo>() { CollectionItem = userRepository.FindPolicies(expression).Select(o => new SecurityPolicyInfo(o)).ToList() };
+        }
+
+        /// <summary>
+        /// Create a policy
+        /// </summary>
+        public SecurityPolicyInfo CreatePolicy(SecurityPolicyInfo Policy)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Get a policy
+        /// </summary>
+        public SecurityPolicyInfo GetPolicy(string policyId)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Delete a policy
+        /// </summary>
+        public SecurityPolicyInfo DeletePolicy(string PolicyId)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

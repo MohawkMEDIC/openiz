@@ -1,4 +1,23 @@
-﻿using MohawkCollege.Util.Console.Parameters;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-7-12
+ */
+using MohawkCollege.Util.Console.Parameters;
 using OpenIZ.Core.Applets;
 using OpenIZ.Core.Applets.Model;
 using System;
@@ -38,6 +57,24 @@ namespace AppletCompiler
             if (!Path.IsPathRooted(parameters.Source))
                 parameters.Source = Path.Combine(Environment.CurrentDirectory, parameters.Source);
 
+            // Applet collection
+            AppletCollection ac = new AppletCollection();
+            XmlSerializer xsz = new XmlSerializer(typeof(AppletManifest));
+            if(parameters.References != null)
+                foreach (var itm in parameters.References)
+                {
+                    if(File.Exists(itm))
+                    {
+                        using (var fs = File.OpenRead(itm))
+                        {
+                            var mfst = xsz.Deserialize(fs) as AppletManifest;
+                            ac.Add(mfst);
+                            Console.WriteLine("Added reference to {0}; v={1}", mfst.Info.Id, mfst.Info.Version);
+
+                        }
+                    }
+                }
+
             Console.WriteLine("Processing {0}...", parameters.Source);
             String manifestFile = Path.Combine(parameters.Source, "Manifest.xml");
             if (!File.Exists(manifestFile))
@@ -46,7 +83,6 @@ namespace AppletCompiler
             {
                 Console.WriteLine("\t Reading Manifest...", parameters.Source);
 
-                XmlSerializer xsz = new XmlSerializer(typeof(AppletManifest));
                 XmlSerializer packXsz = new XmlSerializer(typeof(AppletPackage));
                 using (var fs = File.OpenRead(manifestFile))
                 {
@@ -54,24 +90,25 @@ namespace AppletCompiler
                     mfst.Assets.AddRange(ProcessDirectory(parameters.Source, parameters.Source));
                     foreach (var i in mfst.Assets)
                         i.Name = i.Name.Substring(1);
+
+                    if (mfst.Info.Version.Contains("*"))
+                        mfst.Info.Version = mfst.Info.Version.Replace("*", ((DateTime.Now.Subtract(new DateTime(DateTime.Now.Year, 1, 1)).TotalMinutes % 1000).ToString().Substring(0, 4)));
+
                     using (var ofs = File.Create(parameters.Output ?? "out.xml"))
                         xsz.Serialize(ofs, mfst);
 
                     var pkg = mfst.CreatePackage();
                     pkg.Meta.Hash = SHA256.Create().ComputeHash(pkg.Manifest);
                     pkg.Meta.PublicKeyToken = pkg.Meta.PublicKeyToken ?? BitConverter.ToString(Guid.NewGuid().ToByteArray()).Replace("-", "");
-                    if (pkg.Meta.Version.Contains("*"))
-                        pkg.Meta.Version = pkg.Meta.Version.Replace("*", DateTime.Now.Subtract(new DateTime(DateTime.Now.Year, 1, 1)).TotalMinutes.ToString("00000"));
 
                     using (var ofs = File.Create(Path.ChangeExtension(parameters.Output ?? "out.xml", ".pak.raw")))
                         packXsz.Serialize(ofs, pkg);
                     using (var ofs = File.Create(Path.ChangeExtension(parameters.Output ?? "out.xml", ".pak")))
                     using (var gzs = new GZipStream(ofs, CompressionMode.Compress))
                     {
-                                                packXsz.Serialize(gzs, pkg);
+                        packXsz.Serialize(gzs, pkg);
                     }
                     // Render the build directory
-
 
                     var bindir = Path.Combine(Path.GetDirectoryName(parameters.Output), "bin");
 
@@ -85,7 +122,6 @@ namespace AppletCompiler
                     else
                         bindir = parameters.Deploy;
 
-                    AppletCollection ac = new AppletCollection();
                     mfst.Initialize();
                     ac.Add(mfst);
 
@@ -117,10 +153,7 @@ namespace AppletCompiler
                         }
                     }
                 }
-
-
                 
-
             }
 
             return retVal;
@@ -228,7 +261,10 @@ namespace AppletCompiler
 
             // Process sub directories
             foreach (var dir in Directory.GetDirectories(source))
-                retVal.AddRange(ProcessDirectory(dir, path));
+                if (!Path.GetFileName(dir).StartsWith("."))
+                    retVal.AddRange(ProcessDirectory(dir, path));
+                else
+                    Console.WriteLine("Skipping directory {0}", dir);
 
             return retVal;
         }

@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using System;
@@ -40,10 +41,14 @@ namespace OpenIZ.Core.Model.Security
     [KeyLookup(nameof(UserName))]
     public class SecurityUser : SecurityEntity
     {
-
+        /// <summary>
+        /// Roles belonging to the user
+        /// </summary>
+        public SecurityUser()
+        {
+            this.Roles = new List<SecurityRole>();
+        }
         
-        // Roles
-        private List<SecurityRole> m_roles;
         // User entities
         private List<Person> m_userEntities;
 
@@ -173,18 +178,7 @@ namespace OpenIZ.Core.Model.Security
         /// </summary>
         [XmlIgnore, JsonIgnore]
         
-        public List<SecurityRole> Roles {
-            get
-            {
-                if(this.IsDelayLoadEnabled && this.m_roles == null)
-                    this.m_roles = EntitySource.Current.Provider.Query<SecurityRole>(r => r.Users.Any(u => u.Key == this.Key)).ToList();
-                return this.m_roles;
-            }
-            set
-            {
-                this.m_roles = value;
-            }
-        }
+        public List<SecurityRole> Roles { get; set; }
       
         /// <summary>
         /// Gets or sets the patient's phone number
@@ -205,13 +199,22 @@ namespace OpenIZ.Core.Model.Security
         public Guid UserClass { get; set; }
 
         /// <summary>
-        /// Forces delay load properties to be from the database
+        /// Gets or sets the policies for the user
         /// </summary>
-        public override void Refresh()
+        [XmlIgnore, JsonIgnore]
+        public override List<SecurityPolicyInstance> Policies
         {
-            base.Refresh();
-            this.m_roles = null;
+            get
+            {
+                return this.Roles.SelectMany(o => o.Policies).ToList();
+            }
+
+            set
+            {
+                throw new NotSupportedException();
+            }
         }
+
 
     }
 }

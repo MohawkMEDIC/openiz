@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-1-13
+ * User: justi
+ * Date: 2016-6-22
  */
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
@@ -265,46 +266,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
                 }
             }
         }
-
-        /// <summary>
-        /// Update property data if required
-        /// </summary>
-        public static void CopyObjectData<TObject>(this TObject toEntity, TObject fromEntity)
-        {
-            if (toEntity == null)
-                throw new ArgumentNullException(nameof(toEntity));
-            else if (fromEntity == null)
-                throw new ArgumentNullException(nameof(fromEntity));
-            else if (fromEntity.GetType() != toEntity.GetType())
-                throw new ArgumentException("Type mismatch", nameof(fromEntity));
-            foreach (var pi in toEntity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {
-                
-                // Skip data ignore
-                if (pi.GetCustomAttribute<DataIgnoreAttribute>() == null &&
-                    pi.GetSetMethod() != null)
-                {
-                    if (pi.PropertyType.IsGenericType &&
-                        pi.PropertyType.GetGenericTypeDefinition() == typeof(EntitySet<>) ||
-                        pi.PropertyType.Namespace.StartsWith("OpenIZ.Persistence"))
-                        continue;
-
-
-                    object newValue = pi.GetValue(fromEntity),
-                        oldValue = pi.GetValue(toEntity);
-
-                    // HACK: New value wrap for nullables
-                    if (newValue is Guid? && newValue != null)
-                        newValue = (newValue as Guid?).Value;
-
-                    if (newValue != null &&
-                        !newValue.Equals(oldValue) == true && 
-                        (pi.PropertyType.IsValueType && !newValue.Equals(Activator.CreateInstance(newValue.GetType())) || !pi.PropertyType.IsValueType))
-                        pi.SetValue(toEntity, newValue);
-                }
-            }
-        }
-
+        
         /// <summary>
         /// Has data changed
         /// </summary>

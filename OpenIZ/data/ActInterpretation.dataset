@@ -6,7 +6,7 @@
       <id>cecd2e42-588f-4c03-b4b1-077aa2ba97d2</id>
       <name>ObservationInterpretation</name>
       <oid>2.16.840.1.113883.1.11.78</oid>
-      <authority>HL7 International</authority>
+      <authority>HL7INT</authority>
       <url>http://hl7.org/fhir/v3/ObservationInterpretation</url>
       <description>Interpretation codes for observations</description>
     </CodeSystem>

@@ -1,4 +1,23 @@
-﻿using Newtonsoft.Json;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-7-18
+ */
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using OpenIZ.Core.Model;
 using System;
@@ -41,7 +60,7 @@ namespace OpenIZ.Core.Http
 		/// </summary>
 		public void Serialize(System.IO.Stream s, object o)
 		{
-			using (TextWriter tw = new StreamWriter(s))
+			using (TextWriter tw = new StreamWriter(s, System.Text.Encoding.UTF8, 1024, true))
 			using (JsonTextWriter jw = new JsonTextWriter(tw))
 				this.m_serializer.Serialize(jw, o);
 		}
@@ -51,7 +70,7 @@ namespace OpenIZ.Core.Http
 		/// </summary>
 		public object DeSerialize(System.IO.Stream s)
 		{
-			using (TextReader tr = new StreamReader(s))
+			using (TextReader tr = new StreamReader(s, System.Text.Encoding.UTF8, true, 1024, true))
 			using (JsonTextReader jr = new JsonTextReader(tr))
 				return this.m_serializer.Deserialize(jr, this.m_type);
 		}

@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
@@ -39,8 +40,13 @@ namespace OpenIZ.Core.Model.DataTypes
     public class ConceptSet : BaseEntityData
     {
 
-        // Set members
-        private List<Concept> m_setMembers;
+        /// <summary>
+        /// Concept set
+        /// </summary>
+        public ConceptSet()
+        {
+            this.Concepts = new List<Concept>();
+        }
 
         /// <summary>
         /// Gets or sets the name of the concept set
@@ -93,18 +99,7 @@ namespace OpenIZ.Core.Model.DataTypes
         
         [AutoLoad]
         [XmlIgnore, JsonIgnore]
-        public List<Concept> Concepts
-        {
-            get {
-                if(this.IsDelayLoadEnabled && this.m_setMembers == null)
-                    this.m_setMembers = EntitySource.Current.Provider.Query<Concept>(o=>o.ConceptSets.Any(s=>s.Key == this.Key)).ToList();
-                return this.m_setMembers;
-            }
-            set
-            {
-                this.m_setMembers = value;
-            }
-        }
+        public List<Concept> Concepts { get; set; }
 
         /// <summary>
         /// Gets or sets the obsoletion reason

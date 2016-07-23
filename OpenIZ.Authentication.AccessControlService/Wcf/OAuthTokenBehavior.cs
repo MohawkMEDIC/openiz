@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-4-19
+ * User: justi
+ * Date: 2016-6-14
  */
 using OpenIZ.Core;
 using System;
@@ -48,6 +49,7 @@ using OpenIZ.Authentication.OAuth2.Configuration;
 using Newtonsoft.Json.Converters;
 using OpenIZ.Core.Security.Claims;
 using System.Security.Authentication;
+using OpenIZ.Core.Security.Attribute;
 
 namespace OpenIZ.Authentication.OAuth2.Wcf
 {
@@ -124,6 +126,7 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
                 try
                 {
                     var principal = identityProvider.Authenticate(tokenRequest["username"], tokenRequest["password"]);
+
                     if (principal == null)
                         return this.CreateErrorCondition(OAuthErrorType.invalid_grant, "Invalid username or password");
                     else

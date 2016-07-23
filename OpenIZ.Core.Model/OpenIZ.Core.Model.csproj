@@ -52,6 +52,9 @@
     <Compile Include="Association.cs" />
     <Compile Include="Collection\Bundle.cs" />
     <Compile Include="Constants\ActClassKeys.cs" />
+    <Compile Include="Constants\ActMoodKeys.cs" />
+    <Compile Include="Constants\ActParticipationKey.cs" />
+    <Compile Include="Constants\ActRelationshipTypeKeys.cs" />
     <Compile Include="Constants\AddressKeys.cs" />
     <Compile Include="Constants\CodeSystemKeys.cs" />
     <Compile Include="Constants\ConceptClassKeys.cs" />

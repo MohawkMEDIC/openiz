@@ -46,6 +46,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.IdentityModel.Tokens.Jwt, Version=4.0.20622.1351, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -63,7 +64,7 @@
     <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationContextExtensions.cs" />
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Configuration\ConfigurationSectionHandler.cs" />
     <Compile Include="Configuration\OpenIZBasicAuthorization.cs" />
     <Compile Include="Configuration\OpenIzClaimsAuthorization.cs" />

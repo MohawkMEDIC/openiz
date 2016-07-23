@@ -1,4 +1,23 @@
-﻿using OpenIZ.Core.Applets.Model;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-14
+ */
+using OpenIZ.Core.Applets.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -310,6 +329,7 @@ namespace OpenIZ.Core.Applets
                                 head = new XElement(xs_xhtml + "head");
                                 htmlContent.Add(head);
                             }
+
                             head.Add(headerInjection);
                             break;
                         }
@@ -324,8 +344,7 @@ namespace OpenIZ.Core.Applets
                             htmlContent = new XElement(xs_xhtml + "html", new XAttribute("ng-app", asset.Name), new XElement(xs_xhtml + "head", headerInjection), bodyElement);
                         }
                         break;
-                    case "div": // The content is a simple DIV
-                    case "table":
+                    default:
                         {
                             if (String.IsNullOrEmpty(htmlAsset.Layout))
                                 htmlContent = htmlAsset.Html as XElement;
@@ -456,10 +475,15 @@ namespace OpenIZ.Core.Applets
                 // Re-write
                 foreach (var itm in htmlContent.DescendantNodes().OfType<XElement>().SelectMany(o => o.Attributes()).Where(o => o.Value.StartsWith("~")))
                 {
-                    
                     itm.Value = String.Format("/{0}/{1}", asset.Manifest.Info.Id, itm.Value.Substring(2)); 
                     //itm.Value = itm.Value.Replace(APPLET_SCHEME, this.AppletBase).Replace(ASSET_SCHEME, this.AssetBase).Replace(DRAWABLE_SCHEME, this.DrawableBase);
                 }
+
+                // Render Title
+                var headTitle = htmlContent.DescendantNodes().OfType<XElement>().FirstOrDefault(o => o.Name == xs_xhtml + "head");
+                var title = htmlAsset.GetTitle(preProcessLocalization);
+                if (headTitle != null && !String.IsNullOrEmpty(title))
+                    headTitle.Add(new XElement(xs_xhtml + "title", new XText(title)));
 
                 // Render out the content
                 using (StringWriter sw = new StringWriter())

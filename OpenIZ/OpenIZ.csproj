@@ -94,6 +94,12 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Data\ActReason.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ControlActClass.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Data\ActInterpretation.dataset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

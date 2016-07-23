@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-1-13
+ * User: justi
+ * Date: 2016-6-14
  */
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using System;
@@ -229,7 +230,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                 // submit the changes
                 using (var dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
                 {
-                    new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.AccessAdministrativeFunction, authContext).Demand();
+                    new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.UnrestrictedAdministration, authContext).Demand();
 
                     var user = dataContext.SecurityUsers.FirstOrDefault(o => o.UserName == userName);
                     if (user == null)
@@ -265,7 +266,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                 // submit the changes
                 using (var dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
                 {
-                    new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.AccessAdministrativeFunction, authContext).Demand();
+                    new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.UnrestrictedAdministration, authContext).Demand();
 
                     var user = dataContext.SecurityUsers.FirstOrDefault(o => o.UserName == userName);
                     if (user == null)
