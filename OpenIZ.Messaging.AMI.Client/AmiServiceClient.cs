@@ -31,43 +31,114 @@ using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Messaging.AMI.Client
 {
-    /// <summary>
-    /// Administrative management service client
-    /// </summary>
-    public class AmiServiceClient : ServiceClientBase, IDisposable
+	/// <summary>
+	/// Represents the AMI service client.
+	/// </summary>
+	public class AmiServiceClient : ServiceClientBase, IDisposable
     {
-        /// <summary>
-        /// Creates the AMI service client with the specified rest client
-        /// </summary>
-        /// <param name="restClient"></param>
-        public AmiServiceClient(IRestClient restClient) : base(restClient)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="OpenIZ.Messaging.AMI.Client.AmiServiceClient"/> class
+		/// with a specified <see cref="OpenIZ.Core.Http.IRestClient"/> instance.
+		/// </summary>
+		/// <param name="client">The <see cref="OpenIZ.Core.Http.IRestClient"/> instance.</param>
+		public AmiServiceClient(IRestClient client) : base(client)
         {
         }
 
-        /// <summary>
-        /// Retrieves the specified role from the AMI
-        /// </summary>
-        public AmiCollection<SecurityRoleInfo> FindRole(Expression<Func<SecurityRole, bool>> query)
+		/// <summary>
+		/// Creates a role in the IMS.
+		/// </summary>
+		/// <param name="role">The role to be created.</param>
+		/// <returns>Returns the newly created role.</returns>
+		public SecurityRoleInfo CreateRole(SecurityRoleInfo role)
+		{
+			return this.Client.Post<SecurityRoleInfo, SecurityRoleInfo>("role", this.Client.Accept, role);
+		}
+
+		/// <summary>
+		/// Creates a user in the IMS.
+		/// </summary>
+		/// <param name="user">The user to be created.</param>
+		/// <returns>Returns the newly created user.</returns>
+		public SecurityUserInfo CreateUser(SecurityUserInfo user)
+		{
+			return this.Client.Post<SecurityUserInfo, SecurityUserInfo>("user", this.Client.Accept, user);
+		}
+
+		#region IDisposable Support
+
+		private bool disposedValue = false; // To detect redundant calls
+
+		/// <summary>
+		/// Dispose of any managed resources.
+		/// </summary>
+		/// <param name="disposing">Whether the current invocation is disposing.</param>
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!disposedValue)
+			{
+				if (disposing)
+				{
+					this.Client?.Dispose();
+				}
+
+				// TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+				// TODO: set large fields to null.
+
+				disposedValue = true;
+			}
+		}
+
+		// TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+		// ~ImsiServiceClient() {
+		//   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+		//   Dispose(false);
+		// }
+
+		/// <summary>
+		/// Dispose of any resources.
+		/// </summary>
+		public void Dispose()
+		{
+			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+			Dispose(true);
+			// TODO: uncomment the following line if the finalizer is overridden above.
+			// GC.SuppressFinalize(this);
+		}
+
+		#endregion IDisposable Support
+
+		/// <summary>
+		/// Retrieves a specified role from the AMI.
+		/// </summary>
+		/// <param name="query">The query expression to use to find the role.</param>
+		/// <returns>Returns a collection of roles which match the specified query parameters.</returns>
+		public AmiCollection<SecurityRoleInfo> FindRole(Expression<Func<SecurityRole, bool>> query)
         {
             var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
             return this.Client.Get<AmiCollection<SecurityRoleInfo>>("role", queryParms);
         }
 
-        /// <summary>
-        /// Retrieves the specified role from the AMI
-        /// </summary>
-        public AmiCollection<SecurityPolicyInfo> FindPolicy(Expression<Func<SecurityPolicy, bool>> query)
+		/// <summary>
+		/// Retrieves a specified policy from the AMI.
+		/// </summary>
+		/// <param name="query">The query expression to use to find the policy.</param>
+		/// <returns>Returns a collection of policies which match the specified query parameters.</returns>
+		public AmiCollection<SecurityPolicyInfo> FindPolicy(Expression<Func<SecurityPolicy, bool>> query)
         {
             var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
             return this.Client.Get<AmiCollection<SecurityPolicyInfo>>("policy", queryParms);
         }
 
-        /// <summary>
-        /// Dispose the client
-        /// </summary>
-        public void Dispose()
-        {
-            this.Client.Dispose();
-        }
+		/// <summary>
+		/// Retrieves a specified user from the AMI.
+		/// </summary>
+		/// <param name="query">The query expression to use to find the user.</param>
+		/// <returns>Returns a collection of users which match the specified query parameters.</returns>
+		public AmiCollection<SecurityUserInfo> FindUser(Expression<Func<SecurityUserInfo, bool>> query)
+		{
+			var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
+			return this.Client.Get<AmiCollection<SecurityUserInfo>>("user", queryParms);
+		}
     }
 }
