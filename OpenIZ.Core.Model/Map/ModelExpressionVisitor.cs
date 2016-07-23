@@ -282,7 +282,9 @@ namespace OpenIZ.Core.Model.Map
                     {
                         case ExpressionType.MemberAccess:
                             var memberExpr = (MemberExpression)right;
-                            var scope = ((ConstantExpression)memberExpr.Expression).Value;
+                            Object scope = null;
+                            if(memberExpr.Expression != null)
+                                scope = ((ConstantExpression)memberExpr.Expression).Value;
                             if (memberExpr.Member is FieldInfo)
                                 right = Expression.Constant(((Guid)(memberExpr.Member as FieldInfo).GetValue(scope)).ToByteArray());
                             else if(memberExpr.Member is MethodInfo)

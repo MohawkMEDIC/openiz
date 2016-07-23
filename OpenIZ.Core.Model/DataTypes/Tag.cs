@@ -128,7 +128,22 @@ namespace OpenIZ.Core.Model.DataTypes
     [XmlType("ActTag",  Namespace = "http://openiz.org/model"), JsonObject("ActTag")]
     public class ActTag : Tag<Act>
     {
+        /// <summary>
+        /// Default ctor
+        /// </summary>
+        public ActTag()
+        {
 
+        }
+
+        /// <summary>
+        /// Construtor setting key and tag
+        /// </summary>
+        public ActTag(String key, String value)
+        {
+            this.TagKey = key;
+            this.Value = value;
+        }
     }
 
 }

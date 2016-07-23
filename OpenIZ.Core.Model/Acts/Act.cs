@@ -41,7 +41,7 @@ namespace OpenIZ.Core.Model.Acts
     public class Act : VersionedEntityData<Act>
     {
 
-        private Guid m_classConceptKey;
+        private Guid? m_classConceptKey;
         private Guid? m_typeConceptKey;
         private Guid? m_statusConceptKey;
         private Guid? m_moodConceptKey;
@@ -145,7 +145,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("classConcept"), JsonProperty("classConcept")]
-        public virtual Guid ClassConceptKey
+        public virtual Guid? ClassConceptKey
         {
             get { return this.m_classConceptKey; }
             set
@@ -221,7 +221,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Class concept datal load property
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DataIgnore, SerializationReference(nameof(ClassConceptKey))]
+        [AutoLoad, SerializationReference(nameof(ClassConceptKey))]
         public Concept ClassConcept
         {
             get
@@ -229,13 +229,18 @@ namespace OpenIZ.Core.Model.Acts
                 this.m_classConcept = base.DelayLoad(this.m_classConceptKey, this.m_classConcept);
                 return this.m_classConcept;
             }
+            set
+            {
+                this.m_classConcept = value;
+                this.m_classConceptKey = value?.Key;
+            }
         }
 
         /// <summary>
         /// Mood concept data load property
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DataIgnore, SerializationReference(nameof(MoodConceptKey))]
+        [AutoLoad, SerializationReference(nameof(MoodConceptKey))]
         public Concept MoodConcept
         {
             get
@@ -254,7 +259,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Mood concept data load property
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DataIgnore, SerializationReference(nameof(ReasonConceptKey))]
+        [AutoLoad, SerializationReference(nameof(ReasonConceptKey))]
         public Concept ReasonConcept
         {
             get
@@ -272,7 +277,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Status concept id
         /// </summary>
-        [DataIgnore, SerializationReference(nameof(StatusConceptKey))]
+        [AutoLoad, SerializationReference(nameof(StatusConceptKey))]
         [XmlIgnore, JsonIgnore]
         public Concept StatusConcept
         {
@@ -294,7 +299,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Type concept identifier
         /// </summary>
-        [DataIgnore, SerializationReference(nameof(TypeConceptKey))]
+        [AutoLoad, SerializationReference(nameof(TypeConceptKey))]
         [XmlIgnore, JsonIgnore]
         public Concept TypeConcept
         {

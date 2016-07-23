@@ -47,6 +47,31 @@ namespace OpenIZ.Core.Model.Acts
         private Concept m_participationRole;
 
         /// <summary>
+        /// Default constructor for act participation
+        /// </summary>
+        public ActParticipation()
+        {
+        }
+
+        /// <summary>
+        /// Act participation relationship between <paramref name="source"/> and <paramref name="player"/>
+        /// </summary>
+        public ActParticipation(Guid? roleType, Entity player)
+        {
+            this.ParticipationRoleKey = roleType;
+            this.PlayerEntity = player;
+        }
+
+        /// <summary>
+        /// Entity relationship between <paramref name="source"/> and <paramref name="playerKey"/>
+        /// </summary>
+        public ActParticipation(Guid? roleType, Guid? playerKey)
+        {
+            this.ParticipationRoleKey = roleType;
+            this.PlayerEntityKey = playerKey;
+        }
+
+        /// <summary>
         /// Gets or sets the target entity reference
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]

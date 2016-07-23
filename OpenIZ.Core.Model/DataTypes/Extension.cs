@@ -139,5 +139,21 @@ namespace OpenIZ.Core.Model.DataTypes
     public class ActExtension : Extension<Act>
     {
 
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public ActExtension()
+        {
+
+        }
+
+        /// <summary>
+        /// Creates an entity extension
+        /// </summary>
+        public ActExtension(Guid extensionType, byte[] value)
+        {
+            this.ExtensionTypeKey = extensionType;
+            this.ExtensionValue = value;
+        }
     }
 }

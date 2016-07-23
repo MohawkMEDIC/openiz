@@ -275,6 +275,8 @@ namespace OpenIZ.Core.Model.Query
                         var valueExpression = binaryExpression.Right as ConstantExpression;
                         if (expressionMember.Member.DeclaringType.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty != expressionMember.Member.Name)
                             throw new InvalidOperationException("Guards must be on classifier");
+                        if (valueExpression == null)
+                            throw new InvalidOperationException("Only constant expressions are supported on guards");
                         return String.Format("{0}[{1}]", path, valueExpression.Value);
 
                     }

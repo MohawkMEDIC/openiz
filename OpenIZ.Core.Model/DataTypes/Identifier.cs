@@ -75,7 +75,31 @@ namespace OpenIZ.Core.Model.DataTypes
     [XmlType(Namespace = "http://openiz.org/model", TypeName = "ActIdentifier")]
     public class ActIdentifier : IdentifierBase<Act>
     {
+        /// <summary>
+        /// Default ctor
+        /// </summary>
+        public ActIdentifier()
+        {
 
+        }
+
+        /// <summary>
+        /// Creates a new entity identifier with specified authority
+        /// </summary>
+        public ActIdentifier(Guid authorityId, String value)
+        {
+            this.AuthorityKey = authorityId;
+            this.Value = value;
+        }
+
+        /// <summary>
+        /// Creates a new entity identifier
+        /// </summary>
+        public ActIdentifier(AssigningAuthority authority, String value)
+        {
+            this.Authority = authority;
+            this.Value = value;
+        }
     }
 
     /// <summary>

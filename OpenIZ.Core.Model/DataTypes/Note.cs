@@ -142,7 +142,20 @@ namespace OpenIZ.Core.Model.DataTypes
     [XmlType("ActNote",  Namespace = "http://openiz.org/model"), JsonObject("ActNote")]
     public class ActNote : Note<Acts.Act>
     {
+        /// <summary>
+        /// Default ctor
+        /// </summary>
+        public ActNote()
+        {
 
+        }
+
+        /// <summary>
+        /// Creates a new instance of the entity note
+        /// </summary>
+        public ActNote(Guid authorKey, String text) : base(authorKey, text)
+        {
+        }
     }
 
 }

@@ -49,6 +49,31 @@ namespace OpenIZ.Core.Model.Acts
         private Concept m_relationshipType;
 
         /// <summary>
+        /// Default constructor for entity relationship
+        /// </summary>
+        public ActRelationship()
+        {
+        }
+
+        /// <summary>
+        /// Entity relationship between <paramref name="source"/> and <paramref name="target"/>
+        /// </summary>
+        public ActRelationship(Guid? relationshipType, Act target)
+        {
+            this.RelationshipTypeKey = relationshipType;
+            this.TargetAct = target;
+        }
+
+        /// <summary>
+        /// Entity relationship between <paramref name="source"/> and <paramref name="target"/>
+        /// </summary>
+        public ActRelationship(Guid? relationshipType, Guid? targetKey)
+        {
+            this.RelationshipTypeKey = relationshipType;
+            this.TargetActKey = targetKey;
+        }
+
+        /// <summary>
         /// The target of the association
         /// </summary>
         [XmlElement("target"), JsonProperty("target")]
