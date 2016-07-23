@@ -39,9 +39,13 @@ namespace OpenIZ.Core.Http
 			{
 				case "text/xml":
 				case "application/xml":
+				case "application/xml; charset=utf-8":
+				case "application/xml; charset=UTF-8":
 					return new XmlBodySerializer(typeHint);
 
 				case "application/json":
+				case "application/json; charset=utf-8":
+				case "application/json; charset=UTF-8":
 					return new JsonBodySerializer(typeHint);
 
 				case "application/x-www-urlform-encoded":

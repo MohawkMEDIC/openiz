@@ -40,6 +40,8 @@ using System.Text;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using OpenIZ.Core.Security.Attribute;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -430,5 +432,103 @@ namespace OpenIZ.Messaging.AMI.Wcf
         {
             throw new NotImplementedException();
         }
-    }
+
+		/// <summary>
+		/// Updates a concept.
+		/// </summary>
+		/// <param name="rawConceptId">The id of the concept to be updated.</param>
+		/// <param name="concept">The concept containing the updated model.</param>
+		/// <returns>Returns the newly updated concept.</returns>
+		public Concept UpdateConcept(string rawConceptId, Concept concept)
+		{
+			Guid conceptId = Guid.Empty;
+
+			if (Guid.TryParse(rawConceptId, out conceptId))
+			{
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(rawConceptId)));
+			}
+
+			var conceptRepository = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+
+			if (conceptRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IConceptRepositoryService)));
+			}
+
+			return conceptRepository.SaveConcept(concept);
+		}
+
+		public AmiCollection<Concept> GetConcepts()
+		{
+			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
+			if (parameters.Count == 0)
+			{
+				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
+			}
+
+			var expression = QueryExpressionParser.BuildLinqExpression<Concept>(this.CreateQuery(parameters));
+
+			var conceptRepository = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+
+			if (conceptRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IConceptRepositoryService)));
+			}
+
+			return new AmiCollection<Concept>()
+			{
+				CollectionItem = conceptRepository.FindConcepts(expression).ToList()
+			};
+		}
+
+		public AmiCollection<ConceptSet> GetConceptSets()
+		{
+			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
+			if (parameters.Count == 0)
+			{
+				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
+			}
+
+			var expression = QueryExpressionParser.BuildLinqExpression<ConceptSet>(this.CreateQuery(parameters));
+
+			var conceptRepository = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+
+			if (conceptRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IConceptRepositoryService)));
+			}
+
+			return new AmiCollection<ConceptSet>()
+			{
+				CollectionItem = conceptRepository.FindConceptSets(expression).ToList()
+			};
+		}
+
+		/// <summary>
+		/// Gets a list of devices.
+		/// </summary>
+		/// <returns>Returns a list of devices.</returns>
+		public AmiCollection<SecurityDevice> GetDevices()
+		{
+			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
+			if (parameters.Count == 0)
+			{
+				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
+			}
+
+			var expression = QueryExpressionParser.BuildLinqExpression<ConceptSet>(this.CreateQuery(parameters));
+
+			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+			}
+
+			return new AmiCollection<SecurityDevice>();
+		}
+	}
 }

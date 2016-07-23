@@ -28,6 +28,7 @@ using OpenIZ.Core.Model.AMI.Auth;
 using System.Linq.Expressions;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.Security;
+using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.Messaging.AMI.Client
 {
@@ -45,6 +46,11 @@ namespace OpenIZ.Messaging.AMI.Client
         {
         }
 
+		/// <summary>
+		/// Accepts a certificate signing request.
+		/// </summary>
+		/// <param name="id">The id of the certificate signing request.</param>
+		/// <returns>Returns the submission result.</returns>
 		public SubmissionResult AcceptCertificateSigningRequest(string id)
 		{
 			return this.Client.Put<object, SubmissionResult>(string.Format("csr/{0}", id), this.Client.Accept, null);
@@ -114,11 +120,31 @@ namespace OpenIZ.Messaging.AMI.Client
 		#endregion IDisposable Support
 
 		/// <summary>
+		/// Gets a list of concepts from the AMI.
+		/// </summary>
+		/// <param name="query">The query expressions to use to find the concepts.</param>
+		/// <returns>Returns a collection of concepts which match the specified query.</returns>
+		public AmiCollection<Concept> GetConcepts(Expression<Func<Concept, bool>> query)
+		{
+			return this.Client.Get<AmiCollection<Concept>>("concepts", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
+		/// Gets a list of concept sets from the AMI.
+		/// </summary>
+		/// <param name="query">The query expressions to use to find the concept sets.</param>
+		/// <returns>Returns a collection of concept sets which match the specified query.</returns>
+		public AmiCollection<ConceptSet> GetConceptSets(Expression<Func<ConceptSet, bool>> query)
+		{
+			return this.Client.Get<AmiCollection<ConceptSet>>("conceptsets", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
 		/// Retrieves a specified role from the AMI.
 		/// </summary>
 		/// <param name="query">The query expression to use to find the role.</param>
 		/// <returns>Returns a collection of roles which match the specified query parameters.</returns>
-		public AmiCollection<SecurityRoleInfo> FindRole(Expression<Func<SecurityRole, bool>> query)
+		public AmiCollection<SecurityRoleInfo> GetRoles(Expression<Func<SecurityRole, bool>> query)
         {
             var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
             return this.Client.Get<AmiCollection<SecurityRoleInfo>>("role", queryParms);
@@ -129,21 +155,31 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// </summary>
 		/// <param name="query">The query expression to use to find the policy.</param>
 		/// <returns>Returns a collection of policies which match the specified query parameters.</returns>
-		public AmiCollection<SecurityPolicyInfo> FindPolicy(Expression<Func<SecurityPolicy, bool>> query)
-        {
-            var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
-            return this.Client.Get<AmiCollection<SecurityPolicyInfo>>("policy", queryParms);
-        }
+		public AmiCollection<SecurityPolicyInfo> GetPolicies(Expression<Func<SecurityPolicy, bool>> query)
+		{
+			var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
+			return this.Client.Get<AmiCollection<SecurityPolicyInfo>>("policy", queryParms);
+		}
 
 		/// <summary>
 		/// Retrieves a specified user from the AMI.
 		/// </summary>
 		/// <param name="query">The query expression to use to find the user.</param>
 		/// <returns>Returns a collection of users which match the specified query parameters.</returns>
-		public AmiCollection<SecurityUserInfo> FindUser(Expression<Func<SecurityUserInfo, bool>> query)
+		public AmiCollection<SecurityUserInfo> GetUsers(Expression<Func<SecurityUserInfo, bool>> query)
 		{
 			var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
 			return this.Client.Get<AmiCollection<SecurityUserInfo>>("user", queryParms);
 		}
-    }
+
+		/// <summary>
+		/// Submits a certificate signing request to the AMI.
+		/// </summary>
+		/// <param name="submissionRequest">The certificate signing request.</param>
+		/// <returns>Returns the submission result.</returns>
+		public SubmissionResult SubmitCertificateSigningRequest(SubmissionRequest submissionRequest)
+		{
+			return this.Client.Post<SubmissionRequest, SubmissionResult>("csr", this.Client.Accept, submissionRequest);
+		}
+	}
 }

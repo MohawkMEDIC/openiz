@@ -20,6 +20,11 @@
 using OpenIZ.Core.Model.AMI;
 using OpenIZ.Core.Model.AMI.Auth;
 using OpenIZ.Core.Model.AMI.Security;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Security;
+using System;
+using System.Linq.Expressions;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Xml.Schema;
@@ -30,46 +35,98 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	/// Administrative management interface contract
 	/// </summary>
 	[ServiceContract(ConfigurationName = "AMI_1.0", Name = "AMI"), XmlSerializerFormat]
-	[ServiceKnownType(typeof(SubmissionRequest))]
-	[ServiceKnownType(typeof(SubmissionResult))]
+	[ServiceKnownType(typeof(Place))]
+	[ServiceKnownType(typeof(Entity))]
+	[ServiceKnownType(typeof(Concept))]
+	[ServiceKnownType(typeof(ConceptSet))]
+	[ServiceKnownType(typeof(Organization))]
+	[ServiceKnownType(typeof(DeviceEntity))]
+	[ServiceKnownType(typeof(ReferenceTerm))]
 	[ServiceKnownType(typeof(SubmissionInfo))]
-	[ServiceKnownType(typeof(X509Certificate2Info))]
 	[ServiceKnownType(typeof(SecurityUserInfo))]
 	[ServiceKnownType(typeof(SecurityRoleInfo))]
+	[ServiceKnownType(typeof(SubmissionResult))]
+	[ServiceKnownType(typeof(ApplicationEntity))]
+	[ServiceKnownType(typeof(SubmissionRequest))]
+	[ServiceKnownType(typeof(X509Certificate2Info))]
 	[ServiceKnownType(typeof(AmiCollection<SubmissionInfo>))]
-	[ServiceKnownType(typeof(AmiCollection<X509Certificate2Info>))]
 	[ServiceKnownType(typeof(AmiCollection<SecurityUserInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<X509Certificate2Info>))]
 	public interface IAmiContract
 	{
 		/// <summary>
-		/// Submit the specified CSR
+		/// Accept the CSR
 		/// </summary>
-		[WebInvoke(UriTemplate = "/csr", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-		SubmissionResult SubmitCsr(SubmissionRequest s);
+		[WebInvoke(UriTemplate = "/csr/accept/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		SubmissionResult AcceptCsr(string id);
 
 		/// <summary>
-		/// Get the submissions
+		/// Create a security Policy
 		/// </summary>
-		[WebGet(UriTemplate = "/csr", BodyStyle = WebMessageBodyStyle.Bare)]
-		AmiCollection<SubmissionInfo> GetCsrs();
+		[WebInvoke(UriTemplate = "/policy/create", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		SecurityPolicyInfo CreatePolicy(SecurityPolicyInfo Policy);
+
+		/// <summary>
+		/// Create a security Role
+		/// </summary>
+		[WebInvoke(UriTemplate = "/role/create", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		SecurityRoleInfo CreateRole(SecurityRoleInfo Role);
+
+		/// <summary>
+		/// Create a security user
+		/// </summary>
+		[WebInvoke(UriTemplate = "/user/create", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		SecurityUserInfo CreateUser(SecurityUserInfo user);
 
 		/// <summary>
 		/// Reject the specified CSR
 		/// </summary>
-		[WebInvoke(UriTemplate = "/csr/{certId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-		SubmissionResult RejectCsr(string certId, RevokeReason reason);
+		[WebInvoke(UriTemplate = "/certificate/delete/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		SubmissionResult DeleteCertificate(string id, RevokeReason reason);
 
 		/// <summary>
-		/// Gets the specified CSR request
+		/// Delete a security Policy
 		/// </summary>
-		[WebGet(UriTemplate = "/csr/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
-		SubmissionResult GetCsr(string id);
+		[WebInvoke(UriTemplate = "/policy/delete/{policyId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		SecurityPolicyInfo DeletePolicy(string policyId);
 
 		/// <summary>
-		/// Accept the CSR
+		/// Delete a security Role
 		/// </summary>
-		[WebInvoke(UriTemplate = "/csr/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
-		SubmissionResult AcceptCsr(string id);
+		[WebInvoke(UriTemplate = "/role/delete/{roleId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		SecurityRoleInfo DeleteRole(string roleId);
+
+		/// <summary>
+		/// Delete a security user
+		/// </summary>
+		[WebInvoke(UriTemplate = "/user/delete/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		SecurityUserInfo DeleteUser(string userId);
+
+		/// <summary>
+		/// Get the specified certificate
+		/// </summary>
+		[WebGet(UriTemplate = "/certificate/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
+		byte[] GetCertificate(string id);
+
+		/// <summary>
+		/// Get specified certificates
+		/// </summary>
+		[WebGet(UriTemplate = "/certificates", BodyStyle = WebMessageBodyStyle.Bare)]
+		AmiCollection<X509Certificate2Info> GetCertificates();
+
+		/// <summary>
+		/// Gets a list of concepts.
+		/// </summary>
+		/// <returns>Returns a list of concepts.</returns>
+		[WebGet(UriTemplate = "/concepts", BodyStyle = WebMessageBodyStyle.Bare)]
+		AmiCollection<Concept> GetConcepts();
+
+		/// <summary>
+		/// Gets a list of concept sets.
+		/// </summary>
+		/// <returns>Returns a list of concept sets.</returns>
+		[WebGet(UriTemplate = "/conceptsets", BodyStyle = WebMessageBodyStyle.Bare)]
+		AmiCollection<ConceptSet> GetConceptSets();
 
 		/// <summary>
 		/// Get the CRL
@@ -79,72 +136,36 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		byte[] GetCrl();
 
 		/// <summary>
-		/// Get specified certificates
+		/// Gets the specified CSR request
 		/// </summary>
-		[WebGet(UriTemplate = "/certificate", BodyStyle = WebMessageBodyStyle.Bare)]
-		AmiCollection<X509Certificate2Info> GetCertificates();
+		[WebGet(UriTemplate = "/csr/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
+		SubmissionResult GetCsr(string id);
 
 		/// <summary>
-		/// Get the specified certificate
+		/// Get the submissions
 		/// </summary>
-		[WebGet(UriTemplate = "/certificate/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
-		byte[] GetCertificate(string id);
+		[WebGet(UriTemplate = "/csrs", BodyStyle = WebMessageBodyStyle.Bare)]
+		AmiCollection<SubmissionInfo> GetCsrs();
 
 		/// <summary>
-		/// Reject the specified CSR
+		/// Gets a list of devices.
 		/// </summary>
-		[WebInvoke(UriTemplate = "/certificate/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-		SubmissionResult DeleteCertificate(string id, RevokeReason reason);
+		/// <returns>Returns a list of devices.</returns>
+		[WebGet(UriTemplate = "/devices", BodyStyle = WebMessageBodyStyle.Bare)]
+		AmiCollection<SecurityDevice> GetDevices();
 
 		/// <summary>
-		/// Security user information
+		/// Security Policy information
 		/// </summary>
 		/// <returns></returns>
-		[WebGet(UriTemplate = "/user", BodyStyle = WebMessageBodyStyle.Bare)]
-		AmiCollection<SecurityUserInfo> GetUsers();
+		[WebGet(UriTemplate = "/policies", BodyStyle = WebMessageBodyStyle.Bare)]
+		AmiCollection<SecurityPolicyInfo> GetPolicies();
 
 		/// <summary>
-		/// Create a security user
+		/// Get a security Policy
 		/// </summary>
-		[WebInvoke(UriTemplate = "/user", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-		SecurityUserInfo CreateUser(SecurityUserInfo user);
-
-		/// <summary>
-		/// Get a security user
-		/// </summary>
-		[WebGet(UriTemplate = "/user/{userId}", BodyStyle = WebMessageBodyStyle.Bare)]
-		SecurityUserInfo GetUser(string userId);
-
-		/// <summary>
-		/// Get a security user
-		/// </summary>
-		[WebInvoke(UriTemplate = "/user/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
-		SecurityUserInfo UpdateUser(string userId, SecurityUserInfo info);
-
-		/// <summary>
-		/// Delete a security user
-		/// </summary>
-		[WebInvoke(UriTemplate = "/user/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-		SecurityUserInfo DeleteUser(string userId);
-
-		/// <summary>
-		/// Get the schema
-		/// </summary>
-		[WebGet(UriTemplate = "/?xsd={schemaId}")]
-		XmlSchema GetSchema(int schemaId);
-
-		/// <summary>
-		/// Security Role information
-		/// </summary>
-		/// <returns></returns>
-		[WebGet(UriTemplate = "/role", BodyStyle = WebMessageBodyStyle.Bare)]
-		AmiCollection<SecurityRoleInfo> GetRoles();
-
-		/// <summary>
-		/// Create a security Role
-		/// </summary>
-		[WebInvoke(UriTemplate = "/role", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-		SecurityRoleInfo CreateRole(SecurityRoleInfo Role);
+		[WebGet(UriTemplate = "/policy/{policyId}", BodyStyle = WebMessageBodyStyle.Bare)]
+		SecurityPolicyInfo GetPolicy(string policyId);
 
 		/// <summary>
 		/// Get a security Role
@@ -153,36 +174,57 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		SecurityRoleInfo GetRole(string roleId);
 
 		/// <summary>
-		/// Delete a security Role
+		/// Security Role information
 		/// </summary>
-		[WebInvoke(UriTemplate = "/role/{roleId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-		SecurityRoleInfo DeleteRole(string roleId);
+		/// <returns></returns>
+		[WebGet(UriTemplate = "/roles", BodyStyle = WebMessageBodyStyle.Bare)]
+		AmiCollection<SecurityRoleInfo> GetRoles();
 
-        /// <summary>
-        /// Security Policy information
-        /// </summary>
-        /// <returns></returns>
-        [WebGet(UriTemplate = "/policy", BodyStyle = WebMessageBodyStyle.Bare)]
-        AmiCollection<SecurityPolicyInfo> GetPolicies();
+		/// <summary>
+		/// Get the schema
+		/// </summary>
+		[WebGet(UriTemplate = "/?xsd={schemaId}")]
+		XmlSchema GetSchema(int schemaId);
 
-        /// <summary>
-        /// Create a security Policy
-        /// </summary>
-        [WebInvoke(UriTemplate = "/policy", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-        SecurityPolicyInfo CreatePolicy(SecurityPolicyInfo Policy);
+		/// <summary>
+		/// Get a security user
+		/// </summary>
+		[WebGet(UriTemplate = "/user/{userId}", BodyStyle = WebMessageBodyStyle.Bare)]
+		SecurityUserInfo GetUser(string userId);
 
-        /// <summary>
-        /// Get a security Policy
-        /// </summary>
-        [WebGet(UriTemplate = "/policy/{policyId}", BodyStyle = WebMessageBodyStyle.Bare)]
-        SecurityPolicyInfo GetPolicy(string policyId);
+		/// <summary>
+		/// Security user information
+		/// </summary>
+		/// <returns></returns>
+		[WebGet(UriTemplate = "/users", BodyStyle = WebMessageBodyStyle.Bare)]
+		AmiCollection<SecurityUserInfo> GetUsers();
 
-        /// <summary>
-        /// Delete a security Policy
-        /// </summary>
-        [WebInvoke(UriTemplate = "/policy/{policyId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-        SecurityPolicyInfo DeletePolicy(string PolicyId);
+		/// <summary>
+		/// Reject the specified CSR
+		/// </summary>
+		[WebInvoke(UriTemplate = "/csr/{certId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		SubmissionResult RejectCsr(string certId, RevokeReason reason);
 
+		/// <summary>
+		/// Submit the specified CSR
+		/// </summary>
+		[WebInvoke(UriTemplate = "/csr/submit", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		SubmissionResult SubmitCsr(SubmissionRequest s);
 
-    }
+		/// <summary>
+		/// Updates a concept.
+		/// </summary>
+		/// <param name="rawConceptId">The id of the concept to be updated.</param>
+		/// <param name="concept">The concept containing the updated model.</param>
+		/// <returns>Returns the newly updated concept.</returns>
+		[WebInvoke(UriTemplate = "/concept/update/{rawConceptId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		Concept UpdateConcept(string rawConceptId, Concept concept);
+
+		/// <summary>
+		/// Get a security user
+		/// </summary>
+		[WebInvoke(UriTemplate = "/user/update/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		SecurityUserInfo UpdateUser(string userId, SecurityUserInfo info);
+
+	}
 }
