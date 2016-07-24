@@ -197,11 +197,35 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
+		/// Deletes a place.
+		/// </summary>
+		/// <param name="placeId">The id of the place to be deleted.</param>
+		/// <returns>Returns the deleted place.</returns>
+		public Place DeletePlace(string placeId)
+		{
+			Guid placeKey = Guid.Empty;
+
+			if (!Guid.TryParse(placeId, out placeKey))
+			{
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(placeId)));
+			}
+
+			var placeRepository = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
+
+			if (placeRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IPlaceRepositoryService)));
+			}
+
+			return placeRepository.Obsolete(placeKey);
+		}
+
+		/// <summary>
 		/// Deletes a security policy.
 		/// </summary>
 		/// <param name="policyId">The id of the policy to be deleted.</param>
 		/// <returns>Returns the deleted policy.</returns>
-		public SecurityPolicyInfo DeletePolicy(string PolicyId)
+		public SecurityPolicyInfo DeletePolicy(string policyId)
 		{
 			throw new NotImplementedException();
 		}
@@ -564,18 +588,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <summary>
 		/// Updates a concept.
 		/// </summary>
-		/// <param name="rawConceptId">The id of the concept to be updated.</param>
 		/// <param name="concept">The concept containing the updated model.</param>
 		/// <returns>Returns the newly updated concept.</returns>
-		public Concept UpdateConcept(string rawConceptId, Concept concept)
+		public Concept UpdateConcept(Concept concept)
 		{
-			Guid conceptId = Guid.Empty;
-
-			if (Guid.TryParse(rawConceptId, out conceptId))
-			{
-				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(rawConceptId)));
-			}
-
 			var conceptRepository = ApplicationContext.Current.GetService<IConceptRepositoryService>();
 
 			if (conceptRepository == null)
@@ -584,6 +600,23 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			}
 
 			return conceptRepository.SaveConcept(concept);
+		}
+
+		/// <summary>
+		/// Updates a place.
+		/// </summary>
+		/// <param name="place">The place containing the update information.</param>
+		/// <returns>Returns the updated place.</returns>
+		public Place UpdatePlace(Place place)
+		{
+			var placeRepository = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
+
+			if (placeRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IPlaceRepositoryService)));
+			}
+
+			return placeRepository.Save(place);
 		}
 
 		/// <summary>

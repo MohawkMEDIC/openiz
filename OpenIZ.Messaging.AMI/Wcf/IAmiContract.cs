@@ -102,6 +102,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		SubmissionResult DeleteCertificate(string id, RevokeReason reason);
 
 		/// <summary>
+		/// Deletes a place.
+		/// </summary>
+		/// <param name="placeId">The id of the place to be deleted.</param>
+		/// <returns>Returns the deleted place.</returns>
+		[WebInvoke(UriTemplate = "/place/delete/{placeId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		Place DeletePlace(string placeId);
+
+		/// <summary>
 		/// Deletes a security policy.
 		/// </summary>
 		/// <param name="policyId">The id of the policy to be deleted.</param>
@@ -263,11 +271,18 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <summary>
 		/// Updates a concept.
 		/// </summary>
-		/// <param name="rawConceptId">The id of the concept to be updated.</param>
-		/// <param name="concept">The concept containing the updated model.</param>
-		/// <returns>Returns the newly updated concept.</returns>
-		[WebInvoke(UriTemplate = "/concept/update/{rawConceptId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
-		Concept UpdateConcept(string rawConceptId, Concept concept);
+		/// <param name="concept">The concept containing the updated information.</param>
+		/// <returns>Returns the updated concept.</returns>
+		[WebInvoke(UriTemplate = "/concept/update", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		Concept UpdateConcept(Concept concept);
+
+		/// <summary>
+		/// Updates a place.
+		/// </summary>
+		/// <param name="place">The place containing the update information.</param>
+		/// <returns>Returns the updated place.</returns>
+		[WebInvoke(UriTemplate = "/place/update", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		Place UpdatePlace(Place place);
 
 		/// <summary>
 		/// Updates a security user.
