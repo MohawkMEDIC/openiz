@@ -1,33 +1,36 @@
 ﻿/*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: justi
  * Date: 2016-6-22
  */
+
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using MARC.Util.CertificateTools;
+using OpenIZ.Core.Model.AMI.Auth;
+using OpenIZ.Core.Model.AMI.Security;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Security;
 using OpenIZ.Core.Services;
 using OpenIZ.Messaging.AMI.Configuration;
-using OpenIZ.Core.Model.AMI.Auth;
-using OpenIZ.Core.Model.AMI.Security;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -39,9 +42,6 @@ using System.ServiceModel.Web;
 using System.Text;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using OpenIZ.Core.Security.Attribute;
-using OpenIZ.Core.Model.DataTypes;
-using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -77,9 +77,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		{
 			int id = Int32.Parse(rawId);
 			this.m_certTool.Approve(id);
-            var submission = this.m_certTool.GetRequestStatus(id);
+			var submission = this.m_certTool.GetRequestStatus(id);
 
-            var result = new SubmissionResult(submission.Message, submission.RequestId, (SubmissionStatus)submission.Outcome, submission.AuthorityResponse);
+			var result = new SubmissionResult(submission.Message, submission.RequestId, (SubmissionStatus)submission.Outcome, submission.AuthorityResponse);
 			result.Certificate = null;
 			return result;
 		}
@@ -483,9 +483,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		{
 			int id = Int32.Parse(rawId);
 			this.m_certTool.DenyRequest(id);
-            var status = this.m_certTool.GetRequestStatus(id);
+			var status = this.m_certTool.GetRequestStatus(id);
 
-            var result = new SubmissionResult(status.Message, status.RequestId, (SubmissionStatus)status.Outcome, status.AuthorityResponse);
+			var result = new SubmissionResult(status.Message, status.RequestId, (SubmissionStatus)status.Outcome, status.AuthorityResponse);
 			result.Certificate = null;
 			return result;
 		}
@@ -495,9 +495,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		public SubmissionResult SubmitCsr(SubmissionRequest s)
 		{
-            var submission = this.m_certTool.SubmitRequest(s.CmcRequest, s.AdminContactName, s.AdminAddress);
+			var submission = this.m_certTool.SubmitRequest(s.CmcRequest, s.AdminContactName, s.AdminAddress);
 
-            var result = new SubmissionResult(submission.Message, submission.RequestId, (SubmissionStatus)submission.Outcome, submission.AuthorityResponse);
+			var result = new SubmissionResult(submission.Message, submission.RequestId, (SubmissionStatus)submission.Outcome, submission.AuthorityResponse);
 			if (this.m_configuration.CaConfiguration.AutoApprove)
 				return this.AcceptCsr(result.RequestId.ToString());
 			else
