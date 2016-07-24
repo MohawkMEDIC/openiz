@@ -100,10 +100,41 @@ namespace OpenIZ.Core.Services.Impl
             return retVal;
         }
 
-        /// <summary>
-        /// Find the specified policies
-        /// </summary>
-        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+		/// <summary>
+		/// Gets a list of devices based on a filter.
+		/// </summary>
+		/// <param name="filter">The filter to use to match the devices.</param>
+		/// <returns>Returns a list of devices.</returns>
+		public IEnumerable<SecurityDevice> FindDevices(Expression<Func<SecurityDevice, bool>> filter)
+		{
+			int totalCount = 0;
+			return this.FindDevices(filter, 0, null, out totalCount);
+		}
+
+		/// <summary>
+		/// Gets a list of devices based on a filter.
+		/// </summary>
+		/// <param name="filter">The filter to use to match the devices.</param>
+		/// <param name="offset">The offset of the search.</param>
+		/// <param name="count">The number of devices.</param>
+		/// <param name="totalResults">The total number of devices.</param>
+		/// <returns>Returns a list of devices.</returns>
+		public IEnumerable<SecurityDevice> FindDevices(Expression<Func<SecurityDevice, bool>> filter, int offset, int? count, out int totalResults)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityDevice>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException("Missing persistence service");
+			}
+
+			return persistenceService.Query(filter, offset, count, AuthenticationContext.Current.Principal, out totalResults);
+		}
+
+		/// <summary>
+		/// Find the specified policies
+		/// </summary>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
         public IEnumerable<SecurityPolicy> FindPolicies(Expression<Func<SecurityPolicy, bool>> filter)
         {
             int total = 0;

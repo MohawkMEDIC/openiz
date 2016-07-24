@@ -33,96 +33,112 @@ namespace OpenIZ.Core.Services
     /// </summary>
     public interface ISecurityRepositoryService
     {
+		/// <summary>
+		/// Change user's password
+		/// </summary>
+		SecurityUser ChangePassword(Guid userId, String password);
 
-        /// <summary>
-        /// Create the specified user with specified password
-        /// </summary>
-        SecurityUser CreateUser(SecurityUser userInfo, String password);
+		/// <summary>
+		/// Create the specified Role with specified password
+		/// </summary>
+		SecurityRole CreateRole(SecurityRole roleInfo);
 
-        /// <summary>
-        /// Obsolete a user
-        /// </summary>
-        SecurityUser ObsoleteUser(Guid userId);
+		/// <summary>
+		/// Create the specified user with specified password
+		/// </summary>
+		SecurityUser CreateUser(SecurityUser userInfo, String password);
 
-        /// <summary>
-        /// Change user's password
-        /// </summary>
-        SecurityUser ChangePassword(Guid userId, String password);
+		/// <summary>
+		/// Gets a list of devices based on a filter.
+		/// </summary>
+		/// <param name="filter">The filter to use to match the devices.</param>
+		/// <returns>Returns a list of devices.</returns>
+		IEnumerable<SecurityDevice> FindDevices(Expression<Func<SecurityDevice, bool>> filter);
 
-        /// <summary>
-        /// Lock a user
-        /// </summary>
-        void LockUser(Guid userId);
+		/// <summary>
+		/// Gets a list of devices based on a filter.
+		/// </summary>
+		/// <param name="filter">The filter to use to match the devices.</param>
+		/// <param name="offset">The offset of the search.</param>
+		/// <param name="count">The number of devices.</param>
+		/// <param name="totalResults">The total number of devices.</param>
+		/// <returns>Returns a list of devices.</returns>
+		IEnumerable<SecurityDevice> FindDevices(Expression<Func<SecurityDevice, bool>> filter, int offset, int? count, out int totalResults);
 
-        /// <summary>
-        /// Unlock a user
-        /// </summary>
-        void UnlockUser(Guid userId);
+		/// <summary>
+		/// Gets the specified policies
+		/// </summary>
+		IEnumerable<SecurityPolicy> FindPolicies(Expression<Func<SecurityPolicy, bool>> filter);
 
-        /// <summary>
-        /// Gets the specified security user based on the principal
-        /// </summary>
-        SecurityUser GetUser(IIdentity identity);
+		/// <summary>
+		/// Find the specified policies
+		/// </summary>
+		IEnumerable<SecurityPolicy> FindPolicies(Expression<Func<SecurityPolicy, bool>> filter, int offset, int? count, out int totalResults);
 
-        /// <summary>
-        /// Get the specified user
-        /// </summary>
-        SecurityUser GetUser(Guid userId);
+		/// <summary>
+		/// Finds the specified Roles
+		/// </summary>
+		IEnumerable<SecurityRole> FindRoles(Expression<Func<SecurityRole, bool>> query);
 
-        /// <summary>
-        /// Finds the specified users
-        /// </summary>
-        IEnumerable<SecurityUser> FindUsers(Expression<Func<SecurityUser, bool>> query);
+		/// <summary>
+		/// Finds the specified Roles matching the query 
+		/// </summary>
+		IEnumerable<SecurityRole> FindRoles(Expression<Func<SecurityRole, bool>> query, int offset, int? count, out int total);
 
-        /// <summary>
-        /// Finds the specified users matching the query 
-        /// </summary>
-        IEnumerable<SecurityUser> FindUsers(Expression<Func<SecurityUser, bool>> query, int offset, int? count, out int total);
+		/// <summary>
+		/// Finds the specified users
+		/// </summary>
+		IEnumerable<SecurityUser> FindUsers(Expression<Func<SecurityUser, bool>> query);
 
-        /// <summary>
-        /// Save the specified security user
-        /// </summary>
-        SecurityUser SaveUser(SecurityUser user);
+		/// <summary>
+		/// Finds the specified users matching the query 
+		/// </summary>
+		IEnumerable<SecurityUser> FindUsers(Expression<Func<SecurityUser, bool>> query, int offset, int? count, out int total);
 
+		/// <summary>
+		/// Get the specified Role
+		/// </summary>
+		SecurityRole GetRole(Guid roleId);
 
-        /// <summary>
-        /// Create the specified Role with specified password
-        /// </summary>
-        SecurityRole CreateRole(SecurityRole roleInfo);
+		/// <summary>
+		/// Get the specified user
+		/// </summary>
+		SecurityUser GetUser(Guid userId);
 
-        /// <summary>
-        /// Obsolete a Role
-        /// </summary>
-        SecurityRole ObsoleteRole(Guid roleId);
+		/// <summary>
+		/// Gets the specified security user based on the principal
+		/// </summary>
+		SecurityUser GetUser(IIdentity identity);
 
-        /// <summary>
-        /// Get the specified Role
-        /// </summary>
-        SecurityRole GetRole(Guid roleId);
+		/// <summary>
+		/// Lock a user
+		/// </summary>
+		void LockUser(Guid userId);
 
-        /// <summary>
-        /// Finds the specified Roles
-        /// </summary>
-        IEnumerable<SecurityRole> FindRoles(Expression<Func<SecurityRole, bool>> query);
+		/// <summary>
+		/// Obsolete a Role
+		/// </summary>
+		SecurityRole ObsoleteRole(Guid roleId);
 
-        /// <summary>
-        /// Finds the specified Roles matching the query 
-        /// </summary>
-        IEnumerable<SecurityRole> FindRoles(Expression<Func<SecurityRole, bool>> query, int offset, int? count, out int total);
+		/// <summary>
+		/// Obsolete a user
+		/// </summary>
+		SecurityUser ObsoleteUser(Guid userId);
 
-        /// <summary>
-        /// Save the specified security Role
-        /// </summary>
-        SecurityRole SaveRole(SecurityRole role);
+		/// <summary>
+		/// Save the specified security Role
+		/// </summary>
+		SecurityRole SaveRole(SecurityRole role);
 
-        /// <summary>
-        /// Gets the specified policies
-        /// </summary>
-        IEnumerable<SecurityPolicy> FindPolicies(Expression<Func<SecurityPolicy, bool>> filter);
+		/// <summary>
+		/// Save the specified security user
+		/// </summary>
+		SecurityUser SaveUser(SecurityUser user);
 
-        /// <summary>
-        /// Find the specified policies
-        /// </summary>
-        IEnumerable<SecurityPolicy> FindPolicies(Expression<Func<SecurityPolicy, bool>> filter, int offset, int? count, out int totalResults);
-    }
+		/// <summary>
+		/// Unlock a user
+		/// </summary>
+		void UnlockUser(Guid userId);
+
+	}
 }
