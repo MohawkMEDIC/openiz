@@ -46,7 +46,7 @@ using System.Xml.Serialization;
 namespace OpenIZ.Messaging.AMI.Wcf
 {
 	/// <summary>
-	/// Represents the AMI behavior
+	/// Represents the administrative contract interface.
 	/// </summary>
 	[ServiceBehavior(ConfigurationName = "AMI")]
 	public class AmiBehavior : IAmiContract
@@ -71,8 +71,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Accept the signing request
+		/// Accepts a certificate signing request.
 		/// </summary>
+		/// <param name="id">The id of the certificate signing request to be accepted.</param>
+		/// <returns>Returns the acceptance result.</returns>
 		public SubmissionResult AcceptCsr(string rawId)
 		{
 			int id = Int32.Parse(rawId);
@@ -84,14 +86,28 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			return result;
 		}
 
+		/// <summary>
+		/// Creates a place in the IMS.
+		/// </summary>
+		/// <param name="place">The place to be created.</param>
+		/// <returns>Returns the newly created place.</returns>
 		public Place CreatePlace(Place place)
 		{
-			throw new NotImplementedException();
+			var placeRepository = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
+
+			if (placeRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} cannot be null", nameof(IPlaceRepositoryService)));
+			}
+
+			return placeRepository.Insert(place);
 		}
 
 		/// <summary>
-		/// Create a policy
+		/// Creates a security policy.
 		/// </summary>
+		/// <param name="policy">The security policy to be created.</param>
+		/// <returns>Returns the newly created security policy.</returns>
 		public SecurityPolicyInfo CreatePolicy(SecurityPolicyInfo Policy)
 		{
 			throw new NotImplementedException();
@@ -109,8 +125,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Creates the specified role in the database
+		/// Creates a security role.
 		/// </summary>
+		/// <param name="role">The security role to be created.</param>
+		/// <returns>Returns the newly created security role.</returns>
 		public SecurityRoleInfo CreateRole(SecurityRoleInfo role)
 		{
 			var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
@@ -122,8 +140,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Create the specified user
+		/// Creates a security user.
 		/// </summary>
+		/// <param name="user">The security user to be created.</param>
+		/// <returns>Returns the newly created security user.</returns>
 		public SecurityUserInfo CreateUser(SecurityUserInfo user)
 		{
 			var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
@@ -149,8 +169,11 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Revokes a certificate
+		/// Deletes a specified certificate.
 		/// </summary>
+		/// <param name="id">The id of the certificate to be deleted.</param>
+		/// <param name="reason">The reason the certificate is to be deleted.</param>
+		/// <returns>Returns the deletion result.</returns>
 		public SubmissionResult DeleteCertificate(string rawId, OpenIZ.Core.Model.AMI.Security.RevokeReason reason)
 		{
 			int id = Int32.Parse(rawId);
@@ -172,16 +195,20 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Delete a policy
+		/// Deletes a security policy.
 		/// </summary>
+		/// <param name="policyId">The id of the policy to be deleted.</param>
+		/// <returns>Returns the deleted policy.</returns>
 		public SecurityPolicyInfo DeletePolicy(string PolicyId)
 		{
 			throw new NotImplementedException();
 		}
 
 		/// <summary>
-		/// Delete a role
+		/// Deletes a security role.
 		/// </summary>
+		/// <param name="roleId">The id of the role to be deleted.</param>
+		/// <returns>Returns the deleted role.</returns>
 		public SecurityRoleInfo DeleteRole(string rawRoleId)
 		{
 			Guid roleId = Guid.Empty;
@@ -192,8 +219,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Deletes the specified user
+		/// Deletes a security user.
 		/// </summary>
+		/// <param name="userId">The id of the user to be deleted.</param>
+		/// <returns>Returns the deleted user.</returns>
 		public SecurityUserInfo DeleteUser(string rawUserId)
 		{
 			Guid userId = Guid.Parse(rawUserId);
@@ -202,8 +231,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Get the certificate in PKCS certificate
+		/// Gets a specific certificate.
 		/// </summary>
+		/// <param name="id">The id of the certificate to retrieve.</param>
+		/// <returns>Returns the certificate.</returns>
 		public byte[] GetCertificate(string rawId)
 		{
 			int id = Int32.Parse(rawId);
@@ -214,9 +245,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Get certificates
+		/// Gets a list of certificates.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>Returns a list of certificates.</returns>
 		public AmiCollection<X509Certificate2Info> GetCertificates()
 		{
 			AmiCollection<X509Certificate2Info> collection = new AmiCollection<X509Certificate2Info>();
@@ -226,6 +257,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			return collection;
 		}
 
+		/// <summary>
+		/// Gets a list of concepts.
+		/// </summary>
+		/// <returns>Returns a list of concepts.</returns>
 		public AmiCollection<Concept> GetConcepts()
 		{
 			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
@@ -250,6 +285,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			};
 		}
 
+		/// <summary>
+		/// Gets a list of concept sets.
+		/// </summary>
+		/// <returns>Returns a list of concept sets.</returns>
 		public AmiCollection<ConceptSet> GetConceptSets()
 		{
 			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
@@ -275,8 +314,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Get CRL
+		/// Gets the certificate revocation list.
 		/// </summary>
+		/// <returns>Returns the certificate revocation list.</returns>
 		public byte[] GetCrl()
 		{
 			WebOperationContext.Current.OutgoingResponse.ContentType = "application/x-pkcs7-crl";
@@ -285,10 +325,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Get the specified CSR
+		/// Gets a specific certificate signing request.
 		/// </summary>
-		/// <param name="id"></param>
-		/// <returns></returns>
+		/// <param name="id">The id of the certificate signing request to be retrieved.</param>
+		/// <returns>Returns the certificate signing request.</returns>
 		public SubmissionResult GetCsr(string rawId)
 		{
 			int id = Int32.Parse(rawId);
@@ -299,9 +339,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Get submissions
+		/// Gets a list of submitted certificate signing requests.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>Returns a list of certificate signing requests.</returns>
 		public AmiCollection<SubmissionInfo> GetCsrs()
 		{
 			AmiCollection<SubmissionInfo> collection = new AmiCollection<SubmissionInfo>();
@@ -350,6 +390,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			};
 		}
 
+		/// <summary>
+		/// Gets a list of places.
+		/// </summary>
+		/// <returns>Returns a list of places.</returns>
 		public AmiCollection<Place> GetPlaces()
 		{
 			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
@@ -375,8 +419,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Get Policies
+		/// Gets a list of policies.
 		/// </summary>
+		/// <returns>Returns a list of policies.</returns>
 		public AmiCollection<SecurityPolicyInfo> GetPolicies()
 		{
 			var expression = QueryExpressionParser.BuildLinqExpression<SecurityPolicy>(this.CreateQuery(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters));
@@ -385,16 +430,20 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Get a policy
+		/// Gets a specific security policy.
 		/// </summary>
+		/// <param name="policyId">The id of the security policy to be retrieved.</param>
+		/// <returns>Returns the security policy.</returns>
 		public SecurityPolicyInfo GetPolicy(string policyId)
 		{
 			throw new NotImplementedException();
 		}
 
 		/// <summary>
-		/// Gets the specified role
+		/// Gets a specific security role.
 		/// </summary>
+		/// <param name="roleId">The id of the security role to be retrieved.</param>
+		/// <returns>Returns the security role.</returns>
 		public SecurityRoleInfo GetRole(string rawRoleId)
 		{
 			Guid roleId = Guid.Empty;
@@ -405,8 +454,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Get all roles according to the filter
+		/// Gets a list of security roles.
 		/// </summary>
+		/// <returns>Returns a list of security roles.</returns>
 		public AmiCollection<SecurityRoleInfo> GetRoles()
 		{
 			var expression = QueryExpressionParser.BuildLinqExpression<SecurityRole>(this.CreateQuery(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters));
@@ -415,10 +465,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Get the schema for the AMI
+		/// Gets the schema for the administrative interface.
 		/// </summary>
-		/// <param name="schemaId"></param>
-		/// <returns></returns>
+		/// <param name="schemaId">The id of the schema to be retrieved.</param>
+		/// <returns>Returns the administrative interface schema.</returns>
 		public XmlSchema GetSchema(int schemaId)
 		{
 			try
@@ -452,8 +502,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Gets the specified user information
+		/// Gets a specific security user.
 		/// </summary>
+		/// <param name="userId">The id of the security user to be retrieved.</param>
+		/// <returns>Returns the security user.</returns>
 		public SecurityUserInfo GetUser(string rawUserId)
 		{
 			Guid userId = Guid.Empty;
@@ -464,8 +516,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Get all users matching the query parameter
+		/// Gets a list of security users.
 		/// </summary>
+		/// <returns>Returns a list of security users.</returns>
 		public AmiCollection<SecurityUserInfo> GetUsers()
 		{
 			var expression = QueryExpressionParser.BuildLinqExpression<SecurityUser>(this.CreateQuery(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters));
@@ -474,11 +527,11 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Reject the CSR
+		/// Rejects a specified certificate signing request.
 		/// </summary>
-		/// <param name="id"></param>
-		/// <param name="reason"></param>
-		/// <returns></returns>
+		/// <param name="certId">The id of the certificate signing request to be rejected.</param>
+		/// <param name="reason">The reason the certificate signing request is to be rejected.</param>
+		/// <returns>Returns the rejection result.</returns>
 		public SubmissionResult RejectCsr(string rawId, OpenIZ.Core.Model.AMI.Security.RevokeReason reason)
 		{
 			int id = Int32.Parse(rawId);
@@ -491,8 +544,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Submit a CSR request
+		/// Submits a specific certificate signing request.
 		/// </summary>
+		/// <param name="s">The certificate signing request.</param>
+		/// <returns>Returns the submission result.</returns>
 		public SubmissionResult SubmitCsr(SubmissionRequest s)
 		{
 			var submission = this.m_certTool.SubmitRequest(s.CmcRequest, s.AdminContactName, s.AdminAddress);
@@ -530,8 +585,11 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Update a user
+		/// Updates a security user.
 		/// </summary>
+		/// <param name="userId">The id of the security user to be updated.</param>
+		/// <param name="info">The security user containing the updated information.</param>
+		/// <returns>Returns the updated security user.</returns>
 		public SecurityUserInfo UpdateUser(string rawUserId, SecurityUserInfo info)
 		{
 			Guid userId = Guid.Parse(rawUserId);
