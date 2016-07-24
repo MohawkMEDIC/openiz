@@ -57,6 +57,26 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
+		/// Creates a device in the IMS.
+		/// </summary>
+		/// <param name="device">The device to be created.</param>
+		/// <returns>Returns the newly created device.</returns>
+		public SecurityDevice CreateDevice(SecurityDevice device)
+		{
+			return this.Client.Post<SecurityDevice, SecurityDevice>("device/create", this.Client.Accept, device);
+		}
+
+		/// <summary>
+		/// Creates a place in the IMS.
+		/// </summary>
+		/// <param name="place">The place to be created.</param>
+		/// <returns>Returns the newly created place.</returns>
+		public Place CreatePlace(Place place)
+		{
+			return this.Client.Post<Place, Place>("place/create", this.Client.Accept, place);
+		}
+
+		/// <summary>
 		/// Creates a role in the IMS.
 		/// </summary>
 		/// <param name="role">The role to be created.</param>
@@ -137,6 +157,16 @@ namespace OpenIZ.Messaging.AMI.Client
 		public AmiCollection<ConceptSet> GetConceptSets(Expression<Func<ConceptSet, bool>> query)
 		{
 			return this.Client.Get<AmiCollection<ConceptSet>>("conceptsets", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
+		/// Gets a list of devices from the AMI.
+		/// </summary>
+		/// <param name="query">The query expression to use to find the devices.</param>
+		/// <returns>Returns a collection of devices which match the specified query.</returns>
+		public AmiCollection<SecurityDevice> GetDevices(Expression<Func<SecurityDevice, bool>> query)
+		{
+			return this.Client.Get<AmiCollection<SecurityDevice>>("devices", QueryExpressionBuilder.BuildQuery(query).ToArray());
 		}
 
 		/// <summary>
