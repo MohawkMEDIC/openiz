@@ -29,6 +29,7 @@ using System.Linq.Expressions;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Messaging.AMI.Client
 {
@@ -53,7 +54,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the submission result.</returns>
 		public SubmissionResult AcceptCertificateSigningRequest(string id)
 		{
-			return this.Client.Put<object, SubmissionResult>(string.Format("csr/{0}", id), this.Client.Accept, null);
+			return this.Client.Put<object, SubmissionResult>(string.Format("csr/accept/{0}", id), this.Client.Accept, null);
 		}
 
 		/// <summary>
@@ -63,7 +64,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the newly created role.</returns>
 		public SecurityRoleInfo CreateRole(SecurityRoleInfo role)
 		{
-			return this.Client.Post<SecurityRoleInfo, SecurityRoleInfo>("role", this.Client.Accept, role);
+			return this.Client.Post<SecurityRoleInfo, SecurityRoleInfo>("role/create", this.Client.Accept, role);
 		}
 
 		/// <summary>
@@ -73,7 +74,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the newly created user.</returns>
 		public SecurityUserInfo CreateUser(SecurityUserInfo user)
 		{
-			return this.Client.Post<SecurityUserInfo, SecurityUserInfo>("user", this.Client.Accept, user);
+			return this.Client.Post<SecurityUserInfo, SecurityUserInfo>("user/create", this.Client.Accept, user);
 		}
 
 		#region IDisposable Support
@@ -122,7 +123,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <summary>
 		/// Gets a list of concepts from the AMI.
 		/// </summary>
-		/// <param name="query">The query expressions to use to find the concepts.</param>
+		/// <param name="query">The query expression to use to find the concepts.</param>
 		/// <returns>Returns a collection of concepts which match the specified query.</returns>
 		public AmiCollection<Concept> GetConcepts(Expression<Func<Concept, bool>> query)
 		{
@@ -132,11 +133,32 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <summary>
 		/// Gets a list of concept sets from the AMI.
 		/// </summary>
-		/// <param name="query">The query expressions to use to find the concept sets.</param>
+		/// <param name="query">The query expression to use to find the concept sets.</param>
 		/// <returns>Returns a collection of concept sets which match the specified query.</returns>
 		public AmiCollection<ConceptSet> GetConceptSets(Expression<Func<ConceptSet, bool>> query)
 		{
 			return this.Client.Get<AmiCollection<ConceptSet>>("conceptsets", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
+		/// Gets a list of places from the AMI.
+		/// </summary>
+		/// <param name="query">The query expression to use to find the places.</param>
+		/// <returns>Returns a collection of places which match the specified query.</returns>
+		public AmiCollection<Place> GetPlaces(Expression<Func<Place, bool>> query)
+		{
+			return this.Client.Get<AmiCollection<Place>>("places", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
+		/// Retrieves a specified policy from the AMI.
+		/// </summary>
+		/// <param name="query">The query expression to use to find the policy.</param>
+		/// <returns>Returns a collection of policies which match the specified query parameters.</returns>
+		public AmiCollection<SecurityPolicyInfo> GetPolicies(Expression<Func<SecurityPolicy, bool>> query)
+		{
+			var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
+			return this.Client.Get<AmiCollection<SecurityPolicyInfo>>("policies", queryParms);
 		}
 
 		/// <summary>
@@ -147,19 +169,8 @@ namespace OpenIZ.Messaging.AMI.Client
 		public AmiCollection<SecurityRoleInfo> GetRoles(Expression<Func<SecurityRole, bool>> query)
         {
             var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
-            return this.Client.Get<AmiCollection<SecurityRoleInfo>>("role", queryParms);
+            return this.Client.Get<AmiCollection<SecurityRoleInfo>>("roles", queryParms);
         }
-
-		/// <summary>
-		/// Retrieves a specified policy from the AMI.
-		/// </summary>
-		/// <param name="query">The query expression to use to find the policy.</param>
-		/// <returns>Returns a collection of policies which match the specified query parameters.</returns>
-		public AmiCollection<SecurityPolicyInfo> GetPolicies(Expression<Func<SecurityPolicy, bool>> query)
-		{
-			var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
-			return this.Client.Get<AmiCollection<SecurityPolicyInfo>>("policy", queryParms);
-		}
 
 		/// <summary>
 		/// Retrieves a specified user from the AMI.
@@ -169,7 +180,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		public AmiCollection<SecurityUserInfo> GetUsers(Expression<Func<SecurityUserInfo, bool>> query)
 		{
 			var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
-			return this.Client.Get<AmiCollection<SecurityUserInfo>>("user", queryParms);
+			return this.Client.Get<AmiCollection<SecurityUserInfo>>("users", queryParms);
 		}
 
 		/// <summary>

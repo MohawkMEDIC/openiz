@@ -61,17 +61,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.AMI");
 
 		/// <summary>
-		/// Create a query
-		/// </summary>
-		private NameValueCollection CreateQuery(System.Collections.Specialized.NameValueCollection nvc)
-		{
-			var retVal = new OpenIZ.Core.Model.Query.NameValueCollection();
-			foreach (var k in nvc.AllKeys)
-				retVal.Add(k, new List<String>(nvc.GetValues(k)));
-			return retVal;
-		}
-
-		/// <summary>
 		/// Creates the AMI behavior
 		/// </summary>
 		public AmiBehavior()
@@ -93,6 +82,43 @@ namespace OpenIZ.Messaging.AMI.Wcf
             var result = new SubmissionResult(submission.Message, submission.RequestId, (SubmissionStatus)submission.Outcome, submission.AuthorityResponse);
 			result.Certificate = null;
 			return result;
+		}
+
+		public Place CreatePlace(Place place)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Create a policy
+		/// </summary>
+		public SecurityPolicyInfo CreatePolicy(SecurityPolicyInfo Policy)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Create a query
+		/// </summary>
+		private NameValueCollection CreateQuery(System.Collections.Specialized.NameValueCollection nvc)
+		{
+			var retVal = new OpenIZ.Core.Model.Query.NameValueCollection();
+			foreach (var k in nvc.AllKeys)
+				retVal.Add(k, new List<String>(nvc.GetValues(k)));
+			return retVal;
+		}
+
+		/// <summary>
+		/// Creates the specified role in the database
+		/// </summary>
+		public SecurityRoleInfo CreateRole(SecurityRoleInfo role)
+		{
+			var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+			var roleToCreate = new SecurityRole()
+			{
+				Name = role.Name
+			};
+			return new SecurityRoleInfo(roleRepository.CreateRole(roleToCreate));
 		}
 
 		/// <summary>
@@ -146,6 +172,26 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
+		/// Delete a policy
+		/// </summary>
+		public SecurityPolicyInfo DeletePolicy(string PolicyId)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Delete a role
+		/// </summary>
+		public SecurityRoleInfo DeleteRole(string rawRoleId)
+		{
+			Guid roleId = Guid.Empty;
+			if (!Guid.TryParse(rawRoleId, out roleId))
+				throw new ArgumentException(nameof(rawRoleId));
+			var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+			return new SecurityRoleInfo(roleRepository.ObsoleteRole(roleId));
+		}
+
+		/// <summary>
 		/// Deletes the specified user
 		/// </summary>
 		public SecurityUserInfo DeleteUser(string rawUserId)
@@ -180,6 +226,54 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			return collection;
 		}
 
+		public AmiCollection<Concept> GetConcepts()
+		{
+			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
+			if (parameters.Count == 0)
+			{
+				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
+			}
+
+			var expression = QueryExpressionParser.BuildLinqExpression<Concept>(this.CreateQuery(parameters));
+
+			var conceptRepository = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+
+			if (conceptRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IConceptRepositoryService)));
+			}
+
+			return new AmiCollection<Concept>()
+			{
+				CollectionItem = conceptRepository.FindConcepts(expression).ToList()
+			};
+		}
+
+		public AmiCollection<ConceptSet> GetConceptSets()
+		{
+			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
+			if (parameters.Count == 0)
+			{
+				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
+			}
+
+			var expression = QueryExpressionParser.BuildLinqExpression<ConceptSet>(this.CreateQuery(parameters));
+
+			var conceptRepository = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+
+			if (conceptRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IConceptRepositoryService)));
+			}
+
+			return new AmiCollection<ConceptSet>()
+			{
+				CollectionItem = conceptRepository.FindConceptSets(expression).ToList()
+			};
+		}
+
 		/// <summary>
 		/// Get CRL
 		/// </summary>
@@ -188,6 +282,20 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			WebOperationContext.Current.OutgoingResponse.ContentType = "application/x-pkcs7-crl";
 			WebOperationContext.Current.OutgoingResponse.Headers.Add("Content-Disposition", "attachment; filename=\"openiz.crl\"");
 			return Encoding.UTF8.GetBytes(this.m_certTool.GetCRL());
+		}
+
+		/// <summary>
+		/// Get the specified CSR
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		public SubmissionResult GetCsr(string rawId)
+		{
+			int id = Int32.Parse(rawId);
+			var submission = this.m_certTool.GetRequestStatus(id);
+
+			var result = new SubmissionResult(submission.Message, submission.RequestId, (SubmissionStatus)submission.Outcome, submission.AuthorityResponse);
+			return result;
 		}
 
 		/// <summary>
@@ -216,17 +324,94 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Get the specified CSR
+		/// Gets a list of devices.
 		/// </summary>
-		/// <param name="id"></param>
-		/// <returns></returns>
-		public SubmissionResult GetCsr(string rawId)
+		/// <returns>Returns a list of devices.</returns>
+		public AmiCollection<SecurityDevice> GetDevices()
 		{
-			int id = Int32.Parse(rawId);
-            var submission = this.m_certTool.GetRequestStatus(id);
+			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
 
-            var result = new SubmissionResult(submission.Message, submission.RequestId, (SubmissionStatus)submission.Outcome, submission.AuthorityResponse);
-			return result;
+			if (parameters.Count == 0)
+			{
+				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
+			}
+
+			var expression = QueryExpressionParser.BuildLinqExpression<ConceptSet>(this.CreateQuery(parameters));
+
+			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+			}
+
+			return new AmiCollection<SecurityDevice>
+			{
+			};
+		}
+
+		public AmiCollection<Place> GetPlaces()
+		{
+			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
+			if (parameters.Count == 0)
+			{
+				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
+			}
+
+			var expression = QueryExpressionParser.BuildLinqExpression<Place>(this.CreateQuery(parameters));
+
+			var placeRepository = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
+
+			if (placeRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IPlaceRepositoryService)));
+			}
+
+			return new AmiCollection<Place>()
+			{
+				CollectionItem = placeRepository.Find(expression).ToList()
+			};
+		}
+
+		/// <summary>
+		/// Get Policies
+		/// </summary>
+		public AmiCollection<SecurityPolicyInfo> GetPolicies()
+		{
+			var expression = QueryExpressionParser.BuildLinqExpression<SecurityPolicy>(this.CreateQuery(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters));
+			var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+			return new AmiCollection<SecurityPolicyInfo>() { CollectionItem = userRepository.FindPolicies(expression).Select(o => new SecurityPolicyInfo(o)).ToList() };
+		}
+
+		/// <summary>
+		/// Get a policy
+		/// </summary>
+		public SecurityPolicyInfo GetPolicy(string policyId)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets the specified role
+		/// </summary>
+		public SecurityRoleInfo GetRole(string rawRoleId)
+		{
+			Guid roleId = Guid.Empty;
+			if (!Guid.TryParse(rawRoleId, out roleId))
+				throw new ArgumentException(nameof(rawRoleId));
+			var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+			return new SecurityRoleInfo(roleRepository.GetRole(roleId));
+		}
+
+		/// <summary>
+		/// Get all roles according to the filter
+		/// </summary>
+		public AmiCollection<SecurityRoleInfo> GetRoles()
+		{
+			var expression = QueryExpressionParser.BuildLinqExpression<SecurityRole>(this.CreateQuery(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters));
+			var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+			return new AmiCollection<SecurityRoleInfo>() { CollectionItem = userRepository.FindRoles(expression).Select(o => new SecurityRoleInfo(o)).ToList() };
 		}
 
 		/// <summary>
@@ -319,10 +504,35 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				return result;
 		}
 
-        /// <summary>
-        /// Update a user
-        /// </summary>
-        public SecurityUserInfo UpdateUser(string rawUserId, SecurityUserInfo info)
+		/// <summary>
+		/// Updates a concept.
+		/// </summary>
+		/// <param name="rawConceptId">The id of the concept to be updated.</param>
+		/// <param name="concept">The concept containing the updated model.</param>
+		/// <returns>Returns the newly updated concept.</returns>
+		public Concept UpdateConcept(string rawConceptId, Concept concept)
+		{
+			Guid conceptId = Guid.Empty;
+
+			if (Guid.TryParse(rawConceptId, out conceptId))
+			{
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(rawConceptId)));
+			}
+
+			var conceptRepository = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+
+			if (conceptRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IConceptRepositoryService)));
+			}
+
+			return conceptRepository.SaveConcept(concept);
+		}
+
+		/// <summary>
+		/// Update a user
+		/// </summary>
+		public SecurityUserInfo UpdateUser(string rawUserId, SecurityUserInfo info)
 		{
 			Guid userId = Guid.Parse(rawUserId);
 			// First change password if needed
@@ -350,185 +560,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			}
 
 			return userInfo;
-		}
-
-		/// <summary>
-		/// Get all roles according to the filter
-		/// </summary>
-		public AmiCollection<SecurityRoleInfo> GetRoles()
-		{
-			var expression = QueryExpressionParser.BuildLinqExpression<SecurityRole>(this.CreateQuery(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters));
-			var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-			return new AmiCollection<SecurityRoleInfo>() { CollectionItem = userRepository.FindRoles(expression).Select(o => new SecurityRoleInfo(o)).ToList() };
-		}
-
-        /// <summary>
-        /// Creates the specified role in the database
-        /// </summary>
-        public SecurityRoleInfo CreateRole(SecurityRoleInfo role)
-		{
-			var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-			var roleToCreate = new SecurityRole()
-			{
-				Name = role.Name
-			};
-			return new SecurityRoleInfo(roleRepository.CreateRole(roleToCreate));
-		}
-
-		/// <summary>
-		/// Gets the specified role
-		/// </summary>
-		public SecurityRoleInfo GetRole(string rawRoleId)
-		{
-			Guid roleId = Guid.Empty;
-			if (!Guid.TryParse(rawRoleId, out roleId))
-				throw new ArgumentException(nameof(rawRoleId));
-			var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-			return new SecurityRoleInfo(roleRepository.GetRole(roleId));
-		}
-
-		/// <summary>
-		/// Delete a role
-		/// </summary>
-		public SecurityRoleInfo DeleteRole(string rawRoleId)
-		{
-			Guid roleId = Guid.Empty;
-			if (!Guid.TryParse(rawRoleId, out roleId))
-				throw new ArgumentException(nameof(rawRoleId));
-			var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-			return new SecurityRoleInfo(roleRepository.ObsoleteRole(roleId));
-		}
-
-        /// <summary>
-        /// Get Policies
-        /// </summary>
-        public AmiCollection<SecurityPolicyInfo> GetPolicies()
-        {
-            var expression = QueryExpressionParser.BuildLinqExpression<SecurityPolicy>(this.CreateQuery(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters));
-            var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-            return new AmiCollection<SecurityPolicyInfo>() { CollectionItem = userRepository.FindPolicies(expression).Select(o => new SecurityPolicyInfo(o)).ToList() };
-        }
-
-        /// <summary>
-        /// Create a policy
-        /// </summary>
-        public SecurityPolicyInfo CreatePolicy(SecurityPolicyInfo Policy)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Get a policy
-        /// </summary>
-        public SecurityPolicyInfo GetPolicy(string policyId)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Delete a policy
-        /// </summary>
-        public SecurityPolicyInfo DeletePolicy(string PolicyId)
-        {
-            throw new NotImplementedException();
-        }
-
-		/// <summary>
-		/// Updates a concept.
-		/// </summary>
-		/// <param name="rawConceptId">The id of the concept to be updated.</param>
-		/// <param name="concept">The concept containing the updated model.</param>
-		/// <returns>Returns the newly updated concept.</returns>
-		public Concept UpdateConcept(string rawConceptId, Concept concept)
-		{
-			Guid conceptId = Guid.Empty;
-
-			if (Guid.TryParse(rawConceptId, out conceptId))
-			{
-				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(rawConceptId)));
-			}
-
-			var conceptRepository = ApplicationContext.Current.GetService<IConceptRepositoryService>();
-
-			if (conceptRepository == null)
-			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IConceptRepositoryService)));
-			}
-
-			return conceptRepository.SaveConcept(concept);
-		}
-
-		public AmiCollection<Concept> GetConcepts()
-		{
-			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
-
-			if (parameters.Count == 0)
-			{
-				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
-			}
-
-			var expression = QueryExpressionParser.BuildLinqExpression<Concept>(this.CreateQuery(parameters));
-
-			var conceptRepository = ApplicationContext.Current.GetService<IConceptRepositoryService>();
-
-			if (conceptRepository == null)
-			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IConceptRepositoryService)));
-			}
-
-			return new AmiCollection<Concept>()
-			{
-				CollectionItem = conceptRepository.FindConcepts(expression).ToList()
-			};
-		}
-
-		public AmiCollection<ConceptSet> GetConceptSets()
-		{
-			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
-
-			if (parameters.Count == 0)
-			{
-				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
-			}
-
-			var expression = QueryExpressionParser.BuildLinqExpression<ConceptSet>(this.CreateQuery(parameters));
-
-			var conceptRepository = ApplicationContext.Current.GetService<IConceptRepositoryService>();
-
-			if (conceptRepository == null)
-			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IConceptRepositoryService)));
-			}
-
-			return new AmiCollection<ConceptSet>()
-			{
-				CollectionItem = conceptRepository.FindConceptSets(expression).ToList()
-			};
-		}
-
-		/// <summary>
-		/// Gets a list of devices.
-		/// </summary>
-		/// <returns>Returns a list of devices.</returns>
-		public AmiCollection<SecurityDevice> GetDevices()
-		{
-			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
-
-			if (parameters.Count == 0)
-			{
-				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
-			}
-
-			var expression = QueryExpressionParser.BuildLinqExpression<ConceptSet>(this.CreateQuery(parameters));
-
-			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-
-			if (securityRepository == null)
-			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
-			}
-
-			return new AmiCollection<SecurityDevice>();
 		}
 	}
 }

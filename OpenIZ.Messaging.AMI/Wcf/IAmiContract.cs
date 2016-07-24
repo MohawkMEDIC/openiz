@@ -61,6 +61,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		SubmissionResult AcceptCsr(string id);
 
 		/// <summary>
+		/// Creates a place in the IMS.
+		/// </summary>
+		/// <param name="place">The place to be created.</param>
+		/// <returns>Returns the newly created place.</returns>
+		[WebInvoke(UriTemplate = "/place/create", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		Place CreatePlace(Place place);
+
+		/// <summary>
 		/// Create a security Policy
 		/// </summary>
 		[WebInvoke(UriTemplate = "/policy/create", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
@@ -153,6 +161,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns a list of devices.</returns>
 		[WebGet(UriTemplate = "/devices", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<SecurityDevice> GetDevices();
+
+		/// <summary>
+		/// Gets a list of places.
+		/// </summary>
+		/// <returns>Returns a list of places.</returns>
+		[WebGet(UriTemplate = "/places", BodyStyle = WebMessageBodyStyle.Bare)]
+		AmiCollection<Place> GetPlaces();
 
 		/// <summary>
 		/// Security Policy information
