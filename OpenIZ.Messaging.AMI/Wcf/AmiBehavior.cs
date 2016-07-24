@@ -114,8 +114,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Create a query
+		/// Creates a query
 		/// </summary>
+		/// <param name="nvc">The name value collection to use to create the query.</param>
+		/// <returns>Returns the created query.</returns>
 		private NameValueCollection CreateQuery(System.Collections.Specialized.NameValueCollection nvc)
 		{
 			var retVal = new OpenIZ.Core.Model.Query.NameValueCollection();
