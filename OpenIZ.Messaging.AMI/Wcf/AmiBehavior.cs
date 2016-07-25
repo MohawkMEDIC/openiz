@@ -197,6 +197,16 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
+		/// Deletes a device.
+		/// </summary>
+		/// <param name="deviceId">The id of the device to be deleted.</param>
+		/// <returns>Returns the deleted device.</returns>
+		public SecurityDevice DeleteDevice(string deviceId)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// Deletes a place.
 		/// </summary>
 		/// <param name="placeId">The id of the place to be deleted.</param>

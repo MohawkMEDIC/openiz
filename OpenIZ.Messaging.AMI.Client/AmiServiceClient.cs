@@ -96,6 +96,56 @@ namespace OpenIZ.Messaging.AMI.Client
 			return this.Client.Post<SecurityUserInfo, SecurityUserInfo>("user/create", this.Client.Accept, user);
 		}
 
+		/// <summary>
+		/// Deletes a device.
+		/// </summary>
+		/// <param name="id">The id of the device to be deleted.</param>
+		/// <returns>Returns the deleted device.</returns>
+		public SecurityDevice DeleteDevice(string id)
+		{
+			return this.Client.Delete<SecurityDevice>(string.Format("device/delete/{0}", id));
+		}
+
+		/// <summary>
+		/// Deletes a place.
+		/// </summary>
+		/// <param name="id">The id of the place to be deleted.</param>
+		/// <returns>Returns the deleted place.</returns>
+		public Place DeletePlace(string id)
+		{
+			return this.Client.Delete<Place>(string.Format("place/delete/{0}", id));
+		}
+
+		/// <summary>
+		/// Deletes a security policy.
+		/// </summary>
+		/// <param name="id">The id of the policy to be deleted.</param>
+		/// <returns>Returns the deleted policy.</returns>
+		public SecurityPolicyInfo DeletePolicy(string id)
+		{
+			return this.Client.Delete<SecurityPolicyInfo>(string.Format("policy/delete/{0}", id));
+		}
+
+		/// <summary>
+		/// Deletes a security role.
+		/// </summary>
+		/// <param name="id">The id of the role to be deleted.</param>
+		/// <returns>Returns the deleted role.</returns>
+		public SecurityRoleInfo DeleteRole(string id)
+		{
+			return this.Client.Delete<SecurityRoleInfo>(string.Format("role/delete/{0}", id));
+		}
+
+		/// <summary>
+		/// Deletes a security user.
+		/// </summary>
+		/// <param name="id">The id of the user to be deleted.</param>
+		/// <returns>Returns the deleted user.</returns>
+		public SecurityUserInfo DeleteUser(string id)
+		{
+			return this.Client.Delete<SecurityUserInfo>(string.Format("user/delete/{0}", id));
+		}
+
 		#region IDisposable Support
 
 		private bool disposedValue = false; // To detect redundant calls
@@ -140,7 +190,17 @@ namespace OpenIZ.Messaging.AMI.Client
 		#endregion IDisposable Support
 
 		/// <summary>
-		/// Gets a list of concepts from the AMI.
+		/// Gets a list of certificates.
+		/// </summary>
+		/// <param name="query">The query expression to use to find the certificates.</param>
+		/// <returns>Returns a collection of certificates which match the specified query.</returns>
+		AmiCollection<X509Certificate2Info> GetCertificates(Expression<Func<X509Certificate2Info, bool>> query)
+		{
+			return this.Client.Get<AmiCollection<X509Certificate2Info>>("certificates", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
+		/// Gets a list of concepts.
 		/// </summary>
 		/// <param name="query">The query expression to use to find the concepts.</param>
 		/// <returns>Returns a collection of concepts which match the specified query.</returns>
@@ -150,7 +210,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
-		/// Gets a list of concept sets from the AMI.
+		/// Gets a list of concept sets.
 		/// </summary>
 		/// <param name="query">The query expression to use to find the concept sets.</param>
 		/// <returns>Returns a collection of concept sets which match the specified query.</returns>
@@ -160,7 +220,27 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
-		/// Gets a list of devices from the AMI.
+		/// Gets a certificate signing request.
+		/// </summary>
+		/// <param name="id">The id of the certificate signing request to be retrieved.</param>
+		/// <returns>Returns a certificate signing request.</returns>
+		public SubmissionResult GetCertificateSigningRequest(string id)
+		{
+			return this.Client.Get<SubmissionResult>(string.Format("csr/{0}", id));
+		}
+
+		/// <summary>
+		/// Gets a list of certificate signing requests.
+		/// </summary>
+		/// <param name="query">The query expression to use to find the certificate signing requests.</param>
+		/// <returns>Returns a collection of certificate signing requests which match the specified query.</returns>
+		public AmiCollection<SubmissionInfo> GetCertificateSigningRequests(Expression<Func<SubmissionInfo, bool>> query)
+		{
+			return this.Client.Get<AmiCollection<SubmissionInfo>>("csrs", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
+		/// Gets a list of devices.
 		/// </summary>
 		/// <param name="query">The query expression to use to find the devices.</param>
 		/// <returns>Returns a collection of devices which match the specified query.</returns>
@@ -170,7 +250,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
-		/// Gets a list of places from the AMI.
+		/// Gets a list of places.
 		/// </summary>
 		/// <param name="query">The query expression to use to find the places.</param>
 		/// <returns>Returns a collection of places which match the specified query.</returns>
@@ -180,7 +260,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
-		/// Retrieves a specified policy from the AMI.
+		/// Retrieves a specified policy.
 		/// </summary>
 		/// <param name="query">The query expression to use to find the policy.</param>
 		/// <returns>Returns a collection of policies which match the specified query parameters.</returns>
@@ -191,7 +271,27 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
-		/// Retrieves a specified role from the AMI.
+		/// Gets a specific policy.
+		/// </summary>
+		/// <param name="id">The id of the policy to be retrieved.</param>
+		/// <returns>Returns the specific policy.</returns>
+		public SecurityPolicyInfo GetPolicy(string id)
+		{
+			return this.Client.Get<SecurityPolicyInfo>(string.Format("policy/{0}", id));
+		}
+
+		/// <summary>
+		/// Gets a specific role.
+		/// </summary>
+		/// <param name="id">The id of the role to be retrieved.</param>
+		/// <returns>Returns the specified user.</returns>
+		public SecurityRoleInfo GetRole(string id)
+		{
+			return this.Client.Get<SecurityRoleInfo>(string.Format("role/{0}", id));
+		}
+
+		/// <summary>
+		/// Retrieves a specified role.
 		/// </summary>
 		/// <param name="query">The query expression to use to find the role.</param>
 		/// <returns>Returns a collection of roles which match the specified query parameters.</returns>
@@ -202,7 +302,17 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
-		/// Retrieves a specified user from the AMI.
+		/// Gets a specific user.
+		/// </summary>
+		/// <param name="id">The id of the user to be retrieved.</param>
+		/// <returns>Returns the specified user.</returns>
+		public SecurityUserInfo GetUser(string id)
+		{
+			return this.Client.Get<SecurityUserInfo>(string.Format("user/{0}", id));
+		}
+
+		/// <summary>
+		/// Retrieves a specified user.
 		/// </summary>
 		/// <param name="query">The query expression to use to find the user.</param>
 		/// <returns>Returns a collection of users which match the specified query parameters.</returns>
@@ -220,6 +330,37 @@ namespace OpenIZ.Messaging.AMI.Client
 		public SubmissionResult SubmitCertificateSigningRequest(SubmissionRequest submissionRequest)
 		{
 			return this.Client.Post<SubmissionRequest, SubmissionResult>("csr", this.Client.Accept, submissionRequest);
+		}
+
+		/// <summary>
+		/// Updates a concept.
+		/// </summary>
+		/// <param name="concept">The concept containing the updated information.</param>
+		/// <returns>Returns the updated concept.</returns>
+		public Concept UpdateConcept(Concept concept)
+		{
+			return this.Client.Put<Concept, Concept>("concept/update", this.Client.Accept, concept);
+		}
+
+		/// <summary>
+		/// Updates a place.
+		/// </summary>
+		/// <param name="place">The place containing the updated information.</param>
+		/// <returns>Returns the updated place.</returns>
+		public Place UpdatePlace(Place place)
+		{
+			return this.Client.Put<Place, Place>("place/update", this.Client.Accept, place);
+		}
+
+		/// <summary>
+		/// Updates a user.
+		/// </summary>
+		/// <param name="id">The id of the user to be updated.</param>
+		/// <param name="user">The user containing the updated information.</param>
+		/// <returns>Returns the updated user.</returns>
+		public SecurityUserInfo UpdateUser(string id, SecurityUserInfo user)
+		{
+			return this.Client.Put<SecurityUserInfo, SecurityUserInfo>(string.Format("user/update/{0}", id), this.Client.Accept, user);
 		}
 	}
 }

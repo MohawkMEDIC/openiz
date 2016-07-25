@@ -102,6 +102,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		SubmissionResult DeleteCertificate(string id, RevokeReason reason);
 
 		/// <summary>
+		/// Deletes a device.
+		/// </summary>
+		/// <param name="deviceId">The id of the device to be deleted.</param>
+		/// <returns>Returns the deleted device.</returns>
+		[WebInvoke(UriTemplate = "/device/delete/{deviceId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		SecurityDevice DeleteDevice(string deviceId);
+
+		/// <summary>
 		/// Deletes a place.
 		/// </summary>
 		/// <param name="placeId">The id of the place to be deleted.</param>
@@ -279,7 +287,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <summary>
 		/// Updates a place.
 		/// </summary>
-		/// <param name="place">The place containing the update information.</param>
+		/// <param name="place">The place containing the updated information.</param>
 		/// <returns>Returns the updated place.</returns>
 		[WebInvoke(UriTemplate = "/place/update", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		Place UpdatePlace(Place place);
