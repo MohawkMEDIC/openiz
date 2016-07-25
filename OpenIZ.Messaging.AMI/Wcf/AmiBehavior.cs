@@ -412,7 +412,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
 			}
 
-			var expression = QueryExpressionParser.BuildLinqExpression<ConceptSet>(this.CreateQuery(parameters));
+			var expression = QueryExpressionParser.BuildLinqExpression<SecurityDevice>(this.CreateQuery(parameters));
 
 			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
@@ -423,6 +423,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			return new AmiCollection<SecurityDevice>
 			{
+				CollectionItem = securityRepository.FindDevices(expression).ToList()
 			};
 		}
 

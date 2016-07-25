@@ -39,11 +39,13 @@ namespace OpenIZ.Core.Services.Impl
     /// </summary>
     public class LocalSecurityRepositoryService : ISecurityRepositoryService
     {
-
-        /// <summary>
-        /// Change user's password
-        /// </summary>
-        public SecurityUser ChangePassword(Guid userId, string password)
+		/// <summary>
+		/// Changes a user's password.
+		/// </summary>
+		/// <param name="userId">The id of the user.</param>
+		/// <param name="password">The new password of the user.</param>
+		/// <returns>Returns the updated user.</returns>
+		public SecurityUser ChangePassword(Guid userId, string password)
         {
             var securityUser = this.GetUser(userId);
             var iids = ApplicationContext.Current.GetService<IIdentityProviderService>();
@@ -51,10 +53,30 @@ namespace OpenIZ.Core.Services.Impl
             return securityUser;
         }
 
-        /// <summary>
-        /// Creates the provided role
-        /// </summary>
-        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.CreateRoles)]
+		/// <summary>
+		/// Creates a device.
+		/// </summary>
+		/// <param name="device">The security device.</param>
+		/// <returns>Returns the newly created device.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.CreateDevice)]
+		public SecurityDevice CreateDevice(SecurityDevice device)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityDevice>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityDevice>)));
+			}
+
+			return persistenceService.Insert(device, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
+		/// Creates a role.
+		/// </summary>
+		/// <param name="roleInfo">The security role.</param>
+		/// <returns>Returns the newly created security role.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.CreateRoles)]
         public SecurityRole CreateRole(SecurityRole roleInfo)
         {
             var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
@@ -63,10 +85,13 @@ namespace OpenIZ.Core.Services.Impl
             return pers.Insert(roleInfo, AuthenticationContext.Current.Principal, TransactionMode.Commit);
         }
 
-        /// <summary>
-        /// Create a user
-        /// </summary>
-        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.CreateIdentity)]
+		/// <summary>
+		/// Creates a user with a specified password.
+		/// </summary>
+		/// <param name="userInfo">The security user.</param>
+		/// <param name="password">The password.</param>
+		/// <returns>Returns the newly created user.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.CreateIdentity)]
         public SecurityUser CreateUser(SecurityUser userInfo, string password)
         {
             var iids = ApplicationContext.Current.GetService<IIdentityProviderService>();
@@ -101,126 +126,188 @@ namespace OpenIZ.Core.Services.Impl
         }
 
 		/// <summary>
-		/// Gets a list of devices based on a filter.
+		/// Gets a list of devices based on a query.
 		/// </summary>
-		/// <param name="filter">The filter to use to match the devices.</param>
+		/// <param name="query">The query to use to match the devices.</param>
 		/// <returns>Returns a list of devices.</returns>
-		public IEnumerable<SecurityDevice> FindDevices(Expression<Func<SecurityDevice, bool>> filter)
+		public IEnumerable<SecurityDevice> FindDevices(Expression<Func<SecurityDevice, bool>> query)
 		{
 			int totalCount = 0;
-			return this.FindDevices(filter, 0, null, out totalCount);
+			return this.FindDevices(query, 0, null, out totalCount);
 		}
 
 		/// <summary>
-		/// Gets a list of devices based on a filter.
+		/// Gets a list of devices based on a query.
 		/// </summary>
-		/// <param name="filter">The filter to use to match the devices.</param>
+		/// <param name="query">The filter to use to match the devices.</param>
 		/// <param name="offset">The offset of the search.</param>
 		/// <param name="count">The number of devices.</param>
 		/// <param name="totalResults">The total number of devices.</param>
 		/// <returns>Returns a list of devices.</returns>
-		public IEnumerable<SecurityDevice> FindDevices(Expression<Func<SecurityDevice, bool>> filter, int offset, int? count, out int totalResults)
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+		public IEnumerable<SecurityDevice> FindDevices(Expression<Func<SecurityDevice, bool>> query, int offset, int? count, out int totalResults)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityDevice>>();
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException("Missing persistence service");
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityDevice>)));
 			}
 
-			return persistenceService.Query(filter, offset, count, AuthenticationContext.Current.Principal, out totalResults);
+			return persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
 		}
 
 		/// <summary>
-		/// Find the specified policies
+		/// Gets a list of policies based on a query.
 		/// </summary>
+		/// <param name="query">The query to use to match the policies.</param>
+		/// <returns>Returns a list of policies.</returns>
 		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
-        public IEnumerable<SecurityPolicy> FindPolicies(Expression<Func<SecurityPolicy, bool>> filter)
+        public IEnumerable<SecurityPolicy> FindPolicies(Expression<Func<SecurityPolicy, bool>> query)
         {
-            int total = 0;
-            return this.FindPolicies(filter, 0, null, out total);
+            int totalResults = 0;
+            return this.FindPolicies(query, 0, null, out totalResults);
         }
 
-        /// <summary>
-        /// Find the specified policies with the specified query restrictions
-        /// </summary>
-        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
-        public IEnumerable<SecurityPolicy> FindPolicies(Expression<Func<SecurityPolicy, bool>> query, int offset, int? count, out int total)
+		/// <summary>
+		/// Gets a list of policies based on a query.
+		/// </summary>
+		/// <param name="query">The query to use to match the policies.</param>
+		/// <param name="offset">The offset of the search.</param>
+		/// <param name="count">The number of policies.</param>
+		/// <param name="totalResults">The total number of policies.</param>
+		/// <returns>Returns a list of policies.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public IEnumerable<SecurityPolicy> FindPolicies(Expression<Func<SecurityPolicy, bool>> query, int offset, int? count, out int totalResults)
         {
-            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityPolicy>>();
-            if (pers == null)
-                throw new InvalidOperationException("Missing persistence service");
-            return pers.Query(query, offset, count, AuthenticationContext.Current.Principal, out total);
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityPolicy>>();
 
-        }
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityPolicy>)));
+			}
 
-        /// <summary>
-        /// Finds the roles matching the specified queried
-        /// </summary>
-        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+			return persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
+		}
+
+		/// <summary>
+		/// Gets a list of roles based on a query.
+		/// </summary>
+		/// <param name="query">The query to use to match the roles.</param>
+		/// <returns>Returns a list of roles.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
         public IEnumerable<SecurityRole> FindRoles(Expression<Func<SecurityRole, bool>> query)
         {
-            int total = 0;
-            return this.FindRoles(query, 0, null, out total);
-        }
+			int totalResults = 0;
+			return this.FindRoles(query, 0, null, out totalResults);
+		}
 
-        /// <summary>
-        /// Find all roles specified 
-        /// </summary>
-        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
-        public IEnumerable<SecurityRole> FindRoles(Expression<Func<SecurityRole, bool>> query, int offset, int? count, out int total)
+		/// <summary>
+		/// Gets a list of roles based on a query.
+		/// </summary>
+		/// <param name="query">The query to use to match the roles.</param>
+		/// <param name="offset">The offset of the search.</param>
+		/// <param name="count">The number of roles.</param>
+		/// <param name="totalResults">The total number of roles.</param>
+		/// <returns>Returns a list of roles.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public IEnumerable<SecurityRole> FindRoles(Expression<Func<SecurityRole, bool>> query, int offset, int? count, out int totalResults)
         {
-            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
-            if (pers == null)
-                throw new InvalidOperationException("Missing role persistence service");
-            return pers.Query(query, offset, count, AuthenticationContext.Current.Principal, out total);
-        }
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
 
-        /// <summary>
-        /// Find users matching the specified query
-        /// </summary>
-        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityRole>)));
+			}
+
+			return persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
+		}
+
+		/// <summary>
+		/// Gets a list of users based on a query.
+		/// </summary>
+		/// <param name="query">The query to use to match the users.</param>
+		/// <returns>Returns a list of users.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
         public IEnumerable<SecurityUser> FindUsers(Expression<Func<SecurityUser, bool>> query)
         {
-            int total = 0;
-            return this.FindUsers(query, 0, null, out total);
-        }
+			int totalResults = 0;
+			return this.FindUsers(query, 0, null, out totalResults);
+		}
 
-        /// <summary>
-        /// Find the specified users
-        /// </summary>
-        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
-        public IEnumerable<SecurityUser> FindUsers(Expression<Func<SecurityUser, bool>> query, int offset, int? count, out int total)
+		/// <summary>
+		/// Gets a list of users based on a query.
+		/// </summary>
+		/// <param name="query">The query to use to match the users.</param>
+		/// <param name="offset">The offset of the search.</param>
+		/// <param name="count">The number of users.</param>
+		/// <param name="totalResults">The total number of users.</param>
+		/// <returns>Returns a list of roles.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+        public IEnumerable<SecurityUser> FindUsers(Expression<Func<SecurityUser, bool>> query, int offset, int? count, out int totalResults)
         {
-            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
-            if (pers == null)
-                throw new InvalidOperationException("Missing persistence service");
-            return pers.Query(query, offset, count, AuthenticationContext.Current.Principal, out total);
-        }
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
 
-        /// <summary>
-        /// Gets the specified role
-        /// </summary>
-        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityUser>)));
+			}
+
+			return persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
+		}
+
+		/// <summary>
+		/// Gets a specific device.
+		/// </summary>
+		/// <param name="deviceId">The id of the device to be retrieved.</param>
+		/// <returns>Returns the device.</returns>
+		public SecurityDevice GetDevice(Guid deviceId)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityDevice>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityDevice>)));
+			}
+
+			return persistenceService.Get<Guid>(new Identifier<Guid>(deviceId), AuthenticationContext.Current.Principal, false);
+		}
+
+		/// <summary>
+		/// Gets a specific role.
+		/// </summary>
+		/// <param name="roleId">The id of the role to retrieve.</param>
+		/// <returns>Returns the role.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
         public SecurityRole GetRole(Guid roleId)
         {
-            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
-            if (pers == null)
-                throw new InvalidOperationException("Missing role persistence service");
-            return pers.Get<Guid>(new Identifier<Guid>(roleId), AuthenticationContext.Current.Principal, false);
-        }
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
 
-        /// <summary>
-        /// Get the specified user
-        /// </summary>
-        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityRole>)));
+			}
+
+			return persistenceService.Get<Guid>(new Identifier<Guid>(roleId), AuthenticationContext.Current.Principal, false);
+		}
+
+		/// <summary>
+		/// Gets a specific user.
+		/// </summary>
+		/// <param name="userId">The id of the user to retrieve.</param>
+		/// <returns>Returns the user.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
         public SecurityUser GetUser(Guid userId)
         {
-            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
-            if (pers == null)
-                throw new InvalidOperationException("Missing persistence service");
-            return pers.Get(new Identifier<Guid>(userId), AuthenticationContext.Current.Principal, false);
-        }
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityUser>)));
+			}
+
+			return persistenceService.Get<Guid>(new Identifier<Guid>(userId), AuthenticationContext.Current.Principal, false);
+		}
 
         /// <summary>
         /// Get the specified user based on identity
@@ -234,10 +321,11 @@ namespace OpenIZ.Core.Services.Impl
             return pers.Query(o=>o.UserName == identity.Name && o.ObsoletionTime == null, AuthenticationContext.Current.Principal).FirstOrDefault();
         }
 
-        /// <summary>
-        /// Lock the specified user
-        /// </summary>
-        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
+		/// <summary>
+		/// Locks a specific user.
+		/// </summary>
+		/// <param name="userId">The id of the user to lock.</param>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
         public void LockUser(Guid userId)
         {
             var iids = ApplicationContext.Current.GetService<IIdentityProviderService>();
@@ -249,23 +337,47 @@ namespace OpenIZ.Core.Services.Impl
             
         }
 
-        /// <summary>
-        /// Obsoletes the specified role
-        /// </summary>
-        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterRoles)]
+		/// <summary>
+		/// Obsoletes a device.
+		/// </summary>
+		/// <param name="deviceId">The id of the device to be obsoleted.</param>
+		/// <returns>Returns the obsoleted device.</returns>
+		public SecurityDevice ObsoleteDevice(Guid deviceId)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityDevice>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityDevice>)));
+			}
+
+			return persistenceService.Obsolete(this.GetDevice(deviceId), AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
+		/// Obsoletes a role.
+		/// </summary>
+		/// <param name="roleId">The id of the role to be obsoleted.</param>
+		/// <returns>Returns the obsoleted role.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterRoles)]
         public SecurityRole ObsoleteRole(Guid roleId)
         {
-            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
-            if (pers == null)
-                throw new InvalidOperationException("Missing role provider service");
-            return pers.Obsolete(this.GetRole(roleId), AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
 
-        }
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityRole>)));
+			}
 
-        /// <summary>
-        /// Obsolete the specified user
-        /// </summary>
-        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
+			return persistenceService.Obsolete(this.GetRole(roleId), AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
+		/// Obsoletes a user.
+		/// </summary>
+		/// <param name="userId">The id of the user to be obsoleted.</param>
+		/// <returns>Returns the obsoleted user.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
         public SecurityUser ObsoleteUser(Guid userId)
         {
             var iids = ApplicationContext.Current.GetService<IIdentityProviderService>();
@@ -281,22 +393,47 @@ namespace OpenIZ.Core.Services.Impl
             return retVal;
         }
 
-        /// <summary>
-        /// Saves the specified role
-        /// </summary>
-        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterRoles)]
+		/// <summary>
+		/// Updates a security device.
+		/// </summary>
+		/// <param name="device">The security device containing the updated information.</param>
+		/// <returns>Returns the updated device.</returns>
+		public SecurityDevice SaveDevice(SecurityDevice device)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityDevice>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityDevice>)));
+			}
+
+			return persistenceService.Update(device, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
+		/// Updates a security role.
+		/// </summary>
+		/// <param name="role">The security role containing the updated information.</param>
+		/// <returns>Returns the updated role.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterRoles)]
         public SecurityRole SaveRole(SecurityRole role)
         {
-            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
-            if (pers == null)
-                throw new InvalidOperationException("Missing role persistence service");
-            return pers.Update(role, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-        }
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
 
-        /// <summary>
-        /// Save the specified user
-        /// </summary>
-        public SecurityUser SaveUser(SecurityUser user)
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityRole>)));
+			}
+
+			return persistenceService.Update(role, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
+		/// Updates a security user.
+		/// </summary>
+		/// <param name="user">The security user containing the updated information.</param>
+		/// <returns>Returns the updated user.</returns>
+		public SecurityUser SaveUser(SecurityUser user)
         {
             var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
             user.PasswordHash = null; // Don't update the password hash here
@@ -309,10 +446,11 @@ namespace OpenIZ.Core.Services.Impl
             return pers.Update(user, AuthenticationContext.Current.Principal, TransactionMode.Commit);
         }
 
-        /// <summary>
-        /// Unlock the specified user
-        /// </summary>
-        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
+		/// <summary>
+		/// Unlocks a specific user.
+		/// </summary>
+		/// <param name="userId">The id of the user to be unlocked.</param>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
         public void UnlockUser(Guid userId)
         {
             var iids = ApplicationContext.Current.GetService<IIdentityProviderService>();
@@ -322,5 +460,5 @@ namespace OpenIZ.Core.Services.Impl
             var securityUser = this.GetUser(userId);
             iids.SetLockout(securityUser.UserName, false, AuthenticationContext.Current.Principal);
         }
-    }
+	}
 }
