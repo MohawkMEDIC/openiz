@@ -112,9 +112,8 @@
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
     </None>
-    <None Include="Schema\DataSet.xsd">
+    <None Include="Schema\OpenIZDataSet.xsd">
       <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>

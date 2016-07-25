@@ -86,6 +86,7 @@
       <Link>OpenIZ.licenseheader</Link>
     </None>
     <EmbeddedResource Include="SimpleModel.json" />
+    <EmbeddedResource Include="RegistrationForm.json" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

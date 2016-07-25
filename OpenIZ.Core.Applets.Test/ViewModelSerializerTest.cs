@@ -102,6 +102,21 @@ namespace OpenIZ.Core.Applets.Test
         }
 
         /// <summary>
+        /// Test parsing of a form submission
+        /// </summary>
+        [TestMethod]
+        public void TestParseFormSubmission()
+        {
+            using (var sr = new StreamReader(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.RegistrationForm.json")))
+            {
+                var json = sr.ReadToEnd();
+                var patient = JsonViewModelSerializer.DeSerialize<Patient>(json);
+                json = JsonViewModelSerializer.Serialize(patient);
+                //Assert.AreEqual(this.m_patientUnderTest.ClassConceptKey, patient.ClassConceptKey);
+            }
+        }
+
+        /// <summary>
         /// Test de-serialization of the IMS patient object
         /// </summary>
         [TestMethod]

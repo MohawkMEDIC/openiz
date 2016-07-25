@@ -246,7 +246,8 @@ namespace OpenIZ.Core.Applets
             {
 
                 AppletManifest resolvedManifest = null;
-                String pathLeft = path.IsAbsoluteUri ? path.AbsolutePath.Substring(1) : path.OriginalString;
+                String pathLeft = path.IsAbsoluteUri ? path.AbsolutePath.Substring(1) : 
+                    path.OriginalString.StartsWith("/") ? path.OriginalString.Substring(1) : path.OriginalString;
                 // Is the host specified?
                 if (path.IsAbsoluteUri && !String.IsNullOrEmpty(path.Host))
                 {

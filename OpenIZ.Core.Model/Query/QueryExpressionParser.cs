@@ -242,7 +242,9 @@ namespace OpenIZ.Core.Model.Query
 
                         // The expression
                         Expression valueExpr = null;
-                        if (accessExpression.Type == typeof(String))
+                        if (pValue == "null")
+                            valueExpr = Expression.Constant(null);
+                        else if (accessExpression.Type == typeof(String))
                             valueExpr = Expression.Constant(pValue);
                         else if (accessExpression.Type == typeof(DateTime) || accessExpression.Type == typeof(DateTime?))
                             valueExpr = Expression.Constant(DateTime.Parse(pValue));

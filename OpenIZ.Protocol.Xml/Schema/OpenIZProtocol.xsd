@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2015 rel. 4 (http://www.altova.com) by Justin Fyfe (Mohawk College) -->
+<xs:schema xmlns:tns="http://openiz.org/protocol" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://openiz.org/protocol" elementFormDefault="qualified">
+	<xs:simpleType name="BinaryOperatorType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="eq"/>
+			<xs:enumeration value="lt"/>
+			<xs:enumeration value="lte"/>
+			<xs:enumeration value="gt"/>
+			<xs:enumeration value="gte"/>
+			<xs:enumeration value="ne"/>
+			<xs:enumeration value="and"/>
+			<xs:enumeration value="or"/>
+			<xs:enumeration value="add"/>
+			<xs:enumeration value="sub"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="XmlBinaryExpression" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:XmlExpression">
+				<xs:sequence>
+					<xs:choice minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="constantExpression" type="tns:XmlConstantExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="memberExpression" type="tns:XmlMemberExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="parameterExpression" type="tns:XmlParameterExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="binaryExpression" type="tns:XmlBinaryExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="unaryExpression" type="tns:XmlUnaryExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="methodCallExpression" type="tns:XmlMethodCallExpression" minOccurs="0" maxOccurs="1"/>
+					</xs:choice>
+				</xs:sequence>
+				<xs:attribute name="operator" type="tns:BinaryOperatorType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XmlExpression" abstract="true">
+		<xs:attribute name="type" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="XmlParameterExpression" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:XmlExpression">
+				<xs:attribute name="parameterName" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XmlBoundExpression" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:XmlExpression">
+				<xs:sequence>
+					<xs:choice minOccurs="1" maxOccurs="1">
+						<xs:element name="constantExpression" type="tns:XmlConstantExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="memberExpression" type="tns:XmlMemberExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="parameterExpression" type="tns:XmlParameterExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="binaryExpression" type="tns:XmlBinaryExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="unaryExpression" type="tns:XmlUnaryExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="methodCallExpression" type="tns:XmlMethodCallExpression" minOccurs="0" maxOccurs="1"/>
+					</xs:choice>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XmlConstantExpression" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:XmlExpression">
+				<xs:sequence>
+					<xs:element name="value" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XmlMemberExpression" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:XmlBoundExpression">
+				<xs:attribute name="memberName" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XmlUnaryExpression" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:XmlBoundExpression">
+				<xs:sequence>
+					<xs:element name="Operator" type="tns:UnaryOperatorType" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:simpleType name="UnaryOperatorType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="not"/>
+			<xs:enumeration value="convert"/>
+			<xs:enumeration value="neg"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="XmlMethodCallExpression" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:XmlBoundExpression">
+				<xs:sequence>
+					<xs:element name="argument" type="tns:XmlExpressionList" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+				<xs:attribute name="methodName" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XmlExpressionList">
+		<xs:sequence>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="constantExpression" type="tns:XmlConstantExpression" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="memberExpression" type="tns:XmlMemberExpression" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="parameterExpression" type="tns:XmlParameterExpression" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="binaryExpression" type="tns:XmlBinaryExpression" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="unaryExpression" type="tns:XmlUnaryExpression" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="methodCallExpression" type="tns:XmlMethodCallExpression" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="lambdaExpression" type="tns:XmlLambdaExpression" minOccurs="0" maxOccurs="1"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="XmlLambdaExpression" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:XmlBoundExpression">
+				<xs:sequence>
+					<xs:element name="argument" type="tns:XmlParameterExpression" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

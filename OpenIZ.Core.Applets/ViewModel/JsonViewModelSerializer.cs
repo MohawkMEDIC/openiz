@@ -31,6 +31,8 @@ using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Map;
 using OpenIZ.Core.Extensions;
+using OpenIZ.Core.Model.Serialization;
+using OpenIZ.Core.Model.Reflection;
 
 namespace OpenIZ.Core.Applets.ViewModel
 {
@@ -40,6 +42,9 @@ namespace OpenIZ.Core.Applets.ViewModel
     /// </summary>
     public static class JsonViewModelSerializer
     {
+
+        // Binder
+        private static ModelSerializationBinder s_binder = new ModelSerializationBinder();
 
         /// <summary>
         /// Serializes the specified internal data 
@@ -116,7 +121,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                         // Find the property 
                         var propertyInfo = serializationType.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName == (String)jreader.Value);
                         if (propertyInfo == null)
-                            propertyInfo = serializationType.GetRuntimeProperties().FirstOrDefault(o => serializationType.GetRuntimeProperty(o.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty ?? o.Name)?.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName + "Model" == (String)jreader.Value);
+                            propertyInfo = serializationType.GetRuntimeProperties().FirstOrDefault(o =>o.GetCustomAttribute<SerializationReferenceAttribute>() != null && serializationType.GetRuntimeProperty(o.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty)?.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName + "Model" == (String)jreader.Value);
                         jreader.Read();
                         // Token type switch
                         switch (jreader.TokenType)
@@ -154,24 +159,26 @@ namespace OpenIZ.Core.Applets.ViewModel
                                                 String classifier = (String)jreader.Value;
 
                                                 // Consume the start array
-                                                while (jreader.Read() && jreader.TokenType != JsonToken.StartArray) ;
+                                                //
+                                                while (jreader.Read() && jreader.TokenType != JsonToken.StartArray && jreader.TokenType != JsonToken.StartObject) ;
 
+                                                bool isArray = jreader.TokenType == JsonToken.StartArray;
                                                 // Read inner array
                                                 int iDepth = jreader.Depth;
-                                                while (jreader.Read())
+
+                                                while (isArray && jreader.Read() || !isArray)
                                                 {
-                                                    if (iDepth == jreader.Depth && jreader.TokenType == JsonToken.EndArray)
+                                                    
+                                                    if (iDepth == jreader.Depth && (jreader.TokenType == JsonToken.EndArray || jreader.TokenType == JsonToken.EndObject || jreader.TokenType == JsonToken.None))
                                                         break;
 
                                                     // Construct the object
                                                     Object contained = null;
-                                                    bool isSimple = false;
                                                     if (jreader.TokenType == JsonToken.StartObject)
                                                         contained = DeSerializeInternal(jreader, elementType);
                                                     else // simple value
                                                     {
                                                         contained = Activator.CreateInstance(elementType);
-                                                        isSimple = true;
                                                         // Get the simple value property
                                                         var simpleProperty = elementType.GetRuntimeProperty(elementType.GetTypeInfo().GetCustomAttribute<SimpleValueAttribute>().ValueProperty);
                                                         if (StripNullable(simpleProperty.PropertyType) == typeof(Guid))
@@ -202,25 +209,28 @@ namespace OpenIZ.Core.Applets.ViewModel
                                                     }
 
                                                     // Set the classifier
-                                                    var setProperty = classifierProperty;
-                                                    var target = contained;
-                                                    String propertyName = classifierProperty.Name;
-                                                    while (propertyName != null)
+                                                    if (classifier != "$other")
                                                     {
-                                                        var classifierValue = typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(setProperty.PropertyType.GetTypeInfo()) ?
-                                                            Activator.CreateInstance(setProperty.PropertyType) :
-                                                            classifier;
-                                                        setProperty.SetValue(target, classifierValue);
-                                                        propertyName = setProperty.PropertyType.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty;
-                                                        if (propertyName != null)
+                                                        var setProperty = classifierProperty;
+                                                        var target = contained;
+                                                        String propertyName = classifierProperty.Name;
+                                                        while (propertyName != null)
                                                         {
-                                                            setProperty = setProperty.PropertyType.GetRuntimeProperty(propertyName);
-                                                            target = classifierValue;
+                                                            var classifierValue = typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(setProperty.PropertyType.GetTypeInfo()) ?
+                                                                Activator.CreateInstance(setProperty.PropertyType) :
+                                                                classifier;
+                                                            setProperty.SetValue(target, classifierValue);
+                                                            propertyName = setProperty.PropertyType.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty;
+                                                            if (propertyName != null)
+                                                            {
+                                                                setProperty = setProperty.PropertyType.GetRuntimeProperty(propertyName);
+                                                                target = classifierValue;
+                                                            }
                                                         }
                                                     }
 
-                                                    // Add the container to the object
-                                                    (modelInstance as IList).Add(contained);
+                                                // Add the container to the object
+                                                (modelInstance as IList).Add(contained);
 
 
                                                 }
@@ -256,7 +266,20 @@ namespace OpenIZ.Core.Applets.ViewModel
                                 }
                                 break;
                             default: // Simple values
-                                if (propertyInfo == null)
+                                if(propertyInfo == null)
+                                    continue;
+                                else if (propertyInfo.Name == nameof(IdentifiedData.Type)) // Type switch
+                                {
+                                    var xsiType = s_binder.BindToType(retVal.GetType().GetTypeInfo().Assembly.FullName, (String)jreader.Value);
+                                    if (xsiType != retVal.GetType())
+                                    {
+                                        var nRetVal = Activator.CreateInstance(xsiType);
+                                        nRetVal.CopyObjectData(retVal);
+                                        retVal = nRetVal;
+                                        serializationType = xsiType;
+                                    }
+                                }
+                                else if (propertyInfo == null)
                                     continue;
                                 else if (jreader.TokenType == JsonToken.Null)
                                     break;
@@ -287,8 +310,20 @@ namespace OpenIZ.Core.Applets.ViewModel
                                                 propertyInfo.SetValue(retVal, (Double)jreader.Value);
                                             break;
                                         case JsonToken.String:
+
+                                            var klu = propertyInfo.PropertyType.GetTypeInfo().GetCustomAttribute<KeyLookupAttribute>();
                                             if (StripNullable(propertyInfo.PropertyType) == typeof(Guid))
                                                 propertyInfo.SetValue(retVal, Guid.Parse((String)jreader.Value));
+                                            else if (klu == null) // not a key
+                                              propertyInfo.SetValue(retVal, JsonConvert.DeserializeObject((String)jreader.Value, propertyInfo.PropertyType));
+                                            else
+                                            {
+                                                var scopedInstance = Activator.CreateInstance(propertyInfo.PropertyType);
+                                                // Set the propoerty
+                                                propertyInfo.PropertyType.GetRuntimeProperty(klu.UniqueProperty).SetValue(scopedInstance, jreader.Value);
+                                                propertyInfo.SetValue(retVal, scopedInstance);
+                                            }
+                                            
                                             break;
 
                                     }
@@ -326,7 +361,7 @@ namespace OpenIZ.Core.Applets.ViewModel
             jwriter.WriteStartObject();
             var myClassifier = data.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
 
-            foreach (var itm in data.GetType().GetRuntimeProperties().Where(p=>p.CanRead && p.CanWrite))
+            foreach (var itm in data.GetType().GetRuntimeProperties().Where(p => p.CanRead && p.CanWrite))
             {
                 // Value is null
                 var value = itm.GetValue(data);
@@ -380,7 +415,7 @@ namespace OpenIZ.Core.Applets.ViewModel
 
                             // Classifier obj becomes the dictionary object
                             List<Object> values = null;
-                            String classKey = classifierObj?.ToString() ?? "Other";
+                            String classKey = classifierObj?.ToString() ?? "$other";
                             if (!classifiedGroups.TryGetValue(classKey, out values))
                             {
                                 values = new List<object>();

@@ -22,6 +22,7 @@ using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.EntityLoader;
+using OpenIZ.Core.Model.Reflection;
 using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
