@@ -107,6 +107,23 @@ namespace OpenIZ.Protocol.Xml.Test
         }
 
         /// <summary>
+        /// Test guard condition generation for polio 0
+        /// </summary>
+        [TestMethod]
+        public void TestGuardNoPolioDose0()
+        {
+            Expression<Func<Patient, bool>> filterCondition = (data) => !data.Participations.Where(guard => guard.ParticipationRoleKey == ActParticipationKey.RecordTarget).Any(o => o.SourceEntity is SubstanceAdministration && (o.SourceEntity as SubstanceAdministration).SequenceId == 0 && o.SourceEntity.Participations.Any(p => p.PlayerEntity.TypeConcept.Mnemonic == "VaccineType-OralPolioVaccine"));
+            XmlExpression xmlExpr = XmlExpression.FromExpression(filterCondition);
+            var xml = this.ToXmlString(xmlExpr);
+            Trace.TraceInformation(xml);
+
+            var parsed = this.FromXmlString(xml, typeof(XmlLambdaExpression));
+            parsed.InitializeContext(null);
+            var expression = parsed.ToExpression();
+
+            var compile = (expression as LambdaExpression).Compile();
+        }
+        /// <summary>
         /// Tests that the model can serialize a simple lambda expression
         /// </summary>
         [TestMethod]

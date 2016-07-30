@@ -40,13 +40,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\IdentifiedElement.cs" />
-    <Compile Include="Model\Protocol.cs" />
-    <Compile Include="Model\ProtocolAction.cs" />
-    <Compile Include="Model\ProtocolModel.cs" />
-    <Compile Include="Model\ProtocolPreCondition.cs" />
-    <Compile Include="Model\ProtocolTrigger.cs" />
-    <Compile Include="Model\ProtocolWhereClause.cs" />
+    <Compile Include="Model\BaseProtocolElement.cs" />
+    <Compile Include="Model\ProtocolCollection.cs" />
+    <Compile Include="Model\ProtocolDefinition.cs" />
+    <Compile Include="Model\ProtocolRuleDefinition.cs" />
+    <Compile Include="Model\ProtocolThenClauseCollection.cs" />
+    <Compile Include="Model\ProtocolWhenClauseCollection.cs" />
     <Compile Include="Model\XmlLinq\XmlBinaryExpression.cs" />
     <Compile Include="Model\XmlLinq\XmlBoundExpression.cs" />
     <Compile Include="Model\XmlLinq\XmlMethodCallExpression.cs" />
@@ -59,12 +58,29 @@
     <Compile Include="Model\XmlLinq\XmlTypeBinaryExpression.cs" />
     <Compile Include="Model\XmlLinq\XmlUnaryExpression.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XmlClinicalProtocol.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.Core.Applets\OpenIZ.Core.Applets.csproj">
+      <Project>{39E61451-F4FE-493D-B754-5F06EB284AAC}</Project>
+      <Name>OpenIZ.Core.Applets</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
       <Project>{F1A82A4F-4A57-47D7-AE76-444C8A4FF54A}</Project>
       <Name>OpenIZ.Core.Model</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.PCL\OpenIZ.Core.PCL.csproj">
+      <Project>{3A45F695-47A2-464C-ACE6-BDABBFA39FBC}</Project>
+      <Name>OpenIZ.Core.PCL</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Antlr3.Runtime">
+      <HintPath>..\Solution Items\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="ExpressionEvaluator">
+      <HintPath>..\Solution Items\ExpressionEvaluator.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

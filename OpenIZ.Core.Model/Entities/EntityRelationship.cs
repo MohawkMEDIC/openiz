@@ -86,7 +86,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Target entity reference
         /// </summary>
-        [SerializationReference(nameof(TargetEntityKey))]
+        [SerializationReference(nameof(TargetEntityKey)), DataIgnore]
         [XmlIgnore, JsonIgnore]
         public Entity TargetEntity
         {
@@ -106,7 +106,6 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [XmlElement("relationshipType"), JsonProperty("relationshipType")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         public Guid? RelationshipTypeKey
         {
             get { return this.m_associationTypeKey; }

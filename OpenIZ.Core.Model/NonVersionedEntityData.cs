@@ -68,10 +68,21 @@ namespace OpenIZ.Core.Model
         }
 
         /// <summary>
+        /// Gets the time this item was modified
+        /// </summary>
+        public override DateTimeOffset ModifiedOn
+        {
+            get
+            {
+                return this.UpdatedTime ?? this.CreationTime;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the user that updated this base data
         /// </summary>
-        
-        [XmlIgnore, JsonIgnore]
+
+        [XmlIgnore, JsonIgnore, DataIgnore()]
         public SecurityUser UpdatedBy
         {
             get

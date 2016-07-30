@@ -25,6 +25,8 @@ using System.Linq.Expressions;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Core.Services
 {
@@ -70,6 +72,12 @@ namespace OpenIZ.Core.Services
         SecurityUser GetUser(Guid userId);
 
         /// <summary>
+        /// Creates the specified user entity
+        /// </summary>
+        /// <returns></returns>
+        UserEntity CreateUserEntity(UserEntity userEntity);
+
+        /// <summary>
         /// Finds the specified users
         /// </summary>
         IEnumerable<SecurityUser> FindUsers(Expression<Func<SecurityUser, bool>> query);
@@ -79,16 +87,32 @@ namespace OpenIZ.Core.Services
         /// </summary>
         IEnumerable<SecurityUser> FindUsers(Expression<Func<SecurityUser, bool>> query, int offset, int? count, out int total);
 
+
+        /// <summary>
+        /// Gets the specified user entity
+        /// </summary>
+        UserEntity GetUserEntity(Guid id, Guid versionId);
+
         /// <summary>
         /// Save the specified security user
         /// </summary>
         SecurityUser SaveUser(SecurityUser user);
+
+        /// <summary>
+        /// Obsoletes the specfied user entity
+        /// </summary>
+        UserEntity ObsoleteUserEntity(Guid id);
 
 
         /// <summary>
         /// Create the specified Role with specified password
         /// </summary>
         SecurityRole CreateRole(SecurityRole roleInfo);
+
+        /// <summary>
+        /// Finds the specified user entity 
+        /// </summary>
+        IEnumerable<UserEntity> FindUserEntity(Expression<Func<UserEntity, bool>> expression);
 
         /// <summary>
         /// Obsolete a Role
@@ -99,6 +123,11 @@ namespace OpenIZ.Core.Services
         /// Get the specified Role
         /// </summary>
         SecurityRole GetRole(Guid roleId);
+
+        /// <summary>
+        /// Finds the specified user entity with the specified query restrictions
+        /// </summary>
+        IEnumerable<UserEntity> FindUserEntity(Expression<Func<UserEntity, bool>> expression, int offset, int count, out int totalCount);
 
         /// <summary>
         /// Finds the specified Roles
@@ -114,6 +143,11 @@ namespace OpenIZ.Core.Services
         /// Save the specified security Role
         /// </summary>
         SecurityRole SaveRole(SecurityRole role);
+
+        /// <summary>
+        /// Saves (inserts or updates) the specified user entity
+        /// </summary>
+        UserEntity SaveUserEntity(UserEntity userEntity);
 
         /// <summary>
         /// Gets the specified policies

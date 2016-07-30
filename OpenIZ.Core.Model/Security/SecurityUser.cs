@@ -36,7 +36,7 @@ namespace OpenIZ.Core.Model.Security
     /// <summary>
     /// Security user represents a user for the purpose of security 
     /// </summary>
-    [XmlType("SecurityUser",  Namespace = "http://openiz.org/model"), JsonObject("SecurityUser")]
+    [XmlType("SecurityUser", Namespace = "http://openiz.org/model"), JsonObject("SecurityUser")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "SecurityUser")]
     [KeyLookup(nameof(UserName))]
     public class SecurityUser : SecurityEntity
@@ -48,7 +48,7 @@ namespace OpenIZ.Core.Model.Security
         {
             this.Roles = new List<SecurityRole>();
         }
-        
+
         // User entities
         private List<Person> m_userEntities;
 
@@ -114,49 +114,14 @@ namespace OpenIZ.Core.Model.Security
         /// </summary>
         [XmlElement("photo"), JsonProperty("photo")]
         public byte[] UserPhoto { get; set; }
-
-        /// <summary>
-        /// Gets the list of entities associated with this security user
-        /// </summary>
-        [XmlIgnore,JsonIgnore]
-        public List<Person> Entities
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_userEntities = EntitySource.Current.Provider.Query<UserEntity>(o => o.SecurityUserKey == this.Key && o.ObsoletionTime == null).OfType<Person>().ToList();
-                return this.m_userEntities;
-            }
-            set
-            {
-                this.m_userEntities = value;
-            }
-        }
-
-        /// <summary>
-        /// Concepts as identifiers for XML purposes only
-        /// </summary>
-        [XmlElement("entity"), JsonProperty("entity")]
         
-        public List<Guid> EntitiesXml
-        {
-            get
-            {
-                return this.Entities?.Where(o=>o.Key.HasValue).Select(o => o.Key.Value).ToList();
-            }
-            set
-            {
-                this.Entities = new List<Person>(value.Select(o => new Person() { Key = o }));
-                ; // nothing
-            }
-        }
 
         /// <summary>
         /// The last login time
         /// </summary>
         [XmlIgnore, JsonIgnore]
         public DateTimeOffset? LastLoginTime { get; set; }
-       
+
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
@@ -177,9 +142,9 @@ namespace OpenIZ.Core.Model.Security
         /// Represents roles
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        
+
         public List<SecurityRole> Roles { get; set; }
-      
+
         /// <summary>
         /// Gets or sets the patient's phone number
         /// </summary>
@@ -197,6 +162,17 @@ namespace OpenIZ.Core.Model.Security
         /// </summary>
         [XmlElement("userClass"), JsonProperty("userClass")]
         public Guid UserClass { get; set; }
+
+        /// <summary>
+        /// Gets the etag
+        /// </summary>
+        public override string Tag
+        {
+            get
+            {
+                return this.SecurityHash;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the policies for the user

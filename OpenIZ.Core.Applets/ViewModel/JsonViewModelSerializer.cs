@@ -122,7 +122,11 @@ namespace OpenIZ.Core.Applets.ViewModel
                         var propertyInfo = serializationType.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName == (String)jreader.Value);
                         if (propertyInfo == null)
                             propertyInfo = serializationType.GetRuntimeProperties().FirstOrDefault(o =>o.GetCustomAttribute<SerializationReferenceAttribute>() != null && serializationType.GetRuntimeProperty(o.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty)?.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName + "Model" == (String)jreader.Value);
+                        if (propertyInfo == null )
+                            propertyInfo = serializationType.GetRuntimeProperties().FirstOrDefault(o => o.Name.ToLower() + "Model" == (String)jreader.Value);
                         jreader.Read();
+
+
                         // Token type switch
                         switch (jreader.TokenType)
                         {
@@ -138,6 +142,11 @@ namespace OpenIZ.Core.Applets.ViewModel
                                 else if (typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(propertyInfo.PropertyType.GetTypeInfo()))
                                 {
                                     var value = DeSerializeInternal(jreader, propertyInfo.PropertyType);
+
+                                    if (propertyInfo.GetCustomAttribute<DataIgnoreAttribute>() != null &&
+                                        propertyInfo.GetCustomAttribute<JsonPropertyAttribute>() == null)
+                                        continue; // skip
+
                                     propertyInfo.SetValue(retVal, value);
                                 }
                                 else if (typeof(IList).GetTypeInfo().IsAssignableFrom(propertyInfo?.PropertyType.GetTypeInfo()))
@@ -238,6 +247,10 @@ namespace OpenIZ.Core.Applets.ViewModel
                                         }
                                     }
 
+                                    if (propertyInfo.GetCustomAttribute<DataIgnoreAttribute>() != null &&
+                                        propertyInfo.GetCustomAttribute<JsonPropertyAttribute>() == null)
+                                        continue; // skip
+
                                     propertyInfo.SetValue(retVal, modelInstance);
                                 }
                                 break;
@@ -261,6 +274,12 @@ namespace OpenIZ.Core.Applets.ViewModel
                                                 break;
                                             (modelInstance as IList).Add(DeSerializeInternal(jreader, elementType));
                                         }
+
+
+                                        if (propertyInfo.GetCustomAttribute<DataIgnoreAttribute>() != null &&
+                                            propertyInfo.GetCustomAttribute<JsonPropertyAttribute>() == null)
+                                            continue; // skip
+
                                         propertyInfo.SetValue(retVal, modelInstance);
                                     }
                                 }
@@ -291,8 +310,10 @@ namespace OpenIZ.Core.Applets.ViewModel
                                         case JsonToken.Integer:
                                             if (StripNullable(propertyInfo.PropertyType).GetTypeInfo().IsEnum)
                                                 propertyInfo.SetValue(retVal, Enum.ToObject(StripNullable(propertyInfo.PropertyType), jreader.Value));
-                                            else if (StripNullable(propertyInfo.PropertyType) == typeof(Int32))
-                                                propertyInfo.SetValue(retVal, Convert.ToInt32(jreader.Value));
+                                            //else if (StripNullable(propertyInfo.PropertyType) == typeof(Int32) ||
+                                            //    StripNullable(propertyInfo.PropertyType) == typeof(UInt32))
+                                            else
+                                                propertyInfo.SetValue(retVal, JsonConvert.DeserializeObject(jreader.Value.ToString(), propertyInfo.PropertyType));
 
                                             break;
                                         case JsonToken.Date:
@@ -359,10 +380,14 @@ namespace OpenIZ.Core.Applets.ViewModel
 
             // Write object data
             jwriter.WriteStartObject();
+            jwriter.WritePropertyName("$type");
+            jwriter.WriteValue(data.Type);
             var myClassifier = data.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
-
             foreach (var itm in data.GetType().GetRuntimeProperties().Where(p => p.CanRead && p.CanWrite))
             {
+                // Truly ignore this? No JsonProperty and a DataIgnore?
+                if (itm.GetCustomAttribute<DataIgnoreAttribute>() != null && itm.GetCustomAttribute<JsonPropertyAttribute>() == null)
+                    continue; 
                 // Value is null
                 var value = itm.GetValue(data);
                 if (value == null || (itm.Name == myClassifier?.ClassifierProperty && value is IdentifiedData))
@@ -374,7 +399,9 @@ namespace OpenIZ.Core.Applets.ViewModel
                     propertyName = data.GetType().GetRuntimeProperty(delayLoadProperty?.RedirectProperty).GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName + "Model";
                 else if (propertyName == null && value is IdentifiedData)
                     propertyName = String.Format("{0}Model", itm.Name.ToLower());
-                else if (propertyName == null)
+                else if (propertyName == null || propertyName == "$type")
+                    continue;
+                else if (value is IList && (value as IList).Count == 0)
                     continue;
 
                 jwriter.WritePropertyName(propertyName);

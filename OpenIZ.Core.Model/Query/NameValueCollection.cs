@@ -69,10 +69,11 @@ namespace OpenIZ.Core.Model.Query
         public static NameValueCollection ParseQueryString(String qstring)
         {
             NameValueCollection retVal = new NameValueCollection();
+            if (qstring.StartsWith("?")) qstring = qstring.Substring(1);
             foreach (var itm in qstring.Split('&'))
             {
                 var expr = itm.Split('=');
-                retVal.Add(expr[0], expr[1]);
+                retVal.Add(expr[0].Trim(), expr[1].Replace('+', ' ').Trim());
             }
             return retVal;
         }
@@ -92,5 +93,22 @@ namespace OpenIZ.Core.Model.Query
                 lock (this.m_syncRoot)
                     this.Add(name, new List<String>() { value });
         }
+
+        /// <summary>
+        /// Represent as a string
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            String queryString = String.Empty;
+            foreach (var kv in this)
+            {
+                queryString += String.Format("{0}={1}", kv.Key, Uri.EscapeDataString(kv.Value.ToString()));
+                if (!kv.Equals(this.Last()))
+                    queryString += "&";
+            }
+            return queryString;
+        }
     }
+
 }

@@ -68,10 +68,12 @@
     <Compile Include="ResourceHandler\ConceptResourceHandler.cs" />
     <Compile Include="ResourceHandler\ConceptSetResourceHandler.cs" />
     <Compile Include="ResourceHandler\IResourceHandler.cs" />
+    <Compile Include="ResourceHandler\MaterialResourceHandler.cs" />
     <Compile Include="ResourceHandler\PatientResourceHandler.cs" />
     <Compile Include="ResourceHandler\PlaceResourceHandler.cs" />
     <Compile Include="ResourceHandler\ProviderResourceHandler.cs" />
     <Compile Include="ResourceHandler\ResourceHandlerUtil.cs" />
+    <Compile Include="ResourceHandler\UserEntityResourceHandler.cs" />
     <Compile Include="Util\BundleUtil.cs" />
     <Compile Include="Wcf\Behavior\ImsiErrorEndpointBehavior.cs" />
     <Compile Include="Wcf\Compression\CompressionUtil.cs" />

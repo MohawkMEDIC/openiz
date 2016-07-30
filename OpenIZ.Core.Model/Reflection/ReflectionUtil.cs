@@ -154,6 +154,7 @@ namespace OpenIZ.Core.Model.Reflection
 
         }
 
+
         /// <summary>
         /// Create aggregation functions
         /// </summary>

@@ -75,6 +75,10 @@ namespace OpenIZ.Core.Model.Constants
         /// </summary>
         public static readonly Guid Stock = Guid.Parse("FFD8304A-43EC-4EBC-95FC-FB4A4F2338F0");
         /// <summary>
+        /// Represents a form code
+        /// </summary>
+        public static readonly Guid Form = Guid.Parse("17EE5254-8C25-4ABB-B246-083FBE9AFA15");
+        /// <summary>
         /// Unit of measure identifier
         /// </summary>
         public static readonly Guid UnitOfMeasure = Guid.Parse("1EF69347-EF03-4FF7-B3C5-6334448845E6");

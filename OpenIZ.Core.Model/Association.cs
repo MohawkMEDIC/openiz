@@ -40,8 +40,20 @@ namespace OpenIZ.Core.Model
         // Target entity key
         private Guid? m_sourceEntityKey;
         // The target entity
-        
         private TSourceType m_sourceEntity;
+
+        /// <summary>
+        /// Get the modification date
+        /// </summary>
+        public override DateTimeOffset ModifiedOn
+        {
+            get
+            {
+                if(this.SourceEntity != null)
+                    return this.SourceEntity.ModifiedOn;
+                return DateTime.Now;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the source entity's key (where the relationship is FROM)
@@ -55,8 +67,11 @@ namespace OpenIZ.Core.Model
             }
             set
             {
-                this.m_sourceEntityKey = value;
-                this.m_sourceEntity = null;
+                if (value != this.m_sourceEntityKey)
+                {
+                    this.m_sourceEntityKey = value;
+                    this.m_sourceEntity = null;
+                }
             }
         }
 

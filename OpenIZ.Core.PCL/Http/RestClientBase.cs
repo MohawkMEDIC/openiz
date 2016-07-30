@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http.Headers;
 
 namespace OpenIZ.Core.Http
 {
@@ -112,7 +113,7 @@ namespace OpenIZ.Core.Http
             
             if (this.Credentials == null && 
                 this.Description.Binding.Security?.CredentialProvider != null &&
-                this.Description.Binding.Security?.PremptiveAuthentication == true)
+                this.Description.Binding.Security?.PreemptiveAuthentication == true)
                 this.Credentials = this.Description.Binding.Security.CredentialProvider.GetCredentials(this);
 
 			if (this.Credentials != null)
@@ -207,8 +208,9 @@ namespace OpenIZ.Core.Http
 					return default(TResult);
 				}
 
+
 				// Invoke
-				var retVal = this.InvokeInternal<TBody, TResult>(method, url, contentType, body, query);
+				var retVal = this.InvokeInternal<TBody, TResult>(method, url, contentType, requestEventArgs.AdditionalHeaders, body, query);
 
 				this.Responded?.Invoke(this, new RestResponseEventArgs(method, url, parameters, contentType, retVal, 200));
 
@@ -232,7 +234,7 @@ namespace OpenIZ.Core.Http
 		/// <param name="query">Query.</param>
 		/// <typeparam name="TBody">The 1st type parameter.</typeparam>
 		/// <typeparam name="TResult">The 2nd type parameter.</typeparam>
-		protected abstract TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, TBody body, params KeyValuePair<string, object>[] query);
+		protected abstract TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, Dictionary<HttpRequestHeader, String> additionalHeaders, TBody body, params KeyValuePair<string, object>[] query);
 
 		/// <summary>
 		/// Executes a post against the url

@@ -1,0 +1,326 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ProtocolDefinition xmlns="http://openiz.org/protocol" name="Oral Polio Vaccine" protocolVersion="1" uuid="C2A628F3-DB52-45ED-B863-0FB4B1B8E77C">
+  <rule id="OPV0">
+    <!-- When the patient has not received any, -->
+    <when evaluation="and">
+      <!-- Does not have a recommendation for OPV-0 (Birth Dose) -->
+      <imsiExpression negationIndicator="true">
+        participation[RecordTarget].source@SubstanceAdministration.doseSequence=0&amp;
+        participation[RecordTarget].source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=ANTIGEN&amp;
+        participation[RecordTarget].source@SubstanceAdministration.participation[Product].player.identifier[CVX].value=02
+      </imsiExpression>
+      <!-- Chid is younger than 5 days -->
+      <linqExpression>DateOfBirth.HasValue &amp;&amp; now - DateOfBirth.Value &lt; new TimeSpan(5,0,0,0)</linqExpression>
+      <!--
+          You can also use plaintext LINQ expression:
+          <linqExpression><![CDATA[!data.Participations.Where(guard => guard.ParticipationRoleKey == ActParticipationKey.RecordTarget).Any(o => o.SourceEntity is SubstanceAdministration && (o.SourceEntity as SubstanceAdministration).SequenceId == 0 && o.SourceEntity.Participations.Any(p => p.PlayerEntity.TypeConcept.Mnemonic == "Antigen" && p.PlayerEntity.Name.Any(n=>n.Component.Any(c=>c.Value == "OPV"))))]]></linqExpression>
+          You can also use a serialized LINQ expression:
+          <xmlLinqExpression>
+            <unaryExpression operator="not" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" xmlns="http://openiz.org/protocol">
+              <methodCallExpression staticClass="System.Linq.Enumerable, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" methodName="Any">
+                <methodTypeArgument>OpenIZ.Core.Model.Acts.ActParticipation, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</methodTypeArgument>
+                <argument>
+                  <methodCallExpression staticClass="System.Linq.Enumerable, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" methodName="Where">
+                    <methodTypeArgument>OpenIZ.Core.Model.Acts.ActParticipation, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</methodTypeArgument>
+                    <argument>
+                      <memberExpression memberName="Participations">
+                        <parameterExpression type="OpenIZ.Core.Model.Roles.Patient, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" parameterName="data" />
+                      </memberExpression>
+                      <lambdaExpression>
+                        <binaryExpression operator="eq">
+                          <memberExpression memberName="ParticipationRoleKey">
+                            <parameterExpression type="OpenIZ.Core.Model.Acts.ActParticipation, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" parameterName="guard" />
+                          </memberExpression>
+                          <unaryExpression operator="convert" type="System.Nullable`1[[System.Guid, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+                            <memberExpression staticClass="OpenIZ.Core.Model.Constants.ActParticipationKey, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" memberName="RecordTarget" />
+                          </unaryExpression>
+                        </binaryExpression>
+                        <argument type="OpenIZ.Core.Model.Acts.ActParticipation, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" parameterName="guard" />
+                      </lambdaExpression>
+                    </argument>
+                  </methodCallExpression>
+                  <lambdaExpression>
+                    <binaryExpression operator="and">
+                      <binaryExpression operator="and">
+                        <typeBinaryExpression operandType="OpenIZ.Core.Model.Acts.SubstanceAdministration, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+                          <memberExpression memberName="SourceEntity">
+                            <parameterExpression type="OpenIZ.Core.Model.Acts.ActParticipation, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" parameterName="o" />
+                          </memberExpression>
+                        </typeBinaryExpression>
+                        <binaryExpression operator="eq">
+                          <memberExpression memberName="SequenceId">
+                            <unaryExpression operator="as" type="OpenIZ.Core.Model.Acts.SubstanceAdministration, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+                              <memberExpression memberName="SourceEntity">
+                                <parameterExpression type="OpenIZ.Core.Model.Acts.ActParticipation, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" parameterName="o" />
+                              </memberExpression>
+                            </unaryExpression>
+                          </memberExpression>
+                          <constantExpression>
+                            <value xsi:type="xsd:unsignedInt">0</value>
+                          </constantExpression>
+                        </binaryExpression>
+                      </binaryExpression>
+                      <methodCallExpression staticClass="System.Linq.Enumerable, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" methodName="Any">
+                        <methodTypeArgument>OpenIZ.Core.Model.Acts.ActParticipation, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</methodTypeArgument>
+                        <argument>
+                          <memberExpression memberName="Participations">
+                            <memberExpression memberName="SourceEntity">
+                              <parameterExpression type="OpenIZ.Core.Model.Acts.ActParticipation, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" parameterName="o" />
+                            </memberExpression>
+                          </memberExpression>
+                          <lambdaExpression>
+                            <binaryExpression operator="eq">
+                              <memberExpression memberName="Mnemonic">
+                                <memberExpression memberName="TypeConcept">
+                                  <memberExpression memberName="PlayerEntity">
+                                    <parameterExpression type="OpenIZ.Core.Model.Acts.ActParticipation, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" parameterName="p" />
+                                  </memberExpression>
+                                </memberExpression>
+                              </memberExpression>
+                              <constantExpression>
+                                <value xsi:type="xsd:string">VaccineType-OralPolioVaccine</value>
+                              </constantExpression>
+                            </binaryExpression>
+                            <argument type="OpenIZ.Core.Model.Acts.ActParticipation, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" parameterName="p" />
+                          </lambdaExpression>
+                        </argument>
+                      </methodCallExpression>
+                    </binaryExpression>
+                    <argument type="OpenIZ.Core.Model.Acts.ActParticipation, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" parameterName="o" />
+                  </lambdaExpression>
+                </argument>
+              </methodCallExpression>
+            </unaryExpression>
+          </xmlLinqExpression>-->
+    </when>
+    <then>
+      <action>
+        <jsonModel>
+          <![CDATA[
+            {
+				      "$type": "SubstanceAdministration",
+				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
+              "typeConceptModel": { "mnemonic" : "ImmunizationEvent" },
+				      "doseSequence": 0,
+              "doseQuantity" : 1.0,
+              "doseUnitConcept" : {
+                "mnemonic" : "DOSE"
+              },
+              "routeConceptModel" : {
+                "mnemonic": "ORAL"
+              },
+				      "participation": {
+					      "Product": [{
+                  "playerModel" : {
+                    "$type" : "Material",
+                    "typeConceptModel": {
+                      "mnemonic": "ANTIGEN"
+                    },
+                    "identifier" : {
+                      "CVX" : ["02"]
+                    },
+						        "name": {
+							        "Assigned": [{
+								        "component": {
+									        "$other": ["Oral Polio Vaccine"]
+								        }
+							        }],
+                      "Search": [{
+								        "component": {
+									        "$other": ["OPV"]
+								        }
+							        }]
+						        }
+                  }
+					      }]
+				      }
+			      }
+            ]]>
+        </jsonModel>
+        <!-- Set the dynamic properties to 0..5 days after birth - Recommend 1 day after birth-->
+        <assign propertyName="StartTime">DateOfBirth.Value + new TimeSpan(0,0,0,0)</assign>
+        <assign propertyName="StopTime">DateOfBirth.Value + new TimeSpan(5,0,0,0)</assign>
+        <assign propertyName="ActTime">DateOfBirth.Value + new TimeSpan(1,0,0,0)</assign>
+      </action>
+    </then>
+  </rule>
+  <rule id="OPV1">
+    <!-- When the patient has not received any, -->
+    <when evaluation="and">
+      <!-- Does not have a recommendation for OPV-1 -->
+      <imsiExpression negationIndicator="true">
+        participation[RecordTarget].source@SubstanceAdministration.doseSequence=1&amp;
+        participation[RecordTarget].source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=ANTIGEN&amp;
+        participation[RecordTarget].source@SubstanceAdministration.participation[Product].player.identifier[CVX].value=02
+      </imsiExpression>
+    </when>
+    <then>
+      <action>
+        <jsonModel>
+          <![CDATA[
+            {
+				      "$type": "SubstanceAdministration",
+				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
+              "typeConceptModel": { "mnemonic" : "ImmunizationEvent" },
+				      "doseSequence": 1,
+              "doseQuantity" : 1.0,
+              "doseUnitConcept" : {
+                "mnemonic" : "DOSE"
+              },
+              "routeConceptModel" : {
+                "mnemonic": "ORAL"
+              },
+				      "participation": {
+					      "Product": [{
+                  "playerModel" : {
+                    "$type" : "Material",
+                    "typeConceptModel": {
+                      "mnemonic": "ANTIGEN"
+                    },
+                    "identifier" : {
+                      "CVX" : ["02"]
+                    },
+						        "name": {
+							        "Assigned": [{
+								        "component": {
+									        "$other": ["Oral Polio Vaccine"]
+								        }
+							        }],
+                      "Search": [{
+								        "component": {
+									        "$other": ["OPV"]
+								        }
+							        }]
+						        }
+                  }
+					      }]
+				      }
+			      }
+            ]]>
+        </jsonModel>
+        <assign propertyName="StartTime">DateOfBirth.Value + new TimeSpan(6 * 7,0,0,0)</assign>
+        <assign propertyName="ActTime">DateOfBirth.Value + new TimeSpan(6 * 7,0,0,0)</assign>
+      </action>
+    </then>
+  </rule>
+  <rule id="OPV2">
+    <!-- When the patient has not received any, -->
+    <when evaluation="and">
+      <!-- DOES HAVE OPV1 -->
+      <imsiExpression>
+        participation[RecordTarget].source@SubstanceAdministration.doseSequence=1&amp;
+        participation[RecordTarget].source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=ANTIGEN&amp;
+        participation[RecordTarget].source@SubstanceAdministration.participation[Product].player.identifier[CVX].value=02
+      </imsiExpression>
+    </when>
+    <then>
+      <action>
+        <jsonModel>
+          <![CDATA[
+            {
+				      "$type": "SubstanceAdministration",
+				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
+              "typeConceptModel": { "mnemonic" : "ImmunizationEvent" },
+				      "doseSequence": 2,
+              "doseQuantity" : 1.0,
+              "doseUnitConcept" : {
+                "mnemonic" : "DOSE"
+              },
+              "routeConceptModel" : {
+                "mnemonic": "ORAL"
+              },
+				      "participation": {
+					      "Product": [{
+                  "playerModel" : {
+                    "$type" : "Material",
+                    "typeConceptModel": {
+                      "mnemonic": "ANTIGEN"
+                    },
+                    "identifier" : {
+                      "CVX" : ["02"]
+                    },
+						        "name": {
+							        "Assigned": [{
+								        "component": {
+									        "$other": ["Oral Polio Vaccine"]
+								        }
+							        }],
+                      "Search": [{
+								        "component": {
+									        "$other": ["OPV"]
+								        }
+							        }]
+						        }
+                  }
+					      }]
+				      }
+			      }
+            ]]>
+        </jsonModel>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source@SubstanceAdministration.doseSequence=1&amp;source@SubstanceAdministration.participation[Product].player.identifier[CVX].value=02" propertyName="StartTime">Act.ActTime + new TimeSpan(6 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source@SubstanceAdministration.doseSequence=1&amp;source@SubstanceAdministration.participation[Product].player.identifier[CVX].value=02" propertyName="ActTime">Act.ActTime + new TimeSpan(6 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source@SubstanceAdministration.doseSequence=1&amp;source@SubstanceAdministration.participation[Product].player.identifier[CVX].value=02" propertyName="StopTime">Act.ActTime + new TimeSpan(8 * 7,0,0,0)</assign>
+      </action>
+    </then>
+  </rule>
+  <rule id="OPV3">
+    <!-- When the patient has not received any, -->
+    <when evaluation="and">
+      <!-- DOES HAVE OPV2 -->
+      <imsiExpression>
+        participation[RecordTarget].source@SubstanceAdministration.doseSequence=2&amp;
+        participation[RecordTarget].source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=ANTIGEN&amp;
+        participation[RecordTarget].source@SubstanceAdministration.participation[Product].player.identifier[CVX].value=02
+      </imsiExpression>
+    </when>
+    <then>
+      <action>
+        <jsonModel>
+          <![CDATA[
+            {
+				      "$type": "SubstanceAdministration",
+				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
+              "typeConceptModel": { "mnemonic" : "ImmunizationEvent" },
+				      "doseSequence": 3,
+              "doseQuantity" : 1.0,
+              "doseUnitConcept" : {
+                "mnemonic" : "DOSE"
+              },
+              "routeConceptModel" : {
+                "mnemonic": "ORAL"
+              },
+				      "participation": {
+					      "Product": [{
+                  "playerModel" : {
+                    "$type" : "Material",
+                    "typeConceptModel": {
+                      "mnemonic": "ANTIGEN"
+                    },
+                    "identifier" : {
+                      "CVX" : ["02"]
+                    },
+						        "name": {
+							        "Assigned": [{
+								        "component": {
+									        "$other": ["Oral Polio Vaccine"]
+								        }
+							        }],
+                      "Search": [{
+								        "component": {
+									        "$other": ["OPV"]
+								        }
+							        }]
+						        }
+                  }
+					      }]
+				      }
+			      }
+            ]]>
+        </jsonModel>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source@SubstanceAdministration.doseSequence=2&amp;source@SubstanceAdministration.participation[Product].player.identifier[CVX].value=02" propertyName="StartTime">Act.ActTime + new TimeSpan(6 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source@SubstanceAdministration.doseSequence=2&amp;source@SubstanceAdministration.participation[Product].player.identifier[CVX].value=02" propertyName="ActTime">Act.ActTime + new TimeSpan(6 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source@SubstanceAdministration.doseSequence=2&amp;source@SubstanceAdministration.participation[Product].player.identifier[CVX].value=02" propertyName="StopTime">Act.ActTime + new TimeSpan(8 * 7,0,0,0)</assign>
+      </action>
+    </then>
+  </rule>
+</ProtocolDefinition>

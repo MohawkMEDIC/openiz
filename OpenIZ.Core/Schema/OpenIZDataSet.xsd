@@ -18,59 +18,69 @@
  - User: justi
  - Date: 2016-7-18
  -->
-<xs:schema xmlns:tns="http://openiz.org/data" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:q1="http://openiz.org/model" xmlns:q2="http://openiz.org/model" xmlns:q3="http://openiz.org/model" xmlns:q4="http://openiz.org/model" xmlns:q5="http://openiz.org/model" xmlns:q6="http://openiz.org/model" xmlns:q7="http://openiz.org/model" xmlns:q8="http://openiz.org/model" xmlns:q9="http://openiz.org/model" targetNamespace="http://openiz.org/data" elementFormDefault="qualified">
-	<xs:import namespace="http://openiz.org/model" schemaLocation="OpenIZModel.xsd"/>
-  <xs:element name="dataset" nillable="true" type="tns:DatasetInstall" />
+<xs:schema xmlns:tns="http://openiz.org/data" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:q1="http://openiz.org/model" xmlns:q2="http://openiz.org/model" xmlns:q3="http://openiz.org/model" xmlns:q4="http://openiz.org/model" xmlns:q5="http://openiz.org/model" xmlns:q6="http://openiz.org/model" xmlns:q7="http://openiz.org/model" xmlns:q8="http://openiz.org/model" xmlns:q9="http://openiz.org/model" xmlns:q10="http://openiz.org/model" xmlns:q11="http://openiz.org/model" xmlns:q12="http://openiz.org/model" xmlns:q13="http://openiz.org/model" xmlns:q14="http://openiz.org/model" xmlns:q15="http://openiz.org/model" xmlns:q16="http://openiz.org/model" xmlns:q17="http://openiz.org/model" xmlns:q18="http://openiz.org/model" xmlns:q19="http://openiz.org/model" xmlns:q20="http://openiz.org/model" xmlns:q21="http://openiz.org/model" targetNamespace="http://openiz.org/data" elementFormDefault="qualified">
+  <xs:import namespace="http://openiz.org/model" schemaLocation="OpenIZModel.xsd"/>
+  <xs:element name="dataset" type="tns:DatasetInstall" nillable="true"/>
   <xs:complexType name="DatasetInstall">
     <xs:sequence>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element minOccurs="0" maxOccurs="1" name="insert" type="tns:DataInsert" />
-        <xs:element minOccurs="0" maxOccurs="1" name="obsolete" type="tns:DataObsolete" />
-        <xs:element minOccurs="0" maxOccurs="1" name="update" type="tns:DataUpdate" />
+        <xs:element name="insert" type="tns:DataInsert" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="obsolete" type="tns:DataObsolete" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="update" type="tns:DataUpdate" minOccurs="0" maxOccurs="1"/>
       </xs:choice>
     </xs:sequence>
-    <xs:attribute name="id" type="xs:string" />
+    <xs:attribute name="id" type="xs:string"/>
   </xs:complexType>
-  <xs:complexType name="DataInsert">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:DataInstallAction" />
+  <xs:complexType name="DataInsert" mixed="false">
+    <xs:complexContent>
+      <xs:extension base="tns:DataInstallAction"/>
     </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="DataInstallAction" abstract="true">
     <xs:sequence>
       <xs:choice minOccurs="1" maxOccurs="1">
-        <xs:element minOccurs="0" maxOccurs="1" xmlns:q1="http://openiz.org/model" ref="q1:Concept" />
-        <xs:element minOccurs="0" maxOccurs="1" xmlns:q2="http://openiz.org/model" ref="q2:ConceptSet" />
-        <xs:element minOccurs="0" maxOccurs="1" xmlns:q3="http://openiz.org/model" ref="q3:AssigningAuthority" />
-        <xs:element minOccurs="0" maxOccurs="1" xmlns:q4="http://openiz.org/model" ref="q4:ConceptClass" />
-        <xs:element minOccurs="0" maxOccurs="1" xmlns:q5="http://openiz.org/model" ref="q5:SecurityPolicy" />
-        <xs:element minOccurs="0" maxOccurs="1" xmlns:q6="http://openiz.org/model" ref="q6:SecurityRole" />
-        <xs:element minOccurs="0" maxOccurs="1" xmlns:q7="http://openiz.org/model" ref="q7:ExtensionType" />
-        <xs:element minOccurs="0" maxOccurs="1" xmlns:q8="http://openiz.org/model" ref="q8:CodeSystem" />
-        <xs:element minOccurs="0" maxOccurs="1" xmlns:q9="http://openiz.org/model" ref="q9:ReferenceTerm" />
-        <xs:element minOccurs="0" maxOccurs="1" xmlns:q10="http://openiz.org/model" ref="q10:IdentifierType" />
-        <xs:element minOccurs="0" maxOccurs="1" xmlns:q11="http://openiz.org/model" ref="q11:Bundle" />
+        <xs:element ref="q1:Concept" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q2:ConceptSet" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q3:AssigningAuthority" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q4:ConceptClass" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q5:SecurityPolicy" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q6:SecurityRole" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q7:SecurityUser" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q8:ExtensionType" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q9:CodeSystem" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q10:ReferenceTerm" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q11:IdentifierType" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q12:UserEntity" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q13:Entity" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q14:Organization" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q15:Person" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q16:Provider" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q17:Material" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q18:ManufacturedMaterial" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q19:Patient" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q20:Place" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="q21:Bundle" minOccurs="0" maxOccurs="1"/>
       </xs:choice>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="associate" type="tns:DataAssociation" />
+      <xs:element name="associate" type="tns:DataAssociation" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="DataAssociation">
-    <xs:complexContent mixed="false">
+  <xs:complexType name="DataAssociation" mixed="false">
+    <xs:complexContent>
       <xs:extension base="tns:DataInstallAction">
-        <xs:attribute name="property" type="xs:string" />
+        <xs:attribute name="property" type="xs:string"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="DataUpdate">
-    <xs:complexContent mixed="false">
+  <xs:complexType name="DataUpdate" mixed="false">
+    <xs:complexContent>
       <xs:extension base="tns:DataInstallAction">
-        <xs:attribute name="insertIfNotExists" type="xs:boolean" use="required" />
+        <xs:attribute name="insertIfNotExists" type="xs:boolean" use="required"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="DataObsolete">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:DataInstallAction" />
+  <xs:complexType name="DataObsolete" mixed="false">
+    <xs:complexContent>
+      <xs:extension base="tns:DataInstallAction"/>
     </xs:complexContent>
   </xs:complexType>
 </xs:schema>

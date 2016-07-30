@@ -18,6 +18,7 @@
  * Date: 2016-7-16
  */
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Model.Interfaces;
 using System;
@@ -72,7 +73,7 @@ namespace OpenIZ.Core.Model
             
             while (typ != typeof(Object))
             {
-                fields.AddRange(typ.GetRuntimeFields().Where(o=>!o.IsStatic && o.IsPrivate)); // ... Well now they know..
+                fields.AddRange(typ.GetRuntimeFields().Where(o=>!o.IsStatic)); // ... Well now they know..
                 typ = typ.GetTypeInfo().BaseType;
             }
 
@@ -136,6 +137,25 @@ namespace OpenIZ.Core.Model
         /// Force reloading of delay load properties
         /// </summary>
         public virtual void Refresh() { }
+
+        /// <summary>
+        /// Gets or sets the modified on time
+        /// </summary>
+        [XmlElement("modifiedOn"), JsonProperty("modifiedOn"), DataIgnore]
+        public abstract DateTimeOffset ModifiedOn { get; }
+
+        /// <summary>
+        /// Gets a tag which changes whenever the object is updated
+        /// </summary>
+        [XmlElement("tag"), JsonProperty("tag"), DataIgnore]
+        public virtual String Tag {
+            get
+            {
+                if(this.Key.HasValue)
+                    return BitConverter.ToString(this.Key?.ToByteArray()).Replace("-", "");
+                return null;
+            }
+        }
 
         /// <summary>
         /// Clone the specified data

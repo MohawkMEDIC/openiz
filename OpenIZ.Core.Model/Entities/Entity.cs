@@ -272,21 +272,30 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [AutoLoad()]
         [XmlElement("relationship"), JsonProperty("relationship")]
-        public List<EntityRelationship> Relationships { get; set; }
+        public List<EntityRelationship> Relationships {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Gets a list of all telecommunications addresses associated with the entity
         /// </summary>
         [AutoLoad()]
         [XmlElement("telecom"), JsonProperty("telecom")]
-        public List<EntityTelecomAddress> Telecoms { get; set; }
+        public List<EntityTelecomAddress> Telecoms {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Gets a list of all extensions associated with the entity
         /// </summary>
         [AutoLoad()]
         [XmlElement("extension"), JsonProperty("extension")]
-        public List<EntityExtension> Extensions { get; set; }
+        public List<EntityExtension> Extensions {
+            get;
+            set;
+        }
 
 
         /// <summary>

@@ -37,10 +37,12 @@
   <ItemGroup>
     <Compile Include="Acts\Act.cs" />
     <Compile Include="Acts\ActParticipation.cs" />
+    <Compile Include="Acts\ActProtocol.cs" />
     <Compile Include="Acts\ActRelationship.cs" />
     <Compile Include="Acts\ControlAct.cs" />
     <Compile Include="Acts\Observation.cs" />
     <Compile Include="Acts\PatientEncounter.cs" />
+    <Compile Include="Acts\Protocol.cs" />
     <Compile Include="Acts\SubstanceAdministration.cs" />
     <Compile Include="Attributes\AutoLoadAttribute.cs" />
     <Compile Include="Attributes\ClassifierAttribute.cs" />

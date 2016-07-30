@@ -36,6 +36,17 @@ namespace OpenIZ.Messaging.IMSI.Model
     {
 
         /// <summary>
+        /// Gets the date this was modified
+        /// </summary>
+        public override DateTimeOffset ModifiedOn
+        {
+            get
+            {
+                return DateTimeOffset.Now;
+            }
+        }
+
+        /// <summary>
         /// Represents an error result
         /// </summary>
         public ErrorResult()

@@ -94,14 +94,24 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Data\ActReason.dataset">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Include="Data\000-ActReason.dataset">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\ControlActClass.dataset">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Include="Data\000-ActSubstanceAdministrationCode.dataset">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\ActInterpretation.dataset">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Include="Data\000-AdministrableDrugForm.dataset">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\000-ControlActClass.dataset">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\000-ActInterpretation.dataset">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\000-VaccineTypes.dataset">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +132,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <DependentUpon>OpenIZ.mdf</DependentUpon>
     </Content>
+    <None Include="Data\000-RouteOfAdministration.dataset">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="OpenIZ.en.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -151,7 +151,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Relationships
             if (data.Relationships != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Entities.EntityRelationship, Data.EntityAssociation>(
-                    data.Relationships,
+                    data.Relationships.Where(o=>!o.InversionIndicator).ToList(),
                     retVal,
                     context,
                     principal);
@@ -236,7 +236,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Relationships
             if (data.Relationships != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Entities.EntityRelationship, Data.EntityAssociation>(
-                    data.Relationships,
+                    data.Relationships.Where(o => !o.InversionIndicator).ToList(),
                     retVal,
                     context,
                     principal);

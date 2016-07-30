@@ -25,6 +25,7 @@
   <class modelClass="OpenIZ.Core.Model.Security.SecurityUser, OpenIZ.Core.Model, Version=1.0.0.0"
 		domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SecurityUser, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="UserId"/>
+    <proeprty modelName="Tag" domainNAme="SecurityHash"/>
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="UpdatedByKey" domainName="UpdatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
@@ -39,6 +40,7 @@
     <property modelName="SecurityHash" domainName="SecurityStamp"/>
     <property modelName="InvalidLoginAttempts" domainName="FailedLoginAttempts"/>
     <property modelName="LastLoginTime" domainName="LastSuccessfulLogin"/>
+    <property modelName="ModifiedOn" domainName="UpdatedTime"/>
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="UpdatedByEntity" keyName="UpdatedBy"/>
@@ -47,6 +49,7 @@
 
   <class modelClass="OpenIZ.Core.Model.Security.SecurityRole, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SecurityRole, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="RoleId"/>
+    <proeprty modelName="Tag" domainNAme="RoleId"/>
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <property modelName="CreatedBy" domainName="CreatedByEntity"/>
@@ -54,6 +57,7 @@
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
     <property modelName="UpdatedBy" domainName="UpdatedByEntity"/>
+    <property modelName="ModifiedOn" domainName="UpdatedTime"/>
     <property modelName="UpdatedByKey" domainName="UpdatedBy"/>
     <property modelName="Users" domainName="SecurityUserRoles">
       <via domainName="SecurityUser"/>
@@ -65,8 +69,11 @@
 
   <class modelClass="OpenIZ.Core.Model.Security.SecurityPolicy, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.Policy, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="PolicyId"/>
+    <proeprty modelName="Tag" domainNAme="PolicyId"/>
+
     <property modelName="Handler" domainName="HandlerClass"/>
     <property modelName="Oid" domainName="PolicyOid"/>
+    <property modelName="ModifiedOn" domainName="CreationTime"/>
     <property modelName="CreatedBy" domainName="CreatedByEntity"/>
     <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
@@ -81,7 +88,9 @@
   <class modelClass="OpenIZ.Core.Model.Security.SecurityApplication, OpenIZ.Core.Model, Version=1.0.0.0"
 		domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SecurityApplication, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ApplicationId"/>
+    <property modelName="Tag" dontLoad="true" domainName="ApplicationId"/>
     <property modelName="Name" domainName="ApplicationPublicId"/>
+    <property modelName="ModifiedOn" domainName="CreationTime"/>
 
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
@@ -95,7 +104,9 @@
   <class modelClass="OpenIZ.Core.Model.Security.SecurityDevice, OpenIZ.Core.Model, Version=1.0.0.0"
 		domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SecurityDevice, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="DeviceId"/>
+    <property modelName="Tag" dontLoad="true" domainName="DeviceId"/>
     <property modelName="Name" domainName="DevicePublicId"/>
+    <property modelName="ModifiedOn" domainName="CreationTime"/>
 
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
@@ -117,6 +128,7 @@
   <class modelClass="OpenIZ.Core.Model.Security.SecurityPolicyInstance, OpenIZ.Core.Model, Version=1.0.0.0"
   domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SecurityApplicationPolicy, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="SecurityPolicyInstanceId"/>
+    <property modelName="Tag" dontLoad="true" domainName="SecurityPolicyInstanceId"/>
     <property modelName="SourceEntityKey" domainName="ApplicationId"/>
     <property modelName="PolicyKey" domainName="PolicyId"/>
     <property modelName="SourceEntity" domainName="SecurityApplication"/>
@@ -126,6 +138,7 @@
   <class modelClass="OpenIZ.Core.Model.Security.SecurityPolicyInstance, OpenIZ.Core.Model, Version=1.0.0.0"
   domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SecurityDevicePolicy, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="SecurityPolicyInstanceId"/>
+    <property modelName="Tag" dontLoad="true" domainName="SecurityPolicyInstanceId"/>
     <property modelName="SourceEntityKey" domainName="DeviceId"/>
     <property modelName="PolicyKey" domainName="PolicyId"/>
     <property modelName="SourceEntity" domainName="SecurityDevice"/>
@@ -137,12 +150,14 @@
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptSet, OpenIZ.Core.Model, Version=1.0.0.0"
 		domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptSet, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ConceptSetId"/>
+    <property modelName="Tag" dontLoad="true" domainName="ConceptSetId"/>
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
     <property modelName="CreatedBy" domainName="CreatedByEntity"/>
     <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
+    <property modelName="ModifiedOn" domainName="UpdatedTime"/>
 
     <property modelName="Concepts" domainName="ConceptSetMembers">
       <via domainName="Concept">
@@ -157,10 +172,14 @@
 
     <property modelName="Key" domainName="ConceptId"/>
     <property modelName="VersionKey" domainName="ConceptVersionId"/>
+    <property modelName="Tag" dontLoad="true" domainName="ConceptVersionId"/>
+    <property modelName="ModifiedOn" domainName="CreationTime"/>
+
     <property modelName="PreviousVersionKey" domainName="ReplacesVersionId"/>
     <property modelName="VersionSequence" domainName="VersionSequenceId"/>
     <property modelName="StatusConceptKey" domainName="StatusConceptId"/>
     <property modelName="StatusConcept" domainName="StatusConcept">
+
       <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
     </property>
     <property modelName="ReferenceTerms" domainName="Concept">
@@ -205,12 +224,15 @@
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptClass, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptClass, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ConceptClassId"/>
+    <property modelName="Tag" dontLoad="true" domainName="ConceptClassId"/>
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
     <property modelName="UpdatedByKey" domainName="UpdatedBy"/>
     <property modelName="CreatedBy" domainName="CreatedByEntity"/>
     <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
     <property modelName="UpdatedBy" domainName="UpdatedByEntity"/>
+    <property modelName="ModifiedOn" domainName="UpdatedTime"/>
+
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
 
@@ -218,10 +240,12 @@
 
   <class modelClass="OpenIZ.Core.Model.DataTypes.AssigningAuthority, OpenIZ.Core.Model, Version=1.0.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.AssigningAuthority, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="AssigningAuthorityId"/>
+    <property modelName="Tag" dontLoad="true" domainName="AssigningAuthorityId"/>
     <collapseKey propertyName="AssigningDevice" keyName="AssigningDeviceId"/>
     <property modelName="DomainName" domainName="HL7CX4"/>
     <property modelName="AssigningDeviceKey" domainName="AssigningDeviceId"/>
     <property modelName="AssigningDevice" domainName="AssigningDevice"/>
+    <property modelName="ModifiedOn" domainName="CreationTime"/>
 
     <property modelName="CreatedBy" domainName="CreatedByEntity"/>
     <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
@@ -235,12 +259,15 @@
   <class modelClass="OpenIZ.Core.Model.DataTypes.CodeSystem, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.CodeSystem, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="CodeSystemId"/>
+    <property modelName="Tag" dontLoad="true" domainName="CodeSystemId"/>
     <property modelName="CreatedBy" domainName="CreatedByEntity"/>
     <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
     <property modelName="UpdatedBy" domainName="UpdatedByEntity"/>
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
     <property modelName="UpdatedByKey" domainName="UpdatedBy"/>
+    <property modelName="ModifiedOn" domainName="UpdatedTime"/>
+
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="UpdatedByEntity" keyName="UpdatedBy"/>
@@ -249,12 +276,15 @@
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptRelationshipType, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptRelationshipType, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ConceptRelationshipTypeId"/>
+    <property modelName="Tag" dontLoad="true" domainName="ConceptRelationshipTypeId"/>
     <property modelName="CreatedBy" domainName="CreatedByEntity"/>
     <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
     <property modelName="UpdatedBy" domainName="UpdatedByEntity"/>
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
     <property modelName="UpdatedByKey" domainName="UpdatedBy"/>
+    <property modelName="ModifiedOn" domainName="UpdatedTime"/>
+
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="UpdatedByEntity" keyName="UpdatedBy"/>
@@ -263,6 +293,7 @@
   <class modelClass="OpenIZ.Core.Model.DataTypes.PhoneticAlgorithm, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.PhoneticAlgorithm, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="PhoneticAlgorithmId"/>
+    <property modelName="Tag" dontLoad="true" domainName="PhoneticAlgorithmId"/>
     <property modelName="Handler" domainName="HandlerClass"/>
     <property modelName="CreatedBy" domainName="CreatedByEntity"/>
     <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
@@ -270,6 +301,8 @@
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
     <property modelName="UpdatedByKey" domainName="UpdatedBy"/>
+    <property modelName="ModifiedOn" domainName="UpdatedTime"/>
+
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="UpdatedByEntity" keyName="UpdatedBy"/>
@@ -278,6 +311,7 @@
   <class modelClass="OpenIZ.Core.Model.DataTypes.ReferenceTerm, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ReferenceTerm, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ReferenceTermId"/>
+    <property modelName="Tag" dontLoad="true" domainName="ReferenceTermId"/>
     <property modelName="CodeSystemKey" domainName="CodeSystemId"/>
     <property modelName="CodeSystem" domainName="CodeSystem"/>
     <collapseKey propertyName="CodeSystem" keyName="CodeSystemId"/>
@@ -287,6 +321,8 @@
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
     <property modelName="UpdatedByKey" domainName="UpdatedBy"/>
+    <property modelName="ModifiedOn" domainName="UpdatedTime"/>
+
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="UpdatedByEntity" keyName="UpdatedBy"/>
@@ -295,6 +331,7 @@
   <class modelClass="OpenIZ.Core.Model.DataTypes.ReferenceTermName, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ReferenceTermDisplayName, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ReferenceTermDisplayNameId"/>
+    <property modelName="Tag" dontLoad="true" domainName="ReferenceTermDisplayNameId"/>
     <property modelName="ReferenceTermKey" domainName="ReferenceTermId"/>
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
@@ -312,6 +349,7 @@
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptName, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ConceptName, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="ConceptNameId"/>
+    <property modelName="Tag" dontLoad="true" domainName="ConceptNameId"/>
     <property modelName="SourceEntityKey" domainName="ConceptId"/>
     <property modelName="PhoneticAlgorithmKey" domainName="PhoneticAlgorithmId"/>
     <property modelName="PhoneticAlgorithm" domainName="PhoneticAlgorithm" dontLoad="true"/>
@@ -338,9 +376,12 @@
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.EntityVersion, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="EntityId"/>
     <property modelName="VersionKey" domainName="EntityVersionId"/>
+    <property modelName="Tag" dontLoad="true" domainName="EntityVersionId"/>
     <property modelName="PreviousVersionKey" domainName="ReplacesVersionId"/>
     <property modelName="VersionSequence" domainName="VersionSequenceId"/>
     <property modelName="StatusConceptKey" domainName="StatusConceptId"/>
+    <property modelName="ModifiedOn" domainName="CreationTime"/>
+
     <property modelName="ClassConceptKey" domainName="Entity">
       <via domainName="ClassConceptId"/>
     </property>
@@ -489,6 +530,7 @@
   <class modelClass="OpenIZ.Core.Model.DataTypes.IdentifierType, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.IdentifierType, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="IdentifierTypeId"/>
+    <property modelName="Tag" dontLoad="true" domainName="IdentifierTypeId"/>
     <property modelName="TypeConceptKey" domainName="IdentifierTypeConceptId"/>
     <property modelName="TypeConcept" domainName="IdentifierTypeConcept">
       <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
@@ -499,12 +541,19 @@
       <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
       
     </property>
+    <property modelName="ModifiedOn" domainName="IdentifierTypeConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId">
+        <via domainName="CreationTime"/>
+      </via>
+    </property>
+
     <collapseKey propertyName="EntityClassScopeConcept" keyName="EntityClassScopeConceptId"/>
   </class>
 
   <class modelClass="OpenIZ.Core.Model.DataTypes.AssigningAuthority, OpenIZ.Core.Model, Version=1.0.0.0"
        domainClass="OpenIZ.Persistence.Data.MSSQL.Data.AssigningAuthority, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="AssigningAuthorityId"/>
+    <property modelName="Tag" dontLoad="true" domainName="AssigningAuthorityId"/>
     <property modelName="DomainName" domainName="HL7CX4"/>
     <property modelName="AssigningDeviceKey" domainName="AssigningDeviceId"/>
     <property modelName="CreatedBy" domainName="CreatedByEntity"/>
@@ -513,6 +562,8 @@
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
+    <property modelName="ModifiedOn" domainName="CreationTime"/>
+
   </class>
 
   <class modelClass="OpenIZ.Core.Model.Entities.EntityRelationship, OpenIZ.Core.Model, Version=1.0.0.0"
@@ -563,6 +614,8 @@
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="UpdatedByEntity" keyName="UpdatedBy"/>
     <propertyName modelName="ExtensionHandler" domainName="HandlerClass"/>
+    <property modelName="ModifiedOn" domainName="UpdatedTime"/>
+
 
   </class>
 
@@ -721,6 +774,11 @@
     <property modelName="Key" domainName="EntityVersion">
         <via domainName="EntityId"/>
     </property>
+    <property modelName="FormConceptKey" domainName="FormConceptId"/>
+    <property modelName="FormConcept" domainName="FormConcept"/>
+    <property modelName="QuantityConceptKey" domainName="QuantityConceptId"/>
+    <property modelName="QuantityConcept" domainName="QuantityConcept"/>
+
     <property modelName="VersionKey" domainName="EntityVersionId"/>
   </class>
 

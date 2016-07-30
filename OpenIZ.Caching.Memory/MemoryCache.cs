@@ -22,6 +22,7 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Event;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Caching.Memory.Configuration;
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -78,8 +79,10 @@ namespace OpenIZ.Caching.Memory
             m_tracer.TraceInformation("Binding initial collections...");
 
             foreach (var t in this.m_configuration.Types)
+            {
                 this.RegisterCacheType(t.Type);
-
+                
+            }
         }
 
         /// <summary>
@@ -134,13 +137,13 @@ namespace OpenIZ.Caching.Memory
                     lock (this.m_lock)
                     {
                         var entry = cache[key];
-                        entry.Data = data;
+                        entry.Data = (data as IdentifiedData)?.GetLocked() ?? data;
                         entry.LastUpdateTime = DateTime.Now.Ticks;
                     }
                 else
                     lock (this.m_lock)
                         if (!cache.ContainsKey(key))
-                            cache.Add(key, new CacheEntry(DateTime.Now, data));
+                            cache.Add(key, new CacheEntry(DateTime.Now, (data as IdentifiedData)?.GetLocked() ?? data));
             }
             else if (this.m_configuration.AutoSubscribeTypes)
                 this.RegisterCacheType(data.GetType());
@@ -305,7 +308,7 @@ namespace OpenIZ.Caching.Memory
                 var eventParm = Expression.Parameter(ppeArgType, "e");
                 var eventTxMode = Expression.MakeMemberAccess(eventParm, ppeArgType.GetProperty("Mode"));
                 var eventData = Expression.MakeMemberAccess(eventParm, ppeArgType.GetProperty("Data"));
-                var handlerLambda = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCacheService).GetMethod("HandlePostPersistenceEvent"),
+                var handlerLambda = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetMethod("HandlePostPersistenceEvent"),
                     eventTxMode, eventData), senderParm, eventParm);
                 var delInstance = handlerLambda.Compile();
 
@@ -315,6 +318,18 @@ namespace OpenIZ.Caching.Memory
                 idpType.GetEvent("Obsoleted").AddEventHandler(svcInstance, delInstance);
             }
 
+
+            // Load initial data
+            this.m_taskPool.QueueUserWorkItem((o) =>
+            {
+                var conf = this.m_configuration.Types.FirstOrDefault(c => c.Type == t);
+                if (conf == null) return;
+                foreach (var sd in conf.SeedQueries)
+                {
+                    this.m_tracer.TraceInformation("Seeding cache with {0}", sd);
+                    // TODO: Seed cache initial data
+                }
+            });
         }
 
         /// <summary>
@@ -324,6 +339,16 @@ namespace OpenIZ.Caching.Memory
         {
             if (this.m_disposed)
                 throw new ObjectDisposedException(nameof(MemoryCache));
+        }
+
+        /// <summary>
+        /// Persistence event handler
+        /// </summary>
+        public void HandlePostPersistenceEvent(TransactionMode txMode, Object data)
+        {
+            if (txMode == TransactionMode.Commit)
+                this.AddUpdateEntry(data);
+
         }
 
         /// <summary>

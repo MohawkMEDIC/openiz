@@ -26,6 +26,7 @@ namespace OpenIZ.Protocol.Xml.Model.XmlLinq
         /// </summary>
         public XmlParameterExpression(ParameterExpression expr) 
         {
+            this.m_expression = expr;
             this.ParameterName = expr.Name;
             this.TypeXml = expr.Type.AssemblyQualifiedName;
         }

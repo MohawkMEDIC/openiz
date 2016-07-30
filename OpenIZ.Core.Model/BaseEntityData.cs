@@ -102,7 +102,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the user that created this base data
         /// </summary>
-        [SerializationReference(nameof(CreatedByKey))]
+        [SerializationReference(nameof(CreatedByKey)), DataIgnore()]
         [XmlIgnore, JsonIgnore]
         public virtual SecurityUser CreatedBy {
             get
@@ -116,6 +116,18 @@ namespace OpenIZ.Core.Model
                 this.m_createdById = value?.Key;
             }
          }
+
+        /// <summary>
+        /// Get the modified on time
+        /// </summary>
+        public override DateTimeOffset ModifiedOn
+        {
+            get
+            {
+                return this.CreationTime;
+            }
+        }
+
 
         /// <summary>
         /// True if key should be serialized
@@ -139,7 +151,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the user that obsoleted this base data
         /// </summary>
-        [SerializationReference(nameof(ObsoletedByKey))]
+        [SerializationReference(nameof(ObsoletedByKey)), DataIgnore()]
         [XmlIgnore, JsonIgnore]
         public virtual SecurityUser ObsoletedBy {
             get

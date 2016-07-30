@@ -31,6 +31,8 @@ using MARC.HI.EHRS.SVC.Core.Services.Security;
 using OpenIZ.Core.Security;
 using MARC.HI.EHRS.SVC.Core.Data;
 using OpenIZ.Core.Security.Attribute;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -101,6 +103,17 @@ namespace OpenIZ.Core.Services.Impl
         }
 
         /// <summary>
+        /// Creates the specified user entity
+        /// </summary>
+        public UserEntity CreateUserEntity(UserEntity userEntity)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Persistence service missing");
+            return persistence.Insert(userEntity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+        }
+
+        /// <summary>
         /// Find the specified policies
         /// </summary>
         [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
@@ -143,6 +156,30 @@ namespace OpenIZ.Core.Services.Impl
             if (pers == null)
                 throw new InvalidOperationException("Missing role persistence service");
             return pers.Query(query, offset, count, AuthenticationContext.Current.Principal, out total);
+        }
+
+        /// <summary>
+        /// Find the specified user entity data
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        public IEnumerable<UserEntity> FindUserEntity(Expression<Func<UserEntity, bool>> expression)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Persistence service missing");
+            return persistence.Query(expression, AuthenticationContext.Current.Principal);
+        }
+
+        /// <summary>
+        /// Find the specified user entity with constraints
+        /// </summary>
+        public IEnumerable<UserEntity> FindUserEntity(Expression<Func<UserEntity, bool>> expression, int offset, int count, out int totalCount)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Persistence service missing");
+            return persistence.Query(expression, offset, count, AuthenticationContext.Current.Principal, out totalCount);
         }
 
         /// <summary>
@@ -204,6 +241,17 @@ namespace OpenIZ.Core.Services.Impl
         }
 
         /// <summary>
+        /// Gets the specified user entity
+        /// </summary>
+        public UserEntity GetUserEntity(Guid id, Guid versionId)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Persistence service missing");
+            return persistence.Get<Guid>(new Identifier<Guid>(id, versionId), AuthenticationContext.Current.Principal, false);
+        }
+
+        /// <summary>
         /// Lock the specified user
         /// </summary>
         [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
@@ -251,6 +299,17 @@ namespace OpenIZ.Core.Services.Impl
         }
 
         /// <summary>
+        /// Obsoletes the specified user entity
+        /// </summary>
+        public UserEntity ObsoleteUserEntity(Guid id)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Persistence service not found");
+            return persistence.Obsolete(new UserEntity() { Key = id }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+        }
+
+        /// <summary>
         /// Saves the specified role
         /// </summary>
         [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterRoles)]
@@ -276,6 +335,25 @@ namespace OpenIZ.Core.Services.Impl
             if (AuthenticationContext.Current.Principal.Identity.Name != user.UserName) // Users can update their own info
                 new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.AlterIdentity).Demand(); // Otherwise demand to be an administrator
             return pers.Update(user, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+        }
+
+        /// <summary>
+        /// Saves the specified user entity
+        /// </summary>
+        public UserEntity SaveUserEntity(UserEntity userEntity)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Persistence service not found");
+            try
+            {
+                return persistence.Update(userEntity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            }
+            catch
+            {
+                return persistence.Insert(userEntity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+            }
         }
 
         /// <summary>

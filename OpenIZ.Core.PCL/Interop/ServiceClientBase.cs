@@ -37,7 +37,7 @@ namespace OpenIZ.Core.Interop.Clients
 		/// Gets the client.
 		/// </summary>
 		/// <value>The client.</value>
-		protected IRestClient Client
+		public IRestClient Client
 		{
 			get
 			{

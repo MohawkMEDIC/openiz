@@ -33,7 +33,7 @@ namespace OpenIZ.Protocol.Xml.Model.XmlLinq
         /// <summary>
         /// Creates a new xml expression list
         /// </summary>
-        public XmlExpressionList(ReadOnlyCollection<Expression> expr)
+        public XmlExpressionList(IEnumerable<Expression> expr)
         {
             this.Item = new List<XmlExpression>(expr.Select(o=>XmlExpression.FromExpression(o)));
         }
