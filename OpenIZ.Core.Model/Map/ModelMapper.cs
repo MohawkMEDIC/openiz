@@ -332,6 +332,10 @@ namespace OpenIZ.Core.Model.Map
                     continue;
                 else if (!primitives.Contains(propInfo.PropertyType) && !propInfo.PropertyType.GetTypeInfo().IsEnum)
                     continue;
+                else if (propInfo.GetCustomAttribute<DataIgnoreAttribute>() != null 
+                    || !propInfo.CanWrite)
+                    continue;
+
 
                 // Property info
                 if (propInfo.GetValue(modelInstance) == null)
@@ -554,7 +558,7 @@ namespace OpenIZ.Core.Model.Map
 
                                 // Get the generic method for LIST to be widdled down
                                 instance = Expression.Lambda(aggregateExpr, parm).Compile().DynamicInvoke(instance);
-
+                                
                             }
                             via = via.Via;
                         }
@@ -621,7 +625,7 @@ namespace OpenIZ.Core.Model.Map
                 keyStack.Remove(idEnt.Key.Value);
                 FireMappedToModel(this, idEnt.Key ?? Guid.Empty, retVal as IdentifiedData);
             }
-            (retVal as IdentifiedData).SetDelayLoad(true);
+           // (retVal as IdentifiedData).SetDelayLoad(true);
 
             return retVal;
         }

@@ -165,6 +165,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             try
             {
 
+
                 var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
                 if (handler != null)
                 {
@@ -172,8 +173,18 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     if (retVal == null)
                         throw new FileNotFoundException(id);
 
+                    WebOperationContext.Current.OutgoingResponse.ETag = retVal.Tag;
+                    WebOperationContext.Current.OutgoingResponse.LastModified = retVal.ModifiedOn.DateTime;
 
-                    if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_bundle"] == "true")
+                    // HTTP IF headers?
+                    if(WebOperationContext.Current.IncomingRequest.IfModifiedSince.HasValue && 
+                        retVal.ModifiedOn <= WebOperationContext.Current.IncomingRequest.IfModifiedSince ||
+                        WebOperationContext.Current.IncomingRequest.IfNoneMatch?.Any(o=>retVal.Tag == o) == true)
+                    {
+                        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotModified;
+                        return null;
+                    }
+                    else if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_bundle"] == "true")
                         return Bundle.CreateBundle(retVal);
                     else
                     {
@@ -316,10 +327,31 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 {
                     String offset = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_offset"],
                         count = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_count"];
+
+                    var query = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters.ToQuery();
+
+                    // Modified on?
+                    if (WebOperationContext.Current.IncomingRequest.IfModifiedSince.HasValue)
+                        query.Add("modifiedOn", ">" + WebOperationContext.Current.IncomingRequest.IfModifiedSince.Value.ToString("o"));
+
                     int totalResults = 0;
-                    IEnumerable<IdentifiedData> retVal = handler.Query(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters.ToQuery(), Int32.Parse(offset ?? "0"), Int32.Parse(count ?? "100"), out totalResults);
-                    
-                    return BundleUtil.CreateBundle(retVal, totalResults, Int32.Parse(offset ?? "0"), WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_lean"] != null);
+
+                    IEnumerable<IdentifiedData> retVal = handler.Query(query, Int32.Parse(offset ?? "0"), Int32.Parse(count ?? "100"), out totalResults);
+                    WebOperationContext.Current.OutgoingResponse.LastModified = retVal.OrderByDescending(o => o.ModifiedOn).FirstOrDefault()?.ModifiedOn.DateTime ?? DateTime.Now;
+
+
+                    // Last modification time and not modified conditions
+                    if ((WebOperationContext.Current.IncomingRequest.IfModifiedSince.HasValue ||
+                        WebOperationContext.Current.IncomingRequest.IfNoneMatch != null) &&
+                        totalResults == 0)
+                    {
+                        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotModified;
+                        return null;
+                    }
+                    else
+                    {
+                        return BundleUtil.CreateBundle(retVal, totalResults, Int32.Parse(offset ?? "0"), WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_lean"] != null);
+                    }
                 }
                 else
                     throw new FileNotFoundException(resourceType);
@@ -332,6 +364,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
         }
 
+        
         /// <summary>
         /// Get the server's current time
         /// </summary>
@@ -458,6 +491,23 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             {
                 return this.ErrorHelper(e, false);
             }
+        }
+
+        /// <summary>
+        /// Perform the search but only return the headers
+        /// </summary>
+        public void HeadSearch(string resourceType)
+        {
+            WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters.Add("_count", "1");
+                this.Search(resourceType);
+        }
+
+        /// <summary>
+        /// Get just the headers
+        /// </summary>
+        public void GetHead(string resourceType, string id)
+        {
+            this.Get(resourceType, id);
         }
         #endregion
     }

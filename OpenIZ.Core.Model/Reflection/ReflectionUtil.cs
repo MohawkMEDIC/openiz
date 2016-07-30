@@ -17,8 +17,10 @@
  * User: justi
  * Date: 2016-6-28
  */
+using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Map;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -33,6 +35,53 @@ namespace OpenIZ.Core.Model.Reflection
     /// </summary>
     public static class ReflectionUtil
     {
+
+        /// <summary>
+        /// Update property data if required
+        /// </summary>
+        public static void CopyObjectData<TObject>(this TObject toEntity, TObject fromEntity)
+        {
+            if (toEntity == null)
+                throw new ArgumentNullException(nameof(toEntity));
+            else if (fromEntity == null)
+                throw new ArgumentNullException(nameof(fromEntity));
+            else if (!fromEntity.GetType().GetTypeInfo().IsAssignableFrom(toEntity.GetType().GetTypeInfo()))
+                throw new ArgumentException("Type mismatch", nameof(fromEntity));
+            foreach (var destinationPi in toEntity.GetType().GetRuntimeProperties())
+            {
+                // Skip properties no in the source
+                if (fromEntity.GetType().GetRuntimeProperty(destinationPi.Name) == null)
+                    continue;
+
+                // Skip data ignore
+                if (destinationPi.GetCustomAttribute<DataIgnoreAttribute>() == null &&
+                    destinationPi.CanWrite)
+                {
+                    if (destinationPi.PropertyType.GetTypeInfo().IsGenericType &&
+                        destinationPi.PropertyType.GetGenericTypeDefinition().Namespace.StartsWith("System.Data.Linq") ||
+                        destinationPi.PropertyType.Namespace.StartsWith("OpenIZ.Persistence"))
+                        continue;
+
+
+                    object newValue = destinationPi.GetValue(fromEntity),
+                        oldValue = destinationPi.GetValue(toEntity);
+
+                    // HACK: New value wrap for nullables
+                    if (newValue is Guid? && newValue != null)
+                        newValue = (newValue as Guid?).Value;
+
+                    // HACK: Empty lists are NULL
+                    if ((newValue as IList)?.Count == 0)
+                        newValue = null;
+
+                    if (newValue != null &&
+                        !newValue.Equals(oldValue) == true &&
+                        (destinationPi.PropertyType.GetTypeInfo().IsValueType && !newValue.Equals(Activator.CreateInstance(newValue.GetType())) || !destinationPi.PropertyType.GetTypeInfo().IsValueType))
+                        destinationPi.SetValue(toEntity, newValue);
+                }
+            }
+        }
+
         /// <summary>
         /// Create a version filter
         /// </summary>
@@ -104,6 +153,7 @@ namespace OpenIZ.Core.Model.Reflection
             return Expression.Call(whereMethod as MethodInfo, me, sortLambda);
 
         }
+
 
         /// <summary>
         /// Create aggregation functions

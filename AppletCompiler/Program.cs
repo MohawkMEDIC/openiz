@@ -68,6 +68,7 @@ namespace AppletCompiler
                         using (var fs = File.OpenRead(itm))
                         {
                             var mfst = xsz.Deserialize(fs) as AppletManifest;
+                            mfst.Initialize();
                             ac.Add(mfst);
                             Console.WriteLine("Added reference to {0}; v={1}", mfst.Info.Id, mfst.Info.Version);
 
@@ -136,21 +137,23 @@ namespace AppletCompiler
                         else
                             continue;
 
-                        foreach(var itm in mfst.Assets)
-                        {
-                            try
+                        foreach(var m in ac)
+                            foreach(var itm in m.Assets)
                             {
-                                String fn = Path.Combine(wd, itm.Name.Replace("/", "\\"));
-                                if (!Directory.Exists(Path.GetDirectoryName(fn)))
-                                    Directory.CreateDirectory(Path.GetDirectoryName(fn));
-                                File.WriteAllBytes(fn, ac.RenderAssetContent(itm, lang.Language));
+                                try
+                                {
+                                    String fn = Path.Combine(wd, m.Info.Id, itm.Name.Replace("/", "\\"));
+                                    Console.WriteLine("\tRendering {0}...", fn);
+                                    if (!Directory.Exists(Path.GetDirectoryName(fn)))
+                                        Directory.CreateDirectory(Path.GetDirectoryName(fn));
+                                    File.WriteAllBytes(fn, ac.RenderAssetContent(itm, lang.Language));
+                                }
+                                catch(Exception e)
+                                {
+                                    Console.WriteLine("E: {0}: {1} {2}", itm, e.GetType().Name, e);
+                                    retVal = -1000;
+                                }
                             }
-                            catch(Exception e)
-                            {
-                                Console.WriteLine("E: {0}: {1} {2}", itm, e.GetType().Name, e.Message);
-                                retVal = -1000;
-                            }
-                        }
                     }
                 }
                 

@@ -38,48 +38,7 @@ namespace OpenIZ.Core
     public static class ExtensionMethods
     {
 
-        /// <summary>
-        /// Update property data if required
-        /// </summary>
-        public static void CopyObjectData<TObject>(this TObject toEntity, TObject fromEntity)
-        {
-            if (toEntity == null)
-                throw new ArgumentNullException(nameof(toEntity));
-            else if (fromEntity == null)
-                throw new ArgumentNullException(nameof(fromEntity));
-            else if (fromEntity.GetType() != toEntity.GetType())
-                throw new ArgumentException("Type mismatch", nameof(fromEntity));
-            foreach (var pi in toEntity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {
-
-                // Skip data ignore
-                if (pi.GetCustomAttribute<DataIgnoreAttribute>() == null &&
-                    pi.GetSetMethod() != null)
-                {
-                    if (pi.PropertyType.IsGenericType &&
-                        pi.PropertyType.GetGenericTypeDefinition() == typeof(System.Data.Linq.EntitySet<>) ||
-                        pi.PropertyType.Namespace.StartsWith("OpenIZ.Persistence"))
-                        continue;
-
-
-                    object newValue = pi.GetValue(fromEntity),
-                        oldValue = pi.GetValue(toEntity);
-
-                    // HACK: New value wrap for nullables
-                    if (newValue is Guid? && newValue != null)
-                        newValue = (newValue as Guid?).Value;
-
-                    // HACK: Empty lists are NULL
-                    if ((newValue as IList)?.Count == 0)
-                        newValue = null;
-
-                    if (newValue != null &&
-                        !newValue.Equals(oldValue) == true &&
-                        (pi.PropertyType.IsValueType && !newValue.Equals(Activator.CreateInstance(newValue.GetType())) || !pi.PropertyType.IsValueType))
-                        pi.SetValue(toEntity, newValue);
-                }
-            }
-        }
+        
 
         /// <summary>
         /// Get locale

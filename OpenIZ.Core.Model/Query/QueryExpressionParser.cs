@@ -49,13 +49,17 @@ namespace OpenIZ.Core.Model.Query
         public static Expression<Func<TModelType, bool>> BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters)
         {
             var expression = BuildLinqExpression<TModelType>(httpQueryParameters, "o");
-            return Expression.Lambda<Func<TModelType, bool>>(expression.Body, expression.Parameters);
+
+            if (expression == null) // No query!
+                return (TModelType o) => o != null;
+            else 
+                return Expression.Lambda<Func<TModelType, bool>>(expression.Body, expression.Parameters);
         }
 
         /// <summary>
         /// Build LINQ expression
         /// </summary>
-        public static LambdaExpression BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters, String parameterName)
+        public static LambdaExpression BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters, string parameterName)
         { 
             var parameterExpression = Expression.Parameter(typeof(TModelType), parameterName);
             Expression retVal = null;
@@ -78,7 +82,8 @@ namespace OpenIZ.Core.Model.Query
                 foreach(var rawMember in memberPath)
                 {
                     var pMember = rawMember;
-                    String guard = String.Empty;
+                    String guard = String.Empty,
+                        cast = String.Empty;
 
                     // Update path
                     path += pMember + ".";
@@ -89,26 +94,40 @@ namespace OpenIZ.Core.Model.Query
                         guard = pMember.Substring(pMember.IndexOf("[") + 1, pMember.Length - pMember.IndexOf("[") - 2);
                         pMember = pMember.Substring(0, pMember.IndexOf("["));
                     }
+                    if(pMember.Contains("@"))
+                    {
+                        cast = pMember.Substring(pMember.IndexOf("@") + 1);
+                        pMember = pMember.Substring(0, pMember.IndexOf("@"));
+                    }
 
                     // Get member info
-                    var memberInfo = accessExpression.Type.GetRuntimeProperties().SingleOrDefault(p => p.GetCustomAttributes<XmlElementAttribute>()?.Any(a=>a.ElementName == pMember) == true);
+                    var memberInfo = accessExpression.Type.GetRuntimeProperties().FirstOrDefault(p => p.GetCustomAttributes<XmlElementAttribute>()?.Any(a=>a.ElementName == pMember) == true);
                     if (memberInfo == null)
                         throw new ArgumentOutOfRangeException(currentValue.Key);
-
 
                     // Handle XML props
                     if (memberInfo.Name.EndsWith("Xml"))
                         memberInfo = accessExpression.Type.GetRuntimeProperty(memberInfo.Name.Replace("Xml", ""));
                     else if (pMember != memberPath.Last())
                     {
-                        var backingFor = accessExpression.Type.GetRuntimeProperties().SingleOrDefault(p => p.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty == memberInfo.Name);
+                        var backingFor = accessExpression.Type.GetRuntimeProperties().FirstOrDefault(p => p.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty == memberInfo.Name);
                         if (backingFor != null)
                             memberInfo = backingFor;
                     }
+
                     accessExpression = Expression.MakeMemberAccess(accessExpression, memberInfo);
-                    
+
+
+                    if (!String.IsNullOrEmpty(cast))
+                    {
+                        Type castType = typeof(QueryExpressionParser).GetTypeInfo().Assembly.ExportedTypes.FirstOrDefault(o => o.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName == cast);
+                        if (castType == null)
+                            throw new ArgumentOutOfRangeException(nameof(castType), cast);
+                        accessExpression = Expression.TypeAs(accessExpression, castType);
+                    }
+
                     // Guard on classifier?
-                    if(!String.IsNullOrEmpty(guard))
+                    if (!String.IsNullOrEmpty(guard))
                     {
                         Type itemType = accessExpression.Type.GenericTypeArguments[0];
                         Type predicateType = typeof(Func<,>).MakeGenericType(itemType, typeof(bool));
@@ -242,7 +261,9 @@ namespace OpenIZ.Core.Model.Query
 
                         // The expression
                         Expression valueExpr = null;
-                        if (accessExpression.Type == typeof(String))
+                        if (pValue == "null")
+                            valueExpr = Expression.Constant(null);
+                        else if (accessExpression.Type == typeof(String))
                             valueExpr = Expression.Constant(pValue);
                         else if (accessExpression.Type == typeof(DateTime) || accessExpression.Type == typeof(DateTime?))
                             valueExpr = Expression.Constant(DateTime.Parse(pValue));
@@ -250,8 +271,10 @@ namespace OpenIZ.Core.Model.Query
                             valueExpr = Expression.Constant(DateTimeOffset.Parse(pValue));
                         else if (accessExpression.Type == typeof(Guid))
                             valueExpr = Expression.Constant(Guid.Parse(pValue));
-                        else if(accessExpression.Type == typeof(Guid?))
+                        else if (accessExpression.Type == typeof(Guid?))
                             valueExpr = Expression.Convert(Expression.Constant(Guid.Parse(pValue)), typeof(Guid?));
+                        else if (accessExpression.Type.GetTypeInfo().IsEnum)
+                            valueExpr = Expression.Constant(Enum.ToObject(accessExpression.Type, Int32.Parse(pValue)));
                         else
                             valueExpr = Expression.Constant(Convert.ChangeType(pValue, accessExpression.Type));
                         Expression singleExpression = Expression.MakeBinary(et, accessExpression, valueExpr);
@@ -269,6 +292,9 @@ namespace OpenIZ.Core.Model.Query
             }
 
             Debug.WriteLine(String.Format("Converted {0} to {1}", httpQueryParameters, retVal));
+
+            if (retVal == null)
+                return null;
             return Expression.Lambda(retVal, parameterExpression);
 
         }

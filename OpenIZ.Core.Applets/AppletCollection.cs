@@ -246,7 +246,8 @@ namespace OpenIZ.Core.Applets
             {
 
                 AppletManifest resolvedManifest = null;
-                String pathLeft = path.IsAbsoluteUri ? path.AbsolutePath.Substring(1) : path.OriginalString;
+                String pathLeft = path.IsAbsoluteUri ? path.AbsolutePath.Substring(1) : 
+                    path.OriginalString.StartsWith("/") ? path.OriginalString.Substring(1) : path.OriginalString;
                 // Is the host specified?
                 if (path.IsAbsoluteUri && !String.IsNullOrEmpty(path.Host))
                 {
@@ -497,7 +498,7 @@ namespace OpenIZ.Core.Applets
                     // Process localization
                     if (!String.IsNullOrEmpty(preProcessLocalization))
                     {
-                        Regex re = new Regex("{{\\s?:?:?'(.*)'\\s?\\|\\s?i18n\\s?}}");
+                        Regex re = new Regex("{{\\s?:?:?'(.*?)'\\s?\\|\\s?i18n\\s?}}");
                         var assetString = this.GetStrings(preProcessLocalization);
                         renderBuffer = Encoding.UTF8.GetBytes(re.Replace(sw.ToString(), (m) => assetString.FirstOrDefault(o => o.Key == m.Groups[1].Value).Value ?? m.Groups[1].Value));
                     }

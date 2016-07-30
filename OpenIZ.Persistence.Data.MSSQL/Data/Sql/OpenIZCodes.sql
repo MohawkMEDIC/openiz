@@ -493,6 +493,7 @@ INSERT INTO Concept VALUES ('e658ca72-3b6a-4099-ab6e-7cf6861a5b61', 1);
 INSERT INTO Concept VALUES ('b389dedf-be61-456b-aa70-786e1a5a69e0', 1);
 
 -- Concept Classes
+INSERT INTO ConceptClass (ConceptClassId, Name, Mnemonic, CreatedBy) VALUES ('17EE5254-8C25-4ABB-B246-083FBE9AFA15','Form Concept', 'Form', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 INSERT INTO ConceptClass (ConceptClassId, Name, Mnemonic, CreatedBy) VALUES ('17FD5254-8C25-4ABB-B246-083FBE9AFA15','Classification Concept', 'ClassCode', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 INSERT INTO ConceptClass (ConceptClassId, Name, Mnemonic, CreatedBy) VALUES ('54B93182-FC19-47A2-82C6-089FD70A4F45', 'Status', 'Status', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 INSERT INTO ConceptClass (ConceptClassId, Name, Mnemonic, CreatedBy) VALUES ('BBA99722-23CE-469A-8FA5-10DEBA853D35', 'Mood', 'Mood', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');

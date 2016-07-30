@@ -25,6 +25,8 @@ using System.Linq.Expressions;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Core.Services
 {
@@ -113,13 +115,18 @@ namespace OpenIZ.Core.Services
 		/// <param name="totalResults">The total number of roles.</param>
 		/// <returns>Returns a list of roles.</returns>
 		IEnumerable<SecurityRole> FindRoles(Expression<Func<SecurityRole, bool>> query, int offset, int? count, out int totalResults);
+        /// <summary>
+        /// Creates the specified user entity
+        /// </summary>
+        /// <returns></returns>
+        UserEntity CreateUserEntity(UserEntity userEntity);
 
-		/// <summary>
-		/// Gets a list of users based on a query.
-		/// </summary>
-		/// <param name="query">The query to use to match the users.</param>
-		/// <returns>Returns a list of users.</returns>
-		IEnumerable<SecurityUser> FindUsers(Expression<Func<SecurityUser, bool>> query);
+        /// <summary>
+        /// Gets a list of users based on a query.
+        /// </summary>
+        /// <param name="query">The query to use to match the users.</param>
+        /// <returns>Returns a list of users.</returns>
+        IEnumerable<SecurityUser> FindUsers(Expression<Func<SecurityUser, bool>> query);
 
 		/// <summary>
 		/// Gets a list of users based on a query.
@@ -137,20 +144,30 @@ namespace OpenIZ.Core.Services
 		/// <param name="deviceId">The id of the device to be retrieved.</param>
 		/// <returns>Returns the device.</returns>
 		SecurityDevice GetDevice(Guid deviceId);
+        /// <summary>
+        /// Gets the specified user entity
+        /// </summary>
+        UserEntity GetUserEntity(Guid id, Guid versionId);
 
-		/// <summary>
-		/// Gets a specific role.
-		/// </summary>
-		/// <param name="roleId">The id of the role to retrieve.</param>
-		/// <returns>Returns the role.</returns>
-		SecurityRole GetRole(Guid roleId);
+        /// <summary>
+        /// Gets a specific role.
+        /// </summary>
+        /// <param name="roleId">The id of the role to retrieve.</param>
+        /// <returns>Returns the role.</returns>
+        SecurityRole GetRole(Guid roleId);
+      
+        /// <summary>
+        /// Obsoletes the specfied user entity
+        /// </summary>
+        UserEntity ObsoleteUserEntity(Guid id);
 
-		/// <summary>
-		/// Gets a specific user.
-		/// </summary>
-		/// <param name="userId">The id of the user to retrieve.</param>
-		/// <returns>Returns the user.</returns>
-		SecurityUser GetUser(Guid userId);
+
+        /// <summary>
+        /// Gets a specific user.
+        /// </summary>
+        /// <param name="userId">The id of the user to retrieve.</param>
+        /// <returns>Returns the user.</returns>
+        SecurityUser GetUser(Guid userId);
 
 		/// <summary>
 		/// Gets the specified security user based on the principal
@@ -184,12 +201,22 @@ namespace OpenIZ.Core.Services
 		/// <returns>Returns the obsoleted user.</returns>
 		SecurityUser ObsoleteUser(Guid userId);
 
-		/// <summary>
-		/// Updates a security device.
-		/// </summary>
-		/// <param name="device">The security device containing the updated information.</param>
-		/// <returns>Returns the updated device.</returns>
-		SecurityDevice SaveDevice(SecurityDevice device);
+        /// <summary>
+        /// Finds the specified user entity 
+        /// </summary>
+        IEnumerable<UserEntity> FindUserEntity(Expression<Func<UserEntity, bool>> expression);
+
+        /// <summary>
+        /// Finds the specified user entity 
+        /// </summary>
+        IEnumerable<UserEntity> FindUserEntity(Expression<Func<UserEntity, bool>> expression, int offset, int? count, out int totalCount);
+
+        /// <summary>
+        /// Updates a security device.
+        /// </summary>
+        /// <param name="device">The security device containing the updated information.</param>
+        /// <returns>Returns the updated device.</returns>
+        SecurityDevice SaveDevice(SecurityDevice device);
 
 		/// <summary>
 		/// Updates a security role.
@@ -197,13 +224,17 @@ namespace OpenIZ.Core.Services
 		/// <param name="role">The security role containing the updated information.</param>
 		/// <returns>Returns the updated role.</returns>
 		SecurityRole SaveRole(SecurityRole role);
+        /// <summary>
+        /// Saves (inserts or updates) the specified user entity
+        /// </summary>
+        UserEntity SaveUserEntity(UserEntity userEntity);
 
-		/// <summary>
-		/// Updates a security user.
-		/// </summary>
-		/// <param name="user">The security user containing the updated information.</param>
-		/// <returns>Returns the updated user.</returns>
-		SecurityUser SaveUser(SecurityUser user);
+        /// <summary>
+        /// Updates a security user.
+        /// </summary>
+        /// <param name="user">The security user containing the updated information.</param>
+        /// <returns>Returns the updated user.</returns>
+        SecurityUser SaveUser(SecurityUser user);
 
 		/// <summary>
 		/// Unlocks a specific user.

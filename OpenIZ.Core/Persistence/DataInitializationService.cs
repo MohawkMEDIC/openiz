@@ -21,13 +21,17 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.EntityLoader;
+using OpenIZ.Core.Model.Reflection;
 using OpenIZ.Core.Security;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Security.Principal;
 using System.Text;
@@ -114,7 +118,7 @@ namespace OpenIZ.Core.Persistence
                                     // IDP Type
                                     Type idpType = typeof(IDataPersistenceService<>);
                                     idpType = idpType.MakeGenericType(new Type[] { itm.Element.GetType() });
-                                    var svc = ApplicationContext.Current.GetService(idpType);
+                                    var idpInstance = ApplicationContext.Current.GetService(idpType);
 
                                     // Don't insert duplicates
                                     var getMethod = idpType.GetMethod("Get");
@@ -123,7 +127,7 @@ namespace OpenIZ.Core.Persistence
 
                                     Object target = null, existing = null;
                                     if(itm.Element.Key.HasValue)
-                                        existing = getMethod.MakeGenericMethod(new Type[] { typeof(Guid) }).Invoke(svc, new object[] { new Identifier<Guid>(itm.Element.Key.Value), AuthenticationContext.SystemPrincipal, false });
+                                        existing = getMethod.MakeGenericMethod(new Type[] { typeof(Guid) }).Invoke(idpInstance, new object[] { new Identifier<Guid>(itm.Element.Key.Value), AuthenticationContext.SystemPrincipal, false });
                                     if (existing != null)
                                     {
                                         target = existing;
@@ -132,6 +136,7 @@ namespace OpenIZ.Core.Persistence
                                     else
                                         target = itm.Element;
 
+                                   
                                     // Association
                                     if (itm.Association != null)
                                         foreach (var ascn in itm.Association)
@@ -142,9 +147,9 @@ namespace OpenIZ.Core.Persistence
                                         }
 
                                     if (existing == null && (itm is DataInsert || (itm is DataUpdate && (itm as DataUpdate).InsertIfNotExists)))
-                                        idpType.GetMethod("Insert", new Type[] { itm.Element.GetType(), typeof(IPrincipal), typeof(TransactionMode) }).Invoke(svc, new object[] { target, AuthenticationContext.SystemPrincipal, TransactionMode.Commit });
+                                        idpType.GetMethod("Insert", new Type[] { itm.Element.GetType(), typeof(IPrincipal), typeof(TransactionMode) }).Invoke(idpInstance, new object[] { target, AuthenticationContext.SystemPrincipal, TransactionMode.Commit });
                                     else if (!(itm is DataInsert))
-                                        idpType.GetMethod(itm.ActionName, new Type[] { itm.Element.GetType(), typeof(IPrincipal), typeof(TransactionMode) }).Invoke(svc, new object[] { target, AuthenticationContext.SystemPrincipal, TransactionMode.Commit });
+                                        idpType.GetMethod(itm.ActionName, new Type[] { itm.Element.GetType(), typeof(IPrincipal), typeof(TransactionMode) }).Invoke(idpInstance, new object[] { target, AuthenticationContext.SystemPrincipal, TransactionMode.Commit });
 
                                 }
                                 this.m_traceSource.TraceInformation("Applied {0} changes", ds.Action.Count);

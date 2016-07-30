@@ -31,6 +31,8 @@ using MARC.HI.EHRS.SVC.Core.Services.Security;
 using OpenIZ.Core.Security;
 using MARC.HI.EHRS.SVC.Core.Data;
 using OpenIZ.Core.Security.Attribute;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -124,13 +126,23 @@ namespace OpenIZ.Core.Services.Impl
             }
             return retVal;
         }
+        /// <summary>
+        /// Creates the specified user entity
+        /// </summary>
+        public UserEntity CreateUserEntity(UserEntity userEntity)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Persistence service missing");
+            return persistence.Insert(userEntity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+        }
 
-		/// <summary>
-		/// Gets a list of devices based on a query.
-		/// </summary>
-		/// <param name="query">The query to use to match the devices.</param>
-		/// <returns>Returns a list of devices.</returns>
-		public IEnumerable<SecurityDevice> FindDevices(Expression<Func<SecurityDevice, bool>> query)
+        /// <summary>
+        /// Gets a list of devices based on a query.
+        /// </summary>
+        /// <param name="query">The query to use to match the devices.</param>
+        /// <returns>Returns a list of devices.</returns>
+        public IEnumerable<SecurityDevice> FindDevices(Expression<Func<SecurityDevice, bool>> query)
 		{
 			int totalCount = 0;
 			return this.FindDevices(query, 0, null, out totalCount);
@@ -223,12 +235,36 @@ namespace OpenIZ.Core.Services.Impl
 			return persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
 		}
 
-		/// <summary>
-		/// Gets a list of users based on a query.
-		/// </summary>
-		/// <param name="query">The query to use to match the users.</param>
-		/// <returns>Returns a list of users.</returns>
-		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+        /// <summary>
+        /// Find the specified user entity data
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        public IEnumerable<UserEntity> FindUserEntity(Expression<Func<UserEntity, bool>> expression)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Persistence service missing");
+            return persistence.Query(expression, AuthenticationContext.Current.Principal);
+        }
+
+        /// <summary>
+        /// Find the specified user entity with constraints
+        /// </summary>
+        public IEnumerable<UserEntity> FindUserEntity(Expression<Func<UserEntity, bool>> expression, int offset, int? count, out int totalCount)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Persistence service missing");
+            return persistence.Query(expression, offset, count, AuthenticationContext.Current.Principal, out totalCount);
+        }
+
+        /// <summary>
+        /// Gets a list of users based on a query.
+        /// </summary>
+        /// <param name="query">The query to use to match the users.</param>
+        /// <returns>Returns a list of users.</returns>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
         public IEnumerable<SecurityUser> FindUsers(Expression<Func<SecurityUser, bool>> query)
         {
 			int totalResults = 0;
@@ -321,11 +357,22 @@ namespace OpenIZ.Core.Services.Impl
             return pers.Query(o=>o.UserName == identity.Name && o.ObsoletionTime == null, AuthenticationContext.Current.Principal).FirstOrDefault();
         }
 
-		/// <summary>
-		/// Locks a specific user.
-		/// </summary>
-		/// <param name="userId">The id of the user to lock.</param>
-		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
+        /// <summary>
+        /// Gets the specified user entity
+        /// </summary>
+        public UserEntity GetUserEntity(Guid id, Guid versionId)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Persistence service missing");
+            return persistence.Get<Guid>(new Identifier<Guid>(id, versionId), AuthenticationContext.Current.Principal, false);
+        }
+
+        /// <summary>
+        /// Locks a specific user.
+        /// </summary>
+        /// <param name="userId">The id of the user to lock.</param>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
         public void LockUser(Guid userId)
         {
             var iids = ApplicationContext.Current.GetService<IIdentityProviderService>();
@@ -392,13 +439,23 @@ namespace OpenIZ.Core.Services.Impl
             iids.DeleteIdentity(retVal.UserName, AuthenticationContext.Current.Principal);
             return retVal;
         }
+        /// <summary>
+        /// Obsoletes the specified user entity
+        /// </summary>
+        public UserEntity ObsoleteUserEntity(Guid id)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Persistence service not found");
+            return persistence.Obsolete(new UserEntity() { Key = id }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+        }
 
-		/// <summary>
-		/// Updates a security device.
-		/// </summary>
-		/// <param name="device">The security device containing the updated information.</param>
-		/// <returns>Returns the updated device.</returns>
-		public SecurityDevice SaveDevice(SecurityDevice device)
+        /// <summary>
+        /// Updates a security device.
+        /// </summary>
+        /// <param name="device">The security device containing the updated information.</param>
+        /// <returns>Returns the updated device.</returns>
+        public SecurityDevice SaveDevice(SecurityDevice device)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityDevice>>();
 
@@ -446,7 +503,26 @@ namespace OpenIZ.Core.Services.Impl
             return pers.Update(user, AuthenticationContext.Current.Principal, TransactionMode.Commit);
         }
 
-		/// <summary>
+        /// <summary>
+        /// Saves the specified user entity
+        /// </summary>
+        public UserEntity SaveUserEntity(UserEntity userEntity)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Persistence service not found");
+            try
+            {
+                return persistence.Update(userEntity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            }
+            catch
+            {
+                return persistence.Insert(userEntity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+            }
+        }
+
+        /// <summary>
 		/// Unlocks a specific user.
 		/// </summary>
 		/// <param name="userId">The id of the user to be unlocked.</param>

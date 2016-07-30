@@ -67,7 +67,7 @@ namespace OpenIZ.Core.Model.EntityLoader
             /// </summary>
             public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData, new()
             {
-                throw new NotImplementedException();
+                return new List<TObject>();
             }
         }
 

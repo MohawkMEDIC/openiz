@@ -32,6 +32,7 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core;
+using OpenIZ.Core.Model.Reflection;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -135,10 +136,17 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public override IQueryable<TModel> Query (ModelDataContext context, Expression<Func<TModel, bool>> query, IPrincipal principal)
 		{
-			var domainQuery = m_mapper.MapModelExpression<TModel, TDomain> (query);
-			var retVal = context.GetTable<TDomain> ().Where (domainQuery);
-			return retVal.Select(o=>this.ToModelInstance(o, context, principal));
+			return this.QueryInternal(context, query).Select(o=>this.ToModelInstance(o, context, principal));
 		}
+
+        /// <summary>
+        /// Perform the query 
+        /// </summary>
+        protected IQueryable<TDomain> QueryInternal(ModelDataContext context, Expression<Func<TModel, bool>> query)
+        {
+            var domainQuery = m_mapper.MapModelExpression<TModel, TDomain>(query);
+            return context.GetTable<TDomain>().Where(domainQuery);
+        }
 
         /// <summary>
         /// Update associated items

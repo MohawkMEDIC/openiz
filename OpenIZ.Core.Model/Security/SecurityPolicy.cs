@@ -125,6 +125,7 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// The policy
         /// </summary>
+        [AutoLoad]
         public SecurityPolicy Policy {
             get
             {

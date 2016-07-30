@@ -73,25 +73,9 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Concepts as identifiers for XML purposes only
         /// </summary>
         [XmlElement("concept"), JsonProperty("concept")]
-        
-        //[Bundle(nameof(Concepts))]
-        public List<Guid> ConceptsXml
-        {
-            get
-            {
-                if (this.Concepts != null)
-                    foreach (var itm in this.Concepts.Where(o => o.Key == null))
-                        if (itm.Mnemonic != null)
-                            itm.Key = EntitySource.Current.Provider.Query<Concept>(o => o.Mnemonic == itm.Mnemonic).FirstOrDefault()?.Key;
-                        else
-                            itm.Key = Guid.NewGuid();
 
-                return this.Concepts?.Select(o => o.Key.Value).ToList();
-            }
-            set
-            {
-            }
-        }
+        //[Bundle(nameof(Concepts))]
+        public List<Guid> ConceptsXml { get; set; }
 
         /// <summary>
         /// Gets the concepts in the set
@@ -99,7 +83,17 @@ namespace OpenIZ.Core.Model.DataTypes
         
         [AutoLoad]
         [XmlIgnore, JsonIgnore]
-        public List<Concept> Concepts { get; set; }
+        public List<Concept> Concepts
+        {
+            get
+            {
+                return this.ConceptsXml?.Select(o => EntitySource.Current.Get<Concept>(o) ?? new Concept() { Key = o }).ToList();
+            }
+            set
+            {
+                this.ConceptsXml = value?.Where(o => o.Key.HasValue).Select(o => o.Key.Value).ToList();
+            }
+        }
 
         /// <summary>
         /// Gets or sets the obsoletion reason

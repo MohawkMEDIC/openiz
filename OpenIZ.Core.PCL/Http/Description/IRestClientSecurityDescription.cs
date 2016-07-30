@@ -51,7 +51,7 @@ namespace OpenIZ.Core.Http.Description
         /// <summary>
         /// When true instructs the client to pre-emptively authenticate itself
         /// </summary>
-        bool PremptiveAuthentication { get; set; }
+        bool PreemptiveAuthentication { get; set; }
     }
 
 	/// <summary>

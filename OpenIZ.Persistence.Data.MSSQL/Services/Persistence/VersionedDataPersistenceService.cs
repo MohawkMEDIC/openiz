@@ -33,6 +33,7 @@ using System.ComponentModel;
 using MARC.HI.EHRS.SVC.Core.Data;
 using OpenIZ.Core.Services;
 using OpenIZ.Core;
+using OpenIZ.Core.Model.Reflection;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {

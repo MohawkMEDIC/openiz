@@ -17,6 +17,8 @@
  * User: justi
  * Date: 2016-7-18
  */
+using System.Security.Principal;
+
 namespace OpenIZ.Core.Http
 {
 	/// <summary>
@@ -34,5 +36,10 @@ namespace OpenIZ.Core.Http
 		/// </summary>
 		/// <param name="context">Context.</param>
 		Credentials Authenticate(IRestClient context);
-	}
+
+        /// <summary>
+        /// Gets credentials for the specified principal
+        /// </summary>
+        Credentials GetCredentials(IPrincipal principal);
+    }
 }

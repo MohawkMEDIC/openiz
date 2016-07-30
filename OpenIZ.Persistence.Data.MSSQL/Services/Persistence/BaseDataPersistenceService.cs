@@ -25,6 +25,8 @@ using OpenIZ.Persistence.Data.MSSQL.Data;
 using System.Security.Principal;
 using OpenIZ.Persistence.Data.MSSQL.Exceptions;
 using OpenIZ.Core;
+using OpenIZ.Core.Model.Reflection;
+using System.Linq.Expressions;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -89,6 +91,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
 			return data;
 		}
+
+        /// <summary>
+        /// Query the specified object ordering by creation time
+        /// </summary>
+        /// <returns></returns>
+        public override IQueryable<TModel> Query(ModelDataContext context, Expression<Func<TModel, bool>> query, IPrincipal principal)
+        {
+            var qresult = this.QueryInternal(context, query).OrderByDescending(o => o.CreationTime);
+            return qresult.Select(o => this.ToModelInstance(o, context, principal));
+        }
 
         /// <summary>
         /// Performs the actual obsoletion

@@ -51,7 +51,7 @@ namespace OpenIZ.Caching.Memory.Configuration
                     TypeXml = itm.Attributes["type"]?.Value,
                     MaxCacheAge = TimeSpan.Parse(itm.Attributes["maxAge"]?.Value ?? "1:0:0:0", CultureInfo.InvariantCulture).Ticks,
                     MaxCacheSize = Int32.Parse(itm.Attributes["maxSize"]?.Value ?? "50"),
-                    SeedQueries = itm.SelectNodes("./*[local-name() = 'seed']/*[local-name() = 'add']").OfType<XmlElement>().Select(o => o.Value).ToList()
+                    SeedQueries = itm.SelectNodes("./*[local-name() = 'seed']/*[local-name() = 'add']").OfType<XmlElement>().Select(o => o.InnerText).ToList()
                 });
             }
 

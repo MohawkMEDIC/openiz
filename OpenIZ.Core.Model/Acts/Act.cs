@@ -64,6 +64,7 @@ namespace OpenIZ.Core.Model.Acts
             this.Notes = new List<ActNote>();
             this.Participations = new List<ActParticipation>();
             this.Tags = new List<ActTag>();
+            this.Protocols = new List<ActProtocol>();
 
         }
         /// <summary>
@@ -350,6 +351,11 @@ namespace OpenIZ.Core.Model.Acts
         
         [AutoLoad, XmlElement("tag"), JsonProperty("tag")]
         public List<ActTag> Tags { get; set; }
+
+        /// <summary>
+        /// Identifies protocols attached to the act
+        /// </summary>
+        public List<ActProtocol> Protocols { get; set; }
 
         /// <summary>
         /// Participations

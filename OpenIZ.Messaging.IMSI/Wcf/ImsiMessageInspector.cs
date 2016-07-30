@@ -90,6 +90,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
 
             try
             {
+
                 string encodings = WebOperationContext.Current.IncomingRequest.Headers.Get("Accept-Encoding");
                 string compressionScheme = String.Empty;
 
@@ -117,6 +118,10 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 foreach (var kv in requiredHeaders)
                     if (!WebOperationContext.Current.OutgoingResponse.Headers.AllKeys.Contains(kv.Key))
                         WebOperationContext.Current.OutgoingResponse.Headers.Add(kv.Key, kv.Value);
+
+                // No reply = no compress :)
+                if (reply.IsEmpty)
+                    return;
 
                 // Finally compress
                 // Compress

@@ -32,7 +32,15 @@ namespace OpenIZ.Core.Diagnostics
 		private String m_source;
 
 		// Writers
-		private List<TraceWriter> m_writers = new List<TraceWriter>();
+		private static List<TraceWriter> m_writers = new List<TraceWriter>();
+
+        /// <summary>
+        /// Adds a writer to the trace stack
+        /// </summary>
+        public static void AddWriter(TraceWriter tw)
+        {
+            m_writers.Add(tw);
+        }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Core.Diagnostics.Logger"/> class.
@@ -56,7 +64,7 @@ namespace OpenIZ.Core.Diagnostics
 		/// </summary>
 		public void TraceEvent(System.Diagnostics.Tracing.EventLevel level, string format, params Object[] args)
 		{
-			foreach (var w in this.m_writers)
+			foreach (var w in m_writers)
 			{
 				w.TraceEvent(level, this.m_source, format, args);
 			}

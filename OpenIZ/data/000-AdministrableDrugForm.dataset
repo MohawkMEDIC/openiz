@@ -1,0 +1,440 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="HL7v3 AdministrableDrugForm Concept Set" xmlns="http://openiz.org/data">
+  <update insertIfNotExists="true">
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>3173ad32-7cd7-42c9-911f-79f564552ae1</id>
+      <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+      <name>AdministrableDrugForm</name>
+      <oid>2.16.840.1.113883.5.85</oid>
+      <authority>AdministrableDrugForm</authority>
+      <url>http://hl7.org/fhir/v3-AdministrableDrugForm</url>
+    </CodeSystem>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>041af497-7045-419f-aefa-e50fba15751d</id>
+      <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+      <mnemonic>APPFUL</mnemonic>
+      <codeSystem>3173ad32-7cd7-42c9-911f-79f564552ae1</codeSystem>
+      <name>
+        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        <language>en</language>
+        <value>applicatorful</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>6d9d2146-3b5e-446d-b0ac-db11b5b8169c</id>
+      <creationTime>2016-07-29T20:01:32.5331581+03:00</creationTime>
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>AdministrableDrugForm-Applicatorful</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>17EE5254-8C25-4ABB-B246-083FBE9AFA15</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <referenceTerm>041af497-7045-419f-aefa-e50fba15751d</referenceTerm>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>applicatorful</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>f575f6c1-3380-4313-9b1a-61fd7452660a</id>
+      <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+      <mnemonic>DROP</mnemonic>
+      <codeSystem>3173ad32-7cd7-42c9-911f-79f564552ae1</codeSystem>
+      <name>
+        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        <language>en</language>
+        <value>Drops</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>305eac0d-3679-4bf1-85be-b7a3de7687e2</id>
+      <creationTime>2016-07-29T20:01:32.5331581+03:00</creationTime>
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>AdministrableDrugForm-Drops</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>17EE5254-8C25-4ABB-B246-083FBE9AFA15</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <referenceTerm>f575f6c1-3380-4313-9b1a-61fd7452660a</referenceTerm>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Drops</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>fbeb0548-cc65-4fb5-8648-fdc770d82466</id>
+      <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+      <mnemonic>NDROP</mnemonic>
+      <codeSystem>3173ad32-7cd7-42c9-911f-79f564552ae1</codeSystem>
+      <name>
+        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        <language>en</language>
+        <value>nasal drops</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>174d7764-9a7f-45ed-9155-9665aa12ba3f</id>
+      <creationTime>2016-07-29T20:01:32.5331581+03:00</creationTime>
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>AdministrableDrugForm-NasalDrops</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>17EE5254-8C25-4ABB-B246-083FBE9AFA15</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <referenceTerm>fbeb0548-cc65-4fb5-8648-fdc770d82466</referenceTerm>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>nasal drops</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>2b8f77b7-552b-417f-aa8d-f5551f00e2b7</id>
+      <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+      <mnemonic>OPDROP</mnemonic>
+      <codeSystem>3173ad32-7cd7-42c9-911f-79f564552ae1</codeSystem>
+      <name>
+        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        <language>en</language>
+        <value>ophthalmic drops</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>5bc5706b-a2ba-4e6c-bab1-64bc4460ac40</id>
+      <creationTime>2016-07-29T20:01:32.5331581+03:00</creationTime>
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>AdministrableDrugForm-OphthalmicDrops</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>17EE5254-8C25-4ABB-B246-083FBE9AFA15</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <referenceTerm>2b8f77b7-552b-417f-aa8d-f5551f00e2b7</referenceTerm>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>ophthalmic drops</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>74cddd93-59e0-48ff-af92-8a472b54c4f2</id>
+      <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+      <mnemonic>ORDROP</mnemonic>
+      <codeSystem>3173ad32-7cd7-42c9-911f-79f564552ae1</codeSystem>
+      <name>
+        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        <language>en</language>
+        <value>oral drops</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>66cbce3a-2e77-401d-95d8-ee0361f4f076</id>
+      <creationTime>2016-07-29T20:01:32.5331581+03:00</creationTime>
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>AdministrableDrugForm-OralDrops</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>17EE5254-8C25-4ABB-B246-083FBE9AFA15</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <referenceTerm>74cddd93-59e0-48ff-af92-8a472b54c4f2</referenceTerm>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>oral drops</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>2f1c883f-2a9e-4d92-ab3c-40b8cfbe7259</id>
+      <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+      <mnemonic>OTDROP</mnemonic>
+      <codeSystem>3173ad32-7cd7-42c9-911f-79f564552ae1</codeSystem>
+      <name>
+        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        <language>en</language>
+        <value>otic drops</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>af3a5fa5-7889-45f3-8809-2294129d49c8</id>
+      <creationTime>2016-07-29T20:01:32.5331581+03:00</creationTime>
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>AdministrableDrugForm-OticDrops</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>17EE5254-8C25-4ABB-B246-083FBE9AFA15</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <referenceTerm>2f1c883f-2a9e-4d92-ab3c-40b8cfbe7259</referenceTerm>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>otic drops</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>482d3140-1241-4bde-9865-74e9e94d3917</id>
+      <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+      <mnemonic>PUFF</mnemonic>
+      <codeSystem>3173ad32-7cd7-42c9-911f-79f564552ae1</codeSystem>
+      <name>
+        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        <language>en</language>
+        <value>puff</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>7b105b84-f369-4897-a2ad-983ccb37af17</id>
+      <creationTime>2016-07-29T20:01:32.5331581+03:00</creationTime>
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>AdministrableDrugForm-Puff</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>17EE5254-8C25-4ABB-B246-083FBE9AFA15</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <referenceTerm>482d3140-1241-4bde-9865-74e9e94d3917</referenceTerm>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>puff</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>f582d87f-b000-4744-a188-c6af3693c932</id>
+      <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+      <mnemonic>SCOOP</mnemonic>
+      <codeSystem>3173ad32-7cd7-42c9-911f-79f564552ae1</codeSystem>
+      <name>
+        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        <language>en</language>
+        <value>scoops</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>11309ea3-e650-4639-8198-2a64068f7166</id>
+      <creationTime>2016-07-29T20:01:32.5331581+03:00</creationTime>
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>AdministrableDrugForm-Scoops</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>17EE5254-8C25-4ABB-B246-083FBE9AFA15</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <referenceTerm>f582d87f-b000-4744-a188-c6af3693c932</referenceTerm>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>scoops</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>2839824e-f62d-4844-9b9e-189a7ab5d81d</id>
+      <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+      <mnemonic>SPRY</mnemonic>
+      <codeSystem>3173ad32-7cd7-42c9-911f-79f564552ae1</codeSystem>
+      <name>
+        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        <language>en</language>
+        <value>sprays</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>9902267c-8f77-4233-bfd3-e6b068ab326a</id>
+      <creationTime>2016-07-29T20:01:32.5331581+03:00</creationTime>
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>AdministrableDrugForm-Injection</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>17EE5254-8C25-4ABB-B246-083FBE9AFA15</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <referenceTerm>2839824e-f62d-4844-9b9e-189a7ab5d81d</referenceTerm>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>sprays</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>3b02267c-8f77-4233-bfd3-e6b068ab326a</id>
+      <creationTime>2016-07-29T20:01:32.5331581+03:00</creationTime>
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>AdministrableDrugForm-Sprays</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>17EE5254-8C25-4ABB-B246-083FBE9AFA15</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <referenceTerm>2839824e-f62d-4844-9b9e-189a7ab5d81d</referenceTerm>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>sprays</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>3ebc783f-c3da-43e5-acf9-6bf7e84a398a</id>
+      <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+      <name>AdministrableDrugForm</name>
+      <mnemonic>AdministrableDrugForm</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.1.28</oid>
+      <url>http://openiz.org/valuset/v3-AdministrableDrugForm</url>
+      <concept>6d9d2146-3b5e-446d-b0ac-db11b5b8169c</concept>
+      <concept>305eac0d-3679-4bf1-85be-b7a3de7687e2</concept>
+      <concept>174d7764-9a7f-45ed-9155-9665aa12ba3f</concept>
+      <concept>5bc5706b-a2ba-4e6c-bab1-64bc4460ac40</concept>
+      <concept>66cbce3a-2e77-401d-95d8-ee0361f4f076</concept>
+      <concept>af3a5fa5-7889-45f3-8809-2294129d49c8</concept>
+      <concept>7b105b84-f369-4897-a2ad-983ccb37af17</concept>
+      <concept>11309ea3-e650-4639-8198-2a64068f7166</concept>
+      <concept>3b02267c-8f77-4233-bfd3-e6b068ab326a</concept>
+      <concept>9902267c-8f77-4233-bfd3-e6b068ab326a</concept>
+
+    </ConceptSet>
+  </update>
+</dataset>

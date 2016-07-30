@@ -52,6 +52,9 @@ namespace OpenIZ.Core.Model.Collection
     [XmlInclude(typeof(QuantityObservation))]
     [XmlInclude(typeof(PatientEncounter))]
     [XmlInclude(typeof(SubstanceAdministration))]
+    [XmlInclude(typeof(UserEntity))]
+    [XmlInclude(typeof(ApplicationEntity))]
+    [XmlInclude(typeof(DeviceEntity))]
     [XmlInclude(typeof(Entity))]
     [XmlInclude(typeof(Patient))]
     [XmlInclude(typeof(Provider))]
@@ -78,6 +81,20 @@ namespace OpenIZ.Core.Model.Collection
         /// Represents bundle contents
         /// </summary>
         private List<IdentifiedData> m_bundleContents = new List<IdentifiedData>();
+
+        // Modified now
+        private DateTimeOffset m_modifiedOn = DateTime.Now;
+
+        /// <summary>
+        /// Gets the time the bundle was modified
+        /// </summary>
+        public override DateTimeOffset ModifiedOn
+        {
+            get
+            {
+                return this.m_modifiedOn;
+            }
+        }
 
         /// <summary>
         /// Gets or sets items in the bundle
@@ -171,8 +188,11 @@ namespace OpenIZ.Core.Model.Collection
         /// </summary>
         public void Reconstitute()
         {
-            foreach(var itm in this.Item)
+            foreach (var itm in this.Item)
+            {
                 this.Reconstitute(itm);
+                itm.SetDelayLoad(true);
+            }
         }
         
         /// <summary>
@@ -182,7 +202,6 @@ namespace OpenIZ.Core.Model.Collection
         private void Reconstitute(IdentifiedData data)
         {
             // Prevent delay loading from EntitySource (we're doing that right now)
-            bool originalDelayLoad = data.IsDelayLoadEnabled;
             data.SetDelayLoad(false);
 
             // Iterate over properties
@@ -207,7 +226,8 @@ namespace OpenIZ.Core.Model.Collection
 
                 // Now we get the value of the key
                 var keyPi = data.GetType().GetRuntimeProperty(keyName);
-                if (keyPi == null)
+                if (keyPi == null || (keyPi.PropertyType != typeof(Guid) &&
+                    keyPi.PropertyType != typeof(Guid?)))
                     continue; // Invalid key link name
 
                 // Get the key and find a match
@@ -218,7 +238,6 @@ namespace OpenIZ.Core.Model.Collection
                 
             }
 
-            data.SetDelayLoad(originalDelayLoad);
 
         }
 
@@ -229,6 +248,7 @@ namespace OpenIZ.Core.Model.Collection
         {
             try
             {
+                currentBundle.m_modifiedOn = DateTimeOffset.Now;
                 foreach (var pi in model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<SerializationReferenceAttribute>() != null))
                 {
                     try

@@ -63,7 +63,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the security user key
         /// </summary>
-        [XmlIgnore, JsonIgnore]
+        [XmlIgnore, JsonIgnore, DataIgnore]
         [SerializationReference(nameof(SecurityUserKey))]
         public SecurityUser SecurityUser
         {

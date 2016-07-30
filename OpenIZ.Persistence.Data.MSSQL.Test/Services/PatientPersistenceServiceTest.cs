@@ -116,7 +116,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 Names = new List<EntityName>()
                 {
                     new EntityName(NameUseKeys.Legal, "Johnson", "Martha")
-                },
+                }
             };
 
             // Associate: PARENT > CHILD

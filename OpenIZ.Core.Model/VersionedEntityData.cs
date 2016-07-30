@@ -65,9 +65,22 @@ namespace OpenIZ.Core.Model
         }
 
         /// <summary>
+        /// Override the ETag
+        /// </summary>
+        public override string Tag
+        {
+            get
+            {
+                if(this.VersionKey != null)
+                    return BitConverter.ToString(this.VersionKey?.ToByteArray()).Replace("-", "");
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the previous version key
         /// </summary>
-        
+
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("previousVersion"), JsonProperty("previousVersion")]
         public virtual Guid? PreviousVersionKey

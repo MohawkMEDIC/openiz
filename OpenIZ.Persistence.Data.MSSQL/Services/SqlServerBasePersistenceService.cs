@@ -126,7 +126,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// <param name="key">Key.</param>
         internal TData Get(ModelDataContext context, Guid key, IPrincipal principal)
         {
-            return this.Query(context, o => o.Key == key, principal)?.SingleOrDefault();
+            return this.Query(context, o => o.Key == key, principal)?.FirstOrDefault();
         }
 
         /// <summary>
@@ -183,6 +183,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                         tx.Commit();
                     else
                         tx.Rollback();
+
                     this.Inserted?.Invoke(this, new PostPersistenceEventArgs<TData>(data, principal));
 
                     return data;
@@ -404,6 +405,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                         var result = postData.Results.Take(1).ToList();
                         totalCount = result.Count;
                         this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Returning {0}..{1} or {2} results", offset, offset + (count ?? 1000), totalCount);
+                        result.ForEach((o) => o.SetDelayLoad(true)); // Enable delay load for items
+
                         return result;
                     }
                     else
@@ -418,6 +421,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                         var retVal = postData.Results.AsParallel().ToList();
                         retVal.ForEach((o) => o.SetDelayLoad(true)); // Enable delay load for items
                         this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Returning {0}..{1} or {2} results", offset, offset + (count ?? 1000), totalCount);
+
                         return retVal;
                     }
 

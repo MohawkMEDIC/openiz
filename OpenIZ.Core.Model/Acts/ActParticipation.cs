@@ -35,7 +35,7 @@ namespace OpenIZ.Core.Model.Acts
     /// Associates an entity which participates in an act
     /// </summary>
     [Classifier(nameof(ParticipationRole))]
-    [XmlType(Namespace = "http://openiz.org/model", TypeName = "ActParticipation")]
+    [XmlType(Namespace = "http://openiz.org/model", TypeName = "ActParticipation"), JsonObject(nameof(ActParticipation))]
     public class ActParticipation : VersionedAssociation<Act>
     {
 
@@ -138,6 +138,22 @@ namespace OpenIZ.Core.Model.Acts
             {
                 this.m_participationRole = value;
                 this.m_participationRoleKey = value?.Key;
+            }
+        }
+
+        /// <summary>
+        /// The entity that this relationship targets
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public Act Act
+        {
+            get
+            {
+                return this.SourceEntity;
+            }
+            set
+            {
+                this.SourceEntity = value;
             }
         }
 

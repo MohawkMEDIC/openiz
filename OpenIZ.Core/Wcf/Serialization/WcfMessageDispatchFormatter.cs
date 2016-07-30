@@ -52,6 +52,8 @@ namespace OpenIZ.Core.Wcf.Serialization
         // The operation description
         private OperationDescription m_operationDescription;
 
+        private String m_version = Assembly.GetEntryAssembly().GetName().Version.ToString();
+        private String m_versionName = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "Unnamed";
         // Trace source
         private TraceSource m_traceSource = new TraceSource(OpenIzConstants.WcfTraceSourceName);
         // Known types
@@ -184,10 +186,10 @@ namespace OpenIZ.Core.Wcf.Serialization
                         using (StreamWriter sw = new StreamWriter(ms, Encoding.UTF8))
                         using (JsonWriter jsw = new JsonTextWriter(sw))
                         {
-							jsz.DateFormatHandling = DateFormatHandling.IsoDateFormat;
-							jsz.NullValueHandling = NullValueHandling.Ignore;
-							jsz.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-							jsz.TypeNameHandling = TypeNameHandling.Auto;
+                            jsz.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+                            jsz.NullValueHandling = NullValueHandling.Ignore;
+                            jsz.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                            jsz.TypeNameHandling = TypeNameHandling.Auto;
                             jsz.Converters.Add(new StringEnumConverter());
                             jsz.Serialize(jsw, result);
                             sw.Flush();
@@ -227,12 +229,14 @@ namespace OpenIZ.Core.Wcf.Serialization
                 {
                     reply = Message.CreateMessage(messageVersion, this.m_operationDescription.Messages[1].Action, new RawBodyWriter(result as Stream));
                 }
+                else
+                    reply = Message.CreateMessage(messageVersion, this.m_operationDescription.Messages[1].Action);
 
                 reply.Properties.Add(WebBodyFormatMessageProperty.Name, new WebBodyFormatMessageProperty(format));
                 //var responseProperty = (HttpResponseMessageProperty)OperationContext.Current.OutgoingMessageProperties[HttpResponseMessageProperty.Name];
                 //var responseProperty = new HttpResponseMessageProperty();
                 WebOperationContext.Current.OutgoingResponse.ContentType= contentType;
-                WebOperationContext.Current.OutgoingResponse.Headers.Add("X-PoweredBy", "OpenIZIMSI");
+                WebOperationContext.Current.OutgoingResponse.Headers.Add("X-PoweredBy", String.Format("OpenIZ {0} ({1})", m_version, m_versionName));
                 WebOperationContext.Current.OutgoingResponse.Headers.Add("X-GeneratedOn", DateTime.Now.ToString("o"));
                 //reply.Properties.Add(HttpResponseMessageProperty.Name, responseProperty);
                 // TODO: Determine best way to clear current authentication context

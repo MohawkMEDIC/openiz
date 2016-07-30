@@ -11,7 +11,14 @@
     "mnemonic": "ACTIVE"
   },
   "identifier": { "OHIPCARD": [ "12343120423" ] },
-  "relationship": { "Mother": [ "6d6dac87-5c37-4bb3-a880-2627f6144ce8" ] },
+  "relationship": {
+    "Mother": [
+      {
+        "target": { "id": "6d6dac87-5c37-4bb3-a880-2627f6144ce8" }
+      }
+
+    ]
+  },
   "telecom": { "WorkPlace": [ "mailto:will@johnson.com" ] },
   "extension": { "http://openiz.org/oiz/birthcertificate": [ null ] },
   "name": {

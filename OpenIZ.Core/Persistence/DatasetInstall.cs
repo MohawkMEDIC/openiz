@@ -91,6 +91,8 @@ namespace OpenIZ.Core.Persistence
         [XmlElement("Organization", typeof(Organization), Namespace = "http://openiz.org/model")]
         [XmlElement("Person", typeof(Person), Namespace = "http://openiz.org/model")]
         [XmlElement("Provider", typeof(Provider), Namespace = "http://openiz.org/model")]
+        [XmlElement("Material", typeof(Material), Namespace = "http://openiz.org/model")]
+        [XmlElement("ManufacturedMaterial", typeof(ManufacturedMaterial), Namespace = "http://openiz.org/model")]
         [XmlElement("Patient", typeof(Patient), Namespace = "http://openiz.org/model")]
         [XmlElement("Place", typeof(Place), Namespace = "http://openiz.org/model")]
         [XmlElement("Bundle", typeof(Bundle), Namespace = "http://openiz.org/model")]

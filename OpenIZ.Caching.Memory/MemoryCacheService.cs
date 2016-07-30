@@ -79,14 +79,7 @@ namespace OpenIZ.Caching.Memory
         /// </summary>
         public event EventHandler Stopping;
 
-        /// <summary>
-        /// Persistence event handler
-        /// </summary>
-        public void HandlePostPersistenceEvent(TransactionMode txMode, Object data)
-        {
-            if (txMode == TransactionMode.Commit)
-                MemoryCache.Current.AddUpdateEntry(data);
-        }
+       
 
         /// <summary>
         /// Start the service
@@ -118,9 +111,20 @@ namespace OpenIZ.Caching.Memory
             var timerService = ApplicationContext.Current.GetService<ITimerService>();
             if(timerService != null)
             {
-                timerService.AddJob(new CacheCleanupTimerJob(), new TimeSpan(this.m_configuration.Types.Select(o=>o.MaxCacheAge).Min()));
-                timerService.AddJob(new CacheRegulatorTimerJob(), new TimeSpan(0, 1, 0));
+                if (timerService.IsRunning)
+                {
+                    timerService.AddJob(new CacheCleanupTimerJob(), new TimeSpan(this.m_configuration.Types.Select(o => o.MaxCacheAge).Min()));
+                    timerService.AddJob(new CacheRegulatorTimerJob(), new TimeSpan(0, 1, 0));
+                }
+                else
+                    timerService.Started += (s, e) =>
+                    {
+                        timerService.AddJob(new CacheCleanupTimerJob(), new TimeSpan(this.m_configuration.Types.Select(o => o.MaxCacheAge).Min()));
+                        timerService.AddJob(new CacheRegulatorTimerJob(), new TimeSpan(0, 1, 0));
+                    };
             }
+
+
             this.Started?.Invoke(this, EventArgs.Empty);
             return true;
         }

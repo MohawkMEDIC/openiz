@@ -52,7 +52,7 @@ namespace OpenIZ.Core.Http
 					return new FormBodySerializer();
 
 				default:
-					throw new InvalidOperationException();
+					throw new ArgumentOutOfRangeException(nameof(contentType), contentType, "Not supported");
 			}
 		}
 
