@@ -66,12 +66,30 @@ namespace OpenIZ.Messaging.AMI.Client
 			return this.Client.Post<SecurityDevice, SecurityDevice>("device/create", this.Client.Accept, device);
 		}
 
-		/// <summary>
-		/// Creates a place in the IMS.
-		/// </summary>
-		/// <param name="place">The place to be created.</param>
-		/// <returns>Returns the newly created place.</returns>
-		public Place CreatePlace(Place place)
+        /// <summary>
+        /// Retrieves the specified role from the AMI
+        /// </summary>
+        public AmiCollection<SecurityRoleInfo> FindRole(Expression<Func<SecurityRole, bool>> query)
+        {
+            var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
+            return this.Client.Get<AmiCollection<SecurityRoleInfo>>("role", queryParms);
+        }
+
+        /// <summary>
+        /// Retrieves the specified role from the AMI
+        /// </summary>
+        public AmiCollection<SecurityPolicyInfo> FindPolicy(Expression<Func<SecurityPolicy, bool>> query)
+        {
+            var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
+            return this.Client.Get<AmiCollection<SecurityPolicyInfo>>("policy", queryParms);
+        }
+
+        /// <summary>
+        /// Creates a place in the IMS.
+        /// </summary>
+        /// <param name="place">The place to be created.</param>
+        /// <returns>Returns the newly created place.</returns>
+        public Place CreatePlace(Place place)
 		{
 			return this.Client.Post<Place, Place>("place/create", this.Client.Accept, place);
 		}
