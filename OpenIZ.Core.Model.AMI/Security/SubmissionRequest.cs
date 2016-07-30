@@ -14,41 +14,37 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: Nityan
- * Date: 2016-7-23
+ * User: justi
+ * Date: 2016-7-22
  */
+using System;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.AMI.Security
 {
 	/// <summary>
-	/// The reason something is revoked
+	/// Submission request
 	/// </summary>
-	[XmlType(nameof(RevokeReason), Namespace = "http://openiz.org/ami")]
-	public enum RevokeReason : uint
+	[XmlType(nameof(SubmissionRequest), Namespace = "http://openiz.org/ami")]
+	[XmlRoot(nameof(SubmissionRequest), Namespace = "http://openiz.org/ami")]
+	public class SubmissionRequest
 	{
-		[XmlEnum("UNSPECIFIED")]
-		Unspecified = 0x0,
+		/// <summary>
+		/// Gets or sets the cmc request
+		/// </summary>
+		[XmlElement("cmc")]
+		public String CmcRequest { get; set; }
 
-		[XmlEnum("KEY COMPROMISED")]
-		KeyCompromise = 0x1,
+		/// <summary>
+		/// Gets or sets the contact name
+		/// </summary>
+		[XmlElement("contact")]
+		public String AdminContactName { get; set; }
 
-		[XmlEnum("CA COMPROMISED")]
-		CaCompromise = 0x2,
-
-		[XmlEnum("AFFILIATION CHANGED")]
-		AffiliationChange = 0x3,
-
-		[XmlEnum("SUPERSEDED")]
-		Superseded = 0x4,
-
-		[XmlEnum("CESSATION OF OPERATION")]
-		CessationOfOperation = 0x5,
-
-		[XmlEnum("CERTIFICATE ON HOLD")]
-		CertificateHold = 0x6,
-
-		[XmlEnum("REINSTANTIATE")]
-		Reinstate = 0xFFFFFFFF
+		/// <summary>
+		/// Gets or sets the admin address
+		/// </summary>
+		[XmlElement("address")]
+		public String AdminAddress { get; set; }
 	}
 }

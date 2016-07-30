@@ -14,37 +14,36 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: Nityan
- * Date: 2016-7-23
+ * User: justi
+ * Date: 2016-7-22
  */
-using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.AMI.Security
 {
 	/// <summary>
-	/// Submission request
+	/// AMI collection base
 	/// </summary>
-	[XmlType(nameof(SubmissionRequest), Namespace = "http://openiz.org/ami")]
-	[XmlRoot(nameof(SubmissionRequest), Namespace = "http://openiz.org/ami")]
-	public class SubmissionRequest
+	[XmlType(Namespace = "http://openiz.org/ami")]
+	public class AmiCollection<T>
 	{
 		/// <summary>
-		/// Gets or sets the cmc request
+		/// Total collection size
 		/// </summary>
-		[XmlElement("cmc")]
-		public String CmcRequest { get; set; }
+		[XmlAttribute("size")]
+		public int Size { get; set; }
 
 		/// <summary>
-		/// Gets or sets the contact name
+		/// Total offset
 		/// </summary>
-		[XmlElement("contact")]
-		public String AdminContactName { get; set; }
+		[XmlAttribute("offset")]
+		public int Offset { get; set; }
 
 		/// <summary>
-		/// Gets or sets the admin address
+		/// Collection item
 		/// </summary>
-		[XmlElement("address")]
-		public String AdminAddress { get; set; }
+		[XmlElement("item")]
+		public List<T> CollectionItem { get; set; }
 	}
 }
