@@ -14,41 +14,36 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2016-7-22
+ * User: Nityan
+ * Date: 2016-7-23
  */
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.AMI.Security
 {
 	/// <summary>
-	/// The reason something is revoked
+	/// AMI collection base
 	/// </summary>
-	[XmlType(nameof(RevokeReason), Namespace = "http://openiz.org/ami")]
-	public enum RevokeReason : uint
+	[XmlType(Namespace = "http://openiz.org/ami")]
+	public class AmiCollection<T>
 	{
-		[XmlEnum("UNSPECIFIED")]
-		Unspecified = 0x0,
+		/// <summary>
+		/// Total collection size
+		/// </summary>
+		[XmlAttribute("size")]
+		public int Size { get; set; }
 
-		[XmlEnum("KEY COMPROMISED")]
-		KeyCompromise = 0x1,
+		/// <summary>
+		/// Total offset
+		/// </summary>
+		[XmlAttribute("offset")]
+		public int Offset { get; set; }
 
-		[XmlEnum("CA COMPROMISED")]
-		CaCompromise = 0x2,
-
-		[XmlEnum("AFFILIATION CHANGED")]
-		AffiliationChange = 0x3,
-
-		[XmlEnum("SUPERSEDED")]
-		Superseded = 0x4,
-
-		[XmlEnum("CESSATION OF OPERATION")]
-		CessationOfOperation = 0x5,
-
-		[XmlEnum("CERTIFICATE ON HOLD")]
-		CertificateHold = 0x6,
-
-		[XmlEnum("REINSTANTIATE")]
-		Reinstate = 0xFFFFFFFF
+		/// <summary>
+		/// Collection item
+		/// </summary>
+		[XmlElement("item")]
+		public List<T> CollectionItem { get; set; }
 	}
 }
