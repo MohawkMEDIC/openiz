@@ -333,5 +333,21 @@ namespace OpenIZ.Core.Model.Entities
         [XmlElement("participation"), JsonProperty("participation")]
         public List<ActParticipation> Participations { get; set; }
 
+        /// <summary>
+        /// Clean the patient of any empty "noise" elements
+        /// </summary>
+        /// <returns></returns>
+        public override IdentifiedData Clean()
+        {
+            this.Addresses.RemoveAll(o => o.Clean().IsEmpty());
+            this.Names.RemoveAll(o => o.Clean().IsEmpty());
+            this.Telecoms.RemoveAll(o => o.Clean().IsEmpty());
+            this.Tags.RemoveAll(o => o.Clean().IsEmpty());
+            this.Notes.RemoveAll(o => o.Clean().IsEmpty());
+            this.Extensions.RemoveAll(o => o.Clean().IsEmpty());
+            this.Identifiers.RemoveAll(o => o.Clean().IsEmpty());
+
+            return this;
+        }
     }
 }

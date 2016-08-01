@@ -106,7 +106,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents an external assigned identifier
     /// </summary>
     [XmlType(Namespace = "http://openiz.org/model")]
-    [Classifier(nameof(Authority)), SimpleValue(nameof(Value))] 
+    [Classifier(nameof(Authority))] 
     public abstract class IdentifierBase<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>, new()
     {
 
@@ -213,6 +213,15 @@ namespace OpenIZ.Core.Model.DataTypes
             base.Refresh();
             this.m_authority = null;
             this.m_identifierType = null;
+        }
+
+        /// <summary>
+        /// True if the identifier is empty
+        /// </summary>
+        /// <returns></returns>
+        public override bool IsEmpty()
+        {
+            return String.IsNullOrEmpty(this.Value);
         }
     }
 }

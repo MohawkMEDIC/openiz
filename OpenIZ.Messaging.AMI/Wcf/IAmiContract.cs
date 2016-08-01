@@ -18,6 +18,7 @@
  * Date: 2016-6-22
  */
 
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.AMI.Auth;
 using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Core.Model.DataTypes;
@@ -153,21 +154,21 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// Gets a list of certificates.
 		/// </summary>
 		/// <returns>Returns a list of certificates.</returns>
-		[WebGet(UriTemplate = "/certificates", BodyStyle = WebMessageBodyStyle.Bare)]
+		[WebGet(UriTemplate = "/certificate", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<X509Certificate2Info> GetCertificates();
 
 		/// <summary>
 		/// Gets a list of concepts.
 		/// </summary>
 		/// <returns>Returns a list of concepts.</returns>
-		[WebGet(UriTemplate = "/concepts", BodyStyle = WebMessageBodyStyle.Bare)]
+		[WebGet(UriTemplate = "/concept", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<Concept> GetConcepts();
 
 		/// <summary>
 		/// Gets a list of concept sets.
 		/// </summary>
 		/// <returns>Returns a list of concept sets.</returns>
-		[WebGet(UriTemplate = "/conceptsets", BodyStyle = WebMessageBodyStyle.Bare)]
+		[WebGet(UriTemplate = "/conceptset", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<ConceptSet> GetConceptSets();
 
 		/// <summary>
@@ -189,28 +190,28 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// Gets a list of submitted certificate signing requests.
 		/// </summary>
 		/// <returns>Returns a list of certificate signing requests.</returns>
-		[WebGet(UriTemplate = "/csrs", BodyStyle = WebMessageBodyStyle.Bare)]
+		[WebGet(UriTemplate = "/csr", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<SubmissionInfo> GetCsrs();
 
 		/// <summary>
 		/// Gets a list of devices.
 		/// </summary>
 		/// <returns>Returns a list of devices.</returns>
-		[WebGet(UriTemplate = "/devices", BodyStyle = WebMessageBodyStyle.Bare)]
+		[WebGet(UriTemplate = "/device", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<SecurityDevice> GetDevices();
 
 		/// <summary>
 		/// Gets a list of places.
 		/// </summary>
 		/// <returns>Returns a list of places.</returns>
-		[WebGet(UriTemplate = "/places", BodyStyle = WebMessageBodyStyle.Bare)]
+		[WebGet(UriTemplate = "/place", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<Place> GetPlaces();
 
 		/// <summary>
 		/// Gets a list of policies.
 		/// </summary>
 		/// <returns>Returns a list of policies.</returns>
-		[WebGet(UriTemplate = "/policies", BodyStyle = WebMessageBodyStyle.Bare)]
+		[WebGet(UriTemplate = "/policy", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<SecurityPolicyInfo> GetPolicies();
 
 		/// <summary>
@@ -233,7 +234,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// Gets a list of security roles.
 		/// </summary>
 		/// <returns>Returns a list of security roles.</returns>
-		[WebGet(UriTemplate = "/roles", BodyStyle = WebMessageBodyStyle.Bare)]
+		[WebGet(UriTemplate = "/role", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<SecurityRoleInfo> GetRoles();
 
 		/// <summary>
@@ -256,7 +257,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// Gets a list of security users.
 		/// </summary>
 		/// <returns>Returns a list of security users.</returns>
-		[WebGet(UriTemplate = "/users", BodyStyle = WebMessageBodyStyle.Bare)]
+		[WebGet(UriTemplate = "/user", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<SecurityUserInfo> GetUsers();
 
 		/// <summary>
@@ -300,5 +301,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the updated security user.</returns>
 		[WebInvoke(UriTemplate = "/user/update/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		SecurityUserInfo UpdateUser(string userId, SecurityUserInfo info);
+        
 	}
 }

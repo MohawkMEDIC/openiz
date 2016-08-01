@@ -129,5 +129,26 @@ namespace OpenIZ.Core.Model.Entities
             base.Refresh();
             this.m_nameUseKey = null;
         }
+
+        /// <summary>
+        /// Clean object
+        /// </summary>
+        public override IdentifiedData Clean()
+        {
+            this.Component.RemoveAll(o => String.IsNullOrEmpty(o.Value));
+            return this;
+
+        }
+
+
+        /// <summary>
+        /// True if empty
+        /// </summary>
+        /// <returns></returns>
+        public override bool IsEmpty()
+        {
+            return this.Component.Count == 0;
+        }
+
     }
 }

@@ -22,7 +22,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 	using System;
 	
 	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="OpenIZ")]
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="OpenIZ_Test")]
 	public partial class ModelDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -69,6 +69,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void InsertAssigningAuthority(AssigningAuthority instance);
     partial void UpdateAssigningAuthority(AssigningAuthority instance);
     partial void DeleteAssigningAuthority(AssigningAuthority instance);
+    partial void InsertAssigningAuthorityScope(AssigningAuthorityScope instance);
+    partial void UpdateAssigningAuthorityScope(AssigningAuthorityScope instance);
+    partial void DeleteAssigningAuthorityScope(AssigningAuthorityScope instance);
     partial void InsertCodedObservation(CodedObservation instance);
     partial void UpdateCodedObservation(CodedObservation instance);
     partial void DeleteCodedObservation(CodedObservation instance);
@@ -102,6 +105,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void InsertConceptVersion(ConceptVersion instance);
     partial void UpdateConceptVersion(ConceptVersion instance);
     partial void DeleteConceptVersion(ConceptVersion instance);
+    partial void InsertControlAct(ControlAct instance);
+    partial void UpdateControlAct(ControlAct instance);
+    partial void DeleteControlAct(ControlAct instance);
     partial void InsertDeviceEntity(DeviceEntity instance);
     partial void UpdateDeviceEntity(DeviceEntity instance);
     partial void DeleteDeviceEntity(DeviceEntity instance);
@@ -255,7 +261,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     #endregion
 		
 		public ModelDataContext() : 
-				base(global::OpenIZ.Persistence.Data.MSSQL.Properties.Settings.Default.OpenIZConnectionString2, mappingSource)
+				base(global::OpenIZ.Persistence.Data.MSSQL.Properties.Settings.Default.OpenIZ_TestConnectionString2, mappingSource)
 		{
 			OnCreated();
 		}
@@ -388,6 +394,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		public System.Data.Linq.Table<AssigningAuthorityScope> AssigningAuthorityScopes
+		{
+			get
+			{
+				return this.GetTable<AssigningAuthorityScope>();
+			}
+		}
+		
 		public System.Data.Linq.Table<CodedObservation> CodedObservations
 		{
 			get
@@ -473,6 +487,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			get
 			{
 				return this.GetTable<ConceptVersion>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ControlAct> ControlActs
+		{
+			get
+			{
+				return this.GetTable<ControlAct>();
 			}
 		}
 		
@@ -1654,7 +1676,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary ExtensionValue
 		{
 			get
@@ -3905,6 +3927,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<ActVersion> _ActVersionsReplacesVersionId;
 		
+		private EntityRef<ControlAct> _ControlAct;
+		
 		private EntityRef<Observation> _Observation;
 		
 		private EntityRef<PatientEncounter> _PatientEncounter;
@@ -3962,6 +3986,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		public ActVersion()
 		{
 			this._ActVersionsReplacesVersionId = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersionsReplacesVersionId), new Action<ActVersion>(this.detach_ActVersionsReplacesVersionId));
+			this._ControlAct = default(EntityRef<ControlAct>);
 			this._Observation = default(EntityRef<Observation>);
 			this._PatientEncounter = default(EntityRef<PatientEncounter>);
 			this._SubstanceAdministration = default(EntityRef<SubstanceAdministration>);
@@ -4308,6 +4333,35 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			set
 			{
 				this._ActVersionsReplacesVersionId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ControlAct", Storage="_ControlAct", ThisKey="ActVersionId", OtherKey="ActVersionId", IsUnique=true, IsForeignKey=false)]
+		public ControlAct ControlAct
+		{
+			get
+			{
+				return this._ControlAct.Entity;
+			}
+			set
+			{
+				ControlAct previousValue = this._ControlAct.Entity;
+				if (((previousValue != value) 
+							|| (this._ControlAct.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ControlAct.Entity = null;
+						previousValue.ActVersion = null;
+					}
+					this._ControlAct.Entity = value;
+					if ((value != null))
+					{
+						value.ActVersion = this;
+					}
+					this.SendPropertyChanged("ControlAct");
+				}
 			}
 		}
 		
@@ -4905,6 +4959,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<ActIdentifier> _ActIdentifiers;
 		
+		private EntitySet<AssigningAuthorityScope> _AssigningAuthorityScopes;
+		
 		private EntitySet<EntityIdentifier> _EntityIdentifiers;
 		
 		private EntityRef<SecurityDevice> _AssigningDevice;
@@ -4944,6 +5000,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		public AssigningAuthority()
 		{
 			this._ActIdentifiers = new EntitySet<ActIdentifier>(new Action<ActIdentifier>(this.attach_ActIdentifiers), new Action<ActIdentifier>(this.detach_ActIdentifiers));
+			this._AssigningAuthorityScopes = new EntitySet<AssigningAuthorityScope>(new Action<AssigningAuthorityScope>(this.attach_AssigningAuthorityScopes), new Action<AssigningAuthorityScope>(this.detach_AssigningAuthorityScopes));
 			this._EntityIdentifiers = new EntitySet<EntityIdentifier>(new Action<EntityIdentifier>(this.attach_EntityIdentifiers), new Action<EntityIdentifier>(this.detach_EntityIdentifiers));
 			this._AssigningDevice = default(EntityRef<SecurityDevice>);
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
@@ -5196,6 +5253,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AssigningAuthority_AssigningAuthorityScope", Storage="_AssigningAuthorityScopes", ThisKey="AssigningAuthorityId", OtherKey="AssigningAuthorityId")]
+		public EntitySet<AssigningAuthorityScope> AssigningAuthorityScopes
+		{
+			get
+			{
+				return this._AssigningAuthorityScopes;
+			}
+			set
+			{
+				this._AssigningAuthorityScopes.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AssigningAuthority_EntityIdentifier", Storage="_EntityIdentifiers", ThisKey="AssigningAuthorityId", OtherKey="AssigningAuthorityId")]
 		public EntitySet<EntityIdentifier> EntityIdentifiers
 		{
@@ -5343,6 +5413,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			entity.AssigningAuthority = null;
 		}
 		
+		private void attach_AssigningAuthorityScopes(AssigningAuthorityScope entity)
+		{
+			this.SendPropertyChanging();
+			entity.AssigningAuthority = this;
+		}
+		
+		private void detach_AssigningAuthorityScopes(AssigningAuthorityScope entity)
+		{
+			this.SendPropertyChanging();
+			entity.AssigningAuthority = null;
+		}
+		
 		private void attach_EntityIdentifiers(EntityIdentifier entity)
 		{
 			this.SendPropertyChanging();
@@ -5353,6 +5435,174 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this.SendPropertyChanging();
 			entity.AssigningAuthority = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AssigningAuthorityScope")]
+	public partial class AssigningAuthorityScope : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _AssigningAuthorityId;
+		
+		private System.Guid _ScopeConceptId;
+		
+		private EntityRef<AssigningAuthority> _AssigningAuthority;
+		
+		private EntityRef<Concept> _ScopeConcept;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnAssigningAuthorityIdChanging(System.Guid value);
+    partial void OnAssigningAuthorityIdChanged();
+    partial void OnScopeConceptIdChanging(System.Guid value);
+    partial void OnScopeConceptIdChanged();
+    #endregion
+		
+		public AssigningAuthorityScope()
+		{
+			this._AssigningAuthority = default(EntityRef<AssigningAuthority>);
+			this._ScopeConcept = default(EntityRef<Concept>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AssigningAuthorityId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		public System.Guid AssigningAuthorityId
+		{
+			get
+			{
+				return this._AssigningAuthorityId;
+			}
+			set
+			{
+				if ((this._AssigningAuthorityId != value))
+				{
+					if (this._AssigningAuthority.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAssigningAuthorityIdChanging(value);
+					this.SendPropertyChanging();
+					this._AssigningAuthorityId = value;
+					this.SendPropertyChanged("AssigningAuthorityId");
+					this.OnAssigningAuthorityIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ScopeConceptId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		public System.Guid ScopeConceptId
+		{
+			get
+			{
+				return this._ScopeConceptId;
+			}
+			set
+			{
+				if ((this._ScopeConceptId != value))
+				{
+					if (this._ScopeConcept.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnScopeConceptIdChanging(value);
+					this.SendPropertyChanging();
+					this._ScopeConceptId = value;
+					this.SendPropertyChanged("ScopeConceptId");
+					this.OnScopeConceptIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AssigningAuthority_AssigningAuthorityScope", Storage="_AssigningAuthority", ThisKey="AssigningAuthorityId", OtherKey="AssigningAuthorityId", IsForeignKey=true)]
+		public AssigningAuthority AssigningAuthority
+		{
+			get
+			{
+				return this._AssigningAuthority.Entity;
+			}
+			set
+			{
+				AssigningAuthority previousValue = this._AssigningAuthority.Entity;
+				if (((previousValue != value) 
+							|| (this._AssigningAuthority.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AssigningAuthority.Entity = null;
+						previousValue.AssigningAuthorityScopes.Remove(this);
+					}
+					this._AssigningAuthority.Entity = value;
+					if ((value != null))
+					{
+						value.AssigningAuthorityScopes.Add(this);
+						this._AssigningAuthorityId = value.AssigningAuthorityId;
+					}
+					else
+					{
+						this._AssigningAuthorityId = default(System.Guid);
+					}
+					this.SendPropertyChanged("AssigningAuthority");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_AssigningAuthorityScope", Storage="_ScopeConcept", ThisKey="ScopeConceptId", OtherKey="ConceptId", IsForeignKey=true)]
+		public Concept ScopeConcept
+		{
+			get
+			{
+				return this._ScopeConcept.Entity;
+			}
+			set
+			{
+				Concept previousValue = this._ScopeConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._ScopeConcept.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ScopeConcept.Entity = null;
+						previousValue.AssigningAuthorityScopesScopeConceptId.Remove(this);
+					}
+					this._ScopeConcept.Entity = value;
+					if ((value != null))
+					{
+						value.AssigningAuthorityScopesScopeConceptId.Add(this);
+						this._ScopeConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._ScopeConceptId = default(System.Guid);
+					}
+					this.SendPropertyChanged("ScopeConcept");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 	}
 	
@@ -6071,6 +6321,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<ActVersion> _ActVersionsTypeConceptId;
 		
+		private EntitySet<AssigningAuthorityScope> _AssigningAuthorityScopesScopeConceptId;
+		
 		private EntitySet<CodedObservation> _CodedObservationsValueConceptId;
 		
 		private EntitySet<ConceptName> _ConceptNames;
@@ -6153,6 +6405,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._ActRelationshipsRelationshipTypeConceptId = new EntitySet<ActRelationship>(new Action<ActRelationship>(this.attach_ActRelationshipsRelationshipTypeConceptId), new Action<ActRelationship>(this.detach_ActRelationshipsRelationshipTypeConceptId));
 			this._ActVersionsStatusConceptId = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersionsStatusConceptId), new Action<ActVersion>(this.detach_ActVersionsStatusConceptId));
 			this._ActVersionsTypeConceptId = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersionsTypeConceptId), new Action<ActVersion>(this.detach_ActVersionsTypeConceptId));
+			this._AssigningAuthorityScopesScopeConceptId = new EntitySet<AssigningAuthorityScope>(new Action<AssigningAuthorityScope>(this.attach_AssigningAuthorityScopesScopeConceptId), new Action<AssigningAuthorityScope>(this.detach_AssigningAuthorityScopesScopeConceptId));
 			this._CodedObservationsValueConceptId = new EntitySet<CodedObservation>(new Action<CodedObservation>(this.attach_CodedObservationsValueConceptId), new Action<CodedObservation>(this.detach_CodedObservationsValueConceptId));
 			this._ConceptNames = new EntitySet<ConceptName>(new Action<ConceptName>(this.attach_ConceptNames), new Action<ConceptName>(this.detach_ConceptNames));
 			this._ConceptReferenceTerms = new EntitySet<ConceptReferenceTerm>(new Action<ConceptReferenceTerm>(this.attach_ConceptReferenceTerms), new Action<ConceptReferenceTerm>(this.detach_ConceptReferenceTerms));
@@ -6303,6 +6556,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			set
 			{
 				this._ActVersionsTypeConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_AssigningAuthorityScope", Storage="_AssigningAuthorityScopesScopeConceptId", ThisKey="ConceptId", OtherKey="ScopeConceptId")]
+		public EntitySet<AssigningAuthorityScope> AssigningAuthorityScopesScopeConceptId
+		{
+			get
+			{
+				return this._AssigningAuthorityScopesScopeConceptId;
+			}
+			set
+			{
+				this._AssigningAuthorityScopesScopeConceptId.Assign(value);
 			}
 		}
 		
@@ -6812,6 +7078,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this.SendPropertyChanging();
 			entity.TypeConcept = null;
+		}
+		
+		private void attach_AssigningAuthorityScopesScopeConceptId(AssigningAuthorityScope entity)
+		{
+			this.SendPropertyChanging();
+			entity.ScopeConcept = this;
+		}
+		
+		private void detach_AssigningAuthorityScopesScopeConceptId(AssigningAuthorityScope entity)
+		{
+			this.SendPropertyChanging();
+			entity.ScopeConcept = null;
 		}
 		
 		private void attach_CodedObservationsValueConceptId(CodedObservation entity)
@@ -10180,6 +10458,109 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ControlAct")]
+	public partial class ControlAct : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _ActVersionId;
+		
+		private EntityRef<ActVersion> _ActVersion;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnActVersionIdChanging(System.Guid value);
+    partial void OnActVersionIdChanged();
+    #endregion
+		
+		public ControlAct()
+		{
+			this._ActVersion = default(EntityRef<ActVersion>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		public System.Guid ActVersionId
+		{
+			get
+			{
+				return this._ActVersionId;
+			}
+			set
+			{
+				if ((this._ActVersionId != value))
+				{
+					if (this._ActVersion.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnActVersionIdChanging(value);
+					this.SendPropertyChanging();
+					this._ActVersionId = value;
+					this.SendPropertyChanged("ActVersionId");
+					this.OnActVersionIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ControlAct", Storage="_ActVersion", ThisKey="ActVersionId", OtherKey="ActVersionId", IsForeignKey=true)]
+		public ActVersion ActVersion
+		{
+			get
+			{
+				return this._ActVersion.Entity;
+			}
+			set
+			{
+				ActVersion previousValue = this._ActVersion.Entity;
+				if (((previousValue != value) 
+							|| (this._ActVersion.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ActVersion.Entity = null;
+						previousValue.ControlAct = null;
+					}
+					this._ActVersion.Entity = value;
+					if ((value != null))
+					{
+						value.ControlAct = this;
+						this._ActVersionId = value.ActVersionId;
+					}
+					else
+					{
+						this._ActVersionId = default(System.Guid);
+					}
+					this.SendPropertyChanged("ActVersion");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.DeviceEntity")]
 	public partial class DeviceEntity : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -12079,7 +12460,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary ExtensionValue
 		{
 			get
@@ -13552,7 +13933,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
 		public System.Guid CreatedBy
 		{
 			get
@@ -14928,7 +15309,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(128) NOT NULL", CanBeNull=false)]
 		public string Name
 		{
 			get

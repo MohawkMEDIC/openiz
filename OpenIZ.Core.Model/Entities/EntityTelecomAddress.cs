@@ -74,6 +74,15 @@ namespace OpenIZ.Core.Model.Entities
         }
 
         /// <summary>
+        /// Empty
+        /// </summary>
+        /// <returns></returns>
+        public override bool IsEmpty()
+        {
+            return String.IsNullOrEmpty(this.Value);
+        }
+
+        /// <summary>
         /// Gets or sets the name use
         /// </summary>
         [SerializationReference(nameof(AddressUseKey)), AutoLoad]

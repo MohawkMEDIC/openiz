@@ -125,6 +125,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\000-RouteOfAdministration.dataset">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </None>
     <Content Include="Data\OpenIZ.mdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -132,10 +136,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <DependentUpon>OpenIZ.mdf</DependentUpon>
     </Content>
-    <None Include="Data\000-RouteOfAdministration.dataset">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
     <Content Include="OpenIZ.en.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

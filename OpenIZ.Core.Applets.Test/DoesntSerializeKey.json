@@ -1,0 +1,920 @@
+﻿{
+	"$type": "Patient",
+	"dateOfBirth": "2016-07-30T17:47:18.541Z",
+	"classConcept": "bacd9c6f-3fa9-481e-9636-37457962804d",
+	"determinerConcept": "f29f08de-78a7-4a5e-aeaf-7b545ba19a09",
+	"determinerConceptModel": {
+		"$type": "Concept",
+		"isReadonly": true,
+		"mnemonic": "Specific",
+		"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+		"statusConceptModel": {
+			"$type": "Concept",
+			"isReadonly": true,
+			"mnemonic": "ACTIVE",
+			"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+			"statusConceptModel": null,
+			"conceptClass": "54b93182-fc19-47a2-82c6-089fd70a4f45",
+			"conceptClassModel": {
+				"$type": "ConceptClass",
+				"name": "Status",
+				"mnemonic": "Status",
+				"creationTime": "0001-01-01T00:00:00.000Z",
+				"id": "54b93182-fc19-47a2-82c6-089fd70a4f45"
+			},
+			"conceptSet": ["c7578340-a8ff-4d7d-8105-581016324e68",
+			"de358951-24dc-48dc-8185-f10b7ea4dcd1",
+			"93a48f6a-6808-4c70-83a2-d02178c2a883",
+			"aae906aa-27b3-4cdb-aff1-f08b0fd31e59"],
+			"previousVersion": "79e3833b-3e56-e611-af32-448500e4678f",
+			"previousVersionModel": null,
+			"version": "79e3833b-3e56-e611-af32-448500e4678f",
+			"creationTime": "2016-07-30T13:13:17.783Z",
+			"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+			"id": "c8064cbd-fa06-4530-b430-1a52f1530c27"
+		},
+		"conceptClass": "0d6b3439-c9be-4480-af39-eeb457c052d0",
+		"conceptClassModel": {
+			"$type": "ConceptClass",
+			"name": "Other Classification",
+			"mnemonic": "Other",
+			"creationTime": "0001-01-01T00:00:00.000Z",
+			"id": "0d6b3439-c9be-4480-af39-eeb457c052d0"
+		},
+		"name": {
+			"en": "specific"
+		},
+		"conceptSet": ["effc9f86-56e2-4920-a75a-fec310aa1430"],
+		"version": "e5e3833b-3e56-e611-af32-448500e4678f",
+		"creationTime": "2016-07-30T13:13:18.278Z",
+		"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+		"id": "f29f08de-78a7-4a5e-aeaf-7b545ba19a09"
+	},
+	"identifier": {
+		"$other": {
+			"$type": "EntityIdentifier"
+		}
+	},
+	"relationship": {
+		"Mother": {
+			"$type": "EntityRelationship",
+			"targetModel": {
+				"$type": "Person",
+				"classConcept": "9de2a846-ddf2-4ebc-902e-84508c5089ea",
+				"determinerConcept": "f29f08de-78a7-4a5e-aeaf-7b545ba19a09",
+				"determinerConceptModel": {
+					"$type": "Concept",
+					"isReadonly": true,
+					"mnemonic": "Specific",
+					"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+					"statusConceptModel": {
+						"$type": "Concept",
+						"isReadonly": true,
+						"mnemonic": "ACTIVE",
+						"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+						"statusConceptModel": null,
+						"conceptClass": "54b93182-fc19-47a2-82c6-089fd70a4f45",
+						"conceptClassModel": {
+							"$type": "ConceptClass",
+							"name": "Status",
+							"mnemonic": "Status",
+							"creationTime": "0001-01-01T00:00:00.000Z",
+							"id": "54b93182-fc19-47a2-82c6-089fd70a4f45"
+						},
+						"conceptSet": ["c7578340-a8ff-4d7d-8105-581016324e68",
+						"de358951-24dc-48dc-8185-f10b7ea4dcd1",
+						"93a48f6a-6808-4c70-83a2-d02178c2a883",
+						"aae906aa-27b3-4cdb-aff1-f08b0fd31e59"],
+						"previousVersion": "79e3833b-3e56-e611-af32-448500e4678f",
+						"previousVersionModel": null,
+						"version": "79e3833b-3e56-e611-af32-448500e4678f",
+						"creationTime": "2016-07-30T13:13:17.783Z",
+						"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+						"id": "c8064cbd-fa06-4530-b430-1a52f1530c27"
+					},
+					"conceptClass": "0d6b3439-c9be-4480-af39-eeb457c052d0",
+					"conceptClassModel": {
+						"$type": "ConceptClass",
+						"name": "Other Classification",
+						"mnemonic": "Other",
+						"creationTime": "0001-01-01T00:00:00.000Z",
+						"id": "0d6b3439-c9be-4480-af39-eeb457c052d0"
+					},
+					"name": {
+						"en": "specific"
+					},
+					"conceptSet": ["effc9f86-56e2-4920-a75a-fec310aa1430"],
+					"version": "e5e3833b-3e56-e611-af32-448500e4678f",
+					"creationTime": "2016-07-30T13:13:18.278Z",
+					"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+					"id": "f29f08de-78a7-4a5e-aeaf-7b545ba19a09"
+				},
+				"identifier": {
+					"$other": {
+						"$type": "EntityIdentifier",
+						"value": "P"
+					}
+				},
+				"telecom": {
+					"$other": {
+						"$type": "EntityTelecomAddress",
+						"use": "00000000-0000-0000-0000-000000000000",
+						"value": "P"
+					}
+				},
+				"name": {
+					"OfficialRecord": {
+						"$type": "EntityName",
+						"use": "1ec9583a-b019-4baa-b856-b99caf368656",
+						"component": {
+							"Family": "P",
+							"Given": ["P",
+							"P"]
+						}
+					}
+				},
+				"creationTime": "0001-01-01T00:00:00.000Z"
+			},
+			"relationshipType": "29ff64e5-b564-411a-92c7-6818c02a9e48",
+			"inversionInd": false
+		},
+		"$other": {
+			"$type": "EntityRelationship",
+			"targetModel": {
+				"$type": "Person",
+				"classConcept": "9de2a846-ddf2-4ebc-902e-84508c5089ea",
+				"determinerConcept": "f29f08de-78a7-4a5e-aeaf-7b545ba19a09",
+				"determinerConceptModel": {
+					"$type": "Concept",
+					"isReadonly": true,
+					"mnemonic": "Specific",
+					"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+					"statusConceptModel": {
+						"$type": "Concept",
+						"isReadonly": true,
+						"mnemonic": "ACTIVE",
+						"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+						"statusConceptModel": null,
+						"conceptClass": "54b93182-fc19-47a2-82c6-089fd70a4f45",
+						"conceptClassModel": {
+							"$type": "ConceptClass",
+							"name": "Status",
+							"mnemonic": "Status",
+							"creationTime": "0001-01-01T00:00:00.000Z",
+							"id": "54b93182-fc19-47a2-82c6-089fd70a4f45"
+						},
+						"conceptSet": ["c7578340-a8ff-4d7d-8105-581016324e68",
+						"de358951-24dc-48dc-8185-f10b7ea4dcd1",
+						"93a48f6a-6808-4c70-83a2-d02178c2a883",
+						"aae906aa-27b3-4cdb-aff1-f08b0fd31e59"],
+						"previousVersion": "79e3833b-3e56-e611-af32-448500e4678f",
+						"previousVersionModel": null,
+						"version": "79e3833b-3e56-e611-af32-448500e4678f",
+						"creationTime": "2016-07-30T13:13:17.783Z",
+						"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+						"id": "c8064cbd-fa06-4530-b430-1a52f1530c27"
+					},
+					"conceptClass": "0d6b3439-c9be-4480-af39-eeb457c052d0",
+					"conceptClassModel": {
+						"$type": "ConceptClass",
+						"name": "Other Classification",
+						"mnemonic": "Other",
+						"creationTime": "0001-01-01T00:00:00.000Z",
+						"id": "0d6b3439-c9be-4480-af39-eeb457c052d0"
+					},
+					"name": {
+						"en": "specific"
+					},
+					"conceptSet": ["effc9f86-56e2-4920-a75a-fec310aa1430"],
+					"version": "e5e3833b-3e56-e611-af32-448500e4678f",
+					"creationTime": "2016-07-30T13:13:18.278Z",
+					"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+					"id": "f29f08de-78a7-4a5e-aeaf-7b545ba19a09"
+				},
+				"identifier": {
+					"$other": {
+						"$type": "EntityIdentifier",
+						"value": "P"
+					}
+				},
+				"telecom": {
+					"$other": {
+						"$type": "EntityTelecomAddress",
+						"use": "00000000-0000-0000-0000-000000000000",
+						"value": "P"
+					}
+				},
+				"name": {
+					"OfficialRecord": {
+						"$type": "EntityName",
+						"use": "1ec9583a-b019-4baa-b856-b99caf368656",
+						"component": {
+							"Family": "P",
+							"Given": ["P",
+							"P"]
+						}
+					}
+				},
+				"creationTime": "0001-01-01T00:00:00.000Z"
+			},
+			"inversionInd": false
+		},
+		"DedicatedServiceDeliveryLocation": {
+			"$type": "EntityRelationship",
+			"target": "d0f4a878-13cb-4509-9b4f-80b2c1548d2b",
+			"targetModel": {
+				"$type": "Entity",
+				"classConcept": "ff34dfa7-c6d3-4f8b-bc9f-14bcdc13ba6c",
+				"determinerConcept": "f29f08de-78a7-4a5e-aeaf-7b545ba19a09",
+				"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+				"typeConcept": "339b8fdd-ac29-4c89-9a9e-0ebe21d52b16",
+				"determinerConceptModel": {
+					"$type": "Concept",
+					"isReadonly": true,
+					"mnemonic": "Specific",
+					"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+					"statusConceptModel": {
+						"$type": "Concept",
+						"isReadonly": true,
+						"mnemonic": "ACTIVE",
+						"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+						"statusConceptModel": null,
+						"conceptClass": "54b93182-fc19-47a2-82c6-089fd70a4f45",
+						"conceptClassModel": {
+							"$type": "ConceptClass",
+							"name": "Status",
+							"mnemonic": "Status",
+							"creationTime": "0001-01-01T00:00:00.000Z",
+							"id": "54b93182-fc19-47a2-82c6-089fd70a4f45"
+						},
+						"conceptSet": ["c7578340-a8ff-4d7d-8105-581016324e68",
+						"de358951-24dc-48dc-8185-f10b7ea4dcd1",
+						"93a48f6a-6808-4c70-83a2-d02178c2a883",
+						"aae906aa-27b3-4cdb-aff1-f08b0fd31e59"],
+						"previousVersion": "79e3833b-3e56-e611-af32-448500e4678f",
+						"previousVersionModel": null,
+						"version": "79e3833b-3e56-e611-af32-448500e4678f",
+						"creationTime": "2016-07-30T13:13:17.783Z",
+						"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+						"id": "c8064cbd-fa06-4530-b430-1a52f1530c27"
+					},
+					"conceptClass": "0d6b3439-c9be-4480-af39-eeb457c052d0",
+					"conceptClassModel": {
+						"$type": "ConceptClass",
+						"name": "Other Classification",
+						"mnemonic": "Other",
+						"creationTime": "0001-01-01T00:00:00.000Z",
+						"id": "0d6b3439-c9be-4480-af39-eeb457c052d0"
+					},
+					"name": {
+						"en": "specific"
+					},
+					"conceptSet": ["effc9f86-56e2-4920-a75a-fec310aa1430"],
+					"version": "e5e3833b-3e56-e611-af32-448500e4678f",
+					"creationTime": "2016-07-30T13:13:18.278Z",
+					"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+					"id": "f29f08de-78a7-4a5e-aeaf-7b545ba19a09"
+				},
+				"statusConceptModel": {
+					"$type": "Concept",
+					"isReadonly": true,
+					"mnemonic": "ACTIVE",
+					"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+					"statusConceptModel": null,
+					"conceptClass": "54b93182-fc19-47a2-82c6-089fd70a4f45",
+					"conceptClassModel": {
+						"$type": "ConceptClass",
+						"name": "Status",
+						"mnemonic": "Status",
+						"creationTime": "0001-01-01T00:00:00.000Z",
+						"id": "54b93182-fc19-47a2-82c6-089fd70a4f45"
+					},
+					"conceptSet": ["c7578340-a8ff-4d7d-8105-581016324e68",
+					"de358951-24dc-48dc-8185-f10b7ea4dcd1",
+					"93a48f6a-6808-4c70-83a2-d02178c2a883",
+					"aae906aa-27b3-4cdb-aff1-f08b0fd31e59"],
+					"previousVersion": "79e3833b-3e56-e611-af32-448500e4678f",
+					"previousVersionModel": null,
+					"version": "79e3833b-3e56-e611-af32-448500e4678f",
+					"creationTime": "2016-07-30T13:13:17.783Z",
+					"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+					"id": "c8064cbd-fa06-4530-b430-1a52f1530c27"
+				},
+				"typeConceptModel": {
+					"$type": "Concept",
+					"isReadonly": false,
+					"mnemonic": "Facility-HealthCenter",
+					"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+					"statusConceptModel": {
+						"$type": "Concept",
+						"isReadonly": true,
+						"mnemonic": "ACTIVE",
+						"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+						"statusConceptModel": null,
+						"conceptClass": "54b93182-fc19-47a2-82c6-089fd70a4f45",
+						"conceptClassModel": {
+							"$type": "ConceptClass",
+							"name": "Status",
+							"mnemonic": "Status",
+							"creationTime": "0001-01-01T00:00:00.000Z",
+							"id": "54b93182-fc19-47a2-82c6-089fd70a4f45"
+						},
+						"conceptSet": ["c7578340-a8ff-4d7d-8105-581016324e68",
+						"de358951-24dc-48dc-8185-f10b7ea4dcd1",
+						"93a48f6a-6808-4c70-83a2-d02178c2a883",
+						"aae906aa-27b3-4cdb-aff1-f08b0fd31e59"],
+						"previousVersion": "79e3833b-3e56-e611-af32-448500e4678f",
+						"previousVersionModel": null,
+						"version": "79e3833b-3e56-e611-af32-448500e4678f",
+						"creationTime": "2016-07-30T13:13:17.783Z",
+						"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+						"id": "c8064cbd-fa06-4530-b430-1a52f1530c27"
+					},
+					"conceptClass": "0d6b3439-c9be-4480-af39-eeb457c052d0",
+					"conceptClassModel": {
+						"$type": "ConceptClass",
+						"name": "Other Classification",
+						"mnemonic": "Other",
+						"creationTime": "0001-01-01T00:00:00.000Z",
+						"id": "0d6b3439-c9be-4480-af39-eeb457c052d0"
+					},
+					"name": {
+						"en": "Health Center"
+					},
+					"previousVersion": "76a57a73-e47a-48dc-a2c7-f43b6e28aeaa",
+					"previousVersionModel": null,
+					"version": "76a57a73-e47a-48dc-a2c7-f43b6e28aeaa",
+					"creationTime": "2016-07-30T13:28:58.909Z",
+					"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+					"id": "339b8fdd-ac29-4c89-9a9e-0ebe21d52b16"
+				},
+				"identifier": {
+					"TZ_FRID": "urn:uuid:479A6D76-0139-3355-873F-97512EB9F136",
+					"TIIS_FACID": "16818"
+				},
+				"relationship": {
+					"Parent": {
+						"$type": "EntityRelationship",
+						"target": "bb21594a-d546-4e6f-8111-e4a2978a4b80",
+						"targetModel": {
+							"$type": "Entity",
+							"classConcept": "ff34dfa7-c6d3-4f8b-bc9f-14bcdc13ba6c",
+							"determinerConcept": "f29f08de-78a7-4a5e-aeaf-7b545ba19a09",
+							"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+							"typeConcept": "5f10a0a1-2bbf-4254-98f8-595ac5b3233c",
+							"determinerConceptModel": {
+								"$type": "Concept",
+								"isReadonly": true,
+								"mnemonic": "Specific",
+								"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+								"statusConceptModel": {
+									"$type": "Concept",
+									"isReadonly": true,
+									"mnemonic": "ACTIVE",
+									"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+									"statusConceptModel": null,
+									"conceptClass": "54b93182-fc19-47a2-82c6-089fd70a4f45",
+									"conceptClassModel": {
+										"$type": "ConceptClass",
+										"name": "Status",
+										"mnemonic": "Status",
+										"creationTime": "0001-01-01T00:00:00.000Z",
+										"id": "54b93182-fc19-47a2-82c6-089fd70a4f45"
+									},
+									"conceptSet": ["c7578340-a8ff-4d7d-8105-581016324e68",
+									"de358951-24dc-48dc-8185-f10b7ea4dcd1",
+									"93a48f6a-6808-4c70-83a2-d02178c2a883",
+									"aae906aa-27b3-4cdb-aff1-f08b0fd31e59"],
+									"previousVersion": "79e3833b-3e56-e611-af32-448500e4678f",
+									"previousVersionModel": null,
+									"version": "79e3833b-3e56-e611-af32-448500e4678f",
+									"creationTime": "2016-07-30T13:13:17.783Z",
+									"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+									"id": "c8064cbd-fa06-4530-b430-1a52f1530c27"
+								},
+								"conceptClass": "0d6b3439-c9be-4480-af39-eeb457c052d0",
+								"conceptClassModel": {
+									"$type": "ConceptClass",
+									"name": "Other Classification",
+									"mnemonic": "Other",
+									"creationTime": "0001-01-01T00:00:00.000Z",
+									"id": "0d6b3439-c9be-4480-af39-eeb457c052d0"
+								},
+								"name": {
+									"en": "specific"
+								},
+								"conceptSet": ["effc9f86-56e2-4920-a75a-fec310aa1430"],
+								"version": "e5e3833b-3e56-e611-af32-448500e4678f",
+								"creationTime": "2016-07-30T13:13:18.278Z",
+								"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+								"id": "f29f08de-78a7-4a5e-aeaf-7b545ba19a09"
+							},
+							"statusConceptModel": {
+								"$type": "Concept",
+								"isReadonly": true,
+								"mnemonic": "ACTIVE",
+								"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+								"statusConceptModel": null,
+								"conceptClass": "54b93182-fc19-47a2-82c6-089fd70a4f45",
+								"conceptClassModel": {
+									"$type": "ConceptClass",
+									"name": "Status",
+									"mnemonic": "Status",
+									"creationTime": "0001-01-01T00:00:00.000Z",
+									"id": "54b93182-fc19-47a2-82c6-089fd70a4f45"
+								},
+								"conceptSet": ["c7578340-a8ff-4d7d-8105-581016324e68",
+								"de358951-24dc-48dc-8185-f10b7ea4dcd1",
+								"93a48f6a-6808-4c70-83a2-d02178c2a883",
+								"aae906aa-27b3-4cdb-aff1-f08b0fd31e59"],
+								"previousVersion": "79e3833b-3e56-e611-af32-448500e4678f",
+								"previousVersionModel": null,
+								"version": "79e3833b-3e56-e611-af32-448500e4678f",
+								"creationTime": "2016-07-30T13:13:17.783Z",
+								"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+								"id": "c8064cbd-fa06-4530-b430-1a52f1530c27"
+							},
+							"typeConceptModel": {
+								"$type": "Concept",
+								"isReadonly": false,
+								"mnemonic": "Facility-District",
+								"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+								"statusConceptModel": {
+									"$type": "Concept",
+									"isReadonly": true,
+									"mnemonic": "ACTIVE",
+									"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+									"statusConceptModel": null,
+									"conceptClass": "54b93182-fc19-47a2-82c6-089fd70a4f45",
+									"conceptClassModel": {
+										"$type": "ConceptClass",
+										"name": "Status",
+										"mnemonic": "Status",
+										"creationTime": "0001-01-01T00:00:00.000Z",
+										"id": "54b93182-fc19-47a2-82c6-089fd70a4f45"
+									},
+									"conceptSet": ["c7578340-a8ff-4d7d-8105-581016324e68",
+									"de358951-24dc-48dc-8185-f10b7ea4dcd1",
+									"93a48f6a-6808-4c70-83a2-d02178c2a883",
+									"aae906aa-27b3-4cdb-aff1-f08b0fd31e59"],
+									"previousVersion": "79e3833b-3e56-e611-af32-448500e4678f",
+									"previousVersionModel": null,
+									"version": "79e3833b-3e56-e611-af32-448500e4678f",
+									"creationTime": "2016-07-30T13:13:17.783Z",
+									"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+									"id": "c8064cbd-fa06-4530-b430-1a52f1530c27"
+								},
+								"conceptClass": "0d6b3439-c9be-4480-af39-eeb457c052d0",
+								"conceptClassModel": {
+									"$type": "ConceptClass",
+									"name": "Other Classification",
+									"mnemonic": "Other",
+									"creationTime": "0001-01-01T00:00:00.000Z",
+									"id": "0d6b3439-c9be-4480-af39-eeb457c052d0"
+								},
+								"name": {
+									"en": "District"
+								},
+								"previousVersion": "bf8febe7-6346-4e5e-b0a8-517d98d444f7",
+								"previousVersionModel": null,
+								"version": "bf8febe7-6346-4e5e-b0a8-517d98d444f7",
+								"creationTime": "2016-07-30T13:28:58.713Z",
+								"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+								"id": "5f10a0a1-2bbf-4254-98f8-595ac5b3233c"
+							},
+							"identifier": {
+								"TIIS_FACID": "12610",
+								"TZ_FRID": "urn:uuid:AE3D4B98-E037-36D0-83EB-FE4382E81F90"
+							},
+							"relationship": {
+								"Parent": {
+									"$type": "EntityRelationship",
+									"target": "60fc68a6-897a-4b0d-8390-bc13b25b707f",
+									"targetModel": {
+										"$type": "Entity",
+										"classConcept": "ff34dfa7-c6d3-4f8b-bc9f-14bcdc13ba6c",
+										"determinerConcept": "f29f08de-78a7-4a5e-aeaf-7b545ba19a09",
+										"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+										"typeConcept": "d79ca638-090d-40db-989d-9c181353c7b5",
+										"determinerConceptModel": {
+											"$type": "Concept",
+											"isReadonly": true,
+											"mnemonic": "Specific",
+											"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+											"statusConceptModel": {
+												"$type": "Concept",
+												"isReadonly": true,
+												"mnemonic": "ACTIVE",
+												"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+												"statusConceptModel": null,
+												"conceptClass": "54b93182-fc19-47a2-82c6-089fd70a4f45",
+												"conceptClassModel": {
+													"$type": "ConceptClass",
+													"name": "Status",
+													"mnemonic": "Status",
+													"creationTime": "0001-01-01T00:00:00.000Z",
+													"id": "54b93182-fc19-47a2-82c6-089fd70a4f45"
+												},
+												"conceptSet": ["c7578340-a8ff-4d7d-8105-581016324e68",
+												"de358951-24dc-48dc-8185-f10b7ea4dcd1",
+												"93a48f6a-6808-4c70-83a2-d02178c2a883",
+												"aae906aa-27b3-4cdb-aff1-f08b0fd31e59"],
+												"previousVersion": "79e3833b-3e56-e611-af32-448500e4678f",
+												"previousVersionModel": null,
+												"version": "79e3833b-3e56-e611-af32-448500e4678f",
+												"creationTime": "2016-07-30T13:13:17.783Z",
+												"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+												"id": "c8064cbd-fa06-4530-b430-1a52f1530c27"
+											},
+											"conceptClass": "0d6b3439-c9be-4480-af39-eeb457c052d0",
+											"conceptClassModel": {
+												"$type": "ConceptClass",
+												"name": "Other Classification",
+												"mnemonic": "Other",
+												"creationTime": "0001-01-01T00:00:00.000Z",
+												"id": "0d6b3439-c9be-4480-af39-eeb457c052d0"
+											},
+											"name": {
+												"en": "specific"
+											},
+											"conceptSet": ["effc9f86-56e2-4920-a75a-fec310aa1430"],
+											"version": "e5e3833b-3e56-e611-af32-448500e4678f",
+											"creationTime": "2016-07-30T13:13:18.278Z",
+											"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+											"id": "f29f08de-78a7-4a5e-aeaf-7b545ba19a09"
+										},
+										"statusConceptModel": {
+											"$type": "Concept",
+											"isReadonly": true,
+											"mnemonic": "ACTIVE",
+											"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+											"statusConceptModel": null,
+											"conceptClass": "54b93182-fc19-47a2-82c6-089fd70a4f45",
+											"conceptClassModel": {
+												"$type": "ConceptClass",
+												"name": "Status",
+												"mnemonic": "Status",
+												"creationTime": "0001-01-01T00:00:00.000Z",
+												"id": "54b93182-fc19-47a2-82c6-089fd70a4f45"
+											},
+											"conceptSet": ["c7578340-a8ff-4d7d-8105-581016324e68",
+											"de358951-24dc-48dc-8185-f10b7ea4dcd1",
+											"93a48f6a-6808-4c70-83a2-d02178c2a883",
+											"aae906aa-27b3-4cdb-aff1-f08b0fd31e59"],
+											"previousVersion": "79e3833b-3e56-e611-af32-448500e4678f",
+											"previousVersionModel": null,
+											"version": "79e3833b-3e56-e611-af32-448500e4678f",
+											"creationTime": "2016-07-30T13:13:17.783Z",
+											"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+											"id": "c8064cbd-fa06-4530-b430-1a52f1530c27"
+										},
+										"typeConceptModel": {
+											"$type": "Concept",
+											"isReadonly": false,
+											"mnemonic": "Facility-Region",
+											"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+											"statusConceptModel": {
+												"$type": "Concept",
+												"isReadonly": true,
+												"mnemonic": "ACTIVE",
+												"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+												"statusConceptModel": null,
+												"conceptClass": "54b93182-fc19-47a2-82c6-089fd70a4f45",
+												"conceptClassModel": {
+													"$type": "ConceptClass",
+													"name": "Status",
+													"mnemonic": "Status",
+													"creationTime": "0001-01-01T00:00:00.000Z",
+													"id": "54b93182-fc19-47a2-82c6-089fd70a4f45"
+												},
+												"conceptSet": ["c7578340-a8ff-4d7d-8105-581016324e68",
+												"de358951-24dc-48dc-8185-f10b7ea4dcd1",
+												"93a48f6a-6808-4c70-83a2-d02178c2a883",
+												"aae906aa-27b3-4cdb-aff1-f08b0fd31e59"],
+												"previousVersion": "79e3833b-3e56-e611-af32-448500e4678f",
+												"previousVersionModel": null,
+												"version": "79e3833b-3e56-e611-af32-448500e4678f",
+												"creationTime": "2016-07-30T13:13:17.783Z",
+												"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+												"id": "c8064cbd-fa06-4530-b430-1a52f1530c27"
+											},
+											"conceptClass": "0d6b3439-c9be-4480-af39-eeb457c052d0",
+											"conceptClassModel": {
+												"$type": "ConceptClass",
+												"name": "Other Classification",
+												"mnemonic": "Other",
+												"creationTime": "0001-01-01T00:00:00.000Z",
+												"id": "0d6b3439-c9be-4480-af39-eeb457c052d0"
+											},
+											"name": {
+												"en": "Region"
+											},
+											"previousVersion": "3ab9d2ee-e7df-4aa1-8c03-484bcbce789c",
+											"previousVersionModel": null,
+											"version": "3ab9d2ee-e7df-4aa1-8c03-484bcbce789c",
+											"creationTime": "2016-07-30T13:28:58.565Z",
+											"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+											"id": "d79ca638-090d-40db-989d-9c181353c7b5"
+										},
+										"identifier": {
+											"TIIS_FACID": "12608",
+											"TZ_FRID": "urn:uuid:EDFD5B83-560D-39EB-9121-D8EB33326F1D"
+										},
+										"relationship": {
+											"Parent": {
+												"$type": "EntityRelationship",
+												"target": "0e6e3658-6611-477e-b215-5db6cb8a7816",
+												"targetModel": {
+													"$type": "Entity",
+													"classConcept": "ff34dfa7-c6d3-4f8b-bc9f-14bcdc13ba6c",
+													"determinerConcept": "f29f08de-78a7-4a5e-aeaf-7b545ba19a09",
+													"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+													"typeConcept": "d79ca638-090d-40db-989d-9c181353c7b5",
+													"determinerConceptModel": {
+														"$type": "Concept",
+														"isReadonly": true,
+														"mnemonic": "Specific",
+														"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+														"statusConceptModel": {
+															"$type": "Concept",
+															"isReadonly": true,
+															"mnemonic": "ACTIVE",
+															"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+															"statusConceptModel": null,
+															"conceptClass": "54b93182-fc19-47a2-82c6-089fd70a4f45",
+															"conceptClassModel": {
+																"$type": "ConceptClass",
+																"name": "Status",
+																"mnemonic": "Status",
+																"creationTime": "0001-01-01T00:00:00.000Z",
+																"id": "54b93182-fc19-47a2-82c6-089fd70a4f45"
+															},
+															"conceptSet": ["c7578340-a8ff-4d7d-8105-581016324e68",
+															"de358951-24dc-48dc-8185-f10b7ea4dcd1",
+															"93a48f6a-6808-4c70-83a2-d02178c2a883",
+															"aae906aa-27b3-4cdb-aff1-f08b0fd31e59"],
+															"previousVersion": "79e3833b-3e56-e611-af32-448500e4678f",
+															"previousVersionModel": null,
+															"version": "79e3833b-3e56-e611-af32-448500e4678f",
+															"creationTime": "2016-07-30T13:13:17.783Z",
+															"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+															"id": "c8064cbd-fa06-4530-b430-1a52f1530c27"
+														},
+														"conceptClass": "0d6b3439-c9be-4480-af39-eeb457c052d0",
+														"conceptClassModel": {
+															"$type": "ConceptClass",
+															"name": "Other Classification",
+															"mnemonic": "Other",
+															"creationTime": "0001-01-01T00:00:00.000Z",
+															"id": "0d6b3439-c9be-4480-af39-eeb457c052d0"
+														},
+														"name": {
+															"en": "specific"
+														},
+														"conceptSet": ["effc9f86-56e2-4920-a75a-fec310aa1430"],
+														"version": "e5e3833b-3e56-e611-af32-448500e4678f",
+														"creationTime": "2016-07-30T13:13:18.278Z",
+														"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+														"id": "f29f08de-78a7-4a5e-aeaf-7b545ba19a09"
+													},
+													"statusConceptModel": {
+														"$type": "Concept",
+														"isReadonly": true,
+														"mnemonic": "ACTIVE",
+														"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+														"statusConceptModel": null,
+														"conceptClass": "54b93182-fc19-47a2-82c6-089fd70a4f45",
+														"conceptClassModel": {
+															"$type": "ConceptClass",
+															"name": "Status",
+															"mnemonic": "Status",
+															"creationTime": "0001-01-01T00:00:00.000Z",
+															"id": "54b93182-fc19-47a2-82c6-089fd70a4f45"
+														},
+														"conceptSet": ["c7578340-a8ff-4d7d-8105-581016324e68",
+														"de358951-24dc-48dc-8185-f10b7ea4dcd1",
+														"93a48f6a-6808-4c70-83a2-d02178c2a883",
+														"aae906aa-27b3-4cdb-aff1-f08b0fd31e59"],
+														"previousVersion": "79e3833b-3e56-e611-af32-448500e4678f",
+														"previousVersionModel": null,
+														"version": "79e3833b-3e56-e611-af32-448500e4678f",
+														"creationTime": "2016-07-30T13:13:17.783Z",
+														"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+														"id": "c8064cbd-fa06-4530-b430-1a52f1530c27"
+													},
+													"typeConceptModel": {
+														"$type": "Concept",
+														"isReadonly": false,
+														"mnemonic": "Facility-Region",
+														"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+														"statusConceptModel": {
+															"$type": "Concept",
+															"isReadonly": true,
+															"mnemonic": "ACTIVE",
+															"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+															"statusConceptModel": null,
+															"conceptClass": "54b93182-fc19-47a2-82c6-089fd70a4f45",
+															"conceptClassModel": {
+																"$type": "ConceptClass",
+																"name": "Status",
+																"mnemonic": "Status",
+																"creationTime": "0001-01-01T00:00:00.000Z",
+																"id": "54b93182-fc19-47a2-82c6-089fd70a4f45"
+															},
+															"conceptSet": ["c7578340-a8ff-4d7d-8105-581016324e68",
+															"de358951-24dc-48dc-8185-f10b7ea4dcd1",
+															"93a48f6a-6808-4c70-83a2-d02178c2a883",
+															"aae906aa-27b3-4cdb-aff1-f08b0fd31e59"],
+															"previousVersion": "79e3833b-3e56-e611-af32-448500e4678f",
+															"previousVersionModel": null,
+															"version": "79e3833b-3e56-e611-af32-448500e4678f",
+															"creationTime": "2016-07-30T13:13:17.783Z",
+															"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+															"id": "c8064cbd-fa06-4530-b430-1a52f1530c27"
+														},
+														"conceptClass": "0d6b3439-c9be-4480-af39-eeb457c052d0",
+														"conceptClassModel": {
+															"$type": "ConceptClass",
+															"name": "Other Classification",
+															"mnemonic": "Other",
+															"creationTime": "0001-01-01T00:00:00.000Z",
+															"id": "0d6b3439-c9be-4480-af39-eeb457c052d0"
+														},
+														"name": {
+															"en": "Region"
+														},
+														"previousVersion": "3ab9d2ee-e7df-4aa1-8c03-484bcbce789c",
+														"previousVersionModel": null,
+														"version": "3ab9d2ee-e7df-4aa1-8c03-484bcbce789c",
+														"creationTime": "2016-07-30T13:28:58.565Z",
+														"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+														"id": "d79ca638-090d-40db-989d-9c181353c7b5"
+													},
+													"identifier": {
+														"TZ_FRID": "urn:uuid:67882F85-DA89-3A79-A7D5-E224859863D6",
+														"TIIS_FACID": "12607"
+													},
+													"extension": {
+														"http://openiz.org/extensions/contrib/tiis/isleaf": null,
+														"http://openiz.org/extensions/contrib/tiis/vaccineStore": null,
+														"http://openiz.org/extensions/contrib/tiis/coldStorageCapacity": null,
+														"http://openiz.org/extensions/contrib/tiis/isVaccinationPoint": null
+													},
+													"name": {
+														"OfficialRecord": {
+															"$type": "EntityName",
+															"use": "1ec9583a-b019-4baa-b856-b99caf368656",
+															"component": {
+																"$other": {
+																	"$type": "EntityNameComponent",
+																	"value": "TANZANIA"
+																}
+															},
+															"source": "0e6e3658-6611-477e-b215-5db6cb8a7816",
+															"id": "d222d7ac-3f4a-4f14-8a23-b41599b986dc"
+														}
+													},
+													"tag": {
+														"http://openiz.org/tags/contrib/importedData": "true"
+													},
+													"version": "3836a436-b3f5-4fe1-b2c2-bfbf234068bf",
+													"creationTime": "2016-07-30T13:29:04.206Z",
+													"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+													"id": "0e6e3658-6611-477e-b215-5db6cb8a7816"
+												},
+												"relationshipType": "bfcbb345-86db-43ba-b47e-e7411276ac7c",
+												"inversionInd": false,
+												"source": "60fc68a6-897a-4b0d-8390-bc13b25b707f",
+												"id": "fb78ba23-0b3e-475b-9572-e48f7cf8e638"
+											}
+										},
+										"extension": {
+											"http://openiz.org/extensions/contrib/tiis/isVaccinationPoint": null,
+											"http://openiz.org/extensions/contrib/tiis/isleaf": null,
+											"http://openiz.org/extensions/contrib/tiis/vaccineStore": null,
+											"http://openiz.org/extensions/contrib/tiis/coldStorageCapacity": null
+										},
+										"name": {
+											"OfficialRecord": {
+												"$type": "EntityName",
+												"use": "1ec9583a-b019-4baa-b856-b99caf368656",
+												"component": {
+													"$other": {
+														"$type": "EntityNameComponent",
+														"value": "Arusha Region"
+													}
+												},
+												"source": "60fc68a6-897a-4b0d-8390-bc13b25b707f",
+												"id": "d53aba19-2223-4179-9ddc-60d948812e9f"
+											}
+										},
+										"tag": {
+											"http://openiz.org/tags/contrib/importedData": "true"
+										},
+										"previousVersion": "95af1f2b-5231-440c-b4d7-20a54851cc12",
+										"previousVersionModel": null,
+										"version": "95af1f2b-5231-440c-b4d7-20a54851cc12",
+										"creationTime": "2016-07-30T10:38:31.461Z",
+										"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+										"id": "60fc68a6-897a-4b0d-8390-bc13b25b707f"
+									},
+									"relationshipType": "bfcbb345-86db-43ba-b47e-e7411276ac7c",
+									"inversionInd": false,
+									"source": "bb21594a-d546-4e6f-8111-e4a2978a4b80",
+									"id": "94e791c6-53d5-4e8f-b8df-aa5aaa0ef4b4"
+								}
+							},
+							"extension": {
+								"http://openiz.org/extensions/contrib/tiis/isleaf": null,
+								"http://openiz.org/extensions/contrib/tiis/coldStorageCapacity": null,
+								"http://openiz.org/extensions/contrib/tiis/vaccineStore": null,
+								"http://openiz.org/extensions/contrib/tiis/isVaccinationPoint": null
+							},
+							"name": {
+								"OfficialRecord": {
+									"$type": "EntityName",
+									"use": "1ec9583a-b019-4baa-b856-b99caf368656",
+									"component": {
+										"$other": {
+											"$type": "EntityNameComponent",
+											"value": "Arusha City Council"
+										}
+									},
+									"source": "bb21594a-d546-4e6f-8111-e4a2978a4b80",
+									"id": "f8532c5a-05b6-486e-9ec5-29d5d8f94fb5"
+								}
+							},
+							"tag": {
+								"http://openiz.org/tags/contrib/importedData": "true"
+							},
+							"previousVersion": "9a8451e4-d94f-410d-955e-22362b9e006d",
+							"previousVersionModel": null,
+							"version": "9a8451e4-d94f-410d-955e-22362b9e006d",
+							"creationTime": "2016-07-30T10:38:32.144Z",
+							"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+							"id": "bb21594a-d546-4e6f-8111-e4a2978a4b80"
+						},
+						"relationshipType": "bfcbb345-86db-43ba-b47e-e7411276ac7c",
+						"inversionInd": false,
+						"source": "d0f4a878-13cb-4509-9b4f-80b2c1548d2b",
+						"id": "fe596886-cdd2-457f-a873-6e006c5a2580"
+					}
+				},
+				"extension": {
+					"http://openiz.org/extensions/contrib/tiis/isVaccinationPoint": null,
+					"http://openiz.org/extensions/contrib/tiis/vaccineStore": null,
+					"http://openiz.org/extensions/contrib/tiis/isleaf": null,
+					"http://openiz.org/extensions/contrib/tiis/coldStorageCapacity": null
+				},
+				"name": {
+					"OfficialRecord": {
+						"$type": "EntityName",
+						"use": "1ec9583a-b019-4baa-b856-b99caf368656",
+						"component": {
+							"$other": {
+								"$type": "EntityNameComponent",
+								"value": "Total Care Dispensary"
+							}
+						},
+						"source": "d0f4a878-13cb-4509-9b4f-80b2c1548d2b",
+						"id": "92928feb-69c6-426f-8b7e-9d6b9f12bd9a"
+					}
+				},
+				"tag": {
+					"http://openiz.org/tags/contrib/importedData": "true"
+				},
+				"version": "b1dfdb38-6abd-4c40-a9d8-9f86117031de",
+				"creationTime": "2016-07-30T13:30:33.806Z",
+				"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+				"id": "d0f4a878-13cb-4509-9b4f-80b2c1548d2b"
+			},
+			"relationshipType": "455f1772-f580-47e8-86bd-b5ce25d351f9",
+			"inversionInd": false
+		}
+	},
+	"name": {
+		"OfficialRecord": {
+			"$type": "EntityName",
+			"use": "1ec9583a-b019-4baa-b856-b99caf368656",
+			"component": {
+				"Family": "P",
+				"Given": ["P",
+				"P"]
+			}
+		}
+	},
+	"address": {
+		"HomeAddress": {
+			"$type": "EntityAddress",
+			"use": "493c3e9d-4f65-4e4d-9582-c9008f4f2eb4",
+			"component": {
+				"CensusTract": "373a1702-72d8-40a8-b0f5-0e1fd7d86d97"
+			}
+		}
+	},
+	"creationTime": "0001-01-01T00:00:00.000Z",
+	"id": "d6df5bc6-74ba-4280-ab91-8c01a686c459",
+	"participation": {
+		
+	}
+}

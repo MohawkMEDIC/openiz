@@ -142,6 +142,24 @@ namespace OpenIZ.Core.Model.Entities
         }
 
         /// <summary>
+        /// Is empty
+        /// </summary>
+        /// <returns></returns>
+        public override bool IsEmpty()
+        {
+            return this.RelationshipType == null && this.RelationshipTypeKey == null;
+        }
+
+        /// <summary>
+        /// Clean the entity
+        /// </summary>
+        /// <returns></returns>
+        public override IdentifiedData Clean()
+        {
+            this.TargetEntity = this.TargetEntity?.Clean() as Entity;
+            return this;
+        }
+        /// <summary>
         /// Refresh this entity
         /// </summary>
         public override void Refresh()

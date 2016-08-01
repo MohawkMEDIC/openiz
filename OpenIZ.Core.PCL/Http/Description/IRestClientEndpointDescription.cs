@@ -28,5 +28,10 @@ namespace OpenIZ.Core.Http.Description
 		/// Gets the address of the endpoint
 		/// </summary>
 		string Address { get; }
-	}
+
+        /// <summary>
+        /// Gets or sets the timeouts
+        /// </summary>
+        int Timeout { get; set; }
+    }
 }

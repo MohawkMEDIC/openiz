@@ -144,7 +144,23 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// The entity that this relationship targets
         /// </summary>
-        [XmlIgnore, JsonIgnore]
+        [JsonProperty("act"), XmlElement("act")]
+        public Guid? ActKey
+        {
+            get
+            {
+                return this.SourceEntityKey;
+            }
+            set
+            {
+                this.SourceEntityKey = value;
+            }
+        }
+
+        /// <summary>
+        /// The entity that this relationship targets
+        /// </summary>
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(ActKey))]
         public Act Act
         {
             get
@@ -165,6 +181,26 @@ namespace OpenIZ.Core.Model.Acts
             base.Refresh();
             this.m_participationRole = null;
             this.m_player = null;
+        }
+
+        /// <summary>
+        /// Clean
+        /// </summary>
+        /// <returns></returns>
+        public override IdentifiedData Clean()
+        {
+            this.PlayerEntity= this.PlayerEntity?.Clean() as Entity;
+            return this;
+        }
+
+        /// <summary>
+        /// Determine if this is empty
+        /// </summary>
+        /// <returns></returns>
+        public override bool IsEmpty()
+        {
+            return !this.ParticipationRoleKey.HasValue && this.ParticipationRole == null ||
+                this.PlayerEntity == null && !this.PlayerEntityKey.HasValue;
         }
     }
 }

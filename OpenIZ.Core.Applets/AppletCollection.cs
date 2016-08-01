@@ -266,7 +266,7 @@ namespace OpenIZ.Core.Applets
                         if (resolvedManifest != null) break;
                     }
                 }
-                if (resolvedManifest == null) resolvedManifest = relative.Manifest;
+                if (resolvedManifest == null) resolvedManifest = relative?.Manifest;
 
                 // Is there a resource?
                 if (resolvedManifest != null)

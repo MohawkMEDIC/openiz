@@ -43,7 +43,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.EntityName Insert(ModelDataContext context, Core.Model.Entities.EntityName data, IPrincipal principal)
         {
-
             // Ensure exists
             data.NameUse?.EnsureExists(context, principal);
             data.NameUseKey = data.NameUse?.Key ?? data.NameUseKey;

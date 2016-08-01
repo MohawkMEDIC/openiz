@@ -19,8 +19,11 @@
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Model.Security;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.DataTypes
@@ -83,6 +86,13 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [XmlElement("url"), JsonProperty("url")]
         public String Url { get; set; }
+
+        /// <summary>
+        /// Represents scopes to which the authority is bound
+        /// </summary>
+        [JsonProperty("scope"), XmlElement("scope")]
+        public List<Guid> AuthorityScopeXml { get; set; }
+
         /// <summary>
         /// Assigning device identifier
         /// </summary>
@@ -111,6 +121,22 @@ namespace OpenIZ.Core.Model.DataTypes
             {
                 this.m_assigningDevice = value;
                 this.m_assigningDeviceId = value?.Key;
+            }
+        }
+
+        /// <summary>
+        /// Gets concept sets to which this concept is a member
+        /// </summary>
+        [DataIgnore, XmlIgnore, JsonIgnore, SerializationReference(nameof(AuthorityScopeXml))]
+        public List<Concept> AuthorityScope
+        {
+            get
+            {
+                return this.AuthorityScopeXml?.Select(o => EntitySource.Current.Get<Concept>(o)).ToList();
+            }
+            set
+            {
+                this.AuthorityScopeXml = value?.Where(o => o.Key.HasValue).Select(o => o.Key.Value).ToList();
             }
         }
 

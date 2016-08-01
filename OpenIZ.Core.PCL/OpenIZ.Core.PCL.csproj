@@ -63,6 +63,7 @@
     <Compile Include="Services\IConceptRepositoryService.cs" />
     <Compile Include="Services\IDataCacheService.cs" />
     <Compile Include="Services\IMaterialRepositoryService.cs" />
+    <Compile Include="Services\Impl\IMetadataRepositoryService.cs" />
     <Compile Include="Services\Impl\NullPhoneticAlgorithmHandler.cs" />
     <Compile Include="Protocol\SimpleCarePlanService.cs" />
     <Compile Include="Services\IPatientRepositoryService.cs" />

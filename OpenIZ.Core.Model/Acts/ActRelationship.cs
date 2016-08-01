@@ -33,7 +33,7 @@ namespace OpenIZ.Core.Model.Acts
     /// <summary>
     /// Act relationships
     /// </summary>
-    
+    [Classifier(nameof(RelationshipType))]
     [XmlType("ActRelationship",  Namespace = "http://openiz.org/model"), JsonObject("ActRelationship")]
     public class ActRelationship : VersionedAssociation<Act>
     {

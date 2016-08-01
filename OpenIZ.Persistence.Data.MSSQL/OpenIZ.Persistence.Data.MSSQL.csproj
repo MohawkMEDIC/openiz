@@ -92,6 +92,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Services\Persistence\AssigningAuthorityPersistenceService.cs" />
     <Compile Include="Services\Persistence\ManufacturedMaterialPersistenceService.cs" />
     <Compile Include="Services\Persistence\MaterialPersistenceService.cs" />
     <Compile Include="Services\Persistence\ProviderPersistenceService.cs" />
@@ -125,6 +126,7 @@
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
     </None>
+    <None Include="app.config" />
     <None Include="Data\Model.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>Model.designer.cs</LastGenOutput>

@@ -29,6 +29,9 @@ namespace OpenIZ.Protocol.Xml.Model
         [XmlElement("linqExpression", typeof(String))]
         public List<object> Clause { get; set; }
 
+        // Lock
+        private Object m_lockObject = new object();
+
         /// <summary>
         /// Compile the expression
         /// </summary>
@@ -102,7 +105,8 @@ namespace OpenIZ.Protocol.Xml.Model
             if (this.m_compiledExpression == null)
                 this.Compile<TData>();
 
-            return this.m_compiledExpression.Invoke(parm);
+            lock(this.m_lockObject)
+                return this.m_compiledExpression.Invoke(parm);
         }
     }
 

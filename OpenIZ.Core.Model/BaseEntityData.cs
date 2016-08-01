@@ -204,6 +204,7 @@ namespace OpenIZ.Core.Model
             }
         }
 
+
         /// <summary>
         /// Represent the data as a string
         /// </summary>

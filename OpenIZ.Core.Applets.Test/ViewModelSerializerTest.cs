@@ -112,6 +112,7 @@ namespace OpenIZ.Core.Applets.Test
                 var json = sr.ReadToEnd();
                 var patient = JsonViewModelSerializer.DeSerialize<Patient>(json);
                 json = JsonViewModelSerializer.Serialize(patient);
+                Assert.IsNotNull(patient.Tags[0].TagKey);
                 //Assert.AreEqual(this.m_patientUnderTest.ClassConceptKey, patient.ClassConceptKey);
             }
         }
@@ -129,6 +130,21 @@ namespace OpenIZ.Core.Applets.Test
                 var patient = JsonViewModelSerializer.DeSerialize<Patient>(json);
                 Assert.AreEqual(this.m_patientUnderTest.ClassConceptKey, patient.ClassConceptKey);
             }
+        }
+
+        /// <summary>
+        /// Doesn't desearialize key for some reason
+        /// </summary>
+        [TestMethod]
+        public void TestBugfixDoesntDeserializeKey()
+        {
+            using (var sr = new StreamReader(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.DoesntSerializeKey.json")))
+            {
+                var json = sr.ReadToEnd();
+                var patient = JsonViewModelSerializer.DeSerialize<Patient>(json);
+                Assert.IsNotNull(patient.Key);
+            }
+
         }
     }
 }

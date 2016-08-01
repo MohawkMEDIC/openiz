@@ -159,6 +159,17 @@ namespace OpenIZ.Core.Model
         }
 
         /// <summary>
+        /// Cleans the identified data of any "empty" stuff
+        /// </summary>
+        public virtual IdentifiedData Clean() { return this; }
+
+        /// <summary>
+        /// True if the object is empty
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool IsEmpty() { return false; }
+
+        /// <summary>
         /// Clone the specified data
         /// </summary>
         public IdentifiedData Clone()

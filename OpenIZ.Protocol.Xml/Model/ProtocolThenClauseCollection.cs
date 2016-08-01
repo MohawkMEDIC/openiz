@@ -42,9 +42,8 @@ namespace OpenIZ.Protocol.Xml.Model
             {
                 Act act = null;
                 if (itm.Element is String) // JSON
-                    act = JsonViewModelSerializer.DeSerialize<Act>(itm.Element as String);
-                else
-                    act = itm.Element as Act;
+                    itm.Element = JsonViewModelSerializer.DeSerialize<Act>(itm.Element as String);
+                act = itm.Element as Act;
 
                 // Now do the actions to the properties as stated
                 foreach (var instr in itm.Do)
@@ -54,9 +53,10 @@ namespace OpenIZ.Protocol.Xml.Model
 
                 // Assign this patient as the record target
                 act.Key = act.Key ?? Guid.NewGuid();
-                act.Participations.Add(new ActParticipation(ActParticipationKey.RecordTarget, p.Key) { ParticipationRole = new Core.Model.DataTypes.Concept() { Key = ActParticipationKey.RecordTarget, Mnemonic = "RecordTarget" } });
+                Guid pkey = Guid.NewGuid();
+                act.Participations.Add(new ActParticipation(ActParticipationKey.RecordTarget, p.Key) { ParticipationRole = new Core.Model.DataTypes.Concept() { Key = ActParticipationKey.RecordTarget, Mnemonic = "RecordTarget" }, Key = pkey });
                 // Add record target to the source for forward rules
-                p.Participations.Add(new ActParticipation(ActParticipationKey.RecordTarget, p) { SourceEntity = act, ParticipationRole = new Core.Model.DataTypes.Concept() { Key = ActParticipationKey.RecordTarget, Mnemonic = "RecordTarget" } });
+                p.Participations.Add(new ActParticipation(ActParticipationKey.RecordTarget, p) { SourceEntity = act, ParticipationRole = new Core.Model.DataTypes.Concept() { Key = ActParticipationKey.RecordTarget, Mnemonic = "RecordTarget" }, Key = pkey });
                 act.CreationTime = DateTime.Now;
                 // The act to the return value
                 retVal.Add(act);
@@ -80,7 +80,7 @@ namespace OpenIZ.Protocol.Xml.Model
         [XmlElement("TextObservation", typeof(TextObservation), Namespace = "http://openiz.org/model")]
         [XmlElement("SubstanceAdministration", typeof(SubstanceAdministration), Namespace = "http://openiz.org/model")]
         [XmlElement("QuantityObservation", typeof(QuantityObservation), Namespace = "http://openiz.org/model")]
-        [XmlElement("CodedObseration", typeof(CodedObservation), Namespace = "http://openiz.org/model")]
+        [XmlElement("CodedObservation", typeof(CodedObservation), Namespace = "http://openiz.org/model")]
         [XmlElement("PatientEncounter", typeof(PatientEncounter), Namespace = "http://openiz.org/model")]
         [XmlElement("jsonModel", typeof(String))]
         public Object Element { get; set; }

@@ -256,6 +256,7 @@ namespace OpenIZ.Core.Model.Acts
             }
         }
 
+
         /// <summary>
         /// Mood concept data load property
         /// </summary>
@@ -374,5 +375,17 @@ namespace OpenIZ.Core.Model.Acts
         }
 
 
+        /// <summary>
+        /// Clean the patient of any empty "noise" elements
+        /// </summary>
+        /// <returns></returns>
+        public override IdentifiedData Clean()
+        {
+            this.Tags.RemoveAll(o => o.Clean().IsEmpty());
+            this.Notes.RemoveAll(o => o.Clean().IsEmpty());
+            this.Extensions.RemoveAll(o => o.Clean().IsEmpty());
+            this.Identifiers.RemoveAll(o => o.Clean().IsEmpty());
+            return this;
+        }
     }
 }

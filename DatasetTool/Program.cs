@@ -11,7 +11,7 @@ namespace DatasetTool
     {
         static void Main(string[] args)
         {
-
+            Console.WriteLine("{0} {1} {2}", DateTime.Now, DateTimeOffset.Now, (DateTimeOffset)DateTime.Now);
             var consoleParms = new ParameterParser<ConsoleParameters>().Parse(args);
 
             var tool = typeof(Program).Assembly.ExportedTypes.FirstOrDefault(o => o.Name == consoleParms.ToolName);

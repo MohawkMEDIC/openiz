@@ -131,7 +131,7 @@
           "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
           "startTime": "2016-07-25T10:20:20.109Z",
           "stopTime": "2016-07-25T10:20:20.109Z",
-          "doseSequence": 3,
+          "doseSequence":3,
           "participation": {
             "ExposureAgent": [
               {
@@ -189,7 +189,7 @@
           "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
           "startTime": "2016-07-25T10:20:20.109Z",
           "stopTime": "2016-07-25T10:20:20.109Z",
-          "doseSequence": 3,
+          "doseSequence":3,
           "participation": {
             "ExposureAgent": [
               {
@@ -247,7 +247,7 @@
           "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
           "startTime": "2016-07-25T10:20:20.109Z",
           "stopTime": "2016-07-25T10:20:20.109Z",
-          "doseSequence": 3,
+          "doseSequence":3,
           "participation": {
             "ExposureAgent": [
               {

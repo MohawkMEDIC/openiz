@@ -106,6 +106,14 @@ namespace OpenIZ.Core.Model.Entities
         public String Value { get; set; }
 
         /// <summary>
+        /// Gets if the item is empty
+        /// </summary>
+        /// <returns></returns>
+        public override bool IsEmpty()
+        {
+            return String.IsNullOrEmpty(this.Value);
+        }
+        /// <summary>
         /// Forces refreshing of delay load properties
         /// </summary>
         public override void Refresh()

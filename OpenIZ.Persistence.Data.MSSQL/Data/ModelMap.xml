@@ -246,7 +246,11 @@
     <property modelName="AssigningDeviceKey" domainName="AssigningDeviceId"/>
     <property modelName="AssigningDevice" domainName="AssigningDevice"/>
     <property modelName="ModifiedOn" domainName="CreationTime"/>
-
+    <property modelName="AuthorityScope" domainName="AssigningAuthorityScopes">
+      <via domainName="ScopeConcept">
+        <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+      </via>
+    </property>
     <property modelName="CreatedBy" domainName="CreatedByEntity"/>
     <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
@@ -525,6 +529,7 @@
     <collapseKey propertyName="AssigningAuthority" keyName="AssigningAuthorityId"/>
     <property modelName="SourceEntityKey" domainName="EntityId"/>
     <property modelName="Value" domainName="IdentifierValue"/>
+
   </class>
 
   <class modelClass="OpenIZ.Core.Model.DataTypes.IdentifierType, OpenIZ.Core.Model, Version=1.0.0.0"
