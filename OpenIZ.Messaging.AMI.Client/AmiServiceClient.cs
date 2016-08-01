@@ -77,6 +77,16 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
+		/// Creates a policy in the IMS.
+		/// </summary>
+		/// <param name="policy">The policy to be created.</param>
+		/// <returns>Returns the newly created policy.</returns>
+		public SecurityPolicyInfo CreatePolicy(SecurityPolicyInfo policy)
+		{
+			return this.Client.Post<SecurityPolicyInfo, SecurityPolicyInfo>("policy/create", this.Client.Accept, policy);
+		}
+
+		/// <summary>
 		/// Creates a role in the IMS.
 		/// </summary>
 		/// <param name="role">The role to be created.</param>
@@ -316,7 +326,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// </summary>
 		/// <param name="query">The query expression to use to find the user.</param>
 		/// <returns>Returns a collection of users which match the specified query parameters.</returns>
-		public AmiCollection<SecurityUserInfo> GetUsers(Expression<Func<SecurityUserInfo, bool>> query)
+		public AmiCollection<SecurityUserInfo> GetUsers(Expression<Func<SecurityUser, bool>> query)
 		{
 			var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
 			return this.Client.Get<AmiCollection<SecurityUserInfo>>("users", queryParms);

@@ -61,6 +61,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		SubmissionResult AcceptCsr(string id);
 
 		/// <summary>
+		/// Creates a device in the IMS.
+		/// </summary>
+		/// <param name="device">The device to be created.</param>
+		/// <returns>Returns the newly created device.</returns>
+		[WebInvoke(UriTemplate = "/device/create", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		SecurityDevice CreateDevice(SecurityDevice device);
+
+		/// <summary>
 		/// Creates a place in the IMS.
 		/// </summary>
 		/// <param name="place">The place to be created.</param>

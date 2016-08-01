@@ -74,6 +74,23 @@ namespace OpenIZ.Core.Services.Impl
 		}
 
 		/// <summary>
+		/// Creates a security policy.
+		/// </summary>
+		/// <param name="policy">The security policy.</param>
+		/// <returns>Returns the newly created policy.</returns>
+		public SecurityPolicy CreatePolicy(SecurityPolicy policy)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityPolicy>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityPolicy>)));
+			}
+
+			return persistenceService.Insert(policy, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
 		/// Creates a role.
 		/// </summary>
 		/// <param name="roleInfo">The security role.</param>
