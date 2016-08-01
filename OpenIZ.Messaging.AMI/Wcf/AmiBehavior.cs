@@ -87,6 +87,23 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
+		/// Creates a device in the IMS.
+		/// </summary>
+		/// <param name="device">The device to be created.</param>
+		/// <returns>Returns the newly created device.</returns>
+		public SecurityDevice CreateDevice(SecurityDevice device)
+		{
+			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+			}
+
+			return securityRepository.CreateDevice(device);
+		}
+
+		/// <summary>
 		/// Creates a place in the IMS.
 		/// </summary>
 		/// <param name="place">The place to be created.</param>
@@ -108,9 +125,23 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="policy">The security policy to be created.</param>
 		/// <returns>Returns the newly created security policy.</returns>
-		public SecurityPolicyInfo CreatePolicy(SecurityPolicyInfo Policy)
+		public SecurityPolicyInfo CreatePolicy(SecurityPolicyInfo policy)
 		{
-			throw new NotImplementedException();
+			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+			}
+
+			SecurityPolicy policyToCreate = new SecurityPolicy
+			{
+				CanOverride = policy.CanOverride,
+				Name = policy.Name,
+				Oid = policy.Oid
+			};
+
+			return new SecurityPolicyInfo(securityRepository.CreatePolicy(policyToCreate));
 		}
 
 		/// <summary>
@@ -203,7 +234,21 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the deleted device.</returns>
 		public SecurityDevice DeleteDevice(string deviceId)
 		{
-			throw new NotImplementedException();
+			Guid deviceKey = Guid.Empty;
+
+			if (!Guid.TryParse(deviceId, out deviceKey))
+			{
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(deviceId)));
+			}
+
+			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+			}
+
+			return securityRepository.ObsoleteDevice(deviceKey);
 		}
 
 		/// <summary>

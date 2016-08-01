@@ -47,6 +47,7 @@ namespace OpenIZ.Core.Model.AMI.Auth
             this.Name = o.Name;
             this.Oid = o.Oid;
             this.CanOverride = o.CanOverride;
+			this.Policy = o;
         }
 
         /// <summary>
@@ -81,5 +82,11 @@ namespace OpenIZ.Core.Model.AMI.Auth
         [XmlAttribute("oid")]
         public string Oid { get; set; }
 
-    }
+		/// <summary>
+		/// Gets or sets the policy information
+		/// </summary>
+		[XmlElement("policyInfo")]
+		public SecurityPolicy Policy { get; set; }
+
+	}
 }

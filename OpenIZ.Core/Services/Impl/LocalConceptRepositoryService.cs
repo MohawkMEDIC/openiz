@@ -164,7 +164,14 @@ namespace OpenIZ.Core.Services.Impl
 
         public Concept InsertConcept(Concept concept)
         {
-            throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<Concept>)));
+			}
+
+			return persistenceService.Insert(concept, AuthenticationContext.Current.Principal, TransactionMode.Commit);
         }
 
         /// <summary>
