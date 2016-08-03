@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,8 @@ using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Model.Security;
 using Newtonsoft.Json;
+using System.Threading;
+using System.Diagnostics;
 
 namespace OpenIZ.Core.Model.Collection
 {
@@ -44,10 +47,14 @@ namespace OpenIZ.Core.Model.Collection
     [XmlInclude(typeof(ReferenceTerm))]
     [XmlInclude(typeof(Act))]
     [XmlInclude(typeof(TextObservation))]
+    [XmlInclude(typeof(ConceptSet))]
     [XmlInclude(typeof(CodedObservation))]
     [XmlInclude(typeof(QuantityObservation))]
     [XmlInclude(typeof(PatientEncounter))]
     [XmlInclude(typeof(SubstanceAdministration))]
+    [XmlInclude(typeof(UserEntity))]
+    [XmlInclude(typeof(ApplicationEntity))]
+    [XmlInclude(typeof(DeviceEntity))]
     [XmlInclude(typeof(Entity))]
     [XmlInclude(typeof(Patient))]
     [XmlInclude(typeof(Provider))]
@@ -61,7 +68,6 @@ namespace OpenIZ.Core.Model.Collection
     [XmlInclude(typeof(PhoneticAlgorithm))]
     [XmlInclude(typeof(Bundle))]
     [XmlInclude(typeof(ConceptClass))]
-    [XmlInclude(typeof(Bundle))]
     [XmlInclude(typeof(ConceptRelationship))]
     [XmlInclude(typeof(ConceptRelationshipType))]
     [XmlInclude(typeof(SecurityUser))]
@@ -75,6 +81,20 @@ namespace OpenIZ.Core.Model.Collection
         /// Represents bundle contents
         /// </summary>
         private List<IdentifiedData> m_bundleContents = new List<IdentifiedData>();
+
+        // Modified now
+        private DateTimeOffset m_modifiedOn = DateTime.Now;
+
+        /// <summary>
+        /// Gets the time the bundle was modified
+        /// </summary>
+        public override DateTimeOffset ModifiedOn
+        {
+            get
+            {
+                return this.m_modifiedOn;
+            }
+        }
 
         /// <summary>
         /// Gets or sets items in the bundle
@@ -129,9 +149,37 @@ namespace OpenIZ.Core.Model.Collection
             retVal.Count = retVal.TotalResults = 1;
             if (resourceRoot == null)
                 return retVal;
-            
+            retVal.EntryKey = resourceRoot.Key;
             retVal.Item.Add(resourceRoot);
             ProcessModel(resourceRoot, retVal);
+            return retVal;
+        }
+
+        /// <summary>
+        /// Create a bundle
+        /// </summary>
+        public static Bundle CreateBundle(IEnumerable<IdentifiedData> resourceRoot, int totalResults, int offset)
+        {
+            Bundle retVal = new Bundle();
+            retVal.Key = Guid.NewGuid();
+            retVal.Count = resourceRoot.Count();
+            retVal.Offset = offset;
+            retVal.TotalResults = totalResults;
+            if (resourceRoot == null)
+                return retVal;
+
+            // Resource root
+            foreach (var itm in resourceRoot)
+            {
+                if (itm == null)
+                    continue;
+                if (!retVal.Item.Exists(o => o.Key == itm.Key))
+                {
+                    retVal.Item.Add(itm.GetLocked());
+                    Bundle.ProcessModel(itm.GetLocked() as IdentifiedData, retVal);
+                }
+            }
+
             return retVal;
         }
 
@@ -140,8 +188,11 @@ namespace OpenIZ.Core.Model.Collection
         /// </summary>
         public void Reconstitute()
         {
-            foreach(var itm in this.Item)
+            foreach (var itm in this.Item)
+            {
                 this.Reconstitute(itm);
+                itm.SetDelayLoad(true);
+            }
         }
         
         /// <summary>
@@ -151,27 +202,43 @@ namespace OpenIZ.Core.Model.Collection
         private void Reconstitute(IdentifiedData data)
         {
             // Prevent delay loading from EntitySource (we're doing that right now)
-            data = data.GetLocked();
+            data.SetDelayLoad(false);
 
             // Iterate over properties
-            foreach(var pi in data.GetType().GetRuntimeProperties())
+            foreach (var pi in data.GetType().GetRuntimeProperties())
             {
+
+                // Is this property not null? If so, we want to iterate
+                object value = pi.GetValue(data);
+                if (value is IList)
+                {
+                    foreach (var itm in value as IList)
+                        if (itm is IdentifiedData)
+                            this.Reconstitute(itm as IdentifiedData);
+                }
+                else if (value is IdentifiedData)
+                    this.Reconstitute(value as IdentifiedData);
+
                 // Is the pi a delay load? if so then get the key property
-                var keyName = pi.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName;
+                var keyName = pi.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty;
                 if (keyName == null || pi.SetMethod == null)
                     continue; // Skip if there is no delay load or if we can't even set this property
 
                 // Now we get the value of the key
                 var keyPi = data.GetType().GetRuntimeProperty(keyName);
-                if (keyPi == null)
+                if (keyPi == null || (keyPi.PropertyType != typeof(Guid) &&
+                    keyPi.PropertyType != typeof(Guid?)))
                     continue; // Invalid key link name
 
                 // Get the key and find a match
-                var key = (Guid)keyPi.GetValue(data);
+                var key = (Guid?)keyPi.GetValue(data);
                 var bundleItem = this.Item.Find(o => o.Key == key);
-                pi.SetValue(data, bundleItem);
+                if(bundleItem != null)
+                    pi.SetValue(data, bundleItem);
                 
             }
+
+
         }
 
         /// <summary>
@@ -179,52 +246,60 @@ namespace OpenIZ.Core.Model.Collection
         /// </summary>
         public static void ProcessModel(IdentifiedData model, Bundle currentBundle, bool followList = true)
         {
-            foreach(var pi in model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<DelayLoadAttribute>() != null))
+            try
             {
-                try
+                currentBundle.m_modifiedOn = DateTimeOffset.Now;
+                foreach (var pi in model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<SerializationReferenceAttribute>() != null))
                 {
-                    object rawValue = pi.GetValue(model);
-                    if (rawValue == null) continue;
-
-                    if (rawValue is IList && followList)
+                    try
                     {
-                        foreach (var itm in rawValue as IList)
+                        object rawValue = pi.GetValue(model);
+                        if (rawValue == null) continue;
+
+                        if (rawValue is IList && followList)
                         {
-
-                            if (itm is IdentifiedData)
+                            foreach (var itm in rawValue as IList)
                             {
-                                if (currentBundle.Item.Exists(o => o.Key == (itm as IdentifiedData).Key))
-                                    continue;
 
+                                if (itm is IdentifiedData)
+                                {
+                                    if (currentBundle.Item.Exists(o => o.Key == (itm as IdentifiedData).Key))
+                                        continue;
+
+                                    if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null)
+                                        lock (currentBundle.m_lockObject)
+                                            if (!currentBundle.Item.Exists(o => o.Key == (itm as IdentifiedData).Key))
+                                                currentBundle.Item.Add(itm as IdentifiedData);
+
+                                    ProcessModel(itm as IdentifiedData, currentBundle, true);
+                                }
+                            }
+                        }
+                        else if (rawValue is IdentifiedData)
+                        {
+                            var iValue = rawValue as IdentifiedData;
+                            var versionedValue = rawValue as IVersionedEntity;
+
+                            // Check for existing item
+                            if (!currentBundle.Item.Exists(i => i?.Key == iValue?.Key && versionedValue?.VersionKey == (i as IVersionedEntity)?.VersionKey))
+                            {
                                 if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null)
-                                    lock(currentBundle.m_lockObject)
-                                        if (!currentBundle.Item.Exists(o => o.Key == (itm as IdentifiedData).Key))
-                                            currentBundle.Item.Add(itm as IdentifiedData);
-
-                                ProcessModel(itm as IdentifiedData, currentBundle, false);
+                                    lock (currentBundle.m_lockObject)
+                                        if (!currentBundle.Item.Exists(o => o.Key == iValue.Key))
+                                            currentBundle.Item.Add(iValue);
+                                ProcessModel(iValue, currentBundle);
                             }
                         }
                     }
-                    else if (rawValue is IdentifiedData)
+                    catch (Exception e)
                     {
-                        var iValue = rawValue as IdentifiedData;
-                        var versionedValue = rawValue as IVersionedEntity;
-
-                        // Check for existing item
-                        if (!currentBundle.Item.Exists(i => i.Key == iValue.Key && versionedValue?.VersionKey == (i as IVersionedEntity)?.VersionKey))
-                        {
-                            if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null)
-                                lock (currentBundle.m_lockObject)
-                                    if (!currentBundle.Item.Exists(o => o.Key == iValue.Key))
-                                        currentBundle.Item.Add(iValue);
-                            ProcessModel(iValue, currentBundle);
-                        }
+                        Debug.WriteLine("Instance error: {0}", e);
                     }
                 }
-                catch(Exception e)
-                {
-                    // TODO: LOG
-                }
+            }
+            catch(Exception e)
+            {
+                Debug.WriteLine("Error: {0}", e);
             }
         }
 

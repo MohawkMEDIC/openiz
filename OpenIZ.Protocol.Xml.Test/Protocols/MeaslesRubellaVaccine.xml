@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ProtocolDefinition xmlns="http://openiz.org/protocol" uuid="D48FF086-702E-4F46-A8DE-C3FFBD02FD7C" id="MR" name="Measles Rubella Vaccine">
+  <rule id="MR1">
+    <when evaluation="and">
+      <!-- MR1 is not in their file yet -->
+      <imsiExpression negationIndicator="true">
+        participation[RecordTarget].source@SubstanceAdministration.doseSequence=1&amp;
+        participation[RecordTarget].source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=VaccineType-MR
+      </imsiExpression>
+    </when>
+    <then>
+      <action>
+        <jsonModel>
+          <![CDATA[
+            {
+				      "$type": "SubstanceAdministration",
+				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
+              "typeConceptModel": { "id" : "F3BE6B88-BC8F-4263-A779-86F21EA10A47", "mnemonic" : "Immunization" },
+				      "doseSequence": 1,
+              "doseQuantity" : 1.0,
+              "doseUnitConcept" : {
+                "id": "A77B8D83-1CC9-4806-A268-5D1738154AFA",
+                "mnemonic" : "DOSE"
+              },
+              "routeConceptModel" : {
+                "id": "D594F99F-0151-41A0-A359-282AB54683A1",
+                "mnemonic": "RouteOfAdministration-IM"
+              },
+				      "participation": {
+					      "Product": [{
+                  "playerModel" : {
+                    "$type" : "Material",
+                    "id" : "6506FA75-9CD9-47DC-9B94-CBD55B6B6C8B",
+                    "typeConceptModel": {
+                      "id" : "6549730D-EBBE-4700-8052-3DD3F390213F",
+                      "mnemonic": "VaccineType-MR"
+                    },
+						        "name": {
+							        "OfficialRecord": [{
+								        "component": {
+									        "$other": ["MEASLES AND RUBELLA"]
+								        }
+							        }],
+                      "Assigned": [{
+								        "component": {
+									        "$other": ["MR"]
+								        }
+							        }]
+						        }
+                  }
+					      }]
+				      }
+			      }
+          ]]>
+        </jsonModel>
+        <assign propertyName="ActTime">DateOfBirth.Value + new TimeSpan(274, 0, 0, 0)</assign>
+        <assign propertyName="StartTime">DateOfBirth.Value + new TimeSpan(274,0,0,0)</assign>
+      </action>
+    </then>
+  </rule>
+  <rule id="MR2">
+    <when evaluation="and">
+      <!-- MR 1 is in their file yet -->
+      <imsiExpression negationIndicator="false">
+        participation[RecordTarget].source@SubstanceAdministration.doseSequence=1&amp;
+        participation[RecordTarget].source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=VaccineType-MR
+      </imsiExpression>
+      <!-- MR 2 is not in their file yet -->
+      <imsiExpression negationIndicator="true">
+        participation[RecordTarget].source@SubstanceAdministration.doseSequence=2&amp;
+        participation[RecordTarget].source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=VaccineType-MR
+      </imsiExpression>
+    </when>
+    <then>
+      <action>
+        <jsonModel>
+          <![CDATA[
+            {
+				      "$type": "SubstanceAdministration",
+				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
+              "typeConceptModel": { "id" : "F3BE6B88-BC8F-4263-A779-86F21EA10A47", "mnemonic" : "Immunization" },
+				      "doseSequence": 2,
+              "doseQuantity" : 1.0,
+              "doseUnitConcept" : {
+                "id": "A77B8D83-1CC9-4806-A268-5D1738154AFA",
+                "mnemonic" : "DOSE"
+              },
+              "routeConceptModel" : {
+                "id": "D594F99F-0151-41A0-A359-282AB54683A1",
+                "mnemonic": "RouteOfAdministration-IM"
+              },
+				      "participation": {
+					      "Product": [{
+                  "playerModel" : {
+                    "$type" : "Material",
+                    "id" : "6506FA75-9CD9-47DC-9B94-CBD55B6B6C8B",
+                    "typeConceptModel": {
+                      "id" : "6549730D-EBBE-4700-8052-3DD3F390213F",
+                      "mnemonic": "VaccineType-MR"
+                    },
+						        "name": {
+							        "OfficialRecord": [{
+								        "component": {
+									        "$other": ["MEASLES AND RUBELLA"]
+								        }
+							        }],
+                      "Assigned": [{
+								        "component": {
+									        "$other": ["MR"]
+								        }
+							        }]
+						        }
+                  }
+					      }]
+				      }
+			      }
+          ]]>
+        </jsonModel>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source@SubstanceAdministration.doseSequence=1&amp;source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=VaccineType-MR" propertyName="StartTime">Act.ActTime + new TimeSpan(274,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source@SubstanceAdministration.doseSequence=1&amp;source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=VaccineType-MR" propertyName="ActTime">Act.ActTime + new TimeSpan(274,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source@SubstanceAdministration.doseSequence=1&amp;source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=VaccineType-MR" propertyName="StopTime">Act.ActTime + new TimeSpan(281,0,0,0)</assign>
+      </action>
+    </then>
+  </rule>
+ 
+</ProtocolDefinition>

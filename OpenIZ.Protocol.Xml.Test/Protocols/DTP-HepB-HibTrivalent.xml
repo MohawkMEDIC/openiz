@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ProtocolDefinition xmlns="http://openiz.org/protocol" uuid="F6186968-9BA7-40DE-939B-42FCC00083A3" id="DTP-HepB-Hib" name="DTP-HepB-Hib Vaccine Schedule">
+  <rule id="DTP1">
+    <when evaluation="and">
+      <!-- DTP1 is not in their file yet -->
+      <imsiExpression negationIndicator="true">
+        participation[RecordTarget].source@SubstanceAdministration.doseSequence=1&amp;
+        participation[RecordTarget].source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=VaccineType-DTP-Hib-HepB
+      </imsiExpression>
+    </when>
+    <then>
+      <action>
+        <jsonModel>
+          <![CDATA[
+            {
+				      "$type": "SubstanceAdministration",
+				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
+              "typeConceptModel": { "id" : "F3BE6B88-BC8F-4263-A779-86F21EA10A47", "mnemonic" : "InitialImmunization" },
+				      "doseSequence": 1,
+              "doseQuantity" : 1.0,
+              "doseUnitConcept" : {
+                "id": "A77B8D83-1CC9-4806-A268-5D1738154AFA",
+                "mnemonic" : "DOSE"
+              },
+              "routeConceptModel" : {
+                "id": "D594F99F-0151-41A0-A359-282AB54683A1",
+                "mnemonic": "RouteOfAdministration-IM"
+              },
+				      "participation": {
+					      "Product": [{
+                  "playerModel" : {
+                    "$type" : "Material",
+                    "id" : "41B008A6-FCF8-40BC-AB96-7567E94BCF8F",
+                    "typeConceptModel": {
+                      "id" : "C20CE9A2-57FD-4FFB-9C12-04A3957D732A",
+                      "mnemonic": "VaccineType-DTP-Hib-HepB"
+                    },
+						        "name": {
+							        "OfficialRecord": [{
+								        "component": {
+									        "$other": ["DTP - Haemophilus influenzae type b conjugate and hepatitis b"]
+								        }
+							        }],
+                      "Assigned": [{
+								        "component": {
+									        "$other": ["DTP-Hib-HepB"]
+								        }
+							        }]
+						        }
+                  }
+					      }]
+				      }
+			      }
+          ]]>
+        </jsonModel>
+        <assign propertyName="ActTime">DateOfBirth.Value + new TimeSpan(42, 0, 0, 0)</assign>
+        <assign propertyName="StartTime">DateOfBirth.Value + new TimeSpan(42,0,0,0)</assign>
+        <assign propertyName="StopTime">DateOfBirth.Value + new TimeSpan(49, 0, 0, 0)</assign>
+      </action>
+    </then>
+  </rule>
+  <rule id="DTP2">
+    <when evaluation="and">
+      <!-- DTP 1 is in their file yet -->
+      <imsiExpression negationIndicator="false">
+        participation[RecordTarget].source@SubstanceAdministration.doseSequence=1&amp;
+        participation[RecordTarget].source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=VaccineType-DTP-Hib-HepB
+      </imsiExpression>
+      <!-- DTP 2 is not in their file yet -->
+      <imsiExpression negationIndicator="true">
+        participation[RecordTarget].source@SubstanceAdministration.doseSequence=2&amp;
+        participation[RecordTarget].source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=VaccineType-DTP-Hib-HepB
+      </imsiExpression>
+    </when>
+    <then>
+      <action>
+        <jsonModel>
+          <![CDATA[
+            {
+				      "$type": "SubstanceAdministration",
+				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
+              "typeConceptModel": { "id" : "6E7A3521-2967-4C0A-80EC-6C5C197B2178", "mnemonic" : "Immunization" },
+				      "doseSequence": 2,
+              "doseQuantity" : 1.0,
+              "doseUnitConcept" : {
+                "id": "A77B8D83-1CC9-4806-A268-5D1738154AFA",
+                "mnemonic" : "DOSE"
+              },
+              "routeConceptModel" : {
+                "id": "D594F99F-0151-41A0-A359-282AB54683A1",
+                "mnemonic": "RouteOfAdministration-IM"
+              },
+				      "participation": {
+					      "Product": [{
+                  "playerModel" : {
+                    "$type" : "Material",
+                    "id" : "41B008A6-FCF8-40BC-AB96-7567E94BCF8F",
+                    "typeConceptModel": {
+                      "id" : "C20CE9A2-57FD-4FFB-9C12-04A3957D732A",
+                      "mnemonic": "VaccineType-DTP-Hib-HepB"
+                    },
+						        "name": {
+							        "OfficialRecord": [{
+								        "component": {
+									        "$other": ["DTP - Haemophilus influenzae type b conjugate and hepatitis b"]
+								        }
+							        }],
+                      "Assigned": [{
+								        "component": {
+									        "$other": ["DTP-Hib-HepB"]
+								        }
+							        }]
+						        }
+                  }
+					      }]
+				      }
+			      }
+          ]]>
+        </jsonModel>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source@SubstanceAdministration.doseSequence=1&amp;source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=VaccineType-DTP-Hib-HepB" propertyName="StartTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source@SubstanceAdministration.doseSequence=1&amp;source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=VaccineType-DTP-Hib-HepB" propertyName="ActTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source@SubstanceAdministration.doseSequence=1&amp;source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=VaccineType-DTP-Hib-HepB" propertyName="StopTime">Act.ActTime + new TimeSpan(5 * 7,0,0,0)</assign>
+      </action>
+    </then>
+  </rule>
+  <rule id="DTP3">
+    <when evaluation="and">
+      <!-- DTP 2 is in their file yet -->
+      <imsiExpression negationIndicator="false">
+        participation[RecordTarget].source@SubstanceAdministration.doseSequence=2&amp;
+        participation[RecordTarget].source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=VaccineType-DTP-Hib-HepB
+      </imsiExpression>
+      <!-- DTP 3 is not in their file yet -->
+      <imsiExpression negationIndicator="true">
+        participation[RecordTarget].source@SubstanceAdministration.doseSequence=3&amp;
+        participation[RecordTarget].source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=VaccineType-DTP-Hib-HepB
+      </imsiExpression>
+    </when>
+    <then>
+      <action>
+        <jsonModel>
+          <![CDATA[
+            {
+				      "$type": "SubstanceAdministration",
+				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
+              "typeConceptModel": { "id" : "6E7A3521-2967-4C0A-80EC-6C5C197B2178", "mnemonic" : "Immunization" },
+				      "doseSequence": 3,
+              "doseQuantity" : 1.0,
+              "doseUnitConcept" : {
+                "id": "A77B8D83-1CC9-4806-A268-5D1738154AFA",
+                "mnemonic" : "DOSE"
+              },
+              "routeConceptModel" : {
+                "id": "D594F99F-0151-41A0-A359-282AB54683A1",
+                "mnemonic": "RouteOfAdministration-IM"
+              },
+				      "participation": {
+					      "Product": [{
+                  "playerModel" : {
+                    "$type" : "Material",
+                    "id" : "41B008A6-FCF8-40BC-AB96-7567E94BCF8F",
+                    "typeConceptModel": {
+                      "id" : "C20CE9A2-57FD-4FFB-9C12-04A3957D732A",
+                      "mnemonic": "VaccineType-DTP-Hib-HepB"
+                    },
+						        "name": {
+							        "OfficialRecord": [{
+								        "component": {
+									        "$other": ["DTP - Haemophilus influenzae type b conjugate and hepatitis b"]
+								        }
+							        }],
+                      "Assigned": [{
+								        "component": {
+									        "$other": ["DTP-Hib-HepB"]
+								        }
+							        }]
+						        }
+                  }
+					      }]
+				      }
+			      }
+          ]]>
+        </jsonModel>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source@SubstanceAdministration.doseSequence=2&amp;source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=VaccineType-DTP-Hib-HepB" propertyName="StartTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source@SubstanceAdministration.doseSequence=2&amp;source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=VaccineType-DTP-Hib-HepB" propertyName="ActTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source@SubstanceAdministration.doseSequence=2&amp;source@SubstanceAdministration.participation[Product].player.typeConcept.mnemonic=VaccineType-DTP-Hib-HepB" propertyName="StopTime">Act.ActTime + new TimeSpan(5 * 7,0,0,0)</assign>
+      </action>
+    </then>
+  </rule>
+</ProtocolDefinition>

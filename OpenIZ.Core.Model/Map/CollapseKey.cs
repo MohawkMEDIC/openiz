@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-4-19
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using System.Collections.Generic;
@@ -50,17 +51,27 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         public IEnumerable<ValidationResultDetail> Validate(Type domainClass)
         {
+
             List<ValidationResultDetail> retVal = new List<ValidationResultDetail>();
-            if (domainClass?.GetRuntimeProperty(this.PropertyName) == null)
+            if (String.IsNullOrEmpty(this.KeyName))
+                retVal.Add(new ValidationResultDetail(ResultDetailType.Error, String.Format("collapseKey missing @keyName"), null, null));
+            if (String.IsNullOrEmpty(this.PropertyName))
+                retVal.Add(new ValidationResultDetail(ResultDetailType.Error, String.Format("collapseKey missing @propertyName"), null, null));
+            if (!String.IsNullOrEmpty(this.PropertyName) && domainClass?.GetRuntimeProperty(this.PropertyName) == null)
                 retVal.Add(new ValidationResultDetail(ResultDetailType.Error, String.Format("({0}).{1} not found", domainClass?.Name, this.PropertyName), null, null));
-            if (domainClass?.GetRuntimeProperty(this.KeyName) == null)
+            if (!String.IsNullOrEmpty(this.KeyName) && domainClass?.GetRuntimeProperty(this.KeyName) == null)
                 retVal.Add(new ValidationResultDetail(ResultDetailType.Error, String.Format("({0}).{1} not found", domainClass?.Name, this.KeyName), null, null));
-            var runtimeProperty = domainClass?.GetRuntimeProperty(this.KeyName);
-            if (runtimeProperty?.PropertyType != typeof(Guid) &&
-                runtimeProperty?.PropertyType != typeof(Guid?) &&
-                runtimeProperty?.PropertyType != typeof(Decimal) &&
-                runtimeProperty?.PropertyType != typeof(Decimal?))
-                retVal.Add(new ValidationResultDetail(ResultDetailType.Error, String.Format("({0}).{1} must be one of [Guid, Nullable<Guid>, Decimal, Nullable<Decimal>]", domainClass?.Name, this.KeyName), null, null));
+
+            if (!String.IsNullOrEmpty(this.KeyName))
+            {
+                var runtimeProperty = domainClass?.GetRuntimeProperty(this.KeyName);
+                if (runtimeProperty?.PropertyType != typeof(Guid) &&
+                    runtimeProperty?.PropertyType != typeof(Guid?) &&
+                    runtimeProperty?.PropertyType != typeof(Decimal) &&
+                    runtimeProperty?.PropertyType != typeof(Decimal?))
+                    retVal.Add(new ValidationResultDetail(ResultDetailType.Error, String.Format("({0}).{1} must be one of [Guid, Nullable<Guid>, Decimal, Nullable<Decimal>]", domainClass?.Name, this.KeyName), null, null));
+            }
+            
             return retVal;
         }
     }

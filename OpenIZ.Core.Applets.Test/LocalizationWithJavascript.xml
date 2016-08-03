@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ - 
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-6-14
+ -->
+<AppletManifest xmlns="http://openiz.org/applet">
+  <info id="org.openiz.applet.sample.localization.js" version="1.0.0.0">
+    <name lang="en">Sample localization with JavaScript</name>
+    <name lang="fr"></name>
+    <groupName>Samples</groupName>
+    <author>OpenIZ Community</author>
+  
+  </info>
+  <asset lang="en" name="strings" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+        var MyAppStrings = {
+          hello : "Hello! This is a string!",
+          alert : "This is an alert text",
+          click_me: "Click Me!"
+        };
+      ]]>
+    </contentText>
+  </asset>
+  <asset lang="fr" name="strings" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+        var MyAppStrings = {
+          hello : "Bonjour! C'est un string!",
+          alert : "C'est les mots de notification!",
+          click_me : "Cliquez Moi!"
+        };
+      ]]>
+    </contentText>
+  </asset>
+  <asset name="index.html" mimeType="text/html">
+    <contentHtml>
+      <script>strings</script>
+      <script>index-controller</script>
+    <content>
+      <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="Locale">
+        {{locale_strings.hello}}
+        <a href="#" ng-click="alertMe()">{{locale_strings.click_me}}</a>
+      </body>
+    </content>
+    </contentHtml>
+  </asset>
+  <asset name="index-controller" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+        	var indexApp = angular.module('index', []);
+
+			    indexApp.controller('ConfigurationController', ['$scope', function ($scope)
+			    {
+            $scope.locale_strings = MyAppStrings;
+            
+            $scope.alertMe = function() {
+              alert($scope.locale_strings.alert);
+            };
+          }]);
+      ]]>  
+    </contentText>
+  </asset>
+</AppletManifest>

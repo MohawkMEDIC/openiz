@@ -13,17 +13,18 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>Profile49</TargetFrameworkProfile>
+    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\bin\Debug\OpenIZ.Core.Model.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -36,16 +37,26 @@
   <ItemGroup>
     <Compile Include="Acts\Act.cs" />
     <Compile Include="Acts\ActParticipation.cs" />
+    <Compile Include="Acts\ActProtocol.cs" />
     <Compile Include="Acts\ActRelationship.cs" />
+    <Compile Include="Acts\ControlAct.cs" />
     <Compile Include="Acts\Observation.cs" />
     <Compile Include="Acts\PatientEncounter.cs" />
+    <Compile Include="Acts\Protocol.cs" />
     <Compile Include="Acts\SubstanceAdministration.cs" />
+    <Compile Include="Attributes\AutoLoadAttribute.cs" />
     <Compile Include="Attributes\ClassifierAttribute.cs" />
-    <Compile Include="Attributes\DelayLoadAttribute.cs" />
+    <Compile Include="Attributes\DataIgnoreAttribute.cs" />
+    <Compile Include="Attributes\KeyLookupAttribute.cs" />
+    <Compile Include="Attributes\SerializationReferenceAttribute.cs" />
+    <Compile Include="Attributes\SimpleValueAttribute.cs" />
     <Compile Include="BaseEntityData.cs" />
     <Compile Include="Association.cs" />
     <Compile Include="Collection\Bundle.cs" />
     <Compile Include="Constants\ActClassKeys.cs" />
+    <Compile Include="Constants\ActMoodKeys.cs" />
+    <Compile Include="Constants\ActParticipationKey.cs" />
+    <Compile Include="Constants\ActRelationshipTypeKeys.cs" />
     <Compile Include="Constants\AddressKeys.cs" />
     <Compile Include="Constants\CodeSystemKeys.cs" />
     <Compile Include="Constants\ConceptClassKeys.cs" />
@@ -55,7 +66,10 @@
     <Compile Include="Constants\EntityClassConceptKeys.cs" />
     <Compile Include="Constants\EntityRelationshipTypeKeys.cs" />
     <Compile Include="Constants\NameKeys.cs" />
+    <Compile Include="Constants\PhoneticAlgorithmKeys.cs" />
     <Compile Include="Constants\StatusConceptKeys.cs" />
+    <Compile Include="Constants\TelecomAddressUseKeys.cs" />
+    <Compile Include="Constants\UserClassKeys.cs" />
     <Compile Include="DataTypes\AssigningAuthority.cs" />
     <Compile Include="DataTypes\CodeSystem.cs" />
     <Compile Include="DataTypes\Concept.cs" />
@@ -97,21 +111,34 @@
     <Compile Include="Entities\PlaceService.cs" />
     <Compile Include="Exceptions\ModelMapValidationException.cs" />
     <Compile Include="Exceptions\ModelValidationException.cs" />
+    <Compile Include="Extensions\BooleanExtensionHandler.cs" />
+    <Compile Include="Extensions\DecimalExtensionHandler.cs" />
+    <Compile Include="Extensions\StringExtensionHandler.cs" />
     <Compile Include="IdentifiedData.cs" />
+    <Compile Include="Interfaces\IBaseEntityData.cs" />
+    <Compile Include="Interfaces\IExtensionHandler.cs" />
     <Compile Include="Interfaces\IIdentifiedEntity.cs" />
     <Compile Include="Interfaces\ISimpleAssociation.cs" />
     <Compile Include="Interfaces\ISecurable.cs" />
     <Compile Include="Interfaces\IVersionedAssociation.cs" />
     <Compile Include="Interfaces\IVersionedEntity.cs" />
     <Compile Include="Map\ClassMap.cs" />
+    <Compile Include="Map\ClassRedirect.cs" />
     <Compile Include="Map\CollapseKey.cs" />
+    <Compile Include="Map\AggregationFunctionType.cs" />
     <Compile Include="Map\MapUtil.cs" />
     <Compile Include="Map\ModelExpressionVisitor.cs" />
     <Compile Include="Map\ModelMap.cs" />
     <Compile Include="Map\ModelMapper.cs" />
+    <Compile Include="Map\OpenIZConvert.cs" />
     <Compile Include="Map\PropertyMap.cs" />
+    <Compile Include="Map\SortOrderType.cs" />
     <Compile Include="Map\ValidationResultDetail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Query\NameValueCollection.cs" />
+    <Compile Include="Query\QueryExpressionBuilder.cs" />
+    <Compile Include="Query\QueryExpressionParser.cs" />
+    <Compile Include="Reflection\ReflectionUtil.cs" />
     <Compile Include="Roles\Patient.cs" />
     <Compile Include="Roles\Provider.cs" />
     <Compile Include="Security\SecurityApplication.cs" />
@@ -134,7 +161,16 @@
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
     </None>
+    <None Include="Schema\BaseTypes.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Schema\OpenIZModel.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

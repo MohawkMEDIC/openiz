@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,144 +14,140 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-4-19
+ * User: justi
+ * Date: 2016-6-19
  */
+using MARC.HI.EHRS.SVC.Core;
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Services;
+using OpenIZ.Persistence.Data.MSSQL.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
-using OpenIZ.Persistence.Data.MSSQL.Data;
 using System.Data.Linq;
-using System.Security.Principal;
-using MARC.HI.EHRS.SVC.Core;
-using OpenIZ.Core.Services;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
     /// <summary>
-    /// Persistence of entity names
+    /// Entity name persistence service
     /// </summary>
-    public class EntityNamePersistenceService : VersionedAssociationPersistenceService<Core.Model.Entities.EntityName, Core.Model.Entities.Entity, Data.EntityName>
+    public class EntityNamePersistenceService : IdentifiedPersistenceService<Core.Model.Entities.EntityName, Data.EntityName>
+    {
+
+        /// <summary>
+        /// Insert the specified object
+        /// </summary>
+        public override Core.Model.Entities.EntityName Insert(ModelDataContext context, Core.Model.Entities.EntityName data, IPrincipal principal)
+        {
+            // Ensure exists
+            data.NameUse?.EnsureExists(context, principal);
+            data.NameUseKey = data.NameUse?.Key ?? data.NameUseKey;
+            var retVal = base.Insert(context, data, principal);
+
+            // Data component
+            if (data.Component != null)
+                base.UpdateAssociatedItems<Core.Model.Entities.EntityNameComponent, Data.EntityNameComponent>(
+                    data.Component, 
+                    data, 
+                    context,
+                    principal);
+
+            return retVal;
+        }
+
+        /// <summary>
+        /// Update the entity name
+        /// </summary>
+        public override Core.Model.Entities.EntityName Update(ModelDataContext context, Core.Model.Entities.EntityName data, IPrincipal principal)
+        {
+            // Ensure exists
+            data.NameUse?.EnsureExists(context, principal);
+            data.NameUseKey = data.NameUse?.Key ?? data.NameUseKey;
+
+            var retVal = base.Update(context, data, principal);
+
+            var sourceKey = data.Key.Value.ToByteArray();
+
+            // Data component
+            if (data.Component != null)
+                base.UpdateAssociatedItems<Core.Model.Entities.EntityNameComponent, Data.EntityNameComponent>(
+                    data.Component,
+                    data,
+                    context,
+                    principal);
+
+            return retVal;
+        }
+
+        /// <summary>
+        /// Data load options
+        /// </summary>
+        /// <returns></returns>
+        internal override DataLoadOptions GetDataLoadOptions()
+        {
+            DataLoadOptions dlo = new DataLoadOptions();
+            dlo.LoadWith<Data.EntityName>(c => c.NameUseConcept);
+            dlo.LoadWith<Data.EntityName>(c => c.EntityNameComponents);
+            dlo.LoadWith<Data.EntityNameComponent>(c => c.ComponentTypeConcept);
+            dlo.LoadWith<Data.EntityNameComponent>(c => c.PhoneticValue);
+
+            return dlo;
+        }
+    }
+
+    /// <summary>
+    /// Represents an entity name component persistence service
+    /// </summary>
+    public class EntityNameComponentPersistenceService : IdentifiedPersistenceService<Core.Model.Entities.EntityNameComponent, Data.EntityNameComponent>
     {
         /// <summary>
-        /// Convert to model
+        /// From model instance
         /// </summary>
-        internal override Core.Model.Entities.EntityName ConvertToModel(object data)
+        public override object FromModelInstance(Core.Model.Entities.EntityNameComponent modelInstance, ModelDataContext context, IPrincipal princpal)
         {
-            if (data == null)
-                return null;
+            var retVal = base.FromModelInstance(modelInstance, context, princpal) as Data.EntityNameComponent;
 
-            var name = data as Data.EntityName;
-
-            var retVal = DataCache.Current.Get(name.EntityNameId) as Core.Model.Entities.EntityName;
-            if (retVal == null)
+            // Duplicate name?
+            var existing = context.PhoneticValues.FirstOrDefault(o => o.Value == modelInstance.Value);
+            if (existing != null)
+                retVal.PhoneticValue = existing;
+            else
             {
-                retVal = this.ConvertItem(name);
-
-                ConceptPersistenceService cp = new ConceptPersistenceService();
-                if (name.NameUseConcept != null)
-                    retVal.NameUse = cp.ConvertItem(name.NameUseConcept.CurrentVersion());
-                if (name.EntityNameComponents != null)
+                var phoneticCoder = ApplicationContext.Current.GetService<IPhoneticAlgorithmHandler>();
+                retVal.PhoneticValue = new PhoneticValue()
                 {
-                    retVal.Component = new List<Core.Model.Entities.EntityNameComponent>();
-                    retVal.Component.AddRange(
-                        name.EntityNameComponents.Select(o=>new Core.Model.Entities.EntityNameComponent()
-                        {
-                            ComponentTypeKey = o.ComponentTypeConceptId,
-                            Key = o.EntityNameComponentId,
-                            PhoneticAlgorithmKey = o.PhoneticValue.PhoneticAlgorithmId,
-                            PhoneticCode = o.PhoneticValue.PhoneticCode,
-                            Value = o.PhoneticValue.Value,
-                            SourceEntityKey = retVal.Key,
-                        }));
-                }
+                    PhoneticValueId = Guid.NewGuid(),
+                    Value = modelInstance.Value,
+                    PhoneticAlgorithmId = phoneticCoder?.AlgorithmId ?? PhoneticAlgorithmKeys.None,
+                    PhoneticCode = phoneticCoder?.GenerateCode(modelInstance.Value)
+                };
             }
 
             return retVal;
         }
 
         /// <summary>
-        /// Gets the table that backs this particular persister
+        /// Insert context
         /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        protected override Table<Data.EntityName> GetDataTable(ModelDataContext context)
+        public override Core.Model.Entities.EntityNameComponent Insert(ModelDataContext context, Core.Model.Entities.EntityNameComponent data, IPrincipal principal)
         {
-            return context.EntityNames;
+            data.ComponentType?.EnsureExists(context, principal);
+            data.ComponentTypeKey = data.ComponentType?.Key ?? data.ComponentTypeKey;
+            return base.Insert(context, data, principal);
         }
 
         /// <summary>
-        /// Insert the entity name into the database, optionally creating a new version of the entity
+        /// Update
         /// </summary>
-        internal override Core.Model.Entities.EntityName Insert(Core.Model.Entities.EntityName storageData, IPrincipal principal, ModelDataContext dataContext, bool newVersion)
+        public override Core.Model.Entities.EntityNameComponent Update(ModelDataContext context, Core.Model.Entities.EntityNameComponent data, IPrincipal principal)
         {
-            var domainName = this.ConvertFromModel(storageData) as Data.EntityName;
-
-            // Ensure that the use code exists
-            if (storageData.NameUse != null)
-                domainName.NameUseConceptId = storageData.NameUse.EnsureExists(principal, dataContext).Key;
-
-            // Get the current version & create a new version if needed
-            var currentEntityVersion = dataContext.EntityVersions.Single(o => o.EntityId == storageData.SourceEntityKey && o.ObsoletionTime == null);
-            EntityVersion newEntityVersion = newVersion ? currentEntityVersion.NewVersion(principal, dataContext) : currentEntityVersion;
-            domainName.EffectiveVersionSequenceId = newEntityVersion.VersionSequenceId;
-            domainName.Entity = newEntityVersion.Entity;
-
-            // Get phonetic service
-            var phoneticAlgorithm = ApplicationContext.Current.GetService<IPhoneticAlgorithmHandler>();
-
-            // Convert address components 
-            foreach (var itm in storageData.Component)
-            {
-                var nameValue = dataContext.PhoneticValues.SingleOrDefault(o => o.Value == itm.Value);
-                if (nameValue == null)
-                {
-                    if (itm.PhoneticAlgorithmKey == Guid.Empty && phoneticAlgorithm != null)
-                    {
-                        itm.PhoneticCode = phoneticAlgorithm.GenerateCode(itm.Value);
-                        itm.PhoneticAlgorithmKey = phoneticAlgorithm.AlgorithmId;
-                    }
-                    else
-                        itm.PhoneticAlgorithmKey = Core.Model.DataTypes.PhoneticAlgorithm.EmptyAlgorithm.Key;
-
-                    // Set the phonetic value
-                    nameValue = new PhoneticValue()
-                    {
-                        Value = itm.Value,
-                        PhoneticAlgorithmId = itm.PhoneticAlgorithmKey,
-                        PhoneticCode = itm.PhoneticCode
-                    };
-                }
-                
-                domainName.EntityNameComponents.Add(new Data.EntityNameComponent()
-                {
-                    ComponentTypeConceptId = itm.ComponentTypeKey == Guid.Empty ? null : (Guid?)itm.ComponentTypeKey,
-                    PhoneticValue = nameValue,
-                    EntityName = domainName
-                });
-            }
-            dataContext.EntityNames.InsertOnSubmit(domainName);
-            dataContext.SubmitChanges(); // Write and reload data from database
-
-            // Copy properties
-            storageData.Key = domainName.EntityNameId;
-            storageData.EffectiveVersionSequenceId = domainName.EffectiveVersionSequenceId;
-            storageData.SourceEntityKey = domainName.EntityId;
-            return storageData;
-
-        }
-
-        internal override Core.Model.Entities.EntityName Obsolete(Core.Model.Entities.EntityName storageData, IPrincipal principal, ModelDataContext dataContext, bool newVersion)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal override Core.Model.Entities.EntityName Update(Core.Model.Entities.EntityName storageData, IPrincipal principal, ModelDataContext dataContext, bool newVersion)
-        {
-            throw new NotImplementedException();
+            data.ComponentType?.EnsureExists(context, principal);
+            data.ComponentTypeKey = data.ComponentType?.Key ?? data.ComponentTypeKey;
+            return base.Update(context, data, principal);
         }
     }
 }

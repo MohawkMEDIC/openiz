@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Attributes;
@@ -27,22 +28,25 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using OpenIZ.Core.Interfaces;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
     /// <summary>
     /// Represents a base entity extension
     /// </summary>
-    [Classifier(nameof(ExtensionType))]
+    [Classifier(nameof(ExtensionType)), SimpleValue(nameof(ExtensionValue))]
     [XmlType(Namespace = "http://openiz.org/model")]
-    public abstract class Extension<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>
+    public abstract class Extension<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>, new()
     {
 
+
         // Extension type key
-        private Guid m_extensionTypeKey;
+        private Guid? m_extensionTypeKey;
         // Extension type
-        
         private ExtensionType m_extensionType;
+        // Extension handler
+        private IExtensionHandler m_extensionHandler;
 
         /// <summary>
         /// Gets or sets the value of the extension
@@ -51,11 +55,17 @@ namespace OpenIZ.Core.Model.DataTypes
         public byte[] ExtensionValue { get; set; }
 
         /// <summary>
+        /// Gets or sets an extension displayable value
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public String ExtensionDisplay { get; set; }
+
+        /// <summary>
         /// Gets or sets the extension type key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlIgnore, JsonIgnore]
-        public Guid ExtensionTypeKey
+        public Guid? ExtensionTypeKey
         {
             get { return this.m_extensionTypeKey; }
             set
@@ -68,8 +78,9 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the extension type
         /// </summary>
-        [DelayLoad(nameof(ExtensionTypeKey))]
+        [SerializationReference(nameof(ExtensionTypeKey))]
         [XmlElement("extensionType"), JsonProperty("extensionType")]
+        [AutoLoad]
         public ExtensionType ExtensionType
         {
             get {
@@ -79,10 +90,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_extensionType = value;
-                if (value == null)
-                    this.m_extensionTypeKey = Guid.Empty;
-                else
-                    this.m_extensionTypeKey = value.Key;
+                this.m_extensionTypeKey = value?.Key;
             }
         }
 
@@ -104,6 +112,23 @@ namespace OpenIZ.Core.Model.DataTypes
     public class EntityExtension : Extension<Entity>
     {
 
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public EntityExtension()
+        {
+
+        }
+
+        /// <summary>
+        /// Creates an entity extension
+        /// </summary>
+        public EntityExtension(Guid extensionType, byte[] value)
+        {
+            this.ExtensionTypeKey = extensionType;
+            this.ExtensionValue = value;
+        }
+        
     }
 
     /// <summary>
@@ -114,5 +139,21 @@ namespace OpenIZ.Core.Model.DataTypes
     public class ActExtension : Extension<Act>
     {
 
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public ActExtension()
+        {
+
+        }
+
+        /// <summary>
+        /// Creates an entity extension
+        /// </summary>
+        public ActExtension(Guid extensionType, byte[] value)
+        {
+            this.ExtensionTypeKey = extensionType;
+            this.ExtensionValue = value;
+        }
     }
 }

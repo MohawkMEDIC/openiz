@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-4-19
+ * User: justi
+ * Date: 2016-6-14
  */
 using OpenIZ.Core.Model.Map;
 using System;
@@ -51,5 +52,16 @@ namespace OpenIZ.Core.Exceptions
         /// </summary>
         public IEnumerable<ValidationResultDetail> ValidationDetails { get; private set; }
 
+        /// <summary>
+        /// Output model map exception as string
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder("Model Validation Exception:\r\n");
+            foreach (var itm in this.ValidationDetails)
+                sb.AppendFormat("{0}: {1} @ {2}\r\n", itm.Level, itm.Message, itm.Location);
+            return sb.ToString();
+        }
     }
 }

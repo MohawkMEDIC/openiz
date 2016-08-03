@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
@@ -43,40 +44,36 @@ namespace OpenIZ.Core.Model.Entities
         public EntityAddress(Guid useKey, String streetAddressLine, String city, String province, String country, String zipCode)
         {
             this.m_addressUseKey = useKey;
-            this.m_addressComponents = new List<EntityAddressComponent>();
+            this.Component = new List<EntityAddressComponent>();
             if (!String.IsNullOrEmpty(streetAddressLine))
-                this.m_addressComponents.Add(new EntityAddressComponent(AddressComponentKeys.StreetAddressLine, streetAddressLine));
+                this.Component.Add(new EntityAddressComponent(AddressComponentKeys.StreetAddressLine, streetAddressLine));
             if (!String.IsNullOrEmpty(city))
-                this.m_addressComponents.Add(new EntityAddressComponent(AddressComponentKeys.City, city));
+                this.Component.Add(new EntityAddressComponent(AddressComponentKeys.City, city));
             if (!String.IsNullOrEmpty(province))
-                this.m_addressComponents.Add(new EntityAddressComponent(AddressComponentKeys.State, province));
+                this.Component.Add(new EntityAddressComponent(AddressComponentKeys.State, province));
             if (!String.IsNullOrEmpty(country))
-                this.m_addressComponents.Add(new EntityAddressComponent(AddressComponentKeys.Country, country));
+                this.Component.Add(new EntityAddressComponent(AddressComponentKeys.Country, country));
             if (!String.IsNullOrEmpty(zipCode))
-                this.m_addressComponents.Add(new EntityAddressComponent(AddressComponentKeys.PostalCode, zipCode));
+                this.Component.Add(new EntityAddressComponent(AddressComponentKeys.PostalCode, zipCode));
         }
         /// <summary>
         /// Default CTOR
         /// </summary>
         public EntityAddress()
         {
-
+            this.Component = new List<EntityAddressComponent>();
         }
+
         // Address use key
         private Guid? m_addressUseKey;
         // Address use concept
-        
         private Concept m_addressUseConcept;
-        // Address components
-        
-        private List<EntityAddressComponent> m_addressComponents;
 
         /// <summary>
         /// Gets or sets the address use key
         /// </summary>
         [XmlElement("use"), JsonProperty("use")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         public Guid? AddressUseKey
         {
             get { return this.m_addressUseKey; }
@@ -90,8 +87,9 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the address use
         /// </summary>
-        [DelayLoad(nameof(AddressUseKey))]
+        [SerializationReference(nameof(AddressUseKey))]
         [XmlIgnore, JsonIgnore]
+        [AutoLoad]
         public Concept AddressUse
         {
             get {
@@ -108,30 +106,26 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the component types
         /// </summary>
-        [DelayLoad(null)]
         [XmlElement("component"), JsonProperty("component")]
-        public List<EntityAddressComponent> Component
+        [AutoLoad]
+        public List<EntityAddressComponent> Component { get; set; }
+
+        /// <summary>
+        /// Remove empty components
+        /// </summary>
+        public override IdentifiedData Clean()
         {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_addressComponents = EntitySource.Current.GetRelations(this.Key, this.m_addressComponents);
-                return this.m_addressComponents;
-            }
-            set
-            {
-                this.m_addressComponents = value;
-            }
+            this.Component.RemoveAll(o => String.IsNullOrEmpty(o.Value));
+            return this;
         }
 
         /// <summary>
-        /// Force linked properties to delay load
+        /// True if empty
         /// </summary>
-        public override void Refresh()
+        /// <returns></returns>
+        public override bool IsEmpty()
         {
-            base.Refresh();
-            this.m_addressComponents = null;
-            this.m_addressUseKey = null;
+            return this.Component.Count == 0;
         }
     }
 }

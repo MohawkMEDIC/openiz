@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
@@ -35,7 +36,7 @@ namespace OpenIZ.Core.Model.Entities
     {
 
         // Service key
-        private Guid m_serviceConceptKey;
+        private Guid? m_serviceConceptKey;
         // Service
         
         private Concept m_service;
@@ -51,7 +52,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("serviceConcept"), JsonProperty("serviceConcept")]
-        public Guid ServiceConceptKey
+        public Guid? ServiceConceptKey
         {
             get { return this.m_serviceConceptKey; }
             set
@@ -64,7 +65,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the service concept
         /// </summary>
-        [DelayLoad(nameof(ServiceConceptKey))]
+        [SerializationReference(nameof(ServiceConceptKey))]
         [XmlIgnore, JsonIgnore]
         public Concept ServiceConcept
         {
@@ -75,10 +76,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 this.m_service = value;
-                if (value == null)
-                    this.m_serviceConceptKey = Guid.Empty;
-                else
-                    this.m_serviceConceptKey = value.Key;
+                this.m_serviceConceptKey = value?.Key;
             }
         }
 

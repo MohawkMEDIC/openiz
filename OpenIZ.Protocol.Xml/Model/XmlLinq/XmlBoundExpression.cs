@@ -1,0 +1,104 @@
+﻿using System;
+using System.Linq.Expressions;
+using System.Xml.Serialization;
+
+namespace OpenIZ.Protocol.Xml.Model.XmlLinq
+{
+    /// <summary>
+    /// Represents an XmlExpression bound to another expression
+    /// </summary>
+    [XmlType(nameof(XmlBoundExpression), Namespace = "http://openiz.org/protocol")]
+    public abstract class XmlBoundExpression : XmlExpression
+    {
+        /// <summary>
+        /// Creates the bound expression
+        /// </summary>
+        public XmlBoundExpression()
+        {
+
+        }
+
+        /// <summary>
+        /// Initialize context
+        /// </summary>
+        public override void InitializeContext(XmlExpression context)
+        {
+            base.InitializeContext(context);
+            this.Object?.InitializeContext(this);
+        }
+
+        /// <summary>
+        /// Creates the bound expression
+        /// </summary>
+        public XmlBoundExpression(Expression expr) 
+        {
+            this.Object = XmlExpression.FromExpression(expr);
+        }
+
+        /// <summary>
+        /// Creates type bound expression
+        /// </summary>
+        /// <param name="expr"></param>
+        public XmlBoundExpression(TypeBinaryExpression expr)
+        {
+            this.Object = XmlExpression.FromExpression(expr.Expression);
+        }
+
+        /// <summary>
+        /// Creates the bound expression
+        /// </summary>
+        public XmlBoundExpression(MemberExpression expr) 
+        {
+            this.Object = XmlExpression.FromExpression(expr.Expression);
+        }
+
+        /// <summary>
+        /// Creates the bound expression
+        /// </summary>
+        public XmlBoundExpression(MethodCallExpression expr) 
+        {
+            this.Object = XmlExpression.FromExpression(expr.Object);
+        }
+
+        /// <summary>
+        /// Creates the bound expression
+        /// </summary>
+        public XmlBoundExpression(UnaryExpression expr) 
+        {
+            this.Object = XmlExpression.FromExpression(expr.Operand);
+        }
+
+        /// <summary>
+        /// Gets or sets the explicit type (for unbound methods)
+        /// </summary>
+        [XmlAttribute("staticClass")]
+        public String StaticClassXml { get; set; }
+
+
+        /// <summary>
+        /// Gets the method class
+        /// </summary>
+        [XmlIgnore]
+        public Type StaticClass
+        {
+            get
+            {
+                if (this.StaticClassXml == null)
+                    return null;
+                return Type.GetType(this.StaticClassXml);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the expression
+        /// </summary>
+        [XmlElement("constantExpression", typeof(XmlConstantExpression))]
+        [XmlElement("memberExpression", typeof(XmlMemberExpression))]
+        [XmlElement("parameterExpression", typeof(XmlParameterExpression))]
+        [XmlElement("binaryExpression", typeof(XmlBinaryExpression))]
+        [XmlElement("unaryExpression", typeof(XmlUnaryExpression))]
+        [XmlElement("methodCallExpression", typeof(XmlMethodCallExpression))]
+        [XmlElement("typeBinaryExpression", typeof(XmlTypeBinaryExpression))]
+        public XmlExpression Object { get; set; }
+    }
+}

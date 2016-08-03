@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
@@ -34,26 +35,50 @@ namespace OpenIZ.Core.Model.Entities
     {
 
         // The entity key
-        private Guid m_targetEntityKey;
+        private Guid? m_targetEntityKey;
         // The target entity
         
         private Entity m_targetEntity;
         // The association type key
-        private Guid m_associationTypeKey;
+        private Guid? m_associationTypeKey;
         // The association type
         
         private Concept m_relationshipType;
 
         /// <summary>
+        /// Default constructor for entity relationship
+        /// </summary>
+        public EntityRelationship()
+        {
+        }
+
+        /// <summary>
+        /// Entity relationship between <paramref name="source"/> and <paramref name="target"/>
+        /// </summary>
+        public EntityRelationship(Guid? relationshipType, Entity target)
+        {
+            this.RelationshipTypeKey = relationshipType;
+            this.TargetEntity = target;
+        }
+
+        /// <summary>
+        /// Entity relationship between <paramref name="source"/> and <paramref name="target"/>
+        /// </summary>
+        public EntityRelationship(Guid? relationshipType, Guid? targetKey)
+        {
+            this.RelationshipTypeKey = relationshipType;
+            this.TargetEntityKey  = targetKey;
+        }
+        /// <summary>
         /// The target of the association
         /// </summary>
         [XmlElement("target"), JsonProperty("target")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
-        public Guid TargetEntityKey
+        public Guid? TargetEntityKey
         {
             get { return this.m_targetEntityKey; }
-            set { this.m_targetEntityKey = value;
+            set {
+                this.m_targetEntityKey = value;
                 this.m_targetEntity = null;
             }
         }
@@ -61,7 +86,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Target entity reference
         /// </summary>
-        [DelayLoad(nameof(TargetEntityKey))]
+        [SerializationReference(nameof(TargetEntityKey))]
         [XmlIgnore, JsonIgnore]
         public Entity TargetEntity
         {
@@ -72,10 +97,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 this.m_targetEntity = value;
-                if (value == null)
-                    this.m_targetEntityKey = Guid.Empty;
-                else
-                    this.m_targetEntityKey = value.Key;
+                    this.m_targetEntityKey = value?.Key;
             }
         }
 
@@ -84,8 +106,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [XmlElement("relationshipType"), JsonProperty("relationshipType")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
-        public Guid RelationshipTypeKey
+        public Guid? RelationshipTypeKey
         {
             get { return this.m_associationTypeKey; }
             set
@@ -96,10 +117,17 @@ namespace OpenIZ.Core.Model.Entities
         }
 
         /// <summary>
+        /// The inversion indicator
+        /// </summary>
+        [XmlElement("inversionInd"), JsonProperty("inversionInd")]
+        public bool InversionIndicator { get; set; }
+
+        /// <summary>
         /// Gets or sets the association type
         /// </summary>
+        [AutoLoad]
         [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(RelationshipTypeKey))]
+        [SerializationReference(nameof(RelationshipTypeKey))]
         public Concept RelationshipType
         {
             get {
@@ -109,13 +137,28 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 this.m_relationshipType = value;
-                if (value == null)
-                    this.m_associationTypeKey = Guid.Empty;
-                else
-                    this.m_associationTypeKey = value.Key;
+                this.m_associationTypeKey = value?.Key;
             }
         }
 
+        /// <summary>
+        /// Is empty
+        /// </summary>
+        /// <returns></returns>
+        public override bool IsEmpty()
+        {
+            return this.RelationshipType == null && this.RelationshipTypeKey == null;
+        }
+
+        /// <summary>
+        /// Clean the entity
+        /// </summary>
+        /// <returns></returns>
+        public override IdentifiedData Clean()
+        {
+            this.TargetEntity = this.TargetEntity?.Clean() as Entity;
+            return this;
+        }
         /// <summary>
         /// Refresh this entity
         /// </summary>

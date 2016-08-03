@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using System;
@@ -32,11 +33,11 @@ namespace OpenIZ.Core.Model.Security
     /// Security Entity base class
     /// </summary>
     [XmlType(Namespace = "http://openiz.org/model", TypeName = "SecurityEntity")]
-    public abstract class SecurityEntity : NonVersionedEntityData
+    public class SecurityEntity : NonVersionedEntityData
     {
 
         // Policies
-        private List<SecurityPolicyInstance> m_policies = new List<SecurityPolicyInstance>();
+        protected List<SecurityPolicyInstance> m_policies = new List<SecurityPolicyInstance>();
 
         /// <summary>
         /// Policies associated with the entity

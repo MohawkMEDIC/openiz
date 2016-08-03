@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,10 +14,11 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Model.Interfaces;
 using System;
@@ -32,14 +34,17 @@ using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model
 {
+    
+
     /// <summary>
     /// Represents data that is identified by a key
     /// </summary>
     [XmlType("IdentifiedData",  Namespace = "http://openiz.org/model"), JsonObject("IdentifiedData")]
     public abstract class IdentifiedData : IIdentifiedEntity
     {
+
         // True when the data class is locked for storage
-        private bool m_delayLoad = true;
+        private bool m_delayLoad = false;
 
         /// <summary>
         /// True if the class is currently loading associations when accessed
@@ -68,7 +73,7 @@ namespace OpenIZ.Core.Model
             
             while (typ != typeof(Object))
             {
-                fields.AddRange(typ.GetRuntimeFields().Where(o=>!o.IsStatic && o.IsPrivate)); // ... Well now they know..
+                fields.AddRange(typ.GetRuntimeFields().Where(o=>!o.IsStatic)); // ... Well now they know..
                 typ = typ.GetTypeInfo().BaseType;
             }
 
@@ -79,6 +84,7 @@ namespace OpenIZ.Core.Model
                 if (value is IdentifiedData)
                     (value as IdentifiedData).SetDelayLoad(v); // Let it go
                 else if (value is IList &&
+                    fi.FieldType.GenericTypeArguments.Length > 0 &&
                     typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(fi.FieldType.GenericTypeArguments[0].GetTypeInfo()))
                 {
                     foreach (IdentifiedData itm in value as IList)
@@ -91,7 +97,16 @@ namespace OpenIZ.Core.Model
         /// The internal primary key value of the entity
         /// </summary>
         [XmlElement("id"), JsonProperty("id")]
-        public Guid Key { get; set; }
+        public Guid? Key { get; set; }
+
+        /// <summary>
+        /// True if key should be serialized
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeKey()
+        {
+            return this.Key.HasValue;
+        }
 
         /// <summary>
         /// Gets the type
@@ -109,11 +124,13 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Get associated entity
         /// </summary>
-        protected TEntity DelayLoad<TEntity>(Guid? keyReference, TEntity currentInstance) where TEntity : IdentifiedData
+        protected TEntity DelayLoad<TEntity>(Guid? keyReference, TEntity currentInstance) where TEntity : IdentifiedData, new()
         {
-            if (this.m_delayLoad &&
+            if (currentInstance == null &&
+                this.m_delayLoad &&
                 keyReference.HasValue)
-                currentInstance = EntitySource.Current.Get(keyReference.Value, currentInstance);
+                currentInstance = EntitySource.Current.Get<TEntity>(keyReference.Value);
+            currentInstance?.SetDelayLoad(this.IsDelayLoadEnabled);
             return currentInstance;
         }
 
@@ -121,6 +138,36 @@ namespace OpenIZ.Core.Model
         /// Force reloading of delay load properties
         /// </summary>
         public virtual void Refresh() { }
+
+        /// <summary>
+        /// Gets or sets the modified on time
+        /// </summary>
+        [XmlElement("modifiedOn"), JsonProperty("modifiedOn"), DataIgnore]
+        public abstract DateTimeOffset ModifiedOn { get; }
+
+        /// <summary>
+        /// Gets a tag which changes whenever the object is updated
+        /// </summary>
+        [XmlElement("tag"), JsonProperty("tag"), DataIgnore]
+        public virtual String Tag {
+            get
+            {
+                if(this.Key.HasValue)
+                    return BitConverter.ToString(this.Key?.ToByteArray()).Replace("-", "");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Cleans the identified data of any "empty" stuff
+        /// </summary>
+        public virtual IdentifiedData Clean() { return this; }
+
+        /// <summary>
+        /// True if the object is empty
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool IsEmpty() { return false; }
 
         /// <summary>
         /// Clone the specified data

@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,11 +14,12 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-4-19
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +38,34 @@ namespace OpenIZ.Core.Model.Map
         private Dictionary<String, PropertyMap> m_modelPropertyMap = new Dictionary<String, PropertyMap>();
         private Dictionary<String, PropertyMap> m_domainPropertyMap = new Dictionary<String, PropertyMap>();
         private Object m_lockObject = new Object();
+        private Type m_domainType = null;
+        private Type m_modelType = null;
+
+        /// <summary>
+        /// Gets the domain CLR type
+        /// </summary>
+        [XmlIgnore]
+        public Type DomainType
+        {
+            get
+            {
+                if (this.m_domainType == null)
+                    this.m_domainType = Type.GetType(this.DomainClass);
+                return this.m_domainType;
+            }
+        }
+
+        /// <summary>
+        /// Gets the model CLR type
+        /// </summary>
+        [XmlIgnore]
+        public Type ModelType { get
+            {
+                if (this.m_modelType == null)
+                    this.m_modelType = Type.GetType(this.ModelClass);
+                return this.m_modelType;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the model class for the mapper
@@ -60,6 +90,12 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         [XmlElement("property")]
         public List<PropertyMap> Property { get; set; }
+
+        /// <summary>
+        /// Gets or sets the base proeprty 
+        /// </summary>
+        [XmlElement("base")]
+        public PropertyMap ParentDomainProperty { get; set; }
 
         /// <summary>
         /// Try to get a collapse key
@@ -90,6 +126,9 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         public IEnumerable<ValidationResultDetail> Validate()
         {
+#if DEBUG
+            Debug.WriteLine(String.Format("Validating {0}>{1}", this.ModelClass, this.DomainClass));
+#endif
             List<ValidationResultDetail> retVal = new List<ValidationResultDetail>();
             Type modelClass = Type.GetType(this.ModelClass),
                 domainClass = Type.GetType(this.DomainClass);
@@ -99,9 +138,9 @@ namespace OpenIZ.Core.Model.Map
                 retVal.Add(new ValidationResultDetail(ResultDetailType.Error, String.Format("Class {0} not found", this.DomainClass), null, null));
 
             foreach(var p in this.Property)
-                retVal.AddRange(p.Validate(modelClass, domainClass));
+                retVal.AddRange(p.Validate(modelClass, domainClass).Select(o => { o.Location = this.ModelClass; return o; }));
             foreach (var k in this.CollapseKey)
-                retVal.AddRange(k.Validate(domainClass));
+                retVal.AddRange(k.Validate(domainClass).Select(o => { o.Location = this.ModelClass; return o; }));
 
             return retVal;
         }

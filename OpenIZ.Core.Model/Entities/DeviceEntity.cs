@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Constants;
@@ -41,7 +42,7 @@ namespace OpenIZ.Core.Model.Entities
     {
 
         // Security device key
-        private Guid m_securityDeviceKey;
+        private Guid? m_securityDeviceKey;
         // Security device
         private SecurityDevice m_securityDevice;
 
@@ -60,7 +61,7 @@ namespace OpenIZ.Core.Model.Entities
         [XmlElement("securityDevice"), JsonProperty("securityDevice")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        public Guid SecurityDeviceKey
+        public Guid? SecurityDeviceKey
         {
             get { return this.m_securityDeviceKey; }
             set
@@ -73,7 +74,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the security device
         /// </summary>
-        [DelayLoad(nameof(SecurityDeviceKey))]
+        [SerializationReference(nameof(SecurityDeviceKey))]
         [XmlIgnore, JsonIgnore]
         public SecurityDevice SecurityDevice
         {
@@ -84,10 +85,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 this.m_securityDevice = value;
-                if (value == null)
-                    this.m_securityDeviceKey = Guid.Empty;
-                else
-                    this.m_securityDeviceKey = value.Key;
+                this.m_securityDeviceKey = value?.Key;
             }
         }
         /// <summary>

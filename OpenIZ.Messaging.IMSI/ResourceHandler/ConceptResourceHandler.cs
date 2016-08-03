@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using System.Collections.Generic;
@@ -29,10 +30,13 @@ using MARC.HI.EHRS.SVC.Core.Data;
 using System.ServiceModel.Web;
 using System.ServiceModel;
 using System.Security.Claims;
-using System.Collections.Specialized;
 using OpenIZ.Messaging.IMSI.Util;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Services;
+using OpenIZ.Core.Model.Query;
+using OpenIZ.Core.Security;
+using System.Security.Permissions;
+using OpenIZ.Core.Security.Attribute;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {
@@ -60,9 +64,10 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <summary>
         /// Create the specified object in the database
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
         public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
         {
-            var conceptService = ApplicationContext.Current.GetService<IConceptService>();
+            var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
 
             Bundle bundleData = data as Bundle;
             bundleData?.Reconstitute();
@@ -87,16 +92,17 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         public IdentifiedData Get(Guid id, Guid versionId)
         {
-            var conceptService = ApplicationContext.Current.GetService<IConceptService>();
+            var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
             return conceptService.GetConcept(id, versionId);
         }
 
         /// <summary>
         /// Obsolete the specified concept
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
         public IdentifiedData Obsolete(Guid key)
         {
-            var conceptService = ApplicationContext.Current.GetService<IConceptService>();
+            var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
             return conceptService.ObsoleteConcept(key);
         }
 
@@ -105,8 +111,8 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
         {
-            var conceptService = ApplicationContext.Current.GetService<IConceptService>();
-            return conceptService.FindConcepts(new QueryParameterLinqExpressionBuilder().BuildLinqExpression<Concept>(queryParameters));
+            var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+            return conceptService.FindConcepts(QueryExpressionParser.BuildLinqExpression<Concept>(queryParameters));
         }
 
         /// <summary>
@@ -114,16 +120,17 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out Int32 totalCount)
         {
-            var conceptService = ApplicationContext.Current.GetService<IConceptService>();
-            return conceptService.FindConcepts(new QueryParameterLinqExpressionBuilder().BuildLinqExpression<Concept>(queryParameters), offset, count, out totalCount);
+            var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+            return conceptService.FindConcepts(QueryExpressionParser.BuildLinqExpression<Concept>(queryParameters), offset, count, out totalCount);
         }
 
         /// <summary>
         /// Update the specified data
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
         public IdentifiedData Update(IdentifiedData data)
         {
-            var conceptService = ApplicationContext.Current.GetService<IConceptService>();
+            var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
 
             Bundle bundleData = data as Bundle;
             bundleData?.Reconstitute();

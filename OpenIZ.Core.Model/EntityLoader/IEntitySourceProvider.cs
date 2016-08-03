@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-6-14
  */
 using OpenIZ.Core.Model.Interfaces;
 using System;
@@ -35,16 +36,23 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// <summary>
         /// Get the specified object
         /// </summary>
-        TObject Get<TObject>(Guid key) where TObject : IdentifiedData;
+        TObject Get<TObject>(Guid? key) where TObject : IdentifiedData, new();
 
         /// <summary>
         /// Get the specified object
         /// </summary>
-        TObject Get<TObject>(Guid key, Guid versionKey) where TObject : IdentifiedData, IVersionedEntity;
+        TObject Get<TObject>(Guid? key, Guid? versionKey) where TObject : IdentifiedData, IVersionedEntity, new();
 
         /// <summary>
         /// Query the specified data from the delay load provider
         /// </summary>
-        IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData;
+        IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData, new();
+        
+        /// <summary>
+        /// Get relationships
+        /// </summary>
+        List<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence) where TObject : IdentifiedData, IVersionedAssociation, new();
+
+
     }
 }

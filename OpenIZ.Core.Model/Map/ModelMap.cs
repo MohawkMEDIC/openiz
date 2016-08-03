@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,11 +14,13 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-4-19
+ * User: justi
+ * Date: 2016-6-14
  */
+using OpenIZ.Core.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,11 +41,29 @@ namespace OpenIZ.Core.Model.Map
         // Lock object
         private Object m_lockObject = new Object();
 
+
+        /// <summary>
+        /// Creates the specified model mmap
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public static ModelMap Load(Stream sourceStream)
+        {
+            XmlSerializer xsz = new XmlSerializer(typeof(ModelMap));
+            var retVal = xsz.Deserialize(sourceStream) as ModelMap;
+            var validation = retVal.Validate();
+            if (validation.Any(o => o.Level == ResultDetailType.Error))
+                throw new ModelMapValidationException(validation);
+            return retVal;
+        }
+
         /// <summary>
         /// Gets or sets the class mapping
         /// </summary>
         [XmlElement("class")]
         public List<ClassMap> Class { get; set; }
+
+
 
         /// <summary>
         /// Get a class map for the specified type
@@ -52,7 +73,7 @@ namespace OpenIZ.Core.Model.Map
             ClassMap retVal = null;
             if(!this.m_classCache.TryGetValue(type, out retVal))
             {
-                retVal = this.Class.Find(o => Type.GetType(o.ModelClass) == type);
+                retVal = this.Class.Find(o => o.ModelType == type);
                 if(retVal != null)
                     lock(this.m_lockObject)
                         if(!this.m_classCache.ContainsKey(type))
@@ -70,6 +91,18 @@ namespace OpenIZ.Core.Model.Map
             foreach(var cls in this.Class)
                 retVal.AddRange(cls.Validate());
             return retVal;
+        }
+
+        /// <summary>
+        /// Get the model class map between two types
+        /// </summary>
+        internal ClassMap GetModelClassMap(Type modelType, Type domainType)
+        {
+            var retVal = this.GetModelClassMap(modelType);
+            if (retVal?.DomainType == domainType)
+                return retVal;
+            else
+                return this.Class.Find(o => o.ModelType == modelType && o.DomainType == domainType);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-1-13
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using System.Linq;
@@ -26,7 +27,7 @@ using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Model.Map;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
-using OpenIZ.Persistence.Data.MSSQL.Services.Persistence;
+using OpenIZ.Persistence.Data.MSSQL.Services;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Test.Map
 {
@@ -34,7 +35,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Map
     public class ModelMapTest : DataTest
     {
         // Mapper
-        private ModelMapper m_mapper = new ModelMapper(typeof(SecurityUserPersistenceService).Assembly.GetManifestResourceStream("OpenIZ.Persistence.Data.MSSQL.Data.ModelMap.xml"));
+        private ModelMapper m_mapper = new ModelMapper(typeof(SqlServerPersistenceService).Assembly.GetManifestResourceStream("OpenIZ.Persistence.Data.MSSQL.Data.ModelMap.xml"));
 
         /// <summary>
         /// This test ensures that the model conversion visitor is capable of converting 

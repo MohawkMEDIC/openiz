@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,12 +14,13 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-1-22
+ * User: justi
+ * Date: 2016-6-14
  */
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Messaging.IMSI.Configuration;
+using OpenIZ.Messaging.IMSI.ResourceHandler;
 using OpenIZ.Messaging.IMSI.Wcf;
 using OpenIZ.Messaging.IMSI.Wcf.Behavior;
 using OpenIZ.Messaging.IMSI.Wcf.Serialization;
@@ -36,6 +38,26 @@ using System.Threading.Tasks;
 
 namespace OpenIZ.Messaging.IMSI
 {
+
+    
+    /// <summary>
+    /// Http helper extensions
+    /// </summary>
+    public static class HttpHelperExtensions
+    {
+
+        /// <summary>
+        /// Convert query types
+        /// </summary>
+        public static OpenIZ.Core.Model.Query.NameValueCollection ToQuery(this System.Collections.Specialized.NameValueCollection nvc)
+        {
+            var retVal = new OpenIZ.Core.Model.Query.NameValueCollection();
+            foreach (var k in nvc.AllKeys)
+                retVal.Add(k, new List<String>(nvc.GetValues(k)));
+            return retVal;
+        }
+    }
+
     /// <summary>
     /// The IMSI Message Handler Daemon class
     /// </summary>
@@ -88,8 +110,10 @@ namespace OpenIZ.Messaging.IMSI
             {
                 this.Starting?.Invoke(this, EventArgs.Empty);
 
-                this.m_webHost = new WebServiceHost(typeof(ImsiServiceBehavior));
+                // Force startup
+                ResourceHandlerUtil.Current.GetType();
 
+                this.m_webHost = new WebServiceHost(typeof(ImsiServiceBehavior));
                 foreach(ServiceEndpoint endpoint in this.m_webHost.Description.Endpoints)
                 {
                     this.m_traceSource.TraceInformation("Starting IMSI on {0}...", endpoint.Address);

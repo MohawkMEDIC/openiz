@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using Newtonsoft.Json;
 using System;
@@ -29,6 +30,22 @@ namespace OpenIZ.Core.Model.Entities
     [XmlType("PersonLanguageCommunication",  Namespace ="http://openiz.org/model"), JsonObject("PersonLanguageCommunication")]
     public class PersonLanguageCommunication : VersionedAssociation<Entity>
     {
+        /// <summary>
+        /// Default ctor
+        /// </summary>
+        public PersonLanguageCommunication()
+        {
+
+        }
+
+        /// <summary>
+        /// Language communication code ctor with specified code and preference
+        /// </summary>
+        public PersonLanguageCommunication(String languageCode, bool isPreferred)
+        {
+            this.LanguageCode = languageCode;
+            this.IsPreferred = isPreferred;
+        }
 
         /// <summary>
         /// Gets or sets the language code

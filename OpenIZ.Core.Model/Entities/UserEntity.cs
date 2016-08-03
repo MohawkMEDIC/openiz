@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,11 +14,12 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-10
+ * User: justi
+ * Date: 2016-7-16
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Security;
 using System;
 using System.Collections.Generic;
@@ -37,7 +39,7 @@ namespace OpenIZ.Core.Model.Entities
     {
 
         // Security user key
-        private Guid m_securityUserKey;
+        private Guid? m_securityUserKey;
         // Security user
         private SecurityUser m_securityUser;
 
@@ -45,7 +47,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the security user key
         /// </summary>
         [XmlElement("securityUser"), JsonProperty("securityUser")]
-        public Guid SecurityUserKey
+        public Guid? SecurityUserKey
         {
             get
             {
@@ -61,8 +63,8 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the security user key
         /// </summary>
-        [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(SecurityUserKey))]
+        [XmlIgnore, JsonIgnore, DataIgnore]
+        [SerializationReference(nameof(SecurityUserKey))]
         public SecurityUser SecurityUser
         {
             get
@@ -74,7 +76,7 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 this.m_securityUser = value;
-                this.m_securityUserKey = value.Key;
+                this.m_securityUserKey = value?.Key;
             }
         }
 

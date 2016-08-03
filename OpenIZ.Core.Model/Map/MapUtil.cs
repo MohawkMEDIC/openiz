@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-4-19
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using System.Collections.Generic;
@@ -123,7 +124,17 @@ namespace OpenIZ.Core.Model.Map
                 result = value;
                 return true;
             }
-            else if (m_destType.GetTypeInfo().IsEnum) // No map exists yet
+            else if (m_destType == typeof(int) && value.GetType().GetTypeInfo().IsEnum)
+            {
+                result = (int)value;
+                return true;
+            }
+            else if (m_destType.GetTypeInfo().IsEnum && value.GetType() == typeof(int))
+            {
+                result = value;
+                return true;
+            }
+            else if (m_destType.GetTypeInfo().IsEnum && value.GetType() == typeof(String)) // No map exists yet
             {
                 try
                 {
@@ -156,7 +167,8 @@ namespace OpenIZ.Core.Model.Map
                     mi = FindConverter(typeof(System.Xml.XmlConvert), value.GetType(), destType);
                 if (mi == null) // Using System.Convert as a last resort
                     mi = FindConverter(typeof(System.Convert), value.GetType(), destType);
-
+                if (mi == null)
+                    mi = FindConverter(typeof(OpenIZConvert), value.GetType(), destType);
                 if (mi != null)
                 {
                     lock (s_wireMaps)

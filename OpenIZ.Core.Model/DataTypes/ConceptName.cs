@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
@@ -29,13 +30,13 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents a name (human name) that a concept may have
     /// </summary>
-    [Classifier(nameof(Language))]
+    [Classifier(nameof(Language)), SimpleValue(nameof(Name))]
     [XmlType("ConceptName",  Namespace = "http://openiz.org/model"), JsonObject("ConceptName")]
     public class ConceptName : VersionedAssociation<Concept>
     {
 
         // Id of the algorithm used to generate phonetic code
-        private Guid m_phoneticAlgorithmId;
+        private Guid? m_phoneticAlgorithmId;
 
         // Algorithm used to generate the code
         
@@ -65,7 +66,7 @@ namespace OpenIZ.Core.Model.DataTypes
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("phoneticAlgorithm"), JsonProperty("phoneticAlgorithm")]
-        public Guid  PhoneticAlgorithmKey
+        public Guid?  PhoneticAlgorithmKey
         {
             get { return this.m_phoneticAlgorithmId; }
             set
@@ -78,7 +79,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the phonetic algorithm
         /// </summary>
-        [DelayLoad(nameof(PhoneticAlgorithmKey))]
+        [SerializationReference(nameof(PhoneticAlgorithmKey))]
         [XmlIgnore, JsonIgnore]
         public PhoneticAlgorithm PhoneticAlgorithm
         {
@@ -90,10 +91,7 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_phoneticAlgorithm = value;
-                if (value == null)
-                    this.m_phoneticAlgorithmId = Guid.Empty;
-                else
-                    this.m_phoneticAlgorithmId = value.Key;
+                this.m_phoneticAlgorithmId = value?.Key;
             }
         }
 

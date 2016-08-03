@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Constants;
@@ -70,7 +71,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the concept which indicates the interpretation of the observtion
         /// </summary>
-        [DelayLoad(nameof(InterpretationConceptKey))]
+        [SerializationReference(nameof(InterpretationConceptKey))]
         [XmlIgnore, JsonIgnore]
         public Concept InterpretationConcept
         {
@@ -105,7 +106,7 @@ namespace OpenIZ.Core.Model.Acts
     {
 
         // UOM key
-        private Guid m_unitOfMeasureKey;
+        private Guid? m_unitOfMeasureKey;
         // UOM
         private Concept m_unitOfMeasure;
 
@@ -121,7 +122,7 @@ namespace OpenIZ.Core.Model.Acts
         [XmlElement("unitOfMeasure"), JsonProperty("unitOfMeasure")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        public Guid UnitOfMeasureKey
+        public Guid? UnitOfMeasureKey
         {
             get { return this.m_unitOfMeasureKey; }
             set
@@ -135,7 +136,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the unit of measure
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(UnitOfMeasureKey))]
+        [SerializationReference(nameof(UnitOfMeasureKey))]
         public Concept UnitOfMeasure
         {
             get
@@ -146,10 +147,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 this.m_unitOfMeasure = value;
-                if (value != null)
-                    this.m_unitOfMeasureKey = value.Key;
-                else
-                    this.m_unitOfMeasureKey = Guid.Empty;
+                this.m_unitOfMeasureKey = value?.Key;
             }
         }
 
@@ -188,7 +186,7 @@ namespace OpenIZ.Core.Model.Acts
     {
 
         // Value key
-        private Guid m_valueKey;
+        private Guid? m_valueKey;
         // Value
         private Concept m_value;
 
@@ -198,7 +196,7 @@ namespace OpenIZ.Core.Model.Acts
         [XmlElement("value"), JsonProperty("value")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        public Guid ValueKey
+        public Guid? ValueKey
         {
             get { return this.m_valueKey; }
             set
@@ -212,7 +210,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the coded value of the observation
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(ValueKey))]
+        [SerializationReference(nameof(ValueKey))]
         public Concept Value
         {
             get
@@ -223,10 +221,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 this.m_value = value;
-                if (value == null)
-                    this.m_valueKey = Guid.Empty;
-                else
-                    this.m_valueKey = value.Key;
+                this.m_valueKey = value?.Key;
             }
         }
 

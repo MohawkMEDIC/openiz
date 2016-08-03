@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-17
+ * User: justi
+ * Date: 2016-6-14
  */
 using OpenIZ.Core.Services;
 using System;
@@ -64,17 +65,30 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             // Data context
             using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
             {
-                Guid appId = Guid.Parse(applicationId);
                 IPasswordHashingService hashService = ApplicationContext.Current.GetService<IPasswordHashingService>();
-                var client = dataContext.SecurityApplications.SingleOrDefault(o => o.ApplicationId == appId && o.ApplicationSecret == hashService.EncodePassword(applicationSecret));
+                var client = dataContext.SecurityApplications.SingleOrDefault(o => o.ApplicationPublicId == applicationId && o.ApplicationSecret == hashService.EncodePassword(applicationSecret));
                 if (client == null)
                     throw new SecurityException("Invalid application credentials");
 
-                IPrincipal applicationPrincipal = new ApplicationPrincipal(new OpenIZ.Core.Security.ApplicationIdentity(client.ApplicationId, true));
+                IPrincipal applicationPrincipal = new ApplicationPrincipal(new OpenIZ.Core.Security.ApplicationIdentity(client.ApplicationId, client.ApplicationPublicId, true));
                 new PolicyPermission(System.Security.Permissions.PermissionState.None, PermissionPolicyIdentifiers.Login, applicationPrincipal).Demand();
                 return applicationPrincipal;
             }
 
+        }
+
+        /// <summary>
+        /// Gets the specified identity
+        /// </summary>
+        public IIdentity GetIdentity(string name)
+        {
+            // Data context
+            using (ModelDataContext dataContext = new ModelDataContext(this.m_configuration.ReadonlyConnectionString))
+            {
+                var client = dataContext.SecurityApplications.SingleOrDefault(o => o.ApplicationPublicId == name);
+                return new OpenIZ.Core.Security.ApplicationIdentity(client.ApplicationId, client.ApplicationPublicId, false);
+
+            }
         }
     }
 }

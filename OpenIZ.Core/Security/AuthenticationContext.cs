@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,11 @@ namespace OpenIZ.Core.Security
         /// SYSTEM user's SID
         /// </summary>
         public const String SystemUserSid = "fadca076-3690-4a6e-af9e-f1cd68e8c7e8";
+
+        /// <summary>
+        /// ANONYMOUS user's SID
+        /// </summary>
+        public const String AnonymousUserSid = "C96859F0-043C-4480-8DAB-F69D6E86696C";
 
         /// <summary>
         /// System identity

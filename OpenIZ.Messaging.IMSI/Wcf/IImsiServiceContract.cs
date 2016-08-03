@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-1-22
+ * User: justi
+ * Date: 2016-6-14
  */
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
@@ -73,10 +74,22 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         IdentifiedData Search(string resourceType);
 
         /// <summary>
+        /// Search for the specified resource type
+        /// </summary>
+        [WebInvoke(Method = "HEAD", UriTemplate = "/{resourceType}", BodyStyle = WebMessageBodyStyle.Bare)]
+        void HeadSearch(string resourceType);
+
+        /// <summary>
         /// Get the specified resource
         /// </summary>
         [WebGet(UriTemplate = "/{resourceType}/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
         IdentifiedData Get(string resourceType, string id);
+
+        /// <summary>
+        /// HEAD the specified resource
+        /// </summary>
+        [WebInvoke(Method = "HEAD", UriTemplate = "/{resourceType}/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
+        void GetHead(string resourceType, string id);
 
         /// <summary>
         /// Get history of an object

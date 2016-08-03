@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-1-22
+ * User: justi
+ * Date: 2016-6-14
  */
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
@@ -28,7 +29,6 @@ using OpenIZ.Core.Security.Claims;
 using OpenIZ.Persistence.Data.MSSQL.Configuration;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using OpenIZ.Persistence.Data.MSSQL.Security;
-using OpenIZ.Persistence.Data.MSSQL.Services.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -63,7 +63,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     return context.SecurityApplicationPolicies.Where(o => o.ApplicationId == (securable as IdentifiedData).Key && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o)).ToList();
                 else if (securable is ApplicationPrincipal)
                 {
-                    Guid appId = Guid.Parse((securable as ApplicationPrincipal).Identity.Name);
+                    var sid = (securable as ApplicationPrincipal).FindFirst(ClaimTypes.Sid);
+                    Guid appId = Guid.Parse(sid.Value);
                     return context.SecurityApplicationPolicies.Where(o => o.ApplicationId == appId && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o)).ToList();
                 }
                 else if (securable is IPrincipal || securable is IIdentity)

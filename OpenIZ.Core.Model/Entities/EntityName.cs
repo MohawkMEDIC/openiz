@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-18
  */
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
@@ -41,9 +42,6 @@ namespace OpenIZ.Core.Model.Entities
         // Name use concept
         
         private Concept m_nameUseConcept;
-        // Name components
-        
-        private List<EntityNameComponent> m_nameComponents;
 
         /// <summary>
         /// Creates a new name
@@ -51,12 +49,12 @@ namespace OpenIZ.Core.Model.Entities
         public EntityName(Guid nameUse, String family, params String[] given)
         {
             this.m_nameUseKey = nameUse;
-            this.m_nameComponents = new List<EntityNameComponent>();
+            this.Component = new List<EntityNameComponent>();
 
             if (!String.IsNullOrEmpty(family))
-                this.m_nameComponents.Add(new EntityNameComponent(NameComponentKeys.Family, family));
+                this.Component.Add(new EntityNameComponent(NameComponentKeys.Family, family));
             foreach (var nm in given)
-                this.m_nameComponents.Add(new EntityNameComponent(NameComponentKeys.Given, nm));
+                this.Component.Add(new EntityNameComponent(NameComponentKeys.Given, nm));
         }
 
         /// <summary>
@@ -67,7 +65,7 @@ namespace OpenIZ.Core.Model.Entities
         public EntityName(Guid nameUse, String name)
         {
             this.m_nameUseKey = nameUse;
-            this.m_nameComponents = new List<EntityNameComponent>()
+            this.Component = new List<EntityNameComponent>()
             {
                 new EntityNameComponent(name)
             };
@@ -78,7 +76,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         public EntityName()
         {
-
+            this.Component = new List<EntityNameComponent>();
         }
 
         /// <summary>
@@ -86,7 +84,6 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [XmlElement("use"), JsonProperty("use")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         public Guid? NameUseKey
         {
             get { return this.m_nameUseKey; }
@@ -100,8 +97,9 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the name use
         /// </summary>
-        [DelayLoad(nameof(NameUseKey))]
+        [SerializationReference(nameof(NameUseKey))]
         [XmlIgnore, JsonIgnore]
+        [AutoLoad]
         public Concept NameUse
         {
             get {
@@ -118,21 +116,10 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the component types
         /// </summary>
-        [DelayLoad(null)]
+        
         [XmlElement("component"), JsonProperty("component")]
-        public List<EntityNameComponent> Component
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_nameComponents = EntitySource.Current.GetRelations(this.Key, this.m_nameComponents);
-                return this.m_nameComponents;
-            }
-            set
-            {
-                this.m_nameComponents = value;
-            }
-        }
+        [AutoLoad]
+        public List<EntityNameComponent> Component { get; set; }
 
         /// <summary>
         /// Refreshes the underlying content
@@ -140,8 +127,28 @@ namespace OpenIZ.Core.Model.Entities
         public override void Refresh()
         {
             base.Refresh();
-            this.m_nameComponents = null;
             this.m_nameUseKey = null;
         }
+
+        /// <summary>
+        /// Clean object
+        /// </summary>
+        public override IdentifiedData Clean()
+        {
+            this.Component.RemoveAll(o => String.IsNullOrEmpty(o.Value));
+            return this;
+
+        }
+
+
+        /// <summary>
+        /// True if empty
+        /// </summary>
+        /// <returns></returns>
+        public override bool IsEmpty()
+        {
+            return this.Component.Count == 0;
+        }
+
     }
 }

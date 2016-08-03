@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,12 +14,13 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-17
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,22 +31,26 @@ namespace OpenIZ.Core.Security
     /// <summary>
     /// Application identity
     /// </summary>
-    public class ApplicationIdentity : IIdentity
+    public class ApplicationIdentity : ClaimsIdentity
     {
+        // Member variables
+        private string m_name;
+        private bool m_isAuthenticated;
 
         /// <summary>
         /// Application identity ctor
         /// </summary>
-        public ApplicationIdentity(Guid name, Boolean isAuthenticated)
+        public ApplicationIdentity(Guid sid, String name, Boolean isAuthenticated)
         {
-            this.Name = name.ToString();
-            this.IsAuthenticated = isAuthenticated;
+            this.m_name = name.ToString();
+            this.m_isAuthenticated = isAuthenticated;
+            this.AddClaim(new Claim(ClaimTypes.Sid, sid.ToString()));
         }
 
         /// <summary>
         /// Identity for an application
         /// </summary>
-        public string AuthenticationType
+        public override string AuthenticationType
         {
             get
             {
@@ -55,38 +61,25 @@ namespace OpenIZ.Core.Security
         /// <summary>
         /// True if is authenticated
         /// </summary>
-        public bool IsAuthenticated { get; private set; }
+        public override bool IsAuthenticated { get { return this.m_isAuthenticated; }  }
 
         /// <summary>
         /// Gets or sets the name
         /// </summary>
-        public string Name { get; private set; }
+        public override string Name { get { return this.m_name; } }
     }
     /// <summary>
     /// Represents an IPrincipal related to an application
     /// </summary>
-    public class ApplicationPrincipal : IPrincipal
+    public class ApplicationPrincipal : ClaimsPrincipal
     {
 
         /// <summary>
         /// Application principal
         /// </summary>
-        public ApplicationPrincipal(IIdentity identity)
+        public ApplicationPrincipal(IIdentity identity) : base(identity)
         {
-            this.Identity = identity;
         }
 
-        /// <summary>
-        /// Gets the identity
-        /// </summary>
-        public IIdentity Identity { get; private set; }
-
-        /// <summary>
-        /// Is in role?
-        /// </summary>
-        public bool IsInRole(string role)
-        {
-            return false;
-        }
     }
 }

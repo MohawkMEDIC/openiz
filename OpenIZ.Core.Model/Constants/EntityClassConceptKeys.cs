@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using System.Collections.Generic;
@@ -76,7 +77,7 @@ namespace OpenIZ.Core.Model.Constants
         /// <summary>
         /// State
         /// </summary>
-        public static readonly Guid State = Guid.Parse("6B82E7F0-08BF-46DB-BDCF-95F69592E3BF");
+        public static readonly Guid State = Guid.Parse("8CF4B0B0-84E5-4122-85FE-6AFA8240C218");
         /// <summary>
         /// Container
         /// </summary>
@@ -97,6 +98,17 @@ namespace OpenIZ.Core.Model.Constants
         /// Service delivery location
         /// </summary>
         public static readonly Guid Provider = Guid.Parse("6B04FED8-C164-469C-910B-F824C2BDA4F0");
-
+        /// <summary>
+        /// County or parish
+        /// </summary>
+        public static readonly Guid CountyOrParish = Guid.Parse("D9489D56-DDAC-4596-B5C6-8F41D73D8DC5");
+        /// <summary>
+        /// Country or nation
+        /// </summary>
+        public static readonly Guid Country = Guid.Parse("48B2FFB3-07DB-47BA-AD73-FC8FB8502471");
+        /// <summary>
+        /// Non living subject
+        /// </summary>
+        public static readonly Guid NonLivingSubject = Guid.Parse("9025E5C9-693B-49D4-973C-D7010F3A23EE");
     }
 }

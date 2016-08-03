@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Constants;
@@ -40,7 +41,7 @@ namespace OpenIZ.Core.Model.Entities
     {
 
         // Industry concept
-        private Guid m_industryConceptKey;
+        private Guid? m_industryConceptKey;
         // Industry Concept
         
         private Concept m_industryConcept;
@@ -60,7 +61,7 @@ namespace OpenIZ.Core.Model.Entities
         
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("industryConcept"), JsonProperty("industryConcept")]
-        public Guid IndustryConceptKey
+        public Guid? IndustryConceptKey
         {
             get { return this.m_industryConceptKey; }
             set
@@ -73,7 +74,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the industry in which the organization operates
         /// </summary>
-        [DelayLoad(nameof(IndustryConceptKey))]
+        [SerializationReference(nameof(IndustryConceptKey))]
         [XmlIgnore, JsonIgnore]
         public Concept IndustryConcept
         {
@@ -83,10 +84,7 @@ namespace OpenIZ.Core.Model.Entities
             }
             set {
                 this.m_industryConcept = value;
-                if (value == null)
-                    this.m_industryConceptKey = Guid.Empty;
-                else
-                    this.m_industryConceptKey = value.Key;
+                this.m_industryConceptKey = value?.Key;
             }
         }
 

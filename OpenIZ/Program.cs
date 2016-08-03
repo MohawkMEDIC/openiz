@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-1-22
+ * User: justi
+ * Date: 2016-6-14
  */
 using MARC.HI.EHRS.SVC.Core;
 using MohawkCollege.Util.Console.Parameters;
@@ -29,6 +30,7 @@ using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIZ.Core;
 
 namespace OpenIZ
 {
@@ -44,9 +46,17 @@ namespace OpenIZ
         /// </summary>
         static void Main(String[] args)
         {
+            
             AppDomain.CurrentDomain.SetData(
                "DataDirectory",
                Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location), "Data"));
+
+            // Handle Unahndled exception
+            AppDomain.CurrentDomain.UnhandledException += (o, e) => {
+                var emergencyString = ApplicationContext.Current?.GetLocaleString("01189998819991197253");
+                Trace.TraceError(emergencyString ?? "FATAL ERROR", e.ExceptionObject);
+                Environment.Exit(999);
+            };
 
             // Parser
             ParameterParser<ConsoleParameters> parser = new ParameterParser<ConsoleParameters>();
@@ -96,6 +106,8 @@ namespace OpenIZ
 #else
                 Trace.TraceError("Error encountered: {0}. Will terminate", e.Message);
 #endif
+                Environment.Exit(911);
+
             }
 
         }

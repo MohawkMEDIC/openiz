@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using System;
@@ -33,20 +34,32 @@ namespace OpenIZ.Core.Model
     /// </summary>
     /// <typeparam name="TSourceType"></typeparam>
     [XmlType(Namespace = "http://openiz.org/model")]
-    public abstract class Association<TSourceType> : IdentifiedData, ISimpleAssociation where TSourceType : IdentifiedData
+    public abstract class Association<TSourceType> : IdentifiedData, ISimpleAssociation where TSourceType : IdentifiedData, new()
     {
 
         // Target entity key
-        private Guid m_sourceEntityKey;
+        private Guid? m_sourceEntityKey;
         // The target entity
-        
         private TSourceType m_sourceEntity;
+
+        /// <summary>
+        /// Get the modification date
+        /// </summary>
+        public override DateTimeOffset ModifiedOn
+        {
+            get
+            {
+                if(this.SourceEntity != null)
+                    return this.SourceEntity.ModifiedOn;
+                return DateTime.Now;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the source entity's key (where the relationship is FROM)
         /// </summary>
         [XmlElement("source"), JsonProperty("source")]
-        public virtual Guid SourceEntityKey
+        public virtual Guid? SourceEntityKey
         {
             get
             {
@@ -54,16 +67,19 @@ namespace OpenIZ.Core.Model
             }
             set
             {
-                this.m_sourceEntityKey = value;
-                this.m_sourceEntity = null;
+                if (value != this.m_sourceEntityKey)
+                {
+                    this.m_sourceEntityKey = value;
+                    this.m_sourceEntity = null;
+                }
             }
         }
 
         /// <summary>
         /// The entity that this relationship targets
         /// </summary>
-        [DelayLoad(nameof(SourceEntityKey))]
-        [XmlIgnore, JsonIgnore]
+        [SerializationReference(nameof(SourceEntityKey))]
+        [XmlIgnore, JsonIgnore, DataIgnore]
         public TSourceType SourceEntity
         {
             get
@@ -74,10 +90,7 @@ namespace OpenIZ.Core.Model
             set
             {
                 this.m_sourceEntity = value;
-                if (value == null)
-                    this.m_sourceEntityKey = default(Guid);
-                else
-                    this.m_sourceEntityKey = value.Key;
+                this.m_sourceEntityKey = value?.Key;
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-1-13
+ * User: justi
+ * Date: 2016-6-14
  */
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using System;
@@ -39,6 +40,7 @@ using MARC.HI.EHRS.SVC.Core.Exceptions;
 using MARC.HI.EHRS.SVC.Core.Event;
 using System.Diagnostics;
 using OpenIZ.Core.Security.Attribute;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services
 {
@@ -189,9 +191,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     // Does this principal have the ability to 
                     Data.SecurityUser newIdentityUser = new Data.SecurityUser()
                     {
+                        UserId = Guid.NewGuid(),
                         UserName = userName,
                         UserPassword = hashingService.EncodePassword(password),
-                        SecurityStamp = Guid.NewGuid().ToString()
+                        SecurityStamp = Guid.NewGuid().ToString(),
+                        UserClass = UserClassKeys.HumanUser
                     };
 
                     if (authContext != null)
@@ -210,6 +214,84 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                 throw;
             }
 
+        }
+
+        /// <summary>
+        /// Delete the specified identity
+        /// </summary>
+        public void DeleteIdentity(string userName, IPrincipal authContext)
+        {
+            if (String.IsNullOrEmpty(userName))
+                throw new ArgumentNullException(nameof(userName));
+
+            this.m_traceSource.TraceInformation("Delete identity {0}", userName);
+            try
+            {
+                // submit the changes
+                using (var dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
+                {
+                    new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.UnrestrictedAdministration, authContext).Demand();
+
+                    var user = dataContext.SecurityUsers.FirstOrDefault(o => o.UserName == userName);
+                    if (user == null)
+                        throw new KeyNotFoundException("Specified user does not exist!");
+
+                    // Obsolete
+                    user.ObsoletionTime = DateTimeOffset.Now;
+                    user.ObsoletedByEntity = authContext.GetUser(dataContext);
+                    user.SecurityStamp = Guid.NewGuid().ToString();
+
+                    dataContext.SubmitChanges();
+                }
+
+            }
+            catch(Exception e)
+            {
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Set the lockout status
+        /// </summary>
+        public void SetLockout(string userName, bool lockout, IPrincipal authContext)
+        {
+            if (String.IsNullOrEmpty(userName))
+                throw new ArgumentNullException(nameof(userName));
+
+            this.m_traceSource.TraceInformation("Lockout identity {0} = {1}", userName, lockout);
+            try
+            {
+                // submit the changes
+                using (var dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
+                {
+                    new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.UnrestrictedAdministration, authContext).Demand();
+
+                    var user = dataContext.SecurityUsers.FirstOrDefault(o => o.UserName == userName);
+                    if (user == null)
+                        throw new KeyNotFoundException("Specified user does not exist!");
+
+                    // Obsolete
+					if (lockout)
+					{
+						user.Lockout = DateTimeOffset.Now;
+					}
+                    user.ObsoletionTime = null;
+                    user.ObsoletedBy = null;
+                    user.UpdatedByEntity = authContext.GetUser(dataContext);
+                    user.UpdatedTime = DateTimeOffset.Now;
+                    user.SecurityStamp = Guid.NewGuid().ToString();
+
+                    dataContext.SubmitChanges();
+                }
+
+            }
+            catch (Exception e)
+            {
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                throw;
+            }
         }
     }
 }

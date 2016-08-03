@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using System;
@@ -35,14 +36,19 @@ namespace OpenIZ.Core.Model.Security
     /// <summary>
     /// Security user represents a user for the purpose of security 
     /// </summary>
-    [XmlType("SecurityUser",  Namespace = "http://openiz.org/model"), JsonObject("SecurityUser")]
+    [XmlType("SecurityUser", Namespace = "http://openiz.org/model"), JsonObject("SecurityUser")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "SecurityUser")]
+    [KeyLookup(nameof(UserName))]
     public class SecurityUser : SecurityEntity
     {
+        /// <summary>
+        /// Roles belonging to the user
+        /// </summary>
+        public SecurityUser()
+        {
+            this.Roles = new List<SecurityRole>();
+        }
 
-        
-        // Roles
-        private List<SecurityRole> m_roles;
         // User entities
         private List<Person> m_userEntities;
 
@@ -64,8 +70,25 @@ namespace OpenIZ.Core.Model.Security
         /// <summary>
         /// Gets or sets whether the account is locked out
         /// </summary>
-        [XmlElement("lockoutEnabled"), JsonProperty("lockoutEnabled")]
-        public Boolean LockoutEnabled { get; set; }
+        [XmlIgnore, JsonIgnore]
+        public DateTime? Lockout { get; set; }
+
+        /// <summary>
+        /// Gets or sets the creation time in XML format
+        /// </summary>
+        [XmlElement("lockout"), JsonProperty("lockout")]
+        public String LockoutXml
+        {
+            get { return this.LastLoginTime?.ToString("o", CultureInfo.InvariantCulture); }
+            set
+            {
+                if (value != null)
+                    this.LastLoginTime = DateTimeOffset.ParseExact(value, "o", CultureInfo.InvariantCulture);
+                else
+                    this.LastLoginTime = default(DateTimeOffset);
+            }
+        }
+
         /// <summary>
         /// Gets or sets whether the password hash is enabled
         /// </summary>
@@ -91,45 +114,14 @@ namespace OpenIZ.Core.Model.Security
         /// </summary>
         [XmlElement("photo"), JsonProperty("photo")]
         public byte[] UserPhoto { get; set; }
-
-        /// <summary>
-        /// Gets the list of entities associated with this security user
-        /// </summary>
-        [XmlIgnore,JsonIgnore]
-        public List<Person> Entities
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_userEntities = EntitySource.Current.Provider.Query<UserEntity>(o => o.SecurityUserKey == this.Key && o.ObsoletionTime == null).OfType<Person>().ToList();
-                return this.m_userEntities;
-            }
-        }
-
-        /// <summary>
-        /// Concepts as identifiers for XML purposes only
-        /// </summary>
-        [XmlElement("entity"), JsonProperty("entity")]
-        [DelayLoad(null)]
-        //[Bundle(nameof(Concepts))]
-        public List<Guid> EntitiesXml
-        {
-            get
-            {
-                return this.Entities?.Select(o => o.Key).ToList();
-            }
-            set
-            {
-                ; // nothing
-            }
-        }
+        
 
         /// <summary>
         /// The last login time
         /// </summary>
         [XmlIgnore, JsonIgnore]
         public DateTimeOffset? LastLoginTime { get; set; }
-       
+
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
@@ -150,16 +142,9 @@ namespace OpenIZ.Core.Model.Security
         /// Represents roles
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DelayLoad(null)]
-        public List<SecurityRole> Roles {
-            get
-            {
-                if(this.IsDelayLoadEnabled && this.m_roles == null)
-                    this.m_roles = EntitySource.Current.Provider.Query<SecurityRole>(r => r.Users.Any(u => u.Key == this.Key)).ToList();
-                return this.m_roles;
-            }
-        }
-      
+
+        public List<SecurityRole> Roles { get; set; }
+
         /// <summary>
         /// Gets or sets the patient's phone number
         /// </summary>
@@ -171,15 +156,41 @@ namespace OpenIZ.Core.Model.Security
         /// </summary>
         [XmlElement("phoneNumberConfirmed"), JsonProperty("phoneNumberConfirmed")]
         public Boolean PhoneNumberConfirmed { get; set; }
-        
+
         /// <summary>
-        /// Forces delay load properties to be from the database
+        /// Gets or sets the user class key
         /// </summary>
-        public override void Refresh()
+        [XmlElement("userClass"), JsonProperty("userClass")]
+        public Guid UserClass { get; set; }
+
+        /// <summary>
+        /// Gets the etag
+        /// </summary>
+        public override string Tag
         {
-            base.Refresh();
-            this.m_roles = null;
+            get
+            {
+                return this.SecurityHash;
+            }
         }
+
+        /// <summary>
+        /// Gets or sets the policies for the user
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public override List<SecurityPolicyInstance> Policies
+        {
+            get
+            {
+                return this.Roles.SelectMany(o => o.Policies).ToList();
+            }
+
+            set
+            {
+                throw new NotSupportedException();
+            }
+        }
+
 
     }
 }

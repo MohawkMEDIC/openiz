@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,173 +14,96 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-6-19
  */
-using OpenIZ.Core.Model.DataTypes;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MARC.HI.EHRS.SVC.Core.Data;
+using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Persistence.Data.MSSQL.Data;
-using System.Linq.Expressions;
 using System.Security.Principal;
-using OpenIZ.Persistence.Data.MSSQL.Exceptions;
+using System.Data.Linq;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
-    /// <summary>
-    /// A persistence implementation that can persist Concet Sets
-    /// </summary>
-    public class ConceptSetPersistenceService : BaseDataPersistenceService<Core.Model.DataTypes.ConceptSet>
-    {
+	/// <summary>
+	/// Persistence service for ConceptSets
+	/// </summary>
+	public class ConceptSetPersistenceService : BaseDataPersistenceService<Core.Model.DataTypes.ConceptSet, Data.ConceptSet>
+	{
+
         /// <summary>
-        /// Convert from a model
+        /// Get data load options
         /// </summary>
-        internal override object ConvertFromModel(Core.Model.DataTypes.ConceptSet model)
+        /// <returns></returns>
+        internal override DataLoadOptions GetDataLoadOptions()
         {
-            return s_mapper.MapModelInstance<Core.Model.DataTypes.ConceptSet, Data.ConceptSet>(model);
+            var loadOptions = base.GetDataLoadOptions();
+            loadOptions.LoadWith<Data.ConceptSet>(cs => cs.ConceptSetMembers);
+            loadOptions.LoadWith<Data.ConceptSetMember>(cs => cs.Concept);
+            loadOptions.LoadWith<Data.ConceptVersion>(c => c.Concept);
+            loadOptions.LoadWith<Data.Concept>(c => c.ConceptNames);
+            loadOptions.LoadWith<Data.ConceptVersion>(c => c.ConceptClass);
+            //loadOptions.LoadWith<Data.Concept>(c => c.ConceptVersions);
+
+            return loadOptions;
         }
 
         /// <summary>
-        /// Convert to a model instance
+        /// Return value
         /// </summary>
-        internal override Core.Model.DataTypes.ConceptSet ConvertToModel(object data)
+        public override Core.Model.DataTypes.ConceptSet ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
         {
-            return this.ConvertToModel(data as Data.ConceptSet);
+            var retVal = base.ToModelInstance(dataInstance, context, principal);
+            var de = dataInstance as Data.ConceptSet;
+            retVal.ConceptsXml = de.ConceptSetMembers.Select(o => o.ConceptId).ToList();
+            return retVal;
         }
 
         /// <summary>
-        /// Convert to model
+        /// Inser the specified concept set
         /// </summary>
-        internal Core.Model.DataTypes.ConceptSet ConvertToModel(Data.ConceptSet data)
+        public override Core.Model.DataTypes.ConceptSet Insert(ModelDataContext context, Core.Model.DataTypes.ConceptSet data, IPrincipal principal)
         {
-            return this.ConvertItem(data);
+            var retVal = base.Insert(context, data, principal);
+
+            // Concept sets 
+            if (retVal.Concepts != null)
+                foreach (var i in retVal.Concepts)
+                {
+                    i.EnsureExists(context, principal);
+                    context.ConceptSetMembers.InsertOnSubmit(new Data.ConceptSetMember() { ConceptId = i.Key.Value, ConceptSetId = retVal.Key.Value });
+                }
+            return retVal;
         }
 
         /// <summary>
-        /// Get the specified concept set by identiifer
+        /// Update the specified conceptset
         /// </summary>
-        internal override Core.Model.DataTypes.ConceptSet Get(Identifier<Guid> containerId, IPrincipal principal, bool loadFast, ModelDataContext dataContext)
+        public override Core.Model.DataTypes.ConceptSet Update(ModelDataContext context, Core.Model.DataTypes.ConceptSet data, IPrincipal principal)
         {
+            var retVal = base.Update(context, data, principal);
 
-            Data.ConceptSet tRetVal = dataContext.ConceptSets.SingleOrDefault(o => o.ConceptSetId == containerId.Id);
-
-            // Return value
-            if (tRetVal == null)
-                return null;
-            else
-                return this.ConvertToModel(tRetVal);
-
-        }
-
-        /// <summary>
-        /// Insert the specified concept set into the datamodel
-        /// </summary>
-        internal override Core.Model.DataTypes.ConceptSet Insert(Core.Model.DataTypes.ConceptSet storageData, IPrincipal principal, ModelDataContext dataContext)
-        {
-
-            // Insert the concept model
-            if (storageData.Key != Guid.Empty)
-                throw new SqlFormalConstraintException(SqlFormalConstraintType.IdentityInsert);
-            else if (principal == null)
-                throw new ArgumentNullException(nameof(principal));
-
-            // Inser the record
-            var domainConceptSet = this.ConvertFromModel(storageData) as Data.ConceptSet;
-            dataContext.ConceptSets.InsertOnSubmit(domainConceptSet);
-            domainConceptSet.CreatedByEntity = principal.GetUser(dataContext);
-            // Now insert the relationships
-            domainConceptSet.ConceptSetMembers.AddRange(storageData.Concepts.Select(o => new ConceptSetMember() { ConceptId = o.EnsureExists(principal, dataContext).Key, ConceptSet = domainConceptSet }));
-
-            // Perform insert
-            dataContext.SubmitChanges();
-            storageData.Key = domainConceptSet.ConceptSetId;
-            return storageData;
-        }
-
-        /// <summary>
-        /// Obsolete the specified storage data container
-        /// </summary>
-        internal override Core.Model.DataTypes.ConceptSet Obsolete(Core.Model.DataTypes.ConceptSet storageData, IPrincipal principal, ModelDataContext dataContext)
-        {
-            // Validate
-            if (storageData.Key == Guid.Empty)
-                throw new SqlFormalConstraintException(SqlFormalConstraintType.NonIdentityUpdate);
-            else if (principal == null)
-                throw new ArgumentNullException(nameof(principal));
-
-
-            // Retrieve
-            var domainConceptSet = dataContext.ConceptSets.SingleOrDefault(o => o.ConceptSetId == storageData.Key);
-            if (domainConceptSet == null)
-                throw new KeyNotFoundException();
-            // Obsolete
-            domainConceptSet.ObsoletedByEntity = principal.GetUser(dataContext);
-            storageData.ObsoletionTime =  domainConceptSet.ObsoletionTime = DateTime.Now;
-            domainConceptSet.ObsoletionReason = storageData.ObsoletionReason;
-            storageData.ObsoletedByKey = domainConceptSet.ObsoletedByEntity.UserId;
-
-            // Submit changes
-            dataContext.SubmitChanges();
-
-            return storageData;
-        }
-
-        /// <summary>
-        /// Query the specified concept set from the database
-        /// </summary>
-        internal override IQueryable<Core.Model.DataTypes.ConceptSet> Query(Expression<Func<Core.Model.DataTypes.ConceptSet, bool>> query, IPrincipal principal, ModelDataContext dataContext)
-        {
-            var domainQuery = s_mapper.MapModelExpression<Core.Model.DataTypes.ConceptSet, Data.ConceptSet>(query);
-            return dataContext.ConceptSets.Where(domainQuery).Select(
-                o => this.ConvertToModel(o)
-            );
-        }
-
-        /// <summary>
-        /// Update the specified concept set
-        /// </summary>
-        internal override Core.Model.DataTypes.ConceptSet Update(Core.Model.DataTypes.ConceptSet storageData, IPrincipal principal, ModelDataContext dataContext)
-        {
-            if (storageData.Key == Guid.Empty)
-                throw new SqlFormalConstraintException(SqlFormalConstraintType.NonIdentityUpdate);
-            else if (principal == null)
-                throw new ArgumentNullException(nameof(principal));
-
-
-            // Get the existing version
-            var existingSet = dataContext.ConceptSets.SingleOrDefault(o => o.ConceptSetId == storageData.Key);
-            if (existingSet == null)
-                throw new KeyNotFoundException();
-            
-            // Merge changes
-            existingSet.CopyObjectData(this.ConvertFromModel(storageData));
-            existingSet.UpdatedByEntity = principal.GetUser(dataContext);
-            existingSet.UpdatedTime = DateTimeOffset.Now;
-
-            // Now verify which concepts should be removed/added/updated
-            if(storageData.Concepts != null)
+            // Concept sets 
+            if (retVal.Concepts != null)
             {
-                // Existing concepts which do not appear in the 
-                var existingConcepts = existingSet.ConceptSetMembers.Where(o => o.ConceptSetId == storageData.Key); // active names
+                // Special case m2m
+                var existingConceptSets = context.ConceptSetMembers.Where(o => o.ConceptSetId == retVal.Key);
+                // Any new?
+                var newConcepts = retVal.Concepts.Where(o => !existingConceptSets.Select(e => e.ConceptId).ToList().Contains(o.Key.Value));
+                foreach (var i in newConcepts)
+                {
+                    i.EnsureExists(context, principal);
+                    context.ConceptSetMembers.InsertOnSubmit(new Data.ConceptSetMember() { ConceptId = i.Key.Value, ConceptSetId = retVal.Key.Value });
+                }
 
-                // Remove old
-                dataContext.ConceptSetMembers.DeleteAllOnSubmit(existingConcepts.Where(o => !storageData.Concepts.Exists(ecn => ecn.Key == o.ConceptId)));
-
-                // Insert those that do not exist
-                var insertRecords = storageData.Concepts.Where(o => !existingConcepts.Any(ecn => ecn.ConceptId == o.Key));
-                foreach (var ins in insertRecords)
-                    existingSet.ConceptSetMembers.Add(new ConceptSetMember() { ConceptSet = existingSet, ConceptId = ins.EnsureExists(principal, dataContext).Key });
+                var delConcepts = existingConceptSets.Select(e => e.ConceptId).ToList().Where(o => !retVal.Concepts.Exists(c => c.Key == o));
+                foreach (var i in delConcepts)
+                    context.ConceptSetMembers.DeleteOnSubmit(existingConceptSets.FirstOrDefault(p => p.ConceptId == i && p.ConceptSetId == retVal.Key.Value));
             }
-
-            dataContext.SubmitChanges();
-
-            var retVal = this.ConvertToModel(existingSet);
 
             return retVal;
         }
     }
 }
+

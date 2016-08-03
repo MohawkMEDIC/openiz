@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<dataset xmlns="http://openiz.org/data" id="ActClass Codes">
+
+  <update insertIfExists="true">
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>BAB1D66A-1E98-4BFD-9B4A-7C4BE88F35D1</id>
+      <name>ActClass</name>
+      <oid>2.16.840.1.113883.5.6</oid>
+      <authority>HL7 International</authority>
+      <url>http://openiz.org/valueset/v3-ActClassClinicalDocument</url>
+      <description>Classification codes for Acts</description>
+    </CodeSystem>
+  </update>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>EB81CF88-C116-4DC6-ABED-7805895C1C3A</id>
+      <mnemonic>CACT</mnemonic>
+      <codeSystem>BAB1D66A-1E98-4BFD-9B4A-7C4BE88F35D1</codeSystem>
+      <name>
+        <language>CACT</language>
+        <value>ControlActEvent</value>
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert property="Concepts">
+    <Concept xmlns="http://openiz.org/model">
+      <id>B35488CE-B7CD-4DD4-B4DE-5F83DC55AF9F</id>
+      <isReadonly>true</isReadonly>
+      <mnemonic>ControlActEvent</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>17FD5254-8C25-4ABB-B246-083FBE9AFA15</conceptClass>
+      <referenceTerm>
+        <referenceTerm>EB81CF88-C116-4DC6-ABED-7805895C1C3A</referenceTerm>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Control Act Event</value>
+      </name>
+    </Concept>
+  </insert>
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>62C5FDE0-A3AA-45DF-94E9-242F4451644A</id>
+      <name>Act Class</name>
+      <mnemonic>ActClass</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.1.1</oid>
+      <url>http://openiz.org/valueset/act-class</url>
+      <concept>B35488CE-B7CD-4DD4-B4DE-5F83DC55AF9F</concept>
+
+    </ConceptSet>
+   
+  </update>
+
+</dataset>

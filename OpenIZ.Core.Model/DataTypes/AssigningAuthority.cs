@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,13 +14,16 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Model.Security;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.DataTypes
@@ -27,10 +31,30 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents a model class which is an assigning authority
     /// </summary>
-    [Classifier(nameof(Oid))]
-    [XmlType("AssigningAuthority",  Namespace = "http://openiz.org/model"), JsonObject("AssigningAuthority")]
+    [Classifier(nameof(DomainName)), KeyLookup(nameof(DomainName))]
+    [XmlType(nameof(AssigningAuthority),  Namespace = "http://openiz.org/model"), JsonObject("AssigningAuthority")]
+    [XmlRoot(nameof(AssigningAuthority), Namespace = "http://openiz.org/model")]
     public  class AssigningAuthority : BaseEntityData
     {
+
+        /// <summary>
+        /// Assigning authority
+        /// </summary>
+        public AssigningAuthority()
+        {
+
+        }
+
+        /// <summary>
+        /// Creates a new assigning authority 
+        /// </summary>
+        public AssigningAuthority(String domainName, String name, String oid)
+        {
+            this.DomainName = domainName;
+            this.Name = name;
+            this.Oid = oid;
+        }
+
         // Assigning device id
         private Guid? m_assigningDeviceId;
 
@@ -62,6 +86,13 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [XmlElement("url"), JsonProperty("url")]
         public String Url { get; set; }
+
+        /// <summary>
+        /// Represents scopes to which the authority is bound
+        /// </summary>
+        [JsonProperty("scope"), XmlElement("scope")]
+        public List<Guid> AuthorityScopeXml { get; set; }
+
         /// <summary>
         /// Assigning device identifier
         /// </summary>
@@ -90,6 +121,22 @@ namespace OpenIZ.Core.Model.DataTypes
             {
                 this.m_assigningDevice = value;
                 this.m_assigningDeviceId = value?.Key;
+            }
+        }
+
+        /// <summary>
+        /// Gets concept sets to which this concept is a member
+        /// </summary>
+        [DataIgnore, XmlIgnore, JsonIgnore, SerializationReference(nameof(AuthorityScopeXml))]
+        public List<Concept> AuthorityScope
+        {
+            get
+            {
+                return this.AuthorityScopeXml?.Select(o => EntitySource.Current.Get<Concept>(o)).ToList();
+            }
+            set
+            {
+                this.AuthorityScopeXml = value?.Where(o => o.Key.HasValue).Select(o => o.Key.Value).ToList();
             }
         }
 

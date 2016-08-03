@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-1-13
+ * User: justi
+ * Date: 2016-6-14
  */
 using System.Linq;
 using System;
@@ -30,6 +31,7 @@ using System.Security;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Security;
 using System.Security.Authentication;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 {
@@ -55,12 +57,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 UserName = "admin@identitytest.com",
                 Email = "admin@identitytest.com",
                 PasswordHash = hashingService.EncodePassword("password"),
+                UserClass = UserClassKeys.HumanUser
             }, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
             dataService.Insert(new SecurityUser()
             {
                 UserName = "user@identitytest.com",
                 Email = "user@identitytest.com",
                 PasswordHash = hashingService.EncodePassword("password"),
+                UserClass = UserClassKeys.HumanUser
+
             }, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
 
             IRoleProviderService roleService = ApplicationContext.Current.GetService<IRoleProviderService>();
@@ -109,8 +114,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 
             // Reset data for test
             var user = dataPersistence.Query(u => u.UserName == "user@identitytest.com", null).First();
-            user.LockoutEnabled = false;
-            user.LastLoginTime = default(DateTime);
+            user.Lockout = null;
+            user.LastLoginTime = null;
             user.InvalidLoginAttempts = 0;
             dataPersistence.Update(user, provider.Authenticate("admin@identitytest.com", "password"), TransactionMode.Commit);
 
@@ -125,8 +130,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 // We should have a lockout
                 user = dataPersistence.Get(user.Id(), null, false);
                 Assert.AreEqual(1, user.InvalidLoginAttempts);
-                Assert.AreEqual(default(DateTime), user.LastLoginTime);
-                Assert.IsFalse(user.LockoutEnabled);
+                Assert.AreEqual(null, user.LastLoginTime);
+                Assert.IsFalse(user.Lockout.HasValue);
 
             }
 
@@ -144,14 +149,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             IIdentityProviderService provider = ApplicationContext.Current.GetService<IIdentityProviderService>();
             // Reset data for test
             var user = dataPersistence.Query(u => u.UserName == "user@identitytest.com", null).First();
-            user.LockoutEnabled = false;
-            user.LastLoginTime = default(DateTime);
+            user.Lockout = null;
+            user.LastLoginTime = null;
             user.InvalidLoginAttempts = 0;
             dataPersistence.Update(user, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
 
 
             // Try 4 times to log in
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 7; i++)
                 try
                 {
                     var principal = provider.Authenticate("user@identitytest.com", "passwordz");
@@ -163,8 +168,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             // We should have a lockout
             user = dataPersistence.Get(user.Id(), null, false);
             Assert.IsTrue(user.InvalidLoginAttempts >= 4);
-            Assert.AreEqual(default(DateTime), user.LastLoginTime);
-            Assert.IsTrue(user.LockoutEnabled);
+            Assert.AreEqual(null, user.LastLoginTime);
+            Assert.IsTrue(user.Lockout.HasValue);
 
 
         }
@@ -247,7 +252,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             // Now verify with data persistence
             var dataUser = dataPersistence.Query(u => u.UserName == "admincreated@identitytest.com", null).First();
             Assert.AreEqual(hashingService.EncodePassword("mypassword"), dataUser.PasswordHash);
-            Assert.IsFalse(dataUser.LockoutEnabled);
+            Assert.IsFalse(dataUser.Lockout.HasValue);
             Assert.AreEqual(authContext.Identity.Name, dataUser.CreatedBy.UserName);
             
 

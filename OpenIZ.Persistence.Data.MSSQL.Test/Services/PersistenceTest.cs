@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-1-13
+ * User: justi
+ * Date: 2016-6-14
  */
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
@@ -84,6 +85,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 
             // Update
             var propertyInfo = typeof(TModel).GetProperty(propertyToChange);
+            object originalValue = propertyInfo.GetValue(objectUnderTest);
+
             if (propertyInfo.PropertyType == typeof(String))
                 propertyInfo.SetValue(objectAfterInsert, "NEW_VALUE");
             else if (propertyInfo.PropertyType == typeof(Nullable<DateTimeOffset>) ||
@@ -97,7 +100,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual(objectAfterInsert.Key, objectAfterUpdate.Key);
             objectAfterUpdate = persistenceService.Get(objectAfterUpdate.Id(), authContext, false);
             // Update attributes should be set
-            Assert.AreNotEqual(propertyInfo.GetValue(objectUnderTest), propertyInfo.GetValue(objectAfterUpdate));
+            Assert.AreNotEqual(originalValue, propertyInfo.GetValue(objectAfterUpdate));
             Assert.AreEqual(objectAfterInsert.Key, objectAfterUpdate.Key);
 
             return objectAfterUpdate;
@@ -106,7 +109,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
         /// <summary>
         /// Perform a query
         /// </summary>
-        public IEnumerable<TModel> DoTestQuery(Expression<Func<TModel, bool>> predicate, Guid knownResultKey, IPrincipal authContext)
+        public IEnumerable<TModel> DoTestQuery(Expression<Func<TModel, bool>> predicate, Guid? knownResultKey, IPrincipal authContext)
         {
 
             // Auth context

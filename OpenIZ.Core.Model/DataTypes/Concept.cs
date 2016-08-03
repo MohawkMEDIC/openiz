@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
@@ -34,27 +35,32 @@ namespace OpenIZ.Core.Model.DataTypes
     
     [XmlType("Concept",  Namespace = "http://openiz.org/model"), JsonObject("Concept")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Concept")]
-    [Classifier(nameof(Mnemonic))]
+    [Classifier(nameof(Mnemonic)), KeyLookup(nameof(Mnemonic))]
     public class Concept : VersionedEntityData<Concept>
     {
 
-      
+
+        /// <summary>
+        /// Creates a new concept
+        /// </summary>
+        public Concept()
+        {
+            this.ReferenceTerms = new List<ConceptReferenceTerm>();
+            this.ConceptNames = new List<ConceptName>();
+            this.Relationship = new List<ConceptRelationship>();
+            this.ConceptSets = new List<ConceptSet>();
+        }
+
         // Concept class id
-        private Guid m_classId;
-        // Backing field for relationships
-        private List<ConceptRelationship> m_relationships;
+        private Guid? m_classId;
         // Concept class
         private ConceptClass m_class;
-        // Reference terms
-        private List<ConceptReferenceTerm> m_referenceTerms;
-        // Names
-        private List<ConceptName> m_conceptNames;
         // Status id
         private Guid? m_conceptStatusId;
         // Status
         private Concept m_conceptStatus;
-        // Concept set
-        private List<ConceptSet> m_conceptSet;
+        
+
         /// <summary>
         /// Gets or sets an indicator which dictates whether the concept is a system concept
         /// </summary>
@@ -88,7 +94,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the status of the concept
         /// </summary>
-        [DelayLoad(nameof(StatusConceptKey))]
+        [SerializationReference(nameof(StatusConceptKey))]
         [XmlIgnore, JsonIgnore]
         public Concept StatusConcept
         {
@@ -109,28 +115,19 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets a list of concept relationships
         /// </summary>
-        [DelayLoad(null)]
-        [XmlElement("relationship"), JsonProperty("relationship")]
-        public List<ConceptRelationship> Relationship
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_relationships = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_relationships);
-
-                return this.m_relationships;
-            }
-        }
+        [AutoLoad, XmlElement("relationship"), JsonProperty("relationship")]
+        public List<ConceptRelationship> Relationship { get; set; }
 
         /// <summary>
         /// Gets or sets the class identifier
         /// </summary>
         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("class"), JsonProperty("class")]
-        public Guid  ClassKey
-        {
-            get { return this.m_classId; }
+        [XmlElement("conceptClass"), JsonProperty("conceptClass")]
+        public Guid?  ClassKey { get
+            {
+                return this.m_classId;
+            }
             set
             {
                 this.m_classId = value;
@@ -141,8 +138,8 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets the classification of the concept
         /// </summary>
-        [DelayLoad(nameof(ClassKey))]
-        [XmlIgnore, JsonIgnore]
+        [SerializationReference(nameof(ClassKey))]
+        [AutoLoad, XmlIgnore, JsonIgnore]
         public ConceptClass Class
         {
             get
@@ -153,99 +150,45 @@ namespace OpenIZ.Core.Model.DataTypes
             set
             {
                 this.m_class = value;
-                if (value == null)
-                    this.m_classId = Guid.Empty;
-                else
-                    this.m_classId = value.Key;
+                this.m_classId = value?.Key;
             }
         }
 
         /// <summary>
         /// Gets a list of concept reference terms
         /// </summary>
-        [DelayLoad(null)]
-        [XmlElement("referenceTerm"), JsonProperty("referenceTerm")]
-        public List<ConceptReferenceTerm> ReferenceTerms
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_referenceTerms = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_referenceTerms);
-
-                return this.m_referenceTerms;
-            }
-        }
+        
+        [AutoLoad, XmlElement("referenceTerm"), JsonProperty("referenceTerm")]
+        public List<ConceptReferenceTerm> ReferenceTerms { get; set; }
 
         /// <summary>
         /// Gets the concept names
         /// </summary>
-        [DelayLoad(null)]
-        [XmlElement("name"), JsonProperty("name")]
-        public List<ConceptName> ConceptNames
-        {
-            get
-            {
-                if (this.IsDelayLoadEnabled)
-                    this.m_conceptNames = EntitySource.Current.GetRelations(this.Key, this.VersionSequence, this.m_conceptNames);
-
-                return this.m_conceptNames;
-            }
-        }
+        //
+        [AutoLoad, XmlElement("name"), JsonProperty("name")]
+        public List<ConceptName> ConceptNames { get; set; }
 
         /// <summary>
         /// Concept sets as identifiers for XML purposes only
         /// </summary>
-        [XmlElement("conceptSet"), JsonProperty("conceptSet")]
-        [DelayLoad(null)]
-        //[Bundle(nameof(ConceptSets))]
-        public List<Guid> ConceptSetsXml
-        {
-            get
-            {
-                return this.ConceptSets?.Select(o => o.Key).ToList();
-            }
-            set
-            {
-                ; // nothing
-            }
-        }
+        [DataIgnore, XmlElement("conceptSet"), JsonProperty("conceptSet")]
+        public List<Guid> ConceptSetsXml { get; set; }
 
         /// <summary>
         /// Gets concept sets to which this concept is a member
         /// </summary>
-        [XmlIgnore, JsonIgnore]
-        [DelayLoad(null)]
+        [DataIgnore, XmlIgnore, JsonIgnore, SerializationReference(nameof(ConceptSetsXml))]
         public List<ConceptSet> ConceptSets
         {
             get
             {
-                if(this.m_conceptSet == null &&
-                    this.IsDelayLoadEnabled)
-                    this.m_conceptSet = EntitySource.Current.Provider.Query<ConceptSet>(s => s.Concepts.Any(c => c.Key == this.Key)).ToList();
-                return this.m_conceptSet;
+                return this.ConceptSetsXml?.Select(o=>EntitySource.Current.Get<ConceptSet>(o)).ToList();
+            }
+            set
+            {
+                this.ConceptSetsXml = value?.Where(o=>o.Key.HasValue).Select(o => o.Key.Value).ToList();
             }
         }
 
-        /// <summary>
-        /// Reference terms
-        /// </summary>
-        public void SetDelayLoadProperties(List<ConceptName> names, List<ConceptReferenceTerm> referenceTerms)
-        {
-            this.m_conceptNames = names;
-            this.m_referenceTerms = referenceTerms;
-        }
-
-        /// <summary>
-        /// Refresh the specified object's delay load properties
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_class = null;
-            this.m_conceptNames = null;
-            this.m_conceptStatus = null;
-            this.m_referenceTerms = null;
-            this.m_relationships = null;
-        }
     }
 }

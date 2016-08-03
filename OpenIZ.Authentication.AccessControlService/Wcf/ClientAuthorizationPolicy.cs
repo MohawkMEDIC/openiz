@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-4-19
+ * User: justi
+ * Date: 2016-6-14
  */
 using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Services;
@@ -80,7 +81,12 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
                 if (identities == null || identities.Count <= 0)
                     throw new Exception("No Identity found");
 
-                evaluationContext.Properties["Principal"] = new GenericPrincipal(identities[0], null);
+                // Add SID claim
+                var principal = new GenericPrincipal(identities[0], null);
+                var applicationProvider = ApplicationContext.Current.GetService<IApplicationIdentityProviderService>();
+                var applicationPrincipal = applicationProvider.GetIdentity(principal.Identity.Name);
+                principal.AddIdentity(applicationPrincipal as Core.Security.ApplicationIdentity);
+                evaluationContext.Properties["Principal"] = principal;
                 return true;
             }
             catch(Exception e)

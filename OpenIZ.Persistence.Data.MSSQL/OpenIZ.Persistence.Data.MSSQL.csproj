@@ -72,25 +72,19 @@
   <ItemGroup>
     <Compile Include="Configuration\SqlConfigurationSectionHandler.cs" />
     <Compile Include="Configuration\SqlConfiguration.cs" />
-    <Compile Include="Data\DataCache.cs" />
+    <Compile Include="Data\IDbAssociatedEntity.cs" />
+    <Compile Include="Data\IDbBaseData.cs" />
+    <Compile Include="Data\IDbVersionedData.cs" />
     <Compile Include="Data\LinqTraceWriter.cs" />
+    <Compile Include="Data\DataModelExtensions.cs" />
+    <Compile Include="Data\IDbIdentified.cs" />
     <Compile Include="Data\Model.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Model.dbml</DependentUpon>
     </Compile>
-    <Compile Include="Data\ModelExtensions.cs" />
     <Compile Include="Security\SqlSecurityPolicy.cs" />
     <Compile Include="Security\SqlSecurityPolicyInstance.cs" />
-    <Compile Include="Services\Persistence\EntityAddressPersistenceService.cs" />
-    <Compile Include="Services\Persistence\EntityNamePersistenceService.cs" />
-    <Compile Include="Services\Persistence\VersionedAssociationPersistenceService.cs" />
-    <Compile Include="Services\Persistence\CodeSystemPersistenceService.cs" />
-    <Compile Include="Services\Persistence\ConceptClassPersistenceService.cs" />
-    <Compile Include="Services\Persistence\ConceptRelationshipTypePersistenceService.cs" />
-    <Compile Include="Services\Persistence\ConceptSetPersistenceService.cs" />
-    <Compile Include="Services\Persistence\EntityPersistenceService.cs" />
-    <Compile Include="Services\Persistence\PhoneticAlgorithmPersistenceService.cs" />
     <Compile Include="Exceptions\SqlFormalConstraintException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -98,20 +92,33 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Services\Persistence\ConceptNamePersistenceService.cs" />
+    <Compile Include="Services\Persistence\AssigningAuthorityPersistenceService.cs" />
+    <Compile Include="Services\Persistence\ManufacturedMaterialPersistenceService.cs" />
+    <Compile Include="Services\Persistence\MaterialPersistenceService.cs" />
+    <Compile Include="Services\Persistence\ProviderPersistenceService.cs" />
+    <Compile Include="Services\Persistence\SecurityPersistenceServices.cs" />
+    <Compile Include="Services\SqlServerPersistenceService.cs" />
+    <Compile Include="Services\Persistence\ApplicationEntityPersistenceService.cs" />
+    <Compile Include="Services\Persistence\BaseDataPersistenceService.cs" />
     <Compile Include="Services\Persistence\ConceptPersistenceService.cs" />
-    <Compile Include="Services\Persistence\ConceptReferenceTermPersistenceService.cs" />
-    <Compile Include="Services\Persistence\ConceptRelationshipPersistenceService.cs" />
-    <Compile Include="Services\Persistence\ReferenceTermPersistenceService.cs" />
-    <Compile Include="Services\Persistence\SecurityPolicyPersistenceService.cs" />
-    <Compile Include="Services\Persistence\SqlPersistenceService.cs" />
+    <Compile Include="Services\Persistence\ConceptSetPersistenceService.cs" />
+    <Compile Include="Services\Persistence\DeviceEntityPersistenceService.cs" />
+    <Compile Include="Services\Persistence\EntityAddressPersistenceService.cs" />
+    <Compile Include="Services\Persistence\EntityDerivedPersistenceService.cs" />
+    <Compile Include="Services\Persistence\EntityNamePersistenceService.cs" />
+    <Compile Include="Services\Persistence\EntityPersistenceService.cs" />
+    <Compile Include="Services\Persistence\IdentifiedPersistenceService.cs" />
+    <Compile Include="Services\SqlServerBasePersistenceService.cs" />
+    <Compile Include="Services\Persistence\OrganizationPersistenceService.cs" />
+    <Compile Include="Services\Persistence\PatientPersistenceService.cs" />
+    <Compile Include="Services\Persistence\PersonPersistenceService.cs" />
+    <Compile Include="Services\Persistence\PlacePersistenceService.cs" />
+    <Compile Include="Services\Persistence\UserEntityPersistenceService.cs" />
+    <Compile Include="Services\Persistence\VersionedDataPersistenceService.cs" />
     <Compile Include="Services\SqlApplicationIdentityProvider.cs" />
     <Compile Include="Services\SqlIdentityProvider.cs" />
     <Compile Include="Services\SqlPolicyInformationService.cs" />
     <Compile Include="Services\SqlRoleProvider.cs" />
-    <Compile Include="Services\Persistence\BasePersistenceService.cs" />
-    <Compile Include="Services\Persistence\SecurityRolePersistenceService.cs" />
-    <Compile Include="Services\Persistence\SecurityUserPersistenceService.cs" />
     <Compile Include="Security\SqlClaimsIdentity.cs" />
     <Compile Include="SqlServerConstants.cs" />
   </ItemGroup>
@@ -137,6 +144,8 @@
     <Content Include="Data\CorrectDbml.xslt">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Data\Sql\OpenIZFn.sql" />
+    <Content Include="Data\Sql\Testing\OpenIZTestData.sql" />
     <EmbeddedResource Include="Data\dbfeatures.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -165,6 +174,10 @@
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
       <Project>{f1a82a4f-4a57-47d7-ae76-444c8a4ff54a}</Project>
       <Name>OpenIZ.Core.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.PCL\OpenIZ.Core.PCL.csproj">
+      <Project>{3a45f695-47a2-464c-ace6-bdabbfa39fbc}</Project>
+      <Name>OpenIZ.Core.PCL</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core\OpenIZ.Core.csproj">
       <Project>{db9bc05e-45f1-4f96-a161-f36bdecaf566}</Project>

@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Constants;
@@ -39,20 +40,20 @@ namespace OpenIZ.Core.Model.Entities
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "ApplicationEntity")]
     public class ApplicationEntity : Entity
     {
-        // Security application key
-        private Guid m_securityApplicationKey;
-        // Security application
-        
-        private SecurityApplication m_securityApplication;
 
         /// <summary>
-        /// Application entity
+        /// Creates application entity
         /// </summary>
         public ApplicationEntity()
         {
-            base.DeterminerConceptKey = DeterminerKeys.Specific;
-            base.ClassConceptKey = EntityClassKeys.Entity;
+            this.ClassConceptKey = EntityClassKeys.NonLivingSubject;
+            this.DeterminerConceptKey = DeterminerKeys.Specific;
         }
+
+        // Security application key
+        private Guid? m_securityApplicationKey;
+        // Security application
+        private SecurityApplication m_securityApplication;
 
         /// <summary>
         /// Gets or sets the security application
@@ -60,7 +61,7 @@ namespace OpenIZ.Core.Model.Entities
         [XmlElement("securityApplication"), JsonProperty("securityApplication")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        public Guid SecurityApplicationKey
+        public Guid? SecurityApplicationKey
         {
             get { return this.m_securityApplicationKey; }
             set
@@ -73,7 +74,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the security application
         /// </summary>
-        [DelayLoad(nameof(SecurityApplicationKey))]
+        [SerializationReference(nameof(SecurityApplicationKey))]
         [XmlIgnore, JsonIgnore]
         public SecurityApplication SecurityApplication
         {
@@ -84,10 +85,8 @@ namespace OpenIZ.Core.Model.Entities
             set
             {
                 this.m_securityApplication = value;
-                if (value == null)
-                    this.m_securityApplicationKey = Guid.Empty;
-                else
-                    this.m_securityApplicationKey = value.Key;
+
+                    this.m_securityApplicationKey = value?.Key;
             }
         }
 

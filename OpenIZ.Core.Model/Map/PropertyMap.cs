@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-4-19
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using System.Diagnostics;
+using System.Collections;
 
 namespace OpenIZ.Core.Model.Map
 {
@@ -57,11 +60,37 @@ namespace OpenIZ.Core.Model.Map
         public bool DontLoad { get; set; }
 
         /// <summary>
+        /// Disaggregation function
+        /// </summary>
+        [XmlAttribute("aggregate")]
+        public AggregationFunctionType Aggregate { get; set; }
+
+        /// <summary>
+        /// Order By
+        /// </summary>
+        [XmlAttribute("orderBy")]
+        public string OrderBy { get; set; }
+
+        /// <summary>
+        /// Gets or sets the sort order
+        /// </summary>
+        [XmlAttribute("sortOrder")]
+        public SortOrderType SortOrder { get; set; }
+
+        /// <summary>
+        /// This property doesn't "belong on IMS"
+        /// </summary>
+        [XmlAttribute("isAssociation")]
+        public bool IsAssociative { get; set; }
+
+        /// <summary>
         /// Validate the property type
         /// </summary>
         public IEnumerable<ValidationResultDetail> Validate(Type modelClass, Type domainClass)
         {
-            
+#if VERBOSE_DEBUG
+            Debug.WriteLine(String.Format("\t Property {0}>{1}", this.ModelName, this.DomainName));
+#endif
             if (domainClass?.IsConstructedGenericType == true)
                 domainClass = domainClass.GenericTypeArguments[0];
             if (modelClass?.IsConstructedGenericType == true)
@@ -82,6 +111,20 @@ namespace OpenIZ.Core.Model.Map
             if (this.Via != null)
                 retVal.AddRange(this.Via.Validate(modelClass?.GetRuntimeProperty(this.ModelName ?? "")?.PropertyType ?? modelClass, domainClass?.GetRuntimeProperty(this.DomainName)?.PropertyType));
 
+            // Order by?
+            if(!String.IsNullOrEmpty(this.OrderBy) && domainClass != null)
+            {
+
+                var orderProperty = domainClass.GetRuntimeProperty(this.DomainName);
+                if (!orderProperty.PropertyType.GetTypeInfo().ImplementedInterfaces.Any(o => o == typeof(IEnumerable)))
+                    retVal.Add(new ValidationResultDetail(ResultDetailType.Error, String.Format("Sort Property {0}.{1} is not enumerable", domainClass?.Name, this.OrderBy), null, null));
+                else
+                {
+                    orderProperty = orderProperty.PropertyType.GetTypeInfo().GenericTypeArguments[0].GetRuntimeProperty(this.OrderBy);
+                    if (orderProperty == null)
+                        retVal.Add(new ValidationResultDetail(ResultDetailType.Error, String.Format("Sort Property {0}.{1} not found", domainClass?.Name, this.OrderBy), null, null));
+                }
+            }
             return retVal;
 
         }

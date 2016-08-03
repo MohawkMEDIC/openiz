@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-1-13
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using System.Linq;
@@ -29,6 +30,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using OpenIZ.Core.Security;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 {
@@ -61,7 +63,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 EmailConfirmed = true,
                 PasswordHash = "test_user_hash_store",
                 SecurityHash = "test_security_hash",
-                UserName = "admin"
+                UserName = "admin",
+                UserClass = UserClassKeys.HumanUser
             };
 
             var userAfterTest = base.DoTestInsert(userUnderTest);
@@ -83,7 +86,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 EmailConfirmed = false,
                 PasswordHash = hashingService.EncodePassword("password"),
                 SecurityHash = "cert",
-                UserName = "updateTest"
+                UserName = "updateTest",
+                UserClass = UserClassKeys.HumanUser
+
             };
             
             // Store user
@@ -113,7 +118,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 EmailConfirmed = false,
                 PasswordHash = hashingService.EncodePassword("password"),
                 SecurityHash = securityHash,
-                UserName = "queryTest"
+                UserName = "queryTest",
+                UserClass = UserClassKeys.HumanUser
+
             };
 
             var testUser = base.DoTestInsert(userUnderTest);
@@ -137,7 +144,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 EmailConfirmed = false,
                 PasswordHash = hashingService.EncodePassword("password"),
                 SecurityHash = securityHash,
-                UserName = "delayLoadTest"
+                UserName = "delayLoadTest",
+                UserClass = UserClassKeys.HumanUser
             };
 
 

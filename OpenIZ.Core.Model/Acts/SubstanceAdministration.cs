@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-7-16
  */
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Constants;
@@ -39,9 +40,9 @@ namespace OpenIZ.Core.Model.Acts
     public class SubstanceAdministration : Act
     {
         // Route key
-        private Guid m_routeKey;
+        private Guid? m_routeKey;
         // Dose unit key
-        private Guid m_doseUnitKey;
+        private Guid? m_doseUnitKey;
         // Route
         private Concept m_route;
         // Dose unit
@@ -61,7 +62,7 @@ namespace OpenIZ.Core.Model.Acts
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("route"), JsonProperty("route")]
-        public Guid RouteKey
+        public Guid? RouteKey
         {
             get { return this.m_routeKey; }
             set
@@ -77,7 +78,7 @@ namespace OpenIZ.Core.Model.Acts
         [EditorBrowsable(EditorBrowsableState.Never)]
         
         [XmlElement("doseUnit"), JsonProperty("doseUnit")]
-        public Guid DoseUnitKey
+        public Guid? DoseUnitKey
         {
             get { return this.m_doseUnitKey; }
             set
@@ -91,7 +92,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets a concept which indicates the route of administration (eg: Oral, Injection, etc.)
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(RouteKey))]
+        [SerializationReference(nameof(RouteKey))]
         public Concept Route
         {
             get
@@ -102,10 +103,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 this.m_route = value;
-                if (value == null)
-                    this.m_routeKey = Guid.Empty;
-                else
-                    this.m_routeKey = value.Key;
+                this.m_routeKey = value?.Key;
             }
         }
 
@@ -113,7 +111,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets a concept which indicates the unit of measure for the dose (eg: 5 mL, 10 mL, 1 drop, etc.)
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [DelayLoad(nameof(DoseUnitKey))]
+        [SerializationReference(nameof(DoseUnitKey))]
         public Concept DoseUnit
         {
             get
@@ -124,10 +122,7 @@ namespace OpenIZ.Core.Model.Acts
             set
             {
                 this.m_doseUnit = value;
-                if (value == null)
-                    this.m_doseUnitKey = Guid.Empty;
-                else
-                    this.m_doseUnitKey = value.Key;
+                this.m_doseUnitKey = value?.Key;
             }
         }
 

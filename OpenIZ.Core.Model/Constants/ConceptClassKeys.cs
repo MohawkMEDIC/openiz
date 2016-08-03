@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-2-1
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using System.Collections.Generic;
@@ -73,6 +74,10 @@ namespace OpenIZ.Core.Model.Constants
         /// Stock class identifier
         /// </summary>
         public static readonly Guid Stock = Guid.Parse("FFD8304A-43EC-4EBC-95FC-FB4A4F2338F0");
+        /// <summary>
+        /// Represents a form code
+        /// </summary>
+        public static readonly Guid Form = Guid.Parse("17EE5254-8C25-4ABB-B246-083FBE9AFA15");
         /// <summary>
         /// Unit of measure identifier
         /// </summary>

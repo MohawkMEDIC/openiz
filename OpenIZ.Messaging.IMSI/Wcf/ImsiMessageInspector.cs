@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -13,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-1-22
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using System.Linq;
@@ -89,6 +90,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
 
             try
             {
+
                 string encodings = WebOperationContext.Current.IncomingRequest.Headers.Get("Accept-Encoding");
                 string compressionScheme = String.Empty;
 
@@ -105,7 +107,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 }
 
 
-                var httpResponse = (HttpResponseMessageProperty)reply.Properties[HttpResponseMessageProperty.Name];
+                //var httpResponse = (HttpResponseMessageProperty)reply.Properties[HttpResponseMessageProperty.Name];
                 // CORS
                 // TODO: Add a configuration option to disable this
                 Dictionary<String, String> requiredHeaders = new Dictionary<string, string>() {
@@ -116,6 +118,10 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 foreach (var kv in requiredHeaders)
                     if (!WebOperationContext.Current.OutgoingResponse.Headers.AllKeys.Contains(kv.Key))
                         WebOperationContext.Current.OutgoingResponse.Headers.Add(kv.Key, kv.Value);
+
+                // No reply = no compress :)
+                if (reply.IsEmpty)
+                    return;
 
                 // Finally compress
                 // Compress
