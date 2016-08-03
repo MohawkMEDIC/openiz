@@ -294,6 +294,207 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
             }
         }
     }
+
+    /// <summary>
+    /// Partial implementing entity Association
+    /// </summary>
+    public partial class ActRelationship : IDbVersionedAssociation
+    {
+        /// <summary>
+        /// Gets the associated item key
+        /// </summary>
+        [LinqPropertyMap(nameof(SourceActId))]
+        public Guid AssociatedItemKey
+        {
+            get
+            {
+                return this.SourceActId;
+            }
+
+            set
+            {
+                this.SourceActId = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the id
+        /// </summary>
+        [LinqPropertyMap(nameof(ActRelationshipId))]
+        public Guid Id
+        {
+            get
+            {
+                return this.ActRelationshipId;
+            }
+
+            set
+            {
+                this.ActRelationshipId = value;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Participations
+    /// </summary>
+    public partial class ActParticipation : IDbVersionedAssociation
+    {
+        /// <summary>
+        /// Gets the associated item key
+        /// </summary>
+        [LinqPropertyMap(nameof(ActId))]
+        public Guid AssociatedItemKey
+        {
+            get
+            {
+                return this.ActId;
+            }
+
+            set
+            {
+                this.ActId = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the id
+        /// </summary>
+        [LinqPropertyMap(nameof(ActParticipationId))]
+        public Guid Id
+        {
+            get
+            {
+                return this.ActParticipationId;
+            }
+
+            set
+            {
+                this.ActParticipationId = value;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Participations
+    /// </summary>
+    public partial class ActNote : IDbVersionedAssociation
+    {
+        /// <summary>
+        /// Gets the associated item key
+        /// </summary>
+        [LinqPropertyMap(nameof(ActId))]
+        public Guid AssociatedItemKey
+        {
+            get
+            {
+                return this.ActId;
+            }
+
+            set
+            {
+                this.ActId = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the id
+        /// </summary>
+        [LinqPropertyMap(nameof(ActNoteId))]
+        public Guid Id
+        {
+            get
+            {
+                return this.ActNoteId;
+            }
+
+            set
+            {
+                this.ActNoteId = value;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Extensions
+    /// </summary>
+    public partial class ActExtension : IDbVersionedAssociation
+    {
+        /// <summary>
+        /// Gets the associated item key
+        /// </summary>
+        [LinqPropertyMap(nameof(ActId))]
+        public Guid AssociatedItemKey
+        {
+            get
+            {
+                return this.ActId;
+            }
+
+            set
+            {
+                this.ActId = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the id
+        /// </summary>
+        [LinqPropertyMap(nameof(ActExtensionId))]
+        public Guid Id
+        {
+            get
+            {
+                return this.ActExtensionId;
+            }
+
+            set
+            {
+                this.ActExtensionId = value;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Identifier
+    /// </summary>
+    public partial class ActIdentifier : IDbVersionedAssociation
+    {
+        /// <summary>
+        /// Gets the associated item key
+        /// </summary>
+        [LinqPropertyMap(nameof(ActId))]
+        public Guid AssociatedItemKey
+        {
+            get
+            {
+                return this.ActId;
+            }
+
+            set
+            {
+                this.ActId = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the id
+        /// </summary>
+        [LinqPropertyMap(nameof(ActIdentifierId))]
+        public Guid Id
+        {
+            get
+            {
+                return this.ActIdentifierId;
+            }
+
+            set
+            {
+                this.ActIdentifierId = value;
+            }
+        }
+    }
+
     /// <summary>
     /// Partial implementing entity Note
     /// </summary>
@@ -490,6 +691,46 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
             set
             {
                 this.EntityTagId = value;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Partial implementing entity Tag
+    /// </summary>
+    public partial class ActTag : IDbAssociation, IDbBaseData
+    {
+        /// <summary>
+        /// Gets the associated item key
+        /// </summary>
+        [LinqPropertyMap(nameof(ActId))]
+        public Guid AssociatedItemKey
+        {
+            get
+            {
+                return this.ActId;
+            }
+
+            set
+            {
+                this.ActId = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the id
+        /// </summary>
+        [LinqPropertyMap(nameof(ActTagId))]
+        public Guid Id
+        {
+            get
+            {
+                return this.ActTagId;
+            }
+
+            set
+            {
+                this.ActTagId = value;
             }
         }
     }

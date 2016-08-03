@@ -29,6 +29,7 @@ using System.Threading.Tasks;
 using OpenIZ.Core.Model.EntityLoader;
 using System.Globalization;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Core.Model.Acts
 {
@@ -333,9 +334,15 @@ namespace OpenIZ.Core.Model.Acts
         public List<ActRelationship> Relationships { get; set; }
 
         /// <summary>
+        /// Gets or sets the policy instances
+        /// </summary>
+        [XmlElement("policy"), JsonProperty("policy")]
+        public List<SecurityPolicyInstance> Policies { get; set; }
+
+        /// <summary>
         /// Gets a list of all extensions associated with the act
         /// </summary>
-        
+
         [AutoLoad, XmlElement("extension"), JsonProperty("extension")]
         public List<ActExtension> Extensions { get; set; }
 

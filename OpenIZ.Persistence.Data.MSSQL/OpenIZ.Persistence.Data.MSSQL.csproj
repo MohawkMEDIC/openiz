@@ -92,11 +92,17 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Services\Persistence\ActDerivedPersistenceService.cs" />
+    <Compile Include="Services\Persistence\ActPersistenceService.cs" />
     <Compile Include="Services\Persistence\AssigningAuthorityPersistenceService.cs" />
+    <Compile Include="Services\Persistence\ControlActPersistenceService.cs" />
+    <Compile Include="Services\Persistence\EncounterPersistenceService.cs" />
     <Compile Include="Services\Persistence\ManufacturedMaterialPersistenceService.cs" />
     <Compile Include="Services\Persistence\MaterialPersistenceService.cs" />
+    <Compile Include="Services\Persistence\ObservationPersistenceService.cs" />
     <Compile Include="Services\Persistence\ProviderPersistenceService.cs" />
     <Compile Include="Services\Persistence\SecurityPersistenceServices.cs" />
+    <Compile Include="Services\Persistence\SubstanceAdministrationPersistenceService.cs" />
     <Compile Include="Services\SqlServerPersistenceService.cs" />
     <Compile Include="Services\Persistence\ApplicationEntityPersistenceService.cs" />
     <Compile Include="Services\Persistence\BaseDataPersistenceService.cs" />

@@ -38,6 +38,104 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     }
 
     /// <summary>
+    /// Identified
+    /// </summary>
+    public partial class ControlAct : IDbIdentified
+    {
+        /// <summary>
+        /// Gets or sets the key for the interface
+        /// </summary>
+        [LinqPropertyMap(nameof(ActVersionId))]
+        public Guid Id
+        {
+            get { return this.ActVersionId; }
+            set { this.ActVersionId = value; }
+        }
+    }
+
+    /// <summary>
+    /// Identified
+    /// </summary>
+    public partial class PatientEncounter : IDbIdentified
+    {
+        /// <summary>
+        /// Gets or sets the key for the interface
+        /// </summary>
+        [LinqPropertyMap(nameof(ActVersionId))]
+        public Guid Id
+        {
+            get { return this.ActVersionId; }
+            set { this.ActVersionId = value; }
+        }
+
+    }
+
+    /// <summary>
+    /// Identified
+    /// </summary>
+    public partial class TextObservation : IDbIdentified
+    {
+        /// <summary>
+        /// Gets or sets the key for the interface
+        /// </summary>
+        [LinqPropertyMap(nameof(ActVersionId))]
+        public Guid Id
+        {
+            get { return this.ActVersionId; }
+            set { this.ActVersionId = value; }
+        }
+
+    }
+
+    /// <summary>
+    /// Identified
+    /// </summary>
+    public partial class QuantityObservation : IDbIdentified
+    {
+        /// <summary>
+        /// Gets or sets the key for the interface
+        /// </summary>
+        [LinqPropertyMap(nameof(ActVersionId))]
+        public Guid Id
+        {
+            get { return this.ActVersionId; }
+            set { this.ActVersionId = value; }
+        }
+
+    }
+    /// <summary>
+    /// Identified
+    /// </summary>
+    public partial class CodedObservation : IDbIdentified
+    {
+        /// <summary>
+        /// Gets or sets the key for the interface
+        /// </summary>
+        [LinqPropertyMap(nameof(ActVersionId))]
+        public Guid Id
+        {
+            get { return this.ActVersionId; }
+            set { this.ActVersionId = value; }
+        }
+
+    }
+    /// <summary>
+    /// Identified
+    /// </summary>
+    public partial class SubstanceAdministration : IDbIdentified
+    {
+        /// <summary>
+        /// Gets or sets the key for the interface
+        /// </summary>
+        [LinqPropertyMap(nameof(ActVersionId))]
+        public Guid Id
+        {
+            get { return this.ActVersionId; }
+            set { this.ActVersionId = value; }
+        }
+
+    }
+    /// <summary>
     /// Entity identification 
     /// </summary>
     public partial class DeviceEntity : IDbIdentified
@@ -211,6 +309,28 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         }
     }
 
+    /// <summary>
+    /// Act implementation of IDbIdentified
+    /// </summary>
+    public partial class Act : IDbIdentified
+    {
+        /// <summary>
+        /// Gets or sets the key
+        /// </summary>
+        [LinqPropertyMap(nameof(ActId))]
+        public Guid Id
+        {
+            get
+            {
+                return this.ActId;
+            }
+
+            set
+            {
+                this.ActId = value;
+            }
+        }
+    }
 
     /// <summary>
     /// Interface implementation for patient

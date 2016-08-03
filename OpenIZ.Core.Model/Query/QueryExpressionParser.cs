@@ -201,10 +201,20 @@ namespace OpenIZ.Core.Model.Query
                             case '<':
                                 et = ExpressionType.LessThan;
                                 pValue = value.Substring(1);
+                                if(pValue[0] == '=')
+                                {
+                                    et = ExpressionType.LessThanOrEqual;
+                                    pValue = pValue.Substring(1);
+                                }
                                 break;
                             case '>':
                                 et = ExpressionType.GreaterThan;
                                 pValue = value.Substring(1);
+                                if (pValue[0] == '=')
+                                {
+                                    et = ExpressionType.GreaterThanOrEqual;
+                                    pValue = pValue.Substring(1);
+                                }
                                 break;
                             case '~':
                                 et = ExpressionType.Equal;
@@ -234,24 +244,6 @@ namespace OpenIZ.Core.Model.Query
                                 else
                                     throw new InvalidOperationException("~ can only be applied to string properties");
 
-                                break;
-                            case '=':
-                                switch(value[1])
-                                {
-                                    case '<':
-                                        et = ExpressionType.LessThanOrEqual;
-                                        pValue = value.Substring(2);
-                                        break;
-                                    case '>':
-                                        et = ExpressionType.GreaterThanOrEqual;
-                                        pValue = value.Substring(2);
-                                        break;
-                                    default:
-                                        et = ExpressionType.Equal;
-                                        pValue = value.Substring(1);
-
-                                        break;
-                                }
                                 break;
                             case '!':
                                 et = ExpressionType.NotEqual;

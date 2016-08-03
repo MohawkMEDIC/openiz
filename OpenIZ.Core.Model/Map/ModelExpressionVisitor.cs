@@ -51,14 +51,16 @@ namespace OpenIZ.Core.Model.Map
             // Member access
             private readonly Expression m_memberAccess;
 
+            private readonly ModelMapper m_sourceMapper;
+
             /// <summary>
             /// Creates a new instance of the lambda correction visitor
             /// </summary>
-            public LambdaCorrectionVisitor(Expression correctedMemberAccess, ParameterExpression lambdaExpressionParameter)
+            public LambdaCorrectionVisitor(Expression correctedMemberAccess, ParameterExpression lambdaExpressionParameter, ModelMapper sourceMapper)
             {
                 this.m_originalParameter = lambdaExpressionParameter;
                 this.m_memberAccess = correctedMemberAccess;
-
+                this.m_sourceMapper = sourceMapper;
             }
 
             /// <summary>
@@ -118,6 +120,9 @@ namespace OpenIZ.Core.Model.Map
 
         // Parameters
         private readonly ParameterExpression[] m_parameters;
+
+        // Scope stack
+        private Stack<ParameterExpression> m_scope = new Stack<ParameterExpression>();
 
         /// <summary>
         /// Model conversion visitor 
@@ -187,15 +192,18 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         protected virtual Expression VisitLambdaGeneric(LambdaExpression node)
         {
+            var parameters = this.VisitExpressionList(node.Parameters.OfType<Expression>().ToList()).OfType<ParameterExpression>().ToArray();
+            this.m_scope.Push(this.Visit(parameters[0]) as ParameterExpression);
             Expression newBody = this.Visit(node.Body);
+
             if (newBody != node.Body)
             {
-                var parameters = this.VisitExpressionList(node.Parameters.OfType<Expression>().ToList()).OfType<ParameterExpression>().ToArray();
                 var lambdaType = node.Type;
                 if (lambdaType.GetGenericTypeDefinition() == typeof(Func<,>))
                     lambdaType = typeof(Func<,>).MakeGenericType(parameters.Select(p => p.Type).Union(new Type[] { newBody.Type }).ToArray());
-                return Expression.Lambda(lambdaType, newBody, parameters);
+                return Expression.Lambda(lambdaType, newBody, this.m_scope.Pop());
             }
+            else this.m_scope.Pop();
             return node;
 
         }
@@ -235,18 +243,18 @@ namespace OpenIZ.Core.Model.Map
                 Expression argExpression = this.Visit(exp);
 
                 // Is there a VIA expression to be corrected?
-                if (argExpression is LambdaExpression)
-                {
-                    var lambdaExpression = argExpression as LambdaExpression;
-                    // Ok, we need to find the traversal expression
-                    //this.m_mapper.
-                    ParameterExpression newParameter = Expression.Parameter(this.m_mapper.ExtractDomainType(retVal[0].Type), lambdaExpression.Parameters[0].Name);
-                    Expression accessExpression = this.m_mapper.CreateLambdaMemberAdjustmentExpression(args.First() as MemberExpression, newParameter);
-                    Expression newBody = new LambdaCorrectionVisitor(accessExpression, lambdaExpression.Parameters[0]).Visit(lambdaExpression.Body);
-                    Type lambdaType = typeof(Func<,>).MakeGenericType(new Type[] { newParameter.Type, newBody.Type });
-                    argExpression = Expression.Lambda(lambdaType, newBody, newParameter);
+                //if (argExpression is LambdaExpression)
+                //{
+                //    var lambdaExpression = argExpression as LambdaExpression;
+                //    // Ok, we need to find the traversal expression
+                //    //this.m_mapper.
+                //    ParameterExpression newParameter = Expression.Parameter(this.m_mapper.ExtractDomainType(retVal[0].Type), lambdaExpression.Parameters[0].Name);
+                //    Expression accessExpression = retVal.First(); // this.m_mapper.CreateLambdaMemberAdjustmentExpression(args.First() as MemberExpression, newParameter);
+                //    Expression newBody = new LambdaCorrectionVisitor(accessExpression, lambdaExpression.Parameters[0], this.m_mapper).Visit(lambdaExpression.Body);
+                //    Type lambdaType = typeof(Func<,>).MakeGenericType(new Type[] { newParameter.Type, newBody.Type });
+                //    argExpression = Expression.Lambda(lambdaType, newBody, newParameter);
 
-                }
+                //}
                 // Add the expression
                 if (argExpression != exp)
                 {
@@ -336,7 +344,11 @@ namespace OpenIZ.Core.Model.Map
 
             Type mappedType = this.m_mapper.MapModelType(node.Type);
             var parameterRef = this.m_parameters.FirstOrDefault(p => p.Name == node.Name && p.Type == mappedType);
+            
+            if (parameterRef != null)
+                return parameterRef;
 
+            parameterRef = this.m_scope.FirstOrDefault(p => p.Name == node.Name && p.Type == mappedType);
             if (parameterRef != null)
                 return parameterRef;
 

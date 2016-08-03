@@ -57,6 +57,7 @@
     <Compile Include="Http\XmlBodySerializer.cs" />
     <Compile Include="Interop\ServiceClientBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IActRepositoryService.cs" />
     <Compile Include="Services\ICarePlanService.cs" />
     <Compile Include="Protocol\IClinicalProtocol.cs" />
     <Compile Include="Services\IClinicalProtocolRepositoryService.cs" />

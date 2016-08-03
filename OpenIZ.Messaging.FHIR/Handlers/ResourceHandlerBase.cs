@@ -17,6 +17,10 @@ using OpenIZ.Core.Security;
 using MARC.HI.EHRS.SVC.Core.Data;
 using System.Diagnostics;
 using System.Data;
+using OpenIZ.Messaging.FHIR.Util;
+using System.Linq;
+using System.Linq.Expressions;
+using OpenIZ.Core.Model.Query;
 
 namespace OpenIZ.Messaging.FHIR.Handlers
 {
@@ -24,31 +28,16 @@ namespace OpenIZ.Messaging.FHIR.Handlers
     /// FHIR Resource handler base
     /// </summary>
     /// <typeparam name="TFhirResource"></typeparam>
-    public class ResourceHandlerBase<TFhirResource, TModel> : IFhirResourceHandler
-        where TFhirResource : ResourceBase, new()
+    public abstract class ResourceHandlerBase<TFhirResource, TModel> : IFhirResourceHandler
+        where TFhirResource : DomainResourceBase, new()
         where TModel : IdentifiedData, new()
     {
 
         // Model mapper
         protected static ModelMapper s_mapper = new ModelMapper(typeof(ResourceHandlerBase<,>).Assembly.GetManifestResourceStream("OpenIZ.Messaging.FHIR.ModelMap.xml"));
 
-        // Persistence service
-        protected IDataPersistenceService<TModel> m_persistence = null;
-
         // Trace source
         protected TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.FHIR");
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public ResourceHandlerBase()
-        {
-            this.m_persistence = ApplicationContext.Current.GetService<IDataPersistenceService<TModel>>();
-            
-            if (this.m_persistence == null)
-                throw new InvalidOperationException(String.Format("Cannot find the appropriate persistence handler for {0}", typeof(TModel)));
-
-        }
 
         /// <summary>
         /// Get the resource name
@@ -65,7 +54,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
         /// <summary>
         /// Create the specified resource
         /// </summary>
-        public virtual FhirOperationResult Create(ResourceBase target, TransactionMode mode)
+        public virtual FhirOperationResult Create(DomainResourceBase target, TransactionMode mode)
         {
             this.m_traceSource.TraceInformation("Creating resource {0} ({1})", this.ResourceName, target);
 
@@ -85,7 +74,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             // Return fhir operation result
             return new FhirOperationResult()
             {
-                Results = new List<ResourceBase>() { this.MapToFhir(result) },
+                Results = new List<DomainResourceBase>() { this.MapToFhir(result) },
                 Details = issues,
                 Outcome = issues.Exists(o=>o.Type == MARC.Everest.Connectors.ResultDetailType.Error) ? ResultCode.Error : ResultCode.Accepted
             };
@@ -95,50 +84,37 @@ namespace OpenIZ.Messaging.FHIR.Handlers
         /// <summary>
         /// Map to FHIR
         /// </summary>
-        protected virtual TFhirResource MapToFhir(TModel model)
-        {
-            return s_mapper.MapModelInstance<TModel, TFhirResource>(model);
-        }
+        protected abstract TFhirResource MapToFhir(TModel model);
 
         /// <summary>
         /// Map to model
         /// </summary>
-        protected virtual TModel MapToModel(TFhirResource resource)
-        {
-            return s_mapper.MapDomainInstance<TFhirResource, TModel>(resource);
-        }
+        protected abstract TModel MapToModel(TFhirResource resource);
 
         /// <summary>
         /// Perform the actual persistence of the insert
         /// </summary>
-        protected virtual TModel Create(TModel modelInstance, List<IResultDetail> issues, TransactionMode mode)
-        {
-            return this.m_persistence.Insert(modelInstance, AuthenticationContext.Current.Principal, mode);
-        }
+        protected abstract TModel Create(TModel modelInstance, List<IResultDetail> issues, TransactionMode mode);
+
+        /// <summary>
+        /// Query the specified result out of the DB
+        /// </summary>
+        protected abstract IEnumerable<TModel> Query(Expression<Func<TModel, bool>> query, List<IResultDetail> issues, int offset, int count, out int totalResults);
 
         /// <summary>
         /// Delete the specified patient identifier
         /// </summary>
-        protected virtual TModel Delete(TModel model, List<IResultDetail> details, TransactionMode mode)
-        {
-            return this.m_persistence.Obsolete(model, AuthenticationContext.Current.Principal, mode);
-        }
+        protected abstract TModel Delete(Guid modelId, List<IResultDetail> details);
 
         /// <summary>
         /// Retrieve the specified patient
         /// </summary>
-        protected virtual TModel Read(Identifier<Guid> id, List<IResultDetail> details)
-        {
-            return this.m_persistence.Get(id, AuthenticationContext.Current.Principal, false);
-        }
-
+        protected abstract TModel Read(Identifier<Guid> id, List<IResultDetail> details);
+        
         /// <summary>
         /// Update the specified model
         /// </summary>
-        protected virtual TModel Update(TModel model, List<IResultDetail> details, TransactionMode mode)
-        {
-            return this.m_persistence.Update(model, AuthenticationContext.Current.Principal, mode);
-        }
+        protected abstract TModel Update(TModel model, List<IResultDetail> details, TransactionMode mode);
 
         /// <summary>
         /// Deletes the specified resource
@@ -155,26 +131,49 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             if (!Guid.TryParse(id, out guidId))
                 throw new ArgumentException(ApplicationContext.Current.GetLocaleString("MSGE002"));
 
-            var modelObj = this.m_persistence.Get(new Identifier<Guid>(guidId), AuthenticationContext.Current.Principal, true);
-            if (modelObj == null)
-                throw new KeyNotFoundException();
-
             // Do the deletion
             List<IResultDetail> details = new List<IResultDetail>();
-            var result = this.Delete(modelObj, details, mode);
+
+            var result = this.Delete(guidId, details);
+
 
             // Return fhir operation result
             return new FhirOperationResult()
             {
-                Results = new List<ResourceBase>() { this.MapToFhir(result) },
+                Results = new List<DomainResourceBase>() { this.MapToFhir(result) },
                 Details = details,
                 Outcome = details.Exists(o => o.Type == MARC.Everest.Connectors.ResultDetailType.Error) ? ResultCode.Error : ResultCode.Accepted
             };
         }
 
-        public FhirQueryResult Query(NameValueCollection parameters)
+        /// <summary>
+        /// Query for the specified data
+        /// </summary>
+        /// <returns></returns>
+        public FhirQueryResult Query(System.Collections.Specialized.NameValueCollection parameters)
         {
-            throw new NotImplementedException();
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters));
+
+            Core.Model.Query.NameValueCollection imsiQuery = null;
+            FhirQuery query = QueryRewriter.RewriteFhirQuery<TFhirResource, TModel>(parameters, out imsiQuery);
+
+            // Do the query
+            int totalResults = 0;
+            List<IResultDetail> issues = new List<IResultDetail>();
+            var predicate = QueryExpressionParser.BuildLinqExpression<TModel>(imsiQuery);
+            var imsiResults = this.Query(predicate, issues, query.Start, query.Quantity, out totalResults);
+
+
+            // Return FHIR query result
+            return new FhirQueryResult()
+            {
+                Details = issues,
+                Outcome = ResultCode.Accepted,
+                Results = imsiResults.Select(o=>this.MapToFhir(o)).OfType<DomainResourceBase>().ToList(),
+                Query = query,
+                TotalResults = totalResults
+            };
         }
 
         /// <summary>
@@ -200,7 +199,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             return new FhirOperationResult()
             {
                 Outcome = ResultCode.Accepted,
-                Results = new List<ResourceBase>() { this.MapToFhir(result) },
+                Results = new List<DomainResourceBase>() { this.MapToFhir(result) },
                 Details = details
             };
         }
@@ -208,7 +207,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
         /// <summary>
         /// Updates the specified record
         /// </summary>
-        public FhirOperationResult Update(string id, ResourceBase target, TransactionMode mode)
+        public FhirOperationResult Update(string id, DomainResourceBase target, TransactionMode mode)
         {
             this.m_traceSource.TraceInformation("Updating resource {0}/{1} ({2})", this.ResourceName, id, target);
 
@@ -241,7 +240,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             // Return fhir operation result
             return new FhirOperationResult()
             {
-                Results = new List<ResourceBase>() { this.MapToFhir(result) },
+                Results = new List<DomainResourceBase>() { this.MapToFhir(result) },
                 Details = issues,
                 Outcome = issues.Exists(o => o.Type == MARC.Everest.Connectors.ResultDetailType.Error) ? ResultCode.Error : ResultCode.Accepted
             };

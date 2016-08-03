@@ -11,8 +11,8 @@ namespace OpenIZ.Messaging.FHIR.Util
     /// <summary>
     /// Represents a query parameter map
     /// </summary>
-    [XmlType(nameof(QueryParameterType), Namespace = "http://openiz.org/model/fhir")]
-    [XmlRoot(nameof(QueryParameterType), Namespace = "http://openiz.org/model/fhir")]
+    [XmlType(nameof(QueryParameterMap), Namespace = "http://openiz.org/model/fhir")]
+    [XmlRoot(nameof(QueryParameterMap), Namespace = "http://openiz.org/model/fhir")]
     public class QueryParameterMap
     {
 
@@ -78,25 +78,8 @@ namespace OpenIZ.Messaging.FHIR.Util
         /// Gets or sets the type of the fhir parmaeter
         /// </summary>
         [XmlAttribute("type")]
-        public FhirQueryType FhirType { get; set; }
+        public String FhirType { get; set; }
         
     }
 
-    /// <summary>
-    /// The expected query type
-    /// </summary>
-    [XmlType(nameof(FhirQueryType), Namespace = "http://openiz.org/model/fhir")]
-    public enum FhirQueryType
-    {
-        [XmlEnum("string")]
-        String,
-        [XmlEnum("uri")]
-        Uri,
-        [XmlEnum("token")]
-        Token,
-        [XmlEnum("date")]
-        Date,
-        [XmlEnum("number")]
-        Number
-    }
 }

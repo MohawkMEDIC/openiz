@@ -47,6 +47,8 @@ namespace OpenIZ.Core.Model.Acts
         private Concept m_route;
         // Dose unit
         private Concept m_doseUnit;
+        private Concept m_site;
+        private Guid? m_siteKey;
 
         /// <summary>
         /// Substance administration ctor
@@ -137,6 +139,40 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [XmlElement("doseSequence"), JsonProperty("doseSequence")]
         public uint SequenceId { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the site
+        /// </summary>
+        [XmlElement("site"), JsonProperty("site")]
+        public Guid? SiteKey
+        {
+            get { return this.m_siteKey; }
+            set
+            {
+                this.m_siteKey = value;
+                this.m_site = null;
+            }
+        }
+        
+        /// <summary>
+        /// Gets or sets a concept which indicates the site of administration
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        [SerializationReference(nameof(SiteKey))]
+        public Concept Site
+        {
+            get
+            {
+                this.m_site = base.DelayLoad(this.m_siteKey, this.m_site);
+                return this.m_site;
+            }
+            set
+            {
+                this.m_site = value;
+                this.m_siteKey = value?.Key;
+            }
+        }
 
         /// <summary>
         /// Force delay loading of properties

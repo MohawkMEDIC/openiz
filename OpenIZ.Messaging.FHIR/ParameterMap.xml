@@ -1,30 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<QueryParameterType xmlns="http://openiz.org/model/fhir">
+<QueryParameterMap xmlns="http://openiz.org/model/fhir">
   
-  <type model="OpenIZ.Core.Model.DataTypes.ConceptSet, OpenIZ.Core.Model, Version=1.0.0.0">
-    <map fhir="code" model="Concepts.ReferenceTerms.ReferenceTerm.Mnemonic"/>
-    <map fhir="date" model="CreationTime"/>
-    <map fhir="description" model="Name"/>
-    <map fhir="identifier" model="Oid" type="token"/>
-    <map fhir="name" model="Mnemonic"/>
-    <map fhir="url" model="Url" type="uri"/>
+  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Immunization, MARc.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
+    <map fhir="vaccine-code" model="participation[Consumable].player.typeConcept" type="concept"/>
+    <map fhir="dose-sequence" model="doseSequence"/>
+    <map fhir="date" model="actTime"/>
+    <map fhir="patient" model="participation[RecordTarget].player.id"/>
+    <map fhir="patient.gender" model="participation[RecordTarget].player.genderConcept" type="concept"/>
+    <map fhir="patient.birthDate" model="participation[RecordTarget].player.dateOfBirth"/>
+    <map fhir="location" model="participation[Location].player.id"/>
+    <map fhir="location.name" model="participation[Location].player.name.component.value"/>
+    <map fhir="location.identifier" model="participation[Location].player.identifier" type="identifier"/>
   </type>
-
-  <type model="OpenIZ.Core.Model.Roles.Patient, OpenIZ.Core.Model, Version=1.0.0.0">
-    <map fhir="address" model="Addresses.Component.Value"/>
-    <map fhir="address-city" model="Addresses.Component[CityOrTown].Value"/>
-    <map fhir="address-country" model="Addresses.Component[Country].Value"/>
-    <map fhir="address-postalcode" model="Addresses.Component[PostalCode].Value"/>
-    <map fhir="address-state" model="Addresses.Component[State].Value"/>
-    <map fhir="address-use" model="Addresses.AddressUse.ReferenceTerms.ReferenceTerm.Mnemonic"/>
-    <map fhir="birthdate" model="DateOfBirth"/>
-    <map fhir="deceased" model="Deceased"/>
-    <map fhir="gender" model="Gender"/>
-    <map fhir="email" model="Telecom[Email].Value"/>
-    <map fhir="family" model="Names.Component[Family].Value"/>
-    <map fhir="given" model="Names.Component[Given].Value"/>
-    <map fhir="name" model="Names.Component.Value"/>
-    <map fhir="phone" model="Telecom[Phone].Value"/>
-    <map fhir="identifier" model="Identifiers.Value" type="token"/>
-  </type>
-</QueryParameterType>
+</QueryParameterMap>

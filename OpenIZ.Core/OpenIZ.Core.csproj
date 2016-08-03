@@ -79,7 +79,6 @@
     <Compile Include="Security\ApplicationPrincipal.cs" />
     <Compile Include="Security\Claims\PurposeOfUseClaimHandler.cs" />
     <Compile Include="Security\Claims\IClaimTypeHandler.cs" />
-    <Compile Include="Services\IApplicationIdentityProviderService.cs" />
     <Compile Include="Security\Permission\PolicyPermissionAttribute.cs" />
     <Compile Include="Security\AuthenticationContext.cs" />
     <Compile Include="Security\ILocalPolicy.cs" />
@@ -91,8 +90,8 @@
     <Compile Include="Security\SecurityUtils.cs" />
     <Compile Include="Security\SHA256PasswordHashingService.cs" />
     <Compile Include="Services\IApplicationIdentityProviderService.cs" />
-    <Compile Include="Services\IConceptService.cs" />
     <Compile Include="Services\IDeviceIdentityProviderService.cs" />
+    <Compile Include="Services\Impl\LocalActRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalMaterialRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalMetadataRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalPatientRepositoryService.cs" />

@@ -906,10 +906,28 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			return ((int)(result.ReturnValue));
 		}
 		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.fn_AssertConceptClass", IsComposable=true)]
+		public System.Nullable<bool> fn_AssertConceptClass([global::System.Data.Linq.Mapping.ParameterAttribute(Name="ConceptId", DbType="UniqueIdentifier")] System.Nullable<System.Guid> conceptId, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="AssertClassMnemonic", DbType="NVarChar(32)")] string assertClassMnemonic)
+		{
+			return ((System.Nullable<bool>)(this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), conceptId, assertClassMnemonic).ReturnValue));
+		}
+		
 		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.fn_OpenIzSchemaVersion", IsComposable=true)]
 		public string fn_OpenIzSchemaVersion()
 		{
 			return ((string)(this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod()))).ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.fn_IsAccountLocked", IsComposable=true)]
+		public System.Nullable<bool> fn_IsAccountLocked([global::System.Data.Linq.Mapping.ParameterAttribute(Name="UserName", DbType="NVarChar(128)")] string userName)
+		{
+			return ((System.Nullable<bool>)(this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), userName).ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.fn_IsConceptSetMember", IsComposable=true)]
+		public System.Nullable<bool> fn_IsConceptSetMember([global::System.Data.Linq.Mapping.ParameterAttribute(Name="ConceptId", DbType="UniqueIdentifier")] System.Nullable<System.Guid> conceptId, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="ConceptSetMnemonic", DbType="NVarChar(32)")] string conceptSetMnemonic)
+		{
+			return ((System.Nullable<bool>)(this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), conceptId, conceptSetMnemonic).ReturnValue));
 		}
 	}
 	
@@ -929,7 +947,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<ActIdentifier> _ActIdentifiers;
 		
-		private EntityRef<ActNote> _ActNoteActNoteId;
+		private EntityRef<ActNote> _ActNote;
 		
 		private EntitySet<ActParticipation> _ActParticipations;
 		
@@ -965,7 +983,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this._ActExtensions = new EntitySet<ActExtension>(new Action<ActExtension>(this.attach_ActExtensions), new Action<ActExtension>(this.detach_ActExtensions));
 			this._ActIdentifiers = new EntitySet<ActIdentifier>(new Action<ActIdentifier>(this.attach_ActIdentifiers), new Action<ActIdentifier>(this.detach_ActIdentifiers));
-			this._ActNoteActNoteId = default(EntityRef<ActNote>);
+			this._ActNote = default(EntityRef<ActNote>);
 			this._ActParticipations = new EntitySet<ActParticipation>(new Action<ActParticipation>(this.attach_ActParticipations), new Action<ActParticipation>(this.detach_ActParticipations));
 			this._ActPolicies = new EntitySet<ActPolicy>(new Action<ActPolicy>(this.attach_ActPolicies), new Action<ActPolicy>(this.detach_ActPolicies));
 			this._ActProtocols = new EntitySet<ActProtocol>(new Action<ActProtocol>(this.attach_ActProtocols), new Action<ActProtocol>(this.detach_ActProtocols));
@@ -1072,31 +1090,31 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Act_ActNote", Storage="_ActNoteActNoteId", ThisKey="ActId", OtherKey="ActNoteId", IsUnique=true, IsForeignKey=false)]
-		public ActNote ActNoteActNoteId
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Act_ActNote", Storage="_ActNote", ThisKey="ActId", OtherKey="ActNoteId", IsUnique=true, IsForeignKey=false)]
+		public ActNote ActNote
 		{
 			get
 			{
-				return this._ActNoteActNoteId.Entity;
+				return this._ActNote.Entity;
 			}
 			set
 			{
-				ActNote previousValue = this._ActNoteActNoteId.Entity;
+				ActNote previousValue = this._ActNote.Entity;
 				if (((previousValue != value) 
-							|| (this._ActNoteActNoteId.HasLoadedOrAssignedValue == false)))
+							|| (this._ActNote.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
 					if ((previousValue != null))
 					{
-						this._ActNoteActNoteId.Entity = null;
+						this._ActNote.Entity = null;
 						previousValue.Act = null;
 					}
-					this._ActNoteActNoteId.Entity = value;
+					this._ActNote.Entity = value;
 					if ((value != null))
 					{
 						value.Act = this;
 					}
-					this.SendPropertyChanged("ActNoteActNoteId");
+					this.SendPropertyChanged("ActNote");
 				}
 			}
 		}
@@ -1676,7 +1694,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary ExtensionValue
 		{
 			get
@@ -2366,12 +2384,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					if ((previousValue != null))
 					{
 						this._Act.Entity = null;
-						previousValue.ActNoteActNoteId = null;
+						previousValue.ActNote = null;
 					}
 					this._Act.Entity = value;
 					if ((value != null))
 					{
-						value.ActNoteActNoteId = this;
+						value.ActNote = this;
 						this._ActNoteId = value.ActId;
 					}
 					else
@@ -3245,7 +3263,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private decimal _EffectiveVersionSequenceId;
 		
-		private decimal _ObsoleteVersionSequenceId;
+		private System.Nullable<decimal> _ObsoleteVersionSequenceId;
 		
 		private System.Guid _RelationshipTypeConceptId;
 		
@@ -3267,7 +3285,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnTargetActIdChanged();
     partial void OnEffectiveVersionSequenceIdChanging(decimal value);
     partial void OnEffectiveVersionSequenceIdChanged();
-    partial void OnObsoleteVersionSequenceIdChanging(decimal value);
+    partial void OnObsoleteVersionSequenceIdChanging(System.Nullable<decimal> value);
     partial void OnObsoleteVersionSequenceIdChanged();
     partial void OnRelationshipTypeConceptIdChanging(System.Guid value);
     partial void OnRelationshipTypeConceptIdChanged();
@@ -3369,8 +3387,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoleteVersionSequenceId", DbType="Decimal(20,0) NOT NULL")]
-		public decimal ObsoleteVersionSequenceId
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoleteVersionSequenceId", DbType="Decimal(20,0)")]
+		public System.Nullable<decimal> ObsoleteVersionSequenceId
 		{
 			get
 			{
@@ -3552,7 +3570,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.DateTimeOffset _CreationTime;
 		
-		private System.Nullable<System.Guid> _CreatedBy;
+		private System.Guid _CreatedBy;
 		
 		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
 		
@@ -3578,7 +3596,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnValueChanged();
     partial void OnCreationTimeChanging(System.DateTimeOffset value);
     partial void OnCreationTimeChanged();
-    partial void OnCreatedByChanging(System.Nullable<System.Guid> value);
+    partial void OnCreatedByChanging(System.Guid value);
     partial void OnCreatedByChanged();
     partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
     partial void OnObsoletionTimeChanged();
@@ -3698,8 +3716,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> CreatedBy
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid CreatedBy
 		{
 			get
 			{
@@ -3827,7 +3845,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					}
 					else
 					{
-						this._CreatedBy = default(Nullable<System.Guid>);
+						this._CreatedBy = default(System.Guid);
 					}
 					this.SendPropertyChanged("CreatedByEntity");
 				}
@@ -12460,7 +12478,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionValue", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary ExtensionValue
 		{
 			get
@@ -26334,11 +26352,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private int _SequenceId;
 		
+		private System.Nullable<System.Guid> _SiteConceptId;
+		
 		private EntityRef<ActVersion> _ActVersion;
 		
 		private EntityRef<Concept> _DoseUnitConcept;
 		
 		private EntityRef<Concept> _RouteConcept;
+		
+		private EntityRef<Concept> _SiteConcept;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -26354,6 +26376,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnDoseUnitConceptIdChanged();
     partial void OnSequenceIdChanging(int value);
     partial void OnSequenceIdChanged();
+    partial void OnSiteConceptIdChanging(System.Nullable<System.Guid> value);
+    partial void OnSiteConceptIdChanged();
     #endregion
 		
 		public SubstanceAdministration()
@@ -26361,6 +26385,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._ActVersion = default(EntityRef<ActVersion>);
 			this._DoseUnitConcept = default(EntityRef<Concept>);
 			this._RouteConcept = default(EntityRef<Concept>);
+			this._SiteConcept = default(EntityRef<Concept>);
 			OnCreated();
 		}
 		
@@ -26476,6 +26501,30 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SiteConceptId", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> SiteConceptId
+		{
+			get
+			{
+				return this._SiteConceptId;
+			}
+			set
+			{
+				if ((this._SiteConceptId != value))
+				{
+					if (this._SiteConcept.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnSiteConceptIdChanging(value);
+					this.SendPropertyChanging();
+					this._SiteConceptId = value;
+					this.SendPropertyChanged("SiteConceptId");
+					this.OnSiteConceptIdChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_SubstanceAdministration", Storage="_ActVersion", ThisKey="ActVersionId", OtherKey="ActVersionId", IsForeignKey=true)]
 		public ActVersion ActVersion
 		{
@@ -26574,6 +26623,24 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._RouteConceptId = default(System.Guid);
 					}
 					this.SendPropertyChanged("RouteConcept");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_SubstanceAdministration2", Storage="_SiteConcept", ThisKey="SiteConceptId", OtherKey="ConceptId", IsForeignKey=true)]
+		public Concept SiteConcept
+		{
+			get
+			{
+				return this._SiteConcept.Entity;
+			}
+			set
+			{
+				if ((this._SiteConcept.Entity != value))
+				{
+					this.SendPropertyChanging();
+					this._SiteConcept.Entity = value;
+					this.SendPropertyChanged("SiteConcept");
 				}
 			}
 		}

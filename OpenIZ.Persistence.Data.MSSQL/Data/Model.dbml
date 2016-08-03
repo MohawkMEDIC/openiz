@@ -7,7 +7,7 @@
       <Column Name="MoodConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Association Name="Act_ActExtension" Member="ActExtensions" ThisKey="ActId" OtherKey="ActId" Type="ActExtension" />
       <Association Name="Act_ActIdentifier" Member="ActIdentifiers" ThisKey="ActId" OtherKey="ActId" Type="ActIdentifier" />
-      <Association Name="Act_ActNote" Member="ActNoteActNoteId" ThisKey="ActId" OtherKey="ActNoteId" Type="ActNote" Cardinality="One" />
+      <Association Name="Act_ActNote" Member="ActNote" ThisKey="ActId" OtherKey="ActNoteId" Type="ActNote" Cardinality="One" />
       <Association Name="Act_ActParticipation" Member="ActParticipations" ThisKey="ActId" OtherKey="ActId" Type="ActParticipation" />
       <Association Name="Act_ActPolicy" Member="ActPolicies" ThisKey="ActId" OtherKey="ActId" Type="ActPolicy" />
       <Association Name="Act_ActProtocol" Member="ActProtocols" ThisKey="ActId" OtherKey="ActId" Type="ActProtocol" />
@@ -117,7 +117,7 @@
       <Column Name="SourceActId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="TargetActId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="EffectiveVersionSequenceId" Type="System.Decimal" DbType="Decimal(20,0) NOT NULL" CanBeNull="false" />
-      <Column Name="ObsoleteVersionSequenceId" Type="System.Decimal" DbType="Decimal(20,0) NOT NULL" CanBeNull="false" />
+      <Column Name="ObsoleteVersionSequenceId" Type="System.Decimal" DbType="Decimal(20,0)" CanBeNull="true" />
       <Column Name="RelationshipTypeConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Association Name="Act_ActRelationship" Member="SourceAct" ThisKey="SourceActId" OtherKey="ActId" Type="Act" IsForeignKey="true" />
       <Association Name="Act_ActRelationship1" Member="TargetAct" ThisKey="TargetActId" OtherKey="ActId" Type="Act" IsForeignKey="true" />
@@ -133,7 +133,7 @@
       <Column Name="Name" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
       <Column Name="Value" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
       <Column Name="CreationTime" Type="System.DateTimeOffset" DbType="DateTimeOffset NOT NULL" CanBeNull="false" IsDbGenerated="true" />
-      <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Association Name="Act_ActTag" Member="Act" ThisKey="ActId" OtherKey="ActId" Type="Act" IsForeignKey="true" />
@@ -1161,9 +1161,11 @@
       <Column Name="DoseQuantity" Type="System.Decimal" DbType="Decimal(18,0) NOT NULL" CanBeNull="false" />
       <Column Name="DoseUnitConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="SequenceId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SiteConceptId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Association Name="ActVersion_SubstanceAdministration" Member="ActVersion" ThisKey="ActVersionId" OtherKey="ActVersionId" Type="ActVersion" IsForeignKey="true" />
       <Association Name="Concept_SubstanceAdministration" Member="DoseUnitConcept" ThisKey="DoseUnitConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
       <Association Name="Concept_SubstanceAdministration1" Member="RouteConcept" ThisKey="RouteConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
+      <Association Name="Concept_SubstanceAdministration2" Member="SiteConcept" ThisKey="SiteConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.TextObservation" Member="TextObservations">
@@ -1180,8 +1182,21 @@
     <Parameter Name="SecurityUserId" Parameter="securityUserId" Type="System.Guid" DbType="UniqueIdentifier" Direction="InOut" />
     <Return Type="System.Int32" />
   </Function>
+  <Function Name="dbo.fn_AssertConceptClass" Method="fn_AssertConceptClass" IsComposable="true">
+    <Parameter Name="ConceptId" Parameter="conceptId" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="AssertClassMnemonic" Parameter="assertClassMnemonic" Type="System.String" DbType="NVarChar(32)" />
+    <Return Type="System.Boolean" />
+  </Function>
   <Function Name="dbo.fn_OpenIzSchemaVersion" Method="fn_OpenIzSchemaVersion" IsComposable="true">
     <Return Type="System.String" />
   </Function>
-
+  <Function Name="dbo.fn_IsAccountLocked" Method="fn_IsAccountLocked" IsComposable="true">
+    <Parameter Name="UserName" Parameter="userName" Type="System.String" DbType="NVarChar(128)" />
+    <Return Type="System.Boolean" />
+  </Function>
+  <Function Name="dbo.fn_IsConceptSetMember" Method="fn_IsConceptSetMember" IsComposable="true">
+    <Parameter Name="ConceptId" Parameter="conceptId" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="ConceptSetMnemonic" Parameter="conceptSetMnemonic" Type="System.String" DbType="NVarChar(32)" />
+    <Return Type="System.Boolean" />
+  </Function>
 </Database>
