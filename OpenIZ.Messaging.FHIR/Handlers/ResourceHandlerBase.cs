@@ -152,6 +152,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
         /// <returns></returns>
         public FhirQueryResult Query(System.Collections.Specialized.NameValueCollection parameters)
         {
+            
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters));
 

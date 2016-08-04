@@ -91,7 +91,9 @@ namespace OpenIZ.Core.Model.Map
             typeof(DateTime),
             typeof(DateTime?),
             typeof(DateTimeOffset),
-            typeof(DateTimeOffset?)
+            typeof(DateTimeOffset?),
+            typeof(UInt32),
+            typeof(UInt32?)
         };
 
         // The map file
@@ -145,6 +147,27 @@ namespace OpenIZ.Core.Model.Map
         }
 
         /// <summary>
+        /// Maps a cast to appropriate path
+        /// </summary>
+        public Expression MapTypeCast(UnaryExpression sourceExpression, Expression accessExpression)
+        {
+
+            // First we find the map for the specified type
+            ClassMap classMap = this.m_mapFile.GetModelClassMap(sourceExpression.Operand.Type);
+
+            PropertyMap castMap = classMap.Cast?.Find(o => o.ModelType == sourceExpression.Type);
+            if (castMap == null) throw new InvalidCastException();
+            Expression accessExpr = Expression.MakeMemberAccess(accessExpression, accessExpression.Type.GetRuntimeProperty(castMap.DomainName));
+            while(castMap.Via != null)
+            {
+                castMap = castMap.Via;
+                accessExpr = Expression.MakeMemberAccess(accessExpr, accessExpr.Type.GetRuntimeProperty(castMap.DomainName));
+            }
+            return accessExpr;
+
+        }
+
+        /// <summary>
         /// Map member 
         /// </summary>
         public Expression MapModelMember(MemberExpression memberExpression, Expression accessExpression, Type modelType = null)
@@ -194,7 +217,7 @@ namespace OpenIZ.Core.Model.Map
                 Type domainType = this.MapModelType(modelType ?? memberExpression.Expression.Type);
 
                 // Get domain member and map
-                MemberInfo domainMember = domainType.GetRuntimeProperty(memberExpression.Member.Name);
+                MemberInfo domainMember = accessExpression.Type.GetRuntimeProperty(memberExpression.Member.Name);
                 if (domainMember != null)
                     return Expression.MakeMemberAccess(accessExpression, domainMember);
                 else

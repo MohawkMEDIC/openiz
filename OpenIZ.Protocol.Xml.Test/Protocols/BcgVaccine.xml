@@ -15,11 +15,11 @@
               "typeConceptModel": { "id" : "F3BE6B88-BC8F-4263-A779-86F21EA10A47", "mnemonic" : "InitialImmunization" },
 				      "doseSequence": 0,
               "doseQuantity" : 1.0,
-              "doseUnitConcept" : {
+              "doseUnitModel" : {
                 "id": "A77B8D83-1CC9-4806-A268-5D1738154AFA",
                 "mnemonic" : "DOSE"
               },
-              "routeConceptModel" : {
+              "routeModel" : {
                 "id": "D594F99F-0151-41A0-A359-282AB54683A1",
                 "mnemonic": "RouteOfAdministration-IM"
               },

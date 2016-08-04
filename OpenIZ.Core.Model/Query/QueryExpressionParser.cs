@@ -31,6 +31,7 @@ using System.Globalization;
 using OpenIZ.Core.Model.Attributes;
 using System.Collections;
 using OpenIZ.Core.Model.Reflection;
+using OpenIZ.Core.Model.Reflection;
 
 namespace OpenIZ.Core.Model.Query
 {
@@ -189,11 +190,21 @@ namespace OpenIZ.Core.Model.Query
 
                 }
 
+               
                 // Now expression
                 var kp = currentValue.Value;
                 if(kp != null)
-                    foreach(var value in kp)
+                    foreach(var qValue in kp)
                     {
+                        var value = qValue;
+                        // HACK: Fuzz dates for intervals
+                        if ((accessExpression.Type.StripNullable() == typeof(DateTime) ||
+                            accessExpression.Type.StripNullable() == typeof(DateTimeOffset)) &&
+                            value.Length <= 7
+                            )
+                            value = "~" + value;
+
+                        // Process value
                         String pValue = value;
                         ExpressionType et = ExpressionType.Equal;
                         switch(value[0])
@@ -273,7 +284,7 @@ namespace OpenIZ.Core.Model.Query
                         if (keyExpression == null)
                             keyExpression = singleExpression;
                         else
-                            keyExpression = Expression.MakeBinary(ExpressionType.OrElse, keyExpression, singleExpression);
+                            keyExpression = Expression.MakeBinary(ExpressionType.AndAlso, keyExpression, singleExpression);
                     }
 
                 if (retVal == null)

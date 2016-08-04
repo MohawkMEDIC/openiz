@@ -1,12 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <QueryParameterMap xmlns="http://openiz.org/model/fhir">
-  
-  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Immunization, MARc.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
+
+  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.ResourceBase, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
+    <map fhir="_id" model="id"/>
+    <map fhir="_lastUpdated" model="modifiedOn"/>
+  </type>
+  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Immunization, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
     <map fhir="vaccine-code" model="participation[Consumable].player.typeConcept" type="concept"/>
     <map fhir="dose-sequence" model="doseSequence"/>
     <map fhir="date" model="actTime"/>
     <map fhir="patient" model="participation[RecordTarget].player.id"/>
-    <map fhir="patient.gender" model="participation[RecordTarget].player.genderConcept" type="concept"/>
+    <map fhir="patient.gender" model="participation[RecordTarget].player@Patient.genderConcept" type="concept"/>
+    <map fhir="patient.name" model="participation[RecordTarget].player.name.component.value" />
     <map fhir="patient.birthDate" model="participation[RecordTarget].player.dateOfBirth"/>
     <map fhir="location" model="participation[Location].player.id"/>
     <map fhir="location.name" model="participation[Location].player.name.component.value"/>

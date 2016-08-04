@@ -1,6 +1,7 @@
 ﻿using MohawkCollege.Util.Console.Parameters;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,11 @@ namespace DatasetTool
     {
         static void Main(string[] args)
         {
+            AppDomain.CurrentDomain.SetData(
+               "DataDirectory",
+               Path.GetDirectoryName(typeof(Program).Assembly.Location));
+
+
             Console.WriteLine("{0} {1} {2}", DateTime.Now, DateTimeOffset.Now, (DateTimeOffset)DateTime.Now);
             var consoleParms = new ParameterParser<ConsoleParameters>().Parse(args);
 

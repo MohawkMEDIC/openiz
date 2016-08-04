@@ -1,0 +1,362 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<data xmlns="urn:ideaworks.ca:pat">
+
+  <oid name="ECID" oid="1.3.6.1.4.1.33349.3.107.2016.8.1.0"/>
+  <oid name="NID" oid="1.3.6.1.4.1.33349.3.107.2016.8.1.8"/>
+  <oid name="EPID" oid=""/>
+  <oid name="PHYS_ID" oid="8.48.3.2.3.4.5.6.7.5.4.6"/>
+  <oid name="LOC_ID" oid="8.48.3.2.3.4.5.6.7.5.4.9"/>
+  <oid name="ME" oid="1.3.6.1.4.1.33349.3.107.2016.8.1.7"/>
+  <hospital physId="20" id="3232" name="Muddsville Small Health Hospital" city="Muddsville" sal="930 Brant St" postal="45856">
+    <name>Pulmonologist</name>
+    <name>Penny</name>
+  </hospital>
+  <hospital physId="21" id="3322" name="Weasleville Community Hospital" city="Weasleville" sal="120 Main Street East" postal="58554">
+    <name>Cardiologist</name>
+    <name>Charles</name>
+  </hospital>
+  <hospital physId="22" id="3111" name="GHHS Mohawk Hospital" city="Dogbertia" 
+            sal="135 Fennell Ave West" postal="48725">
+    <name>Aorta</name>
+    <name>Annie</name>
+  </hospital>
+  <gpo physId="23" id="6599" name="Dr. Family's Family Health Practice" city="Muddsville" 
+       sal="123 Main Street West" postal="458552">
+    <name>Family</name>
+    <name>Francis</name>
+  </gpo>
+  <gpo physId="24" id="7000" name="General Medical Associates" city="Weasleville" 
+       sal="4500 King St. E" postal="34323">
+    <name>General</name>
+    <name>Gerald</name>
+  </gpo>
+  <clinic physId="25" id="8754" name="Grimsby Community Health Hospital Chest Clinic" city="Dogbertia" 
+          sal="120 Main Street East" postal="24323">
+    <name>Lung</name>
+    <name>Lucy</name>
+  </clinic>
+  <clinic physId="26" id="6897" name="Firerock Lung Clinic" city="Dogbertia" 
+          sal="140 Queenston Rd" postal="84555">
+    <name>Breath</name>
+    <name>Boris</name>
+  </clinic>
+  <allergist physId="27" id="9001" name="Associated Specialists" city="Lincoln" 
+             sal="4500 King St. E" postal="54855">
+    <name>Itchy</name>
+    <name>Ichabod</name>
+  </allergist>
+  <allergist physId="28" id="9002" name="Downtown Medical Professionals" city="Lincoln" 
+             sal="100 James St. S" postal="58854">
+    <name>Allergist</name>
+    <name>Andy</name>
+  </allergist>
+  <hospital physId="20" id="2303" name="Burlington Good Health Hospital" city="Burlington" sal="930 Brant St" postal="L7P 5C6">
+    <name>Pulmonologist</name>
+    <name>Penny</name>
+  </hospital>
+  <hospital physId="21" id="2304" name="Grimsby Community Health Hospital" city="Grimsby" sal="120 Main Street East" postal="L3M 1C9">
+    <name>Cardiologist</name>
+    <name>Charles</name>
+  </hospital>
+  <hospital physId="22" id="2305" name="Mohawk College Hospital" city="Hamilton"
+            sal="135 Fennell Ave West" postal="L9C 7V7">
+    <name>Aorta</name>
+    <name>Annie</name>
+  </hospital>
+  <gpo physId="23" id="1303" name="Dr. Family's Family Health Practice" city="Hamilton"
+       sal="123 Main Street West" postal="L8P 5N2">
+    <name>Family</name>
+    <name>Francis</name>
+  </gpo>
+  <gpo physId="24" id="1305" name="General Medical Associates" city="Lincoln"
+       sal="4500 King St. E" postal="L0R 1B4">
+    <name>General</name>
+    <name>Gerald</name>
+  </gpo>
+  <clinic physId="25" id="3300" name="Grimsby Community Health Hospital Chest Clinic" city="Grimsby"
+          sal="120 Main Street East" postal="L3M 1C9">
+    <name>Lung</name>
+    <name>Lucy</name>
+  </clinic>
+  <clinic physId="26" id="3301" name="Firerock Lung Clinic" city="Hamilton"
+          sal="140 Queenston Rd" postal="L8K 4N2">
+    <name>Breath</name>
+    <name>Boris</name>
+  </clinic>
+  <allergist physId="27" id="2600" name="Associated Specialists" city="Lincoln"
+             sal="4500 King St. E" postal="L0R 1B4">
+    <name>Itchy</name>
+    <name>Ichabod</name>
+  </allergist>
+  <allergist physId="28" id="2601" name="Downtown Medical Professionals" city="Hamilton"
+             sal="100 James St. S" postal="L8P 1B4">
+    <name>Allergist</name>
+    <name>Andy</name>
+  </allergist>
+  <familyName>Smith</familyName>
+  <familyName>Johnson</familyName>
+  <familyName>Williams</familyName>
+  <familyName>Brown</familyName>
+  <familyName>Jones</familyName>
+  <familyName>Miller</familyName>
+  <familyName>Davis</familyName>
+  <familyName>García</familyName>
+  <familyName>Rodríguez</familyName>
+  <familyName>Wilson</familyName>
+  <familyName>Martínez</familyName>
+  <familyName>Anderson</familyName>
+  <familyName>Taylor</familyName>
+  <familyName>Thomas</familyName>
+  <familyName>Hernández</familyName>
+  <familyName>Moore</familyName>
+  <familyName>Martin</familyName>
+  <familyName>Jackson</familyName>
+  <familyName>Thompson</familyName>
+  <familyName>White</familyName>
+  <familyName>López</familyName>
+  <familyName>Lee</familyName>
+  <familyName>González</familyName>
+  <familyName>Harris</familyName>
+  <familyName>Clark</familyName>
+  <familyName>Lewis</familyName>
+  <familyName>Robinson</familyName>
+  <familyName>Walker</familyName>
+  <familyName>Pérez</familyName>
+  <familyName>Hall</familyName>
+  <familyName>Young</familyName>
+  <familyName>Allen</familyName>
+  <familyName>Sánchez</familyName>
+  <familyName>Wright</familyName>
+  <familyName>King</familyName>
+  <familyName>Scott</familyName>
+  <familyName>Green</familyName>
+  <familyName>Baker</familyName>
+  <familyName>Adams</familyName>
+  <familyName>Nelson</familyName>
+  <familyName>Hill</familyName>
+  <familyName>Ramírez</familyName>
+  <familyName>Campbell</familyName>
+  <familyName>Mitchell</familyName>
+  <familyName>Roberts</familyName>
+  <familyName>Carter</familyName>
+  <familyName>Phillips</familyName>
+  <familyName>Evans</familyName>
+  <familyName>Turner</familyName>
+  <familyName>Torres</familyName>
+  <familyName>Parker</familyName>
+  <familyName>Collins</familyName>
+  <familyName>Edwards</familyName>
+  <familyName>Stewart</familyName>
+  <familyName>Flores</familyName>
+  <familyName>Morris</familyName>
+  <familyName>Nguyen</familyName>
+  <familyName>Murphy</familyName>
+  <familyName>Rivera</familyName>
+  <familyName>Cook</familyName>
+  <familyName>Rogers</familyName>
+  <familyName>Morgan</familyName>
+  <familyName>Peterson</familyName>
+  <familyName>Cooper</familyName>
+  <familyName>Reed</familyName>
+  <familyName>Bailey</familyName>
+  <familyName>Bell</familyName>
+  <familyName>Gómez</familyName>
+  <familyName>Kelly</familyName>
+  <familyName>Howard</familyName>
+  <familyName>Ward</familyName>
+  <familyName>Cox</familyName>
+  <familyName>Díaz</familyName>
+  <familyName>Richardson</familyName>
+  <familyName>Wood</familyName>
+  <familyName>Watson</familyName>
+  <familyName>Brooks</familyName>
+  <familyName>Bennett</familyName>
+  <familyName>Gray</familyName>
+  <familyName>James</familyName>
+  <familyName>Reyes</familyName>
+  <familyName>Cruz</familyName>
+  <familyName>Hughes</familyName>
+  <familyName>Price</familyName>
+  <familyName>Myers</familyName>
+  <familyName>Long</familyName>
+  <familyName>Foster</familyName>
+  <familyName>Sanders</familyName>
+  <familyName>Ross</familyName>
+  <familyName>Morales</familyName>
+  <familyName>Powell</familyName>
+  <familyName>Sullivan</familyName>
+  <familyName>Russell</familyName>
+  <familyName>Ortiz</familyName>
+  <familyName>Jenkins</familyName>
+  <familyName>Gutiérrez</familyName>
+  <familyName>Perry</familyName>
+  <familyName>Butler</familyName>
+  <familyName>Barnes</familyName>
+  <familyName>Fisher</familyName>
+
+  <givenName gender="Male">Aidan</givenName>
+  <givenName gender="Male">Jacob</givenName>
+  <givenName gender="Male">Ethan</givenName>
+  <givenName gender="Male">Nicholas</givenName>
+  <givenName gender="Male">Matthew</givenName>
+  <givenName gender="Male">Ryan</givenName>
+  <givenName gender="Male">Tyler</givenName>
+  <givenName gender="Male">Jack</givenName>
+  <givenName gender="Male">Joshua</givenName>
+  <givenName gender="Male">Andrew</givenName>
+  <givenName gender="Male">Dylan</givenName>
+  <givenName gender="Male">Michael</givenName>
+  <givenName gender="Male">Connor</givenName>
+  <givenName gender="Male">Caden</givenName>
+  <givenName gender="Male">Jayden</givenName>
+  <givenName gender="Male">Noah</givenName>
+  <givenName gender="Male">Zachary</givenName>
+  <givenName gender="Male">Alexander</givenName>
+  <givenName gender="Male">Logan</givenName>
+  <givenName gender="Male">Caleb</givenName>
+  <givenName gender="Male">Nathan</givenName>
+  <givenName gender="Male">Jackson</givenName>
+  <givenName gender="Male">William</givenName>
+  <givenName gender="Male">Evan</givenName>
+  <givenName gender="Male">Joseph</givenName>
+  <givenName gender="Male">Benjamin</givenName>
+  <givenName gender="Male">James</givenName>
+  <givenName gender="Male">Christopher</givenName>
+  <givenName gender="Male">Cameron</givenName>
+  <givenName gender="Male">Daniel</givenName>
+  <givenName gender="Male">Christian</givenName>
+  <givenName gender="Male">Luke</givenName>
+  <givenName gender="Male">Gavin</givenName>
+  <givenName gender="Male">Gabriel</givenName>
+  <givenName gender="Male">Mason</givenName>
+  <givenName gender="Male">Anthony</givenName>
+  <givenName gender="Male">Brayden</givenName>
+  <givenName gender="Male">David</givenName>
+  <givenName gender="Male">Austin</givenName>
+  <givenName gender="Male">Lucas</givenName>
+  <givenName gender="Male">John</givenName>
+  <givenName gender="Male">Elijah</givenName>
+  <givenName gender="Male">Owen</givenName>
+  <givenName gender="Male">Jonathan</givenName>
+  <givenName gender="Male">Brandon</givenName>
+  <givenName gender="Male">Alex</givenName>
+  <givenName gender="Male">Samuel</givenName>
+  <givenName gender="Male">Sean</givenName>
+  <givenName gender="Male">Thomas</givenName>
+  <givenName gender="Male">Hunter</givenName>
+
+  <givenName gender="Female">Emma</givenName>
+  <givenName gender="Female">Olivia</givenName>
+  <givenName gender="Female">Maya</givenName>
+  <givenName gender="Female">Emily</givenName>
+  <givenName gender="Female">Sarah</givenName>
+  <givenName gender="Female">Isabella</givenName>
+  <givenName gender="Female">Ava</givenName>
+  <givenName gender="Female">Chloe</givenName>
+  <givenName gender="Female">Alexis</givenName>
+  <givenName gender="Female">Abbigail</givenName>
+  <givenName gender="Female">Deborah</givenName>
+  <givenName gender="Female">Jennifer</givenName>
+  <givenName gender="Female">Allison</givenName>
+  <givenName gender="Female">Susan</givenName>
+  <givenName gender="Female">Natalie</givenName>
+  <givenName gender="Female">Rose</givenName>
+  <givenName gender="Female">Katie</givenName>
+  <givenName gender="Female">Lisa</givenName>
+  <givenName gender="Female">Christine</givenName>
+  <givenName gender="Female">Monique</givenName>
+  <givenName gender="Female">Mona</givenName>
+  <givenName gender="Female">Madison</givenName>
+  <givenName gender="Female">May</givenName>
+  <givenName gender="Female">Hillary</givenName>
+  <givenName gender="Female">Lyssa</givenName>
+  <givenName gender="Female">Kayleigh</givenName>
+  <givenName gender="Female">Bernidette</givenName>
+  <givenName gender="Female">Jude</givenName>
+  <givenName gender="Female">Emma</givenName>
+  <givenName gender="Female">Emily</givenName>
+  <givenName gender="Female">Madison</givenName>
+  <givenName gender="Female">Kaitlyn</givenName>
+  <givenName gender="Female">Sophia</givenName>
+  <givenName gender="Female">Isabella</givenName>
+  <givenName gender="Female">Olivia</givenName>
+  <givenName gender="Female">Hannah</givenName>
+  <givenName gender="Female">Makayla</givenName>
+  <givenName gender="Female">Ava</givenName>
+  <givenName gender="Female">Abigail</givenName>
+  <givenName gender="Female">Sarah</givenName>
+  <givenName gender="Female">Hailey</givenName>
+  <givenName gender="Female">Kaylee</givenName>
+  <givenName gender="Female">Madeline</givenName>
+  <givenName gender="Female">Ella</givenName>
+  <givenName gender="Female">Grace</givenName>
+  <givenName gender="Female">Mia</givenName>
+  <givenName gender="Female">Riley</givenName>
+  <givenName gender="Female">Samantha</givenName>
+  <givenName gender="Female">Sydney</givenName>
+  <givenName gender="Female">Lauren</givenName>
+  <givenName gender="Female">Mackenzie</givenName>
+  <givenName gender="Female">Chloe</givenName>
+  <givenName gender="Female">Alyssa</givenName>
+  <givenName gender="Female">Lily</givenName>
+  <givenName gender="Female">Alexis</givenName>
+  <givenName gender="Female">Natalie</givenName>
+  <givenName gender="Female">Taylor</givenName>
+  <givenName gender="Female">Anna</givenName>
+  <givenName gender="Female">Brianna</givenName>
+  <givenName gender="Female">Zoe</givenName>
+  <givenName gender="Female">Kylie</givenName>
+  <givenName gender="Female">Ashley</givenName>
+  <givenName gender="Female">Elizabeth</givenName>
+  <givenName gender="Female">Megan</givenName>
+  <givenName gender="Female">Allison</givenName>
+  <givenName gender="Female">Kayla</givenName>
+  <givenName gender="Female">Katherine</givenName>
+  <givenName gender="Female">Kyra</givenName>
+  <givenName gender="Female">Isabelle</givenName>
+  <givenName gender="Female">Morgan</givenName>
+  <givenName gender="Female">Savannah</givenName>
+  <givenName gender="Female">Jasmine</givenName>
+  <givenName gender="Female">Arianna</givenName>
+  <givenName gender="Female">Avery</givenName>
+  <givenName gender="Female">Julia</givenName>
+  <givenName gender="Female">Rachel</givenName>
+  <givenName gender="Female">Maya</givenName>
+  <givenName gender="Female">Jordan</givenName>
+
+  <streetName>Main St.</streetName>
+  <streetName>King St.</streetName>
+  <streetName>West 5th</streetName>
+  <streetName>James St.</streetName>
+  <streetName>Barton St.</streetName>
+  <streetName>Cannon St.</streetName>
+  <streetName>Ontario St.</streetName>
+  <streetName>Younge St.</streetName>
+  <streetName>Glover Rd.</streetName>
+  <city code="ON">Hamilton</city>
+  <city code="ON">Stoney Creek</city>
+  <city code="ON">Burlington</city>
+  <city code="ON">Grimsby</city>
+
+  <bloodType code="Z67.10">Type A positive</bloodType>
+  <bloodType code="Z67.11">Type A negative</bloodType>
+  <bloodType code="Z67.20">Type B positive</bloodType>
+  <bloodType code="Z67.21">Type B negative</bloodType>
+  <bloodType code="Z67.30">Type AB positive</bloodType>
+  <bloodType code="Z67.31">Type AB negative</bloodType>
+  <bloodType code="Z67.40">Type O positive</bloodType>
+  <bloodType code="Z67.41">Type O negative</bloodType>
+
+  <ageFVC minAge="6" maxAge="8" minValue="0.5" maxValue="1.25"/>
+  <ageFVC minAge="9" maxAge="12" minValue="1.0" maxValue="2.2"/>
+  <ageFVC minAge="13" maxAge="20" minValue="2.0" maxValue="3.2"/>
+  <ageFEV minAge="6" maxAge="8" minValue="0.5" maxValue="1.25"/>
+  <ageFEV minAge="9" maxAge="12" minValue="1.0" maxValue="2.2"/>
+  <ageFEV minAge="13" maxAge="20" minValue="2.0" maxValue="3.2"/>
+  <ageFEF minAge="6" maxAge="8" minValue="1" maxValue="2.25"/>
+  <ageFEF minAge="9" maxAge="12" minValue="1.5" maxValue="3.2"/>
+  <ageFEF minAge="13" maxAge="20" minValue="2.8" maxValue="3.75"/>
+
+  <!--<mohstid domain="1.3.6.1.4.1.33349.3.1.3.12" id="000-123-457" family="Smith" given="John"/>-->
+
+</data>

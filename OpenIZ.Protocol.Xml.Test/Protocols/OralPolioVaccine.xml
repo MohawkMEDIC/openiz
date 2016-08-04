@@ -19,11 +19,11 @@
               "typeConceptModel": { "id" : "F3BE6B88-BC8F-4263-A779-86F21EA10A47", "mnemonic" : "InitialImmunization" },
 				      "doseSequence": 0,
               "doseQuantity" : 1.0,
-              "doseUnitConcept" : {
+              "doseUnitModel" : {
                 "id": "A77B8D83-1CC9-4806-A268-5D1738154AFA",
                 "mnemonic" : "DOSE"
               },
-              "routeConceptModel" : {
+              "routeModel" : {
                 "id": "0a1388b0-66fb-4063-bfe3-151dd8442838",
                 "mnemonic": "RouteOffAdministration-PO"
               },
@@ -80,11 +80,11 @@
               "typeConceptModel": { "id" : "F3BE6B88-BC8F-4263-A779-86F21EA10A47", "mnemonic" : "Immunization" },
 				      "doseSequence": 1,
               "doseQuantity" : 1.0,
-              "doseUnitConcept" : {
+              "doseUnitModel" : {
                 "id": "A77B8D83-1CC9-4806-A268-5D1738154AFA",
                 "mnemonic" : "DOSE"
               },
-              "routeConceptModel" : {
+              "routeModel" : {
                 "id": "0a1388b0-66fb-4063-bfe3-151dd8442838",
                 "mnemonic": "RouteOffAdministration-PO"
               },
@@ -144,11 +144,11 @@
               "typeConceptModel": { "id" : "6E7A3521-2967-4C0A-80EC-6C5C197B2178", "mnemonic" : "Immunization" },
 				      "doseSequence": 2,
               "doseQuantity" : 1.0,
-              "doseUnitConcept" : {
+              "doseUnitModel" : {
                 "id": "A77B8D83-1CC9-4806-A268-5D1738154AFA",
                 "mnemonic" : "DOSE"
               },
-              "routeConceptModel" : {
+              "routeModel" : {
                 "id": "0a1388b0-66fb-4063-bfe3-151dd8442838",
                 "mnemonic": "RouteOffAdministration-PO"
               },
@@ -209,11 +209,11 @@
               "typeConceptModel": { "id" : "6E7A3521-2967-4C0A-80EC-6C5C197B2178", "mnemonic" : "Immunization" },
 				      "doseSequence": 3,
               "doseQuantity" : 1.0,
-              "doseUnitConcept" : {
+              "doseUnitModel" : {
                 "id": "A77B8D83-1CC9-4806-A268-5D1738154AFA",
                 "mnemonic" : "DOSE"
               },
-              "routeConceptModel" : {
+              "routeModel" : {
                 "id": "0a1388b0-66fb-4063-bfe3-151dd8442838",
                 "mnemonic": "RouteOffAdministration-PO"
               },

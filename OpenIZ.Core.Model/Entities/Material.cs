@@ -54,6 +54,7 @@ namespace OpenIZ.Core.Model.Entities
         public Material()
         {
             this.ClassConceptKey = EntityClassKeys.Material;
+            this.DeterminerConceptKey = DeterminerKeys.Described;
         }
 
         /// <summary>

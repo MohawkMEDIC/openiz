@@ -28,7 +28,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents a reference term relationship between a concept and reference term
     /// </summary>
-    
+    [Classifier(nameof(ReferenceTerm))]
     [XmlType("ConceptReferenceTerm",  Namespace = "http://openiz.org/model"), JsonObject("ConceptReferenceTerm")]
     public class ConceptReferenceTerm : VersionedAssociation<Concept>
     {
@@ -48,7 +48,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         
-        [XmlElement("referenceTerm"), JsonProperty("referenceTerm")]
+        [XmlElement("term"), JsonProperty("term")]
         public Guid?  ReferenceTermKey {
             get { return this.m_referenceTermId; }
             set

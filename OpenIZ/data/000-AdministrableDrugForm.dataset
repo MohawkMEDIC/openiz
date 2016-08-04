@@ -39,7 +39,7 @@
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
-        <referenceTerm>041af497-7045-419f-aefa-e50fba15751d</referenceTerm>
+        <term>041af497-7045-419f-aefa-e50fba15751d</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -81,7 +81,7 @@
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
-        <referenceTerm>f575f6c1-3380-4313-9b1a-61fd7452660a</referenceTerm>
+        <term>f575f6c1-3380-4313-9b1a-61fd7452660a</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -123,7 +123,7 @@
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
-        <referenceTerm>fbeb0548-cc65-4fb5-8648-fdc770d82466</referenceTerm>
+        <term>fbeb0548-cc65-4fb5-8648-fdc770d82466</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -165,7 +165,7 @@
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
-        <referenceTerm>2b8f77b7-552b-417f-aa8d-f5551f00e2b7</referenceTerm>
+        <term>2b8f77b7-552b-417f-aa8d-f5551f00e2b7</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -207,7 +207,7 @@
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
-        <referenceTerm>74cddd93-59e0-48ff-af92-8a472b54c4f2</referenceTerm>
+        <term>74cddd93-59e0-48ff-af92-8a472b54c4f2</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -249,7 +249,7 @@
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
-        <referenceTerm>2f1c883f-2a9e-4d92-ab3c-40b8cfbe7259</referenceTerm>
+        <term>2f1c883f-2a9e-4d92-ab3c-40b8cfbe7259</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -291,7 +291,7 @@
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
-        <referenceTerm>482d3140-1241-4bde-9865-74e9e94d3917</referenceTerm>
+        <term>482d3140-1241-4bde-9865-74e9e94d3917</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -333,7 +333,7 @@
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
-        <referenceTerm>f582d87f-b000-4744-a188-c6af3693c932</referenceTerm>
+        <term>f582d87f-b000-4744-a188-c6af3693c932</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -375,7 +375,7 @@
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
-        <referenceTerm>2839824e-f62d-4844-9b9e-189a7ab5d81d</referenceTerm>
+        <term>2839824e-f62d-4844-9b9e-189a7ab5d81d</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -403,7 +403,7 @@
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
-        <referenceTerm>2839824e-f62d-4844-9b9e-189a7ab5d81d</referenceTerm>
+        <term>2839824e-f62d-4844-9b9e-189a7ab5d81d</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>

@@ -122,6 +122,7 @@
     <Compile Include="Interfaces\ISecurable.cs" />
     <Compile Include="Interfaces\IVersionedAssociation.cs" />
     <Compile Include="Interfaces\IVersionedEntity.cs" />
+    <Compile Include="Map\CastMap.cs" />
     <Compile Include="Map\ClassMap.cs" />
     <Compile Include="Map\ClassRedirect.cs" />
     <Compile Include="Map\CollapseKey.cs" />

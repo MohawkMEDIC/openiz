@@ -37,6 +37,17 @@ namespace OpenIZ.Core.Model.Reflection
     {
 
         /// <summary>
+        /// Strips any nullable typing
+        /// </summary>
+        public static Type StripNullable(this Type t)
+        {
+            if (t.GetTypeInfo().IsGenericType &&
+                t.GetTypeInfo().GetGenericTypeDefinition() == typeof(Nullable<>))
+                return t.GetTypeInfo().GenericTypeArguments[0];
+            return t;
+        }
+
+        /// <summary>
         /// Update property data if required
         /// </summary>
         public static void CopyObjectData<TObject>(this TObject toEntity, TObject fromEntity)

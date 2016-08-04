@@ -89,16 +89,7 @@ namespace OpenIZ.Core.Applets.ViewModel
 
         }
 
-        /// <summary>
-        /// Strips any nullable typing
-        /// </summary>
-        private static Type StripNullable(Type t)
-        {
-            if (t.GetTypeInfo().IsGenericType &&
-                t.GetTypeInfo().GetGenericTypeDefinition() == typeof(Nullable<>))
-                return t.GetTypeInfo().GenericTypeArguments[0];
-            return t;
-        }
+        
 
         /// <summary>
         /// Perform the work of de-serializing

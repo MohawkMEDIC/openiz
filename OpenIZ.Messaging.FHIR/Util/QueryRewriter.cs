@@ -33,6 +33,7 @@ using OpenIZ.Core.Model.DataTypes;
 using MARC.HI.EHRS.SVC.Messaging.FHIR;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Query;
+using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
 
 namespace OpenIZ.Messaging.FHIR.Util
 {
@@ -56,7 +57,7 @@ namespace OpenIZ.Messaging.FHIR.Util
             return Expression.Lambda<Func<TModel, bool>>(this.QueryExpression.Body, this.QueryExpression.Parameters);
         }
     }
-   
+
     /// <summary>
     /// A class which is responsible for translating a series of Query Parmaeters to a LINQ expression
     /// to be passed to the persistence layer
@@ -67,18 +68,23 @@ namespace OpenIZ.Messaging.FHIR.Util
 
         // The query parameter map
         private static QueryParameterMap s_map;
+        // Default
+        private static QueryParameterType s_default;
 
         /// <summary>
         /// Static CTOR
         /// </summary>
-        static QueryRewriter () {
+        static QueryRewriter()
+        {
             using (Stream s = typeof(QueryRewriter).Assembly.GetManifestResourceStream("OpenIZ.Messaging.FHIR.ParameterMap.xml"))
             {
                 XmlSerializer xsz = new XmlSerializer(typeof(QueryParameterMap));
                 s_map = xsz.Deserialize(s) as QueryParameterMap;
+                s_default = s_map.Map.FirstOrDefault(o => o.SourceType == typeof(ResourceBase));
             }
         }
 
+        
         /// <summary>
         /// Re-writes the FHIR query parameter to IMSI query parameter format
         /// </summary>
@@ -99,94 +105,113 @@ namespace OpenIZ.Messaging.FHIR.Util
             FhirQuery retVal = new FhirQuery()
             {
                 ActualParameters = new System.Collections.Specialized.NameValueCollection(),
-                Quantity = count, 
+                Quantity = count,
                 Start = offset,
                 MinimumDegreeMatch = 100,
                 QueryId = Guid.NewGuid(),
                 IncludeHistory = false,
-                IncludeContained = false 
+                IncludeContained = false
             };
 
             imsiQuery = new NameValueCollection();
 
             var map = s_map.Map.FirstOrDefault(o => o.SourceType == typeof(TFhirResource));
-            if (map == null)
-                throw new NotSupportedException();
 
-            foreach(var kv in fhirQuery.AllKeys)
+            foreach (var kv in fhirQuery.AllKeys)
             {
 
                 List<String> value = new List<string>(fhirQuery.GetValues(kv).Length);
-                if (kv.StartsWith("_"))
+                var parmMap = map?.Map.FirstOrDefault(o => o.FhirName == kv);
+                if (parmMap == null)
+                    parmMap = s_default.Map.FirstOrDefault(o => o.FhirName == kv);
+                if(parmMap == null) continue;
+
+                foreach (var v in fhirQuery.GetValues(kv))
                 {
-                    value.Add(fhirQuery[kv]);
+                    if (String.IsNullOrEmpty(v)) continue;
+
+                    // Operands
+                    bool chop = false;
+                    string opValue = String.Empty;
+                    if (v.Length > 2)
+                        switch (v.Substring(0, 2))
+                        {
+                            case "gt":
+                                chop = true;
+                                opValue = ">";
+                                break;
+                            case "ge":
+                                chop = true;
+                                opValue = ">=";
+                                break;
+                            case "lt":
+                                chop = true;
+                                opValue = "<";
+                                break;
+                            case "le":
+                                chop = true;
+                                opValue = "<=";
+                                break;
+                            case "ne":
+                                chop = true;
+                                opValue = "!";
+                                break;
+                            case "eq":
+                                chop = true;
+                                break;
+                            default:
+                                break;
+                        }
+                    retVal.ActualParameters.Add(kv, v);
+                    value.Add(opValue + v.Substring(chop ? 2 : 0));
                 }
-                else
+
+                if (value.Count(o => !String.IsNullOrEmpty(o)) == 0)
+                    continue;
+
+                // Query 
+                switch (parmMap.FhirType)
                 {
-                    var parmMap = map.Map.FirstOrDefault(o => o.FhirName == kv);
-                    if (parmMap == null) continue;
+                    case "identifier":
+                        foreach (var itm in value)
+                        {
+                            if (itm.Contains("|"))
+                            {
+                                var segs = itm.Split('|');
+                                imsiQuery.Add(String.Format("{0}[{1}].value", kv, segs[0]), segs[1]);
+                            }
+                            else
+                                imsiQuery.Add(kv + ".value", itm);
+                        }
+                        break;
+                    case "concept":
+                        foreach (var itm in value)
+                        {
+                            if (itm.Contains("|"))
+                            {
+                                var segs = itm.Split('|');
+                                imsiQuery.Add(String.Format("{0}.referenceTerm[{1}].term.mnemonic", parmMap.ModelName, segs[0]), segs[1]);
+                            }
+                            else
+                                imsiQuery.Add(parmMap.ModelName + ".referenceTerm.term.mnemonic", itm);
+                        }
+                        break;
+                    case "tag":
+                        foreach (var itm in value)
+                        {
+                            if (itm.Contains("|"))
+                            {
+                                var segs = itm.Split('|');
+                                imsiQuery.Add(String.Format("{0}[{1}].value", parmMap.ModelName, segs[0]), segs[1]);
+                            }
+                            else
+                                imsiQuery.Add(parmMap.ModelName, itm);
+                        }
+                        break;
 
-                    foreach (var v in fhirQuery.GetValues(kv))
-                    {
-                        string opValue = String.Empty;
-                        if(v.Length > 2)
-                            switch (v.Substring(0, 2))
-                            {
-                                case "gt":
-                                    opValue = ">";
-                                    break;
-                                case "ge":
-                                    opValue = ">=";
-                                    break;
-                                case "lt":
-                                    opValue = "<";
-                                    break;
-                                case "le":
-                                    opValue = "<=";
-                                    break;
-                                case "ne":
-                                    opValue = "!";
-                                    break;
-                                case "eq":
-                                    break;
-                                default:
-                                    continue;
-                            }
-                        retVal.ActualParameters.Add(kv, v);
-                        value.Add(opValue + v.Substring(opValue.Length));
-                    }
-
-                    // Query 
-                    switch (parmMap.FhirType)
-                    {
-                        case "identifier":
-                            foreach(var itm in value)
-                            {
-                                if (itm.Contains("|"))
-                                {
-                                    var segs = itm.Split('|');
-                                    imsiQuery.Add(String.Format("{0}[{1}].value", kv, segs[0]), segs[1]);
-                                }
-                                else
-                                    imsiQuery.Add(kv + ".value", itm);
-                            }
-                            break;
-                        case "concept":
-                            foreach (var itm in value)
-                            {
-                                if (itm.Contains("|"))
-                                {
-                                    var segs = itm.Split('|');
-                                    imsiQuery.Add(String.Format("{0}[{1}].mnemonic", parmMap.ModelName, segs[0]), segs[1]);
-                                }
-                                else
-                                    imsiQuery.Add(parmMap.ModelName + ".mnemonic", itm);
-                            }
-                            break;
-                        default:
-                            imsiQuery.Add(parmMap.ModelName, value);
-                            break;
-                    }
+                    default:
+                        imsiQuery.Add(parmMap.ModelName, value);
+                        break;
                 }
             }
 

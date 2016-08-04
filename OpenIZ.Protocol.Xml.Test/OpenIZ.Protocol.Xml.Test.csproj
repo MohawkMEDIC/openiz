@@ -79,14 +79,25 @@
   <ItemGroup>
     <EmbeddedResource Include="Protocols\OralPolioVaccine.xml">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Protocols\BcgVaccine.xml" />
-    <EmbeddedResource Include="Protocols\DTP-HepB-HibTrivalent.xml" />
-    <EmbeddedResource Include="Protocols\MeaslesRubellaVaccine.xml" />
-    <EmbeddedResource Include="Protocols\PCV13Vaccine.xml" />
-    <EmbeddedResource Include="Protocols\RotaVaccine.xml" />
+    <EmbeddedResource Include="Protocols\BcgVaccine.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Protocols\DTP-HepB-HibTrivalent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Protocols\MeaslesRubellaVaccine.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Protocols\PCV13Vaccine.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Protocols\RotaVaccine.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

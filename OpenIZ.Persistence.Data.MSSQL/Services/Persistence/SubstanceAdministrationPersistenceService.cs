@@ -26,7 +26,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (dbSbadm.RouteConceptId != null)
                 retVal.RouteKey = dbSbadm.RouteConceptId;
             retVal.DoseQuantity = dbSbadm.DoseQuantity;
-            retVal.SequenceId = (uint)dbSbadm.SequenceId;
+            retVal.SequenceId = (int)dbSbadm.SequenceId;
             
             return retVal;
         }

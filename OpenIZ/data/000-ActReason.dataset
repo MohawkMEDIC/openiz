@@ -131,7 +131,7 @@
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
       <referenceTerm>
-        <referenceTerm>13270316-afdf-4b57-a3d5-6d94e435d2f4</referenceTerm>
+        <term>13270316-afdf-4b57-a3d5-6d94e435d2f4</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -148,7 +148,7 @@
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
       <referenceTerm>
-        <referenceTerm>7138ec74-ff29-4988-819b-a36d3008e8ed</referenceTerm>
+        <term>7138ec74-ff29-4988-819b-a36d3008e8ed</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -165,7 +165,7 @@
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
       <referenceTerm>
-        <referenceTerm>96c166e8-b7ee-4736-b82d-d29ffc152afc</referenceTerm>
+        <term>96c166e8-b7ee-4736-b82d-d29ffc152afc</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -182,7 +182,7 @@
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
       <referenceTerm>
-        <referenceTerm>03b0e560-1b65-43ed-947f-5ee2de3b7a18</referenceTerm>
+        <term>03b0e560-1b65-43ed-947f-5ee2de3b7a18</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -199,7 +199,7 @@
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
       <referenceTerm>
-        <referenceTerm>269ed252-8a5c-49ef-aca5-f698ec69b138</referenceTerm>
+        <term>269ed252-8a5c-49ef-aca5-f698ec69b138</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -216,7 +216,7 @@
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
       <referenceTerm>
-        <referenceTerm>92deabbd-ab56-48bf-b4dc-8dbad6f8e10f</referenceTerm>
+        <term>92deabbd-ab56-48bf-b4dc-8dbad6f8e10f</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -233,7 +233,7 @@
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
       <referenceTerm>
-        <referenceTerm>0e43d88e-5d3d-43c5-982e-b83f93df659f</referenceTerm>
+        <term>0e43d88e-5d3d-43c5-982e-b83f93df659f</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -250,7 +250,7 @@
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
       <referenceTerm>
-        <referenceTerm>878007c1-fea7-4023-a9f4-1c25c5afc0bd</referenceTerm>
+        <term>878007c1-fea7-4023-a9f4-1c25c5afc0bd</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -267,7 +267,7 @@
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
       <referenceTerm>
-        <referenceTerm>eba2b6f2-3207-413a-a9ad-6afe0c50b9ec</referenceTerm>
+        <term>eba2b6f2-3207-413a-a9ad-6afe0c50b9ec</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -284,7 +284,7 @@
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
       <referenceTerm>
-        <referenceTerm>aee12575-b057-4ed9-b682-2aed3413a9d3</referenceTerm>
+        <term>aee12575-b057-4ed9-b682-2aed3413a9d3</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>

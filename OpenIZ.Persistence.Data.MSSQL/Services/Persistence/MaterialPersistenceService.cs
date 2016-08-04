@@ -39,7 +39,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.Material ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
         {
-            return this.ToModelInstance<Core.Model.Entities.Material>(dataInstance as Data.Material, context, principal);
+            return this.ToModelInstance<Core.Model.Entities.Material>(dataInstance, context, principal);
         }
 
         /// <summary>

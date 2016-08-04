@@ -74,7 +74,7 @@
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
       <referenceTerm>
-        <referenceTerm>0350046f-c207-4c20-81bd-2c56d74ace98</referenceTerm>
+        <term>0350046f-c207-4c20-81bd-2c56d74ace98</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -91,7 +91,7 @@
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
       <referenceTerm>
-        <referenceTerm>fb282370-a51a-4401-a2d7-1a25fe28752d</referenceTerm>
+        <term>fb282370-a51a-4401-a2d7-1a25fe28752d</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -108,7 +108,7 @@
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
       <referenceTerm>
-        <referenceTerm>abb06e88-2d11-4213-bede-0f773df34aa9</referenceTerm>
+        <term>abb06e88-2d11-4213-bede-0f773df34aa9</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -126,7 +126,7 @@
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
       <referenceTerm>
-        <referenceTerm>49df2038-e57c-4b7f-b75f-bcdfa559c846</referenceTerm>
+        <term>49df2038-e57c-4b7f-b75f-bcdfa559c846</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
@@ -144,7 +144,7 @@
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
       <referenceTerm>
-        <referenceTerm>68fd68cc-c725-4908-917c-7a4cc1ae4902</referenceTerm>
+        <term>68fd68cc-c725-4908-917c-7a4cc1ae4902</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>

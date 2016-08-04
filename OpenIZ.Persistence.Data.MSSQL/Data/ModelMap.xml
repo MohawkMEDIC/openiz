@@ -443,6 +443,10 @@
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="TypeConcept" keyName="TypeConceptId"/>
     <collapseKey propertyName="StatusConcept" keyName="StatusConceptId"/>
+
+    <cast type="OpenIZ.Core.Model.Roles.Patient, OpenIZ.Core.Model, Version=1.0.0.0" domainName="Person">
+        <via domainName="Patient"/>
+    </cast>
   </class>
 
   <class modelClass="OpenIZ.Core.Model.Entities.Entity, OpenIZ.Core.Model, Version=1.0.0.0"
@@ -799,8 +803,13 @@
   </class>
 
   <!-- Acts -->
+
+  
   <class modelClass="OpenIZ.Core.Model.Acts.Act, OpenIZ.Core.Model, Version=1.0.0.0"
    domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ActVersion, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key"  domainName="ActId"/>
+    <property modelName="VersionKey"  domainName="ActVersionId"/>
+
     <property modelName="ClassConceptKey" domainName="Act">
       <via domainName="ClassConceptId"/>
     </property>
@@ -852,13 +861,25 @@
     </property>
   </class>
 
+  <class modelClass="OpenIZ.Core.Model.Acts.Act, OpenIZ.Core.Model, Version=1.0.0.0"
+ domainClass="OpenIZ.Persistence.Data.MSSQL.Data.Act, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key"  domainName="ActId"/>
+    <property modelName="ClassConceptKey"  domainName="ClassConceptId"/>
+    <property modelName="MoodConceptKey"  domainName="MoodConceptId"/>
+  </class>
+  
   <!-- Substance Administration -->
   <class modelClass="OpenIZ.Core.Model.Acts.SubstanceAdministration, OpenIZ.Core.Model, Version=1.0.0.0"
  domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SubstanceAdministration, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <base domainName="ActVersion"/>
+    <property modelName="Key" domainName="ActVersion">
+        <via domainName="ActId"/>
+    </property>
+    <property modelName="VersionKey" domainName="ActVersionId"/>
     <property modelName="DoseUnitKey" domainName="DoseUnitConceptId"/>
     <property modelName="RouteKey" domainName="RouteConceptId"/>
     <property modelName="SiteKey" domainName="SiteConceptId"/>
+      <property modelName="SequenceId" domainName="SequenceId"/>
     <property modelName="DoseUnit" domainName="DoseUnitConcept">
       <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
     </property>
@@ -873,6 +894,7 @@
   <!-- Substance Administration -->
   <class modelClass="OpenIZ.Core.Model.Acts.ActParticipation, OpenIZ.Core.Model, Version=1.0.0.0"
  domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ActParticipation, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="ActParticipationId"/>
     <property modelName="SourceEntityKey" domainName="ActId"/>
     <property modelName="PlayerEntityKey" domainName="EntityId"/>
     <property modelName="ParticipationRoleKey" domainName="ParticipationRoleConceptId"/>
@@ -885,5 +907,30 @@
     <property modelName="ParticipationRole" domainName="ParticipationRoleConcept">
       <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
     </property>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ActIdentifier, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ActIdentifier, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="ActIdentifierId"/>
+    <property modelName="IdentifierTypeKey" domainName="IdentifierTypeId"/>
+    <property modelName="IdentifierType" domainName="IdentifierType"/>
+    <collapseKey propertyName="IdentifierType" keyName="IdentifierTypeId"/>
+    <property modelName="AuthorityKey" domainName="AssigningAuthorityId"/>
+    <property modelName="Authority" domainName="AssigningAuthority"/>
+    <collapseKey propertyName="AssigningAuthority" keyName="AssigningAuthorityId"/>
+    <property modelName="SourceEntityKey" domainName="ActId"/>
+    <property modelName="Value" domainName="IdentifierValue"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.ActRelationship, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ActRelationship, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="ActRelationshipId"/>
+    <property modelName="SourceEntityKey" domainName="SourceActId"/>
+    <property modelName="TargetActKey" domainName="TargetActId"/>
+    <property modelName="RelationshipTypeKey" domainName="RelationshipTypeConceptId"/>
+    <property modelName="RelationshipType" domainName="RelationshipTypeConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+    </property>
+    <collapseKey propertyName="RelationshipTypeConcept" keyName="RelationshipTypeConceptId"/>
   </class>
 </modelMap>

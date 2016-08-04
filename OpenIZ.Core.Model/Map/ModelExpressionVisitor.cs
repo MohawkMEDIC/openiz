@@ -164,10 +164,39 @@ namespace OpenIZ.Core.Model.Map
                     return this.VisitConvert((UnaryExpression)node);
                 case ExpressionType.Constant:
                     return this.VisitConstant((ConstantExpression)node);
+                case ExpressionType.TypeIs:
+                    return this.VisitTypeBinary((TypeBinaryExpression)node);
+                case ExpressionType.TypeAs:
+                    return this.VisitUnary((UnaryExpression)node);
                 default:
                     return base.Visit(node);
             }
 
+        }
+
+        /// <summary>
+        /// Map type binary
+        /// </summary>
+        protected override Expression VisitTypeBinary(TypeBinaryExpression node)
+        {
+            Expression newExpr = this.Visit(node.Expression);
+            var newType = this.m_mapper.MapModelType(node.TypeOperand);
+            if (newExpr != node.Expression || newType != node.TypeOperand)
+                return Expression.TypeIs(newExpr, newType);
+            return node;
+        }
+
+        /// <summary>
+        /// Visit unary expression
+        /// </summary>
+        protected override Expression VisitUnary(UnaryExpression node)
+        {
+            var newOp = this.Visit(node.Operand);
+            if (newOp != node.Operand && node.NodeType == ExpressionType.TypeAs)
+                return this.m_mapper.MapTypeCast(node, newOp);
+            else if (newOp != node.Operand)
+                return Expression.MakeUnary(node.NodeType, newOp, this.m_mapper.MapModelType(node.Type));
+            return node;
         }
 
         /// <summary>

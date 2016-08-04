@@ -138,7 +138,7 @@ namespace OpenIZ.Core.Model.Acts
         /// The sequence of the dose (i.e. OPV 0 = 0 , OPV 1 = 1, etc.)
         /// </summary>
         [XmlElement("doseSequence"), JsonProperty("doseSequence")]
-        public uint SequenceId { get; set; }
+        public int SequenceId { get; set; }
 
 
         /// <summary>

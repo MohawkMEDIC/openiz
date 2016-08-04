@@ -98,6 +98,12 @@ namespace OpenIZ.Core.Model.Map
         public PropertyMap ParentDomainProperty { get; set; }
 
         /// <summary>
+        /// Casting
+        /// </summary>
+        [XmlElement("cast")]
+        public List<CastMap> Cast { get; set; }
+
+        /// <summary>
         /// Try to get a collapse key
         /// </summary>
         public bool TryGetCollapseKey(string propertyName, out CollapseKey retVal)
