@@ -59,6 +59,23 @@ namespace OpenIZ.Core.Model.Map
             return new Guid(b);
         }
 
+
+        /// <summary>
+        /// DT > DTO
+        /// </summary>
+        public static DateTimeOffset? DateTimeToDateTimeOffset(DateTime? dt)
+        {
+            return dt;
+        }
+
+        /// <summary>
+        /// DTO > DT
+        /// </summary>
+        public static DateTime? DateTimeOffsetToDateTime(DateTimeOffset? dto)
+        {
+            return dto?.DateTime;
+        }
+
         /// <summary>
         /// DT > DTO
         /// </summary>

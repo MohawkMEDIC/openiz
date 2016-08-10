@@ -106,6 +106,13 @@ namespace OpenIZ.Core.Model.Entities
             }
         }
 
+        /// <summary>
+        /// Value of the name
+        /// </summary>
+        public override string ToString()
+        {
+            return this.Value;
+        }
 
     }
 }

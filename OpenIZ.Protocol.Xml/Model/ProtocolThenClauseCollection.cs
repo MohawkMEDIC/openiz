@@ -40,26 +40,30 @@ namespace OpenIZ.Protocol.Xml.Model
 
             foreach (var itm in this.Action)
             {
-                Act act = null;
-                if (itm.Element is String) // JSON
-                    itm.Element = JsonViewModelSerializer.DeSerialize<Act>(itm.Element as String);
-                act = itm.Element as Act;
-
-                // Now do the actions to the properties as stated
-                foreach (var instr in itm.Do)
+                
+                for (int index = 0; index < itm.Repeat; index++)
                 {
-                    instr.Evaluate(act, p);
-                }
+                    Act act = null;
+                    if (itm.Element is String) // JSON
+                        itm.Element = JsonViewModelSerializer.DeSerialize<Act>(itm.Element as String);
+                    act = (itm.Element as Act).Clone() as Act;
+                    
+                    // Now do the actions to the properties as stated
+                    foreach (var instr in itm.Do)
+                    {
+                        instr.Evaluate(act, p, index);
+                    }
 
-                // Assign this patient as the record target
-                act.Key = act.Key ?? Guid.NewGuid();
-                Guid pkey = Guid.NewGuid();
-                act.Participations.Add(new ActParticipation(ActParticipationKey.RecordTarget, p.Key) { ParticipationRole = new Core.Model.DataTypes.Concept() { Key = ActParticipationKey.RecordTarget, Mnemonic = "RecordTarget" }, Key = pkey });
-                // Add record target to the source for forward rules
-                p.Participations.Add(new ActParticipation(ActParticipationKey.RecordTarget, p) { SourceEntity = act, ParticipationRole = new Core.Model.DataTypes.Concept() { Key = ActParticipationKey.RecordTarget, Mnemonic = "RecordTarget" }, Key = pkey });
-                act.CreationTime = DateTime.Now;
-                // The act to the return value
-                retVal.Add(act);
+                    // Assign this patient as the record target
+                    act.Key = act.Key ?? Guid.NewGuid();
+                    Guid pkey = Guid.NewGuid();
+                    act.Participations.Add(new ActParticipation(ActParticipationKey.RecordTarget, p.Key) { ParticipationRole = new Core.Model.DataTypes.Concept() { Key = ActParticipationKey.RecordTarget, Mnemonic = "RecordTarget" }, Key = pkey });
+                    // Add record target to the source for forward rules
+                    p.Participations.Add(new ActParticipation(ActParticipationKey.RecordTarget, p) { SourceEntity = act, ParticipationRole = new Core.Model.DataTypes.Concept() { Key = ActParticipationKey.RecordTarget, Mnemonic = "RecordTarget" }, Key = pkey });
+                    act.CreationTime = DateTime.Now;
+                    // The act to the return value
+                    retVal.Add(act);
+                }
             }
 
             return retVal;
@@ -72,6 +76,19 @@ namespace OpenIZ.Protocol.Xml.Model
     [XmlType(nameof(ProtocolDataAction), Namespace = "http://openiz.org/protocol")]
     public class ProtocolDataAction
     {
+        /// <summary>
+        /// ctor
+        /// </summary>
+        public ProtocolDataAction()
+        {
+            this.Repeat = 1;
+        }
+
+        /// <summary>
+        /// Repeat?
+        /// </summary>
+        [XmlAttribute("repeat")]
+        public int Repeat { get; set; }
 
         /// <summary>
         /// Gets the elements to be performed
@@ -114,7 +131,7 @@ namespace OpenIZ.Protocol.Xml.Model
         /// Evaluate the expression
         /// </summary>
         /// <returns></returns>
-        public abstract object Evaluate(Act act, Patient recordTarget);
+        public abstract object Evaluate(Act act, Patient recordTarget, int index);
     }
 
     /// <summary>
@@ -156,7 +173,7 @@ namespace OpenIZ.Protocol.Xml.Model
         /// <summary>
         /// Evaluate the specified action on the object
         /// </summary>
-        public override object Evaluate(Act act, Patient recordTarget)
+        public override object Evaluate(Act act, Patient recordTarget, int index)
         {
             var propertyInfo = act.GetType().GetRuntimeProperty(this.PropertyName);
 
@@ -168,8 +185,10 @@ namespace OpenIZ.Protocol.Xml.Model
                 exp.TypeRegistry = new TypeRegistry();
                 exp.TypeRegistry.RegisterDefaultTypes();
                 exp.TypeRegistry.RegisterType<Guid>();
+                exp.TypeRegistry.RegisterType<DateTimeOffset>();
                 exp.TypeRegistry.RegisterType<TimeSpan>();
                 exp.TypeRegistry.RegisterSymbol("now", DateTime.Now); // because MONO is scumbag
+                exp.TypeRegistry.RegisterSymbol("index", index); // because MONO is scumbag
 
                 Object setValue = null;
 
@@ -227,7 +246,7 @@ namespace OpenIZ.Protocol.Xml.Model
         /// <summary>
         /// Evaluate
         /// </summary>
-        public override object Evaluate(Act act, Patient recordTarget)
+        public override object Evaluate(Act act, Patient recordTarget, int index)
         {
             var value = act.GetType().GetRuntimeProperty(this.PropertyName) as IList;
             value?.Add(this.Element);

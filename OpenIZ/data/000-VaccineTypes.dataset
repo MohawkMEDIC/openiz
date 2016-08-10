@@ -4517,7 +4517,7 @@
       <name>Vaccines</name>
       <mnemonic>VaccineTypeCodes</mnemonic>
       <oid>1.3.6.1.4.1.33349.3.1.5.9.1.25</oid>
-      <url>http://openiz.org/valueset/VaccineTypeCodes</url>
+      <url>http://openiz.org/conceptset/VaccineTypeCodes</url>
 
     <concept>c5a7fd4e-9660-4c49-95ad-fd39e6f2cb26</concept>
   

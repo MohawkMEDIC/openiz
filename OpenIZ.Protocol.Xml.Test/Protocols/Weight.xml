@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ProtocolDefinition xmlns="http://openiz.org/protocol" uuid="063FFFAD-FC37-4666-B949-4A96AE2A4FB9" id="Weight" name="Weigh Schedule">
+  <rule id="Weight">
+    <when evaluation="and">
+      <!-- Patient does not have Weights taken or proposed-->
+      <imsiExpression negationIndicator="true">participation[RecordTarget].source.typeConcept.mnemonic=VitalSign-Weight</imsiExpression>
+    </when>
+    <then>
+      <action repeat="60">
+        <jsonModel>
+          <![CDATA[
+            {
+              "template": {
+                "mnemonic": "Act.Observation.Weight"
+              },
+              "$type": "QuantityObservation",
+              "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
+              "classConcept": "28D022C6-8A8B-47C4-9E6A-2BC67308739E",
+              "typeConcept": "a261f8cd-69b0-49aa-91f4-e6d3e5c612ed",
+              "unitOfMeasure" : "a0a8d4db-db72-4bc7-9b8c-c07cef7bc796"
+            }
+          ]]>
+        </jsonModel>
+        <assign propertyName="ActTime">DateOfBirth.Value.Date.AddMonths(index)</assign>
+        <assign propertyName="StartTime">DateOfBirth.Value.Date.AddMonths(index).AddDays(-DateOfBirth.Value.Day + 1)</assign>
+        <assign propertyName="StopTime">DateOfBirth.Value.Date.AddMonths(index+1).AddDays(-DateOfBirth.Value.Day).AddHours(23).AddMinutes(59)</assign>
+      </action>
+
+    </then>
+  </rule>
+</ProtocolDefinition>

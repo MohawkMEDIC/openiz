@@ -43,6 +43,7 @@ namespace OpenIZ.Core.Model.Collection
     /// </summary>
     [XmlType(nameof(Bundle), Namespace = "http://openiz.org/model")]
     [XmlRoot(nameof(Bundle), Namespace = "http://openiz.org/model")]
+    [JsonObject("Bundle")]
     [XmlInclude(typeof(Concept))]
     [XmlInclude(typeof(ReferenceTerm))]
     [XmlInclude(typeof(Act))]
@@ -138,6 +139,16 @@ namespace OpenIZ.Core.Model.Collection
         /// </summary>
         [XmlElement("totalResults"), JsonProperty("totalResults")]
         public int TotalResults { get; set; }
+
+        /// <summary>
+        /// Set delay loading on bundle
+        /// </summary>
+        public override void SetDelayLoad(bool v)
+        {
+            base.SetDelayLoad(v);
+            foreach (var itm in this.m_bundleContents)
+                itm.SetDelayLoad(v);
+        }
 
         /// <summary>
         /// Create a bundle

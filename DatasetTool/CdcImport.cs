@@ -41,9 +41,131 @@ namespace DatasetTool
             [Parameter("o")]
             public String Output { get; set; }
 
+            /// <summary>
+            /// Concept set name
+            /// </summary>
+            [Parameter("setName")]
+            public String ConceptSetName { get; set; }
 
+            /// <summary>
+            /// The OID of the concept set
+            /// </summary>
+            [Parameter("setOid")]
+            public String ConceptSetOid { get; set; }
+
+            /// <summary>
+            /// The OID of the concept set
+            /// </summary>
+            [Parameter("setDescription")]
+            public String ConceptSetDescription { get; set; }
         }
 
+        /// <summary>
+        /// Converts PHIN VADS to dataset
+        /// </summary>
+        public static void PhinVadsToDataset(String[] args)
+        {
+
+            var options = new ParameterParser<CvxOptions>().Parse(args);
+            DatasetInstall conceptDataset = new DatasetInstall();
+            using (var sr = File.OpenText(options.Input))
+            {
+                // Consume the first line
+                sr.ReadLine();
+                var components = sr.ReadLine().Split('\t');
+                // Next line is the value set information
+                // Create  code concept set
+                var conceptSet = new ConceptSet()
+                {
+                    Key = Guid.NewGuid(),
+                    Mnemonic = options.ConceptSetName ?? components[1],
+                    Name = options.ConceptSetDescription ?? components[0],
+                    Oid = options.ConceptSetOid ?? components[2],
+                    CreationTime = DateTime.Parse(components[6]),
+                    Url = !String.IsNullOrEmpty(options.ConceptSetName) ? "http://openiz.org/conceptset/" + options.ConceptSetName :
+                            "http://openiz.org/conceptsets/contrib/" + components[1]
+                };
+
+                Dictionary<String, CodeSystem> codeSystems = new Dictionary<string, CodeSystem>();
+
+                // Consume the next set of lines 
+                while (!sr.ReadLine().StartsWith("Concept Code")) ;
+
+                while(!sr.EndOfStream)
+                {
+                    components = sr.ReadLine().Split('\t');
+
+                    // Try to get the code system
+                    CodeSystem codeSys = null;
+                    if (!codeSystems.TryGetValue(components[4], out codeSys))
+                    {
+                        codeSys = new CodeSystem()
+                        {
+                            Key = Guid.NewGuid(),
+                            Authority = components[8],
+                            Name = components[6],
+                            Oid = components[4],
+                            Description = components[5],
+                            CreationTime = conceptSet.CreationTime
+                        };
+                        codeSystems.Add(codeSys.Oid, codeSys);
+                        conceptDataset.Action.Add(new DataUpdate()
+                        {
+                            InsertIfNotExists = true,
+                            Element = codeSys
+                        });
+                    }
+
+                    // Insert the code
+                    var refTerm = new ReferenceTerm()
+                    {
+                        Key = Guid.NewGuid(),
+                        CodeSystemKey = codeSys.Key,
+                        CreationTime = conceptSet.CreationTime,
+                        DisplayNames = new List<ReferenceTermName>()
+                        {
+                            new ReferenceTermName()
+                            {
+                                Name = components[1],
+                                Language = "en"
+                            }
+                        },
+                        Mnemonic = components[0]
+                    };
+                    var concept = new Concept()
+                    {
+                        Key = Guid.NewGuid(),
+                        Mnemonic = components[6] + "-" + components[0],
+                        CreationTime = conceptSet.CreationTime,
+                        StatusConceptKey = StatusKeys.Active,
+                        ClassKey = ConceptClassKeys.Other,
+                        ConceptNames = new List<ConceptName>()
+                        {
+                            new ConceptName()
+                            {
+                                Name = components[1],
+                                Language = "en"
+                            }
+                        },
+                        ReferenceTerms = new List<ConceptReferenceTerm>()
+                        {
+                            new ConceptReferenceTerm()
+                            {
+                                ReferenceTermKey = refTerm.Key
+                            }
+                        }
+                    };
+                    conceptDataset.Action.Add(new DataUpdate() { InsertIfNotExists = true, Element = refTerm });
+                    conceptDataset.Action.Add(new DataUpdate() { InsertIfNotExists = true, Element = concept });
+                    conceptSet.ConceptsXml.Add(concept.Key.Value);
+                }
+                conceptDataset.Action.Add(new DataUpdate() { InsertIfNotExists = true, Element = conceptSet });
+            }
+
+            XmlSerializer xsz = new XmlSerializer(typeof(DatasetInstall));
+            using (FileStream fs = File.Create(options.Output))
+                xsz.Serialize(fs, conceptDataset);
+        }
 
         /// <summary>
         /// CVX Import
@@ -62,7 +184,7 @@ namespace DatasetTool
                     Mnemonic = "VaccineTypeCodes",
                     Name = "Vaccines",
                     Oid = "1.3.6.1.4.1.33349.3.1.5.9.1.25",
-                    Url = "http://openiz.org/valueset/VaccineTypeCodes"
+                    Url = "http://openiz.org/conceptset/VaccineTypeCodes"
                 },
                 Association = new List<DataAssociation>()
             };
@@ -167,7 +289,7 @@ namespace DatasetTool
                         Mnemonic = "TsvConceptSet",
                         Name = components[5],
                         Oid = components[6],
-                        Url = "http://openiz.org/valueset/TsvConceptCodes"
+                        Url = "http://openiz.org/conceptset/TsvConceptCodes"
                     },
                     Association = new List<DataAssociation>()
                 };

@@ -5,6 +5,16 @@
     <map fhir="_id" model="id"/>
     <map fhir="_lastUpdated" model="modifiedOn"/>
   </type>
+  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.ImmunizationRecommendation, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
+    <map fhir="vaccine-type" model="participation[Product].player.typeConcept" type="concept"/>
+    <map fhir="dose-number" model="doseSequence"/>
+    <map fhir="date" model="creationTime"/>
+    <map fhir="patient" model="participation[RecordTarget].player.id"/>
+    <map fhir="patient.gender" model="participation[RecordTarget].player@Patient.genderConcept" type="concept"/>
+    <map fhir="patient.name" model="participation[RecordTarget].player.name.component.value" />
+    <map fhir="patient.birthDate" model="participation[RecordTarget].player@Person.dateOfBirth"/>
+  </type>
+  
   <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Immunization, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
     <map fhir="vaccine-code" model="participation[Consumable].player.typeConcept" type="concept"/>
     <map fhir="dose-sequence" model="doseSequence"/>
@@ -12,7 +22,7 @@
     <map fhir="patient" model="participation[RecordTarget].player.id"/>
     <map fhir="patient.gender" model="participation[RecordTarget].player@Patient.genderConcept" type="concept"/>
     <map fhir="patient.name" model="participation[RecordTarget].player.name.component.value" />
-    <map fhir="patient.birthDate" model="participation[RecordTarget].player.dateOfBirth"/>
+    <map fhir="patient.birthDate" model="participation[Location].player@Person.dateOfBirth"/>
     <map fhir="location" model="participation[Location].player.id"/>
     <map fhir="location.name" model="participation[Location].player.name.component.value"/>
     <map fhir="location.identifier" model="participation[Location].player.identifier" type="identifier"/>

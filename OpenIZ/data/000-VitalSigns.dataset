@@ -1,0 +1,451 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/data">
+  <update insertIfNotExists="true">
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>08C59397-706B-456A-AEB1-9E7D5A2ADC94</id>
+      <name>LOINC</name>
+      <oid>2.16.840.1.113883.6.1</oid>
+      <authority>LN</authority>
+      <description>Logical Observation Identifiers Names and Codes</description>
+    </CodeSystem>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>996ce03b-913e-44ea-895a-8a74d0e2f819</id>
+      
+      <mnemonic>9279-1</mnemonic>
+      <codeSystem>08C59397-706B-456A-AEB1-9E7D5A2ADC94</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>RESPIRATION RATE</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>4e3de4ec-17b8-4816-83a4-0792c4fb2a29</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>VitalSign-Respiration</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>996ce03b-913e-44ea-895a-8a74d0e2f819</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>RESPIRATION RATE</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>ad651c92-6f0e-47e9-824a-ce7b470e69bf</id>
+      
+      <mnemonic>8867-4</mnemonic>
+      <codeSystem>08C59397-706B-456A-AEB1-9E7D5A2ADC94</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>HEART BEAT</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>5b4661ea-eecb-47da-8e25-71e1c1db04d8</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>VitalSign-HeartBeat</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>ad651c92-6f0e-47e9-824a-ce7b470e69bf</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>HEART BEAT</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>5f5d9f49-671d-492f-8e7a-4089de4e4433</id>
+      
+      <mnemonic>2710-2</mnemonic>
+      <codeSystem>08C59397-706B-456A-AEB1-9E7D5A2ADC94</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>OXYGEN SATURATION</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>6fae313d-fb69-400a-bc2c-31cf4c542251</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>VitalSign-OxygenSaturation</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>5f5d9f49-671d-492f-8e7a-4089de4e4433</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>OXYGEN SATURATION</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>ba10727a-324e-4e1b-a15b-fac40fe6fcc8</id>
+      
+      <mnemonic>8480-6</mnemonic>
+      <codeSystem>08C59397-706B-456A-AEB1-9E7D5A2ADC94</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>INTRAVASCULAR SYSTOLIC</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>c0e4e81e-af1f-4a81-80a6-c59a32f57cfa</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>VitalSign-SystolicBp</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>ba10727a-324e-4e1b-a15b-fac40fe6fcc8</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>INTRAVASCULAR SYSTOLIC</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>f058368e-bd65-4563-8667-d40f188d6a2f</id>
+      
+      <mnemonic>8462-4</mnemonic>
+      <codeSystem>08C59397-706B-456A-AEB1-9E7D5A2ADC94</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>INTRAVASCULAR DIASTOLIC</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>8e105155-32d4-4bbe-bc86-60154706b3ca</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>VitalSign-DiastolicBp</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>f058368e-bd65-4563-8667-d40f188d6a2f</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>INTRAVASCULAR DIASTOLIC</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>d0e266d4-28b3-48a0-b0a1-fce4f00a18a4</id>
+      
+      <mnemonic>8310-5</mnemonic>
+      <codeSystem>08C59397-706B-456A-AEB1-9E7D5A2ADC94</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>BODY TEMPERATURE</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>174ef16c-5779-4713-a5e0-4e838b60fe81</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>VitalSign-BodyTemperature</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>d0e266d4-28b3-48a0-b0a1-fce4f00a18a4</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>BODY TEMPERATURE</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>0de87486-4dc0-40fc-a727-643d3e4f14d6</id>
+      
+      <mnemonic>8302-2</mnemonic>
+      <codeSystem>08C59397-706B-456A-AEB1-9E7D5A2ADC94</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>BODY HEIGHT (MEASURED)</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>850ca898-c656-4ba2-a7c1-ff74e3331396</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>VitalSign-Height</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>0de87486-4dc0-40fc-a727-643d3e4f14d6</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>BODY HEIGHT (MEASURED)</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>dea396fd-82fe-4950-8ee7-5605fcccdf5a</id>
+      
+      <mnemonic>8306-3</mnemonic>
+      <codeSystem>08C59397-706B-456A-AEB1-9E7D5A2ADC94</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>BODY HEIGHT^LYING</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>8d2e144b-d7bf-4c17-8916-25aff60bcb2f</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>VitalSign-HeightLying</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>dea396fd-82fe-4950-8ee7-5605fcccdf5a</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>BODY HEIGHT^LYING</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>38ff2822-152e-4c7e-bdc7-ffad05965fb7</id>
+      
+      <mnemonic>8287-5</mnemonic>
+      <codeSystem>08C59397-706B-456A-AEB1-9E7D5A2ADC94</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>CIRCUMFRENCE.OCCIPITAL-FRONTAL (TAPE MEASURE)</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>b971ed37-0ec9-43e6-9dea-e8399417ea44</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>VitalSign-Circumference</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>38ff2822-152e-4c7e-bdc7-ffad05965fb7</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>CIRCUMFRENCE.OCCIPITAL-FRONTAL (TAPE MEASURE)</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>ed100389-21bd-466e-9d48-785d3d3a6224</id>
+      
+      <mnemonic>3141-9</mnemonic>
+      <codeSystem>08C59397-706B-456A-AEB1-9E7D5A2ADC94</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>BODY WEIGHT (MEASURED)</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>a261f8cd-69b0-49aa-91f4-e6d3e5c612ed</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>VitalSign-Weight</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>ed100389-21bd-466e-9d48-785d3d3a6224</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>BODY WEIGHT (MEASURED)</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>c9791a94-7a04-4276-804d-82589b6d0be1</id>
+      <name>Vital Signs</name>
+      <mnemonic>VitalSigns</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.1.34</oid>
+      <url>http://openiz.org/conceptsets/contrib/VitalSigns</url>
+      <concept>4e3de4ec-17b8-4816-83a4-0792c4fb2a29</concept>
+      <concept>5b4661ea-eecb-47da-8e25-71e1c1db04d8</concept>
+      <concept>6fae313d-fb69-400a-bc2c-31cf4c542251</concept>
+      <concept>c0e4e81e-af1f-4a81-80a6-c59a32f57cfa</concept>
+      <concept>8e105155-32d4-4bbe-bc86-60154706b3ca</concept>
+      <concept>174ef16c-5779-4713-a5e0-4e838b60fe81</concept>
+      <concept>850ca898-c656-4ba2-a7c1-ff74e3331396</concept>
+      <concept>8d2e144b-d7bf-4c17-8916-25aff60bcb2f</concept>
+      <concept>b971ed37-0ec9-43e6-9dea-e8399417ea44</concept>
+      <concept>a261f8cd-69b0-49aa-91f4-e6d3e5c612ed</concept>
+    </ConceptSet>
+  </update>
+</dataset>

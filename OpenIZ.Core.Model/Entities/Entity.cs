@@ -51,7 +51,6 @@ namespace OpenIZ.Core.Model.Entities
         private Guid? m_creationActId;
         // Type concept
         private Guid? m_typeConceptId;
-
         // Class concept
         private Concept m_classConcept;
         // Determiner concept
@@ -80,6 +79,12 @@ namespace OpenIZ.Core.Model.Entities
         }
 
         /// <summary>
+        /// Gets or sets the template identifier 
+        /// </summary>
+        [AutoLoad, XmlElement("template"), JsonProperty("template")]
+        public TemplateDefinition Template { get; set; }
+
+        /// <summary>
         /// Class concept
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -98,7 +103,6 @@ namespace OpenIZ.Core.Model.Entities
         /// Determiner concept
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         [XmlElement("determinerConcept"), JsonProperty("determinerConcept")]
         public virtual Guid? DeterminerConceptKey
         {
@@ -114,7 +118,6 @@ namespace OpenIZ.Core.Model.Entities
         /// Status concept id
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         [XmlElement("statusConcept"), JsonProperty("statusConcept")]
         public Guid?  StatusConceptKey
         {
@@ -130,7 +133,6 @@ namespace OpenIZ.Core.Model.Entities
         /// Creation act reference
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         [XmlElement("creationAct"), JsonProperty("creationAct")]
         public Guid?  CreationActKey
         {
@@ -146,7 +148,6 @@ namespace OpenIZ.Core.Model.Entities
         /// Type concept identifier
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         [XmlElement("typeConcept"), JsonProperty("typeConcept")]
         public Guid?  TypeConceptKey
         {

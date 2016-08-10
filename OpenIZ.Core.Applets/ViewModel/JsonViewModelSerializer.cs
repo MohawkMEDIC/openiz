@@ -202,8 +202,11 @@ namespace OpenIZ.Core.Applets.ViewModel
                                                             if (elementType.GetTypeInfo().GetCustomAttribute<SimpleValueAttribute>() != null)
                                                                 simpleProperty = elementType.GetRuntimeProperty(elementType.GetTypeInfo().GetCustomAttribute<SimpleValueAttribute>().ValueProperty);
 
-                                                            if (simpleProperty != null && StripNullable(simpleProperty.PropertyType) == typeof(Guid))
-                                                                simpleProperty.SetValue(contained, Guid.Parse((String)jreader.Value));
+                                                            if (simpleProperty != null && simpleProperty.PropertyType.StripNullable() == typeof(Guid))
+                                                            {
+                                                                if(!String.IsNullOrEmpty((String)jreader.Value))
+                                                                    simpleProperty.SetValue(contained, Guid.Parse((String)jreader.Value));
+                                                            }
                                                             else if (simpleProperty != null && simpleProperty.PropertyType == typeof(byte[]))
                                                             {
                                                                 switch (jreader.TokenType)
@@ -263,7 +266,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                                                 {
                                                     var klu = elementType.GetTypeInfo().GetCustomAttribute<KeyLookupAttribute>();
                                                     var satt = elementType.GetTypeInfo().GetCustomAttribute<SimpleValueAttribute>();
-                                                    if (StripNullable(elementType) == typeof(Guid))
+                                                    if (elementType.StripNullable() == typeof(Guid))
                                                         (modelInstance as IList).Add(Guid.Parse((String)jreader.Value));
                                                     else if (satt != null) // not a key
                                                     {
@@ -286,7 +289,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                                                         (modelInstance as IList).Add(sattInstance);
                                                     }
                                                     else if (jreader.Value != null)
-                                                        (modelInstance as IList).Add(JsonConvert.DeserializeObject((String)jreader.Value, StripNullable(elementType)));
+                                                        (modelInstance as IList).Add(JsonConvert.DeserializeObject((String)jreader.Value, elementType.StripNullable()));
 
                                                     // Set the classifier
                                                     if (classifier != "$other")
@@ -347,7 +350,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                                             {
                                                 // TODO: This file needs to be cleaned up desperately
                                                 var klu = elementType.GetTypeInfo().GetCustomAttribute<KeyLookupAttribute>();
-                                                if (StripNullable(elementType) == typeof(Guid))
+                                                if (elementType.StripNullable() == typeof(Guid))
                                                     (modelInstance as IList).Add(Guid.Parse((String)jreader.Value));
                                                 else if (klu == null) // not a key
                                                     (modelInstance as IList).Add(JsonConvert.DeserializeObject((String)jreader.Value, elementType));
@@ -385,8 +388,8 @@ namespace OpenIZ.Core.Applets.ViewModel
                                     switch (jreader.TokenType)
                                     {
                                         case JsonToken.Integer:
-                                            if (StripNullable(propertyInfo.PropertyType).GetTypeInfo().IsEnum)
-                                                propertyInfo.SetValue(retVal, Enum.ToObject(StripNullable(propertyInfo.PropertyType), jreader.Value));
+                                            if (propertyInfo.PropertyType.StripNullable().GetTypeInfo().IsEnum)
+                                                propertyInfo.SetValue(retVal, Enum.ToObject(propertyInfo.PropertyType.StripNullable(), jreader.Value));
                                             //else if (StripNullable(propertyInfo.PropertyType) == typeof(Int32) ||
                                             //    StripNullable(propertyInfo.PropertyType) == typeof(UInt32))
                                             else
@@ -394,7 +397,7 @@ namespace OpenIZ.Core.Applets.ViewModel
 
                                             break;
                                         case JsonToken.Date:
-                                            if (StripNullable(propertyInfo.PropertyType) == typeof(DateTime))
+                                            if (propertyInfo.PropertyType.StripNullable() == typeof(DateTime))
                                                 propertyInfo.SetValue(retVal, (DateTime)jreader.Value);
                                             else if (propertyInfo.PropertyType == typeof(String))
                                                 propertyInfo.SetValue(retVal, ((DateTime)jreader.Value).ToString("o"));
@@ -402,7 +405,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                                                 propertyInfo.SetValue(retVal, (DateTimeOffset)jreader.Value);
                                             break;
                                         case JsonToken.Float:
-                                            if (StripNullable(propertyInfo.PropertyType) == typeof(Decimal))
+                                            if (propertyInfo.PropertyType.StripNullable() == typeof(Decimal))
                                                 propertyInfo.SetValue(retVal, Convert.ToDecimal(jreader.Value));
                                             else
                                                 propertyInfo.SetValue(retVal, (Double)jreader.Value);
@@ -410,10 +413,13 @@ namespace OpenIZ.Core.Applets.ViewModel
                                         case JsonToken.String:
 
                                             var klu = propertyInfo.PropertyType.GetTypeInfo().GetCustomAttribute<KeyLookupAttribute>();
-                                            if (StripNullable(propertyInfo.PropertyType) == typeof(Guid))
-                                                propertyInfo.SetValue(retVal, Guid.Parse((String)jreader.Value));
+                                            if (propertyInfo.PropertyType.StripNullable() == typeof(Guid))
+                                            {
+                                                if(!String.IsNullOrEmpty((String)jreader.Value))
+                                                    propertyInfo.SetValue(retVal, Guid.Parse((String)jreader.Value));
+                                            }
                                             else if (klu == null) // not a key
-                                              propertyInfo.SetValue(retVal, JsonConvert.DeserializeObject((String)jreader.Value, StripNullable(propertyInfo.PropertyType)));
+                                                propertyInfo.SetValue(retVal, JsonConvert.DeserializeObject((String)jreader.Value, propertyInfo.PropertyType.StripNullable()));
                                             else
                                             {
                                                 var scopedInstance = Activator.CreateInstance(propertyInfo.PropertyType);

@@ -408,7 +408,9 @@
         <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
       </via>
     </property>
-
+    <property modelName="Template" domainName="Entity">
+      <via domainName="TemplateDefinition"/>
+    </property>
     <property modelName="TypeConceptKey" domainName="TypeConceptId"/>
     <property modelName="CreatedByKey" domainName="CreatedBy"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
@@ -447,6 +449,7 @@
     <cast type="OpenIZ.Core.Model.Roles.Patient, OpenIZ.Core.Model, Version=1.0.0.0" domainName="Person">
         <via domainName="Patient"/>
     </cast>
+    <cast type="OpenIZ.Core.Model.Entities.Person, OpenIZ.Core.Model, Version=1.0.0.0" domainName="Person"/>
   </class>
 
   <class modelClass="OpenIZ.Core.Model.Entities.Entity, OpenIZ.Core.Model, Version=1.0.0.0"
@@ -803,13 +806,12 @@
   </class>
 
   <!-- Acts -->
-
-  
   <class modelClass="OpenIZ.Core.Model.Acts.Act, OpenIZ.Core.Model, Version=1.0.0.0"
    domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ActVersion, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key"  domainName="ActId"/>
     <property modelName="VersionKey"  domainName="ActVersionId"/>
-
+    <property modelName="StartTime" domainName="ActStartTime"/>
+    <property modelName="StopTime" domainName="ActStopTime"/>
     <property modelName="ClassConceptKey" domainName="Act">
       <via domainName="ClassConceptId"/>
     </property>
@@ -831,6 +833,9 @@
     </property>
     <property modelName="StatusConcept" domainName="StatusConcept">
       <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+    </property>
+    <property modelName="Template" domainName="Act">
+      <via domainName="TemplateDefinition"/>
     </property>
     <property modelName="TypeConceptKey" domainName="TypeConceptId"/>
     <property modelName="StatusConceptKey" domainName="StatusConceptId"/>

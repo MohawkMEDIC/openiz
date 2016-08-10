@@ -24,6 +24,7 @@ using OpenIZ.Core.Model.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -61,7 +62,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Set delay load
         /// </summary>
-        public void SetDelayLoad(bool v)
+        public virtual void SetDelayLoad(bool v)
         {
 
             if (this.m_delayLoad == v)
@@ -129,7 +130,10 @@ namespace OpenIZ.Core.Model
             if (currentInstance == null &&
                 this.m_delayLoad &&
                 keyReference.HasValue)
+            {
+                Debug.WriteLine("Delay loading key reference: {0}>{1}", this.Key, keyReference);
                 currentInstance = EntitySource.Current.Get<TEntity>(keyReference.Value);
+            }
             currentInstance?.SetDelayLoad(this.IsDelayLoadEnabled);
             return currentInstance;
         }

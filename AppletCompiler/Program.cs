@@ -173,7 +173,8 @@ namespace AppletCompiler
             { ".jpeg", "image/jpeg" },
             { ".gif", "image/gif" },
             { ".png", "image/png" },
-            { ".bmp", "image/bmp" }
+            { ".bmp", "image/bmp" },
+            { ".json", "application/json" }
 
         };
 
@@ -242,6 +243,7 @@ namespace AppletCompiler
                             });
                             break;
                         case ".js":
+                        case ".json":
                             retVal.Add(new AppletAsset()
                             {
                                 Name = ResolveName(itm.Replace(path, "")),

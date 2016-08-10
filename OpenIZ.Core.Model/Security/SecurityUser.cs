@@ -49,9 +49,6 @@ namespace OpenIZ.Core.Model.Security
             this.Roles = new List<SecurityRole>();
         }
 
-        // User entities
-        private List<Person> m_userEntities;
-
         /// <summary>
         /// Gets or sets the email address of the user
         /// </summary>

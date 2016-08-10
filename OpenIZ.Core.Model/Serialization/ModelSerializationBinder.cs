@@ -44,7 +44,7 @@ namespace OpenIZ.Core.Model.Serialization
 
             // The type
             var type = asm.ExportedTypes.SingleOrDefault(
-                t => t.GetTypeInfo().GetCustomAttribute<JsonObjectAttribute>()?.Id == typeName
+                t => t.GetTypeInfo().GetCustomAttribute<JsonObjectAttribute>(false)?.Id == typeName
                 );
             if (type == null)
                 type = asm.GetType(typeName);

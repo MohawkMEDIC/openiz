@@ -7,7 +7,7 @@
       <name>ActClass</name>
       <oid>2.16.840.1.113883.5.6</oid>
       <authority>HL7 International</authority>
-      <url>http://openiz.org/valueset/v3-ActClassClinicalDocument</url>
+      <url>http://openiz.org/conceptset/v3-ActClassClinicalDocument</url>
       <description>Classification codes for Acts</description>
     </CodeSystem>
   </update>
@@ -45,7 +45,7 @@
       <name>Act Class</name>
       <mnemonic>ActClass</mnemonic>
       <oid>1.3.6.1.4.1.33349.3.1.5.9.1.1</oid>
-      <url>http://openiz.org/valueset/act-class</url>
+      <url>http://openiz.org/conceptset/act-class</url>
       <concept>B35488CE-B7CD-4DD4-B4DE-5F83DC55AF9F</concept>
       <concept>932a3c7e-ad77-450a-8a1f-030fc2855450</concept>
       <concept>82d09e9e-9b12-47dd-acba-0557cc025bd7</concept>

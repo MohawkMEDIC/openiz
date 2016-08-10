@@ -89,6 +89,7 @@
     <Compile Include="DataTypes\ReferenceTerm.cs" />
     <Compile Include="DataTypes\ReferenceTermName.cs" />
     <Compile Include="DataTypes\Tag.cs" />
+    <Compile Include="DataTypes\TemplateDefinition.cs" />
     <Compile Include="Entities\UserEntity.cs" />
     <Compile Include="EntityLoader\EntitySource.cs" />
     <Compile Include="EntityLoader\IEntitySourceProvider.cs" />

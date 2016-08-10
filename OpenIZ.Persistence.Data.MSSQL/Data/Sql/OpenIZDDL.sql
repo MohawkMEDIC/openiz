@@ -814,16 +814,41 @@ CREATE TABLE IdentifierType
 	CONSTRAINT FK_EntityIdentifierTypeEntityClassScopeConceptId FOREIGN KEY (EntityClassScopeConceptId) REFERENCES Concept(ConceptId)
 );
 
+-- TEMPLATE DEFINITION
+CREATE TABLE TemplateDefinition 
+(
+	TemplateDefinitionId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(),
+	Oid NVARCHAR(64) NOT NULL UNIQUE, -- UNIQUE OID FOR THE OBJECT
+	Mnemonic NVARCHAR(64) NOT NULL UNIQUE, -- THE MNEMONIC FOR THE OBJECT
+	Name NVARCHAR(128), -- THE HUMAN READABLE NAME FOR THE OBJECT
+	Description TEXT, -- DESCRIPTIVE TEXT ABOUT THE OBJECT
+	CreationTime DATETIMEOFFSET NOT NULL DEFAULT SYSDATETIMEOFFSET(), -- THE TIME THE TEMPLATE WAS CREATED
+	CreatedBy UNIQUEIDENTIFIER NOT NULL, -- THE USER THAT CREATED THE TEMPLATE
+	ObsoletionTime DATETIMEOFFSET, -- WHEN PRESENT, INDICATES THE DATE THE TEMPLATE IS NOT LONGER ACTIVE
+	ObsoletedBy UNIQUEIDENTIFIER, -- THE USER WHO OBSOLETED THIS RECORD
+	UpdatedTime DATETIMEOFFSET, -- THE TIME THE RECORD WAS UPDATED
+	UpdatedBy UNIQUEIDENTIFIER, -- THE PERSON WHO UPDATED THE TEMPLATE RECORD
+	CONSTRAINT PK_TemplateDefinition PRIMARY KEY (TemplateDefinitionId),
+	CONSTRAINT FK_TemplateDefinitionObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT CK_TemplateDefinitionObsoletedBy CHECK(ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletedBy IS NULL AND ObsoletionTime IS NULL),
+	CONSTRAINT FK_TemplateDefinitionCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT FK_TemplateDefinitionUpdatedBy FOREIGN KEY (UpdatedBy) REFERENCES SecurityUser(UserId),
+	CONSTRAINT CK_TemplateDefinitionUpdatedBy CHECK(UpdatedBy IS NOT NULL AND UpdatedTime IS NOT NULL OR UpdatedBy IS NULL AND UpdatedTime IS NULL)
+);
+
 CREATE TABLE Act
 (
 	ActId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(), -- THE UNIQUE IDENTIFIER FOR THE ACT. THIS IS A NUMERIC FOR EASE OF
+	TemplateDefinitionId UNIQUEIDENTIFIER, -- IDENTIFIES THE TEMPLATE THIS ENTITY FOLLOWS
 	ClassConceptId UNIQUEIDENTIFIER NOT NULL, -- CLASSIFIES THE TYPE OF ACT REPRESENTED
 	MoodConceptId UNIQUEIDENTIFIER NOT NULL, -- THE MOOD OF THE ACT
 	CONSTRAINT PK_Act PRIMARY KEY (ActId),
 	CONSTRAINT FK_ActClassConceptId FOREIGN KEY (ClassConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT CK_ActClassConceptIdConceptClass CHECK (dbo.fn_IsConceptSetMember(ClassConceptId, 'ActClass') = 1),
 	CONSTRAINT FK_ActVersionMoodConceptId FOREIGN KEY (MoodConceptId) REFERENCES Concept(ConceptId),
-	CONSTRAINT CK_ActVersionActMoodConceptIdConceptClass CHECK (dbo.fn_IsConceptSetMember(MoodConceptId, 'ActMood') = 1)
+	CONSTRAINT CK_ActVersionActMoodConceptIdConceptClass CHECK (dbo.fn_IsConceptSetMember(MoodConceptId, 'ActMood') = 1),
+	CONSTRAINT FK_ActTemplateDefinitionId FOREIGN KEY (TemplateDefinitionId) REFERENCES TemplateDefinition(TemplateDefinitionId),
+
 );
 
 CREATE SEQUENCE ActVersionSequenceId START WITH 1 INCREMENT BY 1;
@@ -1026,11 +1051,13 @@ CREATE INDEX IX_ActPolicyEffectiveVersion ON ActPolicy(EffectiveVersionSequenceI
 CREATE TABLE Entity
 (
 	EntityId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(), -- THE UNIQUE IDENTIFIER FOR THE ENTITY
+	TemplateDefinitionId UNIQUEIDENTIFIER, -- IDENTIFIES THE TEMPLATE THIS ENTITY FOLLOWS
 	ClassConceptId UNIQUEIDENTIFIER NOT NULL, -- IDENTIFIES THE CONCEPT IDENTIFIER
 	DeterminerConceptId UNIQUEIDENTIFIER NOT NULL, -- IDENTIFIES WHETHER THE ENTITY IS A CLASS OF THING OR AN ACTUAL THING
 	CONSTRAINT PK_Entity PRIMARY KEY (EntityId),
 	CONSTRAINT FK_EntityClassConceptId FOREIGN KEY (ClassConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_EntityDeterminerConceptId FOREIGN KEY (DeterminerConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT FK_EntityTemplateDefinitionId FOREIGN KEY (TemplateDefinitionId) REFERENCES TemplateDefinition(TemplateDefinitionId),
 	CONSTRAINT CK_EntityClassConceptSet CHECK (dbo.fn_IsConceptSetMember(ClassConceptId, 'EntityClass') = 1),
 	CONSTRAINT CK_EntityDeterminerConceptSet CHECK (dbo.fn_IsConceptSetMember(DeterminerConceptId, 'EntityDeterminer') = 1)
 );
@@ -1267,11 +1294,11 @@ CREATE TABLE PlaceService
 CREATE TABLE Organization
 (
 	EntityVersionId UNIQUEIDENTIFIER NOT NULL, -- THE VERSION OF THE ENTITY THE ORGANIZATION DATA APPLIES TO
-	IndustryConceptId UNIQUEIDENTIFIER NOT NULL, -- THE INDUSTRY IN WHICH THE ORGANIZATION PARTICIPATES
+	IndustryConceptId UNIQUEIDENTIFIER, -- THE INDUSTRY IN WHICH THE ORGANIZATION PARTICIPATES
 	CONSTRAINT PK_Organization PRIMARY KEY (EntityVersionId),
 	CONSTRAINT FK_OrganizationEntityVersionId FOREIGN KEY (EntityVersionId) REFERENCES EntityVersion(EntityVersionId),
 	CONSTRAINT FK_OrganizationIndustryConceptId FOREIGN KEY (IndustryConceptId) REFERENCES Concept(ConceptId),
-	CONSTRAINT CK_OrganizationIndustryConceptConceptSet CHECK (dbo.fn_IsConceptSetMember(IndustryConceptId, 'IndustryCode') = 1)
+	CONSTRAINT CK_OrganizationIndustryConceptConceptSet CHECK (IndustryConceptId IS NULL OR IndustryConceptId IS NOT NULL AND dbo.fn_IsConceptSetMember(IndustryConceptId, 'IndustryCode') = 1)
 );
 
 CREATE TABLE ApplicationEntity
@@ -1309,8 +1336,8 @@ CREATE TABLE Material
 	CONSTRAINT FK_MaterialEntityVersionId FOREIGN KEY (EntityVersionId) REFERENCES EntityVersion(EntityVersionId),
 	CONSTRAINT FK_MaterialFormConceptId FOREIGN KEY (FormConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_MaterialQuantityConceptId FOREIGN KEY (QuantityConceptId) REFERENCES Concept(ConceptId),
-	CONSTRAINT CK_MaterialFormConceptClass CHECK (dbo.fn_AssertConceptClass(FormConceptId, 'Form') = 1),
-	CONSTRAINT CK_MaterialQuantityConceptClass CHECK (dbo.fn_AssertConceptClass(QuantityConceptId, 'UnitOfMeasure') = 1)
+	CONSTRAINT CK_MaterialFormConceptClass CHECK (FormConceptId IS NULL OR FormConceptId IS NOT NULL AND dbo.fn_AssertConceptClass(FormConceptId, 'Form') = 1),
+	CONSTRAINT CK_MaterialQuantityConceptClass CHECK (QuantityConceptId IS NULL OR QuantityConceptId IS NOT NULL AND dbo.fn_AssertConceptClass(QuantityConceptId, 'UnitOfMeasure') = 1)
 );
 
 CREATE TABLE ManufacturedMaterial

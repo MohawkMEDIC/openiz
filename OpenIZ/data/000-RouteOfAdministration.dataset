@@ -10139,7 +10139,7 @@
       <name>Route of administration</name>
       <mnemonic>RouteOfAdministration</mnemonic>
       <oid>1.3.6.1.4.1.33349.3.1.5.9.1.29</oid>
-      <url>http://openiz.org/valueset/ROUTEConceptCodes</url>
+      <url>http://openiz.org/conceptset/ROUTEConceptCodes</url>
       <concept>0ca599e6-8b4a-4122-b2b9-6085a14efb5b</concept>
       <concept>3b139d49-42d8-4dca-8121-ff45509fabeb</concept>
       <concept>4700e7ed-2dea-4978-9135-575e20b85ba1</concept>

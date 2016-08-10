@@ -103,9 +103,12 @@ namespace OpenIZ.Core.Model.Query
             String queryString = String.Empty;
             foreach (var kv in this)
             {
-                queryString += String.Format("{0}={1}", kv.Key, Uri.EscapeDataString(kv.Value.ToString()));
-                if (!kv.Equals(this.Last()))
-                    queryString += "&";
+                foreach (var val in kv.Value)
+                {
+                    queryString += String.Format("{0}={1}", kv.Key, Uri.EscapeDataString(val));
+                    if (!kv.Equals(this.Last()))
+                        queryString += "&";
+                }
             }
             return queryString;
         }

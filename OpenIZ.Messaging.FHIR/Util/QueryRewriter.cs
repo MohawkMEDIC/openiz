@@ -178,10 +178,10 @@ namespace OpenIZ.Messaging.FHIR.Util
                             if (itm.Contains("|"))
                             {
                                 var segs = itm.Split('|');
-                                imsiQuery.Add(String.Format("{0}[{1}].value", kv, segs[0]), segs[1]);
+                                imsiQuery.Add(String.Format("{0}[{1}].value", parmMap.ModelName, segs[0]), segs[1]);
                             }
                             else
-                                imsiQuery.Add(kv + ".value", itm);
+                                imsiQuery.Add(parmMap.ModelName + ".value", itm);
                         }
                         break;
                     case "concept":

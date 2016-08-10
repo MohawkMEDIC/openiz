@@ -127,6 +127,12 @@ namespace OpenIZ.Core.Applets.Model
         }
 
         /// <summary>
+        /// Gets or ets the templates for use in the applet
+        /// </summary>
+        [XmlElement("template")]
+        public List<AppletTemplateDefinition> Templates { get; set; }
+
+        /// <summary>
         /// Gets or sets the assets which are to be used in the applet
         /// </summary>
         [XmlElement("asset")]

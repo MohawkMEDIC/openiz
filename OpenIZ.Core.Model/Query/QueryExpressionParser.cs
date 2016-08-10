@@ -133,6 +133,8 @@ namespace OpenIZ.Core.Model.Query
                         Type itemType = accessExpression.Type.GenericTypeArguments[0];
                         Type predicateType = typeof(Func<,>).MakeGenericType(itemType, typeof(bool));
                         ParameterExpression guardParameter = Expression.Parameter(itemType, "guard");
+                        if (guard == "null")
+                            guard = null;
 
                         // Cascade the Classifiers to get the access
                         ClassifierAttribute classAttr = itemType.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
@@ -144,8 +146,10 @@ namespace OpenIZ.Core.Model.Query
                         {
                             guardAccessor = Expression.MakeMemberAccess(guardAccessor, classifierProperty);
                             classAttr = classifierProperty.PropertyType.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
-                            if(classAttr != null)
+                            if (classAttr != null && guard != null)
                                 classifierProperty = classifierProperty.PropertyType.GetRuntimeProperty(classAttr.ClassifierProperty);
+                            else if (guard == null)
+                                break;
                         }
 
                         var whereMethod = typeof(Enumerable).GetGenericMethod("Where",
@@ -203,6 +207,10 @@ namespace OpenIZ.Core.Model.Query
                             value.Length <= 7
                             )
                             value = "~" + value;
+
+                        // Correct for nullable
+                        if (value != "null" && accessExpression.Type.GetTypeInfo().IsGenericType && accessExpression.Type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                            accessExpression = Expression.MakeMemberAccess(accessExpression, accessExpression.Type.GetRuntimeProperty("Value"));
 
                         // Process value
                         String pValue = value;

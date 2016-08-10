@@ -160,7 +160,7 @@
       <name>Act Interpretation</name>
       <mnemonic>ActInterpretation</mnemonic>
       <oid>1.3.6.1.4.1.33349.3.1.5.9.1.5</oid>
-      <url>http://openiz.org/valueset/act-interpretation</url>
+      <url>http://openiz.org/conceptset/act-interpretation</url>
       <concept>3c4d6579-7496-4b44-aac1-18a714ff7a05</concept>
       <concept>8b553d58-6c8c-4d01-a534-83ba5780b41a</concept>
       <concept>a7159ba0-a9ec-4565-95b8-ed364794c0b8</concept>

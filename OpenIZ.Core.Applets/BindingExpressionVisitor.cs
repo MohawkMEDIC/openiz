@@ -72,8 +72,13 @@ namespace OpenIZ.Core.Applets
                                 {
                                     Expression bind = this.Visit(call.Arguments[0]);
                                     var lambda = call.Arguments[1] as LambdaExpression;
-                                    
-                                    Expression leftExpression = (lambda.Body as BinaryExpression).Left as MemberExpression;
+
+                                    Expression leftExpression = null;
+                                    if (lambda.Body is MethodCallExpression) // Embedded ANY?
+                                        leftExpression = (lambda.Body as MethodCallExpression).Object ?? (lambda.Body as MethodCallExpression).Arguments[0];
+                                    else
+                                        leftExpression = (lambda.Body as BinaryExpression).Left as MemberExpression;
+
                                     Stack<Expression> accessExpression = new Stack<Expression>();
                                     while (leftExpression != lambda.Parameters[0])
                                     {
@@ -92,7 +97,15 @@ namespace OpenIZ.Core.Applets
                                         if (expr is MemberExpression)
                                             bind = Expression.MakeMemberAccess(bind, (expr as MemberExpression).Member);
                                         else
-                                            bind = Expression.Call(bind, (expr as MethodCallExpression).Method, (expr as MethodCallExpression).Arguments);
+                                        {
+                                            var method = (expr as MethodCallExpression).Method;
+                                            if (method.IsStatic)
+                                            {
+                                                bind = this.Visit(Expression.Call(null, (expr as MethodCallExpression).Method, bind, (expr as MethodCallExpression).Arguments[1]));
+                                            }
+                                            else
+                                                bind = Expression.Call(bind, (expr as MethodCallExpression).Method, (expr as MethodCallExpression).Arguments);
+                                        }
                                     }
                                     return bind;
                                 }

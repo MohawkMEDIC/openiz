@@ -51,6 +51,7 @@ namespace OpenIZ.Core.Applets
         // A cache of rendered assets
         private static Dictionary<String, Byte[]> s_cache = new Dictionary<string, byte[]>();
         private static Dictionary<String, List<KeyValuePair<String, String>>> s_stringCache = new Dictionary<string, List<KeyValuePair<string, string>>>();
+        private static Dictionary<String, AppletTemplateDefinition> s_templateCache = new Dictionary<string, AppletTemplateDefinition>();
         private static Object s_syncLock = new object();
 
         public const string APPLET_SCHEME = "app://";
@@ -227,6 +228,24 @@ namespace OpenIZ.Core.Applets
         }
 
         /// <summary>
+        /// Gets the template definition
+        /// </summary>
+        public AppletTemplateDefinition GetTemplateDefinition(String templateMnemonic)
+        {
+            AppletTemplateDefinition retVal = null;
+            if (!s_templateCache.TryGetValue(templateMnemonic ?? "", out retVal))
+                lock (s_syncLock)
+                {
+                    retVal = this.m_appletManifest.SelectMany(o => o.Templates).
+                        FirstOrDefault(o => o.Mnemonic == templateMnemonic);
+                    if(retVal != null)
+                        retVal.DefinitionContent = this.RenderAssetContent(this.ResolveAsset(retVal.Definition));
+                    s_templateCache.Add(templateMnemonic, retVal);
+                }
+            return retVal;
+        }
+
+        /// <summary>
         /// Resolve the asset 
         /// </summary>
         public AppletAsset ResolveAsset(String assetPath, AppletAsset relative = null, String language = null) 
@@ -389,6 +408,8 @@ namespace OpenIZ.Core.Applets
                         orderByDescending = db.Attributes(xs_binding + "orderByDescending").FirstOrDefault(),
                         orderBy = db.Attributes(xs_binding + "orderByDescending").FirstOrDefault();
 
+                    if(value != null)
+                        value.Value = value.Value.Replace("{{ locale }}", System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
 
                     if (source == null || filter == null)
                         continue;

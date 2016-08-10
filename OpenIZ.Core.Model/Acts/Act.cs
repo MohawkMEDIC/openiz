@@ -38,6 +38,7 @@ namespace OpenIZ.Core.Model.Acts
     /// </summary>
     [XmlType(Namespace ="http://openiz.org/model", TypeName ="Act")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Act")]
+    [JsonObject("Act")]
     [Classifier(nameof(ClassConcept))]
     public class Act : VersionedEntityData<Act>
     {
@@ -80,6 +81,12 @@ namespace OpenIZ.Core.Model.Acts
         [XmlIgnore, JsonIgnore]
         public DateTimeOffset ActTime { get; set; }
 
+
+        /// <summary>
+        /// Gets or sets the template identifier 
+        /// </summary>
+        [AutoLoad, XmlElement("template"), JsonProperty("template")]
+        public TemplateDefinition Template { get; set; }
 
         /// <summary>
         /// Gets or sets the creation time in XML format

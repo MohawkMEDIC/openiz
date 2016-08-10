@@ -39,7 +39,6 @@ namespace OpenIZ.Protocol.Xml.Test
                 DateOfBirth = DateTime.Now,
                 GenderConcept = new Core.Model.DataTypes.Concept() { Mnemonic = "FEMALE" }
             };
-
             // Now apply the protocol
             var acts = xmlCp.Calculate(newborn);
             String json = JsonViewModelSerializer.Serialize(newborn);
@@ -71,6 +70,31 @@ namespace OpenIZ.Protocol.Xml.Test
             String json = JsonViewModelSerializer.Serialize(newborn);
             Assert.AreEqual(1, acts.Count);
         }
+
+        /// <summary>
+        /// Test that the care plan schedules OPV0 at the correct time
+        /// </summary>
+        [TestMethod]
+        public void TestShouldRepeatWeight()
+        {
+
+            ProtocolDefinition definition = ProtocolDefinition.Load(typeof(TestProtocolApply).Assembly.GetManifestResourceStream("OpenIZ.Protocol.Xml.Test.Protocols.Weight.xml"));
+            XmlClinicalProtocol xmlCp = new XmlClinicalProtocol(definition);
+
+            // Patient that is just born = Schedule OPV
+            Patient newborn = new Patient()
+            {
+                Key = Guid.NewGuid(),
+                DateOfBirth = DateTime.Now,
+                GenderConcept = new Core.Model.DataTypes.Concept() { Mnemonic = "FEMALE" }
+            };
+
+            // Now apply the protocol
+            var acts = xmlCp.Calculate(newborn);
+            String json = JsonViewModelSerializer.Serialize(newborn);
+            Assert.AreEqual(60, acts.Count);
+        }
+
 
         /// <summary>
         /// Test that the care plan schedules OPV0 at the correct time

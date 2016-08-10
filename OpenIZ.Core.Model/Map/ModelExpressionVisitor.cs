@@ -320,8 +320,28 @@ namespace OpenIZ.Core.Model.Map
                         case ExpressionType.MemberAccess:
                             var memberExpr = (MemberExpression)right;
                             Object scope = null;
-                            if(memberExpr.Expression != null)
-                                scope = ((ConstantExpression)memberExpr.Expression).Value;
+                            if (memberExpr.Expression != null)
+                            {
+                                Stack<Expression> accessStack = new Stack<Expression>();
+                                Expression accessExpr = memberExpr.Expression;
+                                while (!(accessExpr is ConstantExpression))
+                                {
+                                    accessStack.Push(accessExpr);
+                                    if (accessExpr is MemberExpression)
+                                        accessExpr = (accessExpr as MemberExpression).Expression;
+                                    else break;
+                                }
+
+                                scope = ((ConstantExpression)accessExpr).Value;
+                                while (accessStack.Count > 0)
+                                {
+                                    var member = (accessStack.Pop() as MemberExpression).Member;
+                                    if (member is PropertyInfo)
+                                        scope = (member as PropertyInfo).GetValue(scope);
+                                    else if (member is FieldInfo)
+                                        scope = (member as FieldInfo).GetValue(scope);
+                                }
+                            }
                             if (memberExpr.Member is FieldInfo)
                                 right = Expression.Constant(((Guid)(memberExpr.Member as FieldInfo).GetValue(scope)).ToByteArray());
                             else if(memberExpr.Member is MethodInfo)
@@ -335,6 +355,7 @@ namespace OpenIZ.Core.Model.Map
                             break;
                     }
                 }
+               
                 return Expression.MakeBinary(node.NodeType, left, Expression.Convert(right, left.Type));
             }
             else if (right != node.Right || left != node.Left)

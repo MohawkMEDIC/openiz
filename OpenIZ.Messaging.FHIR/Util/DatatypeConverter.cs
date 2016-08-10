@@ -1,5 +1,6 @@
 ﻿using MARC.HI.EHRS.SVC.Messaging.FHIR.DataTypes;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Interfaces;
@@ -35,6 +36,22 @@ namespace OpenIZ.Messaging.FHIR.Util
             if (rt == null)
                 return null;
             return new FhirCoding(new Uri(rt.CodeSystem.Url ?? String.Format("urn:oid:{0}", rt.CodeSystem.Oid)), rt.Mnemonic);
+        }
+
+        /// <summary>
+        /// Convert the model
+        /// </summary>
+        public static FhirIdentifier Convert<TBoundModel>(IdentifierBase<TBoundModel> identifier) where TBoundModel : VersionedEntityData<TBoundModel>, new()
+        {
+            if (identifier == null)
+                return null;
+            return new FhirIdentifier()
+            {
+                Label = identifier.Authority?.Name,
+                System = new FhirUri(new Uri(identifier.Authority?.Url ?? String.Format("urn:oid:{0}", identifier.Authority?.Oid))),
+                Use = identifier.IdentifierType?.TypeConcept?.Mnemonic,
+                Value = identifier.Value
+            };
         }
 
         /// <summary>

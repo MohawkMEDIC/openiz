@@ -187,10 +187,23 @@ namespace OpenIZ.Messaging.IMSI.Test
 
             var dtString = DateTime.Now;
             String expected = "o => o.Names.Where(guard => (guard.NameUse.Mnemonic == \"L\")).Any(name => name.Component.Where(guard => (guard.ComponentType.Mnemonic == \"GIV\")).Any(component => (component.Value == \"John\")))";
-
-            
             NameValueCollection httpQueryParameters = new NameValueCollection();
             httpQueryParameters.Add("name[L].component[GIV].value", "John");
+            var expr = QueryExpressionParser.BuildLinqExpression<Patient>(httpQueryParameters);
+            Assert.AreEqual(expected, expr.ToString());
+
+        }
+
+        /// <summary>
+        /// Guard with null
+        /// </summary>
+        [TestMethod]
+        public void TestNullGuardCondition()
+        {
+            var dtString = DateTime.Now;
+            String expected = "o => o.Names.Where(guard => (guard.NameUse.Mnemonic == \"L\")).Any(name => name.Component.Where(guard => (guard.ComponentType == null)).Any(component => (component.Value == \"John\")))";
+            NameValueCollection httpQueryParameters = new NameValueCollection();
+            httpQueryParameters.Add("name[L].component[null].value", "John");
             var expr = QueryExpressionParser.BuildLinqExpression<Patient>(httpQueryParameters);
             Assert.AreEqual(expected, expr.ToString());
 
