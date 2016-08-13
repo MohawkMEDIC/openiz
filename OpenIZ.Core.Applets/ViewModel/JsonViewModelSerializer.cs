@@ -50,6 +50,10 @@ namespace OpenIZ.Core.Applets.ViewModel
         // Binder
         private static ModelSerializationBinder s_binder = new ModelSerializationBinder();
 
+        // Property cache
+        private static Dictionary<Type, Dictionary<PropertyInfo, String>> s_writePropertyCache = new Dictionary<Type, Dictionary<PropertyInfo, String>>();
+        private static Dictionary<Type, Dictionary<String,PropertyInfo>> s_readPropertyCache = new Dictionary<Type, Dictionary<String, PropertyInfo>>();
+
         /// <summary>
         /// Serializes the specified internal data 
         /// </summary>
@@ -106,6 +110,10 @@ namespace OpenIZ.Core.Applets.ViewModel
             object retVal = Activator.CreateInstance(serializationType);
             int depth = jreader.Depth;
 
+            PreparePropertyCache(serializationType);
+            var serializationProperties = s_readPropertyCache[serializationType];
+
+
             // Reader
             while (jreader.Read())
             {
@@ -117,11 +125,8 @@ namespace OpenIZ.Core.Applets.ViewModel
                 {
                     case JsonToken.PropertyName:
                         // Find the property 
-                        var propertyInfo = serializationType.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName == (String)jreader.Value);
-                        if (propertyInfo == null)
-                            propertyInfo = serializationType.GetRuntimeProperties().FirstOrDefault(o =>o.GetCustomAttribute<SerializationReferenceAttribute>() != null && serializationType.GetRuntimeProperty(o.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty)?.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName + "Model" == (String)jreader.Value);
-                        if (propertyInfo == null )
-                            propertyInfo = serializationType.GetRuntimeProperties().FirstOrDefault(o => o.Name.ToLower() + "Model" == (String)jreader.Value);
+                        PropertyInfo propertyInfo = null;
+                        serializationProperties.TryGetValue(jreader.Value.ToString(), out propertyInfo);
 #if VERBOSE_DEBUG
                         Debug.WriteLine("< {0}", jreader.Path);
 #endif
@@ -378,6 +383,8 @@ namespace OpenIZ.Core.Applets.ViewModel
                                         nRetVal.CopyObjectData(retVal);
                                         retVal = nRetVal;
                                         serializationType = xsiType;
+                                        PreparePropertyCache(xsiType);
+                                        serializationProperties = s_readPropertyCache[xsiType];
                                     }
                                 }
                                 else if (jreader.TokenType == JsonToken.Null)
@@ -402,7 +409,11 @@ namespace OpenIZ.Core.Applets.ViewModel
                                             else if (propertyInfo.PropertyType == typeof(String))
                                                 propertyInfo.SetValue(retVal, ((DateTime)jreader.Value).ToString("o"));
                                             else
-                                                propertyInfo.SetValue(retVal, (DateTimeOffset)jreader.Value);
+                                            {
+                                                // HACK: Mono is a scumbag
+                                                var dto = new DateTimeOffset((DateTime)jreader.Value);
+                                                propertyInfo.SetValue(retVal, dto);
+                                            }
                                             break;
                                         case JsonToken.Float:
                                             if (propertyInfo.PropertyType.StripNullable() == typeof(Decimal))
@@ -444,6 +455,57 @@ namespace OpenIZ.Core.Applets.ViewModel
         }
 
         /// <summary>
+        /// Prepares the property caches
+        /// </summary>
+        /// <param name="serialziationType"></param>
+        private static void PreparePropertyCache(Type serializationType)
+        {
+            // Properties
+            Dictionary<String, PropertyInfo> parseProperties = null;
+            if (!s_readPropertyCache.TryGetValue(serializationType, out parseProperties))
+            {
+                parseProperties = new Dictionary<string, PropertyInfo>();
+                foreach (var itm in serializationType.GetRuntimeProperties().Where(o => o.CanWrite))
+                {
+                    var jpa = itm.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName;
+                    if (jpa == null && itm.GetCustomAttribute<SerializationReferenceAttribute>() != null)
+                        jpa = serializationType.GetRuntimeProperty(itm.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty)?.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName + "Model";
+                    if (jpa == null)
+                        jpa = itm.Name.ToLower() + "Model";
+                    parseProperties.Add(jpa, itm);
+                }
+                lock (s_readPropertyCache)
+                    s_readPropertyCache.Add(serializationType, parseProperties);
+            }
+            // Properties
+            Dictionary<PropertyInfo, String> serializationProperties = null;
+
+            if (!s_writePropertyCache.TryGetValue(serializationType, out serializationProperties))
+            {
+                serializationProperties = new Dictionary<PropertyInfo, String>();
+                foreach (var itm in serializationType.GetRuntimeProperties().Where(o => o.CanRead))
+                {
+                    // Truly ignore this? No JsonProperty and a DataIgnore?
+                    if (itm.GetCustomAttribute<DataIgnoreAttribute>() != null && itm.GetCustomAttribute<JsonPropertyAttribute>() == null)
+                        continue;
+
+
+                    var jpa = itm.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName;
+                    if (jpa == null && itm.GetCustomAttribute<SerializationReferenceAttribute>() != null)
+                        jpa = serializationType.GetRuntimeProperty(itm.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty)?.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName + "Model";
+                    if (jpa == null)
+                        jpa = itm.Name.ToLower() + "Model";
+
+                    if (jpa == null || jpa == "$type")
+                        continue;
+                    serializationProperties.Add(itm, jpa);
+                }
+                lock (s_writePropertyCache)
+                    s_writePropertyCache.Add(serializationType, serializationProperties);
+            }
+        }
+
+        /// <summary>
         /// Serialize the specified object
         /// </summary>
         private static void SerializeInternal(IdentifiedData data, JsonWriter jwriter, HashSet<Guid> writeStack = null)
@@ -473,25 +535,20 @@ namespace OpenIZ.Core.Applets.ViewModel
             jwriter.WritePropertyName("$type");
             jwriter.WriteValue(data.Type);
             var myClassifier = data.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
-            foreach (var itm in data.GetType().GetRuntimeProperties().Where(p => p.CanRead && p.CanWrite))
+            
+            PreparePropertyCache(data.GetType());
+            var serializationProperties = s_writePropertyCache[data.GetType()];
+            
+            foreach (var itm in serializationProperties)
             {
-                // Truly ignore this? No JsonProperty and a DataIgnore?
-                if (itm.GetCustomAttribute<DataIgnoreAttribute>() != null && itm.GetCustomAttribute<JsonPropertyAttribute>() == null)
-                    continue; 
+
                 // Value is null
-                var value = itm.GetValue(data);
-                if (value == null || (itm.Name == myClassifier?.ClassifierProperty && value is IdentifiedData))
+                var value = itm.Key.GetValue(data);
+                if (value == null || (itm.Key.Name == myClassifier?.ClassifierProperty && value is IdentifiedData))
                     continue;
 
-                String propertyName = itm.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName;
-                var delayLoadProperty = itm.GetCustomAttribute<SerializationReferenceAttribute>();
-                if (!String.IsNullOrEmpty(delayLoadProperty?.RedirectProperty))
-                    propertyName = data.GetType().GetRuntimeProperty(delayLoadProperty?.RedirectProperty).GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName + "Model";
-                else if (propertyName == null && value is IdentifiedData)
-                    propertyName = String.Format("{0}Model", itm.Name.ToLower());
-                else if (propertyName == null || propertyName == "$type")
-                    continue;
-                else if (value is IList && (value as IList).Count == 0)
+                String propertyName = itm.Value;
+                if (value is IList && (value as IList).Count == 0)
                     continue;
 #if VERBOSE_DEBUG
                 Debug.WriteLine("> {0}", jwriter.Path);
@@ -501,7 +558,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                 if (value is IList)
                 {
                     // TODO: What if the object has classifiers?
-                    var elementType = itm.PropertyType.GenericTypeArguments[0];
+                    var elementType = itm.Key.PropertyType.GenericTypeArguments[0];
                     var classifierAttribute = elementType.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
                     if (classifierAttribute == null) // No classifier
                     {

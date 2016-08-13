@@ -1062,6 +1062,15 @@ CREATE TABLE Entity
 	CONSTRAINT CK_EntityDeterminerConceptSet CHECK (dbo.fn_IsConceptSetMember(DeterminerConceptId, 'EntityDeterminer') = 1)
 );
 
+GO 
+
+CREATE FUNCTION fn_AssertEntityClass (@EntityId UNIQUEIDENTIFIER, @AssertClassMnemonic NVARCHAR(32))
+RETURNS BIT BEGIN
+	RETURN (SELECT COUNT(*) FROM Entity INNER JOIN ConceptCurrentVersion ON (Entity.ClassConceptId = ConceptCurrentVersion.ConceptId) WHERE EntityId = @EntityId AND ConceptCurrentVersion.Mnemonic = @AssertClassMnemonic);
+END;
+
+GO
+
 CREATE TABLE EntityTag
 (
 	EntityTagId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(), -- UNIQUE IDENTIFIER FOR THE TAG INSTANCE
@@ -1114,7 +1123,7 @@ CREATE TABLE EntityAssociation
 	TargetEntityId UNIQUEIDENTIFIER NOT NULL, -- THE TARGET OF THE RELATIONSHIP
 	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE VERSION WHERE THE ASSOCIATION BECAME ACTIVE
 	ObsoleteVersionSequenceId NUMERIC(20), -- THE VERSION WHERE THE ASSOCIATION IS NO LONGER ACTIVE
-	AssociationTypeConceptId UNIQUEIDENTIFIER
+	AssociationTypeConceptId UNIQUEIDENTIFIER,
 	CONSTRAINT PK_EntityAssociation PRIMARY KEY (EntityAssociationId),
 	CONSTRAINT FK_EntityAssociationSourceEntityId FOREIGN KEY (SourceEntityId) REFERENCES Entity(EntityId),
 	CONSTRAINT FK_EntityAssociationTargetEntityId FOREIGN KEY (TargetEntityId) REFERENCES Entity(EntityId),
@@ -1131,7 +1140,7 @@ CREATE INDEX IX_EntityAssociationEffectiveVersion ON EntityAssociation(Effective
 CREATE TABLE QuantifiedEntityAssociation
 (
 	EntityAssociationId UNIQUEIDENTIFIER NOT NULL, -- THE UNIQUE IDENTIFIER FOR THE ASSOCIATION
-	Quantity FLOAT NOT NULL CHECK (Quantity > 0), -- THE QUANTITY OF THE SOURCE IN THE TARGET
+	Quantity FLOAT NOT NULL CHECK (Quantity >= 0), -- THE QUANTITY OF THE SOURCE IN THE TARGET
 	CONSTRAINT PK_QuantifiedEntityAssociation PRIMARY KEY (EntityAssociationId),
 	CONSTRAINT FK_QuantifiedEntityAssociationEntityAssociationId FOREIGN KEY (EntityAssociationId) REFERENCES EntityAssociation(EntityAssociationId)
 );
@@ -1519,6 +1528,43 @@ CREATE TABLE QuantifiedActParticipation
 	CONSTRAINT FK_QuantifiedActParticipationId FOREIGN KEY (ActParticipationId) REFERENCES ActParticipation(ActParticipationId)
 );
 
+-- STOCK BALANCE
+-- YOU MAY ASK WHY THE STOCK BALANCE IS NOT AN QUANTIFIED ENTITY RELATIONSHIP, WELL THE REASON
+-- IS THAT UPDATING A RELATIONSHIP RESULTS IN A NEW VERSION OF THE RELATED ENTITY (SOURCE), SINCE
+-- STOCK IS VERSION INDEPENDENT THIS TABLE ALLOWS FOR THAT STORAGE
+CREATE TABLE StockBalance (
+	StockBalanceId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(), -- THE UNIQUE IDENTIFIER FOR THE STOCK BALANCE
+	PlaceEntityId UNIQUEIDENTIFIER NOT NULL, -- THE IDENTIFIER OF THE PLACE TO WHICH THE STOCK IS HELD
+	MaterialEntityId UNIQUEIDENTIFIER NOT NULL, -- THE IDENTIFIER OF THE MATERIAL ENTITY TO WHICH THE STOCK BALANCE IS COUNTED
+	Quantity INT NOT NULL CHECK(Quantity >= 0), -- THE QUANTITY OF THE MATERIAL
+	CreationTime DATETIMEOFFSET NOT NULL DEFAULT SYSDATETIMEOFFSET(), -- TIME THE STOCK RECORD WAS FIRST CREATED
+	UpdatedTime DATETIMEOFFSET, -- THE TIME THAT THE STOCK BALANCE WAS LAST CALCULATED
+	CONSTRAINT PK_StockBalance PRIMARY KEY (StockBalanceId),
+	CONSTRAINT FK_StockBalanceMaterialEntity FOREIGN KEY (MaterialEntityId) REFERENCES Entity(EntityId),
+	CONSTRAINT FK_StockBalancePlaceEntity FOREIGN KEY (PlaceEntityId) REFERENCES Entity(EntityId),
+	CONSTRAINT CK_StockBalanceMaterialEntity CHECK (dbo.fn_AssertEntityClass(MaterialEntityId, 'ManufacturedMaterial') = 1),
+	CONSTRAINT CK_StockBalancePlaceEntity CHECK (dbo.fn_AssertEntityClass(PlaceEntityId, 'ServiceDeliveryLocation') = 1)
+);
+
+-- STOCK LEDGER
+CREATE TABLE StockLedger (
+	StockLedgerId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(), -- THE STOCK KLEDGER IDENTIFIER
+	PlaceEntityId UNIQUEIDENTIFIER NOT NULL, -- THE IDENTIFIER OF THE PLACE TO WHICH THE STOCK IS HELD
+	MaterialEntityId UNIQUEIDENTIFIER NOT NULL, -- THE IDENTIFIER OF THE MATERIAL ENTITY TO WHICH THE STOCK BALANCE IS COUNTED
+	Quantity INT NOT NULL, -- THE QUANTITY OF THE ACTION
+	LedgerActionConceptId UNIQUEIDENTIFIER NOT NULL, -- THE ACTION PERFORMED ON THE LEDGER
+	Note TEXT, -- HUMAN NOTES ABOUT THE LEDGER ENTRY
+	CreationTime DATETIMEOFFSET NOT NULL DEFAULT SYSDATETIMEOFFSET(),
+	CreatedBy UNIQUEIDENTIFIER NOT NULL, -- THE USER WHO CREATED THE LEDGER ENTRY
+	CONSTRAINT PK_StockLedger PRIMARY KEY (StockLedgerId),
+	CONSTRAINT FK_StockLedgerMaterialEntity FOREIGN KEY (MaterialEntityId) REFERENCES Entity(EntityId),
+	CONSTRAINT FK_StockLedgerPlaceEntity FOREIGN KEY (PlaceEntityId) REFERENCES Entity(EntityId),
+	CONSTRAINT CK_StockLedgerMaterialEntity CHECK (dbo.fn_AssertEntityClass(MaterialEntityId, 'ManufacturedMaterial') = 1),
+	CONSTRAINT CK_StockLedgerPlaceEntity CHECK (dbo.fn_AssertEntityClass(PlaceEntityId, 'ServiceDeliveryLocation') = 1),
+	CONSTRAINT FK_StockLedgerActionConcept FOREIGN KEY (LedgerActionConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT CK_StockLedgerActionConcept CHECK (dbo.fn_AssertConceptClass(LedgerActionConceptId, 'Stock') = 1)
+);
+
 GO 
 
 -- CREATE CONCEPT VIEW
@@ -1558,7 +1604,7 @@ CREATE VIEW EntityTelecomAddressValue AS
 GO
 
 
-
+-- ENTITY VERSION 
 CREATE VIEW EntityCurrentVersion AS
 SELECT EntityVersion.*, StatusConcept.Mnemonic AS StatusMnemonic, 
 	ClassConcept.Mnemonic AS ClassMnemonic, 

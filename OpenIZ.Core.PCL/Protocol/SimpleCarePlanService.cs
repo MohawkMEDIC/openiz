@@ -27,22 +27,25 @@ namespace OpenIZ.Core.Protocol
         }
 
         /// <summary>
+        /// Initialize
+        /// </summary>
+        public void Initialize()
+        {
+            this.Protocols = new List<IClinicalProtocol>();
+            int c;
+            foreach (var proto in this.m_repository.FindProtocol(o => !o.ObsoletionTime.HasValue, 0, null, out c))
+            {
+                var protocolClass = Activator.CreateInstance(proto.HandlerClass) as IClinicalProtocol;
+                protocolClass.Load(proto);
+                this.Protocols.Add(protocolClass);
+            }
+        }
+        /// <summary>
         /// Gets the protocols
         /// </summary>
         public List<IClinicalProtocol> Protocols
         {
-            get
-            {
-                var retVal = new List<IClinicalProtocol>();
-                int c;
-                foreach (var proto in this.m_repository.FindProtocol(o => !o.ObsoletionTime.HasValue, 0, null, out c))
-                {
-                    var protocolClass = Activator.CreateInstance(proto.HandlerClass) as IClinicalProtocol;
-                    protocolClass.Load(proto);
-                    retVal.Add(protocolClass);
-                }
-                return retVal;
-            }
+            get; private set;
         }
 
         /// <summary>

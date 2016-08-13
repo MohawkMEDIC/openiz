@@ -151,6 +151,8 @@
     <Compile Include="Security\SecurityUser.cs" />
     <Compile Include="Serialization\ModelSerializationBinder.cs" />
     <Compile Include="NonVersionedEntityData.cs" />
+    <Compile Include="Stock\StockBalance.cs" />
+    <Compile Include="Stock\StockLedger.cs" />
     <Compile Include="VersionedAssociation.cs" />
     <Compile Include="VersionedEntityData.cs" />
   </ItemGroup>

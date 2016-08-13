@@ -74,9 +74,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             retVal.DeterminerConceptKey = dbInstance.Entity.DeterminerConceptId;
 
             // Inversion relationships
-            //retVal.Relationships.RemoveAll(o => o.InversionIndicator);
-            retVal.Relationships.AddRange(context.EntityAssociations.Where(o => o.TargetEntityId == retVal.Key.Value).Select(o => new EntityRelationship(o.AssociationTypeConceptId, o.TargetEntityId)
+            retVal.Relationships.RemoveAll(o => o.InversionIndicator);
+            retVal.Relationships.AddRange(context.EntityAssociations.Where(o => o.TargetEntityId == retVal.Key.Value).Distinct().Select(o => new EntityRelationship(o.AssociationTypeConceptId, o.TargetEntityId)
             {
+                SourceEntityKey = o.SourceEntityId,
+                Key = o.EntityAssociationId,
                 InversionIndicator = true
             }));
 

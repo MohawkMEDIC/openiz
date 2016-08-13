@@ -68,6 +68,7 @@
     <Compile Include="ResourceHandler\ConceptResourceHandler.cs" />
     <Compile Include="ResourceHandler\ConceptSetResourceHandler.cs" />
     <Compile Include="ResourceHandler\IResourceHandler.cs" />
+    <Compile Include="ResourceHandler\ManufacturedMaterialHandler.cs" />
     <Compile Include="ResourceHandler\MaterialResourceHandler.cs" />
     <Compile Include="ResourceHandler\AssigningAuthorityResourceHandler.cs" />
     <Compile Include="ResourceHandler\PatientResourceHandler.cs" />

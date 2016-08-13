@@ -176,7 +176,7 @@ namespace OpenIZ.Core.Model.Map
             ClassMap classMap = this.m_mapFile.GetModelClassMap(modelType ?? memberExpression.Expression.Type);
 
             if (classMap == null)
-                return memberExpression;
+                return accessExpression;
 
             // Expression is the same class? Collapse if it is a key
             MemberExpression accessExpressionAsMember = accessExpression as MemberExpression;
@@ -447,6 +447,11 @@ namespace OpenIZ.Core.Model.Map
             if (iKeyMap != null)
             {
                 object keyValue = typeof(TDomain).GetRuntimeProperty(iKeyMap.DomainName).GetValue(domainInstance);
+                while (iKeyMap.Via != null)
+                {
+                    keyValue = keyValue.GetType().GetRuntimeProperty(iKeyMap.Via.DomainName).GetValue(keyValue);
+                    iKeyMap = iKeyMap.Via;
+                }
                 if (keyValue is byte[])
                     keyValue = new Guid(keyValue as byte[]);
 

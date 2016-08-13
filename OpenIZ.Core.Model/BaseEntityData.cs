@@ -120,6 +120,8 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Get the modified on time
         /// </summary>
+        [JsonIgnore, XmlIgnore]
+
         public override DateTimeOffset ModifiedOn
         {
             get

@@ -43,5 +43,36 @@ namespace OpenIZ.Core.Services
         /// Finds the specified material with the specified restrictions
         /// </summary>
         IEnumerable<Material> FindMaterial(Expression<Func<Material, bool>> expression, int offset, int count, out int totalCount);
+
+        /// <summary>
+        /// Saves the specified ManufacturedMaterial from data layer
+        /// </summary>
+        ManufacturedMaterial SaveManufacturedMaterial(ManufacturedMaterial ManufacturedMaterial);
+
+        /// <summary>
+        /// Inserts the ManufacturedMaterial in the persistence layer
+        /// </summary>
+        ManufacturedMaterial InsertManufacturedMaterial(ManufacturedMaterial ManufacturedMaterial);
+
+        /// <summary>
+        /// Gets the specified ManufacturedMaterial from the database
+        /// </summary>
+        ManufacturedMaterial GetManufacturedMaterial(Guid id, Guid versionId);
+
+        /// <summary>
+        /// Obsoletes the specified ManufacturedMaterial
+        /// </summary>
+        ManufacturedMaterial ObsoleteManufacturedMaterial(Guid key);
+
+        /// <summary>
+        /// Finds the specified ManufacturedMaterial
+        /// </summary>
+        IEnumerable<ManufacturedMaterial> FindManufacturedMaterial(Expression<Func<ManufacturedMaterial, bool>> expression);
+
+        /// <summary>
+        /// Finds the specified ManufacturedMaterial with the specified restrictions
+        /// </summary>
+        IEnumerable<ManufacturedMaterial> FindManufacturedMaterial(Expression<Func<ManufacturedMaterial, bool>> expression, int offset, int count, out int totalCount);
+
     }
 }

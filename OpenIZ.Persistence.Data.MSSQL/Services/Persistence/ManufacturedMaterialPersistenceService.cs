@@ -48,10 +48,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             var idp = dataInstance as IDbVersionedData;
             var domainMat = dataInstance as Data.ManufacturedMaterial ?? context.GetTable<Data.ManufacturedMaterial>().Where(o => o.EntityVersionId == idp.VersionId).First();
-            var dbm = context.GetTable<Data.Material>().FirstOrDefault(o => o.EntityVersionId == idp.Id);
+            var dbm = context.GetTable<Data.Material>().FirstOrDefault(o => o.EntityVersionId == domainMat.EntityVersionId);
             var retVal = this.m_materialPersister.ToModelInstance<Core.Model.Entities.ManufacturedMaterial>(dbm, context, principal);
             retVal.LotNumber = domainMat.LotNumber;
-            return base.ToModelInstance(dataInstance, context, principal);
+            return retVal;
 
         }
 
