@@ -33,6 +33,8 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core;
 using OpenIZ.Core.Model.Reflection;
+using System.Reflection;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -136,8 +138,29 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public override IQueryable<TModel> Query (ModelDataContext context, Expression<Func<TModel, bool>> query, IPrincipal principal)
 		{
-			return this.QueryInternal(context, query).Select(o=>this.ToModelInstance(o, context, principal));
+            var access = typeof(TDomain)?.GetProperty("Id")?.GetCustomAttribute<LinqPropertyMapAttribute>();
+            var cacheService = ApplicationContext.Current.GetService<IDataCachingService>();
+
+            //if (access != null && cacheService != null)
+            //{
+            //    var parm = Expression.Parameter(typeof(TDomain));
+            //    Expression<Func<TDomain, Guid>> selectExpression = Expression.Lambda<Func<TDomain, Guid>>(Expression.MakeMemberAccess(parm, typeof(TDomain).GetRuntimeProperty(access.LinqMember)), parm);
+
+            //    var internalQuery = this.QueryInternal(context, query);
+            //    return internalQuery.Select(selectExpression).Select(o => cacheService.GetCacheItem<TModel>(o) ?? this.ToModelInstance(context.GetTable<TDomain>().Where(ExpressionRewriter.Rewrite<TDomain>(p=>p.Id == o)).Single, context, principal));
+            //}
+            //else
+                return this.QueryInternal(context, query).Select(o=>this.CacheLoad(o, context, principal));
 		}
+
+        /// <summary>
+        /// Tru to load from cache
+        /// </summary>
+        private TModel CacheLoad(TDomain o, ModelDataContext context, IPrincipal principal)
+        {
+            return ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(o.Id) ?? this.ToModelInstance(o, context, principal);
+        }
+
 
         /// <summary>
         /// Perform the query 

@@ -19,6 +19,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
@@ -84,5 +85,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             data.QuantityConceptKey = data.QuantityConcept?.Key ?? data.QuantityConceptKey;
             return base.Update(context, data, principal);
         }
+
     }
 }

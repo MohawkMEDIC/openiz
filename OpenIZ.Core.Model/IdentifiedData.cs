@@ -89,7 +89,7 @@ namespace OpenIZ.Core.Model
                     typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(fi.FieldType.GenericTypeArguments[0].GetTypeInfo()))
                 {
                     foreach (IdentifiedData itm in value as IList)
-                        itm.SetDelayLoad(v);
+                        itm?.SetDelayLoad(v);
                 }
             }
         }

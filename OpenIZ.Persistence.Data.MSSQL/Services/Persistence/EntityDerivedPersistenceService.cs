@@ -20,6 +20,7 @@
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using System.Security.Principal;
+using System.Data.Linq;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -61,6 +62,15 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = this.m_entityPersister.Obsolete(context, data, principal);
             return data;
+        }
+
+        /// <summary>
+        /// Get data load options
+        /// </summary>
+        internal override DataLoadOptions GetDataLoadOptions()
+        {
+            var retVal = this.m_entityPersister.GetDataLoadOptions();
+            return retVal;
         }
 
     }

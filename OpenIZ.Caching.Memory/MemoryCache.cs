@@ -137,13 +137,16 @@ namespace OpenIZ.Caching.Memory
                     lock (this.m_lock)
                     {
                         var entry = cache[key];
-                        entry.Data = data; //(data as IdentifiedData)?.GetLocked() ?? data;
+                        entry.Data = (data as IdentifiedData)?.GetLocked() ?? data;
                         entry.LastUpdateTime = DateTime.Now.Ticks;
                     }
                 else
                     lock (this.m_lock)
                         if (!cache.ContainsKey(key))
-                            cache.Add(key, new CacheEntry(DateTime.Now, data));
+                        {
+                            cache.Add(key, new CacheEntry(DateTime.Now, (data as IdentifiedData)?.GetLocked() ?? data));
+                            this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cache for {0} contains {1} entries...", objData, cache.Count);
+                        }
             }
             else if (this.m_configuration.AutoSubscribeTypes)
                 this.RegisterCacheType(data.GetType());
@@ -168,9 +171,11 @@ namespace OpenIZ.Caching.Memory
                 if (cache.TryGetValue(key.Value, out candidate))
                 {
                     candidate.Touch();
+                    this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cache hit {0}", key.Value);
                     return candidate.Data;
                 }
             }
+            this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cache miss {0}", key.Value);
             return null;
         }
 
