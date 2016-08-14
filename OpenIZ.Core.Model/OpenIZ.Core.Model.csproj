@@ -44,6 +44,16 @@
     <Compile Include="Acts\PatientEncounter.cs" />
     <Compile Include="Acts\Protocol.cs" />
     <Compile Include="Acts\SubstanceAdministration.cs" />
+    <Compile Include="AMI\AmiCollection.cs" />
+    <Compile Include="AMI\Auth\SecurityPolicyInfo.cs" />
+    <Compile Include="AMI\Auth\SecurityRoleInfo.cs" />
+    <Compile Include="AMI\Auth\SecurityUserInfo.cs" />
+    <Compile Include="AMI\Security\RevokeReason.cs" />
+    <Compile Include="AMI\Security\SubmissionInfo.cs" />
+    <Compile Include="AMI\Security\SubmissionRequest.cs" />
+    <Compile Include="AMI\Security\SubmissionResult.cs" />
+    <Compile Include="AMI\Security\SubmissionStatus.cs" />
+    <Compile Include="AMI\Security\X509Certificate2Info.cs" />
     <Compile Include="Attributes\AutoLoadAttribute.cs" />
     <Compile Include="Attributes\ClassifierAttribute.cs" />
     <Compile Include="Attributes\DataIgnoreAttribute.cs" />
