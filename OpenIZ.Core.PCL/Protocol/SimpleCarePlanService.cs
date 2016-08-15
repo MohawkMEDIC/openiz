@@ -16,8 +16,6 @@ namespace OpenIZ.Core.Protocol
     /// </summary>
     public class SimpleCarePlanService : ICarePlanService
     {
-        // Protocols
-        private IClinicalProtocolRepositoryService m_repository = null;
 
         /// <summary>
         /// Constructs the aggregate care planner
@@ -33,7 +31,8 @@ namespace OpenIZ.Core.Protocol
         {
             this.Protocols = new List<IClinicalProtocol>();
             int c;
-            foreach (var proto in this.m_repository.FindProtocol(o => !o.ObsoletionTime.HasValue, 0, null, out c))
+            var repo = ApplicationServiceContext.Current.GetService(typeof(IClinicalProtocolRepositoryService)) as IClinicalProtocolRepositoryService;
+            foreach (var proto in repo.FindProtocol(o => !o.ObsoletionTime.HasValue, 0, null, out c))
             {
                 var protocolClass = Activator.CreateInstance(proto.HandlerClass) as IClinicalProtocol;
                 protocolClass.Load(proto);
@@ -48,21 +47,6 @@ namespace OpenIZ.Core.Protocol
             get; private set;
         }
 
-        /// <summary>
-        /// Gets or sets the repository to be used
-        /// </summary>
-        public IClinicalProtocolRepositoryService Repository
-        {
-            get
-            {
-                return this.m_repository;
-            }
-            set
-            {
-                this.m_repository = value;
-
-            }
-        }
 
         /// <summary>
         /// Create a care plan

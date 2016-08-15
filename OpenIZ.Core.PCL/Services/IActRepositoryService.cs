@@ -15,6 +15,31 @@ namespace OpenIZ.Core.Services
     {
 
         /// <summary>
+        /// Insert the specified act
+        /// </summary>
+        Act Insert(Act insert);
+
+        /// <summary>
+        /// Insert or update the specified act
+        /// </summary>
+        Act Save(Act act);
+
+        /// <summary>
+        /// Obsolete the specified act
+        /// </summary>
+        Act Obsolete(Guid key);
+
+        /// <summary>
+        /// Get the specified act
+        /// </summary>
+        Act Get(Guid key, Guid versionId);
+
+        /// <summary>
+        /// Find all acts
+        /// </summary>
+        IEnumerable<Act> FindActs(Expression<Func<Act, bool>> query, int offset, int? count, out int totalResults);
+
+        /// <summary>
         /// Find the substance administrations
         /// </summary>
         IEnumerable<SubstanceAdministration> FindSubstanceAdministrations(Expression<Func<SubstanceAdministration, bool>> filter, int offset, int? count, out int totalResults); 

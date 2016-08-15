@@ -589,7 +589,7 @@
     </property>
     <collapseKey propertyName="AssociationTypeConcept" keyName="AssociationTypeConceptId"/>
   </class>
-
+  
   <class modelClass="OpenIZ.Core.Model.Entities.EntityTelecomAddress, OpenIZ.Core.Model, Version=1.0.0.0"
      domainClass="OpenIZ.Persistence.Data.MSSQL.Data.EntityTelecomAddress, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="EntityTelecomAddressId"/>

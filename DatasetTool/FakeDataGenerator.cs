@@ -21,6 +21,7 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Security;
 using MARC.Everest.Threading;
+using OpenIZ.Core;
 
 namespace DatasetTool
 {
@@ -100,7 +101,11 @@ namespace DatasetTool
             var parameters = new ParameterParser<ConsoleParameters>().Parse(args);
             int populationSize = Int32.Parse(parameters.PopulationSize ?? "10");
             int maxAge = Int32.Parse(parameters.MaxAge ?? "500");
-            scp.Repository = new SeederProtocolRepositoryService();
+            ApplicationContext.Current.AddServiceProvider(typeof(SimpleCarePlanService));
+            ApplicationContext.Current.AddServiceProvider(typeof(SeederProtocolRepositoryService));
+
+            ApplicationServiceContext.Current = ApplicationContext.Current;
+            //cp.Repository = new SeederProtocolRepositoryService();
             ApplicationContext.Current.Start();
 
             WaitThreadPool wtp = new WaitThreadPool();

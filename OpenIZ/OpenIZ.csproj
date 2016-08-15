@@ -52,6 +52,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autodocs.ServiceModel.Web">
+      <HintPath>..\Solution Items\Autodocs.ServiceModel.Web.dll</HintPath>
+    </Reference>
     <Reference Include="MARC.HI.EHRS.SVC.Auditing">
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Auditing.dll</HintPath>
     </Reference>

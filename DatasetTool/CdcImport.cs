@@ -151,7 +151,8 @@ namespace DatasetTool
                         {
                             new ConceptReferenceTerm()
                             {
-                                ReferenceTermKey = refTerm.Key
+                                ReferenceTermKey = refTerm.Key,
+                                RelationshipTypeKey = ConceptRelationshipTypeKeys.SameAs
                             }
                         }
                     };

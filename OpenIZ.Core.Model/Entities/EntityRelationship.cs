@@ -141,6 +141,13 @@ namespace OpenIZ.Core.Model.Entities
             }
         }
 
+
+        /// <summary>
+        /// Represents the quantity of target in source
+        /// </summary>
+        [XmlElement("quantity"), JsonProperty("quantity")]
+        public int Quantity { get; set; }
+
         /// <summary>
         /// Is empty
         /// </summary>

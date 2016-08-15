@@ -26,11 +26,6 @@ namespace OpenIZ.Core.Services
         List<IClinicalProtocol> Protocols { get; }
 
         /// <summary>
-        /// Gets or sets the clinical repository to use
-        /// </summary>
-        IClinicalProtocolRepositoryService Repository { get; set; }
-
-        /// <summary>
         /// Initializes the protocols
         /// </summary>
         void Initialize();

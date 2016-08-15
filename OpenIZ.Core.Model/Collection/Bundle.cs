@@ -274,14 +274,13 @@ namespace OpenIZ.Core.Model.Collection
 
                                 if (itm is IdentifiedData)
                                 {
-                                    if (currentBundle.Item.Exists(o => o.Key == (itm as IdentifiedData).Key))
+                                    if (currentBundle.Item.Exists(o => o?.Key == (itm as IdentifiedData).Key))
                                         continue;
 
                                     if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null)
                                         lock (currentBundle.m_lockObject)
                                             if (!currentBundle.Item.Exists(o => o.Key == (itm as IdentifiedData).Key))
                                                 currentBundle.Item.Add(itm as IdentifiedData);
-
                                     ProcessModel(itm as IdentifiedData, currentBundle, true);
                                 }
                             }

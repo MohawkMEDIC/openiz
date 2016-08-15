@@ -17,6 +17,14 @@ namespace OpenIZ.Core.Services.Impl
     public class LocalActRepositoryService : IActRepositoryService
     {
         /// <summary>
+        /// Find acts matching the predicate
+        /// </summary>
+        public IEnumerable<Act> FindActs(Expression<Func<Act, bool>> query, int offset, int? count, out int totalResults)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Perform the search
         /// </summary>
         public IEnumerable<SubstanceAdministration> FindSubstanceAdministrations(Expression<Func<SubstanceAdministration, bool>> filter, int offset, int? count, out int totalResults)
@@ -27,6 +35,26 @@ namespace OpenIZ.Core.Services.Impl
 
             return persistenceService.Query(filter, offset, count, AuthenticationContext.Current.Principal, out totalResults);
 
+        }
+
+        public Act Get(Guid key, Guid versionId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Act Insert(Act insert)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Act Obsolete(Guid key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Act Save(Act act)
+        {
+            throw new NotImplementedException();
         }
     }
 }

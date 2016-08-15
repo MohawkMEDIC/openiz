@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -58,6 +59,10 @@ namespace OpenIZ.Core.Services
 		/// <returns>Returns the specified provider.</returns>
 		Provider Get(Guid id, Guid versionId);
 
+        /// <summary>
+        /// Get the provider based off the user identity
+        /// </summary>
+        Provider Get(IIdentity identity);
 
 		/// <summary>
 		/// Searches for a provider using a given predicate.

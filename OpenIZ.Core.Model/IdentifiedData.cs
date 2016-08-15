@@ -36,7 +36,6 @@ using System.Xml.Serialization;
 namespace OpenIZ.Core.Model
 {
     
-
     /// <summary>
     /// Represents data that is identified by a key
     /// </summary>
