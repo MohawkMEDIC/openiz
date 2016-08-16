@@ -57,6 +57,17 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
+		/// Changes the password of a user.
+		/// </summary>
+		/// <param name="id">The id of the user whose password is to be changed.</param>
+		/// <param name="password">The new password of the user.</param>
+		/// <returns>Returns the updated user.</returns>
+		public SecurityUser ChangePassword(Guid id, string password)
+		{
+			return this.Client.Put<string, SecurityUser>(string.Format("changepassword/{0}", id.ToString()), this.Client.Accept, password);
+		}
+
+		/// <summary>
 		/// Creates a device in the IMS.
 		/// </summary>
 		/// <param name="device">The device to be created.</param>
