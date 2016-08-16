@@ -73,8 +73,16 @@ namespace OpenIZ.Core.Model.Query
             foreach (var itm in qstring.Split('&'))
             {
                 var expr = itm.Split('=');
+                expr[0] = Uri.UnescapeDataString(expr[0]);
+                expr[1] = Uri.UnescapeDataString(expr[1]);
                 // HACK: Replace this later
-                retVal.Add(expr[0].Trim(), expr[1].Replace('+', ' ').Replace("%3C","<").Replace("%3E",">").Replace("%21","!").Replace("%3D","=").Trim());
+                retVal.Add(expr[0].Trim(), expr[1].Replace('+', ' ').
+                    Replace("%3C","<").
+                    Replace("%3E",">").
+                    Replace("%21","!").
+                    Replace("%3D","=").
+                    Replace("%5B", "[").
+                    Replace("%5D", "]").Trim());
             }
             return retVal;
         }

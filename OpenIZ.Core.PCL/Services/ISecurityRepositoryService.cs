@@ -187,6 +187,11 @@ namespace OpenIZ.Core.Services
 		/// </summary>
 		UserEntity GetUserEntity(Guid id, Guid versionId);
 
+        /// <summary>
+        /// Get the user entity 
+        /// </summary>
+        UserEntity GetUserEntity(IIdentity identity);
+
 		/// <summary>
 		/// Locks a specific user.
 		/// </summary>

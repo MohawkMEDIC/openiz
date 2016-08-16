@@ -375,6 +375,18 @@ namespace OpenIZ.Core.Services.Impl
         }
 
         /// <summary>
+        /// Get user entity from identity
+        /// </summary>
+        public UserEntity GetUserEntity(IIdentity identity)
+        {
+            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (pers == null)
+                throw new InvalidOperationException("Missing persistence service");
+            int t = 0;
+            return pers.Query(o => o.SecurityUser.UserName == identity.Name, 0, 1, AuthenticationContext.Current.Principal, out t).FirstOrDefault();
+        }
+
+        /// <summary>
         /// Gets the specified user entity
         /// </summary>
         public UserEntity GetUserEntity(Guid id, Guid versionId)

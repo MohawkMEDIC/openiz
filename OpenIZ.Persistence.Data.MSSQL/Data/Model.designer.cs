@@ -22,7 +22,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 	using System;
 	
 	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="OpenIZ")]
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="OpenIZ_Test")]
 	public partial class ModelDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -30,12 +30,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertAct(Act instance);
-    partial void UpdateAct(Act instance);
-    partial void DeleteAct(Act instance);
     partial void InsertUserEntity(UserEntity instance);
     partial void UpdateUserEntity(UserEntity instance);
     partial void DeleteUserEntity(UserEntity instance);
+    partial void InsertAct(Act instance);
+    partial void UpdateAct(Act instance);
+    partial void DeleteAct(Act instance);
     partial void InsertActExtension(ActExtension instance);
     partial void UpdateActExtension(ActExtension instance);
     partial void DeleteActExtension(ActExtension instance);
@@ -252,19 +252,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void InsertSecurityUserRole(SecurityUserRole instance);
     partial void UpdateSecurityUserRole(SecurityUserRole instance);
     partial void DeleteSecurityUserRole(SecurityUserRole instance);
+    partial void InsertStockBalance(StockBalance instance);
+    partial void UpdateStockBalance(StockBalance instance);
+    partial void DeleteStockBalance(StockBalance instance);
+    partial void InsertStockLedger(StockLedger instance);
+    partial void UpdateStockLedger(StockLedger instance);
+    partial void DeleteStockLedger(StockLedger instance);
     partial void InsertSubstanceAdministration(SubstanceAdministration instance);
     partial void UpdateSubstanceAdministration(SubstanceAdministration instance);
     partial void DeleteSubstanceAdministration(SubstanceAdministration instance);
-    partial void InsertTemplateDefinition(TemplateDefinition instance);
-    partial void UpdateTemplateDefinition(TemplateDefinition instance);
-    partial void DeleteTemplateDefinition(TemplateDefinition instance);
     partial void InsertTextObservation(TextObservation instance);
     partial void UpdateTextObservation(TextObservation instance);
     partial void DeleteTextObservation(TextObservation instance);
     #endregion
 		
 		public ModelDataContext() : 
-				base(global::OpenIZ.Persistence.Data.MSSQL.Properties.Settings.Default.OpenIZConnectionString2, mappingSource)
+				base(global::OpenIZ.Persistence.Data.MSSQL.Properties.Settings.Default.OpenIZ_TestConnectionString2, mappingSource)
 		{
 			OnCreated();
 		}
@@ -293,19 +296,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			OnCreated();
 		}
 		
-		public System.Data.Linq.Table<Act> Acts
-		{
-			get
-			{
-				return this.GetTable<Act>();
-			}
-		}
-		
 		public System.Data.Linq.Table<UserEntity> UserEntities
 		{
 			get
 			{
 				return this.GetTable<UserEntity>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Act> Acts
+		{
+			get
+			{
+				return this.GetTable<Act>();
 			}
 		}
 		
@@ -885,19 +888,27 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		public System.Data.Linq.Table<StockBalance> StockBalances
+		{
+			get
+			{
+				return this.GetTable<StockBalance>();
+			}
+		}
+		
+		public System.Data.Linq.Table<StockLedger> StockLedgers
+		{
+			get
+			{
+				return this.GetTable<StockLedger>();
+			}
+		}
+		
 		public System.Data.Linq.Table<SubstanceAdministration> SubstanceAdministrations
 		{
 			get
 			{
 				return this.GetTable<SubstanceAdministration>();
-			}
-		}
-		
-		public System.Data.Linq.Table<TemplateDefinition> TemplateDefinitions
-		{
-			get
-			{
-				return this.GetTable<TemplateDefinition>();
 			}
 		}
 		
@@ -907,14 +918,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				return this.GetTable<TextObservation>();
 			}
-		}
-		
-		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Authenticate")]
-		public int sp_Authenticate([global::System.Data.Linq.Mapping.ParameterAttribute(Name="UserName", DbType="NVarChar(128)")] string userName, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="PasswordHash", DbType="NVarChar(128)")] string passwordHash, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="MaxInvalidLoginAttempts", DbType="Int")] System.Nullable<int> maxInvalidLoginAttempts, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="SecurityUserId", DbType="UniqueIdentifier")] ref System.Nullable<System.Guid> securityUserId)
-		{
-			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), userName, passwordHash, maxInvalidLoginAttempts, securityUserId);
-			securityUserId = ((System.Nullable<System.Guid>)(result.GetParameterValue(3)));
-			return ((int)(result.ReturnValue));
 		}
 		
 		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.fn_AssertConceptClass", IsComposable=true)]
@@ -929,6 +932,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			return ((string)(this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod()))).ReturnValue));
 		}
 		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.fn_AssertEntityClass", IsComposable=true)]
+		public System.Nullable<bool> fn_AssertEntityClass([global::System.Data.Linq.Mapping.ParameterAttribute(Name="EntityId", DbType="UniqueIdentifier")] System.Nullable<System.Guid> entityId, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="AssertClassMnemonic", DbType="NVarChar(32)")] string assertClassMnemonic)
+		{
+			return ((System.Nullable<bool>)(this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), entityId, assertClassMnemonic).ReturnValue));
+		}
+		
 		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.fn_IsAccountLocked", IsComposable=true)]
 		public System.Nullable<bool> fn_IsAccountLocked([global::System.Data.Linq.Mapping.ParameterAttribute(Name="UserName", DbType="NVarChar(128)")] string userName)
 		{
@@ -940,6 +949,182 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			return ((System.Nullable<bool>)(this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), conceptId, conceptSetMnemonic).ReturnValue));
 		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.sp_Authenticate")]
+		public int sp_Authenticate([global::System.Data.Linq.Mapping.ParameterAttribute(Name="UserName", DbType="NVarChar(128)")] string userName, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="PasswordHash", DbType="NVarChar(128)")] string passwordHash, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="MaxInvalidLoginAttempts", DbType="Int")] System.Nullable<int> maxInvalidLoginAttempts, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="SecurityUserId", DbType="UniqueIdentifier")] ref System.Nullable<System.Guid> securityUserId)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), userName, passwordHash, maxInvalidLoginAttempts, securityUserId);
+			securityUserId = ((System.Nullable<System.Guid>)(result.GetParameterValue(3)));
+			return ((int)(result.ReturnValue));
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.UserEntity")]
+	public partial class UserEntity : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _EntityVersionId;
+		
+		private System.Guid _UserId;
+		
+		private EntityRef<Person> _Person;
+		
+		private EntityRef<SecurityUser> _SecurityUser;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnEntityVersionIdChanging(System.Guid value);
+    partial void OnEntityVersionIdChanged();
+    partial void OnUserIdChanging(System.Guid value);
+    partial void OnUserIdChanged();
+    #endregion
+		
+		public UserEntity()
+		{
+			this._Person = default(EntityRef<Person>);
+			this._SecurityUser = default(EntityRef<SecurityUser>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		public System.Guid EntityVersionId
+		{
+			get
+			{
+				return this._EntityVersionId;
+			}
+			set
+			{
+				if ((this._EntityVersionId != value))
+				{
+					if (this._Person.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnEntityVersionIdChanging(value);
+					this.SendPropertyChanging();
+					this._EntityVersionId = value;
+					this.SendPropertyChanged("EntityVersionId");
+					this.OnEntityVersionIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid UserId
+		{
+			get
+			{
+				return this._UserId;
+			}
+			set
+			{
+				if ((this._UserId != value))
+				{
+					if (this._SecurityUser.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUserIdChanging(value);
+					this.SendPropertyChanging();
+					this._UserId = value;
+					this.SendPropertyChanged("UserId");
+					this.OnUserIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Person_UserEntity", Storage="_Person", ThisKey="EntityVersionId", OtherKey="EntityVersionId", IsForeignKey=true)]
+		public Person Person
+		{
+			get
+			{
+				return this._Person.Entity;
+			}
+			set
+			{
+				Person previousValue = this._Person.Entity;
+				if (((previousValue != value) 
+							|| (this._Person.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Person.Entity = null;
+						previousValue.UserEntity = null;
+					}
+					this._Person.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntity = this;
+						this._EntityVersionId = value.EntityVersionId;
+					}
+					else
+					{
+						this._EntityVersionId = default(System.Guid);
+					}
+					this.SendPropertyChanged("Person");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity", Storage="_SecurityUser", ThisKey="UserId", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser SecurityUser
+		{
+			get
+			{
+				return this._SecurityUser.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._SecurityUser.Entity;
+				if (((previousValue != value) 
+							|| (this._SecurityUser.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SecurityUser.Entity = null;
+						previousValue.UserEntities.Remove(this);
+					}
+					this._SecurityUser.Entity = value;
+					if ((value != null))
+					{
+						value.UserEntities.Add(this);
+						this._UserId = value.UserId;
+					}
+					else
+					{
+						this._UserId = default(System.Guid);
+					}
+					this.SendPropertyChanged("SecurityUser");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Act")]
@@ -949,8 +1134,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
 		private System.Guid _ActId;
-		
-		private System.Nullable<System.Guid> _TemplateDefinitionId;
 		
 		private System.Guid _ClassConceptId;
 		
@@ -980,16 +1163,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntityRef<Concept> _MoodConcept;
 		
-		private EntityRef<TemplateDefinition> _TemplateDefinition;
-		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
     partial void OnActIdChanging(System.Guid value);
     partial void OnActIdChanged();
-    partial void OnTemplateDefinitionIdChanging(System.Nullable<System.Guid> value);
-    partial void OnTemplateDefinitionIdChanged();
     partial void OnClassConceptIdChanging(System.Guid value);
     partial void OnClassConceptIdChanged();
     partial void OnMoodConceptIdChanging(System.Guid value);
@@ -1010,7 +1189,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._ActVersions = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersions), new Action<ActVersion>(this.detach_ActVersions));
 			this._ClassConcept = default(EntityRef<Concept>);
 			this._MoodConcept = default(EntityRef<Concept>);
-			this._TemplateDefinition = default(EntityRef<TemplateDefinition>);
 			OnCreated();
 		}
 		
@@ -1030,30 +1208,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this._ActId = value;
 					this.SendPropertyChanged("ActId");
 					this.OnActIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TemplateDefinitionId", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> TemplateDefinitionId
-		{
-			get
-			{
-				return this._TemplateDefinitionId;
-			}
-			set
-			{
-				if ((this._TemplateDefinitionId != value))
-				{
-					if (this._TemplateDefinition.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnTemplateDefinitionIdChanging(value);
-					this.SendPropertyChanging();
-					this._TemplateDefinitionId = value;
-					this.SendPropertyChanged("TemplateDefinitionId");
-					this.OnTemplateDefinitionIdChanged();
 				}
 			}
 		}
@@ -1304,40 +1458,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TemplateDefinition_Act", Storage="_TemplateDefinition", ThisKey="TemplateDefinitionId", OtherKey="TemplateDefinitionId", IsForeignKey=true)]
-		public TemplateDefinition TemplateDefinition
-		{
-			get
-			{
-				return this._TemplateDefinition.Entity;
-			}
-			set
-			{
-				TemplateDefinition previousValue = this._TemplateDefinition.Entity;
-				if (((previousValue != value) 
-							|| (this._TemplateDefinition.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._TemplateDefinition.Entity = null;
-						previousValue.Acts.Remove(this);
-					}
-					this._TemplateDefinition.Entity = value;
-					if ((value != null))
-					{
-						value.Acts.Add(this);
-						this._TemplateDefinitionId = value.TemplateDefinitionId;
-					}
-					else
-					{
-						this._TemplateDefinitionId = default(Nullable<System.Guid>);
-					}
-					this.SendPropertyChanged("TemplateDefinition");
-				}
-			}
-		}
-		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -1476,174 +1596,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this.SendPropertyChanging();
 			entity.Act = null;
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.UserEntity")]
-	public partial class UserEntity : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private System.Guid _EntityVersionId;
-		
-		private System.Guid _UserId;
-		
-		private EntityRef<Person> _Person;
-		
-		private EntityRef<SecurityUser> _SecurityUser;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnEntityVersionIdChanging(System.Guid value);
-    partial void OnEntityVersionIdChanged();
-    partial void OnUserIdChanging(System.Guid value);
-    partial void OnUserIdChanged();
-    #endregion
-		
-		public UserEntity()
-		{
-			this._Person = default(EntityRef<Person>);
-			this._SecurityUser = default(EntityRef<SecurityUser>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityVersionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
-		public System.Guid EntityVersionId
-		{
-			get
-			{
-				return this._EntityVersionId;
-			}
-			set
-			{
-				if ((this._EntityVersionId != value))
-				{
-					if (this._Person.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnEntityVersionIdChanging(value);
-					this.SendPropertyChanging();
-					this._EntityVersionId = value;
-					this.SendPropertyChanged("EntityVersionId");
-					this.OnEntityVersionIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid UserId
-		{
-			get
-			{
-				return this._UserId;
-			}
-			set
-			{
-				if ((this._UserId != value))
-				{
-					if (this._SecurityUser.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnUserIdChanging(value);
-					this.SendPropertyChanging();
-					this._UserId = value;
-					this.SendPropertyChanged("UserId");
-					this.OnUserIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Person_UserEntity", Storage="_Person", ThisKey="EntityVersionId", OtherKey="EntityVersionId", IsForeignKey=true)]
-		public Person Person
-		{
-			get
-			{
-				return this._Person.Entity;
-			}
-			set
-			{
-				Person previousValue = this._Person.Entity;
-				if (((previousValue != value) 
-							|| (this._Person.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Person.Entity = null;
-						previousValue.UserEntity = null;
-					}
-					this._Person.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntity = this;
-						this._EntityVersionId = value.EntityVersionId;
-					}
-					else
-					{
-						this._EntityVersionId = default(System.Guid);
-					}
-					this.SendPropertyChanged("Person");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_UserEntity", Storage="_SecurityUser", ThisKey="UserId", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser SecurityUser
-		{
-			get
-			{
-				return this._SecurityUser.Entity;
-			}
-			set
-			{
-				SecurityUser previousValue = this._SecurityUser.Entity;
-				if (((previousValue != value) 
-							|| (this._SecurityUser.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._SecurityUser.Entity = null;
-						previousValue.UserEntities.Remove(this);
-					}
-					this._SecurityUser.Entity = value;
-					if ((value != null))
-					{
-						value.UserEntities.Add(this);
-						this._UserId = value.UserId;
-					}
-					else
-					{
-						this._UserId = default(System.Guid);
-					}
-					this.SendPropertyChanged("SecurityUser");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
 		}
 	}
 	
@@ -6473,6 +6425,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<QuantityObservation> _QuantityObservationsUnitOfMeasureConceptId;
 		
+		private EntitySet<StockLedger> _StockLedgersLedgerActionConceptId;
+		
 		private EntitySet<SubstanceAdministration> _SubstanceAdministrationsDoseUnitConceptId;
 		
 		private EntitySet<SubstanceAdministration> _SubstanceAdministrationsRouteConceptId;
@@ -6528,6 +6482,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._PlaceServicesServiceConceptId = new EntitySet<PlaceService>(new Action<PlaceService>(this.attach_PlaceServicesServiceConceptId), new Action<PlaceService>(this.detach_PlaceServicesServiceConceptId));
 			this._ProvidersProviderSpecialtyConceptId = new EntitySet<Provider>(new Action<Provider>(this.attach_ProvidersProviderSpecialtyConceptId), new Action<Provider>(this.detach_ProvidersProviderSpecialtyConceptId));
 			this._QuantityObservationsUnitOfMeasureConceptId = new EntitySet<QuantityObservation>(new Action<QuantityObservation>(this.attach_QuantityObservationsUnitOfMeasureConceptId), new Action<QuantityObservation>(this.detach_QuantityObservationsUnitOfMeasureConceptId));
+			this._StockLedgersLedgerActionConceptId = new EntitySet<StockLedger>(new Action<StockLedger>(this.attach_StockLedgersLedgerActionConceptId), new Action<StockLedger>(this.detach_StockLedgersLedgerActionConceptId));
 			this._SubstanceAdministrationsDoseUnitConceptId = new EntitySet<SubstanceAdministration>(new Action<SubstanceAdministration>(this.attach_SubstanceAdministrationsDoseUnitConceptId), new Action<SubstanceAdministration>(this.detach_SubstanceAdministrationsDoseUnitConceptId));
 			this._SubstanceAdministrationsRouteConceptId = new EntitySet<SubstanceAdministration>(new Action<SubstanceAdministration>(this.attach_SubstanceAdministrationsRouteConceptId), new Action<SubstanceAdministration>(this.detach_SubstanceAdministrationsRouteConceptId));
 			this._SubstanceAdministrationsSiteConceptId = new EntitySet<SubstanceAdministration>(new Action<SubstanceAdministration>(this.attach_SubstanceAdministrationsSiteConceptId), new Action<SubstanceAdministration>(this.detach_SubstanceAdministrationsSiteConceptId));
@@ -7055,6 +7010,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_StockLedger", Storage="_StockLedgersLedgerActionConceptId", ThisKey="ConceptId", OtherKey="LedgerActionConceptId")]
+		public EntitySet<StockLedger> StockLedgersLedgerActionConceptId
+		{
+			get
+			{
+				return this._StockLedgersLedgerActionConceptId;
+			}
+			set
+			{
+				this._StockLedgersLedgerActionConceptId.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_SubstanceAdministration", Storage="_SubstanceAdministrationsDoseUnitConceptId", ThisKey="ConceptId", OtherKey="DoseUnitConceptId")]
 		public EntitySet<SubstanceAdministration> SubstanceAdministrationsDoseUnitConceptId
 		{
@@ -7556,6 +7524,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this.SendPropertyChanging();
 			entity.UnitOfMeasureConcept = null;
+		}
+		
+		private void attach_StockLedgersLedgerActionConceptId(StockLedger entity)
+		{
+			this.SendPropertyChanging();
+			entity.LedgerActionConcept = this;
+		}
+		
+		private void detach_StockLedgersLedgerActionConceptId(StockLedger entity)
+		{
+			this.SendPropertyChanging();
+			entity.LedgerActionConcept = null;
 		}
 		
 		private void attach_SubstanceAdministrationsDoseUnitConceptId(SubstanceAdministration entity)
@@ -10903,8 +10883,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Guid _EntityId;
 		
-		private System.Nullable<System.Guid> _TemplateDefinitionId;
-		
 		private System.Guid _ClassConceptId;
 		
 		private System.Guid _DeterminerConceptId;
@@ -10939,11 +10917,17 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<PlaceService> _PlaceServicesPlaceEntityId;
 		
+		private EntitySet<StockBalance> _StockBalancesMaterialEntityId;
+		
+		private EntitySet<StockBalance> _StockBalancesPlaceEntityId;
+		
+		private EntitySet<StockLedger> _StockLedgersMaterialEntityId;
+		
+		private EntitySet<StockLedger> _StockLedgersPlaceEntityId;
+		
 		private EntityRef<Concept> _ClassConcept;
 		
 		private EntityRef<Concept> _DeterminerConcept;
-		
-		private EntityRef<TemplateDefinition> _TemplateDefinition;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -10951,8 +10935,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnCreated();
     partial void OnEntityIdChanging(System.Guid value);
     partial void OnEntityIdChanged();
-    partial void OnTemplateDefinitionIdChanging(System.Nullable<System.Guid> value);
-    partial void OnTemplateDefinitionIdChanged();
     partial void OnClassConceptIdChanging(System.Guid value);
     partial void OnClassConceptIdChanged();
     partial void OnDeterminerConceptIdChanging(System.Guid value);
@@ -10976,9 +10958,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._EntityVersions = new EntitySet<EntityVersion>(new Action<EntityVersion>(this.attach_EntityVersions), new Action<EntityVersion>(this.detach_EntityVersions));
 			this._PersonLanguageCommunicationsPersonEntityId = new EntitySet<PersonLanguageCommunication>(new Action<PersonLanguageCommunication>(this.attach_PersonLanguageCommunicationsPersonEntityId), new Action<PersonLanguageCommunication>(this.detach_PersonLanguageCommunicationsPersonEntityId));
 			this._PlaceServicesPlaceEntityId = new EntitySet<PlaceService>(new Action<PlaceService>(this.attach_PlaceServicesPlaceEntityId), new Action<PlaceService>(this.detach_PlaceServicesPlaceEntityId));
+			this._StockBalancesMaterialEntityId = new EntitySet<StockBalance>(new Action<StockBalance>(this.attach_StockBalancesMaterialEntityId), new Action<StockBalance>(this.detach_StockBalancesMaterialEntityId));
+			this._StockBalancesPlaceEntityId = new EntitySet<StockBalance>(new Action<StockBalance>(this.attach_StockBalancesPlaceEntityId), new Action<StockBalance>(this.detach_StockBalancesPlaceEntityId));
+			this._StockLedgersMaterialEntityId = new EntitySet<StockLedger>(new Action<StockLedger>(this.attach_StockLedgersMaterialEntityId), new Action<StockLedger>(this.detach_StockLedgersMaterialEntityId));
+			this._StockLedgersPlaceEntityId = new EntitySet<StockLedger>(new Action<StockLedger>(this.attach_StockLedgersPlaceEntityId), new Action<StockLedger>(this.detach_StockLedgersPlaceEntityId));
 			this._ClassConcept = default(EntityRef<Concept>);
 			this._DeterminerConcept = default(EntityRef<Concept>);
-			this._TemplateDefinition = default(EntityRef<TemplateDefinition>);
 			OnCreated();
 		}
 		
@@ -10998,30 +10983,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this._EntityId = value;
 					this.SendPropertyChanged("EntityId");
 					this.OnEntityIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TemplateDefinitionId", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> TemplateDefinitionId
-		{
-			get
-			{
-				return this._TemplateDefinitionId;
-			}
-			set
-			{
-				if ((this._TemplateDefinitionId != value))
-				{
-					if (this._TemplateDefinition.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnTemplateDefinitionIdChanging(value);
-					this.SendPropertyChanging();
-					this._TemplateDefinitionId = value;
-					this.SendPropertyChanged("TemplateDefinitionId");
-					this.OnTemplateDefinitionIdChanged();
 				}
 			}
 		}
@@ -11269,6 +11230,58 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_StockBalance", Storage="_StockBalancesMaterialEntityId", ThisKey="EntityId", OtherKey="MaterialEntityId")]
+		public EntitySet<StockBalance> StockBalancesMaterialEntityId
+		{
+			get
+			{
+				return this._StockBalancesMaterialEntityId;
+			}
+			set
+			{
+				this._StockBalancesMaterialEntityId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_StockBalance1", Storage="_StockBalancesPlaceEntityId", ThisKey="EntityId", OtherKey="PlaceEntityId")]
+		public EntitySet<StockBalance> StockBalancesPlaceEntityId
+		{
+			get
+			{
+				return this._StockBalancesPlaceEntityId;
+			}
+			set
+			{
+				this._StockBalancesPlaceEntityId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_StockLedger", Storage="_StockLedgersMaterialEntityId", ThisKey="EntityId", OtherKey="MaterialEntityId")]
+		public EntitySet<StockLedger> StockLedgersMaterialEntityId
+		{
+			get
+			{
+				return this._StockLedgersMaterialEntityId;
+			}
+			set
+			{
+				this._StockLedgersMaterialEntityId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_StockLedger1", Storage="_StockLedgersPlaceEntityId", ThisKey="EntityId", OtherKey="PlaceEntityId")]
+		public EntitySet<StockLedger> StockLedgersPlaceEntityId
+		{
+			get
+			{
+				return this._StockLedgersPlaceEntityId;
+			}
+			set
+			{
+				this._StockLedgersPlaceEntityId.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_Entity", Storage="_ClassConcept", ThisKey="ClassConceptId", OtherKey="ConceptId", IsForeignKey=true)]
 		public Concept ClassConcept
 		{
@@ -11333,40 +11346,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._DeterminerConceptId = default(System.Guid);
 					}
 					this.SendPropertyChanged("DeterminerConcept");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TemplateDefinition_Entity", Storage="_TemplateDefinition", ThisKey="TemplateDefinitionId", OtherKey="TemplateDefinitionId", IsForeignKey=true)]
-		public TemplateDefinition TemplateDefinition
-		{
-			get
-			{
-				return this._TemplateDefinition.Entity;
-			}
-			set
-			{
-				TemplateDefinition previousValue = this._TemplateDefinition.Entity;
-				if (((previousValue != value) 
-							|| (this._TemplateDefinition.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._TemplateDefinition.Entity = null;
-						previousValue.Entities.Remove(this);
-					}
-					this._TemplateDefinition.Entity = value;
-					if ((value != null))
-					{
-						value.Entities.Add(this);
-						this._TemplateDefinitionId = value.TemplateDefinitionId;
-					}
-					else
-					{
-						this._TemplateDefinitionId = default(Nullable<System.Guid>);
-					}
-					this.SendPropertyChanged("TemplateDefinition");
 				}
 			}
 		}
@@ -11566,6 +11545,54 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		}
 		
 		private void detach_PlaceServicesPlaceEntityId(PlaceService entity)
+		{
+			this.SendPropertyChanging();
+			entity.PlaceEntity = null;
+		}
+		
+		private void attach_StockBalancesMaterialEntityId(StockBalance entity)
+		{
+			this.SendPropertyChanging();
+			entity.MaterialEntity = this;
+		}
+		
+		private void detach_StockBalancesMaterialEntityId(StockBalance entity)
+		{
+			this.SendPropertyChanging();
+			entity.MaterialEntity = null;
+		}
+		
+		private void attach_StockBalancesPlaceEntityId(StockBalance entity)
+		{
+			this.SendPropertyChanging();
+			entity.PlaceEntity = this;
+		}
+		
+		private void detach_StockBalancesPlaceEntityId(StockBalance entity)
+		{
+			this.SendPropertyChanging();
+			entity.PlaceEntity = null;
+		}
+		
+		private void attach_StockLedgersMaterialEntityId(StockLedger entity)
+		{
+			this.SendPropertyChanging();
+			entity.MaterialEntity = this;
+		}
+		
+		private void detach_StockLedgersMaterialEntityId(StockLedger entity)
+		{
+			this.SendPropertyChanging();
+			entity.MaterialEntity = null;
+		}
+		
+		private void attach_StockLedgersPlaceEntityId(StockLedger entity)
+		{
+			this.SendPropertyChanging();
+			entity.PlaceEntity = this;
+		}
+		
+		private void detach_StockLedgersPlaceEntityId(StockLedger entity)
 		{
 			this.SendPropertyChanging();
 			entity.PlaceEntity = null;
@@ -23849,12 +23876,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<SecurityUserRole> _SecurityUserRoles;
 		
-		private EntitySet<TemplateDefinition> _TemplateDefinitionsCreatedBy;
-		
-		private EntitySet<TemplateDefinition> _TemplateDefinitionsObsoletedBy;
-		
-		private EntitySet<TemplateDefinition> _TemplateDefinitionsUpdatedBy;
-		
 		private EntityRef<SecurityUser> _CreatedByEntity;
 		
 		private EntityRef<SecurityUser> _ObsoletedByEntity;
@@ -23964,9 +23985,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._SecurityUserClaims = new EntitySet<SecurityUserClaim>(new Action<SecurityUserClaim>(this.attach_SecurityUserClaims), new Action<SecurityUserClaim>(this.detach_SecurityUserClaims));
 			this._SecurityUserLogins = new EntitySet<SecurityUserLogin>(new Action<SecurityUserLogin>(this.attach_SecurityUserLogins), new Action<SecurityUserLogin>(this.detach_SecurityUserLogins));
 			this._SecurityUserRoles = new EntitySet<SecurityUserRole>(new Action<SecurityUserRole>(this.attach_SecurityUserRoles), new Action<SecurityUserRole>(this.detach_SecurityUserRoles));
-			this._TemplateDefinitionsCreatedBy = new EntitySet<TemplateDefinition>(new Action<TemplateDefinition>(this.attach_TemplateDefinitionsCreatedBy), new Action<TemplateDefinition>(this.detach_TemplateDefinitionsCreatedBy));
-			this._TemplateDefinitionsObsoletedBy = new EntitySet<TemplateDefinition>(new Action<TemplateDefinition>(this.attach_TemplateDefinitionsObsoletedBy), new Action<TemplateDefinition>(this.detach_TemplateDefinitionsObsoletedBy));
-			this._TemplateDefinitionsUpdatedBy = new EntitySet<TemplateDefinition>(new Action<TemplateDefinition>(this.attach_TemplateDefinitionsUpdatedBy), new Action<TemplateDefinition>(this.detach_TemplateDefinitionsUpdatedBy));
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
 			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
 			this._UpdatedByEntity = default(EntityRef<SecurityUser>);
@@ -25085,45 +25103,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_TemplateDefinition", Storage="_TemplateDefinitionsCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
-		public EntitySet<TemplateDefinition> TemplateDefinitionsCreatedBy
-		{
-			get
-			{
-				return this._TemplateDefinitionsCreatedBy;
-			}
-			set
-			{
-				this._TemplateDefinitionsCreatedBy.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_TemplateDefinition1", Storage="_TemplateDefinitionsObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
-		public EntitySet<TemplateDefinition> TemplateDefinitionsObsoletedBy
-		{
-			get
-			{
-				return this._TemplateDefinitionsObsoletedBy;
-			}
-			set
-			{
-				this._TemplateDefinitionsObsoletedBy.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_TemplateDefinition2", Storage="_TemplateDefinitionsUpdatedBy", ThisKey="UserId", OtherKey="UpdatedBy")]
-		public EntitySet<TemplateDefinition> TemplateDefinitionsUpdatedBy
-		{
-			get
-			{
-				return this._TemplateDefinitionsUpdatedBy;
-			}
-			set
-			{
-				this._TemplateDefinitionsUpdatedBy.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_SecurityUser", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
 		public SecurityUser CreatedByEntity
 		{
@@ -25939,42 +25918,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this.SendPropertyChanging();
 			entity.SecurityUser = null;
 		}
-		
-		private void attach_TemplateDefinitionsCreatedBy(TemplateDefinition entity)
-		{
-			this.SendPropertyChanging();
-			entity.CreatedByEntity = this;
-		}
-		
-		private void detach_TemplateDefinitionsCreatedBy(TemplateDefinition entity)
-		{
-			this.SendPropertyChanging();
-			entity.CreatedByEntity = null;
-		}
-		
-		private void attach_TemplateDefinitionsObsoletedBy(TemplateDefinition entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoletedByEntity = this;
-		}
-		
-		private void detach_TemplateDefinitionsObsoletedBy(TemplateDefinition entity)
-		{
-			this.SendPropertyChanging();
-			entity.ObsoletedByEntity = null;
-		}
-		
-		private void attach_TemplateDefinitionsUpdatedBy(TemplateDefinition entity)
-		{
-			this.SendPropertyChanging();
-			entity.UpdatedByEntity = this;
-		}
-		
-		private void detach_TemplateDefinitionsUpdatedBy(TemplateDefinition entity)
-		{
-			this.SendPropertyChanging();
-			entity.UpdatedByEntity = null;
-		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.SecurityUserClaim")]
@@ -26585,6 +26528,623 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.StockBalance")]
+	public partial class StockBalance : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _StockBalanceId;
+		
+		private System.Guid _PlaceEntityId;
+		
+		private System.Guid _MaterialEntityId;
+		
+		private int _Quantity;
+		
+		private System.DateTimeOffset _CreationTime;
+		
+		private System.Nullable<System.DateTimeOffset> _UpdatedTime;
+		
+		private EntityRef<Entity> _MaterialEntity;
+		
+		private EntityRef<Entity> _PlaceEntity;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnStockBalanceIdChanging(System.Guid value);
+    partial void OnStockBalanceIdChanged();
+    partial void OnPlaceEntityIdChanging(System.Guid value);
+    partial void OnPlaceEntityIdChanged();
+    partial void OnMaterialEntityIdChanging(System.Guid value);
+    partial void OnMaterialEntityIdChanged();
+    partial void OnQuantityChanging(int value);
+    partial void OnQuantityChanged();
+    partial void OnCreationTimeChanging(System.DateTimeOffset value);
+    partial void OnCreationTimeChanged();
+    partial void OnUpdatedTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnUpdatedTimeChanged();
+    #endregion
+		
+		public StockBalance()
+		{
+			this._MaterialEntity = default(EntityRef<Entity>);
+			this._PlaceEntity = default(EntityRef<Entity>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StockBalanceId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		public System.Guid StockBalanceId
+		{
+			get
+			{
+				return this._StockBalanceId;
+			}
+			set
+			{
+				if ((this._StockBalanceId != value))
+				{
+					this.OnStockBalanceIdChanging(value);
+					this.SendPropertyChanging();
+					this._StockBalanceId = value;
+					this.SendPropertyChanged("StockBalanceId");
+					this.OnStockBalanceIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlaceEntityId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid PlaceEntityId
+		{
+			get
+			{
+				return this._PlaceEntityId;
+			}
+			set
+			{
+				if ((this._PlaceEntityId != value))
+				{
+					if (this._PlaceEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPlaceEntityIdChanging(value);
+					this.SendPropertyChanging();
+					this._PlaceEntityId = value;
+					this.SendPropertyChanged("PlaceEntityId");
+					this.OnPlaceEntityIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MaterialEntityId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid MaterialEntityId
+		{
+			get
+			{
+				return this._MaterialEntityId;
+			}
+			set
+			{
+				if ((this._MaterialEntityId != value))
+				{
+					if (this._MaterialEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnMaterialEntityIdChanging(value);
+					this.SendPropertyChanging();
+					this._MaterialEntityId = value;
+					this.SendPropertyChanged("MaterialEntityId");
+					this.OnMaterialEntityIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Quantity", DbType="Int NOT NULL")]
+		public int Quantity
+		{
+			get
+			{
+				return this._Quantity;
+			}
+			set
+			{
+				if ((this._Quantity != value))
+				{
+					this.OnQuantityChanging(value);
+					this.SendPropertyChanging();
+					this._Quantity = value;
+					this.SendPropertyChanged("Quantity");
+					this.OnQuantityChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", AutoSync=AutoSync.Always, DbType="DateTimeOffset NOT NULL", IsDbGenerated=true)]
+		public System.DateTimeOffset CreationTime
+		{
+			get
+			{
+				return this._CreationTime;
+			}
+			set
+			{
+				if ((this._CreationTime != value))
+				{
+					this.OnCreationTimeChanging(value);
+					this.SendPropertyChanging();
+					this._CreationTime = value;
+					this.SendPropertyChanged("CreationTime");
+					this.OnCreationTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> UpdatedTime
+		{
+			get
+			{
+				return this._UpdatedTime;
+			}
+			set
+			{
+				if ((this._UpdatedTime != value))
+				{
+					this.OnUpdatedTimeChanging(value);
+					this.SendPropertyChanging();
+					this._UpdatedTime = value;
+					this.SendPropertyChanged("UpdatedTime");
+					this.OnUpdatedTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_StockBalance", Storage="_MaterialEntity", ThisKey="MaterialEntityId", OtherKey="EntityId", IsForeignKey=true)]
+		public Entity MaterialEntity
+		{
+			get
+			{
+				return this._MaterialEntity.Entity;
+			}
+			set
+			{
+				Entity previousValue = this._MaterialEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._MaterialEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._MaterialEntity.Entity = null;
+						previousValue.StockBalancesMaterialEntityId.Remove(this);
+					}
+					this._MaterialEntity.Entity = value;
+					if ((value != null))
+					{
+						value.StockBalancesMaterialEntityId.Add(this);
+						this._MaterialEntityId = value.EntityId;
+					}
+					else
+					{
+						this._MaterialEntityId = default(System.Guid);
+					}
+					this.SendPropertyChanged("MaterialEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_StockBalance1", Storage="_PlaceEntity", ThisKey="PlaceEntityId", OtherKey="EntityId", IsForeignKey=true)]
+		public Entity PlaceEntity
+		{
+			get
+			{
+				return this._PlaceEntity.Entity;
+			}
+			set
+			{
+				Entity previousValue = this._PlaceEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._PlaceEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._PlaceEntity.Entity = null;
+						previousValue.StockBalancesPlaceEntityId.Remove(this);
+					}
+					this._PlaceEntity.Entity = value;
+					if ((value != null))
+					{
+						value.StockBalancesPlaceEntityId.Add(this);
+						this._PlaceEntityId = value.EntityId;
+					}
+					else
+					{
+						this._PlaceEntityId = default(System.Guid);
+					}
+					this.SendPropertyChanged("PlaceEntity");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.StockLedger")]
+	public partial class StockLedger : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _StockLedgerId;
+		
+		private System.Guid _PlaceEntityId;
+		
+		private System.Guid _MaterialEntityId;
+		
+		private int _Quantity;
+		
+		private System.Guid _LedgerActionConceptId;
+		
+		private string _Note;
+		
+		private System.DateTimeOffset _CreationTime;
+		
+		private System.Guid _CreatedBy;
+		
+		private EntityRef<Concept> _LedgerActionConcept;
+		
+		private EntityRef<Entity> _MaterialEntity;
+		
+		private EntityRef<Entity> _PlaceEntity;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnStockLedgerIdChanging(System.Guid value);
+    partial void OnStockLedgerIdChanged();
+    partial void OnPlaceEntityIdChanging(System.Guid value);
+    partial void OnPlaceEntityIdChanged();
+    partial void OnMaterialEntityIdChanging(System.Guid value);
+    partial void OnMaterialEntityIdChanged();
+    partial void OnQuantityChanging(int value);
+    partial void OnQuantityChanged();
+    partial void OnLedgerActionConceptIdChanging(System.Guid value);
+    partial void OnLedgerActionConceptIdChanged();
+    partial void OnNoteChanging(string value);
+    partial void OnNoteChanged();
+    partial void OnCreationTimeChanging(System.DateTimeOffset value);
+    partial void OnCreationTimeChanged();
+    partial void OnCreatedByChanging(System.Guid value);
+    partial void OnCreatedByChanged();
+    #endregion
+		
+		public StockLedger()
+		{
+			this._LedgerActionConcept = default(EntityRef<Concept>);
+			this._MaterialEntity = default(EntityRef<Entity>);
+			this._PlaceEntity = default(EntityRef<Entity>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StockLedgerId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		public System.Guid StockLedgerId
+		{
+			get
+			{
+				return this._StockLedgerId;
+			}
+			set
+			{
+				if ((this._StockLedgerId != value))
+				{
+					this.OnStockLedgerIdChanging(value);
+					this.SendPropertyChanging();
+					this._StockLedgerId = value;
+					this.SendPropertyChanged("StockLedgerId");
+					this.OnStockLedgerIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlaceEntityId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid PlaceEntityId
+		{
+			get
+			{
+				return this._PlaceEntityId;
+			}
+			set
+			{
+				if ((this._PlaceEntityId != value))
+				{
+					if (this._PlaceEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPlaceEntityIdChanging(value);
+					this.SendPropertyChanging();
+					this._PlaceEntityId = value;
+					this.SendPropertyChanged("PlaceEntityId");
+					this.OnPlaceEntityIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MaterialEntityId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid MaterialEntityId
+		{
+			get
+			{
+				return this._MaterialEntityId;
+			}
+			set
+			{
+				if ((this._MaterialEntityId != value))
+				{
+					if (this._MaterialEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnMaterialEntityIdChanging(value);
+					this.SendPropertyChanging();
+					this._MaterialEntityId = value;
+					this.SendPropertyChanged("MaterialEntityId");
+					this.OnMaterialEntityIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Quantity", DbType="Int NOT NULL")]
+		public int Quantity
+		{
+			get
+			{
+				return this._Quantity;
+			}
+			set
+			{
+				if ((this._Quantity != value))
+				{
+					this.OnQuantityChanging(value);
+					this.SendPropertyChanging();
+					this._Quantity = value;
+					this.SendPropertyChanged("Quantity");
+					this.OnQuantityChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LedgerActionConceptId", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid LedgerActionConceptId
+		{
+			get
+			{
+				return this._LedgerActionConceptId;
+			}
+			set
+			{
+				if ((this._LedgerActionConceptId != value))
+				{
+					if (this._LedgerActionConcept.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnLedgerActionConceptIdChanging(value);
+					this.SendPropertyChanging();
+					this._LedgerActionConceptId = value;
+					this.SendPropertyChanged("LedgerActionConceptId");
+					this.OnLedgerActionConceptIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Note", DbType="Text", UpdateCheck=UpdateCheck.Never)]
+		public string Note
+		{
+			get
+			{
+				return this._Note;
+			}
+			set
+			{
+				if ((this._Note != value))
+				{
+					this.OnNoteChanging(value);
+					this.SendPropertyChanging();
+					this._Note = value;
+					this.SendPropertyChanged("Note");
+					this.OnNoteChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", AutoSync=AutoSync.Always, DbType="DateTimeOffset NOT NULL", IsDbGenerated=true)]
+		public System.DateTimeOffset CreationTime
+		{
+			get
+			{
+				return this._CreationTime;
+			}
+			set
+			{
+				if ((this._CreationTime != value))
+				{
+					this.OnCreationTimeChanging(value);
+					this.SendPropertyChanging();
+					this._CreationTime = value;
+					this.SendPropertyChanged("CreationTime");
+					this.OnCreationTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
+		public System.Guid CreatedBy
+		{
+			get
+			{
+				return this._CreatedBy;
+			}
+			set
+			{
+				if ((this._CreatedBy != value))
+				{
+					this.OnCreatedByChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedBy = value;
+					this.SendPropertyChanged("CreatedBy");
+					this.OnCreatedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_StockLedger", Storage="_LedgerActionConcept", ThisKey="LedgerActionConceptId", OtherKey="ConceptId", IsForeignKey=true)]
+		public Concept LedgerActionConcept
+		{
+			get
+			{
+				return this._LedgerActionConcept.Entity;
+			}
+			set
+			{
+				Concept previousValue = this._LedgerActionConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._LedgerActionConcept.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._LedgerActionConcept.Entity = null;
+						previousValue.StockLedgersLedgerActionConceptId.Remove(this);
+					}
+					this._LedgerActionConcept.Entity = value;
+					if ((value != null))
+					{
+						value.StockLedgersLedgerActionConceptId.Add(this);
+						this._LedgerActionConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._LedgerActionConceptId = default(System.Guid);
+					}
+					this.SendPropertyChanged("LedgerActionConcept");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_StockLedger", Storage="_MaterialEntity", ThisKey="MaterialEntityId", OtherKey="EntityId", IsForeignKey=true)]
+		public Entity MaterialEntity
+		{
+			get
+			{
+				return this._MaterialEntity.Entity;
+			}
+			set
+			{
+				Entity previousValue = this._MaterialEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._MaterialEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._MaterialEntity.Entity = null;
+						previousValue.StockLedgersMaterialEntityId.Remove(this);
+					}
+					this._MaterialEntity.Entity = value;
+					if ((value != null))
+					{
+						value.StockLedgersMaterialEntityId.Add(this);
+						this._MaterialEntityId = value.EntityId;
+					}
+					else
+					{
+						this._MaterialEntityId = default(System.Guid);
+					}
+					this.SendPropertyChanged("MaterialEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Entity_StockLedger1", Storage="_PlaceEntity", ThisKey="PlaceEntityId", OtherKey="EntityId", IsForeignKey=true)]
+		public Entity PlaceEntity
+		{
+			get
+			{
+				return this._PlaceEntity.Entity;
+			}
+			set
+			{
+				Entity previousValue = this._PlaceEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._PlaceEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._PlaceEntity.Entity = null;
+						previousValue.StockLedgersPlaceEntityId.Remove(this);
+					}
+					this._PlaceEntity.Entity = value;
+					if ((value != null))
+					{
+						value.StockLedgersPlaceEntityId.Add(this);
+						this._PlaceEntityId = value.EntityId;
+					}
+					else
+					{
+						this._PlaceEntityId = default(System.Guid);
+					}
+					this.SendPropertyChanged("PlaceEntity");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.SubstanceAdministration")]
 	public partial class SubstanceAdministration : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -26928,487 +27488,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TemplateDefinition")]
-	public partial class TemplateDefinition : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private System.Guid _TemplateDefinitionId;
-		
-		private string _Oid;
-		
-		private string _Mnemonic;
-		
-		private string _Name;
-		
-		private string _Description;
-		
-		private System.DateTimeOffset _CreationTime;
-		
-		private System.Guid _CreatedBy;
-		
-		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
-		
-		private System.Nullable<System.Guid> _ObsoletedBy;
-		
-		private System.Nullable<System.DateTimeOffset> _UpdatedTime;
-		
-		private System.Nullable<System.Guid> _UpdatedBy;
-		
-		private EntitySet<Act> _Acts;
-		
-		private EntitySet<Entity> _Entities;
-		
-		private EntityRef<SecurityUser> _CreatedByEntity;
-		
-		private EntityRef<SecurityUser> _ObsoletedByEntity;
-		
-		private EntityRef<SecurityUser> _UpdatedByEntity;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnTemplateDefinitionIdChanging(System.Guid value);
-    partial void OnTemplateDefinitionIdChanged();
-    partial void OnOidChanging(string value);
-    partial void OnOidChanged();
-    partial void OnMnemonicChanging(string value);
-    partial void OnMnemonicChanged();
-    partial void OnNameChanging(string value);
-    partial void OnNameChanged();
-    partial void OnDescriptionChanging(string value);
-    partial void OnDescriptionChanged();
-    partial void OnCreationTimeChanging(System.DateTimeOffset value);
-    partial void OnCreationTimeChanged();
-    partial void OnCreatedByChanging(System.Guid value);
-    partial void OnCreatedByChanged();
-    partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
-    partial void OnObsoletionTimeChanged();
-    partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
-    partial void OnObsoletedByChanged();
-    partial void OnUpdatedTimeChanging(System.Nullable<System.DateTimeOffset> value);
-    partial void OnUpdatedTimeChanged();
-    partial void OnUpdatedByChanging(System.Nullable<System.Guid> value);
-    partial void OnUpdatedByChanged();
-    #endregion
-		
-		public TemplateDefinition()
-		{
-			this._Acts = new EntitySet<Act>(new Action<Act>(this.attach_Acts), new Action<Act>(this.detach_Acts));
-			this._Entities = new EntitySet<Entity>(new Action<Entity>(this.attach_Entities), new Action<Entity>(this.detach_Entities));
-			this._CreatedByEntity = default(EntityRef<SecurityUser>);
-			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
-			this._UpdatedByEntity = default(EntityRef<SecurityUser>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TemplateDefinitionId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
-		public System.Guid TemplateDefinitionId
-		{
-			get
-			{
-				return this._TemplateDefinitionId;
-			}
-			set
-			{
-				if ((this._TemplateDefinitionId != value))
-				{
-					this.OnTemplateDefinitionIdChanging(value);
-					this.SendPropertyChanging();
-					this._TemplateDefinitionId = value;
-					this.SendPropertyChanged("TemplateDefinitionId");
-					this.OnTemplateDefinitionIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Oid", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
-		public string Oid
-		{
-			get
-			{
-				return this._Oid;
-			}
-			set
-			{
-				if ((this._Oid != value))
-				{
-					this.OnOidChanging(value);
-					this.SendPropertyChanging();
-					this._Oid = value;
-					this.SendPropertyChanged("Oid");
-					this.OnOidChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Mnemonic", DbType="NVarChar(64) NOT NULL", CanBeNull=false)]
-		public string Mnemonic
-		{
-			get
-			{
-				return this._Mnemonic;
-			}
-			set
-			{
-				if ((this._Mnemonic != value))
-				{
-					this.OnMnemonicChanging(value);
-					this.SendPropertyChanging();
-					this._Mnemonic = value;
-					this.SendPropertyChanged("Mnemonic");
-					this.OnMnemonicChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(128)")]
-		public string Name
-		{
-			get
-			{
-				return this._Name;
-			}
-			set
-			{
-				if ((this._Name != value))
-				{
-					this.OnNameChanging(value);
-					this.SendPropertyChanging();
-					this._Name = value;
-					this.SendPropertyChanged("Name");
-					this.OnNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="Text", UpdateCheck=UpdateCheck.Never)]
-		public string Description
-		{
-			get
-			{
-				return this._Description;
-			}
-			set
-			{
-				if ((this._Description != value))
-				{
-					this.OnDescriptionChanging(value);
-					this.SendPropertyChanging();
-					this._Description = value;
-					this.SendPropertyChanged("Description");
-					this.OnDescriptionChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", AutoSync=AutoSync.Always, DbType="DateTimeOffset NOT NULL", IsDbGenerated=true)]
-		public System.DateTimeOffset CreationTime
-		{
-			get
-			{
-				return this._CreationTime;
-			}
-			set
-			{
-				if ((this._CreationTime != value))
-				{
-					this.OnCreationTimeChanging(value);
-					this.SendPropertyChanging();
-					this._CreationTime = value;
-					this.SendPropertyChanged("CreationTime");
-					this.OnCreationTimeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
-		public System.Guid CreatedBy
-		{
-			get
-			{
-				return this._CreatedBy;
-			}
-			set
-			{
-				if ((this._CreatedBy != value))
-				{
-					if (this._CreatedByEntity.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnCreatedByChanging(value);
-					this.SendPropertyChanging();
-					this._CreatedBy = value;
-					this.SendPropertyChanged("CreatedBy");
-					this.OnCreatedByChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTime", DbType="DateTimeOffset")]
-		public System.Nullable<System.DateTimeOffset> ObsoletionTime
-		{
-			get
-			{
-				return this._ObsoletionTime;
-			}
-			set
-			{
-				if ((this._ObsoletionTime != value))
-				{
-					this.OnObsoletionTimeChanging(value);
-					this.SendPropertyChanging();
-					this._ObsoletionTime = value;
-					this.SendPropertyChanged("ObsoletionTime");
-					this.OnObsoletionTimeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletedBy", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> ObsoletedBy
-		{
-			get
-			{
-				return this._ObsoletedBy;
-			}
-			set
-			{
-				if ((this._ObsoletedBy != value))
-				{
-					if (this._ObsoletedByEntity.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnObsoletedByChanging(value);
-					this.SendPropertyChanging();
-					this._ObsoletedBy = value;
-					this.SendPropertyChanged("ObsoletedBy");
-					this.OnObsoletedByChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedTime", DbType="DateTimeOffset")]
-		public System.Nullable<System.DateTimeOffset> UpdatedTime
-		{
-			get
-			{
-				return this._UpdatedTime;
-			}
-			set
-			{
-				if ((this._UpdatedTime != value))
-				{
-					this.OnUpdatedTimeChanging(value);
-					this.SendPropertyChanging();
-					this._UpdatedTime = value;
-					this.SendPropertyChanged("UpdatedTime");
-					this.OnUpdatedTimeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedBy", DbType="UniqueIdentifier")]
-		public System.Nullable<System.Guid> UpdatedBy
-		{
-			get
-			{
-				return this._UpdatedBy;
-			}
-			set
-			{
-				if ((this._UpdatedBy != value))
-				{
-					if (this._UpdatedByEntity.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnUpdatedByChanging(value);
-					this.SendPropertyChanging();
-					this._UpdatedBy = value;
-					this.SendPropertyChanged("UpdatedBy");
-					this.OnUpdatedByChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TemplateDefinition_Act", Storage="_Acts", ThisKey="TemplateDefinitionId", OtherKey="TemplateDefinitionId")]
-		public EntitySet<Act> Acts
-		{
-			get
-			{
-				return this._Acts;
-			}
-			set
-			{
-				this._Acts.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TemplateDefinition_Entity", Storage="_Entities", ThisKey="TemplateDefinitionId", OtherKey="TemplateDefinitionId")]
-		public EntitySet<Entity> Entities
-		{
-			get
-			{
-				return this._Entities;
-			}
-			set
-			{
-				this._Entities.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_TemplateDefinition", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser CreatedByEntity
-		{
-			get
-			{
-				return this._CreatedByEntity.Entity;
-			}
-			set
-			{
-				SecurityUser previousValue = this._CreatedByEntity.Entity;
-				if (((previousValue != value) 
-							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._CreatedByEntity.Entity = null;
-						previousValue.TemplateDefinitionsCreatedBy.Remove(this);
-					}
-					this._CreatedByEntity.Entity = value;
-					if ((value != null))
-					{
-						value.TemplateDefinitionsCreatedBy.Add(this);
-						this._CreatedBy = value.UserId;
-					}
-					else
-					{
-						this._CreatedBy = default(System.Guid);
-					}
-					this.SendPropertyChanged("CreatedByEntity");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_TemplateDefinition1", Storage="_ObsoletedByEntity", ThisKey="ObsoletedBy", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser ObsoletedByEntity
-		{
-			get
-			{
-				return this._ObsoletedByEntity.Entity;
-			}
-			set
-			{
-				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
-				if (((previousValue != value) 
-							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ObsoletedByEntity.Entity = null;
-						previousValue.TemplateDefinitionsObsoletedBy.Remove(this);
-					}
-					this._ObsoletedByEntity.Entity = value;
-					if ((value != null))
-					{
-						value.TemplateDefinitionsObsoletedBy.Add(this);
-						this._ObsoletedBy = value.UserId;
-					}
-					else
-					{
-						this._ObsoletedBy = default(Nullable<System.Guid>);
-					}
-					this.SendPropertyChanged("ObsoletedByEntity");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_TemplateDefinition2", Storage="_UpdatedByEntity", ThisKey="UpdatedBy", OtherKey="UserId", IsForeignKey=true)]
-		public SecurityUser UpdatedByEntity
-		{
-			get
-			{
-				return this._UpdatedByEntity.Entity;
-			}
-			set
-			{
-				SecurityUser previousValue = this._UpdatedByEntity.Entity;
-				if (((previousValue != value) 
-							|| (this._UpdatedByEntity.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._UpdatedByEntity.Entity = null;
-						previousValue.TemplateDefinitionsUpdatedBy.Remove(this);
-					}
-					this._UpdatedByEntity.Entity = value;
-					if ((value != null))
-					{
-						value.TemplateDefinitionsUpdatedBy.Add(this);
-						this._UpdatedBy = value.UserId;
-					}
-					else
-					{
-						this._UpdatedBy = default(Nullable<System.Guid>);
-					}
-					this.SendPropertyChanged("UpdatedByEntity");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void attach_Acts(Act entity)
-		{
-			this.SendPropertyChanging();
-			entity.TemplateDefinition = this;
-		}
-		
-		private void detach_Acts(Act entity)
-		{
-			this.SendPropertyChanging();
-			entity.TemplateDefinition = null;
-		}
-		
-		private void attach_Entities(Entity entity)
-		{
-			this.SendPropertyChanging();
-			entity.TemplateDefinition = this;
-		}
-		
-		private void detach_Entities(Entity entity)
-		{
-			this.SendPropertyChanging();
-			entity.TemplateDefinition = null;
 		}
 	}
 	

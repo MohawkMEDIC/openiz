@@ -28,6 +28,8 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Security;
 using MARC.HI.EHRS.SVC.Core.Data;
+using System.Security.Principal;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -70,13 +72,30 @@ namespace OpenIZ.Core.Services.Impl
 			return persistenceService.Query(predicate, offset, count, AuthenticationContext.Current.Principal, out totalCount);
 		}
 
-		/// <summary>
-		/// Gets the specified provider.
-		/// </summary>
-		/// <param name="id">The id of the provider.</param>
-		/// <param name="versionId">The version id of the provider.</param>
-		/// <returns>Returns the specified provider.</returns>
-		public Provider Get(Guid id, Guid versionId)
+        /// <summary>
+        /// Get the provider based on the identity
+        /// </summary>
+        public Provider Get(IIdentity identity)
+        {
+            var userService = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            var providerService = ApplicationContext.Current.GetService<IDataPersistenceService<Provider>>();
+
+            if (providerService == null)
+                throw new InvalidOperationException("No persistence service found");
+
+            // TODO: Make this one hit to the persistence layer
+            int t = 0;
+            var userEntity = userService.Query(o=>o.SecurityUser.UserName == identity.Name, 0, 1, AuthenticationContext.Current.Principal, out t).FirstOrDefault();
+            return providerService.Query(o => o.Relationships.Any(r => r.SourceEntityKey == userEntity.Key || r.TargetEntityKey == userEntity.Key), 0, 1, AuthenticationContext.Current.Principal, out t).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Gets the specified provider.
+        /// </summary>
+        /// <param name="id">The id of the provider.</param>
+        /// <param name="versionId">The version id of the provider.</param>
+        /// <returns>Returns the specified provider.</returns>
+        public Provider Get(Guid id, Guid versionId)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Provider>>();
 

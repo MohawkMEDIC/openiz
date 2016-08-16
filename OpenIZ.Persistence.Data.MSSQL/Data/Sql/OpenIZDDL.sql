@@ -870,6 +870,7 @@ CREATE TABLE ActVersion
 	ActTime DATETIMEOFFSET, -- THE DATE THE ACT OCCURRED
 	ActStartTime DATETIMEOFFSET, -- THE TIME WHEN THE ACT STARTED
 	ActStopTime DATETIMEOFFSET, -- THE TIME WHEN THE ACT STOPPED
+	ReasonConceptId UNIQUEIDENTIFIER, -- REASON FOR THE ACT 
 	CONSTRAINT PK_ActVersion PRIMARY KEY (ActVersionId),
 	CONSTRAINT FK_ActVersionAct FOREIGN KEY (ActId) REFERENCES Act(ActId),
 	CONSTRAINT FK_ActVersionCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
@@ -877,7 +878,9 @@ CREATE TABLE ActVersion
 	CONSTRAINT FK_ActVersionReplacesVersionId FOREIGN KEY (ReplacesVersionId) REFERENCES ActVersion(ActVersionId),
 	CONSTRAINT FK_ActVersionTypeConceptId FOREIGN KEY (TypeConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT FK_ActVersionStatusConceptId FOREIGN KEY (StatusConceptId) REFERENCES Concept(ConceptId),
+	CONSTRAINT FK_ActVersionReasonConceptId FOREIGN KEY (ReasonConceptId) REFERENCES Concept(ConceptId),
 	CONSTRAINT CK_ActVersionActClassStatusConceptIdConceptClass CHECK (dbo.fn_IsConceptSetMember(StatusConceptId, 'ActStatus') = 1),
+	CONSTRAINT CK_ActVersionActClassReasonConceptIdConceptClass CHECK (dbo.fn_IsConceptSetMember(ReasonConceptId, 'ActReason') = 1),
 	CONSTRAINT CK_ActVersionObsoletedBy CHECK(ObsoletedBy IS NOT NULL AND ObsoletionTime IS NOT NULL OR ObsoletedBy IS NULL AND ObsoletionTime IS NULL),
 	CONSTRAINT CK_ActVersionActTime CHECK(ActTime IS NOT NULL OR ActStartTime IS NOT NULL OR ActStopTime IS NOT NULL) -- CHECK: ONE OF ACT TIME, START, OR END MUST BE PROVIDED
 );
@@ -1124,6 +1127,7 @@ CREATE TABLE EntityAssociation
 	EffectiveVersionSequenceId NUMERIC(20) NOT NULL, -- THE VERSION WHERE THE ASSOCIATION BECAME ACTIVE
 	ObsoleteVersionSequenceId NUMERIC(20), -- THE VERSION WHERE THE ASSOCIATION IS NO LONGER ACTIVE
 	AssociationTypeConceptId UNIQUEIDENTIFIER,
+	Quantity INT NOT NULL DEFAULT 1,
 	CONSTRAINT PK_EntityAssociation PRIMARY KEY (EntityAssociationId),
 	CONSTRAINT FK_EntityAssociationSourceEntityId FOREIGN KEY (SourceEntityId) REFERENCES Entity(EntityId),
 	CONSTRAINT FK_EntityAssociationTargetEntityId FOREIGN KEY (TargetEntityId) REFERENCES Entity(EntityId),
@@ -1136,14 +1140,6 @@ CREATE TABLE EntityAssociation
 CREATE INDEX IX_EntityAssociationSource ON EntityAssociation(SourceEntityId);
 CREATE INDEX IX_EntityAssociationTarget ON EntityAssociation(TargetEntityId);
 CREATE INDEX IX_EntityAssociationEffectiveVersion ON EntityAssociation(EffectiveVersionSequenceId, ObsoleteVersionSequenceId);
-
-CREATE TABLE QuantifiedEntityAssociation
-(
-	EntityAssociationId UNIQUEIDENTIFIER NOT NULL, -- THE UNIQUE IDENTIFIER FOR THE ASSOCIATION
-	Quantity FLOAT NOT NULL CHECK (Quantity >= 0), -- THE QUANTITY OF THE SOURCE IN THE TARGET
-	CONSTRAINT PK_QuantifiedEntityAssociation PRIMARY KEY (EntityAssociationId),
-	CONSTRAINT FK_QuantifiedEntityAssociationEntityAssociationId FOREIGN KEY (EntityAssociationId) REFERENCES EntityAssociation(EntityAssociationId)
-);
 
 CREATE TABLE EntityAddress
 (
@@ -1526,43 +1522,6 @@ CREATE TABLE QuantifiedActParticipation
 	Quantity INT NOT NULL CHECK (Quantity >= 0), -- THE QUANTITY OF ENTITY INSTANCES PARTICIPATING IN THE PARTICIPATION
 	CONSTRAINT PK_QuantifiedActParticipation PRIMARY KEY (ActParticipationId),
 	CONSTRAINT FK_QuantifiedActParticipationId FOREIGN KEY (ActParticipationId) REFERENCES ActParticipation(ActParticipationId)
-);
-
--- STOCK BALANCE
--- YOU MAY ASK WHY THE STOCK BALANCE IS NOT AN QUANTIFIED ENTITY RELATIONSHIP, WELL THE REASON
--- IS THAT UPDATING A RELATIONSHIP RESULTS IN A NEW VERSION OF THE RELATED ENTITY (SOURCE), SINCE
--- STOCK IS VERSION INDEPENDENT THIS TABLE ALLOWS FOR THAT STORAGE
-CREATE TABLE StockBalance (
-	StockBalanceId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(), -- THE UNIQUE IDENTIFIER FOR THE STOCK BALANCE
-	PlaceEntityId UNIQUEIDENTIFIER NOT NULL, -- THE IDENTIFIER OF THE PLACE TO WHICH THE STOCK IS HELD
-	MaterialEntityId UNIQUEIDENTIFIER NOT NULL, -- THE IDENTIFIER OF THE MATERIAL ENTITY TO WHICH THE STOCK BALANCE IS COUNTED
-	Quantity INT NOT NULL CHECK(Quantity >= 0), -- THE QUANTITY OF THE MATERIAL
-	CreationTime DATETIMEOFFSET NOT NULL DEFAULT SYSDATETIMEOFFSET(), -- TIME THE STOCK RECORD WAS FIRST CREATED
-	UpdatedTime DATETIMEOFFSET, -- THE TIME THAT THE STOCK BALANCE WAS LAST CALCULATED
-	CONSTRAINT PK_StockBalance PRIMARY KEY (StockBalanceId),
-	CONSTRAINT FK_StockBalanceMaterialEntity FOREIGN KEY (MaterialEntityId) REFERENCES Entity(EntityId),
-	CONSTRAINT FK_StockBalancePlaceEntity FOREIGN KEY (PlaceEntityId) REFERENCES Entity(EntityId),
-	CONSTRAINT CK_StockBalanceMaterialEntity CHECK (dbo.fn_AssertEntityClass(MaterialEntityId, 'ManufacturedMaterial') = 1),
-	CONSTRAINT CK_StockBalancePlaceEntity CHECK (dbo.fn_AssertEntityClass(PlaceEntityId, 'ServiceDeliveryLocation') = 1)
-);
-
--- STOCK LEDGER
-CREATE TABLE StockLedger (
-	StockLedgerId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(), -- THE STOCK KLEDGER IDENTIFIER
-	PlaceEntityId UNIQUEIDENTIFIER NOT NULL, -- THE IDENTIFIER OF THE PLACE TO WHICH THE STOCK IS HELD
-	MaterialEntityId UNIQUEIDENTIFIER NOT NULL, -- THE IDENTIFIER OF THE MATERIAL ENTITY TO WHICH THE STOCK BALANCE IS COUNTED
-	Quantity INT NOT NULL, -- THE QUANTITY OF THE ACTION
-	LedgerActionConceptId UNIQUEIDENTIFIER NOT NULL, -- THE ACTION PERFORMED ON THE LEDGER
-	Note TEXT, -- HUMAN NOTES ABOUT THE LEDGER ENTRY
-	CreationTime DATETIMEOFFSET NOT NULL DEFAULT SYSDATETIMEOFFSET(),
-	CreatedBy UNIQUEIDENTIFIER NOT NULL, -- THE USER WHO CREATED THE LEDGER ENTRY
-	CONSTRAINT PK_StockLedger PRIMARY KEY (StockLedgerId),
-	CONSTRAINT FK_StockLedgerMaterialEntity FOREIGN KEY (MaterialEntityId) REFERENCES Entity(EntityId),
-	CONSTRAINT FK_StockLedgerPlaceEntity FOREIGN KEY (PlaceEntityId) REFERENCES Entity(EntityId),
-	CONSTRAINT CK_StockLedgerMaterialEntity CHECK (dbo.fn_AssertEntityClass(MaterialEntityId, 'ManufacturedMaterial') = 1),
-	CONSTRAINT CK_StockLedgerPlaceEntity CHECK (dbo.fn_AssertEntityClass(PlaceEntityId, 'ServiceDeliveryLocation') = 1),
-	CONSTRAINT FK_StockLedgerActionConcept FOREIGN KEY (LedgerActionConceptId) REFERENCES Concept(ConceptId),
-	CONSTRAINT CK_StockLedgerActionConcept CHECK (dbo.fn_AssertConceptClass(LedgerActionConceptId, 'Stock') = 1)
 );
 
 GO 

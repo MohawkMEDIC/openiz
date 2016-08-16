@@ -12,6 +12,7 @@ using OpenIZ.Core.Protocol;
 using OpenIZ.Core.Services;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using OpenIZ.Core;
 
 namespace OpenIZ.Protocol.Xml.Test
 {
@@ -19,7 +20,7 @@ namespace OpenIZ.Protocol.Xml.Test
     /// Tests the application of protocol
     /// </summary>
     [TestClass]
-    public class TestProtocolApply
+    public class TestProtocolApply : IServiceProvider
     {
 
         /// <summary>
@@ -201,7 +202,7 @@ namespace OpenIZ.Protocol.Xml.Test
         {
 
             SimpleCarePlanService scp = new SimpleCarePlanService();
-            scp.Repository = new DummyProtocolRepository();
+            ApplicationServiceContext.Current = this;
 
             // Patient that is just born = Schedule OPV
             Patient newborn = new Patient()
@@ -215,6 +216,14 @@ namespace OpenIZ.Protocol.Xml.Test
             var acts = scp.CreateCarePlan(newborn);
             String json = JsonViewModelSerializer.Serialize(newborn);
             Assert.AreEqual(15, acts.Count());
+        }
+
+        /// <summary>
+        /// Get service
+        /// </summary>
+        public object GetService(Type serviceType)
+        {
+            return new DummyProtocolRepository();
         }
     }
 
