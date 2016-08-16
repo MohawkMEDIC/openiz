@@ -69,7 +69,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="password">The new password of the user.</param>
 		/// <returns>Returns the updated user.</returns>
 		[WebInvoke(UriTemplate = "/changepassword/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT" )]
-		SecurityUser ChangePassword(Guid id, string password);
+		SecurityUser ChangePassword(string id, string password);
 
 		/// <summary>
 		/// Creates a device in the IMS.

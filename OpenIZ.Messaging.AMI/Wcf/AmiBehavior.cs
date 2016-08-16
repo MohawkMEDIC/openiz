@@ -92,8 +92,15 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="id">The id of the user whose password is to be changed.</param>
 		/// <param name="password">The new password of the user.</param>
 		/// <returns>Returns the updated user.</returns>
-		public SecurityUser ChangePassword(Guid id, string password)
+		public SecurityUser ChangePassword(string id, string password)
 		{
+			Guid userKey = Guid.Empty;
+
+			if (!Guid.TryParse(id, out userKey))
+			{
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(id)));
+			}
+
 			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
 			if (securityRepository == null)
@@ -101,7 +108,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
 			}
 
-			return securityRepository.ChangePassword(id, password);
+			return securityRepository.ChangePassword(userKey, password);
 		}
 
 		/// <summary>
