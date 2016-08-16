@@ -58,6 +58,15 @@ namespace OpenIZ.Core.Applets.Model
 			get;
 			set;
 		}
-	}
+
+        /// <summary>
+        /// Unpack the package
+        /// </summary>
+        public AppletManifest Unpack()
+        {
+            using (MemoryStream ms = new MemoryStream(this.Manifest))
+                return AppletManifest.Load(ms);
+        }
+    }
 }
 

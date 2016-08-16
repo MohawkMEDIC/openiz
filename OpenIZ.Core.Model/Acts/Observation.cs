@@ -100,7 +100,6 @@ namespace OpenIZ.Core.Model.Acts
     /// Represents an observation that contains a quantity
     /// </summary>
     [XmlType("QuantityObservation",  Namespace = "http://openiz.org/model"), JsonObject("QuantityObservation")]
-    
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "QuantityObservation" )]
     public class QuantityObservation : Observation
     {
@@ -165,7 +164,6 @@ namespace OpenIZ.Core.Model.Acts
     /// Represents an observation with a text value
     /// </summary>
     [XmlType("TextObservation",  Namespace = "http://openiz.org/model"), JsonObject("TextObservation")]
-    
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "TextObservation")]
     public class TextObservation : Observation
     {
@@ -180,7 +178,6 @@ namespace OpenIZ.Core.Model.Acts
     /// Represents an observation with a concept value
     /// </summary>
     [XmlType("CodedObservation",  Namespace = "http://openiz.org/model"), JsonObject("CodedObservation")]
-    
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "CodedObservation")]
     public class CodedObservation : Observation
     {
