@@ -24,6 +24,7 @@ using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Security;
+using System;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Xml.Schema;
@@ -60,6 +61,15 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the acceptance result.</returns>
 		[WebInvoke(UriTemplate = "/csr/accept/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		SubmissionResult AcceptCsr(string id);
+
+		/// <summary>
+		/// Changes the password of a user.
+		/// </summary>
+		/// <param name="id">The id of the user whose password is to be changed.</param>
+		/// <param name="password">The new password of the user.</param>
+		/// <returns>Returns the updated user.</returns>
+		[WebInvoke(UriTemplate = "/changepassword/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT" )]
+		SecurityUser ChangePassword(Guid id, string password);
 
 		/// <summary>
 		/// Creates a device in the IMS.

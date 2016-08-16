@@ -57,6 +57,17 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
+		/// Changes the password of a user.
+		/// </summary>
+		/// <param name="id">The id of the user whose password is to be changed.</param>
+		/// <param name="password">The new password of the user.</param>
+		/// <returns>Returns the updated user.</returns>
+		public SecurityUser ChangePassword(Guid id, string password)
+		{
+			return this.Client.Put<string, SecurityUser>(string.Format("changepassword/{0}", id.ToString()), this.Client.Accept, password);
+		}
+
+		/// <summary>
 		/// Creates a device in the IMS.
 		/// </summary>
 		/// <param name="device">The device to be created.</param>
@@ -65,24 +76,6 @@ namespace OpenIZ.Messaging.AMI.Client
 		{
 			return this.Client.Post<SecurityDevice, SecurityDevice>("device/create", this.Client.Accept, device);
 		}
-
-        /// <summary>
-        /// Retrieves the specified role from the AMI
-        /// </summary>
-        public AmiCollection<SecurityRoleInfo> FindRole(Expression<Func<SecurityRole, bool>> query)
-        {
-            var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
-            return this.Client.Get<AmiCollection<SecurityRoleInfo>>("role", queryParms);
-        }
-
-        /// <summary>
-        /// Retrieves the specified role from the AMI
-        /// </summary>
-        public AmiCollection<SecurityPolicyInfo> FindPolicy(Expression<Func<SecurityPolicy, bool>> query)
-        {
-            var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
-            return this.Client.Get<AmiCollection<SecurityPolicyInfo>>("policy", queryParms);
-        }
 
         /// <summary>
         /// Creates a place in the IMS.
@@ -218,13 +211,31 @@ namespace OpenIZ.Messaging.AMI.Client
 		#endregion IDisposable Support
 
 		/// <summary>
+		/// Retrieves the specified role from the AMI
+		/// </summary>
+		public AmiCollection<SecurityRoleInfo> FindRole(Expression<Func<SecurityRole, bool>> query)
+		{
+			var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
+			return this.Client.Get<AmiCollection<SecurityRoleInfo>>("role", queryParms);
+		}
+
+		/// <summary>
+		/// Retrieves the specified role from the AMI
+		/// </summary>
+		public AmiCollection<SecurityPolicyInfo> FindPolicy(Expression<Func<SecurityPolicy, bool>> query)
+		{
+			var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
+			return this.Client.Get<AmiCollection<SecurityPolicyInfo>>("policy", queryParms);
+		}
+
+		/// <summary>
 		/// Gets a list of certificates.
 		/// </summary>
 		/// <param name="query">The query expression to use to find the certificates.</param>
 		/// <returns>Returns a collection of certificates which match the specified query.</returns>
 		AmiCollection<X509Certificate2Info> GetCertificates(Expression<Func<X509Certificate2Info, bool>> query)
 		{
-			return this.Client.Get<AmiCollection<X509Certificate2Info>>("certificates", QueryExpressionBuilder.BuildQuery(query).ToArray());
+			return this.Client.Get<AmiCollection<X509Certificate2Info>>("certificate", QueryExpressionBuilder.BuildQuery(query).ToArray());
 		}
 
 		/// <summary>
@@ -234,7 +245,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns a collection of concepts which match the specified query.</returns>
 		public AmiCollection<Concept> GetConcepts(Expression<Func<Concept, bool>> query)
 		{
-			return this.Client.Get<AmiCollection<Concept>>("concepts", QueryExpressionBuilder.BuildQuery(query).ToArray());
+			return this.Client.Get<AmiCollection<Concept>>("concept", QueryExpressionBuilder.BuildQuery(query).ToArray());
 		}
 
 		/// <summary>
@@ -244,7 +255,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns a collection of concept sets which match the specified query.</returns>
 		public AmiCollection<ConceptSet> GetConceptSets(Expression<Func<ConceptSet, bool>> query)
 		{
-			return this.Client.Get<AmiCollection<ConceptSet>>("conceptsets", QueryExpressionBuilder.BuildQuery(query).ToArray());
+			return this.Client.Get<AmiCollection<ConceptSet>>("conceptset", QueryExpressionBuilder.BuildQuery(query).ToArray());
 		}
 
 		/// <summary>
@@ -274,7 +285,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns a collection of devices which match the specified query.</returns>
 		public AmiCollection<SecurityDevice> GetDevices(Expression<Func<SecurityDevice, bool>> query)
 		{
-			return this.Client.Get<AmiCollection<SecurityDevice>>("devices", QueryExpressionBuilder.BuildQuery(query).ToArray());
+			return this.Client.Get<AmiCollection<SecurityDevice>>("device", QueryExpressionBuilder.BuildQuery(query).ToArray());
 		}
 
 		/// <summary>
@@ -284,7 +295,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns a collection of places which match the specified query.</returns>
 		public AmiCollection<Place> GetPlaces(Expression<Func<Place, bool>> query)
 		{
-			return this.Client.Get<AmiCollection<Place>>("places", QueryExpressionBuilder.BuildQuery(query).ToArray());
+			return this.Client.Get<AmiCollection<Place>>("place", QueryExpressionBuilder.BuildQuery(query).ToArray());
 		}
 
 		/// <summary>
@@ -295,7 +306,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		public AmiCollection<SecurityPolicyInfo> GetPolicies(Expression<Func<SecurityPolicy, bool>> query)
 		{
 			var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
-			return this.Client.Get<AmiCollection<SecurityPolicyInfo>>("policies", queryParms);
+			return this.Client.Get<AmiCollection<SecurityPolicyInfo>>("policy", queryParms);
 		}
 
 		/// <summary>
@@ -326,7 +337,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		public AmiCollection<SecurityRoleInfo> GetRoles(Expression<Func<SecurityRole, bool>> query)
 		{
 			var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
-			return this.Client.Get<AmiCollection<SecurityRoleInfo>>("roles", queryParms);
+			return this.Client.Get<AmiCollection<SecurityRoleInfo>>("role", queryParms);
 		}
 
 		/// <summary>
@@ -347,7 +358,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		public AmiCollection<SecurityUserInfo> GetUsers(Expression<Func<SecurityUser, bool>> query)
 		{
 			var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
-			return this.Client.Get<AmiCollection<SecurityUserInfo>>("users", queryParms);
+			return this.Client.Get<AmiCollection<SecurityUserInfo>>("user", queryParms);
 		}
 
 		/// <summary>
@@ -357,7 +368,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the submission result.</returns>
 		public SubmissionResult SubmitCertificateSigningRequest(SubmissionRequest submissionRequest)
 		{
-			return this.Client.Post<SubmissionRequest, SubmissionResult>("csr", this.Client.Accept, submissionRequest);
+			return this.Client.Post<SubmissionRequest, SubmissionResult>("csr/submit", this.Client.Accept, submissionRequest);
 		}
 
 		/// <summary>
