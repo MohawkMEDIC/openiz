@@ -84,7 +84,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                     InversionIndicator = true
                 }));
             }
-
+            
             return retVal;
         }
 
@@ -95,6 +95,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             // Alright first, which type am I mapping to?
             var dbEntity = dataInstance as Data.EntityVersion;
+            
             switch(dbEntity.Entity.ClassConceptId.ToString().ToUpper())
             {
                 case Device:

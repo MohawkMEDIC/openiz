@@ -10,6 +10,7 @@ using OpenIZ.Core.Services.Impl;
 using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Core.Security;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {

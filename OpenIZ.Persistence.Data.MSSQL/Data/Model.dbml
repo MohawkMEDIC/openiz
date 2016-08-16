@@ -1,16 +1,9 @@
-﻿<Database Name="OpenIZ_Test" Class="ModelDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\justi\Source\Repos\openiz\OpenIZ.Persistence.Data.MSSQL.Test\OpenIZ_Test.mdf;Integrated Security=True;Connect Timeout=30" SettingsObjectName="OpenIZ.Persistence.Data.MSSQL.Properties.Settings" SettingsPropertyName="OpenIZ_TestConnectionString2" Provider="System.Data.SqlClient" />
-  <Table Name="dbo.UserEntity" Member="UserEntities">
-    <Type Name="UserEntity">
-      <Column Name="EntityVersionId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="UserId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
-      <Association Name="Person_UserEntity" Member="Person" ThisKey="EntityVersionId" OtherKey="EntityVersionId" Type="Person" IsForeignKey="true" />
-      <Association Name="SecurityUser_UserEntity" Member="SecurityUser" ThisKey="UserId" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
-    </Type>
-  </Table>
+﻿<Database Name="OpenIZ" Class="ModelDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\justi\Source\Repos\openiz\OpenIZ\Data\OpenIZ.mdf;Integrated Security=True" SettingsObjectName="OpenIZ.Persistence.Data.MSSQL.Properties.Settings" SettingsPropertyName="OpenIZConnectionString2" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Act" Member="Acts">
     <Type Name="Act">
       <Column Name="ActId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TemplateDefinitionId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="ClassConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="MoodConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Association Name="Act_ActExtension" Member="ActExtensions" ThisKey="ActId" OtherKey="ActId" Type="ActExtension" />
@@ -25,6 +18,15 @@
       <Association Name="Act_ActVersion" Member="ActVersions" ThisKey="ActId" OtherKey="ActId" Type="ActVersion" />
       <Association Name="Concept_Act" Member="ClassConcept" ThisKey="ClassConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
       <Association Name="Concept_Act1" Member="MoodConcept" ThisKey="MoodConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
+      <Association Name="TemplateDefinition_Act" Member="TemplateDefinition" ThisKey="TemplateDefinitionId" OtherKey="TemplateDefinitionId" Type="TemplateDefinition" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UserEntity" Member="UserEntities">
+    <Type Name="UserEntity">
+      <Column Name="EntityVersionId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="UserId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Association Name="Person_UserEntity" Member="Person" ThisKey="EntityVersionId" OtherKey="EntityVersionId" Type="Person" IsForeignKey="true" />
+      <Association Name="SecurityUser_UserEntity" Member="SecurityUser" ThisKey="UserId" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.ActExtension" Member="ActExtensions">
@@ -294,7 +296,6 @@
       <Association Name="Concept_PlaceService" Member="PlaceServicesServiceConceptId" ThisKey="ConceptId" OtherKey="ServiceConceptId" Type="PlaceService" />
       <Association Name="Concept_Provider" Member="ProvidersProviderSpecialtyConceptId" ThisKey="ConceptId" OtherKey="ProviderSpecialtyConceptId" Type="Provider" />
       <Association Name="Concept_QuantityObservation" Member="QuantityObservationsUnitOfMeasureConceptId" ThisKey="ConceptId" OtherKey="UnitOfMeasureConceptId" Type="QuantityObservation" />
-      <Association Name="Concept_StockLedger" Member="StockLedgersLedgerActionConceptId" ThisKey="ConceptId" OtherKey="LedgerActionConceptId" Type="StockLedger" />
       <Association Name="Concept_SubstanceAdministration" Member="SubstanceAdministrationsDoseUnitConceptId" ThisKey="ConceptId" OtherKey="DoseUnitConceptId" Type="SubstanceAdministration" />
       <Association Name="Concept_SubstanceAdministration1" Member="SubstanceAdministrationsRouteConceptId" ThisKey="ConceptId" OtherKey="RouteConceptId" Type="SubstanceAdministration" />
       <Association Name="Concept_SubstanceAdministration2" Member="SubstanceAdministrationsSiteConceptId" ThisKey="ConceptId" OtherKey="SiteConceptId" Type="SubstanceAdministration" />
@@ -456,6 +457,7 @@
   <Table Name="dbo.Entity" Member="Entities">
     <Type Name="Entity">
       <Column Name="EntityId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TemplateDefinitionId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="ClassConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="DeterminerConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Association Name="Entity_ActNote" Member="ActNotesAuthorEntityId" ThisKey="EntityId" OtherKey="AuthorEntityId" Type="ActNote" />
@@ -473,12 +475,9 @@
       <Association Name="Entity_EntityVersion" Member="EntityVersions" ThisKey="EntityId" OtherKey="EntityId" Type="EntityVersion" />
       <Association Name="Entity_PersonLanguageCommunication" Member="PersonLanguageCommunicationsPersonEntityId" ThisKey="EntityId" OtherKey="PersonEntityId" Type="PersonLanguageCommunication" />
       <Association Name="Entity_PlaceService" Member="PlaceServicesPlaceEntityId" ThisKey="EntityId" OtherKey="PlaceEntityId" Type="PlaceService" />
-      <Association Name="Entity_StockBalance" Member="StockBalancesMaterialEntityId" ThisKey="EntityId" OtherKey="MaterialEntityId" Type="StockBalance" />
-      <Association Name="Entity_StockBalance1" Member="StockBalancesPlaceEntityId" ThisKey="EntityId" OtherKey="PlaceEntityId" Type="StockBalance" />
-      <Association Name="Entity_StockLedger" Member="StockLedgersMaterialEntityId" ThisKey="EntityId" OtherKey="MaterialEntityId" Type="StockLedger" />
-      <Association Name="Entity_StockLedger1" Member="StockLedgersPlaceEntityId" ThisKey="EntityId" OtherKey="PlaceEntityId" Type="StockLedger" />
       <Association Name="Concept_Entity" Member="ClassConcept" ThisKey="ClassConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
       <Association Name="Concept_Entity1" Member="DeterminerConcept" ThisKey="DeterminerConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
+      <Association Name="TemplateDefinition_Entity" Member="TemplateDefinition" ThisKey="TemplateDefinitionId" OtherKey="TemplateDefinitionId" Type="TemplateDefinition" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.EntityAddress" Member="EntityAddresses">
@@ -741,7 +740,7 @@
   <Table Name="dbo.Organization" Member="Organizations">
     <Type Name="Organization">
       <Column Name="EntityVersionId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="IndustryConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="IndustryConceptId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Association Name="EntityVersion_Organization" Member="EntityVersion" ThisKey="EntityVersionId" OtherKey="EntityVersionId" Type="EntityVersion" IsForeignKey="true" />
       <Association Name="Concept_Organization" Member="IndustryConcept" ThisKey="IndustryConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
     </Type>
@@ -1122,6 +1121,9 @@
       <Association Name="SecurityUser_SecurityUserClaim" Member="SecurityUserClaims" ThisKey="UserId" OtherKey="UserId" Type="SecurityUserClaim" />
       <Association Name="SecurityUser_SecurityUserLogin" Member="SecurityUserLogins" ThisKey="UserId" OtherKey="UserId" Type="SecurityUserLogin" />
       <Association Name="SecurityUser_SecurityUserRole" Member="SecurityUserRoles" ThisKey="UserId" OtherKey="UserId" Type="SecurityUserRole" />
+      <Association Name="SecurityUser_TemplateDefinition" Member="TemplateDefinitionsCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="TemplateDefinition" />
+      <Association Name="SecurityUser_TemplateDefinition1" Member="TemplateDefinitionsObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="TemplateDefinition" />
+      <Association Name="SecurityUser_TemplateDefinition2" Member="TemplateDefinitionsUpdatedBy" ThisKey="UserId" OtherKey="UpdatedBy" Type="TemplateDefinition" />
       <Association Name="SecurityUser_SecurityUser" Member="CreatedByEntity" ThisKey="CreatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
       <Association Name="SecurityUser_SecurityUser1" Member="ObsoletedByEntity" ThisKey="ObsoletedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
       <Association Name="SecurityUser_SecurityUser2" Member="UpdatedByEntity" ThisKey="UpdatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
@@ -1160,33 +1162,6 @@
       <Association Name="SecurityUser_SecurityUserRole" Member="SecurityUser" ThisKey="UserId" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
     </Type>
   </Table>
-  <Table Name="dbo.StockBalance" Member="StockBalances">
-    <Type Name="StockBalance">
-      <Column Name="StockBalanceId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="PlaceEntityId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
-      <Column Name="MaterialEntityId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
-      <Column Name="Quantity" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="CreationTime" Type="System.DateTimeOffset" DbType="DateTimeOffset NOT NULL" CanBeNull="false" IsDbGenerated="true" />
-      <Column Name="UpdatedTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
-      <Association Name="Entity_StockBalance" Member="MaterialEntity" ThisKey="MaterialEntityId" OtherKey="EntityId" Type="Entity" IsForeignKey="true" />
-      <Association Name="Entity_StockBalance1" Member="PlaceEntity" ThisKey="PlaceEntityId" OtherKey="EntityId" Type="Entity" IsForeignKey="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.StockLedger" Member="StockLedgers">
-    <Type Name="StockLedger">
-      <Column Name="StockLedgerId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="PlaceEntityId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
-      <Column Name="MaterialEntityId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
-      <Column Name="Quantity" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="LedgerActionConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
-      <Column Name="Note" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
-      <Column Name="CreationTime" Type="System.DateTimeOffset" DbType="DateTimeOffset NOT NULL" CanBeNull="false" IsDbGenerated="true" />
-      <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
-      <Association Name="Concept_StockLedger" Member="LedgerActionConcept" ThisKey="LedgerActionConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
-      <Association Name="Entity_StockLedger" Member="MaterialEntity" ThisKey="MaterialEntityId" OtherKey="EntityId" Type="Entity" IsForeignKey="true" />
-      <Association Name="Entity_StockLedger1" Member="PlaceEntity" ThisKey="PlaceEntityId" OtherKey="EntityId" Type="Entity" IsForeignKey="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.SubstanceAdministration" Member="SubstanceAdministrations">
     <Type Name="SubstanceAdministration">
       <Column Name="ActVersionId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
@@ -1201,6 +1176,26 @@
       <Association Name="Concept_SubstanceAdministration2" Member="SiteConcept" ThisKey="SiteConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
     </Type>
   </Table>
+  <Table Name="dbo.TemplateDefinition" Member="TemplateDefinitions">
+    <Type Name="TemplateDefinition">
+      <Column Name="TemplateDefinitionId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Oid" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
+      <Column Name="Mnemonic" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(128)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="CreationTime" Type="System.DateTimeOffset" DbType="DateTimeOffset NOT NULL" CanBeNull="false" IsDbGenerated="true" />
+      <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
+      <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="UpdatedTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
+      <Column Name="UpdatedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Association Name="TemplateDefinition_Act" Member="Acts" ThisKey="TemplateDefinitionId" OtherKey="TemplateDefinitionId" Type="Act" />
+      <Association Name="TemplateDefinition_Entity" Member="Entities" ThisKey="TemplateDefinitionId" OtherKey="TemplateDefinitionId" Type="Entity" />
+      <Association Name="SecurityUser_TemplateDefinition" Member="CreatedByEntity" ThisKey="CreatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
+      <Association Name="SecurityUser_TemplateDefinition1" Member="ObsoletedByEntity" ThisKey="ObsoletedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
+      <Association Name="SecurityUser_TemplateDefinition2" Member="UpdatedByEntity" ThisKey="UpdatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
+    </Type>
+  </Table>
   <Table Name="dbo.TextObservation" Member="TextObservations">
     <Type Name="TextObservation">
       <Column Name="ActVersionId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
@@ -1208,6 +1203,13 @@
       <Association Name="Observation_TextObservation" Member="Observation" ThisKey="ActVersionId" OtherKey="ActVersionId" Type="Observation" IsForeignKey="true" />
     </Type>
   </Table>
+  <Function Name="dbo.sp_Authenticate" Method="sp_Authenticate">
+    <Parameter Name="UserName" Parameter="userName" Type="System.String" DbType="NVarChar(128)" />
+    <Parameter Name="PasswordHash" Parameter="passwordHash" Type="System.String" DbType="NVarChar(128)" />
+    <Parameter Name="MaxInvalidLoginAttempts" Parameter="maxInvalidLoginAttempts" Type="System.Int32" DbType="Int" />
+    <Parameter Name="SecurityUserId" Parameter="securityUserId" Type="System.Guid" DbType="UniqueIdentifier" Direction="InOut" />
+    <Return Type="System.Int32" />
+  </Function>
   <Function Name="dbo.fn_AssertConceptClass" Method="fn_AssertConceptClass" IsComposable="true">
     <Parameter Name="ConceptId" Parameter="conceptId" Type="System.Guid" DbType="UniqueIdentifier" />
     <Parameter Name="AssertClassMnemonic" Parameter="assertClassMnemonic" Type="System.String" DbType="NVarChar(32)" />
@@ -1215,11 +1217,6 @@
   </Function>
   <Function Name="dbo.fn_OpenIzSchemaVersion" Method="fn_OpenIzSchemaVersion" IsComposable="true">
     <Return Type="System.String" />
-  </Function>
-  <Function Name="dbo.fn_AssertEntityClass" Method="fn_AssertEntityClass" IsComposable="true">
-    <Parameter Name="EntityId" Parameter="entityId" Type="System.Guid" DbType="UniqueIdentifier" />
-    <Parameter Name="AssertClassMnemonic" Parameter="assertClassMnemonic" Type="System.String" DbType="NVarChar(32)" />
-    <Return Type="System.Boolean" />
   </Function>
   <Function Name="dbo.fn_IsAccountLocked" Method="fn_IsAccountLocked" IsComposable="true">
     <Parameter Name="UserName" Parameter="userName" Type="System.String" DbType="NVarChar(128)" />
@@ -1229,12 +1226,5 @@
     <Parameter Name="ConceptId" Parameter="conceptId" Type="System.Guid" DbType="UniqueIdentifier" />
     <Parameter Name="ConceptSetMnemonic" Parameter="conceptSetMnemonic" Type="System.String" DbType="NVarChar(32)" />
     <Return Type="System.Boolean" />
-  </Function>
-  <Function Name="dbo.sp_Authenticate" Method="sp_Authenticate">
-    <Parameter Name="UserName" Parameter="userName" Type="System.String" DbType="NVarChar(128)" />
-    <Parameter Name="PasswordHash" Parameter="passwordHash" Type="System.String" DbType="NVarChar(128)" />
-    <Parameter Name="MaxInvalidLoginAttempts" Parameter="maxInvalidLoginAttempts" Type="System.Int32" DbType="Int" />
-    <Parameter Name="SecurityUserId" Parameter="securityUserId" Type="System.Guid" DbType="UniqueIdentifier" Direction="InOut" />
-    <Return Type="System.Int32" />
   </Function>
 </Database>

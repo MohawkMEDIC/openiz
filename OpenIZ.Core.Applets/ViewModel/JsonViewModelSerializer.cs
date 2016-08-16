@@ -475,7 +475,8 @@ namespace OpenIZ.Core.Applets.ViewModel
                     parseProperties.Add(jpa, itm);
                 }
                 lock (s_readPropertyCache)
-                    s_readPropertyCache.Add(serializationType, parseProperties);
+                    if (!s_readPropertyCache.ContainsKey(serializationType))
+                        s_readPropertyCache.Add(serializationType, parseProperties);
             }
             // Properties
             Dictionary<PropertyInfo, String> serializationProperties = null;
@@ -501,7 +502,8 @@ namespace OpenIZ.Core.Applets.ViewModel
                     serializationProperties.Add(itm, jpa);
                 }
                 lock (s_writePropertyCache)
-                    s_writePropertyCache.Add(serializationType, serializationProperties);
+                    if(!s_writePropertyCache.ContainsKey(serializationType))
+                        s_writePropertyCache.Add(serializationType, serializationProperties);
             }
         }
 

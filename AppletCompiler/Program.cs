@@ -60,6 +60,7 @@ namespace AppletCompiler
             // Applet collection
             AppletCollection ac = new AppletCollection();
             XmlSerializer xsz = new XmlSerializer(typeof(AppletManifest));
+            XmlSerializer xpz = new XmlSerializer(typeof(AppletPackage));
             if(parameters.References != null)
                 foreach (var itm in parameters.References)
                 {
@@ -67,11 +68,23 @@ namespace AppletCompiler
                     {
                         using (var fs = File.OpenRead(itm))
                         {
-                            var mfst = xsz.Deserialize(fs) as AppletManifest;
-                            mfst.Initialize();
-                            ac.Add(mfst);
-                            Console.WriteLine("Added reference to {0}; v={1}", mfst.Info.Id, mfst.Info.Version);
+                            if (Path.GetExtension(itm) == ".pak")
+                                using (var gzs = new GZipStream(fs, CompressionMode.Decompress))
+                                {
+                                    var pack = xpz.Deserialize(gzs) as AppletPackage;
+                                    var mfst = pack.Unpack();
+                                    mfst.Initialize();
+                                    ac.Add(mfst);
+                                    Console.WriteLine("Added reference to {0}; v={1}", mfst.Info.Id, mfst.Info.Version);
+                                }
+                            else
+                            {
+                                var mfst = xsz.Deserialize(fs) as AppletManifest;
+                                mfst.Initialize();
+                                ac.Add(mfst);
+                                Console.WriteLine("Added reference to {0}; v={1}", mfst.Info.Id, mfst.Info.Version);
 
+                            }
                         }
                     }
                 }
@@ -95,12 +108,16 @@ namespace AppletCompiler
                     if (mfst.Info.Version.Contains("*"))
                         mfst.Info.Version = mfst.Info.Version.Replace("*", ((DateTime.Now.Subtract(new DateTime(DateTime.Now.Year, 1, 1)).TotalMinutes % 1000).ToString().Substring(0, 4)));
 
+                    if (!Directory.Exists(Path.GetDirectoryName(parameters.Output)))
+                        Directory.CreateDirectory(Path.GetDirectoryName(parameters.Output));
+
                     using (var ofs = File.Create(parameters.Output ?? "out.xml"))
                         xsz.Serialize(ofs, mfst);
 
                     var pkg = mfst.CreatePackage();
                     pkg.Meta.Hash = SHA256.Create().ComputeHash(pkg.Manifest);
                     pkg.Meta.PublicKeyToken = pkg.Meta.PublicKeyToken ?? BitConverter.ToString(Guid.NewGuid().ToByteArray()).Replace("-", "");
+
 
                     using (var ofs = File.Create(Path.ChangeExtension(parameters.Output ?? "out.xml", ".pak.raw")))
                         packXsz.Serialize(ofs, pkg);
