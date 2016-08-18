@@ -62,17 +62,18 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <param name="id">The id of the user whose password is to be changed.</param>
 		/// <param name="password">The new password of the user.</param>
 		/// <returns>Returns the updated user.</returns>
+        [Obsolete("Should update the user with new password instead")]
 		public SecurityUser ChangePassword(Guid id, string password)
 		{
 			return this.Client.Put<string, SecurityUser>(string.Format("changepassword/{0}", id.ToString()), this.Client.Accept, password);
 		}
 
-		/// <summary>
-		/// Creates a device in the IMS.
-		/// </summary>
-		/// <param name="device">The device to be created.</param>
-		/// <returns>Returns the newly created device.</returns>
-		public SecurityDevice CreateDevice(SecurityDevice device)
+        /// <summary>
+        /// Creates a device in the IMS.
+        /// </summary>
+        /// <param name="device">The device to be created.</param>
+        /// <returns>Returns the newly created device.</returns>
+        public SecurityDevice CreateDevice(SecurityDevice device)
 		{
 			return this.Client.Post<SecurityDevice, SecurityDevice>("device/create", this.Client.Accept, device);
 		}
@@ -397,9 +398,21 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <param name="id">The id of the user to be updated.</param>
 		/// <param name="user">The user containing the updated information.</param>
 		/// <returns>Returns the updated user.</returns>
+        [Obsolete("User UpdateUser(Guid, SecurityUserInfo) as this REST binding will be removed in future versions")]
 		public SecurityUserInfo UpdateUser(string id, SecurityUserInfo user)
 		{
 			return this.Client.Put<SecurityUserInfo, SecurityUserInfo>(string.Format("user/update/{0}", id), this.Client.Accept, user);
 		}
-	}
+
+        /// <summary>
+        /// Updates a user.
+        /// </summary>
+        /// <param name="id">The id of the user to be updated.</param>
+        /// <param name="user">The user containing the updated information.</param>
+        /// <returns>Returns the updated user.</returns>
+        public SecurityUserInfo UpdateUser(Guid id, SecurityUserInfo user)
+        {
+            return this.Client.Put<SecurityUserInfo, SecurityUserInfo>(string.Format("user/{0}", id), this.Client.Accept, user);
+        }
+    }
 }

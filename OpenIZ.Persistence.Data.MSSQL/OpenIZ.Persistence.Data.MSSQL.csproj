@@ -150,6 +150,8 @@
     <Content Include="Data\CorrectDbml.xslt">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Data\Sql\OpenIZ-Clean.sql" />
+    <Content Include="Data\Sql\OpenIZ-Drop.sql" />
     <Content Include="Data\Sql\OpenIZFn.sql" />
     <Content Include="Data\Sql\Testing\OpenIZTestData.sql" />
     <EmbeddedResource Include="Data\dbfeatures.xml">

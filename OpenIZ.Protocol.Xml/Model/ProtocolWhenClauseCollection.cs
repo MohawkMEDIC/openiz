@@ -67,7 +67,7 @@ namespace OpenIZ.Protocol.Xml.Model
                     exp.TypeRegistry.RegisterType<TData>();
                     exp.TypeRegistry.RegisterType<Guid>();
                     exp.TypeRegistry.RegisterType<TimeSpan>();
-                    exp.TypeRegistry.RegisterSymbol("now", DateTime.Now); // because MONO is scumbag
+                    exp.TypeRegistry.RegisterParameter("now", ()=>DateTime.Now); // because MONO is scumbag
                     //exp.TypeRegistry.RegisterSymbol("data", expressionParm);
                     exp.ScopeCompile<TData>();
                     //Func<TData, bool> d = exp.ScopeCompile<TData>();

@@ -2,21 +2,22 @@
   <update insertIfNotExists="true">
     <CodeSystem xmlns="http://openiz.org/model">
       <id>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
       <name>HL7AREASON</name>
       <oid>2.16.840.1.113883.5.8</oid>
       <authority>HL7AREASON</authority>
       <description>HL7AREASON</description>
+      <url>http://hl7.org/fhir/ValueSet/v3-ActReason</url>
+
     </CodeSystem>
   </update>
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>90e0d0b6-c055-42ec-8248-d37f4a28650c</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>BROKE</mnemonic>
       <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Broken / Damaged</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -26,7 +27,7 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>dcff308d-cca5-4eb3-ad92-770917d88e56</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
@@ -54,11 +55,11 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>a5d6651d-ccfc-43da-8ee0-b4aaf584bfd2</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>OSTOCK</mnemonic>
       <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Out of Stock</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -68,7 +69,7 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>c7469fad-f190-40a2-a28d-f97d1863e8cf</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
@@ -96,11 +97,11 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>e82094f0-5f36-4b3d-99cf-61ae9ba2015d</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>EXPIRE</mnemonic>
       <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Expired</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -110,7 +111,7 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>4b518938-b1ea-44e3-b837-31617fa188a4</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
@@ -138,11 +139,11 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>69a00e97-f612-47eb-a6f9-bb244e81705c</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>PATCAR</mnemonic>
       <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Patient Care</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -152,7 +153,7 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>2d86e872-57a0-4103-9f60-d10bd8e196ae</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
@@ -180,11 +181,11 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>8b712301-b4a5-4cee-8998-e1a08f85612e</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>PREFUS</mnemonic>
       <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Patient Refused</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -194,7 +195,7 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>42351a36-f60f-4687-b334-7a41b091bae1</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
@@ -222,11 +223,11 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>5ce6d619-b0e5-4cb1-9183-f468f85018e2</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>PPT</mnemonic>
       <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Per-Protocol</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -236,7 +237,7 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>a53562bd-b499-4603-8772-866e181fb3e7</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
@@ -264,11 +265,11 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>7fd09f7c-cb6e-4c2c-9ca7-87606d34cecc</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>ALGINT</mnemonic>
       <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Alergy / Intolerance</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -278,7 +279,7 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>4ff3617b-bb91-4f3f-b4d2-2425f477037f</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
@@ -306,11 +307,11 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>71c88c5a-d0a0-4e9b-a552-782f39919a71</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>AGE</mnemonic>
       <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Age Alert</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -320,7 +321,7 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>98db93c5-e53c-4e42-8f5e-46c336a5b29e</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
@@ -348,11 +349,11 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>a5f6ea22-7961-458c-bb8d-0a88364bb3d1</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>PROFJ</mnemonic>
       <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Professional Judegement</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -362,7 +363,7 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>9d947e6d-8406-42f3-bb8a-634fb3c81a08</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
@@ -390,11 +391,11 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>b7c1d7d1-aaa7-4699-9076-ac93302e488d</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>RELIG</mnemonic>
       <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Religious Objection</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -404,7 +405,7 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>0d40c2b6-7ceb-4492-ab2a-6e7c730eaf22</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
@@ -432,11 +433,11 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>d6b628aa-2ab1-4bc3-8141-2ffc94ae2d13</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>STRTLATE</mnemonic>
       <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Started too late</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -446,7 +447,7 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>b75bf533-9804-4450-83c7-23f0332f87b8</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
@@ -474,11 +475,11 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>4a27e314-ce2f-4638-92ed-bdf73ffc8921</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>__VACSAF</mnemonic>
       <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Vaccine Safety concern</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -488,7 +489,7 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>c6718df8-c8c0-49fd-a73d-52f6981ccbf7</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
@@ -516,11 +517,11 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>9bbd7579-0ff8-4c50-aa3c-fcbfd8b1258c</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>CSTORE</mnemonic>
       <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Cold storage malfunction</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -530,7 +531,7 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>06922eac-0cae-49af-a33c-fc7096349e4a</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
@@ -558,7 +559,6 @@
   <update insertIfNotExists="true">
     <ConceptSet xmlns="http://openiz.org/model">
       <id>ba44f451-f979-4e11-9db4-aad8e2e88ce5</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
       <name>Reason Codes</name>
       <mnemonic>ActReason</mnemonic>
       <oid>1.3.6.1.4.1.33349.3.1.5.9.1.19</oid>
@@ -581,11 +581,10 @@
   <update insertIfNotExists="true">
     <ConceptSet xmlns="http://openiz.org/model">
       <id>ba44f451-f979-4e11-9db4-aad8e2e88ce5</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
-      <name>Reason Codes</name>
+      <name>Stock Reason Codes</name>
       <mnemonic>StockReason</mnemonic>
-      <oid>1.3.6.1.4.1.33349.3.1.5.9.1.19</oid>
-      <url>http://openiz.org/conceptsets/Reason</url>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.1.35</oid>
+      <url>http://openiz.org/conceptsets/StockReason</url>
       <concept>dcff308d-cca5-4eb3-ad92-770917d88e56</concept>
       <concept>4b518938-b1ea-44e3-b837-31617fa188a4</concept>
       <concept>06922eac-0cae-49af-a33c-fc7096349e4a</concept>

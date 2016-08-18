@@ -106,7 +106,7 @@ namespace AppletCompiler
                         i.Name = i.Name.Substring(1);
 
                     if (mfst.Info.Version.Contains("*"))
-                        mfst.Info.Version = mfst.Info.Version.Replace("*", ((DateTime.Now.Subtract(new DateTime(DateTime.Now.Year, 1, 1)).TotalMinutes % 1000).ToString().Substring(0, 4)));
+                        mfst.Info.Version = mfst.Info.Version.Replace("*", (((DateTime.Now.Subtract(new DateTime(DateTime.Now.Year, 1, 1)).Ticks >> 24) % 10000)).ToString("0000"));
 
                     if (!Directory.Exists(Path.GetDirectoryName(parameters.Output)))
                         Directory.CreateDirectory(Path.GetDirectoryName(parameters.Output));

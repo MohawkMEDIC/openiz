@@ -56,5 +56,10 @@ namespace OpenIZ.Core
         internal const string GeneralPanicErrorCode = "01189998819991197253";
         // General panic error text
         internal const string GeneralPanicErrorText = "0118 999 881 999 119 7253 - FATAL ERROR: {0}";
+
+        /// <summary>
+        /// Service trace source name
+        /// </summary>
+        public const string ServiceTraceSourceName = "OpenIZ.Core";
     }
 }

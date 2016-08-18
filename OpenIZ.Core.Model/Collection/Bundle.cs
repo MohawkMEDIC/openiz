@@ -74,6 +74,13 @@ namespace OpenIZ.Core.Model.Collection
     [XmlInclude(typeof(SecurityUser))]
     public class Bundle : IdentifiedData
     {
+        /// <summary>
+        /// Create new bundle
+        /// </summary>
+        public Bundle()
+        {
+            this.Item = new List<IdentifiedData>();
+        }
 
         // Lock object
         private object m_lockObject = new object();
@@ -274,7 +281,7 @@ namespace OpenIZ.Core.Model.Collection
 
                                 if (itm is IdentifiedData)
                                 {
-                                    if (currentBundle.Item.Exists(o => o?.Key == (itm as IdentifiedData).Key))
+                                    if (currentBundle.Item.Exists(o => o?.Key == (itm as IdentifiedData)?.Key))
                                         continue;
 
                                     if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null)
