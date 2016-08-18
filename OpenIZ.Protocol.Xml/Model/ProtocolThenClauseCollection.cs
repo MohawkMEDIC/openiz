@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Protocol.Xml.Model
@@ -31,6 +33,18 @@ namespace OpenIZ.Protocol.Xml.Model
         public List<ProtocolDataAction> Action { get; set; }
 
         /// <summary>
+        /// Local index
+        /// </summary>
+        [ThreadStatic]
+        private static int s_index = 0;
+
+        /// <summary>
+        /// Gets the evaluation index
+        /// </summary>
+        /// <returns></returns>
+        private static int EvaluationIndex() { return s_index; }
+
+        /// <summary>
         /// Evaluate the actions
         /// </summary>
         /// <returns></returns>
@@ -40,18 +54,21 @@ namespace OpenIZ.Protocol.Xml.Model
 
             foreach (var itm in this.Action)
             {
-                
                 for (int index = 0; index < itm.Repeat; index++)
                 {
+                    Interlocked.Exchange(ref s_index, index);
+
                     Act act = null;
                     if (itm.Element is String) // JSON
                         itm.Element = JsonViewModelSerializer.DeSerialize<Act>(itm.Element as String);
                     act = (itm.Element as Act).Clone() as Act;
-                    
+                    act.Participations = new List<ActParticipation>((itm.Element as Act).Participations);
+                    act.Relationships = new List<ActRelationship>((itm.Element as Act).Relationships);
+
                     // Now do the actions to the properties as stated
                     foreach (var instr in itm.Do)
                     {
-                        instr.Evaluate(act, p, index);
+                        instr.Evaluate(act, p, EvaluationIndex);
                     }
 
                     // Assign this patient as the record target
@@ -131,7 +148,7 @@ namespace OpenIZ.Protocol.Xml.Model
         /// Evaluate the expression
         /// </summary>
         /// <returns></returns>
-        public abstract object Evaluate(Act act, Patient recordTarget, int index);
+        public abstract object Evaluate(Act act, Patient recordTarget, Func<Int32> indexFunc);
     }
 
     /// <summary>
@@ -140,6 +157,12 @@ namespace OpenIZ.Protocol.Xml.Model
     [XmlType(nameof(PropertyAssignAction), Namespace = "http://openiz.org/protocol")]
     public class PropertyAssignAction : PropertyAction
     {
+        // The setter action
+        private Delegate m_setter;
+        // Select method
+        private MethodInfo m_scopeSelectMethod;
+        // Linq expression to select scope
+        private Expression m_linqExpression;
 
         /// <summary>
         /// Action name
@@ -173,62 +196,80 @@ namespace OpenIZ.Protocol.Xml.Model
         /// <summary>
         /// Evaluate the specified action on the object
         /// </summary>
-        public override object Evaluate(Act act, Patient recordTarget, int index)
+        public override object Evaluate(Act act, Patient recordTarget, Func<Int32> indexFunc)
         {
+
             var propertyInfo = act.GetType().GetRuntimeProperty(this.PropertyName);
 
             if (this.Element != null)
                 propertyInfo.SetValue(act, this.Element);
             else
             {
-                CompiledExpression exp = new CompiledExpression(this.ValueExpression);
-                exp.TypeRegistry = new TypeRegistry();
-                exp.TypeRegistry.RegisterDefaultTypes();
-                exp.TypeRegistry.RegisterType<Guid>();
-                exp.TypeRegistry.RegisterType<DateTimeOffset>();
-                exp.TypeRegistry.RegisterType<TimeSpan>();
-                exp.TypeRegistry.RegisterSymbol("now", DateTime.Now); // because MONO is scumbag
-                exp.TypeRegistry.RegisterSymbol("index", index); // because MONO is scumbag
+               
+                if(this.m_setter == null)
+                {
+                   
+                    CompiledExpression exp = new CompiledExpression(this.ValueExpression);
+                    exp.TypeRegistry = new TypeRegistry();
+                    exp.TypeRegistry.RegisterDefaultTypes();
+                    exp.TypeRegistry.RegisterType<Guid>();
+                    exp.TypeRegistry.RegisterType<DateTimeOffset>();
+                    exp.TypeRegistry.RegisterType<TimeSpan>();
+                    exp.TypeRegistry.RegisterParameter("now", () => DateTime.Now);
+                    exp.TypeRegistry.RegisterParameter("index", indexFunc); // because MONO is scumbag
+
+                    // Scope
+                    if (!String.IsNullOrEmpty(this.ScopeSelector))
+                    {
+                        var scopeProperty = recordTarget.GetType().GetRuntimeProperty(this.ScopeSelector);
+                        var scopeValue = scopeProperty.GetValue(recordTarget);
+
+                        if (scopeProperty == null) return null; // no scope
+
+                        // Where clause?
+                        if (!String.IsNullOrEmpty(this.WhereFilter))
+                        {
+                            var itemType = scopeProperty.PropertyType.GetTypeInfo().GenericTypeArguments[0];
+                            var predicateType = typeof(Func<,>).MakeGenericType(new Type[] { itemType, typeof(bool) });
+                            var builderMethod = typeof(QueryExpressionParser).GetGenericMethod(nameof(QueryExpressionParser.BuildLinqExpression), new Type[] { itemType }, new Type[] { typeof(NameValueCollection) });
+                            this.m_linqExpression = builderMethod.Invoke(null, new Object[] { NameValueCollection.ParseQueryString(this.WhereFilter) }) as Expression;
+
+                            // Call where clause
+                            builderMethod = typeof(Expression).GetGenericMethod(nameof(Expression.Lambda), new Type[] { predicateType }, new Type[] { typeof(Expression), typeof(ParameterExpression[]) });
+                            var firstMethod = typeof(Enumerable).GetGenericMethod("FirstOrDefault",
+                                   new Type[] { itemType },
+                                   new Type[] { scopeProperty.PropertyType, predicateType });
+
+                            this.m_scopeSelectMethod = (MethodInfo)firstMethod;
+
+                        }
+                        exp.TypeRegistry.RegisterType(this.m_scopeSelectMethod.ReturnType.Name, this.m_scopeSelectMethod.ReturnType);
+
+                        var compileMethod = typeof(CompiledExpression).GetGenericMethod(nameof(CompiledExpression.ScopeCompile), new Type[] { this.m_scopeSelectMethod.ReturnType }, new Type[] { });
+                        this.m_setter = (compileMethod.Invoke(exp, null) as Delegate);
+                    }
+                    else
+                        this.m_setter = exp.ScopeCompile<Patient>();
+                }
 
                 Object setValue = null;
-
-                // Scope
-                IEnumerable<Act> tScope = null;
+                // Where clause?
                 if (!String.IsNullOrEmpty(this.ScopeSelector))
                 {
                     var scopeProperty = recordTarget.GetType().GetRuntimeProperty(this.ScopeSelector);
                     var scopeValue = scopeProperty.GetValue(recordTarget);
-
-                    if (scopeProperty == null) return null; // no scope
-
-                    // Where clause?
-                    object scope = scopeValue;
-                    if(!String.IsNullOrEmpty(this.WhereFilter))
-                    {
-                        var itemType = scopeProperty.PropertyType.GetTypeInfo().GenericTypeArguments[0];
-                        var predicateType = typeof(Func<,>).MakeGenericType(new Type[] { itemType, typeof(bool) });
-                        var builderMethod = typeof(QueryExpressionParser).GetGenericMethod(nameof(QueryExpressionParser.BuildLinqExpression), new Type[] { itemType }, new Type[] { typeof(NameValueCollection) });
-                        var linq = builderMethod.Invoke(null, new Object[] { NameValueCollection.ParseQueryString(this.WhereFilter) });
-                        // Call where clause
-                        builderMethod = typeof(Expression).GetGenericMethod(nameof(Expression.Lambda), new Type[] { predicateType }, new Type[] { typeof(Expression), typeof(ParameterExpression[]) });
-                        var firstMethod = typeof(Enumerable).GetGenericMethod("FirstOrDefault",
-                               new Type[] { itemType },
-                               new Type[] { scopeProperty.PropertyType, predicateType });
-
-                        scope = firstMethod.Invoke(null, new Object[] { scopeValue, (linq as LambdaExpression).Compile() });
-
-                    }
-                    exp.TypeRegistry.RegisterType(scope.GetType().Name, scope.GetType());
-
-                    var compileMethod = typeof(CompiledExpression).GetGenericMethod(nameof(CompiledExpression.ScopeCompile), new Type[] { scope.GetType() }, new Type[] { });
-                    setValue = (compileMethod.Invoke(exp, null) as Delegate).DynamicInvoke(scope);
+                    var scope = scopeValue;
+                    if (!String.IsNullOrEmpty(this.WhereFilter))
+                        scope = this.m_scopeSelectMethod.Invoke(null, new Object[] { scopeValue, (this.m_linqExpression as LambdaExpression).Compile() });
+                    setValue = this.m_setter.DynamicInvoke(scope);
                 }
                 else
-                    setValue = exp.ScopeCompile<Patient>().Invoke(recordTarget);
+                    setValue = this.m_setter.DynamicInvoke(recordTarget);
 
                 //exp.TypeRegistry.RegisterSymbol("data", expressionParm);
-                if(Core.Model.Map.MapUtil.TryConvert(setValue, propertyInfo.PropertyType, out setValue))
+                if (Core.Model.Map.MapUtil.TryConvert(setValue, propertyInfo.PropertyType, out setValue))
                     propertyInfo.SetValue(act, setValue);
+
             }
 
             return propertyInfo.GetValue(act);
@@ -246,7 +287,7 @@ namespace OpenIZ.Protocol.Xml.Model
         /// <summary>
         /// Evaluate
         /// </summary>
-        public override object Evaluate(Act act, Patient recordTarget, int index)
+        public override object Evaluate(Act act, Patient recordTarget, Func<Int32> indexFunc)
         {
             var value = act.GetType().GetRuntimeProperty(this.PropertyName) as IList;
             value?.Add(this.Element);

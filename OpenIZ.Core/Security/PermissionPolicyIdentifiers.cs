@@ -130,9 +130,13 @@ namespace OpenIZ.Core.Security
 
 
         /// <summary>
-        /// Indicates the user can elevate themselves (Break the glass)
+        /// Indicates the user can update metadata
         /// </summary>
-        public const string ReadMetadata = "1.3.6.1.4.1.33349.3.1.5.9.2.4";
+        public const string UnrestrictedMetadata = "1.3.6.1.4.1.33349.3.1.5.9.2.4";
+        /// <summary>
+        /// Indicates the user can read metadata
+        /// </summary>
+        public const string ReadMetadata = "1.3.6.1.4.1.33349.3.1.5.9.2.4.0";
 
         #endregion
 

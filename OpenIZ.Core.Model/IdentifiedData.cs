@@ -130,7 +130,7 @@ namespace OpenIZ.Core.Model
                 this.m_delayLoad &&
                 keyReference.HasValue)
             {
-                Debug.WriteLine("Delay loading key reference: {0}>{1}", this.Key, keyReference);
+                //Debug.WriteLine("Delay loading key reference: {0}>{1}", this.Key, keyReference);
                 currentInstance = EntitySource.Current.Get<TEntity>(keyReference.Value);
             }
             currentInstance?.SetDelayLoad(this.IsDelayLoadEnabled);

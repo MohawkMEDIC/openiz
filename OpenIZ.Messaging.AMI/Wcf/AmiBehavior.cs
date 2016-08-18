@@ -213,9 +213,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				Email = user.Email
 			};
 
-			if (user.Lockout)
+			if (user.Lockout.HasValue && user.Lockout.Value)
 			{
-				userToCreate.Lockout = DateTime.UtcNow;
+				userToCreate.Lockout = DateTime.MaxValue;
 			}
 
 			var securityUser = userRepository.CreateUser(userToCreate, user.Password);
@@ -671,9 +671,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="concept">The concept containing the updated model.</param>
 		/// <returns>Returns the newly updated concept.</returns>
-		public Concept UpdateConcept(Concept concept)
+		public Concept UpdateConcept(String conceptId, Concept concept)
 		{
-			var conceptRepository = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+			Guid key = Guid.Parse(conceptId);
+            if (concept.Key != key)
+                throw new ArgumentException(nameof(conceptId));
+
+            var conceptRepository = ApplicationContext.Current.GetService<IConceptRepositoryService>();
 
 			if (conceptRepository == null)
 			{
@@ -688,9 +692,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="place">The place containing the update information.</param>
 		/// <returns>Returns the updated place.</returns>
-		public Place UpdatePlace(Place place)
+		public Place UpdatePlace(String placeId, Place place)
 		{
-			var placeRepository = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
+            Guid key = Guid.Parse(placeId);
+            if (place.Key != key)
+                throw new ArgumentException(nameof(placeId));
+
+            var placeRepository = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
 
 			if (placeRepository == null)
 			{
@@ -714,26 +722,119 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			if (!String.IsNullOrEmpty(info.Password))
 				userRepository.ChangePassword(userId, info.Password);
 
-			SecurityUserInfo userInfo = new SecurityUserInfo(userRepository.SaveUser(new Core.Model.Security.SecurityUser()
-			{
-				Key = userId,
-				Email = info.Email
-			}));
+            if (info.Email != null)
+            {
+                SecurityUserInfo userInfo = new SecurityUserInfo(userRepository.SaveUser(new Core.Model.Security.SecurityUser()
+                {
+                    Key = userId,
+                    Email = info.Email
+                }));
+            }
 
-			if (info.Lockout)
+			if (info.Lockout.HasValue)
 			{
-				userInfo.Lockout = true;
+                if (info.Lockout.Value)
+                    userRepository.LockUser(userId);
+                else
+                    userRepository.UnlockUser(userId);
 			}
 
 			// First, we remove the roles
-			if (userInfo.Roles != null)
+			if (info.Roles != null && info.Roles.Count > 0)
 			{
 				var irps = ApplicationContext.Current.GetService<IRoleProviderService>();
-				irps.RemoveUsersFromRoles(new String[] { userInfo.UserName }, userInfo.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
-				irps.AddUsersToRoles(new String[] { userInfo.UserName }, userInfo.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
+				irps.RemoveUsersFromRoles(new String[] { info.UserName }, info.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
+				irps.AddUsersToRoles(new String[] { info.UserName }, info.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
 			}
 
-			return userInfo;
+			return info;
 		}
-	}
+
+        /// <summary>
+        /// Update user extended
+        /// </summary>
+        [Obsolete]
+        public SecurityUserInfo UpdateUserEx(string userId, SecurityUserInfo info)
+        {
+            return this.UpdateUser(userId, info);
+        }
+
+        [Obsolete]
+        public Place CreatePlaceEx(Place place)
+        {
+            return this.CreatePlace(place);
+        }
+
+        [Obsolete]
+        public SecurityPolicyInfo CreatePolicyEx(SecurityPolicyInfo policy)
+        {
+            return this.CreatePolicy(policy);
+        }
+
+        [Obsolete]
+        public SecurityRoleInfo CreateRoleEx(SecurityRoleInfo role)
+        {
+            return this.CreateRole(role);
+        }
+
+        [Obsolete]
+        public SecurityUserInfo CreateUserEx(SecurityUserInfo user)
+        {
+            return this.CreateUser(user);
+        }
+
+        [Obsolete]
+        public SubmissionResult DeleteCertificateEx(string id, Core.Model.AMI.Security.RevokeReason reason)
+        {
+            return this.DeleteCertificate(id, reason);
+        }
+
+        [Obsolete]
+        public SecurityDevice DeleteDeviceEx(string deviceId)
+        {
+            return this.DeleteDevice(deviceId);
+        }
+
+        [Obsolete]
+        public Place DeletePlaceEx(string placeId)
+        {
+            return this.DeletePlace(placeId);
+        }
+
+        [Obsolete]
+        public SecurityPolicyInfo DeletePolicyEx(string policyId)
+        {
+            return this.DeletePolicy(policyId);
+        }
+
+        [Obsolete]
+        public SecurityRoleInfo DeleteRoleEx(string roleId)
+        {
+            return this.DeleteRole(roleId);
+        }
+
+        [Obsolete]
+        public SecurityUserInfo DeleteUserEx(string userId)
+        {
+            return this.DeleteUser(userId);
+        }
+
+        [Obsolete]
+        public SubmissionResult SubmitCsrEx(SubmissionRequest s)
+        {
+            return this.SubmitCsr(s);
+        }
+
+        [Obsolete]
+        public Concept UpdateConceptEx(Concept concept)
+        {
+            return this.UpdateConcept(concept.Key.ToString(), concept);
+        }
+        
+        [Obsolete]
+        public Place UpdatePlaceEx(Place place)
+        {
+            return this.UpdatePlace(place.Key.ToString(), place);
+        }
+    }
 }

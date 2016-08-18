@@ -33,6 +33,7 @@ using MARC.HI.EHRS.SVC.Core.Data;
 using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Entities;
+using System.Diagnostics;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -41,6 +42,9 @@ namespace OpenIZ.Core.Services.Impl
     /// </summary>
     public class LocalSecurityRepositoryService : ISecurityRepositoryService
     {
+
+        private TraceSource m_traceSource = new TraceSource(OpenIzConstants.ServiceTraceSourceName);
+
 		/// <summary>
 		/// Changes a user's password.
 		/// </summary>
@@ -49,8 +53,12 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the updated user.</returns>
 		public SecurityUser ChangePassword(Guid userId, string password)
         {
+            this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Changing user password");
             var securityUser = this.GetUser(userId);
+            if (securityUser == null)
+                throw new KeyNotFoundException("Cannot locate security user");
             var iids = ApplicationContext.Current.GetService<IIdentityProviderService>();
+            if (iids == null) throw new InvalidOperationException("Cannot find identity provider service");
             iids.ChangePassword(securityUser.UserName, password, AuthenticationContext.Current.Principal);
             return securityUser;
         }
@@ -63,7 +71,9 @@ namespace OpenIZ.Core.Services.Impl
 		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.CreateDevice)]
 		public SecurityDevice CreateDevice(SecurityDevice device)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityDevice>>();
+            this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Creating device {0}", device);
+
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityDevice>>();
 
 			if (persistenceService == null)
 			{
@@ -80,7 +90,9 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the newly created policy.</returns>
 		public SecurityPolicy CreatePolicy(SecurityPolicy policy)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityPolicy>>();
+            this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Creating policy {0}", policy);
+
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityPolicy>>();
 
 			if (persistenceService == null)
 			{
@@ -98,6 +110,8 @@ namespace OpenIZ.Core.Services.Impl
 		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.CreateRoles)]
         public SecurityRole CreateRole(SecurityRole roleInfo)
         {
+            this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Creating role {0}", roleInfo);
+
             var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
             if (pers == null)
                 throw new InvalidOperationException("Misisng role provider service");
@@ -113,6 +127,8 @@ namespace OpenIZ.Core.Services.Impl
 		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.CreateIdentity)]
         public SecurityUser CreateUser(SecurityUser userInfo, string password)
         {
+            this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Creating user {0}", userInfo);
+
             var iids = ApplicationContext.Current.GetService<IIdentityProviderService>();
             var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
 
@@ -404,6 +420,8 @@ namespace OpenIZ.Core.Services.Impl
         [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
         public void LockUser(Guid userId)
         {
+            this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Locking user {0}", userId);
+
             var iids = ApplicationContext.Current.GetService<IIdentityProviderService>();
             if (iids == null)
                 throw new InvalidOperationException("Missing identity provider service");
@@ -558,6 +576,8 @@ namespace OpenIZ.Core.Services.Impl
 		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
         public void UnlockUser(Guid userId)
         {
+            this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Unlocking user {0}", userId);
+
             var iids = ApplicationContext.Current.GetService<IIdentityProviderService>();
             if (iids == null)
                 throw new InvalidOperationException("Missing identity provider service");
