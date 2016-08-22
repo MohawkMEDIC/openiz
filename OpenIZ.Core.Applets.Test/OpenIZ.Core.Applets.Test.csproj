@@ -88,6 +88,7 @@
     <EmbeddedResource Include="SimpleModel.json" />
     <EmbeddedResource Include="RegistrationForm.json" />
     <EmbeddedResource Include="DoesntSerializeKey.json" />
+    <EmbeddedResource Include="SimpleBundle.json" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

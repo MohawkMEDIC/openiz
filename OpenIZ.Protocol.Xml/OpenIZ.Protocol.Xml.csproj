@@ -40,12 +40,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\BaseProtocolElement.cs" />
+    <Compile Include="Model\DecisionSupportBaseElement.cs" />
     <Compile Include="Model\ProtocolCollection.cs" />
     <Compile Include="Model\ProtocolDefinition.cs" />
     <Compile Include="Model\ProtocolRuleDefinition.cs" />
     <Compile Include="Model\ProtocolThenClauseCollection.cs" />
     <Compile Include="Model\ProtocolWhenClauseCollection.cs" />
+    <Compile Include="Model\RuleSetDefinition.cs" />
     <Compile Include="Model\XmlLinq\XmlBinaryExpression.cs" />
     <Compile Include="Model\XmlLinq\XmlBoundExpression.cs" />
     <Compile Include="Model\XmlLinq\XmlMethodCallExpression.cs" />

@@ -9,7 +9,7 @@ namespace OpenIZ.Protocol.Xml.Model.XmlLinq
     /// <summary>
     /// Gets or sets the binary expression operator
     /// </summary>
-    [XmlType(nameof(UnaryOperatorType), Namespace = "http://openiz.org/protocol")]
+    [XmlType(nameof(UnaryOperatorType), Namespace = "http://openiz.org/cdss")]
     public enum UnaryOperatorType
     {
         [XmlEnum("not")]
@@ -25,7 +25,7 @@ namespace OpenIZ.Protocol.Xml.Model.XmlLinq
     /// <summary>
     /// Represents a unary expression
     /// </summary>
-    [XmlType(nameof(XmlUnaryExpression), Namespace = "http://openiz.org/protocol")]
+    [XmlType(nameof(XmlUnaryExpression), Namespace = "http://openiz.org/cdss")]
     public class XmlUnaryExpression : XmlBoundExpression
     {
         /// <summary>

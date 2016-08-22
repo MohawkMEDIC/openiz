@@ -316,7 +316,7 @@
       <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
       <name>Subset of Discharge Disposition (HL7)</name>
       <mnemonic>DischargeDisposition</mnemonic>
-      <oid>1.3.6.1.4.1.33349.3.1.5.9.1.30</oid>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.30</oid>
       <url>http://openiz.org/conceptset/DischargeDisposition</url>
       <concept>5a6d3db4-cb61-4608-a061-89592f539276</concept>
       <concept>499f18c5-56c4-496e-9e23-e5cf862cfab8</concept>

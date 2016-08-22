@@ -98,8 +98,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the name use
         /// </summary>
         [SerializationReference(nameof(NameUseKey))]
-        [XmlIgnore, JsonIgnore]
-        [AutoLoad]
+        [XmlIgnore, JsonIgnore, AutoLoad]
         public Concept NameUse
         {
             get {

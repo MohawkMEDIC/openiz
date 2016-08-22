@@ -9,7 +9,7 @@ namespace OpenIZ.Protocol.Xml.Model.XmlLinq
     /// <summary>
     /// Represents a call expression
     /// </summary>
-    [XmlType(nameof(XmlMethodCallExpression), Namespace = "http://openiz.org/protocol")]
+    [XmlType(nameof(XmlMethodCallExpression), Namespace = "http://openiz.org/cdss")]
     public class XmlMethodCallExpression : XmlBoundExpression
     {
 

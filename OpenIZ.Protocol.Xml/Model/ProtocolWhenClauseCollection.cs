@@ -11,7 +11,7 @@ namespace OpenIZ.Protocol.Xml.Model
     /// <summary>
     /// Represents a when clause
     /// </summary>
-    [XmlType(nameof(ProtocolWhenClauseCollection), Namespace = "http://openiz.org/protocol")]
+    [XmlType(nameof(ProtocolWhenClauseCollection), Namespace = "http://openiz.org/cdss")]
     public class ProtocolWhenClauseCollection
     {
 
@@ -113,7 +113,7 @@ namespace OpenIZ.Protocol.Xml.Model
     /// <summary>
     /// Represents a simple IMSI expression
     /// </summary>
-    [XmlType(nameof(WhenClauseImsiExpression), Namespace = "http://openiz.org/protocol")]
+    [XmlType(nameof(WhenClauseImsiExpression), Namespace = "http://openiz.org/cdss")]
     public class WhenClauseImsiExpression
     {
 

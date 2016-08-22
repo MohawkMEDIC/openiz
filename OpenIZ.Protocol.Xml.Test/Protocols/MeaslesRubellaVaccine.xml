@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ProtocolDefinition xmlns="http://openiz.org/protocol" uuid="D48FF086-702E-4F46-A8DE-C3FFBD02FD7C" id="MR" name="Measles Rubella Vaccine">
+<ProtocolDefinition xmlns="http://openiz.org/cdss" uuid="D48FF086-702E-4F46-A8DE-C3FFBD02FD7C" id="MR" name="Measles Rubella Vaccine">
   <rule id="MR1">
     <when evaluation="and">
       <!-- MR1 is not in their file yet -->

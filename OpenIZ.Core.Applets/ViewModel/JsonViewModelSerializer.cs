@@ -107,7 +107,12 @@ namespace OpenIZ.Core.Applets.ViewModel
                 throw new InvalidDataException();
 
             // Ctor object
-            object retVal = Activator.CreateInstance(serializationType);
+            object retVal = null;
+
+            if (serializationType.GetTypeInfo().IsAbstract)
+                retVal = new object();
+            else
+                retVal = Activator.CreateInstance(serializationType);
             int depth = jreader.Depth;
 
             PreparePropertyCache(serializationType);
@@ -199,6 +204,8 @@ namespace OpenIZ.Core.Applets.ViewModel
                                                         Object contained = null;
                                                         if (jreader.TokenType == JsonToken.StartObject)
                                                             contained = DeSerializeInternal(jreader, elementType);
+                                                        else if (jreader.TokenType == JsonToken.Null) // null = skip
+                                                            continue;
                                                         else // simple value
                                                         {
                                                             contained = Activator.CreateInstance(elementType);
@@ -209,7 +216,7 @@ namespace OpenIZ.Core.Applets.ViewModel
 
                                                             if (simpleProperty != null && simpleProperty.PropertyType.StripNullable() == typeof(Guid))
                                                             {
-                                                                if(!String.IsNullOrEmpty((String)jreader.Value))
+                                                                if (!String.IsNullOrEmpty((String)jreader.Value))
                                                                     simpleProperty.SetValue(contained, Guid.Parse((String)jreader.Value));
                                                             }
                                                             else if (simpleProperty != null && simpleProperty.PropertyType == typeof(byte[]))
@@ -376,7 +383,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                                     continue;
                                 else if (propertyInfo.Name == nameof(IdentifiedData.Type)) // Type switch
                                 {
-                                    var xsiType = s_binder.BindToType(retVal.GetType().GetTypeInfo().Assembly.FullName, (String)jreader.Value);
+                                    var xsiType = s_binder.BindToType((retVal is Object ? typeof(IdentifiedData) : retVal.GetType()).GetTypeInfo().Assembly.FullName, (String)jreader.Value);
                                     if (xsiType != retVal.GetType())
                                     {
                                         var nRetVal = Activator.CreateInstance(xsiType);

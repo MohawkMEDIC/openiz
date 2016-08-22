@@ -17,7 +17,7 @@ namespace OpenIZ.Protocol.Xml.Model.XmlLinq
     [XmlInclude(typeof(DateTime))]
     [XmlInclude(typeof(String))]
     [XmlInclude(typeof(bool))]
-    [XmlType(nameof(XmlConstantExpression), Namespace = "http://openiz.org/protocol")]
+    [XmlType(nameof(XmlConstantExpression), Namespace = "http://openiz.org/cdss")]
     public class XmlConstantExpression : XmlExpression
     {
         /// <summary>

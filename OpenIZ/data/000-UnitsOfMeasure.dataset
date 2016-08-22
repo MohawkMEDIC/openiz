@@ -436,7 +436,7 @@
       
       <name>Units of Measure</name>
       <mnemonic>UnitOfMeasure</mnemonic>
-      <oid>1.3.6.1.4.1.33349.3.1.5.9.1.35</oid>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.35</oid>
       <url>http://openiz.org/conceptsets/contrib/UnitOfMeasure</url>
       <concept>bb1d639d-aea8-4750-a24c-b2548d2b6fe4</concept>
       <concept>564ebc64-1b56-48cd-907d-41bb47b7834f</concept>
@@ -456,7 +456,7 @@
 
       <name>Units of Measure for Weight</name>
       <mnemonic>UnitOfMeasureWeight</mnemonic>
-      <oid>1.3.6.1.4.1.33349.3.1.5.9.1.36</oid>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.36</oid>
       <url>http://openiz.org/conceptsets/contrib/UnitOfMeasureWeight</url>
       <concept>a0a8d4db-db72-4bc7-9b8c-c07cef7bc796</concept>
     </ConceptSet>

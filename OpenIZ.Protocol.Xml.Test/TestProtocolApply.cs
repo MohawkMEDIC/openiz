@@ -203,7 +203,7 @@ namespace OpenIZ.Protocol.Xml.Test
 
             SimpleCarePlanService scp = new SimpleCarePlanService();
             ApplicationServiceContext.Current = this;
-
+            scp.Initialize();
             // Patient that is just born = Schedule OPV
             Patient newborn = new Patient()
             {
@@ -215,7 +215,7 @@ namespace OpenIZ.Protocol.Xml.Test
             // Now apply the protocol
             var acts = scp.CreateCarePlan(newborn);
             String json = JsonViewModelSerializer.Serialize(newborn);
-            Assert.AreEqual(15, acts.Count());
+            Assert.AreEqual(75, acts.Count());
         }
 
         /// <summary>

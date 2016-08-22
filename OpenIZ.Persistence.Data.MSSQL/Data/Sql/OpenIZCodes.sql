@@ -4046,6 +4046,21 @@ INSERT INTO ConceptReferenceTerm(ReferenceTermId, ConceptId, EffectiveVersionSeq
 INSERT INTO ReferenceTermDisplayName(ReferenceTermId, LanguageCode, DisplayName, CreatedBy, PhoneticAlgorithmId) VALUES('806c2a3a-4317-4a46-92bb-0fb953a61e40', 'en', 'Pager', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8', '402CD339-D0E4-46CE-8FC2-12A4B0E17226');
 INSERT INTO ConceptName(ConceptId, EffectiveVersionSequenceId, LanguageCode, Name, PhoneticAlgorithmId) SELECT ConceptId, VersionSequenceId, 'en', 'Pager', '402CD339-D0E4-46CE-8FC2-12A4B0E17226' FROM ConceptVersion WHERE ConceptId = '788000b4-e37a-4055-a2aa-c650089ce3b1' AND ObsoletionTime IS NULL;
 
+-- STOCK CODES
+INSERT INTO Concept VALUES('31f6fbb8-b510-4624-a639-eb7e93a19b27',1);
+INSERT INTO ConceptVersion (ConceptId, StatusConceptId, CreatedBy, Mnemonic, ConceptClassId) VALUES ('31f6fbb8-b510-4624-a639-eb7e93a19b27', 'c8064cbd-fa06-4530-b430-1a52f1530c27', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8', 'StockTransfer', '17FD5254-8C25-4ABB-B246-083FBE9AFA15');
+INSERT INTO ReferenceTerm(ReferenceTermId, CodeSystemId, Mnemonic, CreatedBy)  VALUES('0063d641-2daf-436d-95f2-39c7e50f4197', 'BAB1D66A-1E98-4BFD-9B4A-7C4BE88F35D1', 'TRNFR', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO ConceptReferenceTerm(ReferenceTermId, ConceptId, EffectiveVersionSequenceId, ConceptRelationshipTypeId) SELECT '0063d641-2daf-436d-95f2-39c7e50f4197', '78a47122-f9bf-450f-a93f-90a103c5f1e8', VersionSequenceId, '2c4dafc2-566a-41ae-9ebc-3097d7d22f4a' FROM ConceptVersion WHERE ConceptId = '31f6fbb8-b510-4624-a639-eb7e93a19b27' AND ObsoletionTime IS NULL;
+INSERT INTO ReferenceTermDisplayName(ReferenceTermId, LanguageCode, DisplayName, CreatedBy, PhoneticAlgorithmId) VALUES('0063d641-2daf-436d-95f2-39c7e50f4197', 'en', 'Transfer', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8', '402CD339-D0E4-46CE-8FC2-12A4B0E17226');
+INSERT INTO ConceptName(ConceptId, EffectiveVersionSequenceId, LanguageCode, Name, PhoneticAlgorithmId) SELECT ConceptId, VersionSequenceId, 'en', 'Transfer', '402CD339-D0E4-46CE-8FC2-12A4B0E17226' FROM ConceptVersion WHERE ConceptId = '31f6fbb8-b510-4624-a639-eb7e93a19b27' AND ObsoletionTime IS NULL;
+
+INSERT INTO Concept VALUES('63ae8c25-d607-4382-a704-63a6b6930faf',1);
+INSERT INTO ConceptVersion (ConceptId, StatusConceptId, CreatedBy, Mnemonic, ConceptClassId) VALUES ('63ae8c25-d607-4382-a704-63a6b6930faf', 'c8064cbd-fa06-4530-b430-1a52f1530c27', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8', 'Adjustment', '17FD5254-8C25-4ABB-B246-083FBE9AFA15');
+INSERT INTO ConceptName(ConceptId, EffectiveVersionSequenceId, LanguageCode, Name, PhoneticAlgorithmId) SELECT ConceptId, VersionSequenceId, 'en', 'Adjustment', '402CD339-D0E4-46CE-8FC2-12A4B0E17226' FROM ConceptVersion WHERE ConceptId = '63ae8c25-d607-4382-a704-63a6b6930faf' AND ObsoletionTime IS NULL;
+
+INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('31f6fbb8-b510-4624-a639-eb7e93a19b27','62C5FDE0-A3AA-45DF-94E9-242F4451644A');
+INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES ('63ae8c25-d607-4382-a704-63a6b6930faf','62C5FDE0-A3AA-45DF-94E9-242F4451644A');
+
 INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES('1ecd7b17-b5ff-4cae-9c3b-c1258132d137','1dabe3e2-44b8-4c45-9102-25ea147e5710');
 INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES('25985f42-476a-4455-a977-4e97a554d710','1dabe3e2-44b8-4c45-9102-25ea147e5710');
 INSERT INTO ConceptSetMember (ConceptId, ConceptSetId) VALUES('e161f90e-5939-430e-861a-f8e885cc353d','1dabe3e2-44b8-4c45-9102-25ea147e5710');

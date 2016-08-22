@@ -36,6 +36,10 @@ namespace OpenIZ.Core.Services
     public interface IPatientRepositoryService
     {
 
+        /// <summary>
+        /// Validate the specified patient, or rather ensure the patient is valid
+        /// </summary>
+        Patient Validate(Patient p);
 
         /// <summary>
         /// Inserts the given patient
@@ -67,7 +71,7 @@ namespace OpenIZ.Core.Services
         /// <summary>
         /// Gets the specified patient
         /// </summary>
-        IdentifiedData Get(Guid id, Guid versionId);
+        Patient Get(Guid id, Guid versionId);
 
         /// <summary>
         /// Un-merges two patients from each other

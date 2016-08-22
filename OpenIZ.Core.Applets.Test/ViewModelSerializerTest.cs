@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Applets.ViewModel;
 using System.IO;
+using OpenIZ.Core.Model.Collection;
 
 namespace OpenIZ.Core.Applets.Test
 {
@@ -117,6 +118,22 @@ namespace OpenIZ.Core.Applets.Test
             }
         }
 
+        /// <summary>
+        /// Test parsing of a form submission
+        /// </summary>
+        [TestMethod]
+        public void TestParseBundle()
+        {
+            using (var sr = new StreamReader(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.SimpleBundle.json")))
+            {
+                var json = sr.ReadToEnd();
+                var bundle = JsonViewModelSerializer.DeSerialize<Bundle>(json);
+                json = JsonViewModelSerializer.Serialize(bundle);
+                Assert.IsNotNull(bundle.EntryKey);
+                //Assert.AreEqual(this.m_patientUnderTest.ClassConceptKey, patient.ClassConceptKey);
+            }
+
+        }
         /// <summary>
         /// Test de-serialization of the IMS patient object
         /// </summary>

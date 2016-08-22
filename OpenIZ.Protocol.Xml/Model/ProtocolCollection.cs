@@ -11,8 +11,8 @@ namespace OpenIZ.Protocol.Xml.Model
     /// <summary>
     /// Protocol collection
     /// </summary>
-    [XmlType(nameof(ProtocolCollection), Namespace = "http://openiz.org/protocol")]
-    public class ProtocolCollection : BaseProtocolElement
+    [XmlType(nameof(ProtocolCollection), Namespace = "http://openiz.org/cdss")]
+    public class ProtocolCollection : DecisionSupportBaseElement
     {
 
         /// <summary>

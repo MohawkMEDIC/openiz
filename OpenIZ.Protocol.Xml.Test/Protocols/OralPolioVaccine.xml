@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ProtocolDefinition xmlns="http://openiz.org/protocol" name="Oral Polio Vaccine" protocolVersion="1" uuid="C2A628F3-DB52-45ED-B863-0FB4B1B8E77C">
+<ProtocolDefinition xmlns="http://openiz.org/cdss" name="Oral Polio Vaccine" protocolVersion="1" uuid="C2A628F3-DB52-45ED-B863-0FB4B1B8E77C">
   <rule id="OPV0">
     <!-- When the patient has not received any, -->
     <when evaluation="and">

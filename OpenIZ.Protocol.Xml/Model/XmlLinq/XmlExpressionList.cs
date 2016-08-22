@@ -10,7 +10,7 @@ namespace OpenIZ.Protocol.Xml.Model.XmlLinq
     /// <summary>
     /// Represents an expression collection
     /// </summary>
-    [XmlType(nameof(XmlExpressionList), Namespace = "http://openiz.org/protocol")]
+    [XmlType(nameof(XmlExpressionList), Namespace = "http://openiz.org/cdss")]
     public class XmlExpressionList
     {
 

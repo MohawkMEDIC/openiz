@@ -21,13 +21,14 @@ using System;
 using System.Xml.Serialization;
 using System.Xml.Linq;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Applets.Model
 {
 	/// <summary>
 	/// Applet reference
 	/// </summary>
-	[XmlType(nameof(AppletName), Namespace = "http://openiz.org/applet")]
+	[XmlType(nameof(AppletName), Namespace = "http://openiz.org/applet"), JsonObject]
 	public class AppletName
 	{
 
@@ -53,6 +54,7 @@ namespace OpenIZ.Core.Applets.Model
 		/// The identifier of the applet
 		/// </summary>
 		[XmlAttribute("id")]
+        [JsonProperty("id")]
 		public String Id {
 			get;
 			set;
@@ -62,6 +64,7 @@ namespace OpenIZ.Core.Applets.Model
 		/// The version of the applet
 		/// </summary>
 		[XmlAttribute("version")]
+        [JsonProperty("version")]
 		public String Version {
 			get;
 			set;

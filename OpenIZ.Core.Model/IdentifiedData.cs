@@ -151,7 +151,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets a tag which changes whenever the object is updated
         /// </summary>
-        [XmlElement("tag"), JsonProperty("tag"), DataIgnore]
+        [XmlElement("etag"), JsonProperty("etag"), DataIgnore]
         public virtual String Tag {
             get
             {
@@ -187,14 +187,9 @@ namespace OpenIZ.Core.Model
         /// </summary>
         public IdentifiedData GetLocked()
         {
-            // Locked already?
-            if (this.m_delayLoad)
-            {
-                var retVal = this.MemberwiseClone() as IdentifiedData;
-                retVal.SetDelayLoad(false);
-                return retVal;
-            }
-            return this;
+            var retVal = this.MemberwiseClone() as IdentifiedData;
+            retVal.SetDelayLoad(false);
+            return retVal;
         }
     }
 }

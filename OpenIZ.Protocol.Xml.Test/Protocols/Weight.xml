@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ProtocolDefinition xmlns="http://openiz.org/protocol" uuid="063FFFAD-FC37-4666-B949-4A96AE2A4FB9" id="Weight" name="Weigh Schedule">
+<ProtocolDefinition xmlns="http://openiz.org/cdss" uuid="063FFFAD-FC37-4666-B949-4A96AE2A4FB9" id="Weight" name="Weigh Schedule">
   <rule id="Weight">
     <when evaluation="and">
       <!-- Patient does not have Weights taken or proposed-->

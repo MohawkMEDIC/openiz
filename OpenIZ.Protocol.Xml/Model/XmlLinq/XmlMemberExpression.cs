@@ -12,7 +12,7 @@ namespace OpenIZ.Protocol.Xml.Model.XmlLinq
     /// <summary>
     /// Represents a expression that access an expression
     /// </summary>
-    [XmlType(nameof(XmlMemberExpression), Namespace = "http://openiz.org/protocol")]
+    [XmlType(nameof(XmlMemberExpression), Namespace = "http://openiz.org/cdss")]
     public class XmlMemberExpression : XmlBoundExpression
     {
 

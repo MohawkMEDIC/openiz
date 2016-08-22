@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:tns="http://openiz.org/protocol" elementFormDefault="qualified" targetNamespace="http://openiz.org/protocol" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:tns="http://openiz.org/cdss" elementFormDefault="qualified" targetNamespace="http://openiz.org/cdss" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:import namespace="http://microsoft.com/wsdl/types/" />
   <xs:import namespace="http://openiz.org/model" />
   <xs:complexType name="BaseProtocolElement" abstract="true">

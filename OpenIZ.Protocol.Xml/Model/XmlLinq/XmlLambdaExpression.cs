@@ -10,7 +10,7 @@ namespace OpenIZ.Protocol.Xml.Model.XmlLinq
     /// <summary>
     /// Represents a lambda expression
     /// </summary>
-    [XmlType(nameof(XmlLambdaExpression), Namespace = "http://openiz.org/protocol")]
+    [XmlType(nameof(XmlLambdaExpression), Namespace = "http://openiz.org/cdss")]
     public class XmlLambdaExpression : XmlBoundExpression
     {
 

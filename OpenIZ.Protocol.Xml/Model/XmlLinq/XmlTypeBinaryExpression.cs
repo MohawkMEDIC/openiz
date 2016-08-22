@@ -7,7 +7,7 @@ namespace OpenIZ.Protocol.Xml.Model.XmlLinq
     /// <summary>
     /// XmlType binary expression
     /// </summary>
-    [XmlType(nameof(XmlTypeBinaryExpression), Namespace = "http://openiz.org/protocol")]
+    [XmlType(nameof(XmlTypeBinaryExpression), Namespace = "http://openiz.org/cdss")]
     public class XmlTypeBinaryExpression : XmlBoundExpression
     {
 

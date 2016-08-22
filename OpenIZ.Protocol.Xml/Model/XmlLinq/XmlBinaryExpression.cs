@@ -12,7 +12,7 @@ namespace OpenIZ.Protocol.Xml.Model.XmlLinq
     /// <summary>
     /// Gets or sets the binary expression operator
     /// </summary>
-    [XmlType(nameof(BinaryOperatorType), Namespace = "http://openiz.org/protocol")]
+    [XmlType(nameof(BinaryOperatorType), Namespace = "http://openiz.org/cdss")]
     public enum BinaryOperatorType
     {
         [XmlEnum("eq")]
@@ -42,7 +42,7 @@ namespace OpenIZ.Protocol.Xml.Model.XmlLinq
     /// <summary>
     /// Represents an XML binary expression
     /// </summary>
-    [XmlType(nameof(XmlBinaryExpression), Namespace = "http://openiz.org/protocol")]
+    [XmlType(nameof(XmlBinaryExpression), Namespace = "http://openiz.org/cdss")]
     public class XmlBinaryExpression : XmlExpression
     {
 

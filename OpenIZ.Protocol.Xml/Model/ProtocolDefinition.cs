@@ -8,9 +8,9 @@ namespace OpenIZ.Protocol.Xml.Model
     /// <summary>
     /// Protocol definition file
     /// </summary>
-    [XmlType(nameof(ProtocolDefinition), Namespace = "http://openiz.org/protocol")]
-    [XmlRoot(nameof(ProtocolDefinition), Namespace = "http://openiz.org/protocol")]
-    public class ProtocolDefinition : BaseProtocolElement
+    [XmlType(nameof(ProtocolDefinition), Namespace = "http://openiz.org/cdss")]
+    [XmlRoot(nameof(ProtocolDefinition), Namespace = "http://openiz.org/cdss")]
+    public class ProtocolDefinition : DecisionSupportBaseElement
     {
 
         /// <summary>

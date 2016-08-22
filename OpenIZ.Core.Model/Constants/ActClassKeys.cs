@@ -83,5 +83,9 @@ namespace OpenIZ.Core.Model.Constants
         /// Control act event
         /// </summary>
         public static readonly Guid ControlAct = Guid.Parse("B35488CE-B7CD-4DD4-B4DE-5F83DC55AF9F");
+        /// <summary>
+        /// The physical transporting of materials or people from one place to another
+        /// </summary>
+        public static readonly Guid Transport = Guid.Parse("61677F76-DC05-466D-91DE-47EFC8E7A3E6");
     }
 }

@@ -7,7 +7,7 @@ namespace OpenIZ.Protocol.Xml.Model.XmlLinq
     /// <summary>
     /// Represents an expression that accesses a named parameter
     /// </summary>
-    [XmlType(nameof(XmlParameterExpression), Namespace = "http://openiz.org/protocol")]
+    [XmlType(nameof(XmlParameterExpression), Namespace = "http://openiz.org/cdss")]
     public class XmlParameterExpression : XmlExpression
     {
         // Expression

@@ -5,8 +5,8 @@ namespace OpenIZ.Protocol.Xml.Model
     /// <summary>
     /// Represents a single rule definition
     /// </summary>
-    [XmlType(nameof(ProtocolRuleDefinition), Namespace = "http://openiz.org/protocol")]
-    public class ProtocolRuleDefinition : BaseProtocolElement
+    [XmlType(nameof(ProtocolRuleDefinition), Namespace = "http://openiz.org/cdss")]
+    public class ProtocolRuleDefinition : DecisionSupportBaseElement
     {
 
         /// <summary>

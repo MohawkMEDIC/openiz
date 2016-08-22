@@ -15,6 +15,11 @@ namespace OpenIZ.Core.Services
     {
 
         /// <summary>
+        /// Validate the act 
+        /// </summary>
+        Act Validate(Act act);
+
+        /// <summary>
         /// Insert the specified act
         /// </summary>
         Act Insert(Act insert);

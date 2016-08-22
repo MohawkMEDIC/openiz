@@ -108,7 +108,7 @@ namespace AppletCompiler
                     if (mfst.Info.Version.Contains("*"))
                         mfst.Info.Version = mfst.Info.Version.Replace("*", (((DateTime.Now.Subtract(new DateTime(DateTime.Now.Year, 1, 1)).Ticks >> 24) % 10000)).ToString("0000"));
 
-                    if (!Directory.Exists(Path.GetDirectoryName(parameters.Output)))
+                    if (!Directory.Exists(Path.GetDirectoryName(parameters.Output)) && !String.IsNullOrEmpty(Path.GetDirectoryName(parameters.Output)))
                         Directory.CreateDirectory(Path.GetDirectoryName(parameters.Output));
 
                     using (var ofs = File.Create(parameters.Output ?? "out.xml"))

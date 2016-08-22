@@ -11,7 +11,7 @@ namespace OpenIZ.Protocol.Xml.Model.XmlLinq
     /// <summary>
     /// Represents an XmlRepresentation of an C# Expression
     /// </summary>
-    [XmlType(nameof(XmlExpression), Namespace = "http://openiz.org/protocol")]
+    [XmlType(nameof(XmlExpression), Namespace = "http://openiz.org/cdss")]
     public abstract class XmlExpression
     {
 

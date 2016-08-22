@@ -6,8 +6,8 @@ namespace OpenIZ.Protocol.Xml.Model
     /// <summary>
     /// Represents a base protocol element
     /// </summary>
-    [XmlType(nameof(BaseProtocolElement), Namespace = "http://openiz.org/protocol")]
-    public abstract class BaseProtocolElement
+    [XmlType(nameof(DecisionSupportBaseElement), Namespace = "http://openiz.org/cdss")]
+    public abstract class DecisionSupportBaseElement
     {
 
         /// <summary>

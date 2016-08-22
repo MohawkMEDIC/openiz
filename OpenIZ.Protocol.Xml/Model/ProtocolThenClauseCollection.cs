@@ -22,8 +22,8 @@ namespace OpenIZ.Protocol.Xml.Model
     /// <summary>
     /// Reperesents a then condition clause
     /// </summary>
-    [XmlType(nameof(ProtocolThenClauseCollection), Namespace = "http://openiz.org/protocol")]
-    public class ProtocolThenClauseCollection : BaseProtocolElement
+    [XmlType(nameof(ProtocolThenClauseCollection), Namespace = "http://openiz.org/cdss")]
+    public class ProtocolThenClauseCollection : DecisionSupportBaseElement
     {
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace OpenIZ.Protocol.Xml.Model
                     act = (itm.Element as Act).Clone() as Act;
                     act.Participations = new List<ActParticipation>((itm.Element as Act).Participations);
                     act.Relationships = new List<ActRelationship>((itm.Element as Act).Relationships);
-
+                    act.Protocols = new List<ActProtocol>((itm.Element as Act).Protocols);
                     // Now do the actions to the properties as stated
                     foreach (var instr in itm.Do)
                     {
@@ -90,7 +90,7 @@ namespace OpenIZ.Protocol.Xml.Model
     /// <summary>
     /// Asset data action base
     /// </summary>
-    [XmlType(nameof(ProtocolDataAction), Namespace = "http://openiz.org/protocol")]
+    [XmlType(nameof(ProtocolDataAction), Namespace = "http://openiz.org/cdss")]
     public class ProtocolDataAction
     {
         /// <summary>
@@ -130,7 +130,7 @@ namespace OpenIZ.Protocol.Xml.Model
     /// <summary>
     /// Associate data
     /// </summary>
-    [XmlType(nameof(PropertyAction), Namespace = "http://openiz.org/protocol")]
+    [XmlType(nameof(PropertyAction), Namespace = "http://openiz.org/cdss")]
     public abstract class PropertyAction : ProtocolDataAction
     {
         /// <summary>
@@ -154,7 +154,7 @@ namespace OpenIZ.Protocol.Xml.Model
     /// <summary>
     /// Property assign value
     /// </summary>
-    [XmlType(nameof(PropertyAssignAction), Namespace = "http://openiz.org/protocol")]
+    [XmlType(nameof(PropertyAssignAction), Namespace = "http://openiz.org/cdss")]
     public class PropertyAssignAction : PropertyAction
     {
         // The setter action
@@ -280,7 +280,7 @@ namespace OpenIZ.Protocol.Xml.Model
     /// <summary>
     /// Add something to a property collection
     /// </summary>
-    [XmlType(nameof(PropertyAddAction), Namespace = "http://openiz.org/protocol")]
+    [XmlType(nameof(PropertyAddAction), Namespace = "http://openiz.org/cdss")]
     public class PropertyAddAction : PropertyAction
     {
 

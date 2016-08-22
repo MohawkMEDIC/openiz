@@ -7,7 +7,7 @@ namespace OpenIZ.Protocol.Xml.Model.XmlLinq
     /// <summary>
     /// Represents an XmlExpression bound to another expression
     /// </summary>
-    [XmlType(nameof(XmlBoundExpression), Namespace = "http://openiz.org/protocol")]
+    [XmlType(nameof(XmlBoundExpression), Namespace = "http://openiz.org/cdss")]
     public abstract class XmlBoundExpression : XmlExpression
     {
         /// <summary>

@@ -60,8 +60,9 @@ namespace OpenIZ.Core.Model.Reflection
                 throw new ArgumentException("Type mismatch", nameof(fromEntity));
             foreach (var destinationPi in toEntity.GetType().GetRuntimeProperties())
             {
+                var sourcePi = fromEntity.GetType().GetRuntimeProperty(destinationPi.Name);
                 // Skip properties no in the source
-                if (fromEntity.GetType().GetRuntimeProperty(destinationPi.Name) == null)
+                if (sourcePi == null)
                     continue;
 
                 // Skip data ignore
@@ -74,7 +75,7 @@ namespace OpenIZ.Core.Model.Reflection
                         continue;
 
 
-                    object newValue = destinationPi.GetValue(fromEntity),
+                    object newValue = sourcePi.GetValue(fromEntity),
                         oldValue = destinationPi.GetValue(toEntity);
 
                     // HACK: New value wrap for nullables
