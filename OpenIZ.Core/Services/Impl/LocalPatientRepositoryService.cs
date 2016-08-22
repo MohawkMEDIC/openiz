@@ -29,6 +29,8 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Security;
 using MARC.HI.EHRS.SVC.Core.Data;
+using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -64,7 +66,7 @@ namespace OpenIZ.Core.Services.Impl
         /// <summary>
         /// Gets the specified patient
         /// </summary>
-        public IdentifiedData Get(Guid id, Guid versionId)
+        public Patient Get(Guid id, Guid versionId)
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
             if (persistenceService == null)
@@ -134,6 +136,31 @@ namespace OpenIZ.Core.Services.Impl
                 throw new InvalidOperationException("No persistence service found");
 
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Validate the patient and prepare for storage
+        /// </summary>
+        public Patient Validate(Patient p)
+        {
+            // Correct the address information
+            if (p.Addresses?.Count > 0)
+            {
+                var ct = p.Addresses?[0].Component?.FirstOrDefault(o => o.ComponentTypeKey == AddressComponentKeys.CensusTract || o.ComponentType?.Mnemonic == "CensusTract").Value;
+                IPlaceRepositoryService iprs = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
+                var homePlace = iprs.Get(Guid.Parse(ct), Guid.Empty);
+                p.Addresses = homePlace.Addresses.Select(o => new EntityAddress()
+                {
+                    AddressUse = p.Addresses[0].AddressUse,
+                    AddressUseKey = p.Addresses[0].AddressUseKey,
+                    Component = o.Component.Select(c => new EntityAddressComponent(c.ComponentTypeKey.Value, c.Value)).ToList()
+                }).ToList();
+            }
+
+            p = p.Clean() as Patient; // clean up messy data
+
+           
+            return p;
         }
     }
 }

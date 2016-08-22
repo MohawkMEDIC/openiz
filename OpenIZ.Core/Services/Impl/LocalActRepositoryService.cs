@@ -8,6 +8,7 @@ using OpenIZ.Core.Model.Acts;
 using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Security;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -55,6 +56,20 @@ namespace OpenIZ.Core.Services.Impl
         public Act Save(Act act)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Validate the act and prepare for storage
+        /// </summary>
+        public Act Validate(Act data)
+        {
+            // Correct author information and controlling act information
+            data = data.Clean() as Act;
+            ISecurityRepositoryService userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+            var currentUserEntity = userService.GetUserEntity(AuthenticationContext.Current.Principal.Identity);
+            if (!data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator))
+                data.Participations.Add(new ActParticipation(ActParticipationKey.Authororiginator, currentUserEntity));
+            return data;
         }
     }
 }
