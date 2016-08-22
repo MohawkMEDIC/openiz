@@ -70,12 +70,17 @@ namespace OpenIZ.Core.Services.Impl
             if (persistenceService == null)
                 throw new InvalidOperationException("No persistence service found");
             return persistenceService.Get<Guid>(new Identifier<Guid>(id, versionId), AuthenticationContext.Current.Principal, false);
-        }
+		}
 
-        /// <summary>
-        /// Insert the specified patient
-        /// </summary>
-        public Patient Insert(Patient p)
+		Patient IPatientRepositoryService.Get(Guid id, Guid versionId)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Insert the specified patient
+		/// </summary>
+		public Patient Insert(Patient p)
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
             if (persistenceService == null)
@@ -135,5 +140,10 @@ namespace OpenIZ.Core.Services.Impl
 
             throw new NotImplementedException();
         }
-    }
+
+		public Patient Validate(Patient p)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

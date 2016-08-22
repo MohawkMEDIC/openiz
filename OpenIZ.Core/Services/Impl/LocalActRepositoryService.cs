@@ -56,5 +56,10 @@ namespace OpenIZ.Core.Services.Impl
         {
             throw new NotImplementedException();
         }
-    }
+
+		public Act Validate(Act act)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }
