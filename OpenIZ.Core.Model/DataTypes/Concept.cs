@@ -38,8 +38,7 @@ namespace OpenIZ.Core.Model.DataTypes
     [Classifier(nameof(Mnemonic)), KeyLookup(nameof(Mnemonic))]
     public class Concept : VersionedEntityData<Concept>
     {
-
-
+        
         /// <summary>
         /// Creates a new concept
         /// </summary>

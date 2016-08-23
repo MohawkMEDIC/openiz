@@ -93,7 +93,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets a concept which indicates the route of administration (eg: Oral, Injection, etc.)
         /// </summary>
-        [XmlIgnore, JsonIgnore]
+        [AutoLoad, XmlIgnore, JsonIgnore]
         [SerializationReference(nameof(RouteKey))]
         public Concept Route
         {
@@ -112,7 +112,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets a concept which indicates the unit of measure for the dose (eg: 5 mL, 10 mL, 1 drop, etc.)
         /// </summary>
-        [XmlIgnore, JsonIgnore]
+        [AutoLoad, XmlIgnore, JsonIgnore]
         [SerializationReference(nameof(DoseUnitKey))]
         public Concept DoseUnit
         {
@@ -158,7 +158,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets a concept which indicates the site of administration
         /// </summary>
-        [XmlIgnore, JsonIgnore]
+        [AutoLoad, XmlIgnore, JsonIgnore]
         [SerializationReference(nameof(SiteKey))]
         public Concept Site
         {

@@ -408,58 +408,72 @@ namespace OpenIZ.Core.Applets
                         orderByDescending = db.Attributes(xs_binding + "orderByDescending").FirstOrDefault(),
                         orderBy = db.Attributes(xs_binding + "orderByDescending").FirstOrDefault();
 
-                    if(value != null)
-                        value.Value = value.Value.Replace("{{ locale }}", System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
-
-                    if (source == null || filter == null)
-                        continue;
-
-                    // First we want to build the filter
-                    Type imsiType = typeof(Patient).GetTypeInfo().Assembly.ExportedTypes.FirstOrDefault(o => o.GetTypeInfo().GetCustomAttribute<XmlRootAttribute>()?.ElementName == source.Value);
-                    if (imsiType == null)
-                        continue;
-
-                    var expressionBuilderMethod = typeof(QueryExpressionParser).GetGenericMethod(nameof(QueryExpressionParser.BuildLinqExpression), new Type[] { imsiType }, new Type[] { typeof(NameValueCollection) });
-                    var filterList = NameValueCollection.ParseQueryString(filter.Value);
-                    var expr = expressionBuilderMethod.Invoke(null, new object[] { filterList });
-                    var filterMethod = typeof(IEntitySourceProvider).GetGenericMethod("Query", new Type[] { imsiType }, new Type[] { expr.GetType() });
-                    var dataSource = (filterMethod.Invoke(EntitySource.Current.Provider, new object[] { expr }));
-
-                    // Sort expression
-                    if (orderBy != null || orderByDescending != null)
+                    var locale = preProcessLocalization;
+                    int i = 0;
+                    var valueSelector = value.Value;
+                    while (i++ < 2)
                     {
-                        var orderProperty = imsiType.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName == (orderBy ?? orderByDescending).Value);
-                        ParameterExpression orderExpr = Expression.Parameter(dataSource.GetType());
-                        var orderBody = orderExpr.Sort(orderBy?.Value ?? orderByDescending?.Value, orderBy == null ? SortOrderType.OrderByDescending : SortOrderType.OrderBy);
-                        dataSource = Expression.Lambda(orderBody, orderExpr).Compile().DynamicInvoke(dataSource);
-                    }
+                        try
+                        {
+                            // Fall back to english?
+                            if (value != null)
+                                valueSelector = value.Value.Replace("{{ locale }}", locale);
 
-                    // Render expression
-                    Delegate keyExpression = null, valueExpression = null;
-                    ParameterExpression parameter = Expression.Parameter(imsiType);
-                    if (key == null)
-                        keyExpression = Expression.Lambda(Expression.MakeMemberAccess(parameter, imsiType.GetRuntimeProperty(nameof(IIdentifiedEntity.Key))), parameter).Compile();
-                    else
-                    {
-                        var rawExpr = new BindingExpressionVisitor().RewriteLambda(expressionBuilderMethod.Invoke(null, new object[] { NameValueCollection.ParseQueryString(key.Value + "=RemoveMe") }) as LambdaExpression);
-                        keyExpression = Expression.Lambda(new BindingExpressionVisitor().Visit(rawExpr.Body), rawExpr.Parameters).Compile();
-                    }
-                    if (value == null)
-                        valueExpression = Expression.Lambda(Expression.Call(parameter, imsiType.GetRuntimeMethod("ToString", new Type[] { })), parameter).Compile();
-                    else
-                    {
-                        var rawExpr = new BindingExpressionVisitor().RewriteLambda(expressionBuilderMethod.Invoke(null, new object[] { NameValueCollection.ParseQueryString(value.Value + "=RemoveMe") }) as LambdaExpression);
-                        valueExpression = Expression.Lambda(rawExpr.Body, rawExpr.Parameters).Compile();
-                    }
+                            if (source == null || filter == null)
+                                continue;
 
-                    // Creation of the options
-                    foreach (var itm in dataSource as IEnumerable)
-                    {
-                        var optAtt = new XElement(xs_xhtml + "option");
-                        optAtt.Add(new XAttribute("value", keyExpression.DynamicInvoke(itm)), new XText(valueExpression.DynamicInvoke(itm)?.ToString()));
-                        db.Add(optAtt);
-                    }
+                            // First we want to build the filter
+                            Type imsiType = typeof(Patient).GetTypeInfo().Assembly.ExportedTypes.FirstOrDefault(o => o.GetTypeInfo().GetCustomAttribute<XmlRootAttribute>()?.ElementName == source.Value);
+                            if (imsiType == null)
+                                continue;
 
+                            var expressionBuilderMethod = typeof(QueryExpressionParser).GetGenericMethod(nameof(QueryExpressionParser.BuildLinqExpression), new Type[] { imsiType }, new Type[] { typeof(NameValueCollection) });
+                            var filterList = NameValueCollection.ParseQueryString(filter.Value);
+                            var expr = expressionBuilderMethod.Invoke(null, new object[] { filterList });
+                            var filterMethod = typeof(IEntitySourceProvider).GetGenericMethod("Query", new Type[] { imsiType }, new Type[] { expr.GetType() });
+                            var dataSource = (filterMethod.Invoke(EntitySource.Current.Provider, new object[] { expr }));
+
+                            // Sort expression
+                            if (orderBy != null || orderByDescending != null)
+                            {
+                                var orderProperty = imsiType.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName == (orderBy ?? orderByDescending).Value);
+                                ParameterExpression orderExpr = Expression.Parameter(dataSource.GetType());
+                                var orderBody = orderExpr.Sort(orderBy?.Value ?? orderByDescending?.Value, orderBy == null ? SortOrderType.OrderByDescending : SortOrderType.OrderBy);
+                                dataSource = Expression.Lambda(orderBody, orderExpr).Compile().DynamicInvoke(dataSource);
+                            }
+
+                            // Render expression
+                            Delegate keyExpression = null, valueExpression = null;
+                            ParameterExpression parameter = Expression.Parameter(imsiType);
+                            if (key == null)
+                                keyExpression = Expression.Lambda(Expression.MakeMemberAccess(parameter, imsiType.GetRuntimeProperty(nameof(IIdentifiedEntity.Key))), parameter).Compile();
+                            else
+                            {
+                                var rawExpr = new BindingExpressionVisitor().RewriteLambda(expressionBuilderMethod.Invoke(null, new object[] { NameValueCollection.ParseQueryString(key.Value + "=RemoveMe") }) as LambdaExpression);
+                                keyExpression = Expression.Lambda(new BindingExpressionVisitor().Visit(rawExpr.Body), rawExpr.Parameters).Compile();
+                            }
+                            if (value == null)
+                                valueExpression = Expression.Lambda(Expression.Call(parameter, imsiType.GetRuntimeMethod("ToString", new Type[] { })), parameter).Compile();
+                            else
+                            {
+                                var rawExpr = new BindingExpressionVisitor().RewriteLambda(expressionBuilderMethod.Invoke(null, new object[] { NameValueCollection.ParseQueryString(valueSelector + "=RemoveMe") }) as LambdaExpression);
+                                valueExpression = Expression.Lambda(rawExpr.Body, rawExpr.Parameters).Compile();
+                            }
+
+                            // Creation of the options
+                            foreach (var itm in dataSource as IEnumerable)
+                            {
+                                var optAtt = new XElement(xs_xhtml + "option");
+                                optAtt.Add(new XAttribute("value", keyExpression.DynamicInvoke(itm)), new XText(valueExpression.DynamicInvoke(itm)?.ToString()));
+                                db.Add(optAtt);
+                            }
+                        }
+                        catch
+                        {
+                            if (locale == "en") throw; // We can't fallback
+                            locale = "en"; // fallback to english
+                        }
+                    }
                 }
 
                 // Now process SSI directives - <!--#include virtual="XXXXXXX" -->

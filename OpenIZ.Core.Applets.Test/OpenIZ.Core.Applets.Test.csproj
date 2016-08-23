@@ -90,6 +90,9 @@
     <EmbeddedResource Include="DoesntSerializeKey.json" />
     <EmbeddedResource Include="SimpleBundle.json" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DoesntInterpretSimpleArray.json" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

@@ -122,6 +122,25 @@ namespace OpenIZ.Core.Applets.Test
         /// Test parsing of a form submission
         /// </summary>
         [TestMethod]
+        public void TestShouldParseSimpleArray()
+        {
+            using (var sr = new StreamReader(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.DoesntInterpretSimpleArray.json")))
+            {
+                var json = sr.ReadToEnd();
+                var bundle = JsonViewModelSerializer.DeSerialize<UserEntity>(json);
+                json = JsonViewModelSerializer.Serialize(bundle);
+                Assert.IsNotNull(bundle.Names[0].Component[1].ComponentType);
+                Assert.AreEqual("Given", bundle.Names[0].Component[0].ComponentType.Mnemonic);
+                Assert.AreEqual("Family", bundle.Names[0].Component[1].ComponentType.Mnemonic);
+                //Assert.AreEqual(this.m_patientUnderTest.ClassConceptKey, patient.ClassConceptKey);
+            }
+
+        }
+
+        /// <summary>
+        /// Test parsing of a form submission
+        /// </summary>
+        [TestMethod]
         public void TestParseBundle()
         {
             using (var sr = new StreamReader(typeof(TestRenderApplets).Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.Test.SimpleBundle.json")))

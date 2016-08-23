@@ -162,16 +162,6 @@ namespace OpenIZ.Core.Model.Collection
         public int TotalResults { get; set; }
 
         /// <summary>
-        /// Set delay loading on bundle
-        /// </summary>
-        public override void SetDelayLoad(bool v)
-        {
-            base.SetDelayLoad(v);
-            foreach (var itm in this.m_bundleContents)
-                itm.SetDelayLoad(v);
-        }
-
-        /// <summary>
         /// Create a bundle
         /// </summary>
         public static Bundle CreateBundle(IdentifiedData resourceRoot)
@@ -220,19 +210,23 @@ namespace OpenIZ.Core.Model.Collection
         /// </summary>
         public void Reconstitute()
         {
+            HashSet<IdentifiedData> context = new HashSet<IdentifiedData>();
             foreach (var itm in this.Item)
             {
-                this.Reconstitute(itm);
+                this.Reconstitute(itm, context);
                 itm.SetDelayLoad(true);
             }
         }
-        
+
         /// <summary>
         /// Re-constitute the data
         /// </summary>
         /// <remarks>Basically this will find any refs and fill them in</remarks>
-        private void Reconstitute(IdentifiedData data)
+        private void Reconstitute(IdentifiedData data, HashSet<IdentifiedData> context)
         {
+            if (context.Contains(data))
+                return;
+            context.Add(data);
             // Prevent delay loading from EntitySource (we're doing that right now)
             data.SetDelayLoad(false);
 
@@ -246,10 +240,10 @@ namespace OpenIZ.Core.Model.Collection
                 {
                     foreach (var itm in value as IList)
                         if (itm is IdentifiedData)
-                            this.Reconstitute(itm as IdentifiedData);
+                            this.Reconstitute(itm as IdentifiedData, context);
                 }
                 else if (value is IdentifiedData)
-                    this.Reconstitute(value as IdentifiedData);
+                    this.Reconstitute(value as IdentifiedData, context);
 
                 // Is the pi a delay load? if so then get the key property
                 var keyName = pi.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty;
@@ -270,6 +264,7 @@ namespace OpenIZ.Core.Model.Collection
                 
             }
 
+            context.Remove(data);
 
         }
 

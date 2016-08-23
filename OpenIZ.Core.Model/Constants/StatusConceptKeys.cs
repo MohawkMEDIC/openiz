@@ -47,5 +47,10 @@ namespace OpenIZ.Core.Model.Constants
         /// Status - Active
         /// </summary>
         public static readonly Guid Active = Guid.Parse("C8064CBD-FA06-4530-B430-1A52F1530C27");
+
+        /// <summary>
+        /// Completed status
+        /// </summary>
+        public static readonly Guid Completed = Guid.Parse("93A48F6A-6808-4C70-83A2-D02178C2A883");
     }
 }

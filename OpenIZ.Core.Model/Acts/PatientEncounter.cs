@@ -56,8 +56,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the key of discharge disposition
         /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        
+        [AutoLoad, EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("dischargeDisposition"), JsonProperty("dischargeDisposition")]
         public Guid? DischargeDispositionKey
         {

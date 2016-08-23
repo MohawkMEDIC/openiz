@@ -127,7 +127,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the association type
         /// </summary>
-        [XmlIgnore, JsonIgnore]
+        [AutoLoad, XmlIgnore, JsonIgnore]
         [SerializationReference(nameof(RelationshipTypeKey))]
         public Concept RelationshipType
         {

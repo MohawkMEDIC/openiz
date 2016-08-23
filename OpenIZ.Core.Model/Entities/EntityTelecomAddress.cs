@@ -29,7 +29,7 @@ namespace OpenIZ.Core.Model.Entities
     /// <summary>
     /// Represents an entity telecom address
     /// </summary>
-    [Classifier(nameof(AddressUse)), SimpleValue(nameof(Value))]
+    [Classifier(nameof(AddressUse))]
     [XmlType("EntityTelecomAddress",  Namespace = "http://openiz.org/model"), JsonObject("EntityTelecomAddress")]
     public class EntityTelecomAddress : VersionedAssociation<Entity>
     {

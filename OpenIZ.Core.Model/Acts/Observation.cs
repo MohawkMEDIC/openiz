@@ -71,7 +71,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the concept which indicates the interpretation of the observtion
         /// </summary>
-        [SerializationReference(nameof(InterpretationConceptKey))]
+        [AutoLoad, SerializationReference(nameof(InterpretationConceptKey))]
         [XmlIgnore, JsonIgnore]
         public Concept InterpretationConcept
         {
@@ -135,7 +135,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the unit of measure
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [SerializationReference(nameof(UnitOfMeasureKey))]
+        [AutoLoad, SerializationReference(nameof(UnitOfMeasureKey))]
         public Concept UnitOfMeasure
         {
             get
@@ -207,7 +207,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the coded value of the observation
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        [SerializationReference(nameof(ValueKey))]
+        [AutoLoad, SerializationReference(nameof(ValueKey))]
         public Concept Value
         {
             get

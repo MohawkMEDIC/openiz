@@ -84,6 +84,38 @@ namespace OpenIZ.Core.Model.Entities
         }
 
         /// <summary>
+        /// The entity that this relationship targets
+        /// </summary>
+        [JsonProperty("holder"), XmlElement("holder")]
+        public Guid? HolderKey
+        {
+            get
+            {
+                return this.SourceEntityKey;
+            }
+            set
+            {
+                this.SourceEntityKey = value;
+            }
+        }
+
+        /// <summary>
+        /// The entity that this relationship targets
+        /// </summary>
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(HolderKey))]
+        public Entity Holder
+        {
+            get
+            {
+                return this.SourceEntity;
+            }
+            set
+            {
+                this.SourceEntity = value;
+            }
+        }
+
+        /// <summary>
         /// Target entity reference
         /// </summary>
         [SerializationReference(nameof(TargetEntityKey))]
@@ -98,22 +130,6 @@ namespace OpenIZ.Core.Model.Entities
             {
                 this.m_targetEntity = value;
                     this.m_targetEntityKey = value?.Key;
-            }
-        }
-
-        /// <summary>
-        /// The entity that this relationship targets
-        /// </summary>
-        [XmlIgnore, JsonIgnore, SerializationReference(nameof(SourceEntityKey))]
-        public Entity SourceEntityEx
-        {
-            get
-            {
-                return this.SourceEntity;
-            }
-            set
-            {
-                this.SourceEntity = value;
             }
         }
 

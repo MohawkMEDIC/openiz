@@ -34,6 +34,7 @@ using OpenIZ.Core.Extensions;
 using OpenIZ.Core.Model.Serialization;
 using OpenIZ.Core.Model.Reflection;
 using System.Diagnostics;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Applets.ViewModel
 {
@@ -278,8 +279,9 @@ namespace OpenIZ.Core.Applets.ViewModel
                                                 {
                                                     var klu = elementType.GetTypeInfo().GetCustomAttribute<KeyLookupAttribute>();
                                                     var satt = elementType.GetTypeInfo().GetCustomAttribute<SimpleValueAttribute>();
+                                                    object value = null;
                                                     if (elementType.StripNullable() == typeof(Guid))
-                                                        (modelInstance as IList).Add(Guid.Parse((String)jreader.Value));
+                                                        value = Guid.Parse((String)jreader.Value);
                                                     else if (satt != null) // not a key
                                                     {
                                                         var sattInstance = Activator.CreateInstance(elementType);
@@ -298,17 +300,17 @@ namespace OpenIZ.Core.Applets.ViewModel
                                                         }
                                                         else
                                                             sattPropertyInfo.SetValue(sattInstance, jreader.Value);
-                                                        (modelInstance as IList).Add(sattInstance);
+                                                        value = sattInstance;
                                                     }
                                                     else if (jreader.Value != null)
-                                                        (modelInstance as IList).Add(JsonConvert.DeserializeObject((String)jreader.Value, elementType.StripNullable()));
+                                                        value = JsonConvert.DeserializeObject((String)jreader.Value, elementType.StripNullable());
 
                                                     // Set the classifier
                                                     if (classifier != "$other")
                                                     {
                                                         var setProperty = classifierProperty;
-                                                        var target = (modelInstance as IList)[0];
                                                         String propertyName = classifierProperty.Name;
+                                                        var target = value;
                                                         while (propertyName != null)
                                                         {
                                                             var classifierValue = typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(setProperty.PropertyType.GetTypeInfo()) ?
@@ -323,6 +325,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                                                             }
                                                         }
                                                     }
+                                                    (modelInstance as IList).Add(value);
 
                                                 }
                                                 break;
@@ -526,6 +529,9 @@ namespace OpenIZ.Core.Applets.ViewModel
                 return;
             }
 
+            // We don't want to trigger delay loading and don't want to trigger loading
+            data = data.GetLocked();
+
             // Prevent infinite loop
             IVersionedEntity ver = data as IVersionedEntity;
             if (writeStack == null)
@@ -590,13 +596,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                         Dictionary<String, List<Object>> classifiedGroups = new Dictionary<String, List<Object>>();
                         foreach (var litm in value as IList)
                         {
-                            var classifierObj = elementType.GetRuntimeProperty(classifierAttribute.ClassifierProperty).GetValue(litm);
-                            var classifierPath = classifierObj?.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
-                            while (classifierPath != null)
-                            {
-                                classifierObj = classifierObj.GetType().GetRuntimeProperty(classifierPath.ClassifierProperty).GetValue(classifierObj);
-                                classifierPath = classifierObj?.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
-                            }
+                            var classifierObj = GetClassifierObj(litm, classifierAttribute);
 
                             // Classifier obj becomes the dictionary object
                             List<Object> values = null;
@@ -647,6 +647,35 @@ namespace OpenIZ.Core.Applets.ViewModel
                 writeStack.Remove(ver?.VersionKey ?? data.Key.Value);
             jwriter.WriteEndObject();
 
+        }
+
+        /// <summary>
+        /// Get classifier object
+        /// </summary>
+        private static object GetClassifierObj(object o, ClassifierAttribute classifierAttribute)
+        {
+            if (o == null) return null;
+
+            var classProperty = o.GetType().GetRuntimeProperty(classifierAttribute.ClassifierProperty);
+            var classifierObj = classProperty.GetValue(o);
+            if(classifierObj == null)
+            {
+                // Force load
+                var keyPropertyName = classProperty.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty;
+                if (keyPropertyName == null)
+                    return null;
+                var keyPropertyValue = o.GetType().GetRuntimeProperty(keyPropertyName).GetValue(o);
+
+                // Now we want to force load!!!!
+                var getValueMethod = typeof(EntitySource).GetGenericMethod("Get", new Type[] { classProperty.PropertyType }, new Type[] { typeof(Guid?) });
+                classifierObj = getValueMethod.Invoke(EntitySource.Current, new object[] { keyPropertyValue });
+                classProperty.SetValue(o, classifierObj);
+            }
+
+            classifierAttribute = classifierObj?.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
+            if (classifierAttribute != null)
+                return GetClassifierObj(classifierObj, classifierAttribute);
+            return classifierObj;
         }
     }
 

@@ -64,9 +64,6 @@ namespace OpenIZ.Core.Model
         public virtual void SetDelayLoad(bool v)
         {
 
-            if (this.m_delayLoad == v)
-                return;
-
             List<FieldInfo> fields = new List<FieldInfo>();
 
             Type typ = this.GetType();
@@ -81,14 +78,16 @@ namespace OpenIZ.Core.Model
             foreach (FieldInfo fi in fields)
             {
                 object value = fi.GetValue(this);
-                if (value is IdentifiedData)
+                if (value is IdentifiedData && 
+                    (value as IdentifiedData).IsDelayLoadEnabled != v)
                     (value as IdentifiedData).SetDelayLoad(v); // Let it go
                 else if (value is IList &&
                     fi.FieldType.GenericTypeArguments.Length > 0 &&
                     typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(fi.FieldType.GenericTypeArguments[0].GetTypeInfo()))
                 {
                     foreach (IdentifiedData itm in value as IList)
-                        itm?.SetDelayLoad(v);
+                        if(itm.IsDelayLoadEnabled != v)
+                            itm?.SetDelayLoad(v);
                 }
             }
         }
