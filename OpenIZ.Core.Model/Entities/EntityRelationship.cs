@@ -102,6 +102,22 @@ namespace OpenIZ.Core.Model.Entities
         }
 
         /// <summary>
+        /// The entity that this relationship targets
+        /// </summary>
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(SourceEntityKey))]
+        public Entity SourceEntityEx
+        {
+            get
+            {
+                return this.SourceEntity;
+            }
+            set
+            {
+                this.SourceEntity = value;
+            }
+        }
+
+        /// <summary>
         /// Association type key
         /// </summary>
         [XmlElement("relationshipType"), JsonProperty("relationshipType")]

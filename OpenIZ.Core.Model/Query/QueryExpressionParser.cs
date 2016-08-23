@@ -32,6 +32,7 @@ using OpenIZ.Core.Model.Attributes;
 using System.Collections;
 using OpenIZ.Core.Model.Reflection;
 using OpenIZ.Core.Model.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace OpenIZ.Core.Model.Query
 {
@@ -45,11 +46,22 @@ namespace OpenIZ.Core.Model.Query
     {
 
         /// <summary>
-        /// Build a LINQ expression
+        /// Buidl linq expression
         /// </summary>
+        /// <typeparam name="TModelType"></typeparam>
+        /// <param name="httpQueryParameters"></param>
+        /// <returns></returns>
         public static Expression<Func<TModelType, bool>> BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters)
         {
-            var expression = BuildLinqExpression<TModelType>(httpQueryParameters, "o");
+            return BuildLinqExpression<TModelType>(httpQueryParameters, null);
+        }
+
+        /// <summary>
+        /// Build a LINQ expression
+        /// </summary>
+        public static Expression<Func<TModelType, bool>> BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters, Dictionary<String, Delegate> variables)
+        {
+            var expression = BuildLinqExpression<TModelType>(httpQueryParameters, "o", variables);
 
             if (expression == null) // No query!
                 return (TModelType o) => o != null;
@@ -60,7 +72,7 @@ namespace OpenIZ.Core.Model.Query
         /// <summary>
         /// Build LINQ expression
         /// </summary>
-        public static LambdaExpression BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters, string parameterName)
+        public static LambdaExpression BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters, string parameterName, Dictionary<String, Delegate> variables = null)
         { 
             var parameterExpression = Expression.Parameter(typeof(TModelType), parameterName);
             Expression retVal = null;
@@ -184,9 +196,9 @@ namespace OpenIZ.Core.Model.Query
                             workingValues.Remove(wv);
                         }
 
-                        var builderMethod = typeof(QueryExpressionParser).GetGenericMethod(nameof(BuildLinqExpression), new Type[] { itemType }, new Type[] { typeof(NameValueCollection), typeof(String) });
+                        var builderMethod = typeof(QueryExpressionParser).GetGenericMethod(nameof(BuildLinqExpression), new Type[] { itemType }, new Type[] { typeof(NameValueCollection), typeof(String), typeof(Dictionary<String, Delegate>) });
 
-                        Expression predicate = (builderMethod.Invoke(null, new object[] { subFilter, pMember }) as LambdaExpression);
+                        Expression predicate = (builderMethod.Invoke(null, new object[] { subFilter, pMember, variables }) as LambdaExpression);
                         keyExpression = Expression.Call(anyMethod, accessExpression, predicate);
                         currentValue = new KeyValuePair<string, string[]>();
                         break;  // skip
@@ -274,6 +286,19 @@ namespace OpenIZ.Core.Model.Query
                         Expression valueExpr = null;
                         if (pValue == "null")
                             valueExpr = Expression.Constant(null);
+                        else if(pValue.StartsWith("$"))
+                        {
+                            Delegate val = null;
+                            if (variables.TryGetValue(pValue.Replace("$", ""), out val))
+                            {
+                                if(val.GetMethodInfo().GetParameters().Length > 0)
+                                    valueExpr = Expression.Convert(Expression.Invoke(Expression.Constant(val)), accessExpression.Type);
+                                else
+                                    valueExpr = Expression.Convert(Expression.Call(val.Target == null ? null : Expression.Constant(val.Target), val.GetMethodInfo()), accessExpression.Type);
+                            }
+                            else
+                                valueExpr = Expression.Constant(null);
+                        }
                         else if (accessExpression.Type == typeof(String))
                             valueExpr = Expression.Constant(pValue);
                         else if (accessExpression.Type == typeof(DateTime) || accessExpression.Type == typeof(DateTime?))

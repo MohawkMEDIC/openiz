@@ -4518,15 +4518,10 @@
       <mnemonic>VaccineTypeCodes</mnemonic>
       <oid>1.3.6.1.4.1.33349.3.1.5.9.3.25</oid>
       <url>http://openiz.org/conceptset/VaccineTypeCodes</url>
-
     <concept>c5a7fd4e-9660-4c49-95ad-fd39e6f2cb26</concept>
-  
     <concept>05e8161b-afd7-4549-aca9-ba1d342ea3c0</concept>
-  
     <concept>19afe679-ef94-48b4-9d6a-3c9827c4c8e2</concept>
-  
     <concept>0cd4c170-77b4-41f4-998c-200c856f9e5e</concept>
-  
     <concept>77e348db-8820-431c-b43e-91087ab276d8</concept>
   
     <concept>4c3f9b25-7c76-4b99-b6da-b1649cd62918</concept>

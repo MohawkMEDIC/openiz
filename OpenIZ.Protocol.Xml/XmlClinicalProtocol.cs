@@ -10,6 +10,9 @@ using OpenIZ.Protocol.Xml.Model;
 using OpenIZ.Core.Diagnostics;
 using System.IO;
 using OpenIZ.Core.Model.Constants;
+using System.Threading;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace OpenIZ.Protocol.Xml
 {
@@ -21,13 +24,7 @@ namespace OpenIZ.Protocol.Xml
 
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(XmlClinicalProtocol));
-
-        /// <summary>
-        /// Evaluation context
-        /// </summary>
-        [ThreadStatic]
-        internal static Dictionary<String, IEnumerable<Act>> EvaluationContext;
-
+        
         /// <summary>
         /// Default ctor
         /// </summary>
@@ -73,16 +70,35 @@ namespace OpenIZ.Protocol.Xml
         }
 
         /// <summary>
+        /// XmlClinicalProtocol
+        /// </summary>
+        static XmlClinicalProtocol()
+        {
+            Func<Int32> expr = () => { return (int)s_variables["index"]; };
+            s_callbacks.Add("index", expr);
+        }
+
+        /// <summary>
+        /// Local index
+        /// </summary>
+        [ThreadStatic]
+        private static Dictionary<String, Object> s_variables = null;
+
+        // Callbacks
+        private static Dictionary<String, Delegate> s_callbacks = new Dictionary<string, Delegate>();
+
+        /// <summary>
         /// Calculate the protocol against a atient
         /// </summary>
         public List<Act> Calculate(Patient p)
         {
-            EvaluationContext = new Dictionary<string, IEnumerable<Act>>();
 
             this.m_tracer.TraceInfo("Calculate ({0}) for {1}...", this.Id, p);
 
+            s_variables = new Dictionary<string, object>() { { "index", 0 } };
+
             // Evaluate eligibility
-            if(!this.Definition.When?.Evaluate(p) == false)
+            if (!this.Definition.When?.Evaluate(p, s_callbacks) == false)
             {
                 this.m_tracer.TraceInfo("{0} does not meet criteria for {1}", p, this.Id);
                 return new List<Act>();
@@ -92,22 +108,44 @@ namespace OpenIZ.Protocol.Xml
 
             // Rules
             foreach (var rule in this.Definition.Rules)
-                if (rule.When.Evaluate(p))
+                for (var index = 0; index < rule.Repeat; index++)
                 {
-                    var acts = rule.Then.Evaluate(p);
-                    retVal.AddRange(acts);
-                    EvaluationContext.Add(rule.Id, acts);
+
+                    s_variables["index"] = index;
+                    foreach (var itm in rule.Variables)
+                    {
+                        if (!s_variables.ContainsKey(itm.VariableName))
+                            s_variables.Add(itm.VariableName, itm.GetValue(null, p, s_callbacks));
+                        else
+                            s_variables[itm.VariableName] = itm.GetValue(null, p, s_callbacks);
+                        if (!s_callbacks.ContainsKey(itm.VariableName))
+                        {
+                            Func<Object> funcBody = () => {
+                                return s_variables[itm.VariableName];
+                            };
+
+                            var varType = s_variables[itm.VariableName].GetType();
+                            Delegate func = Expression.Lambda(typeof(Func<>).MakeGenericType(varType), Expression.Convert(Expression.Call(funcBody.Target == null ? null : Expression.Constant(funcBody.Target), funcBody.GetMethodInfo()), varType)).Compile();
+                            s_callbacks.Add(itm.VariableName, func);
+                        }
+                    }
+
+                    // TODO: Variable initialization 
+                    if (rule.When.Evaluate(p, s_callbacks))
+                    {
+                        var acts = rule.Then.Evaluate(p, s_callbacks);
+                        retVal.AddRange(acts);
+                    }
+                    else
+                        this.m_tracer.TraceInfo("{0} does not meet criteria for rule {1}.{2}", p, this.Id, rule.Uuid);
+
+                    // Assign protocol
+                    foreach (var itm in retVal)
+                        itm.Protocols.Add(new ActProtocol()
+                        {
+                            ProtocolKey = this.Id
+                        });
                 }
-                else
-                    this.m_tracer.TraceInfo("{0} does not meet criteria for rule {1}.{2}", p, this.Id, rule.Uuid);
-
-            // Assign protocol
-            foreach (var itm in retVal)
-                itm.Protocols.Add(new ActProtocol()
-                {
-                    ProtocolKey = this.Id
-                });
-
             return retVal;
         }
 

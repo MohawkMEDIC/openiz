@@ -124,6 +124,9 @@ namespace OpenIZ.Caching.Memory
             // Throw if disposed
             this.ThrowIfDisposed();
 
+            if ((data as IdentifiedData)?.IsEmpty() == true)
+                System.Diagnostics.Debugger.Break();
+
             Type objData = data?.GetType();
             var idData = data as IIdentifiedEntity;
             if (idData == null || !idData.Key.HasValue)

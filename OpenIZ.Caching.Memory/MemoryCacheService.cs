@@ -94,7 +94,13 @@ namespace OpenIZ.Caching.Memory
             // handles when a item is being mapped
             this.m_mappingHandler = (o, e) =>
             {
-                this.GetOrUpdateCacheItem(e);
+                var cacheItem = MemoryCache.Current.TryGetEntry(e.ObjectType, e.Key);
+                if (cacheItem != null)
+                {
+                    e.ModelObject = cacheItem as IdentifiedData;
+                    e.Cancel = true;
+                }
+                //this.GetOrUpdateCacheItem(e);
             };
 
             // Handles when an item is no longer being mapped

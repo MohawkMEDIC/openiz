@@ -1,0 +1,496 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/data">
+  <update insertIfNotExists="true">
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>02823B47-C315-4366-8883-442E646D34BE</id>
+      
+      <name>ActCode</name>
+      <oid>2.16.840.1.113883.5.4</oid>
+      <authority>ActCode</authority>
+      <description>ActCode</description>
+    </CodeSystem>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>fe4280a7-0921-482e-9d10-cc0b1eb88057</id>
+      
+      <mnemonic>ALG</mnemonic>
+      <codeSystem>02823B47-C315-4366-8883-442E646D34BE</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Allergy To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>d001f69c-118c-4080-a675-51be0ec51f86</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Allergy</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>fe4280a7-0921-482e-9d10-cc0b1eb88057</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Allergy To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>f5b49904-c216-4acd-bf92-f3eaee454ca7</id>
+      
+      <mnemonic>OINT</mnemonic>
+      <codeSystem>02823B47-C315-4366-8883-442E646D34BE</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Other Intolerance To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>d0962d26-2230-41fd-a67c-02ce905c5d1f</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>OtherIntolerance</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>f5b49904-c216-4acd-bf92-f3eaee454ca7</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Other Intolerance To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>f144b2f2-4e7f-47eb-adb0-b15b505954f0</id>
+      
+      <mnemonic>DALG</mnemonic>
+      <codeSystem>02823B47-C315-4366-8883-442E646D34BE</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Drug Allergy To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>86b79688-2440-419f-9776-e088b380b7a2</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>DrugAllergy</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>f144b2f2-4e7f-47eb-adb0-b15b505954f0</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Drug Allergy To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>ef5c48bb-ff94-4c58-bcfd-ee8446f20659</id>
+      
+      <mnemonic>EALG</mnemonic>
+      <codeSystem>02823B47-C315-4366-8883-442E646D34BE</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Environmental Allergy To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>c71b35e1-7709-4cc3-a2d5-a105a4085a50</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>EnvironmentalAllergy</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>ef5c48bb-ff94-4c58-bcfd-ee8446f20659</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Environmental Allergy To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>7c66812a-fe66-4ba1-91fb-50b3f8fdd6fd</id>
+      
+      <mnemonic>FALG</mnemonic>
+      <codeSystem>02823B47-C315-4366-8883-442E646D34BE</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Food Allergy To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>353f73b8-43d9-4b02-8c76-5d7e76301bae</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>FoodAllergy</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>7c66812a-fe66-4ba1-91fb-50b3f8fdd6fd</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Food Allergy To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>5e5da5a6-5148-4000-ad03-2fc5ec214a28</id>
+      
+      <mnemonic>DINT</mnemonic>
+      <codeSystem>02823B47-C315-4366-8883-442E646D34BE</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Drug Intolerance To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>0124fde0-7857-4815-b257-74acaa0dd92d</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>DrugIntolerance</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>5e5da5a6-5148-4000-ad03-2fc5ec214a28</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Drug Intolerance To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>2afbff6a-6794-4f72-9523-b22f58464fb2</id>
+      
+      <mnemonic>EINT</mnemonic>
+      <codeSystem>02823B47-C315-4366-8883-442E646D34BE</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Environmental Intolerance To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>9cafb9ec-cd0b-4003-b30c-677fa39b2e16</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>EnvironmentalIntolerance</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>2afbff6a-6794-4f72-9523-b22f58464fb2</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Environmental Intolerance To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>d95e580c-7deb-4891-9eb2-564d8180730c</id>
+      
+      <mnemonic>FINT</mnemonic>
+      <codeSystem>02823B47-C315-4366-8883-442E646D34BE</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Food Intolerance To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>298ac8e5-84ba-4992-9eec-892c636c8e73</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>FoodIntolerance</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>d95e580c-7deb-4891-9eb2-564d8180730c</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Food Intolerance To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>0df285ba-b02a-4a76-93f8-7751ce111755</id>
+      
+      <mnemonic>DNAINT</mnemonic>
+      <codeSystem>02823B47-C315-4366-8883-442E646D34BE</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Drug Non-Allergy Intolerance To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>62fc0be4-f75f-460b-ab98-4215f4573748</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>DrugNonAllergyIntollerance</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>0df285ba-b02a-4a76-93f8-7751ce111755</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Drug Non-Allergy Intolerance To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>6f4d2ea5-8a2c-4fbb-a8de-81522ef53787</id>
+      
+      <mnemonic>ENAINT</mnemonic>
+      <codeSystem>02823B47-C315-4366-8883-442E646D34BE</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Environmental Non-Allergy Intolerance To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>0577d51f-8ff5-4cf7-a2dd-bfc52841fff2</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>EnvironmentalNonAllergyIntolerance</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>6f4d2ea5-8a2c-4fbb-a8de-81522ef53787</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Environmental Non-Allergy Intolerance To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>df6d8c3f-00df-4d66-a3d6-1888b2aeb259</id>
+      
+      <mnemonic>FNAINT</mnemonic>
+      <codeSystem>02823B47-C315-4366-8883-442E646D34BE</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Food Non-Allergy Intolerance To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>594f0a36-34c1-48b4-b870-883173450ff4</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>FoodNonAllergyIntolerance</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>df6d8c3f-00df-4d66-a3d6-1888b2aeb259</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Food Non-Allergy Intolerance To</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>4a3952e0-8998-4020-9da2-6d78b292da69</id>
+      
+      <name>Allergies and Intolerance Types</name>
+      <mnemonic>AllergyIntoleranceCode</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.1.39</oid>
+      <url>http://openiz.org/conceptsets/contrib/AllergyIntoleranceCode</url>
+      <concept>d001f69c-118c-4080-a675-51be0ec51f86</concept>
+      <concept>d0962d26-2230-41fd-a67c-02ce905c5d1f</concept>
+      <concept>86b79688-2440-419f-9776-e088b380b7a2</concept>
+      <concept>c71b35e1-7709-4cc3-a2d5-a105a4085a50</concept>
+      <concept>353f73b8-43d9-4b02-8c76-5d7e76301bae</concept>
+      <concept>0124fde0-7857-4815-b257-74acaa0dd92d</concept>
+      <concept>9cafb9ec-cd0b-4003-b30c-677fa39b2e16</concept>
+      <concept>298ac8e5-84ba-4992-9eec-892c636c8e73</concept>
+      <concept>62fc0be4-f75f-460b-ab98-4215f4573748</concept>
+      <concept>0577d51f-8ff5-4cf7-a2dd-bfc52841fff2</concept>
+      <concept>594f0a36-34c1-48b4-b870-883173450ff4</concept>
+    </ConceptSet>
+  </update>
+</dataset>

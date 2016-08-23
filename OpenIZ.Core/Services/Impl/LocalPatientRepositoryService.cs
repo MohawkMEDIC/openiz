@@ -143,20 +143,7 @@ namespace OpenIZ.Core.Services.Impl
         /// </summary>
         public Patient Validate(Patient p)
         {
-            // Correct the address information
-            if (p.Addresses?.Count > 0)
-            {
-                var ct = p.Addresses?[0].Component?.FirstOrDefault(o => o.ComponentTypeKey == AddressComponentKeys.CensusTract || o.ComponentType?.Mnemonic == "CensusTract").Value;
-                IPlaceRepositoryService iprs = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
-                var homePlace = iprs.Get(Guid.Parse(ct), Guid.Empty);
-                p.Addresses = homePlace.Addresses.Select(o => new EntityAddress()
-                {
-                    AddressUse = p.Addresses[0].AddressUse,
-                    AddressUseKey = p.Addresses[0].AddressUseKey,
-                    Component = o.Component.Select(c => new EntityAddressComponent(c.ComponentTypeKey.Value, c.Value)).ToList()
-                }).ToList();
-            }
-
+           
             p = p.Clean() as Patient; // clean up messy data
 
            

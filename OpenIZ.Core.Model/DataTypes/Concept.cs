@@ -119,9 +119,18 @@ namespace OpenIZ.Core.Model.DataTypes
         public List<ConceptRelationship> Relationship { get; set; }
 
         /// <summary>
+        /// True if concept is empty
+        /// </summary>
+        /// <returns></returns>
+        public override bool IsEmpty()
+        {
+            return String.IsNullOrEmpty(this.Mnemonic);
+        }
+
+        /// <summary>
         /// Gets or sets the class identifier
         /// </summary>
-        
+
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("conceptClass"), JsonProperty("conceptClass")]
         public Guid?  ClassKey { get

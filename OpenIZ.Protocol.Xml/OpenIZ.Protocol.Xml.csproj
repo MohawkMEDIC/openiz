@@ -45,6 +45,7 @@
     <Compile Include="Model\ProtocolDefinition.cs" />
     <Compile Include="Model\ProtocolRuleDefinition.cs" />
     <Compile Include="Model\ProtocolThenClauseCollection.cs" />
+    <Compile Include="Model\ProtocolVariableDefinition.cs" />
     <Compile Include="Model\ProtocolWhenClauseCollection.cs" />
     <Compile Include="Model\RuleSetDefinition.cs" />
     <Compile Include="Model\XmlLinq\XmlBinaryExpression.cs" />

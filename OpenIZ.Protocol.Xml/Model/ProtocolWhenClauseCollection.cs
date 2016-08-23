@@ -35,7 +35,7 @@ namespace OpenIZ.Protocol.Xml.Model
         /// <summary>
         /// Compile the expression
         /// </summary>
-        public void Compile<TData>()
+        public void Compile<TData>(Dictionary<String, Delegate> variableFunc)
         {
             Expression<Func<TData, bool>> expression = null;
             ParameterExpression expressionParm = Expression.Parameter(typeof(TData), "_scope");
@@ -48,7 +48,7 @@ namespace OpenIZ.Protocol.Xml.Model
                 if (itm is WhenClauseImsiExpression)
                 {
                     var imsiExpr = itm as WhenClauseImsiExpression;
-                    clauseExpr = Expression.Invoke(QueryExpressionParser.BuildLinqExpression<TData>(NameValueCollection.ParseQueryString(imsiExpr.Expression)), expressionParm);
+                    clauseExpr = Expression.Invoke(QueryExpressionParser.BuildLinqExpression<TData>(NameValueCollection.ParseQueryString(imsiExpr.Expression), variableFunc), expressionParm);
                     if (imsiExpr.NegationIndicator)
                         clauseExpr = Expression.Not(clauseExpr);
                 }
@@ -68,6 +68,8 @@ namespace OpenIZ.Protocol.Xml.Model
                     exp.TypeRegistry.RegisterType<Guid>();
                     exp.TypeRegistry.RegisterType<TimeSpan>();
                     exp.TypeRegistry.RegisterParameter("now", ()=>DateTime.Now); // because MONO is scumbag
+                    foreach (var fn in variableFunc)
+                        exp.TypeRegistry.RegisterParameter(fn.Key, (Func<Object>)fn.Value);
                     //exp.TypeRegistry.RegisterSymbol("data", expressionParm);
                     exp.ScopeCompile<TData>();
                     //Func<TData, bool> d = exp.ScopeCompile<TData>();
@@ -99,11 +101,11 @@ namespace OpenIZ.Protocol.Xml.Model
         /// <summary>
         /// Evaluate the "when" clause
         /// </summary>
-        public bool Evaluate<TData>(TData parm)
+        public bool Evaluate<TData>(TData parm, Dictionary<String, Delegate> variableFunc)
         {
 
             if (this.m_compiledExpression == null)
-                this.Compile<TData>();
+                this.Compile<TData>(variableFunc);
 
             lock(this.m_lockObject)
                 return this.m_compiledExpression.Invoke(parm);
