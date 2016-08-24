@@ -3,7 +3,7 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>3023bad7-8c16-49ea-81fc-eee6232b80e7</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <isReadonly>false</isReadonly>
       <mnemonic>Supplement-VitaminA</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
@@ -21,7 +21,7 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>1ee21592-da84-4253-a65f-84681aeae1b6</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>Supplement-Mebendazole</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
@@ -38,7 +38,7 @@
   <update insertIfNotExists="true">
     <ConceptSet xmlns="http://openiz.org/model">
       <id>17331147-6e27-4adb-84b4-da105bf41094</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <name>SupplementCodes</name>
       <mnemonic>SupplementCodes</mnemonic>
       <oid>1.3.6.1.4.1.33349.3.1.5.9.1.40</oid>

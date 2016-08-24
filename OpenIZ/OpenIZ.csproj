@@ -136,6 +136,10 @@
     <None Include="Data\000-VitalSigns.dataset">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\000-NullFlavor.dataset">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\000-SeverityObservation.dataset" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">

@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="HL7v3 SeverityObservation Concept Set" xmlns="http://openiz.org/data">
+  <update insertIfNotExists="true">
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>150624bf-da3f-49b6-a50a-b3b4cda7dcce</id>
+      
+      <name>SeverityObservation</name>
+      <oid>2.16.840.1.113883.5.1063</oid>
+      <authority>SeverityObservation</authority>
+      <url>http://hl7.org/fhir/v3-SeverityObservation</url>
+    </CodeSystem>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>446e3f10-a79d-470e-96d4-2db8fcf648c5</id>
+      
+      <mnemonic>H</mnemonic>
+      <codeSystem>150624bf-da3f-49b6-a50a-b3b4cda7dcce</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>High</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>bac8d12f-1829-48e3-beed-bcc2ff0c1050</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>SeverityObservation-High</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>446e3f10-a79d-470e-96d4-2db8fcf648c5</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>High</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>f5d3f474-34c1-4d0e-8098-ce778979c6b8</id>
+      
+      <mnemonic>L</mnemonic>
+      <codeSystem>150624bf-da3f-49b6-a50a-b3b4cda7dcce</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Low</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>b09b4f76-df38-4825-86a9-e791cd37859b</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>SeverityObservation-Low</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>f5d3f474-34c1-4d0e-8098-ce778979c6b8</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Low</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>7b968181-018b-4c2b-af60-ba0a2082f4df</id>
+      
+      <mnemonic>M</mnemonic>
+      <codeSystem>150624bf-da3f-49b6-a50a-b3b4cda7dcce</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Moderate</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>2a1bdbdb-f0e9-4ee2-872f-f3cad824ba10</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>SeverityObservation-Moderate</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>7b968181-018b-4c2b-af60-ba0a2082f4df</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Moderate</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>fea87e2a-b3d7-487b-8fcc-eb3d8308edb6</id>
+      
+      <name>SeverityObservation</name>
+      <mnemonic>SeverityObservation</mnemonic>
+      <oid>2.16.840.1.113883.5.1063</oid>
+      <url>http://openiz.org/valuset/v3-SeverityObservation</url>
+      <concept>bac8d12f-1829-48e3-beed-bcc2ff0c1050</concept>
+      <concept>b09b4f76-df38-4825-86a9-e791cd37859b</concept>
+      <concept>2a1bdbdb-f0e9-4ee2-872f-f3cad824ba10</concept>
+    </ConceptSet>
+  </update>
+</dataset>

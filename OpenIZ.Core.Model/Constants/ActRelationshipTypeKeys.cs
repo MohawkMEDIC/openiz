@@ -50,7 +50,7 @@ namespace OpenIZ.Core.Model.Constants
         /// <summary>
         /// The assertion that a new observation may be a manifestation of another
         /// </summary>
-        public static readonly Guid IsManfestationOf = Guid.Parse("22918D17-D3DC-4135-A003-4C1C52E57E75");
+        public static readonly Guid HasManifestation = Guid.Parse("22918D17-D3DC-4135-A003-4C1C52E57E75");
         /// <summary>
         /// Indicates that the source act appends information contained in the target act
         /// </summary>
@@ -103,5 +103,6 @@ namespace OpenIZ.Core.Model.Constants
         /// Indicates that the source act transforms the target act
         /// </summary>
         public static readonly Guid Transforms = Guid.Parse("DB2AE02A-FF12-4C1B-9C5B-ECDD41AF8583");
+
     }
 }
