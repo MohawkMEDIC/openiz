@@ -9,6 +9,7 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Security;
 using OpenIZ.Core.Model.Constants;
+using MARC.HI.EHRS.SVC.Core.Data;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -40,23 +41,58 @@ namespace OpenIZ.Core.Services.Impl
 
         public Act Get(Guid key, Guid versionId)
         {
-            throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<Act>)));
+			}
+
+			return persistenceService.Get<Guid>(new Identifier<Guid>(key, versionId), AuthenticationContext.Current.Principal, true);
         }
 
         public Act Insert(Act insert)
         {
-            throw new NotImplementedException();
-        }
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<Act>)));
+			}
+
+			return persistenceService.Insert(insert, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
 
         public Act Obsolete(Guid key)
         {
-            throw new NotImplementedException();
-        }
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<Act>)));
+			}
+
+			var act = persistenceService.Get<Guid>(new Identifier<Guid>(key), AuthenticationContext.Current.Principal, true);
+
+			if (act == null)
+			{
+				throw new InvalidOperationException("Act not found");
+			}
+
+			return persistenceService.Obsolete(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
 
         public Act Save(Act act)
         {
-            throw new NotImplementedException();
-        }
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<Act>)));
+			}
+
+			return persistenceService.Update(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
 
         /// <summary>
         /// Validate the act and prepare for storage
