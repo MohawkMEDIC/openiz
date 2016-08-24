@@ -75,7 +75,7 @@ namespace OpenIZ.Messaging.AMI.Client
         /// <returns>Returns the newly created device.</returns>
         public SecurityDevice CreateDevice(SecurityDevice device)
 		{
-			return this.Client.Post<SecurityDevice, SecurityDevice>("device/create", this.Client.Accept, device);
+			return this.Client.Post<SecurityDevice, SecurityDevice>("device", this.Client.Accept, device);
 		}
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace OpenIZ.Messaging.AMI.Client
         /// <returns>Returns the newly created place.</returns>
         public Place CreatePlace(Place place)
 		{
-			return this.Client.Post<Place, Place>("place/create", this.Client.Accept, place);
+			return this.Client.Post<Place, Place>("place", this.Client.Accept, place);
 		}
 
 		/// <summary>
@@ -95,7 +95,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the newly created policy.</returns>
 		public SecurityPolicyInfo CreatePolicy(SecurityPolicyInfo policy)
 		{
-			return this.Client.Post<SecurityPolicyInfo, SecurityPolicyInfo>("policy/create", this.Client.Accept, policy);
+			return this.Client.Post<SecurityPolicyInfo, SecurityPolicyInfo>("policy", this.Client.Accept, policy);
 		}
 
 		/// <summary>
@@ -105,7 +105,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the newly created role.</returns>
 		public SecurityRoleInfo CreateRole(SecurityRoleInfo role)
 		{
-			return this.Client.Post<SecurityRoleInfo, SecurityRoleInfo>("role/create", this.Client.Accept, role);
+			return this.Client.Post<SecurityRoleInfo, SecurityRoleInfo>("role", this.Client.Accept, role);
 		}
 
 		/// <summary>
@@ -115,7 +115,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the newly created user.</returns>
 		public SecurityUserInfo CreateUser(SecurityUserInfo user)
 		{
-			return this.Client.Post<SecurityUserInfo, SecurityUserInfo>("user/create", this.Client.Accept, user);
+			return this.Client.Post<SecurityUserInfo, SecurityUserInfo>("user", this.Client.Accept, user);
 		}
 
 		/// <summary>
@@ -125,7 +125,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the deleted device.</returns>
 		public SecurityDevice DeleteDevice(string id)
 		{
-			return this.Client.Delete<SecurityDevice>(string.Format("device/delete/{0}", id));
+			return this.Client.Delete<SecurityDevice>(string.Format("device/{0}", id));
 		}
 
 		/// <summary>
@@ -135,7 +135,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the deleted place.</returns>
 		public Place DeletePlace(string id)
 		{
-			return this.Client.Delete<Place>(string.Format("place/delete/{0}", id));
+			return this.Client.Delete<Place>(string.Format("place/{0}", id));
 		}
 
 		/// <summary>
@@ -145,7 +145,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the deleted policy.</returns>
 		public SecurityPolicyInfo DeletePolicy(string id)
 		{
-			return this.Client.Delete<SecurityPolicyInfo>(string.Format("policy/delete/{0}", id));
+			return this.Client.Delete<SecurityPolicyInfo>(string.Format("policy/{0}", id));
 		}
 
 		/// <summary>
@@ -155,7 +155,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the deleted role.</returns>
 		public SecurityRoleInfo DeleteRole(string id)
 		{
-			return this.Client.Delete<SecurityRoleInfo>(string.Format("role/delete/{0}", id));
+			return this.Client.Delete<SecurityRoleInfo>(string.Format("role/{0}", id));
 		}
 
 		/// <summary>
@@ -165,7 +165,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the deleted user.</returns>
 		public SecurityUserInfo DeleteUser(string id)
 		{
-			return this.Client.Delete<SecurityUserInfo>(string.Format("user/delete/{0}", id));
+			return this.Client.Delete<SecurityUserInfo>(string.Format("user/{0}", id));
 		}
 
 		#region IDisposable Support
@@ -369,39 +369,29 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the submission result.</returns>
 		public SubmissionResult SubmitCertificateSigningRequest(SubmissionRequest submissionRequest)
 		{
-			return this.Client.Post<SubmissionRequest, SubmissionResult>("csr/submit", this.Client.Accept, submissionRequest);
+			return this.Client.Post<SubmissionRequest, SubmissionResult>("csr", this.Client.Accept, submissionRequest);
 		}
 
 		/// <summary>
 		/// Updates a concept.
 		/// </summary>
+		/// <param name="conceptId">The id of the concept to be updated.</param>
 		/// <param name="concept">The concept containing the updated information.</param>
 		/// <returns>Returns the updated concept.</returns>
-		public Concept UpdateConcept(Concept concept)
+		public Concept UpdateConcept(string conceptId, Concept concept)
 		{
-			return this.Client.Put<Concept, Concept>("concept/update", this.Client.Accept, concept);
+			return this.Client.Put<Concept, Concept>(string.Format("concept/{0}", conceptId), this.Client.Accept, concept);
 		}
 
 		/// <summary>
 		/// Updates a place.
 		/// </summary>
+		/// <param name="placeId">The id of the place to be updated.</param>
 		/// <param name="place">The place containing the updated information.</param>
 		/// <returns>Returns the updated place.</returns>
-		public Place UpdatePlace(Place place)
+		public Place UpdatePlace(string placeId, Place place)
 		{
-			return this.Client.Put<Place, Place>("place/update", this.Client.Accept, place);
-		}
-
-		/// <summary>
-		/// Updates a user.
-		/// </summary>
-		/// <param name="id">The id of the user to be updated.</param>
-		/// <param name="user">The user containing the updated information.</param>
-		/// <returns>Returns the updated user.</returns>
-        [Obsolete("User UpdateUser(Guid, SecurityUserInfo) as this REST binding will be removed in future versions")]
-		public SecurityUserInfo UpdateUser(string id, SecurityUserInfo user)
-		{
-			return this.Client.Put<SecurityUserInfo, SecurityUserInfo>(string.Format("user/update/{0}", id), this.Client.Accept, user);
+			return this.Client.Put<Place, Place>(string.Format("place/{0}", placeId), this.Client.Accept, place);
 		}
 
         /// <summary>

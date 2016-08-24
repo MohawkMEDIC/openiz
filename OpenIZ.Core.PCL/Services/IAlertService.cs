@@ -9,39 +9,46 @@ using System.Threading.Tasks;
 namespace OpenIZ.Core.Services
 {
     /// <summary>
-    /// Represents an alerting service
+    /// Represents an alerting service.
     /// </summary>
     public interface IAlertService
     {
+		/// <summary>
+		/// Fired when an alert was raised and is being processed.
+		/// </summary>
+		event EventHandler<AlertEventArgs> Received;
 
-        /// <summary>
-        /// Indicates an alert was raised and is being processed
-        /// </summary>
-        event EventHandler<AlertEventArgs> Received;
+		/// <summary>
+		/// Fired when an alert is received.
+		/// </summary>
+		event EventHandler<AlertEventArgs> Committed;
 
-        /// <summary>
-        /// Indicates an alert was received and 
-        /// </summary>
-        event EventHandler<AlertEventArgs> Committed;
+		/// <summary>
+		/// Broadcasts an alert.
+		/// </summary>
+		/// <param name="msg">The alert message to be broadcast.</param>
+		void BroadcastAlert(AlertMessage msg);
 
-        /// <summary>
-        /// Broadcast (insert and raise event)
-        /// </summary>
-        void BroadcastAlert(AlertMessage msg);
+		/// <summary>
+		/// Searches for alerts.
+		/// </summary>
+		/// <param name="predicate">The predicate to use to search for alerts.</param>
+		/// <param name="offset">The offset of the search.</param>
+		/// <param name="count">The count of the search results.</param>
+		/// <returns>Returns a list of alerts.</returns>
+		List<AlertMessage> FindAlerts(Expression<Func<AlertMessage, bool>> predicate, int offset, int? count);
 
-        /// <summary>
-        /// Sends an alert
-        /// </summary>
-        void SaveAlert(AlertMessage msg);
+		/// <summary>
+		/// Gets an alert.
+		/// </summary>
+		/// <param name="id">The id of the alert to be retrieved.</param>
+		/// <returns>Returns an alert.</returns>
+		AlertMessage GetAlert(Guid id);
 
-        /// <summary>
-        /// Gets the specified alert
-        /// </summary>
-        AlertMessage GetAlert(Guid id);
-
-        /// <summary>
-        /// Get alerts matching the predicate
-        /// </summary>
-        List<AlertMessage> FindAlerts(Expression<Func<AlertMessage, bool>> predicate, int offset, int? count);
+		/// <summary>
+		/// Saves an alert.
+		/// </summary>
+		/// <param name="msg">The alert message to be saved.</param>
+		void SaveAlert(AlertMessage msg);
     }
 }

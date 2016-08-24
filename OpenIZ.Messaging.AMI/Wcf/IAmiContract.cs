@@ -77,17 +77,8 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="device">The device to be created.</param>
 		/// <returns>Returns the newly created device.</returns>
-		[WebInvoke(UriTemplate = "/device/create", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		[WebInvoke(UriTemplate = "/device", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		SecurityDevice CreateDevice(SecurityDevice device);
-
-		/// <summary>
-		/// Creates a place in the IMS.
-		/// </summary>
-		/// <param name="place">The place to be created.</param>
-		/// <returns>Returns the newly created place.</returns>
-		[WebInvoke(UriTemplate = "/place/create", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-        [Obsolete("This RPC style call will be migrated to REST style operation in future releases")]
-		Place CreatePlaceEx(Place place);
 
         /// <summary>
         /// Creates a place in the IMS.
@@ -95,7 +86,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// <param name="place">The place to be created.</param>
         /// <returns>Returns the newly created place.</returns>
         [WebInvoke(UriTemplate = "/place", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-        [Obsolete("This RPC style call will be migrated to REST style operation in future releases")]
         Place CreatePlace(Place place);
 
         /// <summary>
@@ -105,24 +95,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// <returns>Returns the newly created security policy.</returns>
         [WebInvoke(UriTemplate = "/policy", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		SecurityPolicyInfo CreatePolicy(SecurityPolicyInfo policy);
-
-        /// <summary>
-        /// Creates a security policy.
-        /// </summary>
-        /// <param name="policy">The security policy to be created.</param>
-        /// <returns>Returns the newly created security policy.</returns>
-        [WebInvoke(UriTemplate = "/policy/create", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-        [Obsolete("This RPC style call will be migrated to REST style operation in future releases")]
-        SecurityPolicyInfo CreatePolicyEx(SecurityPolicyInfo policy);
-
-        /// <summary>
-        /// Creates a security role.
-        /// </summary>
-        /// <param name="role">The security role to be created.</param>
-        /// <returns>Returns the newly created security role.</returns>
-        [WebInvoke(UriTemplate = "/role/create", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-        [Obsolete("This RPC style call will be migrated to REST style operation in future releases")]
-        SecurityRoleInfo CreateRoleEx(SecurityRoleInfo role);
 
         /// <summary>
         /// Creates a security role.
@@ -141,15 +113,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		SecurityUserInfo CreateUser(SecurityUserInfo user);
 
         /// <summary>
-        /// Creates a security user.
-        /// </summary>
-        /// <param name="user">The security user to be created.</param>
-        /// <returns>Returns the newly created security user.</returns>
-        [WebInvoke(UriTemplate = "/user/create", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-        [Obsolete("This RPC style call will be migrated to REST style operation in future releases")]
-        SecurityUserInfo CreateUserEx(SecurityUserInfo user);
-
-        /// <summary>
         /// Deletes a specified certificate.
         /// </summary>
         /// <param name="id">The id of the certificate to be deleted.</param>
@@ -159,40 +122,12 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		SubmissionResult DeleteCertificate(string id, RevokeReason reason);
 
         /// <summary>
-        /// Deletes a specified certificate.
-        /// </summary>
-        /// <param name="id">The id of the certificate to be deleted.</param>
-        /// <param name="reason">The reason the certificate is to be deleted.</param>
-        /// <returns>Returns the deletion result.</returns>
-        [WebInvoke(UriTemplate = "/certificate/delete/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-        [Obsolete("This RPC style call will be migrated to REST style operation in future releases")]
-        SubmissionResult DeleteCertificateEx(string id, RevokeReason reason);
-
-        /// <summary>
         /// Deletes a device.
         /// </summary>
         /// <param name="deviceId">The id of the device to be deleted.</param>
         /// <returns>Returns the deleted device.</returns>
         [WebInvoke(UriTemplate = "/device/{deviceId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
 		SecurityDevice DeleteDevice(string deviceId);
-
-        /// <summary>
-        /// Deletes a device.
-        /// </summary>
-        /// <param name="deviceId">The id of the device to be deleted.</param>
-        /// <returns>Returns the deleted device.</returns>
-        [WebInvoke(UriTemplate = "/device/delete/{deviceId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-        [Obsolete("This RPC style call will be migrated to REST style operation in future releases")]
-        SecurityDevice DeleteDeviceEx(string deviceId);
-
-        /// <summary>
-        /// Deletes a place.
-        /// </summary>
-        /// <param name="placeId">The id of the place to be deleted.</param>
-        /// <returns>Returns the deleted place.</returns>
-        [WebInvoke(UriTemplate = "/place/delete/{placeId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-        [Obsolete("This RPC style call will be migrated to REST style operation in future releases")]
-        Place DeletePlaceEx(string placeId);
 
         /// <summary>
         /// Deletes a place.
@@ -207,26 +142,8 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// </summary>
         /// <param name="policyId">The id of the policy to be deleted.</param>
         /// <returns>Returns the deleted policy.</returns>
-        [WebInvoke(UriTemplate = "/policy/delete/{policyId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-		SecurityPolicyInfo DeletePolicyEx(string policyId);
-
-        /// <summary>
-        /// Deletes a security policy.
-        /// </summary>
-        /// <param name="policyId">The id of the policy to be deleted.</param>
-        /// <returns>Returns the deleted policy.</returns>
         [WebInvoke(UriTemplate = "/policy/{policyId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-        [Obsolete("This RPC style call will be migrated to REST style operation in future releases")]
         SecurityPolicyInfo DeletePolicy(string policyId);
-
-        /// <summary>
-        /// Deletes a security role.
-        /// </summary>
-        /// <param name="roleId">The id of the role to be deleted.</param>
-        /// <returns>Returns the deleted role.</returns>
-        [WebInvoke(UriTemplate = "/role/delete/{roleId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-        [Obsolete("This RPC style call will be migrated to REST style operation in future releases")]
-        SecurityRoleInfo DeleteRoleEx(string roleId);
 
         /// <summary>
         /// Deletes a security role.
@@ -235,15 +152,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// <returns>Returns the deleted role.</returns>
         [WebInvoke(UriTemplate = "/role/{roleId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
         SecurityRoleInfo DeleteRole(string roleId);
-
-        /// <summary>
-        /// Deletes a security user.
-        /// </summary>
-        /// <param name="userId">The id of the user to be deleted.</param>
-        /// <returns>Returns the deleted user.</returns>
-        [WebInvoke(UriTemplate = "/user/delete/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-        [Obsolete("This RPC style call will be migrated to REST style operation in future releases")]
-        SecurityUserInfo DeleteUserEx(string userId);
 
         /// <summary>
         /// Deletes a security user.
@@ -365,14 +273,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		SecurityUserInfo GetUser(string userId);
 
         /// <summary>
-        /// Gets a specific security user.
-        /// </summary>
-        /// <param name="userId">The id of the security user to be retrieved.</param>
-        /// <returns>Returns the security user.</returns>
-        [WebInvoke(UriTemplate = "/user/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
-        SecurityUserInfo UpdateUser(string userId , SecurityUserInfo userInfo);
-
-        /// <summary>
         /// Gets a list of security users.
         /// </summary>
         /// <returns>Returns a list of security users.</returns>
@@ -388,15 +288,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/csr/{certId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
 		SubmissionResult RejectCsr(string certId, RevokeReason reason);
 
-		/// <summary>
-		/// Submits a specific certificate signing request.
-		/// </summary>
-		/// <param name="s">The certificate signing request.</param>
-		/// <returns>Returns the submission result.</returns>
-        [Obsolete("This RPC style call will be migrated to REST style operation in future releases")]
-        [WebInvoke(UriTemplate = "/csr/submit", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-		SubmissionResult SubmitCsrEx(SubmissionRequest s);
-
         /// <summary>
         /// Submits a specific certificate signing request.
         /// </summary>
@@ -404,15 +295,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// <returns>Returns the submission result.</returns>
         [WebInvoke(UriTemplate = "/csr", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
         SubmissionResult SubmitCsr(SubmissionRequest s);
-
-        /// <summary>
-        /// Updates a concept.
-        /// </summary>
-        /// <param name="concept">The concept containing the updated information.</param>
-        /// <returns>Returns the updated concept.</returns>
-        [WebInvoke(UriTemplate = "/concept/update", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
-        [Obsolete("This RPC style call will be migrated to REST style operation in future releases")]
-        Concept UpdateConceptEx(Concept concept);
 
         /// <summary>
         /// Updates a concept.
@@ -428,26 +310,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// <param name="place">The place containing the updated information.</param>
         /// <returns>Returns the updated place.</returns>
         [WebInvoke(UriTemplate = "/place/{placeId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
-        Place UpdatePlace(String placeId, Place place);
+        Place UpdatePlace(string placeId, Place place);
 
-        /// <summary>
-        /// Updates a place.
-        /// </summary>
-        /// <param name="place">The place containing the updated information.</param>
-        /// <returns>Returns the updated place.</returns>
-        [WebInvoke(UriTemplate = "/place/update", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
-        [Obsolete("This RPC style call will be migrated to REST style operation in future releases")]
-        Place UpdatePlaceEx(Place place);
-
-        /// <summary>
-        /// Updates a security user.
-        /// </summary>
-        /// <param name="userId">The id of the security user to be updated.</param>
-        /// <param name="info">The security user containing the updated information.</param>
-        /// <returns>Returns the updated security user.</returns>
-        [WebInvoke(UriTemplate = "/user/update/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
-        [Obsolete("This RPC style call will be migrated to REST style operation in future releases")]
-        SecurityUserInfo UpdateUserEx(string userId, SecurityUserInfo info);
-        
+		/// <summary>
+		/// Gets a specific security user.
+		/// </summary>
+		/// <param name="userId">The id of the security user to be retrieved.</param>
+		/// <returns>Returns the security user.</returns>
+		[WebInvoke(UriTemplate = "/user/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		SecurityUserInfo UpdateUser(string userId, SecurityUserInfo userInfo);
 	}
 }
