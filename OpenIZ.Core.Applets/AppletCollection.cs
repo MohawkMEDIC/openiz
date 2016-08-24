@@ -410,7 +410,7 @@ namespace OpenIZ.Core.Applets
 
                     var locale = preProcessLocalization;
                     int i = 0;
-                    var valueSelector = value.Value;
+                    var valueSelector = value?.Value;
                     while (i++ < 2)
                     {
                         try
