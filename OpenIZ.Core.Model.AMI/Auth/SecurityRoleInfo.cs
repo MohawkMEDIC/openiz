@@ -1,30 +1,30 @@
 ﻿/*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: Nityan
  * Date: 2016-8-14
  */
+
 using OpenIZ.Core.Model.Security;
 using System;
-using System.Xml.Serialization;
 using System.Linq;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.AMI.Auth
 {
-
 	/// <summary>
 	/// Represents security role information.
 	/// </summary>
@@ -48,7 +48,7 @@ namespace OpenIZ.Core.Model.AMI.Auth
 			this.Id = role.Key;
 			this.Name = role.Name;
 			this.Role = role;
-            this.Policies = role.Policies.Select(o => new SecurityPolicyInfo(o)).ToArray();
+			this.Policies = role.Policies.Select(o => new SecurityPolicyInfo(o)).ToArray();
 		}
 
 		/// <summary>
@@ -63,16 +63,16 @@ namespace OpenIZ.Core.Model.AMI.Auth
 		[XmlAttribute("name")]
 		public String Name { get; set; }
 
-        /// <summary>
-        /// Represents policies
-        /// </summary>
-        [XmlElement("policy")]
-        public SecurityPolicyInfo[] Policies { get; set; }
+		/// <summary>
+		/// Represents policies
+		/// </summary>
+		[XmlElement("policy")]
+		public SecurityPolicyInfo[] Policies { get; set; }
 
-        /// <summary>
-        /// Gets or sets the role information
-        /// </summary>
-        [XmlElement("roleInfo")]
+		/// <summary>
+		/// Gets or sets the role information
+		/// </summary>
+		[XmlElement("roleInfo")]
 		public SecurityRole Role { get; set; }
 	}
 }
