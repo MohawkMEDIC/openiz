@@ -19,11 +19,17 @@
  */
 
 using System.ServiceModel;
+using System.ServiceModel.Web;
 
 namespace OpenIZ.Messaging.RISI.Wcf
 {
+	/// <summary>
+	/// Provides operations for running and managing reports.
+	/// </summary>
 	[ServiceContract(Namespace = "http://openiz.org/risi/1.0", Name = "RISI", ConfigurationName = "RISI_1.0")]
 	public interface IRisiContract
 	{
+		[WebGet(UriTemplate = "/temp", BodyStyle = WebMessageBodyStyle.Bare)]
+		object PlaceHolderOperation();
 	}
 }

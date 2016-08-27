@@ -18,6 +18,7 @@
  * Date: 2016-8-27
  */
 
+using System;
 using System.ServiceModel;
 
 namespace OpenIZ.Messaging.RISI.Wcf
@@ -25,5 +26,9 @@ namespace OpenIZ.Messaging.RISI.Wcf
 	[ServiceBehavior(ConfigurationName = "RISI")]
 	public class RisiBehavior : IRisiContract
 	{
+		public object PlaceHolderOperation()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
