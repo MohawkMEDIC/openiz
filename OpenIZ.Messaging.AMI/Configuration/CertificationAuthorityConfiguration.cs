@@ -26,6 +26,11 @@ namespace OpenIZ.Messaging.AMI.Configuration
 	public class CertificationAuthorityConfiguration
 	{
 		/// <summary>
+		/// When true, automatically approve CA
+		/// </summary>
+		public bool AutoApprove { get; set; }
+
+		/// <summary>
 		/// Gets or sets the name of the certification authority
 		/// </summary>
 		public string Name { get; set; }
@@ -34,10 +39,5 @@ namespace OpenIZ.Messaging.AMI.Configuration
 		/// Gets or sets the name of the machine
 		/// </summary>
 		public string ServerName { get; set; }
-
-		/// <summary>
-		/// When true, automatically approve CA
-		/// </summary>
-		public bool AutoApprove { get; set; }
 	}
 }

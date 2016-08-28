@@ -18,7 +18,6 @@
  * Date: 2016-6-22
  */
 
-using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.AMI.Auth;
 using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Core.Model.DataTypes;
@@ -68,8 +67,8 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="id">The id of the user whose password is to be changed.</param>
 		/// <param name="password">The new password of the user.</param>
 		/// <returns>Returns the updated user.</returns>
-		[WebInvoke(UriTemplate = "/changepassword/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT" )]
-        [Obsolete("Use UpdateUser instead as this RPC style call may be removed in the future")]
+		[WebInvoke(UriTemplate = "/changepassword/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		[Obsolete("Use UpdateUser instead as this RPC style call may be removed in the future")]
 		SecurityUser ChangePassword(String id, string password);
 
 		/// <summary>
@@ -80,93 +79,93 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/device", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		SecurityDevice CreateDevice(SecurityDevice device);
 
-        /// <summary>
-        /// Creates a place in the IMS.
-        /// </summary>
-        /// <param name="place">The place to be created.</param>
-        /// <returns>Returns the newly created place.</returns>
-        [WebInvoke(UriTemplate = "/place", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-        Place CreatePlace(Place place);
+		/// <summary>
+		/// Creates a place in the IMS.
+		/// </summary>
+		/// <param name="place">The place to be created.</param>
+		/// <returns>Returns the newly created place.</returns>
+		[WebInvoke(UriTemplate = "/place", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		Place CreatePlace(Place place);
 
-        /// <summary>
-        /// Creates a security policy.
-        /// </summary>
-        /// <param name="policy">The security policy to be created.</param>
-        /// <returns>Returns the newly created security policy.</returns>
-        [WebInvoke(UriTemplate = "/policy", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		/// <summary>
+		/// Creates a security policy.
+		/// </summary>
+		/// <param name="policy">The security policy to be created.</param>
+		/// <returns>Returns the newly created security policy.</returns>
+		[WebInvoke(UriTemplate = "/policy", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		SecurityPolicyInfo CreatePolicy(SecurityPolicyInfo policy);
 
-        /// <summary>
-        /// Creates a security role.
-        /// </summary>
-        /// <param name="role">The security role to be created.</param>
-        /// <returns>Returns the newly created security role.</returns>
-        [WebInvoke(UriTemplate = "/role", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-        SecurityRoleInfo CreateRole(SecurityRoleInfo role);
+		/// <summary>
+		/// Creates a security role.
+		/// </summary>
+		/// <param name="role">The security role to be created.</param>
+		/// <returns>Returns the newly created security role.</returns>
+		[WebInvoke(UriTemplate = "/role", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		SecurityRoleInfo CreateRole(SecurityRoleInfo role);
 
-        /// <summary>
-        /// Creates a security user.
-        /// </summary>
-        /// <param name="user">The security user to be created.</param>
-        /// <returns>Returns the newly created security user.</returns>
-        [WebInvoke(UriTemplate = "/user", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		/// <summary>
+		/// Creates a security user.
+		/// </summary>
+		/// <param name="user">The security user to be created.</param>
+		/// <returns>Returns the newly created security user.</returns>
+		[WebInvoke(UriTemplate = "/user", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		SecurityUserInfo CreateUser(SecurityUserInfo user);
 
-        /// <summary>
-        /// Deletes a specified certificate.
-        /// </summary>
-        /// <param name="id">The id of the certificate to be deleted.</param>
-        /// <param name="reason">The reason the certificate is to be deleted.</param>
-        /// <returns>Returns the deletion result.</returns>
-        [WebInvoke(UriTemplate = "/certificate/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		/// <summary>
+		/// Deletes a specified certificate.
+		/// </summary>
+		/// <param name="id">The id of the certificate to be deleted.</param>
+		/// <param name="reason">The reason the certificate is to be deleted.</param>
+		/// <returns>Returns the deletion result.</returns>
+		[WebInvoke(UriTemplate = "/certificate/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
 		SubmissionResult DeleteCertificate(string id, RevokeReason reason);
 
-        /// <summary>
-        /// Deletes a device.
-        /// </summary>
-        /// <param name="deviceId">The id of the device to be deleted.</param>
-        /// <returns>Returns the deleted device.</returns>
-        [WebInvoke(UriTemplate = "/device/{deviceId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		/// <summary>
+		/// Deletes a device.
+		/// </summary>
+		/// <param name="deviceId">The id of the device to be deleted.</param>
+		/// <returns>Returns the deleted device.</returns>
+		[WebInvoke(UriTemplate = "/device/{deviceId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
 		SecurityDevice DeleteDevice(string deviceId);
 
-        /// <summary>
-        /// Deletes a place.
-        /// </summary>
-        /// <param name="placeId">The id of the place to be deleted.</param>
-        /// <returns>Returns the deleted place.</returns>
-        [WebInvoke(UriTemplate = "/place/{placeId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-        Place DeletePlace(string placeId);
+		/// <summary>
+		/// Deletes a place.
+		/// </summary>
+		/// <param name="placeId">The id of the place to be deleted.</param>
+		/// <returns>Returns the deleted place.</returns>
+		[WebInvoke(UriTemplate = "/place/{placeId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		Place DeletePlace(string placeId);
 
-        /// <summary>
-        /// Deletes a security policy.
-        /// </summary>
-        /// <param name="policyId">The id of the policy to be deleted.</param>
-        /// <returns>Returns the deleted policy.</returns>
-        [WebInvoke(UriTemplate = "/policy/{policyId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-        SecurityPolicyInfo DeletePolicy(string policyId);
+		/// <summary>
+		/// Deletes a security policy.
+		/// </summary>
+		/// <param name="policyId">The id of the policy to be deleted.</param>
+		/// <returns>Returns the deleted policy.</returns>
+		[WebInvoke(UriTemplate = "/policy/{policyId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		SecurityPolicyInfo DeletePolicy(string policyId);
 
-        /// <summary>
-        /// Deletes a security role.
-        /// </summary>
-        /// <param name="roleId">The id of the role to be deleted.</param>
-        /// <returns>Returns the deleted role.</returns>
-        [WebInvoke(UriTemplate = "/role/{roleId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-        SecurityRoleInfo DeleteRole(string roleId);
+		/// <summary>
+		/// Deletes a security role.
+		/// </summary>
+		/// <param name="roleId">The id of the role to be deleted.</param>
+		/// <returns>Returns the deleted role.</returns>
+		[WebInvoke(UriTemplate = "/role/{roleId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		SecurityRoleInfo DeleteRole(string roleId);
 
-        /// <summary>
-        /// Deletes a security user.
-        /// </summary>
-        /// <param name="userId">The id of the user to be deleted.</param>
-        /// <returns>Returns the deleted user.</returns>
-        [WebInvoke(UriTemplate = "/user/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-        SecurityUserInfo DeleteUser(string userId);
+		/// <summary>
+		/// Deletes a security user.
+		/// </summary>
+		/// <param name="userId">The id of the user to be deleted.</param>
+		/// <returns>Returns the deleted user.</returns>
+		[WebInvoke(UriTemplate = "/user/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		SecurityUserInfo DeleteUser(string userId);
 
-        /// <summary>
-        /// Gets a specific certificate.
-        /// </summary>
-        /// <param name="id">The id of the certificate to retrieve.</param>
-        /// <returns>Returns the certificate.</returns>
-        [WebGet(UriTemplate = "/certificate/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
+		/// <summary>
+		/// Gets a specific certificate.
+		/// </summary>
+		/// <param name="id">The id of the certificate to retrieve.</param>
+		/// <returns>Returns the certificate.</returns>
+		[WebGet(UriTemplate = "/certificate/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
 		byte[] GetCertificate(string id);
 
 		/// <summary>
@@ -272,11 +271,11 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebGet(UriTemplate = "/user/{userId}", BodyStyle = WebMessageBodyStyle.Bare)]
 		SecurityUserInfo GetUser(string userId);
 
-        /// <summary>
-        /// Gets a list of security users.
-        /// </summary>
-        /// <returns>Returns a list of security users.</returns>
-        [WebGet(UriTemplate = "/user", BodyStyle = WebMessageBodyStyle.Bare)]
+		/// <summary>
+		/// Gets a list of security users.
+		/// </summary>
+		/// <returns>Returns a list of security users.</returns>
+		[WebGet(UriTemplate = "/user", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<SecurityUserInfo> GetUsers();
 
 		/// <summary>
@@ -288,29 +287,29 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/csr/{certId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
 		SubmissionResult RejectCsr(string certId, RevokeReason reason);
 
-        /// <summary>
-        /// Submits a specific certificate signing request.
-        /// </summary>
-        /// <param name="s">The certificate signing request.</param>
-        /// <returns>Returns the submission result.</returns>
-        [WebInvoke(UriTemplate = "/csr", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-        SubmissionResult SubmitCsr(SubmissionRequest s);
+		/// <summary>
+		/// Submits a specific certificate signing request.
+		/// </summary>
+		/// <param name="s">The certificate signing request.</param>
+		/// <returns>Returns the submission result.</returns>
+		[WebInvoke(UriTemplate = "/csr", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		SubmissionResult SubmitCsr(SubmissionRequest s);
 
-        /// <summary>
-        /// Updates a concept.
-        /// </summary>
-        /// <param name="concept">The concept containing the updated information.</param>
-        /// <returns>Returns the updated concept.</returns>
-        [WebInvoke(UriTemplate = "/concept/{conceptId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
-        Concept UpdateConcept(string conceptId, Concept concept);
+		/// <summary>
+		/// Updates a concept.
+		/// </summary>
+		/// <param name="concept">The concept containing the updated information.</param>
+		/// <returns>Returns the updated concept.</returns>
+		[WebInvoke(UriTemplate = "/concept/{conceptId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		Concept UpdateConcept(string conceptId, Concept concept);
 
-        /// <summary>
-        /// Updates a place.
-        /// </summary>
-        /// <param name="place">The place containing the updated information.</param>
-        /// <returns>Returns the updated place.</returns>
-        [WebInvoke(UriTemplate = "/place/{placeId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
-        Place UpdatePlace(string placeId, Place place);
+		/// <summary>
+		/// Updates a place.
+		/// </summary>
+		/// <param name="place">The place containing the updated information.</param>
+		/// <returns>Returns the updated place.</returns>
+		[WebInvoke(UriTemplate = "/place/{placeId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		Place UpdatePlace(string placeId, Place place);
 
 		/// <summary>
 		/// Gets a specific security user.

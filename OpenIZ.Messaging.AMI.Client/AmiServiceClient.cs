@@ -62,28 +62,28 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <param name="id">The id of the user whose password is to be changed.</param>
 		/// <param name="password">The new password of the user.</param>
 		/// <returns>Returns the updated user.</returns>
-        [Obsolete("Should update the user with new password instead")]
+		[Obsolete("Should update the user with new password instead")]
 		public SecurityUser ChangePassword(Guid id, string password)
 		{
 			return this.Client.Put<string, SecurityUser>(string.Format("changepassword/{0}", id.ToString()), this.Client.Accept, password);
 		}
 
-        /// <summary>
-        /// Creates a device in the IMS.
-        /// </summary>
-        /// <param name="device">The device to be created.</param>
-        /// <returns>Returns the newly created device.</returns>
-        public SecurityDevice CreateDevice(SecurityDevice device)
+		/// <summary>
+		/// Creates a device in the IMS.
+		/// </summary>
+		/// <param name="device">The device to be created.</param>
+		/// <returns>Returns the newly created device.</returns>
+		public SecurityDevice CreateDevice(SecurityDevice device)
 		{
 			return this.Client.Post<SecurityDevice, SecurityDevice>("device", this.Client.Accept, device);
 		}
 
-        /// <summary>
-        /// Creates a place in the IMS.
-        /// </summary>
-        /// <param name="place">The place to be created.</param>
-        /// <returns>Returns the newly created place.</returns>
-        public Place CreatePlace(Place place)
+		/// <summary>
+		/// Creates a place in the IMS.
+		/// </summary>
+		/// <param name="place">The place to be created.</param>
+		/// <returns>Returns the newly created place.</returns>
+		public Place CreatePlace(Place place)
 		{
 			return this.Client.Post<Place, Place>("place", this.Client.Accept, place);
 		}
@@ -173,6 +173,17 @@ namespace OpenIZ.Messaging.AMI.Client
 		private bool disposedValue = false; // To detect redundant calls
 
 		/// <summary>
+		/// Dispose of any resources.
+		/// </summary>
+		public void Dispose()
+		{
+			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+			Dispose(true);
+			// TODO: uncomment the following line if the finalizer is overridden above.
+			// GC.SuppressFinalize(this);
+		}
+
+		/// <summary>
 		/// Dispose of any managed resources.
 		/// </summary>
 		/// <param name="disposing">Whether the current invocation is disposing.</param>
@@ -198,27 +209,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		//   Dispose(false);
 		// }
 
-		/// <summary>
-		/// Dispose of any resources.
-		/// </summary>
-		public void Dispose()
-		{
-			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-			Dispose(true);
-			// TODO: uncomment the following line if the finalizer is overridden above.
-			// GC.SuppressFinalize(this);
-		}
-
 		#endregion IDisposable Support
-
-		/// <summary>
-		/// Retrieves the specified role from the AMI
-		/// </summary>
-		public AmiCollection<SecurityRoleInfo> FindRole(Expression<Func<SecurityRole, bool>> query)
-		{
-			var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
-			return this.Client.Get<AmiCollection<SecurityRoleInfo>>("role", queryParms);
-		}
 
 		/// <summary>
 		/// Retrieves the specified role from the AMI
@@ -230,33 +221,12 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
-		/// Gets a list of certificates.
+		/// Retrieves the specified role from the AMI
 		/// </summary>
-		/// <param name="query">The query expression to use to find the certificates.</param>
-		/// <returns>Returns a collection of certificates which match the specified query.</returns>
-		AmiCollection<X509Certificate2Info> GetCertificates(Expression<Func<X509Certificate2Info, bool>> query)
+		public AmiCollection<SecurityRoleInfo> FindRole(Expression<Func<SecurityRole, bool>> query)
 		{
-			return this.Client.Get<AmiCollection<X509Certificate2Info>>("certificate", QueryExpressionBuilder.BuildQuery(query).ToArray());
-		}
-
-		/// <summary>
-		/// Gets a list of concepts.
-		/// </summary>
-		/// <param name="query">The query expression to use to find the concepts.</param>
-		/// <returns>Returns a collection of concepts which match the specified query.</returns>
-		public AmiCollection<Concept> GetConcepts(Expression<Func<Concept, bool>> query)
-		{
-			return this.Client.Get<AmiCollection<Concept>>("concept", QueryExpressionBuilder.BuildQuery(query).ToArray());
-		}
-
-		/// <summary>
-		/// Gets a list of concept sets.
-		/// </summary>
-		/// <param name="query">The query expression to use to find the concept sets.</param>
-		/// <returns>Returns a collection of concept sets which match the specified query.</returns>
-		public AmiCollection<ConceptSet> GetConceptSets(Expression<Func<ConceptSet, bool>> query)
-		{
-			return this.Client.Get<AmiCollection<ConceptSet>>("conceptset", QueryExpressionBuilder.BuildQuery(query).ToArray());
+			var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
+			return this.Client.Get<AmiCollection<SecurityRoleInfo>>("role", queryParms);
 		}
 
 		/// <summary>
@@ -277,6 +247,26 @@ namespace OpenIZ.Messaging.AMI.Client
 		public AmiCollection<SubmissionInfo> GetCertificateSigningRequests(Expression<Func<SubmissionInfo, bool>> query)
 		{
 			return this.Client.Get<AmiCollection<SubmissionInfo>>("csrs", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
+		/// Gets a list of concepts.
+		/// </summary>
+		/// <param name="query">The query expression to use to find the concepts.</param>
+		/// <returns>Returns a collection of concepts which match the specified query.</returns>
+		public AmiCollection<Concept> GetConcepts(Expression<Func<Concept, bool>> query)
+		{
+			return this.Client.Get<AmiCollection<Concept>>("concept", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
+		/// Gets a list of concept sets.
+		/// </summary>
+		/// <param name="query">The query expression to use to find the concept sets.</param>
+		/// <returns>Returns a collection of concept sets which match the specified query.</returns>
+		public AmiCollection<ConceptSet> GetConceptSets(Expression<Func<ConceptSet, bool>> query)
+		{
+			return this.Client.Get<AmiCollection<ConceptSet>>("conceptset", QueryExpressionBuilder.BuildQuery(query).ToArray());
 		}
 
 		/// <summary>
@@ -394,15 +384,25 @@ namespace OpenIZ.Messaging.AMI.Client
 			return this.Client.Put<Place, Place>(string.Format("place/{0}", placeId), this.Client.Accept, place);
 		}
 
-        /// <summary>
-        /// Updates a user.
-        /// </summary>
-        /// <param name="id">The id of the user to be updated.</param>
-        /// <param name="user">The user containing the updated information.</param>
-        /// <returns>Returns the updated user.</returns>
-        public SecurityUserInfo UpdateUser(Guid id, SecurityUserInfo user)
-        {
-            return this.Client.Put<SecurityUserInfo, SecurityUserInfo>(string.Format("user/{0}", id), this.Client.Accept, user);
-        }
-    }
+		/// <summary>
+		/// Updates a user.
+		/// </summary>
+		/// <param name="id">The id of the user to be updated.</param>
+		/// <param name="user">The user containing the updated information.</param>
+		/// <returns>Returns the updated user.</returns>
+		public SecurityUserInfo UpdateUser(Guid id, SecurityUserInfo user)
+		{
+			return this.Client.Put<SecurityUserInfo, SecurityUserInfo>(string.Format("user/{0}", id), this.Client.Accept, user);
+		}
+
+		/// <summary>
+		/// Gets a list of certificates.
+		/// </summary>
+		/// <param name="query">The query expression to use to find the certificates.</param>
+		/// <returns>Returns a collection of certificates which match the specified query.</returns>
+		private AmiCollection<X509Certificate2Info> GetCertificates(Expression<Func<X509Certificate2Info, bool>> query)
+		{
+			return this.Client.Get<AmiCollection<X509Certificate2Info>>("certificate", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+	}
 }

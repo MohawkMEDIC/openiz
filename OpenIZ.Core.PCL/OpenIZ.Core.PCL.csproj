@@ -69,11 +69,13 @@
     <Compile Include="Services\IClinicalProtocolRepositoryService.cs" />
     <Compile Include="Services\IConceptRepositoryService.cs" />
     <Compile Include="Services\IDataCacheService.cs" />
+    <Compile Include="Services\IIdentifierTypeRepositoryService.cs" />
     <Compile Include="Services\IMaterialRepositoryService.cs" />
     <Compile Include="Services\IMetadataRepositoryService.cs" />
     <Compile Include="Services\Impl\BaseBusinessRulesService.cs" />
     <Compile Include="Services\Impl\NullPhoneticAlgorithmHandler.cs" />
     <Compile Include="Protocol\SimpleCarePlanService.cs" />
+    <Compile Include="Services\IOrganizationRepositoryService.cs" />
     <Compile Include="Services\IPatientRepositoryService.cs" />
     <Compile Include="Services\IPhoneticAlgorithmHandler.cs" />
     <Compile Include="Services\IPlaceRepositoryService.cs" />
