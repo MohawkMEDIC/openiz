@@ -629,10 +629,10 @@
     <ConceptSet xmlns="http://openiz.org/model">
       <id>51925f69-14a3-4516-bb2c-e2280a4f3065</id>
       
-      <name>NullFlavor</name>
-      <mnemonic>NullFlavor</mnemonic>
-      <oid>2.16.840.1.113883.5.1008</oid>
-      <url>http://openiz.org/valuset/v3-NullFlavor</url>
+      <name>Null Reason</name>
+      <mnemonic>NullReason</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.42</oid>
+      <url>http://openiz.org/conceptsets/contrib/NullReason</url>
       <concept>21b0ffc8-ca4e-408d-a104-41fc924d3a39</concept>
       <concept>8ef137b3-e717-492b-8d8f-3817c99aed88</concept>
       <concept>d3f92eb1-fece-4dea-bed2-515af2b0fb38</concept>

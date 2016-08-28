@@ -80,6 +80,7 @@
     <Compile Include="Services\IProviderRepositoryService.cs" />
     <Compile Include="Services\ISecurityRepositoryService.cs" />
     <Compile Include="Services\IStockManagementService.cs" />
+    <Compile Include="Services\IThreadPoolService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

@@ -292,9 +292,9 @@ namespace OpenIZ.Core.Model.Query
                             if (variables.TryGetValue(pValue.Replace("$", ""), out val))
                             {
                                 if(val.GetMethodInfo().GetParameters().Length > 0)
-                                    valueExpr = Expression.Convert(Expression.Invoke(Expression.Constant(val)), accessExpression.Type);
+                                    valueExpr = Expression.Invoke(Expression.Constant(val));
                                 else
-                                    valueExpr = Expression.Convert(Expression.Call(val.Target == null ? null : Expression.Constant(val.Target), val.GetMethodInfo()), accessExpression.Type);
+                                    valueExpr = Expression.Call(val.Target == null ? null : Expression.Constant(val.Target), val.GetMethodInfo());
                             }
                             else
                                 valueExpr = Expression.Constant(null);
@@ -313,6 +313,8 @@ namespace OpenIZ.Core.Model.Query
                             valueExpr = Expression.Constant(Enum.ToObject(accessExpression.Type, Int32.Parse(pValue)));
                         else
                             valueExpr = Expression.Constant(Convert.ChangeType(pValue, accessExpression.Type));
+                        if (valueExpr.Type != accessExpression.Type)
+                            valueExpr = Expression.Convert(valueExpr, accessExpression.Type);
                         Expression singleExpression = Expression.MakeBinary(et, accessExpression, valueExpr);
                         if (keyExpression == null)
                             keyExpression = singleExpression;

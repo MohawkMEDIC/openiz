@@ -559,7 +559,8 @@ namespace OpenIZ.Core.Applets.ViewModel
 
                 // Value is null
                 var value = itm.Key.GetValue(data);
-                if (value == null || (itm.Key.Name == myClassifier?.ClassifierProperty && value is IdentifiedData))
+                if (value == null || (itm.Key.Name == myClassifier?.ClassifierProperty && value is IdentifiedData) ||
+                    itm.Key.PropertyType.GetTypeInfo().IsValueType && value == Activator.CreateInstance(itm.Key.PropertyType))
                     continue;
 
                 String propertyName = itm.Value;

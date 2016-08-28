@@ -1,4 +1,5 @@
 ﻿using ExpressionEvaluator;
+using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Protocol.Xml.Model.XmlLinq;
 using System;
@@ -14,6 +15,9 @@ namespace OpenIZ.Protocol.Xml.Model
     [XmlType(nameof(ProtocolWhenClauseCollection), Namespace = "http://openiz.org/cdss")]
     public class ProtocolWhenClauseCollection
     {
+
+        // Tracer
+        private Tracer m_tracer = Tracer.GetTracer(typeof(ProtocolWhenClauseCollection));
 
         /// <summary>
         /// Operator 
@@ -37,7 +41,6 @@ namespace OpenIZ.Protocol.Xml.Model
         /// </summary>
         public void Compile<TData>(Dictionary<String, Delegate> variableFunc)
         {
-            Expression<Func<TData, bool>> expression = null;
             ParameterExpression expressionParm = Expression.Parameter(typeof(TData), "_scope");
             Expression body = null;
             // Iterate and perform binary operations
@@ -51,6 +54,7 @@ namespace OpenIZ.Protocol.Xml.Model
                     clauseExpr = Expression.Invoke(QueryExpressionParser.BuildLinqExpression<TData>(NameValueCollection.ParseQueryString(imsiExpr.Expression), variableFunc), expressionParm);
                     if (imsiExpr.NegationIndicator)
                         clauseExpr = Expression.Not(clauseExpr);
+                    this.m_tracer.TraceVerbose("Converted WHEN {0} > {1}", imsiExpr.Expression, clauseExpr);
                 }
                 else if (itm is XmlLambdaExpression)
                 {
@@ -69,7 +73,7 @@ namespace OpenIZ.Protocol.Xml.Model
                     exp.TypeRegistry.RegisterType<TimeSpan>();
                     exp.TypeRegistry.RegisterParameter("now", ()=>DateTime.Now); // because MONO is scumbag
                     foreach (var fn in variableFunc)
-                        exp.TypeRegistry.RegisterParameter(fn.Key, (Func<Object>)fn.Value);
+                        exp.TypeRegistry.RegisterParameter(fn.Key, fn.Value);
                     //exp.TypeRegistry.RegisterSymbol("data", expressionParm);
                     exp.ScopeCompile<TData>();
                     //Func<TData, bool> d = exp.ScopeCompile<TData>();
@@ -107,7 +111,7 @@ namespace OpenIZ.Protocol.Xml.Model
             if (this.m_compiledExpression == null)
                 this.Compile<TData>(variableFunc);
 
-            lock(this.m_lockObject)
+            lock(m_lockObject)
                 return this.m_compiledExpression.Invoke(parm);
         }
     }

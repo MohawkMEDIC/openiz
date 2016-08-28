@@ -467,6 +467,7 @@ namespace OpenIZ.Core.Applets
                                 optAtt.Add(new XAttribute("value", keyExpression.DynamicInvoke(itm)), new XText(valueExpression.DynamicInvoke(itm)?.ToString()));
                                 db.Add(optAtt);
                             }
+                            break;
                         }
                         catch
                         {

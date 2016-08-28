@@ -13,6 +13,7 @@ using OpenIZ.Core.Model.Constants;
 using System.Threading;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace OpenIZ.Protocol.Xml
 {
@@ -90,63 +91,93 @@ namespace OpenIZ.Protocol.Xml
         /// <summary>
         /// Calculate the protocol against a atient
         /// </summary>
-        public List<Act> Calculate(Patient p)
+        public List<Act> Calculate(Patient triggerPatient)
         {
 
-            this.m_tracer.TraceInfo("Calculate ({0}) for {1}...", this.Id, p);
-
-            s_variables = new Dictionary<string, object>() { { "index", 0 } };
-
-            // Evaluate eligibility
-            if (!this.Definition.When?.Evaluate(p, s_callbacks) == false)
+            try
             {
-                this.m_tracer.TraceInfo("{0} does not meet criteria for {1}", p, this.Id);
+#if DEBUG
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+#endif
+
+                // Get a clone to make decisions on
+                Patient patient = null;
+                lock (triggerPatient)
+                    patient = triggerPatient.Clone() as Patient;
+                patient.Participations = new List<ActParticipation>(triggerPatient.Participations);
+
+                this.m_tracer.TraceInfo("Calculate ({0}) for {1}...", this.Name, patient);
+
+                s_variables = new Dictionary<string, object>() { { "index", 0 } };
+
+                // Evaluate eligibility
+                if (!this.Definition.When?.Evaluate(patient, s_callbacks) == false)
+                {
+                    this.m_tracer.TraceInfo("{0} does not meet criteria for {1}", patient, this.Id);
+                    return new List<Act>();
+                }
+
+                List<Act> retVal = new List<Act>();
+
+                // Rules
+                foreach (var rule in this.Definition.Rules)
+                    for (var index = 0; index < rule.Repeat; index++)
+                    {
+
+                        s_variables["index"] = index;
+                        foreach (var itm in rule.Variables)
+                        {
+                            if (!s_variables.ContainsKey(itm.VariableName))
+                                s_variables.Add(itm.VariableName, itm.GetValue(null, patient, s_callbacks));
+                            else
+                                s_variables[itm.VariableName] = itm.GetValue(null, patient, s_callbacks);
+                            if (!s_callbacks.ContainsKey(itm.VariableName))
+                            {
+                                Func<Object> funcBody = () =>
+                                {
+                                    return s_variables[itm.VariableName];
+                                };
+
+                                var varType = s_variables[itm.VariableName].GetType();
+                                Delegate func = Expression.Lambda(typeof(Func<>).MakeGenericType(varType), Expression.Convert(Expression.Call(funcBody.Target == null ? null : Expression.Constant(funcBody.Target), funcBody.GetMethodInfo()), varType)).Compile();
+                                s_callbacks.Add(itm.VariableName, func);
+                            }
+                        }
+
+                        // TODO: Variable initialization 
+                        if (rule.When.Evaluate(patient, s_callbacks))
+                        {
+                            var acts = rule.Then.Evaluate(patient, s_callbacks);
+                            retVal.AddRange(acts);
+                        }
+                        else
+                            this.m_tracer.TraceInfo("{0} does not meet criteria for rule {1}.{2}", patient, this.Id, rule.Uuid);
+
+                    }
+
+                // Assign protocol
+                foreach (var itm in retVal)
+                    itm.Protocols.Add(new ActProtocol()
+                    {
+                        ProtocolKey = this.Id
+                    });
+
+                // Now we want to add the stuff to the patient
+                lock (triggerPatient)
+                    triggerPatient.Participations.AddRange(retVal.Select(o=>new ActParticipation(ActParticipationKey.RecordTarget, triggerPatient) { Act = o, ParticipationRole = new Core.Model.DataTypes.Concept() { Key = ActParticipationKey.RecordTarget, Mnemonic = "RecordTarget" }, Key = Guid.NewGuid() }));
+#if DEBUG
+                sw.Stop();
+                this.m_tracer.TraceVerbose("Protocol {0} took {1} ms", this.Name, sw.ElapsedMilliseconds);
+#endif
+
+                return retVal;
+            }
+            catch(Exception e)
+            {
+                this.m_tracer.TraceError("Error applying protocol: {0}", e);
                 return new List<Act>();
             }
-
-            List<Act> retVal = new List<Act>();
-
-            // Rules
-            foreach (var rule in this.Definition.Rules)
-                for (var index = 0; index < rule.Repeat; index++)
-                {
-
-                    s_variables["index"] = index;
-                    foreach (var itm in rule.Variables)
-                    {
-                        if (!s_variables.ContainsKey(itm.VariableName))
-                            s_variables.Add(itm.VariableName, itm.GetValue(null, p, s_callbacks));
-                        else
-                            s_variables[itm.VariableName] = itm.GetValue(null, p, s_callbacks);
-                        if (!s_callbacks.ContainsKey(itm.VariableName))
-                        {
-                            Func<Object> funcBody = () => {
-                                return s_variables[itm.VariableName];
-                            };
-
-                            var varType = s_variables[itm.VariableName].GetType();
-                            Delegate func = Expression.Lambda(typeof(Func<>).MakeGenericType(varType), Expression.Convert(Expression.Call(funcBody.Target == null ? null : Expression.Constant(funcBody.Target), funcBody.GetMethodInfo()), varType)).Compile();
-                            s_callbacks.Add(itm.VariableName, func);
-                        }
-                    }
-
-                    // TODO: Variable initialization 
-                    if (rule.When.Evaluate(p, s_callbacks))
-                    {
-                        var acts = rule.Then.Evaluate(p, s_callbacks);
-                        retVal.AddRange(acts);
-                    }
-                    else
-                        this.m_tracer.TraceInfo("{0} does not meet criteria for rule {1}.{2}", p, this.Id, rule.Uuid);
-
-                    // Assign protocol
-                    foreach (var itm in retVal)
-                        itm.Protocols.Add(new ActProtocol()
-                        {
-                            ProtocolKey = this.Id
-                        });
-                }
-            return retVal;
         }
 
         /// <summary>

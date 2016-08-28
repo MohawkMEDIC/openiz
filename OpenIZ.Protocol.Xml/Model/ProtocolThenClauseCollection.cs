@@ -43,29 +43,29 @@ namespace OpenIZ.Protocol.Xml.Model
             foreach (var itm in this.Action)
             {
 
-                    Act act = null;
-                    if (itm.Element is String) // JSON
-                        itm.Element = JsonViewModelSerializer.DeSerialize<Act>(itm.Element as String);
-                    act = (itm.Element as Act).Clone() as Act;
-                    act.Participations = new List<ActParticipation>((itm.Element as Act).Participations);
-                    act.Relationships = new List<ActRelationship>((itm.Element as Act).Relationships);
-                    act.Protocols = new List<ActProtocol>((itm.Element as Act).Protocols);
-                    // Now do the actions to the properties as stated
-                    foreach (var instr in itm.Do)
-                    {
-                        instr.Evaluate(act, p, variableFunc);
-                    }
+                Act act = null;
+                if (itm.Element is String) // JSON
+                    itm.Element = JsonViewModelSerializer.DeSerialize<Act>(itm.Element as String);
+                act = (itm.Element as Act).Clone() as Act;
+                act.Participations = new List<ActParticipation>((itm.Element as Act).Participations);
+                act.Relationships = new List<ActRelationship>((itm.Element as Act).Relationships);
+                act.Protocols = new List<ActProtocol>();// (itm.Element as Act).Protocols);
+                // Now do the actions to the properties as stated
+                foreach (var instr in itm.Do)
+                {
+                    instr.Evaluate(act, p, variableFunc);
+                }
 
-                    // Assign this patient as the record target
-                    act.Key = act.Key ?? Guid.NewGuid();
-                    Guid pkey = Guid.NewGuid();
-                    act.Participations.Add(new ActParticipation(ActParticipationKey.RecordTarget, p.Key) { ParticipationRole = new Core.Model.DataTypes.Concept() { Key = ActParticipationKey.RecordTarget, Mnemonic = "RecordTarget" }, Key = pkey });
-                    // Add record target to the source for forward rules
-                    p.Participations.Add(new ActParticipation(ActParticipationKey.RecordTarget, p) { SourceEntity = act, ParticipationRole = new Core.Model.DataTypes.Concept() { Key = ActParticipationKey.RecordTarget, Mnemonic = "RecordTarget" }, Key = pkey });
-                    act.CreationTime = DateTime.Now;
-                    // The act to the return value
-                    retVal.Add(act);
-                
+                // Assign this patient as the record target
+                act.Key = act.Key ?? Guid.NewGuid();
+                Guid pkey = Guid.NewGuid();
+                act.Participations.Add(new ActParticipation(ActParticipationKey.RecordTarget, p.Key) { ParticipationRole = new Core.Model.DataTypes.Concept() { Key = ActParticipationKey.RecordTarget, Mnemonic = "RecordTarget" }, Key = pkey });
+                // Add record target to the source for forward rules
+                p.Participations.Add(new ActParticipation(ActParticipationKey.RecordTarget, p) { SourceEntity = act, ParticipationRole = new Core.Model.DataTypes.Concept() { Key = ActParticipationKey.RecordTarget, Mnemonic = "RecordTarget" }, Key = pkey });
+                act.CreationTime = DateTime.Now;
+                // The act to the return value
+                retVal.Add(act);
+
             }
 
             return retVal;
@@ -84,7 +84,7 @@ namespace OpenIZ.Protocol.Xml.Model
         public ProtocolDataAction()
         {
         }
-        
+
         /// <summary>
         /// Gets the elements to be performed
         /// </summary>
@@ -252,7 +252,7 @@ namespace OpenIZ.Protocol.Xml.Model
                 propertyInfo.SetValue(act, this.Element);
             else
             {
-                var setValue = this.GetValue(act, recordTarget, variableFunc);               
+                var setValue = this.GetValue(act, recordTarget, variableFunc);
 
                 //exp.TypeRegistry.RegisterSymbol("data", expressionParm);
                 if (Core.Model.Map.MapUtil.TryConvert(setValue, propertyInfo.PropertyType, out setValue))
