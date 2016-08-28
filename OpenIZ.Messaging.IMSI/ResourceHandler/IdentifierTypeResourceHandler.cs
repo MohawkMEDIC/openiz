@@ -36,6 +36,16 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 	/// </summary>
 	public class IdentifierTypeResourceHandler : IResourceHandler
 	{
+		private IIdentifierTypeRepositoryService repository;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="IdentifierTypeResourceHandler"/> class.
+		/// </summary>
+		public IdentifierTypeResourceHandler()
+		{
+			ApplicationContext.Current.Started += (o, e) => this.repository = ApplicationContext.Current.GetService<IIdentifierTypeRepositoryService>();
+		}
+
 		/// <summary>
 		/// Gets the resource name.
 		/// </summary>
@@ -66,7 +76,31 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <returns>Returns the newly created identifier type.</returns>
 		public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
 		{
-			throw new NotImplementedException();
+			Bundle bundleData = data as Bundle;
+			bundleData?.Reconstitute();
+			var processData = bundleData?.Entry ?? data;
+
+			if (processData is Bundle)
+			{
+				throw new InvalidOperationException(string.Format("Bundle must have entry of type {0}", nameof(IdentifierType)));
+			}
+			else if (processData is IdentifierType)
+			{
+				var identifierTypeData = data as IdentifierType;
+
+				if (updateIfExists)
+				{
+					return this.repository.Save(identifierTypeData);
+				}
+				else
+				{
+					return this.repository.Insert(identifierTypeData);
+				}
+			}
+			else
+			{
+				throw new ArgumentException("Invalid persistence type");
+			}
 		}
 
 		/// <summary>
@@ -77,7 +111,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <returns></returns>
 		public IdentifiedData Get(Guid id, Guid versionId)
 		{
-			throw new NotImplementedException();
+			return this.repository.Get(id, versionId);
 		}
 
 		/// <summary>
@@ -87,7 +121,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <returns>Returns the obsoleted identifier type.</returns>
 		public IdentifiedData Obsolete(Guid key)
 		{
-			throw new NotImplementedException();
+			return this.repository.Obsolete(key);
 		}
 
 		/// <summary>
@@ -97,7 +131,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <returns>Returns a list of identifier types.</returns>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			throw new NotImplementedException();
+			return this.repository.Find(QueryExpressionParser.BuildLinqExpression<IdentifierType>(queryParameters));
 		}
 
 		/// <summary>
@@ -110,7 +144,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <returns>Returns a list of identifier types.</returns>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			throw new NotImplementedException();
+			return this.repository.Find(QueryExpressionParser.BuildLinqExpression<IdentifierType>(queryParameters), offset, count, out totalCount);
 		}
 
 		/// <summary>
@@ -120,7 +154,24 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <returns>Returns the updated identifier type.</returns>
 		public IdentifiedData Update(IdentifiedData data)
 		{
-			throw new NotImplementedException();
+			Bundle bundleData = data as Bundle;
+			bundleData?.Reconstitute();
+			var processData = bundleData?.Entry ?? data;
+
+			if (processData is Bundle)
+			{
+				throw new InvalidOperationException(string.Format("Bundle must have entry of type {0}", nameof(IdentifierType)));
+			}
+			else if (processData is IdentifierType)
+			{
+				var organizationData = data as IdentifierType;
+
+				return this.repository.Save(organizationData);
+			}
+			else
+			{
+				throw new ArgumentException("Invalid persistence type");
+			}
 		}
 	}
 }

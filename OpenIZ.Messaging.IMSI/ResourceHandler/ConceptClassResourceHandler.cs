@@ -17,30 +17,34 @@
  * User: khannan
  * Date: 2016-8-27
  */
+using MARC.HI.EHRS.SVC.Core;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Query;
+using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OpenIZ.Core.Model;
-using OpenIZ.Core.Model.Query;
-using OpenIZ.Core.Model.Entities;
-using OpenIZ.Core.Services;
-using MARC.HI.EHRS.SVC.Core;
-using OpenIZ.Core.Model.Collection;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {
 	/// <summary>
-	/// Represents an organization resource handler.
+	/// Represents concept class resource handler.
 	/// </summary>
-	public class OrganizationResourceHandler : IResourceHandler
+	public class ConceptClassResourceHandler : IResourceHandler
 	{
-		private IOrganizationRepositoryService repository;
+		private IConceptRepositoryService repository;
 
-		public OrganizationResourceHandler()
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ConceptClassResourceHandler"/> class.
+		/// </summary>
+		public ConceptClassResourceHandler()
 		{
-			ApplicationContext.Current.Started += (o, e) => this.repository = ApplicationContext.Current.GetService<IOrganizationRepositoryService>();
+			ApplicationContext.Current.Started += (o, e) => this.repository = ApplicationContext.Current.GetService<IConceptRepositoryService>();
 		}
 
 		/// <summary>
@@ -50,7 +54,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		{
 			get
 			{
-				return "Organization";
+				return "ConceptClass";
 			}
 		}
 
@@ -61,7 +65,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		{
 			get
 			{
-				return typeof(Organization);
+				return typeof(ConceptClass);
 			}
 		}
 
@@ -79,19 +83,19 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 
 			if (processData is Bundle)
 			{
-				throw new InvalidOperationException(string.Format("Bundle must have entry of type {0}", nameof(Organization)));
+				throw new InvalidOperationException(string.Format("Bundle must have entry of type {0}", nameof(ConceptClass)));
 			}
-			else if (processData is Organization)
+			else if (processData is ConceptClass)
 			{
-				var organizationData = data as Organization;
+				var conceptClassData = data as ConceptClass;
 
 				if (updateIfExists)
 				{
-					return this.repository.Save(organizationData);
+					return this.repository.SaveConceptClass(conceptClassData);
 				}
 				else
 				{
-					return this.repository.Insert(organizationData);
+					return this.repository.InsertConceptClass(conceptClassData);
 				}
 			}
 			else
@@ -108,7 +112,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <returns>Returns the organization.</returns>
 		public IdentifiedData Get(Guid id, Guid versionId)
 		{
-			return this.repository.Get(id, versionId);
+			return this.repository.GetConceptClass(id);
 		}
 
 		/// <summary>
@@ -118,7 +122,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <returns>Returns the obsoleted organization.</returns>
 		public IdentifiedData Obsolete(Guid key)
 		{
-			return this.repository.Obsolete(key);
+			return this.repository.ObsoleteConceptClass(key);
 		}
 
 		/// <summary>
@@ -128,7 +132,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <returns>Returns a list of organizations.</returns>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			return this.repository.Find(QueryExpressionParser.BuildLinqExpression<Organization>(queryParameters));
+			return this.repository.FindConceptClasses(QueryExpressionParser.BuildLinqExpression<ConceptClass>(queryParameters));
 		}
 
 		/// <summary>
@@ -141,7 +145,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <returns>Returns a list of organizations.</returns>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			return this.repository.Find(QueryExpressionParser.BuildLinqExpression<Organization>(queryParameters), offset, count, out totalCount);
+			return this.repository.FindConceptClasses(QueryExpressionParser.BuildLinqExpression<ConceptClass>(queryParameters), offset, count, out totalCount);
 		}
 
 		/// <summary>
@@ -157,13 +161,13 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 
 			if (processData is Bundle)
 			{
-				throw new InvalidOperationException(string.Format("Bundle must have entry of type {0}", nameof(Organization)));
+				throw new InvalidOperationException(string.Format("Bundle must have entry of type {0}", nameof(ConceptClass)));
 			}
-			else if (processData is Organization)
+			else if (processData is ConceptClass)
 			{
-				var organizationData = data as Organization;
+				var conceptClassData = data as ConceptClass;
 
-				return this.repository.Save(organizationData);
+				return this.repository.SaveConceptClass(conceptClassData);
 			}
 			else
 			{

@@ -33,21 +33,21 @@ namespace OpenIZ.Core.Services
 	public interface IIdentifierTypeRepositoryService
 	{
 		/// <summary>
-		/// Searches for an Identifier Type using a given predicate.
+		/// Searches for an identifier type using a given query.
 		/// </summary>
-		/// <param name="predicate">The predicate to use for searching for the identifier type.</param>
-		/// <returns>Returns a list of identifier types who match the specified predicate.</returns>
-		IEnumerable<IdentifierType> Find(Expression<Func<IdentifierType, bool>> predicate);
+		/// <param name="query">The query to use for searching for the identifier type.</param>
+		/// <returns>Returns a list of identifier types who match the specified query.</returns>
+		IEnumerable<IdentifierType> Find(Expression<Func<IdentifierType, bool>> query);
 
 		/// <summary>
-		/// Searches for an Identifier Type using a given predicate.
+		/// Searches for an identifier type using a given query.
 		/// </summary>
-		/// <param name="predicate">The predicate to use for searching for the organization.</param>
+		/// <param name="query">The query to use for searching for the organization.</param>
 		/// <param name="count">The count of the organizations to return.</param>
 		/// <param name="offset">The offset for the search results.</param>
 		/// <param name="totalCount">The total count of the search results.</param>
-		/// <returns>Returns a list of identifier types who match the specified predicate.</returns>
-		IEnumerable<IdentifierType> Find(Expression<Func<IdentifierType, bool>> predicate, int offset, int? count, out int totalCount);
+		/// <returns>Returns a list of identifier types who match the specified query.</returns>
+		IEnumerable<IdentifierType> Find(Expression<Func<IdentifierType, bool>> query, int offset, int? count, out int totalCount);
 
 		/// <summary>
 		/// Gets the specified identifier type.

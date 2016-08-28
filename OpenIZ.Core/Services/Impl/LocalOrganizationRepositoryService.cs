@@ -35,11 +35,11 @@ namespace OpenIZ.Core.Services.Impl
 	public class LocalOrganizationRepositoryService : IOrganizationRepositoryService
 	{
 		/// <summary>
-		/// Searches for a organization using a given predicate.
+		/// Searches for a organization using a given query.
 		/// </summary>
-		/// <param name="predicate">The predicate to use for searching for the organization.</param>
-		/// <returns>Returns a list of organizations who match the specified predicate.</returns>
-		public IEnumerable<Organization> Find(Expression<Func<Organization, bool>> predicate)
+		/// <param name="query">The predicate to use for searching for the organization.</param>
+		/// <returns>Returns a list of organizations who match the specified query.</returns>
+		public IEnumerable<Organization> Find(Expression<Func<Organization, bool>> query)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Organization>>();
 
@@ -48,18 +48,18 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException("No persistence service found");
 			}
 
-			return persistenceService.Query(predicate, AuthenticationContext.Current.Principal);
+			return persistenceService.Query(query, AuthenticationContext.Current.Principal);
 		}
 
 		/// <summary>
-		/// Searches for a Organization using a given predicate.
+		/// Searches for a Organization using a given query.
 		/// </summary>
-		/// <param name="predicate">The predicate to use for searching for the organization.</param>
+		/// <param name="query">The predicate to use for searching for the organization.</param>
 		/// <param name="count">The count of the organizations to return.</param>
 		/// <param name="offset">The offset for the search results.</param>
 		/// <param name="totalCount">The total count of the search results.</param>
-		/// <returns>Returns a list of organizations who match the specified predicate.</returns>
-		public IEnumerable<Organization> Find(Expression<Func<Organization, bool>> predicate, int offset, int? count, out int totalCount)
+		/// <returns>Returns a list of organizations who match the specified query.</returns>
+		public IEnumerable<Organization> Find(Expression<Func<Organization, bool>> query, int offset, int? count, out int totalCount)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Organization>>();
 
@@ -68,7 +68,7 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException("No persistence service found");
 			}
 
-			return persistenceService.Query(predicate, offset, count, AuthenticationContext.Current.Principal, out totalCount);
+			return persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalCount);
 		}
 
 		/// <summary>

@@ -33,21 +33,21 @@ namespace OpenIZ.Core.Services
 	public interface IOrganizationRepositoryService
 	{
 		/// <summary>
-		/// Searches for a organization using a given predicate.
+		/// Searches for a organization using a given query.
 		/// </summary>
-		/// <param name="predicate">The predicate to use for searching for the organization.</param>
-		/// <returns>Returns a list of organizations who match the specified predicate.</returns>
-		IEnumerable<Organization> Find(Expression<Func<Organization, bool>> predicate);
+		/// <param name="query">The query to use for searching for the organization.</param>
+		/// <returns>Returns a list of organizations who match the specified query.</returns>
+		IEnumerable<Organization> Find(Expression<Func<Organization, bool>> query);
 
 		/// <summary>
-		/// Searches for a Organization using a given predicate.
+		/// Searches for a organization using a given query.
 		/// </summary>
-		/// <param name="predicate">The predicate to use for searching for the organization.</param>
+		/// <param name="query">The query to use for searching for the organization.</param>
 		/// <param name="count">The count of the organizations to return.</param>
 		/// <param name="offset">The offset for the search results.</param>
 		/// <param name="totalCount">The total count of the search results.</param>
-		/// <returns>Returns a list of organizations who match the specified predicate.</returns>
-		IEnumerable<Organization> Find(Expression<Func<Organization, bool>> predicate, int offset, int? count, out int totalCount);
+		/// <returns>Returns a list of organizations who match the specified query.</returns>
+		IEnumerable<Organization> Find(Expression<Func<Organization, bool>> query, int offset, int? count, out int totalCount);
 
 		/// <summary>
 		/// Gets the specified organization.

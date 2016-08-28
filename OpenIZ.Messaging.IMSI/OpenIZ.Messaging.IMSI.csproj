@@ -66,6 +66,7 @@
     <Compile Include="Model\ResultDetail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourceHandler\ActResourceHandler.cs" />
+    <Compile Include="ResourceHandler\ConceptClassResourceHandler.cs" />
     <Compile Include="ResourceHandler\ConceptResourceHandler.cs" />
     <Compile Include="ResourceHandler\ConceptSetResourceHandler.cs" />
     <Compile Include="ResourceHandler\IdentifierTypeResourceHandler.cs" />
