@@ -35,25 +35,14 @@ namespace OpenIZ.Messaging.AMI
 	/// </summary>
 	public class AmiMessageHandler : IDaemonService
 	{
-		// IMSI Trace host
-		private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.AMI");
-
 		// configuration
 		private AmiConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.ami") as AmiConfiguration;
 
+		// IMSI Trace host
+		private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.AMI");
+
 		// web host
 		private WebServiceHost m_webHost;
-
-		/// <summary>
-		/// True if running
-		/// </summary>
-		public bool IsRunning
-		{
-			get
-			{
-				return this.m_webHost?.State == System.ServiceModel.CommunicationState.Opened;
-			}
-		}
 
 		/// <summary>
 		/// Fired when the object is starting up
@@ -74,6 +63,17 @@ namespace OpenIZ.Messaging.AMI
 		/// Fired when the service is stopping
 		/// </summary>
 		public event EventHandler Stopping;
+
+		/// <summary>
+		/// True if running
+		/// </summary>
+		public bool IsRunning
+		{
+			get
+			{
+				return this.m_webHost?.State == System.ServiceModel.CommunicationState.Opened;
+			}
+		}
 
 		/// <summary>
 		/// Start the service

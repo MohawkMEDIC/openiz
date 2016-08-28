@@ -170,19 +170,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Creates a query
-		/// </summary>
-		/// <param name="nvc">The name value collection to use to create the query.</param>
-		/// <returns>Returns the created query.</returns>
-		private NameValueCollection CreateQuery(System.Collections.Specialized.NameValueCollection nvc)
-		{
-			var retVal = new OpenIZ.Core.Model.Query.NameValueCollection();
-			foreach (var k in nvc.AllKeys)
-				retVal.Add(k, new List<String>(nvc.GetValues(k)));
-			return retVal;
-		}
-
-		/// <summary>
 		/// Creates a security role.
 		/// </summary>
 		/// <param name="role">The security role to be created.</param>
@@ -674,10 +661,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		public Concept UpdateConcept(String conceptId, Concept concept)
 		{
 			Guid key = Guid.Parse(conceptId);
-            if (concept.Key != key)
-                throw new ArgumentException(nameof(conceptId));
+			if (concept.Key != key)
+				throw new ArgumentException(nameof(conceptId));
 
-            var conceptRepository = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+			var conceptRepository = ApplicationContext.Current.GetService<IConceptRepositoryService>();
 
 			if (conceptRepository == null)
 			{
@@ -694,11 +681,11 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the updated place.</returns>
 		public Place UpdatePlace(String placeId, Place place)
 		{
-            Guid key = Guid.Parse(placeId);
-            if (place.Key != key)
-                throw new ArgumentException(nameof(placeId));
+			Guid key = Guid.Parse(placeId);
+			if (place.Key != key)
+				throw new ArgumentException(nameof(placeId));
 
-            var placeRepository = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
+			var placeRepository = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
 
 			if (placeRepository == null)
 			{
@@ -722,21 +709,21 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			if (!String.IsNullOrEmpty(info.Password))
 				userRepository.ChangePassword(userId, info.Password);
 
-            if (info.Email != null)
-            {
-                SecurityUserInfo userInfo = new SecurityUserInfo(userRepository.SaveUser(new Core.Model.Security.SecurityUser()
-                {
-                    Key = userId,
-                    Email = info.Email
-                }));
-            }
+			if (info.Email != null)
+			{
+				SecurityUserInfo userInfo = new SecurityUserInfo(userRepository.SaveUser(new Core.Model.Security.SecurityUser()
+				{
+					Key = userId,
+					Email = info.Email
+				}));
+			}
 
 			if (info.Lockout.HasValue)
 			{
-                if (info.Lockout.Value)
-                    userRepository.LockUser(userId);
-                else
-                    userRepository.UnlockUser(userId);
+				if (info.Lockout.Value)
+					userRepository.LockUser(userId);
+				else
+					userRepository.UnlockUser(userId);
 			}
 
 			// First, we remove the roles
@@ -748,6 +735,19 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			}
 
 			return info;
+		}
+
+		/// <summary>
+		/// Creates a query
+		/// </summary>
+		/// <param name="nvc">The name value collection to use to create the query.</param>
+		/// <returns>Returns the created query.</returns>
+		private NameValueCollection CreateQuery(System.Collections.Specialized.NameValueCollection nvc)
+		{
+			var retVal = new OpenIZ.Core.Model.Query.NameValueCollection();
+			foreach (var k in nvc.AllKeys)
+				retVal.Add(k, new List<String>(nvc.GetValues(k)));
+			return retVal;
 		}
 	}
 }

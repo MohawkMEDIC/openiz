@@ -31,10 +31,10 @@ namespace OpenIZ.Core.Model.AMI.Security
 	public class SubmissionRequest
 	{
 		/// <summary>
-		/// Gets or sets the cmc request
+		/// Gets or sets the admin address
 		/// </summary>
-		[XmlElement("cmc")]
-		public String CmcRequest { get; set; }
+		[XmlElement("address")]
+		public String AdminAddress { get; set; }
 
 		/// <summary>
 		/// Gets or sets the contact name
@@ -43,9 +43,9 @@ namespace OpenIZ.Core.Model.AMI.Security
 		public String AdminContactName { get; set; }
 
 		/// <summary>
-		/// Gets or sets the admin address
+		/// Gets or sets the cmc request
 		/// </summary>
-		[XmlElement("address")]
-		public String AdminAddress { get; set; }
+		[XmlElement("cmc")]
+		public String CmcRequest { get; set; }
 	}
 }

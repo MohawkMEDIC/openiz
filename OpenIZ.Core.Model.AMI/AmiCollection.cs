@@ -30,10 +30,10 @@ namespace OpenIZ.Core.Model.AMI.Security
 	public class AmiCollection<T>
 	{
 		/// <summary>
-		/// Total collection size
+		/// Collection item
 		/// </summary>
-		[XmlAttribute("size")]
-		public int Size { get; set; }
+		[XmlElement("item")]
+		public List<T> CollectionItem { get; set; }
 
 		/// <summary>
 		/// Total offset
@@ -42,9 +42,9 @@ namespace OpenIZ.Core.Model.AMI.Security
 		public int Offset { get; set; }
 
 		/// <summary>
-		/// Collection item
+		/// Total collection size
 		/// </summary>
-		[XmlElement("item")]
-		public List<T> CollectionItem { get; set; }
+		[XmlAttribute("size")]
+		public int Size { get; set; }
 	}
 }

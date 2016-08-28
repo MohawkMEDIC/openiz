@@ -76,10 +76,10 @@ namespace OpenIZ.Core.Model.AMI.Security
 		public String Issuer { get; set; }
 
 		/// <summary>
-		/// Distinguished name
+		/// Gets or sets the expiry date
 		/// </summary>
-		[XmlElement("sub")]
-		public String Subject { get; set; }
+		[XmlElement("exp")]
+		public DateTime NotAfter { get; set; }
 
 		/// <summary>
 		/// Gets or sets the issue date
@@ -88,10 +88,10 @@ namespace OpenIZ.Core.Model.AMI.Security
 		public DateTime NotBefore { get; set; }
 
 		/// <summary>
-		/// Gets or sets the expiry date
+		/// Distinguished name
 		/// </summary>
-		[XmlElement("exp")]
-		public DateTime NotAfter { get; set; }
+		[XmlElement("sub")]
+		public String Subject { get; set; }
 
 		/// <summary>
 		/// Gets or sets the thumbprint

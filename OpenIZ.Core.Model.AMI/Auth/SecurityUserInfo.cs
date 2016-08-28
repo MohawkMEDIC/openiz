@@ -55,24 +55,6 @@ namespace OpenIZ.Core.Model.AMI.Auth
 		}
 
 		/// <summary>
-		/// Gets the user identifier
-		/// </summary>
-		[XmlElement("id")]
-		public Guid? UserId { get; set; }
-
-		/// <summary>
-		/// Gets or sets the name of the user
-		/// </summary>
-		[XmlElement("name")]
-		public String UserName { get; set; }
-
-		/// <summary>
-		/// User password
-		/// </summary>
-		[XmlElement("password")]
-		public String Password { get; set; }
-
-		/// <summary>
 		/// E-mail address
 		/// </summary>
 		[XmlElement("email")]
@@ -85,6 +67,12 @@ namespace OpenIZ.Core.Model.AMI.Auth
 		public bool? Lockout { get; set; }
 
 		/// <summary>
+		/// User password
+		/// </summary>
+		[XmlElement("password")]
+		public String Password { get; set; }
+
+		/// <summary>
 		/// Roles
 		/// </summary>
 		[XmlElement("role")]
@@ -95,5 +83,17 @@ namespace OpenIZ.Core.Model.AMI.Auth
 		/// </summary>
 		[XmlElement("userInfo")]
 		public SecurityUser User { get; set; }
+
+		/// <summary>
+		/// Gets the user identifier
+		/// </summary>
+		[XmlElement("id")]
+		public Guid? UserId { get; set; }
+
+		/// <summary>
+		/// Gets or sets the name of the user
+		/// </summary>
+		[XmlElement("name")]
+		public String UserName { get; set; }
 	}
 }
