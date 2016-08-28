@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Persistence", "Persistence", "{2914F4AD-4661-4C73-ADB6-B1D91C11C569}"
 EndProject
@@ -60,8 +60,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Messaging.FHIR", "OpenIZ.Messaging.FHIR\OpenIZ.Messaging.FHIR.csproj", "{33836324-C699-4139-AB9C-7524570A04D5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Messaging.HL7", "OpenIZ.Messaging.HL7\OpenIZ.Messaging.HL7.csproj", "{8F1714CE-CCCE-4EF9-8F2F-B8223D35FDB8}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Stock", "Stock", "{016F90C0-4079-4F48-B0F2-D230FE387689}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AMI", "AMI", "{AACFE53B-5638-4142-841E-A4200086E6B8}"
 EndProject

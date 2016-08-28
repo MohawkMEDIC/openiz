@@ -43,6 +43,13 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {
 	public class ProviderResourceHandler : IResourceHandler
 	{
+		private IProviderRepositoryService repository;
+
+		public ProviderResourceHandler()
+		{
+			ApplicationContext.Current.Started += (o, e) => this.repository = ApplicationContext.Current.GetService<IProviderRepositoryService>();
+		}
+
 		public string ResourceName
 		{
 			get
@@ -61,8 +68,6 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 
 		public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
 		{
-			var providerService = ApplicationContext.Current.GetService<IProviderRepositoryService>();
-
 			Bundle bundleData = data as Bundle;
 			bundleData?.Reconstitute();
 			var processData = bundleData?.Entry ?? data;
@@ -71,17 +76,17 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			{
 				throw new InvalidOperationException(string.Format("Bundle must have entry of type {0}", nameof(Provider)));
 			}
-			else if (processData is Concept)
+			else if (processData is Provider)
 			{
 				var providerData = data as Provider;
 
 				if (updateIfExists)
 				{
-					return providerService.Save(providerData);
+					return this.repository.Save(providerData);
 				}
 				else
 				{
-					return providerService.Insert(providerData);
+					return this.repository.Insert(providerData);
 				}
 			}
 			else
@@ -92,32 +97,26 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 
 		public IdentifiedData Get(Guid id, Guid versionId)
 		{
-			var providerService = ApplicationContext.Current.GetService<IProviderRepositoryService>();
-			return providerService.Get(id, versionId);
+			return this.repository.Get(id, versionId);
 		}
 
 		public IdentifiedData Obsolete(Guid key)
 		{
-			var providerService = ApplicationContext.Current.GetService<IProviderRepositoryService>();
-			return providerService.Obsolete(key);
+			return this.repository.Obsolete(key);
 		}
 
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			var providerService = ApplicationContext.Current.GetService<IProviderRepositoryService>();
-			return providerService.Find(QueryExpressionParser.BuildLinqExpression<Provider>(queryParameters));
+			return this.repository.Find(QueryExpressionParser.BuildLinqExpression<Provider>(queryParameters));
 		}
 
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			var providerService = ApplicationContext.Current.GetService<IProviderRepositoryService>();
-			return providerService.Find(QueryExpressionParser.BuildLinqExpression<Provider>(queryParameters), offset, count, out totalCount);
+			return this.repository.Find(QueryExpressionParser.BuildLinqExpression<Provider>(queryParameters), offset, count, out totalCount);
 		}
 
 		public IdentifiedData Update(IdentifiedData data)
 		{
-			var providerService = ApplicationContext.Current.GetService<IProviderRepositoryService>();
-
 			Bundle bundleData = data as Bundle;
 			bundleData?.Reconstitute();
 			var processData = bundleData?.Entry ?? data;
@@ -126,10 +125,11 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			{
 				throw new InvalidOperationException(string.Format("Bundle must have entry of type {0}", nameof(Provider)));
 			}
-			else if (processData is Concept)
+			else if (processData is Provider)
 			{
 				var providerData = data as Provider;
-				return providerService.Save(providerData);
+
+				return this.repository.Save(providerData);
 			}
 			else
 			{
