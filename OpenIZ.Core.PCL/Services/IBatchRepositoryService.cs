@@ -33,14 +33,14 @@ namespace OpenIZ.Core.Services
 		Bundle Insert(Bundle data);
 
 		/// <summary>
-		/// Updates all the data in the provided bundle in one transaction
-		/// </summary>
-		Bundle Update(Bundle data);
-
-		/// <summary>
 		/// Obsoletes all data in the provided bundle in one transaction
 		/// </summary>
 		Bundle Obsolete(Bundle obsolete);
+
+		/// <summary>
+		/// Updates all the data in the provided bundle in one transaction
+		/// </summary>
+		Bundle Update(Bundle data);
 
 		/// <summary>
 		/// Validate & prepare bundle for insert

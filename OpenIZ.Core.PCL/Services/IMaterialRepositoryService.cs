@@ -31,24 +31,14 @@ namespace OpenIZ.Core.Services
 	public interface IMaterialRepositoryService
 	{
 		/// <summary>
-		/// Saves the specified material from data layer
+		/// Finds the specified ManufacturedMaterial
 		/// </summary>
-		Material SaveMaterial(Material material);
+		IEnumerable<ManufacturedMaterial> FindManufacturedMaterial(Expression<Func<ManufacturedMaterial, bool>> expression);
 
 		/// <summary>
-		/// Inserts the material in the persistence layer
+		/// Finds the specified ManufacturedMaterial with the specified restrictions
 		/// </summary>
-		Material InsertMaterial(Material material);
-
-		/// <summary>
-		/// Gets the specified material from the database
-		/// </summary>
-		Material GetMaterial(Guid id, Guid versionId);
-
-		/// <summary>
-		/// Obsoletes the specified material
-		/// </summary>
-		Material ObsoleteMaterial(Guid key);
+		IEnumerable<ManufacturedMaterial> FindManufacturedMaterial(Expression<Func<ManufacturedMaterial, bool>> expression, int offset, int count, out int totalCount);
 
 		/// <summary>
 		/// Finds the specified material
@@ -61,9 +51,14 @@ namespace OpenIZ.Core.Services
 		IEnumerable<Material> FindMaterial(Expression<Func<Material, bool>> expression, int offset, int count, out int totalCount);
 
 		/// <summary>
-		/// Saves the specified ManufacturedMaterial from data layer
+		/// Gets the specified ManufacturedMaterial from the database
 		/// </summary>
-		ManufacturedMaterial SaveManufacturedMaterial(ManufacturedMaterial ManufacturedMaterial);
+		ManufacturedMaterial GetManufacturedMaterial(Guid id, Guid versionId);
+
+		/// <summary>
+		/// Gets the specified material from the database
+		/// </summary>
+		Material GetMaterial(Guid id, Guid versionId);
 
 		/// <summary>
 		/// Inserts the ManufacturedMaterial in the persistence layer
@@ -71,9 +66,9 @@ namespace OpenIZ.Core.Services
 		ManufacturedMaterial InsertManufacturedMaterial(ManufacturedMaterial ManufacturedMaterial);
 
 		/// <summary>
-		/// Gets the specified ManufacturedMaterial from the database
+		/// Inserts the material in the persistence layer
 		/// </summary>
-		ManufacturedMaterial GetManufacturedMaterial(Guid id, Guid versionId);
+		Material InsertMaterial(Material material);
 
 		/// <summary>
 		/// Obsoletes the specified ManufacturedMaterial
@@ -81,13 +76,18 @@ namespace OpenIZ.Core.Services
 		ManufacturedMaterial ObsoleteManufacturedMaterial(Guid key);
 
 		/// <summary>
-		/// Finds the specified ManufacturedMaterial
+		/// Obsoletes the specified material
 		/// </summary>
-		IEnumerable<ManufacturedMaterial> FindManufacturedMaterial(Expression<Func<ManufacturedMaterial, bool>> expression);
+		Material ObsoleteMaterial(Guid key);
 
 		/// <summary>
-		/// Finds the specified ManufacturedMaterial with the specified restrictions
+		/// Saves the specified ManufacturedMaterial from data layer
 		/// </summary>
-		IEnumerable<ManufacturedMaterial> FindManufacturedMaterial(Expression<Func<ManufacturedMaterial, bool>> expression, int offset, int count, out int totalCount);
+		ManufacturedMaterial SaveManufacturedMaterial(ManufacturedMaterial ManufacturedMaterial);
+
+		/// <summary>
+		/// Saves the specified material from data layer
+		/// </summary>
+		Material SaveMaterial(Material material);
 	}
 }

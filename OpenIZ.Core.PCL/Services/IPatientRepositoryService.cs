@@ -33,51 +33,6 @@ namespace OpenIZ.Core.Services
 	public interface IPatientRepositoryService
 	{
 		/// <summary>
-		/// Validate the specified patient, or rather ensure the patient is valid
-		/// </summary>
-		Patient Validate(Patient p);
-
-		/// <summary>
-		/// Inserts the given patient
-		/// </summary>
-		/// <param name="p"></param>
-		/// <returns></returns>
-		Patient Insert(Patient p);
-
-		/// <summary>
-		/// Updates the given patient only if they already exist
-		/// </summary>
-		/// <param name="p"></param>
-		/// <returns></returns>
-		Patient Save(Patient p);
-
-		/// <summary>
-		/// Obsoletes the given patient
-		/// </summary>
-		Patient Obsolete(Guid key);
-
-		/// <summary>
-		/// Merges two patients together
-		/// </summary>
-		/// <param name="survivor">The surviving patient record</param>
-		/// <param name="victim">The victim patient record</param>
-		/// <returns>A new version of patient <paramref name="a"/> representing the merge</returns>
-		Patient Merge(Patient survivor, Patient victim);
-
-		/// <summary>
-		/// Gets the specified patient
-		/// </summary>
-		Patient Get(Guid id, Guid versionId);
-
-		/// <summary>
-		/// Un-merges two patients from each other
-		/// </summary>
-		/// <param name="patient">The patient which is to be un-merged</param>
-		/// <param name="versionKey">The version of patient P where the split should occur</param>
-		/// <returns>A new patient representing the split record</returns>
-		Patient UnMerge(Patient patient, Guid versionKey);
-
-		/// <summary>
 		/// Searches the patient service for the specified patient matching the
 		/// given predicate
 		/// </summary>
@@ -89,5 +44,50 @@ namespace OpenIZ.Core.Services
 		/// Searches the database for the specified patient
 		/// </summary>
 		IEnumerable<Patient> Find(Expression<Func<Patient, bool>> predicate, int offset, int? count, out int totalCount);
+
+		/// <summary>
+		/// Gets the specified patient
+		/// </summary>
+		Patient Get(Guid id, Guid versionId);
+
+		/// <summary>
+		/// Inserts the given patient
+		/// </summary>
+		/// <param name="p"></param>
+		/// <returns></returns>
+		Patient Insert(Patient p);
+
+		/// <summary>
+		/// Merges two patients together
+		/// </summary>
+		/// <param name="survivor">The surviving patient record</param>
+		/// <param name="victim">The victim patient record</param>
+		/// <returns>A new version of patient <paramref name="a"/> representing the merge</returns>
+		Patient Merge(Patient survivor, Patient victim);
+
+		/// <summary>
+		/// Obsoletes the given patient
+		/// </summary>
+		Patient Obsolete(Guid key);
+
+		/// <summary>
+		/// Updates the given patient only if they already exist
+		/// </summary>
+		/// <param name="p"></param>
+		/// <returns></returns>
+		Patient Save(Patient p);
+
+		/// <summary>
+		/// Un-merges two patients from each other
+		/// </summary>
+		/// <param name="patient">The patient which is to be un-merged</param>
+		/// <param name="versionKey">The version of patient P where the split should occur</param>
+		/// <returns>A new patient representing the split record</returns>
+		Patient UnMerge(Patient patient, Guid versionKey);
+
+		/// <summary>
+		/// Validate the specified patient, or rather ensure the patient is valid
+		/// </summary>
+		Patient Validate(Patient p);
 	}
 }

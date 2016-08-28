@@ -25,6 +25,16 @@ using System.Collections.Generic;
 namespace OpenIZ.Core.Services
 {
 	/// <summary>
+	/// Detected issue priority
+	/// </summary>
+	public enum DetectedIssuePriorityType
+	{
+		Error = 1,
+		Informational = 2,
+		Warning = 4
+	}
+
+	/// <summary>
 	/// Represents a service that executes business rules based on triggers which happen in the persistence layer
 	/// </summary>
 	/// <remarks>
@@ -34,34 +44,9 @@ namespace OpenIZ.Core.Services
 	public interface IBusinessRulesService<TModel> where TModel : IdentifiedData
 	{
 		/// <summary>
-		/// Called before an insert occurs
-		/// </summary>
-		TModel BeforeInsert(TModel data);
-
-		/// <summary>
 		/// Called after an insert occurs
 		/// </summary>
 		TModel AfterInsert(TModel data);
-
-		/// <summary>
-		/// Called to validate a specific object
-		/// </summary>
-		List<DetectedIssue> Validate(TModel data);
-
-		/// <summary>
-		/// Called before an update occurs
-		/// </summary>
-		TModel BeforeUpdate(TModel data);
-
-		/// <summary>
-		/// Called after update committed
-		/// </summary>
-		TModel AfterUpdate(TModel data);
-
-		/// <summary>
-		/// Called before obsolete
-		/// </summary>
-		TModel BeforeObsolete(TModel data);
 
 		/// <summary>
 		/// Called after obsolete committed
@@ -71,24 +56,39 @@ namespace OpenIZ.Core.Services
 		TModel AfterObsolete(TModel data);
 
 		/// <summary>
+		/// Called after query
+		/// </summary>
+		IEnumerable<TModel> AfterQuery(IEnumerable<TModel> results);
+
+		/// <summary>
 		/// Called after retrieve
 		/// </summary>
 		TModel AfterRetrieve(TModel result);
 
 		/// <summary>
-		/// Called after query
+		/// Called after update committed
 		/// </summary>
-		IEnumerable<TModel> AfterQuery(IEnumerable<TModel> results);
-	}
+		TModel AfterUpdate(TModel data);
 
-	/// <summary>
-	/// Detected issue priority
-	/// </summary>
-	public enum DetectedIssuePriorityType
-	{
-		Error = 1,
-		Informational = 2,
-		Warning = 4
+		/// <summary>
+		/// Called before an insert occurs
+		/// </summary>
+		TModel BeforeInsert(TModel data);
+
+		/// <summary>
+		/// Called before obsolete
+		/// </summary>
+		TModel BeforeObsolete(TModel data);
+
+		/// <summary>
+		/// Called before an update occurs
+		/// </summary>
+		TModel BeforeUpdate(TModel data);
+
+		/// <summary>
+		/// Called to validate a specific object
+		/// </summary>
+		List<DetectedIssue> Validate(TModel data);
 	}
 
 	/// <summary>

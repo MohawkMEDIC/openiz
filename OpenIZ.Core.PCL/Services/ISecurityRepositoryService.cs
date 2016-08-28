@@ -196,11 +196,6 @@ namespace OpenIZ.Core.Services
 		void LockUser(Guid userId);
 
 		/// <summary>
-		/// Obsoletes the specfied user entity
-		/// </summary>
-		UserEntity ObsoleteUserEntity(Guid id);
-
-		/// <summary>
 		/// Obsoletes a device.
 		/// </summary>
 		/// <param name="deviceId">The id of the device to be obsoleted.</param>
@@ -220,6 +215,11 @@ namespace OpenIZ.Core.Services
 		/// <param name="userId">The id of the user to be obsoleted.</param>
 		/// <returns>Returns the obsoleted user.</returns>
 		SecurityUser ObsoleteUser(Guid userId);
+
+		/// <summary>
+		/// Obsoletes the specfied user entity
+		/// </summary>
+		UserEntity ObsoleteUserEntity(Guid id);
 
 		/// <summary>
 		/// Updates a security device.

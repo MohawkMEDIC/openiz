@@ -31,14 +31,14 @@ namespace OpenIZ.Core.Services
 	public interface ICarePlanService
 	{
 		/// <summary>
-		/// Create a care plam
-		/// </summary>
-		IEnumerable<Act> CreateCarePlan(Patient p);
-
-		/// <summary>
 		/// Gets the list of protocols which can be or should be used to create the care plans
 		/// </summary>
 		List<IClinicalProtocol> Protocols { get; }
+
+		/// <summary>
+		/// Create a care plam
+		/// </summary>
+		IEnumerable<Act> CreateCarePlan(Patient p);
 
 		/// <summary>
 		/// Initializes the protocols

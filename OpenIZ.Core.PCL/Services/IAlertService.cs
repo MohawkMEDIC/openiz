@@ -31,14 +31,14 @@ namespace OpenIZ.Core.Services
 	public interface IAlertService
 	{
 		/// <summary>
-		/// Fired when an alert was raised and is being processed.
-		/// </summary>
-		event EventHandler<AlertEventArgs> Received;
-
-		/// <summary>
 		/// Fired when an alert is received.
 		/// </summary>
 		event EventHandler<AlertEventArgs> Committed;
+
+		/// <summary>
+		/// Fired when an alert was raised and is being processed.
+		/// </summary>
+		event EventHandler<AlertEventArgs> Received;
 
 		/// <summary>
 		/// Broadcasts an alert.

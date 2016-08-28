@@ -31,26 +31,6 @@ namespace OpenIZ.Core.Services
 	public interface IPlaceRepositoryService
 	{
 		/// <summary>
-		/// Inserts the specified place
-		/// </summary>
-		Place Insert(Place plc);
-
-		/// <summary>
-		/// Saves the specified place
-		/// </summary>
-		Place Save(Place plc);
-
-		/// <summary>
-		/// Obsoletes the specified place
-		/// </summary>
-		Place Obsolete(Guid id);
-
-		/// <summary>
-		/// Gets the specified place
-		/// </summary>
-		Place Get(Guid id, Guid versionId);
-
-		/// <summary>
 		/// Searches the patient service for the specified place matching the
 		/// given predicate
 		/// </summary>
@@ -62,5 +42,25 @@ namespace OpenIZ.Core.Services
 		/// Searches the database for the specified place
 		/// </summary>
 		IEnumerable<Place> Find(Expression<Func<Place, bool>> predicate, int offset, int? count, out int totalCount);
+
+		/// <summary>
+		/// Gets the specified place
+		/// </summary>
+		Place Get(Guid id, Guid versionId);
+
+		/// <summary>
+		/// Inserts the specified place
+		/// </summary>
+		Place Insert(Place plc);
+
+		/// <summary>
+		/// Obsoletes the specified place
+		/// </summary>
+		Place Obsolete(Guid id);
+
+		/// <summary>
+		/// Saves the specified place
+		/// </summary>
+		Place Save(Place plc);
 	}
 }

@@ -33,11 +33,6 @@ namespace OpenIZ.Core.Services
 	public interface IMetadataRepositoryService
 	{
 		/// <summary>
-		/// Gets an assigning authority
-		/// </summary>
-		IdentifiedData GetAssigningAuthority(Guid id);
-
-		/// <summary>
 		/// Finds the specified assigning authority
 		/// </summary>
 		/// <returns></returns>
@@ -47,5 +42,10 @@ namespace OpenIZ.Core.Services
 		/// Finds the specified assigning authority with restrictions
 		/// </summary>
 		IEnumerable<IdentifiedData> FindAssigningAuthority(Expression<Func<AssigningAuthority, bool>> expression, int offset, int count, out int totalCount);
+
+		/// <summary>
+		/// Gets an assigning authority
+		/// </summary>
+		IdentifiedData GetAssigningAuthority(Guid id);
 	}
 }
