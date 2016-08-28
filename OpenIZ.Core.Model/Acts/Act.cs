@@ -159,8 +159,11 @@ namespace OpenIZ.Core.Model.Acts
             get { return this.m_classConceptKey; }
             set
             {
-                this.m_classConceptKey = value;
-                this.m_classConcept = null;
+                if (this.m_classConceptKey != value)
+                {
+                    this.m_classConceptKey = value;
+                    this.m_classConcept = null;
+                }
             }
         }
 
@@ -174,8 +177,11 @@ namespace OpenIZ.Core.Model.Acts
             get { return this.m_moodConceptKey; }
             set
             {
-                this.m_moodConceptKey = value;
-                this.m_moodConcept = null;
+                if (this.m_moodConceptKey != value)
+                {
+                    this.m_moodConceptKey = value;
+                    this.m_moodConcept = null;
+                }
             }
         }
 
@@ -190,8 +196,11 @@ namespace OpenIZ.Core.Model.Acts
             get { return this.m_reasonConceptKey; }
             set
             {
-                this.m_reasonConceptKey = value;
-                this.m_reasonConcept = null;
+                if (this.m_reasonConceptKey != value)
+                {
+                    this.m_reasonConceptKey = value;
+                    this.m_reasonConcept = null;
+                }
             }
         }
 
@@ -205,8 +214,11 @@ namespace OpenIZ.Core.Model.Acts
             get { return this.m_statusConceptKey; }
             set
             {
-                this.m_statusConceptKey = value;
-                this.m_statusConcept = null;
+                if (this.m_statusConceptKey != value)
+                {
+                    this.m_statusConceptKey = value;
+                    this.m_statusConcept = null;
+                }
             }
         }
 
@@ -220,8 +232,11 @@ namespace OpenIZ.Core.Model.Acts
             get { return this.m_typeConceptKey; }
             set
             {
-                this.m_typeConceptKey = value;
-                this.m_typeConcept = null;
+                if (this.m_typeConceptKey != value)
+                {
+                    this.m_typeConceptKey = value;
+                    this.m_typeConcept = null;
+                }
             }
         }
 

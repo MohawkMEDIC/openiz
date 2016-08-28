@@ -66,8 +66,11 @@ namespace OpenIZ.Core.Model.Entities
             get { return this.m_securityDeviceKey; }
             set
             {
-                this.m_securityDeviceKey = value;
-                this.m_securityDevice = null;
+                if (this.m_securityDeviceKey != value)
+                {
+                    this.m_securityDeviceKey = value;
+                    this.m_securityDevice = null;
+                }
             }
         }
 

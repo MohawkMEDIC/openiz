@@ -70,8 +70,11 @@ namespace OpenIZ.Core.Model.DataTypes
             get { return this.m_extensionTypeKey; }
             set
             {
-                this.m_extensionTypeKey = value;
-                this.m_extensionType = null;
+                if (this.m_extensionTypeKey != value)
+                {
+                    this.m_extensionTypeKey = value;
+                    this.m_extensionType = null;
+                }
             }
         }
 

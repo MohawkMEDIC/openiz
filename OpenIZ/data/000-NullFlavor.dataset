@@ -47,6 +47,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
+        <value>Asked / Unknown</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -87,6 +88,7 @@
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
+        <value>Derived</value>
         <language>en</language>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
@@ -129,6 +131,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
+        <value>Invalid</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -170,6 +173,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
+        <value>Masked</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -211,6 +215,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
+        <value>Not Applicable</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -252,6 +257,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
+        <value>Not Asked</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -293,6 +299,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
+        <value>Unavailable</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -333,6 +340,7 @@
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
+        <value>No Information</value>
         <language>en</language>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
@@ -375,6 +383,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
+        <value>Negative Infinity</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -416,6 +425,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
+        <value>Other</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -456,6 +466,7 @@
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
+        <value>Positive Infinity</value>
         <language>en</language>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
@@ -498,6 +509,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
+        <value>Sufficient Quantity</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -539,6 +551,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
+        <value>Trace</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -580,6 +593,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
+        <value>Unencoded</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -621,6 +635,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
+        <value>Unknown</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>

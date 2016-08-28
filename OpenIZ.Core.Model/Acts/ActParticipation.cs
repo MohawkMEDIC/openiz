@@ -82,8 +82,11 @@ namespace OpenIZ.Core.Model.Acts
             get { return this.m_playerKey; }
             set
             {
-                this.m_playerKey = value;
-                this.m_player = null;
+                if (this.m_playerKey != value)
+                {
+                    this.m_playerKey = value;
+                    this.m_player = null;
+                }
             }
         }
 
@@ -98,8 +101,11 @@ namespace OpenIZ.Core.Model.Acts
             get { return this.m_participationRoleKey; }
             set
             {
-                this.m_participationRoleKey = value;
-                this.m_participationRole = null;
+                if (this.m_participationRoleKey != value)
+                {
+                    this.m_participationRoleKey = value;
+                    this.m_participationRole = null;
+                }
             }
         }
 

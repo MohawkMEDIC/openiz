@@ -55,8 +55,11 @@ namespace OpenIZ.Core.Model.Entities
             }
             set
             {
-                this.m_securityUserKey = value;
-                this.m_securityUser = null;
+                if (this.m_securityUserKey != value)
+                {
+                    this.m_securityUserKey = value;
+                    this.m_securityUser = null;
+                }
             }
         }
 

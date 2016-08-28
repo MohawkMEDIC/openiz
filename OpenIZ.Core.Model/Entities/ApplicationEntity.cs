@@ -66,8 +66,11 @@ namespace OpenIZ.Core.Model.Entities
             get { return this.m_securityApplicationKey; }
             set
             {
-                this.m_securityApplicationKey = value;
-                this.m_securityApplication = null;
+                if (this.m_securityApplicationKey != value)
+                {
+                    this.m_securityApplicationKey = value;
+                    this.m_securityApplication = null;
+                }
             }
         }
 

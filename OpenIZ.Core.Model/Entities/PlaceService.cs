@@ -57,8 +57,11 @@ namespace OpenIZ.Core.Model.Entities
             get { return this.m_serviceConceptKey; }
             set
             {
-                this.m_serviceConceptKey = value;
-                this.m_service = null;
+                if (this.m_serviceConceptKey != value)
+                {
+                    this.m_serviceConceptKey = value;
+                    this.m_service = null;
+                }
             }
         }
 

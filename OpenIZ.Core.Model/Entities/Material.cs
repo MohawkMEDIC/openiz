@@ -75,8 +75,11 @@ namespace OpenIZ.Core.Model.Entities
             get { return this.m_formConceptKey; }
             set
             {
-                this.m_formConceptKey = value;
-                this.m_formConcept = null;
+                if (this.m_formConceptKey != value)
+                {
+                    this.m_formConceptKey = value;
+                    this.m_formConcept = null;
+                }
             }
         }
 
@@ -91,8 +94,11 @@ namespace OpenIZ.Core.Model.Entities
             get { return this.m_quantityConceptKey; }
             set
             {
-                this.m_quantityConceptKey = value;
-                this.m_quantityConcept = null;
+                if (this.m_quantityConceptKey != value)
+                {
+                    this.m_quantityConceptKey = value;
+                    this.m_quantityConcept = null;
+                }
             }
         }
 

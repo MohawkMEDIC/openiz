@@ -79,8 +79,11 @@ namespace OpenIZ.Core.Model.Entities
             get { return this.m_addressUseKey; }
             set
             {
-                this.m_addressUseKey = value;
-                this.m_addressUseConcept = null;
+                if (this.m_addressUseKey != value)
+                {
+                    this.m_addressUseKey = value;
+                    this.m_addressUseConcept = null;
+                }
             }
         }
 

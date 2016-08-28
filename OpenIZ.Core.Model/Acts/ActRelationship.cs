@@ -84,8 +84,11 @@ namespace OpenIZ.Core.Model.Acts
             get { return this.m_targetActKey; }
             set
             {
-                this.m_targetActKey = value;
-                this.m_targetAct = null;
+                if (this.m_targetActKey != value)
+                {
+                    this.m_targetActKey = value;
+                    this.m_targetAct = null;
+                }
             }
         }
 
@@ -119,8 +122,11 @@ namespace OpenIZ.Core.Model.Acts
             get { return this.m_relationshipTypeKey; }
             set
             {
-                this.m_relationshipTypeKey = value;
-                this.m_relationshipType = null;
+                if (this.m_relationshipTypeKey != value)
+                {
+                    this.m_relationshipTypeKey = value;
+                    this.m_relationshipType = null;
+                }
             }
         }
 

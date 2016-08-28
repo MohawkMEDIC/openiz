@@ -63,8 +63,11 @@ namespace OpenIZ.Core.Model.Acts
             get { return this.m_interpretationConceptKey; }
             set
             {
-                this.m_interpretationConceptKey = value;
-                this.m_interpretationConcept = null;
+                if (this.m_interpretationConceptKey != value)
+                {
+                    this.m_interpretationConceptKey = value;
+                    this.m_interpretationConcept = null;
+                }
             }
         }
 
@@ -126,8 +129,11 @@ namespace OpenIZ.Core.Model.Acts
             get { return this.m_unitOfMeasureKey; }
             set
             {
-                this.m_unitOfMeasureKey = value;
-                this.m_unitOfMeasure = null;
+                if (this.m_unitOfMeasureKey != value)
+                {
+                    this.m_unitOfMeasureKey = value;
+                    this.m_unitOfMeasure = null;
+                }
             }
         }
 
@@ -198,8 +204,11 @@ namespace OpenIZ.Core.Model.Acts
             get { return this.m_valueKey; }
             set
             {
-                this.m_valueKey = value;
-                this.m_value = null;
+                if (this.m_valueKey != value)
+                {
+                    this.m_valueKey = value;
+                    this.m_value = null;
+                }
             }
         }
 

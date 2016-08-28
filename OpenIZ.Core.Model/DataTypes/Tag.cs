@@ -69,8 +69,11 @@ namespace OpenIZ.Core.Model.DataTypes
             }
             set
             {
-                this.m_sourceEntityKey = value;
-                this.m_sourceEntity = null;
+                if (this.m_sourceEntityKey != value)
+                {
+                    this.m_sourceEntityKey = value;
+                    this.m_sourceEntity = null;
+                }
             }
         }
 

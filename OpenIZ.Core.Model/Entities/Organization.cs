@@ -66,8 +66,11 @@ namespace OpenIZ.Core.Model.Entities
             get { return this.m_industryConceptKey; }
             set
             {
-                this.m_industryConceptKey = value;
-                this.m_industryConcept = null;
+                if (this.m_industryConceptKey != value)
+                {
+                    this.m_industryConceptKey = value;
+                    this.m_industryConcept = null;
+                }
             }
         }
 

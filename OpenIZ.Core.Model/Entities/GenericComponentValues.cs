@@ -75,8 +75,11 @@ namespace OpenIZ.Core.Model.Entities
             get { return this.m_componentTypeKey; }
             set
             {
-                this.m_componentTypeKey = value;
-                this.m_componentType = null;
+                if (this.m_componentTypeKey != value)
+                {
+                    this.m_componentTypeKey = value;
+                    this.m_componentType = null;
+                }
             }
         }
 

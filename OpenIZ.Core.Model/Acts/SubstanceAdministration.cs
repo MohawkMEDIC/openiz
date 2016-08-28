@@ -69,8 +69,11 @@ namespace OpenIZ.Core.Model.Acts
             get { return this.m_routeKey; }
             set
             {
-                this.m_routeKey = value;
-                this.m_route = null;
+                if (this.m_routeKey != value)
+                {
+                    this.m_routeKey = value;
+                    this.m_route = null;
+                }
             }
         }
 
@@ -85,8 +88,11 @@ namespace OpenIZ.Core.Model.Acts
             get { return this.m_doseUnitKey; }
             set
             {
-                this.m_doseUnitKey = value;
-                this.m_doseUnit = null;
+                if (this.m_doseUnitKey != value)
+                {
+                    this.m_doseUnitKey = value;
+                    this.m_doseUnit = null;
+                }
             }
         }
 
@@ -150,8 +156,11 @@ namespace OpenIZ.Core.Model.Acts
             get { return this.m_siteKey; }
             set
             {
-                this.m_siteKey = value;
-                this.m_site = null;
+                if (this.m_siteKey != value)
+                {
+                    this.m_siteKey = value;
+                    this.m_site = null;
+                }
             }
         }
         

@@ -94,8 +94,11 @@ namespace OpenIZ.Core.Model.Entities
             get { return this.m_classConceptId; }
             set
             {
-                this.m_classConceptId = value;
-                this.m_classConcept = null;
+                if (this.m_classConceptId != value)
+                {
+                    this.m_classConceptId = value;
+                    this.m_classConcept = null;
+                }
             }
         }
 
@@ -109,8 +112,11 @@ namespace OpenIZ.Core.Model.Entities
             get { return this.m_determinerConceptId; }
             set
             {
-                this.m_determinerConceptId = value;
-                this.m_determinerConcept = null;
+                if (this.m_determinerConceptId != value)
+                {
+                    this.m_determinerConceptId = value;
+                    this.m_determinerConcept = null;
+                }
             }
         }
 
@@ -124,8 +130,11 @@ namespace OpenIZ.Core.Model.Entities
             get { return this.m_statusConceptId; }
             set
             {
-                this.m_statusConceptId = value;
-                this.m_statusConcept = null;
+                if (this.m_statusConceptId != value)
+                {
+                    this.m_statusConceptId = value;
+                    this.m_statusConcept = null;
+                }
             }
         }
         
@@ -139,8 +148,11 @@ namespace OpenIZ.Core.Model.Entities
             get { return this.m_creationActId; }
             set
             {
-                this.m_creationActId = value;
-                this.m_creationAct = null;
+                if (this.m_creationActId != value)
+                {
+                    this.m_creationActId = value;
+                    this.m_creationAct = null;
+                }
             }
         }
 
@@ -154,8 +166,11 @@ namespace OpenIZ.Core.Model.Entities
             get { return this.m_typeConceptId; }
             set
             {
-                this.m_typeConceptId = value;
-                this.m_typeConcept = null;
+                if (this.m_typeConceptId != value)
+                {
+                    this.m_typeConceptId = value;
+                    this.m_typeConcept = null;
+                }
             }
         }
 

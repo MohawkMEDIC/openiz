@@ -78,8 +78,11 @@ namespace OpenIZ.Core.Model.DataTypes
             get { return this.m_authorKey; }
             set
             {
-                this.m_authorKey = value;
-                this.m_author = null;
+                if (this.m_authorKey != value)
+                {
+                    this.m_authorKey = value;
+                    this.m_author = null;
+                }
             }
         }
 

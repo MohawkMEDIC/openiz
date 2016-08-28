@@ -68,8 +68,11 @@ namespace OpenIZ.Core.Model.Entities
             get { return this.m_nameUseKey; }
             set
             {
-                this.m_nameUseKey = value;
-                this.m_nameUseConcept = null;
+                if (this.m_nameUseKey != value)
+                {
+                    this.m_nameUseKey = value;
+                    this.m_nameUseConcept = null;
+                }
             }
         }
 

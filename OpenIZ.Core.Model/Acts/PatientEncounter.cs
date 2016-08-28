@@ -63,8 +63,11 @@ namespace OpenIZ.Core.Model.Acts
             get { return this.m_dischargeDispositionKey; }
             set
             {
-                this.m_dischargeDispositionKey = value;
-                this.m_dischargeDisposition = null;
+                if (this.m_dischargeDispositionKey != value)
+                {
+                    this.m_dischargeDispositionKey = value;
+                    this.m_dischargeDisposition = null;
+                }
             }
         }
 

@@ -70,8 +70,11 @@ namespace OpenIZ.Core.Model.Roles
             }
             set
             {
-                this.m_providerSpecialtyKey = value;
-                this.m_providerSpeciality = null;
+                if (this.m_providerSpecialtyKey != value)
+                {
+                    this.m_providerSpecialtyKey = value;
+                    this.m_providerSpeciality = null;
+                }
             }
         }
 

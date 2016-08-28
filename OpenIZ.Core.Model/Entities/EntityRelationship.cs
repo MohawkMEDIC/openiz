@@ -78,8 +78,11 @@ namespace OpenIZ.Core.Model.Entities
         {
             get { return this.m_targetEntityKey; }
             set {
-                this.m_targetEntityKey = value;
-                this.m_targetEntity = null;
+                if (this.m_targetEntityKey != value)
+                {
+                    this.m_targetEntityKey = value;
+                    this.m_targetEntity = null;
+                }
             }
         }
 
@@ -95,6 +98,7 @@ namespace OpenIZ.Core.Model.Entities
             }
             set
             {
+
                 this.SourceEntityKey = value;
             }
         }
@@ -143,8 +147,11 @@ namespace OpenIZ.Core.Model.Entities
             get { return this.m_associationTypeKey; }
             set
             {
-                this.m_associationTypeKey = value;
-                this.m_relationshipType = null;
+                if (this.m_associationTypeKey != value)
+                {
+                    this.m_associationTypeKey = value;
+                    this.m_relationshipType = null;
+                }
             }
         }
 

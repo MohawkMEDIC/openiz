@@ -35,8 +35,8 @@ namespace OpenIZ.Core.Model.Roles
     /// <summary>
     /// Represents an entity which is a patient
     /// </summary>
-    
-    [XmlType("Patient",  Namespace = "http://openiz.org/model"), JsonObject("Patient")]
+
+    [XmlType("Patient", Namespace = "http://openiz.org/model"), JsonObject("Patient")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Patient")]
     public class Patient : Person
     {
@@ -44,7 +44,7 @@ namespace OpenIZ.Core.Model.Roles
         // Gender concept key
         private Guid? m_genderConceptKey;
         // Gender concept
-        
+
         private Concept m_genderConcept;
 
         /// <summary>
@@ -77,14 +77,17 @@ namespace OpenIZ.Core.Model.Roles
         /// </summary>
         [XmlElement("genderConcept"), JsonProperty("genderConcept")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
+
         public Guid? GenderConceptKey
         {
             get { return this.m_genderConceptKey; }
             set
             {
-                this.m_genderConceptKey = value;
-                this.m_genderConcept = null;
+                if (value != this.m_genderConceptKey)
+                {
+                    this.m_genderConceptKey = value;
+                    this.m_genderConcept = null;
+                }
             }
         }
 
@@ -92,7 +95,7 @@ namespace OpenIZ.Core.Model.Roles
         /// Gets or sets the gender concept
         /// </summary>
         [SerializationReference(nameof(GenderConceptKey))]
-        [XmlIgnore, JsonIgnore]
+        [XmlIgnore, JsonIgnore, AutoLoad]
         public Concept GenderConcept
         {
             get
@@ -106,7 +109,7 @@ namespace OpenIZ.Core.Model.Roles
                 this.m_genderConceptKey = value?.Key;
             }
         }
-        
+
         /// <summary>
         /// Force a refresh of delay load properties
         /// </summary>
@@ -114,7 +117,7 @@ namespace OpenIZ.Core.Model.Roles
         {
             base.Refresh();
             this.m_genderConcept = null;
-            
+
         }
     }
 }
