@@ -23,7 +23,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using OpenIZ.Core.Alerting;
+using OpenIZ.Core.Alert.Alerting;
 
 namespace OpenIZ.Core.Services.Impl
 {

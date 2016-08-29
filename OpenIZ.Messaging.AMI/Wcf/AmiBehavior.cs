@@ -42,6 +42,8 @@ using System.ServiceModel.Web;
 using System.Text;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using OpenIZ.Core.Model.AMI.Alerting;
+using OpenIZ.Core.Alert.Alerting;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -321,6 +323,53 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			Guid userId = Guid.Parse(rawUserId);
 			var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 			return new SecurityUserInfo(userRepository.ObsoleteUser(userId));
+		}
+
+		/// <summary>
+		/// Gets a specific alert.
+		/// </summary>
+		/// <param name="id">The id of the alert to retrieve.</param>
+		/// <returns>Returns the alert.</returns>
+		public AlertMessageInfo GetAlert(string id)
+		{
+			var alertRepository = ApplicationContext.Current.GetService<IAlertService>();
+
+			if (alertRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAlertService)));
+			}
+
+			var alert = alertRepository.GetAlert(Guid.Parse(id));
+
+			return new AlertMessageInfo(alert);
+		}
+
+		/// <summary>
+		/// Gets a list of alert for a specific query.
+		/// </summary>
+		/// <returns>Returns a list of alert which match the specific query.</returns>
+		public AmiCollection<AlertMessageInfo> GetAlerts()
+		{
+			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
+			if (parameters.Count == 0)
+			{
+				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
+			}
+
+			var expression = QueryExpressionParser.BuildLinqExpression<AlertMessage>(this.CreateQuery(parameters));
+
+			var alertRepository = ApplicationContext.Current.GetService<IAlertService>();
+
+			if (alertRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAlertService)));
+			}
+
+			return new AmiCollection<AlertMessageInfo>()
+			{
+				CollectionItem = alertRepository.FindAlerts(expression, 0, null).Select(a => new AlertMessageInfo(a)).ToList()
+			};
 		}
 
 		/// <summary>

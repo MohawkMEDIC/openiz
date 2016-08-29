@@ -18,6 +18,7 @@
  * Date: 2016-8-24
  */
 
+using OpenIZ.Core.Alert.Alerting;
 using System;
 using System.Xml.Serialization;
 
@@ -30,15 +31,32 @@ namespace OpenIZ.Core.Model.AMI.Alerting
 	[XmlRoot(nameof(AlertMessageInfo), Namespace = "http://openiz.org/ami")]
 	public class AlertMessageInfo
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="AlertMessageInfo"/> class.
+		/// </summary>
 		public AlertMessageInfo()
 		{
 		}
 
-		//[XmlElement("alertInfo")]
-		//public AlertMessage AlertMessage { get; set; }
+		/// <summary>
+		/// Initializes a new instance of the <see cref="AlertMessageInfo"/> class
+		/// with a specified alert message.
+		/// </summary>
+		/// <param name="alertMessage"></param>
+		public AlertMessageInfo(AlertMessage alertMessage)
+		{
+			this.Id = alertMessage.Id;
+			this.AlertMessage = alertMessage;
+		}
 
 		/// <summary>
-		/// Gets or sets the id of the alert message.
+		/// Gets or sets the alert message of the alert message information.
+		/// </summary>
+		[XmlElement("alertInfo")]
+		public AlertMessage AlertMessage { get; set; }
+
+		/// <summary>
+		/// Gets or sets the id of the alert message information.
 		/// </summary>
 		[XmlElement("id")]
 		public Guid Id { get; set; }

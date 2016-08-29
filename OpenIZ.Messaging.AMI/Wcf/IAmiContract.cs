@@ -18,6 +18,7 @@
  * Date: 2016-6-22
  */
 
+using OpenIZ.Core.Model.AMI.Alerting;
 using OpenIZ.Core.Model.AMI.Auth;
 using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Core.Model.DataTypes;
@@ -159,6 +160,21 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the deleted user.</returns>
 		[WebInvoke(UriTemplate = "/user/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
 		SecurityUserInfo DeleteUser(string userId);
+
+		/// <summary>
+		/// Gets a specific alert.
+		/// </summary>
+		/// <param name="id">The id of the alert to retrieve.</param>
+		/// <returns>Returns the alert.</returns>
+		[WebGet(UriTemplate = "/alert/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
+		AlertMessageInfo GetAlert(string id);
+
+		/// <summary>
+		/// Gets a list of alert for a specific query.
+		/// </summary>
+		/// <returns>Returns a list of alert which match the specific query.</returns>
+		[WebGet(UriTemplate = "/alert", BodyStyle = WebMessageBodyStyle.Bare)]
+		AmiCollection<AlertMessageInfo> GetAlerts();
 
 		/// <summary>
 		/// Gets a specific certificate.
