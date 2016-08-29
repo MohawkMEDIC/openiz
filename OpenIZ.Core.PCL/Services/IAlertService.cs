@@ -18,7 +18,7 @@
  * Date: 2016-8-15
  */
 
-using OpenIZ.Core.Alerting;
+using OpenIZ.Core.Alert.Alerting;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;

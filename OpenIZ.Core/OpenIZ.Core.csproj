@@ -124,6 +124,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.Core.Alert\OpenIZ.Core.Alert.csproj">
+      <Project>{cceaa09f-7b59-45ec-b969-3a740c2aebaa}</Project>
+      <Name>OpenIZ.Core.Alert</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
       <Project>{f1a82a4f-4a57-47d7-ae76-444c8a4ff54a}</Project>
       <Name>OpenIZ.Core.Model</Name>
