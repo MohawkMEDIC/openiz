@@ -152,7 +152,7 @@ namespace OpenIZ.Protocol.Xml
                             retVal.AddRange(acts);
                         }
                         else
-                            this.m_tracer.TraceInfo("{0} does not meet criteria for rule {1}.{2}", patient, this.Id, rule.Uuid);
+                            this.m_tracer.TraceInfo("{0} does not meet criteria for rule {1}.{2}", patient, this.Name, rule.Name);
 
                     }
 
@@ -175,7 +175,7 @@ namespace OpenIZ.Protocol.Xml
             }
             catch(Exception e)
             {
-                this.m_tracer.TraceError("Error applying protocol: {0}", e);
+                this.m_tracer.TraceError("Error applying protocol {0}: {1}", this.Name, e);
                 return new List<Act>();
             }
         }
