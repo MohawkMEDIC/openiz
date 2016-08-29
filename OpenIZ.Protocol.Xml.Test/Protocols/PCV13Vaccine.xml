@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ProtocolDefinition xmlns="http://openiz.org/cdss" uuid="5DDA76D6-C192-4260-90CC-BBD96B790656" id="PCV13" name="PCV13 Immunization Schedule">
+  <when evaluation="and">
+    <linqExpression>now.Subtract(DateOfBirth.Value.Date).TotalDays &lt;= 1825</linqExpression>
+  </when>
   <rule id="PCV1">
     <when evaluation="and">
       <!-- PCV1 is not in their file yet -->

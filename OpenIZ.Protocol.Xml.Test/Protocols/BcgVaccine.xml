@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ProtocolDefinition xmlns="http://openiz.org/cdss" uuid="463FFFAD-FC37-4666-B949-4A96AE2A4FB9" id="BCG" name="BCG Vaccine Schedule">
+  <when evaluation="and">
+    <linqExpression>now.Subtract(DateOfBirth.Value.Date).TotalDays &lt;= 1825</linqExpression>
+  </when>
   <rule id="BCG">
     <when evaluation="and">
       <!-- Patient does not have BCG -->

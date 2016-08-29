@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ProtocolDefinition xmlns="http://openiz.org/cdss" uuid="F6186968-9BA7-40DE-939B-42FCC00083A3" id="DTP-HepB-Hib" name="DTP-HepB-Hib Vaccine Schedule">
+  <when evaluation="and">
+    <linqExpression>now.Subtract(DateOfBirth.Value.Date).TotalDays &lt;= 1825</linqExpression>
+  </when>
   <rule id="DTP1">
     <when evaluation="and">
       <!-- DTP1 is not in their file yet -->

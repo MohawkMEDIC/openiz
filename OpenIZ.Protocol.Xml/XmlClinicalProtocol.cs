@@ -112,7 +112,7 @@ namespace OpenIZ.Protocol.Xml
                 s_variables = new Dictionary<string, object>() { { "index", 0 } };
 
                 // Evaluate eligibility
-                if (!this.Definition.When?.Evaluate(patient, s_callbacks) == false)
+                if (this.Definition.When?.Evaluate(patient, s_callbacks) == false)
                 {
                     this.m_tracer.TraceInfo("{0} does not meet criteria for {1}", patient, this.Id);
                     return new List<Act>();

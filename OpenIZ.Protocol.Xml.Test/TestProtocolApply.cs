@@ -198,6 +198,66 @@ namespace OpenIZ.Protocol.Xml.Test
         /// Should schedule all vaccines
         /// </summary>
         [TestMethod]
+        public void ShouldHandlePartials()
+        {
+
+            SimpleCarePlanService scp = new SimpleCarePlanService();
+            ApplicationServiceContext.Current = this;
+            scp.Initialize();
+            // Patient that is just born = Schedule OPV
+            Patient newborn = new Patient()
+            {
+                Key = Guid.NewGuid(),
+                DateOfBirth = DateTime.Now,
+                GenderConcept = new Core.Model.DataTypes.Concept() { Mnemonic = "FEMALE" }
+            };
+
+            // Now apply the protocol
+            var acts = scp.CreateCarePlan(newborn);
+            String json = JsonViewModelSerializer.Serialize(newborn);
+            Assert.AreEqual(83, acts.Count());
+            Assert.IsFalse(acts.Any(o => o.Protocols.Count() > 1));
+            acts = scp.CreateCarePlan(newborn);
+            Assert.AreEqual(0, acts.Count());
+            newborn.Participations.RemoveAll(o => o.Act is QuantityObservation);
+            Assert.AreEqual(23, newborn.Participations.Count);
+            acts = scp.CreateCarePlan(newborn);
+            Assert.AreEqual(60, acts.Count());
+            Assert.AreEqual(83, newborn.Participations.Count());
+            Assert.IsFalse(acts.Any(o => !o.Participations.Any(p => p.ParticipationRoleKey == ActParticipationKey.RecordTarget)));
+        }
+
+
+
+        /// <summary>
+        /// Should schedule all vaccines
+        /// </summary>
+        [TestMethod]
+        public void ShouldExcludeAdults()
+        {
+
+            SimpleCarePlanService scp = new SimpleCarePlanService();
+            ApplicationServiceContext.Current = this;
+            scp.Initialize();
+            // Patient that is just born = Schedule OPV
+            Patient adult = new Patient()
+            {
+                Key = Guid.NewGuid(),
+                DateOfBirth = DateTime.Now.AddMonths(-240),
+                GenderConcept = new Core.Model.DataTypes.Concept() { Mnemonic = "FEMALE" }
+            };
+            
+            // Now apply the protocol
+            var acts = scp.CreateCarePlan(adult);
+            String json = JsonViewModelSerializer.Serialize(adult);
+            Assert.AreEqual(0, acts.Count());
+        }
+
+
+        /// <summary>
+        /// Should schedule all vaccines
+        /// </summary>
+        [TestMethod]
         public void ShouldScheduleAll()
         {
 

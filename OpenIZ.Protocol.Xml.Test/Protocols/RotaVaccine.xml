@@ -1,4 +1,8 @@
 ﻿<ProtocolDefinition xmlns="http://openiz.org/cdss" uuid="D4DFD6C2-2A83-4A4E-BBFE-7D607604A60C" name="Rota Virus Vaccine">
+  <when evaluation="and">
+    <linqExpression>now.Subtract(DateOfBirth.Value.Date).TotalDays &lt;= 1825</linqExpression>
+  </when>
+
   <rule id="ROTA1">
     <when evaluation="and">
       <!-- ROTA is not in their file yet -->

@@ -56,39 +56,7 @@ namespace OpenIZ.Core.Protocol
         /// <returns></returns>
         public IEnumerable<Act> CreateCarePlan(Patient p)
         {
-            var threadPool = ApplicationServiceContext.Current?.GetService(typeof(IThreadPoolService)) as IThreadPoolService;
-            List<Act> protocolActs = new List<Act>();
-            if (threadPool == null)
-                protocolActs = this.Protocols.OrderBy(o => o.Name).AsParallel().SelectMany(o => o.Calculate(p)).ToList();
-            else
-            {
-                ManualResetEvent pulseObject = new ManualResetEvent(false);
-                List<Guid> complete = new List<Guid>();
-
-                foreach (var proto in this.Protocols.OrderBy(o => o.Name))
-                    threadPool.QueueUserWorkItem((o) =>
-                    {
-                        var protocol = o as IClinicalProtocol;
-                        try
-                        {
-                            var acts = protocol.Calculate(p);
-                            lock (protocolActs)
-                                protocolActs.AddRange(acts);
-                        }
-                        finally {
-                            lock (complete)
-                                complete.Add(protocol.Id);
-                            if (complete.Count == this.Protocols.Count)
-                                lock (pulseObject)
-                                    pulseObject.Set();       
-                        }
-                    }, proto);
-
-                // Wait for a pulse
-                pulseObject.WaitOne();
-            }
-
-            // TODO: Aggregate
+            List<Act> protocolActs = this.Protocols.OrderBy(o => o.Name).AsParallel().SelectMany(o => o.Calculate(p)).ToList();
             return protocolActs.ToList();
         }
     }
