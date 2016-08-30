@@ -464,7 +464,9 @@ namespace OpenIZ.Core.Applets
                             foreach (var itm in dataSource as IEnumerable)
                             {
                                 var optAtt = new XElement(xs_xhtml + "option");
-                                optAtt.Add(new XAttribute("value", keyExpression.DynamicInvoke(itm)), new XText(valueExpression.DynamicInvoke(itm)?.ToString()));
+                                var keyValue = keyExpression.DynamicInvoke(itm);
+                                var valueValue = valueExpression.DynamicInvoke(itm)?.ToString();
+                                optAtt.Add(new XAttribute("value", keyValue), new XText(valueValue));
                                 db.Add(optAtt);
                             }
                             break;
