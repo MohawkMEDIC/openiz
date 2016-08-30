@@ -18,8 +18,10 @@
  * Date: 2016-7-22
  */
 
+using OpenIZ.Core.Alert.Alerting;
 using OpenIZ.Core.Http;
 using OpenIZ.Core.Interop.Clients;
+using OpenIZ.Core.Model.AMI.Alerting;
 using OpenIZ.Core.Model.AMI.Auth;
 using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Core.Model.DataTypes;
@@ -230,6 +232,26 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
+		/// Gets a list of alerts.
+		/// </summary>
+		/// <param name="query">The query expression to use to find the alerts.</param>
+		/// <returns>Returns a collection of alerts which match the specified criteria.</returns>
+		public AmiCollection<AlertMessageInfo> GetAlerts(Expression<Func<AlertMessage, bool>> query)
+		{
+			return this.Client.Get<AmiCollection<AlertMessageInfo>>("alert", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
+		/// Gets a list of certificates.
+		/// </summary>
+		/// <param name="query">The query expression to use to find the certificates.</param>
+		/// <returns>Returns a collection of certificates which match the specified query.</returns>
+		public AmiCollection<X509Certificate2Info> GetCertificates(Expression<Func<X509Certificate2Info, bool>> query)
+		{
+			return this.Client.Get<AmiCollection<X509Certificate2Info>>("certificate", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
 		/// Gets a certificate signing request.
 		/// </summary>
 		/// <param name="id">The id of the certificate signing request to be retrieved.</param>
@@ -393,16 +415,6 @@ namespace OpenIZ.Messaging.AMI.Client
 		public SecurityUserInfo UpdateUser(Guid id, SecurityUserInfo user)
 		{
 			return this.Client.Put<SecurityUserInfo, SecurityUserInfo>(string.Format("user/{0}", id), this.Client.Accept, user);
-		}
-
-		/// <summary>
-		/// Gets a list of certificates.
-		/// </summary>
-		/// <param name="query">The query expression to use to find the certificates.</param>
-		/// <returns>Returns a collection of certificates which match the specified query.</returns>
-		private AmiCollection<X509Certificate2Info> GetCertificates(Expression<Func<X509Certificate2Info, bool>> query)
-		{
-			return this.Client.Get<AmiCollection<X509Certificate2Info>>("certificate", QueryExpressionBuilder.BuildQuery(query).ToArray());
 		}
 	}
 }

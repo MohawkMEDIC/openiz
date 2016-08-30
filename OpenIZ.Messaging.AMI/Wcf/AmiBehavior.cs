@@ -339,7 +339,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAlertService)));
 			}
 
-			var alert = alertRepository.GetAlert(Guid.Parse(id));
+			var alert = alertRepository.Get(Guid.Parse(id));
 
 			return new AlertMessageInfo(alert);
 		}
@@ -354,7 +354,11 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			if (parameters.Count == 0)
 			{
-				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
+				var collection = new System.Collections.Specialized.NameValueCollection();
+
+				collection.Add("flags", "2");
+
+				parameters.Add(collection);
 			}
 
 			var expression = QueryExpressionParser.BuildLinqExpression<AlertMessage>(this.CreateQuery(parameters));
@@ -366,10 +370,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAlertService)));
 			}
 
-			return new AmiCollection<AlertMessageInfo>()
-			{
-				CollectionItem = alertRepository.FindAlerts(expression, 0, null).Select(a => new AlertMessageInfo(a)).ToList()
-			};
+			AmiCollection<AlertMessageInfo> alerts = new AmiCollection<AlertMessageInfo>();
+
+			int totalCount = 0;
+
+			alerts.CollectionItem = alertRepository.Find(expression, 0, null, out totalCount).Select(a => new AlertMessageInfo(a)).ToList();
+			alerts.Size = totalCount;
+
+			return alerts;
 		}
 
 		/// <summary>

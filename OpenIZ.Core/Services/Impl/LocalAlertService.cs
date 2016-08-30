@@ -24,6 +24,10 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core.Alert.Alerting;
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Security;
+using MARC.HI.EHRS.SVC.Core.Data;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -45,8 +49,8 @@ namespace OpenIZ.Core.Services.Impl
 		/// <summary>
 		/// Broadcasts an alert.
 		/// </summary>
-		/// <param name="msg">The alert message to be broadcast.</param>
-		public void BroadcastAlert(AlertMessage msg)
+		/// <param name="message">The alert message to be broadcast.</param>
+		public void BroadcastAlert(AlertMessage message)
 		{
 			throw new NotImplementedException();
 		}
@@ -57,10 +61,18 @@ namespace OpenIZ.Core.Services.Impl
 		/// <param name="predicate">The predicate to use to search for alerts.</param>
 		/// <param name="offset">The offset of the search.</param>
 		/// <param name="count">The count of the search results.</param>
+		/// <param name="totalCount">The total count of the alerts.</param>
 		/// <returns>Returns a list of alerts.</returns>
-		public List<AlertMessage> FindAlerts(Expression<Func<AlertMessage, bool>> predicate, int offset, int? count)
+		public IEnumerable<AlertMessage> Find(Expression<Func<AlertMessage, bool>> predicate, int offset, int? count, out int totalCount)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<AlertMessage>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<AlertMessage>)));
+			}
+
+			return persistenceService.Query(predicate, offset, count, AuthenticationContext.Current.Principal, out totalCount);
 		}
 
 		/// <summary>
@@ -68,18 +80,49 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="id">The id of the alert to be retrieved.</param>
 		/// <returns>Returns an alert.</returns>
-		public AlertMessage GetAlert(Guid id)
+		public AlertMessage Get(Guid id)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<AlertMessage>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<AlertMessage>)));
+			}
+
+			return persistenceService.Get<Guid>(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, false);
+		}
+
+		/// <summary>
+		/// Inserts an alert message.
+		/// </summary>
+		/// <param name="message">The alert message to be inserted.</param>
+		/// <returns>Returns the inserted alert.</returns>
+		public AlertMessage Insert(AlertMessage message)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<AlertMessage>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<AlertMessage>)));
+			}
+
+			return persistenceService.Insert(message, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>
 		/// Saves an alert.
 		/// </summary>
-		/// <param name="msg">The alert message to be saved.</param>
-		public void SaveAlert(AlertMessage msg)
+		/// <param name="message">The alert message to be saved.</param>
+		public AlertMessage Save(AlertMessage message)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<AlertMessage>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<AlertMessage>)));
+			}
+
+			return persistenceService.Update(message, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 	}
 }
