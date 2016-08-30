@@ -44,6 +44,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using OpenIZ.Core.Model.AMI.Alerting;
 using OpenIZ.Core.Alert.Alerting;
+using OpenIZ.Core.Model.AMI.DataTypes;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -381,6 +382,15 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
+		/// Gets a list of assigning authorities for a specific query.
+		/// </summary>
+		/// <returns>Returns a list of assigning authorities which match the specific query.</returns>
+		public AmiCollection<AssigningAuthorityInfo> GetAssigningAuthorities()
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// Gets a specific certificate.
 		/// </summary>
 		/// <param name="id">The id of the certificate to retrieve.</param>
@@ -708,6 +718,28 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				return this.AcceptCsr(result.RequestId.ToString());
 			else
 				return result;
+		}
+
+		/// <summary>
+		/// Updates an alert.
+		/// </summary>
+		/// <param name="alertId">The id of the alert to be updated.</param>
+		/// <param name="alert">The alert containing the updated information.</param>
+		/// <returns>Returns the updated alert.</returns>
+		public AlertMessageInfo UpdateAlert(string alertId, AlertMessageInfo alert)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Updates an assigning authority.
+		/// </summary>
+		/// <param name="assigningAuthorityId">The id of the assigning authority to be updated.</param>
+		/// <param name="assigningAuthorityInfo">The assigning authority containing the updated information.</param>
+		/// <returns>Returns the updated assigning authority.</returns>
+		public AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo)
+		{
+			throw new NotImplementedException();
 		}
 
 		/// <summary>

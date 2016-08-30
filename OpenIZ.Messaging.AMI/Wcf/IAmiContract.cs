@@ -20,6 +20,7 @@
 
 using OpenIZ.Core.Model.AMI.Alerting;
 using OpenIZ.Core.Model.AMI.Auth;
+using OpenIZ.Core.Model.AMI.DataTypes;
 using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
@@ -177,6 +178,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		AmiCollection<AlertMessageInfo> GetAlerts();
 
 		/// <summary>
+		/// Gets a list of assigning authorities for a specific query.
+		/// </summary>
+		/// <returns>Returns a list of assigning authorities which match the specific query.</returns>
+		[WebGet(UriTemplate = "/assigningAuthority", BodyStyle = WebMessageBodyStyle.Bare)]
+		AmiCollection<AssigningAuthorityInfo> GetAssigningAuthorities();
+
+		/// <summary>
 		/// Gets a specific certificate.
 		/// </summary>
 		/// <param name="id">The id of the certificate to retrieve.</param>
@@ -312,6 +320,23 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		SubmissionResult SubmitCsr(SubmissionRequest s);
 
 		/// <summary>
+		/// Updates an alert.
+		/// </summary>
+		/// <param name="alertId">The id of the alert to be updated.</param>
+		/// <param name="alert">The alert containing the updated information.</param>
+		/// <returns>Returns the updated alert.</returns>
+		[WebInvoke(UriTemplate = "/alert/{alertId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		AlertMessageInfo UpdateAlert(string alertId, AlertMessageInfo alert);
+
+		/// <summary>
+		/// Updates an assigning authority.
+		/// </summary>
+		/// <param name="assigningAuthorityId">The id of the assigning authority to be updated.</param>
+		/// <param name="assigningAuthorityInfo">The assigning authority containing the updated information.</param>
+		/// <returns>Returns the updated assigning authority.</returns>
+		AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo);
+
+		/// <summary>
 		/// Updates a concept.
 		/// </summary>
 		/// <param name="concept">The concept containing the updated information.</param>
@@ -322,15 +347,17 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <summary>
 		/// Updates a place.
 		/// </summary>
+		/// <param name="placeId">The id of the place to be updated.</param>
 		/// <param name="place">The place containing the updated information.</param>
 		/// <returns>Returns the updated place.</returns>
 		[WebInvoke(UriTemplate = "/place/{placeId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		Place UpdatePlace(string placeId, Place place);
 
 		/// <summary>
-		/// Gets a specific security user.
+		/// Updates a security user.
 		/// </summary>
 		/// <param name="userId">The id of the security user to be retrieved.</param>
+		/// <param name="userInfo">The user containing the updated information.</param>
 		/// <returns>Returns the security user.</returns>
 		[WebInvoke(UriTemplate = "/user/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		SecurityUserInfo UpdateUser(string userId, SecurityUserInfo userInfo);

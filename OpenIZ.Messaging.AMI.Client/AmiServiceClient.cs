@@ -23,6 +23,7 @@ using OpenIZ.Core.Http;
 using OpenIZ.Core.Interop.Clients;
 using OpenIZ.Core.Model.AMI.Alerting;
 using OpenIZ.Core.Model.AMI.Auth;
+using OpenIZ.Core.Model.AMI.DataTypes;
 using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
@@ -206,7 +207,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		// TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-		// ~ImsiServiceClient() {
+		// ~AmiServiceClient() {
 		//   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
 		//   Dispose(false);
 		// }
@@ -242,6 +243,16 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
+		/// Gets a list of assigning authorities.
+		/// </summary>
+		/// <param name="query">The query expression to use to find the assigning authorities.</param>
+		/// <returns>Returns a collection of assigning authorities which match the specified criteria.</returns>
+		public AmiCollection<AssigningAuthorityInfo> GetAssigningAuthorities(Expression<Func<AssigningAuthority, bool>> query)
+		{
+			return this.Client.Get<AmiCollection<AssigningAuthorityInfo>>("assigningAuthority", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
 		/// Gets a list of certificates.
 		/// </summary>
 		/// <param name="query">The query expression to use to find the certificates.</param>
@@ -268,7 +279,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns a collection of certificate signing requests which match the specified query.</returns>
 		public AmiCollection<SubmissionInfo> GetCertificateSigningRequests(Expression<Func<SubmissionInfo, bool>> query)
 		{
-			return this.Client.Get<AmiCollection<SubmissionInfo>>("csrs", QueryExpressionBuilder.BuildQuery(query).ToArray());
+			return this.Client.Get<AmiCollection<SubmissionInfo>>("csr", QueryExpressionBuilder.BuildQuery(query).ToArray());
 		}
 
 		/// <summary>
@@ -382,6 +393,17 @@ namespace OpenIZ.Messaging.AMI.Client
 		public SubmissionResult SubmitCertificateSigningRequest(SubmissionRequest submissionRequest)
 		{
 			return this.Client.Post<SubmissionRequest, SubmissionResult>("csr", this.Client.Accept, submissionRequest);
+		}
+
+		/// <summary>
+		/// Updates an alert.
+		/// </summary>
+		/// <param name="alertId">The id of the alert to be updated.</param>
+		/// <param name="alertMessageInfo">The alert message info containing the updated information.</param>
+		/// <returns>Returns the updated alert.</returns>
+		public AlertMessageInfo UpdateAlert(string alertId, AlertMessageInfo alertMessageInfo)
+		{
+			return this.Client.Put<AlertMessageInfo, AlertMessageInfo>(string.Format("alert/{0}", alertId), this.Client.Accept, alertMessageInfo);
 		}
 
 		/// <summary>

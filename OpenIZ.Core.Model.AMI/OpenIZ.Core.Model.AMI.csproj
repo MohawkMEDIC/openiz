@@ -51,6 +51,7 @@
     <Compile Include="Auth\SecurityPolicyInfo.cs" />
     <Compile Include="Auth\SecurityRoleInfo.cs" />
     <Compile Include="Auth\SecurityUserInfo.cs" />
+    <Compile Include="DataTypes\AssigningAuthorityInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\RevokeReason.cs" />
     <Compile Include="Security\SubmissionInfo.cs" />
