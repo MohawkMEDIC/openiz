@@ -28,14 +28,21 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Security;
 using MARC.HI.EHRS.SVC.Core.Data;
+using OpenIZ.Core.Diagnostics;
+using System.Diagnostics;
 
 namespace OpenIZ.Core.Services.Impl
 {
 	/// <summary>
 	/// Represents a local alert service.
 	/// </summary>
-	public class LocalAlertService : IAlertService
+	public class LocalAlertRepositoryService : IAlertRepositoryService
 	{
+		/// <summary>
+		/// The internal reference to the <see cref="TraceSource"/> instance.
+		/// </summary>
+		private TraceSource traceSource = new TraceSource("OpenIZ.Core");
+
 		/// <summary>
 		/// Fired when an alert was raised and is being processed.
 		/// </summary>
@@ -52,7 +59,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <param name="message">The alert message to be broadcast.</param>
 		public void BroadcastAlert(AlertMessage message)
 		{
-			throw new NotImplementedException();
+			this.Committed?.Invoke(this, new AlertEventArgs(message));
 		}
 
 		/// <summary>
@@ -106,7 +113,24 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<AlertMessage>)));
 			}
 
-			return persistenceService.Insert(message, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			AlertMessage alert;
+
+			try
+			{
+				alert = persistenceService.Insert(message, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+				this.Received?.Invoke(this, new AlertEventArgs(alert));
+			}
+			catch (Exception e)
+			{
+#if DEBUG
+				this.traceSource.TraceEvent(TraceEventType.Error, 0, e.StackTrace);
+#endif
+				this.traceSource.TraceEvent(TraceEventType.Error, 0, e.Message);
+
+				throw;
+			}
+
+			return alert;
 		}
 
 		/// <summary>
@@ -122,7 +146,24 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<AlertMessage>)));
 			}
 
-			return persistenceService.Update(message, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			AlertMessage alert;
+
+			try
+			{
+				alert = persistenceService.Update(message, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+				this.Received?.Invoke(this, new AlertEventArgs(alert));
+			}
+			catch (Exception e)
+			{
+#if DEBUG
+				this.traceSource.TraceEvent(TraceEventType.Error, 0, e.StackTrace);
+#endif
+				this.traceSource.TraceEvent(TraceEventType.Error, 0, e.Message);
+
+				throw;
+			}
+
+			return alert;
 		}
 	}
 }

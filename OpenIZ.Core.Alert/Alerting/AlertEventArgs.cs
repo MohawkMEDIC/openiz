@@ -31,10 +31,10 @@ namespace OpenIZ.Core.Alert.Alerting
 		/// Initializes a new instance of the <see cref="AlertEventArgs"/> class
 		/// with a specified alert message.
 		/// </summary>
-		/// <param name="msg">The alert message.</param>
-		public AlertEventArgs(AlertMessage msg)
+		/// <param name="message">The alert message.</param>
+		public AlertEventArgs(AlertMessage message)
 		{
-			this.Message = msg;
+			this.Message = message;
 		}
 
 		/// <summary>

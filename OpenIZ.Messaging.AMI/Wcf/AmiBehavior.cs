@@ -333,11 +333,11 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the alert.</returns>
 		public AlertMessageInfo GetAlert(string id)
 		{
-			var alertRepository = ApplicationContext.Current.GetService<IAlertService>();
+			var alertRepository = ApplicationContext.Current.GetService<IAlertRepositoryService>();
 
 			if (alertRepository == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAlertService)));
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAlertRepositoryService)));
 			}
 
 			var alert = alertRepository.Get(Guid.Parse(id));
@@ -364,11 +364,11 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			var expression = QueryExpressionParser.BuildLinqExpression<AlertMessage>(this.CreateQuery(parameters));
 
-			var alertRepository = ApplicationContext.Current.GetService<IAlertService>();
+			var alertRepository = ApplicationContext.Current.GetService<IAlertRepositoryService>();
 
 			if (alertRepository == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAlertService)));
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAlertRepositoryService)));
 			}
 
 			AmiCollection<AlertMessageInfo> alerts = new AmiCollection<AlertMessageInfo>();
