@@ -69,6 +69,7 @@
     <Compile Include="ResourceHandler\ConceptClassResourceHandler.cs" />
     <Compile Include="ResourceHandler\ConceptResourceHandler.cs" />
     <Compile Include="ResourceHandler\ConceptSetResourceHandler.cs" />
+    <Compile Include="ResourceHandler\EntityResourceHandler.cs" />
     <Compile Include="ResourceHandler\IdentifierTypeResourceHandler.cs" />
     <Compile Include="ResourceHandler\IResourceHandler.cs" />
     <Compile Include="ResourceHandler\ManufacturedMaterialHandler.cs" />
