@@ -25,28 +25,33 @@ using System.Security.Principal;
 namespace OpenIZ.Core.Services
 {
 	/// <summary>
-	/// Represents a service which retrieves IPrincipal objects for applications
+	/// Represents a service which retrieves IPrincipal objects for applications.
 	/// </summary>
 	public interface IApplicationIdentityProviderService
 	{
 		/// <summary>
-		/// Fired after an authentication request has been made
+		/// Fired after an authentication request has been made.
 		/// </summary>
 		event EventHandler<AuthenticatedEventArgs> Authenticated;
 
 		/// <summary>
-		/// Fired prior to an authentication request being made
+		/// Fired prior to an authentication request being made.
 		/// </summary>
 		event EventHandler<AuthenticatingEventArgs> Authenticating;
 
 		/// <summary>
-		/// Authenticate the application identity
+		/// Authenticate the application identity.
 		/// </summary>
+		/// <param name="applicationId">The application id to authenticate.</param>
+		/// <param name="applicationSecret">The application secret to authenticate.</param>
+		/// <returns>Returns the principal of the application.</returns>
 		IPrincipal Authenticate(String applicationId, String applicationSecret);
 
 		/// <summary>
-		/// Gets the specified identity
+		/// Gets the specified identity for an application.
 		/// </summary>
+		/// <param name="name">The name of the application for which to retrieve the identity.</param>
+		/// <returns>Returns the identity of the application.</returns>
 		IIdentity GetIdentity(string name);
 	}
 }

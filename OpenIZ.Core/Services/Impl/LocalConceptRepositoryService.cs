@@ -35,7 +35,7 @@ namespace OpenIZ.Core.Services.Impl
 	/// Represents a service which is responsible for the
 	/// maintenance of concepts.
 	/// </summary>
-	internal class LocalConceptRepositoryService : IConceptRepositoryService
+	public class LocalConceptRepositoryService : IConceptRepositoryService
 	{
 		/// <summary>
 		/// Searches for a concept class using a given query.

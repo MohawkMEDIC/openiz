@@ -24,13 +24,15 @@ using System.Security.Principal;
 namespace OpenIZ.Core.Services
 {
 	/// <summary>
-	/// Represents an identity service which authenticates devices
+	/// Represents an identity service which authenticates devices.
 	/// </summary>
 	public interface IDeviceIdentityProviderService
 	{
 		/// <summary>
 		/// Authenticate the device based on certificate provided
 		/// </summary>
+		/// <param name="deviceCertificate">The certificate of the device used to authenticate the device.</param>
+		/// <returns>Returns the principal of the device.</returns>
 		IPrincipal Authenticate(X509Certificate2 deviceCertificate);
 	}
 }

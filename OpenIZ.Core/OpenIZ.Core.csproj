@@ -93,7 +93,9 @@
     <Compile Include="Services\IDeviceIdentityProviderService.cs" />
     <Compile Include="Services\Impl\LocalActRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalAlertRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalApplicationIdentityProviderService.cs" />
     <Compile Include="Services\Impl\LocalAssigningAuthorityRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalDeviceIdentityProviderService.cs" />
     <Compile Include="Services\Impl\LocalIdentifierTypeRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalMaterialRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalMetadataRepositoryService.cs" />
