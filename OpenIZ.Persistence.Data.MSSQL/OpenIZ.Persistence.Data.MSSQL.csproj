@@ -97,6 +97,7 @@
     <Compile Include="Services\Persistence\AssigningAuthorityPersistenceService.cs" />
     <Compile Include="Services\Persistence\ControlActPersistenceService.cs" />
     <Compile Include="Services\Persistence\EncounterPersistenceService.cs" />
+    <Compile Include="Services\Persistence\IdentifierTypePersistenceService.cs" />
     <Compile Include="Services\Persistence\ManufacturedMaterialPersistenceService.cs" />
     <Compile Include="Services\Persistence\MaterialPersistenceService.cs" />
     <Compile Include="Services\Persistence\ObservationPersistenceService.cs" />

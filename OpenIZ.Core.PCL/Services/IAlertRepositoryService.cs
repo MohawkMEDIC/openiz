@@ -28,7 +28,7 @@ namespace OpenIZ.Core.Services
 	/// <summary>
 	/// Represents an alerting service.
 	/// </summary>
-	public interface IAlertService
+	public interface IAlertRepositoryService
 	{
 		/// <summary>
 		/// Fired when an alert is received.
@@ -44,7 +44,7 @@ namespace OpenIZ.Core.Services
 		/// Broadcasts an alert.
 		/// </summary>
 		/// <param name="msg">The alert message to be broadcast.</param>
-		void BroadcastAlert(AlertMessage msg);
+		void BroadcastAlert(AlertMessage message);
 
 		/// <summary>
 		/// Searches for alerts.
@@ -52,20 +52,29 @@ namespace OpenIZ.Core.Services
 		/// <param name="predicate">The predicate to use to search for alerts.</param>
 		/// <param name="offset">The offset of the search.</param>
 		/// <param name="count">The count of the search results.</param>
+		/// <param name="totalCount">The total count of the alerts.</param>
 		/// <returns>Returns a list of alerts.</returns>
-		List<AlertMessage> FindAlerts(Expression<Func<AlertMessage, bool>> predicate, int offset, int? count);
+		IEnumerable<AlertMessage> Find(Expression<Func<AlertMessage, bool>> predicate, int offset, int? count, out int totalCount);
 
 		/// <summary>
 		/// Gets an alert.
 		/// </summary>
 		/// <param name="id">The id of the alert to be retrieved.</param>
 		/// <returns>Returns an alert.</returns>
-		AlertMessage GetAlert(Guid id);
+		AlertMessage Get(Guid id);
+
+		/// <summary>
+		/// Inserts an alert message.
+		/// </summary>
+		/// <param name="message">The alert message to be inserted.</param>
+		/// <returns>Returns the inserted alert.</returns>
+		AlertMessage Insert(AlertMessage message);
 
 		/// <summary>
 		/// Saves an alert.
 		/// </summary>
-		/// <param name="msg">The alert message to be saved.</param>
-		void SaveAlert(AlertMessage msg);
+		/// <param name="message">The alert message to be saved.</param>
+		/// <returns>Returns the saved alert.</returns>
+		AlertMessage Save(AlertMessage message);
 	}
 }

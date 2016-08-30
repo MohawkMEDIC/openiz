@@ -59,7 +59,8 @@
     <Compile Include="Interop\ServiceClientBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IActRepositoryService.cs" />
-    <Compile Include="Services\IAlertService.cs" />
+    <Compile Include="Services\IAlertRepositoryService.cs" />
+    <Compile Include="Services\IAssigningAuthorityRepositoryService.cs" />
     <Compile Include="Services\IBatchRepositoryService.cs" />
     <Compile Include="Services\IBusinessRulesService.cs" />
     <Compile Include="Services\ICarePlanService.cs" />
@@ -79,7 +80,7 @@
     <Compile Include="Services\IPlaceRepositoryService.cs" />
     <Compile Include="Services\IProviderRepositoryService.cs" />
     <Compile Include="Services\ISecurityRepositoryService.cs" />
-    <Compile Include="Services\IStockManagementService.cs" />
+    <Compile Include="Services\IStockManagementRepositoryService.cs" />
     <Compile Include="Services\IThreadPoolService.cs" />
   </ItemGroup>
   <ItemGroup>
