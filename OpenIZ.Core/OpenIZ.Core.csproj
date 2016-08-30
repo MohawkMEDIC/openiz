@@ -101,6 +101,7 @@
     <Compile Include="Services\Impl\LocalPatientRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalPlaceRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalProviderRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalStockManagementRepositoryService.cs" />
     <Compile Include="Wcf\Behavior\WcfErrorEndpointBehavior.cs" />
     <Compile Include="Wcf\Security\BasicAuthorizationAccessPolicy.cs" />
     <Compile Include="Wcf\Security\BasicAuthorizationCredentialValidator.cs" />

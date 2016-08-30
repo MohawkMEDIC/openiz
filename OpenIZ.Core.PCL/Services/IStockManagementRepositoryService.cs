@@ -25,18 +25,24 @@ using OpenIZ.Core.Model.Entities;
 namespace OpenIZ.Core.Services
 {
 	/// <summary>
-	/// Represents an abstract way for PCL classes to interact with persistence events that occur on the back end
+	/// Represents a stock management repository service.
 	/// </summary>
-	public interface IStockManagementService
+	public interface IStockManagementRepositoryService
 	{
 		/// <summary>
-		/// Performs a stock adjustment for the specified facility and material
+		/// Performs a stock adjustment for the specified facility and material.
 		/// </summary>
-		Act Adjust(ManufacturedMaterial material, Place place, int quantity, Concept reason);
+		/// <param name="manufacturedMaterial">The manufactured material to be adjusted.</param>
+		/// <param name="place">The facility for which the stock is to be adjusted.</param>
+		/// <param name="quantity">The quantity to be adjusted.</param>
+		/// <param name="reason">The reason for the stock to be adjusted.</param>
+		Act Adjust(ManufacturedMaterial manufacturedMaterial, Place place, int quantity, Concept reason);
 
 		/// <summary>
-		/// Gets the balance for the material
+		/// Gets the balance for the material.
 		/// </summary>
-		int GetBalance(Place place, ManufacturedMaterial material);
+		/// <param name="place">The facility for which to get the balance of stock.</param>
+		/// <param name="manufacturedMaterial">The manufactured material for which to retrieve the balance.</param>
+		int GetBalance(Place place, ManufacturedMaterial manufacturedMaterial);
 	}
 }
