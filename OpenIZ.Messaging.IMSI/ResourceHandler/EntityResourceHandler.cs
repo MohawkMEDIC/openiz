@@ -36,12 +36,19 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 	/// </summary>
 	public class EntityResourceHandler : IResourceHandler
 	{
+		/// <summary>
+		/// The internal reference to the <see cref="IEntityRepositoryService"/> instance.
+		/// </summary>
 		private IEntityRepositoryService repositoryService;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="EntityResourceHandler"/> class.
+		/// </summary>
 		public EntityResourceHandler()
 		{
 			ApplicationContext.Current.Started += (o, e) => this.repositoryService = ApplicationContext.Current.GetService<IEntityRepositoryService>();
 		}
+
 		/// <summary>
 		/// Gets the resource name of the resource handler.
 		/// </summary>
@@ -124,7 +131,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <returns>Returns the obsoleted entity.</returns>
 		public IdentifiedData Obsolete(Guid key)
 		{
-			throw new NotImplementedException();
+			return this.repositoryService.Obsolete(key);
 		}
 
 		/// <summary>
@@ -134,7 +141,8 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <returns>Returns a list of entities.</returns>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			throw new NotImplementedException();
+			int totalCount = 0;
+			return this.Query(queryParameters, 0, 0, out totalCount);
 		}
 
 		/// <summary>
@@ -147,7 +155,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <returns>Returns a list of entities.</returns>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			throw new NotImplementedException();
+			return this.repositoryService.Find(QueryExpressionParser.BuildLinqExpression<Entity>(queryParameters), offset, count, out totalCount);
 		}
 
 		/// <summary>
@@ -157,7 +165,24 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <returns>Returns the updated entity.</returns>
 		public IdentifiedData Update(IdentifiedData data)
 		{
-			throw new NotImplementedException();
+			Bundle bundleData = data as Bundle;
+			bundleData?.Reconstitute();
+			var processData = bundleData?.Entry ?? data;
+
+			if (processData is Bundle)
+			{
+				throw new InvalidOperationException(string.Format("Bundle must have entry of type {0}", nameof(Entity)));
+			}
+			else if (processData is Entity)
+			{
+				var entityData = data as Entity;
+
+				return this.repositoryService.Save(entityData);
+			}
+			else
+			{
+				throw new ArgumentException("Invalid persistence type");
+			}
 		}
 	}
 }
