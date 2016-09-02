@@ -28,7 +28,7 @@ namespace OpenIZ.Core.Services
 	/// <summary>
 	/// Represents an alerting service.
 	/// </summary>
-	public interface IAlertService
+	public interface IAlertManagerService
 	{
 		/// <summary>
 		/// Fired when an alert is received.

@@ -30,7 +30,7 @@ namespace OpenIZ.Core.Services.Impl
 	/// <summary>
 	/// Represents a local alert service.
 	/// </summary>
-	public class LocalAlertService : IAlertService
+	public class LocalAlertService : IAlertManagerService
 	{
 		/// <summary>
 		/// Fired when an alert was raised and is being processed.

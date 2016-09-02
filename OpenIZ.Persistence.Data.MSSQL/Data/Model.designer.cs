@@ -63,6 +63,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void InsertActVersion(ActVersion instance);
     partial void UpdateActVersion(ActVersion instance);
     partial void DeleteActVersion(ActVersion instance);
+    partial void InsertAlertMessage(AlertMessage instance);
+    partial void UpdateAlertMessage(AlertMessage instance);
+    partial void DeleteAlertMessage(AlertMessage instance);
+    partial void InsertAlertMessageRecipient(AlertMessageRecipient instance);
+    partial void UpdateAlertMessageRecipient(AlertMessageRecipient instance);
+    partial void DeleteAlertMessageRecipient(AlertMessageRecipient instance);
     partial void InsertApplicationEntity(ApplicationEntity instance);
     partial void UpdateApplicationEntity(ApplicationEntity instance);
     partial void DeleteApplicationEntity(ApplicationEntity instance);
@@ -378,6 +384,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			get
 			{
 				return this.GetTable<ActVersion>();
+			}
+		}
+		
+		public System.Data.Linq.Table<AlertMessage> AlertMessages
+		{
+			get
+			{
+				return this.GetTable<AlertMessage>();
+			}
+		}
+		
+		public System.Data.Linq.Table<AlertMessageRecipient> AlertMessageRecipients
+		{
+			get
+			{
+				return this.GetTable<AlertMessageRecipient>();
 			}
 		}
 		
@@ -4776,6 +4798,675 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this.SendPropertyChanging();
 			entity.ReplacesVersion = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AlertMessage")]
+	public partial class AlertMessage : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _AlertMessageId;
+		
+		private System.DateTimeOffset _CreationTime;
+		
+		private System.Guid _CreatedBy;
+		
+		private System.Nullable<System.DateTimeOffset> _ObsoletionTime;
+		
+		private System.Nullable<System.Guid> _ObsoletedBy;
+		
+		private System.Nullable<System.DateTimeOffset> _UpdatedTime;
+		
+		private System.Nullable<System.Guid> _UpdatedBy;
+		
+		private string _FromInfo;
+		
+		private string _ToInfo;
+		
+		private System.DateTimeOffset _MessageTime;
+		
+		private string _Subject;
+		
+		private string _Body;
+		
+		private System.Nullable<int> _Flags;
+		
+		private EntitySet<AlertMessageRecipient> _AlertMessageRecipients;
+		
+		private EntityRef<SecurityUser> _CreatedByEntity;
+		
+		private EntityRef<SecurityUser> _ObsoletedByEntity;
+		
+		private EntityRef<SecurityUser> _UpdatedByEntity;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnAlertMessageIdChanging(System.Guid value);
+    partial void OnAlertMessageIdChanged();
+    partial void OnCreationTimeChanging(System.DateTimeOffset value);
+    partial void OnCreationTimeChanged();
+    partial void OnCreatedByChanging(System.Nullable<System.Guid> value);
+    partial void OnCreatedByChanged();
+    partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnObsoletionTimeChanged();
+    partial void OnObsoletedByChanging(System.Nullable<System.Guid> value);
+    partial void OnObsoletedByChanged();
+    partial void OnUpdatedTimeChanging(System.Nullable<System.DateTimeOffset> value);
+    partial void OnUpdatedTimeChanged();
+    partial void OnUpdatedByChanging(System.Nullable<System.Guid> value);
+    partial void OnUpdatedByChanged();
+    partial void OnFromInfoChanging(string value);
+    partial void OnFromInfoChanged();
+    partial void OnToInfoChanging(string value);
+    partial void OnToInfoChanged();
+    partial void OnMessageTimeChanging(System.DateTimeOffset value);
+    partial void OnMessageTimeChanged();
+    partial void OnSubjectChanging(string value);
+    partial void OnSubjectChanged();
+    partial void OnBodyChanging(string value);
+    partial void OnBodyChanged();
+    partial void OnFlagsChanging(System.Nullable<int> value);
+    partial void OnFlagsChanged();
+    #endregion
+		
+		public AlertMessage()
+		{
+			this._AlertMessageRecipients = new EntitySet<AlertMessageRecipient>(new Action<AlertMessageRecipient>(this.attach_AlertMessageRecipients), new Action<AlertMessageRecipient>(this.detach_AlertMessageRecipients));
+			this._CreatedByEntity = default(EntityRef<SecurityUser>);
+			this._ObsoletedByEntity = default(EntityRef<SecurityUser>);
+			this._UpdatedByEntity = default(EntityRef<SecurityUser>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AlertMessageId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		public System.Guid AlertMessageId
+		{
+			get
+			{
+				return this._AlertMessageId;
+			}
+			set
+			{
+				if ((this._AlertMessageId != value))
+				{
+					this.OnAlertMessageIdChanging(value);
+					this.SendPropertyChanging();
+					this._AlertMessageId = value;
+					this.SendPropertyChanged("AlertMessageId");
+					this.OnAlertMessageIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreationTime", AutoSync=AutoSync.Always, DbType="DateTimeOffset NOT NULL", IsDbGenerated=true)]
+		public System.DateTimeOffset CreationTime
+		{
+			get
+			{
+				return this._CreationTime;
+			}
+			set
+			{
+				if ((this._CreationTime != value))
+				{
+					this.OnCreationTimeChanging(value);
+					this.SendPropertyChanging();
+					this._CreationTime = value;
+					this.SendPropertyChanged("CreationTime");
+					this.OnCreationTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier")]
+		public System.Guid CreatedBy
+		{
+			get
+			{
+				return this._CreatedBy;
+			}
+			set
+			{
+				if ((this._CreatedBy != value))
+				{
+					if (this._CreatedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCreatedByChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedBy = value;
+					this.SendPropertyChanged("CreatedBy");
+					this.OnCreatedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletionTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> ObsoletionTime
+		{
+			get
+			{
+				return this._ObsoletionTime;
+			}
+			set
+			{
+				if ((this._ObsoletionTime != value))
+				{
+					this.OnObsoletionTimeChanging(value);
+					this.SendPropertyChanging();
+					this._ObsoletionTime = value;
+					this.SendPropertyChanged("ObsoletionTime");
+					this.OnObsoletionTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObsoletedBy", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> ObsoletedBy
+		{
+			get
+			{
+				return this._ObsoletedBy;
+			}
+			set
+			{
+				if ((this._ObsoletedBy != value))
+				{
+					if (this._ObsoletedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnObsoletedByChanging(value);
+					this.SendPropertyChanging();
+					this._ObsoletedBy = value;
+					this.SendPropertyChanged("ObsoletedBy");
+					this.OnObsoletedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedTime", DbType="DateTimeOffset")]
+		public System.Nullable<System.DateTimeOffset> UpdatedTime
+		{
+			get
+			{
+				return this._UpdatedTime;
+			}
+			set
+			{
+				if ((this._UpdatedTime != value))
+				{
+					this.OnUpdatedTimeChanging(value);
+					this.SendPropertyChanging();
+					this._UpdatedTime = value;
+					this.SendPropertyChanged("UpdatedTime");
+					this.OnUpdatedTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedBy", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> UpdatedBy
+		{
+			get
+			{
+				return this._UpdatedBy;
+			}
+			set
+			{
+				if ((this._UpdatedBy != value))
+				{
+					if (this._UpdatedByEntity.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUpdatedByChanging(value);
+					this.SendPropertyChanging();
+					this._UpdatedBy = value;
+					this.SendPropertyChanged("UpdatedBy");
+					this.OnUpdatedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FromInfo", DbType="VarChar(128) NOT NULL", CanBeNull=false)]
+		public string FromInfo
+		{
+			get
+			{
+				return this._FromInfo;
+			}
+			set
+			{
+				if ((this._FromInfo != value))
+				{
+					this.OnFromInfoChanging(value);
+					this.SendPropertyChanging();
+					this._FromInfo = value;
+					this.SendPropertyChanged("FromInfo");
+					this.OnFromInfoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ToInfo", DbType="VarChar(128) NOT NULL", CanBeNull=false)]
+		public string ToInfo
+		{
+			get
+			{
+				return this._ToInfo;
+			}
+			set
+			{
+				if ((this._ToInfo != value))
+				{
+					this.OnToInfoChanging(value);
+					this.SendPropertyChanging();
+					this._ToInfo = value;
+					this.SendPropertyChanged("ToInfo");
+					this.OnToInfoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MessageTime", DbType="DateTimeOffset NOT NULL")]
+		public System.DateTimeOffset MessageTime
+		{
+			get
+			{
+				return this._MessageTime;
+			}
+			set
+			{
+				if ((this._MessageTime != value))
+				{
+					this.OnMessageTimeChanging(value);
+					this.SendPropertyChanging();
+					this._MessageTime = value;
+					this.SendPropertyChanged("MessageTime");
+					this.OnMessageTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Subject", DbType="VarChar(256)")]
+		public string Subject
+		{
+			get
+			{
+				return this._Subject;
+			}
+			set
+			{
+				if ((this._Subject != value))
+				{
+					this.OnSubjectChanging(value);
+					this.SendPropertyChanging();
+					this._Subject = value;
+					this.SendPropertyChanged("Subject");
+					this.OnSubjectChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Body", DbType="Text NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
+		public string Body
+		{
+			get
+			{
+				return this._Body;
+			}
+			set
+			{
+				if ((this._Body != value))
+				{
+					this.OnBodyChanging(value);
+					this.SendPropertyChanging();
+					this._Body = value;
+					this.SendPropertyChanged("Body");
+					this.OnBodyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Flags", DbType="Int")]
+		public System.Nullable<int> Flags
+		{
+			get
+			{
+				return this._Flags;
+			}
+			set
+			{
+				if ((this._Flags != value))
+				{
+					this.OnFlagsChanging(value);
+					this.SendPropertyChanging();
+					this._Flags = value;
+					this.SendPropertyChanged("Flags");
+					this.OnFlagsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AlertMessage_AlertMessageRecipient", Storage="_AlertMessageRecipients", ThisKey="AlertMessageId", OtherKey="AlertMessageId")]
+		public EntitySet<AlertMessageRecipient> AlertMessageRecipients
+		{
+			get
+			{
+				return this._AlertMessageRecipients;
+			}
+			set
+			{
+				this._AlertMessageRecipients.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_AlertMessage", Storage="_CreatedByEntity", ThisKey="CreatedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser CreatedByEntity
+		{
+			get
+			{
+				return this._CreatedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._CreatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._CreatedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CreatedByEntity.Entity = null;
+						previousValue.AlertMessagesCreatedBy.Remove(this);
+					}
+					this._CreatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.AlertMessagesCreatedBy.Add(this);
+						this._CreatedBy = value.UserId;
+					}
+					else
+					{
+						this._CreatedBy = default(System.Guid);
+					}
+					this.SendPropertyChanged("CreatedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_AlertMessage1", Storage="_ObsoletedByEntity", ThisKey="ObsoletedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser ObsoletedByEntity
+		{
+			get
+			{
+				return this._ObsoletedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._ObsoletedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._ObsoletedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ObsoletedByEntity.Entity = null;
+						previousValue.AlertMessagesObsoletedBy.Remove(this);
+					}
+					this._ObsoletedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.AlertMessagesObsoletedBy.Add(this);
+						this._ObsoletedBy = value.UserId;
+					}
+					else
+					{
+						this._ObsoletedBy = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("ObsoletedByEntity");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_AlertMessage2", Storage="_UpdatedByEntity", ThisKey="UpdatedBy", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser UpdatedByEntity
+		{
+			get
+			{
+				return this._UpdatedByEntity.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._UpdatedByEntity.Entity;
+				if (((previousValue != value) 
+							|| (this._UpdatedByEntity.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._UpdatedByEntity.Entity = null;
+						previousValue.AlertMessagesUpdatedBy.Remove(this);
+					}
+					this._UpdatedByEntity.Entity = value;
+					if ((value != null))
+					{
+						value.AlertMessagesUpdatedBy.Add(this);
+						this._UpdatedBy = value.UserId;
+					}
+					else
+					{
+						this._UpdatedBy = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("UpdatedByEntity");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_AlertMessageRecipients(AlertMessageRecipient entity)
+		{
+			this.SendPropertyChanging();
+			entity.AlertMessage = this;
+		}
+		
+		private void detach_AlertMessageRecipients(AlertMessageRecipient entity)
+		{
+			this.SendPropertyChanging();
+			entity.AlertMessage = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AlertMessageRecipient")]
+	public partial class AlertMessageRecipient : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private System.Guid _AlertMessageId;
+		
+		private System.Guid _SecurityUserId;
+		
+		private EntityRef<AlertMessage> _AlertMessage;
+		
+		private EntityRef<SecurityUser> _SecurityUser;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnAlertMessageIdChanging(System.Guid value);
+    partial void OnAlertMessageIdChanged();
+    partial void OnSecurityUserIdChanging(System.Guid value);
+    partial void OnSecurityUserIdChanged();
+    #endregion
+		
+		public AlertMessageRecipient()
+		{
+			this._AlertMessage = default(EntityRef<AlertMessage>);
+			this._SecurityUser = default(EntityRef<SecurityUser>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AlertMessageId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		public System.Guid AlertMessageId
+		{
+			get
+			{
+				return this._AlertMessageId;
+			}
+			set
+			{
+				if ((this._AlertMessageId != value))
+				{
+					if (this._AlertMessage.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAlertMessageIdChanging(value);
+					this.SendPropertyChanging();
+					this._AlertMessageId = value;
+					this.SendPropertyChanged("AlertMessageId");
+					this.OnAlertMessageIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SecurityUserId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
+		public System.Guid SecurityUserId
+		{
+			get
+			{
+				return this._SecurityUserId;
+			}
+			set
+			{
+				if ((this._SecurityUserId != value))
+				{
+					if (this._SecurityUser.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnSecurityUserIdChanging(value);
+					this.SendPropertyChanging();
+					this._SecurityUserId = value;
+					this.SendPropertyChanged("SecurityUserId");
+					this.OnSecurityUserIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AlertMessage_AlertMessageRecipient", Storage="_AlertMessage", ThisKey="AlertMessageId", OtherKey="AlertMessageId", IsForeignKey=true)]
+		public AlertMessage AlertMessage
+		{
+			get
+			{
+				return this._AlertMessage.Entity;
+			}
+			set
+			{
+				AlertMessage previousValue = this._AlertMessage.Entity;
+				if (((previousValue != value) 
+							|| (this._AlertMessage.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AlertMessage.Entity = null;
+						previousValue.AlertMessageRecipients.Remove(this);
+					}
+					this._AlertMessage.Entity = value;
+					if ((value != null))
+					{
+						value.AlertMessageRecipients.Add(this);
+						this._AlertMessageId = value.AlertMessageId;
+					}
+					else
+					{
+						this._AlertMessageId = default(System.Guid);
+					}
+					this.SendPropertyChanged("AlertMessage");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_AlertMessageRecipient", Storage="_SecurityUser", ThisKey="SecurityUserId", OtherKey="UserId", IsForeignKey=true)]
+		public SecurityUser SecurityUser
+		{
+			get
+			{
+				return this._SecurityUser.Entity;
+			}
+			set
+			{
+				SecurityUser previousValue = this._SecurityUser.Entity;
+				if (((previousValue != value) 
+							|| (this._SecurityUser.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SecurityUser.Entity = null;
+						previousValue.AlertMessageRecipientsSecurityUserId.Remove(this);
+					}
+					this._SecurityUser.Entity = value;
+					if ((value != null))
+					{
+						value.AlertMessageRecipientsSecurityUserId.Add(this);
+						this._SecurityUserId = value.UserId;
+					}
+					else
+					{
+						this._SecurityUserId = default(System.Guid);
+					}
+					this.SendPropertyChanged("SecurityUser");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 	}
 	
@@ -23749,6 +24440,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<ActVersion> _ActVersionsObsoletedBy;
 		
+		private EntitySet<AlertMessage> _AlertMessagesCreatedBy;
+		
+		private EntitySet<AlertMessage> _AlertMessagesObsoletedBy;
+		
+		private EntitySet<AlertMessage> _AlertMessagesUpdatedBy;
+		
+		private EntitySet<AlertMessageRecipient> _AlertMessageRecipientsSecurityUserId;
+		
 		private EntitySet<AssigningAuthority> _AssigningAuthoritiesCreatedBy;
 		
 		private EntitySet<AssigningAuthority> _AssigningAuthoritiesObsoletedBy;
@@ -23914,6 +24613,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._ActTagsObsoletedBy = new EntitySet<ActTag>(new Action<ActTag>(this.attach_ActTagsObsoletedBy), new Action<ActTag>(this.detach_ActTagsObsoletedBy));
 			this._ActVersionsCreatedBy = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersionsCreatedBy), new Action<ActVersion>(this.detach_ActVersionsCreatedBy));
 			this._ActVersionsObsoletedBy = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersionsObsoletedBy), new Action<ActVersion>(this.detach_ActVersionsObsoletedBy));
+			this._AlertMessagesCreatedBy = new EntitySet<AlertMessage>(new Action<AlertMessage>(this.attach_AlertMessagesCreatedBy), new Action<AlertMessage>(this.detach_AlertMessagesCreatedBy));
+			this._AlertMessagesObsoletedBy = new EntitySet<AlertMessage>(new Action<AlertMessage>(this.attach_AlertMessagesObsoletedBy), new Action<AlertMessage>(this.detach_AlertMessagesObsoletedBy));
+			this._AlertMessagesUpdatedBy = new EntitySet<AlertMessage>(new Action<AlertMessage>(this.attach_AlertMessagesUpdatedBy), new Action<AlertMessage>(this.detach_AlertMessagesUpdatedBy));
+			this._AlertMessageRecipientsSecurityUserId = new EntitySet<AlertMessageRecipient>(new Action<AlertMessageRecipient>(this.attach_AlertMessageRecipientsSecurityUserId), new Action<AlertMessageRecipient>(this.detach_AlertMessageRecipientsSecurityUserId));
 			this._AssigningAuthoritiesCreatedBy = new EntitySet<AssigningAuthority>(new Action<AssigningAuthority>(this.attach_AssigningAuthoritiesCreatedBy), new Action<AssigningAuthority>(this.detach_AssigningAuthoritiesCreatedBy));
 			this._AssigningAuthoritiesObsoletedBy = new EntitySet<AssigningAuthority>(new Action<AssigningAuthority>(this.attach_AssigningAuthoritiesObsoletedBy), new Action<AssigningAuthority>(this.detach_AssigningAuthoritiesObsoletedBy));
 			this._CodeSystemsCreatedBy = new EntitySet<CodeSystem>(new Action<CodeSystem>(this.attach_CodeSystemsCreatedBy), new Action<CodeSystem>(this.detach_CodeSystemsCreatedBy));
@@ -24432,6 +25135,58 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			set
 			{
 				this._ActVersionsObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_AlertMessage", Storage="_AlertMessagesCreatedBy", ThisKey="UserId", OtherKey="CreatedBy")]
+		public EntitySet<AlertMessage> AlertMessagesCreatedBy
+		{
+			get
+			{
+				return this._AlertMessagesCreatedBy;
+			}
+			set
+			{
+				this._AlertMessagesCreatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_AlertMessage1", Storage="_AlertMessagesObsoletedBy", ThisKey="UserId", OtherKey="ObsoletedBy")]
+		public EntitySet<AlertMessage> AlertMessagesObsoletedBy
+		{
+			get
+			{
+				return this._AlertMessagesObsoletedBy;
+			}
+			set
+			{
+				this._AlertMessagesObsoletedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_AlertMessage2", Storage="_AlertMessagesUpdatedBy", ThisKey="UserId", OtherKey="UpdatedBy")]
+		public EntitySet<AlertMessage> AlertMessagesUpdatedBy
+		{
+			get
+			{
+				return this._AlertMessagesUpdatedBy;
+			}
+			set
+			{
+				this._AlertMessagesUpdatedBy.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SecurityUser_AlertMessageRecipient", Storage="_AlertMessageRecipientsSecurityUserId", ThisKey="UserId", OtherKey="SecurityUserId")]
+		public EntitySet<AlertMessageRecipient> AlertMessageRecipientsSecurityUserId
+		{
+			get
+			{
+				return this._AlertMessageRecipientsSecurityUserId;
+			}
+			set
+			{
+				this._AlertMessageRecipientsSecurityUserId.Assign(value);
 			}
 		}
 		
@@ -25338,6 +26093,54 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this.SendPropertyChanging();
 			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_AlertMessagesCreatedBy(AlertMessage entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = this;
+		}
+		
+		private void detach_AlertMessagesCreatedBy(AlertMessage entity)
+		{
+			this.SendPropertyChanging();
+			entity.CreatedByEntity = null;
+		}
+		
+		private void attach_AlertMessagesObsoletedBy(AlertMessage entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = this;
+		}
+		
+		private void detach_AlertMessagesObsoletedBy(AlertMessage entity)
+		{
+			this.SendPropertyChanging();
+			entity.ObsoletedByEntity = null;
+		}
+		
+		private void attach_AlertMessagesUpdatedBy(AlertMessage entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = this;
+		}
+		
+		private void detach_AlertMessagesUpdatedBy(AlertMessage entity)
+		{
+			this.SendPropertyChanging();
+			entity.UpdatedByEntity = null;
+		}
+		
+		private void attach_AlertMessageRecipientsSecurityUserId(AlertMessageRecipient entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityUser = this;
+		}
+		
+		private void detach_AlertMessageRecipientsSecurityUserId(AlertMessageRecipient entity)
+		{
+			this.SendPropertyChanging();
+			entity.SecurityUser = null;
 		}
 		
 		private void attach_AssigningAuthoritiesCreatedBy(AssigningAuthority entity)

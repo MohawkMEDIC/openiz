@@ -43,6 +43,7 @@
     <Compile Include="Alerting\AlertEventArgs.cs" />
     <Compile Include="Alerting\AlertMessage.cs" />
     <Compile Include="Alerting\AlertMessageFlags.cs" />
+    <Compile Include="IAlertManagerService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
