@@ -67,6 +67,30 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     }
 
     /// <summary>
+    /// Alert message extension
+    /// </summary>
+    public partial class AlertMessage : IDbNonVersionedBaseData
+    {
+        /// <summary>
+        /// Gets or sets the identifier
+        /// </summary>
+        [LinqPropertyMap(nameof(AlertMessageId))]
+        public Guid Id
+        {
+            get
+            {
+                return this.AlertMessageId;
+            }
+
+            set
+            {
+                this.AlertMessageId = value;
+            }
+        }
+
+    }
+
+    /// <summary>
     /// Interface definition
     /// </summary>
     public partial class ReferenceTermDisplayName : IDbBaseData

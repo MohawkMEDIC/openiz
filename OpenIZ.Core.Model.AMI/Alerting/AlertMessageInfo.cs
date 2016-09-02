@@ -27,6 +27,7 @@ namespace OpenIZ.Core.Model.AMI.Alerting
 	/// <summary>
 	/// Represents information about an alert message.
 	/// </summary>
+    /// TODO: What is the purpose of this class?
 	[XmlType(nameof(AlertMessageInfo), Namespace = "http://openiz.org/ami")]
 	[XmlRoot(nameof(AlertMessageInfo), Namespace = "http://openiz.org/ami")]
 	public class AlertMessageInfo
@@ -45,7 +46,7 @@ namespace OpenIZ.Core.Model.AMI.Alerting
 		/// <param name="alertMessage"></param>
 		public AlertMessageInfo(AlertMessage alertMessage)
 		{
-			this.Id = alertMessage.Id;
+			this.Id = alertMessage.Key.Value;
 			this.AlertMessage = alertMessage;
 		}
 

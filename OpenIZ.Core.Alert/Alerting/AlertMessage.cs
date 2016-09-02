@@ -19,7 +19,10 @@
  */
 
 using Newtonsoft.Json;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Security;
 using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Alert.Alerting
@@ -28,14 +31,14 @@ namespace OpenIZ.Core.Alert.Alerting
 	/// Represents an alert message.
 	/// </summary>
 	[JsonObject(nameof(AlertMessage)), XmlType(nameof(AlertMessage), Namespace = "http://openiz.org/alerting")]
-	public class AlertMessage
+	public class AlertMessage : NonVersionedEntityData
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AlertMessage"/> class.
 		/// </summary>
 		public AlertMessage()
 		{
-			this.Id = Guid.NewGuid();
+			this.Key = Guid.NewGuid();
 		}
 
 		/// <summary>
@@ -64,12 +67,6 @@ namespace OpenIZ.Core.Alert.Alerting
 		public string Body { get; set; }
 
 		/// <summary>
-		/// Gets or sets the user who created the alert.
-		/// </summary>
-		[JsonProperty("createdBy"), XmlElement("createdBy")]
-		public String CreatedBy { get; set; }
-
-		/// <summary>
 		/// Gets or sets the status of the alert.
 		/// </summary>
 		[JsonProperty("flags"), XmlElement("flags")]
@@ -82,27 +79,48 @@ namespace OpenIZ.Core.Alert.Alerting
 		public string From { get; set; }
 
 		/// <summary>
-		/// Gets or sets the id of the alert.
-		/// </summary>
-		[JsonProperty("id"), XmlElement("id")]
-		public Guid Id { get; set; }
-
-		/// <summary>
 		/// Gets or sets the subject of the alert.
 		/// </summary>
 		[JsonProperty("subject"), XmlElement("subject")]
 		public string Subject { get; set; }
 
-		/// <summary>
-		/// Gets or sets the time of the alert.
-		/// </summary>
-		[JsonProperty("time"), XmlElement("time")]
-		public DateTime TimeStamp { get; set; }
+        /// <summary>
+        /// Date/time of the alert
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+		public DateTimeOffset TimeStamp { get; set; }
+
+        /// <summary>
+        /// Gets or sets the time of the alert.
+        /// </summary>
+        [JsonProperty("time"), XmlElement("time")]
+        public String DateTimeXml {
+            get { return this.TimeStamp.DateTime.ToString("o"); }
+            set { this.TimeStamp = DateTime.Parse(value); }
+        }
 
 		/// <summary>
-		/// Gets or sets the recipient of the alert.
+		/// Gets or sets the recipient of the alert in a human readable form
 		/// </summary>
 		[JsonProperty("to"), XmlElement("to")]
 		public String To { get; set; }
-	}
+
+        /// <summary>
+        /// The recipient users used for query
+        /// </summary>
+        [JsonProperty("rcpt"), XmlElement("rcpt")]
+        public List<SecurityUser> RcptTo { get; set; }
+
+        /// <summary>
+        /// Gets or sets the time this was modified on
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public override DateTimeOffset ModifiedOn
+        {
+            get
+            {
+                return this.CreationTime;
+            }
+        }
+    }
 }

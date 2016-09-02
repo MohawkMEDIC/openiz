@@ -22,6 +22,28 @@
 <modelMap xmlns="http://openiz.org/model/map">
 
   <!-- Security Users -->
+  <class modelClass="OpenIZ.Core.Alert.Alerting.AlertMessage, OpenIZ.Core.Alert, Version=1.0.0.0"
+		domainClass="OpenIZ.Persistence.Data.MSSQL.Data.AlertMessage, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
+    <property modelName="Key" domainName="AlertMessageId"/>
+    <property modelName="CreatedByKey" domainName="CreatedBy"/>
+    <property modelName="UpdatedByKey" domainName="UpdatedBy"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
+    <property modelName="CreatedBy" domainName="CreatedByEntity"/>
+    <property modelName="UpdatedBy" domainName="UpdatedByEntity"/>
+    <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
+    <property modelName="ModifiedOn" domainName="UpdatedTime"/>
+    <property modelName="From" domainName="FromInfo"/>
+    <property modelName="To" domainName="ToInfo"/>
+    <property modelName="RcptTo" domainName="AlertMessageRecipients">
+      <via domainName="SecurityUser"/>
+    </property>
+    <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
+    <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
+    <collapseKey propertyName="UpdatedByEntity" keyName="UpdatedBy"/>
+    
+  </class>
+  
+  <!-- Security Users -->
   <class modelClass="OpenIZ.Core.Model.Security.SecurityUser, OpenIZ.Core.Model, Version=1.0.0.0"
 		domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SecurityUser, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0">
     <property modelName="Key" domainName="UserId"/>

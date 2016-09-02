@@ -185,6 +185,35 @@
       <Association Name="SecurityUser_ActVersion1" Member="ObsoletedByEntity" ThisKey="ObsoletedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
     </Type>
   </Table>
+  <Table Name="dbo.AlertMessage" Member="AlertMessages">
+    <Type Name="AlertMessage">
+      <Column Name="AlertMessageId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="CreationTime" Type="System.DateTimeOffset" DbType="DateTimeOffset NOT NULL" CanBeNull="false" IsDbGenerated="true" />
+      <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
+      <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="UpdatedTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
+      <Column Name="UpdatedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="FromInfo" Type="System.String" DbType="VarChar(128) NOT NULL" CanBeNull="false" />
+      <Column Name="ToInfo" Type="System.String" DbType="VarChar(128) NOT NULL" CanBeNull="false" />
+      <Column Name="MessageTime" Type="System.DateTimeOffset" DbType="DateTimeOffset NOT NULL" CanBeNull="false" />
+      <Column Name="Subject" Type="System.String" DbType="VarChar(256)" CanBeNull="true" />
+      <Column Name="Body" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="Flags" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="AlertMessage_AlertMessageRecipient" Member="AlertMessageRecipients" ThisKey="AlertMessageId" OtherKey="AlertMessageId" Type="AlertMessageRecipient" />
+      <Association Name="SecurityUser_AlertMessage" Member="CreatedByEntity" ThisKey="CreatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
+      <Association Name="SecurityUser_AlertMessage1" Member="ObsoletedByEntity" ThisKey="ObsoletedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
+      <Association Name="SecurityUser_AlertMessage2" Member="UpdatedByEntity" ThisKey="UpdatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AlertMessageRecipient" Member="AlertMessageRecipients">
+    <Type Name="AlertMessageRecipient">
+      <Column Name="AlertMessageId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="SecurityUserId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="AlertMessage_AlertMessageRecipient" Member="AlertMessage" ThisKey="AlertMessageId" OtherKey="AlertMessageId" Type="AlertMessage" IsForeignKey="true" />
+      <Association Name="SecurityUser_AlertMessageRecipient" Member="SecurityUser" ThisKey="SecurityUserId" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
+    </Type>
+  </Table>
   <Table Name="dbo.ApplicationEntity" Member="ApplicationEntities">
     <Type Name="ApplicationEntity">
       <Column Name="EntityVersionId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
@@ -1071,6 +1100,10 @@
       <Association Name="SecurityUser_ActTag1" Member="ActTagsObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="ActTag" />
       <Association Name="SecurityUser_ActVersion" Member="ActVersionsCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="ActVersion" />
       <Association Name="SecurityUser_ActVersion1" Member="ActVersionsObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="ActVersion" />
+      <Association Name="SecurityUser_AlertMessage" Member="AlertMessagesCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="AlertMessage" />
+      <Association Name="SecurityUser_AlertMessage1" Member="AlertMessagesObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="AlertMessage" />
+      <Association Name="SecurityUser_AlertMessage2" Member="AlertMessagesUpdatedBy" ThisKey="UserId" OtherKey="UpdatedBy" Type="AlertMessage" />
+      <Association Name="SecurityUser_AlertMessageRecipient" Member="AlertMessageRecipientsSecurityUserId" ThisKey="UserId" OtherKey="SecurityUserId" Type="AlertMessageRecipient" />
       <Association Name="SecurityUser_AssigningAuthority" Member="AssigningAuthoritiesCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="AssigningAuthority" />
       <Association Name="SecurityUser_AssigningAuthority1" Member="AssigningAuthoritiesObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="AssigningAuthority" />
       <Association Name="SecurityUser_CodeSystem" Member="CodeSystemsCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="CodeSystem" />
