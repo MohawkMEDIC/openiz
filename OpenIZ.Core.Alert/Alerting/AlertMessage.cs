@@ -38,7 +38,7 @@ namespace OpenIZ.Core.Alert.Alerting
 		/// </summary>
 		public AlertMessage()
 		{
-			this.Key = Guid.NewGuid();
+
 		}
 
 		/// <summary>

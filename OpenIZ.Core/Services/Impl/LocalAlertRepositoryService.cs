@@ -150,14 +150,10 @@ namespace OpenIZ.Core.Services.Impl
 				alert = persistenceService.Update(message, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 				this.Received?.Invoke(this, new AlertEventArgs(alert));
 			}
-			catch (Exception e)
+			catch (KeyNotFoundException)
 			{
-#if DEBUG
-				this.traceSource.TraceEvent(TraceEventType.Error, 0, e.StackTrace);
-#endif
-				this.traceSource.TraceEvent(TraceEventType.Error, 0, e.Message);
-
-				throw;
+				alert = persistenceService.Insert(message, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+				this.Received?.Invoke(this, new AlertEventArgs(alert));
 			}
 
 			return alert;
