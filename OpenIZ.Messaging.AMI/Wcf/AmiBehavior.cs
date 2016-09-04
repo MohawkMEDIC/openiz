@@ -115,6 +115,25 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
+		/// Creates an alert.
+		/// </summary>
+		/// <param name="alertMessageInfo">The alert message to be created.</param>
+		/// <returns>Returns the created alert.</returns>
+		public AlertMessageInfo CreateAlert(AlertMessageInfo alertMessageInfo)
+		{
+			var alertRepositoryService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
+
+			if (alertRepositoryService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAlertRepositoryService)));
+			}
+
+			var createdAlert = alertRepositoryService.Save(alertMessageInfo.AlertMessage);
+
+			return new AlertMessageInfo(createdAlert);
+		}
+
+		/// <summary>
 		/// Creates a device in the IMS.
 		/// </summary>
 		/// <param name="device">The device to be created.</param>

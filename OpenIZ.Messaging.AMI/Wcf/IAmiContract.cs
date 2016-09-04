@@ -74,6 +74,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		SecurityUser ChangePassword(String id, string password);
 
 		/// <summary>
+		/// Creates an alert.
+		/// </summary>
+		/// <param name="alertMessageInfo">The alert message to be created.</param>
+		/// <returns>Returns the created alert.</returns>
+		[WebInvoke(UriTemplate = "/alert", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		AlertMessageInfo CreateAlert(AlertMessageInfo alertMessageInfo);
+
+		/// <summary>
 		/// Creates a device in the IMS.
 		/// </summary>
 		/// <param name="device">The device to be created.</param>

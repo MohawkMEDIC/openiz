@@ -41,10 +41,10 @@ namespace OpenIZ.Messaging.AMI.Client
 	public class AmiServiceClient : ServiceClientBase, IDisposable
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="OpenIZ.Messaging.AMI.Client.AmiServiceClient"/> class
-		/// with a specified <see cref="OpenIZ.Core.Http.IRestClient"/> instance.
+		/// Initializes a new instance of the <see cref="AmiServiceClient"/> class
+		/// with a specified <see cref="IRestClient"/> instance.
 		/// </summary>
-		/// <param name="client">The <see cref="OpenIZ.Core.Http.IRestClient"/> instance.</param>
+		/// <param name="client">The <see cref="IRestClient"/> instance.</param>
 		public AmiServiceClient(IRestClient client) : base(client)
 		{
 		}
@@ -69,6 +69,16 @@ namespace OpenIZ.Messaging.AMI.Client
 		public SecurityUser ChangePassword(Guid id, string password)
 		{
 			return this.Client.Put<string, SecurityUser>(string.Format("changepassword/{0}", id.ToString()), this.Client.Accept, password);
+		}
+
+		/// <summary>
+		/// Creates an alert message.
+		/// </summary>
+		/// <param name="alertMessageInfo">The alert message to be created.</param>
+		/// <returns>Returns the created alert message.</returns>
+		public AlertMessageInfo CreateAlert(AlertMessageInfo alertMessageInfo)
+		{
+			return this.Client.Post<AlertMessageInfo, AlertMessageInfo>("alert", this.Client.Accept, alertMessageInfo);
 		}
 
 		/// <summary>
