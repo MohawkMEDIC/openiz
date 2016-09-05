@@ -23,6 +23,7 @@ using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
+using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Security;
 using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Messaging.IMSI.Model;
@@ -60,6 +61,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     [ServiceKnownType(typeof(ManufacturedMaterial))]
     [ServiceKnownType(typeof(DeviceEntity))]
 	[ServiceKnownType(typeof(UserEntity))]
+	[ServiceKnownType(typeof(SecurityUser))]
 	[ServiceKnownType(typeof(ApplicationEntity))]
     [ServiceKnownType(typeof(Bundle))]
     [ServiceKnownType(typeof(ErrorResult))]

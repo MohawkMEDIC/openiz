@@ -850,8 +850,15 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			if (info.Roles != null && info.Roles.Count > 0)
 			{
 				var irps = ApplicationContext.Current.GetService<IRoleProviderService>();
-				irps.RemoveUsersFromRoles(new String[] { info.UserName }, info.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
-				irps.AddUsersToRoles(new String[] { info.UserName }, info.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
+
+				var roles = irps.GetAllRoles(info.UserName);
+
+				// if the roles provided are not equal to the current roles of the user, only then change the roles of the user
+				if (roles != info.Roles.Select(r => r.Name).ToArray())
+				{
+					irps.RemoveUsersFromRoles(new String[] { info.UserName }, info.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
+					irps.AddUsersToRoles(new String[] { info.UserName }, info.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
+				}
 			}
 
 			return info;
