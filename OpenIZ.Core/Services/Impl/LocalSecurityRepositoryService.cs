@@ -513,6 +513,23 @@ namespace OpenIZ.Core.Services.Impl
 		}
 
 		/// <summary>
+		/// Updates a security policy.
+		/// </summary>
+		/// <param name="policy">The security policy containing the updated information.</param>
+		/// <returns>Returns the updated policy.</returns>
+		public SecurityPolicy SavePolicy(SecurityPolicy policy)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityPolicy>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityPolicy>)));
+			}
+
+			return persistenceService.Update(policy, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
 		/// Updates a security role.
 		/// </summary>
 		/// <param name="role">The security role containing the updated information.</param>

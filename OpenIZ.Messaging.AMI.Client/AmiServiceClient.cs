@@ -439,6 +439,28 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
+		/// Updates a policy.
+		/// </summary>
+		/// <param name="policyId">The id of the policy to be updated.</param>
+		/// <param name="policyInfo">The policy containing the updated information.</param>
+		/// <returns>Returns the updated policy.</returns>
+		public SecurityPolicyInfo UpdatePolicy(string policyId, SecurityPolicyInfo policyInfo)
+		{
+			return this.Client.Put<SecurityPolicyInfo, SecurityPolicyInfo>(string.Format("policy/{0}", policyId), this.Client.Accept, policyInfo);
+		}
+
+		/// <summary>
+		/// Updates a role.
+		/// </summary>
+		/// <param name="roleId">The id of the role to be updated.</param>
+		/// <param name="roleInfo">The role containing the updated information.</param>
+		/// <returns>Returns the updated role.</returns>
+		public SecurityRoleInfo UpdateRole(string roleId, SecurityRoleInfo roleInfo)
+		{
+			return this.Client.Put<SecurityRoleInfo, SecurityRoleInfo>(string.Format("role/{0}", roleId), this.Client.Accept, roleInfo);
+		}
+
+		/// <summary>
 		/// Updates a user.
 		/// </summary>
 		/// <param name="id">The id of the user to be updated.</param>

@@ -816,6 +816,70 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
+		/// Updates a policy.
+		/// </summary>
+		/// <param name="policyId">The id of the policy to be updated.</param>
+		/// <param name="policyInfo">The policy containing the updated information.</param>
+		/// <returns>Returns the updated policy.</returns>
+		public SecurityPolicyInfo UpdatePolicy(string policyId, SecurityPolicyInfo policyInfo)
+		{
+			Guid id = Guid.Empty;
+
+			if (!Guid.TryParse(policyId, out id))
+			{
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(policyId)));
+			}
+
+			if (policyInfo.Policy.Key != id)
+			{
+				throw new ArgumentException(string.Format("Unable to update role using id: {0}, and id: {1}", id, policyInfo.Policy.Key));
+			}
+
+			var policyRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (policyRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+			}
+
+			var policy = policyRepository.SavePolicy(policyInfo.Policy);
+
+			return new SecurityPolicyInfo(policy);
+		}
+
+		/// <summary>
+		/// Updates a role.
+		/// </summary>
+		/// <param name="roleId">The id of the role to be updated.</param>
+		/// <param name="roleInfo">The role containing the updated information.</param>
+		/// <returns>Returns the updated role.</returns>
+		public SecurityRoleInfo UpdateRole(string roleId, SecurityRoleInfo roleInfo)
+		{
+			Guid id = Guid.Empty;
+
+			if (!Guid.TryParse(roleId, out id))
+			{
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(roleId)));
+			}
+
+			if (roleInfo.Id != id)
+			{
+				throw new ArgumentException(string.Format("Unable to update role using id: {0}, and id: {1}", id, roleInfo.Id));
+			}
+
+			var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (roleRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+			}
+
+			var role = roleRepository.SaveRole(roleInfo.Role);
+
+			return new SecurityRoleInfo(role);
+		}
+
+		/// <summary>
 		/// Updates a security user.
 		/// </summary>
 		/// <param name="userId">The id of the security user to be updated.</param>

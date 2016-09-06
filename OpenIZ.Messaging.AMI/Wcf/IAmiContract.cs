@@ -362,6 +362,24 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		Place UpdatePlace(string placeId, Place place);
 
 		/// <summary>
+		/// Updates a policy.
+		/// </summary>
+		/// <param name="policyId">The id of the policy to be updated.</param>
+		/// <param name="policyInfo">The policy containing the updated information.</param>
+		/// <returns>Returns the updated policy.</returns>
+		[WebInvoke(UriTemplate = "/policy/{policyId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		SecurityPolicyInfo UpdatePolicy(string policyId, SecurityPolicyInfo policyInfo);
+
+		/// <summary>
+		/// Updates a role.
+		/// </summary>
+		/// <param name="roleId">The id of the role to be updated.</param>
+		/// <param name="roleInfo">The role containing the updated information.</param>
+		/// <returns>Returns the updated role.</returns>
+		[WebInvoke(UriTemplate = "/role/{roleId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		SecurityRoleInfo UpdateRole(string roleId, SecurityRoleInfo roleInfo);
+
+		/// <summary>
 		/// Updates a security user.
 		/// </summary>
 		/// <param name="userId">The id of the security user to be retrieved.</param>
