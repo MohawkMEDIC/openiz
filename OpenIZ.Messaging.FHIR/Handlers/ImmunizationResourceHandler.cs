@@ -40,14 +40,20 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             ApplicationContext.Current.Started += (o, e) => this.m_repository = ApplicationContext.Current.GetService<IActRepositoryService>();
         }
         
+        /// <summary>
+        /// Create the specified substance administration
+        /// </summary>
         protected override SubstanceAdministration Create(SubstanceAdministration modelInstance, List<IResultDetail> issues, MARC.HI.EHRS.SVC.Core.Services.TransactionMode mode)
         {
-            throw new NotImplementedException();
+            return this.m_repository.Insert(modelInstance);
         }
 
+        /// <summary>
+        /// Delete a substance administration
+        /// </summary>
         protected override SubstanceAdministration Delete(Guid modelId, List<IResultDetail> details)
         {
-            throw new NotImplementedException();
+            return this.m_repository.Obsolete<SubstanceAdministration>(modelId);
         }
 
         /// <summary>
@@ -104,6 +110,9 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             return retVal;
         }
 
+        /// <summary>
+        /// Map an immunization FHIR resource to a substance administration
+        /// </summary>
         protected override SubstanceAdministration MapToModel(Immunization resource)
         {
             throw new NotImplementedException();
@@ -117,17 +126,23 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             Expression<Func<SubstanceAdministration, bool>> filter = o => o.ClassConceptKey == ActClassKeys.SubstanceAdministration && o.ObsoletionTime == null && o.MoodConceptKey == ActMoodKeys.Eventoccurrence;
             var parm = Expression.Parameter(typeof(SubstanceAdministration));
             query = Expression.Lambda<Func<SubstanceAdministration, bool>>(Expression.AndAlso(Expression.Invoke(filter, parm), Expression.Invoke(query, parm)), parm);
-            return this.m_repository.FindSubstanceAdministrations(query, offset, count, out totalResults);
+            return this.m_repository.Find(query, offset, count, out totalResults);
         }
 
+        /// <summary>
+        /// Return a substance administration
+        /// </summary>
         protected override SubstanceAdministration Read(Identifier<Guid> id, List<IResultDetail> details)
         {
-            throw new NotImplementedException();
+            return this.m_repository.Get<SubstanceAdministration>(id.Id, id.VersionId);
         }
 
+        /// <summary>
+        /// Update the specified substance administration
+        /// </summary>
         protected override SubstanceAdministration Update(SubstanceAdministration model, List<IResultDetail> details, MARC.HI.EHRS.SVC.Core.Services.TransactionMode mode)
         {
-            throw new NotImplementedException();
+            return this.m_repository.Save(model);
         }
     }
 }

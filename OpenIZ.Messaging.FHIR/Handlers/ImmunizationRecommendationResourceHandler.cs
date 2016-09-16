@@ -108,7 +108,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             Expression<Func<SubstanceAdministration, bool>> filter = o => o.ClassConceptKey == ActClassKeys.SubstanceAdministration && o.ObsoletionTime == null && o.MoodConceptKey == ActMoodKeys.Propose;
             var parm = Expression.Parameter(typeof(SubstanceAdministration));
             query = Expression.Lambda<Func<SubstanceAdministration, bool>>(Expression.AndAlso(Expression.Invoke(filter, parm), Expression.Invoke(query, parm)), parm);
-            return this.m_repository.FindSubstanceAdministrations(query, offset, count, out totalResults);
+            return this.m_repository.Find<SubstanceAdministration>(query, offset, count, out totalResults);
         }
 
         protected override SubstanceAdministration Read(Identifier<Guid> id, List<IResultDetail> details)

@@ -19,54 +19,55 @@ namespace OpenIZ.Core.Services.Impl
 		/// <summary>
 		/// Find acts matching the predicate
 		/// </summary>
-		public IEnumerable<Act> FindActs(Expression<Func<Act, bool>> query, int offset, int? count, out int totalResults)
+		public IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> filter, int offset, int? count, out int totalResults) where TAct : Act
 		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Perform the search
-		/// </summary>
-		public IEnumerable<SubstanceAdministration> FindSubstanceAdministrations(Expression<Func<SubstanceAdministration, bool>> filter, int offset, int? count, out int totalResults)
-		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SubstanceAdministration>>();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
 			if (persistenceService == null)
 				throw new InvalidOperationException("No concept persistence service found");
 
 			return persistenceService.Query(filter, offset, count, AuthenticationContext.Current.Principal, out totalResults);
 		}
 
-		public Act Get(Guid key, Guid versionId)
+        /// <summary>
+        /// Get the specified act
+        /// </summary>
+		public TAct Get<TAct>(Guid key, Guid versionId) where TAct : Act
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<Act>)));
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
 			}
 
 			return persistenceService.Get<Guid>(new Identifier<Guid>(key, versionId), AuthenticationContext.Current.Principal, true);
 		}
 
-		public Act Insert(Act insert)
+        /// <summary>
+        /// Insert the specified act
+        /// </summary>
+		public TAct Insert<TAct>(TAct insert) where TAct : Act
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<Act>)));
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
 			}
 
 			return persistenceService.Insert(insert, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
-		public Act Obsolete(Guid key)
+        /// <summary>
+        /// Obsolete the specified act
+        /// </summary>
+		public TAct Obsolete<TAct>(Guid key) where TAct : Act
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<Act>)));
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
 			}
 
 			var act = persistenceService.Get<Guid>(new Identifier<Guid>(key), AuthenticationContext.Current.Principal, true);
@@ -79,25 +80,37 @@ namespace OpenIZ.Core.Services.Impl
 			return persistenceService.Obsolete(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
-		public Act Save(Act act)
+        /// <summary>
+        /// Insert or update the specified act
+        /// </summary>
+        /// <param name="act"></param>
+        /// <returns></returns>
+		public TAct Save<TAct>(TAct act) where TAct : Act
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<Act>)));
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
 			}
 
-			return persistenceService.Update(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            try
+            {
+                return persistenceService.Update(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            }
+            catch(KeyNotFoundException)
+            {
+                return persistenceService.Insert(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            }
 		}
 
 		/// <summary>
 		/// Validate the act and prepare for storage
 		/// </summary>
-		public Act Validate(Act data)
+		public TAct Validate<TAct>(TAct data) where TAct : Act
 		{
 			// Correct author information and controlling act information
-			data = data.Clean() as Act;
+			data = data.Clean() as TAct;
 			ISecurityRepositoryService userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 			var currentUserEntity = userService.GetUserEntity(AuthenticationContext.Current.Principal.Identity);
 			if (!data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator))

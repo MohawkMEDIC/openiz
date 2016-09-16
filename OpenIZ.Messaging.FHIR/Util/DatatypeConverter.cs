@@ -2,11 +2,14 @@
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel.Web;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,6 +31,7 @@ namespace OpenIZ.Messaging.FHIR.Util
             retVal.VersionId = resource.VersionKey.ToString();
             return retVal;
         }
+
         /// <summary>
         /// Convert reference term
         /// </summary>
@@ -36,6 +40,97 @@ namespace OpenIZ.Messaging.FHIR.Util
             if (rt == null)
                 return null;
             return new FhirCoding(new Uri(rt.CodeSystem.Url ?? String.Format("urn:oid:{0}", rt.CodeSystem.Oid)), rt.Mnemonic);
+        }
+
+        /// <summary>
+        /// Convert the telecommunications address
+        /// </summary>
+        public static FhirTelecom Convert(EntityTelecomAddress tel)
+        {
+            return new FhirTelecom()
+            {
+                Use = DatatypeConverter.Convert(tel.AddressUse)?.GetPrimaryCode()?.Code,
+                Value = tel.IETFValue
+            };
+        }
+
+        /// <summary>
+        /// Convert the entity address to a FHIR address
+        /// </summary>
+        public static FhirAddress Convert(EntityAddress addr)
+        {
+            if (addr == null) return null;
+
+            // Return value
+            var retVal = new FhirAddress()
+            {
+                Use = DatatypeConverter.Convert(addr.AddressUse)?.GetPrimaryCode()?.Code,
+                Line = new List<FhirString>()
+            };
+
+            // Process components
+            foreach(var com in addr.Component)
+            {
+                if (com.ComponentTypeKey == AddressComponentKeys.City)
+                    retVal.City = com.Value;
+                else if (com.ComponentTypeKey == AddressComponentKeys.Country)
+                    retVal.Country = com.Value;
+                else if (com.ComponentTypeKey == AddressComponentKeys.AddressLine ||
+                    com.ComponentTypeKey == AddressComponentKeys.StreetAddressLine)
+                    retVal.Line.Add(com.Value);
+                else if (com.ComponentTypeKey == AddressComponentKeys.State)
+                    retVal.State = com.Value;
+                else if (com.ComponentTypeKey == AddressComponentKeys.PostalCode)
+                    retVal.Zip = com.Value;
+                else
+                {
+                    retVal.Extension.Add(new Extension()
+                    {
+                        IsModifier = false,
+                        Url = FhirConstants.OpenIZProfile + "#address-" + com.ComponentType.Mnemonic,
+                        Value = new FhirString(com.Value)
+                    });
+                }
+            }
+
+            return retVal;
+        }
+
+        /// <summary>
+        /// Convert the entity name to a FHIR name
+        /// </summary>
+        public static FhirHumanName Convert(EntityName en)
+        {
+            if (en == null) return null;
+
+            // Return value
+            var retVal = new FhirHumanName()
+            {
+                Use = DatatypeConverter.Convert(en.NameUse)?.GetPrimaryCode()?.Code
+            };
+
+            // Process components
+            foreach (var com in en.Component)
+            {
+                if (com.ComponentTypeKey == NameComponentKeys.Given)
+                    retVal.Given.Add(com.Value);
+                else if (com.ComponentTypeKey == NameComponentKeys.Family)
+                    retVal.Family.Add(com.Value);
+                else if (com.ComponentTypeKey == NameComponentKeys.Prefix)
+                    retVal.Prefix.Add(com.Value);
+                else if (com.ComponentTypeKey == NameComponentKeys.Suffix)
+                    retVal.Suffix.Add(com.Value);
+            }
+
+            return retVal;
+        }
+
+        /// <summary>
+        /// Creates a FHIR reference
+        /// </summary>
+        public static Reference<TResource> CreateReference<TResource>(IVersionedEntity targetEntity) where TResource : DomainResourceBase, new()
+        {
+            return Reference<TResource>.CreateResourceReference(DatatypeConverter.CreateResource<TResource>(targetEntity), WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri);
         }
 
         /// <summary>

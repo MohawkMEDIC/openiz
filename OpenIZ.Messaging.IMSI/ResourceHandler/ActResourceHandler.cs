@@ -92,12 +92,12 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 
 		public IdentifiedData Get(Guid id, Guid versionId)
 		{
-			return this.actRepositorySerivce.Get(id, versionId);
+			return this.actRepositorySerivce.Get<Act>(id, versionId);
 		}
 
 		public IdentifiedData Obsolete(Guid key)
 		{
-			return this.actRepositorySerivce.Obsolete(key);
+			return this.actRepositorySerivce.Obsolete<Act>(key);
 		}
 
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
@@ -108,7 +108,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			return this.actRepositorySerivce.FindActs(QueryExpressionParser.BuildLinqExpression<Act>(queryParameters), 0, count, out totalCount);
+			return this.actRepositorySerivce.Find<Act>(QueryExpressionParser.BuildLinqExpression<Act>(queryParameters), 0, count, out totalCount);
 		}
 
 		public IdentifiedData Update(IdentifiedData data)

@@ -28,41 +28,37 @@ namespace OpenIZ.Core.Services
 	/// <summary>
 	/// Represents the act repository service
 	/// </summary>
+    /// TODO: Should the entire interface be genericised? 
 	public interface IActRepositoryService
 	{
 		/// <summary>
 		/// Find all acts
 		/// </summary>
-		IEnumerable<Act> FindActs(Expression<Func<Act, bool>> query, int offset, int? count, out int totalResults);
+		IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> query, int offset, int? count, out int totalResults) where TAct : Act;
 
-		/// <summary>
-		/// Find the substance administrations
-		/// </summary>
-		IEnumerable<SubstanceAdministration> FindSubstanceAdministrations(Expression<Func<SubstanceAdministration, bool>> filter, int offset, int? count, out int totalResults);
+        /// <summary>
+        /// Get the specified act
+        /// </summary>
+        TAct Get<TAct>(Guid key, Guid versionId) where TAct : Act;
 
-		/// <summary>
-		/// Get the specified act
-		/// </summary>
-		Act Get(Guid key, Guid versionId);
-
-		/// <summary>
-		/// Insert the specified act
-		/// </summary>
-		Act Insert(Act insert);
+        /// <summary>
+        /// Insert the specified act
+        /// </summary>
+        TAct Insert<TAct>(TAct insert) where TAct : Act;
 
 		/// <summary>
 		/// Obsolete the specified act
 		/// </summary>
-		Act Obsolete(Guid key);
+		TAct Obsolete<TAct>(Guid key) where TAct : Act;
 
 		/// <summary>
 		/// Insert or update the specified act
 		/// </summary>
-		Act Save(Act act);
+		TAct Save<TAct>(TAct act) where TAct : Act;
 
 		/// <summary>
 		/// Validate the act
 		/// </summary>
-		Act Validate(Act act);
+		TAct Validate<TAct>(TAct act) where TAct : Act;
 	}
 }
