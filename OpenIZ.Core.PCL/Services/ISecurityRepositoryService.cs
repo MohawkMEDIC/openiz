@@ -222,6 +222,13 @@ namespace OpenIZ.Core.Services
 		UserEntity ObsoleteUserEntity(Guid id);
 
 		/// <summary>
+		/// Updates a security policy.
+		/// </summary>
+		/// <param name="policy">The security policy containing the updated information.</param>
+		/// <returns>Returns the updated policy.</returns>
+		SecurityPolicy SavePolicy(SecurityPolicy policy);
+
+		/// <summary>
 		/// Updates a security device.
 		/// </summary>
 		/// <param name="device">The security device containing the updated information.</param>

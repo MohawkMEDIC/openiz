@@ -74,6 +74,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		SecurityUser ChangePassword(String id, string password);
 
 		/// <summary>
+		/// Creates an alert.
+		/// </summary>
+		/// <param name="alertMessageInfo">The alert message to be created.</param>
+		/// <returns>Returns the created alert.</returns>
+		[WebInvoke(UriTemplate = "/alert", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		AlertMessageInfo CreateAlert(AlertMessageInfo alertMessageInfo);
+
+		/// <summary>
 		/// Creates a device in the IMS.
 		/// </summary>
 		/// <param name="device">The device to be created.</param>
@@ -352,6 +360,24 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the updated place.</returns>
 		[WebInvoke(UriTemplate = "/place/{placeId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		Place UpdatePlace(string placeId, Place place);
+
+		/// <summary>
+		/// Updates a policy.
+		/// </summary>
+		/// <param name="policyId">The id of the policy to be updated.</param>
+		/// <param name="policyInfo">The policy containing the updated information.</param>
+		/// <returns>Returns the updated policy.</returns>
+		[WebInvoke(UriTemplate = "/policy/{policyId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		SecurityPolicyInfo UpdatePolicy(string policyId, SecurityPolicyInfo policyInfo);
+
+		/// <summary>
+		/// Updates a role.
+		/// </summary>
+		/// <param name="roleId">The id of the role to be updated.</param>
+		/// <param name="roleInfo">The role containing the updated information.</param>
+		/// <returns>Returns the updated role.</returns>
+		[WebInvoke(UriTemplate = "/role/{roleId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		SecurityRoleInfo UpdateRole(string roleId, SecurityRoleInfo roleInfo);
 
 		/// <summary>
 		/// Updates a security user.

@@ -115,6 +115,25 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
+		/// Creates an alert.
+		/// </summary>
+		/// <param name="alertMessageInfo">The alert message to be created.</param>
+		/// <returns>Returns the created alert.</returns>
+		public AlertMessageInfo CreateAlert(AlertMessageInfo alertMessageInfo)
+		{
+			var alertRepositoryService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
+
+			if (alertRepositoryService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAlertRepositoryService)));
+			}
+
+			var createdAlert = alertRepositoryService.Insert(alertMessageInfo.AlertMessage);
+
+			return new AlertMessageInfo(createdAlert);
+		}
+
+		/// <summary>
 		/// Creates a device in the IMS.
 		/// </summary>
 		/// <param name="device">The device to be created.</param>
@@ -355,11 +374,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			if (parameters.Count == 0)
 			{
-				var collection = new System.Collections.Specialized.NameValueCollection();
-
-				collection.Add("flags", "2");
-
-				parameters.Add(collection);
+				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
 			}
 
 			var expression = QueryExpressionParser.BuildLinqExpression<AlertMessage>(this.CreateQuery(parameters));
@@ -728,7 +743,23 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the updated alert.</returns>
 		public AlertMessageInfo UpdateAlert(string alertId, AlertMessageInfo alert)
 		{
-			throw new NotImplementedException();
+			Guid key = Guid.Empty;
+
+			if (!Guid.TryParse(alertId, out key))
+			{
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(alertId)));
+			}
+
+			var alertRepository = ApplicationContext.Current.GetService<IAlertRepositoryService>();
+
+			if (alertRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAlertRepositoryService)));
+			}
+
+			var updatedAlert = alertRepository.Save(alert.AlertMessage);
+
+			return new AlertMessageInfo(updatedAlert);
 		}
 
 		/// <summary>
@@ -785,6 +816,70 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
+		/// Updates a policy.
+		/// </summary>
+		/// <param name="policyId">The id of the policy to be updated.</param>
+		/// <param name="policyInfo">The policy containing the updated information.</param>
+		/// <returns>Returns the updated policy.</returns>
+		public SecurityPolicyInfo UpdatePolicy(string policyId, SecurityPolicyInfo policyInfo)
+		{
+			Guid id = Guid.Empty;
+
+			if (!Guid.TryParse(policyId, out id))
+			{
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(policyId)));
+			}
+
+			if (policyInfo.Policy.Key != id)
+			{
+				throw new ArgumentException(string.Format("Unable to update role using id: {0}, and id: {1}", id, policyInfo.Policy.Key));
+			}
+
+			var policyRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (policyRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+			}
+
+			var policy = policyRepository.SavePolicy(policyInfo.Policy);
+
+			return new SecurityPolicyInfo(policy);
+		}
+
+		/// <summary>
+		/// Updates a role.
+		/// </summary>
+		/// <param name="roleId">The id of the role to be updated.</param>
+		/// <param name="roleInfo">The role containing the updated information.</param>
+		/// <returns>Returns the updated role.</returns>
+		public SecurityRoleInfo UpdateRole(string roleId, SecurityRoleInfo roleInfo)
+		{
+			Guid id = Guid.Empty;
+
+			if (!Guid.TryParse(roleId, out id))
+			{
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(roleId)));
+			}
+
+			if (roleInfo.Id != id)
+			{
+				throw new ArgumentException(string.Format("Unable to update role using id: {0}, and id: {1}", id, roleInfo.Id));
+			}
+
+			var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (roleRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+			}
+
+			var role = roleRepository.SaveRole(roleInfo.Role);
+
+			return new SecurityRoleInfo(role);
+		}
+
+		/// <summary>
 		/// Updates a security user.
 		/// </summary>
 		/// <param name="userId">The id of the security user to be updated.</param>
@@ -819,8 +914,15 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			if (info.Roles != null && info.Roles.Count > 0)
 			{
 				var irps = ApplicationContext.Current.GetService<IRoleProviderService>();
-				irps.RemoveUsersFromRoles(new String[] { info.UserName }, info.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
-				irps.AddUsersToRoles(new String[] { info.UserName }, info.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
+
+				var roles = irps.GetAllRoles(info.UserName);
+
+				// if the roles provided are not equal to the current roles of the user, only then change the roles of the user
+				if (roles != info.Roles.Select(r => r.Name).ToArray())
+				{
+					irps.RemoveUsersFromRoles(new String[] { info.UserName }, info.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
+					irps.AddUsersToRoles(new String[] { info.UserName }, info.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
+				}
 			}
 
 			return info;
