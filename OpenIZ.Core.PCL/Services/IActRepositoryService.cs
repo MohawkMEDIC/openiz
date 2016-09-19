@@ -26,43 +26,64 @@ using System.Linq.Expressions;
 namespace OpenIZ.Core.Services
 {
 	/// <summary>
-	/// Represents the act repository service
+	/// Represents an act repository service.
 	/// </summary>
 	public interface IActRepositoryService
 	{
 		/// <summary>
-		/// Find all acts
+		/// Finds acts based on a specific query.
 		/// </summary>
+		/// <param name="query">The query to use to find the acts.</param>
+		/// <param name="offset">The offset of the query.</param>
+		/// <param name="count">The count of the query.</param>
+		/// <param name="totalResults">The total results of the query.</param>
+		/// <returns>Returns a list of acts.</returns>
 		IEnumerable<Act> FindActs(Expression<Func<Act, bool>> query, int offset, int? count, out int totalResults);
 
 		/// <summary>
-		/// Find the substance administrations
+		/// Finds substance administrations based on a specific query.
 		/// </summary>
-		IEnumerable<SubstanceAdministration> FindSubstanceAdministrations(Expression<Func<SubstanceAdministration, bool>> filter, int offset, int? count, out int totalResults);
+		/// <param name="query">The query to use to find the substance administrations.</param>
+		/// <param name="offset">The offset of the query.</param>
+		/// <param name="count">The count of the query.</param>
+		/// <param name="totalResults">The total results of the query.</param>
+		/// <returns>Returns a list of substance administrations.</returns>
+		IEnumerable<SubstanceAdministration> FindSubstanceAdministrations(Expression<Func<SubstanceAdministration, bool>> query, int offset, int? count, out int totalResults);
 
 		/// <summary>
-		/// Get the specified act
+		/// Gets a specific act by key and version key.
 		/// </summary>
-		Act Get(Guid key, Guid versionId);
+		/// <param name="key">The key of the act.</param>
+		/// <param name="versionKey">The version key of the act.</param>
+		/// <returns>Returns an act.</returns>
+		Act Get(Guid key, Guid versionKey);
 
 		/// <summary>
-		/// Insert the specified act
+		/// Inserts a specific act.
 		/// </summary>
-		Act Insert(Act insert);
+		/// <param name="act">The act to be inserted.</param>
+		/// <returns>Returns the inserted act.</returns>
+		Act Insert(Act act);
 
 		/// <summary>
-		/// Obsolete the specified act
+		/// Obsoletes a specific act.
 		/// </summary>
+		/// <param name="key">The key of the act to obsolete.</param>
+		/// <returns>Returns the obsoleted act.</returns>
 		Act Obsolete(Guid key);
 
 		/// <summary>
-		/// Insert or update the specified act
+		/// Inserts or updates the specific act.
 		/// </summary>
+		/// <param name="act">The act to be inserted or saved.</param>
+		/// <returns>Returns the inserted or saved act.</returns>
 		Act Save(Act act);
 
 		/// <summary>
-		/// Validate the act
+		/// Validates an act.
 		/// </summary>
+		/// <param name="act">The act to be validated.</param>
+		/// <returns>Returns the validated act.</returns>
 		Act Validate(Act act);
 	}
 }
