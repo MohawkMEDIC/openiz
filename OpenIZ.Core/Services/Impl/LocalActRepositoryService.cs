@@ -21,7 +21,14 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public IEnumerable<Act> FindActs(Expression<Func<Act, bool>> query, int offset, int? count, out int totalResults)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<Act>)));
+			}
+
+			return persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
 		}
 
 		/// <summary>
