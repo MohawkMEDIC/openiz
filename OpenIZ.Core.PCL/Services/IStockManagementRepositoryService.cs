@@ -21,6 +21,8 @@
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
+using System;
+using System.Collections.Generic;
 
 namespace OpenIZ.Core.Services
 {
@@ -44,5 +46,10 @@ namespace OpenIZ.Core.Services
 		/// <param name="place">The facility for which to get the balance of stock.</param>
 		/// <param name="manufacturedMaterial">The manufactured material for which to retrieve the balance.</param>
 		int GetBalance(Place place, ManufacturedMaterial manufacturedMaterial);
-	}
+
+        /// <summary>
+        /// Find adjustments matching the specified 
+        /// </summary>
+        IEnumerable<Act> FindAdjustments(Guid manufacturedMaterialKey, Guid placeKey, DateTimeOffset? startPeriod, DateTimeOffset? endPeriod);
+    }
 }
