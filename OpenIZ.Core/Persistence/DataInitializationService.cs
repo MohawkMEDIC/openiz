@@ -100,10 +100,7 @@ namespace OpenIZ.Core.Persistence
                     // Perform migrations
                     foreach (var f in datasetFiles)
                     {
-						if (f.Contains("000-NullFlavor"))
-						{
-							continue;
-						}
+						
 
                         try
                         {
