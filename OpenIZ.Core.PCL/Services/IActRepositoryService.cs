@@ -26,13 +26,13 @@ using System.Linq.Expressions;
 namespace OpenIZ.Core.Services
 {
 	/// <summary>
-	/// Represents the act repository service
+	/// Represents an act repository service.
 	/// </summary>
     /// TODO: Should the entire interface be genericised? 
 	public interface IActRepositoryService
 	{
 		/// <summary>
-		/// Find all acts
+		/// Finds acts based on a specific query.
 		/// </summary>
 		IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> query, int offset, int? count, out int totalResults) where TAct : Act;
 
@@ -47,17 +47,17 @@ namespace OpenIZ.Core.Services
         TAct Insert<TAct>(TAct insert) where TAct : Act;
 
 		/// <summary>
-		/// Obsolete the specified act
+		/// Obsoletes a specific act.
 		/// </summary>
 		TAct Obsolete<TAct>(Guid key) where TAct : Act;
 
 		/// <summary>
-		/// Insert or update the specified act
+		/// Inserts or updates the specific act.
 		/// </summary>
 		TAct Save<TAct>(TAct act) where TAct : Act;
 
 		/// <summary>
-		/// Validate the act
+		/// Validates an act.
 		/// </summary>
 		TAct Validate<TAct>(TAct act) where TAct : Act;
 	}

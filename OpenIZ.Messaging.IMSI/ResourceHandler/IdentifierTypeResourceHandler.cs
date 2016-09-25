@@ -162,9 +162,9 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			}
 			else if (processData is IdentifierType)
 			{
-				var organizationData = data as IdentifierType;
+				var identifierData = data as IdentifierType;
 
-				return this.repository.Save(organizationData);
+				return this.repository.Save(identifierData);
 			}
 			else
 			{

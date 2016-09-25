@@ -62,6 +62,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     [ServiceKnownType(typeof(DeviceEntity))]
 	[ServiceKnownType(typeof(UserEntity))]
 	[ServiceKnownType(typeof(SecurityUser))]
+	[ServiceKnownType(typeof(SecurityRole))]
 	[ServiceKnownType(typeof(ApplicationEntity))]
     [ServiceKnownType(typeof(Bundle))]
     [ServiceKnownType(typeof(ErrorResult))]

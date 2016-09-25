@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: Nityan
- * Date: 2016-9-5
+ * Date: 2016-9-17
  */
 using System;
 using System.Collections.Generic;
@@ -27,17 +27,17 @@ using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Services;
 using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Model.Security;
-using OpenIZ.Core.Security.Attribute;
-using System.Security.Permissions;
 using OpenIZ.Core.Security;
+using System.Security.Permissions;
+using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Core.Model.Collection;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {
 	/// <summary>
-	/// Represents a resource handler for security users.
+	/// Represents a resource handler for security roles.
 	/// </summary>
-	public class SecurityUserResourceHandler : IResourceHandler
+	public class SecurityRoleResourceHandler : IResourceHandler
 	{
 		/// <summary>
 		/// The internal reference to the <see cref="ISecurityRepositoryService"/> instance.
@@ -45,9 +45,9 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		private ISecurityRepositoryService repository;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="SecurityUserResourceHandler"/> class.
+		/// Initializes a new instance of the <see cref="SecurityRoleResourceHandler"/> class.
 		/// </summary>
-		public SecurityUserResourceHandler()
+		public SecurityRoleResourceHandler()
 		{
 			ApplicationContext.Current.Started += (o, e) => this.repository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 		}
@@ -59,7 +59,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		{
 			get
 			{
-				return "SecurityUser";
+				return "SecurityRole";
 			}
 		}
 
@@ -70,7 +70,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		{
 			get
 			{
-				return typeof(SecurityUser);
+				return typeof(SecurityRole);
 			}
 		}
 
@@ -93,17 +93,17 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			{
 				throw new InvalidOperationException("Bundle must have an entry point");
 			}
-			else if (processData is SecurityUser)
+			else if (processData is SecurityRole)
 			{
-				var securityUser = processData as SecurityUser;
+				var securityRole = processData as SecurityRole;
 
 				if (updateIfExists)
 				{
-					return this.repository.SaveUser(securityUser);
+					return this.repository.SaveRole(securityRole);
 				}
 				else
 				{
-					return this.repository.CreateUser(securityUser, securityUser.PasswordHash);
+					return this.repository.CreateRole(securityRole);
 				}
 			}
 			else
@@ -117,7 +117,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		public IdentifiedData Get(Guid id, Guid versionId)
 		{
-			return this.repository.GetUser(id);
+			return this.repository.GetRole(id);
 		}
 
 		/// <summary>
@@ -126,7 +126,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
 		public IdentifiedData Obsolete(Guid key)
 		{
-			return this.repository.ObsoleteUser(key);
+			return this.repository.ObsoleteRole(key);
 		}
 
 		/// <summary>
@@ -134,7 +134,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			return this.repository.FindUsers(QueryExpressionParser.BuildLinqExpression<SecurityUser>(queryParameters));
+			return this.repository.FindRoles(QueryExpressionParser.BuildLinqExpression<SecurityRole>(queryParameters));
 		}
 
 		/// <summary>
@@ -142,7 +142,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			return this.repository.FindUsers(QueryExpressionParser.BuildLinqExpression<SecurityUser>(queryParameters), offset, count, out totalCount);
+			return this.repository.FindRoles(QueryExpressionParser.BuildLinqExpression<SecurityRole>(queryParameters), offset, count, out totalCount);
 		}
 
 		/// <summary>
@@ -163,9 +163,9 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			{
 				throw new InvalidOperationException("Bundle must have an entry");
 			}
-			else if (saveData is SecurityUser)
+			else if (saveData is SecurityRole)
 			{
-				return this.repository.SaveUser(saveData as SecurityUser);
+				return this.repository.SaveRole(saveData as SecurityRole);
 			}
 			else
 			{

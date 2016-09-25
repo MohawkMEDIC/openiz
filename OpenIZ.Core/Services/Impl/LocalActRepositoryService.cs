@@ -1,4 +1,23 @@
-﻿using MARC.HI.EHRS.SVC.Core;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: Nityan
+ * Date: 2016-8-26
+ */
+using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Acts;
@@ -12,12 +31,12 @@ using System.Linq.Expressions;
 namespace OpenIZ.Core.Services.Impl
 {
 	/// <summary>
-	/// Local act repository service
+	/// Represents an act repository service.
 	/// </summary>
 	public class LocalActRepositoryService : IActRepositoryService
 	{
 		/// <summary>
-		/// Find acts matching the predicate
+		/// Finds acts based on a specific query.
 		/// </summary>
 		public IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> filter, int offset, int? count, out int totalResults) where TAct : Act
 		{
@@ -105,7 +124,7 @@ namespace OpenIZ.Core.Services.Impl
 		}
 
 		/// <summary>
-		/// Validate the act and prepare for storage
+		/// Validates an act.
 		/// </summary>
 		public TAct Validate<TAct>(TAct data) where TAct : Act
 		{
