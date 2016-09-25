@@ -18,10 +18,17 @@
  * Date: 2016-8-30
  */
 
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Security;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -51,5 +58,20 @@ namespace OpenIZ.Core.Services.Impl
 		{
 			throw new NotImplementedException();
 		}
-	}
+
+        /// <summary>
+        /// Find adjustments
+        /// </summary>
+        public IEnumerable<Act> FindAdjustments(Guid manufacturedMaterialKey, Guid placeKey, DateTimeOffset? startPeriod, DateTimeOffset? endPeriod)
+        {
+            IDataPersistenceService<Act> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
+            if (persistenceService == null)
+                throw new InvalidOperationException();
+
+            return persistenceService.Query(o => o.ClassConceptKey == ActClassKeys.AccountManagement && o.ActTime >= startPeriod.Value && o.ActTime <= endPeriod.Value &&
+                o.Participations.Where(guard=>guard.ParticipationRoleKey == ActParticipationKey.Location).Any(p=>p.PlayerEntityKey == placeKey) &&
+                o.Participations.Where(guard=>guard.ParticipationRoleKey == ActParticipationKey.Consumable).Any(p=>p.PlayerEntityKey == manufacturedMaterialKey), AuthenticationContext.Current.Principal);
+
+        }
+    }
 }
