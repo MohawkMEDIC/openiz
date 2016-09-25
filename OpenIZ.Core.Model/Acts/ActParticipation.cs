@@ -180,6 +180,12 @@ namespace OpenIZ.Core.Model.Acts
         }
 
         /// <summary>
+        /// Gets or sets the quantity of player in the act
+        /// </summary>
+        [XmlElement("quantity"), JsonProperty("quantity")]
+        public int Quantity { get; set; }
+
+        /// <summary>
         /// Forces a delay load from the underlying model
         /// </summary>
         public override void Refresh()
