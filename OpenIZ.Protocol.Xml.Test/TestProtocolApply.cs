@@ -280,6 +280,31 @@ namespace OpenIZ.Protocol.Xml.Test
         }
 
         /// <summary>
+        /// Should group into appointments
+        /// </summary>
+        [TestMethod]
+        public void ShouldScheduleAppointments()
+        {
+            SimpleCarePlanService scp = new SimpleCarePlanService(true);
+            ApplicationServiceContext.Current = this;
+            scp.Initialize();
+            // Patient that is just born = Schedule OPV
+            Patient newborn = new Patient()
+            {
+                Key = Guid.NewGuid(),
+                DateOfBirth = DateTime.Now,
+                GenderConcept = new Core.Model.DataTypes.Concept() { Mnemonic = "FEMALE" }
+            };
+
+            // Now apply the protocol
+            var acts = scp.CreateCarePlan(newborn);
+            String json = JsonViewModelSerializer.Serialize(newborn);
+            Assert.AreEqual(63, acts.Count());
+            Assert.IsFalse(acts.Any(o => o.Protocols.Count() > 1));
+
+        }
+
+        /// <summary>
         /// Get service
         /// </summary>
         public object GetService(Type serviceType)

@@ -8,6 +8,7 @@ using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Protocol;
 using OpenIZ.Core.Services;
 using System.Threading;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Core.Protocol
 {
@@ -18,11 +19,22 @@ namespace OpenIZ.Core.Protocol
     public class SimpleCarePlanService : ICarePlanService
     {
 
+        // Group as appointments
+        private bool m_groupAsAppointments = true;
+
         /// <summary>
         /// Constructs the aggregate care planner
         /// </summary>
         public SimpleCarePlanService()
         {
+        }
+
+        /// <summary>
+        /// Simple care plan services
+        /// </summary>
+        public SimpleCarePlanService(bool groupAppointments)
+        {
+            this.m_groupAsAppointments = groupAppointments;
         }
 
         /// <summary>
@@ -57,6 +69,48 @@ namespace OpenIZ.Core.Protocol
         public IEnumerable<Act> CreateCarePlan(Patient p)
         {
             List<Act> protocolActs = this.Protocols.OrderBy(o => o.Name).AsParallel().SelectMany(o => o.Calculate(p)).ToList();
+
+            if (this.m_groupAsAppointments)
+            {
+                List<PatientEncounter> encounters = new List<PatientEncounter>();
+                foreach (var act in new List<Act>(protocolActs))
+                {
+                    // Is there a candidate encounter which is bound by start/end
+                    var candidate = encounters.FirstOrDefault(e => e.ActTime >= act.StartTime && e.ActTime <= act.StopTime);
+
+                    // Create candidate
+                    if (candidate == null)
+                    {
+                        candidate = new PatientEncounter()
+                        {
+                            Participations = new List<ActParticipation>()
+                        {
+                            new ActParticipation(ActParticipationKey.RecordTarget, p.Key)
+                        },
+                            ActTime = act.ActTime,
+                            StartTime = act.ActTime,
+                            StopTime = act.ActTime.AddDays(7), // give them a week to have the encounter
+                            MoodConceptKey = ActMoodKeys.Propose,
+                            Key = Guid.NewGuid()
+                        };
+                        p.Participations.Add(new ActParticipation()
+                        {
+                            ParticipationRoleKey = ActParticipationKey.RecordTarget,
+                            Act = candidate
+                        });
+                        encounters.Add(candidate);
+                        protocolActs.Add(candidate);
+                    }
+
+                    // Add the protocol act
+                    candidate.Relationships.Add(new ActRelationship(ActRelationshipTypeKeys.HasComponent, act));
+
+                    // Remove so we don't have duplicates
+                    protocolActs.Remove(act);
+                    p.Participations.RemoveAll(o => o.Act == act);
+
+                }
+            }
             return protocolActs.ToList();
         }
     }
