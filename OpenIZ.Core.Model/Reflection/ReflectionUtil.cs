@@ -119,10 +119,10 @@ namespace OpenIZ.Core.Model.Reflection
             var guardParameter = Expression.Parameter(me.Type.GetTypeInfo().GenericTypeArguments[0], "x");
             var currentSequenceId = typeof(TDomain).GetRuntimeProperty("VersionSequenceId").GetValue(domainInstance);
             var bodyExpression = Expression.MakeBinary(ExpressionType.AndAlso,
-                Expression.MakeBinary(ExpressionType.GreaterThanOrEqual, Expression.MakeMemberAccess(guardParameter, effectiveVersionMethod), Expression.Constant(currentSequenceId)),
+                Expression.MakeBinary(ExpressionType.LessThanOrEqual, Expression.MakeMemberAccess(guardParameter, effectiveVersionMethod), Expression.Constant(currentSequenceId)),
                 Expression.MakeBinary(ExpressionType.OrElse,
                     Expression.MakeBinary(ExpressionType.Equal, Expression.MakeMemberAccess(guardParameter, obsoleteVersionMethod), Expression.Constant(null)),
-                    Expression.MakeBinary(ExpressionType.LessThanOrEqual, Expression.MakeMemberAccess(
+                    Expression.MakeBinary(ExpressionType.LessThan, Expression.MakeMemberAccess(
                         Expression.MakeMemberAccess(guardParameter, obsoleteVersionMethod),
                         typeof(Nullable<Decimal>).GetRuntimeProperty("Value")), Expression.Constant(currentSequenceId))
                 )

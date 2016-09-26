@@ -83,6 +83,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.IsTrue(afterTest.Names.Exists(o => o.Component.Exists(c => c.Value == "Strawberries")));
         }
 
+
         /// <summary>
         /// Test the insert of an identified entity
         /// </summary>

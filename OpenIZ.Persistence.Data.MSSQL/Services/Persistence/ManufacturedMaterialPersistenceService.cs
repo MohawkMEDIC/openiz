@@ -31,7 +31,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     /// <summary>
     /// Manufactured material persistence service
     /// </summary>
-    public class ManufacturedMaterialPersistenceService : IdentifiedPersistenceService<Core.Model.Entities.ManufacturedMaterial, Data.ManufacturedMaterial>
+    public class ManufacturedMaterialPersistenceService : EntityDerivedPersistenceService<Core.Model.Entities.ManufacturedMaterial, Data.ManufacturedMaterial>
     {
         // Material persister
         private MaterialPersistenceService m_materialPersister = new MaterialPersistenceService();
@@ -70,7 +70,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         public override Core.Model.Entities.ManufacturedMaterial Update(ModelDataContext context, Core.Model.Entities.ManufacturedMaterial data, IPrincipal principal)
         {
             var updated = this.m_materialPersister.Update(context, data, principal);
-            return base.Update(context, data, principal);
+            return base.Insert(context, data, principal);
         }
 
         /// <summary>

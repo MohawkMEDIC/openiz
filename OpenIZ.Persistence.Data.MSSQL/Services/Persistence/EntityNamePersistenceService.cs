@@ -113,8 +113,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Duplicate name?
             var existing = context.PhoneticValues.FirstOrDefault(o => o.Value == modelInstance.Value);
-            if (existing != null)
-                retVal.PhoneticValue = existing;
+            if (existing != null && existing.PhoneticValueId != retVal.PhoneticValueId)
+                retVal.PhoneticValueId = existing.PhoneticValueId;
             else
             {
                 var phoneticCoder = ApplicationContext.Current.GetService<IPhoneticAlgorithmHandler>();

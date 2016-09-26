@@ -77,6 +77,7 @@
     <Compile Include="Services\SqlIdentityProviderTest.cs" />
     <Compile Include="Services\SqlRoleProviderTest.cs" />
     <Compile Include="Services\EntityPersistenceServiceTest.cs" />
+    <Compile Include="Services\ManufacturedMaterialPersistenceTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Caching.Memory\OpenIZ.Caching.Memory.csproj">

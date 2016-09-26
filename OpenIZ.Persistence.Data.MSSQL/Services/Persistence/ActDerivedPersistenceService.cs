@@ -1,4 +1,7 @@
-﻿using OpenIZ.Core.Model.Acts;
+﻿using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Data;
+using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Services;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using System;
 using System.Collections.Generic;
@@ -45,6 +48,28 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = this.m_actPersister.Obsolete(context, data, principal);
             return data;
+        }
+
+        /// <summary>
+        /// Gets the specified object
+        /// </summary>
+        public override TModel Get<TIdentifier>(MARC.HI.EHRS.SVC.Core.Data.Identifier<TIdentifier> containerId, IPrincipal principal, bool loadFast)
+        {
+            var tr = 0;
+            var uuid = containerId as Identifier<Guid>;
+
+            if (uuid.Id != Guid.Empty)
+            {
+                var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(uuid.Id) as TModel;
+                if (cacheItem != null && (cacheItem.VersionKey.HasValue && uuid.VersionId == cacheItem.VersionKey.Value || uuid.VersionId == Guid.Empty))
+                    return cacheItem;
+            }
+
+            // Get most recent version
+            if (uuid.VersionId == Guid.Empty)
+                return base.Query(o => o.Key == uuid.Id && o.ObsoletionTime == null, 0, 1, principal, out tr).FirstOrDefault();
+            else
+                return base.Query(o => o.Key == uuid.Id && o.VersionKey == uuid.VersionId, 0, 1, principal, out tr).FirstOrDefault();
         }
     }
 }
