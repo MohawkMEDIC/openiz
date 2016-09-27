@@ -216,7 +216,9 @@ namespace OpenIZ.Core.Model.Query
                         // HACK: Fuzz dates for intervals
                         if ((accessExpression.Type.StripNullable() == typeof(DateTime) ||
                             accessExpression.Type.StripNullable() == typeof(DateTimeOffset)) &&
-                            value.Length <= 7
+                            value.Length <= 7 &&
+                            !value.StartsWith("~") &&
+                            !value.Contains("null")
                             )
                             value = "~" + value;
 
@@ -318,6 +320,8 @@ namespace OpenIZ.Core.Model.Query
                         Expression singleExpression = Expression.MakeBinary(et, accessExpression, valueExpr);
                         if (keyExpression == null)
                             keyExpression = singleExpression;
+                        else if(et == ExpressionType.Equal)
+                            keyExpression = Expression.MakeBinary(ExpressionType.OrElse, keyExpression, singleExpression);
                         else
                             keyExpression = Expression.MakeBinary(ExpressionType.AndAlso, keyExpression, singleExpression);
                     }

@@ -31,7 +31,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                 LotNumber = "AAAAA",
                 Identifiers = new List<EntityIdentifier>()
                 {
-                    new EntityIdentifier(new AssigningAuthority() { DomainName = "GTIN", Name = "Global Trade Identifier", Oid = "1.2.3.4.5.6" }, "20304303")
+                    new EntityIdentifier(new AssigningAuthority() { DomainName = "GTIN", Name = "Global Trade Identifier", Oid = "1.2.3.4.5.6.9098766" }, "20304303")
                 },
                 Names = new List<EntityName>() { new EntityName(NameUseKeys.Assigned, "ACME OPV Vaccine") },
                 DeterminerConceptKey = DeterminerKeys.Specific,

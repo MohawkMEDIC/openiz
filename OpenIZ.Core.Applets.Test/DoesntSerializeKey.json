@@ -349,8 +349,8 @@
 					"id": "339b8fdd-ac29-4c89-9a9e-0ebe21d52b16"
 				},
 				"identifier": {
-					"TZ_FRID": "urn:uuid:479A6D76-0139-3355-873F-97512EB9F136",
-					"TIIS_FACID": "16818"
+          "TZ_FRID": { "value": "urn:uuid:479A6D76-0139-3355-873F-97512EB9F136" },
+          "TIIS_FACID": { "value": "16818" }
 				},
 				"relationship": {
 					"Parent": {
@@ -483,8 +483,8 @@
 								"id": "5f10a0a1-2bbf-4254-98f8-595ac5b3233c"
 							},
 							"identifier": {
-								"TIIS_FACID": "12610",
-								"TZ_FRID": "urn:uuid:AE3D4B98-E037-36D0-83EB-FE4382E81F90"
+                "TIIS_FACID": { "value": "12610" },
+                "TZ_FRID": { "value": "urn:uuid:AE3D4B98-E037-36D0-83EB-FE4382E81F90" }
 							},
 							"relationship": {
 								"Parent": {
@@ -617,8 +617,8 @@
 											"id": "d79ca638-090d-40db-989d-9c181353c7b5"
 										},
 										"identifier": {
-											"TIIS_FACID": "12608",
-											"TZ_FRID": "urn:uuid:EDFD5B83-560D-39EB-9121-D8EB33326F1D"
+                      "TIIS_FACID": { "value": "12608" },
+                      "TZ_FRID": { "value": "urn:uuid:EDFD5B83-560D-39EB-9121-D8EB33326F1D" }
 										},
 										"relationship": {
 											"Parent": {
@@ -751,8 +751,8 @@
 														"id": "d79ca638-090d-40db-989d-9c181353c7b5"
 													},
 													"identifier": {
-														"TZ_FRID": "urn:uuid:67882F85-DA89-3A79-A7D5-E224859863D6",
-														"TIIS_FACID": "12607"
+                            "TZ_FRID": { "value": "urn:uuid:67882F85-DA89-3A79-A7D5-E224859863D6" },
+                            "TIIS_FACID": { "value": "12607" }
 													},
 													"extension": {
 														"http://openiz.org/extensions/contrib/tiis/isleaf": null,

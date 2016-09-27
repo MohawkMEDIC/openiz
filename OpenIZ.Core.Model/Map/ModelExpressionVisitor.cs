@@ -272,18 +272,18 @@ namespace OpenIZ.Core.Model.Map
                 Expression argExpression = this.Visit(exp);
 
                 // Is there a VIA expression to be corrected?
-                //if (argExpression is LambdaExpression)
-                //{
-                //    var lambdaExpression = argExpression as LambdaExpression;
-                //    // Ok, we need to find the traversal expression
-                //    //this.m_mapper.
-                //    ParameterExpression newParameter = Expression.Parameter(this.m_mapper.ExtractDomainType(retVal[0].Type), lambdaExpression.Parameters[0].Name);
-                //    Expression accessExpression = retVal.First(); // this.m_mapper.CreateLambdaMemberAdjustmentExpression(args.First() as MemberExpression, newParameter);
-                //    Expression newBody = new LambdaCorrectionVisitor(accessExpression, lambdaExpression.Parameters[0], this.m_mapper).Visit(lambdaExpression.Body);
-                //    Type lambdaType = typeof(Func<,>).MakeGenericType(new Type[] { newParameter.Type, newBody.Type });
-                //    argExpression = Expression.Lambda(lambdaType, newBody, newParameter);
+                if (argExpression is LambdaExpression)
+                {
+                    var lambdaExpression = argExpression as LambdaExpression;
+                    // Ok, we need to find the traversal expression
+                    //this.m_mapper.
+                    ParameterExpression newParameter = Expression.Parameter(this.m_mapper.ExtractDomainType(retVal[0].Type), lambdaExpression.Parameters[0].Name);
+                    Expression accessExpression = this.m_mapper.CreateLambdaMemberAdjustmentExpression(args.First() as MemberExpression, newParameter);
+                    Expression newBody = new LambdaCorrectionVisitor(accessExpression, lambdaExpression.Parameters[0], this.m_mapper).Visit(lambdaExpression.Body);
+                    Type lambdaType = typeof(Func<,>).MakeGenericType(new Type[] { newParameter.Type, newBody.Type });
+                    argExpression = Expression.Lambda(lambdaType, newBody, newParameter);
 
-                //}
+                }
                 // Add the expression
                 if (argExpression != exp)
                 {

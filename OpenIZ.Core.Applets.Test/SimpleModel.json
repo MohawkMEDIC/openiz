@@ -10,7 +10,7 @@
   "statusConceptModel": {
     "mnemonic": "ACTIVE"
   },
-  "identifier": { "OHIPCARD": [ "12343120423" ] },
+  "identifier": { "OHIPCARD": [ { "value": "12343120423" } ] },
   "relationship": {
     "Mother": [
       {
@@ -19,7 +19,14 @@
 
     ]
   },
-  "telecom": { "WorkPlace": [ "mailto:will@johnson.com" ] },
+  "telecom": {
+    "WorkPlace": [
+      {
+        "value": "mailto:will@johnson.com"
+
+      }
+    ]
+  },
   "extension": { "http://openiz.org/oiz/birthcertificate": [ null ] },
   "name": {
     "OfficialRecord": [

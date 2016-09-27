@@ -77,8 +77,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Map
         public void TestConvertSecurityUserNullable()
         {
 
-            Expression<Func<OpenIZ.Core.Model.Security.SecurityUser, bool>> modelExpr = (u => u.ObsoletionTime.HasValue);
-            Expression<Func<OpenIZ.Persistence.Data.MSSQL.Data.SecurityUser, bool>> domainExpr = (u => u.ObsoletionTime.HasValue);
+            Expression<Func<OpenIZ.Core.Model.Security.SecurityUser, bool>> modelExpr = (u => u.ObsoletionTime != null);
+            Expression<Func<OpenIZ.Persistence.Data.MSSQL.Data.SecurityUser, bool>> domainExpr = (u => u.ObsoletionTime != null);
 
             Expression testValue = this.m_mapper.MapModelExpression<SecurityUser, Data.SecurityUser>(modelExpr);
             Assert.AreEqual(domainExpr.ToString(), testValue.ToString());
@@ -159,8 +159,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Map
         public void TestConvertSecurityUserDoubleChainedContainsComplex()
         {
 
-            Expression<Func<OpenIZ.Core.Model.Security.SecurityRole, bool>> modelExpr = (r => r.Users.Any(u => u.CreatedBy.UserName == "jdoe" && u.CreationTime < DateTimeOffset.Now && u.Email.EndsWith(r.Name)) && !r.ObsoletionTime.HasValue);
-            Expression<Func<OpenIZ.Persistence.Data.MSSQL.Data.SecurityRole, bool>> domainExpr = (r => r.SecurityUserRoles.Any(u => u.SecurityUser.CreatedByEntity.UserName == "jdoe" && u.SecurityUser.CreationTime < DateTimeOffset.Now && u.SecurityUser.Email.EndsWith(r.Name)) && !r.ObsoletionTime.HasValue);
+            Expression<Func<OpenIZ.Core.Model.Security.SecurityRole, bool>> modelExpr = (r => r.Users.Any(u => u.CreatedBy.UserName == "jdoe" && u.CreationTime < DateTimeOffset.Now && u.Email.EndsWith(r.Name)) && r.ObsoletionTime == null);
+            Expression<Func<OpenIZ.Persistence.Data.MSSQL.Data.SecurityRole, bool>> domainExpr = (r => r.SecurityUserRoles.Any(u => u.SecurityUser.CreatedByEntity.UserName == "jdoe" && u.SecurityUser.CreationTime < DateTimeOffset.Now && u.SecurityUser.Email.EndsWith(r.Name)) && r.ObsoletionTime == null);
 
             Expression testValue = this.m_mapper.MapModelExpression<SecurityRole, Data.SecurityRole>(modelExpr);
             Assert.AreEqual(domainExpr.ToString(), testValue.ToString());

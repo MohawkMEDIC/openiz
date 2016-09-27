@@ -40,9 +40,5 @@ namespace OpenIZ.Core.Services
 		/// </summary>
 		IEnumerable<Act> CreateCarePlan(Patient p);
 
-		/// <summary>
-		/// Initializes the protocols
-		/// </summary>
-		void Initialize();
 	}
 }
