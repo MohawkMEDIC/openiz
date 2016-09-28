@@ -38,7 +38,7 @@ namespace OpenIZ.Core.Services
 		/// <summary>
 		/// Create a care plam
 		/// </summary>
-		IEnumerable<Act> CreateCarePlan(Patient p);
+		IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters = false);
 
 	}
 }

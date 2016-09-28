@@ -19,9 +19,6 @@ namespace OpenIZ.Core.Protocol
     public class SimpleCarePlanService : ICarePlanService
     {
 
-        // Group as appointments
-        private bool m_groupAsAppointments = true;
-
         // Protocols 
         private List<IClinicalProtocol> m_protocols = new List<IClinicalProtocol>();
 
@@ -31,15 +28,7 @@ namespace OpenIZ.Core.Protocol
         public SimpleCarePlanService()
         {
         }
-
-        /// <summary>
-        /// Simple care plan services
-        /// </summary>
-        public SimpleCarePlanService(bool groupAppointments)
-        {
-            this.m_groupAsAppointments = groupAppointments;
-        }
-
+    
         /// <summary>
         /// Gets the protocols
         /// </summary>
@@ -69,11 +58,11 @@ namespace OpenIZ.Core.Protocol
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
-        public IEnumerable<Act> CreateCarePlan(Patient p)
+        public IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters = false)
         {
             List<Act> protocolActs = this.Protocols.OrderBy(o => o.Name).AsParallel().SelectMany(o => o.Calculate(p)).OrderBy(o=>o.StopTime - o.StartTime).ToList();
 
-            if (this.m_groupAsAppointments)
+            if (asEncounters)
             {
                 List<PatientEncounter> encounters = new List<PatientEncounter>();
                 foreach (var act in new List<Act>(protocolActs))

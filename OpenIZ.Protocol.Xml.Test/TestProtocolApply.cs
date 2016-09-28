@@ -201,7 +201,7 @@ namespace OpenIZ.Protocol.Xml.Test
         public void ShouldHandlePartials()
         {
 
-            SimpleCarePlanService scp = new SimpleCarePlanService(false);
+            SimpleCarePlanService scp = new SimpleCarePlanService();
             ApplicationServiceContext.Current = this;
             // Patient that is just born = Schedule OPV
             Patient newborn = new Patient()
@@ -259,7 +259,7 @@ namespace OpenIZ.Protocol.Xml.Test
         public void ShouldScheduleAll()
         {
 
-            SimpleCarePlanService scp = new SimpleCarePlanService(false);
+            SimpleCarePlanService scp = new SimpleCarePlanService();
             ApplicationServiceContext.Current = this;
             // Patient that is just born = Schedule OPV
             Patient newborn = new Patient()
@@ -282,7 +282,7 @@ namespace OpenIZ.Protocol.Xml.Test
         [TestMethod]
         public void ShouldScheduleAppointments()
         {
-            SimpleCarePlanService scp = new SimpleCarePlanService(true);
+            SimpleCarePlanService scp = new SimpleCarePlanService();
             ApplicationServiceContext.Current = this;
             // Patient that is just born = Schedule OPV
             Patient newborn = new Patient()
@@ -293,7 +293,7 @@ namespace OpenIZ.Protocol.Xml.Test
             };
 
             // Now apply the protocol
-            var acts = scp.CreateCarePlan(newborn);
+            var acts = scp.CreateCarePlan(newborn, true);
             String json = JsonViewModelSerializer.Serialize(newborn);
             Assert.AreEqual(60, acts.Count());
             Assert.IsFalse(acts.Any(o => o.Protocols.Count() > 1));
