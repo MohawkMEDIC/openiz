@@ -20,7 +20,7 @@ namespace OpenIZ.Core.Protocol
     {
 
         // Group as appointments
-        private bool m_groupAsAppointments = true;
+        private bool m_groupAsAppointments = false;
 
         // Protocols 
         private List<IClinicalProtocol> m_protocols = new List<IClinicalProtocol>();
