@@ -49,7 +49,7 @@ namespace OpenIZ.Messaging.HL7
 		/// <summary>
 		/// The internal reference to the <see cref="TraceSource"/> instance.
 		/// </summary>
-		private TraceSource m_tracer = new TraceSource("OpenIZ.Messaging.HL7");
+		private TraceSource tracer = new TraceSource("OpenIZ.Messaging.HL7");
 
 		/// <summary>
 		/// Handle a received message on the LLP interface.
@@ -119,7 +119,7 @@ namespace OpenIZ.Messaging.HL7
 			}
 			catch (Exception ex)
 			{
-				this.m_tracer.TraceEvent(TraceEventType.Error, ex.HResult, "Error processing message {0} : {1}", e.Message?.Version, ex);
+				this.tracer.TraceEvent(TraceEventType.Error, ex.HResult, "Error processing message {0} : {1}", e.Message?.Version, ex);
 				response = MessageUtil.CreateNack(e.Message, "AR", "207", ex.Message);
 			}
 
@@ -138,63 +138,72 @@ namespace OpenIZ.Messaging.HL7
 		//}
 
 		/// <summary>
-		/// Handle a PIX admission
+		/// Handles a patient registration event.
 		/// </summary>
+		/// <param name="request">The registration event message.</param>
+		/// <param name="evt">The event arguments.</param>
+		/// <returns>Returns the response message.</returns>
 		internal IMessage HandleAdmit(NHapi.Model.V25.Message.ADT_A01 request, Hl7MessageReceivedEventArgs evt)
 		{
-			// Get config
-			var dataService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
-			// Create a details array
-			List<IResultDetail> dtls = new List<IResultDetail>();
+			var patientRepositoryService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
 
-			// Validate the inbound message
-			MessageUtil.Validate((IMessage)request, dtls);
+			List<IResultDetail> details = new List<IResultDetail>();
+
+			MessageUtil.Validate((IMessage)request, details);
 
 			IMessage response = null;
 
-			// Control
 			if (request == null)
+			{
 				return null;
+			}
 
-			// Data controller
-			//AuditUtil auditUtil = new AuditUtil() { Context = this.Context };
-			//DataUtil dataUtil = new DataUtil() { Context = this.Context };
-
-			// Construct appropriate audit
 			AuditData audit = null;
+
 			try
 			{
-				// Create Query Data
-				var data = MessageUtil.CreatePatient(request.MSH, request.EVN, request.PID, request.PD1);
-				if (data == null)
+				var patient = MessageUtil.CreatePatient(request.MSH, request.EVN, request.PID, request.PD1);
+
+				if (patient == null)
+				{
 					throw new InvalidOperationException(ApplicationContext.Current.GetLocaleString("MSGE00A"));
+				}
 
-				var result = dataService.Insert(data);
+				var result = patientRepositoryService.Insert(patient);
+
 				if (result == null || result.VersionKey == null)
+				{
 					throw new InvalidOperationException(ApplicationContext.Current.GetLocaleString("DTPE001"));
+				}
 
-				//audit = auditUtil.CreateAuditData("ITI-8", result.VersionId.UpdateMode == UpdateModeType.Update ? ActionType.Update : ActionType.Create, OutcomeIndicator.Success, evt, new List<VersionedDomainIdentifier>() { result.VersionId });
+				response = MessageUtil.CreateNack(request, details, typeof(NHapi.Model.V25.Message.ACK));
 
-				// Now process the result
-				response = MessageUtil.CreateNack(request, dtls, typeof(NHapi.Model.V25.Message.ACK));
 				MessageUtil.UpdateMSH(new NHapi.Base.Util.Terser(response), request);
+
 				(response as NHapi.Model.V25.Message.ACK).MSH.MessageType.TriggerEvent.Value = request.MSH.MessageType.TriggerEvent.Value;
 				(response as NHapi.Model.V25.Message.ACK).MSH.MessageType.MessageStructure.Value = "ACK";
 			}
 			catch (Exception e)
 			{
-				Trace.TraceError(e.ToString());
-				if (!dtls.Exists(o => o.Message == e.Message || o.Exception == e))
-					dtls.Add(new ResultDetail(ResultDetailType.Error, e.Message, e));
-				response = MessageUtil.CreateNack(request, dtls, typeof(NHapi.Model.V25.Message.ACK));
-				//audit = auditUtil.CreateAuditData("ITI-8", ActionType.Create, OutcomeIndicator.EpicFail, evt, new List<VersionedDomainIdentifier>());
+#if DEBUG
+				this.tracer.TraceEvent(TraceEventType.Error, 0, e.StackTrace);
+#endif
+				this.tracer.TraceEvent(TraceEventType.Error, 0, e.Message);
+
+
+				if (!details.Exists(o => o.Message == e.Message || o.Exception == e))
+				{
+					details.Add(new ResultDetail(ResultDetailType.Error, e.Message, e));
+				}
+
+				response = MessageUtil.CreateNack(request, details, typeof(NHapi.Model.V25.Message.ACK));
 			}
 			finally
 			{
-				IAuditorService auditSvc = ApplicationContext.Current.GetService<IAuditorService>();
-				if (auditSvc != null)
-					auditSvc.SendAudit(audit);
+				IAuditorService auditService = ApplicationContext.Current.GetService<IAuditorService>();
+				auditService?.SendAudit(audit);
 			}
+
 			return response;
 		}
 
@@ -203,14 +212,11 @@ namespace OpenIZ.Messaging.HL7
 		/// </summary>
 		internal IMessage HandleIDQuery(NHapi.Model.V25.Message.QBP_Q21 request, Hl7MessageReceivedEventArgs evt)
 		{
-			// Get config
-			var dataService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
+			var patientRepositoryService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
 
-			// Create a details array
-			List<IResultDetail> dtls = new List<IResultDetail>();
+			List<IResultDetail> details = new List<IResultDetail>();
 
-			// Validate the inbound message
-			MessageUtil.Validate((IMessage)request, dtls);
+			MessageUtil.Validate((IMessage)request, details);
 
 			IMessage response = null;
 
@@ -236,7 +242,7 @@ namespace OpenIZ.Messaging.HL7
 				int count = Int32.Parse(request?.RCP?.QuantityLimitedRequest?.Quantity?.Value ?? "0");
 				int offset = 0;
 				int totalCount = 0;
-				var result = dataService.Find(query, offset, count, out totalCount);
+				var result = patientRepositoryService.Find(query, offset, count, out totalCount);
 
 				// Update locations?
 				/*
@@ -252,7 +258,7 @@ namespace OpenIZ.Messaging.HL7
                 */
 
 				// Now process the result
-				response = MessageUtil.CreateRSP_K23(result, dtls);
+				response = MessageUtil.CreateRSP_K23(result, details);
 				//var r = dcu.CreateRSP_K23(null, null);
 				// Copy QPD
 				try
@@ -282,7 +288,7 @@ namespace OpenIZ.Messaging.HL7
 			catch (Exception e)
 			{
 				Trace.TraceError(e.ToString());
-				response = MessageUtil.CreateNack(request, dtls, typeof(RSP_K23));
+				response = MessageUtil.CreateNack(request, details, typeof(RSP_K23));
 				Terser errTerser = new Terser(response);
 				// HACK: Fix the generic ACK with a real ACK for this message
 				errTerser.Set("/MSH-9-2", "K23");
@@ -443,7 +449,7 @@ namespace OpenIZ.Messaging.HL7
 			{
 				IAuditorService auditSvc = ApplicationContext.Current.GetService<IAuditorService>();
 
-				auditSvc?.SendAudit(audit);					
+				auditSvc?.SendAudit(audit);
 			}
 
 			return response;

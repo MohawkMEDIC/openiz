@@ -25,14 +25,17 @@ using NHapi.Base.Model;
 using NHapi.Base.Parser;
 using NHapi.Base.Util;
 using NHapi.Base.validation.impl;
+using NHapi.Model.V25.Datatype;
 using NHapi.Model.V25.Segment;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Security;
 using System.Text;
@@ -51,9 +54,58 @@ namespace OpenIZ.Messaging.HL7
 		private static TraceSource tracer = new TraceSource("OpenIZ.Messaging.HL7");
 
 		/// <summary>
+		/// The internal reference to the HL7v2 Address use conversion map.
+		/// </summary>
+		private static readonly Dictionary<string, Guid> addressUseMap = new Dictionary<string, Guid>
+		{
+			{ "B", AddressUseKeys.WorkPlace },
+			{ "BA", AddressUseKeys.BadAddress },
+			{ "BDL", AddressUseKeys.TemporaryAddress },
+			{ "BR", AddressUseKeys.HomeAddress },
+			{ "C", AddressUseKeys.TemporaryAddress },
+			{ "F", AddressUseKeys.TemporaryAddress },
+			{ "H", AddressUseKeys.HomeAddress },
+			{ "L", AddressUseKeys.PrimaryHome },
+			{ "M", AddressUseKeys.PostalAddress },
+			{ "N", AddressUseKeys.TemporaryAddress },
+			{ "O", AddressUseKeys.WorkPlace },
+			{ "P", AddressUseKeys.PrimaryHome },
+			{ "RH", AddressUseKeys.PrimaryHome }
+		};
+
+		/// <summary>
+		/// The internal reference to the HL7v2 gender conversion map.
+		/// </summary>
+		private static readonly Dictionary<string, Guid> genderMap = new Dictionary<string, Guid>
+		{
+			{ "F", Guid.Parse("094941e9-a3db-48b5-862c-bc289bd7f86c") },
+			{ "M", Guid.Parse("f4e3a6bb-612e-46b2-9f77-ff844d971198") },
+			{ "U", Guid.Parse("ae94a782-1485-4241-9bca-5b09db2156bf") }
+		};
+
+		/// <summary>
+		/// The internal reference to the HL7v2 name use conversion map.
+		/// </summary>
+		private static readonly Dictionary<string, Guid> nameUseMap = new Dictionary<string, Guid>
+		{
+			{ "A", NameUseKeys.Pseudonym },
+			{ "B", NameUseKeys.OfficialRecord },
+			{ "C", NameUseKeys.OfficialRecord },
+			{ "D", NameUseKeys.Ideographic },
+			{ "I", NameUseKeys.Legal },
+			{ "L", NameUseKeys.Legal },
+			{ "M", NameUseKeys.MaidenName },
+			{ "N", NameUseKeys.Pseudonym },
+			{ "P", NameUseKeys.Search },
+			{ "S", NameUseKeys.Anonymous },
+			{ "T", NameUseKeys.Indigenous },
+			{ "U", NameUseKeys.Anonymous }
+		};
+
+		/// <summary>
 		/// The internal reference to the HL7v2 to Telecommunications use conversion map.
 		/// </summary>
-		private static Dictionary<string, Guid> v2TelUseConvert = new Dictionary<string, Guid>()
+		private static Dictionary<string, Guid> telecommunicationsMap = new Dictionary<string, Guid>()
 		{
 			{ "ASN", TelecomAddressUseKeys.AnsweringService },
 			{ "BPN", TelecomAddressUseKeys.Pager },
@@ -73,7 +125,161 @@ namespace OpenIZ.Messaging.HL7
 		/// <returns>Returns the patient instance.</returns>
 		public static Patient CreatePatient(MSH msh, EVN evn, PID pid, PD1 pd1)
 		{
-			throw new NotImplementedException();
+			Patient patient = new Patient();
+
+			patient.Addresses = MessageUtil.ConvertAddresses(pid.GetPatientAddress()).ToList();
+
+			var dateOfBirth = MessageUtil.ConvertTS(pid.DateTimeOfBirth);
+
+			if (dateOfBirth.HasValue)
+			{
+				patient.DateOfBirth = dateOfBirth;
+			}
+
+			var dateOfDeath = MessageUtil.ConvertTS(pid.PatientDeathDateAndTime);
+
+			if (dateOfDeath.HasValue)
+			{
+				patient.DeceasedDate = dateOfDeath.Value;
+			}
+
+			patient.GenderConcept = new Concept
+			{
+				Key = genderMap[pid.AdministrativeSex.Value]
+			};
+
+			patient.LanguageCommunication.Add(new PersonLanguageCommunication(pid.PrimaryLanguage.Identifier.Value, true));
+
+			if (!string.IsNullOrEmpty(pid.MultipleBirthIndicator.Value) && !string.IsNullOrWhiteSpace(pid.MultipleBirthIndicator.Value))
+			{
+				patient.MultipleBirthOrder = Convert.ToInt32(pid.MultipleBirthIndicator.Value);
+			}
+
+			patient.Names = MessageUtil.ConvertNames(pid.GetPatientName()).ToList();
+
+			foreach (var item in pid.GetPhoneNumberHome())
+			{
+				patient.Telecoms.Add(MessageUtil.ConvertXTN(item));
+			}
+
+			foreach (var item in pid.GetPhoneNumberBusiness())
+			{
+				patient.Telecoms.Add(MessageUtil.ConvertXTN(item));
+			}
+
+			return patient;
+		}
+
+		/// <summary>
+		/// Converts a list of <see cref="XAD"/> addresses to a list of <see cref="EntityAddress"/> addresses.
+		/// </summary>
+		/// <param name="addresses">The addresses to be converted.</param>
+		/// <returns>Returns a list of entity addresses.</returns>
+		public static IEnumerable<EntityAddress> ConvertAddresses(NHapi.Model.V25.Datatype.XAD[] addresses)
+		{
+			List<EntityAddress> entityAddresses = new List<EntityAddress>();
+
+			if (addresses.Length == 0)
+			{
+				entityAddresses.AsEnumerable();
+			}
+
+			for (int i = 0; i < addresses.Length; i++)
+			{
+				entityAddresses.Add(new EntityAddress
+				{
+					AddressUse = new Concept
+					{
+						Key = addressUseMap[addresses[i].AddressType.Value]
+					},
+					Component = new List<EntityAddressComponent>
+					{
+						new EntityAddressComponent(AddressComponentKeys.CensusTract, addresses[i].CensusTract.Value),
+						new EntityAddressComponent(AddressComponentKeys.City, addresses[i].City.Value),
+						new EntityAddressComponent(AddressComponentKeys.Country, addresses[i].Country.Value),
+						new EntityAddressComponent(AddressComponentKeys.PostalCode, addresses[i].ZipOrPostalCode.Value),
+						new EntityAddressComponent(AddressComponentKeys.State, addresses[i].StateOrProvince.Value),
+						new EntityAddressComponent(AddressComponentKeys.StreetAddressLine, addresses[i].StreetAddress.StreetOrMailingAddress.Value),
+						new EntityAddressComponent(AddressComponentKeys.StreetName, addresses[i].StreetAddress.StreetName.Value),
+						new EntityAddressComponent(AddressComponentKeys.UnitDesignator, addresses[i].OtherDesignation.Value)
+					}
+				});
+			}
+
+			return entityAddresses.AsEnumerable();
+		}
+
+		/// <summary>
+		/// Converts a list of <see cref="XPN"/> names to a list of <see cref="EntityName"/> names.
+		/// </summary>
+		/// <param name="names">THe list of names to be converted.</param>
+		/// <returns>Returns a list of entity names.</returns>
+		public static IEnumerable<EntityName> ConvertNames(XPN[] names)
+		{
+			List<EntityName> entityNames = new List<EntityName>();
+
+			if (names.Length == 0)
+			{
+				return entityNames.AsEnumerable();
+			}
+
+			for (int i = 0; i < names.Length; i++)
+			{
+				EntityName entityName = new EntityName();
+
+				entityName.NameUse = new Concept
+				{
+					Key = nameUseMap[names[i].NameTypeCode.Value]
+				};
+
+				if (!string.IsNullOrEmpty(names[i].FamilyName.Surname.Value) && !string.IsNullOrWhiteSpace(names[i].FamilyName.Surname.Value))
+				{
+					entityName.Component.Add(new EntityNameComponent(NameComponentKeys.Family, names[i].FamilyName.Surname.Value));
+				}
+
+				if (!string.IsNullOrEmpty(names[i].GivenName.Value) && !string.IsNullOrWhiteSpace(names[i].GivenName.Value))
+				{
+					entityName.Component.Add(new EntityNameComponent(NameComponentKeys.Given, names[i].GivenName.Value));
+				}
+
+				if (!string.IsNullOrEmpty(names[i].PrefixEgDR.Value) && !string.IsNullOrWhiteSpace(names[i].PrefixEgDR.Value))
+				{
+					entityName.Component.Add(new EntityNameComponent(NameComponentKeys.Prefix, names[i].PrefixEgDR.Value));
+				}
+
+				if (!string.IsNullOrEmpty(names[i].DegreeEgMD.Value) && !string.IsNullOrWhiteSpace(names[i].DegreeEgMD.Value))
+				{
+					entityName.Component.Add(new EntityNameComponent(NameComponentKeys.Suffix, names[i].DegreeEgMD.Value));
+				}
+			}
+
+			return entityNames.AsEnumerable();
+		}
+
+		/// <summary>
+		/// Converts a <see cref="TS"/> instance to a <see cref="DateTime"/> instance.
+		/// </summary>
+		/// <param name="timestamp">The TS instance to be converted.</param>
+		/// <returns>Returns the converted date time instance or null.</returns>
+		public static DateTime? ConvertTS(TS timestamp)
+		{
+			DateTime? result = null;
+
+			object dateTime = null;
+
+			if (Util.TryFromWireFormat(timestamp.Time.Value, typeof(MARC.Everest.DataTypes.TS), out dateTime))
+			{
+				result = Convert.ToDateTime(dateTime);
+			}
+			else
+			{
+#if DEBUG
+				MessageUtil.tracer.TraceEvent(TraceEventType.Warning, 0, string.Format("Unable to convert date of birth value: {0}", timestamp.Time.Value));
+#endif
+				MessageUtil.tracer.TraceEvent(TraceEventType.Warning, 0, "Unable to convert date of birth value");
+			}
+
+			return result;
 		}
 
 		/// <summary>
@@ -81,12 +287,12 @@ namespace OpenIZ.Messaging.HL7
 		/// </summary>
 		/// <param name="v2XTN">The v2 XTN instance to be converted.</param>
 		/// <returns>Returns the converted entity telecom address instance.</returns>
-		public static EntityTelecomAddress TelFromXTN(NHapi.Model.V231.Datatype.XTN v2XTN)
+		public static EntityTelecomAddress ConvertXTN(XTN v2XTN)
 		{
 			Regex re = new Regex(@"([+0-9A-Za-z]{1,4})?\((\d{3})\)?(\d{3})\-(\d{4})X?(\d{1,6})?");
 			var retVal = new EntityTelecomAddress();
 
-			if (v2XTN.Get9999999X99999CAnyText.Value == null)
+			if (v2XTN.AnyText.Value == null)
 			{
 				StringBuilder sb = new StringBuilder("tel:");
 
@@ -97,12 +303,12 @@ namespace OpenIZ.Messaging.HL7
 						sb.AppendFormat("{0}-", v2XTN.CountryCode);
 					}
 
-					if (v2XTN.PhoneNumber != null && v2XTN.PhoneNumber.Value != null && !v2XTN.PhoneNumber.Value.Contains("-"))
+					if (v2XTN.TelephoneNumber != null && v2XTN.TelephoneNumber.Value != null && !v2XTN.TelephoneNumber.Value.Contains("-"))
 					{
-						v2XTN.PhoneNumber.Value = v2XTN.PhoneNumber.Value.Insert(3, "-");
+						v2XTN.TelephoneNumber.Value = v2XTN.TelephoneNumber.Value.Insert(3, "-");
 					}
 
-					sb.AppendFormat("{0}-{1}", v2XTN.AreaCityCode, v2XTN.PhoneNumber);
+					sb.AppendFormat("{0}-{1}", v2XTN.AreaCityCode, v2XTN.TelephoneNumber);
 
 					if (v2XTN.Extension.Value != null)
 					{
@@ -122,7 +328,7 @@ namespace OpenIZ.Messaging.HL7
 			}
 			else
 			{
-				var match = re.Match(v2XTN.Get9999999X99999CAnyText.Value);
+				var match = re.Match(v2XTN.AnyText.Value);
 
 				StringBuilder sb = new StringBuilder("tel:");
 
@@ -145,7 +351,7 @@ namespace OpenIZ.Messaging.HL7
 			// Use code conversion
 			Guid use = Guid.Empty;
 
-			if (!string.IsNullOrEmpty(v2XTN.TelecommunicationUseCode.Value) && !v2TelUseConvert.TryGetValue(v2XTN.TelecommunicationUseCode.Value, out use))
+			if (!string.IsNullOrEmpty(v2XTN.TelecommunicationUseCode.Value) && !telecommunicationsMap.TryGetValue(v2XTN.TelecommunicationUseCode.Value, out use))
 			{
 				throw new InvalidOperationException(string.Format("{0} is not a known use code", v2XTN.TelecommunicationUseCode.Value));
 			}
@@ -298,7 +504,7 @@ namespace OpenIZ.Messaging.HL7
 			// Tel use
 			if (tel.AddressUseKey != null)
 			{
-				foreach (var tcu in v2TelUseConvert)
+				foreach (var tcu in telecommunicationsMap)
 				{
 					if (tcu.Value == tel.AddressUseKey)
 					{
