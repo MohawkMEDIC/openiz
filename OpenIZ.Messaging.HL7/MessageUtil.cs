@@ -31,6 +31,7 @@ using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
+using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -105,7 +106,7 @@ namespace OpenIZ.Messaging.HL7
 		/// <summary>
 		/// The internal reference to the HL7v2 to Telecommunications use conversion map.
 		/// </summary>
-		private static Dictionary<string, Guid> telecommunicationsMap = new Dictionary<string, Guid>()
+		private static readonly Dictionary<string, Guid> telecommunicationsMap = new Dictionary<string, Guid>()
 		{
 			{ "ASN", TelecomAddressUseKeys.AnsweringService },
 			{ "BPN", TelecomAddressUseKeys.Pager },
@@ -114,6 +115,36 @@ namespace OpenIZ.Messaging.HL7
 			{ "CEL", TelecomAddressUseKeys.MobileContact },
 			{ "WPN", TelecomAddressUseKeys.WorkPlace }
 		};
+
+		/// <summary>
+		/// The internal reference to the <see cref="IAssigningAuthorityRepositoryService"/> instance.
+		/// </summary>
+		private static IAssigningAuthorityRepositoryService assigningAuthorityRepositoryService;
+
+		/// <summary>
+		/// The internal reference to the <see cref="IConceptRepositoryService"/> instance.
+		/// </summary>
+		private static IConceptRepositoryService conceptRespositoryService;
+
+		static MessageUtil()
+		{
+			ApplicationContext.Current.Started += (o, e) =>
+			{
+				assigningAuthorityRepositoryService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
+				
+				if (assigningAuthorityRepositoryService == null)
+				{
+					MessageUtil.tracer.TraceEvent(TraceEventType.Warning, 0, string.Format("Unable to locate service: {0}", nameof(IAssigningAuthorityRepositoryService)));
+				}
+
+				conceptRespositoryService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+
+				if (conceptRespositoryService == null)
+				{
+					MessageUtil.tracer.TraceEvent(TraceEventType.Warning, 0, string.Format("Unable to locate service: {0}", nameof(IConceptRepositoryService)));
+				}
+			};
+		}
 
 		/// <summary>
 		/// Converts components of a HL7v2 message to a <see cref="Patient"/> instance.
@@ -135,6 +166,10 @@ namespace OpenIZ.Messaging.HL7
 			{
 				patient.DateOfBirth = dateOfBirth;
 			}
+			else
+			{
+				MessageUtil.tracer.TraceEvent(TraceEventType.Warning, 0, "Patient doesn't have date of birth");
+			}
 
 			var dateOfDeath = MessageUtil.ConvertTS(pid.PatientDeathDateAndTime);
 
@@ -143,10 +178,27 @@ namespace OpenIZ.Messaging.HL7
 				patient.DeceasedDate = dateOfDeath.Value;
 			}
 
-			patient.GenderConcept = new Concept
+			try
 			{
-				Key = genderMap[pid.AdministrativeSex.Value]
-			};
+				patient.GenderConcept = new Concept
+				{
+					Key = genderMap[pid.AdministrativeSex.Value]
+				};
+			}
+			catch (KeyNotFoundException)
+			{
+#if DEBUG
+				MessageUtil.tracer.TraceEvent(TraceEventType.Error, 0, string.Format("Gender value {0} not found in map", pid.AdministrativeSex.Value));
+#endif
+				MessageUtil.tracer.TraceEvent(TraceEventType.Error, 0, "Gender value not found in map");
+			}
+
+			if (!string.IsNullOrEmpty(pid.PatientID.IDNumber.Value) && !string.IsNullOrWhiteSpace(pid.PatientID.IDNumber.Value))
+			{
+				patient.Identifiers.AddRange(MessageUtil.ConvertIdentifiers(new CX[] { pid.PatientID }));
+			}
+
+			patient.Identifiers.AddRange(MessageUtil.ConvertIdentifiers(pid.GetAlternatePatientIDPID()));
 
 			patient.LanguageCommunication.Add(new PersonLanguageCommunication(pid.PrimaryLanguage.Identifier.Value, true));
 
@@ -175,7 +227,7 @@ namespace OpenIZ.Messaging.HL7
 		/// </summary>
 		/// <param name="addresses">The addresses to be converted.</param>
 		/// <returns>Returns a list of entity addresses.</returns>
-		public static IEnumerable<EntityAddress> ConvertAddresses(NHapi.Model.V25.Datatype.XAD[] addresses)
+		public static IEnumerable<EntityAddress> ConvertAddresses(XAD[] addresses)
 		{
 			List<EntityAddress> entityAddresses = new List<EntityAddress>();
 
@@ -186,27 +238,115 @@ namespace OpenIZ.Messaging.HL7
 
 			for (int i = 0; i < addresses.Length; i++)
 			{
-				entityAddresses.Add(new EntityAddress
+				EntityAddress entityAddress = new EntityAddress();
+
+				entityAddress.AddressUse = new Concept
 				{
-					AddressUse = new Concept
-					{
-						Key = addressUseMap[addresses[i].AddressType.Value]
-					},
-					Component = new List<EntityAddressComponent>
-					{
-						new EntityAddressComponent(AddressComponentKeys.CensusTract, addresses[i].CensusTract.Value),
-						new EntityAddressComponent(AddressComponentKeys.City, addresses[i].City.Value),
-						new EntityAddressComponent(AddressComponentKeys.Country, addresses[i].Country.Value),
-						new EntityAddressComponent(AddressComponentKeys.PostalCode, addresses[i].ZipOrPostalCode.Value),
-						new EntityAddressComponent(AddressComponentKeys.State, addresses[i].StateOrProvince.Value),
-						new EntityAddressComponent(AddressComponentKeys.StreetAddressLine, addresses[i].StreetAddress.StreetOrMailingAddress.Value),
-						new EntityAddressComponent(AddressComponentKeys.StreetName, addresses[i].StreetAddress.StreetName.Value),
-						new EntityAddressComponent(AddressComponentKeys.UnitDesignator, addresses[i].OtherDesignation.Value)
-					}
-				});
+					Key = addressUseMap[addresses[i].AddressType.Value]
+				};
+
+				if (!string.IsNullOrEmpty(addresses[i].CensusTract.Value) && !string.IsNullOrWhiteSpace(addresses[i].CensusTract.Value))
+				{
+					entityAddress.Component.Add(new EntityAddressComponent(AddressComponentKeys.CensusTract, addresses[i].CensusTract.Value));
+				}
+
+				if (!string.IsNullOrEmpty(addresses[i].City.Value) && !string.IsNullOrWhiteSpace(addresses[i].City.Value))
+				{
+					entityAddress.Component.Add(new EntityAddressComponent(AddressComponentKeys.City, addresses[i].City.Value));
+				}
+
+				if (!string.IsNullOrEmpty(addresses[i].Country.Value) && !string.IsNullOrWhiteSpace(addresses[i].Country.Value))
+				{
+					entityAddress.Component.Add(new EntityAddressComponent(AddressComponentKeys.Country, addresses[i].Country.Value));
+				}
+
+				if (!string.IsNullOrEmpty(addresses[i].ZipOrPostalCode.Value) && !string.IsNullOrWhiteSpace(addresses[i].ZipOrPostalCode.Value))
+				{
+					entityAddress.Component.Add(new EntityAddressComponent(AddressComponentKeys.PostalCode, addresses[i].ZipOrPostalCode.Value));
+				}
+
+				if (!string.IsNullOrEmpty(addresses[i].StreetAddress.StreetOrMailingAddress.Value) && !string.IsNullOrWhiteSpace(addresses[i].StreetAddress.StreetOrMailingAddress.Value))
+				{
+					entityAddress.Component.Add(new EntityAddressComponent(AddressComponentKeys.StreetAddressLine, addresses[i].StreetAddress.StreetOrMailingAddress.Value));
+				}
+
+				if (!string.IsNullOrEmpty(addresses[i].StreetAddress.StreetName.Value) && !string.IsNullOrWhiteSpace(addresses[i].StreetAddress.StreetName.Value))
+				{
+					entityAddress.Component.Add(new EntityAddressComponent(AddressComponentKeys.StreetName, addresses[i].StreetAddress.StreetName.Value));
+				}
+
+				if (!string.IsNullOrEmpty(addresses[i].OtherDesignation.Value) && !string.IsNullOrWhiteSpace(addresses[i].OtherDesignation.Value))
+				{
+					entityAddress.Component.Add(new EntityAddressComponent(AddressComponentKeys.UnitDesignator, addresses[i].OtherDesignation.Value));
+				}
+
+				entityAddresses.Add(entityAddress);
 			}
 
 			return entityAddresses.AsEnumerable();
+		}
+
+		/// <summary>
+		/// Converts an <see cref="CX"/> instance to an <see cref="EntityIdentifier"/> instance.
+		/// </summary>
+		/// <param name="identifier">The identifier to be converted.</param>
+		/// <returns>Returns the converted identifier.</returns>
+		public static EntityIdentifier ConvertIdentifier(CX identifier)
+		{
+			return MessageUtil.ConvertIdentifiers(new CX[] { identifier }).FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Converts a list of <see cref="CX"/> identifiers to a list of <see cref="EntityIdentifier"/> identifiers.
+		/// </summary>
+		/// <param name="identifiers">The list of identifiers to be converted.</param>
+		/// <returns>Returns a list of entity identifiers.</returns>
+		public static IEnumerable<EntityIdentifier> ConvertIdentifiers(CX[] identifiers)
+		{
+			List<EntityIdentifier> entityIdentifiers = new List<EntityIdentifier>();
+
+			if (identifiers.Length == 0)
+			{
+				return entityIdentifiers.AsEnumerable();
+			}
+
+			for (int i = 0; i < identifiers.Length; i++)
+			{
+				EntityIdentifier entityIdentifier = new EntityIdentifier();
+
+				var cx = identifiers[i];
+
+				var assigningAuthority = MessageUtil.assigningAuthorityRepositoryService.Find(a => a.Oid == cx.AssigningAuthority.UniversalID.Value).FirstOrDefault();
+
+				if (assigningAuthority == null)
+				{
+					MessageUtil.tracer.TraceEvent(TraceEventType.Warning, 0, string.Format("Assigning authority OID not found: {0}", cx.AssigningAuthority.UniversalID.Value));
+				}
+				else
+				{
+#if DEBUG
+					MessageUtil.tracer.TraceEvent(TraceEventType.Information, 0, string.Format("Adding {0}^^^&{1}&ISO to alternate identifiers", cx.IDNumber.Value, cx.AssigningAuthority.UniversalID.Value));
+#endif
+					MessageUtil.tracer.TraceEvent(TraceEventType.Information, 0, string.Format("Adding identifier from {0} domain to alternate identifiers", cx.AssigningAuthority.UniversalID.Value));
+
+					entityIdentifier.Authority = assigningAuthority;
+					entityIdentifier.Value = cx.IDNumber.Value;
+				}
+
+				entityIdentifiers.Add(entityIdentifier);
+			}
+
+			return entityIdentifiers.AsEnumerable();
+		}
+
+		/// <summary>
+		/// Converts an <see cref="XPN"/> instance to an <see cref="EntityName"/> instance.
+		/// </summary>
+		/// <param name="name">The name to be converted.</param>
+		/// <returns>Returns the converted name.</returns>
+		public static EntityName ConvertName(XPN name)
+		{
+			return MessageUtil.ConvertNames(new XPN[] { name }).FirstOrDefault();
 		}
 
 		/// <summary>
@@ -251,6 +391,8 @@ namespace OpenIZ.Messaging.HL7
 				{
 					entityName.Component.Add(new EntityNameComponent(NameComponentKeys.Suffix, names[i].DegreeEgMD.Value));
 				}
+
+				entityNames.Add(entityName);
 			}
 
 			return entityNames.AsEnumerable();
@@ -285,41 +427,41 @@ namespace OpenIZ.Messaging.HL7
 		/// <summary>
 		/// Converts a <see cref="NHapi.Model.V231.Datatype.XTN"/> instance to a <see cref="EntityTelecomAddress"/> instance.
 		/// </summary>
-		/// <param name="v2XTN">The v2 XTN instance to be converted.</param>
+		/// <param name="xtn">The v2 XTN instance to be converted.</param>
 		/// <returns>Returns the converted entity telecom address instance.</returns>
-		public static EntityTelecomAddress ConvertXTN(XTN v2XTN)
+		public static EntityTelecomAddress ConvertXTN(XTN xtn)
 		{
 			Regex re = new Regex(@"([+0-9A-Za-z]{1,4})?\((\d{3})\)?(\d{3})\-(\d{4})X?(\d{1,6})?");
 			var retVal = new EntityTelecomAddress();
 
-			if (v2XTN.AnyText.Value == null)
+			if (xtn.AnyText.Value == null)
 			{
 				StringBuilder sb = new StringBuilder("tel:");
 
 				try
 				{
-					if (v2XTN.CountryCode.Value != null)
+					if (xtn.CountryCode.Value != null)
 					{
-						sb.AppendFormat("{0}-", v2XTN.CountryCode);
+						sb.AppendFormat("{0}-", xtn.CountryCode);
 					}
 
-					if (v2XTN.TelephoneNumber != null && v2XTN.TelephoneNumber.Value != null && !v2XTN.TelephoneNumber.Value.Contains("-"))
+					if (xtn.TelephoneNumber != null && xtn.TelephoneNumber.Value != null && !xtn.TelephoneNumber.Value.Contains("-"))
 					{
-						v2XTN.TelephoneNumber.Value = v2XTN.TelephoneNumber.Value.Insert(3, "-");
+						xtn.TelephoneNumber.Value = xtn.TelephoneNumber.Value.Insert(3, "-");
 					}
 
-					sb.AppendFormat("{0}-{1}", v2XTN.AreaCityCode, v2XTN.TelephoneNumber);
+					sb.AppendFormat("{0}-{1}", xtn.AreaCityCode, xtn.TelephoneNumber);
 
-					if (v2XTN.Extension.Value != null)
+					if (xtn.Extension.Value != null)
 					{
-						sb.AppendFormat(";ext={0}", v2XTN.Extension);
+						sb.AppendFormat(";ext={0}", xtn.Extension);
 					}
 				}
 				catch { }
 
 				if (sb.ToString().EndsWith("tel:") || sb.ToString() == "tel:-")
 				{
-					retVal.Value = "tel:" + v2XTN.AnyText.Value;
+					retVal.Value = "tel:" + xtn.AnyText.Value;
 				}
 				else
 				{
@@ -328,7 +470,7 @@ namespace OpenIZ.Messaging.HL7
 			}
 			else
 			{
-				var match = re.Match(v2XTN.AnyText.Value);
+				var match = re.Match(xtn.AnyText.Value);
 
 				StringBuilder sb = new StringBuilder("tel:");
 
@@ -351,9 +493,9 @@ namespace OpenIZ.Messaging.HL7
 			// Use code conversion
 			Guid use = Guid.Empty;
 
-			if (!string.IsNullOrEmpty(v2XTN.TelecommunicationUseCode.Value) && !telecommunicationsMap.TryGetValue(v2XTN.TelecommunicationUseCode.Value, out use))
+			if (!string.IsNullOrEmpty(xtn.TelecommunicationUseCode.Value) && !telecommunicationsMap.TryGetValue(xtn.TelecommunicationUseCode.Value, out use))
 			{
-				throw new InvalidOperationException(string.Format("{0} is not a known use code", v2XTN.TelecommunicationUseCode.Value));
+				throw new InvalidOperationException(string.Format("{0} is not a known use code", xtn.TelecommunicationUseCode.Value));
 			}
 
 			retVal.AddressUseKey = use;
