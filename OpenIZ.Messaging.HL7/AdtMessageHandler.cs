@@ -162,9 +162,9 @@ namespace OpenIZ.Messaging.HL7
 
 			try
 			{
-				var patient = MessageUtil.CreatePatient(request.MSH, request.EVN, request.PID, request.PD1);
+				var patient = MessageUtil.CreatePatient(request.MSH, request.EVN, request.PID, request.PD1, details);
 
-				if (patient == null)
+				if (details.Count(d => d.Type == ResultDetailType.Error) > 0)
 				{
 					throw new InvalidOperationException(ApplicationContext.Current.GetLocaleString("MSGE00A"));
 				}
@@ -189,7 +189,6 @@ namespace OpenIZ.Messaging.HL7
 				this.tracer.TraceEvent(TraceEventType.Error, 0, e.StackTrace);
 #endif
 				this.tracer.TraceEvent(TraceEventType.Error, 0, e.Message);
-
 
 				if (!details.Exists(o => o.Message == e.Message || o.Exception == e))
 				{
@@ -258,7 +257,7 @@ namespace OpenIZ.Messaging.HL7
                 */
 
 				// Now process the result
-				response = MessageUtil.CreateRSP_K23(result, details);
+				response = MessageUtil.CreateRSPK23(result, details);
 				//var r = dcu.CreateRSP_K23(null, null);
 				// Copy QPD
 				try
@@ -317,10 +316,10 @@ namespace OpenIZ.Messaging.HL7
 			var dataService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
 
 			// Create a details array
-			List<IResultDetail> dtls = new List<IResultDetail>();
+			List<IResultDetail> details = new List<IResultDetail>();
 
 			// Validate the inbound message
-			MessageUtil.Validate((IMessage)request, dtls);
+			MessageUtil.Validate((IMessage)request, details);
 
 			IMessage response = null;
 
@@ -340,7 +339,7 @@ namespace OpenIZ.Messaging.HL7
 				for (var i = 0; i < request.PATIENTRepetitionsUsed; i++)
 				{
 					var patientGroup = request.GetPATIENT(i);
-					var survivor = MessageUtil.CreatePatient(request.MSH, request.EVN, patientGroup.PID, patientGroup.PD1);
+					var survivor = MessageUtil.CreatePatient(request.MSH, request.EVN, patientGroup.PID, patientGroup.PD1, details);
 					if (survivor == null)
 						throw new InvalidOperationException(ApplicationContext.Current.GetLocaleString("MSGE00A"));
 					var victim = dataService.Find(o => o.Identifiers.Any(id => id.Authority.DomainName == patientGroup.MRG.GetPriorAlternatePatientID(0).AssigningAuthority.NamespaceID.Value && id.Value == patientGroup.MRG.GetPriorAlternatePatientID(0).IDNumber.Value)).FirstOrDefault();
@@ -355,7 +354,7 @@ namespace OpenIZ.Messaging.HL7
 				//audit.Add(auditUtil.CreateAuditData("ITI-8", ActionType.Delete, OutcomeIndicator.Success, evt, deletedRecordIds));
 				//audit.Add(auditUtil.CreateAuditData("ITI-8", ActionType.Update, OutcomeIndicator.Success, evt, updatedRecordIds));
 				// Now process the result
-				response = MessageUtil.CreateNack(request, dtls, typeof(NHapi.Model.V25.Message.ACK));
+				response = MessageUtil.CreateNack(request, details, typeof(NHapi.Model.V25.Message.ACK));
 				MessageUtil.UpdateMSH(new NHapi.Base.Util.Terser(response), request);
 				(response as NHapi.Model.V25.Message.ACK).MSH.MessageType.TriggerEvent.Value = request.MSH.MessageType.TriggerEvent.Value;
 				(response as NHapi.Model.V25.Message.ACK).MSH.MessageType.MessageStructure.Value = "ACK";
@@ -363,9 +362,9 @@ namespace OpenIZ.Messaging.HL7
 			catch (Exception e)
 			{
 				Trace.TraceError(e.ToString());
-				if (!dtls.Exists(o => o.Message == e.Message || o.Exception == e))
-					dtls.Add(new ResultDetail(ResultDetailType.Error, e.Message, e));
-				response = MessageUtil.CreateNack(request, dtls, typeof(NHapi.Model.V25.Message.ACK));
+				if (!details.Exists(o => o.Message == e.Message || o.Exception == e))
+					details.Add(new ResultDetail(ResultDetailType.Error, e.Message, e));
+				response = MessageUtil.CreateNack(request, details, typeof(NHapi.Model.V25.Message.ACK));
 				//audit.Add(auditUtil.CreateAuditData("ITI-8", ActionType.Delete, OutcomeIndicator.EpicFail, evt, new List<VersionedDomainIdentifier>()));
 			}
 			finally
@@ -401,10 +400,10 @@ namespace OpenIZ.Messaging.HL7
 			var dataService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
 
 			// Create a details array
-			List<IResultDetail> dtls = new List<IResultDetail>();
+			List<IResultDetail> details = new List<IResultDetail>();
 
 			// Validate the inbound message
-			MessageUtil.Validate((IMessage)request, dtls);
+			MessageUtil.Validate((IMessage)request, details);
 
 			IMessage response = null;
 
@@ -421,7 +420,7 @@ namespace OpenIZ.Messaging.HL7
 			try
 			{
 				// Create Query Data
-				var data = MessageUtil.CreatePatient(request.MSH, request.EVN, request.PID, request.PD1);
+				var data = MessageUtil.CreatePatient(request.MSH, request.EVN, request.PID, request.PD1, details);
 				if (data == null)
 					throw new InvalidOperationException(ApplicationContext.Current.GetLocaleString("MSGE00A"));
 
@@ -432,7 +431,7 @@ namespace OpenIZ.Messaging.HL7
 
 				//audit = auditUtil.CreateAuditData("ITI-8", result.VersionId.UpdateMode == UpdateModeType.Update ? ActionType.Update : ActionType.Create, OutcomeIndicator.Success, evt, new List<VersionedDomainIdentifier>() { result.VersionId });
 				// Now process the result
-				response = MessageUtil.CreateNack(request, dtls, typeof(NHapi.Model.V25.Message.ACK));
+				response = MessageUtil.CreateNack(request, details, typeof(NHapi.Model.V25.Message.ACK));
 				MessageUtil.UpdateMSH(new NHapi.Base.Util.Terser(response), request);
 				(response as NHapi.Model.V25.Message.ACK).MSH.MessageType.TriggerEvent.Value = request.MSH.MessageType.TriggerEvent.Value;
 				(response as NHapi.Model.V25.Message.ACK).MSH.MessageType.MessageStructure.Value = "ACK";
@@ -440,9 +439,9 @@ namespace OpenIZ.Messaging.HL7
 			catch (Exception e)
 			{
 				Trace.TraceError(e.ToString());
-				if (!dtls.Exists(o => o.Message == e.Message || o.Exception == e))
-					dtls.Add(new ResultDetail(ResultDetailType.Error, e.Message, e));
-				response = MessageUtil.CreateNack(request, dtls, typeof(NHapi.Model.V25.Message.ACK));
+				if (!details.Exists(o => o.Message == e.Message || o.Exception == e))
+					details.Add(new ResultDetail(ResultDetailType.Error, e.Message, e));
+				response = MessageUtil.CreateNack(request, details, typeof(NHapi.Model.V25.Message.ACK));
 				//audit = auditUtil.CreateAuditData("ITI-8", ActionType.Create, OutcomeIndicator.EpicFail, evt, new List<VersionedDomainIdentifier>());
 			}
 			finally

@@ -76,6 +76,8 @@
     <Compile Include="Persistence\DataInitializationService.cs" />
     <Compile Include="Persistence\DatasetInstall.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResultsDetails\UnrecognizedSenderResultDetail.cs" />
+    <Compile Include="ResultsDetails\UnrecognizedTargetDomainResultDetail.cs" />
     <Compile Include="Security\ApplicationPrincipal.cs" />
     <Compile Include="Security\Claims\PurposeOfUseClaimHandler.cs" />
     <Compile Include="Security\Claims\IClaimTypeHandler.cs" />
