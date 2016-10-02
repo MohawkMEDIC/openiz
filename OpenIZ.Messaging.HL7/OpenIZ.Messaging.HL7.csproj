@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -33,9 +33,6 @@
     <Reference Include="MARC.Everest">
       <HintPath>..\Solution Items\MARC.Everest.dll</HintPath>
     </Reference>
-    <Reference Include="MARC.HI.EHRS.CR.Messaging.HAPI">
-      <HintPath>..\Solution Items\MARC.HI.EHRS.CR.Messaging.HAPI.dll</HintPath>
-    </Reference>
     <Reference Include="MARC.HI.EHRS.SVC.Auditing">
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Auditing.dll</HintPath>
     </Reference>
@@ -44,6 +41,9 @@
     </Reference>
     <Reference Include="MARC.HI.EHRS.SVC.Localization">
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Localization.dll</HintPath>
+    </Reference>
+    <Reference Include="MARC.HI.EHRS.SVC.Messaging.HAPI">
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Messaging.HAPI.dll</HintPath>
     </Reference>
     <Reference Include="NHapi.Base">
       <HintPath>..\Solution Items\NHapi.Base.dll</HintPath>
@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="AdtMessageHandler.cs" />
     <Compile Include="MessageUtil.cs" />
+    <Compile Include="NotSupportedMessageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -81,6 +82,11 @@
       <Project>{db9bc05e-45f1-4f96-a161-f36bdecaf566}</Project>
       <Name>OpenIZ.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\OpenIZ.licenseheader">
+      <Link>OpenIZ.licenseheader</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
