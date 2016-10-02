@@ -27,10 +27,12 @@ using NHapi.Base.Util;
 using NHapi.Base.validation.impl;
 using NHapi.Model.V25.Datatype;
 using NHapi.Model.V25.Segment;
+using OpenIZ.Core;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
+using OpenIZ.Core.ResultsDetails;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
@@ -117,11 +119,6 @@ namespace OpenIZ.Messaging.HL7
 		};
 
 		/// <summary>
-		/// The public reference to the <see cref="IAssigningAuthorityRepositoryService"/> instance.
-		/// </summary>
-		private static IAssigningAuthorityRepositoryService assigningAuthorityRepositoryService;
-
-		/// <summary>
 		/// The public reference to the <see cref="IConceptRepositoryService"/> instance.
 		/// </summary>
 		private static IConceptRepositoryService conceptRespositoryService;
@@ -130,33 +127,6 @@ namespace OpenIZ.Messaging.HL7
 		/// The public reference to the <see cref="ILocalizationService"/> instance.
 		/// </summary>
 		private static ILocalizationService localizationService;
-
-		static MessageUtil()
-		{
-			ApplicationContext.Current.Started += (o, e) =>
-			{
-				assigningAuthorityRepositoryService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
-
-				if (assigningAuthorityRepositoryService == null)
-				{
-					MessageUtil.tracer.TraceEvent(TraceEventType.Warning, 0, string.Format("Unable to locate service: {0}", nameof(IAssigningAuthorityRepositoryService)));
-				}
-
-				conceptRespositoryService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
-
-				if (conceptRespositoryService == null)
-				{
-					MessageUtil.tracer.TraceEvent(TraceEventType.Warning, 0, string.Format("Unable to locate service: {0}", nameof(IConceptRepositoryService)));
-				}
-
-				localizationService = ApplicationContext.Current.GetService<ILocalizationService>();
-
-				if (localizationService == null)
-				{
-					MessageUtil.tracer.TraceEvent(TraceEventType.Warning, 0, string.Format("Unable to locate service: {0}", nameof(ILocalizationService)));
-				}
-			};
-		}
 
 		/// <summary>
 		/// Converts a list of <see cref="XAD"/> addresses to a list of <see cref="EntityAddress"/> addresses.
@@ -176,9 +146,16 @@ namespace OpenIZ.Messaging.HL7
 			{
 				EntityAddress entityAddress = new EntityAddress();
 
+				Guid addressUse = AddressUseKeys.TemporaryAddress;
+
+				if (!string.IsNullOrEmpty(addresses[i].AddressType.Value) && !string.IsNullOrWhiteSpace(addresses[i].AddressType.Value))
+				{
+					addressUseMap.TryGetValue(addresses[i].AddressType.Value, out addressUse);
+				}
+
 				entityAddress.AddressUse = new Concept
 				{
-					Key = addressUseMap[addresses[i].AddressType.Value]
+					Key = addressUse
 				};
 
 				if (!string.IsNullOrEmpty(addresses[i].CensusTract.Value) && !string.IsNullOrWhiteSpace(addresses[i].CensusTract.Value))
@@ -229,6 +206,8 @@ namespace OpenIZ.Messaging.HL7
 		/// <returns>Returns the converted assigning authority.</returns>
 		public static AssigningAuthority ConvertAssigningAuthority(HD id, List<IResultDetail> details)
 		{
+			var assigningAuthorityRepositoryService = ApplicationContext.Current.GetAssigningAuthorityService();
+
 			AssigningAuthority assigningAuthority = null;
 
 			if (id == null)
@@ -239,22 +218,17 @@ namespace OpenIZ.Messaging.HL7
 
 			if (!string.IsNullOrEmpty(id.NamespaceID.Value))
 			{
-				assigningAuthority = MessageUtil.assigningAuthorityRepositoryService.Find(a => a.Oid == id.NamespaceID.Value).FirstOrDefault();
+				assigningAuthority = assigningAuthorityRepositoryService.Find(a => a.Name == id.NamespaceID.Value).FirstOrDefault();
 			}
 
 			if (!string.IsNullOrEmpty(id.UniversalID.Value))
 			{
-				assigningAuthority = MessageUtil.assigningAuthorityRepositoryService.Find(a => a.Oid == id.UniversalID.Value).FirstOrDefault();
+				assigningAuthority = assigningAuthorityRepositoryService.Find(a => a.Oid == id.UniversalID.Value).FirstOrDefault();
 			}
 
 			if (!string.IsNullOrEmpty(id.UniversalIDType.Value) && id.UniversalIDType.Value != "ISO")
 			{
 				details.Add(new NotImplementedResultDetail(ResultDetailType.Warning, MessageUtil.localizationService.GetString("MSGW016"), null));
-			}
-
-			if (assigningAuthority == null)
-			{
-				details.Add(new MandatoryElementMissingResultDetail(ResultDetailType.Error, null, null));
 			}
 
 			return assigningAuthority;
@@ -290,7 +264,7 @@ namespace OpenIZ.Messaging.HL7
 
 				var cx = identifiers[i];
 
-				var assigningAuthority = MessageUtil.assigningAuthorityRepositoryService.Find(a => a.Oid == cx.AssigningAuthority.UniversalID.Value).FirstOrDefault();
+				var assigningAuthority = ApplicationContext.Current.GetAssigningAuthorityService().Find(a => a.Oid == cx.AssigningAuthority.UniversalID.Value).FirstOrDefault();
 
 				if (assigningAuthority == null)
 				{
@@ -341,9 +315,16 @@ namespace OpenIZ.Messaging.HL7
 			{
 				EntityName entityName = new EntityName();
 
+				Guid nameUse = NameUseKeys.Search;
+
+				if (!string.IsNullOrEmpty(names[i].NameTypeCode.Value) && !string.IsNullOrWhiteSpace(names[i].NameTypeCode.Value))
+				{
+					MessageUtil.nameUseMap.TryGetValue(names[i].NameTypeCode.Value, out nameUse);
+				}
+
 				entityName.NameUse = new Concept
 				{
-					Key = nameUseMap[names[i].NameTypeCode.Value]
+					Key = nameUse
 				};
 
 				if (!string.IsNullOrEmpty(names[i].FamilyName.Surname.Value) && !string.IsNullOrWhiteSpace(names[i].FamilyName.Surname.Value))
@@ -381,11 +362,17 @@ namespace OpenIZ.Messaging.HL7
 		{
 			DateTime? result = null;
 
+			if (timestamp.Time.Value == null)
+			{
+				return result;
+			}
+
 			object dateTime = null;
 
 			if (Util.TryFromWireFormat(timestamp.Time.Value, typeof(MARC.Everest.DataTypes.TS), out dateTime))
 			{
-				result = Convert.ToDateTime(dateTime);
+
+				result = ((MARC.Everest.DataTypes.TS)dateTime).DateValue;
 			}
 			else
 			{
@@ -545,11 +532,16 @@ namespace OpenIZ.Messaging.HL7
 		}
 
 		/// <summary>
-		/// Create NACK
+		/// Creates a negative acknowledgement message.
 		/// </summary>
+		/// <param name="request">The request message to use to create the response message.</param>
+		/// <param name="responseCode">The response code of the message.</param>
+		/// <param name="errCode">The error code of the message.</param>
+		/// <param name="errDescription">The error description of the message.</param>
+		/// <returns></returns>
 		public static IMessage CreateNack(IMessage request, string responseCode, string errCode, string errDescription)
 		{
-			System.Diagnostics.Trace.TraceWarning(String.Format("NACK Condition : {0}", errDescription));
+			MessageUtil.tracer.TraceEvent(TraceEventType.Warning, 0, string.Format("NACK Condition : {0}", errDescription));
 
 			var config = ApplicationContext.Current.Configuration;
 
@@ -612,10 +604,17 @@ namespace OpenIZ.Messaging.HL7
 
 			try
 			{
-				patient.GenderConcept = new Concept
+				if (!string.IsNullOrEmpty(pid.AdministrativeSex.Value) && !string.IsNullOrWhiteSpace(pid.AdministrativeSex.Value))
 				{
-					Key = genderMap[pid.AdministrativeSex.Value]
-				};
+					patient.GenderConcept = new Concept
+					{
+						Key = genderMap[pid.AdministrativeSex.Value]
+					};
+				}
+				else
+				{
+					details.Add(new MandatoryElementMissingResultDetail(ResultDetailType.Error, null, null));
+				}
 			}
 			catch (KeyNotFoundException)
 			{
@@ -633,7 +632,10 @@ namespace OpenIZ.Messaging.HL7
 
 			patient.Identifiers.AddRange(MessageUtil.ConvertIdentifiers(pid.GetAlternatePatientIDPID()));
 
-			patient.LanguageCommunication.Add(new PersonLanguageCommunication(pid.PrimaryLanguage.Identifier.Value, true));
+			if (!string.IsNullOrEmpty(pid.PrimaryLanguage.Identifier.Value) && !string.IsNullOrWhiteSpace(pid.PrimaryLanguage.Identifier.Value))
+			{
+				patient.LanguageCommunication.Add(new PersonLanguageCommunication(pid.PrimaryLanguage.Identifier.Value, true));
+			}
 
 			if (!string.IsNullOrEmpty(pid.MultipleBirthIndicator.Value) && !string.IsNullOrWhiteSpace(pid.MultipleBirthIndicator.Value))
 			{
@@ -813,13 +815,15 @@ namespace OpenIZ.Messaging.HL7
 
 			terser.Set("/MSH-11", inboundTerser.Get("/MSH-11"));
 		}
-
-				/// <summary>
-		/// Validate the message
+		
+		/// <summary>
+		/// Validates a message.
 		/// </summary>
+		/// <param name="message">The message to be validated.</param>
+		/// <param name="details">The result details for storing the message validation results.</param>
+		/// <returns>Returns a list of validation results.</returns>
 		public static List<IResultDetail> Validate(IMessage message, List<IResultDetail> details)
 		{
-			// Structure validation
 			PipeParser pipeParser = new PipeParser() { ValidationContext = new DefaultValidation() };
 
 			try
@@ -839,7 +843,12 @@ namespace OpenIZ.Messaging.HL7
 
 				if (msh != null)
 				{
-					MessageUtil.ConvertAssigningAuthority(msh.SendingApplication, details);
+					var result = MessageUtil.ConvertAssigningAuthority(msh.SendingApplication, details);
+
+					if (result == null)
+					{
+						details.Add(new UnrecognizedSenderResultDetail(ResultDetailType.Error, msh.SendingApplication.NamespaceID.Value, "MSH^3"));
+					}
 				}
 			}
 			catch (Exception e)

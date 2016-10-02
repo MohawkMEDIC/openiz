@@ -18,7 +18,10 @@
  * Date: 2016-8-30
  */
 
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -37,7 +40,8 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns a list of assigning authorities.</returns>
 		public IEnumerable<AssigningAuthority> Find(Expression<Func<AssigningAuthority, bool>> query)
 		{
-			throw new NotImplementedException();
+			int totalCount = 0;
+			return this.Find(query, 0, null, out totalCount);
 		}
 
 		/// <summary>
@@ -50,7 +54,14 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns a list of assigning authorities.</returns>
 		public IEnumerable<AssigningAuthority> Find(Expression<Func<AssigningAuthority, bool>> query, int offSet, int? count, out int totalCount)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<AssigningAuthority>)));
+			}
+
+			return persistenceService.Query(query, offSet, count, AuthenticationContext.Current.Principal, out totalCount);
 		}
 
 		/// <summary>
@@ -60,7 +71,14 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns an assiging authority.</returns>
 		public AssigningAuthority Get(Guid key)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<AssigningAuthority>)));
+			}
+
+			return persistenceService.Get<Guid>(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(key), AuthenticationContext.Current.Principal, true);
 		}
 
 		/// <summary>
@@ -70,7 +88,14 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the inserted assigning authority.</returns>
 		public AssigningAuthority Insert(AssigningAuthority assigningAuthority)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<AssigningAuthority>)));
+			}
+
+			return persistenceService.Insert(assigningAuthority, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>
@@ -80,7 +105,14 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the obsoleted assigning authority.</returns>
 		public AssigningAuthority Obsolete(Guid key)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<AssigningAuthority>)));
+			}
+
+			return persistenceService.Obsolete(new AssigningAuthority { Key = key }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>
@@ -90,7 +122,21 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the saved assigning authority.</returns>
 		public AssigningAuthority Save(AssigningAuthority assigningAuthority)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<AssigningAuthority>)));
+			}
+
+			try
+			{
+				return persistenceService.Update(assigningAuthority, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
+			catch (KeyNotFoundException)
+			{
+				return persistenceService.Insert(assigningAuthority, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
 		}
 	}
 }

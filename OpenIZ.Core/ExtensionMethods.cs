@@ -37,9 +37,6 @@ namespace OpenIZ.Core
     /// </summary>
     public static class ExtensionMethods
     {
-
-        
-
         /// <summary>
         /// Get locale
         /// </summary>
@@ -61,6 +58,16 @@ namespace OpenIZ.Core
         {
             return me.GetService<IConceptRepositoryService>();
         }
+
+		/// <summary>
+		/// Gets the assigning authority repository service.
+		/// </summary>
+		/// <param name="me">The current application context.</param>
+		/// <returns>Returns the assigning authority repository service.</returns>
+		public static IAssigningAuthorityRepositoryService GetAssigningAuthorityService(this ApplicationContext me)
+		{
+			return me.GetService<IAssigningAuthorityRepositoryService>();
+		}
 
         /// <summary>
         /// Get application provider service

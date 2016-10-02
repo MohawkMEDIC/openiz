@@ -26,20 +26,50 @@ using System.Threading.Tasks;
 
 namespace OpenIZ.Core.ResultsDetails
 {
+	/// <summary>
+	/// Represents an unrecognized sender result detail.
+	/// </summary>
 	public class UnrecognizedSenderResultDetail : ResultDetail
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="UnrecognizedSenderResultDetail"/> class
+		/// with a specific message.
+		/// </summary>
+		/// <param name="message">The message of the result detail.</param>
 		public UnrecognizedSenderResultDetail(string message) : base(message)
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="UnrecognizedSenderResultDetail"/> class
+		/// with a specific type, message, and exception.
+		/// </summary>
+		/// <param name="type">The type of the result detail.</param>
+		/// <param name="message">The message of the result detail.</param>
+		/// <param name="exception">The exception of the result detail.</param>
 		public UnrecognizedSenderResultDetail(ResultDetailType type, string message, Exception exception) : base(type, message, exception)
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="UnrecognizedSenderResultDetail"/> class
+		/// with a specific type, message, and location.
+		/// </summary>
+		/// <param name="type">The type of the result detail.</param>
+		/// <param name="message">The message of the result detail.</param>
+		/// <param name="location">The location of the result detail.</param>
 		public UnrecognizedSenderResultDetail(ResultDetailType type, string message, string location) : base(type, message, location)
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="UnrecognizedSenderResultDetail"/> class
+		/// with a specific type, message, location, and exception.
+		/// </summary>
+		/// <param name="type">The type of the result detail.</param>
+		/// <param name="message">The message of the result detail.</param>
+		/// <param name="location">The location of the result detail.</param>
+		/// <param name="exception">The exception of the result detail.</param>
 		public UnrecognizedSenderResultDetail(ResultDetailType type, string message, string location, Exception exception) : base(type, message, location, exception)
 		{
 		}
