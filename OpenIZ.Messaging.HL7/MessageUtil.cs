@@ -129,6 +129,16 @@ namespace OpenIZ.Messaging.HL7
 		private static ILocalizationService localizationService;
 
 		/// <summary>
+		/// Converts an <see cref="XAD"/> address instance to an <see cref="EntityAddress"/> instance.
+		/// </summary>
+		/// <param name="address">The address to be converted.</param>
+		/// <returns>Returns the converted entity address.</returns>
+		public static EntityAddress ConvertAddress(XAD address)
+		{
+			return MessageUtil.ConvertAddresses(new XAD[] { address }).FirstOrDefault();
+		}
+
+		/// <summary>
 		/// Converts a list of <see cref="XAD"/> addresses to a list of <see cref="EntityAddress"/> addresses.
 		/// </summary>
 		/// <param name="addresses">The addresses to be converted.</param>
@@ -181,6 +191,11 @@ namespace OpenIZ.Messaging.HL7
 				if (!string.IsNullOrEmpty(addresses[i].StreetAddress.StreetOrMailingAddress.Value) && !string.IsNullOrWhiteSpace(addresses[i].StreetAddress.StreetOrMailingAddress.Value))
 				{
 					entityAddress.Component.Add(new EntityAddressComponent(AddressComponentKeys.StreetAddressLine, addresses[i].StreetAddress.StreetOrMailingAddress.Value));
+				}
+
+				if (!string.IsNullOrEmpty(addresses[i].StateOrProvince.Value) && !string.IsNullOrWhiteSpace(addresses[i].StateOrProvince.Value))
+				{
+					entityAddress.Component.Add(new EntityAddressComponent(AddressComponentKeys.State, addresses[i].StateOrProvince.Value));
 				}
 
 				if (!string.IsNullOrEmpty(addresses[i].StreetAddress.StreetName.Value) && !string.IsNullOrWhiteSpace(addresses[i].StreetAddress.StreetName.Value))
