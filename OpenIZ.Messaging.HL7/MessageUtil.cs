@@ -119,12 +119,12 @@ namespace OpenIZ.Messaging.HL7
 		};
 
 		/// <summary>
-		/// The public reference to the <see cref="IConceptRepositoryService"/> instance.
+		/// The internal reference to the <see cref="IConceptRepositoryService"/> instance.
 		/// </summary>
-		private static IConceptRepositoryService conceptRespositoryService;
+		private static IConceptRepositoryService conceptRepositoryService;
 
 		/// <summary>
-		/// The public reference to the <see cref="ILocalizationService"/> instance.
+		/// The internal reference to the <see cref="ILocalizationService"/> instance.
 		/// </summary>
 		private static ILocalizationService localizationService;
 
