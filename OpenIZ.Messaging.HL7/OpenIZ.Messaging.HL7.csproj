@@ -39,6 +39,10 @@
     <Reference Include="MARC.HI.EHRS.SVC.Core">
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
     </Reference>
+    <Reference Include="MARC.HI.EHRS.SVC.Core.Timer, Version=2.0.0.23991, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.Timer.dll</HintPath>
+    </Reference>
     <Reference Include="MARC.HI.EHRS.SVC.Localization">
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Localization.dll</HintPath>
     </Reference>
@@ -66,8 +70,14 @@
   <ItemGroup>
     <Compile Include="AdtMessageHandler.cs" />
     <Compile Include="MessageUtil.cs" />
+    <Compile Include="MllpMessageSender.cs" />
     <Compile Include="NotSupportedMessageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queue\Hl7MessageQueue.cs" />
+    <Compile Include="Queue\MessageQueueWorkItem.cs" />
+    <Compile Include="Queue\MessageQueueWorkItemCollection.cs" />
+    <Compile Include="Queue\QueueTimerJob.cs" />
+    <Compile Include="Services\ClientRegistryNotificationService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">

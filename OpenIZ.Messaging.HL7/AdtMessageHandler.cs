@@ -29,6 +29,7 @@ using NHapi.Base.Parser;
 using NHapi.Base.Util;
 using NHapi.Model.V25.Message;
 using OpenIZ.Core;
+using OpenIZ.Core.Event;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using System;
@@ -145,6 +146,7 @@ namespace OpenIZ.Messaging.HL7
 		/// <returns>Returns the response message.</returns>
 		internal IMessage HandleAdmit(NHapi.Model.V25.Message.ADT_A01 request, Hl7MessageReceivedEventArgs evt)
 		{
+			var clientRegistryNotificationService = ApplicationContext.Current.GetService<IClientRegistryNotificationService>();
 			var patientRepositoryService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
 
 			List<IResultDetail> details = new List<IResultDetail>();
@@ -182,6 +184,10 @@ namespace OpenIZ.Messaging.HL7
 
 				(response as NHapi.Model.V25.Message.ACK).MSH.MessageType.TriggerEvent.Value = request.MSH.MessageType.TriggerEvent.Value;
 				(response as NHapi.Model.V25.Message.ACK).MSH.MessageType.MessageStructure.Value = "ACK";
+
+				NotificationEventArgs eventArgs = new NotificationEventArgs(request, NotificationType.Create);
+
+				clientRegistryNotificationService?.NotifyRegister(eventArgs);
 			}
 			catch (Exception e)
 			{

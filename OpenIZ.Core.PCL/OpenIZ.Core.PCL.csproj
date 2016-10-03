@@ -38,6 +38,8 @@
     <Compile Include="ApplicationServiceContext.cs" />
     <Compile Include="Diagnostics\Tracer.cs" />
     <Compile Include="Diagnostics\TraceWriter.cs" />
+    <Compile Include="Event\NotificationEventArgs.cs" />
+    <Compile Include="Event\NotificationType.cs" />
     <Compile Include="Http\Credentials.cs" />
     <Compile Include="Http\DefaultContentTypeMapper.cs" />
     <Compile Include="Http\Description\IRestClientCertificateDescription.cs" />
@@ -74,6 +76,7 @@
     <Compile Include="Services\Impl\BaseBusinessRulesService.cs" />
     <Compile Include="Services\Impl\NullPhoneticAlgorithmHandler.cs" />
     <Compile Include="Protocol\SimpleCarePlanService.cs" />
+    <Compile Include="Services\IClientRegistryNotificationService.cs" />
     <Compile Include="Services\IOrganizationRepositoryService.cs" />
     <Compile Include="Services\IPatientRepositoryService.cs" />
     <Compile Include="Services\IPhoneticAlgorithmHandler.cs" />
