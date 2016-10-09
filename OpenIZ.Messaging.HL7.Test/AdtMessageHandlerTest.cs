@@ -25,6 +25,7 @@ using System.Threading.Tasks;
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Messaging.HAPI;
 using MARC.HI.EHRS.SVC.Messaging.HAPI.TransportProtocol;
+using MARC.HI.EHRS.SVC.Messaging.Multi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NHapi.Model.V25.Message;
 
@@ -46,21 +47,39 @@ namespace OpenIZ.Messaging.HL7.Test
 		/// </summary>
 		private ADT_A01 message = null;
 
+		/// <summary>
+		/// The internal reference to the <see cref="AdtMessageHandler"/> instance.
+		/// </summary>
+		private AdtMessageHandler messageHandler;
+
+		/// <summary>
+		/// The internal reference to the <see cref="Microsoft.VisualStudio.TestTools.UnitTesting.TestContext"/> instance.
+		/// </summary>
 		private TestContext context;
 
+		/// <summary>
+		/// Gets or sets the test context.
+		/// </summary>
 		public TestContext TestContext
 		{
 			get { return this.context; }
 			set { this.context = value; }
 		}
 
-		[ClassCleanup]
+		/// <summary>
+		/// Runs cleanup after all tests have been completed.
+		/// </summary>
+		//[ClassCleanup]
 		public static void ClassCleanup()
 		{
 			ApplicationContext.Current.Dispose();
 		}
 
-		[ClassInitialize]
+		/// <summary>
+		/// Runs initialization before any tests have started.
+		/// </summary>
+		/// <param name="context"></param>
+		//[ClassInitialize]
 		public static void ClassStartup(TestContext context)
 		{
 			ApplicationContext.Current.Start();
@@ -83,18 +102,16 @@ namespace OpenIZ.Messaging.HL7.Test
 		public void Initialize()
 		{
 			this.message = new ADT_A01();
+			this.messageHandler = new AdtMessageHandler();
 			this.args = new Hl7MessageReceivedEventArgs(this.message, new Uri("llp://localhost:2100"), new Uri("llp://localhost:2100"), DateTime.Now);
 		}
 
 		[TestMethod]
 		public void TestValidMessage()
 		{
-			var messageHandler = ApplicationContext.Current.GetService<IHL7MessageHandler>();
+			var actual = this.messageHandler.HandleMessage(this.args);
 
-			Assert.IsNotNull(messageHandler);
-
-			var actual = messageHandler.HandleMessage(this.args);
+			Assert.IsNotNull(actual);
 		}
-
 	}
 }

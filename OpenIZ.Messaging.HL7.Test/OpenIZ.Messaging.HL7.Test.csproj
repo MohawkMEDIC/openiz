@@ -45,6 +45,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Messaging.HAPI.dll</HintPath>
     </Reference>
+    <Reference Include="MARC.HI.EHRS.SVC.Messaging.Multi">
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Messaging.Multi.dll</HintPath>
+    </Reference>
     <Reference Include="NHapi.Base">
       <HintPath>..\Solution Items\NHapi.Base.dll</HintPath>
     </Reference>
