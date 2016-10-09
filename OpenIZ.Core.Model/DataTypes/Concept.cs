@@ -198,5 +198,12 @@ namespace OpenIZ.Core.Model.DataTypes
             }
         }
 
+        /// <summary>
+        /// Override string
+        /// </summary>
+        public override string ToString()
+        {
+            return String.Format("{0} [M: {1}]", base.ToString(), this.Mnemonic);
+        }
     }
 }

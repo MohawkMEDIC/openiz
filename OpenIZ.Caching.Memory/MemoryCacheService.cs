@@ -182,5 +182,13 @@ namespace OpenIZ.Caching.Memory
         {
             return MemoryCache.Current.TryGetEntry(typeof(TData), key) as TData;
         }
+
+        /// <summary>
+        /// Get the specified cache item
+        /// </summary>
+        public object GetCacheItem(Type tdata, Guid key)
+        {
+            return MemoryCache.Current.TryGetEntry(tdata, key);
+        }
     }
 }
