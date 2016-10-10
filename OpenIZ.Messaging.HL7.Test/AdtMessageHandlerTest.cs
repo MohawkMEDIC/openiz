@@ -69,7 +69,7 @@ namespace OpenIZ.Messaging.HL7.Test
 		/// <summary>
 		/// Runs cleanup after all tests have been completed.
 		/// </summary>
-		//[ClassCleanup]
+		[ClassCleanup]
 		public static void ClassCleanup()
 		{
 			ApplicationContext.Current.Dispose();
@@ -79,7 +79,7 @@ namespace OpenIZ.Messaging.HL7.Test
 		/// Runs initialization before any tests have started.
 		/// </summary>
 		/// <param name="context"></param>
-		//[ClassInitialize]
+		[ClassInitialize]
 		public static void ClassStartup(TestContext context)
 		{
 			ApplicationContext.Current.Start();

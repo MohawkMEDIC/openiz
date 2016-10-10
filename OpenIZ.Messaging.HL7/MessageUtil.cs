@@ -149,7 +149,7 @@ namespace OpenIZ.Messaging.HL7
 
 			if (addresses.Length == 0)
 			{
-				entityAddresses.AsEnumerable();
+				return entityAddresses.AsEnumerable();
 			}
 
 			for (int i = 0; i < addresses.Length; i++)
@@ -279,7 +279,14 @@ namespace OpenIZ.Messaging.HL7
 
 				var cx = identifiers[i];
 
-				var assigningAuthority = ApplicationContext.Current.GetAssigningAuthorityService().Find(a => a.Oid == cx.AssigningAuthority.UniversalID.Value).FirstOrDefault();
+				var assigningAuthorityService = ApplicationContext.Current.GetAssigningAuthorityService();
+
+				if (assigningAuthorityService == null)
+				{
+					throw new InvalidOperationException($"Unable to locate {nameof(IAssigningAuthorityRepositoryService)}");
+				}
+
+				var assigningAuthority = assigningAuthorityService.Find(a => a.Oid == cx.AssigningAuthority.UniversalID.Value).FirstOrDefault();
 
 				if (assigningAuthority == null)
 				{
