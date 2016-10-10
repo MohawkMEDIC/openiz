@@ -27,6 +27,7 @@ using System.Linq.Expressions;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Acts;
 
 namespace OpenIZ.Messaging.IMSI.Test
 {
@@ -205,6 +206,21 @@ namespace OpenIZ.Messaging.IMSI.Test
             NameValueCollection httpQueryParameters = new NameValueCollection();
             httpQueryParameters.Add("name[L].component[null].value", "John");
             var expr = QueryExpressionParser.BuildLinqExpression<Patient>(httpQueryParameters);
+            Assert.AreEqual(expected, expr.ToString());
+
+        }
+
+        /// <summary>
+        /// Guard with null
+        /// </summary>
+        [TestMethod]
+        public void TestNullableCondition()
+        {
+            var dtString = new DateTime(1999, 01, 01);
+            String expected = "o => ((o.StartTime != null) AndAlso (o.StartTime.Value > 1999-01-01 12:00:00 AM -05:00))";
+            NameValueCollection httpQueryParameters = new NameValueCollection();
+            httpQueryParameters.Add("startTime", ">" + dtString);
+            var expr = QueryExpressionParser.BuildLinqExpression<Act>(httpQueryParameters);
             Assert.AreEqual(expected, expr.ToString());
 
         }
