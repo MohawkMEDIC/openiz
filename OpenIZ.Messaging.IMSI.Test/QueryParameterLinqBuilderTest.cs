@@ -217,7 +217,7 @@ namespace OpenIZ.Messaging.IMSI.Test
         public void TestNullableCondition()
         {
             var dtString = new DateTime(1999, 01, 01);
-            String expected = "o => ((o.StartTime != null) AndAlso (o.StartTime.Value > 1999-01-01 12:00:00 AM -05:00))";
+            String expected = "o => ((o.StartTime != null) AndAlso (o.StartTime.Value > 1/1/1999 12:00:00 AM -05:00))";
             NameValueCollection httpQueryParameters = new NameValueCollection();
             httpQueryParameters.Add("startTime", ">" + dtString);
             var expr = QueryExpressionParser.BuildLinqExpression<Act>(httpQueryParameters);
