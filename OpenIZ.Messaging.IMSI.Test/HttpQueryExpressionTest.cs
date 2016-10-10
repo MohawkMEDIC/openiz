@@ -18,6 +18,7 @@
  * Date: 2016-6-22
  */
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Query;
@@ -191,6 +192,7 @@ namespace OpenIZ.Messaging.IMSI.Test
             var expression = CreateQueryString(query.ToArray());
             Assert.AreEqual("genderConcept.mnemonic=%21Male", expression);
         }
+
 
         /// <summary>
         /// Test write of lookup approximately
