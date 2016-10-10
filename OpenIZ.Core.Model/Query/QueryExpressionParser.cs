@@ -220,9 +220,14 @@ namespace OpenIZ.Core.Model.Query
                             )
                             value = "~" + value;
 
+                        Expression nullCheckExpr = null;
+
                         // Correct for nullable
                         if (value != "null" && accessExpression.Type.GetTypeInfo().IsGenericType && accessExpression.Type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                        {
+                            nullCheckExpr = Expression.MakeBinary(ExpressionType.NotEqual, accessExpression, Expression.Constant(null));
                             accessExpression = Expression.MakeMemberAccess(accessExpression, accessExpression.Type.GetRuntimeProperty("Value"));
+                        }
 
                         // Process value
                         String pValue = value;
@@ -316,6 +321,10 @@ namespace OpenIZ.Core.Model.Query
                         if (valueExpr.Type != accessExpression.Type)
                             valueExpr = Expression.Convert(valueExpr, accessExpression.Type);
                         Expression singleExpression = Expression.MakeBinary(et, accessExpression, valueExpr);
+
+                        if (nullCheckExpr != null)
+                            singleExpression = Expression.MakeBinary(ExpressionType.AndAlso, nullCheckExpr, singleExpression);
+
                         if (keyExpression == null)
                             keyExpression = singleExpression;
                         else
