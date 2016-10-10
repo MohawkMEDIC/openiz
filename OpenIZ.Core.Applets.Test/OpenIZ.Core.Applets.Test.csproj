@@ -89,6 +89,7 @@
     <EmbeddedResource Include="RegistrationForm.json" />
     <EmbeddedResource Include="DoesntSerializeKey.json" />
     <EmbeddedResource Include="SimpleBundle.json" />
+    <EmbeddedResource Include="QuantityObservation.json" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DoesntInterpretSimpleArray.json" />
