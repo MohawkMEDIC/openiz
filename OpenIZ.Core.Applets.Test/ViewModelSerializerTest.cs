@@ -183,6 +183,145 @@ namespace OpenIZ.Core.Applets.Test
 		}
 
 		/// <summary>
+		/// Tests the serialization of a simple act.
+		/// </summary>
+		[TestMethod]
+		public void TestSerializeSimpleAct()
+		{
+			var act = new Act
+			{
+				ClassConcept = new Concept
+				{
+					Key = ActClassKeys.Encounter
+				},
+				CreationTime = DateTimeOffset.Now,
+				Key = Guid.NewGuid(),
+				MoodConcept = new Concept
+				{
+					Key = ActMoodKeys.Eventoccurrence
+				}
+			};
+
+			var actual = JsonViewModelSerializer.Serialize(act);
+
+			Assert.IsTrue(actual.Contains(ActMoodKeys.Eventoccurrence.ToString()));
+			Assert.IsTrue(actual.Contains(ActClassKeys.Encounter.ToString()));
+		}
+
+		/// <summary>
+		/// Tests the serialization of a complex act with participations.
+		/// </summary>
+		[TestMethod]
+		public void TestSerializeActWithParticipations()
+		{
+			var act = new Act
+			{
+				ClassConcept = new Concept
+				{
+					Key = ActClassKeys.Encounter
+				},
+				CreationTime = DateTimeOffset.Now,
+				Key = Guid.NewGuid(),
+				MoodConcept = new Concept
+				{
+					Key = ActMoodKeys.Eventoccurrence
+				},
+				Participations = new List<ActParticipation>
+				{
+					new ActParticipation
+					{
+						ParticipationRole = new Concept
+						{
+							Key = ActParticipationKey.RecordTarget
+						},
+						PlayerEntity = this.m_patientUnderTest
+					},
+					new ActParticipation
+					{
+						ParticipationRole = new Concept
+						{
+							Key = ActParticipationKey.Location
+						},
+						PlayerEntity = new Place
+						{
+							Key = Guid.Parse("AE2795E7-C40A-41CF-B77D-855EE2C3BF47")
+						}
+					}
+				}
+			};
+
+			var actual = JsonViewModelSerializer.Serialize(act);
+
+			Assert.IsTrue(actual.Contains(ActMoodKeys.Eventoccurrence.ToString()));
+			Assert.IsTrue(actual.Contains(ActClassKeys.Encounter.ToString()));
+			Assert.IsTrue(actual.Contains(ActParticipationKey.RecordTarget.ToString()));
+			Assert.IsTrue(actual.Contains(ActParticipationKey.Location.ToString()));
+		}
+
+		/// <summary>
+		/// Tests the serialization of a complex act with relationships.
+		/// </summary>
+		[TestMethod]
+		public void TestSerializeActWithRelationships()
+		{
+			var act = new Act
+			{
+				ClassConcept = new Concept
+				{
+					Key = ActClassKeys.Encounter
+				},
+				CreationTime = DateTimeOffset.Now,
+				Key = Guid.NewGuid(),
+				MoodConcept = new Concept
+				{
+					Key = ActMoodKeys.Eventoccurrence
+				},
+				Relationships = new List<ActRelationship>
+				{
+					new ActRelationship
+					{
+						RelationshipType = new Concept
+						{
+							Key = ActRelationshipTypeKeys.HasSubject
+						},
+						TargetAct = new Act
+						{
+							Participations = new List<ActParticipation>
+							{
+								new ActParticipation
+								{
+									ParticipationRole = new Concept
+									{
+										Key = ActParticipationKey.RecordTarget
+									},
+									PlayerEntity = this.m_patientUnderTest
+								},
+								new ActParticipation
+								{
+									ParticipationRole = new Concept
+									{
+										Key = ActParticipationKey.Location
+									},
+									PlayerEntity = new Place
+									{
+										Key = Guid.Parse("AE2795E7-C40A-41CF-B77D-855EE2C3BF47")
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+
+			var actual = JsonViewModelSerializer.Serialize(act);
+
+			Assert.IsTrue(actual.Contains(ActMoodKeys.Eventoccurrence.ToString()));
+			Assert.IsTrue(actual.Contains(ActClassKeys.Encounter.ToString()));
+			Assert.IsTrue(actual.Contains(ActParticipationKey.RecordTarget.ToString()));
+			Assert.IsTrue(actual.Contains(ActParticipationKey.Location.ToString()));
+		}
+
+		/// <summary>
 		/// Test serialization of the IMS patient object
 		/// </summary>
 		[TestMethod]
