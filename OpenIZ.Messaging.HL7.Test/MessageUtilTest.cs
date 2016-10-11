@@ -1,32 +1,32 @@
 ﻿/*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: khannan
  * Date: 2016-10-1
  */
-using System;
-using System.Linq;
+
+using MARC.HI.EHRS.SVC.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NHapi.Base.Model;
 using NHapi.Model.V25.Datatype;
 using NHapi.Model.V25.Message;
-using NHapi.Base.Model;
-using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Constants;
-using System.Collections.Generic;
-using MARC.HI.EHRS.SVC.Core;
+using OpenIZ.Core.Model.Entities;
+using System;
+using System.Linq;
 
 namespace OpenIZ.Messaging.HL7.Test
 {
@@ -123,6 +123,9 @@ namespace OpenIZ.Messaging.HL7.Test
 			this.xtn = new XTN(Activator.CreateInstance(typeof(ADT_A01)) as IMessage);
 		}
 
+		/// <summary>
+		/// Test the conversion of an address.
+		/// </summary>
 		[TestMethod]
 		public void TestConvertAddress()
 		{
@@ -144,6 +147,9 @@ namespace OpenIZ.Messaging.HL7.Test
 			Assert.AreEqual("L8N3T2", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Value);
 		}
 
+		/// <summary>
+		/// Tests the conversion of an address with an empty city value.
+		/// </summary>
 		[TestMethod]
 		public void TestConvertAddressEmptyCity()
 		{
@@ -167,29 +173,9 @@ namespace OpenIZ.Messaging.HL7.Test
 			Assert.AreEqual("L8N3T2", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Value);
 		}
 
-		[TestMethod]
-		public void TestConvertAddressNullCity()
-		{
-			this.xad.City.Value = null;
-
-			var actual = MessageUtil.ConvertAddress(xad);
-
-			Assert.AreEqual(0, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.City));
-			Assert.IsNull(actual.Component.FirstOrDefault(c => c.ComponentTypeKey == AddressComponentKeys.City)?.Value);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.Country));
-			Assert.AreEqual("Canada", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.Country).Value);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.State));
-			Assert.AreEqual("Ontario", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.State).Value);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.StreetName));
-			Assert.AreEqual("Main St", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.StreetName).Value);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode));
-			Assert.AreEqual("L8N3T2", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Value);
-		}
-
+		/// <summary>
+		/// Tests the conversion of an address with an empty country value.
+		/// </summary>
 		[TestMethod]
 		public void TestConvertAddressEmptyCountry()
 		{
@@ -213,121 +199,9 @@ namespace OpenIZ.Messaging.HL7.Test
 			Assert.AreEqual("L8N3T2", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Value);
 		}
 
-		[TestMethod]
-		public void TestConvertAddressNullCountry()
-		{
-			this.xad.Country.Value = null;
-
-			var actual = MessageUtil.ConvertAddress(xad);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.City));
-			Assert.AreEqual("Hamilton", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.City).Value);
-
-			Assert.AreEqual(0, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.Country));
-			Assert.IsNull(actual.Component.FirstOrDefault(c => c.ComponentTypeKey == AddressComponentKeys.Country)?.Value);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.State));
-			Assert.AreEqual("Ontario", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.State).Value);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.StreetName));
-			Assert.AreEqual("Main St", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.StreetName).Value);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode));
-			Assert.AreEqual("L8N3T2", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Value);
-		}
-
-		[TestMethod]
-		public void TestConvertAddressEmptyState()
-		{
-			this.xad.StateOrProvince.Value = string.Empty;
-
-			var actual = MessageUtil.ConvertAddress(xad);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.City));
-			Assert.AreEqual("Hamilton", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.City).Value);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.Country));
-			Assert.AreEqual("Canada", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.Country).Value);
-
-			Assert.AreEqual(0, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.State));
-			Assert.IsNull(actual.Component.FirstOrDefault(c => c.ComponentTypeKey == AddressComponentKeys.State)?.Value);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.StreetName));
-			Assert.AreEqual("Main St", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.StreetName).Value);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode));
-			Assert.AreEqual("L8N3T2", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Value);
-		}
-
-		[TestMethod]
-		public void TestConvertAddressNullState()
-		{
-			this.xad.StateOrProvince.Value = null;
-
-			var actual = MessageUtil.ConvertAddress(xad);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.City));
-			Assert.AreEqual("Hamilton", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.City).Value);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.Country));
-			Assert.AreEqual("Canada", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.Country).Value);
-
-			Assert.AreEqual(0, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.State));
-			Assert.IsNull(actual.Component.FirstOrDefault(c => c.ComponentTypeKey == AddressComponentKeys.State)?.Value);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.StreetName));
-			Assert.AreEqual("Main St", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.StreetName).Value);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode));
-			Assert.AreEqual("L8N3T2", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Value);
-		}
-
-		[TestMethod]
-		public void TestConvertAddressEmptyStreet()
-		{
-			this.xad.StreetAddress.StreetName.Value = string.Empty;
-
-			var actual = MessageUtil.ConvertAddress(xad);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.City));
-			Assert.AreEqual("Hamilton", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.City).Value);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.Country));
-			Assert.AreEqual("Canada", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.Country).Value);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.State));
-			Assert.AreEqual("Ontario", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.State).Value);
-
-			Assert.AreEqual(0, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.StreetName));
-			Assert.IsNull(actual.Component.FirstOrDefault(c => c.ComponentTypeKey == AddressComponentKeys.StreetName)?.Value);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode));
-			Assert.AreEqual("L8N3T2", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Value);
-		}
-
-		[TestMethod]
-		public void TestConvertAddressNullStreet()
-		{
-			this.xad.StreetAddress.StreetName.Value = null;
-
-			var actual = MessageUtil.ConvertAddress(xad);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.City));
-			Assert.AreEqual("Hamilton", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.City).Value);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.Country));
-			Assert.AreEqual("Canada", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.Country).Value);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.State));
-			Assert.AreEqual("Ontario", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.State).Value);
-
-			Assert.AreEqual(0, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.StreetName));
-			Assert.IsNull(actual.Component.FirstOrDefault(c => c.ComponentTypeKey == AddressComponentKeys.StreetName)?.Value);
-
-			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode));
-			Assert.AreEqual("L8N3T2", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Value);
-		}
-
+		/// <summary>
+		/// Tests the conversion of an address with an empty postal code value.
+		/// </summary>
 		[TestMethod]
 		public void TestConvertAddressEmptyPostalCode()
 		{
@@ -351,6 +225,113 @@ namespace OpenIZ.Messaging.HL7.Test
 			Assert.IsNull(actual.Component.FirstOrDefault(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode)?.Value);
 		}
 
+		/// <summary>
+		/// Tests the conversion of an address with an empty state value.
+		/// </summary>
+		[TestMethod]
+		public void TestConvertAddressEmptyState()
+		{
+			this.xad.StateOrProvince.Value = string.Empty;
+
+			var actual = MessageUtil.ConvertAddress(xad);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.City));
+			Assert.AreEqual("Hamilton", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.City).Value);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.Country));
+			Assert.AreEqual("Canada", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.Country).Value);
+
+			Assert.AreEqual(0, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.State));
+			Assert.IsNull(actual.Component.FirstOrDefault(c => c.ComponentTypeKey == AddressComponentKeys.State)?.Value);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.StreetName));
+			Assert.AreEqual("Main St", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.StreetName).Value);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode));
+			Assert.AreEqual("L8N3T2", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Value);
+		}
+
+		/// <summary>
+		/// Tests the conversion of an address with an empty street value.
+		/// </summary>
+		[TestMethod]
+		public void TestConvertAddressEmptyStreet()
+		{
+			this.xad.StreetAddress.StreetName.Value = string.Empty;
+
+			var actual = MessageUtil.ConvertAddress(xad);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.City));
+			Assert.AreEqual("Hamilton", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.City).Value);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.Country));
+			Assert.AreEqual("Canada", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.Country).Value);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.State));
+			Assert.AreEqual("Ontario", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.State).Value);
+
+			Assert.AreEqual(0, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.StreetName));
+			Assert.IsNull(actual.Component.FirstOrDefault(c => c.ComponentTypeKey == AddressComponentKeys.StreetName)?.Value);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode));
+			Assert.AreEqual("L8N3T2", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Value);
+		}
+
+		/// <summary>
+		/// Tests the conversion of an address with a null city value.
+		/// </summary>
+		[TestMethod]
+		public void TestConvertAddressNullCity()
+		{
+			this.xad.City.Value = null;
+
+			var actual = MessageUtil.ConvertAddress(xad);
+
+			Assert.AreEqual(0, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.City));
+			Assert.IsNull(actual.Component.FirstOrDefault(c => c.ComponentTypeKey == AddressComponentKeys.City)?.Value);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.Country));
+			Assert.AreEqual("Canada", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.Country).Value);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.State));
+			Assert.AreEqual("Ontario", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.State).Value);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.StreetName));
+			Assert.AreEqual("Main St", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.StreetName).Value);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode));
+			Assert.AreEqual("L8N3T2", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Value);
+		}
+
+		/// <summary>
+		/// Tests the conversion of an address with a null country value.
+		/// </summary>
+		[TestMethod]
+		public void TestConvertAddressNullCountry()
+		{
+			this.xad.Country.Value = null;
+
+			var actual = MessageUtil.ConvertAddress(xad);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.City));
+			Assert.AreEqual("Hamilton", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.City).Value);
+
+			Assert.AreEqual(0, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.Country));
+			Assert.IsNull(actual.Component.FirstOrDefault(c => c.ComponentTypeKey == AddressComponentKeys.Country)?.Value);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.State));
+			Assert.AreEqual("Ontario", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.State).Value);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.StreetName));
+			Assert.AreEqual("Main St", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.StreetName).Value);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode));
+			Assert.AreEqual("L8N3T2", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Value);
+		}
+
+		/// <summary>
+		/// Tests the conversion of an address with a null postal code value.
+		/// </summary>
 		[TestMethod]
 		public void TestConvertAddressNullPostalCode()
 		{
@@ -374,9 +355,69 @@ namespace OpenIZ.Messaging.HL7.Test
 			Assert.IsNull(actual.Component.FirstOrDefault(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode)?.Value);
 		}
 
+		/// <summary>
+		/// Tests the conversion of an address with a null state value.
+		/// </summary>
+		[TestMethod]
+		public void TestConvertAddressNullState()
+		{
+			this.xad.StateOrProvince.Value = null;
+
+			var actual = MessageUtil.ConvertAddress(xad);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.City));
+			Assert.AreEqual("Hamilton", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.City).Value);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.Country));
+			Assert.AreEqual("Canada", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.Country).Value);
+
+			Assert.AreEqual(0, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.State));
+			Assert.IsNull(actual.Component.FirstOrDefault(c => c.ComponentTypeKey == AddressComponentKeys.State)?.Value);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.StreetName));
+			Assert.AreEqual("Main St", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.StreetName).Value);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode));
+			Assert.AreEqual("L8N3T2", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Value);
+		}
+
+		/// <summary>
+		/// Tests the conversion of an address with a null street value.
+		/// </summary>
+		[TestMethod]
+		public void TestConvertAddressNullStreet()
+		{
+			this.xad.StreetAddress.StreetName.Value = null;
+
+			var actual = MessageUtil.ConvertAddress(xad);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.City));
+			Assert.AreEqual("Hamilton", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.City).Value);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.Country));
+			Assert.AreEqual("Canada", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.Country).Value);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.State));
+			Assert.AreEqual("Ontario", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.State).Value);
+
+			Assert.AreEqual(0, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.StreetName));
+			Assert.IsNull(actual.Component.FirstOrDefault(c => c.ComponentTypeKey == AddressComponentKeys.StreetName)?.Value);
+
+			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode));
+			Assert.AreEqual("L8N3T2", actual.Component.First(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Value);
+		}
+
+		/// <summary>
+		/// Tests the conversion of a name.
+		/// </summary>
 		[TestMethod]
 		public void TestConvertName()
 		{
+			this.xpn = new XPN(Activator.CreateInstance(typeof(ADT_A01)) as IMessage);
+
+			this.xpn.FamilyName.Surname.Value = "Khanna";
+			this.xpn.GivenName.Value = "Nityan";
+
 			var actual = MessageUtil.ConvertName(this.xpn);
 
 			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == NameComponentKeys.Given));
@@ -386,6 +427,9 @@ namespace OpenIZ.Messaging.HL7.Test
 			Assert.AreEqual("Khanna", actual.Component.FirstOrDefault(c => c.ComponentTypeKey == NameComponentKeys.Family)?.Value);
 		}
 
+		/// <summary>
+		/// Tests the conversion of a name with a famiy name only.
+		/// </summary>
 		[TestMethod]
 		public void TestConvertNameFamilyNameOnly()
 		{
@@ -402,6 +446,9 @@ namespace OpenIZ.Messaging.HL7.Test
 			Assert.IsNull(actual.Component.FirstOrDefault(c => c.ComponentTypeKey == NameComponentKeys.Given)?.Value);
 		}
 
+		/// <summary>
+		/// Tests the conversion of a name with a given name only.
+		/// </summary>
 		[TestMethod]
 		public void TestConvertNameGivenNameOnly()
 		{
@@ -418,6 +465,40 @@ namespace OpenIZ.Messaging.HL7.Test
 			Assert.IsNull(actual.Component.FirstOrDefault(c => c.ComponentTypeKey == NameComponentKeys.Family)?.Value);
 		}
 
+		/// <summary>
+		/// Test the conversion of multiple names.
+		/// </summary>
+		[TestMethod]
+		public void TestConvertNameMultipleNames()
+		{
+			var adt = new ADT_A01();
+
+			var name1 = adt.PID.GetPatientName(0);
+
+			name1.FamilyName.Surname.Value = "Khanna";
+			name1.GivenName.Value = "Nityan";
+			name1.SecondAndFurtherGivenNamesOrInitialsThereof.Value = "Dave";
+
+			var name2 = adt.PID.GetPatientName(1);
+
+			name2.FamilyName.Surname.Value = "Smith";
+			name2.GivenName.Value = "II";
+			name2.SecondAndFurtherGivenNamesOrInitialsThereof.Value = "Capitano";
+
+			var names = new XPN[2];
+
+			names[0] = name1;
+			names[1] = name2;
+
+			var actual = MessageUtil.ConvertNames(names);
+
+			Assert.AreEqual(2, actual.Count(n => n.Component.Any(c => c.ComponentTypeKey == NameComponentKeys.Given)));
+			Assert.AreEqual(2, actual.Count(n => n.Component.Any(c => c.ComponentTypeKey == NameComponentKeys.Family)));
+		}
+
+		/// <summary>
+		/// Tests the conversion of a date time.
+		/// </summary>
 		[TestMethod]
 		public void TestConvertTSDateTime()
 		{
@@ -433,6 +514,9 @@ namespace OpenIZ.Messaging.HL7.Test
 			Assert.AreEqual(new DateTime(1970, 01, 01), actual.Value);
 		}
 
+		/// <summary>
+		/// Tests the conversion of a date time offset.
+		/// </summary>
 		[TestMethod]
 		public void TestConvertTSDateTimeOffset()
 		{
