@@ -1,33 +1,28 @@
 ﻿/*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: khannan
  * Date: 2016-10-6
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using MARC.HI.EHRS.SVC.Core;
-using MARC.HI.EHRS.SVC.Messaging.HAPI;
 using MARC.HI.EHRS.SVC.Messaging.HAPI.TransportProtocol;
-using MARC.HI.EHRS.SVC.Messaging.Multi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NHapi.Model.V25.Message;
+using System;
 
 namespace OpenIZ.Messaging.HL7.Test
 {
@@ -43,6 +38,11 @@ namespace OpenIZ.Messaging.HL7.Test
 		private Hl7MessageReceivedEventArgs args;
 
 		/// <summary>
+		/// The internal reference to the <see cref="Microsoft.VisualStudio.TestTools.UnitTesting.TestContext"/> instance.
+		/// </summary>
+		private TestContext context;
+
+		/// <summary>
 		/// The internal reference to the <see cref="ADT_A01"/> instance.
 		/// </summary>
 		private ADT_A01 message = null;
@@ -51,11 +51,6 @@ namespace OpenIZ.Messaging.HL7.Test
 		/// The internal reference to the <see cref="AdtMessageHandler"/> instance.
 		/// </summary>
 		private AdtMessageHandler messageHandler;
-
-		/// <summary>
-		/// The internal reference to the <see cref="Microsoft.VisualStudio.TestTools.UnitTesting.TestContext"/> instance.
-		/// </summary>
-		private TestContext context;
 
 		/// <summary>
 		/// Gets or sets the test context.
