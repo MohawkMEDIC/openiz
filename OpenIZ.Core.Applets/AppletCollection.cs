@@ -116,7 +116,7 @@ namespace OpenIZ.Core.Applets
                 return false;
             }
         }
-        
+
         /// <summary>
         /// Add an applet manifest to the collection
         /// </summary>
@@ -124,7 +124,7 @@ namespace OpenIZ.Core.Applets
         public void Add(AppletManifest item)
         {
             s_stringCache.Clear();
-            
+
             this.m_appletManifest.Add(item);
         }
 
@@ -151,7 +151,7 @@ namespace OpenIZ.Core.Applets
         {
             this.m_appletManifest.CopyTo(array, arrayIndex);
         }
-        
+
         /// <summary>
         /// Get the enumerator
         /// </summary>
@@ -183,7 +183,7 @@ namespace OpenIZ.Core.Applets
         {
             return this.m_appletManifest.Remove(item);
         }
-        
+
         /// <summary>
         /// Removes the specified item
         /// </summary>
@@ -219,7 +219,7 @@ namespace OpenIZ.Core.Applets
                 lock (s_syncLock)
                 {
                     retVal = this.m_appletManifest.SelectMany(o => o.Strings).
-                        Where(o=>o.Language == locale).
+                        Where(o => o.Language == locale).
                         SelectMany(o => o.String).
                         Select(o => new KeyValuePair<String, String>(o.Key, o.Value)).ToList();
                     s_stringCache.Add(locale, retVal);
@@ -238,7 +238,7 @@ namespace OpenIZ.Core.Applets
                 {
                     retVal = this.m_appletManifest.SelectMany(o => o.Templates).
                         FirstOrDefault(o => o.Mnemonic == templateMnemonic);
-                    if(retVal != null)
+                    if (retVal != null)
                         retVal.DefinitionContent = this.RenderAssetContent(this.ResolveAsset(retVal.Definition));
                     s_templateCache.Add(templateMnemonic, retVal);
                 }
@@ -248,7 +248,7 @@ namespace OpenIZ.Core.Applets
         /// <summary>
         /// Resolve the asset 
         /// </summary>
-        public AppletAsset ResolveAsset(String assetPath, AppletAsset relative = null, String language = null) 
+        public AppletAsset ResolveAsset(String assetPath, AppletAsset relative = null, String language = null)
         {
 
             if (assetPath == null)
@@ -265,7 +265,7 @@ namespace OpenIZ.Core.Applets
             {
 
                 AppletManifest resolvedManifest = null;
-                String pathLeft = path.IsAbsoluteUri ? path.AbsolutePath.Substring(1) : 
+                String pathLeft = path.IsAbsoluteUri ? path.AbsolutePath.Substring(1) :
                     path.OriginalString.StartsWith("/") ? path.OriginalString.Substring(1) : path.OriginalString;
                 // Is the host specified?
                 if (path.IsAbsoluteUri && !String.IsNullOrEmpty(path.Host))
@@ -290,11 +290,11 @@ namespace OpenIZ.Core.Applets
                 // Is there a resource?
                 if (resolvedManifest != null)
                 {
-                    if (pathLeft.EndsWith("/") || String.IsNullOrEmpty(pathLeft) )
+                    if (pathLeft.EndsWith("/") || String.IsNullOrEmpty(pathLeft))
                         pathLeft += "index.html";
                     return resolvedManifest.Assets.FirstOrDefault(o => o.Name == pathLeft);
                 }
-                
+
 
                 return null;
             }
@@ -393,7 +393,7 @@ namespace OpenIZ.Core.Applets
                             }
                         }
                         break;
-                }
+                } // switch
 
                 // Process data bindings
                 var dataBindings = htmlContent.DescendantNodes().OfType<XElement>().Where(o => o.Name.LocalName == "select" && o.Attributes().Any(a => a.Name.Namespace == xs_binding));
@@ -514,7 +514,7 @@ namespace OpenIZ.Core.Applets
                 // Re-write
                 foreach (var itm in htmlContent.DescendantNodes().OfType<XElement>().SelectMany(o => o.Attributes()).Where(o => o.Value.StartsWith("~")))
                 {
-                    itm.Value = String.Format("/{0}/{1}", asset.Manifest.Info.Id, itm.Value.Substring(2)); 
+                    itm.Value = String.Format("/{0}/{1}", asset.Manifest.Info.Id, itm.Value.Substring(2));
                     //itm.Value = itm.Value.Replace(APPLET_SCHEME, this.AppletBase).Replace(ASSET_SCHEME, this.AssetBase).Replace(DRAWABLE_SCHEME, this.DrawableBase);
                 }
 
@@ -545,7 +545,7 @@ namespace OpenIZ.Core.Applets
 
                     // Add to cache
                     lock (s_syncLock)
-                        if(!s_cache.ContainsKey(assetPath))
+                        if (!s_cache.ContainsKey(assetPath))
                             s_cache.Add(assetPath, renderBuffer);
 
                     return renderBuffer;
@@ -555,7 +555,7 @@ namespace OpenIZ.Core.Applets
             else
                 return null;
 
-            
+
         }
 
         /// <summary>
@@ -574,7 +574,7 @@ namespace OpenIZ.Core.Applets
         private List<XElement> GetInjectionHeaders(AppletAsset asset)
         {
             var htmlAsset = asset.Content as AppletAssetHtml;
-            
+
             // Insert scripts & Styles
             List<XElement> headerInjection = new List<XElement>();
             if (htmlAsset == null)
@@ -604,6 +604,20 @@ namespace OpenIZ.Core.Applets
                 else
                     throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
             }
+
+            // Content - SSI
+            var includes = htmlAsset.Html.DescendantNodes().OfType<XComment>().Where(o => o?.Value?.Trim().StartsWith("#include virtual=\"") == true).ToList();
+            foreach (var inc in includes)
+            {
+                String assetName = inc.Value.Trim().Substring(18); // HACK: Should be a REGEX
+                if (assetName.EndsWith("\""))
+                    assetName = assetName.Substring(0, assetName.Length - 1);
+                if (assetName == "content")
+                    continue;
+                var includeAsset = this.ResolveAsset(assetName, asset);
+                headerInjection.AddRange(this.GetInjectionHeaders(includeAsset));
+            }
+
             return headerInjection;
         }
     }

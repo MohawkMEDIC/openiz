@@ -103,6 +103,8 @@ namespace OpenIZ.Core.Protocol
 
                 }
             }
+
+
             return protocolActs.ToList();
         }
     }
