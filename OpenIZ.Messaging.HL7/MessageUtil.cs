@@ -359,6 +359,11 @@ namespace OpenIZ.Messaging.HL7
 					entityName.Component.Add(new EntityNameComponent(NameComponentKeys.Given, names[i].GivenName.Value));
 				}
 
+				if (!string.IsNullOrEmpty(names[i].SecondAndFurtherGivenNamesOrInitialsThereof.Value) && !string.IsNullOrWhiteSpace(names[i].SecondAndFurtherGivenNamesOrInitialsThereof.Value))
+				{
+					entityName.Component.Add(new EntityNameComponent(NameComponentKeys.Given, names[i].SecondAndFurtherGivenNamesOrInitialsThereof.Value));
+				}
+
 				if (!string.IsNullOrEmpty(names[i].PrefixEgDR.Value) && !string.IsNullOrWhiteSpace(names[i].PrefixEgDR.Value))
 				{
 					entityName.Component.Add(new EntityNameComponent(NameComponentKeys.Prefix, names[i].PrefixEgDR.Value));

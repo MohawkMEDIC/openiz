@@ -377,6 +377,11 @@ namespace OpenIZ.Messaging.HL7.Test
 		[TestMethod]
 		public void TestConvertName()
 		{
+			this.xpn = new XPN(Activator.CreateInstance(typeof(ADT_A01)) as IMessage);
+
+			this.xpn.FamilyName.Surname.Value = "Khanna";
+			this.xpn.GivenName.Value = "Nityan";
+
 			var actual = MessageUtil.ConvertName(this.xpn);
 
 			Assert.AreEqual(1, actual.Component.Count(c => c.ComponentTypeKey == NameComponentKeys.Given));
@@ -416,6 +421,34 @@ namespace OpenIZ.Messaging.HL7.Test
 
 			Assert.AreEqual(0, actual.Component.Count(c => c.ComponentTypeKey == NameComponentKeys.Family));
 			Assert.IsNull(actual.Component.FirstOrDefault(c => c.ComponentTypeKey == NameComponentKeys.Family)?.Value);
+		}
+
+		[TestMethod]
+		public void TestConvertNameMultipleNames()
+		{
+			var adt = new ADT_A01();
+
+			var name1 = adt.PID.GetPatientName(0);
+
+			name1.FamilyName.Surname.Value = "Khanna";
+			name1.GivenName.Value = "Nityan";
+			name1.SecondAndFurtherGivenNamesOrInitialsThereof.Value = "Dave";
+
+			var name2 = adt.PID.GetPatientName(1);
+
+			name2.FamilyName.Surname.Value = "Smith";
+			name2.GivenName.Value = "II";
+			name2.SecondAndFurtherGivenNamesOrInitialsThereof.Value = "Capitano";
+
+			var names = new XPN[2];
+
+			names[0] = name1;
+			names[1] = name2;
+
+			var actual = MessageUtil.ConvertNames(names);
+
+			Assert.AreEqual(2, actual.Count(n => n.Component.Any(c => c.ComponentTypeKey == NameComponentKeys.Given)));
+			Assert.AreEqual(2, actual.Count(n => n.Component.Any(c => c.ComponentTypeKey == NameComponentKeys.Family)));
 		}
 
 		[TestMethod]
