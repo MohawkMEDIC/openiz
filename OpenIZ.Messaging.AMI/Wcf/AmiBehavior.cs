@@ -45,6 +45,7 @@ using System.Xml.Serialization;
 using OpenIZ.Core.Model.AMI.Alerting;
 using OpenIZ.Core.Alert.Alerting;
 using OpenIZ.Core.Model.AMI.DataTypes;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -219,7 +220,8 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			var userToCreate = new Core.Model.Security.SecurityUser()
 			{
 				UserName = user.UserName,
-				Email = user.Email
+				Email = user.Email,
+                UserClass = user.User.UserClass == Guid.Empty ? UserClassKeys.HumanUser : user.User.UserClass
 			};
 
 			if (user.Lockout.HasValue && user.Lockout.Value)

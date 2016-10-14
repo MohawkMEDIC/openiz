@@ -47,7 +47,8 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <param name="client">The <see cref="IRestClient"/> instance.</param>
 		public AmiServiceClient(IRestClient client) : base(client)
 		{
-		}
+            this.Client.Accept = client.Accept ?? "application/xml";
+        }
 
 		/// <summary>
 		/// Accepts a certificate signing request.

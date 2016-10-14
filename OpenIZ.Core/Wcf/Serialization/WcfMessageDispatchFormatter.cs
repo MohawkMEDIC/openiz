@@ -111,14 +111,23 @@ namespace OpenIZ.Core.Wcf.Serialization
                     // Use XML Serializer
                     else if (contentType?.StartsWith("application/xml") == true)
                     {
-                        XmlDictionaryReader bodyReader = request.GetReaderAtBodyContents();
-                        while (bodyReader.NodeType != XmlNodeType.Element)
-                            bodyReader.Read();
+                        XmlDictionaryReader rawReader = request.GetReaderAtBodyContents();
+                        rawReader.ReadStartElement("Binary");
+                        byte[] rawBody = rawReader.ReadContentAsBase64();
 
-                        Type eType = s_knownTypes.FirstOrDefault(o => o.GetCustomAttribute<XmlRootAttribute>()?.ElementName == bodyReader.LocalName &&
-                            o.GetCustomAttribute<XmlRootAttribute>()?.Namespace == bodyReader.NamespaceURI);
-                        XmlSerializer xsz = s_serializers[eType];
-                        parameters[pNumber] = xsz.Deserialize(bodyReader);
+                        using (MemoryStream ms = new MemoryStream(rawBody))
+                        {
+                            using (XmlReader bodyReader = XmlReader.Create(ms))
+                            {
+                                while (bodyReader.NodeType != XmlNodeType.Element)
+                                    bodyReader.Read();
+
+                                Type eType = s_knownTypes.FirstOrDefault(o => o.GetCustomAttribute<XmlRootAttribute>()?.ElementName == bodyReader.LocalName &&
+                                o.GetCustomAttribute<XmlRootAttribute>()?.Namespace == bodyReader.NamespaceURI);
+                                XmlSerializer xsz = s_serializers[eType];
+                                parameters[pNumber] = xsz.Deserialize(bodyReader);
+                            }
+                        }
                     }
                     // Use JSON Serializer
                     else if (contentType?.StartsWith("application/json") == true)

@@ -24,7 +24,6 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
-using OpenIZ.Messaging.IMSI.Wcf.Compression;
 using System.IO;
 using System.Xml;
 using System.Text;
@@ -34,6 +33,7 @@ using Newtonsoft.Json;
 using System.Xml.Serialization;
 using System.Reflection;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Wcf.Compression;
 
 namespace OpenIZ.Messaging.IMSI.Wcf
 {

@@ -20,31 +20,43 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Messaging.IMSI.Wcf.Compression
+namespace OpenIZ.Core.Wcf.Compression
 {
     /// <summary>
-    /// Represents a compression scheme
+    /// Compression scheme for deflate
     /// </summary>
-    public interface ICompressionScheme
+    public class DeflateCompressionScheme : ICompressionScheme
     {
+        /// <summary>
+        /// Encoding this compression scheme handles
+        /// </summary>
+        public string Encoding
+        {
+            get
+            {
+                return "deflate";
+            }
+        }
 
         /// <summary>
-        /// Get the encoding 
+        /// Create the compression stream
         /// </summary>
-        string Encoding { get; }
+        public Stream CreateCompressionStream(Stream underlyingStream)
+        {
+            return new DeflateStream(underlyingStream, CompressionMode.Compress);
+        }
+
         /// <summary>
-        /// Create a stream that compresses
+        /// Create a decompression stream
         /// </summary>
-        Stream CreateCompressionStream(Stream underlyingStream);
-        /// <summary>
-        /// Create a stream that de-compresses
-        /// </summary>
-        Stream CreateDecompressionStream(Stream underlyingStream);
+        public Stream CreateDecompressionStream(Stream underlyingStream)
+        {
+            return new DeflateStream(underlyingStream, CompressionMode.Decompress);
+        }
     }
-
-
 }

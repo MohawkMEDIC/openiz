@@ -85,11 +85,6 @@
     <Compile Include="ResourceHandler\UserEntityResourceHandler.cs" />
     <Compile Include="Util\BundleUtil.cs" />
     <Compile Include="Wcf\Behavior\ImsiErrorEndpointBehavior.cs" />
-    <Compile Include="Wcf\Compression\CompressionUtil.cs" />
-    <Compile Include="Wcf\Compression\CompressionBodyWriter.cs" />
-    <Compile Include="Wcf\Compression\DeflateCompressionScheme.cs" />
-    <Compile Include="Wcf\Compression\GzipCompressionScheme.cs" />
-    <Compile Include="Wcf\Compression\ICompressionScheme.cs" />
     <Compile Include="Wcf\IImsiServiceContract.cs" />
     <Compile Include="Wcf\ImsiContentTypeHandler.cs" />
     <Compile Include="Wcf\ImsiMessageInspector.cs" />

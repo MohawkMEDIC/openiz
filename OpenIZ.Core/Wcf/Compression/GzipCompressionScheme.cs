@@ -25,30 +25,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Messaging.IMSI.Wcf.Compression
+namespace OpenIZ.Core.Wcf.Compression
 {
     /// <summary>
-    /// Compression scheme for deflate
+    /// Represents a compresson scheme which can deflate objects
     /// </summary>
-    public class DeflateCompressionScheme : ICompressionScheme
+    public class GzipCompressionScheme : ICompressionScheme
     {
         /// <summary>
-        /// Encoding this compression scheme handles
+        /// Encoding this scheme handles
         /// </summary>
         public string Encoding
         {
             get
             {
-                return "deflate";
+                return "gzip";
             }
         }
 
         /// <summary>
-        /// Create the compression stream
+        /// Create a compression stream
         /// </summary>
         public Stream CreateCompressionStream(Stream underlyingStream)
         {
-            return new DeflateStream(underlyingStream, CompressionMode.Compress);
+            return new GZipStream(underlyingStream, CompressionMode.Compress);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Compression
         /// </summary>
         public Stream CreateDecompressionStream(Stream underlyingStream)
         {
-            return new DeflateStream(underlyingStream, CompressionMode.Decompress);
+            return new GZipStream(underlyingStream, CompressionMode.Decompress);
         }
     }
 }

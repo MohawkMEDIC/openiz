@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Web;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -33,9 +34,9 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     {
         public override WebContentFormat GetMessageFormatForContentType(string contentType)
         {
-            if (contentType.StartsWith("application/xml"))
-                return WebContentFormat.Xml;
-            else
+            //if (contentType.StartsWith("application/xml"))
+            //    return WebContentFormat.Xml;
+            //else
                 return WebContentFormat.Raw;
         }
     }

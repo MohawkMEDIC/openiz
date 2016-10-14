@@ -107,6 +107,11 @@
     <Compile Include="Services\Impl\LocalProviderRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalStockManagementRepositoryService.cs" />
     <Compile Include="Wcf\Behavior\WcfErrorEndpointBehavior.cs" />
+    <Compile Include="Wcf\Compression\CompressionBodyWriter.cs" />
+    <Compile Include="Wcf\Compression\CompressionUtil.cs" />
+    <Compile Include="Wcf\Compression\DeflateCompressionScheme.cs" />
+    <Compile Include="Wcf\Compression\GzipCompressionScheme.cs" />
+    <Compile Include="Wcf\Compression\ICompressionScheme.cs" />
     <Compile Include="Wcf\Security\BasicAuthorizationAccessPolicy.cs" />
     <Compile Include="Wcf\Security\BasicAuthorizationCredentialValidator.cs" />
     <Compile Include="Wcf\Security\JwtTokenAuthorizationPolicy.cs" />

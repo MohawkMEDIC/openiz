@@ -42,6 +42,12 @@ using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Applets
 {
+
+    /// <summary>
+    /// Represents a asset content resolver
+    /// </summary>
+    public delegate object AssetContentResolver(AppletAsset asset);
+
     /// <summary>
     /// Represents a collection of applets
     /// </summary>
@@ -61,6 +67,15 @@ namespace OpenIZ.Core.Applets
         private readonly XNamespace xs_xhtml = "http://www.w3.org/1999/xhtml";
         private readonly XNamespace xs_binding = "http://openiz.org/applet/binding";
 
+        /// <summary>
+        /// Gets or sets whether caching is enabled
+        /// </summary>
+        public Boolean CachePages { get; set; }
+
+        /// <summary>
+        /// Asset content resolver called when asset content is null
+        /// </summary>
+        public AssetContentResolver Resolver { get; set; }
 
         // Reference bundles
         private List<RenderBundle> m_referenceBundles = new List<RenderBundle>()
@@ -72,6 +87,7 @@ namespace OpenIZ.Core.Applets
         /// </summary>
         public AppletCollection()
         {
+            this.CachePages = true;
         }
 
         /// <summary>
@@ -79,6 +95,7 @@ namespace OpenIZ.Core.Applets
         /// </summary>
         public AppletCollection(String baseUrl)
         {
+            this.CachePages = true;
             this.m_baseUrl = baseUrl;
         }
 
@@ -309,28 +326,33 @@ namespace OpenIZ.Core.Applets
             // First, is there an object already
             byte[] cacheObject = null;
             string assetPath = String.Format("{0}?lang={1}", asset.ToString(), preProcessLocalization);
-            if (s_cache.TryGetValue(assetPath, out cacheObject))
+            if (this.CachePages && s_cache.TryGetValue(assetPath, out cacheObject))
                 return cacheObject;
 
-            if (asset.Content is String) // Content is a string
-                return Encoding.UTF8.GetBytes(asset.Content as String);
-            else if (asset.Content is byte[]) // Content is a binary asset
-                return asset.Content as byte[];
-            else if (asset.Content is XElement) // Content is XML
+            // Resolve content
+            var content = asset.Content;
+            if (content == null && this.Resolver != null)
+                content = this.Resolver(asset);
+
+            if (content is String) // Content is a string
+                return Encoding.UTF8.GetBytes(content as String);
+            else if (content is byte[]) // Content is a binary asset
+                return content as byte[];
+            else if (content is XElement) // Content is XML
             {
                 using (MemoryStream ms = new MemoryStream())
                 using (XmlWriter xw = XmlWriter.Create(ms, new XmlWriterSettings() { Indent = true }))
                 {
-                    (asset.Content as XElement).WriteTo(xw);
+                    (content as XElement).WriteTo(xw);
                     xw.Flush();
                     ms.Flush();
                     return ms.ToArray();
                 }
             }
-            else if (asset.Content is AppletAssetHtml) // Content is HTML
+            else if (content is AppletAssetHtml) // Content is HTML
             {
                 // Is the content HTML?
-                var htmlAsset = asset.Content as AppletAssetHtml;
+                var htmlAsset = content as AppletAssetHtml;
                 XElement htmlContent = null;
 
                 // Type of tag to render basic content
@@ -574,6 +596,8 @@ namespace OpenIZ.Core.Applets
         private List<XElement> GetInjectionHeaders(AppletAsset asset)
         {
             var htmlAsset = asset.Content as AppletAssetHtml;
+            if (htmlAsset == null && this.Resolver != null)
+                htmlAsset = this.Resolver(asset) as AppletAssetHtml;
 
             // Insert scripts & Styles
             List<XElement> headerInjection = new List<XElement>();
@@ -615,7 +639,8 @@ namespace OpenIZ.Core.Applets
                 if (assetName == "content")
                     continue;
                 var includeAsset = this.ResolveAsset(assetName, asset);
-                headerInjection.AddRange(this.GetInjectionHeaders(includeAsset));
+                if(includeAsset != null)
+                    headerInjection.AddRange(this.GetInjectionHeaders(includeAsset));
             }
 
             return headerInjection;

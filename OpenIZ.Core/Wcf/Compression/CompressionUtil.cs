@@ -29,7 +29,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace OpenIZ.Messaging.IMSI.Wcf.Compression
+namespace OpenIZ.Core.Wcf.Compression
 {
     /// <summary>
     /// Compression utilities
@@ -82,7 +82,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Compression
                                 int br = BUFFER_SIZE;
                                 while (br == BUFFER_SIZE)
                                 {
-                                    br = rdr.ReadContentAsBase64(buffer, 0, BUFFER_SIZE);
+                                    br = rdr.ReadElementContentAsBase64(buffer, 0, BUFFER_SIZE);
                                     binMs.Write(buffer, 0, br);
                                 }
                             }
@@ -103,8 +103,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Compression
                 outMessage = Message.CreateMessage(message.Version, message.Headers.Action, XmlReader.Create(outMs));
             else
             {
-                outMessage = Message.CreateMessage(message.Version, message.Headers.Action, new RawBodyWriter(binaryData));
-                outMs.Dispose();
+                outMessage = Message.CreateMessage(message.Version, message.Headers.Action, new RawBodyWriter(outMs));
+                //outMs.Dispose();
             }
 
             outMessage.Properties.CopyProperties(message.Properties);

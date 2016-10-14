@@ -152,6 +152,7 @@ namespace OpenIZ.Core.Services.Impl
 				retVal.SecurityHash = userInfo.SecurityHash;
 				retVal.TwoFactorEnabled = userInfo.TwoFactorEnabled;
 				retVal.UserPhoto = userInfo.UserPhoto;
+                retVal.UserClass = userInfo.UserClass;
 				pers.Update(retVal, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 			}
 			return retVal;

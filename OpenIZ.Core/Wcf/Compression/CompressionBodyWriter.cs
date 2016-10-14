@@ -17,7 +17,6 @@
  * User: justi
  * Date: 2016-6-14
  */
-using OpenIZ.Messaging.IMSI.Wcf.Compression;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,7 +27,7 @@ using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Messaging.IMSI.Wcf.Compression
+namespace OpenIZ.Core.Wcf.Compression
 {
 
     /// <summary>

@@ -56,13 +56,19 @@ namespace OpenIZ.Core.Wcf.Serialization
         protected override void OnWriteBodyContents(XmlDictionaryWriter writer)
         {
             writer.WriteStartElement("Binary");
+
+
             if (this.m_stream == null)
                 writer.WriteBase64(this.m_bytes, 0, this.m_bytes.Length);
             else
             {
-                byte[] buffer = new byte[this.m_stream.Length];
-                this.m_stream.Read(buffer, 0, (int)this.m_stream.Length);
-                writer.WriteBase64(buffer, 0, (int)this.m_stream.Length);
+                byte[] buffer = new byte[1024];
+                int br = 1024;
+                while(br == 1024)
+                {
+                    br = this.m_stream.Read(buffer, 0, 1024);
+                    writer.WriteBase64(buffer, 0, br);
+                }
             }
             writer.WriteEndElement();
         }
