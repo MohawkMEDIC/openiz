@@ -31,7 +31,7 @@ namespace OpenIZ.Core.Model.Entities
     /// </summary>
     /// <typeparam name="TBoundModel"></typeparam>
     [Classifier(nameof(ComponentType)), SimpleValue(nameof(Value))]
-    [XmlType(Namespace = "http://openiz.org/model")]
+    [XmlType(Namespace = "http://openiz.org/model"), JsonObject("GenericComponentValues")]
     public abstract class GenericComponentValues<TBoundModel> : Association<TBoundModel> where TBoundModel : IdentifiedData, new()
     {
         // Component type

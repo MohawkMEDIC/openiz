@@ -17,18 +17,21 @@
  * User: justi
  * Date: 2016-7-16
  */
+using Newtonsoft.Json;
 using OpenIZ.Core.Model.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.Acts
 {
     /// <summary>
     /// Represents an act which indicates why data was created/changed
     /// </summary>
+    [XmlType(nameof(ControlAct), Namespace = "http://openiz.org/model"), JsonObject("ControlAct")]
     public class ControlAct : Act
     {
         /// <summary>

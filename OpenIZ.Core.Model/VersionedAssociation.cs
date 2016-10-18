@@ -36,7 +36,7 @@ namespace OpenIZ.Core.Model
     /// Represents a relational class which is bound on a version boundary
     /// </summary>
     
-    [XmlType(Namespace = "http://openiz.org/model")]
+    [XmlType(Namespace = "http://openiz.org/model"), JsonObject("VersionedAssociation")]
     public abstract class VersionedAssociation<TSourceType> : Association<TSourceType>, IVersionedAssociation where TSourceType : VersionedEntityData<TSourceType>, new()
     {
 

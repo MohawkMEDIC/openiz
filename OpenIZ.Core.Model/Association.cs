@@ -33,7 +33,7 @@ namespace OpenIZ.Core.Model
     /// Represents a bse class for bound relational data
     /// </summary>
     /// <typeparam name="TSourceType"></typeparam>
-    [XmlType(Namespace = "http://openiz.org/model")]
+    [XmlType(Namespace = "http://openiz.org/model"), JsonObject("Association")]
     public abstract class Association<TSourceType> : IdentifiedData, ISimpleAssociation where TSourceType : IdentifiedData, new()
     {
 

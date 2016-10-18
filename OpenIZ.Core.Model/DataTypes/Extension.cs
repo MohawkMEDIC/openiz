@@ -36,7 +36,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a base entity extension
     /// </summary>
     [Classifier(nameof(ExtensionType)), SimpleValue(nameof(ExtensionValue))]
-    [XmlType(Namespace = "http://openiz.org/model")]
+    [XmlType(Namespace = "http://openiz.org/model"), JsonObject("Extension")]
     public abstract class Extension<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>, new()
     {
 

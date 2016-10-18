@@ -44,6 +44,10 @@
     <Reference Include="MohawkCollege.Util.Console.Parameters">
       <HintPath>..\Solution Items\MohawkCollege.Util.Console.Parameters.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -61,6 +65,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SeedData\SeedData.cs" />
+    <Compile Include="ViewModelDoc.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -90,6 +95,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\jsdoc-template.js" />
     <Content Include="SeedData\SeedData.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
