@@ -36,7 +36,7 @@ namespace OpenIZ.Core.Model
     /// Represents versioned based data, that is base data which has versions
     /// </summary>
     
-    [XmlType(Namespace = "http://openiz.org/model")]
+    [XmlType(Namespace = "http://openiz.org/model"), JsonObject("VersionedEntityData")]
     public abstract class VersionedEntityData<THistoryModelType> : BaseEntityData, IVersionedEntity where THistoryModelType : VersionedEntityData<THistoryModelType>, new()
     {
 

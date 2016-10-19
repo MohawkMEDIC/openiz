@@ -19,6 +19,7 @@
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.ComponentModel;
@@ -49,7 +50,25 @@ namespace OpenIZ.Core.Model.Entities
         public EntityAddressComponent()
         {
 
-        }     
-  
+        }
+
+        /// <summary>
+        /// Gets or sets the component type key
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [XmlElement("type"), JsonProperty("type")]
+        [Binding(typeof(AddressComponentKeys))]
+        public override Guid? ComponentTypeKey
+        {
+            get
+            {
+                return base.ComponentTypeKey;
+            }
+
+            set
+            {
+                base.ComponentTypeKey = value;
+            }
+        }
     }
 }

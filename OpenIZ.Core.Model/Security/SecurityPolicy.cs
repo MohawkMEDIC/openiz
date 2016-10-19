@@ -83,6 +83,7 @@ namespace OpenIZ.Core.Model.Security
     /// <summary>
     /// Represents a security policy instance
     /// </summary>
+    [XmlType(nameof(SecurityPolicyInstance), Namespace = "http://openiz.org/model"), JsonObject("SecurityPolicyInstance")]
     public class SecurityPolicyInstance : Association<SecurityEntity>
     {
         // Policy id

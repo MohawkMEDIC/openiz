@@ -29,6 +29,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core.Model.EntityLoader;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -89,6 +90,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("classConcept"), JsonProperty("classConcept")]
+        [Binding(typeof(EntityClassKeys))]
         public virtual Guid? ClassConceptKey
         {
             get { return this.m_classConceptId; }
@@ -107,6 +109,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("determinerConcept"), JsonProperty("determinerConcept")]
+        [Binding(typeof(DeterminerKeys))]
         public virtual Guid? DeterminerConceptKey
         {
             get { return this.m_determinerConceptId; }
@@ -125,6 +128,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("statusConcept"), JsonProperty("statusConcept")]
+        [Binding(typeof(StatusKeys))]
         public Guid?  StatusConceptKey
         {
             get { return this.m_statusConceptId; }

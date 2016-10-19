@@ -72,7 +72,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Act identifier
     /// </summary>
     
-    [XmlType(Namespace = "http://openiz.org/model", TypeName = "ActIdentifier")]
+    [XmlType(Namespace = "http://openiz.org/model", TypeName = "ActIdentifier"), JsonObject("ActIdentifier")]
     public class ActIdentifier : IdentifierBase<Act>
     {
         /// <summary>
@@ -105,7 +105,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents an external assigned identifier
     /// </summary>
-    [XmlType(Namespace = "http://openiz.org/model")]
+    [XmlType(Namespace = "http://openiz.org/model"), JsonObject("IdentifierBase")]
     [Classifier(nameof(Authority))] 
     public abstract class IdentifierBase<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>, new()
     {

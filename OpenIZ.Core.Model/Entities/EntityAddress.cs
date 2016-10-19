@@ -74,6 +74,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [XmlElement("use"), JsonProperty("use")]
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [Binding(typeof(AddressUseKeys))]
         public Guid? AddressUseKey
         {
             get { return this.m_addressUseKey; }

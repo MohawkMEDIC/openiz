@@ -45,6 +45,7 @@
     <Compile Include="Acts\Protocol.cs" />
     <Compile Include="Acts\SubstanceAdministration.cs" />
     <Compile Include="Attributes\AutoLoadAttribute.cs" />
+    <Compile Include="Attributes\BindingAttribute.cs" />
     <Compile Include="Attributes\ClassifierAttribute.cs" />
     <Compile Include="Attributes\DataIgnoreAttribute.cs" />
     <Compile Include="Attributes\KeyLookupAttribute.cs" />

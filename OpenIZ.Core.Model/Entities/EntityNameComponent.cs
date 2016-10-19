@@ -19,6 +19,7 @@
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.ComponentModel;
@@ -71,11 +72,30 @@ namespace OpenIZ.Core.Model.Entities
         [XmlElement("phoneticCode"), JsonProperty("phoneticCode")]
         public String PhoneticCode { get; set; }
 
+
+        /// <summary>
+        /// Gets or sets the component type key
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [XmlElement("type"), JsonProperty("type")]
+        [Binding(typeof(NameComponentKeys))]
+        public override Guid? ComponentTypeKey
+        {
+            get
+            {
+                return base.ComponentTypeKey;
+            }
+            set
+            {
+                base.ComponentTypeKey = value;
+            }
+        }
+
         /// <summary>
         /// Gets or sets the identifier of the phonetic code
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
+        [Binding(typeof(PhoneticAlgorithmKeys))]
         [XmlElement("phoneticAlgorithm"), JsonProperty("phoneticAlgorithm")]
         public Guid? PhoneticAlgorithmKey
         {
