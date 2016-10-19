@@ -89,15 +89,10 @@ namespace OpenIZ.Core.Security
         public const string Login = "1.3.6.1.4.1.33349.3.1.5.9.2.1";
 
         /// <summary>
-        /// Login to an interactive session
+        /// Login to an interactive session (with user interaction)
         /// </summary>
-        public const string LoginService = "1.3.6.1.4.1.33349.3.1.5.9.2.1.0";
-
-        /// <summary>
-        /// Login as a service right
-        /// </summary>
-        public const string RreadClinicalData = "1.3.6.1.4.1.33349.3.1.5.9.2.1.1";
-
+        public const string LoginAsService = "1.3.6.1.4.1.33349.3.1.5.9.2.1.0";
+                                                
         /// <summary>
         /// Access clinical data permission 
         /// </summary>

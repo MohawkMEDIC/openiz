@@ -94,6 +94,14 @@
   <ItemGroup>
     <EmbeddedResource Include="DoesntInterpretSimpleArray.json" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MinActModel.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DeepActModel.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

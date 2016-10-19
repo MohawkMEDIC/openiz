@@ -53,6 +53,11 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// </summary>
         List<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence) where TObject : IdentifiedData, IVersionedAssociation, new();
 
+        /// <summary>
+        /// Get relationships
+        /// </summary>
+        List<TObject> GetRelations<TObject>(Guid? sourceKey) where TObject : IdentifiedData, ISimpleAssociation, new();
+
 
     }
 }

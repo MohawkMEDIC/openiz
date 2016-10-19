@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://openiz.org/model/view" elementFormDefault="qualified" targetNamespace="http://openiz.org/model/view" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="ClassifierModelDescription">
+    <xs:attribute name="classifier" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="PropertyContainerDescription" abstract="true">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="property" type="tns:PropertyModelDescription" />
+    </xs:sequence>
+    <xs:attribute name="all" type="xs:boolean" use="required" />
+  </xs:complexType>
+  <xs:complexType name="PropertyModelDescription">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:PropertyContainerDescription">
+        <xs:attribute name="name" type="xs:string" />
+        <xs:attribute name="classifier" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ViewModel" nillable="true" type="tns:ViewModelDescription" />
+  <xs:complexType name="ViewModelDescription">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="type" type="tns:TypeModelDescription" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="TypeModelDescription">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:PropertyContainerDescription">
+        <xs:attribute name="type" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

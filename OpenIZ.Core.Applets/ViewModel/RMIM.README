@@ -1,0 +1,21 @@
+﻿RMIM - Refined Message Information Model README
+-----------------------------------------------
+
+The.Description files allow the serializer to understand the necessary properties which should be included in the
+serialized model under all circumstances regardless of their delay load status.
+
+The.Description format simply instructs the serializer which properties should be traversed. Note that only 
+complex traversable properties need to be included. 
+
+<ViewModel xmlns="http://openiz.org/model/view">
+	<model type="Entity">
+		<property property="name" all="true"/>
+		<property property="address" all="true"/>
+		<property property="telecom"/>
+		<property property="relationship">
+			<property classifier="RecordTarget">
+				<property property="targetModel"/>
+			</property>
+		</property>
+	</model>
+</ViewModel>

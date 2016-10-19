@@ -75,6 +75,11 @@ namespace OpenIZ.Core.Applets.Test
                 throw new NotImplementedException();
             }
 
+            public List<TObject> GetRelations<TObject>(Guid? sourceKey) where TObject : IdentifiedData, ISimpleAssociation, new()
+            {
+                throw new NotImplementedException();
+
+            }
             /// <summary>
             /// Query the specified object
             /// </summary>

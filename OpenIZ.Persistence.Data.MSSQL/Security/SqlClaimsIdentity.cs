@@ -18,7 +18,7 @@
  * Date: 2016-6-14
  */
 using OpenIZ.Core.Services;
- using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Exceptions;
 using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Core.Services.Policy;
@@ -43,6 +43,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Security
 {
@@ -80,7 +81,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
             {
                 if (userName == AuthenticationContext.AnonymousPrincipal.Identity.Name ||
                     userName == AuthenticationContext.SystemPrincipal.Identity.Name)
+                {
                     throw new PolicyViolationException(PermissionPolicyIdentifiers.Login, PolicyDecisionOutcomeType.Deny);
+                }
 
                 Guid? userId = Guid.Empty;
 
@@ -99,7 +102,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
                     var userIdentity = new SqlClaimsIdentity(user, true) { m_authenticationType = "Password" };
 
                     // Is user allowed to login?
-                    new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.Login, new GenericPrincipal(userIdentity, null)).Demand();
+                    if(user.UserClass == UserClassKeys.HumanUser)
+                        new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.Login, new GenericPrincipal(userIdentity, null)).Demand();
+                    else if(user.UserClass == UserClassKeys.ApplictionUser)
+                        new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.LoginAsService, new GenericPrincipal(userIdentity, null)).Demand();
+
                     return userIdentity;
                 }
             }

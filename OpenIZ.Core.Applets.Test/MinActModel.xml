@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ViewModel xmlns="http://openiz.org/model/view" name="sampleact">
+  <type type="Act" all="true">
+    <property name="relationship" all="false">
+      <property classifier="HasSubject" all="false">
+        <property name="targetModel" all="false"/>
+      </property>
+    </property>
+  </type>
+</ViewModel>

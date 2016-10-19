@@ -35,6 +35,8 @@ using OpenIZ.Core.Model.Serialization;
 using OpenIZ.Core.Model.Reflection;
 using System.Diagnostics;
 using OpenIZ.Core.Model.EntityLoader;
+using OpenIZ.Core.Applets.ViewModel.Description;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Applets.ViewModel
 {
@@ -52,9 +54,16 @@ namespace OpenIZ.Core.Applets.ViewModel
         private static ModelSerializationBinder s_binder = new ModelSerializationBinder();
 
         // Property cache
-        private static Dictionary<Type, Dictionary<PropertyInfo, String>> s_writePropertyCache = new Dictionary<Type, Dictionary<PropertyInfo, String>>();
-        private static Dictionary<Type, Dictionary<String,PropertyInfo>> s_readPropertyCache = new Dictionary<Type, Dictionary<String, PropertyInfo>>();
+        private static ViewModelDescription s_defaultViewModel = new ViewModelDescription()
+        {
+            Name = "__default"
+        };
 
+        private static Dictionary<Type, Dictionary<String, PropertyInfo>> s_readPropertyCache = new Dictionary<Type, Dictionary<String, PropertyInfo>>();
+
+        // View model cache
+        private static Dictionary<String, RootSerializationContext> s_rootSerializationContexts = new Dictionary<string, RootSerializationContext>();
+        
         /// <summary>
         /// Serializes the specified internal data 
         /// </summary>
@@ -64,14 +73,19 @@ namespace OpenIZ.Core.Applets.ViewModel
         ///     - Delay load are also expanded to keynameModel which is the model
         ///     - Collections are expanded to classifier class model[classifier] = value
         /// </remarks>
-        public static String Serialize(IdentifiedData data)
+        public static String Serialize(IdentifiedData data, ViewModelDescription viewModel = null)
         {
+            if (data == null)
+                return String.Empty;
+
             using (StringWriter sw = new StringWriter())
             {
                 JsonWriter jwriter = new JsonTextWriter(sw);
-                // Iterate over properties
-                SerializeInternal(data, jwriter);
 
+                if (viewModel == null)
+                    PrepareDefaultViewModel(data.GetType());
+                // Iterate over properties
+                SerializeInternal(data, jwriter, new RootSerializationContext(data?.GetType(), viewModel ?? s_defaultViewModel), new Stack<Guid>());
                 return sw.ToString();
             }
         }
@@ -94,7 +108,7 @@ namespace OpenIZ.Core.Applets.ViewModel
 
         }
 
-        
+
 
         /// <summary>
         /// Perform the work of de-serializing
@@ -102,7 +116,7 @@ namespace OpenIZ.Core.Applets.ViewModel
         private static IdentifiedData DeSerializeInternal(JsonReader jreader, Type serializationType)
         {
 
-            
+
             // Must be at start object
             if (jreader.TokenType != JsonToken.StartObject)
                 throw new InvalidDataException();
@@ -137,7 +151,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                         Debug.WriteLine("< {0}", jreader.Path);
 #endif
                         jreader.Read();
-                        
+
                         // Token type switch
                         switch (jreader.TokenType)
                         {
@@ -273,7 +287,7 @@ namespace OpenIZ.Core.Applets.ViewModel
 
                                                     }
                                                 }
-                                                else if (jreader.TokenType== JsonToken.Null)
+                                                else if (jreader.TokenType == JsonToken.Null)
                                                     ; // don't do anything
                                                 else
                                                 {
@@ -294,7 +308,8 @@ namespace OpenIZ.Core.Applets.ViewModel
                                                             {
                                                                 sattPropertyInfo.SetValue(sattInstance, Convert.FromBase64String(jreader.Value?.ToString()));
                                                             }
-                                                            catch {
+                                                            catch
+                                                            {
                                                                 sattPropertyInfo.SetValue(sattInstance, Encoding.UTF8.GetBytes(jreader.Value?.ToString() ?? ""));
                                                             }
                                                         }
@@ -382,7 +397,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                                 }
                                 break;
                             default: // Simple values
-                                if(propertyInfo == null)
+                                if (propertyInfo == null)
                                     continue;
                                 else if (propertyInfo.Name == nameof(IdentifiedData.Type)) // Type switch
                                 {
@@ -436,7 +451,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                                             var klu = propertyInfo.PropertyType.GetTypeInfo().GetCustomAttribute<KeyLookupAttribute>();
                                             if (propertyInfo.PropertyType.StripNullable() == typeof(Guid))
                                             {
-                                                if(!String.IsNullOrEmpty((String)jreader.Value))
+                                                if (!String.IsNullOrEmpty((String)jreader.Value))
                                                     propertyInfo.SetValue(retVal, Guid.Parse((String)jreader.Value));
                                             }
                                             else if (klu == null) // not a key
@@ -448,7 +463,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                                                 propertyInfo.PropertyType.GetRuntimeProperty(klu.UniqueProperty).SetValue(scopedInstance, jreader.Value);
                                                 propertyInfo.SetValue(retVal, scopedInstance);
                                             }
-                                            
+
                                             break;
 
                                     }
@@ -488,18 +503,26 @@ namespace OpenIZ.Core.Applets.ViewModel
                     if (!s_readPropertyCache.ContainsKey(serializationType))
                         s_readPropertyCache.Add(serializationType, parseProperties);
             }
-            // Properties
-            Dictionary<PropertyInfo, String> serializationProperties = null;
+        }
 
-            if (!s_writePropertyCache.TryGetValue(serializationType, out serializationProperties))
+        /// <summary>
+        /// Prepare default view model
+        /// </summary>
+        private static void PrepareDefaultViewModel(Type serializationType)
+        {
+            // Properties
+            if (!s_defaultViewModel.Model.Any(o => o.TypeName == serializationType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName))
             {
-                serializationProperties = new Dictionary<PropertyInfo, String>();
+                TypeModelDescription modelDescription = new TypeModelDescription()
+                {
+                    TypeName = serializationType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName
+                };
+
                 foreach (var itm in serializationType.GetRuntimeProperties().Where(o => o.CanRead))
                 {
                     // Truly ignore this? No JsonProperty and a DataIgnore?
                     if (itm.GetCustomAttribute<DataIgnoreAttribute>() != null && itm.GetCustomAttribute<JsonPropertyAttribute>() == null)
                         continue;
-
 
                     var jpa = itm.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName;
                     if (jpa == null && itm.GetCustomAttribute<SerializationReferenceAttribute>() != null)
@@ -509,61 +532,103 @@ namespace OpenIZ.Core.Applets.ViewModel
 
                     if (jpa == null || jpa == "$type")
                         continue;
-                    serializationProperties.Add(itm, jpa);
+                    modelDescription.Properties.Add(new PropertyModelDescription()
+                    {
+                        Name = jpa
+                    });
                 }
-                lock (s_writePropertyCache)
-                    if(!s_writePropertyCache.ContainsKey(serializationType))
-                        s_writePropertyCache.Add(serializationType, serializationProperties);
+                lock (s_defaultViewModel)
+                    s_defaultViewModel.Model.Add(modelDescription);
             }
         }
 
         /// <summary>
         /// Serialize the specified object
         /// </summary>
-        private static void SerializeInternal(IdentifiedData data, JsonWriter jwriter, HashSet<Guid> writeStack = null)
+        private static void SerializeInternal(IdentifiedData data, JsonWriter jwriter, SerializationContext context, Stack<Guid> writeStack)
         {
 
-            if(data == null)
+            if (data == null || data.Key.HasValue && writeStack.Contains(data.Key.Value))
             {
                 jwriter.WriteNull();
                 return;
             }
 
-            // We don't want to trigger delay loading and don't want to trigger loading
-            data = data.GetLocked();
+            // Prepare the default view model if not exist
+            PrepareDefaultViewModel(data.GetType());
 
-            // Prevent infinite loop
-            IVersionedEntity ver = data as IVersionedEntity;
-            if (writeStack == null)
-                writeStack = new HashSet<Guid>();
-            else if (data.Key.HasValue && writeStack.Contains(ver?.VersionKey ?? data.Key.Value))
-            {
-                jwriter.WriteNull();
-                return;
-            }
-
-            if (data.Key.HasValue || ver?.VersionKey.HasValue == true)
-                writeStack.Add(ver?.VersionKey ?? data.Key.Value);
+            // Prevent circular references
+            if(data.Key.HasValue)
+                writeStack.Push(data.Key.Value);
 
             // Write object data
             jwriter.WriteStartObject();
             jwriter.WritePropertyName("$type");
             jwriter.WriteValue(data.Type);
             var myClassifier = data.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
-            
-            PreparePropertyCache(data.GetType());
-            var serializationProperties = s_writePropertyCache[data.GetType()];
-            
-            foreach (var itm in serializationProperties)
-            {
 
-                // Value is null
-                var value = itm.Key.GetValue(data);
-                if (value == null || (itm.Key.Name == myClassifier?.ClassifierProperty && value is IdentifiedData) ||
-                    itm.Key.PropertyType.GetTypeInfo().IsValueType && value == Activator.CreateInstance(itm.Key.PropertyType))
+            foreach (var propertyInfo in data.GetType().GetRuntimeProperties())
+            {
+                // Property info cannot read
+                if (!propertyInfo.CanRead) continue;
+
+                // Is there a serialization configured for this?
+                var propertyContext = new PropertySerializationContext(propertyInfo, context);
+
+                // We never serialize unless
+                //  - Context is ROOT (all ROOT properties are serialized)
+                //  - The definition says ALL properties
+                //  - The definition is explicitly set
+                if (!((context is RootSerializationContext) ||
+                    (context as PropertySerializationContext).Description?.All == true ||
+                    propertyContext.Description != null) &&
+                    typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(propertyInfo.PropertyType.StripGeneric().GetTypeInfo()))
                     continue;
 
-                String propertyName = itm.Value;
+                // Value is null
+                var value = propertyInfo.GetValue(data);
+
+                // First, is this explicitly defined!?
+                if ((value == null || (value as IList)?.Count == 0) && propertyContext.Description != null)
+                {
+                    try
+                    {
+                        // We are going to load this mofo , so let's make sure it is loaded
+                        if (value is IList)
+                        {
+                            var elementType = propertyInfo.PropertyType.GenericTypeArguments[0];
+                            var method = EntitySource.Current.Provider.GetType().GetRuntimeMethod("GetRelations", new Type[] { typeof(Guid?) }).MakeGenericMethod(elementType);
+                            value = method.Invoke(EntitySource.Current.Provider, new Object[] { data.Key }) as IList;
+                            propertyInfo.SetValue(data, value);
+                        }
+                        else if (propertyInfo.GetCustomAttribute<SerializationReferenceAttribute>() != null)
+                        {
+                            var keyPropertyRef = propertyInfo.GetCustomAttribute<SerializationReferenceAttribute>();
+                            var keyProperty = data.GetType().GetRuntimeProperty(keyPropertyRef.RedirectProperty);
+                            var key = keyProperty.GetValue(data);
+                            if (key != null)
+                            {
+                                var method = EntitySource.Current.Provider.GetType().GetRuntimeMethod("Get", new Type[] { typeof(Guid?) }).MakeGenericMethod(propertyInfo.PropertyType);
+                                // Backing property
+                                value = method.Invoke(EntitySource.Current.Provider, new Object[] { key }) as IList;
+                                propertyInfo.SetValue(data, value);
+                            }
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        Debug.WriteLine(e.ToString());
+                    }
+                }
+                
+                if (value == null || (propertyInfo.Name == myClassifier?.ClassifierProperty && value is IdentifiedData) ||
+                    propertyInfo.PropertyType.GetTypeInfo().IsValueType && value == Activator.CreateInstance(propertyInfo.PropertyType))
+                    continue;
+
+                String propertyName = propertyContext.Name;
+                if (String.IsNullOrEmpty(propertyName))
+                    continue;
+
                 if (value is IList && (value as IList).Count == 0)
                     continue;
 #if VERBOSE_DEBUG
@@ -573,16 +638,27 @@ namespace OpenIZ.Core.Applets.ViewModel
 
                 if (value is IList)
                 {
-                    // TODO: What if the object has classifiers?
-                    var elementType = itm.Key.PropertyType.GenericTypeArguments[0];
+                    var listValue = value as IList;
+                    var elementType = propertyInfo.PropertyType.GenericTypeArguments[0];
+
+                    // Element type is an association? then we must have an explicit description
+                    if (typeof(ISimpleAssociation).GetTypeInfo().IsAssignableFrom(elementType.GetTypeInfo()))
+                    {
+                        if (propertyContext.Description == null && context.Description?.All != true)
+                        {
+                            jwriter.WriteNull();
+                            continue;
+                        }
+                    }
+
                     var classifierAttribute = elementType.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
                     if (classifierAttribute == null) // No classifier
                     {
                         jwriter.WriteStartArray();
-                        foreach (var litm in value as IList)
+                        foreach (var litm in listValue)
                         {
                             if (litm is IdentifiedData)
-                                SerializeInternal(litm as IdentifiedData, jwriter, writeStack);
+                                SerializeInternal(litm as IdentifiedData, jwriter, propertyContext, writeStack);
                             else
                                 jwriter.WriteValue(litm);
                         }
@@ -602,6 +678,14 @@ namespace OpenIZ.Core.Applets.ViewModel
                             // Classifier obj becomes the dictionary object
                             List<Object> values = null;
                             String classKey = classifierObj?.ToString() ?? "$other";
+
+                            // Classified object is not to be loaded
+                            if (propertyContext.Parent.Description?.Properties.Any(o=>(o.Classifier == classKey || o.Classifier == "*") && o.Name == propertyName) != true &&
+                                context.Description?.All != true &&
+                                !context.ViewModelDefinition.Model.Any(o=>o.TypeName == elementType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName))
+                                continue;
+
+                            // Classified group add
                             if (!classifiedGroups.TryGetValue(classKey, out values))
                             {
                                 values = new List<object>();
@@ -627,7 +711,13 @@ namespace OpenIZ.Core.Applets.ViewModel
                                     svalue = vitm.GetType().GetRuntimeProperty(simpleAttribute.ValueProperty).GetValue(vitm);
 
                                 if (svalue is IdentifiedData)
-                                    SerializeInternal(vitm as IdentifiedData, jwriter, writeStack);
+                                {
+                                    var newPropertyContext = new PropertySerializationContext(propertyInfo, context);
+                                    newPropertyContext.Description = propertyContext.Parent.Description?.Properties.FirstOrDefault(o => o.Classifier == kv.Key && o.Name == propertyName) ??
+                                            propertyContext.Parent.Description?.Properties.FirstOrDefault(o => o.Classifier == "*" && o.Name == propertyName) ??
+                                            newPropertyContext.Description;
+                                    SerializeInternal(vitm as IdentifiedData, jwriter, newPropertyContext, writeStack);
+                                }
                                 else
                                     jwriter.WriteValue(svalue);
                             }
@@ -639,13 +729,13 @@ namespace OpenIZ.Core.Applets.ViewModel
                     }
                 }
                 else if (value is IdentifiedData)
-                    SerializeInternal(value as IdentifiedData, jwriter, writeStack);
+                    SerializeInternal(value as IdentifiedData, jwriter, propertyContext, writeStack);
                 else
                     jwriter.WriteValue(value);
             }
 
-            if (ver?.VersionKey.HasValue == true || data.Key.HasValue)
-                writeStack.Remove(ver?.VersionKey ?? data.Key.Value);
+            if(data.Key.HasValue)
+                writeStack.Pop();
             jwriter.WriteEndObject();
 
         }
@@ -659,7 +749,7 @@ namespace OpenIZ.Core.Applets.ViewModel
 
             var classProperty = o.GetType().GetRuntimeProperty(classifierAttribute.ClassifierProperty);
             var classifierObj = classProperty.GetValue(o);
-            if(classifierObj == null)
+            if (classifierObj == null)
             {
                 // Force load
                 var keyPropertyName = classProperty.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty;

@@ -70,6 +70,14 @@ namespace OpenIZ.Core.Model.EntityLoader
         }
 
         /// <summary>
+        /// Get versioned relationships
+        /// </summary>
+        public List<TObject> GetRelations<TObject>(Guid? sourceKey) where TObject : IdentifiedData, ISimpleAssociation, new()
+        {
+            return this.Query<TObject>(o => sourceKey == o.SourceEntityKey).ToList();
+
+        }
+        /// <summary>
         /// Query the specified object
         /// </summary>
         public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData, new()

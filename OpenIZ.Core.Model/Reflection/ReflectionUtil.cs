@@ -37,6 +37,15 @@ namespace OpenIZ.Core.Model.Reflection
     {
 
         /// <summary>
+        /// Strips list
+        /// </summary>
+        public static Type StripGeneric(this Type t)
+        {
+            if (t.GetTypeInfo().IsGenericType)
+                return t.GetTypeInfo().GenericTypeArguments[0];
+            return t;
+        }
+        /// <summary>
         /// Strips any nullable typing
         /// </summary>
         public static Type StripNullable(this Type t)

@@ -379,7 +379,11 @@ namespace OpenIZ.Core.Model.Map
                             left = (left as UnaryExpression).Operand;
                         else
                             left = Expression.Coalesce(left, Expression.Constant(Activator.CreateInstance(left.Type.GetTypeInfo().GenericTypeArguments[0])));
-
+                    // Handle nullable <> null to always be true
+                    if ((right is ConstantExpression && (right as ConstantExpression).Value == null ||
+                        left is ConstantExpression && (left as ConstantExpression).Value == null) &&
+                        (!right.Type.GetTypeInfo().IsClass || !left.Type.GetTypeInfo().IsClass))
+                        return Expression.Constant(true);
                 }
                 return Expression.MakeBinary(node.NodeType, left, right);
             }

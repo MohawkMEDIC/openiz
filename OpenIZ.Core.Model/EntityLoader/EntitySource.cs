@@ -63,6 +63,14 @@ namespace OpenIZ.Core.Model.EntityLoader
             }
 
             /// <summary>
+            /// Gets the specified relations
+            /// </summary>
+            public List<TObject> GetRelations<TObject>(Guid? sourceKey) where TObject : IdentifiedData, ISimpleAssociation, new()
+            {
+                throw new NotImplementedException();
+            }
+
+            /// <summary>
             /// Query 
             /// </summary>
             public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData, new()
