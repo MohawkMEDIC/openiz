@@ -30,6 +30,7 @@ using OpenIZ.Core.Model.EntityLoader;
 using System.Globalization;
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Security;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Core.Model.Acts
 {
@@ -154,6 +155,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("classConcept"), JsonProperty("classConcept")]
+        [Binding(typeof(ActClassKeys))]
         public virtual Guid? ClassConceptKey
         {
             get { return this.m_classConceptKey; }
@@ -172,6 +174,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("moodConcept"), JsonProperty("moodConcept")]
+        [Binding(typeof(ActMoodKeys))]
         public virtual Guid? MoodConceptKey
         {
             get { return this.m_moodConceptKey; }
@@ -191,6 +194,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("reasonConcept"), JsonProperty("reasonConcept")]
+        [Binding(typeof(ActReasonKeys))]
         public Guid? ReasonConceptKey
         {
             get { return this.m_reasonConceptKey; }
@@ -209,6 +213,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("statusConcept"), JsonProperty("statusConcept")]
+        [Binding(typeof(StatusKeys))]
         public Guid? StatusConceptKey
         {
             get { return this.m_statusConceptKey; }

@@ -28,6 +28,7 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Core.Model.Acts
 {
@@ -94,7 +95,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the participation role key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
+        [Binding(typeof(ActParticipationKey))]
         [XmlElement("participationRole"), JsonProperty("participationRole")]
         public Guid? ParticipationRoleKey
         {

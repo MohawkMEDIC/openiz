@@ -27,6 +27,7 @@ using OpenIZ.Core.Model.Attributes;
 using System.Xml.Serialization;
 using OpenIZ.Core.Model.EntityLoader;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -77,6 +78,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("codeSystem"), JsonProperty("codeSystem")]
+        [Binding(typeof(CodeSystemKeys))]
         public Guid?  CodeSystemKey {
             get { return this.m_codeSystemId; }
             set

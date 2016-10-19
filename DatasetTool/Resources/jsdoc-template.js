@@ -23,4 +23,5 @@
 /**
  * @summary A documented namespace
  * @namespace
+ * @property {uuid} EmptyGuid A property which represents an empty UUID
  */

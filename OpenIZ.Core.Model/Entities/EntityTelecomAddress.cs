@@ -19,6 +19,7 @@
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.ComponentModel;
@@ -65,6 +66,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [XmlElement("use"), JsonProperty("use")]
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [Binding(typeof(TelecomAddressUseKeys))]
         public Guid? AddressUseKey
         {
             get { return this.m_nameUseKey; }

@@ -19,6 +19,7 @@
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Constants;
 using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -67,7 +68,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the identifier of the phonetic code
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
+        [Binding(typeof(PhoneticAlgorithmKeys))]
         [XmlElement("phoneticAlgorithm"), JsonProperty("phoneticAlgorithm")]
         public Guid?  PhoneticAlgorithmKey
         {

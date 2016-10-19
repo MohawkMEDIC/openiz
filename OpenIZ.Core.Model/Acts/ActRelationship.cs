@@ -27,6 +27,7 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Core.Model.Acts
 {
@@ -116,7 +117,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [XmlElement("relationshipType"), JsonProperty("relationshipType")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
+        [Binding(typeof(ActRelationshipTypeKeys))]
         public Guid? RelationshipTypeKey
         {
             get { return this.m_relationshipTypeKey; }

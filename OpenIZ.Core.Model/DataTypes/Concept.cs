@@ -19,6 +19,7 @@
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Model.Interfaces;
 using System;
@@ -77,6 +78,7 @@ namespace OpenIZ.Core.Model.DataTypes
         
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("statusConcept"), JsonProperty("statusConcept")]
+        [Binding(typeof(StatusKeys))]
         public Guid?  StatusConceptKey
         {
             get
@@ -132,6 +134,7 @@ namespace OpenIZ.Core.Model.DataTypes
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("conceptClass"), JsonProperty("conceptClass")]
+        [Binding(typeof(ConceptClassKeys))]
         public Guid?  ClassKey { get
             {
                 return this.m_classId;

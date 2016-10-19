@@ -19,6 +19,7 @@
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Constants;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -49,7 +50,6 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the target concept identifier
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         [XmlElement("targetConcept"), JsonProperty("targetConcept")]
         public Guid? TargetConceptKey
         {
@@ -84,6 +84,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Relationship type
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [Binding(typeof(ConceptRelationshipTypeKeys))]
         [XmlElement("relationshipType"), JsonProperty("relationshipType")]
         public Guid?  RelationshipTypeKey {
             get { return this.m_relationshipTypeId; }

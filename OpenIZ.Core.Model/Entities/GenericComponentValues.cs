@@ -70,7 +70,7 @@ namespace OpenIZ.Core.Model.Entities
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [XmlElement("type"), JsonProperty("type")]
-        public Guid? ComponentTypeKey
+        public virtual Guid? ComponentTypeKey
         {
             get { return this.m_componentTypeKey; }
             set

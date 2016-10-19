@@ -30,6 +30,7 @@ using OpenIZ.Core.Model.EntityLoader;
 using System.Globalization;
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Core.Model.Security
 {
@@ -158,6 +159,7 @@ namespace OpenIZ.Core.Model.Security
         /// Gets or sets the user class key
         /// </summary>
         [XmlElement("userClass"), JsonProperty("userClass")]
+        [Binding(typeof(UserClassKeys))]
         public Guid UserClass { get; set; }
 
         /// <summary>
