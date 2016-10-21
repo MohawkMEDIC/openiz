@@ -76,7 +76,9 @@ namespace OpenIZ.Core.Applets.ViewModel
             while (rootType != typeof(IdentifiedData) && this.Description == null)
             {
                 rootType = rootType.GetTypeInfo().BaseType;
-
+                if (rootType == null) break;
+                typeName = rootType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName ??
+                    rootType.Name;
                 this.Description = description.Model.FirstOrDefault(o => o.TypeName == typeName);
             }
         }
@@ -110,6 +112,8 @@ namespace OpenIZ.Core.Applets.ViewModel
                 if (elementType.GetTypeInfo().IsGenericType)
                     elementType = elementType.GetTypeInfo().GenericTypeArguments[0];
 
+                var rcl = new RootSerializationContext(elementType, parent.ViewModelDefinition);
+                this.Description = rcl.Description;
                 string typeName = elementType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName ??
                     propertyInfo.DeclaringType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName ??
                     elementType.Name;

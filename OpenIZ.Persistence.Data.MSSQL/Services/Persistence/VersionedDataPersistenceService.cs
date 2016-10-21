@@ -122,7 +122,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Obsolete the old version 
             existingObject.ObsoletedBy = user.UserId;
             existingObject.ObsoletionTime = DateTime.Now;
-
             context.GetTable<TDomain>().InsertOnSubmit(newEntityVersion);
             context.SubmitChanges();
 

@@ -53,3 +53,12 @@ INSERT INTO SecurityApplication (ApplicationId, ApplicationPublicId, Application
 
 INSERT INTO SecurityApplicationPolicy
 		VALUES ('638E74A4-42E7-45E0-B693-96048DCA7692', '4C5A581C-A6EE-4267-9231-B0D3D50CC08A', 'D15B96AB-646C-4C00-9A58-EA09EEE67D7C', 2);
+
+INSERT INTO SecurityApplication (ApplicationPublicId, ApplicationSecret, CreatedBy)
+	VALUES ('org.openiz.minims', ('cba830db9a6f5a4b638ff95ef70e98aa82d414ac35b351389024ecb6be40ebf0'), 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+
+INSERT INTO SecurityApplicationPolicy(ApplicationId, PolicyId, PolicyAction)
+	SELECT ApplicationId, PolicyId, 2 FROM
+		SecurityApplication, Policy
+	WHERE
+		SecurityApplication.ApplicationPublicId = 'org.openiz.minims';

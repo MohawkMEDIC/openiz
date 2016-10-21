@@ -308,7 +308,7 @@ namespace OpenIZ.Core.Model.Collection
                             var versionedValue = rawValue as IVersionedEntity;
 
                             // Check for existing item
-                            if (!currentBundle.Item.Exists(i => i.Key == iValue.Key && versionedValue?.VersionKey == (i as IVersionedEntity)?.VersionKey))
+                            if (!currentBundle.Item.Exists(i => i?.Key == iValue.Key && versionedValue?.VersionKey == (i as IVersionedEntity)?.VersionKey))
                             {
                                 if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null)
                                     lock (currentBundle.m_lockObject)

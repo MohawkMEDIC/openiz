@@ -585,6 +585,10 @@ namespace OpenIZ.Core.Applets.ViewModel
                     typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(propertyInfo.PropertyType.StripGeneric().GetTypeInfo()))
                     continue;
 
+                // Do we skip this property?
+                if (propertyInfo.GetCustomAttribute<DataIgnoreAttribute>() != null && propertyInfo.GetCustomAttribute<JsonPropertyAttribute>() == null)
+                    continue;
+
                 // Value is null
                 var value = propertyInfo.GetValue(data);
 
@@ -596,10 +600,13 @@ namespace OpenIZ.Core.Applets.ViewModel
                         // We are going to load this mofo , so let's make sure it is loaded
                         if (value is IList)
                         {
-                            var elementType = propertyInfo.PropertyType.GenericTypeArguments[0];
-                            var method = EntitySource.Current.Provider.GetType().GetRuntimeMethod("GetRelations", new Type[] { typeof(Guid?) }).MakeGenericMethod(elementType);
-                            value = method.Invoke(EntitySource.Current.Provider, new Object[] { data.Key }) as IList;
-                            propertyInfo.SetValue(data, value);
+                            if (data.Key != null && data.ModifiedOn != default(DateTimeOffset))
+                            {
+                                var elementType = propertyInfo.PropertyType.GenericTypeArguments[0];
+                                var method = EntitySource.Current.Provider.GetType().GetRuntimeMethod("GetRelations", new Type[] { typeof(Guid?) }).MakeGenericMethod(elementType);
+                                value = method.Invoke(EntitySource.Current.Provider, new Object[] { data.Key }) as IList;
+                                propertyInfo.SetValue(data, value);
+                            }
                         }
                         else if (propertyInfo.GetCustomAttribute<SerializationReferenceAttribute>() != null)
                         {
