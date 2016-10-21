@@ -415,7 +415,7 @@ namespace OpenIZ.Core.Model.Map
         /// <summary>
         /// Map model instance
         /// </summary>
-        public TModel MapDomainInstance<TDomain, TModel>(TDomain domainInstance, HashSet<Guid> keyStack = null) where TModel : new()
+        public TModel MapDomainInstance<TDomain, TModel>(TDomain domainInstance, bool useCache = true, HashSet<Guid> keyStack = null) where TModel : new()
         {
 
             ClassMap classMap = this.m_mapFile.GetModelClassMap(typeof(TModel), typeof(TDomain));
@@ -459,7 +459,7 @@ namespace OpenIZ.Core.Model.Map
                 idEnt.Key = (Guid)keyValue;
 
                 var cache = FireMappingToModel(this, (Guid)keyValue, retVal as IdentifiedData);
-                if (cache != null)
+                if (cache != null && useCache)
                     return (TModel)cache;
             }
 
@@ -567,7 +567,7 @@ namespace OpenIZ.Core.Model.Map
                     var modelInstance = Activator.CreateInstance(modelProperty.PropertyType) as IList;
                     modelProperty.SetValue(retVal, modelInstance);
                     var instanceMapFunction = typeof(ModelMapper).GetGenericMethod("MapDomainInstance", new Type[] { sourceProperty.PropertyType.GetTypeInfo().GenericTypeArguments[0], modelProperty.PropertyType.GetTypeInfo().GenericTypeArguments[0] },
-                        new Type[] { sourceProperty.PropertyType.GetTypeInfo().GenericTypeArguments[0], typeof(HashSet<Guid>) });
+                        new Type[] { sourceProperty.PropertyType.GetTypeInfo().GenericTypeArguments[0], typeof(bool), typeof(HashSet<Guid>) });
                     foreach (var itm in originalValue as IList)
                     {
                         // Traverse?
@@ -590,7 +590,7 @@ namespace OpenIZ.Core.Model.Map
                             }
                             via = via.Via;
                         }
-                        modelInstance.Add(instanceMapFunction.Invoke(this, new object[] { instance, keyStack }));
+                        modelInstance.Add(instanceMapFunction.Invoke(this, new object[] { instance, useCache, keyStack }));
                     }
                 }
                 // Flat map list 1..1
@@ -600,7 +600,7 @@ namespace OpenIZ.Core.Model.Map
                     var modelInstance = Activator.CreateInstance(modelProperty.PropertyType) as IList;
                     modelProperty.SetValue(retVal, modelInstance);
                     var instanceMapFunction = typeof(ModelMapper).GetGenericMethod("MapDomainInstance", new Type[] { sourceProperty.PropertyType.GenericTypeArguments[0], modelProperty.PropertyType.GenericTypeArguments[0] },
-                        new Type[] { sourceProperty.PropertyType.GenericTypeArguments[0], typeof(HashSet<Guid>) });
+                        new Type[] { sourceProperty.PropertyType.GenericTypeArguments[0], typeof(bool), typeof(HashSet<Guid>) });
                     var listValue = sourceProperty.GetValue(sourceObject);
 
                     // Is this list a versioned association??
@@ -614,7 +614,7 @@ namespace OpenIZ.Core.Model.Map
                     }
 
                     foreach (var itm in listValue as IEnumerable)
-                        modelInstance.Add(instanceMapFunction.Invoke(this, new object[] { itm, keyStack }));
+                        modelInstance.Add(instanceMapFunction.Invoke(this, new object[] { itm, useCache, keyStack }));
                 }
                 else if (m_mapFile.GetModelClassMap(modelProperty.PropertyType) != null)
                 {
@@ -639,8 +639,8 @@ namespace OpenIZ.Core.Model.Map
                         via = via.Via;
                     }
                     var instanceMapFunction = typeof(ModelMapper).GetGenericMethod("MapDomainInstance", new Type[] { instance?.GetType(), modelProperty.PropertyType },
-                       new Type[] { instance.GetType(), typeof(HashSet<Guid>) });
-                    modelProperty.SetValue(retVal, instanceMapFunction.Invoke(this, new object[] { instance, keyStack }));
+                       new Type[] { instance.GetType(), typeof(bool), typeof(HashSet<Guid>) });
+                    modelProperty.SetValue(retVal, instanceMapFunction.Invoke(this, new object[] { instance, useCache, keyStack }));
 
                 }
             }
@@ -648,7 +648,7 @@ namespace OpenIZ.Core.Model.Map
 #if VERBOSE_DEBUG
             Debug.WriteLine("Leaving: {0}>{1}", typeof(TDomain).FullName, typeof(TModel).FullName);
 #endif
-            if (idEnt != null)
+            if (idEnt != null && useCache)
             {
                 keyStack.Remove(idEnt.Key.Value);
                 FireMappedToModel(this, idEnt.Key ?? Guid.Empty, retVal as IdentifiedData);

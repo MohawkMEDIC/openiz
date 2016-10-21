@@ -586,47 +586,48 @@ namespace OpenIZ.Core.Applets.ViewModel
                     continue;
 
                 // Do we skip this property?
-                if (propertyInfo.GetCustomAttribute<DataIgnoreAttribute>() != null && propertyInfo.GetCustomAttribute<JsonPropertyAttribute>() == null)
+                if (propertyInfo.GetCustomAttribute<JsonIgnoreAttribute>() != null && propertyInfo.GetCustomAttribute<SerializationReferenceAttribute>() == null ||
+                    propertyInfo.GetCustomAttribute<DataIgnoreAttribute>() != null && propertyInfo.GetCustomAttribute<JsonPropertyAttribute>() == null)
                     continue;
 
                 // Value is null
                 var value = propertyInfo.GetValue(data);
 
                 // First, is this explicitly defined!?
-                if ((value == null || (value as IList)?.Count == 0) && propertyContext.Description != null)
-                {
-                    try
-                    {
-                        // We are going to load this mofo , so let's make sure it is loaded
-                        if (value is IList)
-                        {
-                            if (data.Key != null && data.ModifiedOn != default(DateTimeOffset))
-                            {
-                                var elementType = propertyInfo.PropertyType.GenericTypeArguments[0];
-                                var method = EntitySource.Current.Provider.GetType().GetRuntimeMethod("GetRelations", new Type[] { typeof(Guid?) }).MakeGenericMethod(elementType);
-                                value = method.Invoke(EntitySource.Current.Provider, new Object[] { data.Key }) as IList;
-                                propertyInfo.SetValue(data, value);
-                            }
-                        }
-                        else if (propertyInfo.GetCustomAttribute<SerializationReferenceAttribute>() != null)
-                        {
-                            var keyPropertyRef = propertyInfo.GetCustomAttribute<SerializationReferenceAttribute>();
-                            var keyProperty = data.GetType().GetRuntimeProperty(keyPropertyRef.RedirectProperty);
-                            var key = keyProperty.GetValue(data);
-                            if (key != null)
-                            {
-                                var method = EntitySource.Current.Provider.GetType().GetRuntimeMethod("Get", new Type[] { typeof(Guid?) }).MakeGenericMethod(propertyInfo.PropertyType);
-                                // Backing property
-                                value = method.Invoke(EntitySource.Current.Provider, new Object[] { key }) as IList;
-                                propertyInfo.SetValue(data, value);
-                            }
-                        }
-                    }
-                    catch(Exception e)
-                    {
-                        Debug.WriteLine(e.ToString());
-                    }
-                }
+                //if ((value == null || (value as IList)?.Count == 0) && propertyContext.Description != null)
+                //{
+                //    try
+                //    {
+                //        // We are going to load this mofo , so let's make sure it is loaded
+                //        if (value is IList)
+                //        {
+                //            if (data.Key != null && data.ModifiedOn != default(DateTimeOffset))
+                //            {
+                //                var elementType = propertyInfo.PropertyType.GenericTypeArguments[0];
+                //                var method = EntitySource.Current.Provider.GetType().GetRuntimeMethod("GetRelations", new Type[] { typeof(Guid?) }).MakeGenericMethod(elementType);
+                //                value = method.Invoke(EntitySource.Current.Provider, new Object[] { data.Key }) as IList;
+                //                propertyInfo.SetValue(data, value);
+                //            }
+                //        }
+                //        else if (propertyInfo.GetCustomAttribute<SerializationReferenceAttribute>() != null)
+                //        {
+                //            var keyPropertyRef = propertyInfo.GetCustomAttribute<SerializationReferenceAttribute>();
+                //            var keyProperty = data.GetType().GetRuntimeProperty(keyPropertyRef.RedirectProperty);
+                //            var key = keyProperty.GetValue(data);
+                //            if (key != null)
+                //            {
+                //                var method = EntitySource.Current.Provider.GetType().GetRuntimeMethod("Get", new Type[] { typeof(Guid?) }).MakeGenericMethod(propertyInfo.PropertyType);
+                //                // Backing property
+                //                value = method.Invoke(EntitySource.Current.Provider, new Object[] { key }) as IList;
+                //                propertyInfo.SetValue(data, value);
+                //            }
+                //        }
+                //    }
+                //    catch(Exception e)
+                //    {
+                //        Debug.WriteLine(e.ToString());
+                //    }
+                //}
                 
                 if (value == null || (propertyInfo.Name == myClassifier?.ClassifierProperty && value is IdentifiedData) ||
                     propertyInfo.PropertyType.GetTypeInfo().IsValueType && value == Activator.CreateInstance(propertyInfo.PropertyType))

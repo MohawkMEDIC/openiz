@@ -207,13 +207,10 @@ namespace OpenIZ.Core.Http
 					this.m_tracer.TraceVerbose("HTTP request cancelled");
 					return default(TResult);
 				}
-
-
+                
 				// Invoke
 				var retVal = this.InvokeInternal<TBody, TResult>(method, url, contentType, requestEventArgs.AdditionalHeaders, body, query);
-
 				this.Responded?.Invoke(this, new RestResponseEventArgs(method, url, parameters, contentType, retVal, 200));
-
 				return retVal;
 			}
 			catch (Exception e)

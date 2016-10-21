@@ -68,21 +68,10 @@ namespace OpenIZ.Core.Applets.ViewModel
         /// </summary>
         public RootSerializationContext(Type rootType, ViewModelDescription description) : base(description)
         {
+            this.Description = description.FindDescription(rootType);
             this.Type = rootType;
-            string typeName = rootType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName ??
-                rootType.Name;
-            this.Description = description.Model.FirstOrDefault(o => o.TypeName == typeName);
-            // Children from the heirarchy
-            while (rootType != typeof(IdentifiedData) && this.Description == null)
-            {
-                rootType = rootType.GetTypeInfo().BaseType;
-                if (rootType == null) break;
-                typeName = rootType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName ??
-                    rootType.Name;
-                this.Description = description.Model.FirstOrDefault(o => o.TypeName == typeName);
-            }
         }
-        
+
 
     }
 
@@ -98,29 +87,8 @@ namespace OpenIZ.Core.Applets.ViewModel
         public PropertySerializationContext(PropertyInfo propertyInfo, SerializationContext parent) : base(parent.ViewModelDefinition)
         {
             this.Parent = parent;
-            
             this.Name = this.GetSerializationName(propertyInfo);
-
-            // Find the property information
-            this.Description = parent.Description?.Properties.FirstOrDefault(o => o.Name == this.Name);
-
-            // Maybe this can be done via type?
-            if(this.Description == null)
-            {
-                var elementType = propertyInfo.PropertyType;
-
-                if (elementType.GetTypeInfo().IsGenericType)
-                    elementType = elementType.GetTypeInfo().GenericTypeArguments[0];
-
-                var rcl = new RootSerializationContext(elementType, parent.ViewModelDefinition);
-                this.Description = rcl.Description;
-                string typeName = elementType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName ??
-                    propertyInfo.DeclaringType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName ??
-                    elementType.Name;
-
-                this.Description = parent.ViewModelDefinition.Model.FirstOrDefault(o => o.TypeName == typeName);
-
-            }
+            this.Description = parent.ViewModelDefinition.FindDescription(propertyInfo, parent.Description);
 
         }
 
