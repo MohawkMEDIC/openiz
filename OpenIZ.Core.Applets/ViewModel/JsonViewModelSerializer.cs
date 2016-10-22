@@ -65,6 +65,20 @@ namespace OpenIZ.Core.Applets.ViewModel
         private static Dictionary<String, RootSerializationContext> s_rootSerializationContexts = new Dictionary<string, RootSerializationContext>();
         
         /// <summary>
+        /// Serialize using the stream writer
+        /// </summary>
+        public static void Serialize(TextWriter writer, IdentifiedData data, ViewModelDescription viewModel = null)
+        {
+            JsonWriter jwriter = new JsonTextWriter(writer);
+
+            if (viewModel == null)
+                PrepareDefaultViewModel(data.GetType());
+            // Iterate over properties
+            SerializeInternal(data, jwriter, new RootSerializationContext(data?.GetType(), viewModel ?? s_defaultViewModel), new Stack<Guid>());
+
+        }
+
+        /// <summary>
         /// Serializes the specified internal data 
         /// </summary>
         /// <remarks>
@@ -80,12 +94,7 @@ namespace OpenIZ.Core.Applets.ViewModel
 
             using (StringWriter sw = new StringWriter())
             {
-                JsonWriter jwriter = new JsonTextWriter(sw);
-
-                if (viewModel == null)
-                    PrepareDefaultViewModel(data.GetType());
-                // Iterate over properties
-                SerializeInternal(data, jwriter, new RootSerializationContext(data?.GetType(), viewModel ?? s_defaultViewModel), new Stack<Guid>());
+                Serialize(sw, data, viewModel);
                 return sw.ToString();
             }
         }
@@ -581,7 +590,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                 //  - The definition is explicitly set
                 if (!((context is RootSerializationContext) ||
                     (context as PropertySerializationContext).Description?.All == true ||
-                    propertyContext.Description != null) &&
+                    propertyContext.Description is PropertyModelDescription) &&
                     typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(propertyInfo.PropertyType.StripGeneric().GetTypeInfo()))
                     continue;
 
@@ -639,6 +648,7 @@ namespace OpenIZ.Core.Applets.ViewModel
 
                 if (value is IList && (value as IList).Count == 0)
                     continue;
+
 #if VERBOSE_DEBUG
                 Debug.WriteLine("> {0}", jwriter.Path);
 #endif
@@ -666,7 +676,13 @@ namespace OpenIZ.Core.Applets.ViewModel
                         foreach (var litm in listValue)
                         {
                             if (litm is IdentifiedData)
+                            {
+                                // Value ... hmm... Is there a more specific rendition based on actual value?
+                                if (propertyContext.Description is TypeModelDescription)
+                                    propertyContext.Description = context.ViewModelDefinition.FindDescription(litm.GetType().StripGeneric());
+
                                 SerializeInternal(litm as IdentifiedData, jwriter, propertyContext, writeStack);
+                            }
                             else
                                 jwriter.WriteValue(litm);
                         }
@@ -688,9 +704,9 @@ namespace OpenIZ.Core.Applets.ViewModel
                             String classKey = classifierObj?.ToString() ?? "$other";
 
                             // Classified object is not to be loaded
-                            if (propertyContext.Parent.Description?.Properties.Any(o=>(o.Classifier == classKey || o.Classifier == "*") && o.Name == propertyName) != true &&
+                            if (propertyContext.Parent.Description?.Properties.Any(o => (o.Classifier == classKey || o.Classifier == "*") && o.Name == propertyName) != true &&
                                 context.Description?.All != true &&
-                                !context.ViewModelDefinition.Model.Any(o=>o.TypeName == elementType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName))
+                                !context.ViewModelDefinition.Model.Any(o => o.TypeName == elementType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName))
                                 continue;
 
                             // Classified group add
@@ -737,7 +753,13 @@ namespace OpenIZ.Core.Applets.ViewModel
                     }
                 }
                 else if (value is IdentifiedData)
+                {
+                    // Value ... hmm... Is there a more specific rendition based on actual value?
+                    if (propertyContext.Description is TypeModelDescription)
+                        propertyContext.Description = context.ViewModelDefinition.FindDescription(value.GetType().StripGeneric());
+
                     SerializeInternal(value as IdentifiedData, jwriter, propertyContext, writeStack);
+                }
                 else
                     jwriter.WriteValue(value);
             }

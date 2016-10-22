@@ -93,18 +93,21 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
 		/// <param name="context">Context.</param>
 		/// <param name="data">Data.</param>
 		public abstract TData Insert(ModelDataContext context, TData data, IPrincipal principal);
+
         /// <summary>
         /// Perform the actual update.
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
         public abstract TData Update(ModelDataContext context, TData data, IPrincipal principal);
+
         /// <summary>
         /// Performs the actual obsoletion
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
         public abstract TData Obsolete(ModelDataContext context, TData data, IPrincipal principal);
+
         /// <summary>
         /// Performs the actual query
         /// </summary>

@@ -372,7 +372,9 @@ namespace OpenIZ.Core.Applets
                                 htmlContent.Add(head);
                             }
 
-                            head.Add(headerInjection);
+                            head.Add(headerInjection.Where(o => !head.Elements(o.Name).Any(e => (e.Attributes("src") != null && (e.Attributes("src") == o.Attributes("src"))) || (e.Attributes("href") != null && (e.Attributes("href") == o.Attributes("href"))))));
+
+//                            head.Add(headerInjection);
                             break;
                         }
                     case "body": // The content is an HTML Body element, we must inject the HTML header
@@ -403,7 +405,8 @@ namespace OpenIZ.Core.Applets
                                 using (MemoryStream ms = new MemoryStream(this.RenderAssetContent(layoutAsset, preProcessLocalization)))
                                     htmlContent = XDocument.Load(ms).Element(xs_xhtml + "html") as XElement;
 
-                                (htmlContent.Element(xs_xhtml + "head") as XElement).Add(headerInjection);
+                                var headElement = (htmlContent.Element(xs_xhtml + "head") as XElement);
+                                headElement.Add(headerInjection.Where(o => !headElement.Elements(o.Name).Any(e => (e.Attributes("src") != null && (e.Attributes("src") == o.Attributes("src"))) || (e.Attributes("href") != null && (e.Attributes("href") == o.Attributes("href"))))));
 
                                 // Find the <!--#include virtual="content" --> tag
                                 var contentNode = htmlContent.DescendantNodes().OfType<XComment>().SingleOrDefault(o => o.Value.Trim() == "#include virtual=\"content\"");
@@ -524,8 +527,10 @@ namespace OpenIZ.Core.Applets
                                 inc.AddAfterSelf(xel.Element(xs_xhtml + "body").Elements());
                             else
                             {
-                                var headerInjection = this.GetInjectionHeaders(includeAsset);
-                                htmlContent.Element(xs_xhtml + "head")?.Add(headerInjection);
+                                //var headerInjection = this.GetInjectionHeaders(includeAsset);
+
+                                //var headElement = htmlContent.Element(xs_xhtml + "head");
+                                //headElement?.Add(headerInjection.Where(o => !headElement.Elements(o.Name).Any(e => (e.Attributes("src") != null && (e.Attributes("src") == o.Attributes("src"))) || (e.Attributes("href") != null && (e.Attributes("href") == o.Attributes("href"))))));
 
                                 inc.AddAfterSelf(xel);
                             }
@@ -643,7 +648,35 @@ namespace OpenIZ.Core.Applets
                     headerInjection.AddRange(this.GetInjectionHeaders(includeAsset));
             }
 
-            return headerInjection;
+            // Re-write
+            foreach (var itm in headerInjection.OfType<XElement>().SelectMany(o => o.Attributes()).Where(o => o.Value.StartsWith("~")))
+            {
+                itm.Value = String.Format("/{0}/{1}", asset.Manifest.Info.Id, itm.Value.Substring(2));
+                //itm.Value = itm.Value.Replace(APPLET_SCHEME, this.AppletBase).Replace(ASSET_SCHEME, this.AssetBase).Replace(DRAWABLE_SCHEME, this.DrawableBase);
+            }
+            return headerInjection.Distinct(new XElementEquityComparer()).ToList();
+        }
+
+        /// <summary>
+        /// Xelement comparer
+        /// </summary>
+        private class XElementEquityComparer : IEqualityComparer<XElement>
+        {
+            public bool Equals(XElement x, XElement y)
+            {
+                bool equals = true;
+                foreach(var xa in x.Attributes())
+                {
+                    var ya = y.Attribute(xa.Name);
+                    equals &= xa.Value == ya?.Value;
+                }
+                return equals;
+            }
+
+            public int GetHashCode(XElement obj)
+            {
+                return obj.GetHashCode();
+            }
         }
     }
 }

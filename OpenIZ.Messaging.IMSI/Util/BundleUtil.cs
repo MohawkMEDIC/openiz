@@ -59,7 +59,7 @@ namespace OpenIZ.Messaging.IMSI.Util
                     {
                         if (itm == null)
                             continue;
-                        if (!retVal.Item.Exists(o => o.Key == itm.Key))
+                        if (!retVal.Item.Exists(o => o?.Key == itm.Key))
                         {
                             retVal.Item.Add(itm);
                             if(!lean)

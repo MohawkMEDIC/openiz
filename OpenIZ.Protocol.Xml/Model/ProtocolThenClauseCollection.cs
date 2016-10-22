@@ -47,8 +47,8 @@ namespace OpenIZ.Protocol.Xml.Model
                 if (itm.Element is String) // JSON
                     itm.Element = JsonViewModelSerializer.DeSerialize<Act>(itm.Element as String);
                 act = (itm.Element as Act).Clone() as Act;
-                act.Participations = new List<ActParticipation>((itm.Element as Act).Participations);
-                act.Relationships = new List<ActRelationship>((itm.Element as Act).Relationships);
+                act.Participations = new List<ActParticipation>((itm.Element as Act).Participations.Select(o=>o.Clone() as ActParticipation));
+                act.Relationships = new List<ActRelationship>((itm.Element as Act).Relationships.Select(o => o.Clone() as ActRelationship));
                 act.Protocols = new List<ActProtocol>();// (itm.Element as Act).Protocols);
                 // Now do the actions to the properties as stated
                 foreach (var instr in itm.Do)
