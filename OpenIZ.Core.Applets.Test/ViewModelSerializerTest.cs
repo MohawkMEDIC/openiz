@@ -255,8 +255,6 @@ namespace OpenIZ.Core.Applets.Test
 
 			Assert.IsTrue(actual.Contains(ActMoodKeys.Eventoccurrence.ToString()));
 			Assert.IsTrue(actual.Contains(ActClassKeys.Encounter.ToString()));
-			Assert.IsTrue(actual.Contains(ActParticipationKey.RecordTarget.ToString()));
-			Assert.IsTrue(actual.Contains(ActParticipationKey.Location.ToString()));
 		}
 
 		/// <summary>
@@ -318,8 +316,6 @@ namespace OpenIZ.Core.Applets.Test
 
 			Assert.IsTrue(actual.Contains(ActMoodKeys.Eventoccurrence.ToString()));
 			Assert.IsTrue(actual.Contains(ActClassKeys.Encounter.ToString()));
-			Assert.IsTrue(actual.Contains(ActParticipationKey.RecordTarget.ToString()));
-			Assert.IsTrue(actual.Contains(ActParticipationKey.Location.ToString()));
 		}
 
         /// <summary>
