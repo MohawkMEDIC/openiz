@@ -231,7 +231,7 @@ namespace OpenIZ.Core.Http
 		/// <param name="query">Query.</param>
 		/// <typeparam name="TBody">The 1st type parameter.</typeparam>
 		/// <typeparam name="TResult">The 2nd type parameter.</typeparam>
-		protected abstract TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, Dictionary<HttpRequestHeader, String> additionalHeaders, TBody body, params KeyValuePair<string, object>[] query);
+		protected abstract TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, WebHeaderCollection additionalHeaders, TBody body, params KeyValuePair<string, object>[] query);
 
 		/// <summary>
 		/// Executes a post against the url

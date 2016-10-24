@@ -54,6 +54,7 @@
     <Compile Include="Http\IRestClient.cs" />
     <Compile Include="Http\Description\IRestClientSecurityDescription.cs" />
     <Compile Include="Http\JsonBodySerializer.cs" />
+    <Compile Include="Http\MultipartBinarySerializer.cs" />
     <Compile Include="Http\RestClientBase.cs" />
     <Compile Include="Http\RestClientException.cs" />
     <Compile Include="Http\RestClientEventArgs.cs" />

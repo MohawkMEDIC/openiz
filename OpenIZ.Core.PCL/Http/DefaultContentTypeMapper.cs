@@ -51,7 +51,10 @@ namespace OpenIZ.Core.Http
 				case "application/x-www-urlform-encoded":
 					return new FormBodySerializer();
 
-				default:
+                default:
+                    if (contentType.StartsWith("multipart/form-data"))
+                        return new MultipartBinarySerializer(contentType);
+
 					throw new ArgumentOutOfRangeException(nameof(contentType), contentType, "Not supported");
 			}
 		}

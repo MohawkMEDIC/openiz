@@ -47,6 +47,8 @@ using OpenIZ.Core.Alert.Alerting;
 using OpenIZ.Core.Model.AMI.DataTypes;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.AMI.Diagnostics;
+using OpenIZ.Core.Security.Attribute;
+using System.Security.Permissions;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -75,12 +77,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			this.m_certTool.ServerName = this.m_configuration?.CaConfiguration.ServerName;
 		}
 
-		/// <summary>
-		/// Accepts a certificate signing request.
-		/// </summary>
-		/// <param name="id">The id of the certificate signing request to be accepted.</param>
-		/// <returns>Returns the acceptance result.</returns>
-		public SubmissionResult AcceptCsr(string rawId)
+        /// <summary>
+        /// Accepts a certificate signing request.
+        /// </summary>
+        /// <param name="id">The id of the certificate signing request to be accepted.</param>
+        /// <returns>Returns the acceptance result.</returns>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+        public SubmissionResult AcceptCsr(string rawId)
 		{
 			int id = Int32.Parse(rawId);
 			this.m_certTool.Approve(id);
@@ -155,10 +158,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// <summary>
         /// Create a diagnostic report 
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
         public DiagnosticReport CreateDiagnosticReport(DiagnosticReport report)
         {
-            report.Key = Guid.NewGuid();
-            return report;
+            var persister = ApplicationContext.Current.GetService<IDataPersistenceService<DiagnosticReport>>();
+            if (persister == null)
+                throw new InvalidOperationException("Cannot find appriopriate persister");
+            return persister.Insert(report, AuthenticationContext.Current.Principal, TransactionMode.Commit);
         }
 
         /// <summary>
@@ -247,13 +253,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			return new SecurityUserInfo(securityUser);
 		}
 
-		/// <summary>
-		/// Deletes a specified certificate.
-		/// </summary>
-		/// <param name="id">The id of the certificate to be deleted.</param>
-		/// <param name="reason">The reason the certificate is to be deleted.</param>
-		/// <returns>Returns the deletion result.</returns>
-		public SubmissionResult DeleteCertificate(string rawId, OpenIZ.Core.Model.AMI.Security.RevokeReason reason)
+        /// <summary>
+        /// Deletes a specified certificate.
+        /// </summary>
+        /// <param name="id">The id of the certificate to be deleted.</param>
+        /// <param name="reason">The reason the certificate is to be deleted.</param>
+        /// <returns>Returns the deletion result.</returns>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+        public SubmissionResult DeleteCertificate(string rawId, OpenIZ.Core.Model.AMI.Security.RevokeReason reason)
 		{
 			int id = Int32.Parse(rawId);
 			var result = this.m_certTool.GetRequestStatus(id);
@@ -714,13 +721,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			return new AmiCollection<SecurityUserInfo>() { CollectionItem = userRepository.FindUsers(expression).Select(o => new SecurityUserInfo(o)).ToList() };
 		}
 
-		/// <summary>
-		/// Rejects a specified certificate signing request.
-		/// </summary>
-		/// <param name="certId">The id of the certificate signing request to be rejected.</param>
-		/// <param name="reason">The reason the certificate signing request is to be rejected.</param>
-		/// <returns>Returns the rejection result.</returns>
-		public SubmissionResult RejectCsr(string rawId, OpenIZ.Core.Model.AMI.Security.RevokeReason reason)
+        /// <summary>
+        /// Rejects a specified certificate signing request.
+        /// </summary>
+        /// <param name="certId">The id of the certificate signing request to be rejected.</param>
+        /// <param name="reason">The reason the certificate signing request is to be rejected.</param>
+        /// <returns>Returns the rejection result.</returns>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+        public SubmissionResult RejectCsr(string rawId, OpenIZ.Core.Model.AMI.Security.RevokeReason reason)
 		{
 			int id = Int32.Parse(rawId);
 			this.m_certTool.DenyRequest(id);
@@ -731,12 +739,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			return result;
 		}
 
-		/// <summary>
-		/// Submits a specific certificate signing request.
-		/// </summary>
-		/// <param name="s">The certificate signing request.</param>
-		/// <returns>Returns the submission result.</returns>
-		public SubmissionResult SubmitCsr(SubmissionRequest s)
+        /// <summary>
+        /// Submits a specific certificate signing request.
+        /// </summary>
+        /// <param name="s">The certificate signing request.</param>
+        /// <returns>Returns the submission result.</returns>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+        public SubmissionResult SubmitCsr(SubmissionRequest s)
 		{
 			var submission = this.m_certTool.SubmitRequest(s.CmcRequest, s.AdminContactName, s.AdminAddress);
 

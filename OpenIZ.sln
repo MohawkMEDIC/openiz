@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Persistence", "Persistence", "{2914F4AD-4661-4C73-ADB6-B1D91C11C569}"
 EndProject
@@ -82,6 +82,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MSSQL", "MSSQL", "{BD7BD6A4-A76C-4D72-BA99-D04F385BE4B1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Messaging.HL7.Test", "OpenIZ.Messaging.HL7.Test\OpenIZ.Messaging.HL7.Test.csproj", "{09033283-267F-49DE-AAAF-0B54C749D1A1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jira", "Jira", "{1287B457-DF5C-4381-BD3E-A66524519BB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Persistence.Diagnostics.Jira", "OpenIZ.Persistence.Diagnostics.Jira\OpenIZ.Persistence.Diagnostics.Jira.csproj", "{18A9F102-023E-4E17-8A70-A91365E1510D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -201,6 +205,10 @@ Global
 		{09033283-267F-49DE-AAAF-0B54C749D1A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09033283-267F-49DE-AAAF-0B54C749D1A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09033283-267F-49DE-AAAF-0B54C749D1A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18A9F102-023E-4E17-8A70-A91365E1510D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18A9F102-023E-4E17-8A70-A91365E1510D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18A9F102-023E-4E17-8A70-A91365E1510D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18A9F102-023E-4E17-8A70-A91365E1510D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -240,5 +248,7 @@ Global
 		{8884281D-262F-4EFF-B379-DE674E03A802} = {2914F4AD-4661-4C73-ADB6-B1D91C11C569}
 		{BD7BD6A4-A76C-4D72-BA99-D04F385BE4B1} = {2914F4AD-4661-4C73-ADB6-B1D91C11C569}
 		{09033283-267F-49DE-AAAF-0B54C749D1A1} = {034029A9-C588-4CD7-9FF3-69CD4F82DB8E}
+		{1287B457-DF5C-4381-BD3E-A66524519BB9} = {2914F4AD-4661-4C73-ADB6-B1D91C11C569}
+		{18A9F102-023E-4E17-8A70-A91365E1510D} = {1287B457-DF5C-4381-BD3E-A66524519BB9}
 	EndGlobalSection
 EndGlobal

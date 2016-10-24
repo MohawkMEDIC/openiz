@@ -79,13 +79,13 @@ namespace OpenIZ.Core.Http
 		public RestRequestEventArgs(String method, String url, NameValueCollection query, String contentType, Object body) :
 			base(method, url, query, contentType, body)
 		{
-            this.AdditionalHeaders = new Dictionary<HttpRequestHeader, string>();
+            this.AdditionalHeaders = new WebHeaderCollection();
 		}
 
         /// <summary>
         /// Gets or sets additional headers
         /// </summary>
-        public Dictionary<HttpRequestHeader, String> AdditionalHeaders { get; set; }
+        public WebHeaderCollection AdditionalHeaders { get; set; }
 
         /// <summary>
         /// Gets or sets an indicator whether this request can be cancelled
