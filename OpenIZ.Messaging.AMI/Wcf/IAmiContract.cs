@@ -21,6 +21,7 @@
 using OpenIZ.Core.Model.AMI.Alerting;
 using OpenIZ.Core.Model.AMI.Auth;
 using OpenIZ.Core.Model.AMI.DataTypes;
+using OpenIZ.Core.Model.AMI.Diagnostics;
 using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
@@ -387,5 +388,11 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the security user.</returns>
 		[WebInvoke(UriTemplate = "/user/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		SecurityUserInfo UpdateUser(string userId, SecurityUserInfo userInfo);
+
+        /// <summary>
+        /// Creates a diagnostic report
+        /// </summary>
+        [WebInvoke(UriTemplate = "/sherlock", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+        DiagnosticReport CreateDiagnosticReport(DiagnosticReport report);
 	}
 }

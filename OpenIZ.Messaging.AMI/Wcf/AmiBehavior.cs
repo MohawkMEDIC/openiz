@@ -46,6 +46,7 @@ using OpenIZ.Core.Model.AMI.Alerting;
 using OpenIZ.Core.Alert.Alerting;
 using OpenIZ.Core.Model.AMI.DataTypes;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.AMI.Diagnostics;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -151,12 +152,21 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			return securityRepository.CreateDevice(device);
 		}
 
-		/// <summary>
-		/// Creates a place in the IMS.
-		/// </summary>
-		/// <param name="place">The place to be created.</param>
-		/// <returns>Returns the newly created place.</returns>
-		public Place CreatePlace(Place place)
+        /// <summary>
+        /// Create a diagnostic report 
+        /// </summary>
+        public DiagnosticReport CreateDiagnosticReport(DiagnosticReport report)
+        {
+            report.Key = Guid.NewGuid();
+            return report;
+        }
+
+        /// <summary>
+        /// Creates a place in the IMS.
+        /// </summary>
+        /// <param name="place">The place to be created.</param>
+        /// <returns>Returns the newly created place.</returns>
+        public Place CreatePlace(Place place)
 		{
 			var placeRepository = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
 

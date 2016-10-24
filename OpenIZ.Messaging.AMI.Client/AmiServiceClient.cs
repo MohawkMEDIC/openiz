@@ -24,6 +24,7 @@ using OpenIZ.Core.Interop.Clients;
 using OpenIZ.Core.Model.AMI.Alerting;
 using OpenIZ.Core.Model.AMI.Auth;
 using OpenIZ.Core.Model.AMI.DataTypes;
+using OpenIZ.Core.Model.AMI.Diagnostics;
 using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
@@ -48,6 +49,14 @@ namespace OpenIZ.Messaging.AMI.Client
 		public AmiServiceClient(IRestClient client) : base(client)
 		{
             this.Client.Accept = client.Accept ?? "application/xml";
+        }
+
+        /// <summary>
+        /// Submits a diagnostics report
+        /// </summary>
+        public DiagnosticReport SubmitDiagnosticReport(DiagnosticReport report)
+        {
+            return this.Client.Post<DiagnosticReport, DiagnosticReport>(string.Format("sherlock"), this.Client.Accept, report);
         }
 
 		/// <summary>

@@ -40,9 +40,17 @@
       <Project>{cceaa09f-7b59-45ec-b969-3a740c2aebaa}</Project>
       <Name>OpenIZ.Core.Alert</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.Applets\OpenIZ.Core.Applets.csproj">
+      <Project>{39E61451-F4FE-493D-B754-5F06EB284AAC}</Project>
+      <Name>OpenIZ.Core.Applets</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
       <Project>{f1a82a4f-4a57-47d7-ae76-444c8a4ff54a}</Project>
       <Name>OpenIZ.Core.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.PCL\OpenIZ.Core.PCL.csproj">
+      <Project>{3A45F695-47A2-464C-ACE6-BDABBFA39FBC}</Project>
+      <Name>OpenIZ.Core.PCL</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -52,6 +60,13 @@
     <Compile Include="Auth\SecurityRoleInfo.cs" />
     <Compile Include="Auth\SecurityUserInfo.cs" />
     <Compile Include="DataTypes\AssigningAuthorityInfo.cs" />
+    <Compile Include="Diagnostics\DiagnosticApplicationInfo.cs" />
+    <Compile Include="Diagnostics\DiagnosticEnvironmentInfo.cs" />
+    <Compile Include="Diagnostics\DiagnosticAttachmentInfo.cs" />
+    <Compile Include="Diagnostics\DiagnosticAttachments.cs" />
+    <Compile Include="Diagnostics\DiagnosticReport.cs" />
+    <Compile Include="Diagnostics\DiagnosticSyncInfo.cs" />
+    <Compile Include="Diagnostics\DiagnosticVersionInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\RevokeReason.cs" />
     <Compile Include="Security\SubmissionInfo.cs" />
@@ -64,6 +79,11 @@
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
