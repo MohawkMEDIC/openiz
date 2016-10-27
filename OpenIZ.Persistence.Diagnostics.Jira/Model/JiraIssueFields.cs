@@ -44,5 +44,11 @@ namespace OpenIZ.Persistence.Diagnostics.Jira.Model
         /// </summary>
         [JsonProperty("summary")]
         public String Summary { get; set; }
+
+        /// <summary>
+        /// Gets or sets the labels assigned to the object
+        /// </summary>
+        [JsonProperty("labels")]
+        public String[] Labels { get; set; }
     }
 }

@@ -125,7 +125,8 @@ namespace OpenIZ.Persistence.Diagnostics.Jira
                         Summary = String.Format("OpenIZ-DIAG: Issue from {0}", storageData?.Submitter?.Names?.FirstOrDefault().Component.FirstOrDefault(n => n.ComponentTypeKey == NameComponentKeys.Given)?.Value),
                         IssueType = new Model.JiraIdentifier("Bug"),
                         Priority = new Model.JiraIdentifier("High"),
-                        Project = new Model.JiraKey(this.m_configuration.Project)
+                        Project = new Model.JiraKey(this.m_configuration.Project),
+                        Labels = new string[] { "OpenIZMobile" }
                     }
                 });
 
