@@ -162,5 +162,14 @@ namespace OpenIZ.Core.Model.Acts
             this.m_relationshipType = null;
             this.m_targetAct = null;
         }
+
+        /// <summary>
+        /// Empty?
+        /// </summary>
+        public override bool IsEmpty()
+        {
+            return this.RelationshipType == null && this.RelationshipTypeKey == null ||
+                this.TargetAct == null && this.TargetActKey == null;
+        }
     }
 }

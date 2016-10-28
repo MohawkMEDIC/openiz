@@ -132,7 +132,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets or sets the role that the entity played in participating in the act
         /// </summary>
-        [XmlIgnore, JsonIgnore]
+        [XmlIgnore, JsonIgnore, AutoLoad]
         [SerializationReference(nameof(ParticipationRoleKey))]
         public Concept ParticipationRole
         {
