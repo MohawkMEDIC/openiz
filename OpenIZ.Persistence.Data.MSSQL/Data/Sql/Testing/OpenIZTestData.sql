@@ -4,21 +4,21 @@ DELETE FROM SecurityApplicationPolicy WHERE ApplicationId IN (SELECT Application
 DELETE FROM SecurityApplication WHERE ApplicationPublicId = 'fiddler';
 
 INSERT INTO SecurityUser (UserName, SecurityStamp, UserPassword, Email, PhoneNumber, EmailConfirmed, PhoneNumberConfirmed, CreatedBy)
-	VALUES ('Administrator', NEWID(), '59ff5973691ff75f8baa45f1e38fae24875f77ef00987ed22b02df075fb144f9', 'mailto:administrator@marc-hi.ca', 'tel:+19055751212;ext=4085', 1, 1, 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+	VALUES ('Administrator', NEWID(), '59ff5973691ff75f8baa45f1e38fae24875f77ef00987ed22b02df075fb144f9', 'administrator@marc-hi.ca', 'tel:+19055751212;ext=4085', 1, 1, 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 
 INSERT INTO SecurityUserRole (UserId, RoleId)
 	SELECT UserId, RoleId FROM SecurityUser, SecurityRole 
 	WHERE SecurityUser.UserName = 'Administrator' AND SecurityRole.Name IN ('ADMINISTRATORS');
 
 INSERT INTO SecurityUser (UserName, SecurityStamp, UserPassword, Email, PhoneNumber, EmailConfirmed, PhoneNumberConfirmed, CreatedBy)
-	VALUES ('Bob', NEWID(), '59ff5973691ff75f8baa45f1e38fae24875f77ef00987ed22b02df075fb144f9', 'mailto:bob@marc-hi.ca', 'tel:+19055751212;ext=4085', 1, 1, 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+	VALUES ('Bob', NEWID(), '59ff5973691ff75f8baa45f1e38fae24875f77ef00987ed22b02df075fb144f9', 'bob@marc-hi.ca', 'tel:+19055751212;ext=4085', 1, 1, 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 
 INSERT INTO SecurityUserRole (UserId, RoleId)
 	SELECT UserId, RoleId FROM SecurityUser, SecurityRole 
 	WHERE SecurityUser.UserName = 'Bob' AND SecurityRole.Name IN ('USERS');
 
 INSERT INTO SecurityUser (UserName, SecurityStamp, UserPassword, Email, PhoneNumber, EmailConfirmed, PhoneNumberConfirmed, CreatedBy)
-	VALUES ('Lucy', NEWID(), '59ff5973691ff75f8baa45f1e38fae24875f77ef00987ed22b02df075fb144f9', 'mailto:lucy@marc-hi.ca', 'tel:+19055751212;ext=4085', 1, 1, 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+	VALUES ('Lucy', NEWID(), '59ff5973691ff75f8baa45f1e38fae24875f77ef00987ed22b02df075fb144f9', 'lucy@marc-hi.ca', 'tel:+19055751212;ext=4085', 1, 1, 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 
 INSERT INTO SecurityUserRole (UserId, RoleId)
 	SELECT UserId, RoleId FROM SecurityUser, SecurityRole 

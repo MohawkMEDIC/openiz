@@ -67,9 +67,21 @@ namespace OpenIZ.Core.Security.Claims
         public const string OpenIzApplicationIdentifierClaim = "http://openiz.org/claims/application-id";
 
         /// <summary>
+        /// Secret claim
+        /// </summary>
+        public const string OpenIZTfaSecretClaim = "http://openiz.org/claims/tfa-secret";
+
+        /// <summary>
+        /// TFA secret expiry
+        /// </summary>
+        public const string OpenIZTfaSecretExpiry = "http://openiz.org/claims/tfa-secret-expiry";
+
+
+        /// <summary>
         /// Patient identifier claim
         /// </summary>
         public const string XUAPatientIdentifierClaim = "urn:oasis:names:tc:xacml:2.0:resource:resource-id";
+
         /// <summary>
         /// Purpose of use claim
         /// </summary>
@@ -90,6 +102,11 @@ namespace OpenIZ.Core.Security.Claims
         /// User identifier claim
         /// </summary>
         public const string XspaUserIdentifierClaim = "urn:oasis:names:tc:xacml:1.0:subject:subject-id";
+
+        /// <summary>
+        /// Passwordless authentication (allow authentication without password)
+        /// </summary>
+        public const string OpenIZPasswordlessAuth = "http://openiz.org/claims/auth-nopassword";
 
         /// <summary>
         /// Gets the specified claim type handler

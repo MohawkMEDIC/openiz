@@ -119,13 +119,19 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             var appliesTo = new EndpointReference(tokenRequest["scope"]);
 
             // Validate username and password
-            if (String.IsNullOrWhiteSpace(tokenRequest["username"]) || String.IsNullOrWhiteSpace(tokenRequest["password"]))
+            if (String.IsNullOrWhiteSpace(tokenRequest["username"]))
                 return this.CreateErrorCondition(OAuthErrorType.invalid_request, "Invalid username or password");
             else
             {
                 try
                 {
-                    var principal = identityProvider.Authenticate(tokenRequest["username"], tokenRequest["password"]);
+                    IPrincipal principal = null;
+
+                    // Is there a TFA secret
+                    if (WebOperationContext.Current.IncomingRequest.Headers[OAuthConstants.TfaHeaderName] != null)
+                        principal = identityProvider.Authenticate(tokenRequest["username"], tokenRequest["password"], WebOperationContext.Current.IncomingRequest.Headers[OAuthConstants.TfaHeaderName]);
+                    else
+                        principal = identityProvider.Authenticate(tokenRequest["username"], tokenRequest["password"]);
 
                     if (principal == null)
                         return this.CreateErrorCondition(OAuthErrorType.invalid_grant, "Invalid username or password");
@@ -196,8 +202,8 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             IPolicyInformationService pip = ApplicationContext.Current.GetService<IPolicyInformationService>();
 
             // TODO: Add configuration for expiry
-            DateTime issued = DateTime.Now,
-                expires = DateTime.Now.Add(this.m_configuration.ValidityTime);
+            DateTime issued = DateTime.Parse((oizPrincipal as ClaimsPrincipal)?.FindFirst(ClaimTypes.AuthenticationInstant)?.Value ?? DateTime.Now.ToString("o")),
+                expires = DateTime.Parse((oizPrincipal as ClaimsPrincipal)?.FindFirst(ClaimTypes.Expiration)?.Value ?? DateTime.Now.Add(this.m_configuration.ValidityTime).ToString("o"));
 
             // System claims
             List<Claim> claims = new List<Claim>(
@@ -211,19 +217,22 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
                 new Claim(OpenIzClaimTypes.OpenIzApplicationIdentifierClaim,  
                 (clientPrincipal as ClaimsPrincipal).FindFirst(ClaimTypes.Sid).Value)
             };
-
-
+            
             // Additional claims
             claims.AddRange(additionalClaims);
 
             // Get policies
             var oizPrincipalPolicies = pip.GetActivePolicies(oizPrincipal);
-            claims.AddRange(oizPrincipalPolicies.Where(o=>o.Rule == PolicyDecisionOutcomeType.Grant).Select(o => new Claim(OpenIzClaimTypes.OpenIzGrantedPolicyClaim, o.Policy.Oid)));
-                
-            // Is the user elevated? If so, add claims for those policies
-            if(claims.Exists(o=>o.Type == OpenIzClaimTypes.XspaPurposeOfUseClaim))
-                claims.AddRange(oizPrincipalPolicies.Where(o => o.Rule == PolicyDecisionOutcomeType.Elevate).Select(o => new Claim(OpenIzClaimTypes.OpenIzGrantedPolicyClaim, o.Policy.Oid)));
 
+            // Add grant if not exists
+            if((oizPrincipal as ClaimsPrincipal)?.HasClaim(o=>o.Type == OpenIzClaimTypes.OpenIzGrantedPolicyClaim) == true)
+                claims.AddRange((oizPrincipal as ClaimsPrincipal).FindAll(OpenIzClaimTypes.OpenIzGrantedPolicyClaim));
+            else
+                claims.AddRange(oizPrincipalPolicies.Where(o => o.Rule == PolicyDecisionOutcomeType.Grant).Select(o => new Claim(OpenIzClaimTypes.OpenIzGrantedPolicyClaim, o.Policy.Oid)));
+
+            // Is the user elevated? If so, add claims for those policies
+            if (claims.Exists(o => o.Type == OpenIzClaimTypes.XspaPurposeOfUseClaim))
+                claims.AddRange(oizPrincipalPolicies.Where(o => o.Rule == PolicyDecisionOutcomeType.Elevate).Select(o => new Claim(OpenIzClaimTypes.OpenIzGrantedPolicyClaim, o.Policy.Oid)));
 
             // Add Email address from idp
             claims.AddRange((oizPrincipal as ClaimsPrincipal).Claims.Where(o => o.Type == ClaimTypes.Email || o.Type == ClaimTypes.NameIdentifier || o.Type == ClaimTypes.Expiration));
@@ -272,7 +281,7 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             {
                 TokenType = OAuthConstants.JwtTokenType,
                 AccessToken = handler.WriteToken(jwt),
-                ExpiresIn = (int)this.m_configuration.ValidityTime.TotalMilliseconds,
+                ExpiresIn = (int)(expires.Subtract(DateTime.Now)).TotalMilliseconds
                 //RefreshToken = // TODO: Need to write a SessionProvider for this so we can keep track of refresh tokens 
             };
 

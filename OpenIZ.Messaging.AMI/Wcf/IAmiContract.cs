@@ -27,6 +27,7 @@ using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Security;
 using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Xml.Schema;
@@ -390,9 +391,22 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		SecurityUserInfo UpdateUser(string userId, SecurityUserInfo userInfo);
 
         /// <summary>
+        /// Creates a request that the server issue a reset code
+        /// </summary>
+        [WebInvoke(UriTemplate = "/tfa", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+        void SendTfaSecret(TfaRequestInfo resetInfo);
+
+        /// <summary>
+        /// Gets the list of TFA mechanisms
+        /// </summary>
+        [WebGet(UriTemplate = "/tfa")]
+        AmiCollection<TfaMechanismInfo> GetTfaMechanisms();
+
+        /// <summary>
         /// Creates a diagnostic report
         /// </summary>
         [WebInvoke(UriTemplate = "/sherlock", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
         DiagnosticReport CreateDiagnosticReport(DiagnosticReport report);
+        
 	}
 }

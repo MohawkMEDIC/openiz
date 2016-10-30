@@ -377,10 +377,28 @@ namespace OpenIZ.Core.Services.Impl
 			return persistenceService.Get<Guid>(new Identifier<Guid>(userId), AuthenticationContext.Current.Principal, false);
 		}
 
-		/// <summary>
-		/// Get the specified user based on identity
-		/// </summary>
-		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        /// <summary>
+        /// Gets a specific user.
+        /// </summary>
+        /// <param name="userId">The id of the user to retrieve.</param>
+        /// <returns>Returns the user.</returns>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public SecurityUser GetUser(String userName)
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+
+            if (persistenceService == null)
+            {
+                throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityUser>)));
+            }
+
+            return persistenceService.Query(u => u.UserName == userName, AuthenticationContext.Current.Principal).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Get the specified user based on identity
+        /// </summary>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
 		public SecurityUser GetUser(IIdentity identity)
 		{
 			var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();

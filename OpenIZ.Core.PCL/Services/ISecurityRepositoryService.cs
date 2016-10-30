@@ -143,15 +143,20 @@ namespace OpenIZ.Core.Services
 		/// <returns>Returns a list of users.</returns>
 		IEnumerable<SecurityUser> FindUsers(Expression<Func<SecurityUser, bool>> query);
 
-		/// <summary>
-		/// Gets a list of users based on a query.
-		/// </summary>
-		/// <param name="query">The query to use to match the users.</param>
-		/// <param name="offset">The offset of the search.</param>
-		/// <param name="count">The number of users.</param>
-		/// <param name="totalResults">The total number of users.</param>
-		/// <returns>Returns a list of roles.</returns>
-		IEnumerable<SecurityUser> FindUsers(Expression<Func<SecurityUser, bool>> query, int offset, int? count, out int totalResults);
+        /// <summary>
+        /// Get a user by user name
+        /// </summary>
+        SecurityUser GetUser(String userName);
+
+        /// <summary>
+        /// Gets a list of users based on a query.
+        /// </summary>
+        /// <param name="query">The query to use to match the users.</param>
+        /// <param name="offset">The offset of the search.</param>
+        /// <param name="count">The number of users.</param>
+        /// <param name="totalResults">The total number of users.</param>
+        /// <returns>Returns a list of roles.</returns>
+        IEnumerable<SecurityUser> FindUsers(Expression<Func<SecurityUser, bool>> query, int offset, int? count, out int totalResults);
 
 		/// <summary>
 		/// Gets a specific device.

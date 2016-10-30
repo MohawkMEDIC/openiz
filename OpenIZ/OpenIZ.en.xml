@@ -36,5 +36,4 @@
   <!-- SECURITY ERRORS -->
   <string name="SECE001">Client made claim which it is not permitted to make</string>
   <string name="SECE002">Claim {0} is not valid</string>
-
 </locale>

@@ -87,6 +87,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jira", "Jira", "{1287B457-D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Persistence.Diagnostics.Jira", "OpenIZ.Persistence.Diagnostics.Jira\OpenIZ.Persistence.Diagnostics.Jira.csproj", "{18A9F102-023E-4E17-8A70-A91365E1510D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Security", "Security", "{E512EAF6-9A58-4D1C-8A46-C2D5C6CD793B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Core.Security.Tfa.Email", "OpenIZ.Core.Security.Tfa.Email\OpenIZ.Core.Security.Tfa.Email.csproj", "{23699F04-DA75-4889-AA00-7F6F4B5FCFBB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -209,6 +213,10 @@ Global
 		{18A9F102-023E-4E17-8A70-A91365E1510D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18A9F102-023E-4E17-8A70-A91365E1510D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18A9F102-023E-4E17-8A70-A91365E1510D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23699F04-DA75-4889-AA00-7F6F4B5FCFBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23699F04-DA75-4889-AA00-7F6F4B5FCFBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23699F04-DA75-4889-AA00-7F6F4B5FCFBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23699F04-DA75-4889-AA00-7F6F4B5FCFBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -250,5 +258,6 @@ Global
 		{09033283-267F-49DE-AAAF-0B54C749D1A1} = {034029A9-C588-4CD7-9FF3-69CD4F82DB8E}
 		{1287B457-DF5C-4381-BD3E-A66524519BB9} = {2914F4AD-4661-4C73-ADB6-B1D91C11C569}
 		{18A9F102-023E-4E17-8A70-A91365E1510D} = {1287B457-DF5C-4381-BD3E-A66524519BB9}
+		{23699F04-DA75-4889-AA00-7F6F4B5FCFBB} = {E512EAF6-9A58-4D1C-8A46-C2D5C6CD793B}
 	EndGlobalSection
 EndGlobal
