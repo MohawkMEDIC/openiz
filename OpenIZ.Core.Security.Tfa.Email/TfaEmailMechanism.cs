@@ -1,4 +1,5 @@
 ﻿using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Security.Tfa.Email.Configuration;
 using OpenIZ.Core.Security.Tfa.Email.Resources;
@@ -24,7 +25,7 @@ namespace OpenIZ.Core.Security.Tfa.Email
     {
 
         // Configuration
-        private MechanismConfiguration m_configuration = ConfigurationManager.GetSection("openiz.core.security.tfa.email") as MechanismConfiguration;
+        private MechanismConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.core.security.tfa.email") as MechanismConfiguration;
 
         // Tracer
         private TraceSource m_tracer = new TraceSource("OpenIZ.Core.Security.Tfa.Email");
