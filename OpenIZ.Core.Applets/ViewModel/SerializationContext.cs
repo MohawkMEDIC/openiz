@@ -22,6 +22,7 @@ namespace OpenIZ.Core.Applets.ViewModel
         public SerializationContext(ViewModelDescription viewModel)
         {
             this.ViewModelDefinition = viewModel;
+            this.Loaded = new Dictionary<Guid, HashSet<string>>();
         }
 
         /// <summary>
@@ -49,12 +50,17 @@ namespace OpenIZ.Core.Applets.ViewModel
         /// Represents the view model definition
         /// </summary>
         public ViewModelDescription ViewModelDefinition { get; protected set; }
-
-
+        
         /// <summary>
         /// Description
         /// </summary>
         public PropertyContainerDescription Description { get; set; }
+
+        /// <summary>
+        /// Known cache misses
+        /// </summary>
+        public Dictionary<Guid, HashSet<String>> Loaded { get; private set; }
+
     }
 
     /// <summary>
@@ -88,8 +94,21 @@ namespace OpenIZ.Core.Applets.ViewModel
         {
             this.Parent = parent;
             this.Name = this.GetSerializationName(propertyInfo);
-            this.Description = parent.ViewModelDefinition.FindDescription(propertyInfo, parent.Description);
+            this.Description = parent.ViewModelDefinition.FindDescription(propertyInfo, this.Name, parent.Description);
 
+        }
+
+
+        /// <summary>
+        /// Gets the root context
+        /// </summary>
+        public RootSerializationContext Root { get
+            {
+                var ctx = this.Parent;
+                while (ctx is PropertySerializationContext)
+                    ctx = (ctx as PropertySerializationContext).Parent;
+                return ctx as RootSerializationContext;
+            }
         }
 
         /// <summary>

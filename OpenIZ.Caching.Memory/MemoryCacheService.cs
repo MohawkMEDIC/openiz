@@ -190,5 +190,13 @@ namespace OpenIZ.Caching.Memory
         {
             return MemoryCache.Current.TryGetEntry(tdata, key);
         }
+
+        /// <summary>
+        /// Add the specified item to the memory cache
+        /// </summary>
+        public void Add(IdentifiedData data)
+        {
+            MemoryCache.Current.AddUpdateEntry(data);
+        }
     }
 }

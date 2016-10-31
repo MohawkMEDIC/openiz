@@ -23,6 +23,11 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
         [XmlAttribute("classifier")]
         public String Classifier { get; set; }
 
+        /// <summary>
+        /// Seriallization behavior
+        /// </summary>
+        [XmlAttribute("behavior")]
+        public SerializationBehaviorType Action { get; set; }
 
     }
 }

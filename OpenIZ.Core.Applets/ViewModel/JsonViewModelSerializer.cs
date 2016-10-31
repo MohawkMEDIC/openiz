@@ -37,6 +37,8 @@ using System.Diagnostics;
 using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Applets.ViewModel.Description;
 using System.Xml.Serialization;
+using OpenIZ.Core;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Core.Applets.ViewModel
 {
@@ -557,6 +559,9 @@ namespace OpenIZ.Core.Applets.ViewModel
         private static void SerializeInternal(IdentifiedData data, JsonWriter jwriter, SerializationContext context, Stack<Guid> writeStack)
         {
 
+            // True when this method has modified "data" attribute
+            bool loadedProperties = false;
+
             if (data == null || data.Key.HasValue && writeStack.Contains(data.Key.Value))
             {
                 jwriter.WriteNull();
@@ -591,7 +596,8 @@ namespace OpenIZ.Core.Applets.ViewModel
                 if (!((context is RootSerializationContext) ||
                     (context as PropertySerializationContext).Description?.All == true ||
                     propertyContext.Description is PropertyModelDescription) &&
-                    typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(propertyInfo.PropertyType.StripGeneric().GetTypeInfo()))
+                    typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(propertyInfo.PropertyType.StripGeneric().GetTypeInfo()) ||
+                    (propertyContext.Description as PropertyModelDescription)?.Action == SerializationBehaviorType.Never)
                     continue;
 
                 // Do we skip this property?
@@ -603,41 +609,58 @@ namespace OpenIZ.Core.Applets.ViewModel
                 var value = propertyInfo.GetValue(data);
 
                 // First, is this explicitly defined!?
-                //if ((value == null || (value as IList)?.Count == 0) && propertyContext.Description != null)
-                //{
-                //    try
-                //    {
-                //        // We are going to load this mofo , so let's make sure it is loaded
-                //        if (value is IList)
-                //        {
-                //            if (data.Key != null && data.ModifiedOn != default(DateTimeOffset))
-                //            {
-                //                var elementType = propertyInfo.PropertyType.GenericTypeArguments[0];
-                //                var method = EntitySource.Current.Provider.GetType().GetRuntimeMethod("GetRelations", new Type[] { typeof(Guid?) }).MakeGenericMethod(elementType);
-                //                value = method.Invoke(EntitySource.Current.Provider, new Object[] { data.Key }) as IList;
-                //                propertyInfo.SetValue(data, value);
-                //            }
-                //        }
-                //        else if (propertyInfo.GetCustomAttribute<SerializationReferenceAttribute>() != null)
-                //        {
-                //            var keyPropertyRef = propertyInfo.GetCustomAttribute<SerializationReferenceAttribute>();
-                //            var keyProperty = data.GetType().GetRuntimeProperty(keyPropertyRef.RedirectProperty);
-                //            var key = keyProperty.GetValue(data);
-                //            if (key != null)
-                //            {
-                //                var method = EntitySource.Current.Provider.GetType().GetRuntimeMethod("Get", new Type[] { typeof(Guid?) }).MakeGenericMethod(propertyInfo.PropertyType);
-                //                // Backing property
-                //                value = method.Invoke(EntitySource.Current.Provider, new Object[] { key }) as IList;
-                //                propertyInfo.SetValue(data, value);
-                //            }
-                //        }
-                //    }
-                //    catch(Exception e)
-                //    {
-                //        Debug.WriteLine(e.ToString());
-                //    }
-                //}
-                
+                if ((value == null || (value as IList)?.Count == 0) && (propertyContext.Description as PropertyModelDescription)?.Action == SerializationBehaviorType.Always)
+                {
+                    try
+                    {
+                        // Known miss targets
+                        HashSet<String> missProp = null;
+                        if (propertyContext.Root.Loaded.TryGetValue(data.Key.Value, out missProp))
+                        {
+                            if (missProp.Contains(propertyContext.Name))
+                                continue; // skip known miss
+                            else
+                                missProp.Add(propertyContext.Name);
+                        }
+                        else
+                            propertyContext.Root.Loaded.Add(data.Key.Value, new HashSet<string>() { propertyContext.Name });
+
+                        // We are going to load this mofo , so let's make sure it is loaded
+                        if (value is IList)
+                        {
+                            if (data.Key != null && data.ModifiedOn != default(DateTimeOffset))
+                            {
+                                var elementType = propertyInfo.PropertyType.GenericTypeArguments[0];
+                                var method = EntitySource.Current.Provider.GetType().GetRuntimeMethod("GetRelations", new Type[] { typeof(Guid?) }).MakeGenericMethod(elementType);
+                                value = method.Invoke(EntitySource.Current.Provider, new Object[] { data.Key }) as IList;
+                                propertyInfo.SetValue(data, value);
+                                loadedProperties = true;
+
+                            }
+                        }
+                        else if (propertyInfo.GetCustomAttribute<SerializationReferenceAttribute>() != null)
+                        {
+                            var keyPropertyRef = propertyInfo.GetCustomAttribute<SerializationReferenceAttribute>();
+                            var keyProperty = data.GetType().GetRuntimeProperty(keyPropertyRef.RedirectProperty);
+                            var key = keyProperty.GetValue(data);
+                            if (key != null)
+                            {
+                                var method = EntitySource.Current.Provider.GetType().GetRuntimeMethod("Get", new Type[] { typeof(Guid?) }).MakeGenericMethod(propertyInfo.PropertyType);
+                                // Backing property
+                                value = method.Invoke(EntitySource.Current.Provider, new Object[] { key }) as IList;
+                                propertyInfo.SetValue(data, value);
+                                loadedProperties = true;
+
+                            }
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e.ToString());
+                    }
+                }
+
                 if (value == null || (propertyInfo.Name == myClassifier?.ClassifierProperty && value is IdentifiedData) ||
                     propertyInfo.PropertyType.GetTypeInfo().IsValueType && value == Activator.CreateInstance(propertyInfo.PropertyType))
                     continue;
@@ -768,6 +791,9 @@ namespace OpenIZ.Core.Applets.ViewModel
                 writeStack.Pop();
             jwriter.WriteEndObject();
 
+            // Loaded properties?
+            if (loadedProperties)
+                (ApplicationServiceContext.Current.GetService(typeof(IDataCachingService)) as IDataCachingService).Add(data);
         }
 
         /// <summary>
