@@ -1,130 +1,154 @@
-﻿using Newtonsoft.Json;
-using OpenIZ.Core.Applets.ViewModel.Description;
+﻿using OpenIZ.Core.Applets.ViewModel.Description;
 using OpenIZ.Core.Model;
-using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Xml.Serialization;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace OpenIZ.Core.Applets.ViewModel
 {
     /// <summary>
     /// Represents a serialization context
     /// </summary>
-    internal class SerializationContext
+    public abstract class SerializationContext
     {
+        // Object identifier
+        private int m_objectId = 0;
+        private int m_masterObjectId = 0;
+
+        // Element description
+        private PropertyContainerDescription m_elementDescription;
 
         /// <summary>
-        /// Serialization context
+        /// Gets the serialization context
         /// </summary>
-        public SerializationContext(ViewModelDescription viewModel)
+        public SerializationContext(String propertyName, IViewModelSerializer context, Object instance)
         {
-            this.ViewModelDefinition = viewModel;
-            this.Loaded = new Dictionary<Guid, HashSet<string>>();
+            this.PropertyName = propertyName;
+            this.Parent = null;
+            this.Instance = instance;
+            this.Context = context;
+            this.ViewModelDescription = this.Context.ViewModel;
         }
 
         /// <summary>
-        /// Get the serialization name
+        /// Gets the serialization context
         /// </summary>
-        protected string GetSerializationName(PropertyInfo propertyInfo)
-        {
-            var jpa = propertyInfo.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName;
-            if (jpa == null && propertyInfo.GetCustomAttribute<SerializationReferenceAttribute>() != null)
-                jpa = propertyInfo.DeclaringType.GetRuntimeProperty(propertyInfo.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty)?.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName + "Model";
-            if (jpa == null)
-                jpa = propertyInfo.Name.ToLower() + "Model";
-
-            if (jpa == null || jpa == "$type")
-                return null;
-            return jpa;
-        }
-
-        /// <summary>
-        /// Gets or sets the type
-        /// </summary>
-        public Type Type { get; protected set; }
-
-        /// <summary>
-        /// Represents the view model definition
-        /// </summary>
-        public ViewModelDescription ViewModelDefinition { get; protected set; }
-        
-        /// <summary>
-        /// Description
-        /// </summary>
-        public PropertyContainerDescription Description { get; set; }
-
-        /// <summary>
-        /// Known cache misses
-        /// </summary>
-        public Dictionary<Guid, HashSet<String>> Loaded { get; private set; }
-
-    }
-
-    /// <summary>
-    /// Represents root serialization context
-    /// </summary>
-    internal class RootSerializationContext : SerializationContext
-    {
-
-        /// <summary>
-        /// Represents the type model description
-        /// </summary>
-        public RootSerializationContext(Type rootType, ViewModelDescription description) : base(description)
-        {
-            this.Description = description.FindDescription(rootType);
-            this.Type = rootType;
-        }
-
-
-    }
-
-    /// <summary>
-    /// Property serialization context
-    /// </summary>
-    internal class PropertySerializationContext : SerializationContext
-    {
-
-        /// <summary>
-        /// Serialization context for a property
-        /// </summary>
-        public PropertySerializationContext(PropertyInfo propertyInfo, SerializationContext parent) : base(parent.ViewModelDefinition)
+        public SerializationContext(String propertyName, IViewModelSerializer context, Object instance, SerializationContext parent) : this(propertyName, context, instance)
         {
             this.Parent = parent;
-            this.Name = this.GetSerializationName(propertyInfo);
-            this.Description = parent.ViewModelDefinition.FindDescription(propertyInfo, this.Name, parent.Description);
-
+            this.m_objectId = this.Root.m_masterObjectId++;
         }
 
+        /// <summary>
+        /// Gets the name of the element
+        /// </summary>
+        public String PropertyName { get; private set; }
 
         /// <summary>
-        /// Gets the root context
+        /// Gets the view model serializer in context
         /// </summary>
-        public RootSerializationContext Root { get
+        public IViewModelSerializer Context { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the view model description of the current element
+        /// </summary>
+        public PropertyContainerDescription ElementDescription {
+            get
             {
-                var ctx = this.Parent;
-                while (ctx is PropertySerializationContext)
-                    ctx = (ctx as PropertySerializationContext).Parent;
-                return ctx as RootSerializationContext;
+                if (this.m_elementDescription == null)
+                {
+                    var elementDescription = this.ViewModelDescription.FindDescription(this.PropertyName, this.Parent?.ElementDescription);
+                    if (elementDescription == null)
+                        elementDescription = this.ViewModelDescription.FindDescription(this.Instance?.GetType().StripGeneric());
+                    this.m_elementDescription = elementDescription;
+                }
+                return this.m_elementDescription;
             }
         }
+        
+        /// <summary>
+        /// Gets or sets the root view model description
+        /// </summary>
+        public ViewModelDescription ViewModelDescription { get; private set; }
 
         /// <summary>
-        /// Parent
+        /// Gets the parent of the current serialization context
         /// </summary>
         public SerializationContext Parent { get; private set; }
 
         /// <summary>
-        /// Gets the serialization name
+        /// Gets or sets the instance value
         /// </summary>
-        public String Name { get; set; }
+        public Object Instance { get; private set; }
 
         /// <summary>
-        /// Property information
+        /// Gets the root context
         /// </summary>
-        public PropertyInfo PropertyInfo { get; private set; }
+        public SerializationContext Root {
+            get
+            {
+                var idx = this;
+                while (idx.Parent != null)
+                    idx = idx.Parent;
+                return idx;
+            }
+        }
 
+        /// <summary>
+        /// Returns true when child property information should be force loaded
+        /// </summary>
+        public bool ShouldForceLoad(string childProperty)
+        {
+            var propertyDescription = this.ElementDescription.Properties.FirstOrDefault(o => o.Name == childProperty) as PropertyModelDescription;
+            return propertyDescription?.Action == SerializationBehaviorType.Always;
+        }
+
+        /// <summary>
+        /// Gets the current object identifier (from a JSON property perspective
+        /// </summary>
+        public int ObjectId {  get { return this.m_objectId; } }
+
+        /// <summary>
+        /// Gets the object id of the specified object from the parent instance if it exists 
+        /// </summary>
+        public int? GetParentObjectId(IdentifiedData data)
+        {
+
+            var idx = this;
+            while(idx != null)
+            {
+                if ((idx.Instance as IdentifiedData)?.Key.HasValue == true &&
+                    data.Key.HasValue &&
+                    (idx.Instance as IdentifiedData)?.Key.Value == data.Key.Value ||
+                    idx.Instance == data)
+                    return idx.ObjectId;
+                idx = idx.Parent;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Returns true if the object should be serialized based on the data at hand
+        /// </summary>
+        public bool ShouldSerialize(String childProperty)
+        {
+            var propertyDescription = this.ElementDescription.Properties.FirstOrDefault(o => o.Name == childProperty) as PropertyModelDescription;
+            if (propertyDescription?.Action == SerializationBehaviorType.Never || // Never serialize
+                (!this.ElementDescription.All &&
+                propertyDescription == null))  // Parent is not set to all and does not explicitly call this property out
+                return false;
+            return true;
+        }
+
+        /// <summary>
+        /// Property string
+        /// </summary>
+        public override string ToString()
+        {
+            return this.PropertyName;
+        }
     }
 }
