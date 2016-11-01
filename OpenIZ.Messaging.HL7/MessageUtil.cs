@@ -681,6 +681,13 @@ namespace OpenIZ.Messaging.HL7
 				patient.Telecoms.Add(MessageUtil.ConvertXTN(item));
 			}
 
+			Person person = new Person();
+
+			person.Identifiers.AddRange(MessageUtil.ConvertIdentifiers(pid.GetMotherSIdentifier()));
+			person.Names.AddRange(MessageUtil.ConvertNames(pid.GetMotherSMaidenName()));
+
+			patient.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Mother, person));
+
 			return patient;
 		}
 
