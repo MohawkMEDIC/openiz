@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace DatasetTool
+namespace OizDevTool
 {
     /// <summary>
     /// View model documentation
@@ -68,7 +68,7 @@ namespace DatasetTool
             {
 
                 // First, we shall read
-                using (StreamReader templateReader = new StreamReader(typeof(JsProxy).Assembly.GetManifestResourceStream("DatasetTool.Resources.jsdoc-template.js")))
+                using (StreamReader templateReader = new StreamReader(typeof(JsProxy).Assembly.GetManifestResourceStream("OizDevTool.Resources.jsdoc-template.js")))
                     output.Write(templateReader.ReadToEnd());
 
                 // Output namespace
@@ -84,7 +84,7 @@ namespace DatasetTool
                 foreach (var typ in enumerationTypes.Distinct())
                     GenerateEnumerationDocumentation(output, typ, xmlDoc, parms);
 
-                using (StreamReader templateReader = new StreamReader(typeof(JsProxy).Assembly.GetManifestResourceStream("DatasetTool.Resources.jsdoc-addlclasses.js")))
+                using (StreamReader templateReader = new StreamReader(typeof(JsProxy).Assembly.GetManifestResourceStream("OizDevTool.Resources.jsdoc-addlclasses.js")))
                     output.Write(templateReader.ReadToEnd());
 
                 // Output static 

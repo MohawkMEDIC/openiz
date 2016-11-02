@@ -31,6 +31,7 @@ namespace OpenIZ.Core.Applets.ViewModel
             this.Instance = instance;
             this.Context = context;
             this.ViewModelDescription = this.Context.ViewModel;
+            this.LoadedProperties = new Dictionary<Guid, HashSet<string>>();
         }
 
         /// <summary>
@@ -40,6 +41,7 @@ namespace OpenIZ.Core.Applets.ViewModel
         {
             this.Parent = parent;
             this.m_objectId = this.Root.m_masterObjectId++;
+            this.LoadedProperties = parent?.LoadedProperties ?? new Dictionary<Guid, HashSet<string>>();
         }
 
         /// <summary>
@@ -111,6 +113,12 @@ namespace OpenIZ.Core.Applets.ViewModel
         /// </summary>
         public int ObjectId {  get { return this.m_objectId; } }
 
+
+        /// <summary>
+        /// Loaded properties
+        /// </summary>
+        public Dictionary<Guid, HashSet<String>> LoadedProperties { get; private set; }
+
         /// <summary>
         /// Gets the object id of the specified object from the parent instance if it exists 
         /// </summary>
@@ -135,8 +143,9 @@ namespace OpenIZ.Core.Applets.ViewModel
         /// </summary>
         public bool ShouldSerialize(String childProperty)
         {
-            var propertyDescription = this.ElementDescription.Properties.FirstOrDefault(o => o.Name == childProperty) as PropertyModelDescription;
+            var propertyDescription = this.ElementDescription?.Properties.FirstOrDefault(o => o.Name == childProperty) as PropertyModelDescription;
             if (propertyDescription?.Action == SerializationBehaviorType.Never || // Never serialize
+                this.ElementDescription == null ||
                 (!this.ElementDescription.All &&
                 propertyDescription == null))  // Parent is not set to all and does not explicitly call this property out
                 return false;

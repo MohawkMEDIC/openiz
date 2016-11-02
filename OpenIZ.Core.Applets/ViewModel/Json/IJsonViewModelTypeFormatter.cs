@@ -24,11 +24,17 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         /// <summary>
         /// Parses the specified object from the reader
         /// </summary>
-        /// <typeparam name="TModel">The type of model to be parsed</typeparam>
         /// <param name="r">The reader type</param>
         /// <param name="context">The current parse context</param>
+        /// <param name="asType">The type which is being constructed</param>
         /// <returns></returns>
-        TModel Deserialize<TModel>(JsonReader r, JsonSerializationContext context);
+        object Deserialize(JsonReader r, Type asType, JsonSerializationContext context);
+
+        /// <summary>
+        /// Convert from simple value
+        /// </summary>
+        object FromSimpleValue(object simpleValue);
+
         /// <summary>
         /// Gets the simple value
         /// </summary>

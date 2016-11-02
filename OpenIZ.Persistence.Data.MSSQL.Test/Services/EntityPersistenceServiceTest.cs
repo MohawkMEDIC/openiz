@@ -322,14 +322,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                     Name = "http://openiz.org/oiz/birthcertificate",
                     ExtensionHandler = typeof(EntityPersistenceServiceTest)
                 },
-                ExtensionValue = new byte[] { 1 }
+                ExtensionValueXml = new byte[] { 1 }
             });
 
             var afterInsert = base.DoTestInsert(person);
             Assert.AreEqual(EntityClassKeys.Person, afterInsert.ClassConceptKey);
             Assert.AreEqual(1, afterInsert.Extensions.Count);
             Assert.AreEqual(typeof(EntityPersistenceServiceTest), person.Extensions[0].ExtensionType.ExtensionHandler);
-            Assert.IsTrue(BitConverter.ToBoolean(person.Extensions[0].ExtensionValue, 0));
+            Assert.IsTrue(BitConverter.ToBoolean(person.Extensions[0].ExtensionValueXml, 0));
         }
 
         /// <summary>

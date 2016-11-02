@@ -17,11 +17,16 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         // Classifier attribute
         private ClassifierAttribute m_classifierAttribute;
 
+        // Type
+        private Type m_type;
+
         /// <summary>
         /// Creates a new reflection based classifier
         /// </summary>
-        public JsonReflectionClassifier(ClassifierAttribute classifierAtt)
+        public JsonReflectionClassifier(Type type)
         {
+            this.m_type = type;
+            var classifierAtt = type.StripGeneric().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
             this.m_classifierAttribute = classifierAtt;
         }
 
@@ -32,7 +37,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         {
             get
             {
-                return typeof(IList<IdentifiedData>);
+                return this.m_type;
             }
         }
 
@@ -55,6 +60,60 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 }
                 group.Add(itm);
             }
+            return retVal;
+        }
+
+        /// <summary>
+        /// Perform a re-classification of values
+        /// </summary>
+        public IList Compose(Dictionary<string, object> values)
+        {
+            var retValType = typeof(List<>).MakeGenericType(this.m_type);
+            var retVal = Activator.CreateInstance(retValType) as IList;
+
+            foreach (var itm in values)
+            {
+                PropertyInfo classifierProperty = this.m_type.GetRuntimeProperty(this.m_classifierAttribute.ClassifierProperty),
+                    setProperty = classifierProperty;
+
+                String propertyName = setProperty.Name;
+                Object itmClassifier = null, target = itmClassifier;
+
+                // Construct the classifier
+                if (itm.Key != "$other")
+                {
+                    while (propertyName != null)
+                    {
+                        var classifierValue = typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(setProperty.PropertyType.GetTypeInfo()) ?
+                            Activator.CreateInstance(setProperty.PropertyType) :
+                            itm.Key;
+
+                        if (target != null)
+                            setProperty.SetValue(target, classifierValue);
+                        else
+                            itmClassifier = target = classifierValue;
+
+                        propertyName = setProperty.PropertyType.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty;
+                        if (propertyName != null)
+                        {
+                            setProperty = setProperty.PropertyType.GetRuntimeProperty(propertyName);
+                            target = classifierValue;
+                        }
+                    }
+                }
+
+                // Now set the classifiers
+                foreach(var inst in itm.Value as IList ?? new List<Object>() { itm.Value })
+                {
+                    if (inst == null) continue;
+
+                    if(itm.Key != "$other" )
+                        classifierProperty.SetValue(inst, itmClassifier);
+                    retVal.Add(inst);
+                }
+
+            }
+
             return retVal;
         }
 

@@ -38,6 +38,11 @@ namespace OpenIZ.Core.Applets.ViewModel
         TModel DeSerialize<TModel>(Stream s);
 
         /// <summary>
+        /// De-serialize the specified stream to type
+        /// </summary>
+        Object DeSerialize(Stream s, Type t);
+
+        /// <summary>
         /// Loads the associations for the specified object
         /// </summary>
         List<TAssociation> LoadCollection<TAssociation>(Guid sourceKey) where TAssociation : IdentifiedData, ISimpleAssociation, new();

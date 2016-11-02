@@ -12,6 +12,8 @@ using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Diagnostics;
 using Newtonsoft.Json;
 using System.Collections;
+using OpenIZ.Core.Model.Reflection;
+using OpenIZ.Core.Model.Attributes;
 
 namespace OpenIZ.Core.Applets.ViewModel.Json
 {
@@ -27,8 +29,17 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         // Classifiers
         private Dictionary<Type, IViewModelClassifier> m_classifiers = new Dictionary<Type, IViewModelClassifier>();
 
+        // Sync lock
+        private Object m_syncLock = new object();
+
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(JsonViewModelSerializer));
+
+        // Related load methods
+        private Dictionary<Type, MethodInfo> m_relatedLoadMethods = new Dictionary<Type, MethodInfo>();
+
+        // Reloated load association
+        private Dictionary<Type, MethodInfo> m_relatedLoadAssociations = new Dictionary<Type, MethodInfo>();
 
         /// <summary>
         /// Creates a json view model serializer
@@ -61,7 +72,179 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         /// </summary>
         public TModel DeSerialize<TModel>(Stream s)
         {
-            throw new NotImplementedException();
+            return (TModel)this.DeSerialize(s, typeof(TModel));
+        }
+
+        /// <summary>
+        /// De-serialize data from the string
+        /// </summary>
+        public TModel DeSerialize<TModel>(String s)
+        {
+            using (var sr = new StringReader(s))
+                return (TModel)this.DeSerialize(sr, typeof(TModel));
+        }
+
+        /// <summary>
+        /// De-serializes the data from the stream as the specified type
+        /// </summary>
+        public Object DeSerialize(Stream s, Type t)
+        {
+            using (StreamReader sr = new StreamReader(s))
+                return this.DeSerialize(sr, t);
+        }
+
+        /// <summary>
+        /// De-serializes data from the reader as specified type
+        /// </summary>
+        public Object DeSerialize(TextReader r, Type t)
+        {
+            try
+            {
+                using (JsonReader jr = new JsonTextReader(r))
+                {
+                    // Seek to the start object token
+                    while (jr.TokenType != JsonToken.StartObject && jr.Read()) ;
+
+                    return this.ReadElementUtil(jr, t, new JsonSerializationContext(null, this, null));
+                }
+
+            }
+            catch (Exception ex)
+            {
+                this.m_tracer.TraceError("Error de-serializing: {0}", ex);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Read the specified element
+        /// </summary>
+        public object ReadElementUtil(JsonReader r, Type t, JsonSerializationContext context)
+        {
+            var nonGenericT = t.StripGeneric();
+            var classifier = this.GetClassifier(nonGenericT);
+            switch (r.TokenType)
+            {
+                case JsonToken.StartObject:
+                    {
+                        var formatter = this.GetFormatter(nonGenericT);
+                        // Classifier???
+                        if (classifier == null || !typeof(IList).GetTypeInfo().IsAssignableFrom(t.GetTypeInfo()))
+                            return formatter.Deserialize(r, t, context);
+                        else
+                        {
+                            // Classifier each of these properties aren't real properties, rather they are classified things
+                            int depth = r.Depth;
+                            Dictionary<String, Object> values = new Dictionary<string, object>();
+                            while (r.Read() && !(r.TokenType == JsonToken.EndObject && r.Depth == depth))
+                            {
+                                // Classifier
+                                if (r.TokenType != JsonToken.PropertyName) throw new JsonException($"Expected PropertyName token got {r.TokenType}");
+                                string propertyName = (String)r.Value;
+                                r.Read(); // Read proeprty name
+                                values.Add(propertyName, this.ReadElementUtil(r, r.TokenType == JsonToken.StartObject ? nonGenericT : t, new JsonSerializationContext(propertyName, this, values, context)));
+                            }
+                            return classifier.Compose(values);
+                        }
+                    }
+                // Array read, we want to re-call the specified parse
+                case JsonToken.StartArray:
+                    {
+                        if (!typeof(IList).GetTypeInfo().IsAssignableFrom(t.GetTypeInfo()))
+                            throw new JsonSerializationException($"{t} does not implement IList");
+                        int depth = r.Depth;
+                        var listInstance = Activator.CreateInstance(t) as IList;
+                        while (r.Read() && !(r.TokenType == JsonToken.EndArray && r.Depth == depth))
+                            listInstance.Add(this.ReadElementUtil(r, nonGenericT, context));
+                        return listInstance;
+
+                    }
+                case JsonToken.Null:
+                case JsonToken.Boolean:
+                case JsonToken.Bytes:
+                case JsonToken.Float:
+                case JsonToken.Date:
+                case JsonToken.Integer:
+                case JsonToken.String:
+                    if (typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(nonGenericT.GetTypeInfo())) // Complex object
+                    {
+                        var formatter = this.GetFormatter(t);
+                        return formatter.FromSimpleValue(r.Value);
+                    }
+                    else
+                    {
+                        // Not a simple value attribute so let's just handle it as normal
+                        switch (r.TokenType)
+                        {
+                            case JsonToken.Null:
+                                return null;
+                            case JsonToken.Boolean:
+                            case JsonToken.Bytes:
+                                return r.Value;
+                            case JsonToken.Float:
+                                if (t.StripNullable() == typeof(Decimal))
+                                    return Convert.ToDecimal(r.Value);
+                                else
+                                    return (Double)r.Value;
+                            case JsonToken.Date:
+                                t = t.StripNullable();
+                                if (t == typeof(DateTime))
+                                    return (DateTime)r.Value;
+                                else if (t == typeof(String))
+                                    return ((DateTime)r.Value).ToString("o");
+                                else
+                                    return new DateTimeOffset((DateTime)r.Value);
+                            case JsonToken.Integer:
+                                t = t.StripNullable();
+                                if (t.GetTypeInfo().IsEnum)
+                                    return Enum.ToObject(t, r.Value);
+                                return Convert.ChangeType(r.Value, t);
+                            case JsonToken.String:
+                                if (t.StripNullable() == typeof(Guid))
+                                    return Guid.Parse((string)r.Value);
+                                else
+                                    return r.Value;
+                            default:
+                                return r.Value;
+                        }
+                    }
+                default:
+                    throw new JsonSerializationException("Invalid serialization");
+            }
+        }
+
+        /// <summary>
+        /// Load related object
+        /// </summary>
+        internal object LoadRelated(Type propertyType, Guid key)
+        {
+            MethodInfo methodInfo = null;
+            if (!this.m_relatedLoadMethods.TryGetValue(propertyType, out methodInfo))
+            {
+                methodInfo = this.GetType().GetRuntimeMethod(nameof(LoadRelated), new Type[] { typeof(Guid) }).MakeGenericMethod(propertyType);
+                lock (this.m_syncLock)
+                    if (!this.m_relatedLoadMethods.ContainsKey(propertyType))
+                        this.m_relatedLoadMethods.Add(propertyType, methodInfo);
+
+            }
+            return methodInfo.Invoke(this, new object[] { key });
+        }
+
+        /// <summary>
+        /// Load collection
+        /// </summary>
+        internal IList LoadCollection(Type propertyType, Guid key)
+        {
+            MethodInfo methodInfo = null;
+            if (!this.m_relatedLoadAssociations.TryGetValue(propertyType, out methodInfo))
+            {
+                methodInfo = this.GetType().GetRuntimeMethod(nameof(LoadCollection), new Type[] { typeof(Guid) }).MakeGenericMethod(propertyType.StripGeneric());
+                lock (this.m_syncLock)
+                    if (!this.m_relatedLoadAssociations.ContainsKey(propertyType))
+                        this.m_relatedLoadAssociations.Add(propertyType, methodInfo);
+
+            }
+            return methodInfo.Invoke(this, new object[] { key }) as IList;
         }
 
         /// <summary>
@@ -86,14 +269,15 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         public void WritePropertyUtil(JsonWriter w, String propertyName, Object instance, SerializationContext context)
         {
 
-            // Are we to never serialize this?
-            if (context?.ShouldSerialize(propertyName) == false)
-                return;
-
             // first write the property
             if (!String.IsNullOrEmpty(propertyName))  // In an array so don't emit the property name
+            {
                 w.WritePropertyName(propertyName);
-            
+                // Are we to never serialize this?
+                if (context?.ShouldSerialize(propertyName) == false)
+                    return;
+            }
+
             // Emit type
             if (instance == null)
                 w.WriteNull();
@@ -114,7 +298,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                     var subContext = new JsonSerializationContext(propertyName, this, instance, context as JsonSerializationContext);
                     this.WriteSimpleProperty(w, "$type", identifiedData.Type);
                     this.WriteSimpleProperty(w, "$id", String.Format("obj{0}", subContext.ObjectId));
-                    
+
                     // Write ref
                     var parentObjectId = context?.GetParentObjectId(identifiedData);
                     if (parentObjectId.HasValue) // Recursive
@@ -128,7 +312,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
             else if (instance is IList)
             {
                 // Classifications?
-                var classifier = this.GetClassifier(instance.GetType());
+                var classifier = this.GetClassifier(instance.GetType().StripNullable());
 
                 if (classifier == null) // no classifier
                 {
@@ -140,7 +324,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 else
                 {
                     w.WriteStartObject();
-                    foreach(var cls in classifier.Classify(instance as IList))
+                    foreach (var cls in classifier.Classify(instance as IList))
                     {
                         Object value = new List<Object>(cls.Value as IEnumerable<Object>);
                         if (cls.Value.Count == 1)
@@ -163,7 +347,13 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         {
             IViewModelClassifier retVal = null;
             if (!this.m_classifiers.TryGetValue(type, out retVal))
-                retVal = JsonReflectionTypeFormatter.Current.GetClassifier(type);
+            {
+                var classifierAtt = type.StripGeneric().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
+                if (classifierAtt != null)
+                    retVal = new JsonReflectionClassifier(type);
+                lock (this.m_syncLock)
+                    this.m_classifiers.Add(type, retVal);
+            }
             return retVal;
         }
 
@@ -187,7 +377,11 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         {
             IJsonViewModelTypeFormatter typeFormatter = null;
             if (!this.m_formatters.TryGetValue(type, out typeFormatter))
-                typeFormatter = JsonReflectionTypeFormatter.Current;
+            {
+                typeFormatter = new JsonReflectionTypeFormatter(type);
+                lock (this.m_syncLock)
+                    this.m_formatters.Add(type, typeFormatter);
+            }
             return typeFormatter;
         }
 

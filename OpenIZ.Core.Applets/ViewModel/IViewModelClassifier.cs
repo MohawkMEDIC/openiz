@@ -22,5 +22,9 @@ namespace OpenIZ.Core.Applets.ViewModel
         /// </summary>
         Dictionary<string, IList> Classify(IList data);
 
+        /// <summary>
+        /// Re-compose the classified data 
+        /// </summary>
+        IList Compose(Dictionary<string, object> values);
     }
 }
