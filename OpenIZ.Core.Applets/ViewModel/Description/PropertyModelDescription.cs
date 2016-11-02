@@ -11,6 +11,17 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
     public class PropertyModelDescription : PropertyContainerDescription
     {
 
+
+        /// <summary>
+        /// Initialize the parent structure
+        /// </summary>
+        public void Initialize(PropertyContainerDescription parent)
+        {
+            this.Parent = parent;
+            foreach (var itm in this.Properties)
+                itm.Initialize(this);
+        }
+        
         /// <summary>
         /// The property of the model
         /// </summary>
@@ -29,5 +40,12 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
         [XmlAttribute("behavior")]
         public SerializationBehaviorType Action { get; set; }
 
+        /// <summary>
+        /// Get name 
+        /// </summary>
+        internal override string GetName()
+        {
+            return this.Name;
+        }
     }
 }

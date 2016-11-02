@@ -35,7 +35,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents a base entity extension
     /// </summary>
-    [Classifier(nameof(ExtensionType)), SimpleValue(nameof(ExtensionValue))]
+    [Classifier(nameof(ExtensionType)), SimpleValue(nameof(ExtensionValueXml))]
     [XmlType(Namespace = "http://openiz.org/model"), JsonObject("Extension")]
     public abstract class Extension<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>, new()
     {
@@ -52,7 +52,22 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the value of the extension
         /// </summary>
         [XmlElement("value"), JsonProperty("value")]
-        public byte[] ExtensionValue { get; set; }
+        public byte[] ExtensionValueXml { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ignore value
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public Object ExtesionValue {
+            get
+            {
+                return this.ExtensionType?.ExtensionHandlerInstance.DeSerialize(this.ExtensionValueXml);
+            }
+            set
+            {
+                this.ExtensionValueXml = this.ExtensionType?.ExtensionHandlerInstance.Serialize(value);
+            }
+        }
 
         /// <summary>
         /// Gets or sets an extension displayable value
@@ -129,7 +144,7 @@ namespace OpenIZ.Core.Model.DataTypes
         public EntityExtension(Guid extensionType, byte[] value)
         {
             this.ExtensionTypeKey = extensionType;
-            this.ExtensionValue = value;
+            this.ExtensionValueXml = value;
         }
         
     }
@@ -156,7 +171,7 @@ namespace OpenIZ.Core.Model.DataTypes
         public ActExtension(Guid extensionType, byte[] value)
         {
             this.ExtensionTypeKey = extensionType;
-            this.ExtensionValue = value;
+            this.ExtensionValueXml = value;
         }
     }
 }

@@ -15,6 +15,11 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
     {
 
         /// <summary>
+        /// Gets the name of the object
+        /// </summary>
+        internal abstract String GetName();
+
+        /// <summary>
         /// Type model description
         /// </summary>
         public PropertyContainerDescription()
@@ -23,16 +28,22 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
         }
 
         /// <summary>
+        /// Property container description
+        /// </summary>
+        [XmlIgnore]
+        public PropertyContainerDescription Parent { get; protected set; }
+
+        /// <summary>
         /// Identifies the properties to be included
         /// </summary>
         [XmlElement("property")]
         public List<PropertyModelDescription> Properties { get; set; }
-
 
         /// <summary>
         /// Whether to retrieve all children
         /// </summary>
         [XmlAttribute("all")]
         public bool All { get; set; }
+
     }
 }

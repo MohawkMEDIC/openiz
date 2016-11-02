@@ -1,5 +1,6 @@
 ﻿using ExpressionEvaluator;
 using OpenIZ.Core.Applets.ViewModel;
+using OpenIZ.Core.Applets.ViewModel.Json;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Constants;
@@ -26,6 +27,9 @@ namespace OpenIZ.Protocol.Xml.Model
     public class ProtocolThenClauseCollection : DecisionSupportBaseElement
     {
 
+        // JSON Serializer
+        private static JsonViewModelSerializer s_serializer = new JsonViewModelSerializer();
+
         /// <summary>
         /// Actions to be performed
         /// </summary>
@@ -45,7 +49,7 @@ namespace OpenIZ.Protocol.Xml.Model
 
                 Act act = null;
                 if (itm.Element is String) // JSON
-                    itm.Element = JsonViewModelSerializer.DeSerialize<Act>(itm.Element as String);
+                    itm.Element = s_serializer.DeSerialize<Act>(itm.Element as String);
                 act = (itm.Element as Act).Clone() as Act;
                 act.Participations = new List<ActParticipation>((itm.Element as Act).Participations.Select(o=>o.Clone() as ActParticipation));
                 act.Relationships = new List<ActRelationship>((itm.Element as Act).Relationships.Select(o => o.Clone() as ActRelationship));

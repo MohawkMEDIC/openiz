@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace DatasetTool
+namespace OizDevTool
 {
     /// <summary>
     /// A tool which imports CDC formatted XML data files

@@ -23,7 +23,7 @@ using OpenIZ.Core.Security;
 using MARC.Everest.Threading;
 using OpenIZ.Core;
 
-namespace DatasetTool
+namespace OizDevTool
 {
     /// <summary>
     /// Represents a fake data generator
@@ -150,8 +150,9 @@ namespace DatasetTool
                         actPersistence.Insert(flfls, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
                     }
                 });
-                wtp.WaitOne();
+                
             }
+            wtp.WaitOne();
         }
 
         /// <summary>
