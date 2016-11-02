@@ -256,7 +256,9 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                                 {
                                     // Read next token
                                     r.Read();
-                                    propertyInfo.SetValue(retVal, context.JsonContext.ReadElementUtil(r, propertyInfo.PropertyType, new JsonSerializationContext(propertyName, context.JsonContext, retVal, context as JsonSerializationContext)));
+                                    var instance = context.JsonContext.ReadElementUtil(r, propertyInfo.PropertyType, new JsonSerializationContext(propertyName, context.JsonContext, retVal, context as JsonSerializationContext));
+                                    if (!(instance == null || (instance as IList)?.Count == 0))
+                                        propertyInfo.SetValue(retVal, instance);
                                 }
                                 else
                                     r.Skip();

@@ -168,7 +168,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 case JsonToken.String:
                     if (typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(nonGenericT.GetTypeInfo())) // Complex object
                     {
-                        var formatter = this.GetFormatter(t);
+                        var formatter = this.GetFormatter(nonGenericT);
                         return formatter.FromSimpleValue(r.Value);
                     }
                     else
@@ -289,7 +289,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 IJsonViewModelTypeFormatter typeFormatter = this.GetFormatter(instance.GetType());
 
                 var simpleValue = typeFormatter.GetSimpleValue(instance);
-                if (simpleValue != null && context.PropertyName != "$other") // Special case for $other
+                if (simpleValue != null && propertyName != "$other") // Special case for $other
                     w.WriteValue(simpleValue);
                 else
                 {
@@ -352,7 +352,8 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 if (classifierAtt != null)
                     retVal = new JsonReflectionClassifier(type);
                 lock (this.m_syncLock)
-                    this.m_classifiers.Add(type, retVal);
+                    if(!this.m_classifiers.ContainsKey(type))
+                        this.m_classifiers.Add(type, retVal);
             }
             return retVal;
         }
