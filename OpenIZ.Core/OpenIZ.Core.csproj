@@ -83,6 +83,7 @@
     <Compile Include="Security\ApplicationPrincipal.cs" />
     <Compile Include="Security\Claims\PurposeOfUseClaimHandler.cs" />
     <Compile Include="Security\Claims\IClaimTypeHandler.cs" />
+    <Compile Include="Security\DefaultTfaRelayService.cs" />
     <Compile Include="Security\Permission\PolicyPermissionAttribute.cs" />
     <Compile Include="Security\AuthenticationContext.cs" />
     <Compile Include="Security\ILocalPolicy.cs" />
@@ -92,7 +93,8 @@
     <Compile Include="Security\Claims\OpenIzClaimTypes.cs" />
     <Compile Include="Security\PermissionPolicyIdentifiers.cs" />
     <Compile Include="Security\SecurityUtils.cs" />
-    <Compile Include="Security\SHA256PasswordHashingService.cs" />
+    <Compile Include="Security\PasswordHashingServices.cs" />
+    <Compile Include="Security\TwoFactorSecretGenerators.cs" />
     <Compile Include="Services\IApplicationIdentityProviderService.cs" />
     <Compile Include="Services\IDeviceIdentityProviderService.cs" />
     <Compile Include="Services\Impl\LocalActRepositoryService.cs" />
@@ -108,6 +110,7 @@
     <Compile Include="Services\Impl\LocalPlaceRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalProviderRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalStockManagementRepositoryService.cs" />
+    <Compile Include="Services\ITfaRelayService.cs" />
     <Compile Include="Wcf\Behavior\WcfErrorEndpointBehavior.cs" />
     <Compile Include="Wcf\Compression\CompressionBodyWriter.cs" />
     <Compile Include="Wcf\Compression\CompressionUtil.cs" />

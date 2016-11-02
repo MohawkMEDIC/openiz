@@ -195,7 +195,8 @@ namespace OpenIZ.Core.Model.Entities
         /// <returns></returns>
         public override bool IsEmpty()
         {
-            return this.RelationshipType == null && this.RelationshipTypeKey == null;
+            return this.RelationshipType == null && this.RelationshipTypeKey == null ||
+                this.TargetEntity == null && this.TargetEntityKey == null;
         }
 
         /// <summary>

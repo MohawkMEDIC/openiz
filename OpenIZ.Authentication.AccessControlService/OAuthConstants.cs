@@ -51,5 +51,10 @@ namespace OpenIZ.Authentication.OAuth2
         /// Configuration section name
         /// </summary>
         public const string ConfigurationName = "openiz.authentication.oauth2";
+
+        /// <summary>
+        /// TFA header name
+        /// </summary>
+        public const string TfaHeaderName = "X-OpenIZ-TfaSecret";
     }
 }

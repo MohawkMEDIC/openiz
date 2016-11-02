@@ -41,6 +41,7 @@ using MARC.HI.EHRS.SVC.Core.Event;
 using System.Diagnostics;
 using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Security.Claims;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services
 {
@@ -65,11 +66,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// Fired after an authentication request has been made
         /// </summary>
         public event EventHandler<AuthenticatedEventArgs> Authenticated;
-
-        /// <summary>
-        /// Gets or sets the two factor secret generator
-        /// </summary>
-        public ITwoFactorSecretGenerator TwoFactorSecretGenerator { get; set; }
 
         /// <summary>
         /// Authenticate the user
@@ -110,7 +106,70 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// </summary>
         public IPrincipal Authenticate(string userName, string password, string tfaSecret)
         {
-            throw new NotSupportedException();
+            // First, let's verify the TFA
+            if (String.IsNullOrEmpty(userName))
+                throw new ArgumentNullException(nameof(userName));
+            else if (String.IsNullOrEmpty(tfaSecret))
+                throw new ArgumentNullException(nameof(tfaSecret));
+
+            // Authentication event args
+            var evt = new AuthenticatingEventArgs(userName);
+            this.Authenticating?.Invoke(this, evt);
+            if (evt.Cancel)
+                throw new SecurityException("Authentication cancelled");
+
+            // Password hasher
+            var hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
+            tfaSecret = hashingService.EncodePassword(tfaSecret);
+
+            // Try to authenticate
+            try
+            {
+                using (var dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
+                {
+                    var user = dataContext.SecurityUsers.FirstOrDefault(o => o.UserName == userName);
+                    if (user == null)
+                        throw new KeyNotFoundException(userName);
+                    SecurityUserClaim tfaClaim = dataContext.SecurityUserClaims.FirstOrDefault(o => o.UserId == user.Id && o.ClaimType == OpenIzClaimTypes.OpenIZTfaSecretClaim),
+                        tfaExpiry = dataContext.SecurityUserClaims.FirstOrDefault(o => o.UserId == user.Id && o.ClaimType == OpenIzClaimTypes.OpenIZTfaSecretExpiry),
+                        noPassword = dataContext.SecurityUserClaims.FirstOrDefault(o => o.UserId == user.Id && o.ClaimType == OpenIzClaimTypes.OpenIZPasswordlessAuth);
+
+                    if (tfaClaim == null || tfaExpiry == null)
+                        throw new InvalidOperationException("Cannot find appropriate claims for TFA");
+
+                    // Expiry check
+                    ClaimsPrincipal retVal = null;
+                    DateTime expiryDate = DateTime.Parse(tfaExpiry.ClaimValue);
+                    if (expiryDate < DateTime.Now)
+                        throw new SecurityException("TFA secret expired");
+                    else if (String.IsNullOrEmpty(password) &&
+                        Boolean.Parse(noPassword?.ClaimValue ?? "false") &&
+                        tfaSecret == tfaClaim.ClaimValue) // Last known password hash sent as password, this is a password reset token - It will be set to expire ASAP
+                    {
+                        retVal = SqlClaimsIdentity.Create(user, true, "Tfa+LastPasswordHash").CreateClaimsPrincipal();
+                        (retVal.Identity as ClaimsIdentity).AddClaim(new Claim(OpenIzClaimTypes.OpenIzGrantedPolicyClaim, PermissionPolicyIdentifiers.ChangePassword));
+                        (retVal.Identity as ClaimsIdentity).RemoveClaim(retVal.FindFirst(ClaimTypes.Expiration));
+                        // TODO: Add to configuration
+                        (retVal.Identity as ClaimsIdentity).AddClaim(new Claim(ClaimTypes.Expiration, DateTime.Now.AddMinutes(5).ToString("o")));
+                    }
+                    else if (!String.IsNullOrEmpty(password))
+                        retVal = this.Authenticate(userName, password) as ClaimsPrincipal;
+                    else
+                        throw new PolicyViolationException(PermissionPolicyIdentifiers.Login, PolicyDecisionOutcomeType.Deny);
+
+                    // Now we want to fire authenticated
+                    this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(userName, retVal, true));
+                    return retVal;
+
+                }
+            }
+            catch (Exception e)
+            {
+                this.m_traceSource.TraceEvent(TraceEventType.Verbose, e.HResult, "Invalid credentials : {0}/{1}", userName, password);
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(userName, null, false));
+                throw;
+            }
         }
 
         /// <summary>
@@ -160,7 +219,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// </summary>
         public string GenerateTfaSecret(string userName)
         {
-            throw new NotImplementedException();
+            // This is a simple TFA generator
+            var secret = ApplicationContext.Current.GetService<ITwoFactorSecretGenerator>().GenerateTfaSecret();
+            var hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
+
+            this.AddClaim(userName, new Claim(OpenIzClaimTypes.OpenIZTfaSecretClaim, hashingService.EncodePassword(secret)));
+            this.AddClaim(userName, new Claim(OpenIzClaimTypes.OpenIZTfaSecretExpiry, DateTime.Now.AddMinutes(5).ToString("o")));
+
+            return secret;
         }
 
         /// <summary>
@@ -286,6 +352,82 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     dataContext.SubmitChanges();
                 }
 
+            }
+            catch (Exception e)
+            {
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Add a claim to the specified user
+        /// </summary>
+        public void AddClaim(string userName, Claim claim)
+        {
+            if (userName == null)
+                throw new ArgumentNullException(nameof(userName));
+            else if (claim == null)
+                throw new ArgumentNullException(nameof(claim));
+
+            try
+            {
+                using (var dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
+                {
+                    var user = dataContext.SecurityUsers.FirstOrDefault(o => o.UserName == userName);
+                    if (user == null)
+                        throw new KeyNotFoundException(userName);
+
+                    var existingClaim = dataContext.SecurityUserClaims.FirstOrDefault(o => o.ClaimType == claim.Type && o.UserId == user.Id);
+
+                    // Set the secret
+                    if (existingClaim == null)
+                        dataContext.SecurityUserClaims.InsertOnSubmit(new SecurityUserClaim()
+                        {
+                            ClaimId = Guid.NewGuid(),
+                            ClaimType = claim.Type,
+                            ClaimValue = claim.Value,
+                            SecurityUser = user
+                        });
+                    else
+                        existingClaim.ClaimValue = claim.Value;
+
+                    dataContext.SubmitChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Remove the specified claim
+        /// </summary>
+        public void RemoveClaim(string userName, string claimType)
+        {
+            if (userName == null)
+                throw new ArgumentNullException(nameof(userName));
+            else if (claimType == null)
+                throw new ArgumentNullException(nameof(claimType));
+
+            try
+            {
+                using (var dataContext = new ModelDataContext(this.m_configuration.ReadWriteConnectionString))
+                {
+                    var user = dataContext.SecurityUsers.FirstOrDefault(o => o.UserName == userName);
+                    if (user == null)
+                        throw new KeyNotFoundException(userName);
+
+                    var existingClaim = dataContext.SecurityUserClaims.FirstOrDefault(o => o.ClaimType == claimType && o.UserId == user.Id);
+
+                    // Set the secret
+                    if (existingClaim != null)
+                        dataContext.SecurityUserClaims.DeleteOnSubmit(existingClaim);
+
+                    dataContext.SubmitChanges();
+                }
             }
             catch (Exception e)
             {

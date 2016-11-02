@@ -160,9 +160,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
         /// <summary>
         /// Create a claims identity from a data context user
         /// </summary>
-        internal static SqlClaimsIdentity Create(SecurityUser user)
+        internal static SqlClaimsIdentity Create(SecurityUser user, bool isAuthenticated = false, String authenticationMethod = null)
         {
-            return new SqlClaimsIdentity(user, false);
+            return new SqlClaimsIdentity(user, isAuthenticated) { m_authenticationType = authenticationMethod };
         }
 
         /// <summary>

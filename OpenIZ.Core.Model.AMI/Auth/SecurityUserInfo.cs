@@ -71,11 +71,11 @@ namespace OpenIZ.Core.Model.AMI.Auth
 		/// </summary>
 		[XmlElement("password")]
 		public String Password { get; set; }
-
-		/// <summary>
-		/// Roles
-		/// </summary>
-		[XmlElement("role")]
+        
+        /// <summary>
+        /// Roles
+        /// </summary>
+        [XmlElement("role")]
 		public List<SecurityRoleInfo> Roles { get; set; }
 
 		/// <summary>

@@ -86,13 +86,13 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
         /// <summary>
         /// Find description
         /// </summary>
-        public PropertyContainerDescription FindDescription(PropertyInfo propertyInfo, PropertyContainerDescription context)
+        public PropertyContainerDescription FindDescription(PropertyInfo propertyInfo, String propertyName, PropertyContainerDescription context)
         {
             PropertyContainerDescription retVal = null;
             if (!this.m_description.TryGetValue(propertyInfo, out retVal))
             {
                 // Find the property information
-                retVal = context?.Properties.FirstOrDefault(o => o.Name == this.Name);
+                retVal = context?.Properties.FirstOrDefault(o => o.Name == propertyName);
 
                 // Maybe this can be done via type?
                 if (retVal == null)

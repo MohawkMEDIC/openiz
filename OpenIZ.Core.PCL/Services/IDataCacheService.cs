@@ -38,5 +38,10 @@ namespace OpenIZ.Core.Services
         /// Gets the specified cache item
         /// </summary>
         object GetCacheItem(Type tdata, Guid key);
-	}
+
+        /// <summary>
+        /// Adds the specified item to the cache
+        /// </summary>
+        void Add(IdentifiedData data);
+    }
 }

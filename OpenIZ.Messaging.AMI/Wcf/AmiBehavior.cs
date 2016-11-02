@@ -49,6 +49,7 @@ using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.AMI.Diagnostics;
 using OpenIZ.Core.Security.Attribute;
 using System.Security.Permissions;
+using OpenIZ.Core.Security.Claims;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -223,12 +224,44 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			return new SecurityRoleInfo(roleRepository.CreateRole(roleToCreate));
 		}
 
-		/// <summary>
-		/// Creates a security user.
-		/// </summary>
-		/// <param name="user">The security user to be created.</param>
-		/// <returns>Returns the newly created security user.</returns>
-		public SecurityUserInfo CreateUser(SecurityUserInfo user)
+        /// <summary>
+        /// Creates security reset information
+        /// </summary>
+        public void SendTfaSecret(TfaRequestInfo resetInfo)
+        {
+
+            var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+            var securityUser = securityRepository.GetUser(resetInfo.UserName);
+            if (securityUser == null)
+                throw new KeyNotFoundException();
+
+            // Identity provider
+            var identityProvider = ApplicationContext.Current.GetService<IIdentityProviderService>();
+            var tfaSecret = identityProvider.GenerateTfaSecret(securityUser.UserName);
+
+            // Add a claim
+            if (resetInfo.Purpose == "PasswordReset")
+            {
+                new PolicyPermission(PermissionState.Unrestricted, PermissionPolicyIdentifiers.LoginAsService);
+                identityProvider.AddClaim(securityUser.UserName, new System.Security.Claims.Claim(OpenIzClaimTypes.OpenIZPasswordlessAuth, "true"));
+            }
+
+            var tfaRelay = ApplicationContext.Current.GetService<ITfaRelayService>();
+            if (tfaRelay == null)
+                throw new InvalidOperationException("TFA relay not specified");
+
+            // Now issue the TFA secret
+            tfaRelay.SendSecret(resetInfo.ResetMechanism, securityUser, resetInfo.Verification, tfaSecret);
+
+        }
+
+        /// <summary>
+        /// Creates a security user.
+        /// </summary>
+        /// <param name="user">The security user to be created.</param>
+        /// <returns>Returns the newly created security user.</returns>
+        public SecurityUserInfo CreateUser(SecurityUserInfo user)
 		{
 			var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 			var roleProviderService = ApplicationContext.Current.GetService<IRoleProviderService>();
@@ -696,12 +729,31 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			}
 		}
 
-		/// <summary>
-		/// Gets a specific security user.
-		/// </summary>
-		/// <param name="userId">The id of the security user to be retrieved.</param>
-		/// <returns>Returns the security user.</returns>
-		public SecurityUserInfo GetUser(string rawUserId)
+        /// <summary>
+        /// Get a list of TFA mechanisms
+        /// </summary>
+        public AmiCollection<TfaMechanismInfo> GetTfaMechanisms()
+        {
+            var tfaRelay = ApplicationContext.Current.GetService<ITfaRelayService>();
+            if (tfaRelay == null)
+                throw new InvalidOperationException("TFA Relay missing");
+            return new AmiCollection<TfaMechanismInfo>()
+            {
+                CollectionItem = tfaRelay.Mechanisms.Select(o => new TfaMechanismInfo()
+                {
+                    Id = o.Id,
+                    Name = o.Name,
+                    ChallengeText = o.Challenge
+                }).ToList()
+            };
+        }
+
+        /// <summary>
+        /// Gets a specific security user.
+        /// </summary>
+        /// <param name="userId">The id of the security user to be retrieved.</param>
+        /// <returns>Returns the security user.</returns>
+        public SecurityUserInfo GetUser(string rawUserId)
 		{
 			Guid userId = Guid.Empty;
 			if (!Guid.TryParse(rawUserId, out userId))
@@ -911,8 +963,12 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			Guid userId = Guid.Parse(rawUserId);
 			// First change password if needed
 			var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-			if (!String.IsNullOrEmpty(info.Password))
-				userRepository.ChangePassword(userId, info.Password);
+			var idpService = ApplicationContext.Current.GetService<IIdentityProviderService>();
+            if (!String.IsNullOrEmpty(info.Password))
+            {
+                var user = userRepository.ChangePassword(userId, info.Password);
+                idpService.RemoveClaim(user.UserName, OpenIzClaimTypes.OpenIZPasswordlessAuth);
+            }
 
 			if (info.Email != null)
 			{

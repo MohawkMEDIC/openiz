@@ -3,6 +3,17 @@
   <xs:complexType name="ClassifierModelDescription">
     <xs:attribute name="classifier" type="xs:string" />
   </xs:complexType>
+  <xs:simpleType name="SerializationBehaviorType">
+    <xs:list>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="default" />
+          <xs:enumeration value="always" />
+          <xs:enumeration value="never" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:list>
+  </xs:simpleType>
   <xs:complexType name="PropertyContainerDescription" abstract="true">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="property" type="tns:PropertyModelDescription" />
@@ -14,6 +25,7 @@
       <xs:extension base="tns:PropertyContainerDescription">
         <xs:attribute name="name" type="xs:string" />
         <xs:attribute name="classifier" type="xs:string" />
+        <xs:attribute name="behavior" type="tns:SerializationBehaviorType" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

@@ -58,7 +58,9 @@
     <Compile Include="AmiCollection.cs" />
     <Compile Include="Auth\SecurityPolicyInfo.cs" />
     <Compile Include="Auth\SecurityRoleInfo.cs" />
+    <Compile Include="Auth\TfaRequestInfo.cs" />
     <Compile Include="Auth\SecurityUserInfo.cs" />
+    <Compile Include="Auth\TfaMechanismInfo.cs" />
     <Compile Include="DataTypes\AssigningAuthorityInfo.cs" />
     <Compile Include="Diagnostics\DiagnosticApplicationInfo.cs" />
     <Compile Include="Diagnostics\DiagnosticEnvironmentInfo.cs" />

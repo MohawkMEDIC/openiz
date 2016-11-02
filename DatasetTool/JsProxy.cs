@@ -16,7 +16,7 @@ namespace DatasetTool
     /// <summary>
     /// View model documentation
     /// </summary>
-    public static class ViewModelDoc
+    public static class JsProxy
     {
 
         private static Dictionary<Type, JsonObjectAttribute> primitives = new Dictionary<Type, JsonObjectAttribute>()
@@ -58,7 +58,7 @@ namespace DatasetTool
         /// <summary>
         /// Generate javascript documentation
         /// </summary>
-        public static void GenerateJsDoc(String[] args)
+        public static void GenerateProxy(String[] args)
         {
 
             var parms = new ParameterParser<ConsoleParameters>().Parse(args);
@@ -68,7 +68,7 @@ namespace DatasetTool
             {
 
                 // First, we shall read
-                using (StreamReader templateReader = new StreamReader(typeof(ViewModelDoc).Assembly.GetManifestResourceStream("DatasetTool.Resources.jsdoc-template.js")))
+                using (StreamReader templateReader = new StreamReader(typeof(JsProxy).Assembly.GetManifestResourceStream("DatasetTool.Resources.jsdoc-template.js")))
                     output.Write(templateReader.ReadToEnd());
 
                 // Output namespace
@@ -84,7 +84,7 @@ namespace DatasetTool
                 foreach (var typ in enumerationTypes.Distinct())
                     GenerateEnumerationDocumentation(output, typ, xmlDoc, parms);
 
-                using (StreamReader templateReader = new StreamReader(typeof(ViewModelDoc).Assembly.GetManifestResourceStream("DatasetTool.Resources.jsdoc-addlclasses.js")))
+                using (StreamReader templateReader = new StreamReader(typeof(JsProxy).Assembly.GetManifestResourceStream("DatasetTool.Resources.jsdoc-addlclasses.js")))
                     output.Write(templateReader.ReadToEnd());
 
                 // Output static 
@@ -286,9 +286,11 @@ namespace DatasetTool
             writer.WriteLine(" */");
             writer.WriteLine("{0} : function(copyData) {{ ", jobject.Id);
 
+            writer.WriteLine("\tthis.$type = '{0}';", jobject.Id);
             writer.WriteLine("\tif(copyData) {");
+            copyCommands.Reverse();
             // Get all properties and document them
-            foreach (var itm in copyCommands)
+            foreach (var itm in copyCommands.Where(o=>o != "$type"))
             {
                 writer.WriteLine("\tthis.{0} = copyData.{0};", itm);
             }

@@ -41,4 +41,33 @@ namespace OpenIZ.Core.Security
             return BitConverter.ToString(hasher.ComputeHash(Encoding.UTF8.GetBytes(password))).Replace("-","").ToLower();
         }
     }
+
+    /// <summary>
+    /// SHA1 password generator service
+    /// </summary>
+    public class SHA1PasswordHashingService : IPasswordHashingService
+    {
+        /// <summary>
+        /// Encode a password using the SHA256 encoding
+        /// </summary>
+        public string EncodePassword(string password)
+        {
+            SHA1 hasher = SHA1.Create();
+            return BitConverter.ToString(hasher.ComputeHash(Encoding.UTF8.GetBytes(password))).Replace("-", "").ToLower();
+        }
+    }
+
+    /// <summary>
+    /// Plaintext password generator service
+    /// </summary>
+    public class PlainPasswordHashingService : IPasswordHashingService
+    {
+        /// <summary>
+        /// Encode a password using the SHA256 encoding
+        /// </summary>
+        public string EncodePassword(string password)
+        {
+            return password;
+        }
+    }
 }

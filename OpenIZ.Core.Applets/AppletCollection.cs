@@ -250,11 +250,12 @@ namespace OpenIZ.Core.Applets
         public AppletTemplateDefinition GetTemplateDefinition(String templateMnemonic)
         {
             AppletTemplateDefinition retVal = null;
+            templateMnemonic = templateMnemonic.ToLowerInvariant();
             if (!s_templateCache.TryGetValue(templateMnemonic ?? "", out retVal))
                 lock (s_syncLock)
                 {
                     retVal = this.m_appletManifest.SelectMany(o => o.Templates).
-                        FirstOrDefault(o => o.Mnemonic == templateMnemonic);
+                        FirstOrDefault(o => o.Mnemonic.ToLowerInvariant() == templateMnemonic);
                     if (retVal != null)
                         retVal.DefinitionContent = this.RenderAssetContent(this.ResolveAsset(retVal.Definition));
                     s_templateCache.Add(templateMnemonic, retVal);

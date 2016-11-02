@@ -65,7 +65,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SeedData\SeedData.cs" />
-    <Compile Include="ViewModelDoc.cs" />
+    <Compile Include="JsProxy.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

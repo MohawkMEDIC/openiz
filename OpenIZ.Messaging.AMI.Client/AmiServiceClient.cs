@@ -480,5 +480,21 @@ namespace OpenIZ.Messaging.AMI.Client
 		{
 			return this.Client.Put<SecurityUserInfo, SecurityUserInfo>(string.Format("user/{0}", id), this.Client.Accept, user);
 		}
+
+        /// <summary>
+        /// Gets a list of two-factor mechanisms
+        /// </summary>
+        public AmiCollection<TfaMechanismInfo> GetTwoFactorMechanisms()
+        {
+            return this.Client.Get<AmiCollection<TfaMechanismInfo>>("tfa", null);
+        }
+
+        /// <summary>
+        /// Create security password reset request
+        /// </summary>
+        public void SendTfaSecret(TfaRequestInfo resetInfo)
+        {
+            this.Client.Post<TfaRequestInfo, Object>("tfa", this.Client.Accept, resetInfo);
+        }
 	}
 }

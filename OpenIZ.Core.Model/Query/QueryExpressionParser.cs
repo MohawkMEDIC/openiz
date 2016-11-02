@@ -61,7 +61,13 @@ namespace OpenIZ.Core.Model.Query
         /// </summary>
         public static Expression<Func<TModelType, bool>> BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters, Dictionary<String, Delegate> variables)
         {
-            var expression = BuildLinqExpression<TModelType>(httpQueryParameters, "o", variables);
+            return BuildLinqExpression<TModelType>(httpQueryParameters, variables, true);
+
+        }
+
+        public static Expression<Func<TModelType, bool>> BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters, Dictionary<String, Delegate> variables, bool safeNullable)
+        { 
+            var expression = BuildLinqExpression<TModelType>(httpQueryParameters, "o", variables, safeNullable);
 
             if (expression == null) // No query!
                 return (TModelType o) => o != null;
@@ -72,7 +78,7 @@ namespace OpenIZ.Core.Model.Query
         /// <summary>
         /// Build LINQ expression
         /// </summary>
-        public static LambdaExpression BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters, string parameterName, Dictionary<String, Delegate> variables = null)
+        public static LambdaExpression BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters, string parameterName, Dictionary<String, Delegate> variables = null, bool safeNullable = true)
         { 
             var parameterExpression = Expression.Parameter(typeof(TModelType), parameterName);
             Expression retVal = null;
@@ -86,6 +92,9 @@ namespace OpenIZ.Core.Model.Query
             {
                 var currentValue = workingValues.FirstOrDefault();
                 workingValues.Remove(currentValue);
+
+                if (currentValue.Value.Count(o => !String.IsNullOrEmpty(o)) == 0)
+                    continue;
 
                 // Create accessor expression
                 Expression keyExpression = null;
@@ -196,26 +205,28 @@ namespace OpenIZ.Core.Model.Query
                             workingValues.Remove(wv);
                         }
 
-                        var builderMethod = typeof(QueryExpressionParser).GetGenericMethod(nameof(BuildLinqExpression), new Type[] { itemType }, new Type[] { typeof(NameValueCollection), typeof(String), typeof(Dictionary<String, Delegate>) });
+                        var builderMethod = typeof(QueryExpressionParser).GetGenericMethod(nameof(BuildLinqExpression), new Type[] { itemType }, new Type[] { typeof(NameValueCollection), typeof(String), typeof(Dictionary<String, Delegate>), typeof(bool) });
 
-                        Expression predicate = (builderMethod.Invoke(null, new object[] { subFilter, pMember, variables }) as LambdaExpression);
+                        Expression predicate = (builderMethod.Invoke(null, new object[] { subFilter, pMember, variables, safeNullable }) as LambdaExpression);
+                        if (predicate == null)
+                            continue;
                         keyExpression = Expression.Call(anyMethod, accessExpression, predicate);
                         currentValue = new KeyValuePair<string, string[]>();
                         break;  // skip
                     }
 
                 }
-
-               
+                
                 // Now expression
                 var kp = currentValue.Value;
                 if(kp != null)
-                    foreach(var qValue in kp)
+                    foreach(var qValue in kp.Where(o=>!String.IsNullOrEmpty(o)))
                     {
                         var value = qValue;
+                        var thisAccessExpression = accessExpression;
                         // HACK: Fuzz dates for intervals
-                        if ((accessExpression.Type.StripNullable() == typeof(DateTime) ||
-                            accessExpression.Type.StripNullable() == typeof(DateTimeOffset)) &&
+                        if ((thisAccessExpression.Type.StripNullable() == typeof(DateTime) ||
+                            thisAccessExpression.Type.StripNullable() == typeof(DateTimeOffset)) &&
                             value.Length <= 7 &&
                             !value.StartsWith("~") &&
                             !value.Contains("null")
@@ -225,15 +236,19 @@ namespace OpenIZ.Core.Model.Query
                         Expression nullCheckExpr = null;
 
                         // Correct for nullable
-                        if (value != "null" && accessExpression.Type.GetTypeInfo().IsGenericType && accessExpression.Type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                        if (value != "null" && thisAccessExpression.Type.GetTypeInfo().IsGenericType && thisAccessExpression.Type.GetGenericTypeDefinition() == typeof(Nullable<>) &&
+                            safeNullable)
                         {
-                            nullCheckExpr = Expression.MakeBinary(ExpressionType.NotEqual, accessExpression, Expression.Constant(null));
-                            accessExpression = Expression.MakeMemberAccess(accessExpression, accessExpression.Type.GetRuntimeProperty("Value"));
+                            nullCheckExpr = Expression.MakeBinary(ExpressionType.NotEqual, thisAccessExpression, Expression.Constant(null));
+                            thisAccessExpression = Expression.MakeMemberAccess(thisAccessExpression, accessExpression.Type.GetRuntimeProperty("Value"));
                         }
 
                         // Process value
                         String pValue = value;
                         ExpressionType et = ExpressionType.Equal;
+
+                        if (String.IsNullOrEmpty(value)) continue;
+
                         switch(value[0])
                         {
                             case '<':
@@ -256,13 +271,13 @@ namespace OpenIZ.Core.Model.Query
                                 break;
                             case '~':
                                 et = ExpressionType.Equal;
-                                if (accessExpression.Type == typeof(String))
+                                if (thisAccessExpression.Type == typeof(String))
                                 {
-                                    accessExpression = Expression.Call(accessExpression, typeof(String).GetRuntimeMethod("Contains", new Type[] { typeof(String) }), Expression.Constant(pValue.Substring(1).Replace("*", "/")));
+                                    thisAccessExpression = Expression.Call(thisAccessExpression, typeof(String).GetRuntimeMethod("Contains", new Type[] { typeof(String) }), Expression.Constant(pValue.Substring(1).Replace("*", "/")));
                                     pValue = "true";
                                 }
-                                else if(accessExpression.Type == typeof(DateTime) ||
-                                    accessExpression.Type == typeof(DateTime?))
+                                else if(thisAccessExpression.Type == typeof(DateTime) ||
+                                    thisAccessExpression.Type == typeof(DateTime?))
                                 {
                                     pValue = value.Substring(1);
                                     DateTime dateLow = DateTime.ParseExact(pValue, "yyyy-MM-dd".Substring(0, pValue.Length), CultureInfo.InvariantCulture), dateHigh = DateTime.MaxValue;
@@ -272,11 +287,11 @@ namespace OpenIZ.Core.Model.Query
                                         dateHigh = new DateTime(dateLow.Year, dateLow.Month, DateTime.DaysInMonth(dateLow.Year, dateLow.Month), 23, 59, 59);
                                     else if (pValue.Length == 10)
                                         dateHigh = new DateTime(dateLow.Year, dateLow.Month, dateLow.Day, 23, 59, 59);
-                                    if (accessExpression.Type == typeof(DateTime?))
-                                        accessExpression = Expression.MakeMemberAccess(accessExpression, accessExpression.Type.GetRuntimeProperty("Value"));
-                                    Expression lowerBound = Expression.MakeBinary(ExpressionType.GreaterThanOrEqual, accessExpression, Expression.Constant(dateLow)),
-                                        upperBound = Expression.MakeBinary(ExpressionType.LessThanOrEqual, accessExpression, Expression.Constant(dateHigh));
-                                    accessExpression = Expression.MakeBinary(ExpressionType.AndAlso, lowerBound, upperBound);
+                                    if (thisAccessExpression.Type == typeof(DateTime?))
+                                        thisAccessExpression = Expression.MakeMemberAccess(thisAccessExpression, thisAccessExpression.Type.GetRuntimeProperty("Value"));
+                                    Expression lowerBound = Expression.MakeBinary(ExpressionType.GreaterThanOrEqual, thisAccessExpression, Expression.Constant(dateLow)),
+                                        upperBound = Expression.MakeBinary(ExpressionType.LessThanOrEqual, thisAccessExpression, Expression.Constant(dateHigh));
+                                    thisAccessExpression = Expression.MakeBinary(ExpressionType.AndAlso, lowerBound, upperBound);
                                     pValue = "true"; 
                                 }
                                 else
@@ -306,23 +321,23 @@ namespace OpenIZ.Core.Model.Query
                             else
                                 valueExpr = Expression.Constant(null);
                         }
-                        else if (accessExpression.Type == typeof(String))
+                        else if (thisAccessExpression.Type == typeof(String))
                             valueExpr = Expression.Constant(pValue);
-                        else if (accessExpression.Type == typeof(DateTime) || accessExpression.Type == typeof(DateTime?))
+                        else if (thisAccessExpression.Type == typeof(DateTime) || thisAccessExpression.Type == typeof(DateTime?))
                             valueExpr = Expression.Constant(DateTime.Parse(pValue));
-                        else if (accessExpression.Type == typeof(DateTimeOffset) || accessExpression.Type == typeof(DateTimeOffset?))
+                        else if (thisAccessExpression.Type == typeof(DateTimeOffset) || thisAccessExpression.Type == typeof(DateTimeOffset?))
                             valueExpr = Expression.Constant(DateTimeOffset.Parse(pValue));
-                        else if (accessExpression.Type == typeof(Guid))
+                        else if (thisAccessExpression.Type == typeof(Guid))
                             valueExpr = Expression.Constant(Guid.Parse(pValue));
-                        else if (accessExpression.Type == typeof(Guid?))
+                        else if (thisAccessExpression.Type == typeof(Guid?))
                             valueExpr = Expression.Convert(Expression.Constant(Guid.Parse(pValue)), typeof(Guid?));
-                        else if (accessExpression.Type.GetTypeInfo().IsEnum)
-                            valueExpr = Expression.Constant(Enum.ToObject(accessExpression.Type, Int32.Parse(pValue)));
+                        else if (thisAccessExpression.Type.GetTypeInfo().IsEnum)
+                            valueExpr = Expression.Constant(Enum.ToObject(thisAccessExpression.Type, Int32.Parse(pValue)));
                         else
-                            valueExpr = Expression.Constant(Convert.ChangeType(pValue, accessExpression.Type));
-                        if (valueExpr.Type != accessExpression.Type)
-                            valueExpr = Expression.Convert(valueExpr, accessExpression.Type);
-                        Expression singleExpression = Expression.MakeBinary(et, accessExpression, valueExpr);
+                            valueExpr = Expression.Constant(Convert.ChangeType(pValue, thisAccessExpression.Type));
+                        if (valueExpr.Type != thisAccessExpression.Type)
+                            valueExpr = Expression.Convert(valueExpr, thisAccessExpression.Type);
+                        Expression singleExpression = Expression.MakeBinary(et, thisAccessExpression, valueExpr);
 
                         if (nullCheckExpr != null)
                             singleExpression = Expression.MakeBinary(ExpressionType.AndAlso, nullCheckExpr, singleExpression);
