@@ -27,6 +27,7 @@ using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
 using System.Reflection;
 using System.Runtime;
+using OpenIZ.Core.Interfaces;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -61,6 +62,16 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [XmlIgnore, JsonIgnore]
         public Type ExtensionHandler { get; set; }
+
+        /// <summary>
+        /// Extension handler instance
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public IExtensionHandler ExtensionHandlerInstance {  get
+            {
+                return Activator.CreateInstance(this.ExtensionHandler) as IExtensionHandler;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the description

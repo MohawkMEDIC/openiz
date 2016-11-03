@@ -55,7 +55,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Protocol.Xml", "Open
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Protocol.Xml.Test", "OpenIZ.Protocol.Xml.Test\OpenIZ.Protocol.Xml.Test.csproj", "{F17BD798-699C-4558-AE75-F2AC97B52E86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatasetTool", "DatasetTool\DatasetTool.csproj", "{F51377FB-1E69-40BD-884B-6BB311CB9B0E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OizDevTool", "DatasetTool\OizDevTool.csproj", "{F51377FB-1E69-40BD-884B-6BB311CB9B0E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Messaging.FHIR", "OpenIZ.Messaging.FHIR\OpenIZ.Messaging.FHIR.csproj", "{33836324-C699-4139-AB9C-7524570A04D5}"
 EndProject

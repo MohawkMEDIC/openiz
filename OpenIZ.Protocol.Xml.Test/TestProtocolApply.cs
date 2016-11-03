@@ -13,6 +13,7 @@ using OpenIZ.Core.Services;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using OpenIZ.Core;
+using OpenIZ.Core.Applets.ViewModel.Json;
 
 namespace OpenIZ.Protocol.Xml.Test
 {
@@ -42,7 +43,9 @@ namespace OpenIZ.Protocol.Xml.Test
             };
             // Now apply the protocol
             var acts = xmlCp.Calculate(newborn);
-            String json = JsonViewModelSerializer.Serialize(newborn);
+            var jsonSerializer = new JsonViewModelSerializer();
+            String json = jsonSerializer.Serialize(newborn);
+
             Assert.AreEqual(4, acts.Count);
 
 
@@ -68,7 +71,8 @@ namespace OpenIZ.Protocol.Xml.Test
 
             // Now apply the protocol
             var acts = xmlCp.Calculate(newborn);
-            String json = JsonViewModelSerializer.Serialize(newborn);
+            var jsonSerializer = new JsonViewModelSerializer();
+            String json = jsonSerializer.Serialize(newborn);
             Assert.AreEqual(1, acts.Count);
         }
 
@@ -92,7 +96,8 @@ namespace OpenIZ.Protocol.Xml.Test
 
             // Now apply the protocol
             var acts = xmlCp.Calculate(newborn);
-            String json = JsonViewModelSerializer.Serialize(newborn);
+            var jsonSerializer = new JsonViewModelSerializer();
+            String json = jsonSerializer.Serialize(newborn);
             Assert.AreEqual(60, acts.Count);
         }
 
@@ -117,7 +122,8 @@ namespace OpenIZ.Protocol.Xml.Test
 
             // Now apply the protocol
             var acts = xmlCp.Calculate(newborn);
-            String json = JsonViewModelSerializer.Serialize(newborn);
+            var jsonSerializer = new JsonViewModelSerializer();
+            String json = jsonSerializer.Serialize(newborn);
             Assert.AreEqual(2, acts.Count);
         }
 
@@ -141,7 +147,8 @@ namespace OpenIZ.Protocol.Xml.Test
 
             // Now apply the protocol
             var acts = xmlCp.Calculate(newborn);
-            String json = JsonViewModelSerializer.Serialize(newborn);
+            var jsonSerializer = new JsonViewModelSerializer();
+            String json = jsonSerializer.Serialize(newborn);
             Assert.AreEqual(3, acts.Count);
         }
 
@@ -165,7 +172,8 @@ namespace OpenIZ.Protocol.Xml.Test
 
             // Now apply the protocol
             var acts = xmlCp.Calculate(newborn);
-            String json = JsonViewModelSerializer.Serialize(newborn);
+            var jsonSerializer = new JsonViewModelSerializer();
+            String json = jsonSerializer.Serialize(newborn);
             Assert.AreEqual(3, acts.Count);
         }
 
@@ -189,7 +197,8 @@ namespace OpenIZ.Protocol.Xml.Test
 
             // Now apply the protocol
             var acts = xmlCp.Calculate(newborn);
-            String json = JsonViewModelSerializer.Serialize(newborn);
+            var jsonSerializer = new JsonViewModelSerializer();
+            String json = jsonSerializer.Serialize(newborn);
             Assert.AreEqual(2, acts.Count);
         }
 
@@ -213,7 +222,8 @@ namespace OpenIZ.Protocol.Xml.Test
 
             // Now apply the protocol
             var acts = scp.CreateCarePlan(newborn);
-            String json = JsonViewModelSerializer.Serialize(newborn);
+            var jsonSerializer = new JsonViewModelSerializer();
+            String json = jsonSerializer.Serialize(newborn);
             Assert.AreEqual(83, acts.Count());
             Assert.IsFalse(acts.Any(o => o.Protocols.Count() > 1));
             acts = scp.CreateCarePlan(newborn);
@@ -247,7 +257,8 @@ namespace OpenIZ.Protocol.Xml.Test
             
             // Now apply the protocol
             var acts = scp.CreateCarePlan(adult);
-            String json = JsonViewModelSerializer.Serialize(adult);
+            var jsonSerializer = new JsonViewModelSerializer();
+            String json = jsonSerializer.Serialize(adult);
             Assert.AreEqual(0, acts.Count());
         }
 
@@ -271,7 +282,8 @@ namespace OpenIZ.Protocol.Xml.Test
 
             // Now apply the protocol
             var acts = scp.CreateCarePlan(newborn);
-            String json = JsonViewModelSerializer.Serialize(newborn);
+            var jsonSerializer = new JsonViewModelSerializer();
+            String json = jsonSerializer.Serialize(newborn);
             Assert.AreEqual(83, acts.Count());
             Assert.IsFalse(acts.Any(o => o.Protocols.Count() > 1));
         }
@@ -294,8 +306,9 @@ namespace OpenIZ.Protocol.Xml.Test
 
             // Now apply the protocol
             var acts = scp.CreateCarePlan(newborn, true);
-            String json = JsonViewModelSerializer.Serialize(newborn);
-            Assert.AreEqual(61, acts.Count());
+            var jsonSerializer = new JsonViewModelSerializer();
+            String json = jsonSerializer.Serialize(newborn);
+            Assert.AreEqual(60, acts.Count());
             Assert.IsFalse(acts.Any(o => o.Protocols.Count() > 1));
 
         }

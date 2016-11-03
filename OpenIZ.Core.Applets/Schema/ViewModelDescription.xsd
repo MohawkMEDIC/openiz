@@ -18,7 +18,7 @@
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="property" type="tns:PropertyModelDescription" />
     </xs:sequence>
-    <xs:attribute name="all" type="xs:boolean" use="required" />
+    <xs:attribute name="all" type="xs:boolean" />
   </xs:complexType>
   <xs:complexType name="PropertyModelDescription">
     <xs:complexContent mixed="false">

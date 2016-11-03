@@ -19,7 +19,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
     {
 
         // Description lookup
-        private Dictionary<Object, PropertyContainerDescription> m_description = new Dictionary<object, PropertyContainerDescription>();
+        private Dictionary<String, PropertyContainerDescription> m_description = new Dictionary<String, PropertyContainerDescription>();
 
         // Lock object
         protected object m_lockObject = new object();
@@ -37,6 +37,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
         /// </summary>
         [XmlAttribute("name")]
         public string Name { get; set; }
+
         /// <summary>
         /// Represents the models which are to be defined in the model
         /// </summary>
@@ -49,7 +50,18 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
         public static ViewModelDescription Load(Stream stream)
         {
             XmlSerializer xsz = new XmlSerializer(typeof(ViewModelDescription));
-            return xsz.Deserialize(stream) as ViewModelDescription;
+            var retVal = xsz.Deserialize(stream) as ViewModelDescription;
+            retVal.Initialize();
+            return retVal;
+        }
+
+        /// <summary>
+        /// Initialize
+        /// </summary>
+        public void Initialize()
+        {
+            foreach (var itm in this.Model)
+                itm.Initialize();
         }
 
         /// <summary>
@@ -58,11 +70,13 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
         public PropertyContainerDescription FindDescription(Type rootType)
         {
             PropertyContainerDescription retVal = null;
-            if (!this.m_description.TryGetValue(rootType, out retVal))
+            string rootTypeName = rootType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName ??
+                               rootType.Name;
+            // Type name
+            if (!this.m_description.TryGetValue(rootTypeName, out retVal))
             {
-                string typeName = rootType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName ??
-                                   rootType.Name;
-                retVal = this.Model.FirstOrDefault(o => o.TypeName == typeName);
+                retVal = this.Model.FirstOrDefault(o => o.TypeName == rootTypeName);
+                String typeName = rootTypeName;
                 // Children from the heirarchy
                 while (rootType != typeof(IdentifiedData) && retVal == null)
                 {
@@ -71,14 +85,14 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
                     typeName = rootType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName ??
                         rootType.Name;
 
-                    if(!this.m_description.TryGetValue(rootType, out retVal))
+                    if(!this.m_description.TryGetValue(typeName, out retVal))
                         retVal = this.Model.FirstOrDefault(o => o.TypeName == typeName);
                 }
 
                 if (retVal != null)
                     lock (this.m_lockObject)
-                        if (!this.m_description.ContainsKey(rootType))
-                            this.m_description.Add(rootType, retVal);
+                        if (!this.m_description.ContainsKey(rootTypeName))
+                            this.m_description.Add(rootTypeName, retVal);
             }
             return retVal;
         }
@@ -86,29 +100,29 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
         /// <summary>
         /// Find description
         /// </summary>
-        public PropertyContainerDescription FindDescription(PropertyInfo propertyInfo, String propertyName, PropertyContainerDescription context)
+        public PropertyContainerDescription FindDescription(String propertyName, PropertyContainerDescription context)
         {
+            if (propertyName == null)
+                return null;
             PropertyContainerDescription retVal = null;
-            if (!this.m_description.TryGetValue(propertyInfo, out retVal))
+            String pathName = propertyName;
+            var pathContext = context;
+            while(pathContext != null) { 
+                pathName = pathContext.GetName() + "." + pathName;
+                pathContext = pathContext.Parent;
+            }
+
+            if (!this.m_description.TryGetValue(pathName, out retVal))
             {
+
                 // Find the property information
                 retVal = context?.Properties.FirstOrDefault(o => o.Name == propertyName);
-
-                // Maybe this can be done via type?
                 if (retVal == null)
-                {
-                    var elementType = propertyInfo.PropertyType;
-
-                    if (elementType.GetTypeInfo().IsGenericType)
-                        elementType = elementType.GetTypeInfo().GenericTypeArguments[0];
-
-                    retVal = this.FindDescription(elementType);
-                }
-
+                    retVal = context?.Properties.FirstOrDefault(o => o.Name == "*");
                 if (retVal != null)
                     lock (this.m_lockObject)
-                        if(!this.m_description.ContainsKey(propertyInfo))
-                            this.m_description.Add(propertyInfo, retVal);
+                        if(!this.m_description.ContainsKey(pathName))
+                            this.m_description.Add(pathName, retVal);
             }
             return retVal;
         }

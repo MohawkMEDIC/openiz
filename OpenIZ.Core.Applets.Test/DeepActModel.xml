@@ -1,14 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ViewModel xmlns="http://openiz.org/model/view" name="sampleact">
+  <type type="IdentifiedData" all="true"></type>
   <type type="EntityAddress" all="true">
-    <property name="component" all="false" classifier="*">
+    <property name="component" all="false">
+      <property name="*">
       <property name="value" all="false"/>
+      </property>
     </property>
   </type>
   <type type="EntityIdentifier" all="true"/>
   <type type="EntityName" all="true">
-    <property name="component" all="false" classifier="*">
-      <property name="value" all="false"/>
+    <property name="component" all="false">
+      <property name="Given">
+        <property name="value" all="false"/>
+      </property>
     </property>
   </type>
   <type type="EntityTelecomAddress" all="true"/>
@@ -16,14 +21,16 @@
   <type type="EntityTag" all="true"/>
   <type type="EntityExtension" all="true"/>
   <type type="Act" all="true">
-    <property name="relationship" all="true" classifier="HasSubject">
-      <property name="targetModel" all="false">
-        <property name="participation" all="true" classifier="*">
-          <property name="playerModel" all="false"/>
-        </property>
-        <property name="participation" all="true" classifier="RecordTarget">
-          <property name="playerModel" all="true">
-            <property name="identifier" all="true" classifier="*"/>
+    <property name="relationship" all="true">
+      <property name="HasSubject" all="true">
+        <property name="targetModel" all="false">
+          <property name="participation" all="true">
+            <property name="RecordTarget" all="true">
+              <property name="playerModel" all="true">
+                <property name="identifier" all="true" classifier="*"/>
+              </property>
+            </property>
+            <property name="*" all="true"/>
           </property>
         </property>
       </property>

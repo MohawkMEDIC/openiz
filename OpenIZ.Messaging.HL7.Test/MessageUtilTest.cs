@@ -26,7 +26,9 @@ using NHapi.Model.V25.Message;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Entities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using MARC.Everest.Connectors;
 
 namespace OpenIZ.Messaging.HL7.Test
 {
@@ -530,6 +532,65 @@ namespace OpenIZ.Messaging.HL7.Test
 
 			Assert.IsTrue(actual.HasValue);
 			Assert.AreEqual(new DateTime(1970, 01, 01), actual.Value);
+		}
+
+		[TestMethod]
+		public void TestCreatePatient()
+		{
+			ADT_A01 message = new ADT_A01();
+
+			message.MSH.DateTimeOfMessage.Time.Value = DateTime.Now.ToString("yyyyMMddHHmmss");
+			//message.PID.PatientID.IDNumber.Value = "12345";
+			message.PID.GetPatientName(0).FamilyName.Surname.Value = "Khanna";
+			message.PID.GetPatientName(0).GivenName.Value = "Nityan";
+
+			message.PID.GetMotherSMaidenName(0).GivenName.Value = "Mom";
+			message.PID.GetMotherSMaidenName(0).FamilyName.Surname.Value = "Khanna";
+
+			var details = new List<IResultDetail>();
+
+			var actual = MessageUtil.CreatePatient(message.MSH, message.EVN, message.PID, message.PD1, details);
+
+			var identifier = actual.Identifiers.FirstOrDefault();
+
+			//Assert.IsNotNull(identifier);
+
+			//Assert.AreEqual("12345", identifier.Value);
+
+			var name = actual.Names.FirstOrDefault();
+			Assert.IsNotNull(name);
+
+			var firstName = name.Component.FirstOrDefault(n => n.ComponentTypeKey == NameComponentKeys.Given);
+
+			Assert.IsNotNull(firstName);
+
+			Assert.AreEqual("Nityan", firstName.Value);
+
+			var lastName = name.Component.FirstOrDefault(n => n.ComponentTypeKey == NameComponentKeys.Family);
+
+			Assert.IsNotNull(lastName);
+
+			Assert.AreEqual("Khanna", lastName.Value);
+
+			Assert.AreEqual(1, actual.Relationships.Count);
+
+			var entityRelationship = actual.Relationships.FirstOrDefault();
+
+			Assert.IsNotNull(entityRelationship);
+
+			var mothersFirstname = entityRelationship.TargetEntity.Names.FirstOrDefault()?.Component.FirstOrDefault(n => n.ComponentTypeKey == NameComponentKeys.Given);
+
+			Assert.IsNotNull(mothersFirstname);
+
+			Assert.AreEqual("Mom", mothersFirstname.Value);
+
+			var mothersLastName = entityRelationship.TargetEntity.Names.FirstOrDefault()?.Component.FirstOrDefault(n => n.ComponentTypeKey == NameComponentKeys.Family);
+
+			Assert.IsNotNull(mothersLastName);
+
+			Assert.AreEqual("Khanna", mothersLastName.Value);
+
+
 		}
 
 		/// <summary>

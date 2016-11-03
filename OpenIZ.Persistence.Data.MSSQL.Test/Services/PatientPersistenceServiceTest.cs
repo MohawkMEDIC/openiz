@@ -22,6 +22,7 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using OpenIZ.Core.Applets.ViewModel;
+using OpenIZ.Core.Applets.ViewModel.Json;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
@@ -99,7 +100,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                             Name = "http://openiz.org/oiz/birthcertificate",
                             ExtensionHandler = typeof(EntityPersistenceServiceTest)
                         },
-                        ExtensionValue = new byte[] { 1 }
+                        ExtensionValueXml = new byte[] { 1 }
                     }
                 },
                 GenderConceptKey = Guid.Parse("f4e3a6bb-612e-46b2-9f77-ff844d971198"),
@@ -139,7 +140,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual(DeterminerKeys.Specific, p.DeterminerConceptKey);
             Assert.AreEqual(StatusKeys.Active, p.StatusConceptKey);
 
-            String json = JsonViewModelSerializer.Serialize(afterInsert);
+            var jsonSerializer = new JsonViewModelSerializer();
+            String json = jsonSerializer.Serialize(afterInsert);
             Assert.IsNotNull(json);
 
         }
@@ -206,7 +208,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                             Name = "http://openiz.org/oiz/birthcertificate",
                             ExtensionHandler = typeof(EntityPersistenceServiceTest)
                         },
-                        ExtensionValue = new byte[] { 1 }
+                        ExtensionValueXml = new byte[] { 1 }
                     }
                 },
                 GenderConcept = new Concept() {  Mnemonic = "Male" },
@@ -223,7 +225,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual(DeterminerKeys.Specific, p.DeterminerConceptKey);
             Assert.AreEqual(StatusKeys.Active, p.StatusConceptKey);
             Assert.AreEqual(aa.Key, afterInsert.Identifiers[0].AuthorityKey);
-            String json = JsonViewModelSerializer.Serialize(afterInsert);
+            var jsonSerializer = new JsonViewModelSerializer();
+            String json = jsonSerializer.Serialize(afterInsert);
+
             Assert.IsNotNull(json);
 
         }
@@ -277,7 +281,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                             Name = "http://openiz.org/oiz/birthcertificate",
                             ExtensionHandler = typeof(EntityPersistenceServiceTest)
                         },
-                        ExtensionValue = BitConverter.GetBytes(true)
+                        ExtensionValueXml = BitConverter.GetBytes(true)
                     }
                 },
                 GenderConcept = new Concept() { Mnemonic = "Female" },
@@ -341,7 +345,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
                             Name = "http://openiz.org/oiz/birthcertificate",
                             ExtensionHandler = typeof(EntityPersistenceServiceTest)
                         },
-                        ExtensionValue = BitConverter.GetBytes(true)
+                        ExtensionValueXml = BitConverter.GetBytes(true)
                     }
                 },
                 GenderConcept = new Concept() { Mnemonic = "Female" },

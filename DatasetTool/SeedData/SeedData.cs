@@ -7,7 +7,7 @@ using MARC.Everest.DataTypes;
 using System.IO;
 using System.Reflection;
 
-namespace DatasetTool.SeedData
+namespace OizDevTool.SeedData
 {
 
     

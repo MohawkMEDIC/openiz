@@ -1,10 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ViewModel xmlns="http://openiz.org/model/view" name="sampleact">
+  <type type="IdentifiedData" all="true">
+    <property name="id" behavior="never"/>
+  </type>
   <type type="Act" all="true">
+    <property name="id" behavior="never"/>
     <property name="relationship" all="false">
-      <property classifier="HasSubject" all="false">
+      <property name="HasSubject" all="false">
+        
+      </property>
+      <property name="HasComponent" all="false">
         <property name="targetModel" all="false"/>
       </property>
-    </property>
+      </property>
   </type>
 </ViewModel>
