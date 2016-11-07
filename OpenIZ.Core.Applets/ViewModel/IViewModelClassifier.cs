@@ -25,6 +25,6 @@ namespace OpenIZ.Core.Applets.ViewModel
         /// <summary>
         /// Re-compose the classified data 
         /// </summary>
-        IList Compose(Dictionary<string, object> values);
+        IList Compose(Dictionary<string, object> values, Type retValType);
     }
 }

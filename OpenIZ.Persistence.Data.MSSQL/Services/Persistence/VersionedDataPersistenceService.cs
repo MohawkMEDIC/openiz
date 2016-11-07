@@ -158,7 +158,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <summary>
         /// Update versioned association items
         /// </summary>
-        internal virtual void UpdateVersionedAssociatedItems<TAssociation, TDomainAssociation>(List<TAssociation> storage, TModel source, ModelDataContext context, IPrincipal principal)
+        internal virtual void UpdateVersionedAssociatedItems<TAssociation, TDomainAssociation>(IEnumerable<TAssociation> storage, TModel source, ModelDataContext context, IPrincipal principal)
             where TAssociation : VersionedAssociation<TModel>, new()
             where TDomainAssociation : class, IDbVersionedAssociation, new()
         {
@@ -178,7 +178,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var existing = context.GetTable<TDomainAssociation>().Where(ExpressionRewriter.Rewrite<TDomainAssociation>(o => o.AssociatedItemKey == source.Key && source.VersionSequence >= o.EffectiveVersionSequenceId && (source.VersionSequence < o.ObsoleteVersionSequenceId || !o.ObsoleteVersionSequenceId.HasValue))).ToList().Select(o => m_mapper.MapDomainInstance<TDomainAssociation, TAssociation>(o) as TAssociation);
             
             // Remove old
-            var obsoleteRecords = existing.Where(o => !storage.Exists(ecn => ecn.Key == o.Key));
+            var obsoleteRecords = existing.Where(o => !storage.Any(ecn => ecn.Key == o.Key));
             foreach (var del in obsoleteRecords)
             {
                 del.ObsoleteVersionSequenceId = source.VersionSequence;

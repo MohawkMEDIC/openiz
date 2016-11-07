@@ -144,7 +144,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                                 r.Read(); // Read proeprty name
                                 values.Add(propertyName, this.ReadElementUtil(r, r.TokenType == JsonToken.StartObject ? nonGenericT : t, new JsonSerializationContext(propertyName, this, values, context)));
                             }
-                            return classifier.Compose(values);
+                            return classifier.Compose(values, t);
                         }
                     }
                 // Array read, we want to re-call the specified parse
@@ -200,7 +200,9 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                                     return Enum.ToObject(t, r.Value);
                                 return Convert.ChangeType(r.Value, t);
                             case JsonToken.String:
-                                if (t.StripNullable() == typeof(Guid))
+                                if (String.IsNullOrEmpty((string)r.Value))
+                                    return null;
+                                else if (t.StripNullable() == typeof(Guid))
                                     return Guid.Parse((string)r.Value);
                                 else
                                     return r.Value;
@@ -250,7 +252,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         /// <summary>
         /// Delay loads the specified collection association
         /// </summary>
-        public List<TAssociation> LoadCollection<TAssociation>(Guid sourceKey) where TAssociation : IdentifiedData, ISimpleAssociation, new()
+        public IEnumerable<TAssociation> LoadCollection<TAssociation>(Guid sourceKey) where TAssociation : IdentifiedData, ISimpleAssociation, new()
         {
             return EntitySource.Current.Provider.GetRelations<TAssociation>(sourceKey);
         }

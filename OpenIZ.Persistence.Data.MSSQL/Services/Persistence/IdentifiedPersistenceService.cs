@@ -175,7 +175,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <summary>
         /// Update associated items
         /// </summary>
-        protected virtual void UpdateAssociatedItems<TAssociation, TDomainAssociation>(List<TAssociation> storage, TModel source, ModelDataContext context, IPrincipal principal)
+        protected virtual void UpdateAssociatedItems<TAssociation, TDomainAssociation>(IEnumerable<TAssociation> storage, TModel source, ModelDataContext context, IPrincipal principal)
             where TAssociation : IdentifiedData, ISimpleAssociation, new()
             where TDomainAssociation : class, IDbAssociation, new()
         {
@@ -194,7 +194,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Get existing
             var existing = context.GetTable<TDomainAssociation>().Where(ExpressionRewriter.Rewrite<TDomainAssociation>(o => o.AssociatedItemKey == source.Key)).ToList().Select(o=>m_mapper.MapDomainInstance<TDomainAssociation, TAssociation>(o) as TAssociation);
             // Remove old
-            var obsoleteRecords = existing.Where(o => !storage.Exists(ecn => ecn.Key == o.Key));
+            var obsoleteRecords = existing.Where(o => !storage.Any(ecn => ecn.Key == o.Key));
             foreach (var del in obsoleteRecords)
                 persistenceService.Obsolete(context, del, principal);
 

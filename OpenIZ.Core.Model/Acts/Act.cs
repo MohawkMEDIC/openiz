@@ -31,13 +31,14 @@ using System.Globalization;
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.Collection;
 
 namespace OpenIZ.Core.Model.Acts
 {
     /// <summary>
     /// Represents the base class for an act
     /// </summary>
-    [XmlType(Namespace ="http://openiz.org/model", TypeName ="Act")]
+    [XmlType(Namespace = "http://openiz.org/model", TypeName = "Act")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Act")]
     [JsonObject("Act")]
     [Classifier(nameof(ClassConcept))]
@@ -49,7 +50,7 @@ namespace OpenIZ.Core.Model.Acts
         private Guid? m_statusConceptKey;
         private Guid? m_moodConceptKey;
         private Guid? m_reasonConceptKey;
-        
+
         private Concept m_classConcept;
         private Concept m_typeConcept;
         private Concept m_statusConcept;
@@ -61,14 +62,15 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         public Act()
         {
-            this.Relationships = new List<ActRelationship>();
-            this.Identifiers = new List<ActIdentifier>();
-            this.Extensions = new List<ActExtension>();
-            this.Notes = new List<ActNote>();
-            this.Participations = new List<ActParticipation>();
-            this.Tags = new List<ActTag>();
-            this.Protocols = new List<ActProtocol>();
-
+            this.Relationships = new VersionedAssociationCollection<ActRelationship>(this);
+            this.Identifiers = new VersionedAssociationCollection<ActIdentifier>(this);
+            this.Extensions = new VersionedAssociationCollection<ActExtension>(this);
+            this.Notes = new VersionedAssociationCollection<ActNote>(this);
+            this.Participations = new VersionedAssociationCollection<ActParticipation>(this);
+            this.Tags = new SimpleAssociationCollection<ActTag>(this);
+            this.Protocols = new VersionedAssociationCollection<ActProtocol>(this);
+            this.Policies = new SimpleAssociationCollection<SecurityPolicyInstance>();
+            
         }
         /// <summary>
         /// Gets or sets an indicator which identifies whether the object is negated
@@ -110,7 +112,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [XmlIgnore, JsonIgnore]
         public DateTimeOffset? StartTime { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
@@ -126,7 +128,7 @@ namespace OpenIZ.Core.Model.Acts
                     this.StartTime = default(DateTimeOffset);
             }
         }
-        
+
         /// <summary>
         /// Gets or sets the stop time of the act
         /// </summary>
@@ -352,52 +354,52 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets the identifiers associated with this act
         /// </summary>
         [AutoLoad, XmlElement("identifier"), JsonProperty("identifier")]
-        public List<ActIdentifier> Identifiers { get; set; }
+        public VersionedAssociationCollection<ActIdentifier> Identifiers { get; set; }
 
         /// <summary>
         /// Gets a list of all associated acts for this act
         /// </summary>
         [AutoLoad, XmlElement("relationship"), JsonProperty("relationship")]
-        public List<ActRelationship> Relationships { get; set; }
+        public VersionedAssociationCollection<ActRelationship> Relationships { get; set; }
 
         /// <summary>
         /// Gets or sets the policy instances
         /// </summary>
         [XmlElement("policy"), JsonProperty("policy")]
-        public List<SecurityPolicyInstance> Policies { get; set; }
+        public SimpleAssociationCollection<SecurityPolicyInstance> Policies { get; set; }
 
         /// <summary>
         /// Gets a list of all extensions associated with the act
         /// </summary>
 
         [AutoLoad, XmlElement("extension"), JsonProperty("extension")]
-        public List<ActExtension> Extensions { get; set; }
+        public VersionedAssociationCollection<ActExtension> Extensions { get; set; }
 
         /// <summary>
         /// Gets a list of all notes associated with the act
         /// </summary>
-        
+
         [AutoLoad, XmlElement("note"), JsonProperty("note")]
-        public List<ActNote> Notes { get; set; }
+        public VersionedAssociationCollection<ActNote> Notes { get; set; }
 
         /// <summary>
         /// Gets a list of all tags associated with the act
         /// </summary>
-        
+
         [AutoLoad, XmlElement("tag"), JsonProperty("tag")]
-        public List<ActTag> Tags { get; set; }
+        public SimpleAssociationCollection<ActTag> Tags { get; set; }
 
         /// <summary>
         /// Identifies protocols attached to the act
         /// </summary>
-        public List<ActProtocol> Protocols { get; set; }
+        public VersionedAssociationCollection<ActProtocol> Protocols { get; set; }
 
         /// <summary>
         /// Participations
         /// </summary>
         [XmlElement("participation"), JsonProperty("participation")]
         [AutoLoad]
-        public List<ActParticipation> Participations { get; set; }
+        public VersionedAssociationCollection<ActParticipation> Participations { get; set; }
 
         /// <summary>
         /// Forces the delay load properties in this type to reload
@@ -405,7 +407,7 @@ namespace OpenIZ.Core.Model.Acts
         public override void Refresh()
         {
             base.Refresh();
-            this.m_moodConcept = this.m_reasonConcept  = this.m_classConcept = this.m_statusConcept = this.m_typeConcept = null;
+            this.m_moodConcept = this.m_reasonConcept = this.m_classConcept = this.m_statusConcept = this.m_typeConcept = null;
         }
 
 

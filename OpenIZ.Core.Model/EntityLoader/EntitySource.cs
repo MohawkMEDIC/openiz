@@ -57,7 +57,7 @@ namespace OpenIZ.Core.Model.EntityLoader
             /// <summary>
             /// Gets the specified relations
             /// </summary>
-            public List<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence) where TObject : IdentifiedData, IVersionedAssociation, new()
+            public IEnumerable<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence) where TObject : IdentifiedData, IVersionedAssociation, new()
             {
                 throw new NotImplementedException();
             }
@@ -65,7 +65,7 @@ namespace OpenIZ.Core.Model.EntityLoader
             /// <summary>
             /// Gets the specified relations
             /// </summary>
-            public List<TObject> GetRelations<TObject>(Guid? sourceKey) where TObject : IdentifiedData, ISimpleAssociation, new()
+            public IEnumerable<TObject> GetRelations<TObject>(Guid? sourceKey) where TObject : IdentifiedData, ISimpleAssociation, new()
             {
                 throw new NotImplementedException();
             }
