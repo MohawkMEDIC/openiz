@@ -66,9 +66,9 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         /// <summary>
         /// Perform a re-classification of values
         /// </summary>
-        public IList Compose(Dictionary<string, object> values)
+        public IList Compose(Dictionary<string, object> values, Type retValType)
         {
-            var retValType = typeof(List<>).MakeGenericType(this.m_type);
+            //var retValType = typeof(List<>).MakeGenericType(this.m_type);
             var retVal = Activator.CreateInstance(retValType) as IList;
 
             foreach (var itm in values)

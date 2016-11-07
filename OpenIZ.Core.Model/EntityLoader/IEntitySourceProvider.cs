@@ -47,17 +47,16 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// Query the specified data from the delay load provider
         /// </summary>
         IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData, new();
+
+        /// <summary>
+        /// Get relationships
+        /// </summary>
+        IEnumerable<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence) where TObject : IdentifiedData, IVersionedAssociation, new();
+
+        /// <summary>
+        /// Get relationships
+        /// </summary>
+        IEnumerable<TObject> GetRelations<TObject>(Guid? sourceKey) where TObject : IdentifiedData, ISimpleAssociation, new();
         
-        /// <summary>
-        /// Get relationships
-        /// </summary>
-        List<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence) where TObject : IdentifiedData, IVersionedAssociation, new();
-
-        /// <summary>
-        /// Get relationships
-        /// </summary>
-        List<TObject> GetRelations<TObject>(Guid? sourceKey) where TObject : IdentifiedData, ISimpleAssociation, new();
-
-
     }
 }

@@ -67,7 +67,7 @@ namespace OpenIZ.Core.Model
             }
             set
             {
-                if (value != this.m_sourceEntityKey)
+                if (value != this.m_sourceEntity?.Key)
                 {
                     this.m_sourceEntityKey = value;
                     this.m_sourceEntity = null;

@@ -45,7 +45,7 @@ namespace OpenIZ.Core.Applets.ViewModel
         /// <summary>
         /// Loads the associations for the specified object
         /// </summary>
-        List<TAssociation> LoadCollection<TAssociation>(Guid sourceKey) where TAssociation : IdentifiedData, ISimpleAssociation, new();
+        IEnumerable<TAssociation> LoadCollection<TAssociation>(Guid sourceKey) where TAssociation : IdentifiedData, ISimpleAssociation, new();
 
         /// <summary>
         /// Loads the specified related object

@@ -54,6 +54,8 @@
     <Compile Include="BaseEntityData.cs" />
     <Compile Include="Association.cs" />
     <Compile Include="Collection\Bundle.cs" />
+    <Compile Include="Collection\SimpleAssociationCollection.cs" />
+    <Compile Include="Collection\VersionedAssociationCollection.cs" />
     <Compile Include="Constants\ActClassKeys.cs" />
     <Compile Include="Constants\ActMoodKeys.cs" />
     <Compile Include="Constants\ActParticipationKey.cs" />

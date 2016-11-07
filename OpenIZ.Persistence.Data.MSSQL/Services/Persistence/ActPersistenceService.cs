@@ -131,42 +131,42 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             if (retVal.Extensions != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActExtension, Data.ActExtension>(
-                    retVal.Extensions,
+                    retVal.Extensions.GetLocked(),
                     retVal,
                     context, 
                     principal);
 
             if (retVal.Identifiers != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActIdentifier, Data.ActIdentifier>(
-                    retVal.Identifiers,
+                    retVal.Identifiers.GetLocked(),
                     retVal,
                     context, 
                     principal);
 
             if (retVal.Notes != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActNote, Data.ActNote>(
-                    retVal.Notes,
+                    retVal.Notes.GetLocked(),
                     retVal,
                     context, 
                     principal);
 
             if (retVal.Participations != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActParticipation, Data.ActParticipation>(
-                    retVal.Participations,
+                    retVal.Participations.GetLocked(),
                     retVal,
                     context, 
                     principal);
 
             if (retVal.Relationships != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActRelationship, Data.ActRelationship>(
-                    retVal.Relationships,
+                    retVal.Relationships.GetLocked(),
                     retVal,
                     context, 
                     principal);
 
             if (retVal.Tags != null)
                 base.UpdateAssociatedItems<Core.Model.DataTypes.ActTag, Data.ActTag>(
-                    retVal.Tags,
+                    retVal.Tags.GetLocked(),
                     retVal,
                     context, 
                     principal);
@@ -195,42 +195,42 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             if (retVal.Extensions != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActExtension, Data.ActExtension>(
-                    retVal.Extensions,
+                    retVal.Extensions.GetLocked(),
                     retVal,
                     context,
                     principal);
 
             if (retVal.Identifiers != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActIdentifier, Data.ActIdentifier>(
-                    retVal.Identifiers,
+                    retVal.Identifiers.GetLocked(),
                     retVal,
                     context,
                     principal);
 
             if (retVal.Notes != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActNote, Data.ActNote>(
-                    retVal.Notes,
+                    retVal.Notes.GetLocked(),
                     retVal,
                     context,
                     principal);
 
             if (retVal.Participations != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActParticipation, Data.ActParticipation>(
-                    retVal.Participations,
+                    retVal.Participations.GetLocked(),
                     retVal,
                     context,
                     principal);
 
             if (retVal.Relationships != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActRelationship, Data.ActRelationship>(
-                    retVal.Relationships,
+                    retVal.Relationships.GetLocked(),
                     retVal,
                     context,
                     principal);
 
             if (retVal.Tags != null)
                 base.UpdateAssociatedItems<Core.Model.DataTypes.ActTag, Data.ActTag>(
-                    retVal.Tags,
+                    retVal.Tags.GetLocked(),
                     retVal,
                     context,
                     principal);
