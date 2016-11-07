@@ -18,9 +18,11 @@
  * Date: 2016-8-15
  */
 
+using Newtonsoft.Json;
 using OpenIZ.Core.Model;
 using System;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Services
 {
@@ -94,21 +96,27 @@ namespace OpenIZ.Core.Services
 	/// <summary>
 	/// Represents a detected issue
 	/// </summary>
+    [JsonObject(nameof(DetectedIssue))]
+    [XmlType(nameof(DetectedIssue), Namespace = "http://openiz.org/issue")]
 	public class DetectedIssue
 	{
+
 		/// <summary>
 		/// Represents a detected issue priority
 		/// </summary>
+        [XmlAttribute("priority"), JsonProperty("priority")]
 		public DetectedIssuePriorityType Priority { get; set; }
 
 		/// <summary>
 		/// Text related to the issue
 		/// </summary>
+        [XmlText, JsonProperty("text")]
 		public String Text { get; set; }
 
 		/// <summary>
 		/// The type of issue (a concept)
 		/// </summary>
+        [XmlAttribute("type"), JsonProperty("type")]
 		public Guid TypeKey { get; set; }
 	}
 }

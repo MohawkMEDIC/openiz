@@ -40,6 +40,7 @@
     <Compile Include="Diagnostics\TraceWriter.cs" />
     <Compile Include="Event\NotificationEventArgs.cs" />
     <Compile Include="Event\NotificationType.cs" />
+    <Compile Include="Exceptions\DetectedIssueException.cs" />
     <Compile Include="Http\Credentials.cs" />
     <Compile Include="Http\DefaultContentTypeMapper.cs" />
     <Compile Include="Http\Description\IRestClientCertificateDescription.cs" />
