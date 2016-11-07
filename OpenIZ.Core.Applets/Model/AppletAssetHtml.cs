@@ -89,6 +89,13 @@ namespace OpenIZ.Core.Applets.Model
         [XmlElement("style")]
         public List<String> Style { get; set; }
 
+
+        /// <summary>
+        /// Gets one or more routes
+        /// </summary>
+        [XmlElement("view")]
+        public AppletViewState ViewState { get; set; }
+
         /// <summary>
         /// Content of the element
         /// </summary>
@@ -111,6 +118,7 @@ namespace OpenIZ.Core.Applets.Model
                     this.m_html = value;
             }
         }
+
 
     }
 }

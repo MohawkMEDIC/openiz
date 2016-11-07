@@ -124,6 +124,11 @@ namespace OpenIZ.Core.Applets
         }
 
         /// <summary>
+        /// Gets a list of all view states of all loaded applets
+        /// </summary>
+        public List<AppletAsset> ViewStateAssets {  get { return this.m_appletManifest.SelectMany(m => m.Assets).Where(a => ((a.Content == null && this.Resolver != null ? this.Resolver(a) : a.Content) as AppletAssetHtml)?.ViewState != null).ToList();  } }
+
+        /// <summary>
         /// Return true if the collection is readonly
         /// </summary>
         public bool IsReadOnly
@@ -361,8 +366,8 @@ namespace OpenIZ.Core.Applets
                 {
                     case "html": // The content is a complete HTML page
                         {
-                            var headerInjection = this.GetInjectionHeaders(asset);
                             htmlContent = htmlAsset.Html as XElement;
+                            var headerInjection = this.GetInjectionHeaders(asset, htmlContent.DescendantNodes().OfType<XElement>().Any(o=>o.Name == xs_xhtml + "ui-view"));
 
                             // STRIP - OPENIZJS references
                             var xel = htmlContent.Descendants().OfType<XElement>().Where(o => o.Name == xs_xhtml + "script" && o.Attribute("src")?.Value.Contains("openiz") == true).ToArray();
@@ -381,7 +386,7 @@ namespace OpenIZ.Core.Applets
                     case "body": // The content is an HTML Body element, we must inject the HTML header
                         {
                             // Inject special headers
-                            var headerInjection = this.GetInjectionHeaders(asset);
+                            var headerInjection = this.GetInjectionHeaders(asset, htmlContent.DescendantNodes().OfType<XElement>().Any(o => o.Name == xs_xhtml + "ui-view"));
 
                             // Render the bundles
                             var bodyElement = htmlAsset.Html as XElement;
@@ -396,7 +401,6 @@ namespace OpenIZ.Core.Applets
                             else
                             {
 
-                                var headerInjection = this.GetInjectionHeaders(asset);
 
                                 // Get the layout
                                 var layoutAsset = this.ResolveAsset(htmlAsset.Layout, asset);
@@ -406,8 +410,6 @@ namespace OpenIZ.Core.Applets
                                 using (MemoryStream ms = new MemoryStream(this.RenderAssetContent(layoutAsset, preProcessLocalization)))
                                     htmlContent = XDocument.Load(ms).Element(xs_xhtml + "html") as XElement;
 
-                                var headElement = (htmlContent.Element(xs_xhtml + "head") as XElement);
-                                headElement.Add(headerInjection.Where(o => !headElement.Elements(o.Name).Any(e => (e.Attributes("src") != null && (e.Attributes("src") == o.Attributes("src"))) || (e.Attributes("href") != null && (e.Attributes("href") == o.Attributes("href"))))));
 
                                 // Find the <!--#include virtual="content" --> tag
                                 var contentNode = htmlContent.DescendantNodes().OfType<XComment>().SingleOrDefault(o => o.Value.Trim() == "#include virtual=\"content\"");
@@ -416,6 +418,13 @@ namespace OpenIZ.Core.Applets
                                     contentNode.AddAfterSelf(htmlAsset.Html as XElement);
                                     contentNode.Remove();
                                 }
+
+                                // Injection headers
+                                var headerInjection = this.GetInjectionHeaders(asset, htmlContent.DescendantNodes().OfType<XElement>().Any(o => o.Name == xs_xhtml + "ui-view"));
+                                var headElement = (htmlContent.Element(xs_xhtml + "head") as XElement);
+                                headElement.Add(headerInjection.Where(o => !headElement.Elements(o.Name).Any(e => (e.Attributes("src") != null && (e.Attributes("src") == o.Attributes("src"))) || (e.Attributes("href") != null && (e.Attributes("href") == o.Attributes("href"))))));
+
+
                             }
                         }
                         break;
@@ -599,7 +608,7 @@ namespace OpenIZ.Core.Applets
         /// <summary>
         /// Injection for HTML headers
         /// </summary>
-        private List<XElement> GetInjectionHeaders(AppletAsset asset)
+        private List<XElement> GetInjectionHeaders(AppletAsset asset, bool isUiContainer)
         {
             var htmlAsset = asset.Content as AppletAssetHtml;
             if (htmlAsset == null && this.Resolver != null)
@@ -618,14 +627,19 @@ namespace OpenIZ.Core.Applets
                     throw new FileNotFoundException(String.Format("Bundle {0} not found", itm));
                 headerInjection.AddRange(bundle.Content.SelectMany(o => o.HeaderElement));
             }
-            foreach (var itm in htmlAsset.Script)
-            {
-                var incAsset = this.ResolveAsset(itm, asset);
-                if (incAsset != null)
-                    headerInjection.AddRange(new ScriptBundleContent(itm).HeaderElement);
-                else
-                    throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
-            }
+
+            // All scripts
+            if (isUiContainer) // IS A UI CONTAINER = ANGULAR UI REQUIRES ALL CONTROLLERS BE LOADED
+                return this.ViewStateAssets.SelectMany(o => this.GetInjectionHeaders(o, false)).Distinct(new XElementEquityComparer()).ToList();
+            else
+                foreach (var itm in htmlAsset.Script)
+                {
+                    var incAsset = this.ResolveAsset(itm, asset);
+                    if (incAsset != null)
+                        headerInjection.AddRange(new ScriptBundleContent(itm).HeaderElement);
+                    else
+                        throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
+                }
             foreach (var itm in htmlAsset.Style)
             {
                 var incAsset = this.ResolveAsset(itm, asset);
@@ -646,7 +660,7 @@ namespace OpenIZ.Core.Applets
                     continue;
                 var includeAsset = this.ResolveAsset(assetName, asset);
                 if(includeAsset != null)
-                    headerInjection.AddRange(this.GetInjectionHeaders(includeAsset));
+                    headerInjection.AddRange(this.GetInjectionHeaders(includeAsset, isUiContainer));
             }
 
             // Re-write
@@ -676,7 +690,7 @@ namespace OpenIZ.Core.Applets
 
             public int GetHashCode(XElement obj)
             {
-                return obj.GetHashCode();
+                return obj.Attribute("src")?.Value.GetHashCode() ?? obj.Attribute("href")?.Value.GetHashCode() ?? obj.GetHashCode();
             }
         }
     }
