@@ -109,6 +109,7 @@
     <Compile Include="Services\Impl\LocalPatientRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalPlaceRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalProviderRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalServiceManager.cs" />
     <Compile Include="Services\Impl\LocalStockManagementRepositoryService.cs" />
     <Compile Include="Services\ITfaRelayService.cs" />
     <Compile Include="Wcf\Behavior\WcfErrorEndpointBehavior.cs" />

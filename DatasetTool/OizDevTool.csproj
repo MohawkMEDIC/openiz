@@ -89,10 +89,6 @@
       <Project>{C4E96DB4-D4FA-4703-A3FD-5D9C30DFBB1E}</Project>
       <Name>OpenIZ.Persistence.Data.MSSQL</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OpenIZ.Protocol.Xml\OpenIZ.Protocol.Xml.csproj">
-      <Project>{CAD6BCB7-758B-4AA4-A5FE-A9FAB8A4CF2F}</Project>
-      <Name>OpenIZ.Protocol.Xml</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\jsdoc-template.js" />

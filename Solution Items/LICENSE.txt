@@ -11,3 +11,4 @@ MIT Licensed Components:
 BSD Licensed Components:
 	- Antlr Components (http://www.antlr.org/)
 	- Expression Evaluator (https://github.com/RupertAvery/csharpeval)
+	- JInt (https://github.com/sebastienros/jint)

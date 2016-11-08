@@ -16,6 +16,6 @@ namespace OpenIZ.Core
         /// Gets or sets the current application service context
         /// </summary>
         public static IServiceProvider Current { get; set; }
-
+        
     }
 }

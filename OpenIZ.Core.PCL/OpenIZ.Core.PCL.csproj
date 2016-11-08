@@ -85,6 +85,7 @@
     <Compile Include="Services\IPlaceRepositoryService.cs" />
     <Compile Include="Services\IProviderRepositoryService.cs" />
     <Compile Include="Services\ISecurityRepositoryService.cs" />
+    <Compile Include="Services\IServiceManager.cs" />
     <Compile Include="Services\IStockManagementRepositoryService.cs" />
     <Compile Include="Services\IThreadPoolService.cs" />
   </ItemGroup>

@@ -29,7 +29,7 @@ namespace OpenIZ.Core.Services
 	/// <summary>
 	/// Detected issue priority
 	/// </summary>
-	public enum DetectedIssuePriorityType
+	public enum DetectedIssuePriorityType : int
 	{
 		Error = 1,
 		Informational = 2,
