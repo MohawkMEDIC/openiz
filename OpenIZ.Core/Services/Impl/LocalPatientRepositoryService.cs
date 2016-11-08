@@ -25,6 +25,7 @@ using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace OpenIZ.Core.Services.Impl
@@ -40,9 +41,17 @@ namespace OpenIZ.Core.Services.Impl
 		public IEnumerable<Patient> Find(Expression<Func<Patient, bool>> predicate)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+
 			if (persistenceService == null)
+			{
 				throw new InvalidOperationException("No persistence service found");
-			return persistenceService.Query(predicate, AuthenticationContext.Current.Principal);
+			}
+
+			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<Patient>();
+
+			var results = persistenceService.Query(predicate, AuthenticationContext.Current.Principal);
+
+			return businessRulesService != null ? businessRulesService.AfterQuery(results) : results;
 		}
 
 		/// <summary>
@@ -51,9 +60,17 @@ namespace OpenIZ.Core.Services.Impl
 		public IEnumerable<Patient> Find(Expression<Func<Patient, bool>> predicate, int offset, int? count, out int totalCount)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+
 			if (persistenceService == null)
+			{
 				throw new InvalidOperationException("No persistence service found");
-			return persistenceService.Query(predicate, offset, count, AuthenticationContext.Current.Principal, out totalCount);
+			}
+
+			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<Patient>();
+
+			var results = persistenceService.Query(predicate, offset, count, AuthenticationContext.Current.Principal, out totalCount);
+
+			return businessRulesService != null ? businessRulesService.AfterQuery(results) : results;
 		}
 
 		/// <summary>
@@ -62,20 +79,38 @@ namespace OpenIZ.Core.Services.Impl
 		public Patient Get(Guid id, Guid versionId)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+
 			if (persistenceService == null)
+			{
 				throw new InvalidOperationException("No persistence service found");
-			return persistenceService.Get<Guid>(new Identifier<Guid>(id, versionId), AuthenticationContext.Current.Principal, false);
+			}
+
+			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<Patient>();
+
+			var result = persistenceService.Get<Guid>(new Identifier<Guid>(id, versionId), AuthenticationContext.Current.Principal, false);
+
+			return businessRulesService != null ? businessRulesService.AfterRetrieve(result) : result;
 		}
 
 		/// <summary>
 		/// Insert the specified patient
 		/// </summary>
-		public Patient Insert(Patient p)
+		public Patient Insert(Patient patient)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+
 			if (persistenceService == null)
+			{
 				throw new InvalidOperationException("No persistence service found");
-			return persistenceService.Insert(p, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
+
+			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<Patient>();
+
+			patient = businessRulesService?.BeforeInsert(patient);
+
+			patient = persistenceService.Insert(patient, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+			return businessRulesService != null ? businessRulesService.AfterInsert(patient) : patient;
 		}
 
 		Patient IPatientRepositoryService.Get(Guid id, Guid versionId)
@@ -101,27 +136,60 @@ namespace OpenIZ.Core.Services.Impl
 		public Patient Obsolete(Guid key)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+
 			if (persistenceService == null)
+			{
 				throw new InvalidOperationException("No persistence service found");
-			return persistenceService.Obsolete(new Patient() { Key = key }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
+
+			var patient = this.Find(p => p.Key == key).FirstOrDefault();
+
+			if (patient == null)
+			{
+				throw new InvalidOperationException("Patient not found");
+			}
+
+			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<Patient>();
+
+			patient = businessRulesService?.BeforeObsolete(patient);
+
+			patient = persistenceService.Obsolete(new Patient() { Key = key }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+			return businessRulesService != null ? businessRulesService.AfterObsolete(patient) : patient;
 		}
 
 		/// <summary>
 		/// Save / update the patient
 		/// </summary>
-		public Patient Save(Patient p)
+		public Patient Save(Patient patient)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+
 			if (persistenceService == null)
+			{
 				throw new InvalidOperationException("No persistence service found");
+			}
+
+			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<Patient>();
+
 			try
 			{
-				return persistenceService.Update(p, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+				patient = businessRulesService?.BeforeUpdate(patient);
+
+				patient = persistenceService.Update(patient, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+				patient = businessRulesService?.AfterUpdate(patient);
 			}
 			catch (KeyNotFoundException)
 			{
-				return persistenceService.Insert(p, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+				patient = businessRulesService?.BeforeInsert(patient);
+
+				patient = persistenceService.Insert(patient, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+				patient = businessRulesService?.AfterInsert(patient);
 			}
+
+			return patient;
 		}
 
 		/// <summary>
