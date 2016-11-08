@@ -77,6 +77,12 @@
       <Name>OpenIZ.Core.PCL</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestRules\SimpleActRule.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestRules\SimpleManufacturedMaterialRule.js" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

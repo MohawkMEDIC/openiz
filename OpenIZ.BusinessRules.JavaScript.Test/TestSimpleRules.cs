@@ -3,10 +3,13 @@ using Jint.Native;
 using Jint.Runtime.Interop;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenIZ.Core;
+using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace OpenIZ.BusinessRules.JavaScript.Test
 {
@@ -24,10 +27,19 @@ namespace OpenIZ.BusinessRules.JavaScript.Test
 		{
 			ApplicationServiceContext.Current = new SimpleServiceContext();
 
-			// Step 1 : Rules rules rules!
-			using (var stream = typeof(TestSimpleRules).Assembly.GetManifestResourceStream("OpenIZ.BusinessRules.JavaScript.Test.TestRules.SimplePatientRule.js"))
-			using (StreamReader sr = new StreamReader(stream))
-				JavascriptBusinessRulesEngine.Current.AddRules(sr);
+			var names = typeof(TestSimpleRules).Assembly.GetManifestResourceNames();
+
+			var streams = names.Select(n => typeof(TestSimpleRules).Assembly.GetManifestResourceStream(n));
+
+
+			foreach (var stream in streams)
+			{
+				using (stream)
+				using (StreamReader streamReader = new StreamReader(stream))
+				{
+					JavascriptBusinessRulesEngine.Current.AddRules(streamReader);
+				}
+			}
 		}
 
 		/// <summary>
@@ -64,6 +76,18 @@ namespace OpenIZ.BusinessRules.JavaScript.Test
 		{
 			Assert.IsNotNull(JavascriptBusinessRulesEngine.Current.GetValidators<Patient>());
 			Assert.IsNotNull(JavascriptBusinessRulesEngine.Current.GetCallList<Patient>("AfterInsert"));
+		}
+
+		[TestMethod]
+		public void TestActBusinessRule()
+		{
+			Assert.IsNotNull(JavascriptBusinessRulesEngine.Current.GetCallList<Act>("AfterInsert"));
+		}
+
+		[TestMethod]
+		public void TestManufacturedMaterialBusinessRule()
+		{
+			Assert.IsNotNull(JavascriptBusinessRulesEngine.Current.GetCallList<ManufacturedMaterial>("AfterInsert"));
 		}
 
 		[TestMethod]
