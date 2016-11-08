@@ -44,7 +44,7 @@ namespace OpenIZ.Core.Services
         /// <summary>
         /// Insert the specified act
         /// </summary>
-        TAct Insert<TAct>(TAct insert) where TAct : Act;
+        TAct Insert<TAct>(TAct act) where TAct : Act;
 
 		/// <summary>
 		/// Obsoletes a specific act.

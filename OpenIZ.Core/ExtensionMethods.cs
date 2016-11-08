@@ -19,6 +19,7 @@
  */
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Services;
 using System;
@@ -76,5 +77,16 @@ namespace OpenIZ.Core
         {
             return me.GetService<IApplicationIdentityProviderService>();
         }
+
+		/// <summary>
+		/// Gets the business rules service for a specific information model.
+		/// </summary>
+		/// <typeparam name="T">The type of information for which to retrieve the business rules engine instance.</typeparam>
+		/// <param name="me">The application context.</param>
+		/// <returns>Returns an instance of the business rules service.</returns>
+		public static IBusinessRulesService<T> GetBusinessRulesService<T>(this ApplicationContext me) where T : IdentifiedData
+		{
+			return me.GetService<IBusinessRulesService<T>>();
+		}
     }
 }

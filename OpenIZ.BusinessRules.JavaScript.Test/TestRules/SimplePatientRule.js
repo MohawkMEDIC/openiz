@@ -7,6 +7,14 @@ OpenIZBre.AddBusinessRule("Act", "AfterInsert", function (act) {
     return act;
 });
 
+/**
+ * Sample Business Rule for Patient
+ */
+OpenIZBre.AddBusinessRule("Patient", "AfterInsert", function (patient)
+{
+    return patient;
+});
+
 /** 
  * Sample Validator for Patient - 
  * Must have gender, must be present
