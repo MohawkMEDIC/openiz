@@ -31,6 +31,11 @@ namespace OpenIZ.Core.Applets.ViewModel
         /// Serializes the object <paramref name="data"/> onto stream <paramref name="s"/>
         /// </summary>
         void Serialize(Stream s, IdentifiedData data);
+        
+        /// <summary>
+        /// Serializes the object <paramref name="data"/> onto stream <paramref name="s"/>
+        /// </summary>
+        void Serialize(TextWriter s, IdentifiedData data);
 
         /// <summary>
         /// De-serializes the specified object from the stream

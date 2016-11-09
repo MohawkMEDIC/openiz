@@ -14,6 +14,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Jint;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.BusinessRules.JavaScript
 {
@@ -39,7 +41,7 @@ namespace OpenIZ.BusinessRules.JavaScript
         private JNI.BusinessRulesBridge m_bridge = new JNI.BusinessRulesBridge();
 
         // Trigger definitions
-        private Dictionary<String, Dictionary<String, List<Func<Object, Object>>>> m_triggerDefinitions = new Dictionary<string, Dictionary<string, List<Func<object, object>>>>();
+        private Dictionary<String, Dictionary<String, List<Func<object, ExpandoObject>>>> m_triggerDefinitions = new Dictionary<string, Dictionary<string, List<Func<object, ExpandoObject>>>>();
 
         // Validators
         private Dictionary<String, List<Func<Object, Object[]>>> m_validatorDefinitions = new Dictionary<string, List<Func<object, Object[]>>>();
@@ -68,7 +70,8 @@ namespace OpenIZ.BusinessRules.JavaScript
                 .DebugMode(true)
 #endif
 
-                ).SetValue("OpenIZBre", this.m_bridge);
+                ).SetValue("OpenIZBre", this.m_bridge)
+                .SetValue("console", new JsConsoleProvider());
         }
 
         /// <summary>
@@ -87,6 +90,11 @@ namespace OpenIZ.BusinessRules.JavaScript
                 return s_instance;
             }
         }
+
+        /// <summary>
+        /// Gets the engine
+        /// </summary>
+        public Engine Engine { get { return this.m_engine; } }
 
         /// <summary>
         /// Add the specified script
@@ -135,9 +143,9 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// <summary>
         /// Register a rule
         /// </summary>
-        public void RegisterRule(string target, string trigger, Func<object, object> _delegate)
+        public void RegisterRule(string target, string trigger, Func<object, ExpandoObject> _delegate)
         {
-            Dictionary<String, List<Func<object, object>>> triggerHandler = null;
+            Dictionary<String, List<Func<object, ExpandoObject>>> triggerHandler = null;
             if (!this.m_triggerDefinitions.TryGetValue(target, out triggerHandler))
             {
                 this.m_tracer.TraceInfo("Will try to create BRE service for {0}", target);
@@ -152,17 +160,17 @@ namespace OpenIZ.BusinessRules.JavaScript
 
                 // Now add
                 lock (s_syncLock)
-                    this.m_triggerDefinitions.Add(target, new Dictionary<string, List<Func<object, object>>>()
+                    this.m_triggerDefinitions.Add(target, new Dictionary<string, List<Func<object, ExpandoObject>>>()
                     {
-                        { trigger, new List<Func<object, object>>() { _delegate } }
+                        { trigger, new List<Func<object, ExpandoObject>>() { _delegate } }
                     });
             }
             else
             {
-                List<Func<Object, Object>> delegates = null;
+                List<Func<object, ExpandoObject>> delegates = null;
                 if (!triggerHandler.TryGetValue(trigger, out delegates))
                     lock (s_syncLock)
-                        triggerHandler.Add(trigger, new List<Func<object, object>>() { _delegate });
+                        triggerHandler.Add(trigger, new List<Func<object, ExpandoObject>>() { _delegate });
                 else
                     delegates.Add(_delegate);
             }
@@ -171,15 +179,15 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// <summary>
         /// Get call list of action
         /// </summary>
-        public List<Func<Object, Object>> GetCallList<TBinding>(String action)
+        public List<Func<object, ExpandoObject>> GetCallList<TBinding>(String action)
         {
             var className = typeof(TBinding).GetTypeInfo().GetCustomAttribute<JsonObjectAttribute>()?.Id;
 
             // Try to get the binding
-            Dictionary<String, List<Func<object, object>>> triggerHandler = null;
+            Dictionary<String, List<Func<object, ExpandoObject>>> triggerHandler = null;
             if (this.m_triggerDefinitions.TryGetValue(className, out triggerHandler))
             {
-                List<Func<Object, Object>> callList = null;
+                List<Func<object, ExpandoObject>> callList = null;
                 if (triggerHandler.TryGetValue(action, out callList))
                     return callList;
             }
@@ -209,7 +217,10 @@ namespace OpenIZ.BusinessRules.JavaScript
             var callList = this.GetCallList<TBinding>(action);
             var retVal = data;
             foreach (var c in callList)
-                retVal = (TBinding)c(data);
+            {
+                var raw = c(data);
+                retVal = (TBinding)raw.FirstOrDefault().Value;
+            }
             return retVal;
 
         }

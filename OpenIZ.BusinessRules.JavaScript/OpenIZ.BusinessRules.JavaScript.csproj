@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Include="JavascriptBusinessRulesEngine.cs" />
     <Compile Include="JNI\BusinessRulesBridge.cs" />
+    <Compile Include="JNI\JsConsoleProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuleServiceBase.cs" />
   </ItemGroup>
@@ -48,6 +49,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.Core.Applets\OpenIZ.Core.Applets.csproj">
+      <Project>{39E61451-F4FE-493D-B754-5F06EB284AAC}</Project>
+      <Name>OpenIZ.Core.Applets</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
       <Project>{f1a82a4f-4a57-47d7-ae76-444c8a4ff54a}</Project>
       <Name>OpenIZ.Core.Model</Name>
