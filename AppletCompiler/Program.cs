@@ -224,17 +224,17 @@ namespace AppletCompiler
                             htmlAsset.Style = new List<string>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "style").Select(o => ResolveName(o.Value)));
                             htmlAsset.ViewState = xe.Elements().OfType<XElement>().Where(o => o.Name == xs_openiz + "state").Select(o=>new AppletViewState()
                             {
-                                Name = o.Attribute("name").Value,
-                                Route = o.Elements().OfType<XElement>().FirstOrDefault(r => r.Name == xs_openiz + "url" || r.Name == xs_openiz + "route").Value,
+                                Name = o.Attribute("name")?.Value,
+                                Route = o.Elements().OfType<XElement>().FirstOrDefault(r => r.Name == xs_openiz + "url" || r.Name == xs_openiz + "route")?.Value,
                                 IsAbstract = Boolean.Parse(o.Attribute("abstract")?.Value ?? "False"),
-                                View = o.Elements().OfType<XElement>().Where(v=>v.Name == xs_openiz + "view").Select(v=>new AppletView()
+                                View = o.Elements().OfType<XElement>().Where(v=>v.Name == xs_openiz + "view")?.Select(v=>new AppletView()
                                 {
                                     Name = v.Attribute("name")?.Value,
-                                    Title = v.Elements().OfType<XElement>().Where(t=>t.Name == xs_openiz + "title").Select(t=>new LocaleString() {
+                                    Title = v.Elements().OfType<XElement>().Where(t=>t.Name == xs_openiz + "title")?.Select(t=>new LocaleString() {
                                         Language = t.Attribute("lang")?.Value,
-                                        Value = t.Value
+                                        Value = t?.Value
                                     }).ToList(),
-                                    Controller = v.Element(xs_openiz + "controller").Value
+                                    Controller = v.Element(xs_openiz + "controller")?.Value
                                 }).ToList()
                             }).FirstOrDefault();
                             var demand = xe.DescendantNodes().OfType<XElement>().Where(o => o.Name == xs_openiz + "demand").Select(o => o.Value).ToList();
