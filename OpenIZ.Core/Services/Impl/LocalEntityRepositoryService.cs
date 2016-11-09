@@ -50,7 +50,11 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException(string.Format("Unable to locate {0}", nameof(IDataPersistenceService<Entity>)));
 			}
 
-			return persistenceService.Query(query, AuthenticationContext.Current.Principal);
+			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<Entity>();
+
+			var results = persistenceService.Query(query, AuthenticationContext.Current.Principal);
+
+			return businessRulesService != null ? businessRulesService.AfterQuery(results) : results;
 		}
 
 		/// <summary>
@@ -70,7 +74,11 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException(string.Format("Unable to locate {0}", nameof(IDataPersistenceService<Entity>)));
 			}
 
-			return persistenceService.Query(query, offSet, count, AuthenticationContext.Current.Principal, out totalCount);
+			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<Entity>();
+
+			var results = persistenceService.Query(query, offSet, count, AuthenticationContext.Current.Principal, out totalCount);
+
+			return businessRulesService != null ? businessRulesService.AfterQuery(results) : results;
 		}
 
 		/// <summary>
@@ -88,7 +96,11 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException(string.Format("Unable to locate {0}", nameof(IDataPersistenceService<Entity>)));
 			}
 
-			return persistenceService.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(key, versionKey), AuthenticationContext.Current.Principal, true); 
+			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<Entity>();
+
+			var result = persistenceService.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(key, versionKey), AuthenticationContext.Current.Principal, true);
+
+			return businessRulesService != null ? businessRulesService.AfterRetrieve(result) : result;
 		}
 
 		/// <summary>
@@ -105,7 +117,13 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException(string.Format("Unable to locate {0}", nameof(IDataPersistenceService<Entity>)));
 			}
 
-			return persistenceService.Insert(entity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<Entity>();
+
+			entity = businessRulesService?.BeforeInsert(entity);
+
+			entity = persistenceService.Insert(entity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+			return businessRulesService != null ? businessRulesService.AfterInsert(entity) : entity;
 		}
 
 		/// <summary>
@@ -129,7 +147,13 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException("Entity not found");
 			}
 
-			return persistenceService.Obsolete(entity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<Entity>();
+
+			entity = businessRulesService?.BeforeObsolete(entity);
+
+			entity = persistenceService.Obsolete(entity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+			return businessRulesService != null ? businessRulesService.AfterObsolete(entity) : entity;
 		}
 
 		/// <summary>
@@ -146,14 +170,26 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException(string.Format("Unable to locate {0}", nameof(IDataPersistenceService<Entity>)));
 			}
 
+			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<Entity>();
+
 			try
 			{
-				return persistenceService.Update(entity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+				entity = businessRulesService?.BeforeUpdate(entity);
+
+				entity = persistenceService.Update(entity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+				entity = businessRulesService?.AfterUpdate(entity);
 			}
 			catch (KeyNotFoundException)
 			{
-				return persistenceService.Insert(entity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+				entity = businessRulesService?.BeforeInsert(entity);
+
+				entity = persistenceService.Insert(entity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+				entity = businessRulesService?.AfterInsert(entity);
 			}
+
+			return entity;
 		}
 	}
 }
