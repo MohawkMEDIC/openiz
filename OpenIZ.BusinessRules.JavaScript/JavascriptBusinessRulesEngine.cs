@@ -218,7 +218,7 @@ namespace OpenIZ.BusinessRules.JavaScript
             var retVal = data;
             foreach (var c in callList)
             {
-                var raw = c(data);
+                var raw = c(retVal);
                 retVal = (TBinding)raw.FirstOrDefault().Value;
             }
             return retVal;

@@ -7,6 +7,11 @@ OpenIZBre.AddBusinessRule("Patient", "AfterInsert", function (patient) {
     // Simplify
     var simplePatient = OpenIZBre.SimplifyObject(patient);
 
+    // Should get service
+    var serviceManager = OpenIZBre.GetService("IServiceManager");
+    console.assert(serviceManager != null, "Missing Service Manager");
+    console.assert(serviceManager.AddServiceProvider !== undefined, "Service Manager isn't really really a service manager");
+    serviceManager.AddServiceProvider(null);
     console.assert(simplePatient != null, "Patient is null");
     console.assert(simplePatient.genderConceptModel != null, "Gender is null");
     console.assert(simplePatient.genderConceptModel.mnemonic == "Female", "Expected Female");

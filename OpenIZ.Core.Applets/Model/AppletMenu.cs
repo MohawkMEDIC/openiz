@@ -63,7 +63,13 @@ namespace OpenIZ.Core.Applets.Model
         /// Gets or sets the applet asset that this item should launch
         /// </summary>
         [XmlAttribute("launch")]
-        public String Launcher { get; set; }
+        public String Launch { get; set; }
+
+        /// <summary>
+        /// Asset that this menu item is linked to
+        /// </summary>
+        [XmlAttribute("asset")]
+        public String Asset { get; set; }
 
         /// <summary>
         /// Applet manifest

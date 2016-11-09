@@ -13,6 +13,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using OpenIZ.Core.Model.Roles;
+using System.Reflection;
+using OpenIZ.Core;
 
 namespace OpenIZ.BusinessRules.JavaScript.JNI
 {
@@ -83,6 +85,18 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         }
 
         /// <summary>
+        /// Get service by name
+        /// </summary>
+        public object GetService(String serviceName)
+        {
+            var serviceType = typeof(IActRepositoryService).GetTypeInfo().Assembly.ExportedTypes.FirstOrDefault(o => o.Name == serviceName && o.GetTypeInfo().IsInterface);
+            if (serviceType == null)
+                return null;
+            else
+                return ApplicationServiceContext.Current.GetService(serviceType);
+        }
+
+        /// <summary>
         /// Expand the view model object to an identified object 
         /// </summary>
         public Patient ExpandObject(Object data)
@@ -102,5 +116,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
             }
 
         }
+
+
     }
 }

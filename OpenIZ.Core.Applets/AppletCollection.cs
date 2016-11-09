@@ -408,7 +408,7 @@ namespace OpenIZ.Core.Applets
                                     throw new FileNotFoundException(String.Format("Layout asset {0} not found", htmlAsset.Layout));
 
                                 using (MemoryStream ms = new MemoryStream(this.RenderAssetContent(layoutAsset, preProcessLocalization)))
-                                    htmlContent = XDocument.Load(ms).Element(xs_xhtml + "html") as XElement;
+                                    htmlContent = XDocument.Load(ms).FirstNode as XElement;
 
 
                                 // Find the <!--#include virtual="content" --> tag

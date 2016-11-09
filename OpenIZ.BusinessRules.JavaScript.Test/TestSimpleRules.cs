@@ -117,6 +117,7 @@ namespace OpenIZ.BusinessRules.JavaScript.Test
 
             var breService = ApplicationServiceContext.Current.GetService(typeof(IBusinessRulesService<Patient>)) as IBusinessRulesService<Patient>;
             Assert.IsNotNull(breService);
+
             var patient = breService.AfterInsert(new Patient()
             {
                 GenderConcept = new Core.Model.DataTypes.Concept()
@@ -166,5 +167,6 @@ namespace OpenIZ.BusinessRules.JavaScript.Test
             Assert.AreEqual("UnitOfMeasure_Kilograms", (patient.Participations[0].Act as QuantityObservation).UnitOfMeasure.Mnemonic);
             Assert.IsTrue(patient.DateOfBirth.HasValue);
         }
+
     }
 }
