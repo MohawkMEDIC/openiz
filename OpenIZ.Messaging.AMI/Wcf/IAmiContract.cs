@@ -51,6 +51,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	[ServiceKnownType(typeof(SubmissionResult))]
 	[ServiceKnownType(typeof(ApplicationEntity))]
 	[ServiceKnownType(typeof(SubmissionRequest))]
+	[ServiceKnownType(typeof(SecurityDeviceInfo))]
 	[ServiceKnownType(typeof(X509Certificate2Info))]
 	[ServiceKnownType(typeof(AmiCollection<SubmissionInfo>))]
 	[ServiceKnownType(typeof(AmiCollection<SecurityUserInfo>))]

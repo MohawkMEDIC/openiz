@@ -45,5 +45,4 @@ OpenIZBre.AddValidator("Patient", function (patient) {
         retVal.push({ text: "NoGender", priority: 1 });
 
     return retVal;
-
 });
