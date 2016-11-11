@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: khannan
- * Date: 2016-11-9
+ * Date: 2016-11-10
  */
 using OpenIZ.Core.Model.Security;
 using System;
@@ -27,61 +27,61 @@ using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.AMI.Auth
 {
-
 	/// <summary>
-	/// Represents a wrapper for a <see cref="SecurityDevice"/>.
+	/// Represents a wrapper for the <see cref="SecurityApplication"/> class.
 	/// </summary>
-	[XmlType(nameof(SecurityDeviceInfo), Namespace = "http://openiz.org/ami")]
-	[XmlRoot(nameof(SecurityDeviceInfo), Namespace = "http://openiz.org/ami")]
-	public class SecurityDeviceInfo
+	[XmlType(nameof(SecurityPolicyInfo), Namespace = "http://openiz.org/ami")]
+	[XmlRoot(nameof(SecurityPolicyInfo), Namespace = "http://openiz.org/ami")]
+	public class SecurityApplicationInfo
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="SecurityDeviceInfo"/> class.
+		/// Initializes a new instance of the <see cref="SecurityApplicationInfo"/> class.
 		/// </summary>
-		public SecurityDeviceInfo()
+		public SecurityApplicationInfo()
 		{
 
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="SecurityDeviceInfo"/> class
-		/// with a specific <see cref="SecurityDevice"/> instance.
+		/// Initializes a new instance of the <see cref="SecurityApplicationInfo"/> class
+		/// with a specific <see cref="SecurityApplication"/> instance.
 		/// </summary>
-		/// <param name="device">The security device instance.</param>
-		public SecurityDeviceInfo(SecurityDevice device)
+		/// <param name="application">The security application.</param>
+		public SecurityApplicationInfo(SecurityApplication application)
 		{
-			this.Id = device.Key;
-			this.Name = device.Name;
-			this.DeviceSecret = device.DeviceSecret;
-			this.Device = device;
+			this.Application = application;
+			this.ApplicationSecret = application.ApplicationSecret;
+			this.Id = application.Key;
+			this.Name = application.Name;
+			this.Policies = application.Policies;
 		}
 
 		/// <summary>
-		/// Gets or sets the security device of the security device info.
+		/// Gets or sets the application.
 		/// </summary>
-		[XmlElement("device")]
-		public SecurityDevice Device { get; set; }
+		[XmlElement("application")]
+		public SecurityApplication Application { get; set; }
 
 		/// <summary>
-		/// Gets or sets the id of the device.
+		/// Gets or sets the id of the application.
 		/// </summary>
 		[XmlElement("id")]
 		public Guid? Id { get; set; }
 
 		/// <summary>
-		/// Gets or sets the name of the device.
+		/// Gets or sets the name of the application.
 		/// </summary>
-		[XmlElement("name")]
+		[XmlAttribute("name")]
 		public string Name { get; set; }
 
 		/// <summary>
-		/// Gets or sets the secret of the device.
+		/// Gets or sets the application secret of the application.
 		/// </summary>
-		[XmlElement("deviceSecret")]
-		public string DeviceSecret { get; set; }
+		[XmlAttribute("applicationSecret")]
+		public string ApplicationSecret { get; set; }
 
 		/// <summary>
-		/// Gets or sets the list of security policies associated with the security device.
+		/// Gets or sets the policies associated with the application.
 		/// </summary>
 		[XmlElement("policy")]
 		public List<SecurityPolicyInstance> Policies { get; set; }

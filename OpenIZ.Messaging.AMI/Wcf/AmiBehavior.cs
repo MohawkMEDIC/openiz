@@ -454,7 +454,30 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns a list of assigning authorities which match the specific query.</returns>
 		public AmiCollection<AssigningAuthorityInfo> GetAssigningAuthorities()
 		{
-			throw new NotImplementedException();
+			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
+			if (parameters.Count == 0)
+			{
+				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
+			}
+
+			var expression = QueryExpressionParser.BuildLinqExpression<AssigningAuthority>(this.CreateQuery(parameters));
+
+			var assigningAuthorityRepositoryService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
+
+			if (assigningAuthorityRepositoryService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAssigningAuthorityRepositoryService)));
+			}
+
+			AmiCollection<AssigningAuthorityInfo> assigningAuthorities = new AmiCollection<AssigningAuthorityInfo>();
+
+			int totalCount = 0;
+
+			assigningAuthorities.CollectionItem = assigningAuthorityRepositoryService.Find(expression, 0, null, out totalCount).Select(a => new AssigningAuthorityInfo(a)).ToList();
+			assigningAuthorities.Size = totalCount;
+
+			return assigningAuthorities;
 		}
 
 		/// <summary>
@@ -843,19 +866,44 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the updated assigning authority.</returns>
 		public AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo)
 		{
-			throw new NotImplementedException();
+			Guid id = Guid.Empty;
+
+			if (!Guid.TryParse(assigningAuthorityId, out id))
+			{
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(assigningAuthorityId)));
+			}
+
+			if (assigningAuthorityInfo.Id != id)
+			{
+				throw new ArgumentException(string.Format("Unable to update assigning authority using id: {0}, and id: {1}", id, assigningAuthorityInfo.Id));
+			}
+
+			var assigningAuthorityRepositoryService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
+
+			if (assigningAuthorityRepositoryService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAssigningAuthorityRepositoryService)));
+			}
+
+			var result = assigningAuthorityRepositoryService.Save(assigningAuthorityInfo.AssigningAuthority);
+
+			return new AssigningAuthorityInfo(result);
 		}
 
 		/// <summary>
 		/// Updates a concept.
 		/// </summary>
+		/// <param name="conceptId">The id of the concept to update.</param>
 		/// <param name="concept">The concept containing the updated model.</param>
 		/// <returns>Returns the newly updated concept.</returns>
-		public Concept UpdateConcept(String conceptId, Concept concept)
+		public Concept UpdateConcept(string conceptId, Concept concept)
 		{
 			Guid key = Guid.Parse(conceptId);
+
 			if (concept.Key != key)
+			{
 				throw new ArgumentException(nameof(conceptId));
+			}
 
 			var conceptRepository = ApplicationContext.Current.GetService<IConceptRepositoryService>();
 
@@ -872,11 +920,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="place">The place containing the update information.</param>
 		/// <returns>Returns the updated place.</returns>
-		public Place UpdatePlace(String placeId, Place place)
+		public Place UpdatePlace(string placeId, Place place)
 		{
 			Guid key = Guid.Parse(placeId);
+
 			if (place.Key != key)
+			{
 				throw new ArgumentException(nameof(placeId));
+			}
 
 			var placeRepository = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
 
@@ -1013,8 +1064,12 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		private NameValueCollection CreateQuery(System.Collections.Specialized.NameValueCollection nvc)
 		{
 			var retVal = new OpenIZ.Core.Model.Query.NameValueCollection();
+
 			foreach (var k in nvc.AllKeys)
+			{
 				retVal.Add(k, new List<String>(nvc.GetValues(k)));
+			}
+
 			return retVal;
 		}
 	}
