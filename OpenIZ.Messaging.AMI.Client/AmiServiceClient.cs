@@ -33,6 +33,7 @@ using OpenIZ.Core.Model.Security;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using OpenIZ.Core.Model.AMI.Applet;
 
 namespace OpenIZ.Messaging.AMI.Client
 {
@@ -89,6 +90,16 @@ namespace OpenIZ.Messaging.AMI.Client
 		public AlertMessageInfo CreateAlert(AlertMessageInfo alertMessageInfo)
 		{
 			return this.Client.Post<AlertMessageInfo, AlertMessageInfo>("alert", this.Client.Accept, alertMessageInfo);
+		}
+
+		/// <summary>
+		/// Creates an applet.
+		/// </summary>
+		/// <param name="appletManifestInfo">The applet manifest info to be created.</param>
+		/// <returns>Returns the created applet manifest info.</returns>
+		public AppletManifestInfo CreateApplet(AppletManifestInfo appletManifestInfo)
+		{
+			return this.Client.Post<AppletManifestInfo, AppletManifestInfo>("applet", this.Client.Accept, appletManifestInfo);
 		}
 
         /// <summary>
@@ -149,6 +160,26 @@ namespace OpenIZ.Messaging.AMI.Client
 		public SecurityUserInfo CreateUser(SecurityUserInfo user)
 		{
 			return this.Client.Post<SecurityUserInfo, SecurityUserInfo>("user", this.Client.Accept, user);
+		}
+
+		/// <summary>
+		/// Deletes an applet.
+		/// </summary>
+		/// <param name="appletId">The id of the applet to be deleted.</param>
+		/// <returns>Returns the deleted applet.</returns>
+		public AppletManifestInfo DeleteApplet(string appletId)
+		{
+			return this.Client.Delete<AppletManifestInfo>(string.Format("applet/{0}", appletId));
+		}
+
+		/// <summary>
+		/// Deletes an assigning authority.
+		/// </summary>
+		/// <param name="assigningAuthorityId">The id of the assigning authority to be deleted.</param>
+		/// <returns>Returns the deleted assigning authority.</returns>
+		public AssigningAuthorityInfo DeleteAssigningAuthority(string assigningAuthorityId)
+		{
+			return this.Client.Delete<AssigningAuthorityInfo>(string.Format("assigningAuthority/{0}", assigningAuthorityId));
 		}
 
 		/// <summary>
@@ -270,6 +301,15 @@ namespace OpenIZ.Messaging.AMI.Client
 		public AmiCollection<AlertMessageInfo> GetAlerts(Expression<Func<AlertMessage, bool>> query)
 		{
 			return this.Client.Get<AmiCollection<AlertMessageInfo>>("alert", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
+		/// Gets a list of applets for a specific query.
+		/// </summary>
+		/// <returns>Returns a list of applet which match the specific query.</returns>
+		public AmiCollection<AppletManifestInfo> GetApplets(Expression<Func<AppletManifestInfo, bool>> query)
+		{
+			return this.Client.Get<AmiCollection<AppletManifestInfo>>("applet", QueryExpressionBuilder.BuildQuery(query).ToArray());
 		}
 
 		/// <summary>
@@ -436,13 +476,24 @@ namespace OpenIZ.Messaging.AMI.Client
 			return this.Client.Put<AlertMessageInfo, AlertMessageInfo>(string.Format("alert/{0}", alertId), this.Client.Accept, alertMessageInfo);
 		}
 
-        /// <summary>
-        /// Updates an assigning authority.
-        /// </summary>
-        /// <param name="assigningAuthorityId">The id of the assigning authority to be updated.</param>
-        /// <param name="assigningAuthorityInfo">The assigning authority info containing the updated information.</param>
-        /// <returns>Returns the updated assigning authority.</returns>
-        public AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo)
+		/// <summary>
+		/// Updates an applet.
+		/// </summary>
+		/// <param name="appletId">The id of the applet to be updated.</param>
+		/// <param name="appletManifestInfo">The applet containing the updated information.</param>
+		/// <returns>Returns the updated applet.</returns>
+		public AppletManifestInfo UpdateApplet(string appletId, AppletManifestInfo appletManifestInfo)
+		{
+			return this.Client.Put<AppletManifestInfo, AppletManifestInfo>(string.Format("applet/{0}", appletId), this.Client.Accept, appletManifestInfo);
+		}
+
+		/// <summary>
+		/// Updates an assigning authority.
+		/// </summary>
+		/// <param name="assigningAuthorityId">The id of the assigning authority to be updated.</param>
+		/// <param name="assigningAuthorityInfo">The assigning authority info containing the updated information.</param>
+		/// <returns>Returns the updated assigning authority.</returns>
+		public AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo)
         {
             return this.Client.Put<AssigningAuthorityInfo, AssigningAuthorityInfo>(string.Format("assigningAuthority/{0}", assigningAuthorityId), this.Client.Accept, assigningAuthorityInfo);
         }

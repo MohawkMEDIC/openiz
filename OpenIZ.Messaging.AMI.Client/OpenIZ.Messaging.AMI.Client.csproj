@@ -49,6 +49,10 @@
       <Project>{CCEAA09F-7B59-45EC-B969-3A740C2AEBAA}</Project>
       <Name>OpenIZ.Core.Alert</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.Applets\OpenIZ.Core.Applets.csproj">
+      <Project>{39e61451-f4fe-493d-b754-5f06eb284aac}</Project>
+      <Name>OpenIZ.Core.Applets</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core.Model.AMI\OpenIZ.Core.Model.AMI.csproj">
       <Project>{65ef51c6-5cb8-43b8-ae65-4a68f0b44ad2}</Project>
       <Name>OpenIZ.Core.Model.AMI</Name>

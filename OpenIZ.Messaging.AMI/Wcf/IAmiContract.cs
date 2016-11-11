@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Xml.Schema;
+using OpenIZ.Core.Model.AMI.Applet;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -92,6 +93,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
         [WebInvoke(UriTemplate = "/assigningAuthority", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
         AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo);
 
+		/// <summary>
+		/// Creates an applet.
+		/// </summary>
+		/// <param name="appletManifestInfo">The applet manifest info to be created.</param>
+		/// <returns>Returns the created applet manifest info.</returns>
+		[WebInvoke(UriTemplate = "/applet", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		AppletManifestInfo CreateApplet(AppletManifestInfo appletManifestInfo);
+
         /// <summary>
         /// Creates a device in the IMS.
         /// </summary>
@@ -131,6 +140,22 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the newly created security user.</returns>
 		[WebInvoke(UriTemplate = "/user", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		SecurityUserInfo CreateUser(SecurityUserInfo user);
+
+		/// <summary>
+		/// Deletes an applet.
+		/// </summary>
+		/// <param name="appletId">The id of the applet to be deleted.</param>
+		/// <returns>Returns the deleted applet.</returns>
+		[WebInvoke(UriTemplate = "/applet/{appletId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		AppletManifestInfo DeleteApplet(string appletId);
+
+		/// <summary>
+		/// Deletes an assigning authority.
+		/// </summary>
+		/// <param name="assigningAuthorityId">The id of the assigning authority to be deleted.</param>
+		/// <returns>Returns the deleted assigning authority.</returns>
+		[WebInvoke(UriTemplate = "/assigningAuthority/{assigningAuthorityId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		AssigningAuthorityInfo DeleteAssigningAuthority(string assigningAuthorityId);
 
 		/// <summary>
 		/// Deletes a specified certificate.
@@ -195,6 +220,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns a list of alert which match the specific query.</returns>
 		[WebGet(UriTemplate = "/alert", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<AlertMessageInfo> GetAlerts();
+
+		/// <summary>
+		/// Gets a list of applets for a specific query.
+		/// </summary>
+		/// <returns>Returns a list of applet which match the specific query.</returns>
+		[WebGet(UriTemplate = "/applet", BodyStyle = WebMessageBodyStyle.Bare)]
+		AmiCollection<AppletManifestInfo> GetApplets();
 
 		/// <summary>
 		/// Gets a list of assigning authorities for a specific query.
@@ -348,6 +380,15 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		AlertMessageInfo UpdateAlert(string alertId, AlertMessageInfo alert);
 
 		/// <summary>
+		/// Updates an applet.
+		/// </summary>
+		/// <param name="appletId">The id of the applet to be updated.</param>
+		/// <param name="appletManifestInfo">The applet containing the updated information.</param>
+		/// <returns>Returns the updated applet.</returns>
+		[WebInvoke(UriTemplate = "/applet/{appletId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		AppletManifestInfo UpdateApplet(string appletId, AppletManifestInfo appletManifestInfo);
+
+		/// <summary>
 		/// Updates an assigning authority.
 		/// </summary>
 		/// <param name="assigningAuthorityId">The id of the assigning authority to be updated.</param>
@@ -358,6 +399,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <summary>
 		/// Updates a concept.
 		/// </summary>
+		/// <param name="conceptId">The id of the concept to be updated.</param>
 		/// <param name="concept">The concept containing the updated information.</param>
 		/// <returns>Returns the updated concept.</returns>
 		[WebInvoke(UriTemplate = "/concept/{conceptId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
@@ -406,14 +448,17 @@ namespace OpenIZ.Messaging.AMI.Wcf
         void SendTfaSecret(TfaRequestInfo resetInfo);
 
         /// <summary>
-        /// Gets the list of TFA mechanisms
+        /// Gets the list of TFA mechanisms.
         /// </summary>
+        /// <returns>Returns a list of TFA mechanisms.</returns>
         [WebGet(UriTemplate = "/tfa")]
         AmiCollection<TfaMechanismInfo> GetTfaMechanisms();
 
         /// <summary>
-        /// Creates a diagnostic report
+        /// Creates a diagnostic report.
         /// </summary>
+        /// <param name="report">The diagnostic report to be created.</param>
+        /// <returns>Returns the created diagnostic report.</returns>
         [WebInvoke(UriTemplate = "/sherlock", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
         DiagnosticReport CreateDiagnosticReport(DiagnosticReport report);
         

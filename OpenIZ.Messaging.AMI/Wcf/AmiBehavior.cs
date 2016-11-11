@@ -49,6 +49,7 @@ using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.AMI.Diagnostics;
 using OpenIZ.Core.Security.Attribute;
 using System.Security.Permissions;
+using OpenIZ.Core.Model.AMI.Applet;
 using OpenIZ.Core.Security.Claims;
 
 namespace OpenIZ.Messaging.AMI.Wcf
@@ -158,7 +159,17 @@ namespace OpenIZ.Messaging.AMI.Wcf
             return new AssigningAuthorityInfo(createdAssigningAuthority);
         }
 
-        /// <summary>
+		/// <summary>
+		/// Creates an applet.
+		/// </summary>
+		/// <param name="appletManifestInfo">The applet manifest info to be created.</param>
+		/// <returns>Returns the created applet manifest info.</returns>
+		public AppletManifestInfo CreateApplet(AppletManifestInfo appletManifestInfo)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
         /// Creates a device in the IMS.
         /// </summary>
         /// <param name="device">The device to be created.</param>
@@ -305,7 +316,27 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			return new SecurityUserInfo(securityUser);
 		}
 
-        /// <summary>
+		/// <summary>
+		/// Deletes an applet.
+		/// </summary>
+		/// <param name="appletId">The id of the applet to be deleted.</param>
+		/// <returns>Returns the deleted applet.</returns>
+		public AppletManifestInfo DeleteApplet(string appletId)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Deletes an assigning authority.
+		/// </summary>
+		/// <param name="assigningAuthorityId">The id of the assigning authority to be deleted.</param>
+		/// <returns>Returns the deleted assigning authority.</returns>
+		public AssigningAuthorityInfo DeleteAssigningAuthority(string assigningAuthorityId)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
         /// Deletes a specified certificate.
         /// </summary>
         /// <param name="id">The id of the certificate to be deleted.</param>
@@ -465,6 +496,15 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			alerts.Size = totalCount;
 
 			return alerts;
+		}
+
+		/// <summary>
+		/// Gets a list of applets for a specific query.
+		/// </summary>
+		/// <returns>Returns a list of applet which match the specific query.</returns>
+		public AmiCollection<AppletManifestInfo> GetApplets()
+		{
+			throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -774,6 +814,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// <summary>
         /// Get a list of TFA mechanisms
         /// </summary>
+        /// <returns>Returns a list of TFA mechanisms.</returns>
         public AmiCollection<TfaMechanismInfo> GetTfaMechanisms()
         {
             var tfaRelay = ApplicationContext.Current.GetService<ITfaRelayService>();
@@ -875,6 +916,16 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			var updatedAlert = alertRepository.Save(alert.AlertMessage);
 
 			return new AlertMessageInfo(updatedAlert);
+		}
+
+		/// <summary>
+		/// Updates an applet.
+		/// </summary>
+		/// <param name="appletId">The id of the applet to be updated.</param>
+		/// <param name="appletManifestInfo">The applet containing the updated information.</param>
+		public AppletManifestInfo UpdateApplet(string appletId, AppletManifestInfo appletManifestInfo)
+		{
+			throw new NotImplementedException();
 		}
 
 		/// <summary>
