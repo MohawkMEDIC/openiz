@@ -426,13 +426,24 @@ namespace OpenIZ.Messaging.AMI.Client
 			return this.Client.Put<AlertMessageInfo, AlertMessageInfo>(string.Format("alert/{0}", alertId), this.Client.Accept, alertMessageInfo);
 		}
 
-		/// <summary>
-		/// Updates a concept.
-		/// </summary>
-		/// <param name="conceptId">The id of the concept to be updated.</param>
-		/// <param name="concept">The concept containing the updated information.</param>
-		/// <returns>Returns the updated concept.</returns>
-		public Concept UpdateConcept(string conceptId, Concept concept)
+        /// <summary>
+        /// Updates an assigning authority.
+        /// </summary>
+        /// <param name="assigningAuthorityId">The id of the assigning authority to be updated.</param>
+        /// <param name="assigningAuthorityInfo">The assigning authority info containing the updated information.</param>
+        /// <returns>Returns the updated assigning authority.</returns>
+        public AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo)
+        {
+            return this.Client.Put<AssigningAuthorityInfo, AssigningAuthorityInfo>(string.Format("assigningAuthority/{0}", assigningAuthorityId), this.Client.Accept, assigningAuthorityInfo);
+        }
+
+        /// <summary>
+        /// Updates a concept.
+        /// </summary>
+        /// <param name="conceptId">The id of the concept to be updated.</param>
+        /// <param name="concept">The concept containing the updated information.</param>
+        /// <returns>Returns the updated concept.</returns>
+        public Concept UpdateConcept(string conceptId, Concept concept)
 		{
 			return this.Client.Put<Concept, Concept>(string.Format("concept/{0}", conceptId), this.Client.Accept, concept);
 		}
