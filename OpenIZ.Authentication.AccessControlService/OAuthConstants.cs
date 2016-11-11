@@ -43,6 +43,12 @@ namespace OpenIZ.Authentication.OAuth2
         public const string GrantNamePassword = "password";
 
         /// <summary>
+        /// Grant name for password grant
+        /// </summary>
+        public const string GrantNameRefresh = "refresh_token";
+
+
+        /// <summary>
         /// JWT token type
         /// </summary>
         public const string JwtTokenType = "urn:ietf:params:oauth:token-type:jwt";
@@ -56,5 +62,6 @@ namespace OpenIZ.Authentication.OAuth2
         /// TFA header name
         /// </summary>
         public const string TfaHeaderName = "X-OpenIZ-TfaSecret";
+
     }
 }

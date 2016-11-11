@@ -94,8 +94,9 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             IIdentityProviderService identityProvider = ApplicationContext.Current.GetService<IIdentityProviderService>();
 
             // Only password grants
-            if (tokenRequest["grant_type"] != OAuthConstants.GrantNamePassword)
-                return this.CreateErrorCondition(OAuthErrorType.unsupported_grant_type, "Only 'password' grants allowed");
+            if (tokenRequest["grant_type"] != OAuthConstants.GrantNamePassword &&
+                tokenRequest["grant_type"] != OAuthConstants.GrantNameRefresh)
+                return this.CreateErrorCondition(OAuthErrorType.unsupported_grant_type, "Only 'password' or 'refresh_token' grants allowed");
 
             // Password grant needs well formed scope
             Uri scope = null;
@@ -119,8 +120,8 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             var appliesTo = new EndpointReference(tokenRequest["scope"]);
 
             // Validate username and password
-            if (String.IsNullOrWhiteSpace(tokenRequest["username"]))
-                return this.CreateErrorCondition(OAuthErrorType.invalid_request, "Invalid username or password");
+            if (String.IsNullOrWhiteSpace(tokenRequest["username"]) && String.IsNullOrWhiteSpace(tokenRequest["refresh_token"]))
+                return this.CreateErrorCondition(OAuthErrorType.invalid_request, "Invalid client grant message");
             else
             {
                 try
@@ -128,10 +129,37 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
                     IPrincipal principal = null;
 
                     // Is there a TFA secret
-                    if (WebOperationContext.Current.IncomingRequest.Headers[OAuthConstants.TfaHeaderName] != null)
-                        principal = identityProvider.Authenticate(tokenRequest["username"], tokenRequest["password"], WebOperationContext.Current.IncomingRequest.Headers[OAuthConstants.TfaHeaderName]);
+                    if (tokenRequest["grant_type"] == OAuthConstants.GrantNamePassword)
+                    {
+                        if (WebOperationContext.Current.IncomingRequest.Headers[OAuthConstants.TfaHeaderName] != null)
+                            principal = identityProvider.Authenticate(tokenRequest["username"], tokenRequest["password"], WebOperationContext.Current.IncomingRequest.Headers[OAuthConstants.TfaHeaderName]);
+                        else
+                            principal = identityProvider.Authenticate(tokenRequest["username"], tokenRequest["password"]);
+                    }
+                    else if (tokenRequest["grant_type"] == OAuthConstants.GrantNameRefresh && identityProvider is IIdentityRefreshProviderService)
+                    {
+                        var refreshToken = tokenRequest["refresh_token"];
+                        // Verify signature!
+                        var signingCredentials = this.CreateSigningCredentials();
+                        var signer = new JwtSecurityTokenHandler().SignatureProviderFactory.CreateForVerifying(signingCredentials.SigningKey, signingCredentials.SignatureAlgorithm);
+                        // Verify 
+                        var tokenParts = refreshToken.Split('.').Select(o=> Enumerable.Range(0, o.Length)
+                                 .Where(x => x % 2 == 0)
+                                 .Select(x => Convert.ToByte(o.Substring(x, 2), 16))
+                                 .ToArray()
+                        ).ToArray();
+                        if (tokenParts.Length != 2)
+                            throw new SecurityTokenException("Refresh token in invalid format");
+                        else if (!signer.Verify(tokenParts[1], tokenParts[0]))
+                            throw new SecurityTokenValidationException("Signature does not match refresh token data");
+                        else
+                        {
+                            var secret = tokenParts[1];
+                            principal = (identityProvider as IIdentityRefreshProviderService).Authenticate(secret);
+                        }
+                    }
                     else
-                        principal = identityProvider.Authenticate(tokenRequest["username"], tokenRequest["password"]);
+                        throw new InvalidOperationException("Invalid grant type");
 
                     if (principal == null)
                         return this.CreateErrorCondition(OAuthErrorType.invalid_grant, "Invalid username or password");
@@ -200,6 +228,7 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
 
             IRoleProviderService roleProvider = ApplicationContext.Current.GetService<IRoleProviderService>();
             IPolicyInformationService pip = ApplicationContext.Current.GetService<IPolicyInformationService>();
+            IIdentityRefreshProviderService idp = ApplicationContext.Current.GetService<IIdentityRefreshProviderService>();
 
             // TODO: Add configuration for expiry
             DateTime issued = DateTime.Parse((oizPrincipal as ClaimsPrincipal)?.FindFirst(ClaimTypes.AuthenticationInstant)?.Value ?? DateTime.Now.ToString("o")),
@@ -247,25 +276,8 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
 
             var principal = new ClaimsPrincipal(new ClaimsIdentity(oizPrincipal.Identity, claims));
 
-            SigningCredentials credentials = null;
-            // Signing credentials
-            if (this.m_configuration.Certificate != null)
-                credentials = new X509SigningCredentials(this.m_configuration.Certificate);
-            else if (!String.IsNullOrEmpty(this.m_configuration.ServerSecret) ||
-                this.m_configuration.ServerKey != null)
-            {
-                var sha = SHA256.Create();
-                credentials = new SigningCredentials(
-                    new InMemorySymmetricSecurityKey(this.m_configuration.ServerKey ?? sha.ComputeHash(Encoding.UTF8.GetBytes(this.m_configuration.ServerSecret))),
-                    "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256",
-                    "http://www.w3.org/2001/04/xmlenc#sha256",
-                    new SecurityKeyIdentifier(new NamedKeySecurityKeyIdentifierClause("keyid", "0"))
-                );
-
-            }
-            else
-                throw new SecurityException("Invalid signing configuration");
-
+            SigningCredentials credentials = this.CreateSigningCredentials();
+            
             // Generate security token            
             var jwt = new JwtSecurityToken(
                 signingCredentials: credentials,
@@ -276,16 +288,45 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             );
 
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+            var encoder = handler.SignatureProviderFactory.CreateForSigning(credentials.SigningKey, credentials.SignatureAlgorithm);
+            var refreshGrant = idp.CreateRefreshToken(oizPrincipal);
+            var refreshToken = String.Format("{0}.{1}", BitConverter.ToString(encoder.Sign(refreshGrant)).Replace("-",""), BitConverter.ToString(refreshGrant).Replace("-",""));
+
             WebOperationContext.Current.OutgoingResponse.ContentType = "application/json";
             OAuthTokenResponse response = new OAuthTokenResponse()
             {
                 TokenType = OAuthConstants.JwtTokenType,
                 AccessToken = handler.WriteToken(jwt),
-                ExpiresIn = (int)(expires.Subtract(DateTime.Now)).TotalMilliseconds
-                //RefreshToken = // TODO: Need to write a SessionProvider for this so we can keep track of refresh tokens 
+                ExpiresIn = (int)(expires.Subtract(DateTime.Now)).TotalMilliseconds,
+                RefreshToken = refreshToken // TODO: Need to write a SessionProvider for this so we can keep track of refresh tokens 
             };
 
             return this.CreateResponse(response);
+        }
+
+        /// <summary>
+        /// Create signing credentials
+        /// </summary>
+        private SigningCredentials CreateSigningCredentials()
+        {
+            SigningCredentials retVal = null;
+            // Signing credentials
+            if (this.m_configuration.Certificate != null)
+                retVal = new X509SigningCredentials(this.m_configuration.Certificate);
+            else if (!String.IsNullOrEmpty(this.m_configuration.ServerSecret) ||
+                this.m_configuration.ServerKey != null)
+            {
+                var sha = SHA256.Create();
+                retVal = new SigningCredentials(
+                    new InMemorySymmetricSecurityKey(this.m_configuration.ServerKey ?? sha.ComputeHash(Encoding.UTF8.GetBytes(this.m_configuration.ServerSecret))),
+                    "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256",
+                    "http://www.w3.org/2001/04/xmlenc#sha256",
+                    new SecurityKeyIdentifier(new NamedKeySecurityKeyIdentifierClause("keyid", "0"))
+                );
+            }
+            else
+                throw new SecurityException("Invalid signing configuration");
+            return retVal;
         }
 
         /// <summary>

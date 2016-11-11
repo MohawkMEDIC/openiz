@@ -42,13 +42,14 @@ using System.Diagnostics;
 using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Security.Claims;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services
 {
     /// <summary>
     /// Identity provider service
     /// </summary>
-    public sealed class SqlIdentityProvider : IIdentityProviderService
+    public sealed class SqlIdentityProvider : IIdentityRefreshProviderService
     {
 
         // Trace source
@@ -83,7 +84,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                 this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(userName, principal, true));
                 return principal;
             }
-            catch(SecurityException e)
+            catch (SecurityException e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Verbose, e.HResult, "Invalid credentials : {0}/{1}", userName, password);
 
@@ -207,7 +208,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     dataContext.SubmitChanges();
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
                 throw;
@@ -274,7 +275,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
 
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
                 throw;
@@ -311,7 +312,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                 }
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
                 throw;
@@ -339,10 +340,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                         throw new KeyNotFoundException("Specified user does not exist!");
 
                     // Obsolete
-					if (lockout)
-					{
-						user.Lockout = DateTimeOffset.Now;
-					}
+                    if (lockout)
+                    {
+                        user.Lockout = DateTimeOffset.Now;
+                    }
                     user.ObsoletionTime = null;
                     user.ObsoletedBy = null;
                     user.UpdatedByEntity = authContext.GetUser(dataContext);
@@ -432,6 +433,71 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             catch (Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Create and register a refresh token for the specified principal
+        /// </summary>
+        public byte[] CreateRefreshToken(IPrincipal principal)
+        {
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+            else if (!principal.Identity.IsAuthenticated)
+                throw new SecurityException("Can only generate refresh tokens for authenticated principals");
+
+            var sid = (principal as ClaimsPrincipal).FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (sid == null)
+                throw new InvalidOperationException("Cannot generate refresh claim for this principal");
+
+            byte[] secret = new byte[32];
+
+            // First we shall set the refresh claim
+            byte[] refreshSecret = Guid.NewGuid().ToByteArray(),
+                userSid = Guid.Parse(sid).ToByteArray();
+
+            // Now interlace them
+            for (var i = 0; i < refreshSecret.Length; i++)
+            {
+                secret[i * 2] = refreshSecret[i];
+                secret[(i * 2) + 1] = userSid[i];
+            }
+            this.AddClaim(principal.Identity.Name, new Claim(SqlServerConstants.RefreshSecretClaimType, BitConverter.ToString(secret).Replace("-", "")));
+            this.AddClaim(principal.Identity.Name, new Claim(SqlServerConstants.RefreshExpiryClaimType, DateTime.Parse((principal as ClaimsPrincipal).FindFirst(ClaimTypes.Expiration).Value).AddMinutes(5).ToString("o")));
+            return secret;
+        }
+
+        /// <summary>
+        /// Authenticate using a refresh token
+        /// </summary>
+        public IPrincipal Authenticate(byte[] refreshToken)
+        {
+            if (refreshToken == null)
+                throw new ArgumentNullException(nameof(refreshToken));
+            else if (refreshToken.Length != 32)
+                throw new ArgumentOutOfRangeException(nameof(refreshToken), "Invalid refresh token");
+
+
+            string trokenName = BitConverter.ToString(refreshToken).Replace("-", "");
+            var evt = new AuthenticatingEventArgs(trokenName);
+            this.Authenticating?.Invoke(this, evt);
+            if (evt.Cancel)
+                throw new SecurityException("Authentication cancelled");
+
+            try
+            {
+                var principal = SqlClaimsIdentity.Create(refreshToken).CreateClaimsPrincipal();
+                this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(trokenName, principal, true));
+                return principal;
+            }
+            catch (SecurityException e)
+            {
+                this.m_traceSource.TraceEvent(TraceEventType.Verbose, e.HResult, "Invalid credentials : {0}", refreshToken);
+
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(trokenName, null, false));
                 throw;
             }
         }

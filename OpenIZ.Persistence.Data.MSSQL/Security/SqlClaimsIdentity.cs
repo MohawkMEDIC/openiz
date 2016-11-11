@@ -73,6 +73,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
         private static SqlConfiguration s_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection(SqlServerConstants.ConfigurationSectionName) as SqlConfiguration;
 
         /// <summary>
+        /// Gets the time of issuance
+        /// </summary>
+        public DateTimeOffset IssuedOn { get { return this.m_issuedOn; } }
+
+        /// <summary>
+        /// Gets the time of issuance
+        /// </summary>
+        public DateTimeOffset Expiry { get { return this.m_issuedOn.AddMinutes(30); } }
+
+        /// <summary>
         /// Creates a principal based on username and password
         /// </summary>
         internal static SqlClaimsIdentity Create(String userName, String password)
@@ -123,6 +133,76 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
             catch(SqlException e)
             {
                 switch(e.Number)
+                {
+                    case 51900:
+                        throw new AuthenticationException("Account is locked");
+                    case 51901:
+                        throw new AuthenticationException("Invalid username/password");
+                    case 51902:
+                        throw new AuthenticationException("User requires two-factor authentication");
+                    default:
+                        throw e;
+                }
+            }
+            catch (Exception e)
+            {
+                s_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                throw new Exception("Creating identity failed", e);
+            }
+        }
+
+        /// <summary>
+        /// Creates a principal based on username and password
+        /// </summary>
+        internal static SqlClaimsIdentity Create(byte[] refreshToken)
+        {
+            try
+            {
+                
+                Guid? userId = Guid.Empty;
+
+                using (var dataContext = new Data.ModelDataContext(s_configuration.ReadWriteConnectionString))
+                {
+                    // Attempt to get a user
+                    var secretClaim = dataContext.SecurityUserClaims.FirstOrDefault(o => o.ClaimType == SqlServerConstants.RefreshSecretClaimType && o.ClaimValue == BitConverter.ToString(refreshToken).Replace("-", ""));
+
+                    if (secretClaim == null) throw new SecurityException("Invalid refresh token");
+
+                    // Next we ensure that the claim isn't expired
+                    var expiryClaim = dataContext.SecurityUserClaims.FirstOrDefault(o => o.ClaimType == SqlServerConstants.RefreshExpiryClaimType && o.UserId == secretClaim.UserId);
+                    if (expiryClaim == null || DateTimeOffset.Parse(expiryClaim.ClaimValue) < DateTime.Now)
+                        throw new SecurityException("Token expired");
+
+                    dataContext.sp_Authenticate(secretClaim.SecurityUser.UserName, secretClaim.SecurityUser.UserPassword, 3, ref userId);
+                }
+
+                using (var dataContext = new Data.ModelDataContext(s_configuration.ReadonlyConnectionString))
+                {
+                    var user = dataContext.SecurityUsers.SingleOrDefault(u => u.UserId == userId);
+                    var userIdentity = new SqlClaimsIdentity(user, true) { m_authenticationType = "Refresh" };
+
+                    // Is user allowed to login?
+                    if (user.UserClass == UserClassKeys.HumanUser)
+                        new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.Login, new GenericPrincipal(userIdentity, null)).Demand();
+                    else if (user.UserClass == UserClassKeys.ApplictionUser)
+                        new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.LoginAsService, new GenericPrincipal(userIdentity, null)).Demand();
+
+                    return userIdentity;
+                }
+            }
+            catch (AuthenticationException)
+            {
+                // TODO: Audit this
+                throw;
+            }
+            catch (SecurityException)
+            {
+                // TODO: Audit this
+                throw;
+            }
+            catch (SqlException e)
+            {
+                switch (e.Number)
                 {
                     case 51900:
                         throw new AuthenticationException("Account is locked");
@@ -260,9 +340,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
                 {
                     new Claim(ClaimTypes.Authentication, nameof(SqlClaimsIdentity)),
                     new Claim(ClaimTypes.AuthorizationDecision, this.m_isAuthenticated ? "GRANT" : "DENY"),
-                    new Claim(ClaimTypes.AuthenticationInstant, this.m_issuedOn.ToString("o")), // TODO: Fix this
+                    new Claim(ClaimTypes.AuthenticationInstant, this.IssuedOn.ToString("o")), // TODO: Fix this
                     new Claim(ClaimTypes.AuthenticationMethod, this.m_authenticationType),
-                    new Claim(ClaimTypes.Expiration, this.m_issuedOn.AddMinutes(30).ToString("o")), // TODO: Move this to configuration
+                    new Claim(ClaimTypes.Expiration, this.Expiry.ToString("o")), // TODO: Move this to configuration
                     new Claim(ClaimTypes.Name, this.m_securityUser.UserName),
                     new Claim(ClaimTypes.Sid, this.m_securityUser.UserId.ToString()),
                     new Claim(ClaimTypes.NameIdentifier, this.m_securityUser.UserId.ToString())
@@ -272,11 +352,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
                     claims.Add(new Claim(ClaimTypes.Email, this.m_securityUser.Email));
 
                 // TODO: Demographic data for the user
-
                 var retVal = new ClaimsPrincipal(
                         new ClaimsIdentity[] { new ClaimsIdentity(this, claims.AsReadOnly()) }
                     );
-
                 s_traceSource.TraceInformation("Created security principal from identity {0} > {1}", this, SqlClaimsIdentity.PrincipalToString(retVal));
                 return retVal;
             }
