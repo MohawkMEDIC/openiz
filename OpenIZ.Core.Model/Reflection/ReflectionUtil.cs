@@ -131,7 +131,7 @@ namespace OpenIZ.Core.Model.Reflection
                 Expression.MakeBinary(ExpressionType.LessThanOrEqual, Expression.MakeMemberAccess(guardParameter, effectiveVersionMethod), Expression.Constant(currentSequenceId)),
                 Expression.MakeBinary(ExpressionType.OrElse,
                     Expression.MakeBinary(ExpressionType.Equal, Expression.MakeMemberAccess(guardParameter, obsoleteVersionMethod), Expression.Constant(null)),
-                    Expression.MakeBinary(ExpressionType.LessThan, Expression.MakeMemberAccess(
+                    Expression.MakeBinary(ExpressionType.GreaterThan, Expression.MakeMemberAccess(
                         Expression.MakeMemberAccess(guardParameter, obsoleteVersionMethod),
                         typeof(Nullable<Decimal>).GetRuntimeProperty("Value")), Expression.Constant(currentSequenceId))
                 )

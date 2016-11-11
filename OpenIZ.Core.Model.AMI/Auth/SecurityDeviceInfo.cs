@@ -59,19 +59,19 @@ namespace OpenIZ.Core.Model.AMI.Auth
 		/// <summary>
 		/// Gets or sets the id of the device.
 		/// </summary>
-		[XmlAttribute("id")]
+		[XmlElement("id")]
 		public Guid? Id { get; set; }
 
 		/// <summary>
 		/// Gets or sets the name of the device.
 		/// </summary>
-		[XmlAttribute("name")]
+		[XmlElement("name")]
 		public string Name { get; set; }
 
 		/// <summary>
 		/// Gets or sets the secret of the device.
 		/// </summary>
-		[XmlAttribute("deviceSecret")]
+		[XmlElement("deviceSecret")]
 		public string DeviceSecret { get; set; }
 
 		/// <summary>

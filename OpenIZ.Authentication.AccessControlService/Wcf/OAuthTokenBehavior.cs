@@ -165,6 +165,7 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
                         return this.CreateErrorCondition(OAuthErrorType.invalid_grant, "Invalid username or password");
                     else
                     {
+                        var clams = this.ValidateClaims(principal);
                         return this.CreateTokenResponse(principal, clientPrincipal, appliesTo, this.ValidateClaims(principal));
                     }
                 }

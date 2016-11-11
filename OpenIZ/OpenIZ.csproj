@@ -147,7 +147,7 @@
     <None Include="Data\000-SeverityObservation.dataset">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\000-Materials.dataset">
+    <None Include="Data\001-Materials.dataset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

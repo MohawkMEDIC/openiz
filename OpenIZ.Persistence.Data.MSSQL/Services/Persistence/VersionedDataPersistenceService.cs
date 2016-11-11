@@ -34,6 +34,9 @@ using MARC.HI.EHRS.SVC.Core.Data;
 using OpenIZ.Core.Services;
 using OpenIZ.Core;
 using OpenIZ.Core.Model.Reflection;
+using System.Data.Linq.Mapping;
+using System.Reflection;
+using System.Linq.Expressions;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -168,20 +171,60 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 this.m_tracer.TraceEvent(System.Diagnostics.TraceEventType.Information, 0, "Missing persister for type {0}", typeof(TAssociation).Name);
                 return;
             }
+
+            Dictionary<Guid, Decimal> sourceVersionMaps = new Dictionary<Guid, decimal>();
+
             // Ensure the source key is set
             foreach (var itm in storage)
                 if (itm.SourceEntityKey == Guid.Empty ||
                     itm.SourceEntityKey == null)
                     itm.SourceEntityKey = source.Key;
+                else if(itm.SourceEntityKey != source.Key && !sourceVersionMaps.ContainsKey(itm.SourceEntityKey??Guid.Empty)) // The source comes from somewhere else
+                { 
+                    // First we have our association type, we need to get the property that is 
+                    // linked on the association to get the map to the underlying SQL table
+                    var domainType = m_mapper.MapModelType(typeof(TDomainAssociation));
+                    var mappedProperty = domainType.GetRuntimeProperty("AssociatedItemKey").GetCustomAttribute<LinqPropertyMapAttribute>().LinqMember;
+                    // Next we want to get the association entity which is linked to this key identifier
+                    var rpi = domainType.GetRuntimeProperties().FirstOrDefault(o=>o.GetCustomAttribute<AssociationAttribute>()?.ThisKey == mappedProperty);
+                    // Now we want to switch the type to the entity that is linked to the key so we can 
+                    // get ist primary key
+                    domainType = rpi.PropertyType;
+                    var pkey = domainType.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<ColumnAttribute>()?.IsPrimaryKey == true);
+                    // Now we want to get the key that we should query by that is version independent
+                    domainType = typeof(TDomain);
+                    pkey = domainType.GetRuntimeProperty(pkey.Name);
+                    // Construct a LINQ expression to query the db
+                    var parm = Expression.Parameter(domainType);
+                    var delegateType = typeof(Func<,>).MakeGenericType(domainType, typeof(bool));
+                    var predicate = Expression.Lambda(delegateType, Expression.MakeBinary(ExpressionType.Equal, Expression.MakeMemberAccess(parm, pkey), Expression.Constant(itm.SourceEntityKey.Value)), parm);
+                    // Get the SQL table instance and filter
+                    var table = context.GetTable(domainType);
+                    var tableEnum = table.Provider.Execute(table.Expression);
+                    var methodInfo = typeof(Queryable).GetGenericMethod("FirstOrDefault", new Type[] { domainType }, new Type[]
+                    {
+                        typeof(IQueryable<>).MakeGenericType(domainType),
+                        typeof(Expression<>).MakeGenericType(delegateType)
+                    });
+                    var result = methodInfo.Invoke(null, new Object[] { tableEnum, predicate }) as IDbVersionedData;
+                    sourceVersionMaps.Add(itm.SourceEntityKey.Value, result.VersionSequenceId);
+
+                    //var whereMethod = 
+                    //var result = context.GetTable(domainType).Provider.Execute(predicate);
+                }
 
             // Get existing
+            // TODO: What happens which this is reverse?
             var existing = context.GetTable<TDomainAssociation>().Where(ExpressionRewriter.Rewrite<TDomainAssociation>(o => o.AssociatedItemKey == source.Key && source.VersionSequence >= o.EffectiveVersionSequenceId && (source.VersionSequence < o.ObsoleteVersionSequenceId || !o.ObsoleteVersionSequenceId.HasValue))).ToList().Select(o => m_mapper.MapDomainInstance<TDomainAssociation, TAssociation>(o) as TAssociation);
             
             // Remove old
             var obsoleteRecords = existing.Where(o => !storage.Any(ecn => ecn.Key == o.Key));
             foreach (var del in obsoleteRecords)
             {
-                del.ObsoleteVersionSequenceId = source.VersionSequence;
+                decimal obsVersion = 0;
+                if (!sourceVersionMaps.TryGetValue(del.SourceEntityKey.Value, out obsVersion))
+                    obsVersion = source.VersionSequence.GetValueOrDefault();
+                del.ObsoleteVersionSequenceId = obsVersion;
                 persistenceService.Update(context, del, principal);
             }
 
@@ -194,7 +237,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var insertRecords = storage.Where(o => !existing.Any(ecn => ecn.Key == o.Key));
             foreach (var ins in insertRecords)
             {
-                ins.EffectiveVersionSequenceId = source.VersionSequence;
+                decimal eftVersion = 0;
+                if (!sourceVersionMaps.TryGetValue(ins.SourceEntityKey.Value, out eftVersion))
+                    eftVersion = source.VersionSequence.GetValueOrDefault();
+                ins.EffectiveVersionSequenceId  = eftVersion;
+
                 persistenceService.Insert(context, ins, principal);
             }
         }
