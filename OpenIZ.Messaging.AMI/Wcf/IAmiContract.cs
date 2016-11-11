@@ -84,12 +84,20 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/alert", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		AlertMessageInfo CreateAlert(AlertMessageInfo alertMessageInfo);
 
-		/// <summary>
-		/// Creates a device in the IMS.
-		/// </summary>
-		/// <param name="device">The device to be created.</param>
-		/// <returns>Returns the newly created device.</returns>
-		[WebInvoke(UriTemplate = "/device", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+        /// <summary>
+        /// Creates an assigning authority.
+        /// </summary>
+        /// <param name="assigningAuthorityInfo">The assigning authority to be created.</param>
+        /// <returns>Returns the created assigning authority.</returns>
+        [WebInvoke(UriTemplate = "/assigningAuthority", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+        AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo);
+
+        /// <summary>
+        /// Creates a device in the IMS.
+        /// </summary>
+        /// <param name="device">The device to be created.</param>
+        /// <returns>Returns the newly created device.</returns>
+        [WebInvoke(UriTemplate = "/device", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		SecurityDevice CreateDevice(SecurityDevice device);
 
 		/// <summary>

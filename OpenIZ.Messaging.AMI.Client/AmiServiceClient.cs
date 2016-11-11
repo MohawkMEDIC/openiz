@@ -91,12 +91,22 @@ namespace OpenIZ.Messaging.AMI.Client
 			return this.Client.Post<AlertMessageInfo, AlertMessageInfo>("alert", this.Client.Accept, alertMessageInfo);
 		}
 
-		/// <summary>
-		/// Creates a device in the IMS.
-		/// </summary>
-		/// <param name="device">The device to be created.</param>
-		/// <returns>Returns the newly created device.</returns>
-		public SecurityDevice CreateDevice(SecurityDevice device)
+        /// <summary>
+        /// Creates an assigning authority.
+        /// </summary>
+        /// <param name="assigningAuthorityInfo">The assigning authority to be created.</param>
+        /// <returns>Returns the created assigning authority.</returns>
+        public AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo)
+        {
+            return this.Client.Post<AssigningAuthorityInfo, AssigningAuthorityInfo>("alert", this.Client.Accept, assigningAuthorityInfo);
+        }
+
+        /// <summary>
+        /// Creates a device in the IMS.
+        /// </summary>
+        /// <param name="device">The device to be created.</param>
+        /// <returns>Returns the newly created device.</returns>
+        public SecurityDevice CreateDevice(SecurityDevice device)
 		{
 			return this.Client.Post<SecurityDevice, SecurityDevice>("device", this.Client.Accept, device);
 		}

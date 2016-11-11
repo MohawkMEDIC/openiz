@@ -139,12 +139,31 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			return new AlertMessageInfo(createdAlert);
 		}
 
-		/// <summary>
-		/// Creates a device in the IMS.
-		/// </summary>
-		/// <param name="device">The device to be created.</param>
-		/// <returns>Returns the newly created device.</returns>
-		public SecurityDevice CreateDevice(SecurityDevice device)
+        /// <summary>
+        /// Creates an assigning authority.
+        /// </summary>
+        /// <param name="assigningAuthorityInfo">The assigning authority to be created.</param>
+        /// <returns>Returns the created assigning authority.</returns>
+        public AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo)
+        {
+            var assigningAuthorityRepositoryService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
+
+            if (assigningAuthorityRepositoryService == null)
+            {
+                throw new InvalidOperationException(string.Format("{0} not found", nameof(IAssigningAuthorityRepositoryService)));
+            }
+
+            var createdAssigningAuthority = assigningAuthorityRepositoryService.Insert(assigningAuthorityInfo.AssigningAuthority);
+
+            return new AssigningAuthorityInfo(createdAssigningAuthority);
+        }
+
+        /// <summary>
+        /// Creates a device in the IMS.
+        /// </summary>
+        /// <param name="device">The device to be created.</param>
+        /// <returns>Returns the newly created device.</returns>
+        public SecurityDevice CreateDevice(SecurityDevice device)
 		{
 			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
