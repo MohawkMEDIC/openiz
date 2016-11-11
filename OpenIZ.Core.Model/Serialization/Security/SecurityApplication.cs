@@ -46,7 +46,7 @@ namespace OpenIZ.Core.Model.Security
         public String ApplicationSecret { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the security device/user/role/devie
+        /// Gets or sets the name of the security device/user/role/device.
         /// </summary>
         [XmlElement("name"), JsonProperty("name")]
         public String Name { get; set; }

@@ -57,16 +57,10 @@ namespace OpenIZ.Core.Model.AMI.Auth
 		}
 
 		/// <summary>
-		/// Gets or sets the id of the device.
+		/// Gets or sets the security device of the security device info.
 		/// </summary>
-		[XmlAttribute("id")]
-		public Guid? Id { get; set; }
-
-		/// <summary>
-		/// Gets or sets the name of the device.
-		/// </summary>
-		[XmlAttribute("name")]
-		public string Name { get; set; }
+		[XmlElement("device")]
+		public SecurityDevice Device { get; set; }
 
 		/// <summary>
 		/// Gets or sets the secret of the device.
@@ -75,15 +69,20 @@ namespace OpenIZ.Core.Model.AMI.Auth
 		public string DeviceSecret { get; set; }
 
 		/// <summary>
+		/// Gets or sets the id of the device.
+		/// </summary>
+		[XmlElement("id")]
+		public Guid? Id { get; set; }
+
+		/// <summary>
+		/// Gets or sets the name of the device.
+		/// </summary>
+		[XmlAttribute("name")]
+		public string Name { get; set; }
+		/// <summary>
 		/// Gets or sets the list of security policies associated with the security device.
 		/// </summary>
 		[XmlElement("policy")]
 		public List<SecurityPolicyInstance> Policies { get; set; }
-
-		/// <summary>
-		/// Gets or sets the security device of the security device info.
-		/// </summary>
-		[XmlElement("device")]
-		public SecurityDevice Device { get; set; }
 	}
 }
