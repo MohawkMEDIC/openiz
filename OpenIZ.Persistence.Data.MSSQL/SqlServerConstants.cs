@@ -34,5 +34,14 @@ namespace OpenIZ.Persistence.Data.MSSQL
         public const string ConfigurationSectionName = "openiz.persistence.data.mssql";
         public const string ModelMapResourceName = "OpenIZ.Persistence.Data.MSSQL.Data.ModelMap.xml";
         public const string IdentityTraceSourceName = "OpenIZ.Persistence.Data.MSSQL.Services.Identity";
+
+        /// <summary>
+        /// Refresh secret claim
+        /// </summary>
+        public const string RefreshSecretClaimType = "http://openiz.org/claims/mssql/refreshSecret";
+        /// <summary>
+        /// The refresh secret
+        /// </summary>
+        public const string RefreshExpiryClaimType = "http://openiz.org/claims/mssql/refreshExpiry";
     }
 }
