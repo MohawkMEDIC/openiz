@@ -37,9 +37,9 @@ namespace OpenIZ.Messaging.RISI.Configuration
 		/// <returns>Returns an instance of the configuration section.</returns>
 		public object Create(object parent, object configContext, XmlNode section)
 		{
-			XmlElement serviceElement = section.SelectSingleNode("./*[local-name() = 'service']") as XmlElement;
+			var serviceElement = section.SelectSingleNode("./*[local-name() = 'service']") as XmlElement;
 
-			string wcfServiceName = serviceElement?.Attributes["wcfServiceName"]?.Value;
+			var wcfServiceName = serviceElement?.Attributes["wcfServiceName"]?.Value;
 
 			if (wcfServiceName == null)
 			{
