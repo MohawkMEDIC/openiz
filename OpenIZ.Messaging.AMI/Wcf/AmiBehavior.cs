@@ -300,8 +300,16 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			{
 				UserName = user.UserName,
 				Email = user.Email,
-                UserClass = user.User.UserClass == Guid.Empty ? UserClassKeys.HumanUser : user.User.UserClass
 			};
+
+	        if (user.User == null)
+	        {
+		        userToCreate.UserClass = UserClassKeys.HumanUser;
+	        }
+	        else
+	        {
+		        userToCreate.UserClass = user.User.UserClass == Guid.Empty ? UserClassKeys.HumanUser : user.User.UserClass;
+	        }
 
 			if (user.Lockout.HasValue && user.Lockout.Value)
 			{
