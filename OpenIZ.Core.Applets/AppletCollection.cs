@@ -392,8 +392,10 @@ namespace OpenIZ.Core.Applets
                         }
                     case "body": // The content is an HTML Body element, we must inject the HTML header
                         {
-                            // Inject special headers
-                            var headerInjection = this.GetInjectionHeaders(asset, htmlContent.DescendantNodes().OfType<XElement>().Any(o => o.Name == xs_xhtml + "ui-view"));
+							htmlContent = htmlAsset.Html as XElement;
+
+							// Inject special headers
+							var headerInjection = this.GetInjectionHeaders(asset, htmlContent.DescendantNodes().OfType<XElement>().Any(o => o.Name == xs_xhtml + "ui-view"));
 
                             // Render the bundles
                             var bodyElement = htmlAsset.Html as XElement;
