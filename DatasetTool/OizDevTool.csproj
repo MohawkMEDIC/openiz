@@ -68,6 +68,9 @@
     <Compile Include="JsProxy.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\OpenIZ.licenseheader">
+      <Link>OpenIZ.licenseheader</Link>
+    </None>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>

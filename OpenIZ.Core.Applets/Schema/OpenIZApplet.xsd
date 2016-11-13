@@ -16,7 +16,7 @@
  - the License.
  - 
  - User: justi
- - Date: 2016-7-18
+ - Date: 2016-8-2
  -->
 <xs:schema xmlns:tns="http://openiz.org/applet" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:q1="http://openiz.org/model" xmlns:q2="http://openiz.org/model" xmlns:q3="http://openiz.org/model" xmlns:q4="http://openiz.org/model" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:q5="http://openiz.org/model" xmlns:q6="http://openiz.org/model" xmlns:q7="http://openiz.org/model" xmlns:q8="http://openiz.org/model" xmlns:q9="http://openiz.org/model" targetNamespace="http://openiz.org/applet" elementFormDefault="qualified">
 	<xs:import namespace="http://openiz.org/model" schemaLocation="OpenIZModel.xsd"/>

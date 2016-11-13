@@ -16,7 +16,7 @@
  - the License.
  - 
  - User: justi
- - Date: 2016-7-18
+ - Date: 2016-8-2
  -->
 <AppletManifest xmlns="http://openiz.org/applet">
   <info id="org.openiz.applet.test.layout" version="1.0.0.0">

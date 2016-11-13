@@ -84,8 +84,9 @@
     <EmbeddedResource Include="TestRules\SimpleManufacturedMaterialRule.js" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="TestRules\linq.js" />
-    <Content Include="TestRules\openiz-model.js" />
+    <None Include="..\OpenIZ.licenseheader">
+      <Link>OpenIZ.licenseheader</Link>
+    </None>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

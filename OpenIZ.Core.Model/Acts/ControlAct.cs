@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-16
+ * Date: 2016-8-2
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Constants;
