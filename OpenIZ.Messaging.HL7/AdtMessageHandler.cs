@@ -50,7 +50,7 @@ namespace OpenIZ.Messaging.HL7
 		/// <summary>
 		/// The internal reference to the <see cref="TraceSource"/> instance.
 		/// </summary>
-		private TraceSource tracer = new TraceSource("OpenIZ.Messaging.HL7");
+		private readonly TraceSource tracer = new TraceSource("OpenIZ.Messaging.HL7");
 
 		/// <summary>
 		/// Handle a received message on the LLP interface.
@@ -178,14 +178,14 @@ namespace OpenIZ.Messaging.HL7
 					throw new InvalidOperationException(ApplicationContext.Current.GetLocaleString("DTPE001"));
 				}
 
-				response = MessageUtil.CreateNack(request, details, typeof(NHapi.Model.V25.Message.ACK));
+				response = MessageUtil.CreateNack(request, details, typeof(ACK));
 
-				MessageUtil.UpdateMSH(new NHapi.Base.Util.Terser(response), request);
+				MessageUtil.UpdateMSH(new Terser(response), request);
 
-				(response as NHapi.Model.V25.Message.ACK).MSH.MessageType.TriggerEvent.Value = request.MSH.MessageType.TriggerEvent.Value;
-				(response as NHapi.Model.V25.Message.ACK).MSH.MessageType.MessageStructure.Value = "ACK";
+				(response as ACK).MSH.MessageType.TriggerEvent.Value = request.MSH.MessageType.TriggerEvent.Value;
+				(response as ACK).MSH.MessageType.MessageStructure.Value = "ACK";
 
-				NotificationEventArgs eventArgs = new NotificationEventArgs(request, NotificationType.Create);
+				 var eventArgs = new NotificationEventArgs<Patient>(patient, NotificationType.Create);
 
 				clientRegistryNotificationService?.NotifyRegister(eventArgs);
 			}
@@ -201,7 +201,7 @@ namespace OpenIZ.Messaging.HL7
 					details.Add(new ResultDetail(ResultDetailType.Error, e.Message, e));
 				}
 
-				response = MessageUtil.CreateNack(request, details, typeof(NHapi.Model.V25.Message.ACK));
+				response = MessageUtil.CreateNack(request, details, typeof(ACK));
 			}
 			finally
 			{
@@ -215,7 +215,7 @@ namespace OpenIZ.Messaging.HL7
 		/// <summary>
 		/// Handle a PIX query
 		/// </summary>
-		internal IMessage HandleIDQuery(NHapi.Model.V25.Message.QBP_Q21 request, Hl7MessageReceivedEventArgs evt)
+		internal IMessage HandleIDQuery(QBP_Q21 request, Hl7MessageReceivedEventArgs evt)
 		{
 			var patientRepositoryService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
 
@@ -268,7 +268,7 @@ namespace OpenIZ.Messaging.HL7
 				// Copy QPD
 				try
 				{
-					(response as NHapi.Model.V25.Message.RSP_K23).QPD.MessageQueryName.Identifier.Value = request.QPD.MessageQueryName.Identifier.Value;
+					(response as RSP_K23).QPD.MessageQueryName.Identifier.Value = request.QPD.MessageQueryName.Identifier.Value;
 					Terser reqTerser = new Terser(request),
 						rspTerser = new Terser(response);
 					rspTerser.Set("/QPD-1", reqTerser.Get("/QPD-1"));

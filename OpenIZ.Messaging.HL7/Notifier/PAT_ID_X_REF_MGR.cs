@@ -15,44 +15,35 @@
  * the License.
  * 
  * User: khannan
- * Date: 2016-10-2
+ * Date: 2016-11-12
  */
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIZ.Core.Model.Roles;
+using OpenIZ.Messaging.HL7.Configuration;
 
-namespace OpenIZ.Core.Event
+namespace OpenIZ.Messaging.HL7.Notifier
 {
 	/// <summary>
-	/// Represents a notification type.
+	/// Represents a patient identity cross reference manager notifier.
 	/// </summary>
-	public enum NotificationType
+	public class PAT_ID_X_REF_MGR : INotifier<Patient>
 	{
 		/// <summary>
-		/// Any action occurs. This is only used
+		/// Gets or sets the target configuration of the notifier.
 		/// </summary>
-		Any = Create | Update | DuplicatesResolved,
+		public TargetConfiguration TargetConfiguration { get; set; }
 
 		/// <summary>
-		/// Indicates a creation notification.
+		/// Notifies a remote system.
 		/// </summary>
-		Create = 0x1,
-		
-		/// <summary>
-		/// Indicates a duplicates resolved notification.
-		/// </summary>
-		DuplicatesResolved = 0x2,
-
-		/// <summary>
-		/// Indicates a reconciliation required notification.
-		/// </summary>
-		ReconciliationRequired = 0x4,
-
-		/// <summary>
-		/// Indicates an update notification.
-		/// </summary>
-		Update = 0x8
+		/// <param name="workItem">The work item of the notification.</param>
+		public void Notify(NotificationQueueWorkItem<Patient> workItem)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

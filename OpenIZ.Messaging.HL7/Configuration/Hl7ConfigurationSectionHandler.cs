@@ -1,28 +1,27 @@
 ﻿/*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: khannan
  * Date: 2016-11-11
  */
+
+using OpenIZ.Core.Event;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 
 namespace OpenIZ.Messaging.HL7.Configuration
@@ -41,7 +40,174 @@ namespace OpenIZ.Messaging.HL7.Configuration
 		/// <returns>Returns an instance of the configuration section.</returns>
 		public object Create(object parent, object configContext, XmlNode section)
 		{
-			throw new NotImplementedException();
+			var targetsElement = section.SelectNodes("./*[local-name() = 'targets']/*[local-name() = 'add']");
+
+			var notificationConfiguration = new NotificationConfiguration(Environment.ProcessorCount);
+
+			if (targetsElement == null || targetsElement.Count == 0)
+			{
+				return notificationConfiguration;
+			}
+
+			if (section.Attributes["concurrencyLevel"] != null)
+			{
+				notificationConfiguration.ConcurrencyLevel = int.Parse(section.Attributes["concurrencyLevel"].Value);
+			}
+
+			foreach (XmlElement target in targetsElement)
+			{
+				var targetConfiguration = new TargetConfiguration();
+
+				var connectionString = target.Attributes["connectionString"]?.Value;
+
+				if (connectionString == null)
+				{
+					throw new ConfigurationErrorsException("Target must have a connection string");
+				}
+				else
+				{
+					targetConfiguration.ConnectionString = connectionString;
+				}
+
+				var name = target.Attributes["name"]?.Value;
+
+				if (name != null)
+				{
+					targetConfiguration.Name = name;
+				}
+
+				var actorType = "PAT_IDENTITY_X_REF_MGR";
+
+				if (target.Attributes["actor"] != null)
+				{
+					actorType = target.Attributes["actor"]?.Value;
+				}
+
+				targetConfiguration.ActAs = actorType;
+
+				var deviceId = target.Attributes["deviceId"]?.Value;
+
+				if (deviceId != null)
+				{
+					targetConfiguration.DeviceId = deviceId;
+				}
+
+				// Parse certificate data
+				var certificateNode = target.SelectSingleNode("./*[local-name() = 'trustedIssuerCertificate']");
+
+				if (certificateNode != null)
+				{
+					XmlAttribute storeLocationAtt = certificateNode.Attributes["storeLocation"],
+								storeNameAtt = certificateNode.Attributes["storeName"],
+								findTypeAtt = certificateNode.Attributes["x509FindType"],
+								findValueAtt = certificateNode.Attributes["findValue"];
+
+					if (findTypeAtt == null || findValueAtt == null)
+					{
+						throw new ConfigurationErrorsException("Must supply x509FindType and findValue"); // can't find if nothing to find...
+					}
+
+					targetConfiguration.TrustedIssuerCertLocation = (StoreLocation)Enum.Parse(typeof(StoreLocation), storeLocationAtt == null ? "LocalMachine" : storeLocationAtt.Value);
+					targetConfiguration.TrustedIssuerCertStore = (StoreName)Enum.Parse(typeof(StoreName), storeNameAtt == null ? "My" : storeNameAtt.Value);
+					targetConfiguration.TrustedIssuerCertificate = Hl7ConfigurationSectionHandler.FindCertificate(targetConfiguration.TrustedIssuerCertStore, targetConfiguration.TrustedIssuerCertLocation, (X509FindType)Enum.Parse(typeof(X509FindType), findTypeAtt.Value), findValueAtt.Value);
+				}
+
+				certificateNode = target.SelectSingleNode("./*[local-name() = 'clientLLPCertificate']");
+
+				if (certificateNode != null)
+				{
+					XmlAttribute storeLocationAtt = certificateNode.Attributes["storeLocation"],
+								storeNameAtt = certificateNode.Attributes["storeName"],
+								findTypeAtt = certificateNode.Attributes["x509FindType"],
+								findValueAtt = certificateNode.Attributes["findValue"];
+
+					if (findTypeAtt == null || findValueAtt == null)
+					{
+						throw new ConfigurationErrorsException("Must supply x509FindType and findValue"); // can't find if nothing to find...
+					}
+
+					targetConfiguration.LlpClientCertLocation = (StoreLocation)Enum.Parse(typeof(StoreLocation), storeLocationAtt == null ? "LocalMachine" : storeLocationAtt.Value);
+					targetConfiguration.LlpClientCertStore = (StoreName)Enum.Parse(typeof(StoreName), storeNameAtt == null ? "My" : storeNameAtt.Value);
+					targetConfiguration.LlpClientCertificate = Hl7ConfigurationSectionHandler.FindCertificate(targetConfiguration.LlpClientCertStore, targetConfiguration.LlpClientCertLocation, (X509FindType)Enum.Parse(typeof(X509FindType), findTypeAtt.Value), findValueAtt.Value);
+				}
+
+				// Get the notification domains and add them to the configuration
+				var notificationElements = target.SelectNodes("./*[local-name() = 'notify']");
+
+				foreach (XmlElement notificationElement in notificationElements)
+				{
+					// Attempt to parse the notification element configuration
+					var notificationDomain = string.Empty;
+
+					if (notificationElement.Attributes["domain"] == null)
+					{
+						throw new ConfigurationErrorsException("Notification element must have a domain");
+					}
+					else
+					{
+						notificationDomain = notificationElement.Attributes["domain"].Value;
+					}
+
+					var notificationDomainConfiguration = new NotificationDomainConfiguration(notificationDomain);
+
+					// Parse the actions
+					var actionsElements = notificationElement.SelectNodes("./*[local-name() = 'action']");
+					foreach (XmlElement ae in actionsElements)
+					{
+						// Action types
+						var value = NotificationType.Any;
+
+						if (ae.Attributes["type"] == null)
+						{
+							throw new ConfigurationErrorsException("Action element must have a type");
+						}
+
+						if (!Enum.TryParse(ae.Attributes["type"].Value, out value))
+						{
+							throw new ConfigurationErrorsException($"Invalid action type '{ae.Attributes["type"].Value}'");
+						}
+
+						notificationDomainConfiguration.ActionConfigurations.Add(new ActionConfiguration(value));
+					}
+
+					targetConfiguration.NotificationDomainConfigurations.Add(notificationDomainConfiguration);
+				}
+			}
+
+			return notificationConfiguration;
+		}
+
+		/// <summary>
+		/// Finds a certificate.
+		/// </summary>
+		/// <param name="storeName">The store name to use to find the certificate.</param>
+		/// <param name="storeLocation">The store location to use to find the certificate.</param>
+		/// <param name="findType">The find type to use to find the certificate.</param>
+		/// <param name="findValue">The find value to use to find the certificate.</param>
+		/// <returns>Returns a certificate.</returns>
+		private static X509Certificate2 FindCertificate(StoreName storeName, StoreLocation storeLocation, X509FindType findType, string findValue)
+		{
+			var store = new X509Store(storeName, storeLocation);
+
+			try
+			{
+				store.Open(OpenFlags.ReadOnly);
+
+				var certs = store.Certificates.Find(findType, findValue, false);
+
+				if (certs.Count > 0)
+				{
+					return certs[0];
+				}
+				else
+				{
+					throw new InvalidOperationException("Cannot locate certificate");
+				}
+			}
+			finally
+			{
+				store.Close();
+			}
 		}
 	}
 }

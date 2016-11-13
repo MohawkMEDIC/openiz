@@ -20,6 +20,7 @@
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +31,9 @@ using OpenIZ.Core.Event;
 using NHapi.Model.V25.Message;
 using OpenIZ.Messaging.HL7.Queue;
 using System.Diagnostics;
+using MARC.HI.EHRS.SVC.Core;
+using OpenIZ.Core.Model;
+using OpenIZ.Messaging.HL7.Configuration;
 
 namespace OpenIZ.Messaging.HL7.Services
 {
@@ -39,6 +43,11 @@ namespace OpenIZ.Messaging.HL7.Services
 	[Service(ServiceInstantiationType.Instance)]
 	public class ClientRegistryNotificationService : IClientRegistryNotificationService, IDisposable
 	{
+		/// <summary>
+		/// The internal reference to the <see cref="NotificationConfiguration"/> instance.
+		/// </summary>
+		private NotificationConfiguration configuration;
+
 		/// <summary>
 		/// The internal reference to the sync lock instance.
 		/// </summary>
@@ -59,7 +68,18 @@ namespace OpenIZ.Messaging.HL7.Services
 		/// </summary>
 		public ClientRegistryNotificationService()
 		{
-			this.threadPool = new WaitThreadPool();
+			var configurationManager = ApplicationContext.Current.GetService<IConfigurationManager>();
+
+			if (configurationManager != null)
+			{
+				this.configuration = configurationManager.GetSection("openiz.messaging.hl7.notification.pixpdq") as NotificationConfiguration;
+			}
+			else
+			{
+				this.configuration = ConfigurationManager.GetSection("openiz.messaging.hl7.notification.pixpdq") as NotificationConfiguration;
+			}
+
+			this.threadPool = new WaitThreadPool(this.configuration.ConcurrencyLevel);
 		}
 
 		#region IDisposable Support
@@ -107,49 +127,69 @@ namespace OpenIZ.Messaging.HL7.Services
 		/// Notify that duplicates have been resolved.
 		/// </summary>
 		/// <param name="eventArgs">The notification event arguments.</param>
-		public void NotifyDuplicatesResolved(NotificationEventArgs eventArgs)
+		public void NotifyDuplicatesResolved(NotificationEventArgs<Patient> eventArgs)
 		{
+			throw new NotImplementedException();
+		}
 
+		/// <summary>
+		/// Notifies a remote system.
+		/// </summary>
+		/// <param name="state">The notification data.</param>
+		private void NotifyInternal(object state)
+		{
+			var workItem = state as NotificationQueueWorkItem<Patient>;
+
+			if (workItem == null)
+			{
+				throw new ArgumentException($"Notification event data must be of type {typeof(NotificationQueueWorkItem<Patient>)}");
+			}
+
+			try
+			{
+				List<TargetConfiguration> targetConfigurations = null;
+
+				lock (syncLock)
+				{
+					targetConfigurations = this.configuration.TargetConfigurations.FindAll(t => t.NotificationDomainConfigurations.Exists(delegate(NotificationDomainConfiguration domainConfiguration)
+					{
+						var action = domainConfiguration.ActionConfigurations.Exists(a => (a.NotificationType & workItem.NotificationType) == workItem.NotificationType);
+						var domain = workItem.Event.Identifiers.Exists(i => i.Authority.DomainName == domainConfiguration.Domain);
+
+						return action && domain;
+					}));
+				}
+
+				foreach (var target in targetConfigurations)
+				{
+					target.Notifier.Notify(new NotificationQueueWorkItem<IdentifiedData>(workItem.Event, workItem.NotificationType));
+				}
+			}
+			catch (Exception e)
+			{
+#if DEBUG
+				this.tracer.TraceEvent(TraceEventType.Error, 0, e.StackTrace);
+#endif
+				this.tracer.TraceEvent(TraceEventType.Error, 0, e.Message);
+			}
 		}
 
 		/// <summary>
 		/// Notify that a registration occurred.
 		/// </summary>
 		/// <param name="eventArgs">The notification event arguments.</param>
-		public void NotifyRegister(NotificationEventArgs eventArgs)
+		public void NotifyRegister(NotificationEventArgs<Patient> eventArgs)
 		{
-			if (eventArgs.Data == null)
-			{
-				throw new ArgumentNullException(string.Format("{0} cannot be null", nameof(eventArgs.Data)));
-			}
-
-			if (eventArgs.Data is ADT_A01)
-			{
-				var message = eventArgs.Data as ADT_A01;
-
-				message.MSH.MessageType.TriggerEvent.Value = "A04";
-
-				MessageQueueWorkItem workItem = new MessageQueueWorkItem(message);
-
-				if (!workItem.TrySend())
-				{
-					this.tracer.TraceEvent(TraceEventType.Warning, 0, "Unable to registration notification");
-					Hl7MessageQueue.Current.Enqueue(workItem);
-				}
-			}
-			else
-			{
-				throw new InvalidOperationException(string.Format("{0} must be of type {1}", nameof(eventArgs.Data), nameof(ADT_A01)));
-			}
+			this.threadPool.QueueUserWorkItem(NotifyInternal, new NotificationQueueWorkItem<Patient>(eventArgs.Data, eventArgs.NotificationType));
 		}
 
 		/// <summary>
 		/// Notify that an update occurred.
 		/// </summary>
 		/// <param name="eventArgs">The notification event arguments.</param>
-		public void NotifyUpdate(NotificationEventArgs eventArgs)
+		public void NotifyUpdate(NotificationEventArgs<Patient> eventArgs)
 		{
-
+			this.threadPool.QueueUserWorkItem(NotifyInternal, new NotificationQueueWorkItem<Patient>(eventArgs.Data, eventArgs.NotificationType));
 		}
 	}
 }

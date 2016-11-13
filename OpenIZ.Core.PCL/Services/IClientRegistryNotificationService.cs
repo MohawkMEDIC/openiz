@@ -37,18 +37,18 @@ namespace OpenIZ.Core.Services
 		/// Notify that duplicates have been resolved.
 		/// </summary>
 		/// <param name="eventArgs">The notification event arguments.</param>
-		void NotifyDuplicatesResolved(NotificationEventArgs eventArgs);
+		void NotifyDuplicatesResolved(NotificationEventArgs<Patient> eventArgs);
 
 		/// <summary>
 		/// Notify that a registration occurred.
 		/// </summary>
 		/// <param name="eventArgs">The notification event arguments.</param>
-		void NotifyRegister(NotificationEventArgs eventArgs);
+		void NotifyRegister(NotificationEventArgs<Patient> eventArgs);
 
 		/// <summary>
 		/// Notify that an update occurred.
 		/// </summary>
 		/// <param name="eventArgs">The notification event arguments.</param>
-		void NotifyUpdate(NotificationEventArgs eventArgs);
+		void NotifyUpdate(NotificationEventArgs<Patient> eventArgs);
 	}
 }

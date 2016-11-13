@@ -29,10 +29,10 @@ namespace OpenIZ.Core.Event
 	/// <summary>
 	/// Represents notification event arguments.
 	/// </summary>
-	public class NotificationEventArgs : EventArgs
+	public class NotificationEventArgs<T> : EventArgs where T : IdentifiedData
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="NotificationEventArgs"/> class.
+		/// Initializes a new instance of the <see cref="NotificationEventArgs{T}"/> class.
 		/// </summary>
 		public NotificationEventArgs()
 		{
@@ -40,22 +40,22 @@ namespace OpenIZ.Core.Event
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="NotificationEventArgs"/> class
+		/// Initializes a new instance of the <see cref="NotificationEventArgs{T}"/> class
 		/// with identified data.
 		/// </summary>
 		/// <param name="data">The raw request data.</param>
-		public NotificationEventArgs(object data)
+		public NotificationEventArgs(T data)
 		{
 			if (data == null)
 			{
-				throw new ArgumentNullException(string.Format("{0} cannot be null", nameof(data)));
+				throw new ArgumentNullException($"{nameof(data)} cannot be null");
 			}
 
 			this.Data = data;
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="NotificationEventArgs"/> class
+		/// Initializes a new instance of the <see cref="NotificationEventArgs{T}"/> class
 		/// with a specific notification type.
 		/// </summary>
 		/// <param name="notificationType">The type of notification.</param>
@@ -65,30 +65,30 @@ namespace OpenIZ.Core.Event
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="NotificationEventArgs"/> class
+		/// Initializes a new instance of the <see cref="NotificationEventArgs{T}"/> class
 		/// with identified data and a specific notification type.
 		/// </summary>
 		/// <param name="data">The raw request data.</param>
 		/// <param name="notificationType">The type of notification.</param>
-		public NotificationEventArgs(object data, NotificationType notificationType)
+		public NotificationEventArgs(T data, NotificationType notificationType)
 		{
 			if (data == null)
 			{
-				throw new ArgumentNullException(string.Format("{0} cannot be null", nameof(data)));
+				throw new ArgumentNullException($"{nameof(data)} cannot be null");
 			}
 
 			this.Data = data;
-			this.NotificationType = NotificationType;
+			this.NotificationType = notificationType;
 		}
 
 		/// <summary>
 		/// Gets or sets the data of the notification.
 		/// </summary>
-		public object Data { get; set; }
+		public T Data { get; }
 
 		/// <summary>
 		/// Gets or sets the type of notification.
 		/// </summary>
-		public NotificationType NotificationType { get; set; }
+		public NotificationType NotificationType { get; }
 	}
 }

@@ -19,11 +19,13 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Messaging.HL7.Configuration
 {
@@ -53,7 +55,36 @@ namespace OpenIZ.Messaging.HL7.Configuration
 			this.Name = name;
 			this.ConnectionString = connectionString;
 			this.DeviceId = deviceId;
+
+			var notifierType = Array.Find(typeof(TargetConfiguration).Assembly.GetExportedTypes(), t => t.Name == actAs);
+
+			if (notifierType == null)
+			{
+				throw new ConfigurationErrorsException($"Could not find the specified actor implementation {actAs}");
+			}
+
+			var constructorInfo = notifierType.GetConstructor(Type.EmptyTypes);
+
+			if (constructorInfo == null)
+			{
+				throw new ConfigurationErrorsException($"Could not find the specified actor implementation {actAs}");
+			}
+
+			this.Notifier = constructorInfo.Invoke(null) as INotifier<IdentifiedData>;
+
+			if (this.Notifier == null)
+			{
+				throw new InvalidOperationException($"Unable to create instance of {nameof(constructorInfo.Name)}");
+			}
+
+			this.Notifier.TargetConfiguration = this;
 		}
+
+		/// <summary>
+		/// Gets or sets the act as actor of the configuration.
+		/// </summary>
+		[XmlIgnore]
+		public string ActAs { get; set; }
 
 		/// <summary>
 		/// Gets or sets the connection string of the target configuration.
@@ -96,6 +127,11 @@ namespace OpenIZ.Messaging.HL7.Configuration
 		/// </summary>
 		[XmlIgnore]
 		public List<NotificationDomainConfiguration> NotificationDomainConfigurations { get; set; }
+
+		/// <summary>
+		/// Gets the notifier.
+		/// </summary>
+		public INotifier<IdentifiedData> Notifier { get; }
 
 		/// <summary>
 		/// Gets the server certificate.

@@ -15,27 +15,33 @@
  * the License.
  * 
  * User: khannan
- * Date: 2016-11-11
+ * Date: 2016-11-12
  */
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIZ.Core.Model;
+using OpenIZ.Messaging.HL7.Configuration;
 
-namespace OpenIZ.Messaging.HL7.Configuration
+namespace OpenIZ.Messaging.HL7
 {
 	/// <summary>
-	/// Represents an HL7 configuration.
+	/// Represents a notifier.
 	/// </summary>
-	public class Hl7Configuration
+	/// <typeparam name="T">The type of data of the notification.</typeparam>
+	public interface INotifier<T> where T : IdentifiedData
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Hl7Configuration"/> class.
+		/// Gets or sets the target configuration of the notifier.
 		/// </summary>
-		public Hl7Configuration()
-		{
-			
-		}
+		TargetConfiguration TargetConfiguration { get; set; }
+
+		/// <summary>
+		/// Notifies a remote system.
+		/// </summary>
+		/// <param name="workItem">The work item of the notification.</param>
+		void Notify(NotificationQueueWorkItem<T> workItem);
 	}
 }
