@@ -1,8 +1,8 @@
 ﻿/// <reference path="openiz.js"/>
 
 /*
- * $copyright$
- * 
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -16,8 +16,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: $user$
- * Date: $date$
+ * User: justi
+ * Date: 2016-11-3
  */
 
 /**

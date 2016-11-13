@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: khannan
- * Date: 2016-11-10
+ * User: justi
+ * Date: 2016-11-11
  */
 using OpenIZ.Core.Model.Security;
 using System;

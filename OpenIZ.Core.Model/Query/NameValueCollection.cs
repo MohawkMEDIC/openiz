@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-6-22
+ * Date: 2016-8-2
  */
 using System;
 using System.Collections.Generic;
@@ -75,14 +75,16 @@ namespace OpenIZ.Core.Model.Query
                 var expr = itm.Split('=');
                 expr[0] = Uri.UnescapeDataString(expr[0]);
                 expr[1] = Uri.UnescapeDataString(expr[1]);
-                // HACK: Replace this later
-                retVal.Add(expr[0].Trim(), expr[1].Replace('+', ' ').
-                    Replace("%3C","<").
-                    Replace("%3E",">").
-                    Replace("%21","!").
-                    Replace("%3D","=").
+                var value = expr[1].Replace('+', ' ').
+                    Replace("%3C", "<").
+                    Replace("%3E", ">").
+                    Replace("%21", "!").
+                    Replace("%3D", "=").
                     Replace("%5B", "[").
-                    Replace("%5D", "]").Trim());
+                    Replace("%5D", "]").Trim();
+                // HACK: Replace this later
+                if(!String.IsNullOrEmpty(value))
+                    retVal.Add(expr[0].Trim(), value);
             }
             return retVal;
         }

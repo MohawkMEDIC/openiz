@@ -1,5 +1,5 @@
 ﻿extensions: designer.cs generated.cs
-extensions: .cs .cpp .h
+extensions: .cs .cpp .h .js
 /*
  * Copyright 2015-%CurrentYear% Mohawk College of Applied Arts and Technology
  *

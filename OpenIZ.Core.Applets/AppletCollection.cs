@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-6-14
+ * Date: 2016-8-2
  */
 using OpenIZ.Core.Applets.Model;
 using System;
@@ -358,7 +358,14 @@ namespace OpenIZ.Core.Applets
             else if (content is AppletAssetHtml) // Content is HTML
             {
                 // Is the content HTML?
-                var htmlAsset = content as AppletAssetHtml;
+                var sourceAsset = content as AppletAssetHtml;
+                var htmlAsset = new AppletAssetHtml() {
+                    Html = new XElement(sourceAsset.Html),
+                    Layout = sourceAsset.Layout,
+                    Script = new List<String>(sourceAsset.Script),
+                    Titles = new List<LocaleString>(sourceAsset.Titles),
+                    Style = new List<string>(sourceAsset.Style)
+                };
                 XElement htmlContent = null;
 
                 // Type of tag to render basic content
