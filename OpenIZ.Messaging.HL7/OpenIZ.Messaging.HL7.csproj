@@ -70,6 +70,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdtMessageHandler.cs" />
+    <Compile Include="Configuration\ActionConfiguration.cs" />
+    <Compile Include="Configuration\Hl7ConfigurationSection.cs" />
+    <Compile Include="Configuration\Hl7ConfigurationSectionHandler.cs" />
+    <Compile Include="Configuration\NotificationConfiguration.cs" />
+    <Compile Include="Configuration\NotificationDomainConfiguration.cs" />
+    <Compile Include="Configuration\TargetConfiguration.cs" />
     <Compile Include="MessageUtil.cs" />
     <Compile Include="MllpMessageSender.cs" />
     <Compile Include="NotSupportedMessageHandler.cs" />

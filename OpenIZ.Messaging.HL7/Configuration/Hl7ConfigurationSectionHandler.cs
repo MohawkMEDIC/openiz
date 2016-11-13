@@ -14,18 +14,23 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2016-8-28
+ * User: khannan
+ * Date: 2016-11-11
  */
+using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 
-namespace OpenIZ.Messaging.RISI.Configuration
+namespace OpenIZ.Messaging.HL7.Configuration
 {
 	/// <summary>
-	/// Represents a configuration section handler for the RISI configuration.
+	/// Represents a configuration section handler for the HL7 configuration.
 	/// </summary>
-	public class RisiConfigurationSectionHandler : IConfigurationSectionHandler
+	public class Hl7ConfigurationSectionHandler : IConfigurationSectionHandler
 	{
 		/// <summary>
 		/// Creates the configuration section.
@@ -36,16 +41,7 @@ namespace OpenIZ.Messaging.RISI.Configuration
 		/// <returns>Returns an instance of the configuration section.</returns>
 		public object Create(object parent, object configContext, XmlNode section)
 		{
-			var serviceElement = section.SelectSingleNode("./*[local-name() = 'service']") as XmlElement;
-
-			var wcfServiceName = serviceElement?.Attributes["wcfServiceName"]?.Value;
-
-			if (wcfServiceName == null)
-			{
-				throw new ConfigurationErrorsException("Missing serviceElement", section);
-			}
-
-			return new RisiConfiguration(wcfServiceName);
+			throw new NotImplementedException();
 		}
 	}
 }
