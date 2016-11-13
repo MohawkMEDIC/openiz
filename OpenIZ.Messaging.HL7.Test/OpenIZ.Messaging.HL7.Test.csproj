@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="AdtMessageHandlerTest.cs" />
     <Compile Include="MessageUtilTest.cs" />
+    <Compile Include="NotifierBaseTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

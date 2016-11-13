@@ -55,40 +55,8 @@ namespace OpenIZ.Core.Event
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="NotificationEventArgs{T}"/> class
-		/// with a specific notification type.
-		/// </summary>
-		/// <param name="notificationType">The type of notification.</param>
-		public NotificationEventArgs(NotificationType notificationType)
-		{
-			this.NotificationType = NotificationType;
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="NotificationEventArgs{T}"/> class
-		/// with identified data and a specific notification type.
-		/// </summary>
-		/// <param name="data">The raw request data.</param>
-		/// <param name="notificationType">The type of notification.</param>
-		public NotificationEventArgs(T data, NotificationType notificationType)
-		{
-			if (data == null)
-			{
-				throw new ArgumentNullException($"{nameof(data)} cannot be null");
-			}
-
-			this.Data = data;
-			this.NotificationType = notificationType;
-		}
-
-		/// <summary>
 		/// Gets or sets the data of the notification.
 		/// </summary>
 		public T Data { get; }
-
-		/// <summary>
-		/// Gets or sets the type of notification.
-		/// </summary>
-		public NotificationType NotificationType { get; }
 	}
 }

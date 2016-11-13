@@ -23,6 +23,7 @@ using System;
 using System.Configuration;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
+using OpenIZ.Messaging.HL7.Notifier;
 
 namespace OpenIZ.Messaging.HL7.Configuration
 {
@@ -56,41 +57,35 @@ namespace OpenIZ.Messaging.HL7.Configuration
 
 			foreach (XmlElement target in targetsElement)
 			{
-				var targetConfiguration = new TargetConfiguration();
-
 				var connectionString = target.Attributes["connectionString"]?.Value;
 
 				if (connectionString == null)
 				{
 					throw new ConfigurationErrorsException("Target must have a connection string");
 				}
-				else
-				{
-					targetConfiguration.ConnectionString = connectionString;
-				}
 
 				var name = target.Attributes["name"]?.Value;
 
-				if (name != null)
+				if (name == null)
 				{
-					targetConfiguration.Name = name;
+					throw new ConfigurationErrorsException("Target must have a name");
 				}
 
-				var actorType = "PAT_IDENTITY_X_REF_MGR";
+				var actorType = nameof(PAT_IDENTITY_SRC);
 
-				if (target.Attributes["actor"] != null)
+				if (target.Attributes["myActor"] != null)
 				{
-					actorType = target.Attributes["actor"]?.Value;
+					actorType = target.Attributes["myActor"]?.Value;
 				}
-
-				targetConfiguration.ActAs = actorType;
 
 				var deviceId = target.Attributes["deviceId"]?.Value;
 
-				if (deviceId != null)
+				if (deviceId == null)
 				{
-					targetConfiguration.DeviceId = deviceId;
+					throw new ConfigurationErrorsException("Target must have a device id");
 				}
+
+				var targetConfiguration = new TargetConfiguration(name, connectionString, actorType, deviceId);
 
 				// Parse certificate data
 				var certificateNode = target.SelectSingleNode("./*[local-name() = 'trustedIssuerCertificate']");
@@ -155,7 +150,7 @@ namespace OpenIZ.Messaging.HL7.Configuration
 					foreach (XmlElement ae in actionsElements)
 					{
 						// Action types
-						var value = NotificationType.Any;
+						var value = ActionType.Any;
 
 						if (ae.Attributes["type"] == null)
 						{
@@ -172,6 +167,8 @@ namespace OpenIZ.Messaging.HL7.Configuration
 
 					targetConfiguration.NotificationDomainConfigurations.Add(notificationDomainConfiguration);
 				}
+
+				notificationConfiguration.TargetConfigurations.Add(targetConfiguration);
 			}
 
 			return notificationConfiguration;

@@ -1,39 +1,36 @@
 ﻿/*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: khannan
  * Date: 2016-11-3
  */
+
+using MARC.Everest.Threading;
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Event;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
+using OpenIZ.Messaging.HL7.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenIZ.Core.Model.Roles;
-using MARC.HI.EHRS.SVC.Core.Services;
-using MARC.Everest.Threading;
-using OpenIZ.Core.Event;
-using NHapi.Model.V25.Message;
-using OpenIZ.Messaging.HL7.Queue;
 using System.Diagnostics;
-using MARC.HI.EHRS.SVC.Core;
-using OpenIZ.Core.Model;
-using OpenIZ.Messaging.HL7.Configuration;
+using OpenIZ.Messaging.HL7.Notifier;
 
 namespace OpenIZ.Messaging.HL7.Services
 {
@@ -70,14 +67,7 @@ namespace OpenIZ.Messaging.HL7.Services
 		{
 			var configurationManager = ApplicationContext.Current.GetService<IConfigurationManager>();
 
-			if (configurationManager != null)
-			{
-				this.configuration = configurationManager.GetSection("openiz.messaging.hl7.notification.pixpdq") as NotificationConfiguration;
-			}
-			else
-			{
-				this.configuration = ConfigurationManager.GetSection("openiz.messaging.hl7.notification.pixpdq") as NotificationConfiguration;
-			}
+			this.configuration = configurationManager.GetSection("openiz.messaging.hl7.notification.pixpdq") as NotificationConfiguration;
 
 			this.threadPool = new WaitThreadPool(this.configuration.ConcurrencyLevel);
 		}
@@ -121,7 +111,7 @@ namespace OpenIZ.Messaging.HL7.Services
 			// GC.SuppressFinalize(this);
 		}
 
-		#endregion
+		#endregion IDisposable Support
 
 		/// <summary>
 		/// Notify that duplicates have been resolved.
@@ -151,10 +141,10 @@ namespace OpenIZ.Messaging.HL7.Services
 
 				lock (syncLock)
 				{
-					targetConfigurations = this.configuration.TargetConfigurations.FindAll(t => t.NotificationDomainConfigurations.Exists(delegate(NotificationDomainConfiguration domainConfiguration)
+					targetConfigurations = this.configuration.TargetConfigurations.FindAll(t => t.NotificationDomainConfigurations.Exists(delegate (NotificationDomainConfiguration domainConfiguration)
 					{
-						var action = domainConfiguration.ActionConfigurations.Exists(a => (a.NotificationType & workItem.NotificationType) == workItem.NotificationType);
-						var domain = workItem.Event.Identifiers.Exists(i => i.Authority.DomainName == domainConfiguration.Domain);
+						var action = domainConfiguration.ActionConfigurations.Exists(a => (a.ActionType & workItem.ActionType) == workItem.ActionType);
+						var domain = workItem.Event.Identifiers.Exists(i => i.Authority.Oid == domainConfiguration.Domain);
 
 						return action && domain;
 					}));
@@ -162,7 +152,7 @@ namespace OpenIZ.Messaging.HL7.Services
 
 				foreach (var target in targetConfigurations)
 				{
-					target.Notifier.Notify(new NotificationQueueWorkItem<IdentifiedData>(workItem.Event, workItem.NotificationType));
+					target.Notifier.Notify(new NotificationQueueWorkItem<IdentifiedData>(workItem.Event, workItem.ActionType));
 				}
 			}
 			catch (Exception e)
@@ -180,7 +170,7 @@ namespace OpenIZ.Messaging.HL7.Services
 		/// <param name="eventArgs">The notification event arguments.</param>
 		public void NotifyRegister(NotificationEventArgs<Patient> eventArgs)
 		{
-			this.threadPool.QueueUserWorkItem(NotifyInternal, new NotificationQueueWorkItem<Patient>(eventArgs.Data, eventArgs.NotificationType));
+			this.threadPool.QueueUserWorkItem(NotifyInternal, new NotificationQueueWorkItem<Patient>(eventArgs.Data, ActionType.Create));
 		}
 
 		/// <summary>
@@ -189,7 +179,7 @@ namespace OpenIZ.Messaging.HL7.Services
 		/// <param name="eventArgs">The notification event arguments.</param>
 		public void NotifyUpdate(NotificationEventArgs<Patient> eventArgs)
 		{
-			this.threadPool.QueueUserWorkItem(NotifyInternal, new NotificationQueueWorkItem<Patient>(eventArgs.Data, eventArgs.NotificationType));
+			this.threadPool.QueueUserWorkItem(NotifyInternal, new NotificationQueueWorkItem<Patient>(eventArgs.Data, ActionType.Update));
 		}
 	}
 }

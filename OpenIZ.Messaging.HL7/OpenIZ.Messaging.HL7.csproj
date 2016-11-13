@@ -76,10 +76,13 @@
     <Compile Include="Configuration\NotificationConfiguration.cs" />
     <Compile Include="Configuration\NotificationDomainConfiguration.cs" />
     <Compile Include="Configuration\TargetConfiguration.cs" />
-    <Compile Include="INotifier.cs" />
+    <Compile Include="Extensions\GuidExtensions.cs" />
+    <Compile Include="Notifier\ActionType.cs" />
+    <Compile Include="Notifier\INotifier.cs" />
     <Compile Include="MessageUtil.cs" />
     <Compile Include="MllpMessageSender.cs" />
     <Compile Include="NotificationQueueWorkItem.cs" />
+    <Compile Include="Notifier\NotifierBase.cs" />
     <Compile Include="Notifier\PAT_IDENTITY_SRC.cs" />
     <Compile Include="Notifier\PAT_ID_X_REF_MGR.cs" />
     <Compile Include="NotSupportedMessageHandler.cs" />

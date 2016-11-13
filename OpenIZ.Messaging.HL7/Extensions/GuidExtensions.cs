@@ -15,37 +15,26 @@
  * the License.
  *
  * User: khannan
- * Date: 2016-11-11
+ * Date: 2016-11-12
  */
 
-using System.Xml.Serialization;
-using OpenIZ.Core.Event;
-using OpenIZ.Messaging.HL7.Notifier;
+using System;
 
-namespace OpenIZ.Messaging.HL7.Configuration
+namespace OpenIZ.Messaging.HL7.Extensions
 {
 	/// <summary>
-	/// Represents an action configuration.
+	/// Contains extension methods for the <see cref="Guid"/> class.
 	/// </summary>
-	public class ActionConfiguration
+	public static class GuidExtensions
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ActionConfiguration"/> class.
+		/// Converts a <see cref="Nullable{T}"/> to a <see cref="Guid"/>.
 		/// </summary>
-		public ActionConfiguration()
+		/// <param name="me">The GUID to convert.</param>
+		/// <returns>Returns a GUID.</returns>
+		public static Guid ToGuid(this Guid? me)
 		{
+			return me ?? Guid.Empty;
 		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ActionConfiguration"/> class
-		/// with a specific <see cref="ActionType"/> instance.
-		/// </summary>
-		/// <param name="actionType"></param>
-		public ActionConfiguration(ActionType actionType)
-		{
-			this.ActionType = actionType;
-		}
-
-		public ActionType ActionType { get; set; }
 	}
 }

@@ -1,31 +1,31 @@
 ﻿/*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: khannan
  * Date: 2016-11-11
  */
+
+using OpenIZ.Core.Model;
+using OpenIZ.Messaging.HL7.Notifier;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
-using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Roles;
 
 namespace OpenIZ.Messaging.HL7.Configuration
 {
@@ -35,68 +35,61 @@ namespace OpenIZ.Messaging.HL7.Configuration
 	public class TargetConfiguration
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="TargetConfiguration"/> class.
-		/// </summary>
-		public TargetConfiguration()
-		{
-			
-		}
-
-		/// <summary>
 		/// Initializes a new instance of the <see cref="TargetConfiguration"/> class
 		/// with a specific name, connection string, act as identifier, and device id.
 		/// </summary>
 		/// <param name="name">The name of the target configuration.</param>
 		/// <param name="connectionString">The connection string of the target configuration.</param>
-		/// <param name="actAs">The act as identifier of the target configuration.</param>
+		/// <param name="actor">The act as identifier of the target configuration.</param>
 		/// <param name="deviceId">The device id of the configuration.</param>
-		public TargetConfiguration(string name, string connectionString, string actAs, string deviceId)
+		public TargetConfiguration(string name, string connectionString, string actor, string deviceId)
 		{
 			this.Name = name;
 			this.ConnectionString = connectionString;
 			this.DeviceId = deviceId;
+			this.NotificationDomainConfigurations = new List<NotificationDomainConfiguration>();
 
-			var notifierType = Array.Find(typeof(TargetConfiguration).Assembly.GetExportedTypes(), t => t.Name == actAs);
+			var notifierType = Array.Find(typeof(TargetConfiguration).Assembly.GetExportedTypes(), t => t.Name == actor);
 
 			if (notifierType == null)
 			{
-				throw new ConfigurationErrorsException($"Could not find the specified actor implementation {actAs}");
+				throw new ConfigurationErrorsException($"Could not find the specified actor implementation {actor}");
 			}
 
 			var constructorInfo = notifierType.GetConstructor(Type.EmptyTypes);
 
 			if (constructorInfo == null)
 			{
-				throw new ConfigurationErrorsException($"Could not find the specified actor implementation {actAs}");
+				throw new ConfigurationErrorsException($"Could not find the specified actor implementation {actor}");
 			}
 
-			this.Notifier = constructorInfo.Invoke(null) as INotifier<IdentifiedData>;
+			this.Notifier = constructorInfo.Invoke(null) as INotifier;
 
 			if (this.Notifier == null)
 			{
-				throw new InvalidOperationException($"Unable to create instance of {nameof(constructorInfo.Name)}");
+				throw new InvalidOperationException($"Unable to create instance of {actor}");
 			}
 
 			this.Notifier.TargetConfiguration = this;
 		}
 
 		/// <summary>
-		/// Gets or sets the act as actor of the configuration.
+		/// Gets the actor of the configuration.
 		/// </summary>
-		[XmlIgnore]
-		public string ActAs { get; set; }
+		[XmlAttribute("myActor")]
+		public string Actor { get; }
 
 		/// <summary>
-		/// Gets or sets the connection string of the target configuration.
+		/// Gets the connection string of the target configuration.
 		/// </summary>
-		[XmlIgnore]
-		public string ConnectionString { get; set; }
+		[XmlAttribute("connectionString")]
+		public string ConnectionString { get; }
 
 		/// <summary>
-		/// Gets or sets the device id of the target configuration.
+		/// Gets the device id of the target configuration.
 		/// </summary>
-		[XmlIgnore]
-		public string DeviceId { get; set; }
+		[XmlAttribute("deviceId")]
+		public string DeviceId { get; }
 
 		/// <summary>
 		/// Gets the LLP client certificate.
@@ -117,21 +110,21 @@ namespace OpenIZ.Messaging.HL7.Configuration
 		public StoreName LlpClientCertStore { get; internal set; }
 
 		/// <summary>
-		/// Gets or sets the name of the target configuration.
+		/// Gets the name of the target configuration.
 		/// </summary>
 		[XmlAttribute("name")]
-		public string Name { get; set; }
+		public string Name { get; }
 
 		/// <summary>
 		/// Gets or sets the list of notification domain configurations.
 		/// </summary>
-		[XmlIgnore]
+		[XmlElement("notify")]
 		public List<NotificationDomainConfiguration> NotificationDomainConfigurations { get; set; }
 
 		/// <summary>
 		/// Gets the notifier.
 		/// </summary>
-		public INotifier<IdentifiedData> Notifier { get; }
+		public INotifier Notifier { get; }
 
 		/// <summary>
 		/// Gets the server certificate.

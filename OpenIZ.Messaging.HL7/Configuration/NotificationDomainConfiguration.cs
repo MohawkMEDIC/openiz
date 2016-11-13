@@ -1,28 +1,28 @@
 ﻿/*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: khannan
  * Date: 2016-11-11
  */
-using System;
+
+using OpenIZ.Core.Event;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenIZ.Core.Event;
+using System.Xml.Serialization;
+using OpenIZ.Messaging.HL7.Notifier;
 
 namespace OpenIZ.Messaging.HL7.Configuration
 {
@@ -51,23 +51,25 @@ namespace OpenIZ.Messaging.HL7.Configuration
 		}
 
 		/// <summary>
-		/// Gets or sets the domain of the notification domain configuration.
-		/// </summary>
-		public string Domain { get; set; }
-
-		/// <summary>
 		/// Gets or sets a list of action configurations of the notification domain configuration.
 		/// </summary>
+		[XmlElement("action")]
 		public List<ActionConfiguration> ActionConfigurations { get; set; }
 
 		/// <summary>
-		/// Returns true of the notification domain should be applied for the specific type. 
+		/// Gets or sets the domain of the notification domain configuration.
+		/// </summary>
+		[XmlAttribute("domain")]
+		public string Domain { get; set; }
+
+		/// <summary>
+		/// Returns true of the notification domain should be applied for the specific type.
 		/// </summary>
 		/// <param name="type">The type of the notification.</param>
 		/// <returns>Returns true of the notification domain should be applied for the specific type.</returns>
-		public bool IsApplicableFor(NotificationType type)
+		public bool IsApplicableFor(ActionType type)
 		{
-			return this.ActionConfigurations.Any(a => a.NotificationType == type);
+			return this.ActionConfigurations.Any(a => a.ActionType == type);
 		}
 	}
 }
