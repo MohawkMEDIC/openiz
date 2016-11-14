@@ -44,10 +44,9 @@ namespace OpenIZ.Messaging.HL7.Configuration
 		/// with a specific notification domain.
 		/// </summary>
 		/// <param name="domain">The notification domain.</param>
-		public NotificationDomainConfiguration(string domain)
+		public NotificationDomainConfiguration(string domain) : this()
 		{
 			this.Domain = domain;
-			this.ActionConfigurations = new List<ActionConfiguration>();
 		}
 
 		/// <summary>

@@ -34,7 +34,7 @@ namespace OpenIZ.Messaging.HL7.Configuration
 		/// </summary>
 		public NotificationConfiguration()
 		{
-
+			this.TargetConfigurations = new List<TargetConfiguration>();
 		}
 
 		/// <summary>
@@ -45,7 +45,6 @@ namespace OpenIZ.Messaging.HL7.Configuration
 		public NotificationConfiguration(int concurrencyLevel) : this()
 		{
 			this.ConcurrencyLevel = concurrencyLevel;
-			this.TargetConfigurations = new List<TargetConfiguration>();
 		}
 
 		/// <summary>

@@ -43,7 +43,7 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		/// <summary>
 		/// The protected reference to the <see cref="TraceSource"/> instance.
 		/// </summary>
-		protected readonly TraceSource tracer = new TraceSource("OpenIZ.Messaging.HL7");
+		protected static readonly TraceSource tracer = new TraceSource("OpenIZ.Messaging.HL7");
 
 		/// <summary>
 		/// The internal reference to the <see cref="IAssigningAuthorityRepositoryService"/> instance.
@@ -60,6 +60,8 @@ namespace OpenIZ.Messaging.HL7.Notifier
 
 		internal static void UpdateAD(EntityAddress entityAddress, XAD address)
 		{
+			tracer.TraceEvent(TraceEventType.Information, 0, "Adding addresses");
+
 			var addressUse = entityAddress.AddressUse?.Key;
 
 			if (addressUse != null)
@@ -88,6 +90,8 @@ namespace OpenIZ.Messaging.HL7.Notifier
 			// male f4e3a6bb-612e-46b2-9f77-ff844d971198
 			// undifferentiated ae94a782-1485-4241-9bca-5b09db2156bf
 
+			tracer.TraceEvent(TraceEventType.Information, 0, "Adding gender");
+
 			switch (gender?.ToLowerInvariant())
 			{
 				case "male":
@@ -112,6 +116,8 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		/// <param name="targetConfiguration">The target configuration.</param>
 		internal static void UpdateMSH(MSH msh, TargetConfiguration targetConfiguration)
 		{
+			tracer.TraceEvent(TraceEventType.Information, 0, "Start updating MSH segment");
+
 			msh.AcceptAcknowledgmentType.Value = "AL";
 			msh.DateTimeOfMessage.Time.Value = DateTime.Now.ToString("yyyyMMddHHmmss");
 			msh.MessageControlID.Value = BitConverter.ToInt64(Guid.NewGuid().ToByteArray(), 0).ToString();
@@ -142,6 +148,8 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		/// <param name="targetConfiguration">The target configuration.</param>
 		internal static void UpdatePID(Patient patient, PID pid, TargetConfiguration targetConfiguration)
 		{
+			tracer.TraceEvent(TraceEventType.Information, 0, "Start updating PID segment");
+
 			if (patient.GenderConcept?.Key != null)
 			{
 				UpdateGender(patient.GenderConcept?.Key.ToString(), pid);
@@ -154,7 +162,6 @@ namespace OpenIZ.Messaging.HL7.Notifier
 			{
 				UpdateGender(patient.GenderConceptKey.Value.ToString(), pid);
 			}
-
 
 			if (patient.MultipleBirthOrder.HasValue)
 			{
@@ -225,6 +232,8 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		/// <param name="name">The XPN segment to update.</param>
 		internal static void UpdateXPN(EntityName entityName, XPN name)
 		{
+			tracer.TraceEvent(TraceEventType.Information, 0, "Adding names");
+
 			if (entityName.NameUse?.Key != null)
 			{
 				name.NameTypeCode.Value = MessageUtil.ReverseLookup(MessageUtil.NameUseMap, entityName.NameUse.Key.ToGuid());

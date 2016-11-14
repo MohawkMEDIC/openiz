@@ -19,6 +19,7 @@
  */
 
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace OpenIZ.Messaging.HL7.Queue
 {
@@ -41,6 +42,11 @@ namespace OpenIZ.Messaging.HL7.Queue
 		/// The internal reference to the <see cref="Queue{T}"/> instance.
 		/// </summary>
 		private Queue<MessageQueueWorkItem> queue = new Queue<MessageQueueWorkItem>();
+
+		/// <summary>
+		/// The internal reference to the <see cref="TraceSource"/> instance.
+		/// </summary>
+		private readonly TraceSource tracer = new TraceSource("OpenIZ.Messaging.HL7");
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Hl7MessageQueue"/> class.
@@ -85,6 +91,7 @@ namespace OpenIZ.Messaging.HL7.Queue
 				}
 				else
 				{
+					this.tracer.TraceEvent(TraceEventType.Information, 0, "De-queuing item from: {0}", nameof(Hl7MessageQueue));
 					return this.queue.Dequeue();
 				}
 			}
@@ -98,6 +105,7 @@ namespace OpenIZ.Messaging.HL7.Queue
 		{
 			lock (syncLock)
 			{
+				this.tracer.TraceEvent(TraceEventType.Information, 0, "En-queuing item to: {0}", nameof(Hl7MessageQueue));
 				this.queue.Enqueue(workItem);
 			}
 		}

@@ -38,7 +38,7 @@ namespace OpenIZ.Messaging.HL7.Configuration
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ActionConfiguration"/> class
-		/// with a specific <see cref="ActionType"/> instance.
+		/// with a specific <see cref="Notifier.ActionType"/> instance.
 		/// </summary>
 		/// <param name="actionType"></param>
 		public ActionConfiguration(ActionType actionType)
@@ -46,6 +46,9 @@ namespace OpenIZ.Messaging.HL7.Configuration
 			this.ActionType = actionType;
 		}
 
+		/// <summary>
+		/// Gets or sets the action type of the action configuration.
+		/// </summary>
 		public ActionType ActionType { get; set; }
 	}
 }

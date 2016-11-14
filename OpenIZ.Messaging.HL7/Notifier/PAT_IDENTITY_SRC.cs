@@ -69,7 +69,7 @@ namespace OpenIZ.Messaging.HL7.Notifier
 			{
 				case ActionType.Create:
 					{
-						this.tracer.TraceEvent(TraceEventType.Information, 0, "Received create notification");
+						tracer.TraceEvent(TraceEventType.Information, 0, "Received create notification");
 
 						ADT_A01 message = new ADT_A01();
 
@@ -88,7 +88,7 @@ namespace OpenIZ.Messaging.HL7.Notifier
 					}
 				case ActionType.DuplicatesResolved:
 					{
-						this.tracer.TraceEvent(TraceEventType.Information, 0, "Received duplicates resolved notification");
+						tracer.TraceEvent(TraceEventType.Information, 0, "Received duplicates resolved notification");
 
 						ADT_A39 message = new ADT_A39();
 
@@ -108,7 +108,7 @@ namespace OpenIZ.Messaging.HL7.Notifier
 					}
 				case ActionType.Update:
 					{
-						this.tracer.TraceEvent(TraceEventType.Information, 0, "Received update notification");
+						tracer.TraceEvent(TraceEventType.Information, 0, "Received update notification");
 
 						ADT_A01 message = new ADT_A01();
 
@@ -146,7 +146,7 @@ namespace OpenIZ.Messaging.HL7.Notifier
 
 			if (!queueItem.TrySend())
 			{
-				this.tracer.TraceEvent(TraceEventType.Warning, 0, "Unable to send message to remote endpoint: {0}", this.TargetConfiguration.ConnectionString);
+				tracer.TraceEvent(TraceEventType.Warning, 0, "Unable to send message to remote endpoint: {0}", this.TargetConfiguration.ConnectionString);
 				Hl7MessageQueue.Current.Enqueue(queueItem);
 			}
 		}

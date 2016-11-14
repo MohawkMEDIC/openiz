@@ -147,19 +147,19 @@ namespace OpenIZ.Messaging.HL7.Configuration
 
 					// Parse the actions
 					var actionsElements = notificationElement.SelectNodes("./*[local-name() = 'action']");
-					foreach (XmlElement ae in actionsElements)
+					foreach (XmlElement actionElement in actionsElements)
 					{
 						// Action types
 						var value = ActionType.Any;
 
-						if (ae.Attributes["type"] == null)
+						if (actionElement.Attributes["type"] == null)
 						{
 							throw new ConfigurationErrorsException("Action element must have a type");
 						}
 
-						if (!Enum.TryParse(ae.Attributes["type"].Value, out value))
+						if (!Enum.TryParse(actionElement.Attributes["type"].Value, out value))
 						{
-							throw new ConfigurationErrorsException($"Invalid action type '{ae.Attributes["type"].Value}'");
+							throw new ConfigurationErrorsException($"Invalid action type '{actionElement.Attributes["type"].Value}'");
 						}
 
 						notificationDomainConfiguration.ActionConfigurations.Add(new ActionConfiguration(value));
