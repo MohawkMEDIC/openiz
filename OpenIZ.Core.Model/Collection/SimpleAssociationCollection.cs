@@ -64,6 +64,14 @@ namespace OpenIZ.Core.Model.Collection
         }
 
         /// <summary>
+        /// Create simple assoc
+        /// </summary>
+        public SimpleAssociationCollection(IEnumerable<TEntity> source)
+        {
+            this.m_sourceData = new List<TEntity>(source);
+        }
+
+        /// <summary>
         /// Creates the specified entity collection in the specified context
         /// </summary>
         public SimpleAssociationCollection(IIdentifiedEntity context)

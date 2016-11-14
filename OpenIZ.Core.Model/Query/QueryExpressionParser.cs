@@ -37,7 +37,7 @@ using System.Runtime.CompilerServices;
 namespace OpenIZ.Core.Model.Query
 {
 
-   
+
     /// <summary>
     /// A class which is responsible for translating a series of Query Parmaeters to a LINQ expression
     /// to be passed to the persistence layer
@@ -66,12 +66,12 @@ namespace OpenIZ.Core.Model.Query
         }
 
         public static Expression<Func<TModelType, bool>> BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters, Dictionary<String, Delegate> variables, bool safeNullable)
-        { 
+        {
             var expression = BuildLinqExpression<TModelType>(httpQueryParameters, "o", variables, safeNullable);
 
             if (expression == null) // No query!
                 return (TModelType o) => o != null;
-            else 
+            else
                 return Expression.Lambda<Func<TModelType, bool>>(expression.Body, expression.Parameters);
         }
 
@@ -79,16 +79,16 @@ namespace OpenIZ.Core.Model.Query
         /// Build LINQ expression
         /// </summary>
         public static LambdaExpression BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters, string parameterName, Dictionary<String, Delegate> variables = null, bool safeNullable = true)
-        { 
+        {
             var parameterExpression = Expression.Parameter(typeof(TModelType), parameterName);
             Expression retVal = null;
             List<KeyValuePair<String, String[]>> workingValues = new List<KeyValuePair<string, string[]>>();
             // Iterate 
-            foreach (var nvc in httpQueryParameters.Where(p=>!p.Key.StartsWith("_")).Distinct())
+            foreach (var nvc in httpQueryParameters.Where(p => !p.Key.StartsWith("_")).Distinct())
                 workingValues.Add(new KeyValuePair<string, string[]>(nvc.Key, nvc.Value.ToArray()));
 
             // Get the first values
-            while(workingValues.Count > 0)
+            while (workingValues.Count > 0)
             {
                 var currentValue = workingValues.FirstOrDefault();
                 workingValues.Remove(currentValue);
@@ -101,7 +101,7 @@ namespace OpenIZ.Core.Model.Query
                 Expression accessExpression = parameterExpression;
                 String[] memberPath = currentValue.Key.Split('.');
                 String path = "";
-                foreach(var rawMember in memberPath)
+                foreach (var rawMember in memberPath)
                 {
                     var pMember = rawMember;
                     String guard = String.Empty,
@@ -116,14 +116,14 @@ namespace OpenIZ.Core.Model.Query
                         guard = pMember.Substring(pMember.IndexOf("[") + 1, pMember.Length - pMember.IndexOf("[") - 2);
                         pMember = pMember.Substring(0, pMember.IndexOf("["));
                     }
-                    if(pMember.Contains("@"))
+                    if (pMember.Contains("@"))
                     {
                         cast = pMember.Substring(pMember.IndexOf("@") + 1);
                         pMember = pMember.Substring(0, pMember.IndexOf("@"));
                     }
 
                     // Get member info
-                    var memberInfo = accessExpression.Type.GetRuntimeProperties().FirstOrDefault(p => p.GetCustomAttributes<XmlElementAttribute>()?.Any(a=>a.ElementName == pMember) == true);
+                    var memberInfo = accessExpression.Type.GetRuntimeProperties().FirstOrDefault(p => p.GetCustomAttributes<XmlElementAttribute>()?.Any(a => a.ElementName == pMember) == true);
                     if (memberInfo == null)
                         throw new ArgumentOutOfRangeException(currentValue.Key);
 
@@ -173,7 +173,7 @@ namespace OpenIZ.Core.Model.Query
                                 break;
                         }
 
-                        var whereMethod = typeof(Enumerable).GetGenericMethod("Where",
+                        MethodInfo whereMethod = typeof(Enumerable).GetGenericMethod("Where",
                             new Type[] { itemType },
                             new Type[] { accessExpression.Type, predicateType }) as MethodInfo;
 
@@ -181,11 +181,21 @@ namespace OpenIZ.Core.Model.Query
                         var guardLambda = Expression.Lambda(Expression.MakeBinary(ExpressionType.Equal, guardAccessor, Expression.Constant(guard)), guardParameter);
                         accessExpression = Expression.Call(whereMethod, accessExpression, guardLambda);
 
+                        if (currentValue.Value.Length == 1 && currentValue.Value[0].EndsWith("null"))
+                        {
+                            var anyMethod = typeof(Enumerable).GetGenericMethod("Any",
+                                new Type[] { itemType },
+                                new Type[] { accessExpression.Type }) as MethodInfo;
+                            accessExpression = Expression.Call(anyMethod, accessExpression);
+                            currentValue.Value[0] = currentValue.Value[0].Replace("null", "false");
+                        }
+
                     }
                     // List expression, we want the Any() operator
-                    if (accessExpression.Type.GetTypeInfo().ImplementedInterfaces.Any(o=>o == typeof(IEnumerable)) &&
+                    if (accessExpression.Type.GetTypeInfo().ImplementedInterfaces.Any(o => o == typeof(IEnumerable)) &&
                         accessExpression.Type.GetTypeInfo().IsGenericType)
                     {
+
 
                         Type itemType = accessExpression.Type.GenericTypeArguments[0];
                         Type predicateType = typeof(Func<,>).MakeGenericType(itemType, typeof(bool));
@@ -193,7 +203,7 @@ namespace OpenIZ.Core.Model.Query
                         var anyMethod = typeof(Enumerable).GetGenericMethod("Any",
                             new Type[] { itemType },
                             new Type[] { accessExpression.Type, predicateType }) as MethodInfo;
-                        
+
                         // Add sub-filter
                         NameValueCollection subFilter = new NameValueCollection();
                         subFilter.Add(currentValue.Key.Substring(path.Length), new List<String>(currentValue.Value));
@@ -216,11 +226,11 @@ namespace OpenIZ.Core.Model.Query
                     }
 
                 }
-                
+
                 // Now expression
                 var kp = currentValue.Value;
-                if(kp != null)
-                    foreach(var qValue in kp.Where(o=>!String.IsNullOrEmpty(o)))
+                if (kp != null)
+                    foreach (var qValue in kp.Where(o => !String.IsNullOrEmpty(o)))
                     {
                         var value = qValue;
                         var thisAccessExpression = accessExpression;
@@ -249,12 +259,12 @@ namespace OpenIZ.Core.Model.Query
 
                         if (String.IsNullOrEmpty(value)) continue;
 
-                        switch(value[0])
+                        switch (value[0])
                         {
                             case '<':
                                 et = ExpressionType.LessThan;
                                 pValue = value.Substring(1);
-                                if(pValue[0] == '=')
+                                if (pValue[0] == '=')
                                 {
                                     et = ExpressionType.LessThanOrEqual;
                                     pValue = pValue.Substring(1);
@@ -276,7 +286,7 @@ namespace OpenIZ.Core.Model.Query
                                     thisAccessExpression = Expression.Call(thisAccessExpression, typeof(String).GetRuntimeMethod("Contains", new Type[] { typeof(String) }), Expression.Constant(pValue.Substring(1).Replace("*", "/")));
                                     pValue = "true";
                                 }
-                                else if(thisAccessExpression.Type == typeof(DateTime) ||
+                                else if (thisAccessExpression.Type == typeof(DateTime) ||
                                     thisAccessExpression.Type == typeof(DateTime?))
                                 {
                                     pValue = value.Substring(1);
@@ -292,7 +302,7 @@ namespace OpenIZ.Core.Model.Query
                                     Expression lowerBound = Expression.MakeBinary(ExpressionType.GreaterThanOrEqual, thisAccessExpression, Expression.Constant(dateLow)),
                                         upperBound = Expression.MakeBinary(ExpressionType.LessThanOrEqual, thisAccessExpression, Expression.Constant(dateHigh));
                                     thisAccessExpression = Expression.MakeBinary(ExpressionType.AndAlso, lowerBound, upperBound);
-                                    pValue = "true"; 
+                                    pValue = "true";
                                 }
                                 else
                                     throw new InvalidOperationException("~ can only be applied to string properties");
@@ -308,12 +318,12 @@ namespace OpenIZ.Core.Model.Query
                         Expression valueExpr = null;
                         if (pValue == "null")
                             valueExpr = Expression.Constant(null);
-                        else if(pValue.StartsWith("$"))
+                        else if (pValue.StartsWith("$"))
                         {
                             Delegate val = null;
                             if (variables.TryGetValue(pValue.Replace("$", ""), out val))
                             {
-                                if(val.GetMethodInfo().GetParameters().Length > 0)
+                                if (val.GetMethodInfo().GetParameters().Length > 0)
                                     valueExpr = Expression.Invoke(Expression.Constant(val));
                                 else
                                     valueExpr = Expression.Call(val.Target == null ? null : Expression.Constant(val.Target), val.GetMethodInfo());
@@ -344,7 +354,7 @@ namespace OpenIZ.Core.Model.Query
 
                         if (keyExpression == null)
                             keyExpression = singleExpression;
-                        else if(et == ExpressionType.Equal)
+                        else if (et == ExpressionType.Equal)
                             keyExpression = Expression.MakeBinary(ExpressionType.OrElse, keyExpression, singleExpression);
                         else
                             keyExpression = Expression.MakeBinary(ExpressionType.AndAlso, keyExpression, singleExpression);

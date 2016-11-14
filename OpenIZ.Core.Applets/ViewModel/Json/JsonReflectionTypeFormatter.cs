@@ -32,6 +32,7 @@ using System.Collections;
 using OpenIZ.Core.Model.Serialization;
 using OpenIZ.Core.Extensions;
 using OpenIZ.Core.Services;
+using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.Core.Applets.ViewModel.Json
 {
@@ -197,7 +198,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                             if(o.Key.HasValue) 
                                 value = context.JsonContext.LoadCollection(propertyInfo.PropertyType, (Guid)o.Key);
                             propertyInfo.SetValue(o, value);
-                            loadedProperties = value != null;
+                            loadedProperties = (value as IList).Count > 0;
                         }
                         else
                         {
@@ -221,10 +222,11 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 // TODO: Classifier
                 context.JsonContext.WritePropertyUtil(w, propertyName, value, context);
 
-                // Loaded something, let's cache it
-                if (loadedProperties && o.Key.HasValue)
-                    (ApplicationServiceContext.Current.GetService(typeof(IDataCachingService)) as IDataCachingService).Add(o);
             }
+
+            // Loaded something, let's cache it
+            if (loadedProperties && o.Key.HasValue && ((o as IVersionedEntity) == null || (o as IVersionedEntity)?.VersionKey.HasValue == true))
+                (ApplicationServiceContext.Current.GetService(typeof(IDataCachingService)) as IDataCachingService).Add(o);
         }
 
         /// <summary>

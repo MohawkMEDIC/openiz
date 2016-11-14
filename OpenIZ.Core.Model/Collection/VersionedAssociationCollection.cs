@@ -47,6 +47,13 @@ namespace OpenIZ.Core.Model.Collection
         public VersionedAssociationCollection() : base()
         {
         }
+        
+        /// <summary>
+        /// Entity collection
+        /// </summary>
+        public VersionedAssociationCollection(IEnumerable<TEntity> source) : base(source)
+        {
+        }
 
         /// <summary>
         /// Creates the specified entity collection in the specified context

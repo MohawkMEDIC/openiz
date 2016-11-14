@@ -265,7 +265,15 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                         this.m_relatedLoadAssociations.Add(propertyType, methodInfo);
 
             }
-            return methodInfo.Invoke(this, new object[] { key }) as IList;
+            var listValue = methodInfo.Invoke(this, new object[] { key }) as IList;
+            if (propertyType.GetTypeInfo().IsAssignableFrom(listValue.GetType().GetTypeInfo()))
+                return listValue;
+            else
+            {
+                var retVal = Activator.CreateInstance(propertyType, listValue);
+                return retVal as IList;
+            }
+
         }
 
         /// <summary>
