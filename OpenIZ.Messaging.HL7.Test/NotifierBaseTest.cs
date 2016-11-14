@@ -32,12 +32,18 @@ using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Messaging.HL7.Notifier;
 using NHapi.Model.V25.Segment;
+using OpenIZ.Core.Model.Roles;
 
 namespace OpenIZ.Messaging.HL7.Test
 {
 	[TestClass]
 	public class NotifierBaseTest
 	{
+		/// <summary>
+		/// The internal reference to the <see cref="Configuration.TargetConfiguration"/> instance.
+		/// </summary>
+		private Configuration.TargetConfiguration configuration;
+
 		/// <summary>
 		/// The internal reference to the <see cref="EntityAddress"/> instance.
 		/// </summary>
@@ -54,14 +60,21 @@ namespace OpenIZ.Messaging.HL7.Test
 		private GenericMessage.V25 genericMessage;
 
 		/// <summary>
+		/// The internal reference to the <see cref="Patient"/> instance.
+		/// </summary>
+		private Patient patient;
+
+		/// <summary>
 		/// Runs cleanup after each test execution.
 		/// </summary>
 		[TestCleanup]
 		public void Cleanup()
 		{
+			this.configuration = null;
 			this.entityAddress = null;
 			this.entityName = null;
 			this.genericMessage = null;
+			this.patient = null;
 		}
 
 		/// <summary>
@@ -70,6 +83,10 @@ namespace OpenIZ.Messaging.HL7.Test
 		[TestInitialize]
 		public void Initialize()
 		{
+			this.configuration = new Configuration.TargetConfiguration("Test", "llp://localhost:2100", "PAT_IDENTITY_SRC", "UnitTestDevice");
+
+			this.configuration.NotificationDomainConfigurations.Add(new Configuration.NotificationDomainConfiguration("TestNotificationDomain"));
+
 			this.entityAddress = new EntityAddress
 			{
 				AddressUse = new Concept
@@ -87,6 +104,34 @@ namespace OpenIZ.Messaging.HL7.Test
 			this.entityName = new EntityName(NameUseKeys.OfficialRecord, "Khanna", "Nityan David");
 
 			this.genericMessage = new GenericMessage.V25(new DefaultModelClassFactory());
+
+			this.patient = new Patient
+			{
+				Addresses = new List<EntityAddress>
+				{
+					this.entityAddress
+				},
+				DateOfBirth = new DateTime(1970, 01, 01),
+				DateOfBirthPrecision = DatePrecision.Day,
+				GenderConcept = new Concept
+				{
+					Mnemonic = "male"
+				},
+				Names = new List<EntityName>()
+				{
+					this.entityName
+				},
+				Relationships = new List<EntityRelationship>
+				{
+					new EntityRelationship(EntityRelationshipTypeKeys.Mother, new Person
+					{
+						Names = new List<EntityName>
+						{
+							new EntityName(NameUseKeys.OfficialRecord, "Smith", "Mary L A")
+						}
+					})
+				}
+			};
 		}
 
 		/// <summary>
@@ -129,6 +174,84 @@ namespace OpenIZ.Messaging.HL7.Test
 		}
 
 		/// <summary>
+		/// Tests the update of a <see cref="PID"/> segment.
+		/// </summary>
+		[TestMethod]
+		public void TestUpdateGenderFemaleConcept()
+		{
+			var actual = new ADT_A01().PID;
+
+			NotifierBase.UpdateGender("female", actual);
+
+			Assert.AreEqual("F", actual.AdministrativeSex.Value);
+		}
+
+		/// <summary>
+		/// Tests the update of a <see cref="PID"/> segment.
+		/// </summary>
+		[TestMethod]
+		public void TestUpdateGenderFemaleConceptKey()
+		{
+			var actual = new ADT_A01().PID;
+
+			NotifierBase.UpdateGender("094941e9-a3db-48b5-862c-bc289bd7f86c", actual);
+
+			Assert.AreEqual("F", actual.AdministrativeSex.Value);
+		}
+
+		/// <summary>
+		/// Tests the update of a <see cref="PID"/> segment.
+		/// </summary>
+		[TestMethod]
+		public void TestUpdateGenderMaleConcept()
+		{
+			var actual = new ADT_A01().PID;
+
+			NotifierBase.UpdateGender("male", actual);
+
+			Assert.AreEqual("M", actual.AdministrativeSex.Value);
+		}
+
+		/// <summary>
+		/// Tests the update of a <see cref="PID"/> segment.
+		/// </summary>
+		[TestMethod]
+		public void TestUpdateGenderMaleConceptKey()
+		{
+			var actual = new ADT_A01().PID;
+
+			NotifierBase.UpdateGender("f4e3a6bb-612e-46b2-9f77-ff844d971198", actual);
+
+			Assert.AreEqual("M", actual.AdministrativeSex.Value);
+		}
+
+		/// <summary>
+		/// Tests the update of a <see cref="PID"/> segment.
+		/// </summary>
+		[TestMethod]
+		public void TestUpdateGenderUndifferentiatedConcept()
+		{
+			var actual = new ADT_A01().PID;
+
+			NotifierBase.UpdateGender("undifferentiated", actual);
+
+			Assert.AreEqual("U", actual.AdministrativeSex.Value);
+		}
+
+		/// <summary>
+		/// Tests the update of a <see cref="PID"/> segment.
+		/// </summary>
+		[TestMethod]
+		public void TestUpdateGenderUndifferentiatedConceptKey()
+		{
+			var actual = new ADT_A01().PID;
+
+			NotifierBase.UpdateGender("ae94a782-1485-4241-9bca-5b09db2156bf", actual);
+
+			Assert.AreEqual("U", actual.AdministrativeSex.Value);
+		}
+
+		/// <summary>
 		/// Tests the updating of an <see cref="MSH"/> segment.
 		/// </summary>
 		[TestMethod]
@@ -136,11 +259,7 @@ namespace OpenIZ.Messaging.HL7.Test
 		{
 			var actual = this.genericMessage.GetStructure("MSH") as MSH;
 
-			Configuration.TargetConfiguration configuration = new Configuration.TargetConfiguration("Test", "llp://localhost:2100", "PAT_IDENTITY_SRC", "UnitTestDevice");
-
-			configuration.NotificationDomainConfigurations.Add(new Configuration.NotificationDomainConfiguration("TestNotificationDomain"));
-
-			NotifierBase.UpdateMSH(actual, configuration);
+			NotifierBase.UpdateMSH(actual, this.configuration);
 
 			Assert.AreEqual("AL", actual.AcceptAcknowledgmentType.Value);
 			Assert.AreEqual("UnitTestDevice", actual.ReceivingApplication.NamespaceID.Value);
@@ -157,15 +276,175 @@ namespace OpenIZ.Messaging.HL7.Test
 		{
 			var actual = this.genericMessage.GetStructure("MSH") as MSH;
 
-			Configuration.TargetConfiguration configuration = new Configuration.TargetConfiguration("Test", "llp://localhost:2100", "PAT_IDENTITY_SRC", "UnitTestDevice");
-
-			NotifierBase.UpdateMSH(actual, configuration);
+			this.configuration.NotificationDomainConfigurations.Clear();
+			NotifierBase.UpdateMSH(actual, this.configuration);
 
 			Assert.AreEqual("AL", actual.AcceptAcknowledgmentType.Value);
 			Assert.AreEqual("UnitTestDevice", actual.ReceivingApplication.NamespaceID.Value);
 			Assert.IsNull(actual.ReceivingFacility.NamespaceID.Value);
 			Assert.AreEqual("OpenIZ", actual.SendingApplication.NamespaceID.Value);
 			Assert.AreEqual("OpenIZ", actual.SendingFacility.NamespaceID.Value);
+		}
+
+		/// <summary>
+		/// Tests the updating of a <see cref="PID"/> segment.
+		/// </summary>
+		[TestMethod]
+		public void TestUpdatePID()
+		{
+			var actual = new ADT_A01().PID;
+
+			Configuration.TargetConfiguration configuration = new Configuration.TargetConfiguration("Test", "llp://localhost:2100", "PAT_IDENTITY_SRC", "UnitTestDevice");
+
+			configuration.NotificationDomainConfigurations.Add(new Configuration.NotificationDomainConfiguration("TestNotificationDomain"));
+
+			NotifierBase.UpdatePID(this.patient, actual, configuration);
+
+			Assert.AreEqual("M", actual.AdministrativeSex.Value);
+			Assert.AreEqual("19700101000000.000-0500", actual.DateTimeOfBirth.Time.Value);
+
+			var mothersName = actual.GetMotherSMaidenName(0);
+
+			Assert.AreEqual("Smith", mothersName.FamilyName.Surname.Value);
+			Assert.AreEqual("Mary L A", mothersName.GivenName.Value);
+
+			var name = actual.GetPatientName(0);
+
+			Assert.AreEqual("Khanna", name.FamilyName.Surname.Value);
+			Assert.AreEqual("Nityan David", name.GivenName.Value);
+		}
+
+		/// <summary>
+		/// Tests the updating of a <see cref="PID"/> segment.
+		/// </summary>
+		[TestMethod]
+		public void TestUpdatePIDGenderConceptKeyFemale()
+		{
+			var actual = new ADT_A01().PID;
+
+			this.patient.GenderConcept = null;
+			this.patient.GenderConceptKey = Guid.Parse("094941e9-a3db-48b5-862c-bc289bd7f86c");
+
+			this.patient.Names.Add(new EntityName(NameUseKeys.Search, "Norgate", "Andrew"));
+
+			NotifierBase.UpdatePID(this.patient, actual, this.configuration);
+
+			Assert.AreEqual("F", actual.AdministrativeSex.Value);
+			Assert.AreEqual("19700101000000.000-0500", actual.DateTimeOfBirth.Time.Value);
+
+			var mothersName = actual.GetMotherSMaidenName(0);
+
+			Assert.AreEqual("Smith", mothersName.FamilyName.Surname.Value);
+			Assert.AreEqual("Mary L A", mothersName.GivenName.Value);
+
+			var nameRepOne = actual.GetPatientName(0);
+
+			Assert.AreEqual("Khanna", nameRepOne.FamilyName.Surname.Value);
+			Assert.AreEqual("Nityan David", nameRepOne.GivenName.Value);
+
+			var nameRepTwo = actual.GetPatientName(1);
+
+			Assert.AreEqual("Norgate", nameRepTwo.FamilyName.Surname.Value);
+			Assert.AreEqual("Andrew", nameRepTwo.GivenName.Value);
+		}
+
+		/// <summary>
+		/// Tests the updating of a <see cref="PID"/> segment.
+		/// </summary>
+		[TestMethod]
+		public void TestUpdatePIDGenderConceptKeyMale()
+		{
+			var actual = new ADT_A01().PID;
+
+			this.patient.GenderConcept = null;
+			this.patient.GenderConceptKey = Guid.Parse("f4e3a6bb-612e-46b2-9f77-ff844d971198");
+
+			this.patient.Names.Add(new EntityName(NameUseKeys.Search, "Norgate", "Andrew"));
+
+			NotifierBase.UpdatePID(this.patient, actual, this.configuration);
+
+			Assert.AreEqual("M", actual.AdministrativeSex.Value);
+			Assert.AreEqual("19700101000000.000-0500", actual.DateTimeOfBirth.Time.Value);
+
+			var mothersName = actual.GetMotherSMaidenName(0);
+
+			Assert.AreEqual("Smith", mothersName.FamilyName.Surname.Value);
+			Assert.AreEqual("Mary L A", mothersName.GivenName.Value);
+
+			var nameRepOne = actual.GetPatientName(0);
+
+			Assert.AreEqual("Khanna", nameRepOne.FamilyName.Surname.Value);
+			Assert.AreEqual("Nityan David", nameRepOne.GivenName.Value);
+
+			var nameRepTwo = actual.GetPatientName(1);
+
+			Assert.AreEqual("Norgate", nameRepTwo.FamilyName.Surname.Value);
+			Assert.AreEqual("Andrew", nameRepTwo.GivenName.Value);
+		}
+
+		/// <summary>
+		/// Tests the updating of a <see cref="PID"/> segment.
+		/// </summary>
+		[TestMethod]
+		public void TestUpdatePIDGenderConceptKeyUndifferentiated()
+		{
+			var actual = new ADT_A01().PID;
+
+			this.patient.GenderConcept = null;
+			this.patient.GenderConceptKey = Guid.Parse("ae94a782-1485-4241-9bca-5b09db2156bf");
+
+			this.patient.Names.Add(new EntityName(NameUseKeys.Search, "Norgate", "Andrew"));
+
+			NotifierBase.UpdatePID(this.patient, actual, this.configuration);
+
+			Assert.AreEqual("U", actual.AdministrativeSex.Value);
+			Assert.AreEqual("19700101000000.000-0500", actual.DateTimeOfBirth.Time.Value);
+
+			var mothersName = actual.GetMotherSMaidenName(0);
+
+			Assert.AreEqual("Smith", mothersName.FamilyName.Surname.Value);
+			Assert.AreEqual("Mary L A", mothersName.GivenName.Value);
+
+			var nameRepOne = actual.GetPatientName(0);
+
+			Assert.AreEqual("Khanna", nameRepOne.FamilyName.Surname.Value);
+			Assert.AreEqual("Nityan David", nameRepOne.GivenName.Value);
+
+			var nameRepTwo = actual.GetPatientName(1);
+
+			Assert.AreEqual("Norgate", nameRepTwo.FamilyName.Surname.Value);
+			Assert.AreEqual("Andrew", nameRepTwo.GivenName.Value);
+		}
+
+		/// <summary>
+		/// Tests the updating of a <see cref="PID"/> segment.
+		/// </summary>
+		[TestMethod]
+		public void TestUpdatePIDMultipleNames()
+		{
+			var actual = new ADT_A01().PID;
+
+			this.patient.Names.Add(new EntityName(NameUseKeys.Search, "Norgate", "Andrew"));
+
+			NotifierBase.UpdatePID(this.patient, actual, this.configuration);
+
+			Assert.AreEqual("M", actual.AdministrativeSex.Value);
+			Assert.AreEqual("19700101000000.000-0500", actual.DateTimeOfBirth.Time.Value);
+
+			var mothersName = actual.GetMotherSMaidenName(0);
+
+			Assert.AreEqual("Smith", mothersName.FamilyName.Surname.Value);
+			Assert.AreEqual("Mary L A", mothersName.GivenName.Value);
+
+			var nameRepOne = actual.GetPatientName(0);
+
+			Assert.AreEqual("Khanna", nameRepOne.FamilyName.Surname.Value);
+			Assert.AreEqual("Nityan David", nameRepOne.GivenName.Value);
+
+			var nameRepTwo = actual.GetPatientName(1);
+
+			Assert.AreEqual("Norgate", nameRepTwo.FamilyName.Surname.Value);
+			Assert.AreEqual("Andrew", nameRepTwo.GivenName.Value);
 		}
 
 		/// <summary>

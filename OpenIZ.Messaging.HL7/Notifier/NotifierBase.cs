@@ -31,6 +31,7 @@ using System.Diagnostics;
 using System.Linq;
 using NHapi.Model.V25.Datatype;
 using TS = MARC.Everest.DataTypes.TS;
+using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.Messaging.HL7.Notifier
 {
@@ -76,6 +77,35 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		}
 
 		/// <summary>
+		/// Updates the gender of a <see cref="PID"/> segment.
+		/// </summary>
+		/// <param name="gender">The gender.</param>
+		/// <param name="pid">The PID segment to update.</param>
+		internal static void UpdateGender(string gender, PID pid)
+		{
+			// these are unchanging concepts (readonly)
+			// female 094941e9-a3db-48b5-862c-bc289bd7f86c
+			// male f4e3a6bb-612e-46b2-9f77-ff844d971198
+			// undifferentiated ae94a782-1485-4241-9bca-5b09db2156bf
+
+			switch (gender?.ToLowerInvariant())
+			{
+				case "male":
+				case "f4e3a6bb-612e-46b2-9f77-ff844d971198":
+					pid.AdministrativeSex.Value = "M";
+					break;
+				case "female":
+				case "094941e9-a3db-48b5-862c-bc289bd7f86c":
+					pid.AdministrativeSex.Value = "F";
+					break;
+				case "undifferentiated":
+				case "ae94a782-1485-4241-9bca-5b09db2156bf":
+					pid.AdministrativeSex.Value = "U";
+					break;
+			}
+		}
+
+		/// <summary>
 		/// Updates a <see cref="MSH"/> segment.
 		/// </summary>
 		/// <param name="msh">The MSH segment to update.</param>
@@ -112,20 +142,19 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		/// <param name="targetConfiguration">The target configuration.</param>
 		internal static void UpdatePID(Patient patient, PID pid, TargetConfiguration targetConfiguration)
 		{
-			switch (patient.GenderConcept.Mnemonic)
+			if (patient.GenderConcept?.Key != null)
 			{
-				case "male":
-					pid.AdministrativeSex.Value = "M";
-					break;
-
-				case "female":
-					pid.AdministrativeSex.Value = "F";
-					break;
-
-				case "undifferentiated":
-					pid.AdministrativeSex.Value = "U";
-					break;
+				UpdateGender(patient.GenderConcept?.Key.ToString(), pid);
 			}
+			else if (patient.GenderConcept?.Mnemonic != null)
+			{
+				UpdateGender(patient.GenderConcept?.Mnemonic, pid);
+			}
+			else if (patient.GenderConceptKey.HasValue)
+			{
+				UpdateGender(patient.GenderConceptKey.Value.ToString(), pid);
+			}
+
 
 			if (patient.MultipleBirthOrder.HasValue)
 			{
@@ -165,8 +194,8 @@ namespace OpenIZ.Messaging.HL7.Notifier
 				//pid.PrimaryLanguage.NameOfCodingSystem.Value = "ISO639-1";
 			}
 
-			foreach (var mother in patient.Relationships.Where(r => (r.RelationshipType.Key == EntityRelationshipTypeKeys.Mother ||
-																	r.RelationshipType.Key == EntityRelationshipTypeKeys.NaturalMother) &&
+			foreach (var mother in patient.Relationships.Where(r => (r.RelationshipTypeKey == EntityRelationshipTypeKeys.Mother ||
+																	r.RelationshipTypeKey == EntityRelationshipTypeKeys.NaturalMother) &&
 																	r.TargetEntity is Person).Select(relationship => relationship.TargetEntity as Person))
 			{
 				mother.Identifiers.ForEach(c =>
@@ -175,6 +204,11 @@ namespace OpenIZ.Messaging.HL7.Notifier
 					pid.GetMotherSIdentifier(pid.MotherSIdentifierRepetitionsUsed).AssigningAuthority.UniversalIDType.Value = "ISO";
 					pid.GetMotherSIdentifier(pid.MotherSIdentifierRepetitionsUsed).AssigningAuthority.NamespaceID.Value = c.Authority.Oid;
 					pid.GetMotherSIdentifier(pid.MotherSIdentifierRepetitionsUsed).IDNumber.Value = c.Value;
+				});
+
+				mother.Names.ForEach(c =>
+				{
+					NotifierBase.UpdateXPN(c, pid.GetMotherSMaidenName(pid.MotherSMaidenNameRepetitionsUsed));
 				});
 			}
 
@@ -191,11 +225,13 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		/// <param name="name">The XPN segment to update.</param>
 		internal static void UpdateXPN(EntityName entityName, XPN name)
 		{
-			var nameUse = entityName.NameUse?.Key;
-
-			if (nameUse != null)
+			if (entityName.NameUse?.Key != null)
 			{
-				name.NameTypeCode.Value = MessageUtil.ReverseLookup(MessageUtil.NameUseMap, nameUse.ToGuid());
+				name.NameTypeCode.Value = MessageUtil.ReverseLookup(MessageUtil.NameUseMap, entityName.NameUse.Key.ToGuid());
+			}
+			else if (entityName.NameUseKey.HasValue)
+			{
+				name.NameTypeCode.Value = MessageUtil.ReverseLookup(MessageUtil.NameUseMap, entityName.NameUseKey.ToGuid());
 			}
 
 			name.DegreeEgMD.Value = string.Join(" ", entityName.Component.Where(c => c.ComponentTypeKey == NameComponentKeys.Suffix).Select(c => c.Value));
