@@ -328,7 +328,7 @@ namespace OpenIZ.Core.Applets.Test
         /// <summary>
         /// Tests the serialization of a complex act with relationships.
         /// </summary>
-        //[TestMethod]
+        [TestMethod]
         public void TestSerializeActWithDefinition()
         {
             var act = new Act
@@ -447,7 +447,7 @@ namespace OpenIZ.Core.Applets.Test
         /// <summary>
         /// Tests the serialization of a complex act with relationships.
         /// </summary>
-        //[TestMethod]
+        [TestMethod]
         public void TestSerializeActWithDeepNestDefinition()
         {
             var act = new Act

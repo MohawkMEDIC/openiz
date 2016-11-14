@@ -130,7 +130,7 @@ namespace OpenIZ.BusinessRules.JavaScript.Test
         /// <summary>
         /// Tests that the business rule is able to convert a model object
         /// </summary>
-        //[TestMethod]
+        [TestMethod]
         public void TestShouldConvertModelObject()
         {
 
