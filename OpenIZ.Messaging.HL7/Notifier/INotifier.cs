@@ -15,28 +15,29 @@
  * the License.
  *
  * User: khannan
- * Date: 2016-11-3
+ * Date: 2016-11-12
  */
 
-using MARC.HI.EHRS.SVC.Messaging.HAPI;
-using MARC.HI.EHRS.SVC.Messaging.HAPI.TransportProtocol;
-using NHapi.Base.Model;
+using OpenIZ.Core.Model;
+using OpenIZ.Messaging.HL7.Configuration;
 
-namespace OpenIZ.Messaging.HL7
+namespace OpenIZ.Messaging.HL7.Notifier
 {
 	/// <summary>
-	/// Represents a message handler for unsupported messages.
+	/// Represents a notifier.
 	/// </summary>
-	public class NotSupportedMessageHandler : IHL7MessageHandler
+	/// <typeparam name="T">The type of data of the notification.</typeparam>
+	public interface INotifier
 	{
 		/// <summary>
-		/// Handles unsupported messages.
+		/// Gets or sets the target configuration of the notifier.
 		/// </summary>
-		/// <param name="e">The received message event arguments.</param>
-		/// <returns>Returns a message.</returns>
-		public IMessage HandleMessage(Hl7MessageReceivedEventArgs e)
-		{
-			return MessageUtil.CreateNack(e.Message, "AR", "200", "Unsupported message type");
-		}
+		TargetConfiguration TargetConfiguration { get; set; }
+
+		/// <summary>
+		/// Notifies a remote system.
+		/// </summary>
+		/// <param name="workItem">The work item of the notification.</param>
+		void Notify<T>(NotificationQueueWorkItem<T> workItem) where T : IdentifiedData;
 	}
 }

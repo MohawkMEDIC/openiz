@@ -1,22 +1,23 @@
 ﻿/*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * User: justi
+ *
+ * User: khannan
  * Date: 2016-8-14
  */
+
 using MARC.Everest.Connectors;
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
@@ -58,7 +59,7 @@ namespace OpenIZ.Messaging.HL7
 		/// <summary>
 		/// The public reference to the HL7v2 Address use conversion map.
 		/// </summary>
-		private static readonly Dictionary<string, Guid> addressUseMap = new Dictionary<string, Guid>
+		public static readonly Dictionary<string, Guid> AddressUseMap = new Dictionary<string, Guid>
 		{
 			{ "B", AddressUseKeys.WorkPlace },
 			{ "BA", AddressUseKeys.BadAddress },
@@ -78,7 +79,7 @@ namespace OpenIZ.Messaging.HL7
 		/// <summary>
 		/// The public reference to the HL7v2 gender conversion map.
 		/// </summary>
-		private static readonly Dictionary<string, Guid> genderMap = new Dictionary<string, Guid>
+		public static readonly Dictionary<string, Guid> GenderMap = new Dictionary<string, Guid>
 		{
 			{ "F", Guid.Parse("094941e9-a3db-48b5-862c-bc289bd7f86c") },
 			{ "M", Guid.Parse("f4e3a6bb-612e-46b2-9f77-ff844d971198") },
@@ -88,7 +89,7 @@ namespace OpenIZ.Messaging.HL7
 		/// <summary>
 		/// The public reference to the HL7v2 name use conversion map.
 		/// </summary>
-		private static readonly Dictionary<string, Guid> nameUseMap = new Dictionary<string, Guid>
+		public static readonly Dictionary<string, Guid> NameUseMap = new Dictionary<string, Guid>
 		{
 			{ "A", NameUseKeys.Pseudonym },
 			{ "B", NameUseKeys.OfficialRecord },
@@ -107,7 +108,7 @@ namespace OpenIZ.Messaging.HL7
 		/// <summary>
 		/// The public reference to the HL7v2 to Telecommunications use conversion map.
 		/// </summary>
-		private static readonly Dictionary<string, Guid> telecommunicationsMap = new Dictionary<string, Guid>()
+		public static readonly Dictionary<string, Guid> TelecommunicationsMap = new Dictionary<string, Guid>()
 		{
 			{ "ASN", TelecomAddressUseKeys.AnsweringService },
 			{ "BPN", TelecomAddressUseKeys.Pager },
@@ -159,7 +160,7 @@ namespace OpenIZ.Messaging.HL7
 
 				if (!string.IsNullOrEmpty(addresses[i].AddressType.Value) && !string.IsNullOrWhiteSpace(addresses[i].AddressType.Value))
 				{
-					addressUseMap.TryGetValue(addresses[i].AddressType.Value, out addressUse);
+					AddressUseMap.TryGetValue(addresses[i].AddressType.Value, out addressUse);
 				}
 
 				entityAddress.AddressUse = new Concept
@@ -289,14 +290,14 @@ namespace OpenIZ.Messaging.HL7
 
 				if (assigningAuthority == null)
 				{
-					MessageUtil.tracer.TraceEvent(TraceEventType.Warning, 0, string.Format("Assigning authority OID not found: {0}", cx.AssigningAuthority.UniversalID.Value));
+					MessageUtil.tracer.TraceEvent(TraceEventType.Warning, 0, $"Assigning authority OID not found: {cx.AssigningAuthority.UniversalID.Value}");
 				}
 				else
 				{
 #if DEBUG
-					MessageUtil.tracer.TraceEvent(TraceEventType.Information, 0, string.Format("Adding {0}^^^&{1}&ISO to alternate identifiers", cx.IDNumber.Value, cx.AssigningAuthority.UniversalID.Value));
+					MessageUtil.tracer.TraceEvent(TraceEventType.Information, 0, $"Adding {cx.IDNumber.Value}^^^&{cx.AssigningAuthority.UniversalID.Value}&ISO to alternate identifiers");
 #endif
-					MessageUtil.tracer.TraceEvent(TraceEventType.Information, 0, string.Format("Adding identifier from {0} domain to alternate identifiers", cx.AssigningAuthority.UniversalID.Value));
+					MessageUtil.tracer.TraceEvent(TraceEventType.Information, 0, $"Adding identifier from {cx.AssigningAuthority.UniversalID.Value} domain to alternate identifiers");
 
 					entityIdentifier.Authority = assigningAuthority;
 					entityIdentifier.Value = cx.IDNumber.Value;
@@ -340,7 +341,7 @@ namespace OpenIZ.Messaging.HL7
 
 				if (!string.IsNullOrEmpty(names[i].NameTypeCode.Value) && !string.IsNullOrWhiteSpace(names[i].NameTypeCode.Value))
 				{
-					MessageUtil.nameUseMap.TryGetValue(names[i].NameTypeCode.Value, out nameUse);
+					MessageUtil.NameUseMap.TryGetValue(names[i].NameTypeCode.Value, out nameUse);
 				}
 
 				entityName.NameUse = new Concept
@@ -397,7 +398,6 @@ namespace OpenIZ.Messaging.HL7
 
 			if (Util.TryFromWireFormat(timestamp.Time.Value, typeof(MARC.Everest.DataTypes.TS), out dateTime))
 			{
-
 				result = ((MARC.Everest.DataTypes.TS)dateTime).DateValue;
 			}
 			else
@@ -480,7 +480,7 @@ namespace OpenIZ.Messaging.HL7
 			// Use code conversion
 			Guid use = Guid.Empty;
 
-			if (!string.IsNullOrEmpty(xtn.TelecommunicationUseCode.Value) && !telecommunicationsMap.TryGetValue(xtn.TelecommunicationUseCode.Value, out use))
+			if (!string.IsNullOrEmpty(xtn.TelecommunicationUseCode.Value) && !TelecommunicationsMap.TryGetValue(xtn.TelecommunicationUseCode.Value, out use))
 			{
 				throw new InvalidOperationException(string.Format("{0} is not a known use code", xtn.TelecommunicationUseCode.Value));
 			}
@@ -634,7 +634,7 @@ namespace OpenIZ.Messaging.HL7
 				{
 					patient.GenderConcept = new Concept
 					{
-						Key = genderMap[pid.AdministrativeSex.Value]
+						Key = GenderMap[pid.AdministrativeSex.Value]
 					};
 				}
 				else
@@ -651,11 +651,7 @@ namespace OpenIZ.Messaging.HL7
 				MessageUtil.tracer.TraceEvent(TraceEventType.Error, 0, "Gender value not found in map");
 			}
 
-			if (!string.IsNullOrEmpty(pid.PatientID.IDNumber.Value) && !string.IsNullOrWhiteSpace(pid.PatientID.IDNumber.Value))
-			{
-				patient.Identifiers.AddRange(MessageUtil.ConvertIdentifiers(new CX[] { pid.PatientID }));
-			}
-
+			patient.Identifiers.AddRange(MessageUtil.ConvertIdentifiers(pid.GetPatientIdentifierList()));
 			patient.Identifiers.AddRange(MessageUtil.ConvertIdentifiers(pid.GetAlternatePatientIDPID()));
 
 			if (!string.IsNullOrEmpty(pid.PrimaryLanguage.Identifier.Value) && !string.IsNullOrWhiteSpace(pid.PrimaryLanguage.Identifier.Value))
@@ -732,6 +728,19 @@ namespace OpenIZ.Messaging.HL7
 			else
 				errCode = "207";
 			return errCode;
+		}
+
+		/// <summary>
+		/// Reverses a lookup of a dictionary value.
+		/// </summary>
+		/// <typeparam name="K">The type of key of the dictionary.</typeparam>
+		/// <typeparam name="V">The type of value of the dictionary.</typeparam>
+		/// <param name="dictionary">The dictionary to use to perform the reverse lookup.</param>
+		/// <param name="value">The value to find in the dictionary.</param>
+		/// <returns>Returns the key associated with the given value.</returns>
+		public static K ReverseLookup<K, V>(Dictionary<K, V> dictionary, V value)
+		{
+			return dictionary.FirstOrDefault(d => d.Value.Equals(value)).Key;
 		}
 
 		/// <summary>
@@ -848,7 +857,7 @@ namespace OpenIZ.Messaging.HL7
 
 			terser.Set("/MSH-11", inboundTerser.Get("/MSH-11"));
 		}
-		
+
 		/// <summary>
 		/// Validates a message.
 		/// </summary>
@@ -960,7 +969,7 @@ namespace OpenIZ.Messaging.HL7
 			// Tel use
 			if (tel.AddressUseKey != null)
 			{
-				foreach (var tcu in telecommunicationsMap)
+				foreach (var tcu in TelecommunicationsMap)
 				{
 					if (tcu.Value == tel.AddressUseKey)
 					{

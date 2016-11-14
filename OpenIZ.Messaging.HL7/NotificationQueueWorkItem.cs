@@ -15,40 +15,41 @@
  * the License.
  *
  * User: khannan
- * Date: 2016-11-11
+ * Date: 2016-11-12
  */
 
-using System.Xml.Serialization;
 using OpenIZ.Core.Event;
+using OpenIZ.Core.Model;
 using OpenIZ.Messaging.HL7.Notifier;
 
-namespace OpenIZ.Messaging.HL7.Configuration
+namespace OpenIZ.Messaging.HL7
 {
 	/// <summary>
-	/// Represents an action configuration.
+	/// Represents a notification work item for the wait thread pool.
 	/// </summary>
-	public class ActionConfiguration
+	/// <typeparam name="T">The type of data of the notification.</typeparam>
+	public class NotificationQueueWorkItem<T> where T : IdentifiedData
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ActionConfiguration"/> class.
+		/// Initializes a new instance of the <see cref="NotificationQueueWorkItem{T}"/> class
+		/// with a specific identified data and notification type.
 		/// </summary>
-		public ActionConfiguration()
+		/// <param name="data">The data of the notification work item.</param>
+		/// <param name="actionType">The action type of the work item.</param>
+		public NotificationQueueWorkItem(T data, ActionType actionType)
 		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ActionConfiguration"/> class
-		/// with a specific <see cref="Notifier.ActionType"/> instance.
-		/// </summary>
-		/// <param name="actionType"></param>
-		public ActionConfiguration(ActionType actionType)
-		{
+			this.Event = data;
 			this.ActionType = actionType;
 		}
 
 		/// <summary>
-		/// Gets or sets the action type of the action configuration.
+		/// Gets the event that triggered the action.
 		/// </summary>
-		public ActionType ActionType { get; set; }
+		public T Event { get; }
+
+		/// <summary>
+		/// Gets the action to perform on the event.
+		/// </summary>
+		public ActionType ActionType { get; }
 	}
 }

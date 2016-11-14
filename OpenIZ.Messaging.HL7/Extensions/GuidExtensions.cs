@@ -15,28 +15,26 @@
  * the License.
  *
  * User: khannan
- * Date: 2016-11-3
+ * Date: 2016-11-12
  */
 
-using MARC.HI.EHRS.SVC.Messaging.HAPI;
-using MARC.HI.EHRS.SVC.Messaging.HAPI.TransportProtocol;
-using NHapi.Base.Model;
+using System;
 
-namespace OpenIZ.Messaging.HL7
+namespace OpenIZ.Messaging.HL7.Extensions
 {
 	/// <summary>
-	/// Represents a message handler for unsupported messages.
+	/// Contains extension methods for the <see cref="Guid"/> class.
 	/// </summary>
-	public class NotSupportedMessageHandler : IHL7MessageHandler
+	public static class GuidExtensions
 	{
 		/// <summary>
-		/// Handles unsupported messages.
+		/// Converts a <see cref="Nullable{T}"/> to a <see cref="Guid"/>.
 		/// </summary>
-		/// <param name="e">The received message event arguments.</param>
-		/// <returns>Returns a message.</returns>
-		public IMessage HandleMessage(Hl7MessageReceivedEventArgs e)
+		/// <param name="me">The GUID to convert.</param>
+		/// <returns>Returns a GUID.</returns>
+		public static Guid ToGuid(this Guid? me)
 		{
-			return MessageUtil.CreateNack(e.Message, "AR", "200", "Unsupported message type");
+			return me ?? Guid.Empty;
 		}
 	}
 }

@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using OpenIZ.Core.Event;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -105,11 +106,20 @@ namespace OpenIZ.Core.Services.Impl
 
 			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<Patient>();
 
-			patient = businessRulesService?.BeforeInsert(patient);
+			if (businessRulesService != null)
+			{
+				patient = businessRulesService.BeforeInsert(patient);
+			}
 
 			patient = persistenceService.Insert(patient, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
-			return businessRulesService != null ? businessRulesService.AfterInsert(patient) : patient;
+			patient = businessRulesService != null ? businessRulesService.AfterInsert(patient) : patient;
+
+			var clientRegistryNotificationService = ApplicationContext.Current.GetService<IClientRegistryNotificationService>();
+
+			clientRegistryNotificationService?.NotifyRegister(new NotificationEventArgs<Patient>(patient));
+
+			return patient;
 		}
 
 		Patient IPatientRepositoryService.Get(Guid id, Guid versionId)
@@ -123,8 +133,17 @@ namespace OpenIZ.Core.Services.Impl
 		public Patient Merge(Patient survivor, Patient victim)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+
 			if (persistenceService == null)
+			{
 				throw new InvalidOperationException("No persistence service found");
+			}
+
+			var clientRegistryNotificationService = ApplicationContext.Current.GetService<IClientRegistryNotificationService>();
+
+			clientRegistryNotificationService?.NotifyDuplicatesResolved(new NotificationEventArgs<Patient>(survivor));
+
+
 			// TODO: Do this
 			throw new NotImplementedException();
 		}
@@ -150,9 +169,12 @@ namespace OpenIZ.Core.Services.Impl
 
 			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<Patient>();
 
-			patient = businessRulesService?.BeforeObsolete(patient);
+			if (businessRulesService != null)
+			{
+				patient = businessRulesService.BeforeObsolete(patient);
+			}
 
-			patient = persistenceService.Obsolete(new Patient() { Key = key }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			patient = persistenceService.Obsolete(patient, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
 			return businessRulesService != null ? businessRulesService.AfterObsolete(patient) : patient;
 		}
@@ -173,19 +195,39 @@ namespace OpenIZ.Core.Services.Impl
 
 			try
 			{
-				patient = businessRulesService?.BeforeUpdate(patient);
+				if (businessRulesService != null)
+				{
+					patient = businessRulesService.BeforeUpdate(patient);
+				}
 
 				patient = persistenceService.Update(patient, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
-				patient = businessRulesService?.AfterUpdate(patient);
+				if (businessRulesService != null)
+				{
+					patient = businessRulesService.AfterUpdate(patient);
+				}
+
+				var clientRegistryNotificationService = ApplicationContext.Current.GetService<IClientRegistryNotificationService>();
+
+				clientRegistryNotificationService?.NotifyRegister(new NotificationEventArgs<Patient>(patient));
 			}
 			catch (KeyNotFoundException)
 			{
-				patient = businessRulesService?.BeforeInsert(patient);
+				if (businessRulesService != null)
+				{
+					patient = businessRulesService.BeforeInsert(patient);
+				}
 
 				patient = persistenceService.Insert(patient, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
-				patient = businessRulesService?.AfterInsert(patient);
+				if (businessRulesService != null)
+				{
+					patient = businessRulesService.AfterInsert(patient);
+				}
+
+				var clientRegistryNotificationService = ApplicationContext.Current.GetService<IClientRegistryNotificationService>();
+
+				clientRegistryNotificationService?.NotifyRegister(new NotificationEventArgs<Patient>(patient));
 			}
 
 			return patient;
