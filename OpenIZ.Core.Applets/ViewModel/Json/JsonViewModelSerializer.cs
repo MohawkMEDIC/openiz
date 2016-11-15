@@ -410,7 +410,8 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
             {
                 typeFormatter = new JsonReflectionTypeFormatter(type);
                 lock (this.m_syncLock)
-                    this.m_formatters.Add(type, typeFormatter);
+                    if(!this.m_formatters.ContainsKey(type))
+                        this.m_formatters.Add(type, typeFormatter);
             }
             return typeFormatter;
         }
