@@ -86,6 +86,12 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [XmlElement("url"), JsonProperty("url")]
         public String Url { get; set; }
+        
+        /// <summary>
+        /// HL7CX4 of assigining authority
+        /// </summary>
+        [XmlElement("HL7CX4"), JsonProperty("HL7CX4")]
+        public String HL7CX4 { get; set; }
 
         /// <summary>
         /// Represents scopes to which the authority is bound
