@@ -81,6 +81,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Obsoletion time
         /// </summary>
+        [SerializationReference(nameof(ObsoletionTimeXml))]
         [XmlIgnore, JsonIgnore]
         public DateTimeOffset? ObsoletionTime { get; set; }
 

@@ -30,7 +30,7 @@ namespace OpenIZ.Caching.Memory
     /// <summary>
     /// Represents a cache entry
     /// </summary>
-    public struct CacheEntry
+    public class CacheEntry
     {
 
         // Last read time

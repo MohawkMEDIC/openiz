@@ -389,13 +389,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/applet/{appletId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		AppletManifestInfo UpdateApplet(string appletId, AppletManifestInfo appletManifestInfo);
 
-		/// <summary>
-		/// Updates an assigning authority.
-		/// </summary>
-		/// <param name="assigningAuthorityId">The id of the assigning authority to be updated.</param>
-		/// <param name="assigningAuthorityInfo">The assigning authority containing the updated information.</param>
-		/// <returns>Returns the updated assigning authority.</returns>
-		AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo);
+        /// <summary>
+        /// Updates an assigning authority.
+        /// </summary>
+        /// <param name="assigningAuthorityId">The id of the assigning authority to be updated.</param>
+        /// <param name="assigningAuthorityInfo">The assigning authority containing the updated information.</param>
+        /// <returns>Returns the updated assigning authority.</returns>
+        [WebInvoke(UriTemplate = "/assigningAuthority/{assiginingAuthorityId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+        AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo);
 
 		/// <summary>
 		/// Updates a concept.

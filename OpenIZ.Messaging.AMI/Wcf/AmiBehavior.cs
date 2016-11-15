@@ -333,15 +333,33 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			throw new NotImplementedException();
 		}
 
-		/// <summary>
-		/// Deletes an assigning authority.
-		/// </summary>
-		/// <param name="assigningAuthorityId">The id of the assigning authority to be deleted.</param>
-		/// <returns>Returns the deleted assigning authority.</returns>
-		public AssigningAuthorityInfo DeleteAssigningAuthority(string assigningAuthorityId)
-		{
-			throw new NotImplementedException();
-		}
+        /// <summary>
+        /// Deletes an assigning authority.
+        /// </summary>
+        /// <param name="assigningAuthorityId">The id of the assigning authority to be deleted.</param>
+        /// <returns>Returns the deleted assigning authority.</returns>
+        public AssigningAuthorityInfo DeleteAssigningAuthority(string assigningAuthorityId)
+        {
+            Guid assigningAuthorityKey = Guid.Empty;
+
+            if (!Guid.TryParse(assigningAuthorityId, out assigningAuthorityKey))
+            {
+                throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(assigningAuthorityId)));
+            }
+
+            var assigningAuthorityService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
+
+            if (assigningAuthorityService == null)
+            {
+                throw new InvalidOperationException(string.Format("{0} not found", nameof(IAssigningAuthorityRepositoryService)));
+            }
+
+            return new AssigningAuthorityInfo()
+            {
+                AssigningAuthority = assigningAuthorityService.Obsolete(assigningAuthorityKey),
+                Id = assigningAuthorityKey
+            };
+        }
 
 		/// <summary>
         /// Deletes a specified certificate.

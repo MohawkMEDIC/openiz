@@ -314,8 +314,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                         tx.Commit();
                     else
                         tx.Rollback();
-
-                    this.Obsoleted?.Invoke(this, new PostPersistenceEventArgs<TData>(data));
+                    var args = new PostPersistenceEventArgs<TData>(data)
+                    {
+                        Mode = mode
+                    };
+                    this.Obsoleted?.Invoke(this, args);
 
                     return data;
                 }
