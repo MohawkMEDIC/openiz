@@ -23,14 +23,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core.Applets.Model;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.AMI.Applet
 {
 	/// <summary>
 	/// Represents a wrapper for the <see cref="AppletManifest"/> class.
 	/// </summary>
-	[XmlType(nameof(SecurityApplicationInfo), Namespace = "http://openiz.org/ami")]
-	[XmlRoot(nameof(SecurityApplicationInfo), Namespace = "http://openiz.org/ami")]
+	[XmlType(nameof(AppletManifestInfo), Namespace = "http://openiz.org/ami")]
+	[XmlRoot(nameof(AppletManifestInfo), Namespace = "http://openiz.org/ami")]
 	public class AppletManifestInfo : AppletManifest
 	{
 		/// <summary>

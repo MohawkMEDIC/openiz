@@ -108,7 +108,7 @@ namespace OpenIZ.Messaging.AMI.Client
         /// <returns>Returns the created assigning authority.</returns>
         public AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo)
         {
-            return this.Client.Post<AssigningAuthorityInfo, AssigningAuthorityInfo>("alert", this.Client.Accept, assigningAuthorityInfo);
+            return this.Client.Post<AssigningAuthorityInfo, AssigningAuthorityInfo>("assigningAuthority", this.Client.Accept, assigningAuthorityInfo);
         }
 
         /// <summary>
