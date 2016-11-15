@@ -29,6 +29,8 @@ namespace OpenIZ.Core.Model.AMI.Applet
 	/// <summary>
 	/// Represents a wrapper for the <see cref="AppletManifest"/> class.
 	/// </summary>
+	[XmlType(nameof(SecurityApplicationInfo), Namespace = "http://openiz.org/ami")]
+	[XmlRoot(nameof(SecurityApplicationInfo), Namespace = "http://openiz.org/ami")]
 	public class AppletManifestInfo : AppletManifest
 	{
 		/// <summary>
