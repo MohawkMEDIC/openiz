@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Persistence", "Persistence", "{2914F4AD-4661-4C73-ADB6-B1D91C11C569}"
 EndProject
@@ -96,6 +96,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.BusinessRules.JavaScript.Test", "OpenIZ.BusinessRules.JavaScript.Test\OpenIZ.BusinessRules.JavaScript.Test.csproj", "{6AFCADBB-4505-43FD-A1BA-ED7DBC1BB232}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Protocol.Xml", "OpenIZ.Protocol.Xml\OpenIZ.Protocol.Xml.csproj", "{CAD6BCB7-758B-4AA4-A5FE-A9FAB8A4CF2F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.BusinessRules.Core", "OpenIZ.BusinessRules.Core\OpenIZ.BusinessRules.Core.csproj", "{6535B8B3-0C39-4C9D-A536-05A2DA4126C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -235,6 +237,10 @@ Global
 		{CAD6BCB7-758B-4AA4-A5FE-A9FAB8A4CF2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CAD6BCB7-758B-4AA4-A5FE-A9FAB8A4CF2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CAD6BCB7-758B-4AA4-A5FE-A9FAB8A4CF2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6535B8B3-0C39-4C9D-A536-05A2DA4126C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6535B8B3-0C39-4C9D-A536-05A2DA4126C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6535B8B3-0C39-4C9D-A536-05A2DA4126C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6535B8B3-0C39-4C9D-A536-05A2DA4126C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -280,5 +286,6 @@ Global
 		{3BFD6EE6-0267-4D82-BE7D-9B48B2F6F3D4} = {0031AF94-A1A4-415B-BEB2-D5D757985D86}
 		{6AFCADBB-4505-43FD-A1BA-ED7DBC1BB232} = {0031AF94-A1A4-415B-BEB2-D5D757985D86}
 		{CAD6BCB7-758B-4AA4-A5FE-A9FAB8A4CF2F} = {0031AF94-A1A4-415B-BEB2-D5D757985D86}
+		{6535B8B3-0C39-4C9D-A536-05A2DA4126C0} = {0031AF94-A1A4-415B-BEB2-D5D757985D86}
 	EndGlobalSection
 EndGlobal
