@@ -443,7 +443,21 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the deleted policy.</returns>
 		public SecurityPolicyInfo DeletePolicy(string policyId)
 		{
-			throw new NotImplementedException();
+			var policyKey = Guid.Empty;
+
+			if (!Guid.TryParse(policyId, out policyKey))
+			{
+				throw new ArgumentException($"{nameof(policyId)} must be a valid GUID");
+			}
+
+			var securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepositoryService == null)
+			{
+				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
+			}
+
+			return new SecurityPolicyInfo(securityRepositoryService.ObsoletePolicy(policyKey));
 		}
 
 		/// <summary>

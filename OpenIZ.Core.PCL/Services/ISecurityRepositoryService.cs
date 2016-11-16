@@ -207,6 +207,13 @@ namespace OpenIZ.Core.Services
 		SecurityDevice ObsoleteDevice(Guid deviceId);
 
 		/// <summary>
+		/// Obsoletes a policy.
+		/// </summary>
+		/// <param name="policyId">THe id of the policy to be obsoleted.</param>
+		/// <returns>Returns the obsoleted policy.</returns>
+		SecurityPolicy ObsoletePolicy(Guid policyId);
+
+		/// <summary>
 		/// Obsoletes a role.
 		/// </summary>
 		/// <param name="roleId">The id of the role to be obsoleted.</param>

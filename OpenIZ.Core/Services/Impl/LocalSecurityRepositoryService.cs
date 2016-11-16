@@ -464,6 +464,23 @@ namespace OpenIZ.Core.Services.Impl
 		}
 
 		/// <summary>
+		/// Obsoletes a policy.
+		/// </summary>
+		/// <param name="policyId">THe id of the policy to be obsoleted.</param>
+		/// <returns>Returns the obsoleted policy.</returns>
+		public SecurityPolicy ObsoletePolicy(Guid policyId)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityPolicy>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityPolicy>)));
+			}
+
+			return persistenceService.Obsolete(new SecurityPolicy { Key = policyId }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
 		/// Obsoletes a role.
 		/// </summary>
 		/// <param name="roleId">The id of the role to be obsoleted.</param>
