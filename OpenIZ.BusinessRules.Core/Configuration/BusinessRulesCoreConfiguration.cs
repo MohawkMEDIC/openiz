@@ -23,6 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace OpenIZ.BusinessRules.Core.Configuration
 {
@@ -40,18 +41,9 @@ namespace OpenIZ.BusinessRules.Core.Configuration
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BusinessRulesCoreConfiguration"/> class
-		/// with a specific directory.
-		/// </summary>
-		/// <param name="path">The business rules core configuration directory.</param>
-		public BusinessRulesCoreConfiguration(string path)
-		{
-			this.Path = path;
-		}
-
-		/// <summary>
 		/// Gets or sets the path of the business rules core configuration.
 		/// </summary>
-		public string Path { get; set; }
+		[XmlElement("directory")]
+		public DirectoryConfiguration DirectoryConfiguration { get; set; }
 	}
 }

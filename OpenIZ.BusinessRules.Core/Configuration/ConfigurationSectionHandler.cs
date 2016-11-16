@@ -43,13 +43,16 @@ namespace OpenIZ.BusinessRules.Core.Configuration
 		public object Create(object parent, object configContext, XmlNode section)
 		{
 			var configuration = new BusinessRulesCoreConfiguration();
-			var directoryElement = section.SelectSingleNode("./*[local-name() = 'directory']") as XmlElement;
 
-			var path = directoryElement?.Attributes["path"]?.Value;
+			var directoryElement = section.SelectSingleNode("./*[local-name() = 'directory']");
+
+			var supportedExtensionsElement = section.SelectNodes("./*[local-name() = 'directory']/*[local-name() = 'add']");
+
+			var path = directoryElement.Attributes["path"]?.Value;
 
 			if (path == null)
 			{
-				throw new ConfigurationErrorsException("Missing directory", section);
+				throw new ConfigurationErrorsException("Path cannot be null");
 			}
 
 			if (!Directory.Exists(path))
@@ -57,7 +60,21 @@ namespace OpenIZ.BusinessRules.Core.Configuration
 				throw new ConfigurationErrorsException($"Path {path} does not exist");
 			}
 
-			return new BusinessRulesCoreConfiguration(path);
+			configuration.DirectoryConfiguration.Path = path;
+
+			foreach (XmlElement item in supportedExtensionsElement)
+			{
+				var extensionValue = item.Attributes["extension"]?.Value;
+
+				var extension = Path.GetExtension(extensionValue);
+
+				if (extension != null)
+				{
+					configuration.DirectoryConfiguration.SupportedExtensions.Add(extension);
+				}
+			}
+
+			return configuration;
 		}
 	}
 }

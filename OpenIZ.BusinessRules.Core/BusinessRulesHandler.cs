@@ -23,6 +23,7 @@ using OpenIZ.BusinessRules.Core.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Web;
@@ -34,17 +35,17 @@ namespace OpenIZ.BusinessRules.Core
 	/// <summary>
 	/// Represents a business rules daemon service.
 	/// </summary>
-	public class BusinessRulesDaemonService : IDaemonService
+	public class BusinessRulesHandler : IDaemonService
 	{
 		/// <summary>
 		/// The internal reference to the trace source.
 		/// </summary>
-		private TraceSource m_traceSource = new TraceSource("OpenIZ.BusinessRules.Core");
+		private TraceSource tracer = new TraceSource("OpenIZ.BusinessRules.Core");
 
 		/// <summary>
 		/// The internal reference to the configuration.
 		/// </summary>
-		private BusinessRulesCoreConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.businessrules.core") as BusinessRulesCoreConfiguration;
+		private BusinessRulesCoreConfiguration configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.businessrules.core") as BusinessRulesCoreConfiguration;
 
 		/// <summary>
 		/// Gets the running state of the message handler.
@@ -81,14 +82,18 @@ namespace OpenIZ.BusinessRules.Core
 			{
 				this.Starting?.Invoke(this, EventArgs.Empty);
 
-				// TODO: scan the directory and add the files to the business rules engine.
+				foreach (var file in Directory.GetFiles(this.configuration.DirectoryConfiguration.Path).Select(s =>  this.configuration.DirectoryConfiguration.SupportedExtensions.Where(a => s.EndsWith(a))))
+				{
+					this.tracer.TraceEvent(TraceEventType.Information, 0, "Adding supported extension", file);
+					// TODO: add the files to the business rules engine.
+				}
 
 				this.Started?.Invoke(this, EventArgs.Empty);
 				return true;
 			}
 			catch (Exception e)
 			{
-				this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+				this.tracer.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
 				return false;
 			}
 		}

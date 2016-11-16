@@ -51,6 +51,7 @@
     <Compile Include="BusinessRulesHandler.cs" />
     <Compile Include="Configuration\BusinessRulesCoreConfiguration.cs" />
     <Compile Include="Configuration\ConfigurationSectionHandler.cs" />
+    <Compile Include="Configuration\DirectoryConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
