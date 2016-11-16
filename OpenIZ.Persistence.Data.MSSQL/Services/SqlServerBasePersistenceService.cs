@@ -187,7 +187,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     else
                         tx.Rollback();
 
-                    this.Inserted?.Invoke(this, new PostPersistenceEventArgs<TData>(data, principal));
+					var args = new PostPersistenceEventArgs<TData>(data, principal)
+					{
+						Mode = mode
+					};
+
+                    this.Inserted?.Invoke(this, args);
 
                     return data;
 
@@ -252,7 +257,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     else
                         tx.Rollback();
 
-                    this.Updated?.Invoke(this, new PostPersistenceEventArgs<TData>(data, principal));
+					var args = new PostPersistenceEventArgs<TData>(data, principal)
+					{
+						Mode = mode
+					};
+
+					this.Updated?.Invoke(this, args);
 
                     return data;
                 }
@@ -314,10 +324,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                         tx.Commit();
                     else
                         tx.Rollback();
-                    var args = new PostPersistenceEventArgs<TData>(data)
+
+                    var args = new PostPersistenceEventArgs<TData>(data, principal)
                     {
                         Mode = mode
                     };
+
                     this.Obsoleted?.Invoke(this, args);
 
                     return data;
