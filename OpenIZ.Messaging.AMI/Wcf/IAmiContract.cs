@@ -86,14 +86,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/alert", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		AlertMessageInfo CreateAlert(AlertMessageInfo alertMessageInfo);
 
-        /// <summary>
-        /// Creates an assigning authority.
-        /// </summary>
-        /// <param name="assigningAuthorityInfo">The assigning authority to be created.</param>
-        /// <returns>Returns the created assigning authority.</returns>
-        [WebInvoke(UriTemplate = "/assigningAuthority", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-        AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo);
-
 		/// <summary>
 		/// Creates an applet.
 		/// </summary>
@@ -102,6 +94,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/applet", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		AppletManifestInfo CreateApplet(AppletManifestInfo appletManifestInfo);
 
+		/// <summary>
+		/// Creates an assigning authority.
+		/// </summary>
+		/// <param name="assigningAuthorityInfo">The assigning authority to be created.</param>
+		/// <returns>Returns the created assigning authority.</returns>
+		[WebInvoke(UriTemplate = "/assigningAuthority", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+        AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo);
         /// <summary>
         /// Creates a device in the IMS.
         /// </summary>
@@ -109,6 +108,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// <returns>Returns the newly created device.</returns>
         [WebInvoke(UriTemplate = "/device", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		SecurityDevice CreateDevice(SecurityDevice device);
+
+		/// <summary>
+		/// Creates a diagnostic report.
+		/// </summary>
+		/// <param name="report">The diagnostic report to be created.</param>
+		/// <returns>Returns the created diagnostic report.</returns>
+		[WebInvoke(UriTemplate = "/sherlock", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		DiagnosticReport CreateDiagnosticReport(DiagnosticReport report);
 
 		/// <summary>
 		/// Creates a place in the IMS.
@@ -340,6 +347,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		XmlSchema GetSchema(int schemaId);
 
 		/// <summary>
+		/// Gets the list of TFA mechanisms.
+		/// </summary>
+		/// <returns>Returns a list of TFA mechanisms.</returns>
+		[WebGet(UriTemplate = "/tfa")]
+		AmiCollection<TfaMechanismInfo> GetTfaMechanisms();
+
+		/// <summary>
 		/// Gets a specific security user.
 		/// </summary>
 		/// <param name="userId">The id of the security user to be retrieved.</param>
@@ -362,6 +376,12 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the rejection result.</returns>
 		[WebInvoke(UriTemplate = "/csr/{certId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
 		SubmissionResult RejectCsr(string certId, RevokeReason reason);
+
+		/// <summary>
+		/// Creates a request that the server issue a reset code
+		/// </summary>
+		[WebInvoke(UriTemplate = "/tfa", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		void SendTfaSecret(TfaRequestInfo resetInfo);
 
 		/// <summary>
 		/// Submits a specific certificate signing request.
@@ -442,27 +462,5 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the security user.</returns>
 		[WebInvoke(UriTemplate = "/user/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		SecurityUserInfo UpdateUser(string userId, SecurityUserInfo userInfo);
-
-        /// <summary>
-        /// Creates a request that the server issue a reset code
-        /// </summary>
-        [WebInvoke(UriTemplate = "/tfa", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-        void SendTfaSecret(TfaRequestInfo resetInfo);
-
-        /// <summary>
-        /// Gets the list of TFA mechanisms.
-        /// </summary>
-        /// <returns>Returns a list of TFA mechanisms.</returns>
-        [WebGet(UriTemplate = "/tfa")]
-        AmiCollection<TfaMechanismInfo> GetTfaMechanisms();
-
-        /// <summary>
-        /// Creates a diagnostic report.
-        /// </summary>
-        /// <param name="report">The diagnostic report to be created.</param>
-        /// <returns>Returns the created diagnostic report.</returns>
-        [WebInvoke(UriTemplate = "/sherlock", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-        DiagnosticReport CreateDiagnosticReport(DiagnosticReport report);
-        
 	}
 }
