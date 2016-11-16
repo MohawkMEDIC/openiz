@@ -37,7 +37,7 @@ namespace OpenIZ.BusinessRules.Core.Configuration
 		/// </summary>
 		public BusinessRulesCoreConfiguration()
 		{
-
+			this.DirectoryConfiguration = new DirectoryConfiguration();
 		}
 
 		/// <summary>

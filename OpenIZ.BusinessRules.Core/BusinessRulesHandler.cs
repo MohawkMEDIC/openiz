@@ -82,9 +82,9 @@ namespace OpenIZ.BusinessRules.Core
 			{
 				this.Starting?.Invoke(this, EventArgs.Empty);
 
-				foreach (var file in Directory.GetFiles(this.configuration.DirectoryConfiguration.Path).Select(s =>  this.configuration.DirectoryConfiguration.SupportedExtensions.Where(a => s.EndsWith(a))))
+				foreach (var file in Directory.GetFiles(this.configuration.DirectoryConfiguration.Path, "*.*", SearchOption.AllDirectories).Where(f => this.configuration.DirectoryConfiguration.SupportedExtensions.Contains(Path.GetExtension(f))))
 				{
-					this.tracer.TraceEvent(TraceEventType.Information, 0, "Adding supported extension", file);
+					this.tracer.TraceEvent(TraceEventType.Information, 0, "Adding file {0}", file);
 					// TODO: add the files to the business rules engine.
 				}
 
