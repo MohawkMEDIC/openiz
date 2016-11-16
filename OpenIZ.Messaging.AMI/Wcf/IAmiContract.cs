@@ -95,6 +95,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		AppletManifestInfo CreateApplet(AppletManifestInfo appletManifestInfo);
 
 		/// <summary>
+		/// Creates a security application.
+		/// </summary>
+		/// <param name="applicationInfo">The security application to be created.</param>
+		/// <returns>Returns the created security application.</returns>
+		[WebInvoke(UriTemplate = "/application", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		SecurityApplicationInfo CreateApplication(SecurityApplicationInfo applicationInfo);
+		/// <summary>
 		/// Creates an assigning authority.
 		/// </summary>
 		/// <param name="assigningAuthorityInfo">The assigning authority to be created.</param>
@@ -157,6 +164,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/applet/{appletId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
 		AppletManifestInfo DeleteApplet(string appletId);
 
+		/// <summary>
+		/// Deletes an application.
+		/// </summary>
+		/// <param name="applicationId">The id of the application to be deleted.</param>
+		/// <returns>Returns the deleted application.</returns>
+		[WebInvoke(UriTemplate = "/application/{applicationId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		SecurityApplicationInfo DeleteApplication(string applicationId);
 		/// <summary>
 		/// Deletes an assigning authority.
 		/// </summary>
@@ -235,6 +249,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns a list of applet which match the specific query.</returns>
 		[WebGet(UriTemplate = "/applet", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<AppletManifestInfo> GetApplets();
+
+		/// <summary>
+		/// Gets a list applications for a specific query.
+		/// </summary>
+		/// <returns>Returns a list of application which match the specific query.</returns>
+		[WebGet(UriTemplate = "/application", BodyStyle = WebMessageBodyStyle.Bare)]
+		AmiCollection<SecurityApplicationInfo> GetApplications();
 
 		/// <summary>
 		/// Gets a list of assigning authorities for a specific query.
@@ -409,6 +430,15 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/applet/{appletId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		AppletManifestInfo UpdateApplet(string appletId, AppletManifestInfo appletManifestInfo);
 
+		/// <summary>
+		/// Updates an application.
+		/// </summary>
+		/// <param name="applicationId">The id of the application to be updated.</param>
+		/// <param name="applicationInfo">The application containing the updated information.</param>
+		/// <returns>Returns the updated application.</returns>
+		[WebInvoke(UriTemplate = "/application/{applicationId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		SecurityApplicationInfo UpdateApplication(string applicationId, SecurityApplicationInfo applicationInfo);
+
         /// <summary>
         /// Updates an assigning authority.
         /// </summary>
@@ -426,6 +456,15 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the updated concept.</returns>
 		[WebInvoke(UriTemplate = "/concept/{conceptId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		Concept UpdateConcept(string conceptId, Concept concept);
+
+		/// <summary>
+		/// Updates a device.
+		/// </summary>
+		/// <param name="deviceId">The id of the device to be updated.</param>
+		/// <param name="deviceInfo">The device containing the updated information.</param>
+		/// <returns>Returns the updated device.</returns>
+		[WebInvoke(UriTemplate = "/device/{deviceId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		SecurityDeviceInfo UpdateDevice(string deviceId, SecurityDeviceInfo deviceInfo);
 
 		/// <summary>
 		/// Updates a place.
