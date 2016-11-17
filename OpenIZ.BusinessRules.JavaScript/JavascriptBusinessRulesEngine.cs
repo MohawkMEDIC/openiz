@@ -231,15 +231,17 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// <summary>
         /// Perform actual invokation on all objects
         /// </summary>
-        public TBinding Invoke<TBinding>(string action, TBinding data)
+        public TBinding Invoke<TBinding>(string action, TBinding data) where TBinding : IdentifiedData
         {
             var callList = this.GetCallList<TBinding>(action);
             var retVal = data;
             foreach (var c in callList)
             {
-                var raw = c(retVal);
-                retVal = (TBinding)raw.FirstOrDefault().Value;
+                dynamic viewModel = this.m_bridge.ToViewModel(retVal);
+                viewModel = c(viewModel);
+                retVal = (TBinding)this.m_bridge.ToModel(viewModel);
             }
+
             return retVal;
 
         }
@@ -247,13 +249,13 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// <summary>
         /// Validate the data object if validation is available
         /// </summary>
-        public List<DetectedIssue> Validate<TBinding>(TBinding data)
+        public List<DetectedIssue> Validate<TBinding>(TBinding data) where TBinding : IdentifiedData
         {
             var callList = this.GetValidators<TBinding>();
             var retVal = new List<DetectedIssue>();
             foreach (var c in callList)
             {
-                var issues = c(data);
+                var issues = c(this.m_bridge.ToViewModel(data));
                 retVal.AddRange(issues.Cast<IDictionary<String, Object>>().Select(o=>new DetectedIssue()
                 {
                     Text = o.ContainsKey("text") ? o["text"]?.ToString() : null,

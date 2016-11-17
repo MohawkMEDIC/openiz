@@ -19,6 +19,7 @@
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
@@ -59,7 +60,7 @@ namespace OpenIZ.BusinessRules.JavaScript
         public IEnumerable<TBinding> AfterQuery(IEnumerable<TBinding> results)
         {
             // Invoke the business rule
-            return JavascriptBusinessRulesEngine.Current.Invoke("AfterQuery", results);
+            return JavascriptBusinessRulesEngine.Current.Invoke("AfterQuery", new Bundle() { Item = results.OfType<IdentifiedData>().ToList() }).Item.OfType<TBinding>();
         }
 
         /// <summary>

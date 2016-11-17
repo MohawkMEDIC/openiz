@@ -70,6 +70,7 @@
     <Compile Include="Services\IClinicalProtocolRepositoryService.cs" />
     <Compile Include="Services\IConceptRepositoryService.cs" />
     <Compile Include="Services\IDataCacheService.cs" />
+    <Compile Include="Services\IRepositoryService.cs" />
     <Compile Include="Services\IEntityRepositoryService.cs" />
     <Compile Include="Services\IIdentifierTypeRepositoryService.cs" />
     <Compile Include="Services\IMaterialRepositoryService.cs" />

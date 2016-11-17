@@ -63,6 +63,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="lib\" />
     <Folder Include="Manifest\" />
   </ItemGroup>
   <ItemGroup>
