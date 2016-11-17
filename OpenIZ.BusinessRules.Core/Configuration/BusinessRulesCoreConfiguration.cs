@@ -14,47 +14,36 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: khannan
- * Date: 2016-11-11
+ * User: Nityan
+ * Date: 2016-11-15
  */
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OpenIZ.Core.Applets.Model;
 using System.Xml.Serialization;
 
-namespace OpenIZ.Core.Model.AMI.Applet
+namespace OpenIZ.BusinessRules.Core.Configuration
 {
 	/// <summary>
-	/// Represents a wrapper for the <see cref="AppletManifest"/> class.
+	/// Represents a business rules core configuration.
 	/// </summary>
-	[XmlType(nameof(AppletManifestInfo), Namespace = "http://openiz.org/ami")]
-	[XmlRoot(nameof(AppletManifestInfo), Namespace = "http://openiz.org/ami")]
-	public class AppletManifestInfo : AppletManifest
+	public class BusinessRulesCoreConfiguration
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="AppletManifestInfo"/> class.
+		/// Initializes a new instance of the <see cref="BusinessRulesCoreConfiguration"/> class.
 		/// </summary>
-		public AppletManifestInfo()
+		public BusinessRulesCoreConfiguration()
 		{
-				
+			this.DirectoryConfiguration = new DirectoryConfiguration();
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="AppletManifestInfo"/> class
-		/// with a specific applet manifest instance.
+		/// Gets or sets the path of the business rules core configuration.
 		/// </summary>
-		/// <param name="manifest">The applet manifest instance.</param>
-		public AppletManifestInfo(AppletManifest manifest)
-		{
-			this.AppletManifest = manifest;
-		}
-
-		/// <summary>
-		/// Gets or sets the applet manifest.
-		/// </summary>
-		public AppletManifest AppletManifest { get; set; }
+		[XmlElement("directory")]
+		public DirectoryConfiguration DirectoryConfiguration { get; set; }
 	}
 }

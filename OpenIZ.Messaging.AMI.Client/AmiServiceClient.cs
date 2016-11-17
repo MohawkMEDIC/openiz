@@ -101,6 +101,16 @@ namespace OpenIZ.Messaging.AMI.Client
 			return this.Client.Post<AppletManifestInfo, AppletManifestInfo>("applet", this.Client.Accept, appletManifestInfo);
 		}
 
+		/// <summary>
+		/// Creates a security application.
+		/// </summary>
+		/// <param name="applicationInfo">The security application to be created.</param>
+		/// <returns>Returns the created security application.</returns>
+		public SecurityApplicationInfo CreateApplication(SecurityApplicationInfo applicationInfo)
+		{
+			return this.Client.Post<SecurityApplicationInfo, SecurityApplicationInfo>("application", this.Client.Accept, applicationInfo);
+		}
+
         /// <summary>
         /// Creates an assigning authority.
         /// </summary>
@@ -108,7 +118,7 @@ namespace OpenIZ.Messaging.AMI.Client
         /// <returns>Returns the created assigning authority.</returns>
         public AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo)
         {
-            return this.Client.Post<AssigningAuthorityInfo, AssigningAuthorityInfo>("alert", this.Client.Accept, assigningAuthorityInfo);
+            return this.Client.Post<AssigningAuthorityInfo, AssigningAuthorityInfo>("assigningAuthority", this.Client.Accept, assigningAuthorityInfo);
         }
 
         /// <summary>
@@ -169,6 +179,16 @@ namespace OpenIZ.Messaging.AMI.Client
 		public AppletManifestInfo DeleteApplet(string appletId)
 		{
 			return this.Client.Delete<AppletManifestInfo>(string.Format("applet/{0}", appletId));
+		}
+
+		/// <summary>
+		/// Deletes an application.
+		/// </summary>
+		/// <param name="applicationId">The id of the application to be deleted.</param>
+		/// <returns>Returns the deleted application.</returns>
+		public SecurityApplicationInfo DeleteApplication(string applicationId)
+		{
+			return this.Client.Delete<SecurityApplicationInfo>(string.Format("application/{0}", applicationId));
 		}
 
 		/// <summary>
@@ -309,6 +329,15 @@ namespace OpenIZ.Messaging.AMI.Client
 		public AmiCollection<AppletManifestInfo> GetApplets(Expression<Func<AppletManifestInfo, bool>> query)
 		{
 			return this.Client.Get<AmiCollection<AppletManifestInfo>>("applet", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
+		/// Gets a list applications for a specific query.
+		/// </summary>
+		/// <returns>Returns a list of application which match the specific query.</returns>
+		public AmiCollection<SecurityApplicationInfo> GetApplications(Expression<Func<SecurityApplicationInfo, bool>> query)
+		{
+			return this.Client.Get<AmiCollection<SecurityApplicationInfo>>("application", QueryExpressionBuilder.BuildQuery(query).ToArray());
 		}
 
 		/// <summary>
@@ -484,6 +513,17 @@ namespace OpenIZ.Messaging.AMI.Client
 		public AppletManifestInfo UpdateApplet(string appletId, AppletManifestInfo appletManifestInfo)
 		{
 			return this.Client.Put<AppletManifestInfo, AppletManifestInfo>(string.Format("applet/{0}", appletId), this.Client.Accept, appletManifestInfo);
+		}
+
+		/// <summary>
+		/// Updates an application.
+		/// </summary>
+		/// <param name="applicationId">The id of the application to be updated.</param>
+		/// <param name="applicationInfo">The application containing the updated information.</param>
+		/// <returns>Returns the updated application.</returns>
+		public SecurityApplicationInfo UpdateApplication(string applicationId, SecurityApplicationInfo applicationInfo)
+		{
+			return this.Client.Put<SecurityApplicationInfo, SecurityApplicationInfo>(string.Format("application/{0}", applicationId), this.Client.Accept, applicationInfo);
 		}
 
 		/// <summary>

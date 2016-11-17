@@ -25,7 +25,7 @@ using System.ServiceModel.Dispatcher;
 namespace OpenIZ.Messaging.AMI.Wcf.Behavior
 {
 	/// <summary>
-	/// IMSI Serializer operation behavior
+	/// AMI Serializer operation behavior
 	/// </summary>
 	internal class AmiSerializerOperationBehavior : IOperationBehavior
 	{

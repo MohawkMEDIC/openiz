@@ -60,6 +60,25 @@ namespace OpenIZ.Core.Services.Impl
 		}
 
 		/// <summary>
+		/// Creates a security application.
+		/// </summary>
+		/// <param name="application">The security application.</param>
+		/// <returns>Returns the newly created application.</returns>
+		public SecurityApplication CreateApplication(SecurityApplication application)
+		{
+			this.m_traceSource.TraceEvent(TraceEventType.Information, 0, "Creating application {0}", application);
+
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityApplication>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<SecurityApplication>)} not found");
+			}
+
+			return persistenceService.Insert(application, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
 		/// Creates a device.
 		/// </summary>
 		/// <param name="device">The security device.</param>
@@ -166,6 +185,37 @@ namespace OpenIZ.Core.Services.Impl
 			if (persistence == null)
 				throw new InvalidOperationException("Persistence service missing");
 			return persistence.Insert(userEntity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
+		/// Gets a list of applications based on a query.
+		/// </summary>
+		/// <param name="query">The query to use to match the application.</param>
+		/// <returns>Returns a list of applications.</returns>
+		public IEnumerable<SecurityApplication> FindApplications(Expression<Func<SecurityApplication, bool>> query)
+		{
+			int totalCount = 0;
+			return this.FindApplications(query, 0, null, out totalCount);
+		}
+
+		/// <summary>
+		/// Gets a list of applications based on a query.
+		/// </summary>
+		/// <param name="query">The filter to use to match the applications.</param>
+		/// <param name="offset">The offset of the search.</param>
+		/// <param name="count">The number of applications.</param>
+		/// <param name="totalResults">The total number of applications.</param>
+		/// <returns>Returns a list of applications.</returns>
+		public IEnumerable<SecurityApplication> FindApplications(Expression<Func<SecurityApplication, bool>> query, int offset, int? count, out int totalResults)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityApplication>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<SecurityApplication>)} not found");
+			}
+
+			return persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
 		}
 
 		/// <summary>
@@ -324,6 +374,23 @@ namespace OpenIZ.Core.Services.Impl
 		}
 
 		/// <summary>
+		/// Gets a specific application.
+		/// </summary>
+		/// <param name="applicationId">The id of the application to be retrieved.</param>
+		/// <returns>Returns a application.</returns>
+		public SecurityApplication GetApplication(Guid applicationId)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityApplication>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<SecurityApplication>)} not found");
+			}
+
+			return persistenceService.Get<Guid>(new Identifier<Guid>(applicationId), AuthenticationContext.Current.Principal, false);
+		}
+
+		/// <summary>
 		/// Gets a specific device.
 		/// </summary>
 		/// <param name="deviceId">The id of the device to be retrieved.</param>
@@ -447,6 +514,23 @@ namespace OpenIZ.Core.Services.Impl
 		}
 
 		/// <summary>
+		/// Obsoletes an application.
+		/// </summary>
+		/// <param name="applicationId">The id of the application to be obsoleted.</param>
+		/// <returns>Returns the obsoleted application.</returns>
+		public SecurityApplication ObsoleteApplication(Guid applicationId)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityApplication>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<SecurityApplication>)} not found");
+			}
+
+			return persistenceService.Obsolete(this.GetApplication(applicationId), AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
 		/// Obsoletes a device.
 		/// </summary>
 		/// <param name="deviceId">The id of the device to be obsoleted.</param>
@@ -461,6 +545,23 @@ namespace OpenIZ.Core.Services.Impl
 			}
 
 			return persistenceService.Obsolete(this.GetDevice(deviceId), AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
+		/// Obsoletes a policy.
+		/// </summary>
+		/// <param name="policyId">THe id of the policy to be obsoleted.</param>
+		/// <returns>Returns the obsoleted policy.</returns>
+		public SecurityPolicy ObsoletePolicy(Guid policyId)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityPolicy>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityPolicy>)));
+			}
+
+			return persistenceService.Obsolete(new SecurityPolicy { Key = policyId }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>
@@ -511,6 +612,23 @@ namespace OpenIZ.Core.Services.Impl
 			if (persistence == null)
 				throw new InvalidOperationException("Persistence service not found");
 			return persistence.Obsolete(new UserEntity() { Key = id }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
+		/// Updates a security application.
+		/// </summary>
+		/// <param name="application">The security application containing the updated information.</param>
+		/// <returns>Returns the updated application.</returns>
+		public SecurityApplication SaveApplication(SecurityApplication application)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityApplication>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<SecurityApplication>)} not found");
+			}
+
+			return persistenceService.Update(application, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>

@@ -47,7 +47,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	[ServiceKnownType(typeof(ReferenceTerm))]
 	[ServiceKnownType(typeof(SubmissionInfo))]
 	[ServiceKnownType(typeof(SecurityUserInfo))]
-	[ServiceKnownType(typeof(SecurityRoleInfo))]
+    [ServiceKnownType(typeof(AlertMessageInfo))]
+    [ServiceKnownType(typeof(AssigningAuthorityInfo))]
+    [ServiceKnownType(typeof(SecurityRoleInfo))]
 	[ServiceKnownType(typeof(SubmissionResult))]
 	[ServiceKnownType(typeof(ApplicationEntity))]
 	[ServiceKnownType(typeof(SubmissionRequest))]
@@ -84,14 +86,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/alert", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		AlertMessageInfo CreateAlert(AlertMessageInfo alertMessageInfo);
 
-        /// <summary>
-        /// Creates an assigning authority.
-        /// </summary>
-        /// <param name="assigningAuthorityInfo">The assigning authority to be created.</param>
-        /// <returns>Returns the created assigning authority.</returns>
-        [WebInvoke(UriTemplate = "/assigningAuthority", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-        AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo);
-
 		/// <summary>
 		/// Creates an applet.
 		/// </summary>
@@ -100,6 +94,20 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/applet", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		AppletManifestInfo CreateApplet(AppletManifestInfo appletManifestInfo);
 
+		/// <summary>
+		/// Creates a security application.
+		/// </summary>
+		/// <param name="applicationInfo">The security application to be created.</param>
+		/// <returns>Returns the created security application.</returns>
+		[WebInvoke(UriTemplate = "/application", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		SecurityApplicationInfo CreateApplication(SecurityApplicationInfo applicationInfo);
+		/// <summary>
+		/// Creates an assigning authority.
+		/// </summary>
+		/// <param name="assigningAuthorityInfo">The assigning authority to be created.</param>
+		/// <returns>Returns the created assigning authority.</returns>
+		[WebInvoke(UriTemplate = "/assigningAuthority", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+        AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo);
         /// <summary>
         /// Creates a device in the IMS.
         /// </summary>
@@ -107,6 +115,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// <returns>Returns the newly created device.</returns>
         [WebInvoke(UriTemplate = "/device", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		SecurityDevice CreateDevice(SecurityDevice device);
+
+		/// <summary>
+		/// Creates a diagnostic report.
+		/// </summary>
+		/// <param name="report">The diagnostic report to be created.</param>
+		/// <returns>Returns the created diagnostic report.</returns>
+		[WebInvoke(UriTemplate = "/sherlock", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		DiagnosticReport CreateDiagnosticReport(DiagnosticReport report);
 
 		/// <summary>
 		/// Creates a place in the IMS.
@@ -148,6 +164,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/applet/{appletId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
 		AppletManifestInfo DeleteApplet(string appletId);
 
+		/// <summary>
+		/// Deletes an application.
+		/// </summary>
+		/// <param name="applicationId">The id of the application to be deleted.</param>
+		/// <returns>Returns the deleted application.</returns>
+		[WebInvoke(UriTemplate = "/application/{applicationId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		SecurityApplicationInfo DeleteApplication(string applicationId);
 		/// <summary>
 		/// Deletes an assigning authority.
 		/// </summary>
@@ -226,6 +249,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns a list of applet which match the specific query.</returns>
 		[WebGet(UriTemplate = "/applet", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<AppletManifestInfo> GetApplets();
+
+		/// <summary>
+		/// Gets a list applications for a specific query.
+		/// </summary>
+		/// <returns>Returns a list of application which match the specific query.</returns>
+		[WebGet(UriTemplate = "/application", BodyStyle = WebMessageBodyStyle.Bare)]
+		AmiCollection<SecurityApplicationInfo> GetApplications();
 
 		/// <summary>
 		/// Gets a list of assigning authorities for a specific query.
@@ -338,6 +368,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		XmlSchema GetSchema(int schemaId);
 
 		/// <summary>
+		/// Gets the list of TFA mechanisms.
+		/// </summary>
+		/// <returns>Returns a list of TFA mechanisms.</returns>
+		[WebGet(UriTemplate = "/tfa")]
+		AmiCollection<TfaMechanismInfo> GetTfaMechanisms();
+
+		/// <summary>
 		/// Gets a specific security user.
 		/// </summary>
 		/// <param name="userId">The id of the security user to be retrieved.</param>
@@ -360,6 +397,12 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the rejection result.</returns>
 		[WebInvoke(UriTemplate = "/csr/{certId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
 		SubmissionResult RejectCsr(string certId, RevokeReason reason);
+
+		/// <summary>
+		/// Creates a request that the server issue a reset code
+		/// </summary>
+		[WebInvoke(UriTemplate = "/tfa", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		void SendTfaSecret(TfaRequestInfo resetInfo);
 
 		/// <summary>
 		/// Submits a specific certificate signing request.
@@ -388,12 +431,22 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		AppletManifestInfo UpdateApplet(string appletId, AppletManifestInfo appletManifestInfo);
 
 		/// <summary>
-		/// Updates an assigning authority.
+		/// Updates an application.
 		/// </summary>
-		/// <param name="assigningAuthorityId">The id of the assigning authority to be updated.</param>
-		/// <param name="assigningAuthorityInfo">The assigning authority containing the updated information.</param>
-		/// <returns>Returns the updated assigning authority.</returns>
-		AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo);
+		/// <param name="applicationId">The id of the application to be updated.</param>
+		/// <param name="applicationInfo">The application containing the updated information.</param>
+		/// <returns>Returns the updated application.</returns>
+		[WebInvoke(UriTemplate = "/application/{applicationId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		SecurityApplicationInfo UpdateApplication(string applicationId, SecurityApplicationInfo applicationInfo);
+
+        /// <summary>
+        /// Updates an assigning authority.
+        /// </summary>
+        /// <param name="assigningAuthorityId">The id of the assigning authority to be updated.</param>
+        /// <param name="assigningAuthorityInfo">The assigning authority containing the updated information.</param>
+        /// <returns>Returns the updated assigning authority.</returns>
+        [WebInvoke(UriTemplate = "/assigningAuthority/{assiginingAuthorityId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+        AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo);
 
 		/// <summary>
 		/// Updates a concept.
@@ -403,6 +456,15 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the updated concept.</returns>
 		[WebInvoke(UriTemplate = "/concept/{conceptId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		Concept UpdateConcept(string conceptId, Concept concept);
+
+		/// <summary>
+		/// Updates a device.
+		/// </summary>
+		/// <param name="deviceId">The id of the device to be updated.</param>
+		/// <param name="deviceInfo">The device containing the updated information.</param>
+		/// <returns>Returns the updated device.</returns>
+		[WebInvoke(UriTemplate = "/device/{deviceId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		SecurityDeviceInfo UpdateDevice(string deviceId, SecurityDeviceInfo deviceInfo);
 
 		/// <summary>
 		/// Updates a place.
@@ -439,27 +501,5 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the security user.</returns>
 		[WebInvoke(UriTemplate = "/user/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		SecurityUserInfo UpdateUser(string userId, SecurityUserInfo userInfo);
-
-        /// <summary>
-        /// Creates a request that the server issue a reset code
-        /// </summary>
-        [WebInvoke(UriTemplate = "/tfa", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-        void SendTfaSecret(TfaRequestInfo resetInfo);
-
-        /// <summary>
-        /// Gets the list of TFA mechanisms.
-        /// </summary>
-        /// <returns>Returns a list of TFA mechanisms.</returns>
-        [WebGet(UriTemplate = "/tfa")]
-        AmiCollection<TfaMechanismInfo> GetTfaMechanisms();
-
-        /// <summary>
-        /// Creates a diagnostic report.
-        /// </summary>
-        /// <param name="report">The diagnostic report to be created.</param>
-        /// <returns>Returns the created diagnostic report.</returns>
-        [WebInvoke(UriTemplate = "/sherlock", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-        DiagnosticReport CreateDiagnosticReport(DiagnosticReport report);
-        
 	}
 }

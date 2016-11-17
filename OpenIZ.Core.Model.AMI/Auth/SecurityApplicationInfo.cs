@@ -30,8 +30,8 @@ namespace OpenIZ.Core.Model.AMI.Auth
 	/// <summary>
 	/// Represents a wrapper for the <see cref="SecurityApplication"/> class.
 	/// </summary>
-	[XmlType(nameof(SecurityPolicyInfo), Namespace = "http://openiz.org/ami")]
-	[XmlRoot(nameof(SecurityPolicyInfo), Namespace = "http://openiz.org/ami")]
+	[XmlType(nameof(SecurityApplicationInfo), Namespace = "http://openiz.org/ami")]
+	[XmlRoot(nameof(SecurityApplicationInfo), Namespace = "http://openiz.org/ami")]
 	public class SecurityApplicationInfo
 	{
 		/// <summary>

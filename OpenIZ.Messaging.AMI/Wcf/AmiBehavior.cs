@@ -139,12 +139,41 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			return new AlertMessageInfo(createdAlert);
 		}
 
-        /// <summary>
-        /// Creates an assigning authority.
-        /// </summary>
-        /// <param name="assigningAuthorityInfo">The assigning authority to be created.</param>
-        /// <returns>Returns the created assigning authority.</returns>
-        public AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo)
+		/// <summary>
+		/// Creates an applet.
+		/// </summary>
+		/// <param name="appletManifestInfo">The applet manifest info to be created.</param>
+		/// <returns>Returns the created applet manifest info.</returns>
+		public AppletManifestInfo CreateApplet(AppletManifestInfo appletManifestInfo)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Creates a security application.
+		/// </summary>
+		/// <param name="applicationInfo">The security application to be created.</param>
+		/// <returns>Returns the created security application.</returns>
+		public SecurityApplicationInfo CreateApplication(SecurityApplicationInfo applicationInfo)
+		{
+			var securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepositoryService == null)
+			{
+				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
+			}
+
+			var createdApplication = securityRepositoryService.CreateApplication(applicationInfo.Application);
+
+			return new SecurityApplicationInfo(createdApplication);
+		}
+
+		/// <summary>
+		/// Creates an assigning authority.
+		/// </summary>
+		/// <param name="assigningAuthorityInfo">The assigning authority to be created.</param>
+		/// <returns>Returns the created assigning authority.</returns>
+		public AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo)
         {
             var assigningAuthorityRepositoryService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
 
@@ -157,17 +186,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
             return new AssigningAuthorityInfo(createdAssigningAuthority);
         }
-
-		/// <summary>
-		/// Creates an applet.
-		/// </summary>
-		/// <param name="appletManifestInfo">The applet manifest info to be created.</param>
-		/// <returns>Returns the created applet manifest info.</returns>
-		public AppletManifestInfo CreateApplet(AppletManifestInfo appletManifestInfo)
-		{
-			throw new NotImplementedException();
-		}
-
 		/// <summary>
         /// Creates a device in the IMS.
         /// </summary>
@@ -253,44 +271,12 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			return new SecurityRoleInfo(roleRepository.CreateRole(roleToCreate));
 		}
 
-        /// <summary>
-        /// Creates security reset information
-        /// </summary>
-        public void SendTfaSecret(TfaRequestInfo resetInfo)
-        {
-
-            var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-
-            var securityUser = securityRepository.GetUser(resetInfo.UserName);
-            if (securityUser == null)
-                throw new KeyNotFoundException();
-
-            // Identity provider
-            var identityProvider = ApplicationContext.Current.GetService<IIdentityProviderService>();
-            var tfaSecret = identityProvider.GenerateTfaSecret(securityUser.UserName);
-
-            // Add a claim
-            if (resetInfo.Purpose == "PasswordReset")
-            {
-                new PolicyPermission(PermissionState.Unrestricted, PermissionPolicyIdentifiers.LoginAsService);
-                identityProvider.AddClaim(securityUser.UserName, new System.Security.Claims.Claim(OpenIzClaimTypes.OpenIZPasswordlessAuth, "true"));
-            }
-
-            var tfaRelay = ApplicationContext.Current.GetService<ITfaRelayService>();
-            if (tfaRelay == null)
-                throw new InvalidOperationException("TFA relay not specified");
-
-            // Now issue the TFA secret
-            tfaRelay.SendSecret(resetInfo.ResetMechanism, securityUser, resetInfo.Verification, tfaSecret);
-
-        }
-
-        /// <summary>
-        /// Creates a security user.
-        /// </summary>
-        /// <param name="user">The security user to be created.</param>
-        /// <returns>Returns the newly created security user.</returns>
-        public SecurityUserInfo CreateUser(SecurityUserInfo user)
+		/// <summary>
+		/// Creates a security user.
+		/// </summary>
+		/// <param name="user">The security user to be created.</param>
+		/// <returns>Returns the newly created security user.</returns>
+		public SecurityUserInfo CreateUser(SecurityUserInfo user)
 		{
 			var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 			var roleProviderService = ApplicationContext.Current.GetService<IRoleProviderService>();
@@ -301,14 +287,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				Email = user.Email,
 			};
 
-	        if (user.User == null)
-	        {
-		        userToCreate.UserClass = UserClassKeys.HumanUser;
-	        }
-	        else
-	        {
-		        userToCreate.UserClass = user.User.UserClass == Guid.Empty ? UserClassKeys.HumanUser : user.User.UserClass;
-	        }
+			if (user.User == null)
+			{
+				userToCreate.UserClass = UserClassKeys.HumanUser;
+			}
+			else
+			{
+				userToCreate.UserClass = user.User.UserClass == Guid.Empty ? UserClassKeys.HumanUser : user.User.UserClass;
+			}
 
 			if (user.Lockout.HasValue && user.Lockout.Value)
 			{
@@ -334,23 +320,66 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
+		/// Deletes an application.
+		/// </summary>
+		/// <param name="applicationId">The id of the application to be deleted.</param>
+		/// <returns>Returns the deleted application.</returns>
+		public SecurityApplicationInfo DeleteApplication(string applicationId)
+		{
+			Guid applicationKey = Guid.Empty;
+
+			if (!Guid.TryParse(applicationId, out applicationKey))
+			{
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(applicationId)));
+			}
+
+			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+			}
+
+			var obsoletedApplication = securityRepository.ObsoleteApplication(applicationKey);
+
+			return new SecurityApplicationInfo(obsoletedApplication);
+		}
+		/// <summary>
 		/// Deletes an assigning authority.
 		/// </summary>
 		/// <param name="assigningAuthorityId">The id of the assigning authority to be deleted.</param>
 		/// <returns>Returns the deleted assigning authority.</returns>
 		public AssigningAuthorityInfo DeleteAssigningAuthority(string assigningAuthorityId)
 		{
-			throw new NotImplementedException();
+			Guid assigningAuthorityKey = Guid.Empty;
+
+			if (!Guid.TryParse(assigningAuthorityId, out assigningAuthorityKey))
+			{
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(assigningAuthorityId)));
+			}
+
+			var assigningAuthorityService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
+
+			if (assigningAuthorityService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAssigningAuthorityRepositoryService)));
+			}
+
+			return new AssigningAuthorityInfo()
+			{
+				AssigningAuthority = assigningAuthorityService.Obsolete(assigningAuthorityKey),
+				Id = assigningAuthorityKey
+			};
 		}
 
 		/// <summary>
-        /// Deletes a specified certificate.
-        /// </summary>
-        /// <param name="id">The id of the certificate to be deleted.</param>
-        /// <param name="reason">The reason the certificate is to be deleted.</param>
-        /// <returns>Returns the deletion result.</returns>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
-        public SubmissionResult DeleteCertificate(string rawId, OpenIZ.Core.Model.AMI.Security.RevokeReason reason)
+		/// Deletes a specified certificate.
+		/// </summary>
+		/// <param name="id">The id of the certificate to be deleted.</param>
+		/// <param name="reason">The reason the certificate is to be deleted.</param>
+		/// <returns>Returns the deletion result.</returns>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+		public SubmissionResult DeleteCertificate(string rawId, OpenIZ.Core.Model.AMI.Security.RevokeReason reason)
 		{
 			int id = Int32.Parse(rawId);
 			var result = this.m_certTool.GetRequestStatus(id);
@@ -425,7 +454,21 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the deleted policy.</returns>
 		public SecurityPolicyInfo DeletePolicy(string policyId)
 		{
-			throw new NotImplementedException();
+			var policyKey = Guid.Empty;
+
+			if (!Guid.TryParse(policyId, out policyKey))
+			{
+				throw new ArgumentException($"{nameof(policyId)} must be a valid GUID");
+			}
+
+			var securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepositoryService == null)
+			{
+				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
+			}
+
+			return new SecurityPolicyInfo(securityRepositoryService.ObsoletePolicy(policyKey));
 		}
 
 		/// <summary>
@@ -512,6 +555,38 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		public AmiCollection<AppletManifestInfo> GetApplets()
 		{
 			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets a list applications for a specific query.
+		/// </summary>
+		/// <returns>Returns a list of application which match the specific query.</returns>
+		public AmiCollection<SecurityApplicationInfo> GetApplications()
+		{
+			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
+			if (parameters.Count == 0)
+			{
+				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
+			}
+
+			var expression = QueryExpressionParser.BuildLinqExpression<SecurityApplication>(this.CreateQuery(parameters));
+
+			var securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepositoryService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAssigningAuthorityRepositoryService)));
+			}
+
+			var applications = new AmiCollection<SecurityApplicationInfo>();
+
+			int totalCount = 0;
+
+			applications.CollectionItem = securityRepositoryService.FindApplications(expression, 0, null, out totalCount).Select(a => new SecurityApplicationInfo(a)).ToList();
+			applications.Size = totalCount;
+
+			return applications;
 		}
 
 		/// <summary>
@@ -818,32 +893,32 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			}
 		}
 
-        /// <summary>
-        /// Get a list of TFA mechanisms
-        /// </summary>
-        /// <returns>Returns a list of TFA mechanisms.</returns>
-        public AmiCollection<TfaMechanismInfo> GetTfaMechanisms()
-        {
-            var tfaRelay = ApplicationContext.Current.GetService<ITfaRelayService>();
-            if (tfaRelay == null)
-                throw new InvalidOperationException("TFA Relay missing");
-            return new AmiCollection<TfaMechanismInfo>()
-            {
-                CollectionItem = tfaRelay.Mechanisms.Select(o => new TfaMechanismInfo()
-                {
-                    Id = o.Id,
-                    Name = o.Name,
-                    ChallengeText = o.Challenge
-                }).ToList()
-            };
-        }
+		/// <summary>
+		/// Get a list of TFA mechanisms
+		/// </summary>
+		/// <returns>Returns a list of TFA mechanisms.</returns>
+		public AmiCollection<TfaMechanismInfo> GetTfaMechanisms()
+		{
+			var tfaRelay = ApplicationContext.Current.GetService<ITfaRelayService>();
+			if (tfaRelay == null)
+				throw new InvalidOperationException("TFA Relay missing");
+			return new AmiCollection<TfaMechanismInfo>()
+			{
+				CollectionItem = tfaRelay.Mechanisms.Select(o => new TfaMechanismInfo()
+				{
+					Id = o.Id,
+					Name = o.Name,
+					ChallengeText = o.Challenge
+				}).ToList()
+			};
+		}
 
-        /// <summary>
-        /// Gets a specific security user.
-        /// </summary>
-        /// <param name="userId">The id of the security user to be retrieved.</param>
-        /// <returns>Returns the security user.</returns>
-        public SecurityUserInfo GetUser(string rawUserId)
+		/// <summary>
+		/// Gets a specific security user.
+		/// </summary>
+		/// <param name="userId">The id of the security user to be retrieved.</param>
+		/// <returns>Returns the security user.</returns>
+		public SecurityUserInfo GetUser(string rawUserId)
 		{
 			Guid userId = Guid.Empty;
 			if (!Guid.TryParse(rawUserId, out userId))
@@ -863,14 +938,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			return new AmiCollection<SecurityUserInfo>() { CollectionItem = userRepository.FindUsers(expression).Select(o => new SecurityUserInfo(o)).ToList() };
 		}
 
-        /// <summary>
-        /// Rejects a specified certificate signing request.
-        /// </summary>
-        /// <param name="certId">The id of the certificate signing request to be rejected.</param>
-        /// <param name="reason">The reason the certificate signing request is to be rejected.</param>
-        /// <returns>Returns the rejection result.</returns>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
-        public SubmissionResult RejectCsr(string rawId, OpenIZ.Core.Model.AMI.Security.RevokeReason reason)
+		/// <summary>
+		/// Rejects a specified certificate signing request.
+		/// </summary>
+		/// <param name="certId">The id of the certificate signing request to be rejected.</param>
+		/// <param name="reason">The reason the certificate signing request is to be rejected.</param>
+		/// <returns>Returns the rejection result.</returns>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+		public SubmissionResult RejectCsr(string rawId, OpenIZ.Core.Model.AMI.Security.RevokeReason reason)
 		{
 			int id = Int32.Parse(rawId);
 			this.m_certTool.DenyRequest(id);
@@ -881,6 +956,37 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			return result;
 		}
 
+		/// <summary>
+		/// Creates security reset information
+		/// </summary>
+		public void SendTfaSecret(TfaRequestInfo resetInfo)
+        {
+
+            var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+            var securityUser = securityRepository.GetUser(resetInfo.UserName);
+            if (securityUser == null)
+                throw new KeyNotFoundException();
+
+            // Identity provider
+            var identityProvider = ApplicationContext.Current.GetService<IIdentityProviderService>();
+            var tfaSecret = identityProvider.GenerateTfaSecret(securityUser.UserName);
+
+            // Add a claim
+            if (resetInfo.Purpose == "PasswordReset")
+            {
+                new PolicyPermission(PermissionState.Unrestricted, PermissionPolicyIdentifiers.LoginAsService);
+                identityProvider.AddClaim(securityUser.UserName, new System.Security.Claims.Claim(OpenIzClaimTypes.OpenIZPasswordlessAuth, "true"));
+            }
+
+            var tfaRelay = ApplicationContext.Current.GetService<ITfaRelayService>();
+            if (tfaRelay == null)
+                throw new InvalidOperationException("TFA relay not specified");
+
+            // Now issue the TFA secret
+            tfaRelay.SendSecret(resetInfo.ResetMechanism, securityUser, resetInfo.Verification, tfaSecret);
+
+        }
         /// <summary>
         /// Submits a specific certificate signing request.
         /// </summary>
@@ -933,6 +1039,27 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		public AppletManifestInfo UpdateApplet(string appletId, AppletManifestInfo appletManifestInfo)
 		{
 			throw new NotImplementedException();
+		}
+
+		public SecurityApplicationInfo UpdateApplication(string applicationId, SecurityApplicationInfo applicationInfo)
+		{
+			Guid key = Guid.Parse(applicationId);
+
+			if (applicationInfo.Id != key)
+			{
+				throw new ArgumentException(nameof(applicationId));
+			}
+
+			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+			}
+
+			var updatedApplication = securityRepository.SaveApplication(applicationInfo.Application);
+
+			return new SecurityApplicationInfo(updatedApplication);
 		}
 
 		/// <summary>
@@ -990,6 +1117,33 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			}
 
 			return conceptRepository.SaveConcept(concept);
+		}
+
+		/// <summary>
+		/// Updates a device.
+		/// </summary>
+		/// <param name="deviceId">The id of the device to be updated.</param>
+		/// <param name="deviceInfo">The device containing the updated information.</param>
+		/// <returns>Returns the updated device.</returns>
+		public SecurityDeviceInfo UpdateDevice(string deviceId, SecurityDeviceInfo deviceInfo)
+		{
+			Guid key = Guid.Parse(deviceId);
+
+			if (deviceInfo.Id != key)
+			{
+				throw new ArgumentException(nameof(deviceId));
+			}
+
+			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+			}
+
+			var updatedDevice = securityRepository.SaveDevice(deviceInfo.Device);
+
+			return new SecurityDeviceInfo(updatedDevice);
 		}
 
 		/// <summary>
