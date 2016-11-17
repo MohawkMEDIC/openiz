@@ -415,7 +415,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// <param name="assigningAuthorityId">The id of the assigning authority to be updated.</param>
         /// <param name="assigningAuthorityInfo">The assigning authority containing the updated information.</param>
         /// <returns>Returns the updated assigning authority.</returns>
-        [WebInvoke(UriTemplate = "/assigningAuthority/{assiginingAuthorityId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+        [WebInvoke(UriTemplate = "/assigningAuthority/{assigningAuthorityId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
         AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo);
 
 		/// <summary>
