@@ -33,6 +33,7 @@ using Newtonsoft.Json;
 using System.Collections;
 using OpenIZ.Core.Model.Reflection;
 using OpenIZ.Core.Model.Attributes;
+using System.Diagnostics;
 
 namespace OpenIZ.Core.Applets.ViewModel.Json
 {
@@ -117,6 +118,11 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         /// </summary>
         public Object DeSerialize(TextReader r, Type t)
         {
+#if DEBUG
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            this.m_tracer.TraceVerbose("PERF >>> PARSING {0}", t);
+#endif
             try
             {
                 using (JsonReader jr = new JsonTextReader(r))
@@ -124,14 +130,23 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                     // Seek to the start object token
                     while (jr.TokenType != JsonToken.StartObject && jr.Read()) ;
 
-                    return this.ReadElementUtil(jr, t, new JsonSerializationContext(null, this, null));
+                    if (jr.TokenType == JsonToken.StartObject)
+                        return this.ReadElementUtil(jr, t, new JsonSerializationContext(null, this, null));
+                    else
+                        return null;
                 }
-
             }
             catch (Exception ex)
             {
                 this.m_tracer.TraceError("Error de-serializing: {0}", ex);
                 throw;
+            }
+            finally
+            {
+#if DEBUG
+                sw.Stop();
+                this.m_tracer.TraceVerbose("PERF >>> PARSED {0} IN {1} ms", t, sw.ElapsedMilliseconds);
+#endif
             }
         }
 
@@ -257,6 +272,8 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         internal IList LoadCollection(Type propertyType, Guid key)
         {
             MethodInfo methodInfo = null;
+
+            // Load
             if (!this.m_relatedLoadAssociations.TryGetValue(propertyType, out methodInfo))
             {
                 methodInfo = this.GetType().GetRuntimeMethod(nameof(LoadCollection), new Type[] { typeof(Guid) }).MakeGenericMethod(propertyType.StripGeneric());
@@ -281,22 +298,34 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         /// </summary>
         public IEnumerable<TAssociation> LoadCollection<TAssociation>(Guid sourceKey) where TAssociation : IdentifiedData, ISimpleAssociation, new()
         {
+#if DEBUG
+            this.m_tracer.TraceVerbose("Delay loading collection for object : {0}", sourceKey);
+#endif
+
             return EntitySource.Current.Provider.GetRelations<TAssociation>(sourceKey);
         }
 
         /// <summary>
         /// Load the related information
         /// </summary>
-        public TRelated LoadRelated<TRelated>(Guid objectKey) where TRelated : IdentifiedData, new()
+        public TRelated LoadRelated<TRelated>(Guid? objectKey) where TRelated : IdentifiedData, new()
         {
-            return EntitySource.Current.Provider.Get<TRelated>(objectKey);
+#if DEBUG
+            this.m_tracer.TraceVerbose("Delay loading related object : {0}", objectKey);
+#endif
+            if (objectKey.HasValue)
+                return EntitySource.Current.Provider.Get<TRelated>(objectKey);
+            else
+                return default(TRelated);
         }
 
         /// <summary>
         /// Write property utility
         /// </summary>
-        public void WritePropertyUtil(JsonWriter w, String propertyName, Object instance, SerializationContext context)
+        public void WritePropertyUtil(JsonWriter w, String propertyName, Object instance, SerializationContext context, bool noSubContext = false)
         {
+
+            if (instance == null) return;
 
             // first write the property
             if (!String.IsNullOrEmpty(propertyName))  // In an array so don't emit the property name
@@ -307,10 +336,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                     return;
             }
 
-            // Emit type
-            if (instance == null)
-                w.WriteNull();
-            else if (instance is IdentifiedData)
+            if (instance is IdentifiedData)
             {
                 var identifiedData = instance as IdentifiedData;
 
@@ -324,7 +350,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 {
                     w.WriteStartObject();
 
-                    var subContext = new JsonSerializationContext(propertyName, this, instance, context as JsonSerializationContext);
+                    var subContext = noSubContext && w.Path.EndsWith("]") ? context as JsonSerializationContext : new JsonSerializationContext(propertyName, this, instance, context as JsonSerializationContext);
                     this.WriteSimpleProperty(w, "$type", identifiedData.Type);
                     this.WriteSimpleProperty(w, "$id", String.Format("obj{0}", subContext.ObjectId));
 
@@ -338,7 +364,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                     w.WriteEndObject();
                 }
             }
-            else if (instance is IList)
+            else if (instance is IList && !instance.GetType().IsArray)
             {
                 // Classifications?
                 var classifier = this.GetClassifier(instance.GetType().StripNullable());
@@ -347,7 +373,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 {
                     w.WriteStartArray();
                     foreach (var itm in instance as IList)
-                        this.WritePropertyUtil(w, null, itm, new JsonSerializationContext(propertyName, this, instance, context as JsonSerializationContext));
+                        this.WritePropertyUtil(w, null, itm, new JsonSerializationContext(propertyName, this, instance, context as JsonSerializationContext), noSubContext);
                     w.WriteEndArray();
                 }
                 else
@@ -359,7 +385,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                         if (cls.Value.Count == 1)
                             value = cls.Value[0];
                         // Now write
-                        this.WritePropertyUtil(w, cls.Key, value, new JsonSerializationContext(propertyName, this, instance, context as JsonSerializationContext));
+                        this.WritePropertyUtil(w, cls.Key, value, new JsonSerializationContext(propertyName, this, instance, context as JsonSerializationContext), true);
                     }
                     w.WriteEndObject();
                 }
@@ -372,7 +398,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         /// <summary>
         /// Gets the appropriate classifier for the specified type
         /// </summary>
-        private IViewModelClassifier GetClassifier(Type type)
+        public IViewModelClassifier GetClassifier(Type type)
         {
             IViewModelClassifier retVal = null;
             if (!this.m_classifiers.TryGetValue(type, out retVal))
@@ -381,7 +407,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 if (classifierAtt != null)
                     retVal = new JsonReflectionClassifier(type);
                 lock (this.m_syncLock)
-                    if(!this.m_classifiers.ContainsKey(type))
+                    if (!this.m_classifiers.ContainsKey(type))
                         this.m_classifiers.Add(type, retVal);
             }
             return retVal;
@@ -403,14 +429,14 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         /// Get the specified formatter
         /// </summary>
         /// <param name="type">The type to retrieve the formatter for</param>
-        private IJsonViewModelTypeFormatter GetFormatter(Type type)
+        public IJsonViewModelTypeFormatter GetFormatter(Type type)
         {
             IJsonViewModelTypeFormatter typeFormatter = null;
             if (!this.m_formatters.TryGetValue(type, out typeFormatter))
             {
                 typeFormatter = new JsonReflectionTypeFormatter(type);
                 lock (this.m_syncLock)
-                    if(!this.m_formatters.ContainsKey(type))
+                    if (!this.m_formatters.ContainsKey(type))
                         this.m_formatters.Add(type, typeFormatter);
             }
             return typeFormatter;
@@ -461,6 +487,11 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         /// </summary>
         public void Serialize(TextWriter tw, IdentifiedData data)
         {
+#if DEBUG
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            this.m_tracer.TraceVerbose("PERF >>> SERIALIZING {0}", data);
+#endif
             try
             {
                 using (JsonWriter jw = new JsonTextWriter(tw))
@@ -472,6 +503,13 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
             {
                 this.m_tracer.TraceError("Error serializing {0} : {1}", data, e);
                 throw;
+            }
+            finally
+            {
+#if DEBUG
+                sw.Stop();
+                this.m_tracer.TraceVerbose("PERF >>> SERIALIZED {0} IN {1} ms", data, sw.ElapsedMilliseconds);
+#endif
             }
         }
     }

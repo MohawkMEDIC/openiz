@@ -150,6 +150,25 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
+		/// Creates a security application.
+		/// </summary>
+		/// <param name="applicationInfo">The security application to be created.</param>
+		/// <returns>Returns the created security application.</returns>
+		public SecurityApplicationInfo CreateApplication(SecurityApplicationInfo applicationInfo)
+		{
+			var securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepositoryService == null)
+			{
+				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
+			}
+
+			var createdApplication = securityRepositoryService.CreateApplication(applicationInfo.Application);
+
+			return new SecurityApplicationInfo(createdApplication);
+		}
+
+		/// <summary>
 		/// Creates an assigning authority.
 		/// </summary>
 		/// <param name="assigningAuthorityInfo">The assigning authority to be created.</param>
@@ -300,6 +319,31 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		/// Deletes an application.
+		/// </summary>
+		/// <param name="applicationId">The id of the application to be deleted.</param>
+		/// <returns>Returns the deleted application.</returns>
+		public SecurityApplicationInfo DeleteApplication(string applicationId)
+		{
+			Guid applicationKey = Guid.Empty;
+
+			if (!Guid.TryParse(applicationId, out applicationKey))
+			{
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(applicationId)));
+			}
+
+			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+			}
+
+			var obsoletedApplication = securityRepository.ObsoleteApplication(applicationKey);
+
+			return new SecurityApplicationInfo(obsoletedApplication);
+		}
 		/// <summary>
 		/// Deletes an assigning authority.
 		/// </summary>
@@ -511,6 +555,38 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		public AmiCollection<AppletManifestInfo> GetApplets()
 		{
 			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets a list applications for a specific query.
+		/// </summary>
+		/// <returns>Returns a list of application which match the specific query.</returns>
+		public AmiCollection<SecurityApplicationInfo> GetApplications()
+		{
+			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
+			if (parameters.Count == 0)
+			{
+				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
+			}
+
+			var expression = QueryExpressionParser.BuildLinqExpression<SecurityApplication>(this.CreateQuery(parameters));
+
+			var securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepositoryService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAssigningAuthorityRepositoryService)));
+			}
+
+			var applications = new AmiCollection<SecurityApplicationInfo>();
+
+			int totalCount = 0;
+
+			applications.CollectionItem = securityRepositoryService.FindApplications(expression, 0, null, out totalCount).Select(a => new SecurityApplicationInfo(a)).ToList();
+			applications.Size = totalCount;
+
+			return applications;
 		}
 
 		/// <summary>
@@ -965,6 +1041,27 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			throw new NotImplementedException();
 		}
 
+		public SecurityApplicationInfo UpdateApplication(string applicationId, SecurityApplicationInfo applicationInfo)
+		{
+			Guid key = Guid.Parse(applicationId);
+
+			if (applicationInfo.Id != key)
+			{
+				throw new ArgumentException(nameof(applicationId));
+			}
+
+			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+			}
+
+			var updatedApplication = securityRepository.SaveApplication(applicationInfo.Application);
+
+			return new SecurityApplicationInfo(updatedApplication);
+		}
+
 		/// <summary>
 		/// Updates an assigning authority.
 		/// </summary>
@@ -1020,6 +1117,33 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			}
 
 			return conceptRepository.SaveConcept(concept);
+		}
+
+		/// <summary>
+		/// Updates a device.
+		/// </summary>
+		/// <param name="deviceId">The id of the device to be updated.</param>
+		/// <param name="deviceInfo">The device containing the updated information.</param>
+		/// <returns>Returns the updated device.</returns>
+		public SecurityDeviceInfo UpdateDevice(string deviceId, SecurityDeviceInfo deviceInfo)
+		{
+			Guid key = Guid.Parse(deviceId);
+
+			if (deviceInfo.Id != key)
+			{
+				throw new ArgumentException(nameof(deviceId));
+			}
+
+			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+			}
+
+			var updatedDevice = securityRepository.SaveDevice(deviceInfo.Device);
+
+			return new SecurityDeviceInfo(updatedDevice);
 		}
 
 		/// <summary>

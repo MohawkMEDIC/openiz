@@ -37,7 +37,7 @@ namespace OpenIZ.Core.Http
 		private IRestClientDescription m_configuration;
         private ICredentialProvider m_credentialProvider;
 		// Get tracer
-		private Tracer m_tracer = Tracer.GetTracer(typeof(RestClientBase));
+		private static Tracer s_tracer = Tracer.GetTracer(typeof(RestClientBase));
 
 		/// <summary>
 		/// Fired on request
@@ -106,7 +106,7 @@ namespace OpenIZ.Core.Http
 			Uri uri = uriBuilder.Uri;
 
 			// Log
-			this.m_tracer.TraceVerbose("Constructing WebRequest to {0}", uriBuilder);
+			s_tracer.TraceVerbose("Constructing WebRequest to {0}", uriBuilder);
 
 			// Add headers
 			HttpWebRequest retVal = (HttpWebRequest)HttpWebRequest.Create(uri.ToString());
@@ -120,7 +120,7 @@ namespace OpenIZ.Core.Http
 			{
 				foreach (var kv in this.Credentials.GetHttpHeaders())
 				{
-					this.m_tracer.TraceVerbose("Adding header {0}:{1}", kv.Key, kv.Value);
+					s_tracer.TraceVerbose("Adding header {0}:{1}", kv.Key, kv.Value);
 					retVal.Headers[kv.Key] = kv.Value;
 				}
 			}
@@ -128,7 +128,7 @@ namespace OpenIZ.Core.Http
 			// Return type?
 			if (!String.IsNullOrEmpty(this.Accept))
 			{
-				this.m_tracer.TraceVerbose("Accepts {0}", this.Accept);
+				s_tracer.TraceVerbose("Accepts {0}", this.Accept);
 				retVal.Accept = this.Accept;
 			}
 
@@ -204,7 +204,7 @@ namespace OpenIZ.Core.Http
 				this.Requesting?.Invoke(this, requestEventArgs);
 				if (requestEventArgs.Cancel)
 				{
-					this.m_tracer.TraceVerbose("HTTP request cancelled");
+					s_tracer.TraceVerbose("HTTP request cancelled");
 					return default(TResult);
 				}
                 
@@ -215,7 +215,7 @@ namespace OpenIZ.Core.Http
 			}
 			catch (Exception e)
 			{
-				this.m_tracer.TraceError("Error invoking HTTP: {0}", e);
+				s_tracer.TraceError("Error invoking HTTP: {0}", e);
 				this.Responded?.Invoke(this, new RestResponseEventArgs(method, url, parameters, contentType, null, 500));
 				throw;
 			}
@@ -303,7 +303,7 @@ namespace OpenIZ.Core.Http
 		/// Get the description of this service
 		/// </summary>
 		/// <value>The description.</value>
-		public IRestClientDescription Description { get { return this.m_configuration; } }
+		public IRestClientDescription Description { get { return this.m_configuration; } set { this.m_configuration = value; } }
 
 		#endregion IRestClient implementation
 
@@ -386,7 +386,7 @@ namespace OpenIZ.Core.Http
                 this.Requesting?.Invoke(this, requestEventArgs);
                 if (requestEventArgs.Cancel)
                 {
-                    this.m_tracer.TraceVerbose("HTTP request cancelled");
+                    s_tracer.TraceVerbose("HTTP request cancelled");
                     return null;
                 }
 
@@ -411,7 +411,7 @@ namespace OpenIZ.Core.Http
             }
             catch (Exception e)
             {
-                this.m_tracer.TraceError("Error invoking HTTP: {0}", e);
+                s_tracer.TraceError("Error invoking HTTP: {0}", e);
                 this.Responded?.Invoke(this, new RestResponseEventArgs("HEAD", resourceName, parameters, null, null, 500));
                 throw;
             }

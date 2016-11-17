@@ -70,6 +70,7 @@
     <Compile Include="Services\IClinicalProtocolRepositoryService.cs" />
     <Compile Include="Services\IConceptRepositoryService.cs" />
     <Compile Include="Services\IDataCacheService.cs" />
+    <Compile Include="Services\IRepositoryService.cs" />
     <Compile Include="Services\IEntityRepositoryService.cs" />
     <Compile Include="Services\IIdentifierTypeRepositoryService.cs" />
     <Compile Include="Services\IMaterialRepositoryService.cs" />
@@ -80,9 +81,11 @@
     <Compile Include="Services\IClientRegistryNotificationService.cs" />
     <Compile Include="Services\IOrganizationRepositoryService.cs" />
     <Compile Include="Services\IPatientRepositoryService.cs" />
+    <Compile Include="Services\IPersistableQueryProvider.cs" />
     <Compile Include="Services\IPhoneticAlgorithmHandler.cs" />
     <Compile Include="Services\IPlaceRepositoryService.cs" />
     <Compile Include="Services\IProviderRepositoryService.cs" />
+    <Compile Include="Services\IQueryPersistenceService.cs" />
     <Compile Include="Services\ISecurityRepositoryService.cs" />
     <Compile Include="Services\IServiceManager.cs" />
     <Compile Include="Services\IStockManagementRepositoryService.cs" />

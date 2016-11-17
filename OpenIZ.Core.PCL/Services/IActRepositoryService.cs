@@ -34,7 +34,7 @@ namespace OpenIZ.Core.Services
 		/// Finds acts based on a specific query.
 		/// </summary>
 		IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> query, int offset, int? count, out int totalResults) where TAct : Act;
-
+        
         /// <summary>
         /// Get the specified act
         /// </summary>

@@ -31,6 +31,9 @@ using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Xml.Schema;
 using OpenIZ.Core.Model.AMI.Applet;
+using OpenIZ.Core.Alert.Alerting;
+using OpenIZ.Core.Applets.Model;
+using OpenIZ.Core.Model.AMI.BusinessRules;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -42,20 +45,39 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	[ServiceKnownType(typeof(Entity))]
 	[ServiceKnownType(typeof(Concept))]
 	[ServiceKnownType(typeof(ConceptSet))]
+	[ServiceKnownType(typeof(AlertMessage))]
+	[ServiceKnownType(typeof(AlertMessageInfo))]
+	[ServiceKnownType(typeof(SecurityApplication))]
+	[ServiceKnownType(typeof(SecurityApplicationInfo))]
+	[ServiceKnownType(typeof(SecurityDevice))]
+	[ServiceKnownType(typeof(SecurityDeviceInfo))]
+	[ServiceKnownType(typeof(SecurityPolicy))]
+	[ServiceKnownType(typeof(SecurityPolicyInfo))]
+	[ServiceKnownType(typeof(SecurityRole))]
+	[ServiceKnownType(typeof(SecurityRoleInfo))]
+	[ServiceKnownType(typeof(SecurityUser))]
+	[ServiceKnownType(typeof(SecurityUserInfo))]
+	[ServiceKnownType(typeof(AppletManifest))]
 	[ServiceKnownType(typeof(Organization))]
 	[ServiceKnownType(typeof(DeviceEntity))]
 	[ServiceKnownType(typeof(ReferenceTerm))]
 	[ServiceKnownType(typeof(SubmissionInfo))]
-	[ServiceKnownType(typeof(SecurityUserInfo))]
-    [ServiceKnownType(typeof(AlertMessageInfo))]
-    [ServiceKnownType(typeof(AssigningAuthorityInfo))]
-    [ServiceKnownType(typeof(SecurityRoleInfo))]
 	[ServiceKnownType(typeof(SubmissionResult))]
 	[ServiceKnownType(typeof(ApplicationEntity))]
 	[ServiceKnownType(typeof(SubmissionRequest))]
-	[ServiceKnownType(typeof(SecurityDeviceInfo))]
 	[ServiceKnownType(typeof(X509Certificate2Info))]
+	[ServiceKnownType(typeof(AssigningAuthorityInfo))]
 	[ServiceKnownType(typeof(AmiCollection<SubmissionInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<AppletManifestInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<SecurityApplicationInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<SecurityDeviceInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<SecurityRoleInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<TfaMechanismInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<TfaRequestInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<BusinessRuleInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<AssigningAuthorityInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<SecurityDevice>))]
+	[ServiceKnownType(typeof(AmiCollection<AlertMessageInfo>))]
 	[ServiceKnownType(typeof(AmiCollection<SecurityUserInfo>))]
 	[ServiceKnownType(typeof(AmiCollection<X509Certificate2Info>))]
 	public interface IAmiContract
@@ -94,6 +116,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/applet", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		AppletManifestInfo CreateApplet(AppletManifestInfo appletManifestInfo);
 
+		/// <summary>
+		/// Creates a security application.
+		/// </summary>
+		/// <param name="applicationInfo">The security application to be created.</param>
+		/// <returns>Returns the created security application.</returns>
+		[WebInvoke(UriTemplate = "/application", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		SecurityApplicationInfo CreateApplication(SecurityApplicationInfo applicationInfo);
 		/// <summary>
 		/// Creates an assigning authority.
 		/// </summary>
@@ -157,6 +186,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/applet/{appletId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
 		AppletManifestInfo DeleteApplet(string appletId);
 
+		/// <summary>
+		/// Deletes an application.
+		/// </summary>
+		/// <param name="applicationId">The id of the application to be deleted.</param>
+		/// <returns>Returns the deleted application.</returns>
+		[WebInvoke(UriTemplate = "/application/{applicationId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		SecurityApplicationInfo DeleteApplication(string applicationId);
 		/// <summary>
 		/// Deletes an assigning authority.
 		/// </summary>
@@ -235,6 +271,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns a list of applet which match the specific query.</returns>
 		[WebGet(UriTemplate = "/applet", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<AppletManifestInfo> GetApplets();
+
+		/// <summary>
+		/// Gets a list applications for a specific query.
+		/// </summary>
+		/// <returns>Returns a list of application which match the specific query.</returns>
+		[WebGet(UriTemplate = "/application", BodyStyle = WebMessageBodyStyle.Bare)]
+		AmiCollection<SecurityApplicationInfo> GetApplications();
 
 		/// <summary>
 		/// Gets a list of assigning authorities for a specific query.
@@ -409,6 +452,15 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/applet/{appletId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		AppletManifestInfo UpdateApplet(string appletId, AppletManifestInfo appletManifestInfo);
 
+		/// <summary>
+		/// Updates an application.
+		/// </summary>
+		/// <param name="applicationId">The id of the application to be updated.</param>
+		/// <param name="applicationInfo">The application containing the updated information.</param>
+		/// <returns>Returns the updated application.</returns>
+		[WebInvoke(UriTemplate = "/application/{applicationId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		SecurityApplicationInfo UpdateApplication(string applicationId, SecurityApplicationInfo applicationInfo);
+
         /// <summary>
         /// Updates an assigning authority.
         /// </summary>
@@ -426,6 +478,15 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the updated concept.</returns>
 		[WebInvoke(UriTemplate = "/concept/{conceptId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		Concept UpdateConcept(string conceptId, Concept concept);
+
+		/// <summary>
+		/// Updates a device.
+		/// </summary>
+		/// <param name="deviceId">The id of the device to be updated.</param>
+		/// <param name="deviceInfo">The device containing the updated information.</param>
+		/// <returns>Returns the updated device.</returns>
+		[WebInvoke(UriTemplate = "/device/{deviceId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		SecurityDeviceInfo UpdateDevice(string deviceId, SecurityDeviceInfo deviceInfo);
 
 		/// <summary>
 		/// Updates a place.
