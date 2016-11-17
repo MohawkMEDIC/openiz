@@ -26,6 +26,7 @@ using OpenIZ.Messaging.AMI.Wcf.Behavior;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
 
@@ -36,32 +37,36 @@ namespace OpenIZ.Messaging.AMI
 	/// </summary>
 	public class AmiMessageHandler : IDaemonService
 	{
-		// configuration
-		private AmiConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.ami") as AmiConfiguration;
+		/// <summary>
+		/// The internal reference to the AMI configuration.
+		/// </summary>
+		private AmiConfiguration configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.ami") as AmiConfiguration;
 
-		// IMSI Trace host
-		private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.AMI");
+		/// <summary>
+		/// The internal reference to the trace source.
+		/// </summary>
+		private readonly TraceSource tracer = new TraceSource("OpenIZ.Messaging.AMI");
 
 		// web host
 		private WebServiceHost m_webHost;
 
 		/// <summary>
-		/// Fired when the object is starting up
+		/// Fired when the object is starting up.
 		/// </summary>
 		public event EventHandler Started;
 
 		/// <summary>
-		/// Fired when the object is starting
+		/// Fired when the object is starting.
 		/// </summary>
 		public event EventHandler Starting;
 
 		/// <summary>
-		/// Fired when the service has stopped
+		/// Fired when the service has stopped.
 		/// </summary>
 		public event EventHandler Stopped;
 
 		/// <summary>
-		/// Fired when the service is stopping
+		/// Fired when the service is stopping.
 		/// </summary>
 		public event EventHandler Stopping;
 
@@ -72,7 +77,7 @@ namespace OpenIZ.Messaging.AMI
 		{
 			get
 			{
-				return this.m_webHost?.State == System.ServiceModel.CommunicationState.Opened;
+				return this.m_webHost?.State == CommunicationState.Opened;
 			}
 		}
 
@@ -89,7 +94,7 @@ namespace OpenIZ.Messaging.AMI
 
 				foreach (ServiceEndpoint endpoint in this.m_webHost.Description.Endpoints)
 				{
-					this.m_traceSource.TraceInformation("Starting AMI on {0}...", endpoint.Address);
+					this.tracer.TraceInformation("Starting AMI on {0}...", endpoint.Address);
 					endpoint.EndpointBehaviors.Add(new AmiRestEndpointBehavior());
 					endpoint.EndpointBehaviors.Add(new WcfErrorEndpointBehavior());
 				}
@@ -104,7 +109,7 @@ namespace OpenIZ.Messaging.AMI
 
 				if (!Directory.Exists(appletDirectory))
 				{
-					this.m_traceSource.TraceEvent(TraceEventType.Information, 0, "Creating applet directory: {0}", appletDirectory);
+					this.tracer.TraceEvent(TraceEventType.Information, 0, "Creating applet directory: {0}", appletDirectory);
 
 					Directory.CreateDirectory(appletDirectory);
 				}
@@ -114,7 +119,7 @@ namespace OpenIZ.Messaging.AMI
 			}
 			catch (Exception e)
 			{
-				this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+				this.tracer.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
 				return false;
 			}
 		}
