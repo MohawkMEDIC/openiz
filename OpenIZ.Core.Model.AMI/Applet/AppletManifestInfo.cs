@@ -32,7 +32,7 @@ namespace OpenIZ.Core.Model.AMI.Applet
 	/// </summary>
 	[XmlType(nameof(AppletManifestInfo), Namespace = "http://openiz.org/ami")]
 	[XmlRoot(nameof(AppletManifestInfo), Namespace = "http://openiz.org/ami")]
-	public class AppletManifestInfo : AppletManifest
+	public class AppletManifestInfo
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AppletManifestInfo"/> class.

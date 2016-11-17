@@ -22,8 +22,10 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Wcf.Behavior;
 using OpenIZ.Messaging.AMI.Configuration;
 using OpenIZ.Messaging.AMI.Wcf;
+using OpenIZ.Messaging.AMI.Wcf.Behavior;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
 
@@ -88,10 +90,24 @@ namespace OpenIZ.Messaging.AMI
 				foreach (ServiceEndpoint endpoint in this.m_webHost.Description.Endpoints)
 				{
 					this.m_traceSource.TraceInformation("Starting AMI on {0}...", endpoint.Address);
+					endpoint.EndpointBehaviors.Add(new AmiRestEndpointBehavior());
 					endpoint.EndpointBehaviors.Add(new WcfErrorEndpointBehavior());
 				}
+
 				// Start the webhost
 				this.m_webHost.Open();
+
+				// creates the applets directory where the applets will live
+				var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+				var appletDirectory = Path.Combine(baseDirectory, "applets");
+
+				if (!Directory.Exists(appletDirectory))
+				{
+					this.m_traceSource.TraceEvent(TraceEventType.Information, 0, "Creating applet directory: {0}", appletDirectory);
+
+					Directory.CreateDirectory(appletDirectory);
+				}
 
 				this.Started?.Invoke(this, EventArgs.Empty);
 				return true;

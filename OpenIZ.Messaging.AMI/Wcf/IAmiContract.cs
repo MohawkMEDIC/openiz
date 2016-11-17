@@ -31,6 +31,9 @@ using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Xml.Schema;
 using OpenIZ.Core.Model.AMI.Applet;
+using OpenIZ.Core.Alert.Alerting;
+using OpenIZ.Core.Applets.Model;
+using OpenIZ.Core.Model.AMI.BusinessRules;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -42,20 +45,39 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	[ServiceKnownType(typeof(Entity))]
 	[ServiceKnownType(typeof(Concept))]
 	[ServiceKnownType(typeof(ConceptSet))]
+	[ServiceKnownType(typeof(AlertMessage))]
+	[ServiceKnownType(typeof(AlertMessageInfo))]
+	[ServiceKnownType(typeof(SecurityApplication))]
+	[ServiceKnownType(typeof(SecurityApplicationInfo))]
+	[ServiceKnownType(typeof(SecurityDevice))]
+	[ServiceKnownType(typeof(SecurityDeviceInfo))]
+	[ServiceKnownType(typeof(SecurityPolicy))]
+	[ServiceKnownType(typeof(SecurityPolicyInfo))]
+	[ServiceKnownType(typeof(SecurityRole))]
+	[ServiceKnownType(typeof(SecurityRoleInfo))]
+	[ServiceKnownType(typeof(SecurityUser))]
+	[ServiceKnownType(typeof(SecurityUserInfo))]
+	[ServiceKnownType(typeof(AppletManifest))]
 	[ServiceKnownType(typeof(Organization))]
 	[ServiceKnownType(typeof(DeviceEntity))]
 	[ServiceKnownType(typeof(ReferenceTerm))]
 	[ServiceKnownType(typeof(SubmissionInfo))]
-	[ServiceKnownType(typeof(SecurityUserInfo))]
-    [ServiceKnownType(typeof(AlertMessageInfo))]
-    [ServiceKnownType(typeof(AssigningAuthorityInfo))]
-    [ServiceKnownType(typeof(SecurityRoleInfo))]
 	[ServiceKnownType(typeof(SubmissionResult))]
 	[ServiceKnownType(typeof(ApplicationEntity))]
 	[ServiceKnownType(typeof(SubmissionRequest))]
-	[ServiceKnownType(typeof(SecurityDeviceInfo))]
 	[ServiceKnownType(typeof(X509Certificate2Info))]
+	[ServiceKnownType(typeof(AssigningAuthorityInfo))]
 	[ServiceKnownType(typeof(AmiCollection<SubmissionInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<AppletManifestInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<SecurityApplicationInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<SecurityDeviceInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<SecurityRoleInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<TfaMechanismInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<TfaRequestInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<BusinessRuleInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<AssigningAuthorityInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<SecurityDevice>))]
+	[ServiceKnownType(typeof(AmiCollection<AlertMessageInfo>))]
 	[ServiceKnownType(typeof(AmiCollection<SecurityUserInfo>))]
 	[ServiceKnownType(typeof(AmiCollection<X509Certificate2Info>))]
 	public interface IAmiContract
@@ -445,7 +467,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// <param name="assigningAuthorityId">The id of the assigning authority to be updated.</param>
         /// <param name="assigningAuthorityInfo">The assigning authority containing the updated information.</param>
         /// <returns>Returns the updated assigning authority.</returns>
-        [WebInvoke(UriTemplate = "/assigningAuthority/{assiginingAuthorityId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+        [WebInvoke(UriTemplate = "/assigningAuthority/{assigningAuthorityId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
         AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo);
 
 		/// <summary>
