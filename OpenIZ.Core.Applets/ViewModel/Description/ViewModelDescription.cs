@@ -84,6 +84,21 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
         }
 
         /// <summary>
+        /// Find description based on name
+        /// </summary>
+        public PropertyContainerDescription FindDescription(String name)
+        {
+            PropertyContainerDescription value = null;
+            if (!this.m_description.TryGetValue(name, out value))
+            {
+                value = this.Model.Find(o => o.TypeName == name);
+                lock (this.m_lockObject)
+                    if(!this.m_description.ContainsKey(name))
+                        this.m_description.Add(name, value);
+            }
+            return value;
+        }
+        /// <summary>
         /// Find description
         /// </summary>
         public PropertyContainerDescription FindDescription(Type rootType)

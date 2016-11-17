@@ -111,7 +111,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         /// <summary>
         /// Get property name
         /// </summary>
-        private String GetPropertyName(PropertyInfo info)
+        protected String GetPropertyName(PropertyInfo info)
         {
 
             String retVal = null;
@@ -178,22 +178,9 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 // Null ,do we want to force load?
                 if (value == null || (value as IList)?.Count == 0)
                 {
-                    if (context.ShouldForceLoad(propertyName))
+                    if (o.Key.HasValue && context.ShouldForceLoad(propertyName, o.Key.Value))
                     {
-                        // Known miss targets
-                        HashSet<String> missProp = null;
-                        if (o.Key.HasValue && context.LoadedProperties.TryGetValue(o.Key.Value, out missProp))
-                        {
-                            if (missProp.Contains(propertyName))
-                                continue; // skip known miss
-                            else
-                                missProp.Add(propertyName);
-                        }
-                        else if(o.Key.HasValue)
-                            context.LoadedProperties.Add(o.Key.Value, new HashSet<string>() { propertyName });
-                        
-
-                        if (value is IList)
+                        if (value is IList && !propertyInfo.PropertyType.IsArray)
                         {
                             if(o.Key.HasValue) 
                                 value = context.JsonContext.LoadCollection(propertyInfo.PropertyType, (Guid)o.Key);
@@ -238,9 +225,9 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
             if (!asType.GetTypeInfo().IsAbstract)
                 retVal = Activator.CreateInstance(asType);
 
-            int depth = r.Depth; // current depth
+            int depth = r.TokenType == JsonToken.StartObject ? r.Depth : r.Depth - 1 ; // current depth
             var properties = GetPropertyInfo(asType);
-
+            
             // We will parse this until we can no longer parse
             while (r.Read())
             {
@@ -260,12 +247,10 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                                 var xsiType = s_binder.BindToType(asType.GetTypeInfo().Assembly.FullName, r.ReadAsString());
                                 if (xsiType != asType)
                                 {
-                                    // We need to switch!!!
-                                    asType = xsiType;
-                                    var nRetVal = Activator.CreateInstance(asType);
+                                    var fmtr = context.JsonContext.GetFormatter(xsiType);
+                                    var nRetVal = fmtr.Deserialize(r, xsiType, context);
                                     nRetVal.CopyObjectData(retVal);
-                                    retVal = nRetVal;
-                                    properties = GetPropertyInfo(asType);
+                                    return nRetVal;
                                 }
                                 break;
                             case "$ref": // TODO: lookup reference
@@ -277,7 +262,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                                 {
                                     // Read next token
                                     r.Read();
-                                    var instance = context.JsonContext.ReadElementUtil(r, propertyInfo.PropertyType, new JsonSerializationContext(propertyName, context.JsonContext, retVal, context as JsonSerializationContext));
+                                    var instance = context.JsonContext.ReadElementUtil(r, propertyInfo.PropertyType, new JsonSerializationContext(propertyName, context.JsonContext, retVal, context));
                                     if (!(instance == null || (instance as IList)?.Count == 0))
                                         propertyInfo.SetValue(retVal, instance);
                                 }

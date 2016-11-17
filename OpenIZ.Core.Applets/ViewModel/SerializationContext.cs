@@ -84,6 +84,8 @@ namespace OpenIZ.Core.Applets.ViewModel
                     var elementDescription = this.ViewModelDescription.FindDescription(this.PropertyName, this.Parent?.ElementDescription);
                     if (elementDescription == null)
                         elementDescription = this.ViewModelDescription.FindDescription(this.Instance?.GetType().StripGeneric());
+                    if (!String.IsNullOrEmpty(elementDescription?.Ref))
+                        elementDescription = this.ViewModelDescription.FindDescription(elementDescription.Ref) ?? elementDescription;
                     this.m_elementDescription = elementDescription;
                 }
                 return this.m_elementDescription;
@@ -121,10 +123,24 @@ namespace OpenIZ.Core.Applets.ViewModel
         /// <summary>
         /// Returns true when child property information should be force loaded
         /// </summary>
-        public bool ShouldForceLoad(string childProperty)
+        public bool ShouldForceLoad(string childProperty, Guid key)
         {
             var propertyDescription = this.ElementDescription.Properties.FirstOrDefault(o => o.Name == childProperty) as PropertyModelDescription;
-            return propertyDescription?.Action == SerializationBehaviorType.Always;
+            if(propertyDescription?.Action != SerializationBehaviorType.Always)
+                return false;
+
+            // Known miss targets
+            HashSet<String> missProp = null;
+            if (this.LoadedProperties.TryGetValue(key, out missProp))
+            {
+                if (missProp.Contains(childProperty))
+                    return false;
+                else
+                    missProp.Add(childProperty);
+            }
+            else
+                this.LoadedProperties.Add(key, new HashSet<string>() { childProperty });
+            return true;
         }
 
         /// <summary>

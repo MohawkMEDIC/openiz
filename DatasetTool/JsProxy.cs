@@ -17,11 +17,16 @@
  * User: justi
  * Date: 2016-11-3
  */
+using Microsoft.CSharp;
 using MohawkCollege.Util.Console.Parameters;
 using Newtonsoft.Json;
+using OpenIZ.Core.Applets.ViewModel.Json;
+using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Attributes;
 using System;
+using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -72,6 +77,37 @@ namespace OizDevTool
 
             [Parameter("ns")]
             public String Namespace { get; set; }
+        }
+
+        /// <summary>
+        /// Generate a serializer
+        /// </summary>
+        public static void GenerateSerializer(String[] args)
+        {
+
+            var parms = new ParameterParser<ConsoleParameters>().Parse(args);
+
+            // First we want to open the output file
+            using (TextWriter output = File.CreateText(parms.Output ?? "out.cs"))
+            {
+                JsonSerializerFactory serFact = new JsonSerializerFactory();
+                CSharpCodeProvider csProvider = new CSharpCodeProvider();
+                CodeCompileUnit compileUnit = new CodeCompileUnit();
+
+                // Add namespace
+                compileUnit.Namespaces.Add(serFact.CreateCodeNamespace(parms.Namespace ?? Path.GetFileNameWithoutExtension( parms.AssemblyFile) + ".Json.Formatter", Assembly.LoadFile(parms.AssemblyFile)));
+                compileUnit.ReferencedAssemblies.Add("System.dll");
+                compileUnit.ReferencedAssemblies.Add("Newtonsoft.Json.dll");
+                compileUnit.ReferencedAssemblies.Add(typeof(IdentifiedData).Assembly.Location);
+                compileUnit.ReferencedAssemblies.Add(typeof(IJsonViewModelTypeFormatter).Assembly.Location);
+                compileUnit.ReferencedAssemblies.Add(typeof(Tracer).Assembly.Location);
+                csProvider.GenerateCodeFromCompileUnit(compileUnit, output, new CodeGeneratorOptions()
+                {
+                    BlankLinesBetweenMembers = true
+                });
+
+            }
+
         }
 
         /// <summary>
