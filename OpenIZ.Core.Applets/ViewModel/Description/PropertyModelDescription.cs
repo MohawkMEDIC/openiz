@@ -40,7 +40,8 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
             foreach (var itm in this.Properties)
                 itm.Initialize(this);
         }
-        
+
+
         /// <summary>
         /// The property of the model
         /// </summary>

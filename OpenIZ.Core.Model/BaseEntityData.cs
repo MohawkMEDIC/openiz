@@ -61,7 +61,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Creation Time
         /// </summary>
-        [XmlIgnore, JsonIgnore]
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(CreationTimeXml))]
         public DateTimeOffset CreationTime { get; set; }
 
         /// <summary>
@@ -81,8 +81,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Obsoletion time
         /// </summary>
-        [SerializationReference(nameof(ObsoletionTimeXml))]
-        [XmlIgnore, JsonIgnore]
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(ObsoletionTimeXml))]
         public DateTimeOffset? ObsoletionTime { get; set; }
 
         /// <summary>

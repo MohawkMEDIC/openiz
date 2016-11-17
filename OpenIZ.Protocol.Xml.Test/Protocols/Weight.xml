@@ -27,7 +27,7 @@
     <variable name="maxDate">DateOfBirth.Value.Date.AddMonths(index + 1).AddDays(-DateOfBirth.Value.Day).AddHours(23).AddMinutes(59)</variable>
     <when evaluation="and">
       <!-- Patient does not have Weights taken or proposed-->
-      <imsiExpression negationIndicator="true">participation[RecordTarget].source.typeConcept.mnemonic=VitalSign-Weight&amp;participation[RecordTarget].source.actTime=>$minDate&amp;participation[RecordTarget].source.actTime=&lt;$maxDate</imsiExpression>
+      <imsiExpression negationIndicator="true">participation[RecordTarget].source.typeConcept?.mnemonic=VitalSign-Weight&amp;participation[RecordTarget].source.actTime=>$minDate&amp;participation[RecordTarget].source.actTime=&lt;$maxDate</imsiExpression>
 
     </when>
     <then>

@@ -35,6 +35,7 @@ namespace OpenIZ.Core.Model.Security
     [XmlType(Namespace = "http://openiz.org/model", TypeName = "SecurityRole")]
     [KeyLookup(nameof(Name))]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "SecurityRole")]
+    [JsonObject(nameof(SecurityRole))]
     public class SecurityRole : SecurityEntity
     {
         /// <summary>

@@ -20,6 +20,7 @@
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.Interfaces;
 using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -31,7 +32,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// </summary>
     [XmlType("ReferenceTermName",  Namespace = "http://openiz.org/model"), JsonObject("ReferenceTermName")]
     [Classifier(nameof(Language)), SimpleValue(nameof(Name))]
-    public class ReferenceTermName : BaseEntityData
+    public class ReferenceTermName : BaseEntityData, ISimpleAssociation
     {
 
         // Id of the algorithm used to generate phonetic code
@@ -97,6 +98,15 @@ namespace OpenIZ.Core.Model.DataTypes
                 this.m_phoneticAlgorithm = value;
                 this.m_phoneticAlgorithmId = value?.Key;
             }
+        }
+
+        /// <summary>
+        /// Gets the source entity key
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public Guid? SourceEntityKey
+        {
+            get;set;
         }
 
         /// <summary>
