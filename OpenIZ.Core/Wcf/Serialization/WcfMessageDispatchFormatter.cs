@@ -112,25 +112,23 @@ namespace OpenIZ.Core.Wcf.Serialization
                     else if (contentType?.StartsWith("application/xml") == true)
                     {
                         XmlDictionaryReader rawReader = request.GetReaderAtBodyContents();
-                        rawReader.ReadStartElement("Binary");
-                        byte[] rawBody = rawReader.ReadContentAsBase64();
+						//rawReader.ReadStartElement("Binary");
 
-                        using (MemoryStream ms = new MemoryStream(rawBody))
-                        {
-                            using (XmlReader bodyReader = XmlReader.Create(ms))
-                            {
-                                while (bodyReader.NodeType != XmlNodeType.Element)
-                                    bodyReader.Read();
+						byte[] rawBody = rawReader.ReadContentAsBase64();
 
-                                Type eType = s_knownTypes.FirstOrDefault(o => o.GetCustomAttribute<XmlRootAttribute>()?.ElementName == bodyReader.LocalName &&
-                                o.GetCustomAttribute<XmlRootAttribute>()?.Namespace == bodyReader.NamespaceURI);
-                                XmlSerializer xsz = s_serializers[eType];
-                                parameters[pNumber] = xsz.Deserialize(bodyReader);
-                            }
-                        }
-                    }
-                    // Use JSON Serializer
-                    else if (contentType?.StartsWith("application/json") == true)
+						using (rawReader)
+						{
+							Type eType = s_knownTypes.FirstOrDefault(o => o.GetCustomAttribute<XmlRootAttribute>()?.ElementName == rawReader.LocalName && o.GetCustomAttribute<XmlRootAttribute>()?.Namespace == rawReader.NamespaceURI);
+
+							this.m_traceSource.TraceEvent(TraceEventType.Information, 0, "Contract: {0}", typeof(TContract).Name);
+							this.m_traceSource.TraceEvent(TraceEventType.Information, 0, "Attempting to deserialize type: {0}", eType?.Name);
+
+							XmlSerializer xsz = s_serializers[eType];
+							parameters[pNumber] = xsz.Deserialize(rawReader);
+						}
+					}
+					// Use JSON Serializer
+					else if (contentType?.StartsWith("application/json") == true)
                     {
                         // Read the binary contents form the WCF pipeline
                         XmlDictionaryReader bodyReader = request.GetReaderAtBodyContents();
