@@ -37,6 +37,7 @@ namespace OpenIZ.Core.Model.AMI.Auth
 		/// </summary>
 		public SecurityDeviceInfo()
 		{
+			this.Policies = new List<SecurityPolicyInstance>();
 		}
 
 		/// <summary>
@@ -50,6 +51,7 @@ namespace OpenIZ.Core.Model.AMI.Auth
 			this.Name = device.Name;
 			this.DeviceSecret = device.DeviceSecret;
 			this.Device = device;
+			this.Policies = device.Policies;
 		}
 
 		/// <summary>
