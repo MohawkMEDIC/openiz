@@ -93,7 +93,7 @@ namespace OpenIZ.Core.Wcf.Security
             catch(UnauthorizedRequestException) { throw; }
             catch(Exception e)
             {
-                throw new SecurityTokenException(e.Message);
+                throw new SecurityTokenException(e.Message, e);
             }
         }
     }

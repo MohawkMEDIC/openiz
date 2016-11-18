@@ -215,23 +215,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
             return persister.Insert(report, AuthenticationContext.Current.Principal, TransactionMode.Commit);
         }
 
-        /// <summary>
-        /// Creates a place in the IMS.
-        /// </summary>
-        /// <param name="place">The place to be created.</param>
-        /// <returns>Returns the newly created place.</returns>
-        public Place CreatePlace(Place place)
-		{
-			var placeRepository = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
-
-			if (placeRepository == null)
-			{
-				throw new InvalidOperationException(string.Format("{0} cannot be null", nameof(IPlaceRepositoryService)));
-			}
-
-			return placeRepository.Insert(place);
-		}
-
 		/// <summary>
 		/// Creates a security policy.
 		/// </summary>
@@ -424,30 +407,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Deletes a place.
-		/// </summary>
-		/// <param name="placeId">The id of the place to be deleted.</param>
-		/// <returns>Returns the deleted place.</returns>
-		public Place DeletePlace(string placeId)
-		{
-			Guid placeKey = Guid.Empty;
-
-			if (!Guid.TryParse(placeId, out placeKey))
-			{
-				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(placeId)));
-			}
-
-			var placeRepository = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
-
-			if (placeRepository == null)
-			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IPlaceRepositoryService)));
-			}
-
-			return placeRepository.Obsolete(placeKey);
-		}
-
-		/// <summary>
 		/// Deletes a security policy.
 		/// </summary>
 		/// <param name="policyId">The id of the policy to be deleted.</param>
@@ -549,12 +508,48 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
+		/// Gets a specific applet.
+		/// </summary>
+		/// <param name="appletId">The id of the applet to retrieve.</param>
+		/// <returns>Returns the applet.</returns>
+		public AppletManifestInfo GetApplet(string appletId)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// Gets a list of applets for a specific query.
 		/// </summary>
 		/// <returns>Returns a list of applet which match the specific query.</returns>
 		public AmiCollection<AppletManifestInfo> GetApplets()
 		{
 			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets a specific application.
+		/// </summary>
+		/// <param name="applicationId">The id of the application to retrieve.</param>
+		/// <returns>Returns the application.</returns>
+		public SecurityApplicationInfo GetApplication(string applicationId)
+		{
+			Guid key = Guid.Empty;
+
+			if (!Guid.TryParse(applicationId, out key))
+			{
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(applicationId)));
+			}
+
+			var securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepositoryService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+			}
+
+			var application = securityRepositoryService.GetApplication(key);
+
+			return new SecurityApplicationInfo(application);
 		}
 
 		/// <summary>
@@ -576,7 +571,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			if (securityRepositoryService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAssigningAuthorityRepositoryService)));
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
 			}
 
 			var applications = new AmiCollection<SecurityApplicationInfo>();
@@ -622,6 +617,30 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
+		/// Gets a specific assigning authority.
+		/// </summary>
+		/// <param name="assigningAuthorityId">The id of the assigning authority to retrieve.</param>
+		/// <returns>Returns the assigning authority.</returns>
+		public AssigningAuthorityInfo GetAssigningAuthority(string assigningAuthorityId)
+		{
+			Guid key = Guid.Empty;
+
+			if (!Guid.TryParse(assigningAuthorityId, out key))
+			{
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(assigningAuthorityId)));
+			}
+
+			var assigningAuthorityRepositoryService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
+
+			if (assigningAuthorityRepositoryService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAssigningAuthorityRepositoryService)));
+			}
+
+			return new AssigningAuthorityInfo(assigningAuthorityRepositoryService.Get(key));
+		}
+
+		/// <summary>
 		/// Gets a specific certificate.
 		/// </summary>
 		/// <param name="id">The id of the certificate to retrieve.</param>
@@ -646,62 +665,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			foreach (var cert in certs)
 				collection.CollectionItem.Add(new X509Certificate2Info(cert.Attribute));
 			return collection;
-		}
-
-		/// <summary>
-		/// Gets a list of concepts.
-		/// </summary>
-		/// <returns>Returns a list of concepts.</returns>
-		public AmiCollection<Concept> GetConcepts()
-		{
-			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
-
-			if (parameters.Count == 0)
-			{
-				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
-			}
-
-			var expression = QueryExpressionParser.BuildLinqExpression<Concept>(this.CreateQuery(parameters));
-
-			var conceptRepository = ApplicationContext.Current.GetService<IConceptRepositoryService>();
-
-			if (conceptRepository == null)
-			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IConceptRepositoryService)));
-			}
-
-			return new AmiCollection<Concept>()
-			{
-				CollectionItem = conceptRepository.FindConcepts(expression).ToList()
-			};
-		}
-
-		/// <summary>
-		/// Gets a list of concept sets.
-		/// </summary>
-		/// <returns>Returns a list of concept sets.</returns>
-		public AmiCollection<ConceptSet> GetConceptSets()
-		{
-			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
-
-			if (parameters.Count == 0)
-			{
-				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
-			}
-
-			var expression = QueryExpressionParser.BuildLinqExpression<ConceptSet>(this.CreateQuery(parameters));
-
-			var conceptRepository = ApplicationContext.Current.GetService<IConceptRepositoryService>();
-
-			if (conceptRepository == null)
-			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IConceptRepositoryService)));
-			}
-
-			return new AmiCollection<ConceptSet>()
-			{
-				CollectionItem = conceptRepository.FindConceptSets(expression).ToList()
-			};
 		}
 
 		/// <summary>
@@ -783,34 +746,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Gets a list of places.
-		/// </summary>
-		/// <returns>Returns a list of places.</returns>
-		public AmiCollection<Place> GetPlaces()
-		{
-			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
-
-			if (parameters.Count == 0)
-			{
-				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
-			}
-
-			var expression = QueryExpressionParser.BuildLinqExpression<Place>(this.CreateQuery(parameters));
-
-			var placeRepository = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
-
-			if (placeRepository == null)
-			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IPlaceRepositoryService)));
-			}
-
-			return new AmiCollection<Place>()
-			{
-				CollectionItem = placeRepository.Find(expression).ToList()
-			};
-		}
-
-		/// <summary>
 		/// Gets a list of policies.
 		/// </summary>
 		/// <returns>Returns a list of policies.</returns>
@@ -828,7 +763,21 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the security policy.</returns>
 		public SecurityPolicyInfo GetPolicy(string policyId)
 		{
-			throw new NotImplementedException();
+			Guid key = Guid.Empty;
+
+			if (!Guid.TryParse(policyId, out key))
+			{
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(policyId)));
+			}
+
+			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+			}
+
+			return new SecurityPolicyInfo(securityRepository.GetPolicy(Guid.Parse(policyId)));
 		}
 
 		/// <summary>
@@ -1095,31 +1044,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Updates a concept.
-		/// </summary>
-		/// <param name="conceptId">The id of the concept to update.</param>
-		/// <param name="concept">The concept containing the updated model.</param>
-		/// <returns>Returns the newly updated concept.</returns>
-		public Concept UpdateConcept(string conceptId, Concept concept)
-		{
-			Guid key = Guid.Parse(conceptId);
-
-			if (concept.Key != key)
-			{
-				throw new ArgumentException(nameof(conceptId));
-			}
-
-			var conceptRepository = ApplicationContext.Current.GetService<IConceptRepositoryService>();
-
-			if (conceptRepository == null)
-			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IConceptRepositoryService)));
-			}
-
-			return conceptRepository.SaveConcept(concept);
-		}
-
-		/// <summary>
 		/// Updates a device.
 		/// </summary>
 		/// <param name="deviceId">The id of the device to be updated.</param>
@@ -1144,30 +1068,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			var updatedDevice = securityRepository.SaveDevice(deviceInfo.Device);
 
 			return new SecurityDeviceInfo(updatedDevice);
-		}
-
-		/// <summary>
-		/// Updates a place.
-		/// </summary>
-		/// <param name="place">The place containing the update information.</param>
-		/// <returns>Returns the updated place.</returns>
-		public Place UpdatePlace(string placeId, Place place)
-		{
-			Guid key = Guid.Parse(placeId);
-
-			if (place.Key != key)
-			{
-				throw new ArgumentException(nameof(placeId));
-			}
-
-			var placeRepository = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
-
-			if (placeRepository == null)
-			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IPlaceRepositoryService)));
-			}
-
-			return placeRepository.Save(place);
 		}
 
 		/// <summary>
@@ -1294,7 +1194,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the created query.</returns>
 		private NameValueCollection CreateQuery(System.Collections.Specialized.NameValueCollection nvc)
 		{
-			var retVal = new OpenIZ.Core.Model.Query.NameValueCollection();
+			var retVal = new NameValueCollection();
 
 			foreach (var k in nvc.AllKeys)
 			{

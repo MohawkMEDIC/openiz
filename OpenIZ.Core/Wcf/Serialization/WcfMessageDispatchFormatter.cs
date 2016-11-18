@@ -88,7 +88,13 @@ namespace OpenIZ.Core.Wcf.Serialization
 
             try
             {
-                HttpRequestMessageProperty httpRequest = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
+#if DEBUG
+				RemoteEndpointMessageProperty endpoint = (RemoteEndpointMessageProperty)request.Properties[RemoteEndpointMessageProperty.Name];
+
+				this.m_traceSource.TraceEvent(TraceEventType.Information, 0, "Received request from: {0}:{1}", endpoint.Address, endpoint.Port);
+#endif
+
+				HttpRequestMessageProperty httpRequest = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
                 string contentType = httpRequest.Headers[HttpRequestHeader.ContentType];
 
                 UriTemplateMatch templateMatch = (UriTemplateMatch)request.Properties.SingleOrDefault(o => o.Value is UriTemplateMatch).Value;
@@ -111,26 +117,56 @@ namespace OpenIZ.Core.Wcf.Serialization
                     // Use XML Serializer
                     else if (contentType?.StartsWith("application/xml") == true)
                     {
+
+                        var messageFormatProperty = (WebBodyFormatMessageProperty)request.Properties[WebBodyFormatMessageProperty.Name];
                         XmlDictionaryReader rawReader = request.GetReaderAtBodyContents();
-                        rawReader.ReadStartElement("Binary");
-                        byte[] rawBody = rawReader.ReadContentAsBase64();
 
-                        using (MemoryStream ms = new MemoryStream(rawBody))
+                        switch (messageFormatProperty.Format)
                         {
-                            using (XmlReader bodyReader = XmlReader.Create(ms))
-                            {
-                                while (bodyReader.NodeType != XmlNodeType.Element)
-                                    bodyReader.Read();
+                            case WebContentFormat.Raw:
+                                {
+                                    rawReader.ReadStartElement("Binary");
+                                    byte[] rawBody = rawReader.ReadContentAsBase64();
 
-                                Type eType = s_knownTypes.FirstOrDefault(o => o.GetCustomAttribute<XmlRootAttribute>()?.ElementName == bodyReader.LocalName &&
-                                o.GetCustomAttribute<XmlRootAttribute>()?.Namespace == bodyReader.NamespaceURI);
-                                XmlSerializer xsz = s_serializers[eType];
-                                parameters[pNumber] = xsz.Deserialize(bodyReader);
-                            }
+                                    using (MemoryStream ms = new MemoryStream(rawBody))
+                                    {
+                                        using (XmlReader bodyReader = XmlReader.Create(ms))
+                                        {
+                                            while (bodyReader.NodeType != XmlNodeType.Element)
+                                                bodyReader.Read();
+
+                                            Type eType = s_knownTypes.FirstOrDefault(o => o.GetCustomAttribute<XmlRootAttribute>()?.ElementName == bodyReader.LocalName &&
+                                            o.GetCustomAttribute<XmlRootAttribute>()?.Namespace == bodyReader.NamespaceURI);
+                                            XmlSerializer xsz = s_serializers[eType];
+                                            parameters[pNumber] = xsz.Deserialize(bodyReader);
+                                        }
+                                    }
+                                }
+
+                                break;
+                            case WebContentFormat.Xml:
+                                {
+                                    //rawReader.ReadStartElement("Binary");
+
+                                    byte[] rawBody = rawReader.ReadContentAsBase64();
+
+                                    using (rawReader)
+                                    {
+                                        Type eType = s_knownTypes.FirstOrDefault(o => o.GetCustomAttribute<XmlRootAttribute>()?.ElementName == rawReader.LocalName && o.GetCustomAttribute<XmlRootAttribute>()?.Namespace == rawReader.NamespaceURI);
+
+                                        this.m_traceSource.TraceEvent(TraceEventType.Information, 0, "Contract: {0}", typeof(TContract).Name);
+                                        this.m_traceSource.TraceEvent(TraceEventType.Information, 0, "Attempting to deserialize type: {0}", eType?.Name);
+
+                                        XmlSerializer xsz = s_serializers[eType];
+                                        parameters[pNumber] = xsz.Deserialize(rawReader);
+                                    }
+                                }
+                                break;
                         }
-                    }
-                    // Use JSON Serializer
-                    else if (contentType?.StartsWith("application/json") == true)
+                        
+					}
+					// Use JSON Serializer
+					else if (contentType?.StartsWith("application/json") == true)
                     {
                         // Read the binary contents form the WCF pipeline
                         XmlDictionaryReader bodyReader = request.GetReaderAtBodyContents();
