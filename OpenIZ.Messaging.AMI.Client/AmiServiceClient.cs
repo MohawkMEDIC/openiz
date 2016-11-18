@@ -547,6 +547,17 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
+		/// Updates a device.
+		/// </summary>
+		/// <param name="deviceId">The id of the device to be updated.</param>
+		/// <param name="deviceInfo">The device containing the updated information.</param>
+		/// <returns>Returns the updated device.</returns>
+		public SecurityDeviceInfo UpdateDevice(string deviceId, SecurityDeviceInfo deviceInfo)
+		{
+			return this.Client.Put<SecurityDeviceInfo, SecurityDeviceInfo>(string.Format("device/{0}", deviceId), this.Client.Accept, deviceInfo);
+		}
+
+		/// <summary>
 		/// Updates an assigning authority.
 		/// </summary>
 		/// <param name="assigningAuthorityId">The id of the assigning authority to be updated.</param>
