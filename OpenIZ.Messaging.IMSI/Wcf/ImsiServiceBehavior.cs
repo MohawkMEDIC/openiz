@@ -52,6 +52,9 @@ using OpenIZ.Core.Model.Interfaces;
 using MARC.Everest.Threading;
 using System.Collections.Specialized;
 using OpenIZ.Core.Model.Patch;
+using OpenIZ.Core.Exceptions;
+using MARC.HI.EHRS.SVC.Core;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Messaging.IMSI.Wcf
 {
@@ -434,14 +437,16 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 retCode = System.Net.HttpStatusCode.MethodNotAllowed;
             else if (e is NotImplementedException)
                 retCode = System.Net.HttpStatusCode.NotImplemented;
-            else if (e is InvalidDataException)
+            else if (e is InvalidDataException || e is ArgumentException)
                 retCode = HttpStatusCode.BadRequest;
             else if (e is FileLoadException)
                 retCode = System.Net.HttpStatusCode.Gone;
-            else if (e is FileNotFoundException || e is ArgumentException)
+            else if (e is FileNotFoundException)
                 retCode = System.Net.HttpStatusCode.NotFound;
-            else if (e is ConstraintException)
+            else if (e is ConstraintException || e is PatchException)
                 retCode = (HttpStatusCode)422;
+            else if (e is PatchAssertionException)
+                retCode = HttpStatusCode.Conflict;
             else
                 retCode = System.Net.HttpStatusCode.InternalServerError;
 
@@ -511,14 +516,91 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             this.Get(resourceType, id);
         }
 
+        /// <summary>
+        /// Perform a patch on the serviceo
+        /// </summary>
+        /// <param name="resourceType"></param>
+        /// <param name="id"></param>
+        /// <param name="body"></param>
         public void Patch(string resourceType, string id, Patch body)
         {
-            throw new NotImplementedException();
+            try
+            {
+                // Validate
+                var match = WebOperationContext.Current.IncomingRequest.Headers["If-Match"];
+                if (match == null)
+                    throw new InvalidOperationException("Missing If-Match header");
+
+                // Match bin
+                var versionId = Enumerable.Range(0, match.Length).Where(x => x % 2 == 0)
+                                 .Select(x => Convert.ToByte(match.Substring(x, 2), 16))
+                                 .ToArray();
+                // First we load
+                var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
+
+                if (versionId.Length != 16)
+                    throw new InvalidDataException("If-Match must be UUID");
+                else if (handler == null)
+                    throw new FileNotFoundException(resourceType);
+
+                // Next we get the current version
+                var existing = handler.Get(Guid.Parse(id), new Guid(versionId));
+                if (existing == null)
+                    throw new FileNotFoundException($"/{resourceType}/{id}/history/{versionId}");
+                else if (body == null)
+                    throw new ArgumentNullException(nameof(body));
+                else
+                {
+                    var applied = ApplicationContext.Current.GetService<IPatchService>().Patch(body, existing);
+                    var data = handler.Update(applied);
+                    WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpResponseHeader.ContentLocation, String.Format("{0}/{1}/{2}/history/{3}",
+                            WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
+                            resourceType,
+                            id,
+                            new Guid(versionId)));
+                }
+            }
+            catch (Exception e)
+            {
+                this.ErrorHelper(e, false);
+            }
         }
 
         public Patch GetPatch(string resourceType, string id)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Get options
+        /// </summary>
+        public void Options(string resourceType)
+        {
+            try
+            {
+                var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
+                if (handler == null)
+                    throw new FileNotFoundException(resourceType);
+                else
+                {
+
+                    WebOperationContext.Current.OutgoingResponse.Headers.Add("Allow", $"GET, PUT, POST, OPTIONS, HEAD, DELETE{(ApplicationContext.Current.GetService<IPatchService>() != null ? ", PATCH" : null)}");
+                    if(ApplicationContext.Current.GetService<IPatchService>() != null)
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add("Accept-Patch", "application/xml+oiz-patch");
+                }
+            }
+            catch(Exception e)
+            {
+                this.ErrorHelper(e, false);
+            }
+        }
+
+        /// <summary>
+        /// Options for the specified object
+        /// </summary>
+        public void InstanceOptions(string resourceType, string id)
+        {
+            this.Options(resourceType);
         }
         #endregion
     }

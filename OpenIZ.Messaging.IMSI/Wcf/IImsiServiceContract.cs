@@ -66,10 +66,23 @@ namespace OpenIZ.Messaging.IMSI.Wcf
 	[ServiceKnownType(typeof(SecurityRole))]
 	[ServiceKnownType(typeof(ApplicationEntity))]
     [ServiceKnownType(typeof(Bundle))]
+    [ServiceKnownType(typeof(Patch))]
     [ServiceKnownType(typeof(ErrorResult))]
     [ServiceKnownType(typeof(ConceptSet))]
     public interface IImsiServiceContract 
     {
+
+        /// <summary>
+        /// Executes an options action
+        /// </summary>
+        [WebInvoke(UriTemplate = "/{resourceType}", Method = "OPTIONS", BodyStyle = WebMessageBodyStyle.Bare)]
+        void Options(string resourceType);
+        
+        /// <summary>
+        /// Executes an options action
+        /// </summary>
+        [WebInvoke(UriTemplate = "/{resourceType}/{id}", Method = "OPTIONS", BodyStyle = WebMessageBodyStyle.Bare)]
+        void InstanceOptions(string resourceType, String id);
 
         /// <summary>
         /// Search for the specified resource type
