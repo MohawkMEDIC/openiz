@@ -88,7 +88,13 @@ namespace OpenIZ.Core.Wcf.Serialization
 
             try
             {
-                HttpRequestMessageProperty httpRequest = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
+#if DEBUG
+				RemoteEndpointMessageProperty endpoint = (RemoteEndpointMessageProperty)request.Properties[RemoteEndpointMessageProperty.Name];
+
+				this.m_traceSource.TraceEvent(TraceEventType.Information, 0, "Received request from: {0}:{1}", endpoint.Address, endpoint.Port);
+#endif
+
+				HttpRequestMessageProperty httpRequest = (HttpRequestMessageProperty)request.Properties[HttpRequestMessageProperty.Name];
                 string contentType = httpRequest.Headers[HttpRequestHeader.ContentType];
 
                 UriTemplateMatch templateMatch = (UriTemplateMatch)request.Properties.SingleOrDefault(o => o.Value is UriTemplateMatch).Value;
