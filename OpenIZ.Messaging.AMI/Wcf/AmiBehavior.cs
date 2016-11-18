@@ -707,7 +707,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			if (!Guid.TryParse(policyId, out key))
 			{
-				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(policyId));
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(policyId)));
 			}
 
 			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
