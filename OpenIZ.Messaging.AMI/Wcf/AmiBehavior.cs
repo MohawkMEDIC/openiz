@@ -508,12 +508,48 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
+		/// Gets a specific applet.
+		/// </summary>
+		/// <param name="appletId">The id of the applet to retrieve.</param>
+		/// <returns>Returns the applet.</returns>
+		public AppletManifestInfo GetApplet(string appletId)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// Gets a list of applets for a specific query.
 		/// </summary>
 		/// <returns>Returns a list of applet which match the specific query.</returns>
 		public AmiCollection<AppletManifestInfo> GetApplets()
 		{
 			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets a specific application.
+		/// </summary>
+		/// <param name="applicationId">The id of the application to retrieve.</param>
+		/// <returns>Returns the application.</returns>
+		public SecurityApplicationInfo GetApplication(string applicationId)
+		{
+			Guid key = Guid.Empty;
+
+			if (!Guid.TryParse(applicationId, out key))
+			{
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(applicationId)));
+			}
+
+			var securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepositoryService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+			}
+
+			var application = securityRepositoryService.GetApplication(key);
+
+			return new SecurityApplicationInfo(application);
 		}
 
 		/// <summary>
@@ -535,7 +571,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			if (securityRepositoryService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAssigningAuthorityRepositoryService)));
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
 			}
 
 			var applications = new AmiCollection<SecurityApplicationInfo>();
@@ -578,6 +614,30 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			assigningAuthorities.Size = totalCount;
 
 			return assigningAuthorities;
+		}
+
+		/// <summary>
+		/// Gets a specific assigning authority.
+		/// </summary>
+		/// <param name="assigningAuthorityId">The id of the assigning authority to retrieve.</param>
+		/// <returns>Returns the assigning authority.</returns>
+		public AssigningAuthorityInfo GetAssigningAuthority(string assigningAuthorityId)
+		{
+			Guid key = Guid.Empty;
+
+			if (!Guid.TryParse(assigningAuthorityId, out key))
+			{
+				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(assigningAuthorityId)));
+			}
+
+			var assigningAuthorityRepositoryService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
+
+			if (assigningAuthorityRepositoryService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAssigningAuthorityRepositoryService)));
+			}
+
+			return new AssigningAuthorityInfo(assigningAuthorityRepositoryService.Get(key));
 		}
 
 		/// <summary>

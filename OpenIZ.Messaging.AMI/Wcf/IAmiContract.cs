@@ -245,11 +245,27 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		AmiCollection<AlertMessageInfo> GetAlerts();
 
 		/// <summary>
+		/// Gets a specific applet.
+		/// </summary>
+		/// <param name="appletId">The id of the applet to retrieve.</param>
+		/// <returns>Returns the applet.</returns>
+		[WebGet(UriTemplate = "/applet/{appletId}", BodyStyle = WebMessageBodyStyle.Bare)]
+		AppletManifestInfo GetApplet(string appletId);
+
+		/// <summary>
 		/// Gets a list of applets for a specific query.
 		/// </summary>
 		/// <returns>Returns a list of applet which match the specific query.</returns>
 		[WebGet(UriTemplate = "/applet", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<AppletManifestInfo> GetApplets();
+
+		/// <summary>
+		/// Gets a specific application.
+		/// </summary>
+		/// <param name="applicationId">The id of the application to retrieve.</param>
+		/// <returns>Returns the application.</returns>
+		[WebGet(UriTemplate = "/application/{applicationId}", BodyStyle = WebMessageBodyStyle.Bare)]
+		SecurityApplicationInfo GetApplication(string applicationId);
 
 		/// <summary>
 		/// Gets a list applications for a specific query.
@@ -264,6 +280,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns a list of assigning authorities which match the specific query.</returns>
 		[WebGet(UriTemplate = "/assigningAuthority", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<AssigningAuthorityInfo> GetAssigningAuthorities();
+
+		/// <summary>
+		/// Gets a specific assigning authority.
+		/// </summary>
+		/// <param name="assigningAuthorityId">The id of the assigning authority to retrieve.</param>
+		/// <returns>Returns the assigning authority.</returns>
+		[WebGet(UriTemplate = "/assigningAuthority/{assigningAuthorityId}", BodyStyle = WebMessageBodyStyle.Bare)]
+		AssigningAuthorityInfo GetAssigningAuthority(string assigningAuthorityId);
 
 		/// <summary>
 		/// Gets a specific certificate.

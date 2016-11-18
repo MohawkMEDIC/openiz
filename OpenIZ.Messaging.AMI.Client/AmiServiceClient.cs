@@ -332,6 +332,16 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
+		/// Gets a specific application.
+		/// </summary>
+		/// <param name="id">The id of the application to retrieve.</param>
+		/// <returns>Returns the application.</returns>
+		public SecurityApplicationInfo GetApplication(string id)
+		{
+			return this.Client.Get<SecurityApplicationInfo>(string.Format("application/{0}", id));
+		}
+
+		/// <summary>
 		/// Gets a list applications for a specific query.
 		/// </summary>
 		/// <returns>Returns a list of application which match the specific query.</returns>
@@ -348,6 +358,16 @@ namespace OpenIZ.Messaging.AMI.Client
 		public AmiCollection<AssigningAuthorityInfo> GetAssigningAuthorities(Expression<Func<AssigningAuthority, bool>> query)
 		{
 			return this.Client.Get<AmiCollection<AssigningAuthorityInfo>>("assigningAuthority", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
+		/// Gets a specific assigning authority.
+		/// </summary>
+		/// <param name="id">The id of the assigning authority to retrieve.</param>
+		/// <returns>Returns the assigning authority.</returns>
+		public AssigningAuthorityInfo AssigningAuthority(string id)
+		{
+			return this.Client.Get<AssigningAuthorityInfo>(string.Format("assigningAuthority/{0}", id));
 		}
 
 		/// <summary>
