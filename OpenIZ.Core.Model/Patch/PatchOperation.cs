@@ -81,12 +81,6 @@ namespace OpenIZ.Core.Model.Patch
         public Object Value { get; set; }
 
         /// <summary>
-        /// Move data from one path to another
-        /// </summary>
-        [XmlAttribute("from")]
-        public string From { get; set; }
-
-        /// <summary>
         /// To string representation
         /// </summary>
         public override string ToString()
@@ -96,7 +90,7 @@ namespace OpenIZ.Core.Model.Patch
                 case PatchOperationType.Add:
                     return $"++++ {this.Path}:{this.Value}";
                 case PatchOperationType.Remove:
-                    return $"---- {this.Path}";
+                    return $"---- {this.Path} : {this.Value}";
                 case PatchOperationType.Replace:
                     return $"==== {this.Path} : {this.Value}";
                 case PatchOperationType.Test:

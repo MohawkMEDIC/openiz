@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using OpenIZ.Core.Model.Serialization;
 using System.Linq;
 using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Exceptions;
 
 namespace OpenIZ.Core.PCL.Test
 {
@@ -248,6 +249,165 @@ namespace OpenIZ.Core.PCL.Test
             var patchService = new SimplePatchService();
             var patch = patchService.Diff(a, b);
             var patchString = patch.ToString();
+
+        }
+
+        /// <summary>
+        /// Detects that a patch fails an assertion
+        /// </summary>
+        [TestMethod]
+        public void PatchShouldFailAssertion()
+        {
+            Patient a = new Patient()
+            {
+                Key = Guid.Empty,
+                VersionKey = Guid.NewGuid(),
+                DateOfBirth = DateTime.MaxValue,
+                DateOfBirthPrecision = Model.DataTypes.DatePrecision.Full,
+                Identifiers = new System.Collections.Generic.List<Model.DataTypes.EntityIdentifier>()
+                {
+                    new Model.DataTypes.EntityIdentifier(Guid.Empty, "1234") { Key = Guid.NewGuid() },
+                    new Model.DataTypes.EntityIdentifier(Guid.NewGuid(), "3245") { Key = Guid.NewGuid() }
+                },
+                Names = new System.Collections.Generic.List<Model.Entities.EntityName>()
+                {
+                    new Model.Entities.EntityName(NameUseKeys.Legal, "Smith", "Joe") { Key = Guid.NewGuid() }
+                },
+                Tags = new System.Collections.Generic.List<Model.DataTypes.EntityTag>()
+                {
+                    new Model.DataTypes.EntityTag("KEY", "VALUE")
+                }
+            },
+            b = new Patient()
+            {
+                Key = Guid.Empty,
+                VersionKey = Guid.NewGuid(),
+                DateOfBirth = DateTime.MaxValue,
+                DateOfBirthPrecision = Model.DataTypes.DatePrecision.Full,
+                Identifiers = new System.Collections.Generic.List<Model.DataTypes.EntityIdentifier>()
+                {
+                    new Model.DataTypes.EntityIdentifier(Guid.Empty, "1234") { Key = a.Identifiers[0].Key },
+                    new Model.DataTypes.EntityIdentifier(Guid.NewGuid(), "3245") { Key = a.Identifiers[1].Key }
+                },
+                Names = new System.Collections.Generic.List<Model.Entities.EntityName>()
+                {
+                    new Model.Entities.EntityName(NameUseKeys.Legal, "Smith", "Joseph") { Key = a.Names[0].Key }
+                },
+                Addresses = new System.Collections.Generic.List<Model.Entities.EntityAddress>()
+                {
+                    new Model.Entities.EntityAddress(AddressUseKeys.HomeAddress, "123 Main Street West", "Hamilton", "ON", "CA", "L8K5N2")
+                },
+                Tags = new System.Collections.Generic.List<Model.DataTypes.EntityTag>()
+                {
+                    new Model.DataTypes.EntityTag("KEY", "VALUE2")
+                }
+            };
+
+            var patchService = new SimplePatchService();
+            var patch = patchService.Diff(a, b);
+            var patchString = patch.ToString();
+            Assert.IsNotNull(patch);
+            Assert.AreEqual(15, patch.Operation.Count);
+            
+            // Debug info
+            this.SerializePatch(patch);
+
+            // 1. Patch should be fine. data now = b
+            var data = patchService.Patch(patch, a);
+
+            // 2. Patch should fail, a is different
+            a = a.Clone() as Patient;
+            a.VersionKey = Guid.NewGuid();
+            try
+            {
+                data = patchService.Patch(patch, a);
+                Assert.Fail();
+            }
+            catch(PatchAssertionException e)
+            {
+                
+            }
+        }
+
+
+        /// <summary>
+        /// Test that the patch updates the target object
+        /// </summary>
+        [TestMethod]
+        public void PatchShouldUpdateTargetObject()
+        {
+            Patient a = new Patient()
+            {
+                Key = Guid.Empty,
+                VersionKey = Guid.NewGuid(),
+                DateOfBirth = DateTime.MaxValue,
+                DateOfBirthPrecision = Model.DataTypes.DatePrecision.Full,
+                Identifiers = new System.Collections.Generic.List<Model.DataTypes.EntityIdentifier>()
+                {
+                    new Model.DataTypes.EntityIdentifier(Guid.Empty, "1234") { Key = Guid.NewGuid() },
+                    new Model.DataTypes.EntityIdentifier(Guid.NewGuid(), "3245") { Key = Guid.NewGuid() }
+                },
+                Names = new System.Collections.Generic.List<Model.Entities.EntityName>()
+                {
+                    new Model.Entities.EntityName(NameUseKeys.Legal, "Smith", "Joe") { Key = Guid.NewGuid() },
+                    new Model.Entities.EntityName(NameUseKeys.OfficialRecord, "Smith", "Joseph") { Key = Guid.NewGuid() }
+                },
+                Tags = new System.Collections.Generic.List<Model.DataTypes.EntityTag>()
+                {
+                    new Model.DataTypes.EntityTag("KEY", "VALUE")
+                }
+            },
+            b = new Patient()
+            {
+                Key = Guid.Empty,
+                VersionKey = Guid.NewGuid(),
+                DateOfBirth = DateTime.MaxValue,
+                DateOfBirthPrecision = Model.DataTypes.DatePrecision.Full,
+                Identifiers = new System.Collections.Generic.List<Model.DataTypes.EntityIdentifier>()
+                {
+                    new Model.DataTypes.EntityIdentifier(Guid.Empty, "1234") { Key = a.Identifiers[0].Key }
+                },
+                Names = new System.Collections.Generic.List<Model.Entities.EntityName>()
+                {
+                    new Model.Entities.EntityName(NameUseKeys.Legal, "Smith", "Joseph") { Key = a.Names[0].Key }
+                },
+                Addresses = new System.Collections.Generic.List<Model.Entities.EntityAddress>()
+                {
+                    new Model.Entities.EntityAddress(AddressUseKeys.HomeAddress, "123 Main Street West", "Hamilton", "ON", "CA", "L8K5N2")
+                },
+                Tags = new System.Collections.Generic.List<Model.DataTypes.EntityTag>()
+                {
+                    new Model.DataTypes.EntityTag("KEY", "VALUE2")
+                }
+            };
+
+            var patchService = new SimplePatchService();
+            var patch = patchService.Diff(a, b);
+            var patchString = patch.ToString();
+            Assert.IsNotNull(patch);
+            Assert.AreEqual(16, patch.Operation.Count);
+
+            // Debug info
+            this.SerializePatch(patch);
+
+            // 1. Patch should be fine. data now = b
+            var data = patchService.Patch(patch, a) as Patient;
+
+            // Should update result
+            Assert.AreEqual(1, data.Names.Count);
+            Assert.AreEqual(1, data.Identifiers.Count);
+            Assert.AreEqual(1, data.Addresses.Count);
+            Assert.AreEqual(1, data.Tags.Count);
+            Assert.AreEqual("VALUE2", data.Tags[0].Value);
+            Assert.AreEqual(b.VersionKey, data.VersionKey);
+
+            // Should not update source
+            Assert.AreEqual(2, a.Names.Count);
+            Assert.AreEqual(2, a.Identifiers.Count);
+            Assert.AreEqual(0, a.Addresses.Count);
+            Assert.AreEqual(1, a.Tags.Count);
+            Assert.AreEqual("VALUE", a.Tags[0].Value);
+            Assert.AreEqual(a.VersionKey, patch.Operation[1].Value);
 
         }
     }

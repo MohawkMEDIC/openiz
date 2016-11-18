@@ -12,6 +12,9 @@ using Newtonsoft.Json;
 using OpenIZ.Core.Model.Interfaces;
 using System.Collections;
 using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Exceptions;
+using OpenIZ.Core.Model.Query;
+using OpenIZ.Core.Diagnostics;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -20,6 +23,9 @@ namespace OpenIZ.Core.Services.Impl
     /// </summary>
     public class SimplePatchService : IPatchService
     {
+
+        // Tracer
+        private Tracer m_tracer = Tracer.GetTracer(typeof(SimplePatchService));
 
         // Property information
         private Dictionary<Type, IEnumerable<PropertyInfo>> m_properties = new Dictionary<Type, IEnumerable<PropertyInfo>>();
@@ -47,6 +53,8 @@ namespace OpenIZ.Core.Services.Impl
         private List<PatchOperation> DiffInternal(IdentifiedData existing, IdentifiedData updated, String path)
         {
             // First are they the same?
+            this.m_tracer.TraceVerbose("Generating DIFF: {0} > {1}", existing, updated);
+
             var retVal = new List<PatchOperation>();
             if (!existing.SemanticEquals(updated) && existing.Type == updated.Type)
             {
@@ -109,7 +117,7 @@ namespace OpenIZ.Core.Services.Impl
                                     existingList = (existingValue as IEnumerable).OfType<IdentifiedData>();
 
                                 // Removals
-                                retVal.AddRange(existingList.Where(e => !updatedList.Any(u => e.SemanticEquals(u))).Select(c => new PatchOperation(PatchOperationType.Remove, this.BuildRemoveQuery(path, serializationName, c), null)));
+                                retVal.AddRange(existingList.Where(e => !updatedList.Any(u => e.SemanticEquals(u))).Select(c => this.BuildRemoveQuery(path + serializationName, c)));
 
                                 // Additions 
                                 retVal.AddRange(updatedList.Where(u => !existingList.Any(e => u.SemanticEquals(e))).Select(c => new PatchOperation(PatchOperationType.Add, $"{path}{serializationName}", c)));
@@ -121,7 +129,7 @@ namespace OpenIZ.Core.Services.Impl
                                     existingList = (existingValue as IEnumerable).OfType<Object>();
 
                                 // Removals
-                                retVal.AddRange(existingList.Where(e => !updatedList.Any(u => e.Equals(u))).Select(c => new PatchOperation(PatchOperationType.Remove, $"{path}{serializationName} = {c}", null)));
+                                retVal.AddRange(existingList.Where(e => !updatedList.Any(u => e.Equals(u))).Select(c => new PatchOperation(PatchOperationType.Remove, $"{path}{serializationName}", c)));
 
                                 // Additions 
                                 retVal.AddRange(updatedList.Where(u => !existingList.Any(e => u.Equals(e))).Select(c => new PatchOperation(PatchOperationType.Add, $"{path}{serializationName}", c)));
@@ -137,35 +145,46 @@ namespace OpenIZ.Core.Services.Impl
                     }
                 }
             }
+
+            this.m_tracer.TraceVerbose("-->> DIFF {0} > {1}\r\n{2}", existing, updated, retVal);
+
             return retVal;
         }
 
         /// <summary>
         /// Build removal query
         /// </summary>
-        private string BuildRemoveQuery(String path, String serializationName, IdentifiedData c)
+        private PatchOperation BuildRemoveQuery(String path, IdentifiedData c)
         {
+            PatchOperation retval = new PatchOperation(PatchOperationType.Remove, path, null);
             if (c.Key.HasValue)
-                return $"{path}{serializationName}.id = {c.Key}";
+            {
+                retval.Path += ".id";
+                retval.Value = c.Key;
+            }
             else
             {
                 var classAtt = c.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
                 Object cvalue = c;
+                // Build path
+                var serializationName = "";
                 while (classAtt != null && c != null)
                 {
-                    // Build path
                     var pi = cvalue.GetType().GetRuntimeProperty(classAtt.ClassifierProperty);
                     var redirectProperty = pi.GetCustomAttribute<SerializationReferenceAttribute>();
-                    if(redirectProperty != null)
-                        serializationName += "." + cvalue.GetType().GetRuntimeProperty(redirectProperty.RedirectProperty).GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName;
+                    if (redirectProperty != null)
+                        serializationName += "." + cvalue.GetType().GetRuntimeProperty(redirectProperty.RedirectProperty).GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName ;
                     else
-                        serializationName += "." + pi.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName;
+                        serializationName += "." + pi.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName ;
 
                     cvalue = pi.GetValue(cvalue);
                     classAtt = cvalue?.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
                 }
-                return $"{path}{serializationName} = {cvalue}";
+                retval.Path += serializationName;
+                retval.Value = cvalue;
             }
+
+            return retval;
         }
 
         /// <summary>
@@ -199,9 +218,116 @@ namespace OpenIZ.Core.Services.Impl
                 };
         }
 
+        /// <summary>
+        /// Applies the specified <paramref name="patch"/> onto <paramref name="data"/> to derive the return value.
+        /// </summary>
         public IdentifiedData Patch(Patch patch, IdentifiedData data)
         {
-            throw new NotImplementedException();
+
+            this.m_tracer.TraceVerbose("-->> {0} patch with:\r\n{1}", data, patch);
+
+            var retVal = Activator.CreateInstance(data.GetType());
+            retVal.CopyObjectData(data);
+
+            // We want to run through the patch operations and execute them
+            foreach (var op in patch.Operation)
+            {
+                // Grab the right property
+                var propertyName = op.Path.Split('.');
+                String pathName = String.Empty;
+                PropertyInfo property = null;
+                object applyTo = retVal, applyParent = null;
+                foreach (var itm in propertyName)
+                {
+                    // Get the properties
+                    IEnumerable<PropertyInfo> properties = null;
+                    if (!this.m_properties.TryGetValue(applyTo.GetType(), out properties))
+                        lock (this.m_lockObject)
+                            if (!this.m_properties.ContainsKey(applyTo.GetType()))
+                            {
+                                properties = applyTo.GetType().GetRuntimeProperties().Where(o => o.CanRead && o.CanWrite && o.GetCustomAttribute<JsonPropertyAttribute>() != null);
+                                this.m_properties.Add(applyTo.GetType(), properties);
+                            }
+
+                    var subProperty = properties.FirstOrDefault(o => o.GetCustomAttribute<JsonPropertyAttribute>().PropertyName == itm);
+                    if (subProperty != null)
+                    {
+                        applyParent = applyTo;
+                        applyTo = subProperty.GetValue(applyTo);
+                        if (applyTo is IList)
+                        {
+                            applyTo = Activator.CreateInstance(subProperty.PropertyType, applyTo);
+                            subProperty.SetValue(applyParent, applyTo);
+                        }
+                        property = subProperty;
+                        pathName += itm + ".";
+                    }
+                    else
+                        break;
+                }
+              
+                // Operation type
+                switch(op.OperationType)
+                {
+                    case PatchOperationType.Add:
+                        // We add the value!!! Yay!
+                        if (applyTo is IList)
+                            (applyTo as IList).Add(op.Value);
+                        else
+                            throw new PatchException("Add can only be applied to an IList instance");
+                        break;
+                    case PatchOperationType.Remove:
+                        // We add the value!!! Yay!
+                        if (applyTo is IList)
+                        {
+                            var instance = this.ExecuteLambda("FirstOrDefault", applyTo, property, pathName, op);
+                            if (instance != null)
+                                (applyTo as IList).Remove(instance);
+                        }
+                        else
+                            throw new PatchException("Remove can only be applied to an IList instance");
+                        break;
+                    case PatchOperationType.Replace:
+                        property.SetValue(applyParent, op.Value);
+                        break;
+                    case PatchOperationType.Test:
+                        // We test the value! Also pretty cool
+                        if (applyTo is IdentifiedData && !(applyTo as IdentifiedData).SemanticEquals(op.Value as IdentifiedData))
+                            throw new PatchAssertionException(op.Value, applyTo, op);
+                        else if(applyTo is IList)
+                        {
+                            // Identified data
+                            if (typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(property.PropertyType.StripGeneric().GetTypeInfo()))
+                            {
+                                var result = this.ExecuteLambda("Any", applyTo, property, pathName, op);
+                                if(!(bool)result)
+                                    throw new PatchAssertionException($"Could not find instance matching {op.Path.Replace(pathName, "")} = {op.Value} in collection {applyTo} at {op}");
+                            }
+                            else if (!(applyTo as IList).OfType<Object>().Any(o => o.Equals(op.Value)))
+                                throw new PatchAssertionException($"Assertion failed: {op.Value} could not be found in list {applyTo} at {op}");
+
+                        }
+                        else if(applyTo?.Equals(op.Value) == false && applyTo != op.Value)
+                            throw new PatchAssertionException(op.Value, applyTo, op);
+                        break;
+                }
+            }
+            return retVal as IdentifiedData;
+        }
+
+        /// <summary>
+        /// Execute a lambda
+        /// </summary>
+        private object ExecuteLambda(string action, object source, PropertyInfo property, string pathName, PatchOperation op)
+        {
+            var mi = typeof(QueryExpressionParser).GetGenericMethod("BuildLinqExpression", new Type[] { property.PropertyType.StripGeneric() }, new Type[] { typeof(NameValueCollection) });
+            var lambda = mi.Invoke(null, new object[] { NameValueCollection.ParseQueryString($"{op.Path.Replace(pathName, "")} = {op.Value}") });
+            lambda = lambda.GetType().GetRuntimeMethod("Compile", new Type[] { }).Invoke(lambda, new object[] { });
+            var filterMethod = typeof(Enumerable).GetGenericMethod(action, new Type[] { property.PropertyType.StripGeneric() }, new Type[] { typeof(IEnumerable<>).MakeGenericType(property.PropertyType.StripGeneric()), lambda.GetType() });
+            if (filterMethod == null)
+                throw new PatchException($"Cannot locate instance of {action}() method on collection type {source.GetType()} at {op}");
+            return filterMethod.Invoke(null, new object[] { source, lambda });
+
         }
     }
 }
