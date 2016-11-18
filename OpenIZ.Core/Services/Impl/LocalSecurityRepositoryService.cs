@@ -64,6 +64,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="application">The security application.</param>
 		/// <returns>Returns the newly created application.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.CreateApplication)]
 		public SecurityApplication CreateApplication(SecurityApplication application)
 		{
 			this.m_traceSource.TraceEvent(TraceEventType.Information, 0, "Creating application {0}", application);
@@ -103,6 +104,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="policy">The security policy.</param>
 		/// <returns>Returns the newly created policy.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterPolicy)]
 		public SecurityPolicy CreatePolicy(SecurityPolicy policy)
 		{
 			this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Creating policy {0}", policy);
@@ -192,6 +194,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="query">The query to use to match the application.</param>
 		/// <returns>Returns a list of applications.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
 		public IEnumerable<SecurityApplication> FindApplications(Expression<Func<SecurityApplication, bool>> query)
 		{
 			int totalCount = 0;
@@ -206,6 +209,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <param name="count">The number of applications.</param>
 		/// <param name="totalResults">The total number of applications.</param>
 		/// <returns>Returns a list of applications.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
 		public IEnumerable<SecurityApplication> FindApplications(Expression<Func<SecurityApplication, bool>> query, int offset, int? count, out int totalResults)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityApplication>>();
@@ -223,6 +227,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="query">The query to use to match the devices.</param>
 		/// <returns>Returns a list of devices.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
 		public IEnumerable<SecurityDevice> FindDevices(Expression<Func<SecurityDevice, bool>> query)
 		{
 			int totalCount = 0;
@@ -378,6 +383,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="applicationId">The id of the application to be retrieved.</param>
 		/// <returns>Returns a application.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
 		public SecurityApplication GetApplication(Guid applicationId)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityApplication>>();
@@ -395,6 +401,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="deviceId">The id of the device to be retrieved.</param>
 		/// <returns>Returns the device.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
 		public SecurityDevice GetDevice(Guid deviceId)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityDevice>>();
@@ -412,6 +419,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="policyId">The id of the policy to be retrieved.</param>
 		/// <returns>Returns the policy.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
 		public SecurityPolicy GetPolicy(Guid policyId)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityPolicy>>();
@@ -535,6 +543,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="applicationId">The id of the application to be obsoleted.</param>
 		/// <returns>Returns the obsoleted application.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
 		public SecurityApplication ObsoleteApplication(Guid applicationId)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityApplication>>();
@@ -552,6 +561,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="deviceId">The id of the device to be obsoleted.</param>
 		/// <returns>Returns the obsoleted device.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
 		public SecurityDevice ObsoleteDevice(Guid deviceId)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityDevice>>();
@@ -569,6 +579,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="policyId">THe id of the policy to be obsoleted.</param>
 		/// <returns>Returns the obsoleted policy.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterPolicy)]
 		public SecurityPolicy ObsoletePolicy(Guid policyId)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityPolicy>>();
@@ -653,6 +664,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="device">The security device containing the updated information.</param>
 		/// <returns>Returns the updated device.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
 		public SecurityDevice SaveDevice(SecurityDevice device)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityDevice>>();
@@ -670,6 +682,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="policy">The security policy containing the updated information.</param>
 		/// <returns>Returns the updated policy.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
 		public SecurityPolicy SavePolicy(SecurityPolicy policy)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityPolicy>>();
@@ -705,6 +718,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="user">The security user containing the updated information.</param>
 		/// <returns>Returns the updated user.</returns>
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
 		public SecurityUser SaveUser(SecurityUser user)
 		{
 			var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();

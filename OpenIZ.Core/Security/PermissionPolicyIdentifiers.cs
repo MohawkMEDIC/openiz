@@ -133,14 +133,19 @@ namespace OpenIZ.Core.Security
         /// </summary>
         public const string ReadMetadata = "1.3.6.1.4.1.33349.3.1.5.9.2.4.0";
 
-        #endregion
+		/// <summary>
+		/// Represents an OID to alter a policy.
+		/// </summary>
+		public const string AlterPolicy = "1.3.6.1.4.1.33349.3.1.5.9.2.0.7";
 
-        #region OpenIZ Client Functions
+		#endregion
 
-        /// <summary>
-        /// Access administrative function on the OpenIZ Client
-        /// </summary>
-        public const string AccessClientAdministrativeFunction = "1.3.6.1.4.1.33349.3.1.5.9.2.10";
+		#region OpenIZ Client Functions
+
+		/// <summary>
+		/// Access administrative function on the OpenIZ Client
+		/// </summary>
+		public const string AccessClientAdministrativeFunction = "1.3.6.1.4.1.33349.3.1.5.9.2.10";
 
         #endregion
     }
