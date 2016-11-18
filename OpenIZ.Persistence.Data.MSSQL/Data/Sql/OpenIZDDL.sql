@@ -1,6 +1,6 @@
 ﻿-- OPEN IZ DATABASE CORE
 -- COPYRIGHT (c) 2015, OPEN IZ
--- PORTIONS COPYRIGHT (C) 2015, FYFE SOFTWARE INC.
+-- PORTIONS COPYRIGHT (C) 2015, Mohawk College of Applied Arts and Technology
 -- LICENSED UNDER THE APACHE 2.0 LICENSE
 
 /*
@@ -387,8 +387,8 @@ CREATE TABLE PhoneticAlgorithm
 );
 
 INSERT INTO PhoneticAlgorithm (PhoneticAlgorithmId, Name, HandlerClass, CreatedBy) VALUES ('402CD339-D0E4-46CE-8FC2-12A4B0E17226', 'NONE', NULL, 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
-INSERT INTO PhoneticAlgorithm (PhoneticAlgorithmId, Name, HandlerClass, CreatedBy) VALUES ('3352a79a-d2e0-4e0c-9b48-6fd2a202c681', 'SOUNDEX', 'OpenIZ.Core.Services.Impl.PhoneticAlgorithms.SoundexPhoneticAlgorithmHandler, OpenIZ.Core, Version=1.0.0.0', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
-INSERT INTO PhoneticAlgorithm (PhoneticAlgorithmId, Name, HandlerClass, CreatedBy) VALUES ('d79a4dc6-66a6-4602-8fcb-7dc09a895793', 'METAPHONE', 'OpenIZ.Core.Services.Impl.PhoneticAlgorithms.MetaphonePhoneticAlgorithmHandler, OpenIZ.Core, Version=1.0.0.0', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO PhoneticAlgorithm (PhoneticAlgorithmId, Name, HandlerClass, CreatedBy) VALUES ('3352a79a-d2e0-4e0c-9b48-6fd2a202c681', 'SOUNDEX', 'OpenIZ.Core.Services.Impl.PhoneticAlgorithms.SoundexPhoneticAlgorithmHandler, OpenIZ.Core, Version=0.6.0.0', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+INSERT INTO PhoneticAlgorithm (PhoneticAlgorithmId, Name, HandlerClass, CreatedBy) VALUES ('d79a4dc6-66a6-4602-8fcb-7dc09a895793', 'METAPHONE', 'OpenIZ.Core.Services.Impl.PhoneticAlgorithms.MetaphonePhoneticAlgorithmHandler, OpenIZ.Core, Version=0.6.0.0', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 
 /*
  * A TABLE RESPONSIBLE FOR THE STORAGE OF PHONETIC VALUES

@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("OpenIZ.Core.Model")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Fyfe Software Inc.")]
+[assembly: AssemblyCompany("Mohawk College of Applied Arts and Technology")]
 [assembly: AssemblyProduct("Open Immunize (http://openiz.org)")]
 [assembly: AssemblyCopyright("Copyright (C) 2016, Mohawk College of Applied Arts and Technology")]
 [assembly: AssemblyTrademark("")]
