@@ -11,6 +11,7 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Interfaces;
 using System.Collections;
+using OpenIZ.Core.Model.Attributes;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -86,7 +87,15 @@ namespace OpenIZ.Core.Services.Impl
                         else if ((existingValue as IdentifiedData)?.SemanticEquals(updatedValue as IdentifiedData) == false) // They are different
                         {
                             // Generate tests
-                            retVal.AddRange(this.GenerateTests(existingValue, $"{path}{serializationName}"));
+                            IdentifiedData existingId = existingValue as IdentifiedData,
+                                updatedId = updatedValue as IdentifiedData;
+                            if(existingId.Key == updatedId.Key)
+                                retVal.AddRange(this.DiffInternal(existingId, updatedId, $"{path}{serializationName}."));
+                            else
+                            {
+                                retVal.AddRange(this.GenerateTests(existingValue, $"{path}{serializationName}"));
+                                retVal.Add(new PatchOperation(PatchOperationType.Replace, $"{path}{serializationName}", updatedValue));
+                            }
                         }
                         else if (existingValue is IList && !existingValue.GetType().GetTypeInfo().IsArray)
                         {
@@ -100,7 +109,7 @@ namespace OpenIZ.Core.Services.Impl
                                     existingList = (existingValue as IEnumerable).OfType<IdentifiedData>();
 
                                 // Removals
-                                retVal.AddRange(existingList.Where(e => !updatedList.Any(u => e.SemanticEquals(u))).Select(c => new PatchOperation(PatchOperationType.Remove, $"{path}{serializationName}[{c.Key}]", null)));
+                                retVal.AddRange(existingList.Where(e => !updatedList.Any(u => e.SemanticEquals(u))).Select(c => new PatchOperation(PatchOperationType.Remove, this.BuildRemoveQuery(path, serializationName, c), null)));
 
                                 // Additions 
                                 retVal.AddRange(updatedList.Where(u => !existingList.Any(e => u.SemanticEquals(e))).Select(c => new PatchOperation(PatchOperationType.Add, $"{path}{serializationName}", c)));
@@ -112,7 +121,7 @@ namespace OpenIZ.Core.Services.Impl
                                     existingList = (existingValue as IEnumerable).OfType<Object>();
 
                                 // Removals
-                                retVal.AddRange(existingList.Where(e => !updatedList.Any(u => e.Equals(u))).Select(c => new PatchOperation(PatchOperationType.Remove, $"{path}{serializationName}[{c}]", null)));
+                                retVal.AddRange(existingList.Where(e => !updatedList.Any(u => e.Equals(u))).Select(c => new PatchOperation(PatchOperationType.Remove, $"{path}{serializationName} = {c}", null)));
 
                                 // Additions 
                                 retVal.AddRange(updatedList.Where(u => !existingList.Any(e => u.Equals(e))).Select(c => new PatchOperation(PatchOperationType.Add, $"{path}{serializationName}", c)));
@@ -129,6 +138,34 @@ namespace OpenIZ.Core.Services.Impl
                 }
             }
             return retVal;
+        }
+
+        /// <summary>
+        /// Build removal query
+        /// </summary>
+        private string BuildRemoveQuery(String path, String serializationName, IdentifiedData c)
+        {
+            if (c.Key.HasValue)
+                return $"{path}{serializationName}.id = {c.Key}";
+            else
+            {
+                var classAtt = c.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
+                Object cvalue = c;
+                while (classAtt != null && c != null)
+                {
+                    // Build path
+                    var pi = cvalue.GetType().GetRuntimeProperty(classAtt.ClassifierProperty);
+                    var redirectProperty = pi.GetCustomAttribute<SerializationReferenceAttribute>();
+                    if(redirectProperty != null)
+                        serializationName += "." + cvalue.GetType().GetRuntimeProperty(redirectProperty.RedirectProperty).GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName;
+                    else
+                        serializationName += "." + pi.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName;
+
+                    cvalue = pi.GetValue(cvalue);
+                    classAtt = cvalue?.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
+                }
+                return $"{path}{serializationName} = {cvalue}";
+            }
         }
 
         /// <summary>
@@ -160,11 +197,11 @@ namespace OpenIZ.Core.Services.Impl
                 {
                     new PatchOperation(PatchOperationType.Test, path, existingValue)
                 };
-    }
+        }
 
-    public IdentifiedData Patch(Patch patch, IdentifiedData data)
-    {
-        throw new NotImplementedException();
+        public IdentifiedData Patch(Patch patch, IdentifiedData data)
+        {
+            throw new NotImplementedException();
+        }
     }
-}
 }

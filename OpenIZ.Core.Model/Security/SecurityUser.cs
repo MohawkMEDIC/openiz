@@ -209,7 +209,7 @@ namespace OpenIZ.Core.Model.Security
                 this.TwoFactorEnabled == other.TwoFactorEnabled &&
                 this.UserClass == other.UserClass &&
                 this.UserName == other.UserName &&
-                this.UserPhoto?.HashCode().Equals(other.UserPhoto?.HashCode()) == true;
+                (this.UserPhoto ?? new byte[0]).HashCode().Equals((other.UserPhoto?? new byte[0]).HashCode()) == true;
         }
     }
 }
