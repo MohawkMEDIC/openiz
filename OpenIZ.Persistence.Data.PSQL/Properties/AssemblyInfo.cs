@@ -28,8 +28,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Fyfe Software Inc.")]
-[assembly: AssemblyProduct("OpenIZ.Persistence.Data.PSQL")]
-[assembly: AssemblyCopyright("Copyright © Fyfe Software Inc. 2016")]
+[assembly: AssemblyProduct("Open Immunize (http://openiz.org)")]
+[assembly: AssemblyCopyright("Copyright (C) 2016, Mohawk College of Applied Arts and Technology")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -50,6 +50,6 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
+// [assembly: AssemblyVersion("0.6.14.*")][assembly: AssemblyInformationalVersion("Dalhouse")]
+[assembly: AssemblyVersion("0.6.14.*")][assembly: AssemblyInformationalVersion("Dalhouse")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

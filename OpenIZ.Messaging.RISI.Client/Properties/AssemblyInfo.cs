@@ -26,9 +26,9 @@ using System.Resources;
 [assembly: AssemblyTitle("OpenIZ.Messaging.RISI.Client")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("OpenIZ.Messaging.RISI.Client")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyCompany("Mohawk College of Applied Arts and Techology")]
+[assembly: AssemblyProduct("Open Immunize (http://openiz.org)")]
+[assembly: AssemblyCopyright("Copyright (C) 2016, Mohawk College of Applied Arts and Technology")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
@@ -42,6 +42,6 @@ using System.Resources;
 //
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
+// [assembly: AssemblyVersion("0.6.14.*")][assembly: AssemblyInformationalVersion("Dalhouse")]
+[assembly: AssemblyVersion("0.6.14.*")][assembly: AssemblyInformationalVersion("Dalhouse")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
