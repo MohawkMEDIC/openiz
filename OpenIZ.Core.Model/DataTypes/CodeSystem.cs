@@ -91,5 +91,18 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [XmlElement("description"), JsonProperty("description")]
         public string Description { get; set; }
+
+        /// <summary>
+        /// Determine equality of 
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            CodeSystem other = obj as CodeSystem;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && this.Name == other.Name &&
+                this.Oid == other.Oid &&
+                this.Authority == other.Authority &&
+                this.VersionText == other.VersionText;
+        }
     }
 }

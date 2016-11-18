@@ -51,6 +51,7 @@ using OpenIZ.Messaging.IMSI.Util;
 using OpenIZ.Core.Model.Interfaces;
 using MARC.Everest.Threading;
 using System.Collections.Specialized;
+using OpenIZ.Core.Model.Patch;
 
 namespace OpenIZ.Messaging.IMSI.Wcf
 {
@@ -508,6 +509,16 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         public void GetHead(string resourceType, string id)
         {
             this.Get(resourceType, id);
+        }
+
+        public void Patch(string resourceType, string id, Patch body)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Patch GetPatch(string resourceType, string id)
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

@@ -60,6 +60,7 @@
     <Compile Include="Http\RestClientEventArgs.cs" />
     <Compile Include="Http\XmlBodySerializer.cs" />
     <Compile Include="Interop\ServiceClientBase.cs" />
+    <Compile Include="Patch\SimplePatchService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IActRepositoryService.cs" />
     <Compile Include="Services\IAssigningAuthorityRepositoryService.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Services\IClinicalProtocolRepositoryService.cs" />
     <Compile Include="Services\IConceptRepositoryService.cs" />
     <Compile Include="Services\IDataCacheService.cs" />
+    <Compile Include="Services\IPatchService.cs" />
     <Compile Include="Services\IRepositoryService.cs" />
     <Compile Include="Services\IEntityRepositoryService.cs" />
     <Compile Include="Services\IIdentifierTypeRepositoryService.cs" />

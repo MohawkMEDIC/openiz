@@ -131,5 +131,17 @@ namespace OpenIZ.Core.Model.Entities
         {
             return this.Component.Count == 0;
         }
+
+        /// <summary>
+        /// Semantic equality function
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as EntityAddress;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && 
+                this.AddressUseKey == other.AddressUseKey &&
+                this.Component?.SemanticEquals(other.Component) == true;
+        }
     }
 }

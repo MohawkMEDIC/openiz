@@ -95,6 +95,17 @@ namespace OpenIZ.Core.Model.DataTypes
                 this.m_sourceEntityKey = value?.Key;
             }
         }
+
+        /// <summary>
+        /// Semantic equality 
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as Tag<TSourceType>;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && other.Key == this.Key &&
+                other.Value == this.Value;
+        }
     }
 
     /// <summary>

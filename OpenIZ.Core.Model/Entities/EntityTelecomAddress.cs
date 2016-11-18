@@ -202,5 +202,14 @@ namespace OpenIZ.Core.Model.Entities
             this.m_nameUseConcept = null;
         }
 
+        /// <summary>
+        /// Semantic equality function
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as EntityTelecomAddress;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && this.Value == other.Value && this.AddressUseKey == other.AddressUseKey;
+        }
     }
 }

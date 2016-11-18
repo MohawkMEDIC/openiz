@@ -59,5 +59,16 @@ namespace OpenIZ.Core.Model.Entities
         [XmlElement("isPreferred"), JsonProperty("isPreferred")]
         public bool IsPreferred { get; set; }
 
+        /// <summary>
+        /// Semantic equality function
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as PersonLanguageCommunication;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) &&
+                this.IsPreferred == other.IsPreferred &&
+                this.LanguageCode == other.LanguageCode;
+        }
     }
 }

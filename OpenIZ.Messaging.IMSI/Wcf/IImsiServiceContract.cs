@@ -22,6 +22,7 @@ using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Patch;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Security;
@@ -100,6 +101,19 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// </summary>
         [WebGet(UriTemplate = "/{resourceType}/{id}/history", BodyStyle = WebMessageBodyStyle.Bare)]
         IdentifiedData History(string resourceType, string id);
+
+        /// <summary>
+        /// Patch the specified data 
+        /// </summary>
+        /// <returns></returns>
+        [WebInvoke(Method = "PATCH", UriTemplate = "/{resourceType}/{id}")]
+        void Patch(string resourceType, string id , Patch body);
+
+        /// <summary>
+        /// Returns a list of patches for the specified resource 
+        /// </summary>
+        [WebGet(UriTemplate = "/{resourceType}/{id}/patch")]
+        Patch GetPatch(string resourceType, string id);
 
         /// <summary>
         /// Get a specific version

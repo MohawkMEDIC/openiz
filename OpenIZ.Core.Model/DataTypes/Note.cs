@@ -41,7 +41,7 @@ namespace OpenIZ.Core.Model.DataTypes
         // Author id
         private Guid? m_authorKey;
         // Author entity
-        
+
         private Entity m_author;
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the author key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
+
         [XmlElement("author"), JsonProperty("author")]
         public Guid? AuthorKey
         {
@@ -114,12 +114,23 @@ namespace OpenIZ.Core.Model.DataTypes
             this.m_author = null;
         }
 
+        /// <summary>
+        /// Determine equality
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as Note<TBoundModel>;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && this.AuthorKey == other.AuthorKey &&
+                this.Text == other.Text;
+        }
+
     }
 
     /// <summary>
     /// Represents a note attached to an entity
     /// </summary>
-    [XmlType("EntityNote",  Namespace = "http://openiz.org/model"), JsonObject("EntityNote")]
+    [XmlType("EntityNote", Namespace = "http://openiz.org/model"), JsonObject("EntityNote")]
     public class EntityNote : Note<Entity>
     {
         /// <summary>
@@ -142,7 +153,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Represents a note attached to an entity
     /// </summary>
-    [XmlType("ActNote",  Namespace = "http://openiz.org/model"), JsonObject("ActNote")]
+    [XmlType("ActNote", Namespace = "http://openiz.org/model"), JsonObject("ActNote")]
     public class ActNote : Note<Acts.Act>
     {
         /// <summary>

@@ -17,7 +17,7 @@
  * User: justi
  * Date: 2016-8-2
  */
-using OpenIZ.Core.Model.Reflection;
+using OpenIZ.Core.Model;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;

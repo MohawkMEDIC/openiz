@@ -30,8 +30,6 @@ using System.Diagnostics;
 using System.Globalization;
 using OpenIZ.Core.Model.Attributes;
 using System.Collections;
-using OpenIZ.Core.Model.Reflection;
-using OpenIZ.Core.Model.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace OpenIZ.Core.Model.Query

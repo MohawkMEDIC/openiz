@@ -148,5 +148,18 @@ namespace OpenIZ.Core.Model.DataTypes
             base.Refresh();
             this.m_assigningDevice = null;
         }
+
+        /// <summary>
+        /// Gets the equals of this object
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as AssigningAuthority;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && other.DomainName == this.DomainName &&
+                this.Oid == other.Oid &&
+                this.Url == other.Url &&
+                this.AssigningDeviceKey == other.AssigningDeviceKey;
+        }
     }
 }

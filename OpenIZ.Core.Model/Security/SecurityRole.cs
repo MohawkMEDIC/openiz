@@ -64,5 +64,15 @@ namespace OpenIZ.Core.Model.Security
         [XmlIgnore, JsonIgnore]
         public List<SecurityUser> Users { get; set; }
 
+        /// <summary>
+        /// Determine semantic equality
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as SecurityRole;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) &&
+                this.Name == other.Name;
+        }
     }
 }

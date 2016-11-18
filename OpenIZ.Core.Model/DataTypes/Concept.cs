@@ -208,5 +208,20 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             return String.Format("{0} [M: {1}]", base.ToString(), this.Mnemonic);
         }
+
+        /// <summary>
+        /// Determine equality
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as Concept;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && other.Mnemonic == this.Mnemonic &&
+                this.ClassKey == other.ClassKey &&
+                this.ConceptNames?.SemanticEquals(other.ConceptNames) == true &&
+                this.ConceptSets?.SemanticEquals(other.ConceptSets) == true &&
+                this.IsSystemConcept == other.IsSystemConcept &&
+                this.Relationship?.SemanticEquals(other.Relationship) == true;
+        }
     }
 }

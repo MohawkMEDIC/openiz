@@ -217,5 +217,16 @@ namespace OpenIZ.Core.Model.Entities
             this.m_relationshipType = null;
             this.m_targetEntity = null;
         }
+
+        /// <summary>
+        /// Determine semantic equality
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as EntityRelationship;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && this.TargetEntityKey == other.TargetEntityKey;
+        }
+
     }
 }

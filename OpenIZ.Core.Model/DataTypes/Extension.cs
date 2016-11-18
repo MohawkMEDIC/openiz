@@ -120,6 +120,17 @@ namespace OpenIZ.Core.Model.DataTypes
             base.Refresh();
             this.m_extensionType = null;
         }
+
+        /// <summary>
+        /// Determine equality
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            Extension<TBoundModel> other = obj as Extension<TBoundModel>;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && other.ExtensionTypeKey == this.ExtensionTypeKey &&
+                this.ExtesionValue.Equals(other.ExtesionValue);
+        }
     }
 
     /// <summary>

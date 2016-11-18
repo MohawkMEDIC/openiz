@@ -25,7 +25,6 @@ using OpenIZ.Persistence.Data.MSSQL.Data;
 using System.Security.Principal;
 using OpenIZ.Persistence.Data.MSSQL.Exceptions;
 using OpenIZ.Core;
-using OpenIZ.Core.Model.Reflection;
 using System.Linq.Expressions;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence

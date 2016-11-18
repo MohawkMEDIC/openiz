@@ -33,7 +33,6 @@ using System.ComponentModel;
 using MARC.HI.EHRS.SVC.Core.Data;
 using OpenIZ.Core.Services;
 using OpenIZ.Core;
-using OpenIZ.Core.Model.Reflection;
 using System.Data.Linq.Mapping;
 using System.Reflection;
 using System.Linq.Expressions;

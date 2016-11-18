@@ -32,13 +32,13 @@ using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.Roles;
 using System.Reflection;
 using System.Xml.Serialization;
-using OpenIZ.Core.Model.Reflection;
 using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Map;
 using System.Linq.Expressions;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Core.Applets
 {

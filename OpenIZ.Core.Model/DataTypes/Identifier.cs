@@ -35,8 +35,8 @@ namespace OpenIZ.Core.Model.DataTypes
     /// <summary>
     /// Entity identifiers
     /// </summary>
-    
-    [XmlType("EntityIdentifier",  Namespace = "http://openiz.org/model"), JsonObject("EntityIdentifier")]
+
+    [XmlType("EntityIdentifier", Namespace = "http://openiz.org/model"), JsonObject("EntityIdentifier")]
     public class EntityIdentifier : IdentifierBase<Entity>
     {
 
@@ -45,7 +45,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         public EntityIdentifier()
         {
-                    
+
         }
 
         /// <summary>
@@ -65,13 +65,14 @@ namespace OpenIZ.Core.Model.DataTypes
             this.Authority = authority;
             this.Value = value;
         }
+
     }
 
 
     /// <summary>
     /// Act identifier
     /// </summary>
-    
+
     [XmlType(Namespace = "http://openiz.org/model", TypeName = "ActIdentifier"), JsonObject("ActIdentifier")]
     public class ActIdentifier : IdentifierBase<Act>
     {
@@ -106,21 +107,21 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents an external assigned identifier
     /// </summary>
     [XmlType(Namespace = "http://openiz.org/model"), JsonObject("IdentifierBase")]
-    [Classifier(nameof(Authority))] 
+    [Classifier(nameof(Authority))]
     public abstract class IdentifierBase<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>, new()
     {
 
         // Identifier id
         private Guid? m_identifierTypeId;
         // Authority id
-        
+
         private Guid? m_authorityId;
 
         // Identifier type backing type
-        
+
         private IdentifierType m_identifierType;
         // Assigning authority
-        
+
         private AssigningAuthority m_authority;
 
         /// <summary>
@@ -222,6 +223,16 @@ namespace OpenIZ.Core.Model.DataTypes
         public override bool IsEmpty()
         {
             return String.IsNullOrEmpty(this.Value);
+        }
+
+        /// <summary>
+        /// Returns true if the objects are equal
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as IdentifierBase<TBoundModel>;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && this.Value == other.Value && this.AuthorityKey == other.AuthorityKey;
         }
     }
 }

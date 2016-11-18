@@ -32,7 +32,6 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core;
-using OpenIZ.Core.Model.Reflection;
 using System.Reflection;
 using OpenIZ.Core.Services;
 

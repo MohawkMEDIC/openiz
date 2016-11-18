@@ -110,5 +110,18 @@ namespace OpenIZ.Core.Model.Entities
             base.Refresh();
             this.m_securityDevice = null;
         }
+
+        /// <summary>
+        /// Determine semantic equality 
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as DeviceEntity;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) &&
+                this.SecurityDeviceKey == other.SecurityDeviceKey &&
+                this.ManufacturedModelName == other.ManufacturedModelName &&
+                this.OperatingSystemName == other.OperatingSystemName;
+        }
     }
 }

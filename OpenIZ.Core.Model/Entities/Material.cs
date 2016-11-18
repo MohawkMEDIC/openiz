@@ -162,5 +162,20 @@ namespace OpenIZ.Core.Model.Entities
             this.m_formConcept = null;
             this.m_quantityConcept = null;
         }
+
+        /// <summary>
+        /// Semantic equality function
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as Material;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) &&
+                this.Quantity == other.Quantity &&
+                this.QuantityConceptKey == other.QuantityConceptKey &&
+                this.FormConceptKey == other.FormConceptKey &&
+                this.ExpiryDate == other.ExpiryDate &&
+                this.IsAdministrative == other.IsAdministrative;
+        }
     }
 }

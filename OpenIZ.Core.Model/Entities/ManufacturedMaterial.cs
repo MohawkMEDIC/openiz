@@ -53,5 +53,15 @@ namespace OpenIZ.Core.Model.Entities
         [XmlElement("lotNumber"), JsonProperty("lotNumber")]
         public String LotNumber { get; set; }
 
+        /// <summary>
+        /// Semantic equality
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as ManufacturedMaterial;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && this.LotNumber == other.LotNumber;
+        }
+
     }
 }

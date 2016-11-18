@@ -105,5 +105,17 @@ namespace OpenIZ.Core.Model.Roles
             base.Refresh();
             this.m_providerSpeciality = null;
         }
+
+        /// <summary>
+        /// Semantic equality function
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as Provider;
+            if (other == null)
+                return false;
+            return base.SemanticEquals(obj) &&
+                this.ProviderSpecialtyKey == other.ProviderSpecialtyKey;
+        }
     }
 }

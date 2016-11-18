@@ -36,7 +36,6 @@ using System.Reflection;
 using OpenIZ.Core;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Query;
-using OpenIZ.Core.Model.Reflection;
 using System.Collections;
 
 namespace OpenIZ.BusinessRules.JavaScript.JNI

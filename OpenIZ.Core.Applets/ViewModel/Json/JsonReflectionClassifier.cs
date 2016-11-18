@@ -24,7 +24,6 @@ using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model;
 using System.Reflection;
 using OpenIZ.Core.Model.EntityLoader;
-using OpenIZ.Core.Model.Reflection;
 
 namespace OpenIZ.Core.Applets.ViewModel.Json
 {

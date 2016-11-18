@@ -100,5 +100,16 @@ namespace OpenIZ.Core.Model.Entities
             base.Refresh();
             this.m_industryConcept = null;
         }
+
+        /// <summary>
+        /// Semantic equality function
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as Organization;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) &&
+                this.IndustryConceptKey == other.IndustryConceptKey;
+        }
     }
 }

@@ -97,6 +97,16 @@ namespace OpenIZ.Core.Model.Acts
             base.Refresh();
             this.m_interpretationConcept = null;
         }
+
+        /// <summary>
+        /// Semantic equality function
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as Observation;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && this.InterpretationConceptKey == other.InterpretationConceptKey;
+        }
     }
 
     /// <summary>
@@ -164,6 +174,16 @@ namespace OpenIZ.Core.Model.Acts
             base.Refresh();
             this.m_unitOfMeasure = null;
         }
+
+        /// <summary>
+        /// Semantic equality function
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as QuantityObservation;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && this.Value == other.Value && this.UnitOfMeasureKey == other.UnitOfMeasureKey;
+        }
     }
 
     /// <summary>
@@ -178,6 +198,16 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [XmlElement("value"), JsonProperty("value")]
         public String Value { get; set; }
+
+        /// <summary>
+        /// Semantic equality function
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as TextObservation;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && this.Value == other.Value;
+        }
     }
 
     /// <summary>
@@ -238,6 +268,16 @@ namespace OpenIZ.Core.Model.Acts
         {
             base.Refresh();
             this.m_value = null;
+        }
+
+        /// <summary>
+        /// Semantic equality function
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as CodedObservation;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && other.ValueKey == this.ValueKey;
         }
     }
 

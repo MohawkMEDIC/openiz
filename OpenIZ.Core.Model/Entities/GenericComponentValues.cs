@@ -124,5 +124,17 @@ namespace OpenIZ.Core.Model.Entities
             base.Refresh();
             this.m_componentType = null;
         }
+
+        /// <summary>
+        /// Semantic equality function
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as GenericComponentValues<TBoundModel>;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) &&
+                this.Value == other.Value &&
+                this.ComponentTypeKey == other.ComponentTypeKey;
+        }
     }
 }

@@ -119,5 +119,18 @@ namespace OpenIZ.Core.Model.Entities
             base.Refresh();
             this.m_securityApplication = null;
         }
+
+        /// <summary>
+        /// Semantic equality function
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as ApplicationEntity;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && this.SecurityApplicationKey == other.SecurityApplicationKey &&
+                this.SoftwareName == other.SoftwareName &&
+                this.VersionName == other.VersionName &&
+                this.VendorName == other.VendorName;
+        }
     }
 }

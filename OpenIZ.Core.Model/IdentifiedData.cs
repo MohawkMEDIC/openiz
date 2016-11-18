@@ -35,11 +35,11 @@ using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model
 {
-    
+
     /// <summary>
     /// Represents data that is identified by a key
     /// </summary>
-    [XmlType("IdentifiedData",  Namespace = "http://openiz.org/model"), JsonObject("IdentifiedData")]
+    [XmlType("IdentifiedData", Namespace = "http://openiz.org/model"), JsonObject("IdentifiedData")]
     public abstract class IdentifiedData : IIdentifiedEntity
     {
 
@@ -67,10 +67,10 @@ namespace OpenIZ.Core.Model
             List<FieldInfo> fields = new List<FieldInfo>();
 
             Type typ = this.GetType();
-            
+
             while (typ != typeof(Object))
             {
-                fields.AddRange(typ.GetRuntimeFields().Where(o=>!o.IsStatic)); // ... Well now they know..
+                fields.AddRange(typ.GetRuntimeFields().Where(o => !o.IsStatic)); // ... Well now they know..
                 typ = typ.GetTypeInfo().BaseType;
             }
 
@@ -78,7 +78,7 @@ namespace OpenIZ.Core.Model
             foreach (FieldInfo fi in fields)
             {
                 object value = fi.GetValue(this);
-                if (value is IdentifiedData && 
+                if (value is IdentifiedData &&
                     (value as IdentifiedData).IsDelayLoadEnabled != v)
                     (value as IdentifiedData).SetDelayLoad(v); // Let it go
                 else if (value is IList &&
@@ -86,7 +86,7 @@ namespace OpenIZ.Core.Model
                     typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(fi.FieldType.GenericTypeArguments[0].GetTypeInfo()))
                 {
                     foreach (IdentifiedData itm in value as IList)
-                        if(itm.IsDelayLoadEnabled != v)
+                        if (itm.IsDelayLoadEnabled != v)
                             itm?.SetDelayLoad(v);
                 }
             }
@@ -151,10 +151,11 @@ namespace OpenIZ.Core.Model
         /// Gets a tag which changes whenever the object is updated
         /// </summary>
         [XmlElement("etag"), JsonProperty("etag"), DataIgnore]
-        public virtual String Tag {
+        public virtual String Tag
+        {
             get
             {
-                if(this.Key.HasValue)
+                if (this.Key.HasValue)
                     return BitConverter.ToString(this.Key?.ToByteArray()).Replace("-", "");
                 return null;
             }
@@ -189,6 +190,19 @@ namespace OpenIZ.Core.Model
             var retVal = this.MemberwiseClone() as IdentifiedData;
             retVal.SetDelayLoad(false);
             return retVal;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public virtual bool SemanticEquals(object obj)
+        {
+            var other = obj as IdentifiedData;
+            if (other == null)
+                return false;
+            return this.Key == other.Key && this.Type == other.Type;
         }
     }
 }

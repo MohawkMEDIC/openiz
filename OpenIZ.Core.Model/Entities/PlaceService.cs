@@ -91,5 +91,17 @@ namespace OpenIZ.Core.Model.Entities
             base.Refresh();
             this.m_service = null;
         }
+
+        /// <summary>
+        /// Semantic equality
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as PlaceService;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && 
+                this.ServiceConceptKey == other.ServiceConceptKey &&
+                this.ServiceSchedule == other.ServiceSchedule;
+        }
     }
 }

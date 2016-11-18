@@ -98,5 +98,15 @@ namespace OpenIZ.Core.Model.Acts
             base.Refresh();
             this.m_dischargeDisposition = null;
         }
+
+        /// <summary>
+        /// Semantic equality function
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as PatientEncounter;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && other.DischargeDispositionKey == this.DischargeDispositionKey;
+        }
     }
 }
