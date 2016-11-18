@@ -196,6 +196,13 @@ namespace OpenIZ.Core.Services
 		SecurityDevice GetDevice(Guid deviceId);
 
 		/// <summary>
+		/// Gets a specific policy.
+		/// </summary>
+		/// <param name="policyId">The id of the policy to be retrieved.</param>
+		/// <returns>Returns the policy.</returns>
+		SecurityPolicy GetPolicy(Guid policyId);
+
+		/// <summary>
 		/// Gets a specific role.
 		/// </summary>
 		/// <param name="roleId">The id of the role to retrieve.</param>
@@ -266,7 +273,7 @@ namespace OpenIZ.Core.Services
 		SecurityUser ObsoleteUser(Guid userId);
 
 		/// <summary>
-		/// Obsoletes the specfied user entity
+		/// Obsoletes the specified user entity
 		/// </summary>
 		UserEntity ObsoleteUserEntity(Guid id);
 

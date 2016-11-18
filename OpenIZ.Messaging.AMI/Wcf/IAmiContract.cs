@@ -22,11 +22,9 @@ using OpenIZ.Core.Model.AMI.Auth;
 using OpenIZ.Core.Model.AMI.DataTypes;
 using OpenIZ.Core.Model.AMI.Diagnostics;
 using OpenIZ.Core.Model.AMI.Security;
-using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Security;
 using System;
-using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Xml.Schema;
@@ -41,10 +39,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	/// Represents the administrative contract interface.
 	/// </summary>
 	[ServiceContract(ConfigurationName = "AMI_1.0", Name = "AMI"), XmlSerializerFormat]
-	[ServiceKnownType(typeof(Place))]
 	[ServiceKnownType(typeof(Entity))]
-	[ServiceKnownType(typeof(Concept))]
-	[ServiceKnownType(typeof(ConceptSet))]
 	[ServiceKnownType(typeof(AlertMessage))]
 	[ServiceKnownType(typeof(AlertMessageInfo))]
 	[ServiceKnownType(typeof(SecurityApplication))]
@@ -58,16 +53,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	[ServiceKnownType(typeof(SecurityUser))]
 	[ServiceKnownType(typeof(SecurityUserInfo))]
 	[ServiceKnownType(typeof(AppletManifest))]
-	[ServiceKnownType(typeof(Organization))]
 	[ServiceKnownType(typeof(DeviceEntity))]
-	[ServiceKnownType(typeof(ReferenceTerm))]
 	[ServiceKnownType(typeof(SubmissionInfo))]
 	[ServiceKnownType(typeof(SubmissionResult))]
 	[ServiceKnownType(typeof(ApplicationEntity))]
 	[ServiceKnownType(typeof(SubmissionRequest))]
 	[ServiceKnownType(typeof(X509Certificate2Info))]
 	[ServiceKnownType(typeof(AssigningAuthorityInfo))]
-	[ServiceKnownType(typeof(AmiCollection<Place>))]
 	[ServiceKnownType(typeof(AmiCollection<SubmissionInfo>))]
 	[ServiceKnownType(typeof(AmiCollection<AppletManifestInfo>))]
 	[ServiceKnownType(typeof(AmiCollection<SecurityApplicationInfo>))]
@@ -149,14 +141,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		DiagnosticReport CreateDiagnosticReport(DiagnosticReport report);
 
 		/// <summary>
-		/// Creates a place in the IMS.
-		/// </summary>
-		/// <param name="place">The place to be created.</param>
-		/// <returns>Returns the newly created place.</returns>
-		[WebInvoke(UriTemplate = "/place", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-		Place CreatePlace(Place place);
-
-		/// <summary>
 		/// Creates a security policy.
 		/// </summary>
 		/// <param name="policy">The security policy to be created.</param>
@@ -195,6 +179,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the deleted application.</returns>
 		[WebInvoke(UriTemplate = "/application/{applicationId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
 		SecurityApplicationInfo DeleteApplication(string applicationId);
+
 		/// <summary>
 		/// Deletes an assigning authority.
 		/// </summary>
@@ -219,14 +204,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the deleted device.</returns>
 		[WebInvoke(UriTemplate = "/device/{deviceId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
 		SecurityDevice DeleteDevice(string deviceId);
-
-		/// <summary>
-		/// Deletes a place.
-		/// </summary>
-		/// <param name="placeId">The id of the place to be deleted.</param>
-		/// <returns>Returns the deleted place.</returns>
-		[WebInvoke(UriTemplate = "/place/{placeId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-		Place DeletePlace(string placeId);
 
 		/// <summary>
 		/// Deletes a security policy.
@@ -304,20 +281,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		AmiCollection<X509Certificate2Info> GetCertificates();
 
 		/// <summary>
-		/// Gets a list of concepts.
-		/// </summary>
-		/// <returns>Returns a list of concepts.</returns>
-		[WebGet(UriTemplate = "/concept", BodyStyle = WebMessageBodyStyle.Bare)]
-		AmiCollection<Concept> GetConcepts();
-
-		/// <summary>
-		/// Gets a list of concept sets.
-		/// </summary>
-		/// <returns>Returns a list of concept sets.</returns>
-		[WebGet(UriTemplate = "/conceptset", BodyStyle = WebMessageBodyStyle.Bare)]
-		AmiCollection<ConceptSet> GetConceptSets();
-
-		/// <summary>
 		/// Gets the certificate revocation list.
 		/// </summary>
 		/// <returns>Returns the certificate revocation list.</returns>
@@ -345,13 +308,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns a list of devices.</returns>
 		[WebGet(UriTemplate = "/device", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<SecurityDevice> GetDevices();
-
-		/// <summary>
-		/// Gets a list of places.
-		/// </summary>
-		/// <returns>Returns a list of places.</returns>
-		[WebGet(UriTemplate = "/place", BodyStyle = WebMessageBodyStyle.Bare)]
-		AmiCollection<Place> GetPlaces();
 
 		/// <summary>
 		/// Gets a list of policies.
@@ -473,15 +429,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
         AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo);
 
 		/// <summary>
-		/// Updates a concept.
-		/// </summary>
-		/// <param name="conceptId">The id of the concept to be updated.</param>
-		/// <param name="concept">The concept containing the updated information.</param>
-		/// <returns>Returns the updated concept.</returns>
-		[WebInvoke(UriTemplate = "/concept/{conceptId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
-		Concept UpdateConcept(string conceptId, Concept concept);
-
-		/// <summary>
 		/// Updates a device.
 		/// </summary>
 		/// <param name="deviceId">The id of the device to be updated.</param>
@@ -489,15 +436,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the updated device.</returns>
 		[WebInvoke(UriTemplate = "/device/{deviceId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		SecurityDeviceInfo UpdateDevice(string deviceId, SecurityDeviceInfo deviceInfo);
-
-		/// <summary>
-		/// Updates a place.
-		/// </summary>
-		/// <param name="placeId">The id of the place to be updated.</param>
-		/// <param name="place">The place containing the updated information.</param>
-		/// <returns>Returns the updated place.</returns>
-		[WebInvoke(UriTemplate = "/place/{placeId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
-		Place UpdatePlace(string placeId, Place place);
 
 		/// <summary>
 		/// Updates a policy.

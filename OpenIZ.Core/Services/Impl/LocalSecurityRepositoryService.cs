@@ -408,6 +408,23 @@ namespace OpenIZ.Core.Services.Impl
 		}
 
 		/// <summary>
+		/// Gets a specific policy.
+		/// </summary>
+		/// <param name="policyId">The id of the policy to be retrieved.</param>
+		/// <returns>Returns the policy.</returns>
+		public SecurityPolicy GetPolicy(Guid policyId)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityPolicy>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityPolicy>)));
+			}
+
+			return persistenceService.Get<Guid>(new Identifier<Guid>(policyId), AuthenticationContext.Current.Principal, false);
+		}
+
+		/// <summary>
 		/// Gets a specific role.
 		/// </summary>
 		/// <param name="roleId">The id of the role to retrieve.</param>
