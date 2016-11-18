@@ -64,5 +64,12 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
         [XmlAttribute("all")]
         public bool All { get; set; }
 
+        /// <summary>
+        /// Gets the reference to use
+        /// </summary>
+        [XmlAttribute("ref")]
+        public String Ref { get; set; }
+
+
     }
 }

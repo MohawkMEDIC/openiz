@@ -120,6 +120,54 @@ namespace OpenIZ.Protocol.Xml.Test
             Assert.AreEqual(60, acts.Count);
         }
 
+        /// <summary>
+        /// Test that the care plan schedules weight at the correct time
+        /// </summary>
+        [TestMethod]
+        public void TestShouldSkipWeight()
+        {
+
+            ProtocolDefinition definition = ProtocolDefinition.Load(typeof(TestProtocolApply).Assembly.GetManifestResourceStream("OpenIZ.Protocol.Xml.Test.Protocols.Weight.xml"));
+            XmlClinicalProtocol xmlCp = new XmlClinicalProtocol(definition);
+
+            // Patient that is just born = Schedule OPV
+            Patient newborn = new Patient()
+            {
+                Key = Guid.NewGuid(),
+                DateOfBirth = DateTime.Now,
+                GenderConcept = new Core.Model.DataTypes.Concept() { Mnemonic = "FEMALE" },
+                Participations = new List<ActParticipation>()
+                {
+                    new ActParticipation()
+                    {
+                        ParticipationRole = new Core.Model.DataTypes.Concept() { Mnemonic = "RecordTarget" },
+                        Act = new QuantityObservation()
+                        {
+                            Value = (decimal)3.2,
+                            TypeConcept = new Core.Model.DataTypes.Concept() { Mnemonic = "VitalSign-Weight" },
+                            ActTime = DateTime.Now
+                        }
+                    },
+                    new ActParticipation()
+                    {
+                        ParticipationRole = new Core.Model.DataTypes.Concept() { Mnemonic = "RecordTarget" },
+                        Act = new PatientEncounter()
+                        {
+                            ActTime = DateTime.Now
+                        }
+                    }
+
+                }
+            };
+
+            // Now apply the protocol
+            var acts = xmlCp.Calculate(newborn);
+            var jsonSerializer = new JsonViewModelSerializer();
+            String json = jsonSerializer.Serialize(newborn);
+            Assert.AreEqual(59, acts.Count);
+        }
+
+
 
         /// <summary>
         /// Test that the care plan schedules OPV0 at the correct time

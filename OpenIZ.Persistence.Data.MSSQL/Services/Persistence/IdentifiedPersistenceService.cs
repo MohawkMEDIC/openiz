@@ -130,7 +130,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 throw new KeyNotFoundException(data.Key.ToString());
 
 			context.GetTable<TDomain>().DeleteOnSubmit (domainObject);
-			return data;
+
+			return this.ToModelInstance(domainObject, context, principal);
 		}
 
         /// <summary>

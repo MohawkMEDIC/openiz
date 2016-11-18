@@ -25,7 +25,7 @@ using System.ServiceModel.Dispatcher;
 namespace OpenIZ.Messaging.AMI.Wcf.Behavior
 {
 	/// <summary>
-	/// IMSI REST Endpoint Behavior
+	/// Represents the endpoint behavior for the AMI endpoint.
 	/// </summary>
 	public class AmiRestEndpointBehavior : IEndpointBehavior
 	{
@@ -38,45 +38,29 @@ namespace OpenIZ.Messaging.AMI.Wcf.Behavior
 		}
 
 		/// <summary>
-		/// Apply a dispatcher
+		/// Applies dispatch behavior.
 		/// </summary>
+		/// <param name="endpoint">The endpoint for which to apply the behavior.</param>
+		/// <param name="endpointDispatcher">The endpoint dispatcher of the endpoint.</param>
 		public void ApplyDispatchBehavior(ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
 		{
-			// Apply to each operation the IMSI formatter
+			// Apply to each operation the AMI formatter
 			foreach (var op in endpoint.Contract.Operations)
 			{
-				//    foreach (var ob in op.OperationBehaviors.Where(o => o.GetType().Name.StartsWith("DataContract") || o.GetType().Name.StartsWith("XmlSerializer")).ToArray())
-				//        op.OperationBehaviors.Remove(ob);// HACK: This is total Hax
-
 				op.OperationBehaviors.Add(new AmiSerializerOperationBehavior());
-				//op.Formatter = new ImsiMessageDispatchFormatter(new OperationDescription(op.Name, endpoint.Contract));
-				//}
 			}
 		}
 
 		public void Validate(ServiceEndpoint endpoint)
 		{
-			//base.Validate(endpoint);
 			BindingElementCollection bindingElements = endpoint.Binding.CreateBindingElements();
 			WebMessageEncodingBindingElement webEncoder = bindingElements.Find<WebMessageEncodingBindingElement>();
+
 			if (webEncoder == null)
+			{
 				throw new InvalidOperationException("AMI Must be bound to type webHttpBinding");
+			}
+			
 		}
-
-		///// <summary>
-		///// Request dispatch formatter
-		///// </summary>
-		//protected override IDispatchMessageFormatter GetRequestDispatchFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint)
-		//{
-		//    return new ImsiMessageDispatchFormatter(operationDescription);
-		//}
-
-		///// <summary>
-		///// Reply dispatch formatter
-		///// </summary>
-		//protected override IDispatchMessageFormatter GetReplyDispatchFormatter(OperationDescription operationDescription, ServiceEndpoint endpoint)
-		//{
-		//    return new ImsiMessageDispatchFormatter(operationDescription);
-		//}
 	}
 }

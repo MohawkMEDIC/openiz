@@ -20,20 +20,17 @@
  * Date: 2016-11-8
  */
 
-/// <reference path="linq.js"/>
-
 /**
  * Sample Business Rule for Patient
  */
 OpenIZBre.AddBusinessRule("Patient", "AfterInsert", function (patient) {
     // Simplify
-    var simplePatient = new OpenIZModel.Patient(OpenIZBre.SimplifyObject(patient));
-
+    //var simplePatient = new OpenIZModel.Patient(patient);
+    var simplePatient = patient;
     // Should get service
     var serviceManager = OpenIZBre.GetService("IServiceManager");
     console.assert(serviceManager != null, "Missing Service Manager");
     console.assert(serviceManager.AddServiceProvider !== undefined, "Service Manager isn't really really a service manager");
-    serviceManager.AddServiceProvider(null);
     console.assert(simplePatient != null, "Patient is null");
     console.assert(simplePatient.genderConceptModel != null, "Gender is null");
     console.assert(simplePatient.genderConceptModel.mnemonic == "Female", "Expected Female");
@@ -45,11 +42,8 @@ OpenIZBre.AddBusinessRule("Patient", "AfterInsert", function (patient) {
     console.assert(simplePatient.name.Legal.component != null, "Name missing components");
     console.assert(simplePatient.name.Legal.component.Given == "James", "Expected James as given name");
     console.assert(simplePatient.name.Legal.component.Family == "Smith", "Expected Smith as family");
-
-    simplePatient.tag["foo"] = Enumerable.from(simplePatient.name.Legal).where("$.component != null");
     simplePatient.dateOfBirth = new Date();
-    var expanded = OpenIZBre.ExpandObject(simplePatient);
-    return { value: expanded };
+    return simplePatient;
 });
 
 /** 
@@ -62,7 +56,7 @@ OpenIZBre.AddValidator("Patient", function (patient) {
 
     if (patient == null)
         retVal.push({ text: "NullValue", priority: 1 });
-    else if (patient.GenderConceptKey == null)
+    else if (patient.genderConcept == null)
         retVal.push({ text: "NoGender", priority: 1 });
 
     return retVal;

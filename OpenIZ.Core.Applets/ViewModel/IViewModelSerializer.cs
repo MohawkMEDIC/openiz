@@ -74,6 +74,6 @@ namespace OpenIZ.Core.Applets.ViewModel
         /// <summary>
         /// Loads the specified related object
         /// </summary>
-        TRelated LoadRelated<TRelated>(Guid objectKey) where TRelated : IdentifiedData, new();
+        TRelated LoadRelated<TRelated>(Guid? objectKey) where TRelated : IdentifiedData, new();
     }
 }

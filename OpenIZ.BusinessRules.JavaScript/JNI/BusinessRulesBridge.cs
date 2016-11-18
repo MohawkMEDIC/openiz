@@ -34,6 +34,10 @@ using Newtonsoft.Json.Linq;
 using OpenIZ.Core.Model.Roles;
 using System.Reflection;
 using OpenIZ.Core;
+using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.Query;
+using OpenIZ.Core.Model.Reflection;
+using System.Collections;
 
 namespace OpenIZ.BusinessRules.JavaScript.JNI
 {
@@ -45,6 +49,23 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
 
         // View model serializer
         private IViewModelSerializer m_modelSerializer = new JsonViewModelSerializer();
+
+        // Map of view model names to type names
+        private Dictionary<String, Type> m_modelMap = new Dictionary<string, Type>();
+
+        /// <summary>
+        /// Initializes the business rules bridge
+        /// </summary>
+        public BusinessRulesBridge()
+        {
+            foreach(var t in typeof(IdentifiedData).GetTypeInfo().Assembly.ExportedTypes)
+            {
+                var jatt = t.GetTypeInfo().GetCustomAttribute<JsonObjectAttribute>();
+
+                if (jatt?.Id != null && !this.m_modelMap.ContainsKey(jatt.Id))
+                    this.m_modelMap.Add(jatt.Id, t);
+            }
+        }
 
         /// <summary>
         /// Add a business rule for the specified object
@@ -65,7 +86,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// <summary>
         /// Simplifies an IMSI object
         /// </summary>
-        public Object SimplifyObject(IdentifiedData data)
+        public ExpandoObject ToViewModel(IdentifiedData data)
         {
             // Serialize to a view model serializer
             using (MemoryStream ms = new MemoryStream())
@@ -88,17 +109,18 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// <summary>
         /// Convert to Jint object
         /// </summary>
-        private Dictionary<String, Object> ConvertToJint(JObject source)
+        private ExpandoObject ConvertToJint(JObject source)
         {
-            Dictionary<String, Object> retVal = new Dictionary<string, object>();
+            var retVal = new ExpandoObject();
+            var expandoDic = (IDictionary<String, Object>)retVal;
             foreach(var kv in source)
             {
                 if (kv.Value is JObject)
-                    retVal.Add(kv.Key, ConvertToJint(kv.Value as JObject));
+                    expandoDic.Add(kv.Key, ConvertToJint(kv.Value as JObject));
                 else if (kv.Value is JArray)
-                    retVal.Add(kv.Key, (kv.Value as JArray).Select(o => (o as JValue).Value));
+                    expandoDic.Add(kv.Key, (kv.Value as JArray).Select(o => (o as JValue).Value));
                 else
-                    retVal.Add(kv.Key, (kv.Value as JValue).Value);
+                    expandoDic.Add(kv.Key, (kv.Value as JValue).Value);
             }
             return retVal;
         }
@@ -118,7 +140,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// <summary>
         /// Expand the view model object to an identified object 
         /// </summary>
-        public Patient ExpandObject(Object data)
+        public IdentifiedData ToModel(Object data)
         {
 
             // Serialize to a view model serializer
@@ -131,11 +153,111 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
                 // De-serialize
                 ms.Seek(0, SeekOrigin.Begin);
                 var retVal = this.m_modelSerializer.DeSerialize<IdentifiedData>(ms);
-                return retVal as Patient;
+                return retVal;
             }
+        }
+
+        /// <summary>
+        /// Gets the specified data from the underlying data-store
+        /// </summary>
+        public object Obsolete(String type, Guid id)
+        {
+
+            Type dataType = null;
+            if (!this.m_modelMap.TryGetValue(type, out dataType))
+                throw new InvalidOperationException($"Cannot find type information for {type}");
+
+            var idp = typeof(IRepositoryService<>).MakeGenericType(dataType);
+            var idpInstance = ApplicationServiceContext.Current.GetService(idp);
+            if (idpInstance == null)
+                throw new KeyNotFoundException($"The repository service for {type} was not found. Ensure an IRepositoryService<{type}> is registered");
+
+            var mi = idp.GetRuntimeMethod("Obsolete", new Type[] { typeof(Guid) });
+            return this.ToViewModel(mi.Invoke(idpInstance, new object[] { id }) as IdentifiedData);
+        }
+
+        /// <summary>
+        /// Gets the specified data from the underlying data-store
+        /// </summary>
+        public object Get(String type, Guid id)
+        {
+
+            Type dataType = null;
+            if (!this.m_modelMap.TryGetValue(type, out dataType))
+                throw new InvalidOperationException($"Cannot find type information for {type}");
+
+            var idp = typeof(IRepositoryService<>).MakeGenericType(dataType);
+            var idpInstance = ApplicationServiceContext.Current.GetService(idp);
+            if (idpInstance == null)
+                throw new KeyNotFoundException($"The repository service for {type} was not found. Ensure an IRepositoryService<{type}> is registered");
+
+            var mi = idp.GetRuntimeMethod("Get", new Type[] { typeof(Guid) });
+            return this.ToViewModel(mi.Invoke(idpInstance, new object[] { id }) as IdentifiedData);
+        }
+
+        /// <summary>
+        /// Finds the specified data 
+        /// </summary>
+        public object Find(String type, String query)
+        {
+            Type dataType = null;
+            if (!this.m_modelMap.TryGetValue(type, out dataType))
+                throw new InvalidOperationException($"Cannot find type information for {type}");
+
+            var idp = typeof(IRepositoryService<>).MakeGenericType(dataType);
+            var idpInstance = ApplicationServiceContext.Current.GetService(idp);
+            if (idpInstance == null)
+                throw new KeyNotFoundException($"The repository service for {type} was not found. Ensure an IRepositoryService<{type}> is registered");
+
+            MethodInfo builderMethod = (MethodInfo)typeof(QueryExpressionParser).GetGenericMethod("BuildLinqExpression", new Type[] { dataType }, new Type[] { typeof(NameValueCollection) });
+            var mi = idp.GetRuntimeMethod("Find", new Type[] { builderMethod.ReturnType  });
+
+            var nvc = NameValueCollection.ParseQueryString(query);
+            var filter = builderMethod.Invoke(null, new Object[] { nvc });
+
+            var results = mi.Invoke(idpInstance, new object[] { filter }) as IEnumerable;
+            return this.ToViewModel(new Bundle()
+            {
+                Item = results.OfType<IdentifiedData>().ToList(),
+            });
 
         }
 
+        /// <summary>
+        /// Saves the specified object
+        /// </summary>
+        public object Save(object value)
+        {
 
+            var data = this.ToModel(value);
+            if (data == null) throw new ArgumentException("Could not parse value for save");
+
+            var idp = typeof(IRepositoryService<>).MakeGenericType(data.GetType());
+            var idpInstance = ApplicationServiceContext.Current.GetService(idp);
+            if (idpInstance == null)
+                throw new KeyNotFoundException($"The repository service for {data.GetType()} was not found. Ensure an IRepositoryService<{data.GetType()}> is registered");
+
+            var mi = idp.GetRuntimeMethod("Save", new Type[] { data.GetType() });
+            return this.ToViewModel(mi.Invoke(idpInstance, new object[] { data }) as IdentifiedData);
+
+        }
+
+        /// <summary>
+        /// Inserts the specified object
+        /// </summary>
+        public object Insert(object value)
+        {
+
+            var data = this.ToModel(value);
+            if (data == null) throw new ArgumentException("Could not parse value for insert");
+
+            var idp = typeof(IRepositoryService<>).MakeGenericType(data.GetType());
+            var idpInstance = ApplicationServiceContext.Current.GetService(idp);
+            if (idpInstance == null)
+                throw new KeyNotFoundException($"The repository service for {data.GetType()} was not found. Ensure an IRepositoryService<{data.GetType()}> is registered");
+
+            var mi = idp.GetRuntimeMethod("Insert", new Type[] { data.GetType() });
+            return this.ToViewModel(mi.Invoke(idpInstance, new object[] { data }) as IdentifiedData);
+        }
     }
 }

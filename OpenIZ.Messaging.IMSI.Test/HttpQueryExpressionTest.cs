@@ -18,6 +18,7 @@
  * Date: 2016-8-2
  */
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OpenIZ.Core.Alert.Alerting;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
@@ -237,5 +238,12 @@ namespace OpenIZ.Messaging.IMSI.Test
             var expression = CreateQueryString(query.ToArray());
             Assert.AreEqual("name[Legal].component.value=Smith", expression);
         }
+
+		[TestMethod]
+		public void Test()
+		{
+			var query = QueryExpressionBuilder.BuildQuery<AlertMessage>(a => a.RcptTo.Any(r => r.UserName == "lucy") || a.From == "SYSTEM");
+			var expression = CreateQueryString(query.ToArray());
+		}
     }
 }

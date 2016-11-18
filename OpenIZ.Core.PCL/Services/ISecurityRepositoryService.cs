@@ -40,6 +40,13 @@ namespace OpenIZ.Core.Services
 		SecurityUser ChangePassword(Guid userId, String password);
 
 		/// <summary>
+		/// Creates a security application.
+		/// </summary>
+		/// <param name="application">The security application.</param>
+		/// <returns>Returns the newly created application.</returns>
+		SecurityApplication CreateApplication(SecurityApplication application);
+
+		/// <summary>
 		/// Creates a device.
 		/// </summary>
 		/// <param name="device">The security device.</param>
@@ -73,6 +80,23 @@ namespace OpenIZ.Core.Services
 		/// </summary>
 		/// <returns></returns>
 		UserEntity CreateUserEntity(UserEntity userEntity);
+
+		/// <summary>
+		/// Gets a list of applications based on a query.
+		/// </summary>
+		/// <param name="query">The query to use to match the application.</param>
+		/// <returns>Returns a list of applications.</returns>
+		IEnumerable<SecurityApplication> FindApplications(Expression<Func<SecurityApplication, bool>> query);
+
+		/// <summary>
+		/// Gets a list of applications based on a query.
+		/// </summary>
+		/// <param name="query">The filter to use to match the applications.</param>
+		/// <param name="offset">The offset of the search.</param>
+		/// <param name="count">The number of applications.</param>
+		/// <param name="totalResults">The total number of applications.</param>
+		/// <returns>Returns a list of applications.</returns>
+		IEnumerable<SecurityApplication> FindApplications(Expression<Func<SecurityApplication, bool>> query, int offset, int? count, out int totalResults);
 
 		/// <summary>
 		/// Gets a list of devices based on a query.
@@ -158,11 +182,25 @@ namespace OpenIZ.Core.Services
         IEnumerable<SecurityUser> FindUsers(Expression<Func<SecurityUser, bool>> query, int offset, int? count, out int totalResults);
 
 		/// <summary>
+		/// Gets a specific application.
+		/// </summary>
+		/// <param name="applicationId">The id of the application to be retrieved.</param>
+		/// <returns>Returns a application.</returns>
+		SecurityApplication GetApplication(Guid applicationId);
+
+		/// <summary>
 		/// Gets a specific device.
 		/// </summary>
 		/// <param name="deviceId">The id of the device to be retrieved.</param>
 		/// <returns>Returns the device.</returns>
 		SecurityDevice GetDevice(Guid deviceId);
+
+		/// <summary>
+		/// Gets a specific policy.
+		/// </summary>
+		/// <param name="policyId">The id of the policy to be retrieved.</param>
+		/// <returns>Returns the policy.</returns>
+		SecurityPolicy GetPolicy(Guid policyId);
 
 		/// <summary>
 		/// Gets a specific role.
@@ -200,11 +238,25 @@ namespace OpenIZ.Core.Services
 		void LockUser(Guid userId);
 
 		/// <summary>
+		/// Obsoletes an application.
+		/// </summary>
+		/// <param name="applicationId">The id of the application to be obsoleted.</param>
+		/// <returns>Returns the obsoleted application.</returns>
+		SecurityApplication ObsoleteApplication(Guid applicationId);
+
+		/// <summary>
 		/// Obsoletes a device.
 		/// </summary>
 		/// <param name="deviceId">The id of the device to be obsoleted.</param>
 		/// <returns>Returns the obsoleted device.</returns>
 		SecurityDevice ObsoleteDevice(Guid deviceId);
+
+		/// <summary>
+		/// Obsoletes a policy.
+		/// </summary>
+		/// <param name="policyId">THe id of the policy to be obsoleted.</param>
+		/// <returns>Returns the obsoleted policy.</returns>
+		SecurityPolicy ObsoletePolicy(Guid policyId);
 
 		/// <summary>
 		/// Obsoletes a role.
@@ -221,9 +273,16 @@ namespace OpenIZ.Core.Services
 		SecurityUser ObsoleteUser(Guid userId);
 
 		/// <summary>
-		/// Obsoletes the specfied user entity
+		/// Obsoletes the specified user entity
 		/// </summary>
 		UserEntity ObsoleteUserEntity(Guid id);
+
+		/// <summary>
+		/// Updates a security application.
+		/// </summary>
+		/// <param name="application">The security application containing the updated information.</param>
+		/// <returns>Returns the updated application.</returns>
+		SecurityApplication SaveApplication(SecurityApplication application);
 
 		/// <summary>
 		/// Updates a security policy.

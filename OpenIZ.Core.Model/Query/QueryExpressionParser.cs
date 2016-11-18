@@ -101,6 +101,7 @@ namespace OpenIZ.Core.Model.Query
                 Expression accessExpression = parameterExpression;
                 String[] memberPath = currentValue.Key.Split('.');
                 String path = "";
+
                 foreach (var rawMember in memberPath)
                 {
                     var pMember = rawMember;
@@ -109,12 +110,18 @@ namespace OpenIZ.Core.Model.Query
 
                     // Update path
                     path += pMember + ".";
+                bool coalesce = false;
 
                     // Guard token?
                     if (pMember.Contains("[") && pMember.EndsWith("]"))
                     {
                         guard = pMember.Substring(pMember.IndexOf("[") + 1, pMember.Length - pMember.IndexOf("[") - 2);
                         pMember = pMember.Substring(0, pMember.IndexOf("["));
+                    }
+                    if (pMember.EndsWith("?"))
+                    {
+                        coalesce = true;
+                        pMember = pMember.Substring(0, pMember.Length - 1);
                     }
                     if (pMember.Contains("@"))
                     {
@@ -146,6 +153,10 @@ namespace OpenIZ.Core.Model.Query
                         if (castType == null)
                             throw new ArgumentOutOfRangeException(nameof(castType), cast);
                         accessExpression = Expression.TypeAs(accessExpression, castType);
+                    }
+                    if(coalesce)
+                    {
+                        accessExpression = Expression.Coalesce(accessExpression, Expression.New(accessExpression.Type));
                     }
 
                     // Guard on classifier?
