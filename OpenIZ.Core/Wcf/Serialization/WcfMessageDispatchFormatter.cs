@@ -117,21 +117,53 @@ namespace OpenIZ.Core.Wcf.Serialization
                     // Use XML Serializer
                     else if (contentType?.StartsWith("application/xml") == true)
                     {
+
+                        var messageFormatProperty = (WebBodyFormatMessageProperty)request.Properties[WebBodyFormatMessageProperty.Name];
                         XmlDictionaryReader rawReader = request.GetReaderAtBodyContents();
-						//rawReader.ReadStartElement("Binary");
 
-						byte[] rawBody = rawReader.ReadContentAsBase64();
+                        switch (messageFormatProperty.Format)
+                        {
+                            case WebContentFormat.Raw:
+                                {
+                                    rawReader.ReadStartElement("Binary");
+                                    byte[] rawBody = rawReader.ReadContentAsBase64();
 
-						using (rawReader)
-						{
-							Type eType = s_knownTypes.FirstOrDefault(o => o.GetCustomAttribute<XmlRootAttribute>()?.ElementName == rawReader.LocalName && o.GetCustomAttribute<XmlRootAttribute>()?.Namespace == rawReader.NamespaceURI);
+                                    using (MemoryStream ms = new MemoryStream(rawBody))
+                                    {
+                                        using (XmlReader bodyReader = XmlReader.Create(ms))
+                                        {
+                                            while (bodyReader.NodeType != XmlNodeType.Element)
+                                                bodyReader.Read();
 
-							this.m_traceSource.TraceEvent(TraceEventType.Information, 0, "Contract: {0}", typeof(TContract).Name);
-							this.m_traceSource.TraceEvent(TraceEventType.Information, 0, "Attempting to deserialize type: {0}", eType?.Name);
+                                            Type eType = s_knownTypes.FirstOrDefault(o => o.GetCustomAttribute<XmlRootAttribute>()?.ElementName == bodyReader.LocalName &&
+                                            o.GetCustomAttribute<XmlRootAttribute>()?.Namespace == bodyReader.NamespaceURI);
+                                            XmlSerializer xsz = s_serializers[eType];
+                                            parameters[pNumber] = xsz.Deserialize(bodyReader);
+                                        }
+                                    }
+                                }
 
-							XmlSerializer xsz = s_serializers[eType];
-							parameters[pNumber] = xsz.Deserialize(rawReader);
-						}
+                                break;
+                            case WebContentFormat.Xml:
+                                {
+                                    //rawReader.ReadStartElement("Binary");
+
+                                    byte[] rawBody = rawReader.ReadContentAsBase64();
+
+                                    using (rawReader)
+                                    {
+                                        Type eType = s_knownTypes.FirstOrDefault(o => o.GetCustomAttribute<XmlRootAttribute>()?.ElementName == rawReader.LocalName && o.GetCustomAttribute<XmlRootAttribute>()?.Namespace == rawReader.NamespaceURI);
+
+                                        this.m_traceSource.TraceEvent(TraceEventType.Information, 0, "Contract: {0}", typeof(TContract).Name);
+                                        this.m_traceSource.TraceEvent(TraceEventType.Information, 0, "Attempting to deserialize type: {0}", eType?.Name);
+
+                                        XmlSerializer xsz = s_serializers[eType];
+                                        parameters[pNumber] = xsz.Deserialize(rawReader);
+                                    }
+                                }
+                                break;
+                        }
+                        
 					}
 					// Use JSON Serializer
 					else if (contentType?.StartsWith("application/json") == true)
