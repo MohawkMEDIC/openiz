@@ -47,7 +47,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} persistence service not found", nameof(IDataPersistenceService<ConceptClass>)));
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptClass>)} not found");
 			}
 
 			return persistenceService.Query(query, AuthenticationContext.Current.Principal);
@@ -67,7 +67,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} persistence service not found", nameof(IDataPersistenceService<ConceptClass>)));
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptClass>)} not found");
 			}
 
 			return persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalCount);
@@ -95,8 +95,11 @@ namespace OpenIZ.Core.Services.Impl
 		public IEnumerable<Concept> FindConcepts(Expression<Func<Concept, bool>> query, int offset, int? count, out int totalCount)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
+
 			if (persistenceService == null)
-				throw new InvalidOperationException("No concept persistence service found");
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Concept>)} not found");
+			}
 
 			return persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalCount);
 		}
@@ -140,13 +143,16 @@ namespace OpenIZ.Core.Services.Impl
 		/// <param name="query">The query to use for searching for the concept sets.</param>
 		/// <param name="count">The count of the concept sets to return.</param>
 		/// <param name="offset">The offset for the search results.</param>
-		/// <param name="totalCount">The total count of the search results.</param>
+		/// <param name="totalResults">The total count of the search results.</param>
 		/// <returns>Returns a list of concept sets who match the specified query.</returns>
 		public IEnumerable<ConceptSet> FindConceptSets(Expression<Func<ConceptSet, bool>> query, int offset, int? count, out int totalResults)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptSet>>();
+
 			if (persistenceService == null)
-				throw new InvalidOperationException("No concept set persistence service found");
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptSet>)} not found");
+			}
 
 			return persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
 		}
@@ -160,8 +166,11 @@ namespace OpenIZ.Core.Services.Impl
 		public IdentifiedData GetConcept(Guid id, Guid versionId)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
+
 			if (persistenceService == null)
-				throw new InvalidOperationException("No concept persistence service found");
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Concept>)} not found");
+			}
 
 			return persistenceService.Get(new Identifier<Guid>(id, versionId), AuthenticationContext.Current.Principal, false);
 		}
@@ -191,8 +200,11 @@ namespace OpenIZ.Core.Services.Impl
 		public ConceptSet GetConceptSet(Guid id)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptSet>>();
+
 			if (persistenceService == null)
-				throw new InvalidOperationException("No concept set persistence service found");
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptSet>)} not found");
+			}
 
 			return persistenceService.Get(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, false);
 		}
@@ -211,8 +223,12 @@ namespace OpenIZ.Core.Services.Impl
 		public ReferenceTerm GetReferenceTerm(Concept concept, string codeSystemOid)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptReferenceTerm>>();
+
 			if (persistenceService == null)
-				throw new InvalidOperationException("No reference term persistence service found");
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptReferenceTerm>)} not found");
+			}
+
 			return persistenceService.Query(o => o.SourceEntityKey == concept.Key && o.ReferenceTerm.CodeSystem.Oid == codeSystemOid, AuthenticationContext.Current.Principal).FirstOrDefault()?.ReferenceTerm;
 		}
 
@@ -232,7 +248,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<Concept>)));
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Concept>)} not found");
 			}
 
 			return persistenceService.Insert(concept, AuthenticationContext.Current.Principal, TransactionMode.Commit);
@@ -264,8 +280,12 @@ namespace OpenIZ.Core.Services.Impl
 		public bool IsMember(ConceptSet set, Concept concept)
 		{
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptSet>>();
+
 			if (persistence == null)
-				throw new InvalidOperationException("Cannot locate concept set persistence service");
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptSet>)} not found");
+			}
+
 			return persistence.Count(o => o.Concepts.Any(c => c.Key == concept.Key), AuthenticationContext.Current.Principal) > 0;
 		}
 
