@@ -67,7 +67,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     [ServiceKnownType(typeof(Bundle))]
     [ServiceKnownType(typeof(ErrorResult))]
     [ServiceKnownType(typeof(ConceptSet))]
-    public interface IImsiServiceContract 
+	[ServiceKnownType(typeof(ConceptReferenceTerm))]
+	public interface IImsiServiceContract 
     {
 
         /// <summary>

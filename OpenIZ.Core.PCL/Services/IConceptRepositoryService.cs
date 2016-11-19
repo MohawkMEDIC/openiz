@@ -1,22 +1,23 @@
 ﻿/*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: justi
  * Date: 2016-8-2
  */
+
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.DataTypes;
 using System;
@@ -47,6 +48,23 @@ namespace OpenIZ.Core.Services
 		/// <param name="totalCount">The total count of the search results.</param>
 		/// <returns>Returns a list of concept classes who match the specified query.</returns>
 		IEnumerable<ConceptClass> FindConceptClasses(Expression<Func<ConceptClass, bool>> query, int offset, int? count, out int totalCount);
+
+		/// <summary>
+		/// Queries for concept reference terms.
+		/// </summary>
+		/// <param name="query">The query to use to search for concept reference terms.</param>
+		/// <returns>Returns a list of concept reference terms.</returns>
+		IEnumerable<ConceptReferenceTerm> FindConceptReferenceTerms(Expression<Func<ConceptReferenceTerm, bool>> query);
+
+		/// <summary>
+		/// Queries for concept reference terms.
+		/// </summary>
+		/// <param name="query">The query to use to search for concept reference terms.</param>
+		/// <param name="offset">The offset of the query.</param>
+		/// <param name="count">The count of the query.</param>
+		/// <param name="totalCount">The total count of the query.</param>
+		/// <returns>Returns a list of concept reference terms.</returns>
+		IEnumerable<ConceptReferenceTerm> FindConceptReferenceTerms(Expression<Func<ConceptReferenceTerm, bool>> query, int offset, int? count, out int totalCount);
 
 		/// <summary>
 		/// Searches for a concept using a given query.
@@ -120,8 +138,17 @@ namespace OpenIZ.Core.Services
 		ConceptClass GetConceptClass(Guid id);
 
 		/// <summary>
-		/// Gets the specified concept set.
+		/// Gets a concept reference term by id.
 		/// </summary>
+		/// <param name="id">The id of the concept reference term.</param>
+		/// <returns>Returns the concept reference term.</returns>
+		ConceptReferenceTerm GetConceptReferenceTerm(Guid id);
+
+		/// <summary>
+		/// Gets a concept set.
+		/// </summary>
+		/// <param name="id">The id of the concept set to retrieve.</param>
+		/// <returns>Returns the concept set.</returns>
 		ConceptSet GetConceptSet(Guid id);
 
 		/// <summary>
@@ -154,6 +181,13 @@ namespace OpenIZ.Core.Services
 		ConceptClass InsertConceptClass(ConceptClass conceptClass);
 
 		/// <summary>
+		/// Inserts a concept reference term.
+		/// </summary>
+		/// <param name="conceptReferenceTerm">The concept reference term to be inserted.</param>
+		/// <returns>Returns the inserted concept reference term.</returns>
+		ConceptReferenceTerm InsertConceptReferenceTerm(ConceptReferenceTerm conceptReferenceTerm);
+
+		/// <summary>
 		/// Inserts a concept set.
 		/// </summary>
 		/// <param name="set">The concept set to be inserted.</param>
@@ -180,6 +214,13 @@ namespace OpenIZ.Core.Services
 		ConceptClass ObsoleteConceptClass(Guid key);
 
 		/// <summary>
+		/// Obsoletes a concept reference term.
+		/// </summary>
+		/// <param name="key">The key of the concept reference term to obsolete.</param>
+		/// <returns>Returns the obsoleted concept reference term.</returns>
+		ConceptReferenceTerm ObsoleteConceptReferenceTerm(Guid key);
+
+		/// <summary>
 		/// Obsoletes a concept set.
 		/// </summary>
 		/// <param name="key">The key of the concept set to be obsoleted.</param>
@@ -199,6 +240,13 @@ namespace OpenIZ.Core.Services
 		/// <param name="conceptClass">The concept class to be saved.</param>
 		/// <returns>Returns the saved concept class.</returns>
 		ConceptClass SaveConceptClass(ConceptClass conceptClass);
+
+		/// <summary>
+		/// Inserts or updates a concept reference term.
+		/// </summary>
+		/// <param name="conceptReferenceTerm">The concept reference term to be saved.</param>
+		/// <returns>Returns the saved concept reference term.</returns>
+		ConceptReferenceTerm SaveConceptReferenceTerm(ConceptReferenceTerm conceptReferenceTerm);
 
 		/// <summary>
 		/// Inserts or updates a concept set.
