@@ -191,7 +191,14 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the concept class.</returns>
 		public ConceptClass GetConceptClass(Guid id)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptClass>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptClass>)} not found");
+			}
+
+			return persistenceService.Get<Guid>(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, false);
 		}
 
 		/// <summary>
@@ -232,6 +239,9 @@ namespace OpenIZ.Core.Services.Impl
 			return persistenceService.Query(o => o.SourceEntityKey == concept.Key && o.ReferenceTerm.CodeSystem.Oid == codeSystemOid, AuthenticationContext.Current.Principal).FirstOrDefault()?.ReferenceTerm;
 		}
 
+		/// <summary>
+		/// Returns a value which indicates whether <paramref name="a"/> implies <paramref name="b"/>
+		/// </summary>
 		public bool Implies(Concept a, Concept b)
 		{
 			throw new NotImplementedException();
@@ -261,7 +271,14 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the newly inserted concept class.</returns>
 		public ConceptClass InsertConceptClass(ConceptClass conceptClass)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptClass>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptClass>)} not found");
+			}
+
+			return persistenceService.Insert(conceptClass, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>
@@ -271,7 +288,14 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the inserted concept set.</returns>
 		public ConceptSet InsertConceptSet(ConceptSet set)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptSet>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptSet>)} not found");
+			}
+
+			return persistenceService.Insert(set, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>
@@ -296,7 +320,14 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the obsoleted concept.</returns>
 		public IdentifiedData ObsoleteConcept(Guid key)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Concept>)} not found");
+			}
+
+			return persistenceService.Obsolete(new Concept { Key = key }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>
@@ -306,7 +337,14 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the obsoleted concept class.</returns>
 		public ConceptClass ObsoleteConceptClass(Guid key)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptClass>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptClass>)} not found");
+			}
+
+			return persistenceService.Obsolete(new ConceptClass { Key = key }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>
@@ -316,7 +354,14 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the obsoleted concept set.</returns>
 		public ConceptSet ObsoleteConceptSet(Guid key)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptSet>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptSet>)} not found");
+			}
+
+			return persistenceService.Obsolete(new ConceptSet { Key = key }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>
@@ -326,17 +371,45 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the saved concept.</returns>
 		public Concept SaveConcept(Concept concept)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Concept>)} not found");
+			}
+
+			try
+			{
+				return persistenceService.Update(concept, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
+			catch (KeyNotFoundException)
+			{
+				return persistenceService.Insert(concept, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
 		}
 
 		/// <summary>
 		/// Inserts or updates a concept class.
 		/// </summary>
-		/// <param name="clazz">The concept class to be saved.</param>
+		/// <param name="conceptClass">The concept class to be saved.</param>
 		/// <returns>Returns the saved concept class.</returns>
-		public Concept SaveConceptClass(ConceptClass clazz)
+		public ConceptClass SaveConceptClass(ConceptClass conceptClass)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptClass>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptClass>)} not found");
+			}
+
+			try
+			{
+				return persistenceService.Update(conceptClass, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
+			catch (KeyNotFoundException)
+			{
+				return persistenceService.Insert(conceptClass, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
 		}
 
 		/// <summary>
@@ -346,7 +419,21 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the saved concept set.</returns>
 		public ConceptSet SaveConceptSet(ConceptSet set)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptSet>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptSet>)} not found");
+			}
+
+			try
+			{
+				return persistenceService.Update(set, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
+			catch (KeyNotFoundException)
+			{
+				return persistenceService.Insert(set, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
 		}
 
 		/// <summary>
@@ -354,9 +441,23 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="term">The reference term to be saved.</param>
 		/// <returns>Returns a concept.</returns>
-		public Concept SaveReferenceTerm(ReferenceTerm term)
+		public ReferenceTerm SaveReferenceTerm(ReferenceTerm term)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReferenceTerm>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ReferenceTerm>)} not found");
+			}
+
+			try
+			{
+				return persistenceService.Update(term, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
+			catch (KeyNotFoundException)
+			{
+				return persistenceService.Insert(term, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
 		}
 	}
 }

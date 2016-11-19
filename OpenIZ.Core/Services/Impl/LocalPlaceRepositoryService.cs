@@ -97,8 +97,12 @@ namespace OpenIZ.Core.Services.Impl
 		public Place Save(Place plc)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
+
 			if (persistenceService == null)
+			{
 				throw new InvalidOperationException("No persistence service found");
+			}
+
 			try
 			{
 				return persistenceService.Update(plc, AuthenticationContext.Current.Principal, TransactionMode.Commit);

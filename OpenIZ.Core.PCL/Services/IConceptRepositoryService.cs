@@ -196,9 +196,9 @@ namespace OpenIZ.Core.Services
 		/// <summary>
 		/// Inserts or updates a concept class.
 		/// </summary>
-		/// <param name="clazz">The concept class to be saved.</param>
+		/// <param name="conceptClass">The concept class to be saved.</param>
 		/// <returns>Returns the saved concept class.</returns>
-		Concept SaveConceptClass(ConceptClass clazz);
+		ConceptClass SaveConceptClass(ConceptClass conceptClass);
 
 		/// <summary>
 		/// Inserts or updates a concept set.
@@ -212,6 +212,6 @@ namespace OpenIZ.Core.Services
 		/// </summary>
 		/// <param name="term">The reference term to be saved.</param>
 		/// <returns>Returns a concept.</returns>
-		Concept SaveReferenceTerm(ReferenceTerm term);
+		ReferenceTerm SaveReferenceTerm(ReferenceTerm term);
 	}
 }
