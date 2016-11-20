@@ -51,14 +51,6 @@ namespace OpenIZ.Messaging.AMI.Client
             this.Client.Accept = client.Accept ?? "application/xml";
         }
 
-        /// <summary>
-        /// Submits a diagnostics report
-        /// </summary>
-        public DiagnosticReport SubmitDiagnosticReport(DiagnosticReport report)
-        {
-            return this.Client.Post<DiagnosticReport, DiagnosticReport>(string.Format("sherlock"), this.Client.Accept, report);
-        }
-
 		/// <summary>
 		/// Accepts a certificate signing request.
 		/// </summary>
@@ -132,16 +124,6 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
-		/// Creates a place in the IMS.
-		/// </summary>
-		/// <param name="place">The place to be created.</param>
-		/// <returns>Returns the newly created place.</returns>
-		public Place CreatePlace(Place place)
-		{
-			return this.Client.Post<Place, Place>("place", this.Client.Accept, place);
-		}
-
-		/// <summary>
 		/// Creates a policy in the IMS.
 		/// </summary>
 		/// <param name="policy">The policy to be created.</param>
@@ -178,7 +160,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the deleted applet.</returns>
 		public AppletManifestInfo DeleteApplet(string appletId)
 		{
-			return this.Client.Delete<AppletManifestInfo>(string.Format("applet/{0}", appletId));
+			return this.Client.Delete<AppletManifestInfo>($"applet/{appletId}");
 		}
 
 		/// <summary>
@@ -188,7 +170,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the deleted application.</returns>
 		public SecurityApplicationInfo DeleteApplication(string applicationId)
 		{
-			return this.Client.Delete<SecurityApplicationInfo>(string.Format("application/{0}", applicationId));
+			return this.Client.Delete<SecurityApplicationInfo>($"application/{applicationId}");
 		}
 
 		/// <summary>
@@ -198,7 +180,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the deleted assigning authority.</returns>
 		public AssigningAuthorityInfo DeleteAssigningAuthority(string assigningAuthorityId)
 		{
-			return this.Client.Delete<AssigningAuthorityInfo>(string.Format("assigningAuthority/{0}", assigningAuthorityId));
+			return this.Client.Delete<AssigningAuthorityInfo>($"assigningAuthority/{assigningAuthorityId}");
 		}
 
 		/// <summary>
@@ -208,17 +190,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the deleted device.</returns>
 		public SecurityDevice DeleteDevice(string id)
 		{
-			return this.Client.Delete<SecurityDevice>(string.Format("device/{0}", id));
-		}
-
-		/// <summary>
-		/// Deletes a place.
-		/// </summary>
-		/// <param name="id">The id of the place to be deleted.</param>
-		/// <returns>Returns the deleted place.</returns>
-		public Place DeletePlace(string id)
-		{
-			return this.Client.Delete<Place>(string.Format("place/{0}", id));
+			return this.Client.Delete<SecurityDevice>($"device/{id}");
 		}
 
 		/// <summary>
@@ -228,7 +200,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the deleted policy.</returns>
 		public SecurityPolicyInfo DeletePolicy(string id)
 		{
-			return this.Client.Delete<SecurityPolicyInfo>(string.Format("policy/{0}", id));
+			return this.Client.Delete<SecurityPolicyInfo>($"policy/{id}");
 		}
 
 		/// <summary>
@@ -238,7 +210,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the deleted role.</returns>
 		public SecurityRoleInfo DeleteRole(string id)
 		{
-			return this.Client.Delete<SecurityRoleInfo>(string.Format("role/{0}", id));
+			return this.Client.Delete<SecurityRoleInfo>($"role/{id}");
 		}
 
 		/// <summary>
@@ -248,7 +220,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the deleted user.</returns>
 		public SecurityUserInfo DeleteUser(string id)
 		{
-			return this.Client.Delete<SecurityUserInfo>(string.Format("user/{0}", id));
+			return this.Client.Delete<SecurityUserInfo>($"user/{id}");
 		}
 
 		#region IDisposable Support
@@ -299,8 +271,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// </summary>
 		public AmiCollection<SecurityPolicyInfo> FindPolicy(Expression<Func<SecurityPolicy, bool>> query)
 		{
-			var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
-			return this.Client.Get<AmiCollection<SecurityPolicyInfo>>("policy", queryParms);
+			return this.Client.Get<AmiCollection<SecurityPolicyInfo>>("policy", QueryExpressionBuilder.BuildQuery(query).ToArray());
 		}
 
 		/// <summary>
@@ -308,8 +279,17 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// </summary>
 		public AmiCollection<SecurityRoleInfo> FindRole(Expression<Func<SecurityRole, bool>> query)
 		{
-			var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
-			return this.Client.Get<AmiCollection<SecurityRoleInfo>>("role", queryParms);
+			return this.Client.Get<AmiCollection<SecurityRoleInfo>>("role", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
+		/// Gets a specific alert.
+		/// </summary>
+		/// <param name="id">The id of the alert to retrieve.</param>
+		/// <returns>Returns the alert.</returns>
+		public AlertMessageInfo GetAlert(string id)
+		{
+			return this.Client.Get<AlertMessageInfo>($"alert/{id}");
 		}
 
 		/// <summary>
@@ -338,7 +318,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the application.</returns>
 		public SecurityApplicationInfo GetApplication(string id)
 		{
-			return this.Client.Get<SecurityApplicationInfo>(string.Format("application/{0}", id));
+			return this.Client.Get<SecurityApplicationInfo>($"application/{id}");
 		}
 
 		/// <summary>
@@ -367,7 +347,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the assigning authority.</returns>
 		public AssigningAuthorityInfo AssigningAuthority(string id)
 		{
-			return this.Client.Get<AssigningAuthorityInfo>(string.Format("assigningAuthority/{0}", id));
+			return this.Client.Get<AssigningAuthorityInfo>($"assigningAuthority/{id}");
 		}
 
 		/// <summary>
@@ -387,7 +367,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns a certificate signing request.</returns>
 		public SubmissionResult GetCertificateSigningRequest(string id)
 		{
-			return this.Client.Get<SubmissionResult>(string.Format("csr/{0}", id));
+			return this.Client.Get<SubmissionResult>($"csr/{id}");
 		}
 
 		/// <summary>
@@ -431,24 +411,13 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
-		/// Gets a list of places.
-		/// </summary>
-		/// <param name="query">The query expression to use to find the places.</param>
-		/// <returns>Returns a collection of places which match the specified query.</returns>
-		public AmiCollection<Place> GetPlaces(Expression<Func<Place, bool>> query)
-		{
-			return this.Client.Get<AmiCollection<Place>>("place", QueryExpressionBuilder.BuildQuery(query).ToArray());
-		}
-
-		/// <summary>
 		/// Retrieves a specified policy.
 		/// </summary>
 		/// <param name="query">The query expression to use to find the policy.</param>
 		/// <returns>Returns a collection of policies which match the specified query parameters.</returns>
 		public AmiCollection<SecurityPolicyInfo> GetPolicies(Expression<Func<SecurityPolicy, bool>> query)
 		{
-			var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
-			return this.Client.Get<AmiCollection<SecurityPolicyInfo>>("policy", queryParms);
+			return this.Client.Get<AmiCollection<SecurityPolicyInfo>>("policy", QueryExpressionBuilder.BuildQuery(query).ToArray());
 		}
 
 		/// <summary>
@@ -458,7 +427,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the specific policy.</returns>
 		public SecurityPolicyInfo GetPolicy(string id)
 		{
-			return this.Client.Get<SecurityPolicyInfo>(string.Format("policy/{0}", id));
+			return this.Client.Get<SecurityPolicyInfo>($"policy/{id}");
 		}
 
 		/// <summary>
@@ -468,7 +437,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the specified user.</returns>
 		public SecurityRoleInfo GetRole(string id)
 		{
-			return this.Client.Get<SecurityRoleInfo>(string.Format("role/{0}", id));
+			return this.Client.Get<SecurityRoleInfo>($"role/{id}");
 		}
 
 		/// <summary>
@@ -478,8 +447,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns a collection of roles which match the specified query parameters.</returns>
 		public AmiCollection<SecurityRoleInfo> GetRoles(Expression<Func<SecurityRole, bool>> query)
 		{
-			var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
-			return this.Client.Get<AmiCollection<SecurityRoleInfo>>("role", queryParms);
+			return this.Client.Get<AmiCollection<SecurityRoleInfo>>("role", QueryExpressionBuilder.BuildQuery(query).ToArray());
 		}
 
 		/// <summary>
@@ -489,7 +457,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the specified user.</returns>
 		public SecurityUserInfo GetUser(string id)
 		{
-			return this.Client.Get<SecurityUserInfo>(string.Format("user/{0}", id));
+			return this.Client.Get<SecurityUserInfo>($"user/{id}");
 		}
 
 		/// <summary>
@@ -499,8 +467,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns a collection of users which match the specified query parameters.</returns>
 		public AmiCollection<SecurityUserInfo> GetUsers(Expression<Func<SecurityUser, bool>> query)
 		{
-			var queryParms = QueryExpressionBuilder.BuildQuery(query).ToArray();
-			return this.Client.Get<AmiCollection<SecurityUserInfo>>("user", queryParms);
+			return this.Client.Get<AmiCollection<SecurityUserInfo>>("user", QueryExpressionBuilder.BuildQuery(query).ToArray());
 		}
 
 		/// <summary>
@@ -521,7 +488,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the updated alert.</returns>
 		public AlertMessageInfo UpdateAlert(string alertId, AlertMessageInfo alertMessageInfo)
 		{
-			return this.Client.Put<AlertMessageInfo, AlertMessageInfo>(string.Format("alert/{0}", alertId), this.Client.Accept, alertMessageInfo);
+			return this.Client.Put<AlertMessageInfo, AlertMessageInfo>($"alert/{alertId}", this.Client.Accept, alertMessageInfo);
 		}
 
 		/// <summary>
@@ -532,7 +499,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the updated applet.</returns>
 		public AppletManifestInfo UpdateApplet(string appletId, AppletManifestInfo appletManifestInfo)
 		{
-			return this.Client.Put<AppletManifestInfo, AppletManifestInfo>(string.Format("applet/{0}", appletId), this.Client.Accept, appletManifestInfo);
+			return this.Client.Put<AppletManifestInfo, AppletManifestInfo>($"applet/{appletId}", this.Client.Accept, appletManifestInfo);
 		}
 
 		/// <summary>
@@ -543,7 +510,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the updated application.</returns>
 		public SecurityApplicationInfo UpdateApplication(string applicationId, SecurityApplicationInfo applicationInfo)
 		{
-			return this.Client.Put<SecurityApplicationInfo, SecurityApplicationInfo>(string.Format("application/{0}", applicationId), this.Client.Accept, applicationInfo);
+			return this.Client.Put<SecurityApplicationInfo, SecurityApplicationInfo>($"application/{applicationId}", this.Client.Accept, applicationInfo);
 		}
 
 		/// <summary>
@@ -554,7 +521,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the updated device.</returns>
 		public SecurityDeviceInfo UpdateDevice(string deviceId, SecurityDeviceInfo deviceInfo)
 		{
-			return this.Client.Put<SecurityDeviceInfo, SecurityDeviceInfo>(string.Format("device/{0}", deviceId), this.Client.Accept, deviceInfo);
+			return this.Client.Put<SecurityDeviceInfo, SecurityDeviceInfo>($"device/{deviceId}", this.Client.Accept, deviceInfo);
 		}
 
 		/// <summary>
@@ -565,7 +532,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the updated assigning authority.</returns>
 		public AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo)
         {
-            return this.Client.Put<AssigningAuthorityInfo, AssigningAuthorityInfo>(string.Format("assigningAuthority/{0}", assigningAuthorityId), this.Client.Accept, assigningAuthorityInfo);
+            return this.Client.Put<AssigningAuthorityInfo, AssigningAuthorityInfo>($"assigningAuthority/{assigningAuthorityId}", this.Client.Accept, assigningAuthorityInfo);
         }
 
         /// <summary>
@@ -576,18 +543,7 @@ namespace OpenIZ.Messaging.AMI.Client
         /// <returns>Returns the updated concept.</returns>
         public Concept UpdateConcept(string conceptId, Concept concept)
 		{
-			return this.Client.Put<Concept, Concept>(string.Format("concept/{0}", conceptId), this.Client.Accept, concept);
-		}
-
-		/// <summary>
-		/// Updates a place.
-		/// </summary>
-		/// <param name="placeId">The id of the place to be updated.</param>
-		/// <param name="place">The place containing the updated information.</param>
-		/// <returns>Returns the updated place.</returns>
-		public Place UpdatePlace(string placeId, Place place)
-		{
-			return this.Client.Put<Place, Place>(string.Format("place/{0}", placeId), this.Client.Accept, place);
+			return this.Client.Put<Concept, Concept>($"concept/{conceptId}", this.Client.Accept, concept);
 		}
 
 		/// <summary>
@@ -598,7 +554,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the updated policy.</returns>
 		public SecurityPolicyInfo UpdatePolicy(string policyId, SecurityPolicyInfo policyInfo)
 		{
-			return this.Client.Put<SecurityPolicyInfo, SecurityPolicyInfo>(string.Format("policy/{0}", policyId), this.Client.Accept, policyInfo);
+			return this.Client.Put<SecurityPolicyInfo, SecurityPolicyInfo>($"policy/{policyId}", this.Client.Accept, policyInfo);
 		}
 
 		/// <summary>
@@ -609,7 +565,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the updated role.</returns>
 		public SecurityRoleInfo UpdateRole(string roleId, SecurityRoleInfo roleInfo)
 		{
-			return this.Client.Put<SecurityRoleInfo, SecurityRoleInfo>(string.Format("role/{0}", roleId), this.Client.Accept, roleInfo);
+			return this.Client.Put<SecurityRoleInfo, SecurityRoleInfo>($"role/{roleId}", this.Client.Accept, roleInfo);
 		}
 
 		/// <summary>
@@ -620,7 +576,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the updated user.</returns>
 		public SecurityUserInfo UpdateUser(Guid id, SecurityUserInfo user)
 		{
-			return this.Client.Put<SecurityUserInfo, SecurityUserInfo>(string.Format("user/{0}", id), this.Client.Accept, user);
+			return this.Client.Put<SecurityUserInfo, SecurityUserInfo>($"user/{id}", this.Client.Accept, user);
 		}
 
         /// <summary>
@@ -636,7 +592,17 @@ namespace OpenIZ.Messaging.AMI.Client
         /// </summary>
         public void SendTfaSecret(TfaRequestInfo resetInfo)
         {
-            this.Client.Post<TfaRequestInfo, Object>("tfa", this.Client.Accept, resetInfo);
+            this.Client.Post<TfaRequestInfo, object>("tfa", this.Client.Accept, resetInfo);
         }
+
+		/// <summary>
+		/// Submits a diagnostic report.
+		/// </summary>
+		/// <param name="report">The diagnostic report.</param>
+		/// <returns>Returns the submitted diagnostic report.</returns>
+		public DiagnosticReport SubmitDiagnosticReport(DiagnosticReport report)
+		{
+			return this.Client.Post<DiagnosticReport, DiagnosticReport>(string.Format("sherlock"), this.Client.Accept, report);
+		}
 	}
 }

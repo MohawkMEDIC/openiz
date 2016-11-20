@@ -240,10 +240,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <summary>
 		/// Gets a specific alert.
 		/// </summary>
-		/// <param name="id">The id of the alert to retrieve.</param>
+		/// <param name="alertId">The id of the alert to retrieve.</param>
 		/// <returns>Returns the alert.</returns>
-		[WebGet(UriTemplate = "/alert/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
-		AlertMessageInfo GetAlert(string id);
+		[WebGet(UriTemplate = "/alert/{alertId}", BodyStyle = WebMessageBodyStyle.Bare)]
+		AlertMessageInfo GetAlert(string alertId);
 
 		/// <summary>
 		/// Gets a list of alert for a specific query.

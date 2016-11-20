@@ -459,9 +459,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <summary>
 		/// Gets a specific alert.
 		/// </summary>
-		/// <param name="id">The id of the alert to retrieve.</param>
+		/// <param name="alertId">The id of the alert to retrieve.</param>
 		/// <returns>Returns the alert.</returns>
-		public AlertMessageInfo GetAlert(string id)
+		public AlertMessageInfo GetAlert(string alertId)
 		{
 			var alertRepository = ApplicationContext.Current.GetService<IAlertRepositoryService>();
 
@@ -470,7 +470,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAlertRepositoryService)));
 			}
 
-			var alert = alertRepository.Get(Guid.Parse(id));
+			var alert = alertRepository.Get(Guid.Parse(alertId));
 
 			return new AlertMessageInfo(alert);
 		}
