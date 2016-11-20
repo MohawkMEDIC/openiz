@@ -577,13 +577,12 @@ namespace OpenIZ.Messaging.AMI.Wcf
 						var serializer = new XmlSerializer(typeof(AppletPackage));
 						package = (AppletPackage)serializer.Deserialize(gzipStream);
 					}
-
-					applet.FileExtension = file.EndsWith(".pak.gz") ? ".pak.gz" : ".pak";
 				}
 
 				using (var memoryStream = new MemoryStream(package.Manifest))
 				{
 					applet = new AppletManifestInfo(AppletManifest.Load(memoryStream));
+					applet.FileExtension = file.EndsWith(".pak.gz") ? ".pak.gz" : ".pak";
 				}
 			}
 
