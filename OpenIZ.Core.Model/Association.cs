@@ -94,6 +94,16 @@ namespace OpenIZ.Core.Model
             }
         }
 
+
+        /// <summary>
+        /// Should serialize obsolete
+        /// </summary>
+        public bool ShouldSerializeSourceEntityKey()
+        {
+            return this.m_sourceEntityKey.HasValue;
+        }
+
+
         /// <summary>
         /// Force delay load properties to reload
         /// </summary>

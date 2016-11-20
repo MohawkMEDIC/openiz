@@ -39,13 +39,15 @@ namespace OpenIZ.Core.Services.Impl
         /// <remarks>This method only performs a diff on the root object passed and does not cascade to collections</remarks>
         public Patch Diff(IdentifiedData existing, IdentifiedData updated)
         {
-            return new Patch()
+            var retVal = new Patch()
             {
                 Key = Guid.NewGuid(),
                 CreationTime = DateTimeOffset.Now,
                 Operation = this.DiffInternal(existing, updated, null),
                 AppliesTo = existing
             };
+            this.m_tracer.TraceVerbose("-->> DIFF {0} > {1}\r\n{2}", existing, updated, retVal);
+            return retVal;
         }
 
         /// <summary>
@@ -147,7 +149,6 @@ namespace OpenIZ.Core.Services.Impl
                 }
             }
 
-            this.m_tracer.TraceVerbose("-->> DIFF {0} > {1}\r\n{2}", existing, updated, retVal);
 
             return retVal;
         }

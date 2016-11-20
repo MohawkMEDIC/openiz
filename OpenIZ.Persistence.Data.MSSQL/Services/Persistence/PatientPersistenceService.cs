@@ -70,6 +70,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Reverse lookup
             if (patient.DeceasedDatePrecision.HasValue)
                 retVal.DeceasedDatePrecision = PersonPersistenceService.PrecisionMap.Where(o => o.Value == patient.DeceasedDatePrecision).Select(o => o.Key).First();
+            if (dbe.Entity.PersonLanguageCommunicationsPersonEntityId != null)
+                retVal.LanguageCommunication = dbe.Entity.PersonLanguageCommunicationsPersonEntityId.Where(v => v.EffectiveVersionSequenceId <= dbe.VersionSequenceId && (v.ObsoleteVersionSequenceId == null || v.ObsoleteVersionSequenceId >= dbe.VersionSequenceId)).Select(o => new Core.Model.Entities.PersonLanguageCommunication(o.LanguageCommunication, o.PreferenceIndicator)).ToList();
+
             retVal.MultipleBirthOrder = (int?)patient.MultipleBirthOrder;
             retVal.GenderConceptKey = patient.GenderConceptId;
 

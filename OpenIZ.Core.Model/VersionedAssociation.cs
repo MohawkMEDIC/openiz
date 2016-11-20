@@ -73,6 +73,23 @@ namespace OpenIZ.Core.Model
         }
 
         /// <summary>
+        /// Should serialize obsolete
+        /// </summary>
+        public bool ShouldSerializeObsoleteVersionSequenceId()
+        {
+            return this.m_obsoleteVersionSequenceId.HasValue;
+        }
+
+        /// <summary>
+        /// Should serialize obsolete
+        /// </summary>
+        public bool ShouldSerializeEffectiveVersionSequenceId()
+        {
+            return this.m_effectiveVersionSequenceId.HasValue;
+        }
+
+
+        /// <summary>
         /// Determines equality
         /// </summary>
         public override bool SemanticEquals(object obj)

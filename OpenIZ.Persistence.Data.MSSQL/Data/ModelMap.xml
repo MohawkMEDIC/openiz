@@ -684,6 +684,11 @@
       <via domainName="EntityId"/>
     </property>
     <property modelName="VersionKey" domainName="EntityVersionId"/>
+    <proeprty modelName="LanguageCommunication" domainName="EntityVersion">
+      <via domainName="Entity">
+        <via domainName="PersonLanguageCommunicationsPersonEntityId"/>
+      </via>
+    </proeprty>
   </class>
 
   <class modelClass="OpenIZ.Core.Model.Entities.PersonLanguageCommunication, OpenIZ.Core.Model, Version=0.6.0.0"
