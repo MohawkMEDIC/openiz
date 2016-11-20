@@ -39,6 +39,7 @@
     <Compile Include="Diagnostics\Tracer.cs" />
     <Compile Include="Diagnostics\TraceWriter.cs" />
     <Compile Include="Event\NotificationEventArgs.cs" />
+    <Compile Include="Exceptions\DataPersistenceException.cs" />
     <Compile Include="Exceptions\DetectedIssueException.cs" />
     <Compile Include="Exceptions\PatchException.cs" />
     <Compile Include="Http\Credentials.cs" />

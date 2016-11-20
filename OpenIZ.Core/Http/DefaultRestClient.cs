@@ -103,7 +103,7 @@ namespace OpenIZ.Core.Http
         /// <param name="query">Query.</param>
         /// <typeparam name="TBody">The 1st type parameter.</typeparam>
         /// <typeparam name="TResult">The 2nd type parameter.</typeparam>
-        protected override TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, WebHeaderCollection additionalHeaders, TBody body, params KeyValuePair<string, object>[] query)
+        protected override TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, WebHeaderCollection requestHeaders, out WebHeaderCollection responseHeaders, TBody body, params KeyValuePair<string, object>[] query)
         {
 
             if (String.IsNullOrEmpty(method))
@@ -124,13 +124,13 @@ namespace OpenIZ.Core.Http
                 requestObj.Method = method;
 
                 // Additional headers
-                if (additionalHeaders != null)
-                    foreach (var hdr in additionalHeaders.AllKeys)
+                if (requestHeaders != null)
+                    foreach (var hdr in requestHeaders.AllKeys)
                     {
                         if (hdr == "If-Modified-Since")
-                            requestObj.IfModifiedSince = DateTime.Parse(additionalHeaders[hdr]);
+                            requestObj.IfModifiedSince = DateTime.Parse(requestHeaders[hdr]);
                         else
-                            requestObj.Headers.Add(hdr, additionalHeaders[hdr]);
+                            requestObj.Headers.Add(hdr, requestHeaders[hdr]);
                     }
 
                 // Body was provided?
@@ -199,12 +199,16 @@ namespace OpenIZ.Core.Http
                         });
                         if (!responseTask.Wait(this.Description.Endpoint[0].Timeout))
                             throw new TimeoutException();
-                        else if (responseError != null)
+                        else
                         {
-                            if (((responseError as WebException)?.Response as HttpWebResponse).StatusCode == HttpStatusCode.NotModified)
-                                return default(TResult);
-                            else
-                                throw responseError;
+                            responseHeaders = response.Headers;
+                            if (responseError != null)
+                            {
+                                if (((responseError as WebException)?.Response as HttpWebResponse).StatusCode == HttpStatusCode.NotModified)
+                                    return default(TResult);
+                                else
+                                    throw responseError;
+                            }
                         }
 
                         var validationResult = this.ValidateResponse(response);
@@ -320,7 +324,7 @@ namespace OpenIZ.Core.Http
 
             }
 
-
+            responseHeaders = new WebHeaderCollection();
             return default(TResult);
         }
 

@@ -71,9 +71,8 @@ namespace OpenIZ.Core.Model
         {
             get
             {
-                if(this.VersionKey != null)
-                    return BitConverter.ToString(this.VersionKey?.ToByteArray()).Replace("-", "");
-                return null;
+                return this.VersionKey?.ToString("N");
+
             }
         }
 

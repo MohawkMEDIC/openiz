@@ -207,9 +207,10 @@ namespace OpenIZ.Core.Http
 					s_tracer.TraceVerbose("HTTP request cancelled");
 					return default(TResult);
 				}
-                
-				// Invoke
-				var retVal = this.InvokeInternal<TBody, TResult>(method, url, contentType, requestEventArgs.AdditionalHeaders, body, query);
+
+                // Invoke
+                WebHeaderCollection responseHeaders = null;
+				var retVal = this.InvokeInternal<TBody, TResult>(method, url, contentType, requestEventArgs.AdditionalHeaders, out responseHeaders, body, query);
 				this.Responded?.Invoke(this, new RestResponseEventArgs(method, url, parameters, contentType, retVal, 200));
 				return retVal;
 			}
@@ -231,7 +232,7 @@ namespace OpenIZ.Core.Http
 		/// <param name="query">Query.</param>
 		/// <typeparam name="TBody">The 1st type parameter.</typeparam>
 		/// <typeparam name="TResult">The 2nd type parameter.</typeparam>
-		protected abstract TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, WebHeaderCollection additionalHeaders, TBody body, params KeyValuePair<string, object>[] query);
+		protected abstract TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, WebHeaderCollection requestHeaders, out WebHeaderCollection responseHeaders, TBody body, params KeyValuePair<string, object>[] query);
 
 		/// <summary>
 		/// Executes a post against the url
@@ -367,6 +368,32 @@ namespace OpenIZ.Core.Http
 		public void Dispose()
 		{
 		}
+
+        /// <summary>
+        /// Patches the specified <paramref name="patch"/>
+        /// </summary>
+        public String Patch<TPatch>(string url, string contentType, String ifMatch, TPatch patch) 
+        {
+            try
+            {
+                WebHeaderCollection requestHeaders = new WebHeaderCollection(), 
+                    responseHeaders = null;
+                requestHeaders[HttpRequestHeader.IfMatch] = ifMatch;
+
+                // Invoke
+                this.InvokeInternal<TPatch, Object>("PATCH", url, contentType, requestHeaders, out responseHeaders, patch);
+
+                // Return the ETag of the 
+                return responseHeaders["ETag"];
+            }
+            catch (Exception e)
+            {
+                s_tracer.TraceError("Error invoking HTTP: {0}", e);
+                this.Responded?.Invoke(this, new RestResponseEventArgs("PATCH", url, null, contentType, null, 500));
+                throw;
+            }
+
+        }
 
         /// <summary>
         /// Perform a head operation against the specified url

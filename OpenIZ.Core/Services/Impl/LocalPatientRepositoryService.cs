@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using OpenIZ.Core.Event;
+using OpenIZ.Core.Exceptions;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -211,7 +212,7 @@ namespace OpenIZ.Core.Services.Impl
 
 				clientRegistryNotificationService?.NotifyRegister(new NotificationEventArgs<Patient>(patient));
 			}
-			catch (KeyNotFoundException)
+			catch (DataPersistenceException)
 			{
 				if (businessRulesService != null)
 				{

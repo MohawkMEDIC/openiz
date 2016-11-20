@@ -43,7 +43,8 @@ namespace OpenIZ.Core.Services.Impl
             {
                 Key = Guid.NewGuid(),
                 CreationTime = DateTimeOffset.Now,
-                Operation = this.DiffInternal(existing, updated, null)
+                Operation = this.DiffInternal(existing, updated, null),
+                AppliesTo = existing
             };
         }
 

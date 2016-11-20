@@ -52,6 +52,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
     public sealed class SqlIdentityProvider : IIdentityRefreshProviderService
     {
 
+        // Sync lock
+        private Object m_syncLock = new object();
+
         // Trace source
         private TraceSource m_traceSource = new TraceSource(SqlServerConstants.IdentityTraceSourceName);
 
@@ -264,7 +267,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                         SecurityStamp = Guid.NewGuid().ToString(),
                         UserClass = UserClassKeys.HumanUser
                     };
-
                     if (authContext != null)
                         newIdentityUser.CreatedByEntity = dataContext.SecurityUsers.Single(u => u.UserName == authContext.Identity.Name);
 
@@ -379,21 +381,24 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     if (user == null)
                         throw new KeyNotFoundException(userName);
 
-                    var existingClaim = dataContext.SecurityUserClaims.FirstOrDefault(o => o.ClaimType == claim.Type && o.UserId == user.Id);
+                    lock (this.m_syncLock)
+                    {
+                        var existingClaim = dataContext.SecurityUserClaims.FirstOrDefault(o => o.ClaimType == claim.Type && o.UserId == user.Id);
 
-                    // Set the secret
-                    if (existingClaim == null)
-                        dataContext.SecurityUserClaims.InsertOnSubmit(new SecurityUserClaim()
-                        {
-                            ClaimId = Guid.NewGuid(),
-                            ClaimType = claim.Type,
-                            ClaimValue = claim.Value,
-                            SecurityUser = user
-                        });
-                    else
-                        existingClaim.ClaimValue = claim.Value;
+                        // Set the secret
+                        if (existingClaim == null)
+                            dataContext.SecurityUserClaims.InsertOnSubmit(new SecurityUserClaim()
+                            {
+                                ClaimId = Guid.NewGuid(),
+                                ClaimType = claim.Type,
+                                ClaimValue = claim.Value,
+                                SecurityUser = user
+                            });
+                        else
+                            existingClaim.ClaimValue = claim.Value;
 
-                    dataContext.SubmitChanges();
+                        dataContext.SubmitChanges();
+                    }
                 }
             }
             catch (Exception e)

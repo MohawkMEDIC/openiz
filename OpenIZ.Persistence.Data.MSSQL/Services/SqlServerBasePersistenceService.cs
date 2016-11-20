@@ -201,7 +201,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                 {
                     this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
                     tx?.Rollback();
-                    throw new Exception(e.Message, e);
+                    throw new DataPersistenceException(e.Message, e);
                 }
                 finally
                 {
@@ -270,7 +270,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                 {
                     this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
                     tx?.Rollback();
-                    throw new Exception(e.Message, e);
+                    throw new DataPersistenceException(e.Message, e);
 
                 }
                 finally
@@ -338,7 +338,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                 {
                     this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
                     tx?.Rollback();
-                    throw new Exception(e.Message, e);
+                    throw new DataPersistenceException(e.Message, e);
                 }
                 finally
                 {
@@ -447,7 +447,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                 catch (NotSupportedException e)
                 {
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cannot perform LINQ query, switching to stored query sqp_{0}", typeof(TData).Name);
-                    throw new InvalidOperationException("Cannot perform LINQ query", e);
+                    throw new DataPersistenceException("Cannot perform LINQ query", e);
                 }
                 catch (Exception e)
                 {

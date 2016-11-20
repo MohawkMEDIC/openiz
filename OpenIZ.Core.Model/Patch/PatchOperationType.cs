@@ -5,7 +5,7 @@ namespace OpenIZ.Core.Model.Patch
     /// <summary>
     /// Represents a patch operation type
     /// </summary>
-    [XmlType(nameof(PatchOperationType), Namespace = "http://openiz.org/model/patch")]
+    [XmlType(nameof(PatchOperationType), Namespace = "http://openiz.org/model")]
     public enum PatchOperationType
     {
         /// <summary>

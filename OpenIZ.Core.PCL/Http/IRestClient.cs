@@ -20,6 +20,7 @@
 using OpenIZ.Core.Http.Description;
 using System;
 using System.Collections.Generic;
+using System.Net;
 
 namespace OpenIZ.Core.Http
 {
@@ -82,15 +83,25 @@ namespace OpenIZ.Core.Http
 		/// <typeparam name="TResult">The 2nd type parameter.</typeparam>
 		TResult Invoke<TBody, TResult>(String method, String url, String contentType, TBody body, params KeyValuePair<String, Object>[] query);
 
-		/// <summary>
-		/// Executes a post against the url
-		/// </summary>
-		/// <param name="url">URL.</param>
-		/// <param name="contentType">Content type.</param>
-		/// <param name="body">Body.</param>
-		/// <typeparam name="TBody">The 1st type parameter.</typeparam>
-		/// <typeparam name="TResult">The 2nd type parameter.</typeparam>
-		TResult Post<TBody, TResult>(String url, String contentType, TBody body);
+        /// <summary>
+        /// Instructs the server to perform a PATCH operation
+        /// </summary>
+        /// <typeparam name="TPatch">The type of patch being applied</typeparam>
+        /// <param name="url">The URL</param>
+        /// <param name="contentType">The content type</param>
+        /// <param name="ifMatch">Target version/etag to patch</param>
+        String Patch<TPatch>(string url, string contentType, String ifMatch, TPatch patch);
+
+
+        /// <summary>
+        /// Executes a post against the url
+        /// </summary>
+        /// <param name="url">URL.</param>
+        /// <param name="contentType">Content type.</param>
+        /// <param name="body">Body.</param>
+        /// <typeparam name="TBody">The 1st type parameter.</typeparam>
+        /// <typeparam name="TResult">The 2nd type parameter.</typeparam>
+        TResult Post<TBody, TResult>(String url, String contentType, TBody body);
 
 		/// <summary>
 		/// Deletes the specified object

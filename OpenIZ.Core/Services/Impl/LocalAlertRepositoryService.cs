@@ -21,6 +21,7 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Alert.Alerting;
+using OpenIZ.Core.Exceptions;
 using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
@@ -149,7 +150,7 @@ namespace OpenIZ.Core.Services.Impl
 				alert = persistenceService.Update(message, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 				this.Received?.Invoke(this, new AlertEventArgs(alert));
 			}
-			catch (KeyNotFoundException)
+			catch (DataPersistenceException)
 			{
 				alert = persistenceService.Insert(message, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 				this.Received?.Invoke(this, new AlertEventArgs(alert));

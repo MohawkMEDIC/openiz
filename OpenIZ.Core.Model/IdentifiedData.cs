@@ -155,9 +155,7 @@ namespace OpenIZ.Core.Model
         {
             get
             {
-                if (this.Key.HasValue)
-                    return BitConverter.ToString(this.Key?.ToByteArray()).Replace("-", "");
-                return null;
+                return this.Key?.ToString("N");
             }
         }
 

@@ -35,7 +35,7 @@ namespace OpenIZ.Core.Model
     /// </summary>
     public static class ExtensionMethods
     {
-
+        
         /// <summary>
         /// Compute a basic hash string
         /// </summary>
