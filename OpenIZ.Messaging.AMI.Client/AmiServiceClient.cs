@@ -30,6 +30,7 @@ using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.Security;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using OpenIZ.Core.Model.AMI.Applet;
@@ -303,12 +304,22 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
+		/// Gets a specific applet.
+		/// </summary>
+		/// <param name="id">The id of the applet to retrieve.</param>
+		/// <returns>Returns the applet.</returns>
+		public AppletManifestInfo GetApplet(string id)
+		{
+			return this.Client.Get<AppletManifestInfo>($"applet/{id}");
+		}
+
+		/// <summary>
 		/// Gets a list of applets for a specific query.
 		/// </summary>
 		/// <returns>Returns a list of applet which match the specific query.</returns>
-		public AmiCollection<AppletManifestInfo> GetApplets(Expression<Func<AppletManifestInfo, bool>> query)
+		public AmiCollection<AppletManifestInfo> GetApplets()
 		{
-			return this.Client.Get<AmiCollection<AppletManifestInfo>>("applet", QueryExpressionBuilder.BuildQuery(query).ToArray());
+			return this.Client.Get<AmiCollection<AppletManifestInfo>>("applet", new KeyValuePair<string, object>("_", DateTimeOffset.UtcNow.ToString("yyyyMMddHHmmss")));
 		}
 
 		/// <summary>

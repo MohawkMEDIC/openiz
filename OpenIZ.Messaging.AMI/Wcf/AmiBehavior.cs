@@ -33,8 +33,11 @@ using OpenIZ.Messaging.AMI.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
 using System.ServiceModel;
 using System.ServiceModel.Web;
@@ -48,6 +51,7 @@ using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.AMI.Diagnostics;
 using OpenIZ.Core.Security.Attribute;
 using System.Security.Permissions;
+using OpenIZ.Core.Applets.Model;
 using OpenIZ.Core.Model.AMI.Applet;
 using OpenIZ.Core.Security.Claims;
 
@@ -146,7 +150,32 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the created applet manifest info.</returns>
 		public AppletManifestInfo CreateApplet(AppletManifestInfo appletManifestInfo)
 		{
-			throw new NotImplementedException();
+			// creates the applets directory where the applets will live
+			var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+			var appletDirectory = Path.Combine(baseDirectory, "applets");
+
+			if (!appletManifestInfo.FileExtension.StartsWith("."))
+			{
+				appletManifestInfo.FileExtension = appletManifestInfo.FileExtension.Insert(0, ".");
+			}
+
+			switch (appletManifestInfo.FileExtension)
+			{
+				case ".pak":
+				case ".pak.gz":
+					using (var fileStream = File.Create(Path.Combine(appletDirectory, appletManifestInfo.AppletManifest.Info.Id + appletManifestInfo.FileExtension)))
+					using (var gzipStream = new GZipStream(fileStream, CompressionMode.Compress))
+					{
+						var package = appletManifestInfo.AppletManifest.CreatePackage();
+						var serializer = new XmlSerializer(typeof(AppletPackage));
+
+						serializer.Serialize(gzipStream, package);
+					}
+					break;
+			}
+
+			return appletManifestInfo;
 		}
 
 		/// <summary>
@@ -299,7 +328,20 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the deleted applet.</returns>
 		public AppletManifestInfo DeleteApplet(string appletId)
 		{
-			throw new NotImplementedException();
+			var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+			var appletDirectory = Path.Combine(baseDirectory, "applets");
+
+			var file = Directory.GetFiles(appletDirectory).FirstOrDefault(f => f == appletId);
+
+			if (file == null)
+			{
+				throw new ArgumentException("Applet not found");
+			}
+
+			File.Delete(file);
+
+			return new AppletManifestInfo();
 		}
 
 		/// <summary>
@@ -514,7 +556,38 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the applet.</returns>
 		public AppletManifestInfo GetApplet(string appletId)
 		{
-			throw new NotImplementedException();
+			var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+			var appletDirectory = Path.Combine(baseDirectory, "applets");
+
+			var files = Directory.GetFiles(appletDirectory).Select(Path.GetFileName);
+
+			var file = files.FirstOrDefault(f => f.StartsWith(appletId));
+
+			var applet = new AppletManifestInfo();
+
+			using (var stream = new FileStream(Path.Combine(appletDirectory, file), FileMode.Open))
+			{
+				AppletPackage package = null;
+
+				if (file.EndsWith(".pak") || file.EndsWith(".pak.gz"))
+				{
+					using (var gzipStream = new GZipStream(stream, CompressionMode.Decompress))
+					{
+						var serializer = new XmlSerializer(typeof(AppletPackage));
+						package = (AppletPackage)serializer.Deserialize(gzipStream);
+					}
+
+					applet.FileExtension = file.EndsWith(".pak.gz") ? ".pak.gz" : ".pak";
+				}
+
+				using (var memoryStream = new MemoryStream(package.Manifest))
+				{
+					applet = new AppletManifestInfo(AppletManifest.Load(memoryStream));
+				}
+			}
+
+			return applet;
 		}
 
 		/// <summary>
@@ -523,7 +596,37 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns a list of applet which match the specific query.</returns>
 		public AmiCollection<AppletManifestInfo> GetApplets()
 		{
-			throw new NotImplementedException();
+			var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+			var appletDirectory = Path.Combine(baseDirectory, "applets");
+
+			var files = Directory.GetFiles(appletDirectory);
+
+			var applets = new AmiCollection<AppletManifestInfo>();
+
+			foreach (var file in from file in files let bytes = File.ReadAllBytes(file) select file)
+			{
+				using (var stream = new FileStream(file, FileMode.Open))
+				{
+					AppletPackage package = null;
+
+					if (file.EndsWith(".pak") || file.EndsWith(".pak.gz"))
+					{
+						using (GZipStream gzipStream = new GZipStream(stream, CompressionMode.Decompress))
+						{
+							var serializer = new XmlSerializer(typeof(AppletPackage));
+							package = (AppletPackage)serializer.Deserialize(gzipStream);
+						}
+					}
+
+					using (var memoryStream = new MemoryStream(package.Manifest))
+					{
+						applets.CollectionItem.Add(new AppletManifestInfo(AppletManifest.Load(memoryStream)));
+					}
+				}
+			}
+
+			return applets;
 		}
 
 		/// <summary>
@@ -987,23 +1090,54 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="appletManifestInfo">The applet containing the updated information.</param>
 		public AppletManifestInfo UpdateApplet(string appletId, AppletManifestInfo appletManifestInfo)
 		{
-			throw new NotImplementedException();
+			if (appletId != appletManifestInfo.AppletManifest.Info.Id)
+			{
+				throw new ArgumentException($"Unable to update applet using id {appletId} and {appletManifestInfo.AppletManifest.Info.Id}");
+			}
+			var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+			var appletDirectory = Path.Combine(baseDirectory, "applets");
+
+			var file = Directory.GetFiles(appletDirectory).FirstOrDefault(f => f.StartsWith(appletId));
+
+			if (file == null)
+			{
+				throw new ArgumentException("Applet not found");
+			}
+
+			File.Delete(file);
+
+			using (var fileStream = File.Create(Path.Combine(appletDirectory, appletManifestInfo.AppletManifest.Info.Id)))
+			{
+				var buffer = new byte[fileStream.Length];
+
+				fileStream.Write(buffer, 0, buffer.Length);
+
+				fileStream.Close();
+			}
+
+			return appletManifestInfo;
 		}
 
 		public SecurityApplicationInfo UpdateApplication(string applicationId, SecurityApplicationInfo applicationInfo)
 		{
-			Guid key = Guid.Parse(applicationId);
+			var id = Guid.Empty;
 
-			if (applicationInfo.Id != key)
+			if (!Guid.TryParse(applicationId, out id))
 			{
-				throw new ArgumentException(nameof(applicationId));
+				throw new ArgumentException($"{nameof(applicationId)} must be a valid GUID");
+			}
+
+			if (id != applicationInfo.Id)
+			{
+				throw new ArgumentException($"Cannot update application using id: {id} and {applicationInfo.Id}");
 			}
 
 			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
 			if (securityRepository == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
 			}
 
 			var updatedApplication = securityRepository.SaveApplication(applicationInfo.Application);
@@ -1019,23 +1153,23 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the updated assigning authority.</returns>
 		public AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo)
 		{
-			Guid id = Guid.Empty;
+			var id = Guid.Empty;
 
 			if (!Guid.TryParse(assigningAuthorityId, out id))
 			{
-				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(assigningAuthorityId)));
+				throw new ArgumentException($"{nameof(assigningAuthorityId)} must be a valid GUID");
 			}
 
-			if (assigningAuthorityInfo.Id != id)
+			if (id != assigningAuthorityInfo.Id)
 			{
-				throw new ArgumentException(string.Format("Unable to update assigning authority using id: {0}, and id: {1}", id, assigningAuthorityInfo.Id));
+				throw new ArgumentException($"Unable to update assigning authority using id: {id}, and id: {assigningAuthorityInfo.Id}");
 			}
 
 			var assigningAuthorityRepositoryService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
 
 			if (assigningAuthorityRepositoryService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAssigningAuthorityRepositoryService)));
+				throw new InvalidOperationException($"{nameof(IAssigningAuthorityRepositoryService)} not found");
 			}
 
 			var result = assigningAuthorityRepositoryService.Save(assigningAuthorityInfo.AssigningAuthority);
@@ -1051,18 +1185,23 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the updated device.</returns>
 		public SecurityDeviceInfo UpdateDevice(string deviceId, SecurityDeviceInfo deviceInfo)
 		{
-			Guid key = Guid.Parse(deviceId);
+			var id = Guid.Empty;
 
-			if (deviceInfo.Id != key)
+			if (!Guid.TryParse(deviceId, out id))
 			{
-				throw new ArgumentException(nameof(deviceId));
+				throw new ArgumentException($"{nameof(deviceId)} must be a valid GUID");
+			}
+
+			if (id != deviceInfo.Id)
+			{
+				throw new ArgumentException($"Unable to update device using id: {id}, and id: {deviceInfo.Id}");
 			}
 
 			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
 			if (securityRepository == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
 			}
 
 			var updatedDevice = securityRepository.SaveDevice(deviceInfo.Device);
@@ -1078,16 +1217,16 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the updated policy.</returns>
 		public SecurityPolicyInfo UpdatePolicy(string policyId, SecurityPolicyInfo policyInfo)
 		{
-			Guid id = Guid.Empty;
+			var id = Guid.Empty;
 
 			if (!Guid.TryParse(policyId, out id))
 			{
-				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(policyId)));
+				throw new ArgumentException($"{nameof(policyId)} must be a valid GUID");
 			}
 
-			if (policyInfo.Policy.Key != id)
+			if (id != policyInfo.Policy.Key)
 			{
-				throw new ArgumentException(string.Format("Unable to update role using id: {0}, and id: {1}", id, policyInfo.Policy.Key));
+				throw new ArgumentException($"Unable to update role using id: {id}, and id: {policyInfo.Policy.Key}");
 			}
 
 			var policyRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
@@ -1114,19 +1253,19 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			if (!Guid.TryParse(roleId, out id))
 			{
-				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(roleId)));
+				throw new ArgumentException($"{nameof(roleId)} must be a valid GUID");
 			}
 
-			if (roleInfo.Id != id)
+			if (id != roleInfo.Id)
 			{
-				throw new ArgumentException(string.Format("Unable to update role using id: {0}, and id: {1}", id, roleInfo.Id));
+				throw new ArgumentException($"Unable to update role using id: {id}, and id: {roleInfo.Id}");
 			}
 
 			var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
 			if (roleRepository == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
 			}
 
 			var role = roleRepository.SaveRole(roleInfo.Role);

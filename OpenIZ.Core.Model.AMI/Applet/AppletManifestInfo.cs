@@ -51,5 +51,10 @@ namespace OpenIZ.Core.Model.AMI.Applet
 		/// Gets or sets the applet manifest.
 		/// </summary>
 		public AppletManifest AppletManifest { get; set; }
+
+		/// <summary>
+		/// Gets or sets the file extension of the applet.
+		/// </summary>
+		public string FileExtension { get; set; }
 	}
 }

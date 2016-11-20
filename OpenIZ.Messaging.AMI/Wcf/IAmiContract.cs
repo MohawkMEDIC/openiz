@@ -53,6 +53,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	[ServiceKnownType(typeof(SecurityUser))]
 	[ServiceKnownType(typeof(SecurityUserInfo))]
 	[ServiceKnownType(typeof(AppletManifest))]
+	[ServiceKnownType(typeof(AppletManifestInfo))]
 	[ServiceKnownType(typeof(DeviceEntity))]
 	[ServiceKnownType(typeof(DiagnosticApplicationInfo))]
 	[ServiceKnownType(typeof(DiagnosticAttachmentInfo))]
