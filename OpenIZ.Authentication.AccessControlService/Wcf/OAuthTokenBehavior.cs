@@ -241,7 +241,7 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             )
             {
                 new Claim("iss", this.m_configuration.IssuerName),
-                new Claim(ClaimTypes.AuthenticationInstant, issued.ToString("o")), 
+                //new Claim(ClaimTypes.AuthenticationInstant, issued.ToString("o")), 
                 new Claim(ClaimTypes.AuthenticationMethod, "OAuth2"),
                 new Claim(ClaimTypes.Name, oizPrincipal.Identity.Name),
                 new Claim(OpenIzClaimTypes.OpenIzApplicationIdentifierClaim,  
@@ -265,7 +265,7 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
                 claims.AddRange(oizPrincipalPolicies.Where(o => o.Rule == PolicyDecisionOutcomeType.Elevate).Select(o => new Claim(OpenIzClaimTypes.OpenIzGrantedPolicyClaim, o.Policy.Oid)));
 
             // Add Email address from idp
-            claims.AddRange((oizPrincipal as ClaimsPrincipal).Claims.Where(o => o.Type == ClaimTypes.Email || o.Type == ClaimTypes.NameIdentifier || o.Type == ClaimTypes.Expiration));
+            claims.AddRange((oizPrincipal as ClaimsPrincipal).Claims.Where(o => o.Type == ClaimTypes.Email || o.Type == ClaimTypes.NameIdentifier));
 
             // Find the nameid
             var nameId = claims.Find(o => o.Type == ClaimTypes.NameIdentifier);

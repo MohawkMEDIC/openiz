@@ -116,8 +116,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var user = principal.GetUser(context);
             var newEntityVersion = new TDomain();
             newEntityVersion.CopyObjectData(storageInstance);
+
+            // Client did not change on update, so we need to update!!!
+            if (!data.VersionKey.HasValue ||
+                data.VersionKey.Value == existingObject.VersionId) 
+                data.VersionKey = newEntityVersion.VersionId = Guid.NewGuid();
+
             data.VersionSequence = newEntityVersion.VersionSequenceId = default(Decimal);
-            data.VersionKey = newEntityVersion.VersionId = Guid.NewGuid();
             newEntityVersion.Id = data.Key.Value;
             data.PreviousVersionKey = newEntityVersion.ReplacesVersionId = existingObject.VersionId;
             data.CreatedByKey = newEntityVersion.CreatedBy = user.UserId;

@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using OpenIZ.Core.Interop;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
@@ -58,6 +59,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     [ServiceKnownType(typeof(Provider))]
     [ServiceKnownType(typeof(Organization))]
     [ServiceKnownType(typeof(Place))]
+    [ServiceKnownType(typeof(ServiceOptions))]
     [ServiceKnownType(typeof(Material))]
     [ServiceKnownType(typeof(ManufacturedMaterial))]
     [ServiceKnownType(typeof(DeviceEntity))]
@@ -75,14 +77,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Executes an options action
         /// </summary>
-        [WebInvoke(UriTemplate = "/{resourceType}", Method = "OPTIONS", BodyStyle = WebMessageBodyStyle.Bare)]
-        void Options(string resourceType);
-        
-        /// <summary>
-        /// Executes an options action
-        /// </summary>
-        [WebInvoke(UriTemplate = "/{resourceType}/{id}", Method = "OPTIONS", BodyStyle = WebMessageBodyStyle.Bare)]
-        void InstanceOptions(string resourceType, String id);
+        [WebInvoke(UriTemplate = "/", Method = "OPTIONS", BodyStyle = WebMessageBodyStyle.Bare)]
+        IdentifiedData Options();
 
         /// <summary>
         /// Search for the specified resource type

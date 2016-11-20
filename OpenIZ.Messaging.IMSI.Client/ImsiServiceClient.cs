@@ -18,6 +18,7 @@
  * Date: 2016-8-2
  */
 using OpenIZ.Core.Http;
+using OpenIZ.Core.Interop;
 using OpenIZ.Core.Interop.Clients;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Collection;
@@ -235,6 +236,14 @@ namespace OpenIZ.Messaging.IMSI.Client
             var version = this.Client.Patch<Patch>(String.Format("{0}/{1}", resourceName, patch.AppliesTo.Key.Value), this.Client.Accept, patch.AppliesTo.Tag, patch);
             return Guid.ParseExact(version, "N");
 
+        }
+
+        /// <summary>
+        /// Gets the options for the IMS
+        /// </summary>
+        public ServiceOptions Options()
+        {
+            return this.Client.Options<ServiceOptions>("");
         }
         #region IDisposable Support
 

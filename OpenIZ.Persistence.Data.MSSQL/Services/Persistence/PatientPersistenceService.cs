@@ -98,7 +98,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             data.GenderConceptKey = data.GenderConcept?.Key ?? data.GenderConceptKey;
 
             this.m_personPersister.Update(context, data, principal);
-            return base.Update(context, data, principal);
+            return base.Insert(context, data, principal);
         }
 
         /// <summary>

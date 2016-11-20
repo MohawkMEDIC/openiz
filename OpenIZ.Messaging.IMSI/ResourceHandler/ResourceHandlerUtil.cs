@@ -52,6 +52,16 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			}
 		}
 
+        /// <summary>
+        /// Get the current handlers
+        /// </summary>
+        public IEnumerable<IResourceHandler> Handlers
+        {
+            get
+            {
+                return this.m_handlers.Values;
+            }
+        }
 		/// <summary>
 		/// Resource handler utility ctor
 		/// </summary>
