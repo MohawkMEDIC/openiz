@@ -58,7 +58,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<AssigningAuthority>)));
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<AssigningAuthority>)} not found");
 			}
 
 			return persistenceService.Query(query, offSet, count, AuthenticationContext.Current.Principal, out totalCount);
@@ -68,14 +68,14 @@ namespace OpenIZ.Core.Services.Impl
 		/// Gets an assigning authority.
 		/// </summary>
 		/// <param name="key">The key of the assigning authority to be retrieved.</param>
-		/// <returns>Returns an assiging authority.</returns>
+		/// <returns>Returns an assigning authority.</returns>
 		public AssigningAuthority Get(Guid key)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>();
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<AssigningAuthority>)));
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<AssigningAuthority>)} not found");
 			}
 
 			return persistenceService.Get<Guid>(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>(key), AuthenticationContext.Current.Principal, true);
@@ -92,7 +92,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<AssigningAuthority>)));
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<AssigningAuthority>)} not found");
 			}
 
 			return persistenceService.Insert(assigningAuthority, AuthenticationContext.Current.Principal, TransactionMode.Commit);
@@ -109,7 +109,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<AssigningAuthority>)));
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<AssigningAuthority>)} not found");
 			}
 
 			return persistenceService.Obsolete(new AssigningAuthority { Key = key }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
@@ -126,7 +126,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<AssigningAuthority>)));
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<AssigningAuthority>)} not found");
 			}
 
 			try

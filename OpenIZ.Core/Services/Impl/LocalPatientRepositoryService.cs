@@ -45,7 +45,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException("No persistence service found");
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Patient>)} not found");
 			}
 
 			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<Patient>();
@@ -64,7 +64,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException("No persistence service found");
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Patient>)} not found");
 			}
 
 			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<Patient>();
@@ -83,7 +83,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException("No persistence service found");
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Patient>)} not found");
 			}
 
 			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<Patient>();
@@ -102,7 +102,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException("No persistence service found");
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Patient>)} not found");
 			}
 
 			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<Patient>();
@@ -123,11 +123,6 @@ namespace OpenIZ.Core.Services.Impl
 			return patient;
 		}
 
-		Patient IPatientRepositoryService.Get(Guid id, Guid versionId)
-		{
-			throw new NotImplementedException();
-		}
-
 		/// <summary>
 		/// Merges two patients together
 		/// </summary>
@@ -137,7 +132,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException("No persistence service found");
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Patient>)} not found");
 			}
 
 			var clientRegistryNotificationService = ApplicationContext.Current.GetService<IClientRegistryNotificationService>();
@@ -158,7 +153,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException("No persistence service found");
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Patient>)} not found");
 			}
 
 			var patient = this.Find(p => p.Key == key).FirstOrDefault();
@@ -189,7 +184,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException("No persistence service found");
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Patient>)} not found");
 			}
 
 			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<Patient>();
@@ -240,8 +235,11 @@ namespace OpenIZ.Core.Services.Impl
 		public Patient UnMerge(Patient patient, Guid versionKey)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+
 			if (persistenceService == null)
-				throw new InvalidOperationException("No persistence service found");
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Patient>)} not found");
+			}
 
 			throw new NotImplementedException();
 		}
