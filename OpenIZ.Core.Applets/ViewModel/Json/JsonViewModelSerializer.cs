@@ -31,7 +31,6 @@ using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Diagnostics;
 using Newtonsoft.Json;
 using System.Collections;
-using OpenIZ.Core.Model.Reflection;
 using OpenIZ.Core.Model.Attributes;
 using System.Diagnostics;
 

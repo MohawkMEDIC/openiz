@@ -25,7 +25,6 @@ using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Map;
 using OpenIZ.Core.Model.Query;
-using OpenIZ.Core.Model.Reflection;
 using OpenIZ.Core.Model.Roles;
 using System;
 using System.Collections;

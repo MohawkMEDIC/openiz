@@ -51,6 +51,11 @@ using OpenIZ.Messaging.IMSI.Util;
 using OpenIZ.Core.Model.Interfaces;
 using MARC.Everest.Threading;
 using System.Collections.Specialized;
+using OpenIZ.Core.Model.Patch;
+using OpenIZ.Core.Exceptions;
+using MARC.HI.EHRS.SVC.Core;
+using OpenIZ.Core.Services;
+using OpenIZ.Core.Interop;
 
 namespace OpenIZ.Messaging.IMSI.Wcf
 {
@@ -87,7 +92,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
 
                     var versioned = retVal as IVersionedEntity;
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Created;
-                    if(versioned != null)
+                    WebOperationContext.Current.OutgoingResponse.ETag = retVal.Tag;
+                    if (versioned != null)
                         WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpResponseHeader.ContentLocation, String.Format("{0}/{1}/{2}/history/{3}",
                             WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
                             resourceType,
@@ -124,11 +130,11 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
                 if (handler != null)
                 {
-
                     var retVal = handler.Create(body, true);
-
                     var versioned = retVal as IVersionedEntity;
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Created;
+                    WebOperationContext.Current.OutgoingResponse.ETag = retVal.Tag;
+
                     if (versioned != null)
                         WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpResponseHeader.ContentLocation, String.Format("{0}/{1}/{2}/history/{3}",
                             WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
@@ -177,9 +183,9 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     WebOperationContext.Current.OutgoingResponse.LastModified = retVal.ModifiedOn.DateTime;
 
                     // HTTP IF headers?
-                    if(WebOperationContext.Current.IncomingRequest.IfModifiedSince.HasValue && 
+                    if (WebOperationContext.Current.IncomingRequest.IfModifiedSince.HasValue &&
                         retVal.ModifiedOn <= WebOperationContext.Current.IncomingRequest.IfModifiedSince ||
-                        WebOperationContext.Current.IncomingRequest.IfNoneMatch?.Any(o=>retVal.Tag == o) == true)
+                        WebOperationContext.Current.IncomingRequest.IfNoneMatch?.Any(o => retVal.Tag == o) == true)
                     {
                         WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotModified;
                         return null;
@@ -195,7 +201,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     throw new FileNotFoundException(resourceType);
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
                 return this.ErrorHelper(e, false);
@@ -218,11 +224,15 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                         throw new FileNotFoundException(id);
 
 
-                   
+
                     if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_bundle"] == "true")
                         return Bundle.CreateBundle(retVal);
                     else
+                    {
+                        WebOperationContext.Current.OutgoingResponse.ETag = retVal.Tag;
+
                         return retVal;
+                    }
                 }
                 else
                     throw new FileNotFoundException(resourceType);
@@ -249,7 +259,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 XmlReflectionImporter importer = new XmlReflectionImporter("http://openiz.org/model");
                 XmlSchemaExporter exporter = new XmlSchemaExporter(schemaCollection);
 
-                foreach (var cls in typeof(IImsiServiceContract).GetCustomAttributes<ServiceKnownTypeAttribute>().Select(o=>o.Type))
+                foreach (var cls in typeof(IImsiServiceContract).GetCustomAttributes<ServiceKnownTypeAttribute>().Select(o => o.Type))
                     exporter.ExportTypeMapping(importer.ImportTypeMapping(cls, "http://openiz.org/model"));
 
                 if (schemaId > schemaCollection.Count)
@@ -262,9 +272,9 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.OK;
                     WebOperationContext.Current.OutgoingResponse.ContentType = "text/xml";
                     return schemaCollection[schemaId];
-                }                
+                }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.InternalServerError;
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
@@ -356,7 +366,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 else
                     throw new FileNotFoundException(resourceType);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
 
@@ -364,7 +374,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
         }
 
-        
+
         /// <summary>
         /// Get the server's current time
         /// </summary>
@@ -389,6 +399,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
 
                     var versioned = retVal as IVersionedEntity;
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+                    WebOperationContext.Current.OutgoingResponse.ETag = retVal.Tag;
+
                     if (versioned != null)
                         WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpResponseHeader.ContentLocation, String.Format("{0}/{1}/{2}/history/{3}",
                             WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
@@ -433,14 +445,16 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 retCode = System.Net.HttpStatusCode.MethodNotAllowed;
             else if (e is NotImplementedException)
                 retCode = System.Net.HttpStatusCode.NotImplemented;
-            else if (e is InvalidDataException)
+            else if (e is InvalidDataException || e is ArgumentException)
                 retCode = HttpStatusCode.BadRequest;
             else if (e is FileLoadException)
                 retCode = System.Net.HttpStatusCode.Gone;
-            else if (e is FileNotFoundException || e is ArgumentException)
+            else if (e is FileNotFoundException)
                 retCode = System.Net.HttpStatusCode.NotFound;
-            else if (e is ConstraintException)
+            else if (e is ConstraintException || e is PatchException)
                 retCode = (HttpStatusCode)422;
+            else if (e is PatchAssertionException)
+                retCode = HttpStatusCode.Conflict;
             else
                 retCode = System.Net.HttpStatusCode.InternalServerError;
 
@@ -451,7 +465,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             return result;
 
         }
-        
+
         /// <summary>
         /// Obsolete the specified data
         /// </summary>
@@ -499,7 +513,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         public void HeadSearch(string resourceType)
         {
             WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters.Add("_count", "1");
-                this.Search(resourceType);
+            this.Search(resourceType);
         }
 
         /// <summary>
@@ -509,6 +523,125 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         {
             this.Get(resourceType, id);
         }
+
+        /// <summary>
+        /// Perform a patch on the serviceo
+        /// </summary>
+        /// <param name="resourceType"></param>
+        /// <param name="id"></param>
+        /// <param name="body"></param>
+        public void Patch(string resourceType, string id, Patch body)
+        {
+            try
+            {
+                // Validate
+                var match = WebOperationContext.Current.IncomingRequest.Headers["If-Match"];
+                if (match == null)
+                    throw new InvalidOperationException("Missing If-Match header");
+
+                // Match bin
+                var versionId = Guid.ParseExact(match, "N");
+
+                // First we load
+                var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
+
+                if (handler == null)
+                    throw new FileNotFoundException(resourceType);
+
+                // Next we get the current version
+                var existing = handler.Get(Guid.Parse(id), versionId);
+                if (existing == null)
+                    throw new FileNotFoundException($"/{resourceType}/{id}/history/{versionId}");
+                else if (body == null)
+                    throw new ArgumentNullException(nameof(body));
+                else
+                {
+                    var applied = ApplicationContext.Current.GetService<IPatchService>().Patch(body, existing);
+                    var data = handler.Update(applied);
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NoContent;
+                    WebOperationContext.Current.OutgoingResponse.ETag = applied.Tag;
+                    WebOperationContext.Current.OutgoingResponse.LastModified = applied.ModifiedOn.DateTime;
+                    var versioned = (applied as IVersionedEntity)?.VersionKey;
+                    if (versioned != null)
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpResponseHeader.ContentLocation, String.Format("{0}/{1}/{2}/history/{3}",
+                                WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
+                                resourceType,
+                                id,
+                                versioned));
+                    else
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpResponseHeader.ContentLocation, String.Format("{0}/{1}/{2}",
+                                WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,
+                                resourceType,
+                                id));
+                }
+            }
+            catch (Exception e)
+            {
+                this.ErrorHelper(e, false);
+            }
+        }
+
+        public Patch GetPatch(string resourceType, string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Get options
+        /// </summary>
+        public IdentifiedData Options()
+        {
+            try
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+                WebOperationContext.Current.OutgoingResponse.Headers.Add("Allow", $"GET, PUT, POST, OPTIONS, HEAD, DELETE{(ApplicationContext.Current.GetService<IPatchService>() != null ? ", PATCH" : null)}");
+                if (ApplicationContext.Current.GetService<IPatchService>() != null)
+                    WebOperationContext.Current.OutgoingResponse.Headers.Add("Accept-Patch", "application/xml+oiz-patch");
+
+                // Service options
+                var retVal = new ServiceOptions()
+                {
+                    InterfaceVersion = typeof(IdentifiedData).Assembly.GetName().Version.ToString(),
+                    Services = new List<ServiceResourceOptions>()
+                    {
+                        new ServiceResourceOptions()
+                        {
+                            ResourceName = null,
+                            Verbs = new List<string>() { "OPTIONS" }
+                        },
+                        new ServiceResourceOptions()
+                        {
+                            ResourceName = "time",
+                            Verbs = new List<string>() { "GET" }
+                        }
+                    }
+                };
+
+                // Get the resources which are supported
+                foreach(var itm in ResourceHandlerUtil.Current.Handlers)
+                {
+                    var svc = new ServiceResourceOptions()
+                    {
+                        ResourceName = itm.ResourceName,
+                        Verbs = new List<string>()
+                        {
+                            "GET", "PUT", "POST", "HEAD", "DELETE"
+                        }
+                    };
+                    if (ApplicationContext.Current.GetService<IPatchService>() != null)
+                        svc.Verbs.Add("PATCH");
+                    retVal.Services.Add(svc);
+                }
+
+                return retVal;
+            }
+            catch (Exception e)
+            {
+                return this.ErrorHelper(e, false);
+            }
+        }
+
+      
         #endregion
     }
 }

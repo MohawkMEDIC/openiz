@@ -28,13 +28,37 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Core.Model.Reflection
+namespace OpenIZ.Core.Model
 {
     /// <summary>
     /// Reflection tools
     /// </summary>
-    public static class ReflectionUtil
+    public static class ExtensionMethods
     {
+        
+        /// <summary>
+        /// Compute a basic hash string
+        /// </summary>
+        public static String HashCode(this byte[] me)
+        {
+            long hash = 1009;
+            foreach(var b in me)
+                hash = ((hash << 5) + hash) ^ b;
+            return BitConverter.ToString(BitConverter.GetBytes(hash)).Replace("-", "");
+        }
+
+        /// <summary>
+        /// Determine semantic equality of each item in me and other
+        /// </summary>
+        public static bool SemanticEquals<TEntity>(this IEnumerable<TEntity> me, IEnumerable<TEntity> other) where TEntity : IdentifiedData
+        {
+
+            if (other == null) return false;
+            bool equals = true;
+            foreach (var itm in me)
+                equals &= other.Any(o => o.SemanticEquals(itm));
+            return equals;
+        }
 
         /// <summary>
         /// Strips list

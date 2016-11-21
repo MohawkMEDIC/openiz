@@ -101,5 +101,18 @@ namespace OpenIZ.Core.Model.Entities
         [AutoLoad, XmlElement("service"), JsonProperty("service")]
         public List<PlaceService> Services { get; set; }
 
+        /// <summary>
+        /// Determine semantic equality
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as Place;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && 
+                this.IsMobile == other.IsMobile &&
+                this.Lat == other.Lat &&
+                this.Lng == other.Lng &&
+                this.Services?.SemanticEquals(other.Services) == true;
+        }
     }
 }

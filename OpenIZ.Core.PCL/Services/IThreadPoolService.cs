@@ -39,5 +39,10 @@ namespace OpenIZ.Core.Services
         /// Queues the specified action into the worker pool
         /// </summary>
         void QueueUserWorkItem(Action<Object> action, Object parm);
+
+        /// <summary>
+        /// Queue a user work item
+        /// </summary>
+        void QueueUserWorkItem(TimeSpan timeout, Action<Object> action, Object parm);
     }
 }

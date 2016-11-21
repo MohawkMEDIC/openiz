@@ -60,6 +60,11 @@ namespace OpenIZ.Core.Model.DataTypes
         [XmlElement("description"), JsonProperty("description")]
         public String Description { get; set; }
 
-
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as TemplateDefinition;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && other.Mnemonic == this.Mnemonic;
+        }
     }
 }

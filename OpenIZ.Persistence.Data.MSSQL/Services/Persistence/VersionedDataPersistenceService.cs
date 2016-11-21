@@ -33,7 +33,6 @@ using System.ComponentModel;
 using MARC.HI.EHRS.SVC.Core.Data;
 using OpenIZ.Core.Services;
 using OpenIZ.Core;
-using OpenIZ.Core.Model.Reflection;
 using System.Data.Linq.Mapping;
 using System.Reflection;
 using System.Linq.Expressions;
@@ -117,8 +116,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var user = principal.GetUser(context);
             var newEntityVersion = new TDomain();
             newEntityVersion.CopyObjectData(storageInstance);
+
+            // Client did not change on update, so we need to update!!!
+            if (!data.VersionKey.HasValue ||
+                data.VersionKey.Value == existingObject.VersionId) 
+                data.VersionKey = newEntityVersion.VersionId = Guid.NewGuid();
+
             data.VersionSequence = newEntityVersion.VersionSequenceId = default(Decimal);
-            data.VersionKey = newEntityVersion.VersionId = Guid.NewGuid();
             newEntityVersion.Id = data.Key.Value;
             data.PreviousVersionKey = newEntityVersion.ReplacesVersionId = existingObject.VersionId;
             data.CreatedByKey = newEntityVersion.CreatedBy = user.UserId;

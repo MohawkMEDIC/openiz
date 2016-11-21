@@ -18,9 +18,11 @@
  * Date: 2016-8-2
  */
 using OpenIZ.Core.Http;
+using OpenIZ.Core.Interop;
 using OpenIZ.Core.Interop.Clients;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.Patch;
 using OpenIZ.Core.Model.Query;
 using System;
 using System.Collections.Generic;
@@ -216,9 +218,36 @@ namespace OpenIZ.Messaging.IMSI.Client
 			}
 		}
 
-		#region IDisposable Support
+        /// <summary>
+        /// Sends a patch operation to the server
+        /// </summary>
+        public Guid Patch(Patch patch)
+        {
 
-		private bool disposedValue = false; // To detect redundant calls
+            if (patch == null)
+                throw new ArgumentNullException(nameof(patch));
+            else if (patch.AppliesTo == null)
+                throw new InvalidOperationException();
+
+            // Resource name
+            String resourceName = patch.AppliesTo.GetType().GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+
+            // First we determine which resource we're patching patch
+            var version = this.Client.Patch<Patch>(String.Format("{0}/{1}", resourceName, patch.AppliesTo.Key.Value), this.Client.Accept, patch.AppliesTo.Tag, patch);
+            return Guid.ParseExact(version, "N");
+
+        }
+
+        /// <summary>
+        /// Gets the options for the IMS
+        /// </summary>
+        public ServiceOptions Options()
+        {
+            return this.Client.Options<ServiceOptions>("");
+        }
+        #region IDisposable Support
+
+        private bool disposedValue = false; // To detect redundant calls
 
 		/// <summary>
 		/// Dispose of any managed resources.

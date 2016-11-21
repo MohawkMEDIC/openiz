@@ -90,8 +90,10 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
             // Cascade inner exceptions
             var ie = error.InnerException;
             while (ie != null)
+            {
                 errorResult.Details.Add(new ResultDetail(DetailType.Error, String.Format("Caused By: {0}", ie.Message)));
-
+                ie = ie.InnerException;
+            }
             // Return error in XML only at this point
             fault = new WcfMessageDispatchFormatter<IImsiServiceContract>().SerializeReply(version, null, errorResult);
 

@@ -9,8 +9,7 @@
 //------------------------------------------------------------------------------
 
 namespace OpenIZ.Core.Model.Json.Formatter {
-    using OpenIZ.Core.Model.Reflection;
-    
+        
     
     public class NonVersionedEntityDataViewModelSerializer : OpenIZ.Core.Applets.ViewModel.Json.IJsonViewModelTypeFormatter {
         

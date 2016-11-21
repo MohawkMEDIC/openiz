@@ -17,11 +17,13 @@
  * User: justi
  * Date: 2016-6-14
  */
+using OpenIZ.Core.Interop;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Patch;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Security;
@@ -57,6 +59,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     [ServiceKnownType(typeof(Provider))]
     [ServiceKnownType(typeof(Organization))]
     [ServiceKnownType(typeof(Place))]
+    [ServiceKnownType(typeof(ServiceOptions))]
     [ServiceKnownType(typeof(Material))]
     [ServiceKnownType(typeof(ManufacturedMaterial))]
     [ServiceKnownType(typeof(DeviceEntity))]
@@ -65,11 +68,18 @@ namespace OpenIZ.Messaging.IMSI.Wcf
 	[ServiceKnownType(typeof(SecurityRole))]
 	[ServiceKnownType(typeof(ApplicationEntity))]
     [ServiceKnownType(typeof(Bundle))]
+    [ServiceKnownType(typeof(Patch))]
     [ServiceKnownType(typeof(ErrorResult))]
     [ServiceKnownType(typeof(ConceptSet))]
 	[ServiceKnownType(typeof(ConceptReferenceTerm))]
 	public interface IImsiServiceContract 
     {
+
+        /// <summary>
+        /// Executes an options action
+        /// </summary>
+        [WebInvoke(UriTemplate = "/", Method = "OPTIONS", BodyStyle = WebMessageBodyStyle.Bare)]
+        IdentifiedData Options();
 
         /// <summary>
         /// Search for the specified resource type
@@ -101,6 +111,19 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// </summary>
         [WebGet(UriTemplate = "/{resourceType}/{id}/history", BodyStyle = WebMessageBodyStyle.Bare)]
         IdentifiedData History(string resourceType, string id);
+
+        /// <summary>
+        /// Patch the specified data 
+        /// </summary>
+        /// <returns></returns>
+        [WebInvoke(Method = "PATCH", UriTemplate = "/{resourceType}/{id}")]
+        void Patch(string resourceType, string id , Patch body);
+
+        /// <summary>
+        /// Returns a list of patches for the specified resource 
+        /// </summary>
+        [WebGet(UriTemplate = "/{resourceType}/{id}/patch")]
+        Patch GetPatch(string resourceType, string id);
 
         /// <summary>
         /// Get a specific version

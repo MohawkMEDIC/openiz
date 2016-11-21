@@ -20,6 +20,7 @@
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Exceptions;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Security;
@@ -157,7 +158,7 @@ namespace OpenIZ.Core.Services.Impl
 			{
 				return persistenceService.Update(provider, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 			}
-			catch (KeyNotFoundException)
+			catch (DataPersistenceException)
 			{
 				return persistenceService.Insert(provider, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 			}

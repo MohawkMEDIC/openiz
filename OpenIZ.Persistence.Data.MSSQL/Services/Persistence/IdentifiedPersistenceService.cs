@@ -32,7 +32,6 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core;
-using OpenIZ.Core.Model.Reflection;
 using System.Reflection;
 using OpenIZ.Core.Services;
 
@@ -105,7 +104,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Map and copy
             var newDomainObject = this.FromModelInstance (data, context, principal) as TDomain;
-            var oldDomainObject = context.GetTable<TDomain>().Single(ExpressionRewriter.Rewrite<TDomain>(o => o.Id == newDomainObject.Id));
+            var domainQuery = ExpressionRewriter.Rewrite<TDomain>(o => o.Id == newDomainObject.Id);
+            var oldDomainObject = context.GetTable<TDomain>().SingleOrDefault(domainQuery);
             if (oldDomainObject == null)
                 throw new KeyNotFoundException(data.Key.ToString());
 

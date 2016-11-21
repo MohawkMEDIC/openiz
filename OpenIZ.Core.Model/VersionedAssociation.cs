@@ -35,7 +35,7 @@ namespace OpenIZ.Core.Model
     /// <summary>
     /// Represents a relational class which is bound on a version boundary
     /// </summary>
-    
+
     [XmlType(Namespace = "http://openiz.org/model"), JsonObject("VersionedAssociation")]
     public abstract class VersionedAssociation<TSourceType> : Association<TSourceType>, IVersionedAssociation where TSourceType : VersionedEntityData<TSourceType>, new()
     {
@@ -45,7 +45,7 @@ namespace OpenIZ.Core.Model
         // The identifier of the version where this data is no longer effective
         private Decimal? m_obsoleteVersionSequenceId;
         // The version where this data is effective
-       
+
         /// <summary>
         /// Gets or sets the effective version of this type
         /// </summary>
@@ -72,5 +72,33 @@ namespace OpenIZ.Core.Model
             }
         }
 
+        /// <summary>
+        /// Should serialize obsolete
+        /// </summary>
+        public bool ShouldSerializeObsoleteVersionSequenceId()
+        {
+            return this.m_obsoleteVersionSequenceId.HasValue;
+        }
+
+        /// <summary>
+        /// Should serialize obsolete
+        /// </summary>
+        public bool ShouldSerializeEffectiveVersionSequenceId()
+        {
+            return this.m_effectiveVersionSequenceId.HasValue;
+        }
+
+
+        /// <summary>
+        /// Determines equality
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as VersionedAssociation<TSourceType>;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) &&
+                this.EffectiveVersionSequenceId == other.EffectiveVersionSequenceId &&
+                this.ObsoleteVersionSequenceId == other.ObsoleteVersionSequenceId;
+        }
     }
 }

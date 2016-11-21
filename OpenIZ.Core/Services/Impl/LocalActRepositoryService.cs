@@ -20,6 +20,7 @@
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Exceptions;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Security;
@@ -146,7 +147,7 @@ namespace OpenIZ.Core.Services.Impl
 
 				act = businessRulesService != null ? businessRulesService.AfterUpdate(act) : act;
 			}
-			catch (KeyNotFoundException)
+			catch (DataPersistenceException)
 			{
 				act = businessRulesService?.BeforeInsert(act);
 

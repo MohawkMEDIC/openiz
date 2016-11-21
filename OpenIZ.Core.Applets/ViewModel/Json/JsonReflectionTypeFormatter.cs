@@ -27,7 +27,6 @@ using OpenIZ.Core.Model;
 using System.Reflection;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Applets.ViewModel.Description;
-using OpenIZ.Core.Model.Reflection;
 using System.Collections;
 using OpenIZ.Core.Model.Serialization;
 using OpenIZ.Core.Extensions;

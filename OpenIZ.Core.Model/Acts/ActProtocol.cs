@@ -48,5 +48,12 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [XmlElement("state"), JsonProperty("state")]
         public String StateData { get; set; }
+
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as ActProtocol;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && other.ProtocolKey == this.ProtocolKey;
+        }
     }
 }

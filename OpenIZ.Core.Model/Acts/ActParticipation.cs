@@ -215,5 +215,17 @@ namespace OpenIZ.Core.Model.Acts
             return !this.ParticipationRoleKey.HasValue && this.ParticipationRole == null ||
                 this.PlayerEntity == null && !this.PlayerEntityKey.HasValue;
         }
+
+        /// <summary>
+        /// Determine equality
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as ActParticipation;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && other.ActKey == this.ActKey &&
+                other.PlayerEntityKey == this.PlayerEntityKey &&
+                other.ParticipationRoleKey == this.ParticipationRoleKey;
+        }
     }
 }

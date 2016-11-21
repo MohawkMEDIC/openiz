@@ -64,5 +64,15 @@ namespace OpenIZ.Core.Model.Acts
         [XmlElement("definition"), JsonProperty("definition")]
         public byte[] Definition { get; set; }
 
+        /// <summary>
+        /// Semantic equality
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as Protocol;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) &&
+                this.Name == other.Name;
+        }
     }
 }

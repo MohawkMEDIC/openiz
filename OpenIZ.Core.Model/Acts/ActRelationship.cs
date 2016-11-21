@@ -35,18 +35,18 @@ namespace OpenIZ.Core.Model.Acts
     /// Act relationships
     /// </summary>
     [Classifier(nameof(RelationshipType))]
-    [XmlType("ActRelationship",  Namespace = "http://openiz.org/model"), JsonObject("ActRelationship")]
+    [XmlType("ActRelationship", Namespace = "http://openiz.org/model"), JsonObject("ActRelationship")]
     public class ActRelationship : VersionedAssociation<Act>
     {
         // The entity key
         private Guid? m_targetActKey;
         // The target entity
-        
+
         private Act m_targetAct;
         // The association type key
         private Guid? m_relationshipTypeKey;
         // The association type
-        
+
         private Concept m_relationshipType;
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [XmlElement("target"), JsonProperty("target")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
+
         public Guid? TargetActKey
         {
             get { return this.m_targetActKey; }
@@ -170,6 +170,16 @@ namespace OpenIZ.Core.Model.Acts
         {
             return this.RelationshipType == null && this.RelationshipTypeKey == null ||
                 this.TargetAct == null && this.TargetActKey == null;
+        }
+
+        /// <summary>
+        /// Determine semantic equality
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as ActRelationship;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && this.TargetActKey == other.TargetActKey;
         }
     }
 }

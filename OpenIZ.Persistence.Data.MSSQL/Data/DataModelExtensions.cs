@@ -20,7 +20,6 @@
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model;
-using OpenIZ.Core.Model.Reflection;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Persistence.Data.MSSQL.Exceptions;

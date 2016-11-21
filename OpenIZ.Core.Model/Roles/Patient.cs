@@ -119,5 +119,18 @@ namespace OpenIZ.Core.Model.Roles
             this.m_genderConcept = null;
 
         }
+
+        /// <summary>
+        /// Semantic equality function
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as Patient;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && 
+                this.GenderConceptKey == other.GenderConceptKey &&
+                this.DeceasedDate == other.DeceasedDate &&
+                this.DeceasedDatePrecision == other.DeceasedDatePrecision;
+        }
     }
 }

@@ -366,8 +366,34 @@ namespace OpenIZ.Core.Model.Entities
             this.Notes.RemoveAll(o => o.Clean().IsEmpty());
             this.Extensions.RemoveAll(o => o.Clean().IsEmpty());
             this.Identifiers.RemoveAll(o => o.Clean().IsEmpty());
-
+            this.Relationships.RemoveAll(o => o.Clean().IsEmpty());
+            this.Participations.RemoveAll(o => o.Clean().IsEmpty());
             return this;
+        }
+
+        /// <summary>
+        /// Semantic equality function
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as Entity;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) &&
+                this.Addresses?.SemanticEquals(other.Addresses) == true &&
+                this.ClassConceptKey == other.ClassConceptKey &&
+                this.CreationActKey == other.CreationActKey &&
+                this.DeterminerConceptKey == other.DeterminerConceptKey &&
+                this.Extensions?.SemanticEquals(other.Extensions) == true &&
+                this.Identifiers?.SemanticEquals(other.Identifiers) == true &&
+                this.Names?.SemanticEquals(other.Names) == true &&
+                this.Notes?.SemanticEquals(other.Notes) == true &&
+                this.Participations?.SemanticEquals(other.Participations) == true &&
+                this.Relationships?.SemanticEquals(other.Relationships) == true &&
+                this.StatusConceptKey == other.StatusConceptKey &&
+                this.Tags?.SemanticEquals(other.Tags) == true &&
+                this.Telecoms?.SemanticEquals(other.Telecoms) == true &&
+                this.Template?.SemanticEquals(other.Template) == true &&
+                this.TypeConceptKey == other.TypeConceptKey;
         }
     }
 }

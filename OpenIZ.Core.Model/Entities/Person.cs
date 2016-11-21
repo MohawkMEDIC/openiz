@@ -82,5 +82,18 @@ namespace OpenIZ.Core.Model.Entities
                 return EntitySource.Current.Get<UserEntity>(this.Key, this.VersionKey)?.SecurityUser;
             }
         }
+
+        /// <summary>
+        /// Semantic equality function
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as Person;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) &&
+                this.DateOfBirth == other.DateOfBirth &&
+                this.DateOfBirthPrecision == other.DateOfBirthPrecision &&
+                this.LanguageCommunication?.SemanticEquals(other.LanguageCommunication) == true;
+        }
     }
 }

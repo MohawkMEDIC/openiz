@@ -190,6 +190,26 @@ namespace OpenIZ.Core.Model.Security
             }
         }
 
-
+        /// <summary>
+        /// Determine semantic equality of user
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as SecurityUser;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) &&
+                this.Email == other.Email &&
+                this.EmailConfirmed == other.EmailConfirmed &&
+                this.PasswordHash == other.PasswordHash &&
+                this.PhoneNumber == other.PhoneNumber &&
+                this.PhoneNumberConfirmed == other.PhoneNumberConfirmed &&
+                this.Policies?.SemanticEquals(other.Policies) == true &&
+                this.Roles?.SemanticEquals(other.Roles) == true &&
+                this.SecurityHash == other.SecurityHash &&
+                this.TwoFactorEnabled == other.TwoFactorEnabled &&
+                this.UserClass == other.UserClass &&
+                this.UserName == other.UserName &&
+                (this.UserPhoto ?? new byte[0]).HashCode().Equals((other.UserPhoto?? new byte[0]).HashCode()) == true;
+        }
     }
 }

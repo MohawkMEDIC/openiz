@@ -38,6 +38,7 @@ namespace OpenIZ.Core
     /// </summary>
     public static class ExtensionMethods
     {
+
         /// <summary>
         /// Get locale
         /// </summary>

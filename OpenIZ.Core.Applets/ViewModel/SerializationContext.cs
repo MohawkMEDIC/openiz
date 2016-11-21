@@ -19,7 +19,6 @@
  */
 using OpenIZ.Core.Applets.ViewModel.Description;
 using OpenIZ.Core.Model;
-using OpenIZ.Core.Model.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -94,6 +94,16 @@ namespace OpenIZ.Core.Model
             }
         }
 
+
+        /// <summary>
+        /// Should serialize obsolete
+        /// </summary>
+        public bool ShouldSerializeSourceEntityKey()
+        {
+            return this.m_sourceEntityKey.HasValue;
+        }
+
+
         /// <summary>
         /// Force delay load properties to reload
         /// </summary>
@@ -101,6 +111,16 @@ namespace OpenIZ.Core.Model
         {
             base.Refresh();
             this.m_sourceEntity = null;
+        }
+
+        /// <summary>
+        /// Determines equality of this association
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as Association<TSourceType>;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && other.SourceEntityKey == other.SourceEntityKey;
         }
     }
 }

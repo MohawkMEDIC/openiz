@@ -11,7 +11,6 @@ using System.Reflection;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Diagnostics;
 using System.Collections;
-using OpenIZ.Core.Model.Reflection;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Model.Serialization;

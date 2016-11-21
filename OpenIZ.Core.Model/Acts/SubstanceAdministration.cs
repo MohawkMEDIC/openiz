@@ -191,5 +191,19 @@ namespace OpenIZ.Core.Model.Acts
             base.Refresh();
             this.m_doseUnit = this.m_route = null;
         }
+
+        /// <summary>
+        /// Semantic equality function
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            var other = obj as SubstanceAdministration;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && other.SiteKey == this.SiteKey &&
+                other.RouteKey == this.RouteKey &&
+                other.DoseUnitKey == this.DoseUnitKey &&
+                other.DoseQuantity == this.DoseQuantity &&
+                other.SequenceId == this.SequenceId;
+        }
     }
 }
