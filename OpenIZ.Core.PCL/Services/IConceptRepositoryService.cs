@@ -27,8 +27,7 @@ using System.Linq.Expressions;
 namespace OpenIZ.Core.Services
 {
 	/// <summary>
-	/// Represents a service which is responsible for the
-	/// maintenance of concepts
+	/// Represents a service which is responsible for the maintenance of concepts.
 	/// </summary>
 	public interface IConceptRepositoryService
 	{
@@ -125,9 +124,10 @@ namespace OpenIZ.Core.Services
 		IdentifiedData GetConcept(Guid id, Guid versionId);
 
 		/// <summary>
-		/// Get a concept by its mnemonic
+		/// Gets a concept by mnemonic.
 		/// </summary>
-		/// <param name="mnemonic">The concept mnemonic to get</param>
+		/// <param name="mnemonic">The mnemonic of the concept.</param>
+		/// <returns>Returns the concept.</returns>
 		Concept GetConcept(string mnemonic);
 
 		/// <summary>
@@ -152,18 +152,26 @@ namespace OpenIZ.Core.Services
 		ConceptSet GetConceptSet(Guid id);
 
 		/// <summary>
-		/// Get the concept set by mnemonic
+		/// Gets a concept set by mnemonic.
 		/// </summary>
+		/// <param name="mnemonic">The mnemonic of the concept set.</param>
+		/// <returns>Returns the concept set.</returns>
 		ConceptSet GetConceptSet(string mnemonic);
 
 		/// <summary>
 		/// Gets the specified reference term from <paramref name="concept"/> in <paramref name="codeSystemOid"/>
 		/// </summary>
+		/// <param name="concept">The concept of the reference term.</param>
+		/// <param name="codeSystemOid">The code system OID of the concept.</param>
+		/// <returns>Returns the reference term.</returns>
 		ReferenceTerm GetReferenceTerm(Concept concept, string codeSystemOid);
 
 		/// <summary>
 		/// Returns a value which indicates whether <paramref name="a"/> implies <paramref name="b"/>
 		/// </summary>
+		/// <param name="a">The left hand concept.</param>
+		/// <param name="b">The right hand concept.</param>
+		/// <returns>Returns true if the first concept implies the second concept.</returns>
 		bool Implies(Concept a, Concept b);
 
 		/// <summary>

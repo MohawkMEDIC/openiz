@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using OpenIZ.Core.Interop;
 using OpenIZ.Core.Model.AMI.Applet;
 
 namespace OpenIZ.Messaging.AMI.Client
@@ -479,6 +480,15 @@ namespace OpenIZ.Messaging.AMI.Client
 		public AmiCollection<SecurityUserInfo> GetUsers(Expression<Func<SecurityUser, bool>> query)
 		{
 			return this.Client.Get<AmiCollection<SecurityUserInfo>>("user", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
+		/// Gets the options for the AMI.
+		/// </summary>
+		/// <returns>Return the service options for the AMI.</returns>
+		public ServiceOptions Options()
+		{
+			return this.Client.Options<ServiceOptions>("");
 		}
 
 		/// <summary>

@@ -170,7 +170,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns a list of concept sets who match the specified query.</returns>
 		public IEnumerable<ConceptSet> FindConceptSets(Expression<Func<ConceptSet, bool>> query)
 		{
-			int total = 0;
+			var total = 0;
 			return this.FindConceptSets(query, 0, null, out total);
 		}
 
