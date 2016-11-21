@@ -47,6 +47,11 @@ namespace OpenIZ.Core.Extensions
         /// </summary>
         public object DeSerialize(byte[] extensionData)
         {
+	        if (extensionData == null)
+	        {
+		        return default(decimal);
+	        }
+
             Int32[] ints = new int[]
             {
                 BitConverter.ToInt32(extensionData, 0),
@@ -54,6 +59,7 @@ namespace OpenIZ.Core.Extensions
                 BitConverter.ToInt32(extensionData, 8),
                 BitConverter.ToInt32(extensionData, 12)
             };
+
             return new Decimal(ints);
         }
 
