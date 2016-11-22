@@ -31,6 +31,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Principal;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -76,7 +77,23 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<SecurityApplication>)} not found");
 			}
 
-			return persistenceService.Insert(application, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			var createdApplication = persistenceService.Insert(application, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+			var applicationEntityPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ApplicationEntity>>();
+
+			if (applicationEntityPersistenceService == null)
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ApplicationEntity>)} not found");
+			}
+
+			applicationEntityPersistenceService.Insert(new ApplicationEntity
+			{
+				SecurityApplication = createdApplication,
+				SoftwareName = application.Name,
+				StatusConceptKey = StatusKeys.Active
+			}, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+			return createdApplication;
 		}
 
 		/// <summary>
@@ -93,10 +110,26 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityDevice>)));
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<SecurityDevice>)} not found");
 			}
 
-			return persistenceService.Insert(device, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			var createdDevice = persistenceService.Insert(device, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+			var deviceEntityPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<DeviceEntity>>();
+
+			if (deviceEntityPersistenceService == null)
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<DeviceEntity>)} not found");
+			}
+
+			deviceEntityPersistenceService.Insert(new DeviceEntity
+			{
+				ManufacturedModelName = device.Name,
+				SecurityDevice = createdDevice,
+				StatusConceptKey = StatusKeys.Active
+			}, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+			return createdDevice;
 		}
 
 		/// <summary>
@@ -671,7 +704,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityDevice>)));
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<SecurityDevice>)} not found");
 			}
 
 			return persistenceService.Update(device, AuthenticationContext.Current.Principal, TransactionMode.Commit);

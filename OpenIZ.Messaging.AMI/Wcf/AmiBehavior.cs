@@ -66,7 +66,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	/// Represents the administrative contract interface.
 	/// </summary>
 	[ServiceBehavior(ConfigurationName = "AMI")]
-	public class AmiBehavior : IAmiContract
+	public partial class AmiBehavior : IAmiContract
 	{
 		// Certificate tool
 		private CertTool m_certTool;
@@ -274,59 +274,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Creates a security role.
-		/// </summary>
-		/// <param name="role">The security role to be created.</param>
-		/// <returns>Returns the newly created security role.</returns>
-		public SecurityRoleInfo CreateRole(SecurityRoleInfo role)
-		{
-			var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-			var roleToCreate = new SecurityRole()
-			{
-				Name = role.Name
-			};
-			return new SecurityRoleInfo(roleRepository.CreateRole(roleToCreate));
-		}
-
-		/// <summary>
-		/// Creates a security user.
-		/// </summary>
-		/// <param name="user">The security user to be created.</param>
-		/// <returns>Returns the newly created security user.</returns>
-		public SecurityUserInfo CreateUser(SecurityUserInfo user)
-		{
-			var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-			var roleProviderService = ApplicationContext.Current.GetService<IRoleProviderService>();
-
-			var userToCreate = new Core.Model.Security.SecurityUser()
-			{
-				UserName = user.UserName,
-				Email = user.Email,
-			};
-
-			if (user.User == null)
-			{
-				userToCreate.UserClass = UserClassKeys.HumanUser;
-			}
-			else
-			{
-				userToCreate.UserClass = user.User.UserClass == Guid.Empty ? UserClassKeys.HumanUser : user.User.UserClass;
-			}
-
-			if (user.Lockout.HasValue && user.Lockout.Value)
-			{
-				userToCreate.Lockout = DateTime.MaxValue;
-			}
-
-			var securityUser = userRepository.CreateUser(userToCreate, user.Password);
-
-			if (user.Roles != null)
-				roleProviderService.AddUsersToRoles(new String[] { user.UserName }, user.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
-
-			return new SecurityUserInfo(securityUser);
-		}
-
-		/// <summary>
 		/// Deletes an applet.
 		/// </summary>
 		/// <param name="appletId">The id of the applet to be deleted.</param>
@@ -475,54 +422,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			}
 
 			return new SecurityPolicyInfo(securityRepositoryService.ObsoletePolicy(key));
-		}
-
-		/// <summary>
-		/// Deletes a security role.
-		/// </summary>
-		/// <param name="rawRoleId">The id of the role to be deleted.</param>
-		/// <returns>Returns the deleted role.</returns>
-		public SecurityRoleInfo DeleteRole(string rawRoleId)
-		{
-			var key = Guid.Empty;
-
-			if (!Guid.TryParse(rawRoleId, out key))
-			{
-				throw new ArgumentException($"{nameof(rawRoleId)} must be a valid GUID");
-			}
-
-			var securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-
-			if (securityRepositoryService == null)
-			{
-				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
-			}
-
-			return new SecurityRoleInfo(securityRepositoryService.ObsoleteRole(key));
-		}
-
-		/// <summary>
-		/// Deletes a security user.
-		/// </summary>
-		/// <param name="rawUserId">The id of the user to be deleted.</param>
-		/// <returns>Returns the deleted user.</returns>
-		public SecurityUserInfo DeleteUser(string rawUserId)
-		{
-			var key = Guid.Empty;
-
-			if (!Guid.TryParse(rawUserId, out key))
-			{
-				throw new ArgumentException($"{nameof(rawUserId)} must be a valid GUID");
-			}
-
-			var securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-
-			if (securityRepositoryService == null)
-			{
-				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
-			}
-
-			return new SecurityUserInfo(securityRepositoryService.ObsoleteUser(key));
 		}
 
 		/// <summary>
@@ -917,31 +816,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Gets a specific security role.
-		/// </summary>
-		/// <param name="roleId">The id of the security role to be retrieved.</param>
-		/// <returns>Returns the security role.</returns>
-		public SecurityRoleInfo GetRole(string rawRoleId)
-		{
-			Guid roleId = Guid.Empty;
-			if (!Guid.TryParse(rawRoleId, out roleId))
-				throw new ArgumentException(nameof(rawRoleId));
-			var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-			return new SecurityRoleInfo(roleRepository.GetRole(roleId));
-		}
-
-		/// <summary>
-		/// Gets a list of security roles.
-		/// </summary>
-		/// <returns>Returns a list of security roles.</returns>
-		public AmiCollection<SecurityRoleInfo> GetRoles()
-		{
-			var expression = QueryExpressionParser.BuildLinqExpression<SecurityRole>(this.CreateQuery(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters));
-			var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-			return new AmiCollection<SecurityRoleInfo> { CollectionItem = userRepository.FindRoles(expression).Select(o => new SecurityRoleInfo(o)).ToList() };
-		}
-
-		/// <summary>
 		/// Gets the schema for the administrative interface.
 		/// </summary>
 		/// <param name="schemaId">The id of the schema to be retrieved.</param>
@@ -996,31 +870,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 					ChallengeText = o.Challenge
 				}).ToList()
 			};
-		}
-
-		/// <summary>
-		/// Gets a specific security user.
-		/// </summary>
-		/// <param name="userId">The id of the security user to be retrieved.</param>
-		/// <returns>Returns the security user.</returns>
-		public SecurityUserInfo GetUser(string rawUserId)
-		{
-			Guid userId = Guid.Empty;
-			if (!Guid.TryParse(rawUserId, out userId))
-				throw new ArgumentException(nameof(rawUserId));
-			var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-			return new SecurityUserInfo(userRepository.GetUser(userId));
-		}
-
-		/// <summary>
-		/// Gets a list of security users.
-		/// </summary>
-		/// <returns>Returns a list of security users.</returns>
-		public AmiCollection<SecurityUserInfo> GetUsers()
-		{
-			var expression = QueryExpressionParser.BuildLinqExpression<SecurityUser>(this.CreateQuery(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters));
-			var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-			return new AmiCollection<SecurityUserInfo>() { CollectionItem = userRepository.FindUsers(expression).Select(o => new SecurityUserInfo(o)).ToList() };
 		}
 
 		/// <summary>
@@ -1302,6 +1151,8 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
 			}
 
+			deviceInfo.Device.Policies.AddRange(deviceInfo.Policies);
+
 			var updatedDevice = securityRepository.SaveDevice(deviceInfo.Device);
 
 			return new SecurityDeviceInfo(updatedDevice);
@@ -1340,91 +1191,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Updates a role.
-		/// </summary>
-		/// <param name="roleId">The id of the role to be updated.</param>
-		/// <param name="roleInfo">The role containing the updated information.</param>
-		/// <returns>Returns the updated role.</returns>
-		public SecurityRoleInfo UpdateRole(string roleId, SecurityRoleInfo roleInfo)
-		{
-			Guid id = Guid.Empty;
-
-			if (!Guid.TryParse(roleId, out id))
-			{
-				throw new ArgumentException($"{nameof(roleId)} must be a valid GUID");
-			}
-
-			if (id != roleInfo.Id)
-			{
-				throw new ArgumentException($"Unable to update role using id: {id}, and id: {roleInfo.Id}");
-			}
-
-			var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-
-			if (roleRepository == null)
-			{
-				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
-			}
-
-			var role = roleRepository.SaveRole(roleInfo.Role);
-
-			return new SecurityRoleInfo(role);
-		}
-
-		/// <summary>
-		/// Updates a security user.
-		/// </summary>
-		/// <param name="userId">The id of the security user to be updated.</param>
-		/// <param name="info">The security user containing the updated information.</param>
-		/// <returns>Returns the updated security user.</returns>
-		public SecurityUserInfo UpdateUser(string rawUserId, SecurityUserInfo info)
-		{
-			Guid userId = Guid.Parse(rawUserId);
-			// First change password if needed
-			var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-			var idpService = ApplicationContext.Current.GetService<IIdentityProviderService>();
-			if (!String.IsNullOrEmpty(info.Password))
-			{
-				var user = userRepository.ChangePassword(userId, info.Password);
-				idpService.RemoveClaim(user.UserName, OpenIzClaimTypes.OpenIZPasswordlessAuth);
-			}
-
-			if (info.Email != null)
-			{
-				SecurityUserInfo userInfo = new SecurityUserInfo(userRepository.SaveUser(new Core.Model.Security.SecurityUser()
-				{
-					Key = userId,
-					Email = info.Email
-				}));
-			}
-
-			if (info.Lockout.HasValue)
-			{
-				if (info.Lockout.Value)
-					userRepository.LockUser(userId);
-				else
-					userRepository.UnlockUser(userId);
-			}
-
-			// First, we remove the roles
-			if (info.Roles != null && info.Roles.Count > 0)
-			{
-				var irps = ApplicationContext.Current.GetService<IRoleProviderService>();
-
-				var roles = irps.GetAllRoles(info.UserName);
-
-				// if the roles provided are not equal to the current roles of the user, only then change the roles of the user
-				if (roles != info.Roles.Select(r => r.Name).ToArray())
-				{
-					irps.RemoveUsersFromRoles(new String[] { info.UserName }, info.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
-					irps.AddUsersToRoles(new String[] { info.UserName }, info.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
-				}
-			}
-
-			return info;
-		}
-
-		/// <summary>
 		/// Creates a query
 		/// </summary>
 		/// <param name="nvc">The name value collection to use to create the query.</param>
@@ -1435,7 +1201,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			foreach (var k in nvc.AllKeys)
 			{
-				retVal.Add(k, new List<String>(nvc.GetValues(k)));
+				retVal.Add(k, new List<string>(nvc.GetValues(k)));
 			}
 
 			return retVal;

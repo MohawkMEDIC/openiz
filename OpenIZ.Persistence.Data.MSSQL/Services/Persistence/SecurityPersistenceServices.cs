@@ -105,7 +105,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     /// </summary>
     public class SecurityRolePersistenceService : BaseDataPersistenceService<Core.Model.Security.SecurityRole, Data.SecurityRole>
     {
-
         /// <summary>
         /// Represent as model instance
         /// </summary>
@@ -124,20 +123,21 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = base.Insert(context, data, principal);
 
-            // Roles
-            if (retVal.Policies != null)
-            {
-                retVal.Policies.ForEach(o => o.EnsureExists(context, principal));
-                context.SecurityRolePolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityRolePolicy()
-                {
-                    PolicyId = o.PolicyKey.Value,
-                    PolicyAction = (int)o.GrantType,
-                    RoleId = retVal.Key.Value,
-                    SecurityPolicyInstanceId = Guid.NewGuid()
-                }));
-            } 
+	        if (retVal.Policies == null || !retVal.Policies.Any())
+	        {
+		        return retVal;
+	        }
 
-            return retVal;
+	        retVal.Policies.ForEach(o => o.EnsureExists(context, principal));
+	        context.SecurityRolePolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityRolePolicy()
+	        {
+		        PolicyId = o.PolicyKey.Value,
+		        PolicyAction = (int)o.GrantType,
+		        RoleId = retVal.Key.Value,
+		        SecurityPolicyInstanceId = Guid.NewGuid()
+	        }));
+
+	        return retVal;
         }
 
         /// <summary>
@@ -147,21 +147,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = base.Update(context, data, principal);
 
-            // Roles
-            if (retVal.Policies != null)
-            {
-                context.SecurityRolePolicies.DeleteAllOnSubmit(context.SecurityRolePolicies.Where(o => o.RoleId == retVal.Key.Value));
-                retVal.Policies.ForEach(o => o.EnsureExists(context, principal));
-                context.SecurityRolePolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityRolePolicy()
-                {
-                    PolicyId = o.PolicyKey.Value,
-                    PolicyAction = (int)o.GrantType,
-                    RoleId = retVal.Key.Value,
-                    SecurityPolicyInstanceId = Guid.NewGuid()
-                }));
-            }
+	        if (retVal.Policies == null || !retVal.Policies.Any())
+	        {
+		        return retVal;
+	        }
 
-            return retVal;
+	        context.SecurityRolePolicies.DeleteAllOnSubmit(context.SecurityRolePolicies.Where(o => o.RoleId == retVal.Key.Value));
+	        retVal.Policies.ForEach(o => o.EnsureExists(context, principal));
+	        context.SecurityRolePolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityRolePolicy()
+	        {
+		        PolicyId = o.PolicyKey.Value,
+		        PolicyAction = (int)o.GrantType,
+		        RoleId = retVal.Key.Value,
+		        SecurityPolicyInstanceId = Guid.NewGuid()
+	        }));
+
+	        return retVal;
         }
 
     }
@@ -188,16 +189,21 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = base.Insert(context, data, principal);
 
-            // Roles
-            if (retVal.Policies != null)
-                base.UpdateAssociatedItems<Core.Model.Security.SecurityPolicyInstance, Data.SecurityDevicePolicy>(
-                    retVal.Policies,
-                    retVal,
-                    context,
-                    principal);
+	        if (retVal.Policies == null || !retVal.Policies.Any())
+	        {
+		        return retVal;
+	        }
 
+	        retVal.Policies.ForEach(o => o.EnsureExists(context, principal));
+	        context.SecurityDevicePolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityDevicePolicy()
+	        {
+		        PolicyId = o.PolicyKey.Value,
+		        PolicyAction = (int)o.GrantType,
+		        DeviceId = retVal.Key.Value,
+		        SecurityPolicyInstanceId = Guid.NewGuid()
+	        }));
 
-            return retVal;
+	        return retVal;
         }
 
         /// <summary>
@@ -207,16 +213,23 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = base.Update(context, data, principal);
 
-            // Roles
-            if (retVal.Policies != null)
-                base.UpdateAssociatedItems<Core.Model.Security.SecurityPolicyInstance, Data.SecurityDevicePolicy>(
-                    retVal.Policies,
-                    retVal,
-                    context,
-                    principal);
+	        if (retVal.Policies == null || !retVal.Policies.Any())
+	        {
+		        return retVal;
+	        }
+
+	        context.SecurityDevicePolicies.DeleteAllOnSubmit(context.SecurityDevicePolicies.Where(o => o.DeviceId == retVal.Key.Value));
+	        retVal.Policies.ForEach(o => o.EnsureExists(context, principal));
+	        context.SecurityDevicePolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityDevicePolicy
+	        {
+		        PolicyId = o.PolicyKey.Value,
+		        PolicyAction = (int)o.GrantType,
+		        DeviceId = retVal.Key.Value,
+		        SecurityPolicyInstanceId = Guid.NewGuid()
+	        }));
 
 
-            return retVal;
+	        return retVal;
         }
 
     }
@@ -236,23 +249,25 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             return retVal;
         }
 
-        /// <summary>
-        /// Insert the specified object
-        /// </summary>
-        public override Core.Model.Security.SecurityApplication Insert(ModelDataContext context, Core.Model.Security.SecurityApplication data, IPrincipal principal)
-        {
-            var retVal = base.Insert(context, data, principal);
+	    /// <summary>
+	    /// Insert the specified object
+	    /// </summary>
+	    public override Core.Model.Security.SecurityApplication Insert(ModelDataContext context, Core.Model.Security.SecurityApplication data, IPrincipal principal)
+	    {
+		    var retVal = base.Insert(context, data, principal);
 
-            // Roles
-            if (retVal.Policies != null)
-                base.UpdateAssociatedItems<Core.Model.Security.SecurityPolicyInstance, Data.SecurityApplicationPolicy>(
-                    retVal.Policies,
-                    retVal,
-                    context,
-                    principal);
+		    if (retVal.Policies != null && retVal.Policies.Any())
+		    {
+				context.SecurityApplicationPolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityApplicationPolicy()
+				{
+					PolicyId = o.PolicyKey.Value,
+					PolicyAction = (int)o.GrantType,
+					ApplicationId = retVal.Key.Value,
+					SecurityPolicyInstanceId = Guid.NewGuid()
+				}));
+			}
 
-
-            return retVal;
+			return retVal;
         }
 
         /// <summary>
@@ -262,16 +277,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = base.Update(context, data, principal);
 
-            // Roles
-            if (retVal.Policies != null)
-                base.UpdateAssociatedItems<Core.Model.Security.SecurityPolicyInstance, Data.SecurityApplicationPolicy>(
-                    retVal.Policies,
-                    retVal,
-                    context,
-                    principal);
+	        if (retVal.Policies == null || !retVal.Policies.Any())
+	        {
+		        return retVal;
+	        }
 
+	        context.SecurityApplicationPolicies.DeleteAllOnSubmit(context.SecurityApplicationPolicies.Where(o => o.ApplicationId == retVal.Key.Value));
+	        retVal.Policies.ForEach(o => o.EnsureExists(context, principal));
+	        context.SecurityApplicationPolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityApplicationPolicy
+	        {
+		        PolicyId = o.PolicyKey.Value,
+		        PolicyAction = (int)o.GrantType,
+		        ApplicationId = retVal.Key.Value,
+		        SecurityPolicyInstanceId = Guid.NewGuid()
+	        }));
 
-            return retVal;
+	        return retVal;
         }
 
     }

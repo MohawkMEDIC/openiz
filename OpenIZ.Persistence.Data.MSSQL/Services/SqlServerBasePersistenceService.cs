@@ -356,8 +356,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
             // Try the cache if available
             var guidIdentifier = containerId as Identifier<Guid>;
             var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TData>(guidIdentifier.Id) as TData;
-            if (cacheItem != null)
-                return cacheItem;
+	        if (loadFast && cacheItem != null)
+	        {
+				return cacheItem;
+			}
             else
             {
                 var tr = 0;

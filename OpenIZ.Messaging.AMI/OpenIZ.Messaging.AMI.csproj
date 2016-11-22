@@ -57,6 +57,7 @@
     <Compile Include="Configuration\CertificationAuthorityConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Wcf\AmiBehavior.cs" />
+    <Compile Include="Wcf\AmiBehavior.SecurityRole.cs" />
     <Compile Include="Wcf\Behavior\AmiRestEndpointBehavior.cs" />
     <Compile Include="Wcf\Behavior\AmiSerializerOperationBehavior.cs" />
     <Compile Include="Wcf\IAmiContract.cs" />
@@ -91,6 +92,7 @@
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
     </None>
+    <Compile Include="Wcf\AmiBehavior.SecurityUser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

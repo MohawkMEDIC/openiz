@@ -56,7 +56,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             context.SubmitChanges();
             data.CreationTime = (DateTimeOffset)domainObject.CreationTime;
 
-            return data;
+            return this.ToModelInstance(domainObject, context, principal);
 		}
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             currentObject.CopyObjectData(domainObject);
             context.SubmitChanges();
 
-			return data;
+			return this.ToModelInstance(domainObject, context, principal);
 		}
 
         /// <summary>
