@@ -1,5 +1,5 @@
 ﻿<Database Name="OpenIZ" Class="ModelDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\justi\Source\Repos\openiz\OpenIZ\Data\OpenIZ.mdf;Integrated Security=True" SettingsObjectName="OpenIZ.Persistence.Data.MSSQL.Properties.Settings" SettingsPropertyName="OpenIZConnectionString2" Provider="System.Data.SqlClient" />
+  <Connection Mode="AppSettings" ConnectionString="Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\fyfej\Source\Repos\openiz\OpenIZ\Data\OpenIZ.mdf;Integrated Security=True" SettingsObjectName="OpenIZ.Persistence.Data.MSSQL.Properties.Settings" SettingsPropertyName="OpenIZConnectionString1" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Act" Member="Acts">
     <Type Name="Act">
       <Column Name="ActId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
@@ -81,8 +81,8 @@
       <Column Name="ActId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="EffectiveVersionSequenceId" Type="System.Decimal" DbType="Decimal(20,0) NOT NULL" CanBeNull="false" />
       <Column Name="ObsoleteVersionSequenceId" Type="System.Decimal" DbType="Decimal(20,0)" CanBeNull="true" />
+      <Column Name="Quantity" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="ParticipationRoleConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
-      <Association Name="ActParticipation_QuantifiedActParticipation" Member="QuantifiedActParticipation" ThisKey="ActParticipationId" OtherKey="ActParticipationId" Type="QuantifiedActParticipation" Cardinality="One" />
       <Association Name="Act_ActParticipation" Member="Act" ThisKey="ActId" OtherKey="ActId" Type="Act" IsForeignKey="true" />
 
 
@@ -160,6 +160,7 @@
       <Column Name="ActTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="ActStartTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="ActStopTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
+      <Column Name="ReasonConceptId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
 
 
 
@@ -179,8 +180,9 @@
       <Association Name="ActVersion_SubstanceAdministration" Member="SubstanceAdministration" ThisKey="ActVersionId" OtherKey="ActVersionId" Type="SubstanceAdministration" Cardinality="One" />
       <Association Name="Act_ActVersion" Member="Act" ThisKey="ActId" OtherKey="ActId" Type="Act" IsForeignKey="true" />
       <Association Name="ActVersion_ActVersion" Member="ReplacesVersion" ThisKey="ReplacesVersionId" OtherKey="ActVersionId" Type="ActVersion" IsForeignKey="true" />
-      <Association Name="Concept_ActVersion" Member="StatusConcept" ThisKey="StatusConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
-      <Association Name="Concept_ActVersion1" Member="TypeConcept" ThisKey="TypeConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
+      <Association Name="Concept_ActVersion" Member="ReasonConcept" ThisKey="ReasonConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
+      <Association Name="Concept_ActVersion1" Member="StatusConcept" ThisKey="StatusConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
+      <Association Name="Concept_ActVersion2" Member="TypeConcept" ThisKey="TypeConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
       <Association Name="SecurityUser_ActVersion" Member="CreatedByEntity" ThisKey="CreatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
       <Association Name="SecurityUser_ActVersion1" Member="ObsoletedByEntity" ThisKey="ObsoletedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
     </Type>
@@ -189,7 +191,7 @@
     <Type Name="AlertMessage">
       <Column Name="AlertMessageId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="CreationTime" Type="System.DateTimeOffset" DbType="DateTimeOffset NOT NULL" CanBeNull="false" IsDbGenerated="true" />
-      <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
       <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Column Name="UpdatedTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
@@ -292,8 +294,9 @@
       <Association Name="Concept_Act1" Member="ActsMoodConceptId" ThisKey="ConceptId" OtherKey="MoodConceptId" Type="Act" />
       <Association Name="Concept_ActParticipation" Member="ActParticipationsParticipationRoleConceptId" ThisKey="ConceptId" OtherKey="ParticipationRoleConceptId" Type="ActParticipation" />
       <Association Name="Concept_ActRelationship" Member="ActRelationshipsRelationshipTypeConceptId" ThisKey="ConceptId" OtherKey="RelationshipTypeConceptId" Type="ActRelationship" />
-      <Association Name="Concept_ActVersion" Member="ActVersionsStatusConceptId" ThisKey="ConceptId" OtherKey="StatusConceptId" Type="ActVersion" />
-      <Association Name="Concept_ActVersion1" Member="ActVersionsTypeConceptId" ThisKey="ConceptId" OtherKey="TypeConceptId" Type="ActVersion" />
+      <Association Name="Concept_ActVersion" Member="ActVersionsReasonConceptId" ThisKey="ConceptId" OtherKey="ReasonConceptId" Type="ActVersion" />
+      <Association Name="Concept_ActVersion1" Member="ActVersionsStatusConceptId" ThisKey="ConceptId" OtherKey="StatusConceptId" Type="ActVersion" />
+      <Association Name="Concept_ActVersion2" Member="ActVersionsTypeConceptId" ThisKey="ConceptId" OtherKey="TypeConceptId" Type="ActVersion" />
       <Association Name="Concept_AssigningAuthorityScope" Member="AssigningAuthorityScopesScopeConceptId" ThisKey="ConceptId" OtherKey="ScopeConceptId" Type="AssigningAuthorityScope" />
       <Association Name="Concept_CodedObservation" Member="CodedObservationsValueConceptId" ThisKey="ConceptId" OtherKey="ValueConceptId" Type="CodedObservation" />
       <Association Name="Concept_ConceptName" Member="ConceptNames" ThisKey="ConceptId" OtherKey="ConceptId" Type="ConceptName" />
@@ -549,7 +552,7 @@
       <Column Name="EffectiveVersionSequenceId" Type="System.Decimal" DbType="Decimal(20,0) NOT NULL" CanBeNull="false" />
       <Column Name="ObsoleteVersionSequenceId" Type="System.Decimal" DbType="Decimal(20,0)" CanBeNull="true" />
       <Column Name="AssociationTypeConceptId" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
-      <Association Name="EntityAssociation_QuantifiedEntityAssociation" Member="QuantifiedEntityAssociation" ThisKey="EntityAssociationId" OtherKey="EntityAssociationId" Type="QuantifiedEntityAssociation" Cardinality="One" />
+      <Column Name="Quantity" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Association Name="Concept_EntityAssociation" Member="AssociationTypeConcept" ThisKey="AssociationTypeConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
       <Association Name="Entity_EntityAssociation" Member="SourceEntity" ThisKey="SourceEntityId" OtherKey="EntityId" Type="Entity" IsForeignKey="true" />
       <Association Name="Entity_EntityAssociation1" Member="TargetEntity" ThisKey="TargetEntityId" OtherKey="EntityId" Type="Entity" IsForeignKey="true" />
@@ -931,20 +934,6 @@
       <Association Name="Concept_Provider" Member="ProviderSpecialtyConcept" ThisKey="ProviderSpecialtyConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
     </Type>
   </Table>
-  <Table Name="dbo.QuantifiedActParticipation" Member="QuantifiedActParticipations">
-    <Type Name="QuantifiedActParticipation">
-      <Column Name="ActParticipationId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="Quantity" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Association Name="ActParticipation_QuantifiedActParticipation" Member="ActParticipation" ThisKey="ActParticipationId" OtherKey="ActParticipationId" Type="ActParticipation" IsForeignKey="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.QuantifiedEntityAssociation" Member="QuantifiedEntityAssociations">
-    <Type Name="QuantifiedEntityAssociation">
-      <Column Name="EntityAssociationId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="Quantity" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
-      <Association Name="EntityAssociation_QuantifiedEntityAssociation" Member="EntityAssociation" ThisKey="EntityAssociationId" OtherKey="EntityAssociationId" Type="EntityAssociation" IsForeignKey="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.QuantityObservation" Member="QuantityObservations">
     <Type Name="QuantityObservation">
       <Column Name="ActVersionId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
@@ -1250,6 +1239,11 @@
   </Function>
   <Function Name="dbo.fn_OpenIzSchemaVersion" Method="fn_OpenIzSchemaVersion" IsComposable="true">
     <Return Type="System.String" />
+  </Function>
+  <Function Name="dbo.fn_AssertEntityClass" Method="fn_AssertEntityClass" IsComposable="true">
+    <Parameter Name="EntityId" Parameter="entityId" Type="System.Guid" DbType="UniqueIdentifier" />
+    <Parameter Name="AssertClassMnemonic" Parameter="assertClassMnemonic" Type="System.String" DbType="NVarChar(32)" />
+    <Return Type="System.Boolean" />
   </Function>
   <Function Name="dbo.fn_IsAccountLocked" Method="fn_IsAccountLocked" IsComposable="true">
     <Parameter Name="UserName" Parameter="userName" Type="System.String" DbType="NVarChar(128)" />

@@ -605,6 +605,7 @@
     <property modelName="SourceEntityKey" domainName="SourceEntityId"/>
     <property modelName="TargetEntityKey" domainName="TargetEntityId"/>
     <property modelName="RelationshipTypeKey" domainName="AssociationTypeConceptId"/>
+    <property modelName="Quantity" domainName="Quantity"/>
     <property modelName="RelationshipType" domainName="AssociationTypeConcept">
       <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
     </property>
@@ -929,6 +930,8 @@
     <property modelName="SourceEntityKey" domainName="ActId"/>
     <property modelName="PlayerEntityKey" domainName="EntityId"/>
     <property modelName="ParticipationRoleKey" domainName="ParticipationRoleConceptId"/>
+    <property modelName="Quantity" domainName="Quantity"/>
+
     <property modelName="PlayerEntity" domainName="Entity">
       <via domainName="EntityVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
     </property>
@@ -959,6 +962,7 @@
     <property modelName="SourceEntityKey" domainName="SourceActId"/>
     <property modelName="TargetActKey" domainName="TargetActId"/>
     <property modelName="RelationshipTypeKey" domainName="RelationshipTypeConceptId"/>
+
     <property modelName="RelationshipType" domainName="RelationshipTypeConcept">
       <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
     </property>

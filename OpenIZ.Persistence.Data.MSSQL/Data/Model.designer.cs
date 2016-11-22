@@ -210,12 +210,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void InsertProvider(Provider instance);
     partial void UpdateProvider(Provider instance);
     partial void DeleteProvider(Provider instance);
-    partial void InsertQuantifiedActParticipation(QuantifiedActParticipation instance);
-    partial void UpdateQuantifiedActParticipation(QuantifiedActParticipation instance);
-    partial void DeleteQuantifiedActParticipation(QuantifiedActParticipation instance);
-    partial void InsertQuantifiedEntityAssociation(QuantifiedEntityAssociation instance);
-    partial void UpdateQuantifiedEntityAssociation(QuantifiedEntityAssociation instance);
-    partial void DeleteQuantifiedEntityAssociation(QuantifiedEntityAssociation instance);
     partial void InsertQuantityObservation(QuantityObservation instance);
     partial void UpdateQuantityObservation(QuantityObservation instance);
     partial void DeleteQuantityObservation(QuantityObservation instance);
@@ -270,7 +264,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     #endregion
 		
 		public ModelDataContext() : 
-				base(global::OpenIZ.Persistence.Data.MSSQL.Properties.Settings.Default.OpenIZConnectionString2, mappingSource)
+				base(global::OpenIZ.Persistence.Data.MSSQL.Properties.Settings.Default.OpenIZConnectionString1, mappingSource)
 		{
 			OnCreated();
 		}
@@ -779,22 +773,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		public System.Data.Linq.Table<QuantifiedActParticipation> QuantifiedActParticipations
-		{
-			get
-			{
-				return this.GetTable<QuantifiedActParticipation>();
-			}
-		}
-		
-		public System.Data.Linq.Table<QuantifiedEntityAssociation> QuantifiedEntityAssociations
-		{
-			get
-			{
-				return this.GetTable<QuantifiedEntityAssociation>();
-			}
-		}
-		
 		public System.Data.Linq.Table<QuantityObservation> QuantityObservations
 		{
 			get
@@ -949,6 +927,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		public string fn_OpenIzSchemaVersion()
 		{
 			return ((string)(this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod()))).ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.fn_AssertEntityClass", IsComposable=true)]
+		public System.Nullable<bool> fn_AssertEntityClass([global::System.Data.Linq.Mapping.ParameterAttribute(Name="EntityId", DbType="UniqueIdentifier")] System.Nullable<System.Guid> entityId, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="AssertClassMnemonic", DbType="NVarChar(32)")] string assertClassMnemonic)
+		{
+			return ((System.Nullable<bool>)(this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), entityId, assertClassMnemonic).ReturnValue));
 		}
 		
 		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.fn_IsAccountLocked", IsComposable=true)]
@@ -2566,9 +2550,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<decimal> _ObsoleteVersionSequenceId;
 		
-		private System.Guid _ParticipationRoleConceptId;
+		private int _Quantity;
 		
-		private EntityRef<QuantifiedActParticipation> _QuantifiedActParticipation;
+		private System.Guid _ParticipationRoleConceptId;
 		
 		private EntityRef<Act> _Act;
 		
@@ -2590,13 +2574,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnEffectiveVersionSequenceIdChanged();
     partial void OnObsoleteVersionSequenceIdChanging(System.Nullable<decimal> value);
     partial void OnObsoleteVersionSequenceIdChanged();
+    partial void OnQuantityChanging(int value);
+    partial void OnQuantityChanged();
     partial void OnParticipationRoleConceptIdChanging(System.Guid value);
     partial void OnParticipationRoleConceptIdChanged();
     #endregion
 		
 		public ActParticipation()
 		{
-			this._QuantifiedActParticipation = default(EntityRef<QuantifiedActParticipation>);
 			this._Act = default(EntityRef<Act>);
 			this._ParticipationRoleConcept = default(EntityRef<Concept>);
 			this._Entity = default(EntityRef<Entity>);
@@ -2711,6 +2696,26 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Quantity", DbType="Int NOT NULL")]
+		public int Quantity
+		{
+			get
+			{
+				return this._Quantity;
+			}
+			set
+			{
+				if ((this._Quantity != value))
+				{
+					this.OnQuantityChanging(value);
+					this.SendPropertyChanging();
+					this._Quantity = value;
+					this.SendPropertyChanged("Quantity");
+					this.OnQuantityChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ParticipationRoleConceptId", DbType="UniqueIdentifier NOT NULL")]
 		public System.Guid ParticipationRoleConceptId
 		{
@@ -2731,35 +2736,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 					this._ParticipationRoleConceptId = value;
 					this.SendPropertyChanged("ParticipationRoleConceptId");
 					this.OnParticipationRoleConceptIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActParticipation_QuantifiedActParticipation", Storage="_QuantifiedActParticipation", ThisKey="ActParticipationId", OtherKey="ActParticipationId", IsUnique=true, IsForeignKey=false)]
-		public QuantifiedActParticipation QuantifiedActParticipation
-		{
-			get
-			{
-				return this._QuantifiedActParticipation.Entity;
-			}
-			set
-			{
-				QuantifiedActParticipation previousValue = this._QuantifiedActParticipation.Entity;
-				if (((previousValue != value) 
-							|| (this._QuantifiedActParticipation.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._QuantifiedActParticipation.Entity = null;
-						previousValue.ActParticipation = null;
-					}
-					this._QuantifiedActParticipation.Entity = value;
-					if ((value != null))
-					{
-						value.ActParticipation = this;
-					}
-					this.SendPropertyChanged("QuantifiedActParticipation");
 				}
 			}
 		}
@@ -3234,7 +3210,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StateData", DbType="Xml", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StateData", DbType="Xml", UpdateCheck=UpdateCheck.Never)]
 		public System.Xml.Linq.XElement StateData
 		{
 			get
@@ -4037,6 +4013,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.DateTimeOffset> _ActStopTime;
 		
+		private System.Nullable<System.Guid> _ReasonConceptId;
+		
 		private EntitySet<ActVersion> _ActVersionsReplacesVersionId;
 		
 		private EntityRef<ControlAct> _ControlAct;
@@ -4050,6 +4028,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		private EntityRef<Act> _Act;
 		
 		private EntityRef<ActVersion> _ReplacesVersion;
+		
+		private EntityRef<Concept> _ReasonConcept;
 		
 		private EntityRef<Concept> _StatusConcept;
 		
@@ -4093,6 +4073,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnActStartTimeChanged();
     partial void OnActStopTimeChanging(System.Nullable<System.DateTimeOffset> value);
     partial void OnActStopTimeChanged();
+    partial void OnReasonConceptIdChanging(System.Nullable<System.Guid> value);
+    partial void OnReasonConceptIdChanged();
     #endregion
 		
 		public ActVersion()
@@ -4104,6 +4086,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._SubstanceAdministration = default(EntityRef<SubstanceAdministration>);
 			this._Act = default(EntityRef<Act>);
 			this._ReplacesVersion = default(EntityRef<ActVersion>);
+			this._ReasonConcept = default(EntityRef<Concept>);
 			this._StatusConcept = default(EntityRef<Concept>);
 			this._TypeConcept = default(EntityRef<Concept>);
 			this._CreatedByEntity = default(EntityRef<SecurityUser>);
@@ -4435,6 +4418,30 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReasonConceptId", DbType="UniqueIdentifier")]
+		public System.Nullable<System.Guid> ReasonConceptId
+		{
+			get
+			{
+				return this._ReasonConceptId;
+			}
+			set
+			{
+				if ((this._ReasonConceptId != value))
+				{
+					if (this._ReasonConcept.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnReasonConceptIdChanging(value);
+					this.SendPropertyChanging();
+					this._ReasonConceptId = value;
+					this.SendPropertyChanged("ReasonConceptId");
+					this.OnReasonConceptIdChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActVersion_ActVersion", Storage="_ActVersionsReplacesVersionId", ThisKey="ActVersionId", OtherKey="ReplacesVersionId")]
 		public EntitySet<ActVersion> ActVersionsReplacesVersionId
 		{
@@ -4632,7 +4639,41 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ActVersion", Storage="_StatusConcept", ThisKey="StatusConceptId", OtherKey="ConceptId", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ActVersion", Storage="_ReasonConcept", ThisKey="ReasonConceptId", OtherKey="ConceptId", IsForeignKey=true)]
+		public Concept ReasonConcept
+		{
+			get
+			{
+				return this._ReasonConcept.Entity;
+			}
+			set
+			{
+				Concept previousValue = this._ReasonConcept.Entity;
+				if (((previousValue != value) 
+							|| (this._ReasonConcept.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ReasonConcept.Entity = null;
+						previousValue.ActVersionsReasonConceptId.Remove(this);
+					}
+					this._ReasonConcept.Entity = value;
+					if ((value != null))
+					{
+						value.ActVersionsReasonConceptId.Add(this);
+						this._ReasonConceptId = value.ConceptId;
+					}
+					else
+					{
+						this._ReasonConceptId = default(Nullable<System.Guid>);
+					}
+					this.SendPropertyChanged("ReasonConcept");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ActVersion1", Storage="_StatusConcept", ThisKey="StatusConceptId", OtherKey="ConceptId", IsForeignKey=true)]
 		public Concept StatusConcept
 		{
 			get
@@ -4666,7 +4707,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ActVersion1", Storage="_TypeConcept", ThisKey="TypeConceptId", OtherKey="ConceptId", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ActVersion2", Storage="_TypeConcept", ThisKey="TypeConceptId", OtherKey="ConceptId", IsForeignKey=true)]
 		public Concept TypeConcept
 		{
 			get
@@ -4849,7 +4890,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnAlertMessageIdChanged();
     partial void OnCreationTimeChanging(System.DateTimeOffset value);
     partial void OnCreationTimeChanged();
-    partial void OnCreatedByChanging(System.Nullable<System.Guid> value);
+    partial void OnCreatedByChanging(System.Guid value);
     partial void OnCreatedByChanged();
     partial void OnObsoletionTimeChanging(System.Nullable<System.DateTimeOffset> value);
     partial void OnObsoletionTimeChanged();
@@ -4922,7 +4963,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedBy", DbType="UniqueIdentifier NOT NULL")]
 		public System.Guid CreatedBy
 		{
 			get
@@ -7098,6 +7139,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private EntitySet<ActRelationship> _ActRelationshipsRelationshipTypeConceptId;
 		
+		private EntitySet<ActVersion> _ActVersionsReasonConceptId;
+		
 		private EntitySet<ActVersion> _ActVersionsStatusConceptId;
 		
 		private EntitySet<ActVersion> _ActVersionsTypeConceptId;
@@ -7186,6 +7229,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			this._ActsMoodConceptId = new EntitySet<Act>(new Action<Act>(this.attach_ActsMoodConceptId), new Action<Act>(this.detach_ActsMoodConceptId));
 			this._ActParticipationsParticipationRoleConceptId = new EntitySet<ActParticipation>(new Action<ActParticipation>(this.attach_ActParticipationsParticipationRoleConceptId), new Action<ActParticipation>(this.detach_ActParticipationsParticipationRoleConceptId));
 			this._ActRelationshipsRelationshipTypeConceptId = new EntitySet<ActRelationship>(new Action<ActRelationship>(this.attach_ActRelationshipsRelationshipTypeConceptId), new Action<ActRelationship>(this.detach_ActRelationshipsRelationshipTypeConceptId));
+			this._ActVersionsReasonConceptId = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersionsReasonConceptId), new Action<ActVersion>(this.detach_ActVersionsReasonConceptId));
 			this._ActVersionsStatusConceptId = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersionsStatusConceptId), new Action<ActVersion>(this.detach_ActVersionsStatusConceptId));
 			this._ActVersionsTypeConceptId = new EntitySet<ActVersion>(new Action<ActVersion>(this.attach_ActVersionsTypeConceptId), new Action<ActVersion>(this.detach_ActVersionsTypeConceptId));
 			this._AssigningAuthorityScopesScopeConceptId = new EntitySet<AssigningAuthorityScope>(new Action<AssigningAuthorityScope>(this.attach_AssigningAuthorityScopesScopeConceptId), new Action<AssigningAuthorityScope>(this.detach_AssigningAuthorityScopesScopeConceptId));
@@ -7317,7 +7361,20 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ActVersion", Storage="_ActVersionsStatusConceptId", ThisKey="ConceptId", OtherKey="StatusConceptId")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ActVersion", Storage="_ActVersionsReasonConceptId", ThisKey="ConceptId", OtherKey="ReasonConceptId")]
+		public EntitySet<ActVersion> ActVersionsReasonConceptId
+		{
+			get
+			{
+				return this._ActVersionsReasonConceptId;
+			}
+			set
+			{
+				this._ActVersionsReasonConceptId.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ActVersion1", Storage="_ActVersionsStatusConceptId", ThisKey="ConceptId", OtherKey="StatusConceptId")]
 		public EntitySet<ActVersion> ActVersionsStatusConceptId
 		{
 			get
@@ -7330,7 +7387,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ActVersion1", Storage="_ActVersionsTypeConceptId", ThisKey="ConceptId", OtherKey="TypeConceptId")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Concept_ActVersion2", Storage="_ActVersionsTypeConceptId", ThisKey="ConceptId", OtherKey="TypeConceptId")]
 		public EntitySet<ActVersion> ActVersionsTypeConceptId
 		{
 			get
@@ -7851,6 +7908,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		{
 			this.SendPropertyChanging();
 			entity.RelationshipTypeConcept = null;
+		}
+		
+		private void attach_ActVersionsReasonConceptId(ActVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.ReasonConcept = this;
+		}
+		
+		private void detach_ActVersionsReasonConceptId(ActVersion entity)
+		{
+			this.SendPropertyChanging();
+			entity.ReasonConcept = null;
 		}
 		
 		private void attach_ActVersionsStatusConceptId(ActVersion entity)
@@ -12920,7 +12989,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 		
 		private System.Nullable<System.Guid> _AssociationTypeConceptId;
 		
-		private EntityRef<QuantifiedEntityAssociation> _QuantifiedEntityAssociation;
+		private int _Quantity;
 		
 		private EntityRef<Concept> _AssociationTypeConcept;
 		
@@ -12944,11 +13013,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
     partial void OnObsoleteVersionSequenceIdChanged();
     partial void OnAssociationTypeConceptIdChanging(System.Nullable<System.Guid> value);
     partial void OnAssociationTypeConceptIdChanged();
+    partial void OnQuantityChanging(int value);
+    partial void OnQuantityChanged();
     #endregion
 		
 		public EntityAssociation()
 		{
-			this._QuantifiedEntityAssociation = default(EntityRef<QuantifiedEntityAssociation>);
 			this._AssociationTypeConcept = default(EntityRef<Concept>);
 			this._SourceEntity = default(EntityRef<Entity>);
 			this._TargetEntity = default(EntityRef<Entity>);
@@ -13087,31 +13157,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityAssociation_QuantifiedEntityAssociation", Storage="_QuantifiedEntityAssociation", ThisKey="EntityAssociationId", OtherKey="EntityAssociationId", IsUnique=true, IsForeignKey=false)]
-		public QuantifiedEntityAssociation QuantifiedEntityAssociation
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Quantity", DbType="Int NOT NULL")]
+		public int Quantity
 		{
 			get
 			{
-				return this._QuantifiedEntityAssociation.Entity;
+				return this._Quantity;
 			}
 			set
 			{
-				QuantifiedEntityAssociation previousValue = this._QuantifiedEntityAssociation.Entity;
-				if (((previousValue != value) 
-							|| (this._QuantifiedEntityAssociation.HasLoadedOrAssignedValue == false)))
+				if ((this._Quantity != value))
 				{
+					this.OnQuantityChanging(value);
 					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._QuantifiedEntityAssociation.Entity = null;
-						previousValue.EntityAssociation = null;
-					}
-					this._QuantifiedEntityAssociation.Entity = value;
-					if ((value != null))
-					{
-						value.EntityAssociation = this;
-					}
-					this.SendPropertyChanged("QuantifiedEntityAssociation");
+					this._Quantity = value;
+					this.SendPropertyChanged("Quantity");
+					this.OnQuantityChanged();
 				}
 			}
 		}
@@ -20284,7 +20345,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProtocolDefinition", DbType="Xml", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProtocolDefinition", DbType="Xml", UpdateCheck=UpdateCheck.Never)]
 		public System.Xml.Linq.XElement ProtocolDefinition
 		{
 			get
@@ -21106,260 +21167,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
 						this._ProviderSpecialtyConceptId = default(Nullable<System.Guid>);
 					}
 					this.SendPropertyChanged("ProviderSpecialtyConcept");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.QuantifiedActParticipation")]
-	public partial class QuantifiedActParticipation : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private System.Guid _ActParticipationId;
-		
-		private int _Quantity;
-		
-		private EntityRef<ActParticipation> _ActParticipation;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnActParticipationIdChanging(System.Guid value);
-    partial void OnActParticipationIdChanged();
-    partial void OnQuantityChanging(int value);
-    partial void OnQuantityChanged();
-    #endregion
-		
-		public QuantifiedActParticipation()
-		{
-			this._ActParticipation = default(EntityRef<ActParticipation>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActParticipationId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
-		public System.Guid ActParticipationId
-		{
-			get
-			{
-				return this._ActParticipationId;
-			}
-			set
-			{
-				if ((this._ActParticipationId != value))
-				{
-					if (this._ActParticipation.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnActParticipationIdChanging(value);
-					this.SendPropertyChanging();
-					this._ActParticipationId = value;
-					this.SendPropertyChanged("ActParticipationId");
-					this.OnActParticipationIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Quantity", DbType="Int NOT NULL")]
-		public int Quantity
-		{
-			get
-			{
-				return this._Quantity;
-			}
-			set
-			{
-				if ((this._Quantity != value))
-				{
-					this.OnQuantityChanging(value);
-					this.SendPropertyChanging();
-					this._Quantity = value;
-					this.SendPropertyChanged("Quantity");
-					this.OnQuantityChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ActParticipation_QuantifiedActParticipation", Storage="_ActParticipation", ThisKey="ActParticipationId", OtherKey="ActParticipationId", IsForeignKey=true)]
-		public ActParticipation ActParticipation
-		{
-			get
-			{
-				return this._ActParticipation.Entity;
-			}
-			set
-			{
-				ActParticipation previousValue = this._ActParticipation.Entity;
-				if (((previousValue != value) 
-							|| (this._ActParticipation.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ActParticipation.Entity = null;
-						previousValue.QuantifiedActParticipation = null;
-					}
-					this._ActParticipation.Entity = value;
-					if ((value != null))
-					{
-						value.QuantifiedActParticipation = this;
-						this._ActParticipationId = value.ActParticipationId;
-					}
-					else
-					{
-						this._ActParticipationId = default(System.Guid);
-					}
-					this.SendPropertyChanged("ActParticipation");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.QuantifiedEntityAssociation")]
-	public partial class QuantifiedEntityAssociation : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private System.Guid _EntityAssociationId;
-		
-		private double _Quantity;
-		
-		private EntityRef<EntityAssociation> _EntityAssociation;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnEntityAssociationIdChanging(System.Guid value);
-    partial void OnEntityAssociationIdChanged();
-    partial void OnQuantityChanging(double value);
-    partial void OnQuantityChanged();
-    #endregion
-		
-		public QuantifiedEntityAssociation()
-		{
-			this._EntityAssociation = default(EntityRef<EntityAssociation>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EntityAssociationId", DbType="UniqueIdentifier NOT NULL", IsPrimaryKey=true)]
-		public System.Guid EntityAssociationId
-		{
-			get
-			{
-				return this._EntityAssociationId;
-			}
-			set
-			{
-				if ((this._EntityAssociationId != value))
-				{
-					if (this._EntityAssociation.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnEntityAssociationIdChanging(value);
-					this.SendPropertyChanging();
-					this._EntityAssociationId = value;
-					this.SendPropertyChanged("EntityAssociationId");
-					this.OnEntityAssociationIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Quantity", DbType="Float NOT NULL")]
-		public double Quantity
-		{
-			get
-			{
-				return this._Quantity;
-			}
-			set
-			{
-				if ((this._Quantity != value))
-				{
-					this.OnQuantityChanging(value);
-					this.SendPropertyChanging();
-					this._Quantity = value;
-					this.SendPropertyChanged("Quantity");
-					this.OnQuantityChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EntityAssociation_QuantifiedEntityAssociation", Storage="_EntityAssociation", ThisKey="EntityAssociationId", OtherKey="EntityAssociationId", IsForeignKey=true)]
-		public EntityAssociation EntityAssociation
-		{
-			get
-			{
-				return this._EntityAssociation.Entity;
-			}
-			set
-			{
-				EntityAssociation previousValue = this._EntityAssociation.Entity;
-				if (((previousValue != value) 
-							|| (this._EntityAssociation.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._EntityAssociation.Entity = null;
-						previousValue.QuantifiedEntityAssociation = null;
-					}
-					this._EntityAssociation.Entity = value;
-					if ((value != null))
-					{
-						value.QuantifiedEntityAssociation = this;
-						this._EntityAssociationId = value.EntityAssociationId;
-					}
-					else
-					{
-						this._EntityAssociationId = default(System.Guid);
-					}
-					this.SendPropertyChanged("EntityAssociation");
 				}
 			}
 		}
