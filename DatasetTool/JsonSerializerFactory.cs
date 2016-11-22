@@ -117,7 +117,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         public CodeNamespace CreateCodeNamespace(String name, Assembly asm)
         {
             CodeNamespace retVal = new CodeNamespace(name);
-            retVal.Imports.Add(new CodeNamespaceImport("OpenIZ.Core.Model.Reflection"));
+            retVal.Imports.Add(new CodeNamespaceImport("OpenIZ.Core.Model;"));
 
             foreach (var t in asm.GetTypes().Where(o => o.GetCustomAttribute<JsonObjectAttribute>() != null))
             {

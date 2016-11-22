@@ -79,7 +79,7 @@ namespace OizDevTool
             /// </summary>
             public SeederProtocolRepositoryService()
             {
-                foreach(var f in Directory.GetFiles(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Protocols")))
+                foreach (var f in Directory.GetFiles(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Protocols")))
                 {
                     using (FileStream fs = File.OpenRead(f))
                     {
@@ -111,11 +111,58 @@ namespace OizDevTool
         }
 
         private static SimpleCarePlanService scp = new SimpleCarePlanService();
-        
+
+        /// <summary>
+        /// Generate stock
+        /// </summary>
+        public static void GenerateStock(String[] args)
+        {
+            ApplicationServiceContext.Current = ApplicationContext.Current;
+            //cp.Repository = new SeederProtocolRepositoryService();
+            ApplicationContext.Current.Start();
+            var idp = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
+            WaitThreadPool wtp = new WaitThreadPool();
+            var mat = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>().Query(o => o.ClassConceptKey == EntityClassKeys.Material, AuthenticationContext.SystemPrincipal);
+
+            int tr = 0, ofs = 0;
+            var results = idp.Query(o => o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation, ofs, 25, AuthenticationContext.SystemPrincipal, out tr);
+            var r = new Random();
+
+            while (ofs + 25 < tr)
+            {
+                foreach (var p in results)
+                {
+                    wtp.QueueUserWorkItem((parm) =>
+                    {
+                        Place target = parm as Place;
+                        // Add some stock!!! :)
+                        foreach (var m in mat)
+                        {
+                            var mmats = m.Relationships.Where(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.ManufacturedProduct).OrderBy(o => r.Next()).FirstOrDefault();
+
+                            var rdp = ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>();
+                            if (mmats != null)
+                            {
+
+                                var er = new EntityRelationship(EntityRelationshipTypeKeys.OwnedEntity, mmats.TargetEntityKey) { Quantity = r.Next(0, 100), SourceEntityKey = target.Key, EffectiveVersionSequenceId = target.VersionSequence };
+                                Console.WriteLine("{0} > {1} {2}", target.Names.FirstOrDefault().Component.FirstOrDefault().Value, er.Quantity, m.Names.FirstOrDefault().Component.FirstOrDefault().Value);
+                                rdp.Insert(er, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
+                            }
+                        }
+
+                    }, p);
+                }
+                wtp.WaitOne();
+                ofs += 25;
+                results = idp.Query(o => o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation, ofs, 25, AuthenticationContext.SystemPrincipal, out tr);
+
+            }
+        }
+
         /// <summary>
         /// Generate patients
         /// </summary>
-        public static void GeneratePatients (String[] args)
+        public static void GeneratePatients(String[] args)
         {
             var parameters = new ParameterParser<ConsoleParameters>().Parse(args);
             int populationSize = Int32.Parse(parameters.PopulationSize ?? "10");
@@ -129,7 +176,7 @@ namespace OizDevTool
 
             WaitThreadPool wtp = new WaitThreadPool();
 
-            for(int i = 0; i < populationSize; i++)
+            for (int i = 0; i < populationSize; i++)
             {
                 wtp.QueueUserWorkItem((s) =>
                 {
@@ -169,7 +216,7 @@ namespace OizDevTool
                         actPersistence.Insert(flfls, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
                     }
                 });
-                
+
             }
             wtp.WaitOne();
         }
@@ -179,12 +226,12 @@ namespace OizDevTool
         /// </summary>
         private static Patient GeneratePatient(int maxAge)
         {
-            
+
             Person mother = new Person()
             {
                 Names = new List<EntityName>() { new EntityName(NameUseKeys.OfficialRecord, SeedData.SeedData.Current.PickRandomFamilyName(), SeedData.SeedData.Current.PickRandomGivenName("Female").Name) },
-                Telecoms = new List<EntityTelecomAddress>() {  new EntityTelecomAddress(TelecomAddressUseKeys.MobileContact, String.Format("+255 {0:000} {1:000} {2:000}", Guid.NewGuid().ToByteArray()[0], Guid.NewGuid().ToString()[1], Guid.NewGuid().ToByteArray()[2])) },
-                Identifiers = new List<OpenIZ.Core.Model.DataTypes.EntityIdentifier>() {  new OpenIZ.Core.Model.DataTypes.EntityIdentifier(new AssigningAuthority("NID", "National Identifier", "1.2.3.4.5.6"), BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 0).ToString()) }
+                Telecoms = new List<EntityTelecomAddress>() { new EntityTelecomAddress(TelecomAddressUseKeys.MobileContact, String.Format("+255 {0:000} {1:000} {2:000}", Guid.NewGuid().ToByteArray()[0], Guid.NewGuid().ToString()[1], Guid.NewGuid().ToByteArray()[2])) },
+                Identifiers = new List<OpenIZ.Core.Model.DataTypes.EntityIdentifier>() { new OpenIZ.Core.Model.DataTypes.EntityIdentifier(new AssigningAuthority("NID", "National Identifier", "1.2.3.4.5.6"), BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 0).ToString()) }
             };
 
             String gender = BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 1) % 2 == 0 ? "Male" : "Female";
@@ -196,7 +243,7 @@ namespace OizDevTool
                 DateOfBirth = DateTime.Now.AddDays(-Math.Abs(BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 0) % maxAge)),
                 Addresses = new List<EntityAddress>() { new EntityAddress(AddressUseKeys.HomeAddress, null, "Arusha DC", "Arusha", "TZ", "TZ.NT.AS.AS") },
                 GenderConcept = new Concept() { Mnemonic = gender },
-                Identifiers = new List<EntityIdentifier>() {  new EntityIdentifier(new AssigningAuthority("TIIS_BARCODE", "TImR Barcode IDs", "2.3.4.5.6.7"), BitConverter.ToString(Guid.NewGuid().ToByteArray()).Replace(":","")) }
+                Identifiers = new List<EntityIdentifier>() { new EntityIdentifier(new AssigningAuthority("TIIS_BARCODE", "TImR Barcode IDs", "2.3.4.5.6.7"), BitConverter.ToString(Guid.NewGuid().ToByteArray()).Replace(":", "")) }
             };
 
             // Associate

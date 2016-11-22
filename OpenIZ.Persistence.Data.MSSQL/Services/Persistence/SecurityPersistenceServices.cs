@@ -126,12 +126,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Roles
             if (retVal.Policies != null)
-                base.UpdateAssociatedItems<Core.Model.Security.SecurityPolicyInstance, Data.SecurityRolePolicy>(
-                    retVal.Policies,
-                    retVal,
-                    context,
-                    principal);
-               
+            {
+                retVal.Policies.ForEach(o => o.EnsureExists(context, principal));
+                context.SecurityRolePolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityRolePolicy()
+                {
+                    PolicyId = o.PolicyKey.Value,
+                    PolicyAction = (int)o.GrantType,
+                    RoleId = retVal.Key.Value,
+                    SecurityPolicyInstanceId = Guid.NewGuid()
+                }));
+            } 
 
             return retVal;
         }
@@ -145,12 +149,17 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             // Roles
             if (retVal.Policies != null)
-                base.UpdateAssociatedItems<Core.Model.Security.SecurityPolicyInstance, Data.SecurityRolePolicy>(
-                    retVal.Policies,
-                    retVal,
-                    context,
-                    principal);
-
+            {
+                context.SecurityRolePolicies.DeleteAllOnSubmit(context.SecurityRolePolicies.Where(o => o.RoleId == retVal.Key.Value));
+                retVal.Policies.ForEach(o => o.EnsureExists(context, principal));
+                context.SecurityRolePolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityRolePolicy()
+                {
+                    PolicyId = o.PolicyKey.Value,
+                    PolicyAction = (int)o.GrantType,
+                    RoleId = retVal.Key.Value,
+                    SecurityPolicyInstanceId = Guid.NewGuid()
+                }));
+            }
 
             return retVal;
         }
