@@ -26,7 +26,7 @@ using System.Resources;
 [assembly: AssemblyTitle("OpenIZ.Messaging.AMI.Client")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Mohawk College of Applied Arts and Techology")]
+[assembly: AssemblyCompany("Mohawk College of Applied Arts and Technology")]
 [assembly: AssemblyProduct("Open Immunize (http://openiz.org)")]
 [assembly: AssemblyCopyright("Copyright (C) 2016, Mohawk College of Applied Arts and Technology")]
 [assembly: AssemblyTrademark("")]
