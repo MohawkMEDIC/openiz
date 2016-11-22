@@ -27,8 +27,8 @@ namespace OpenIZ.Core.Model.Patch
         /// <summary>
         /// Application version
         /// </summary>
-        [XmlIgnore, JsonIgnore]
-        public IdentifiedData AppliesTo { get; set; }
+        [XmlElement("appliesTo"), JsonProperty("appliesTo")]
+        public PatchTarget AppliesTo { get; set; }
 
         /// <summary>
         /// A list of patch operations to be applied to the object

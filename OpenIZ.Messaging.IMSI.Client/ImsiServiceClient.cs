@@ -230,10 +230,13 @@ namespace OpenIZ.Messaging.IMSI.Client
                 throw new InvalidOperationException();
 
             // Resource name
-            String resourceName = patch.AppliesTo.GetType().GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+            String resourceName = patch.AppliesTo.Type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
 
             // First we determine which resource we're patching patch
-            var version = this.Client.Patch<Patch>(String.Format("{0}/{1}", resourceName, patch.AppliesTo.Key.Value), this.Client.Accept, patch.AppliesTo.Tag, patch);
+            var tag = patch.AppliesTo.Tag;
+            var key = patch.AppliesTo.Key;
+            patch.AppliesTo = null;
+            var version = this.Client.Patch<Patch>(String.Format("{0}/{1}", resourceName, key.Value), this.Client.Accept, tag, patch);
             return Guid.ParseExact(version, "N");
 
         }

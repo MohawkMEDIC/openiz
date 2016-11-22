@@ -549,14 +549,20 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     throw new FileNotFoundException(resourceType);
 
                 // Next we get the current version
-                var existing = handler.Get(Guid.Parse(id), versionId);
+                var existing = handler.Get(Guid.Parse(id), Guid.Empty);
+
                 if (existing == null)
                     throw new FileNotFoundException($"/{resourceType}/{id}/history/{versionId}");
+                else if((existing as IVersionedEntity).VersionKey != versionId)
+                {
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                    return;
+                }
                 else if (body == null)
                     throw new ArgumentNullException(nameof(body));
                 else
                 {
-                    var applied = ApplicationContext.Current.GetService<IPatchService>().Patch(body, existing);
+                    var applied = ApplicationContext.Current.GetService<IPatchService>().Patch(body, existing, Convert.ToBoolean(WebOperationContext.Current.IncomingRequest.Headers["X-Patch-Force"] ?? "false"));
                     var data = handler.Update(applied);
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NoContent;
                     WebOperationContext.Current.OutgoingResponse.ETag = applied.Tag;

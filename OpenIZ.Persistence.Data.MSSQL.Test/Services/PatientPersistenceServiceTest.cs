@@ -224,7 +224,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
             Assert.AreEqual(EntityClassKeys.Patient, p.ClassConceptKey);
             Assert.AreEqual(DeterminerKeys.Specific, p.DeterminerConceptKey);
             Assert.AreEqual(StatusKeys.Active, p.StatusConceptKey);
-            Assert.AreEqual(aa.Key, afterInsert.Identifiers[0].AuthorityKey);
+            //Assert.AreEqual(aa.Key, afterInsert.Identifiers[0].AuthorityKey);
             var jsonSerializer = new JsonViewModelSerializer();
             String json = jsonSerializer.Serialize(afterInsert);
 

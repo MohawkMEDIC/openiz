@@ -16477,18 +16477,15 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 }
             }
             if (context.ShouldSerialize("authority")) {
-                if ((_strong.Authority == null)) {
-                    if ((_strong.Key.HasValue && context.ShouldForceLoad("authority", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.DataTypes.AssigningAuthority _delay = null;
-                        _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.AssigningAuthority>(_strong.AuthorityKey);
-                        _strong.Authority = _delay;
-                        if ((_delay != null)) {
-                            _loaded = true;
-                            context.JsonContext.WritePropertyUtil(w, "authority", _strong.Authority, context);
-                        }
+                if ((_strong.Authority == null))
+                {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("authority", _strong.Key.Value)))
+                    {
+                        OpenIZ.Core.Model.DataTypes.TemplateDefinition _delay = null;
                     }
                 }
-                else {
+                else
+                {
                     context.JsonContext.WritePropertyUtil(w, "authority", _strong.Authority, context);
                 }
             }
@@ -16697,15 +16694,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("authority")) {
                 if ((_strong.Authority == null)) {
-                    if ((_strong.Key.HasValue && context.ShouldForceLoad("authority", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.DataTypes.AssigningAuthority _delay = null;
-                        _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.AssigningAuthority>(_strong.AuthorityKey);
-                        _strong.Authority = _delay;
-                        if ((_delay != null)) {
-                            _loaded = true;
-                            context.JsonContext.WritePropertyUtil(w, "authority", _strong.Authority, context);
-                        }
-                    }
+                    
                 }
                 else {
                     context.JsonContext.WritePropertyUtil(w, "authority", _strong.Authority, context);

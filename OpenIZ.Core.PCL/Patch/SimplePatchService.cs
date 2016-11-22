@@ -44,7 +44,7 @@ namespace OpenIZ.Core.Services.Impl
                 Key = Guid.NewGuid(),
                 CreationTime = DateTimeOffset.Now,
                 Operation = this.DiffInternal(existing, updated, null),
-                AppliesTo = existing
+                AppliesTo = new PatchTarget(existing)
             };
             this.m_tracer.TraceVerbose("-->> DIFF {0} > {1}\r\n{2}", existing, updated, retVal);
             return retVal;
@@ -82,8 +82,7 @@ namespace OpenIZ.Core.Services.Impl
                     var serializationName = pi.GetCustomAttribute<JsonPropertyAttribute>().PropertyName;
                     object existingValue = pi.GetValue(existing),
                         updatedValue = pi.GetValue(updated);
-
-
+                    
                     // Test
                     if (existingValue == updatedValue)
                         continue; // same 
@@ -110,9 +109,7 @@ namespace OpenIZ.Core.Services.Impl
                         }
                         else if (existingValue is IList && !existingValue.GetType().GetTypeInfo().IsArray)
                         {
-                            // Generate tests
-                            retVal.AddRange(this.GenerateTests(existingValue, $"{path}{serializationName}"));
-
+                           
                             // Simple or complex list?
                             if (typeof(IIdentifiedEntity).GetTypeInfo().IsAssignableFrom(existingValue.GetType().StripGeneric().GetTypeInfo()))
                             {
@@ -223,7 +220,7 @@ namespace OpenIZ.Core.Services.Impl
         /// <summary>
         /// Applies the specified <paramref name="patch"/> onto <paramref name="data"/> to derive the return value.
         /// </summary>
-        public IdentifiedData Patch(Patch patch, IdentifiedData data)
+        public IdentifiedData Patch(Patch patch, IdentifiedData data, bool force = false)
         {
 
             this.m_tracer.TraceVerbose("-->> {0} patch with:\r\n{1}", data, patch);
@@ -293,6 +290,7 @@ namespace OpenIZ.Core.Services.Impl
                         property.SetValue(applyParent, op.Value);
                         break;
                     case PatchOperationType.Test:
+                        if (force) continue;
                         // We test the value! Also pretty cool
                         if (applyTo is IdentifiedData && !(applyTo as IdentifiedData).SemanticEquals(op.Value as IdentifiedData))
                             throw new PatchAssertionException(op.Value, applyTo, op);

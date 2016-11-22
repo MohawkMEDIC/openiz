@@ -54,7 +54,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (dbp.DateOfBirthPrecision.HasValue)
                 retVal.DateOfBirthPrecision = PersonPersistenceService.PrecisionMap.Where(o => o.Value == dbp.DateOfBirthPrecision).Select(o => o.Key).First();
             if (dbe.Entity.PersonLanguageCommunicationsPersonEntityId != null)
-                retVal.LanguageCommunication = dbe.Entity.PersonLanguageCommunicationsPersonEntityId.Where(v=>v.EffectiveVersionSequenceId <= dbe.VersionSequenceId && (v.ObsoleteVersionSequenceId == null || v.ObsoleteVersionSequenceId >= dbe.VersionSequenceId)).Select(o => new Core.Model.Entities.PersonLanguageCommunication(o.LanguageCommunication, o.PreferenceIndicator)).ToList();
+                retVal.LanguageCommunication = dbe.Entity.PersonLanguageCommunicationsPersonEntityId.Where(v=>v.EffectiveVersionSequenceId <= dbe.VersionSequenceId && (v.ObsoleteVersionSequenceId == null || v.ObsoleteVersionSequenceId >= dbe.VersionSequenceId))
+                    .Select(o => new Core.Model.Entities.PersonLanguageCommunication(o.LanguageCommunication, o.PreferenceIndicator) {
+                        Key = o.PersonLanguageCommunicationId
+                    })
+                    .ToList();
             return retVal;
         }
         
@@ -78,7 +82,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             data.SecurityUser?.EnsureExists(context, principal);
             data.SecurityUserKey = data.SecurityUser?.Key ?? data.SecurityUserKey;
             this.m_personPersister.Update(context, data, principal);
-            return base.Update(context, data, principal);
+            return base.Insert(context, data, principal);
         }
 
         /// <summary>

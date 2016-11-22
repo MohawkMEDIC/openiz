@@ -23,6 +23,6 @@ namespace OpenIZ.Core.Services
         /// <summary>
         /// Apples the specified <paramref name="patch"/> onto <paramref name="data"/> returning the updated object
         /// </summary>
-        IdentifiedData Patch(Patch patch, IdentifiedData data);
+        IdentifiedData Patch(Patch patch, IdentifiedData data, bool force = false);
     }
 }
