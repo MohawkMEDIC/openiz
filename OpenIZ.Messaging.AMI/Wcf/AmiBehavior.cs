@@ -32,10 +32,12 @@ using OpenIZ.Core.Services;
 using OpenIZ.Messaging.AMI.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
@@ -52,6 +54,9 @@ using OpenIZ.Core.Model.AMI.Diagnostics;
 using OpenIZ.Core.Security.Attribute;
 using System.Security.Permissions;
 using OpenIZ.Core.Applets.Model;
+using OpenIZ.Core.Exceptions;
+using OpenIZ.Core.Interop;
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.AMI.Applet;
 using OpenIZ.Core.Security.Claims;
 
@@ -82,13 +87,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			this.m_certTool.ServerName = this.m_configuration?.CaConfiguration.ServerName;
 		}
 
-        /// <summary>
-        /// Accepts a certificate signing request.
-        /// </summary>
-        /// <param name="id">The id of the certificate signing request to be accepted.</param>
-        /// <returns>Returns the acceptance result.</returns>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
-        public SubmissionResult AcceptCsr(string rawId)
+		/// <summary>
+		/// Accepts a certificate signing request.
+		/// </summary>
+		/// <param name="id">The id of the certificate signing request to be accepted.</param>
+		/// <returns>Returns the acceptance result.</returns>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+		public SubmissionResult AcceptCsr(string rawId)
 		{
 			int id = Int32.Parse(rawId);
 			this.m_certTool.Approve(id);
@@ -203,24 +208,24 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="assigningAuthorityInfo">The assigning authority to be created.</param>
 		/// <returns>Returns the created assigning authority.</returns>
 		public AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo)
-        {
-            var assigningAuthorityRepositoryService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
+		{
+			var assigningAuthorityRepositoryService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
 
-            if (assigningAuthorityRepositoryService == null)
-            {
-                throw new InvalidOperationException(string.Format("{0} not found", nameof(IAssigningAuthorityRepositoryService)));
-            }
+			if (assigningAuthorityRepositoryService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAssigningAuthorityRepositoryService)));
+			}
 
-            var createdAssigningAuthority = assigningAuthorityRepositoryService.Insert(assigningAuthorityInfo.AssigningAuthority);
+			var createdAssigningAuthority = assigningAuthorityRepositoryService.Insert(assigningAuthorityInfo.AssigningAuthority);
 
-            return new AssigningAuthorityInfo(createdAssigningAuthority);
-        }
+			return new AssigningAuthorityInfo(createdAssigningAuthority);
+		}
 		/// <summary>
-        /// Creates a device in the IMS.
-        /// </summary>
-        /// <param name="device">The device to be created.</param>
-        /// <returns>Returns the newly created device.</returns>
-        public SecurityDevice CreateDevice(SecurityDevice device)
+		/// Creates a device in the IMS.
+		/// </summary>
+		/// <param name="device">The device to be created.</param>
+		/// <returns>Returns the newly created device.</returns>
+		public SecurityDevice CreateDevice(SecurityDevice device)
 		{
 			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
@@ -232,17 +237,17 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			return securityRepository.CreateDevice(device);
 		}
 
-        /// <summary>
-        /// Create a diagnostic report 
-        /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
-        public DiagnosticReport CreateDiagnosticReport(DiagnosticReport report)
-        {
-            var persister = ApplicationContext.Current.GetService<IDataPersistenceService<DiagnosticReport>>();
-            if (persister == null)
-                throw new InvalidOperationException("Cannot find appriopriate persister");
-            return persister.Insert(report, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-        }
+		/// <summary>
+		/// Create a diagnostic report 
+		/// </summary>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
+		public DiagnosticReport CreateDiagnosticReport(DiagnosticReport report)
+		{
+			var persister = ApplicationContext.Current.GetService<IDataPersistenceService<DiagnosticReport>>();
+			if (persister == null)
+				throw new InvalidOperationException("Cannot find appriopriate persister");
+			return persister.Insert(report, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
 
 		/// <summary>
 		/// Creates a security policy.
@@ -431,21 +436,21 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the deleted device.</returns>
 		public SecurityDevice DeleteDevice(string deviceId)
 		{
-			Guid deviceKey = Guid.Empty;
+			var key = Guid.Empty;
 
-			if (!Guid.TryParse(deviceId, out deviceKey))
+			if (!Guid.TryParse(deviceId, out key))
 			{
-				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(deviceId)));
+				throw new ArgumentException($"{nameof(deviceId)} must be a valid GUID");
 			}
 
 			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
 			if (securityRepository == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
 			}
 
-			return securityRepository.ObsoleteDevice(deviceKey);
+			return securityRepository.ObsoleteDevice(key);
 		}
 
 		/// <summary>
@@ -455,9 +460,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the deleted policy.</returns>
 		public SecurityPolicyInfo DeletePolicy(string policyId)
 		{
-			var policyKey = Guid.Empty;
+			var key = Guid.Empty;
 
-			if (!Guid.TryParse(policyId, out policyKey))
+			if (!Guid.TryParse(policyId, out key))
 			{
 				throw new ArgumentException($"{nameof(policyId)} must be a valid GUID");
 			}
@@ -469,33 +474,55 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
 			}
 
-			return new SecurityPolicyInfo(securityRepositoryService.ObsoletePolicy(policyKey));
+			return new SecurityPolicyInfo(securityRepositoryService.ObsoletePolicy(key));
 		}
 
 		/// <summary>
 		/// Deletes a security role.
 		/// </summary>
-		/// <param name="roleId">The id of the role to be deleted.</param>
+		/// <param name="rawRoleId">The id of the role to be deleted.</param>
 		/// <returns>Returns the deleted role.</returns>
 		public SecurityRoleInfo DeleteRole(string rawRoleId)
 		{
-			Guid roleId = Guid.Empty;
-			if (!Guid.TryParse(rawRoleId, out roleId))
-				throw new ArgumentException(nameof(rawRoleId));
-			var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-			return new SecurityRoleInfo(roleRepository.ObsoleteRole(roleId));
+			var key = Guid.Empty;
+
+			if (!Guid.TryParse(rawRoleId, out key))
+			{
+				throw new ArgumentException($"{nameof(rawRoleId)} must be a valid GUID");
+			}
+
+			var securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepositoryService == null)
+			{
+				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
+			}
+
+			return new SecurityRoleInfo(securityRepositoryService.ObsoleteRole(key));
 		}
 
 		/// <summary>
 		/// Deletes a security user.
 		/// </summary>
-		/// <param name="userId">The id of the user to be deleted.</param>
+		/// <param name="rawUserId">The id of the user to be deleted.</param>
 		/// <returns>Returns the deleted user.</returns>
 		public SecurityUserInfo DeleteUser(string rawUserId)
 		{
-			Guid userId = Guid.Parse(rawUserId);
-			var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-			return new SecurityUserInfo(userRepository.ObsoleteUser(userId));
+			var key = Guid.Empty;
+
+			if (!Guid.TryParse(rawUserId, out key))
+			{
+				throw new ArgumentException($"{nameof(rawUserId)} must be a valid GUID");
+			}
+
+			var securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepositoryService == null)
+			{
+				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
+			}
+
+			return new SecurityUserInfo(securityRepositoryService.ObsoleteUser(key));
 		}
 
 		/// <summary>
@@ -505,14 +532,21 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the alert.</returns>
 		public AlertMessageInfo GetAlert(string alertId)
 		{
+			var key = Guid.Empty;
+
+			if (!Guid.TryParse(alertId, out key))
+			{
+				throw new ArgumentException($"{nameof(alertId)} must be a valid GUID");
+			}
+
 			var alertRepository = ApplicationContext.Current.GetService<IAlertRepositoryService>();
 
 			if (alertRepository == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAlertRepositoryService)));
+				throw new InvalidOperationException($"{nameof(IAlertRepositoryService)} not found");
 			}
 
-			var alert = alertRepository.Get(Guid.Parse(alertId));
+			var alert = alertRepository.Get(key);
 
 			return new AlertMessageInfo(alert);
 		}
@@ -635,18 +669,18 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the application.</returns>
 		public SecurityApplicationInfo GetApplication(string applicationId)
 		{
-			Guid key = Guid.Empty;
+			var key = Guid.Empty;
 
 			if (!Guid.TryParse(applicationId, out key))
 			{
-				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(applicationId)));
+				throw new ArgumentException($"{nameof(applicationId)} must be a valid GUID");
 			}
 
 			var securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
 			if (securityRepositoryService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
 			}
 
 			var application = securityRepositoryService.GetApplication(key);
@@ -664,7 +698,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			if (parameters.Count == 0)
 			{
-				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
+				throw new ArgumentException($"{nameof(parameters)} cannot be empty");
 			}
 
 			var expression = QueryExpressionParser.BuildLinqExpression<SecurityApplication>(this.CreateQuery(parameters));
@@ -673,7 +707,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			if (securityRepositoryService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
 			}
 
 			var applications = new AmiCollection<SecurityApplicationInfo>();
@@ -696,7 +730,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			if (parameters.Count == 0)
 			{
-				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
+				throw new ArgumentException($"{nameof(parameters)} cannot be empty");
 			}
 
 			var expression = QueryExpressionParser.BuildLinqExpression<AssigningAuthority>(this.CreateQuery(parameters));
@@ -705,7 +739,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			if (assigningAuthorityRepositoryService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAssigningAuthorityRepositoryService)));
+				throw new InvalidOperationException($"{nameof(IAssigningAuthorityRepositoryService)} not found");
 			}
 
 			AmiCollection<AssigningAuthorityInfo> assigningAuthorities = new AmiCollection<AssigningAuthorityInfo>();
@@ -725,18 +759,18 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the assigning authority.</returns>
 		public AssigningAuthorityInfo GetAssigningAuthority(string assigningAuthorityId)
 		{
-			Guid key = Guid.Empty;
+			var key = Guid.Empty;
 
 			if (!Guid.TryParse(assigningAuthorityId, out key))
 			{
-				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(assigningAuthorityId)));
+				throw new ArgumentException($"{nameof(assigningAuthorityId)} must be a valid GUID");
 			}
 
 			var assigningAuthorityRepositoryService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
 
 			if (assigningAuthorityRepositoryService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAssigningAuthorityRepositoryService)));
+				throw new InvalidOperationException($"{nameof(IAssigningAuthorityRepositoryService)} not found");
 			}
 
 			return new AssigningAuthorityInfo(assigningAuthorityRepositoryService.Get(key));
@@ -829,7 +863,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			if (parameters.Count == 0)
 			{
-				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
+				throw new ArgumentException($"{nameof(parameters)} cannot be empty");
 			}
 
 			var expression = QueryExpressionParser.BuildLinqExpression<SecurityDevice>(this.CreateQuery(parameters));
@@ -838,7 +872,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			if (securityRepository == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
 			}
 
 			return new AmiCollection<SecurityDevice>
@@ -865,18 +899,18 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the security policy.</returns>
 		public SecurityPolicyInfo GetPolicy(string policyId)
 		{
-			Guid key = Guid.Empty;
+			var key = Guid.Empty;
 
 			if (!Guid.TryParse(policyId, out key))
 			{
-				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(policyId)));
+				throw new ArgumentException($"{nameof(policyId)} must be a valid GUID");
 			}
 
 			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
 			if (securityRepository == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
 			}
 
 			return new SecurityPolicyInfo(securityRepository.GetPolicy(Guid.Parse(policyId)));
@@ -904,7 +938,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		{
 			var expression = QueryExpressionParser.BuildLinqExpression<SecurityRole>(this.CreateQuery(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters));
 			var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-			return new AmiCollection<SecurityRoleInfo>() { CollectionItem = userRepository.FindRoles(expression).Select(o => new SecurityRoleInfo(o)).ToList() };
+			return new AmiCollection<SecurityRoleInfo> { CollectionItem = userRepository.FindRoles(expression).Select(o => new SecurityRoleInfo(o)).ToList() };
 		}
 
 		/// <summary>
@@ -926,7 +960,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 				if (schemaId > schemaCollection.Count)
 				{
-					WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NotFound;
+					WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
 					return null;
 				}
 				else
@@ -990,6 +1024,71 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
+		/// Gets options for the AMI service.
+		/// </summary>
+		/// <returns>Returns options for the AMI service.</returns>
+		public IdentifiedData Options()
+		{
+			WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+			WebOperationContext.Current.OutgoingResponse.Headers.Add("Allow", $"GET, PUT, POST, OPTIONS, HEAD, DELETE{(ApplicationContext.Current.GetService<IPatchService>() != null ? ", PATCH" : null)}");
+
+			if (ApplicationContext.Current.GetService<IPatchService>() != null)
+			{
+				WebOperationContext.Current.OutgoingResponse.Headers.Add("Accept-Patch", "application/xml+oiz-patch");
+			}
+
+			var serviceOptions = new ServiceOptions
+			{
+				InterfaceVersion = typeof(AmiCollection<>).Assembly.GetName().Version.ToString(),
+				Services = new List<ServiceResourceOptions>
+				{
+					new ServiceResourceOptions()
+					{
+						ResourceName = null,
+						Verbs = new List<string>() { "OPTIONS" }
+					},
+					new ServiceResourceOptions()
+					{
+						ResourceName = "time",
+						Verbs = new List<string>() { "GET" }
+					}
+				}
+			};
+
+			//foreach (var methodInfo in typeof(IAmiContract).GetMethods().Where(m => m.GetCustomAttribute<WebInvokeAttribute>() != null))
+			//{
+			//	var webInvoke = methodInfo.GetCustomAttribute<WebInvokeAttribute>();
+			//	serviceOptions.Services.Add(new ServiceResourceOptions(methodInfo.GetParameters()[0].ParameterType.Name, new List<string> { webInvoke.Method }));
+			//}
+
+			//foreach (var methodInfo in typeof(IAmiContract).GetMethods())
+			//{
+			//	var webInvoke = methodInfo.GetCustomAttribute<WebInvokeAttribute>();
+			//	var webGet = methodInfo.GetCustomAttribute<WebGetAttribute>();
+
+			//	if (webInvoke != null)
+			//	{
+			//		switch (webInvoke.Method)
+			//		{
+			//			case "DELETE":
+			//				break;
+			//			case "POST":
+			//				serviceOptions.Services.Add(new ServiceResourceOptions(methodInfo.GetParameters()[0].ParameterType.Name, new List<string> { webInvoke.Method }));
+			//				break;
+			//			case "PUT":
+			//				break;
+			//		}
+			//	}
+			//	else if (webGet != null)
+			//	{
+			//		serviceOptions.Services.Add(new ServiceResourceOptions(methodInfo.Name, new List<string> { "GET" }));
+			//	}
+			//}
+
+			return serviceOptions;
+		}
+
+		/// <summary>
 		/// Rejects a specified certificate signing request.
 		/// </summary>
 		/// <param name="certId">The id of the certificate signing request to be rejected.</param>
@@ -1011,40 +1110,40 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// Creates security reset information
 		/// </summary>
 		public void SendTfaSecret(TfaRequestInfo resetInfo)
-        {
+		{
 
-            var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
-            var securityUser = securityRepository.GetUser(resetInfo.UserName);
-            if (securityUser == null)
-                throw new KeyNotFoundException();
+			var securityUser = securityRepository.GetUser(resetInfo.UserName);
+			if (securityUser == null)
+				throw new KeyNotFoundException();
 
-            // Identity provider
-            var identityProvider = ApplicationContext.Current.GetService<IIdentityProviderService>();
-            var tfaSecret = identityProvider.GenerateTfaSecret(securityUser.UserName);
+			// Identity provider
+			var identityProvider = ApplicationContext.Current.GetService<IIdentityProviderService>();
+			var tfaSecret = identityProvider.GenerateTfaSecret(securityUser.UserName);
 
-            // Add a claim
-            if (resetInfo.Purpose == "PasswordReset")
-            {
-                new PolicyPermission(PermissionState.Unrestricted, PermissionPolicyIdentifiers.LoginAsService);
-                identityProvider.AddClaim(securityUser.UserName, new System.Security.Claims.Claim(OpenIzClaimTypes.OpenIZPasswordlessAuth, "true"));
-            }
+			// Add a claim
+			if (resetInfo.Purpose == "PasswordReset")
+			{
+				new PolicyPermission(PermissionState.Unrestricted, PermissionPolicyIdentifiers.LoginAsService);
+				identityProvider.AddClaim(securityUser.UserName, new System.Security.Claims.Claim(OpenIzClaimTypes.OpenIZPasswordlessAuth, "true"));
+			}
 
-            var tfaRelay = ApplicationContext.Current.GetService<ITfaRelayService>();
-            if (tfaRelay == null)
-                throw new InvalidOperationException("TFA relay not specified");
+			var tfaRelay = ApplicationContext.Current.GetService<ITfaRelayService>();
+			if (tfaRelay == null)
+				throw new InvalidOperationException("TFA relay not specified");
 
-            // Now issue the TFA secret
-            tfaRelay.SendSecret(resetInfo.ResetMechanism, securityUser, resetInfo.Verification, tfaSecret);
+			// Now issue the TFA secret
+			tfaRelay.SendSecret(resetInfo.ResetMechanism, securityUser, resetInfo.Verification, tfaSecret);
 
-        }
-        /// <summary>
-        /// Submits a specific certificate signing request.
-        /// </summary>
-        /// <param name="s">The certificate signing request.</param>
-        /// <returns>Returns the submission result.</returns>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
-        public SubmissionResult SubmitCsr(SubmissionRequest s)
+		}
+		/// <summary>
+		/// Submits a specific certificate signing request.
+		/// </summary>
+		/// <param name="s">The certificate signing request.</param>
+		/// <returns>Returns the submission result.</returns>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+		public SubmissionResult SubmitCsr(SubmissionRequest s)
 		{
 			var submission = this.m_certTool.SubmitRequest(s.CmcRequest, s.AdminContactName, s.AdminAddress);
 
@@ -1284,11 +1383,11 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			// First change password if needed
 			var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 			var idpService = ApplicationContext.Current.GetService<IIdentityProviderService>();
-            if (!String.IsNullOrEmpty(info.Password))
-            {
-                var user = userRepository.ChangePassword(userId, info.Password);
-                idpService.RemoveClaim(user.UserName, OpenIzClaimTypes.OpenIZPasswordlessAuth);
-            }
+			if (!String.IsNullOrEmpty(info.Password))
+			{
+				var user = userRepository.ChangePassword(userId, info.Password);
+				idpService.RemoveClaim(user.UserName, OpenIzClaimTypes.OpenIZPasswordlessAuth);
+			}
 
 			if (info.Email != null)
 			{

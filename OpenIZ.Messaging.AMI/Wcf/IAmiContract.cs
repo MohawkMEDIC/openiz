@@ -31,6 +31,8 @@ using System.Xml.Schema;
 using OpenIZ.Core.Model.AMI.Applet;
 using OpenIZ.Core.Alert.Alerting;
 using OpenIZ.Core.Applets.Model;
+using OpenIZ.Core.Interop;
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.AMI.BusinessRules;
 
 namespace OpenIZ.Messaging.AMI.Wcf
@@ -67,6 +69,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	[ServiceKnownType(typeof(SubmissionResult))]
 	[ServiceKnownType(typeof(ApplicationEntity))]
 	[ServiceKnownType(typeof(SubmissionRequest))]
+	[ServiceKnownType(typeof(ServiceOptions))]
 	[ServiceKnownType(typeof(X509Certificate2Info))]
 	[ServiceKnownType(typeof(AssigningAuthorityInfo))]
 	[ServiceKnownType(typeof(AmiCollection<SubmissionInfo>))]
@@ -401,6 +404,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns a list of security users.</returns>
 		[WebGet(UriTemplate = "/user", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<SecurityUserInfo> GetUsers();
+
+		/// <summary>
+		/// Gets options for the AMI service.
+		/// </summary>
+		/// <returns>Returns options for the AMI service.</returns>
+		[WebInvoke(UriTemplate = "/", Method = "OPTIONS", BodyStyle = WebMessageBodyStyle.Bare)]
+		IdentifiedData Options();
 
 		/// <summary>
 		/// Rejects a specified certificate signing request.

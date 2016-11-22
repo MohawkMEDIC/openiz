@@ -32,45 +32,33 @@ using System.Security.Permissions;
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {
 	/// <summary>
-	/// User entty
+	/// Represents a user entity resource handler.
 	/// </summary>
 	public class UserEntityResourceHandler : IResourceHandler
 	{
 		// Repository
-		private ISecurityRepositoryService m_repository;
+		private ISecurityRepositoryService repository;
 
 		/// <summary>
 		/// Place resource handler subscription
 		/// </summary>
 		public UserEntityResourceHandler()
 		{
-			ApplicationContext.Current.Started += (o, e) => this.m_repository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+			ApplicationContext.Current.Started += (o, e) => this.repository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 		}
 
 		/// <summary>
 		/// Gets the name of the resource that this handler
 		/// </summary>
-		public string ResourceName
-		{
-			get
-			{
-				return "UserEntity";
-			}
-		}
+		public string ResourceName => "UserEntity";
 
 		/// <summary>
 		/// Gets the .NET type of the resource handler
 		/// </summary>
-		public Type Type
-		{
-			get
-			{
-				return typeof(UserEntity);
-			}
-		}
+		public Type Type => typeof(UserEntity);
 
 		/// <summary>
-		/// Creates the speciified user entity
+		/// Creates the specified user entity
 		/// </summary>
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
 		public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
@@ -88,9 +76,9 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			{
 				var userEntity = processData as UserEntity;
 				if (updateIfExists)
-					return this.m_repository.CreateUserEntity(userEntity);
+					return this.repository.CreateUserEntity(userEntity);
 				else
-					return this.m_repository.CreateUserEntity(userEntity);
+					return this.repository.CreateUserEntity(userEntity);
 			}
 			else
 				throw new ArgumentException(nameof(data), "Invalid data type");
@@ -101,7 +89,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		public IdentifiedData Get(Guid id, Guid versionId)
 		{
-			return this.m_repository.GetUserEntity(id, versionId);
+			return this.repository.GetUserEntity(id, versionId);
 		}
 
 		/// <summary>
@@ -110,7 +98,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
 		public IdentifiedData Obsolete(Guid key)
 		{
-			return this.m_repository.ObsoleteUserEntity(key);
+			return this.repository.ObsoleteUserEntity(key);
 		}
 
 		/// <summary>
@@ -118,7 +106,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			return this.m_repository.FindUserEntity(QueryExpressionParser.BuildLinqExpression<UserEntity>(queryParameters));
+			return this.repository.FindUserEntity(QueryExpressionParser.BuildLinqExpression<UserEntity>(queryParameters));
 		}
 
 		/// <summary>
@@ -126,7 +114,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			return this.m_repository.FindUserEntity(QueryExpressionParser.BuildLinqExpression<UserEntity>(queryParameters), offset, count, out totalCount);
+			return this.repository.FindUserEntity(QueryExpressionParser.BuildLinqExpression<UserEntity>(queryParameters), offset, count, out totalCount);
 		}
 
 		/// <summary>
@@ -144,7 +132,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			if (saveData is Bundle)
 				throw new InvalidOperationException("Bundle must have an entry");
 			else if (saveData is UserEntity)
-				return this.m_repository.SaveUserEntity(saveData as UserEntity);
+				return this.repository.SaveUserEntity(saveData as UserEntity);
 			else
 				throw new ArgumentException(nameof(data), "Invalid storage type");
 		}

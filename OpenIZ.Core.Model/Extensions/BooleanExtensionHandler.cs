@@ -34,20 +34,14 @@ namespace OpenIZ.Core.Extensions
         /// <summary>
         /// Gets the name of the handler
         /// </summary>
-        public string Name
-        {
-            get
-            {
-                return "Boolean";
-            }
-        }
+        public string Name => "Boolean";
 
-        /// <summary>
+	    /// <summary>
         /// Gets the boolean obect from a byte array
         /// </summary>
         public object DeSerialize(byte[] extensionData)
         {
-            return BitConverter.ToBoolean(extensionData, 0);
+            return extensionData != null && BitConverter.ToBoolean(extensionData, 0);
         }
 
         /// <summary>

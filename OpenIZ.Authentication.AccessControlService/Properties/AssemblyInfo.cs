@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("OpenIZ.Authentication.OAuth2")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Mohawk College of Applied Arts and Techology")]
+[assembly: AssemblyCompany("Mohawk College of Applied Arts and Technology")]
 [assembly: AssemblyProduct("Open Immunize (http://openiz.org)")]
 [assembly: AssemblyCopyright("Copyright (C) 2016, Mohawk College of Applied Arts and Technology")]
 [assembly: AssemblyTrademark("")]

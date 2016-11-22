@@ -15,7 +15,6 @@ namespace OpenIZ.Core.Interop
     [XmlType(nameof(ServiceOptions), Namespace = "http://openiz.org/model"), JsonObject(nameof(ServiceOptions))]
     public class ServiceOptions : IdentifiedData
     {
-
         /// <summary>
         /// Services offered
         /// </summary>
@@ -37,14 +36,8 @@ namespace OpenIZ.Core.Interop
         public List<ServiceResourceOptions> Services { get; set; }
 
         /// <summary>
-        /// Modified on
-        /// </summary>
-        public override DateTimeOffset ModifiedOn
-        {
-            get
-            {
-                return DateTimeOffset.Now;
-            }
-        }
+		/// Gets or sets the modified on date time of the service options.
+		/// </summary>
+        public override DateTimeOffset ModifiedOn => DateTimeOffset.Now;
     }
 }

@@ -238,12 +238,5 @@ namespace OpenIZ.Messaging.IMSI.Test
             var expression = CreateQueryString(query.ToArray());
             Assert.AreEqual("name[Legal].component.value=Smith", expression);
         }
-
-		[TestMethod]
-		public void Test()
-		{
-			var query = QueryExpressionBuilder.BuildQuery<AlertMessage>(a => a.RcptTo.Any(r => r.UserName == "lucy") || a.From == "SYSTEM");
-			var expression = CreateQueryString(query.ToArray());
-		}
     }
 }

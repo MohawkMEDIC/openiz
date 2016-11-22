@@ -374,8 +374,8 @@ namespace OpenIZ.Protocol.Xml.Test
             // Now apply the protocol
             var acts = scp.CreateCarePlan(newborn, true);
             var jsonSerializer = new JsonViewModelSerializer();
-            String json = jsonSerializer.Serialize(newborn);
-            Assert.AreEqual(60, acts.Count());
+			string json = jsonSerializer.Serialize(newborn);
+            Assert.AreEqual(61, acts.Count());
             Assert.IsFalse(acts.Any(o => o.Protocols.Count() > 1));
 
         }
