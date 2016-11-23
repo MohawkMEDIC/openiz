@@ -71,21 +71,23 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = base.Update(context, data, principal);
 
-            if (retVal.Roles != null)
-            {
-                context.SecurityUserRoles.DeleteAllOnSubmit(context.SecurityUserRoles.Where(o => o.UserId == retVal.Key));
-                foreach (var r in retVal.Roles)
-                {
-                    r.EnsureExists(context, principal);
-                    context.SecurityUserRoles.InsertOnSubmit(new SecurityUserRole()
-                    {
-                        UserId = retVal.Key.Value,
-                        RoleId = r.Key.Value
-                    });
-                }
-            }
+	        if (retVal.Roles == null)
+	        {
+		        return retVal;
+	        }
 
-            return retVal;
+	        context.SecurityUserRoles.DeleteAllOnSubmit(context.SecurityUserRoles.Where(o => o.UserId == retVal.Key));
+	        foreach (var r in retVal.Roles)
+	        {
+		        r.EnsureExists(context, principal);
+		        context.SecurityUserRoles.InsertOnSubmit(new SecurityUserRole()
+		        {
+			        UserId = retVal.Key.Value,
+			        RoleId = r.Key.Value
+		        });
+	        }
+
+	        return retVal;
         }
 
         /// <summary>
@@ -123,8 +125,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = base.Insert(context, data, principal);
 
-	        if (retVal.Policies == null || !retVal.Policies.Any())
-	        {
+			if (retVal.Policies == null)
+			{
 		        return retVal;
 	        }
 
@@ -147,8 +149,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = base.Update(context, data, principal);
 
-	        if (retVal.Policies == null || !retVal.Policies.Any())
-	        {
+			if (retVal.Policies == null)
+			{
 		        return retVal;
 	        }
 
@@ -165,7 +167,22 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 	        return retVal;
         }
 
-    }
+		public override object FromModelInstance(Core.Model.Security.SecurityRole modelInstance, ModelDataContext context, IPrincipal princpal)
+		{
+			var domainInstance = base.FromModelInstance(modelInstance, context, princpal) as Data.SecurityRole;
+
+			domainInstance.SecurityRolePolicies.AddRange(modelInstance.Policies.Select(o => new SecurityRolePolicy
+			{
+				PolicyId = o.PolicyKey.Value,
+				PolicyAction = (int)o.GrantType,
+				RoleId = modelInstance.Key.GetValueOrDefault(Guid.NewGuid()),
+				SecurityPolicyInstanceId = Guid.NewGuid()
+			}));
+
+			return domainInstance;
+		}
+
+	}
 
     /// <summary>
     /// Security user persistence
@@ -189,8 +206,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = base.Insert(context, data, principal);
 
-	        if (retVal.Policies == null || !retVal.Policies.Any())
-	        {
+			if (retVal.Policies == null)
+			{
 		        return retVal;
 	        }
 
@@ -213,7 +230,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = base.Update(context, data, principal);
 
-	        if (retVal.Policies == null || !retVal.Policies.Any())
+	        if (retVal.Policies == null)
 	        {
 		        return retVal;
 	        }
@@ -228,11 +245,24 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 		        SecurityPolicyInstanceId = Guid.NewGuid()
 	        }));
 
-
 	        return retVal;
         }
 
-    }
+		public override object FromModelInstance(Core.Model.Security.SecurityDevice modelInstance, ModelDataContext context, IPrincipal princpal)
+		{
+			var domainInstance = base.FromModelInstance(modelInstance, context, princpal) as Data.SecurityDevice;
+
+			domainInstance.SecurityDevicePolicies.AddRange(modelInstance.Policies.Select(o => new SecurityDevicePolicy
+			{
+				PolicyId = o.PolicyKey.Value,
+				PolicyAction = (int)o.GrantType,
+				DeviceId = modelInstance.Key.GetValueOrDefault(Guid.NewGuid()),
+				SecurityPolicyInstanceId = Guid.NewGuid()
+			}));
+
+			return domainInstance;
+		}
+	}
 
     /// <summary>
     /// Security user persistence
@@ -256,8 +286,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 	    {
 		    var retVal = base.Insert(context, data, principal);
 
-		    if (retVal.Policies != null && retVal.Policies.Any())
-		    {
+			if (retVal.Policies == null)
+			{
 				context.SecurityApplicationPolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityApplicationPolicy()
 				{
 					PolicyId = o.PolicyKey.Value,
@@ -277,8 +307,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = base.Update(context, data, principal);
 
-	        if (retVal.Policies == null || !retVal.Policies.Any())
-	        {
+			if (retVal.Policies == null)
+			{
 		        return retVal;
 	        }
 
@@ -295,5 +325,20 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 	        return retVal;
         }
 
-    }
+		public override object FromModelInstance(Core.Model.Security.SecurityApplication modelInstance, ModelDataContext context, IPrincipal princpal)
+		{
+			var domainInstance = base.FromModelInstance(modelInstance, context, princpal) as Data.SecurityApplication;
+
+			domainInstance.SecurityApplicationPolicies.AddRange(modelInstance.Policies.Select(o => new SecurityApplicationPolicy
+			{
+				PolicyId = o.PolicyKey.Value,
+				PolicyAction = (int)o.GrantType,
+				ApplicationId = modelInstance.Key.GetValueOrDefault(Guid.NewGuid()),
+				SecurityPolicyInstanceId = Guid.NewGuid()
+			}));
+
+			return domainInstance;
+		}
+
+	}
 }
