@@ -347,7 +347,6 @@
     <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
     <property modelName="UpdatedByKey" domainName="UpdatedBy"/>
     <property modelName="ModifiedOn" domainName="UpdatedTime"/>
-
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="UpdatedByEntity" keyName="UpdatedBy"/>

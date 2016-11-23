@@ -277,12 +277,14 @@ namespace OpenIZ.Core.Model.Collection
             try
             {
                 currentBundle.m_modifiedOn = DateTimeOffset.Now;
-                foreach (var pi in model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<SerializationReferenceAttribute>() != null))
+                foreach (var pi in model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<SerializationReferenceAttribute>() != null || 
+                    typeof(IList).GetTypeInfo().IsAssignableFrom(p.PropertyType.GetTypeInfo()) && followList))
                 {
                     try
                     {
                         object rawValue = pi.GetValue(model);
                         if (rawValue == null) continue;
+
 
                         if (rawValue is IList && followList)
                         {
@@ -298,7 +300,7 @@ namespace OpenIZ.Core.Model.Collection
                                         lock (currentBundle.m_lockObject)
                                             if (!currentBundle.Item.Exists(o => o.Key == (itm as IdentifiedData).Key))
                                                 currentBundle.Item.Add(itm as IdentifiedData);
-                                    ProcessModel(itm as IdentifiedData, currentBundle, true);
+                                    ProcessModel(itm as IdentifiedData, currentBundle, false);
                                 }
                             }
                         }
@@ -314,7 +316,7 @@ namespace OpenIZ.Core.Model.Collection
                                     lock (currentBundle.m_lockObject)
                                         if (!currentBundle.Item.Exists(o => o.Key == iValue.Key))
                                             currentBundle.Item.Add(iValue);
-                                ProcessModel(iValue, currentBundle);
+                                ProcessModel(iValue, currentBundle, followList);
                             }
                         }
                     }

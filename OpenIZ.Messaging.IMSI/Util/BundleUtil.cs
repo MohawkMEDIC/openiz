@@ -62,17 +62,16 @@ namespace OpenIZ.Messaging.IMSI.Util
                         if (!retVal.Item.Exists(o => o?.Key == itm.Key))
                         {
                             retVal.Item.Add(itm);
-                            if(!lean)
-                                wtp.QueueUserWorkItem((o) =>
-                                {
-                                    var iddat = o as IdentifiedData;
-                                    Bundle.ProcessModel(iddat, retVal);
-                                }, itm.GetLocked());
+                            wtp.QueueUserWorkItem((o) =>
+                            {
+                                var iddat = o as IdentifiedData;
+                                Bundle.ProcessModel(iddat.GetLocked(), retVal, !lean);
+                            }, itm.GetLocked());
                         }
                     }
                     wtp.WaitOne();
                 }
-                
+
                 return retVal;
 
             }

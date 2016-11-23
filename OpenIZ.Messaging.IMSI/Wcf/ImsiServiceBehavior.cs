@@ -191,8 +191,12 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                         WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotModified;
                         return null;
                     }
-                    else if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_bundle"] == "true")
-                        return Bundle.CreateBundle(retVal);
+                    else if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_bundle"] == "true" ||
+                        WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_all"] == "true")
+                    {
+                        ObjectExpander.ExpandProperties(retVal, OpenIZ.Core.Model.Query.NameValueCollection.ParseQueryString(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.RequestUri.Query));
+                        return Bundle.CreateBundle(retVal.GetLocked());
+                    }
                     else
                     {
                         return retVal;
@@ -361,6 +365,13 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     }
                     else
                     {
+                        if (query.ContainsKey("_all") || query.ContainsKey("_expand"))
+                            using (WaitThreadPool wtp = new WaitThreadPool())
+                            {
+                                foreach (var itm in retVal)
+                                    wtp.QueueUserWorkItem((o) => ObjectExpander.ExpandProperties(o as IdentifiedData, query), itm);
+                                wtp.WaitOne();
+                            }
                         return BundleUtil.CreateBundle(retVal, totalResults, Int32.Parse(offset ?? "0"), WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_lean"] != null);
                     }
                 }
@@ -555,7 +566,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
 
                 if (existing == null)
                     throw new FileNotFoundException($"/{resourceType}/{id}/history/{versionId}");
-                else if((existing as IVersionedEntity).VersionKey != versionId && !force)
+                else if ((existing as IVersionedEntity).VersionKey != versionId && !force)
                 {
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
                     WebOperationContext.Current.OutgoingResponse.StatusDescription = ApplicationContext.Current.GetLocaleString("DBPE002");
@@ -564,7 +575,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 else if (body == null)
                     throw new ArgumentNullException(nameof(body));
                 else
-                { 
+                {
                     var applied = ApplicationContext.Current.GetService<IPatchService>().Patch(body, existing, force);
                     var data = handler.Update(applied);
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NoContent;
@@ -627,7 +638,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 };
 
                 // Get the resources which are supported
-                foreach(var itm in ResourceHandlerUtil.Current.Handlers)
+                foreach (var itm in ResourceHandlerUtil.Current.Handlers)
                 {
                     var svc = new ServiceResourceOptions()
                     {
@@ -650,7 +661,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
         }
 
-      
+
         #endregion
     }
 }
