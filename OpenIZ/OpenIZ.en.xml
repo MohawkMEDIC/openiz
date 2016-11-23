@@ -27,6 +27,7 @@
   <string name="MSGE003">Path indicates update for resource different than message content</string>
   <!-- PERSISTENCE ERRORS -->
   <string name="DBPE001">Unable to locate appropriate persistence handler</string>
+  <string name="DBPE002">Attempt to update an obsolete version</string>
   <!-- FORMAL CONSTRAINTS -->
   <string name="DBCE001">Attempt to insert an entity with KEY specified</string>
   <string name="DBCE002">Attempt to update an entity with no KEY specified</string>

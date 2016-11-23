@@ -32,7 +32,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     /// <summary>
     /// Persistence service which is used to persist patients
     /// </summary>
-    public class PatientPersistenceService : IdentifiedPersistenceService<Core.Model.Roles.Patient, Data.Patient>
+    public class PatientPersistenceService : SimpleVersionedEntityPersistenceService<Core.Model.Roles.Patient, Data.Patient>
     {
         // Entity persisters
         private PersonPersistenceService m_personPersister = new PersonPersistenceService();

@@ -88,6 +88,7 @@
     <Compile Include="ResourceHandler\SecurityUserResourceHandler.cs" />
     <Compile Include="ResourceHandler\UserEntityResourceHandler.cs" />
     <Compile Include="Util\BundleUtil.cs" />
+    <Compile Include="Util\ObjectExpander.cs" />
     <Compile Include="Wcf\Behavior\ImsiErrorEndpointBehavior.cs" />
     <Compile Include="Wcf\IImsiServiceContract.cs" />
     <Compile Include="Wcf\ImsiContentTypeHandler.cs" />

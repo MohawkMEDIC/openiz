@@ -120,9 +120,9 @@ namespace OpenIZ.Messaging.AMI.Client
         /// </summary>
         /// <param name="device">The device to be created.</param>
         /// <returns>Returns the newly created device.</returns>
-        public SecurityDevice CreateDevice(SecurityDevice device)
+        public SecurityDeviceInfo CreateDevice(SecurityDeviceInfo device)
 		{
-			return this.Client.Post<SecurityDevice, SecurityDevice>("device", this.Client.Accept, device);
+			return this.Client.Post<SecurityDeviceInfo, SecurityDeviceInfo>("device", this.Client.Accept, device);
 		}
 
 		/// <summary>
@@ -190,9 +190,9 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// </summary>
 		/// <param name="id">The id of the device to be deleted.</param>
 		/// <returns>Returns the deleted device.</returns>
-		public SecurityDevice DeleteDevice(string id)
+		public SecurityDeviceInfo DeleteDevice(string id)
 		{
-			return this.Client.Delete<SecurityDevice>($"device/{id}");
+			return this.Client.Delete<SecurityDeviceInfo>($"device/{id}");
 		}
 
 		/// <summary>
@@ -410,6 +410,16 @@ namespace OpenIZ.Messaging.AMI.Client
 		public AmiCollection<ConceptSet> GetConceptSets(Expression<Func<ConceptSet, bool>> query)
 		{
 			return this.Client.Get<AmiCollection<ConceptSet>>("conceptset", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
+		/// Gets a specific device.
+		/// </summary>
+		/// <param name=")">The id of the security device to be retrieved.</param>
+		/// <returns>Returns the security device.</returns>
+		public SecurityDeviceInfo GetDevice(string id)
+		{
+			return this.Client.Get<SecurityDeviceInfo>($"device/{id}");
 		}
 
 		/// <summary>

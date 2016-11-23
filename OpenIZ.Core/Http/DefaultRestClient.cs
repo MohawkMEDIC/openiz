@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using OpenIZ.Core.Http.Description;
 using OpenIZ.Core.Security;
+using OpenIZ.Core.Model.Query;
 
 namespace OpenIZ.Core.Http
 {
@@ -77,7 +78,7 @@ namespace OpenIZ.Core.Http
         /// <summary>
         /// Create HTTP Request object
         /// </summary>
-        protected override WebRequest CreateHttpRequest(string url, params KeyValuePair<string, object>[] query)
+        protected override WebRequest CreateHttpRequest(string url, NameValueCollection query)
         {
             var retVal = (HttpWebRequest)base.CreateHttpRequest(url, query);
 
@@ -103,7 +104,7 @@ namespace OpenIZ.Core.Http
         /// <param name="query">Query.</param>
         /// <typeparam name="TBody">The 1st type parameter.</typeparam>
         /// <typeparam name="TResult">The 2nd type parameter.</typeparam>
-        protected override TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, WebHeaderCollection requestHeaders, out WebHeaderCollection responseHeaders, TBody body, params KeyValuePair<string, object>[] query)
+        protected override TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, WebHeaderCollection requestHeaders, out WebHeaderCollection responseHeaders, TBody body, NameValueCollection query)
         {
 
             if (String.IsNullOrEmpty(method))

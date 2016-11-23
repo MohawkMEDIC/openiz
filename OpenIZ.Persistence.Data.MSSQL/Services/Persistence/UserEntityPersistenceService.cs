@@ -31,7 +31,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     /// <summary>
     /// Represents a persister that can read/write user entities
     /// </summary>
-    public class UserEntityPersistenceService : IdentifiedPersistenceService<Core.Model.Entities.UserEntity, Data.UserEntity>
+    public class UserEntityPersistenceService : SimpleVersionedEntityPersistenceService<Core.Model.Entities.UserEntity, Data.UserEntity>
     {
 
         // Entity persisters
