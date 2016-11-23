@@ -56,6 +56,7 @@ using OpenIZ.Core.Exceptions;
 using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Interop;
+using OpenIZ.Core;
 
 namespace OpenIZ.Messaging.IMSI.Wcf
 {
@@ -451,10 +452,10 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 retCode = System.Net.HttpStatusCode.Gone;
             else if (e is FileNotFoundException)
                 retCode = System.Net.HttpStatusCode.NotFound;
-            else if (e is ConstraintException || e is PatchException)
-                retCode = (HttpStatusCode)422;
             else if (e is PatchAssertionException)
                 retCode = HttpStatusCode.Conflict;
+            else if (e is ConstraintException || e is PatchException)
+                retCode = (HttpStatusCode)422;
             else
                 retCode = System.Net.HttpStatusCode.InternalServerError;
 
@@ -550,19 +551,21 @@ namespace OpenIZ.Messaging.IMSI.Wcf
 
                 // Next we get the current version
                 var existing = handler.Get(Guid.Parse(id), Guid.Empty);
+                var force = Convert.ToBoolean(WebOperationContext.Current.IncomingRequest.Headers["X-Patch-Force"] ?? "false");
 
                 if (existing == null)
                     throw new FileNotFoundException($"/{resourceType}/{id}/history/{versionId}");
-                else if((existing as IVersionedEntity).VersionKey != versionId)
+                else if((existing as IVersionedEntity).VersionKey != versionId && !force)
                 {
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                    WebOperationContext.Current.OutgoingResponse.StatusDescription = ApplicationContext.Current.GetLocaleString("DBPE002");
                     return;
                 }
                 else if (body == null)
                     throw new ArgumentNullException(nameof(body));
                 else
-                {
-                    var applied = ApplicationContext.Current.GetService<IPatchService>().Patch(body, existing, Convert.ToBoolean(WebOperationContext.Current.IncomingRequest.Headers["X-Patch-Force"] ?? "false"));
+                { 
+                    var applied = ApplicationContext.Current.GetService<IPatchService>().Patch(body, existing, force);
                     var data = handler.Update(applied);
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NoContent;
                     WebOperationContext.Current.OutgoingResponse.ETag = applied.Tag;

@@ -32,13 +32,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     /// <summary>
     /// Entity derived persistence services
     /// </summary>
-    public class EntityDerivedPersistenceService<TModel, TData> : IdentifiedPersistenceService<TModel, TData>
+    public class EntityDerivedPersistenceService<TModel, TData> : SimpleVersionedEntityPersistenceService<TModel, TData>
         where TModel : Core.Model.Entities.Entity, new()
         where TData : class, IDbIdentified, new()
     {
 
         // Entity persister
         protected EntityPersistenceService m_entityPersister = new EntityPersistenceService();
+
         
         /// <summary>
         /// Insert the specified TModel into the database

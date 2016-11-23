@@ -34,7 +34,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     /// <summary>
     /// Represents a persistence service which is derived from an act
     /// </summary>
-    public class ActDerivedPersistenceService<TModel, TData> : IdentifiedPersistenceService<TModel, TData>
+    public class ActDerivedPersistenceService<TModel, TData> : SimpleVersionedEntityPersistenceService<TModel, TData>
         where TModel : Core.Model.Acts.Act, new()
         where TData : class, IDbIdentified, new()
     {

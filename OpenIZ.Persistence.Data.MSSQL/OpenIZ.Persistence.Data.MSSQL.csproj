@@ -104,6 +104,7 @@
     <Compile Include="Services\Persistence\ObservationPersistenceService.cs" />
     <Compile Include="Services\Persistence\ProviderPersistenceService.cs" />
     <Compile Include="Services\Persistence\SecurityPersistenceServices.cs" />
+    <Compile Include="Services\Persistence\SimpleVersionedEntityPersistenceService.cs" />
     <Compile Include="Services\Persistence\SubstanceAdministrationPersistenceService.cs" />
     <Compile Include="Services\SqlServerPersistenceService.cs" />
     <Compile Include="Services\Persistence\ApplicationEntityPersistenceService.cs" />

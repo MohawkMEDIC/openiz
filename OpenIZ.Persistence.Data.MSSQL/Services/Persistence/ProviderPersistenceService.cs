@@ -31,7 +31,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     /// <summary>
     /// Provider persistence service
     /// </summary>
-    public class ProviderPersistenceService : IdentifiedPersistenceService<Core.Model.Roles.Provider, Data.Provider>
+    public class ProviderPersistenceService : SimpleVersionedEntityPersistenceService<Core.Model.Roles.Provider, Data.Provider>
     {
         // Entity persisters
         private PersonPersistenceService m_personPersister = new PersonPersistenceService();
