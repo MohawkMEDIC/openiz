@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -44,5 +45,13 @@ namespace OpenIZ.Core.Model.Attributes
         /// Identifies where the serialization information can be found
         /// </summary>
         public String  RedirectProperty { get; set; }
+
+        /// <summary>
+        /// Get property from the type
+        /// </summary>
+        public PropertyInfo GetProperty(Type hostType)
+        {
+            return hostType.GetRuntimeProperty(this.RedirectProperty);
+        }
     }
 }

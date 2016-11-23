@@ -70,14 +70,17 @@ namespace OpenIZ.Core.Http
 		/// </summary>
 		/// <param name="query"></param>
 		/// <returns></returns>
-		public static String CreateQueryString(params KeyValuePair<String, Object>[] query)
+		public static String CreateQueryString(NameValueCollection query)
 		{
 			String queryString = String.Empty;
 			foreach (var kv in query)
 			{
-				queryString += String.Format("{0}={1}", kv.Key, Uri.EscapeDataString(kv.Value.ToString()));
-				if (!kv.Equals(query.Last()))
-					queryString += "&";
+                foreach (var v in kv.Value)
+                {
+                    queryString += String.Format("{0}={1}", kv.Key, Uri.EscapeDataString(v));
+                    if (!kv.Equals(query.Last()))
+                        queryString += "&";
+                }
 			}
 			return queryString;
 		}
@@ -86,7 +89,7 @@ namespace OpenIZ.Core.Http
 		/// Create the HTTP request
 		/// </summary>
 		/// <param name="url">URL.</param>
-		protected virtual WebRequest CreateHttpRequest(String resourceName, params KeyValuePair<String, Object>[] query)
+		protected virtual WebRequest CreateHttpRequest(String resourceName, NameValueCollection query)
 		{
 			// URL is relative to base address
 
@@ -210,8 +213,8 @@ namespace OpenIZ.Core.Http
 
                 // Invoke
                 WebHeaderCollection responseHeaders = null;
-				var retVal = this.InvokeInternal<TBody, TResult>(method, url, contentType, requestEventArgs.AdditionalHeaders, out responseHeaders, body, query);
-				this.Responded?.Invoke(this, new RestResponseEventArgs(method, url, parameters, contentType, retVal, 200));
+				var retVal = this.InvokeInternal<TBody, TResult>(requestEventArgs.Method, requestEventArgs.Url, requestEventArgs.ContentType, requestEventArgs.AdditionalHeaders, out responseHeaders, body, requestEventArgs.Query);
+				this.Responded?.Invoke(this, new RestResponseEventArgs(requestEventArgs.Method, requestEventArgs.Url, requestEventArgs.Query, requestEventArgs.ContentType, retVal, 200));
 				return retVal;
 			}
 			catch (Exception e)
@@ -232,7 +235,7 @@ namespace OpenIZ.Core.Http
 		/// <param name="query">Query.</param>
 		/// <typeparam name="TBody">The 1st type parameter.</typeparam>
 		/// <typeparam name="TResult">The 2nd type parameter.</typeparam>
-		protected abstract TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, WebHeaderCollection requestHeaders, out WebHeaderCollection responseHeaders, TBody body, params KeyValuePair<string, object>[] query);
+		protected abstract TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, WebHeaderCollection requestHeaders, out WebHeaderCollection responseHeaders, TBody body, NameValueCollection query);
 
 		/// <summary>
 		/// Executes a post against the url
@@ -381,7 +384,7 @@ namespace OpenIZ.Core.Http
                 requestHeaders[HttpRequestHeader.IfMatch] = ifMatch;
 
                 // Invoke
-                this.InvokeInternal<TPatch, Object>("PATCH", url, contentType, requestHeaders, out responseHeaders, patch);
+                this.InvokeInternal<TPatch, Object>("PATCH", url, contentType, requestHeaders, out responseHeaders, patch, null);
 
                 // Return the ETag of the 
                 return responseHeaders["ETag"];
@@ -418,7 +421,7 @@ namespace OpenIZ.Core.Http
                 }
 
                 // Invoke
-                var httpWebReq = this.CreateHttpRequest(resourceName, query);
+                var httpWebReq = this.CreateHttpRequest(resourceName, requestEventArgs.Query);
                 httpWebReq.Method = "HEAD";
 
                 // Get the responst
