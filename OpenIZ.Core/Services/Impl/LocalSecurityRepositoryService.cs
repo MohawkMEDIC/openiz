@@ -208,6 +208,12 @@ namespace OpenIZ.Core.Services.Impl
                 retVal.UserClass = userInfo.UserClass;
 				pers.Update(retVal, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 			}
+
+			this.CreateUserEntity(new UserEntity
+			{
+				SecurityUser = retVal
+			});
+
 			return retVal;
 		}
 

@@ -136,13 +136,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the created assigning authority.</returns>
 		[WebInvoke(UriTemplate = "/assigningAuthority", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
         AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo);
-        /// <summary>
-        /// Creates a device in the IMS.
-        /// </summary>
-        /// <param name="device">The device to be created.</param>
-        /// <returns>Returns the newly created device.</returns>
-        [WebInvoke(UriTemplate = "/device", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-		SecurityDevice CreateDevice(SecurityDevice device);
+
+		/// <summary>
+		/// Creates a device in the IMS.
+		/// </summary>
+		/// <param name="deviceInfo">The device to be created.</param>
+		/// <returns>Returns the newly created device.</returns>
+		[WebInvoke(UriTemplate = "/device", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		SecurityDeviceInfo CreateDevice(SecurityDeviceInfo deviceInfo);
 
 		/// <summary>
 		/// Creates a diagnostic report.
@@ -215,7 +216,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="deviceId">The id of the device to be deleted.</param>
 		/// <returns>Returns the deleted device.</returns>
 		[WebInvoke(UriTemplate = "/device/{deviceId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-		SecurityDevice DeleteDevice(string deviceId);
+		SecurityDeviceInfo DeleteDevice(string deviceId);
 
 		/// <summary>
 		/// Deletes a security policy.
@@ -339,11 +340,19 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		AmiCollection<SubmissionInfo> GetCsrs();
 
 		/// <summary>
+		/// Gets a specific device.
+		/// </summary>
+		/// <param name="deviceId">The id of the security device to be retrieved.</param>
+		/// <returns>Returns the security device.</returns>
+		[WebGet(UriTemplate = "/device/{deviceId}", BodyStyle = WebMessageBodyStyle.Bare)]
+		SecurityDeviceInfo GetDevice(string deviceId);
+
+		/// <summary>
 		/// Gets a list of devices.
 		/// </summary>
 		/// <returns>Returns a list of devices.</returns>
 		[WebGet(UriTemplate = "/device", BodyStyle = WebMessageBodyStyle.Bare)]
-		AmiCollection<SecurityDevice> GetDevices();
+		AmiCollection<SecurityDeviceInfo> GetDevices();
 
 		/// <summary>
 		/// Gets a list of policies.

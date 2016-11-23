@@ -56,7 +56,12 @@
     <Compile Include="Configuration\AmiConfigurationSectionHandler.cs" />
     <Compile Include="Configuration\CertificationAuthorityConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Wcf\AmiBehavior.Applet.cs" />
+    <Compile Include="Wcf\AmiBehavior.Application.cs" />
     <Compile Include="Wcf\AmiBehavior.cs" />
+    <Compile Include="Wcf\AmiBehavior.Alert.cs" />
+    <Compile Include="Wcf\AmiBehavior.SecurityPolicy.cs" />
+    <Compile Include="Wcf\AmiBehavior.SecurityDevice.cs" />
     <Compile Include="Wcf\AmiBehavior.SecurityRole.cs" />
     <Compile Include="Wcf\Behavior\AmiRestEndpointBehavior.cs" />
     <Compile Include="Wcf\Behavior\AmiSerializerOperationBehavior.cs" />
