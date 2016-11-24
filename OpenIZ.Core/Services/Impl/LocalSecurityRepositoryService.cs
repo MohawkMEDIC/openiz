@@ -30,7 +30,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Cryptography;
 using System.Security.Principal;
+using System.Text;
 using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Core.Services.Impl
@@ -77,7 +79,7 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<SecurityApplication>)} not found");
 			}
 
-			application.ApplicationSecret = ApplicationContext.Current.GetService<IPasswordHashingService>().EncodePassword(application.ApplicationSecret);
+			application.ApplicationSecret = this.Encode(application.ApplicationSecret);
 
 			var createdApplication = persistenceService.Insert(application, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
@@ -115,7 +117,7 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<SecurityDevice>)} not found");
 			}
 
-			device.DeviceSecret = ApplicationContext.Current.GetService<IPasswordHashingService>().EncodePassword(device.DeviceSecret);
+			device.DeviceSecret = this.Encode(device.DeviceSecret);
 
 			var createdDevice = persistenceService.Insert(device, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
@@ -551,6 +553,17 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException("Missing persistence service");
 			int t = 0;
 			return pers.Query(o => o.SecurityUser.UserName == identity.Name, 0, 1, AuthenticationContext.Current.Principal, out t).FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Encodes a string using SHA-256.
+		/// </summary>
+		/// <param name="value">The string to be encoded.</param>
+		/// <returns>Returns the encoded string.</returns>
+		private string Encode(string value)
+		{
+			var hasher = SHA256.Create();
+			return BitConverter.ToString(hasher.ComputeHash(Encoding.UTF8.GetBytes(value))).Replace("-", "").ToLower();
 		}
 
 		/// <summary>
