@@ -77,6 +77,8 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<SecurityApplication>)} not found");
 			}
 
+			application.ApplicationSecret = ApplicationContext.Current.GetService<IPasswordHashingService>().EncodePassword(application.ApplicationSecret);
+
 			var createdApplication = persistenceService.Insert(application, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
 			var applicationEntityPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ApplicationEntity>>();
@@ -112,6 +114,8 @@ namespace OpenIZ.Core.Services.Impl
 			{
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<SecurityDevice>)} not found");
 			}
+
+			device.DeviceSecret = ApplicationContext.Current.GetService<IPasswordHashingService>().EncodePassword(device.DeviceSecret);
 
 			var createdDevice = persistenceService.Insert(device, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
