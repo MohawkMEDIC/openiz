@@ -393,26 +393,6 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
-		/// Gets a list of concepts.
-		/// </summary>
-		/// <param name="query">The query expression to use to find the concepts.</param>
-		/// <returns>Returns a collection of concepts which match the specified query.</returns>
-		public AmiCollection<Concept> GetConcepts(Expression<Func<Concept, bool>> query)
-		{
-			return this.Client.Get<AmiCollection<Concept>>("concept", QueryExpressionBuilder.BuildQuery(query).ToArray());
-		}
-
-		/// <summary>
-		/// Gets a list of concept sets.
-		/// </summary>
-		/// <param name="query">The query expression to use to find the concept sets.</param>
-		/// <returns>Returns a collection of concept sets which match the specified query.</returns>
-		public AmiCollection<ConceptSet> GetConceptSets(Expression<Func<ConceptSet, bool>> query)
-		{
-			return this.Client.Get<AmiCollection<ConceptSet>>("conceptset", QueryExpressionBuilder.BuildQuery(query).ToArray());
-		}
-
-		/// <summary>
 		/// Gets a specific device.
 		/// </summary>
 		/// <param name=")">The id of the security device to be retrieved.</param>
@@ -427,9 +407,9 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// </summary>
 		/// <param name="query">The query expression to use to find the devices.</param>
 		/// <returns>Returns a collection of devices which match the specified query.</returns>
-		public AmiCollection<SecurityDevice> GetDevices(Expression<Func<SecurityDevice, bool>> query)
+		public AmiCollection<SecurityDeviceInfo> GetDevices(Expression<Func<SecurityDeviceInfo, bool>> query)
 		{
-			return this.Client.Get<AmiCollection<SecurityDevice>>("device", QueryExpressionBuilder.BuildQuery(query).ToArray());
+			return this.Client.Get<AmiCollection<SecurityDeviceInfo>>("device", QueryExpressionBuilder.BuildQuery(query).ToArray());
 		}
 
 		/// <summary>

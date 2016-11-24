@@ -1,24 +1,31 @@
 ﻿/*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: justi
  * Date: 2016-8-2
  */
+
+using OpenIZ.Core.Alert.Alerting;
+using OpenIZ.Core.Applets.Model;
+using OpenIZ.Core.Interop;
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.AMI.Alerting;
+using OpenIZ.Core.Model.AMI.Applet;
 using OpenIZ.Core.Model.AMI.Auth;
+using OpenIZ.Core.Model.AMI.BusinessRules;
 using OpenIZ.Core.Model.AMI.DataTypes;
 using OpenIZ.Core.Model.AMI.Diagnostics;
 using OpenIZ.Core.Model.AMI.Security;
@@ -28,12 +35,6 @@ using System;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Xml.Schema;
-using OpenIZ.Core.Model.AMI.Applet;
-using OpenIZ.Core.Alert.Alerting;
-using OpenIZ.Core.Applets.Model;
-using OpenIZ.Core.Interop;
-using OpenIZ.Core.Model;
-using OpenIZ.Core.Model.AMI.BusinessRules;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -129,13 +130,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the created security application.</returns>
 		[WebInvoke(UriTemplate = "/application", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		SecurityApplicationInfo CreateApplication(SecurityApplicationInfo applicationInfo);
+
 		/// <summary>
 		/// Creates an assigning authority.
 		/// </summary>
 		/// <param name="assigningAuthorityInfo">The assigning authority to be created.</param>
 		/// <returns>Returns the created assigning authority.</returns>
 		[WebInvoke(UriTemplate = "/assigningAuthority", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-        AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo);
+		AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo);
 
 		/// <summary>
 		/// Creates a device in the IMS.
@@ -471,14 +473,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/application/{applicationId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		SecurityApplicationInfo UpdateApplication(string applicationId, SecurityApplicationInfo applicationInfo);
 
-        /// <summary>
-        /// Updates an assigning authority.
-        /// </summary>
-        /// <param name="assigningAuthorityId">The id of the assigning authority to be updated.</param>
-        /// <param name="assigningAuthorityInfo">The assigning authority containing the updated information.</param>
-        /// <returns>Returns the updated assigning authority.</returns>
-        [WebInvoke(UriTemplate = "/assigningAuthority/{assigningAuthorityId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
-        AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo);
+		/// <summary>
+		/// Updates an assigning authority.
+		/// </summary>
+		/// <param name="assigningAuthorityId">The id of the assigning authority to be updated.</param>
+		/// <param name="assigningAuthorityInfo">The assigning authority containing the updated information.</param>
+		/// <returns>Returns the updated assigning authority.</returns>
+		[WebInvoke(UriTemplate = "/assigningAuthority/{assigningAuthorityId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo);
 
 		/// <summary>
 		/// Updates a device.
