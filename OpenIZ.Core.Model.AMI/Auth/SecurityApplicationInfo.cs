@@ -74,7 +74,7 @@ namespace OpenIZ.Core.Model.AMI.Auth
 		/// <summary>
 		/// Gets or sets the application secret of the application.
 		/// </summary>
-		[XmlElement("name")]
+		[XmlElement("applicationSecret")]
 		public string ApplicationSecret { get; set; }
 
 		/// <summary>
