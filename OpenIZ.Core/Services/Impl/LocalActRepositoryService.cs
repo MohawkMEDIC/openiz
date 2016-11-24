@@ -64,7 +64,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<TAct>)} not found");
 			}
 
 			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TAct>();
@@ -83,12 +83,12 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<TAct>)} not found");
 			}
 
 			var businessRulesService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
 
-			insert = businessRulesService?.BeforeInsert(insert);
+			insert = businessRulesService != null ? businessRulesService.BeforeInsert(insert) : insert;
 
 			insert = persistenceService.Insert(insert, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
@@ -104,7 +104,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<TAct>)} not found");
 			}
 
 			var act = persistenceService.Get<Guid>(new Identifier<Guid>(key), AuthenticationContext.Current.Principal, true);
@@ -116,7 +116,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TAct>();
 
-			act = businessRulesService?.BeforeObsolete(act);
+			act = businessRulesService != null ? businessRulesService.BeforeObsolete(act) : act;
 
 			act = persistenceService.Obsolete(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
@@ -141,7 +141,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			try
 			{
-				act = businessRulesService?.BeforeUpdate(act);
+				act = businessRulesService != null ? businessRulesService.BeforeUpdate(act) : act;
 
 				act = persistenceService.Update(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
@@ -149,7 +149,7 @@ namespace OpenIZ.Core.Services.Impl
 			}
 			catch (DataPersistenceException)
 			{
-				act = businessRulesService?.BeforeInsert(act);
+				act = businessRulesService != null ? businessRulesService.BeforeInsert(act) : act;
 
 				act = persistenceService.Insert(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
