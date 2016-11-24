@@ -68,13 +68,13 @@ namespace OpenIZ.Core.Model.AMI.Auth
 		/// <summary>
 		/// Gets or sets the name of the application.
 		/// </summary>
-		[XmlAttribute("name")]
+		[XmlElement("name")]
 		public string Name { get; set; }
 
 		/// <summary>
 		/// Gets or sets the application secret of the application.
 		/// </summary>
-		[XmlAttribute("applicationSecret")]
+		[XmlElement("applicationSecret")]
 		public string ApplicationSecret { get; set; }
 
 		/// <summary>
