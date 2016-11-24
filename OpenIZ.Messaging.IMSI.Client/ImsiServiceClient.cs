@@ -68,11 +68,11 @@ namespace OpenIZ.Messaging.IMSI.Client
 			// Create with version?
 			if (data.Key != null)
 			{
-				return this.Client.Post<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key), this.Client.Accept, data);
+				return this.Client.Post<Bundle, TModel>(String.Format("{0}/{1}", resourceName, data.Key), this.Client.Accept, Bundle.CreateBundle(data));
 			}
 			else
 			{
-				return this.Client.Post<TModel, TModel>(resourceName, this.Client.Accept, data);
+				return this.Client.Post<Bundle, TModel>(resourceName, this.Client.Accept, Bundle.CreateBundle(data));
 			}
 		}
 
@@ -210,7 +210,7 @@ namespace OpenIZ.Messaging.IMSI.Client
 			// Create with version?
 			if (data.Key != null)
 			{
-				return this.Client.Put<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key.Value), this.Client.Accept, data);
+				return this.Client.Put<Bundle, TModel>(String.Format("{0}/{1}", resourceName, data.Key.Value), this.Client.Accept, Bundle.CreateBundle(data));
 			}
 			else
 			{

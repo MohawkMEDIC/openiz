@@ -48,22 +48,22 @@ namespace OpenIZ.Core.Services
 		/// <returns>Returns a list of concept classes who match the specified query.</returns>
 		IEnumerable<ConceptClass> FindConceptClasses(Expression<Func<ConceptClass, bool>> query, int offset, int? count, out int totalCount);
 
-        /// <summary>
-        /// Queries for concept names.
-        /// </summary>
-        /// <param name="query">The query to use to search for concept names.</param>
-        /// <returns>Returns a list of concept names.</returns>
-        IEnumerable<ConceptName> FindConceptNames(Expression<Func<ConceptName, bool>> query);
+        ///// <summary>
+        ///// Queries for concept names.
+        ///// </summary>
+        ///// <param name="query">The query to use to search for concept names.</param>
+        ///// <returns>Returns a list of concept names.</returns>
+        //IEnumerable<ConceptName> FindConceptNames(Expression<Func<ConceptName, bool>> query);
 
-        /// <summary>
-        /// Queries for concept names.
-        /// </summary>
-        /// <param name="query">The query to use to search for concept names.</param>
-        /// <param name="offset">The offset of the query.</param>
-        /// <param name="count">The count of the query.</param>
-        /// <param name="totalCount">The total count of the query.</param>
-        /// <returns>Returns a list of concept names.</returns>
-        IEnumerable<ConceptName> FindConceptNames(Expression<Func<ConceptName, bool>> query, int offset, int? count, out int totalCount);
+        ///// <summary>
+        ///// Queries for concept names.
+        ///// </summary>
+        ///// <param name="query">The query to use to search for concept names.</param>
+        ///// <param name="offset">The offset of the query.</param>
+        ///// <param name="count">The count of the query.</param>
+        ///// <param name="totalCount">The total count of the query.</param>
+        ///// <returns>Returns a list of concept names.</returns>
+        //IEnumerable<ConceptName> FindConceptNames(Expression<Func<ConceptName, bool>> query, int offset, int? count, out int totalCount);
 
 
         /// <summary>
@@ -150,23 +150,22 @@ namespace OpenIZ.Core.Services
         /// <returns>Returns a list of reference terms who match the specified query.</returns>
         IEnumerable<ReferenceTerm> FindReferenceTerms(Expression<Func<ReferenceTerm, bool>> query, int offset, int? count, out int totalCount);
 
+        ///// <summary>
+        ///// Searches for a reference term name using a given query.
+        ///// </summary>
+        ///// <param name="query">The query to use for searching for the reference term name.</param>
+        ///// <returns>Returns a list of reference term names who match the specified query.</returns>
+        //IEnumerable<ReferenceTermName> FindReferenceTermNames(Expression<Func<ReferenceTermName, bool>> query);
 
-        /// <summary>
-        /// Searches for a reference term name using a given query.
-        /// </summary>
-        /// <param name="query">The query to use for searching for the reference term name.</param>
-        /// <returns>Returns a list of reference term names who match the specified query.</returns>
-        IEnumerable<ReferenceTermName> FindReferenceTermNames(Expression<Func<ReferenceTermName, bool>> query);
-
-        /// <summary>
-        /// Searches for a reference term names using a given query.
-        /// </summary>
-        /// <param name="query">The query to use for searching for the reference term names.</param>
-        /// <param name="count">The count of the reference term names to return.</param>
-        /// <param name="offset">The offset for the search results.</param>
-        /// <param name="totalCount">The total count of the search results.</param>
-        /// <returns>Returns a list of reference term names who match the specified query.</returns>
-        IEnumerable<ReferenceTermName> FindReferenceTermNames(Expression<Func<ReferenceTermName, bool>> query, int offset, int? count, out int totalCount);
+        ///// <summary>
+        ///// Searches for a reference term names using a given query.
+        ///// </summary>
+        ///// <param name="query">The query to use for searching for the reference term names.</param>
+        ///// <param name="count">The count of the reference term names to return.</param>
+        ///// <param name="offset">The offset for the search results.</param>
+        ///// <param name="totalCount">The total count of the search results.</param>
+        ///// <returns>Returns a list of reference term names who match the specified query.</returns>
+        //IEnumerable<ReferenceTermName> FindReferenceTermNames(Expression<Func<ReferenceTermName, bool>> query, int offset, int? count, out int totalCount);
 
         /// <summary>
         /// Gets the specified concept.
@@ -190,12 +189,12 @@ namespace OpenIZ.Core.Services
 		/// <returns>Returns the concept class.</returns>
 		ConceptClass GetConceptClass(Guid id);
 
-        /// <summary>
-        /// Gets a concept name.
-        /// </summary>
-        /// <param name="id">The id of the concept name to retrieve.</param>
-        /// <returns>Returns the concept name.</returns>
-        ConceptName GetConceptName(Guid id);
+        ///// <summary>
+        ///// Gets a concept name.
+        ///// </summary>
+        ///// <param name="id">The id of the concept name to retrieve.</param>
+        ///// <returns>Returns the concept name.</returns>
+        //ConceptName GetConceptName(Guid id);
 
         /// <summary>
         /// Gets a concept reference term by id.
@@ -225,12 +224,12 @@ namespace OpenIZ.Core.Services
         /// <returns>Returns the reference term.</returns>
         ReferenceTerm GetReferenceTerm(Guid id);
 
-        /// <summary>
-        /// Gets a reference term name.
-        /// </summary>
-        /// <param name="id">The id of the reference term name to retrieve.</param>
-        /// <returns>Returns the reference term name.</returns>
-        ReferenceTermName GetReferenceTermName(Guid id);
+        ///// <summary>
+        ///// Gets a reference term name.
+        ///// </summary>
+        ///// <param name="id">The id of the reference term name to retrieve.</param>
+        ///// <returns>Returns the reference term name.</returns>
+        //ReferenceTermName GetReferenceTermName(Guid id);
 
         /// <summary>
         /// Returns a value which indicates whether <paramref name="a"/> implies <paramref name="b"/>
@@ -254,12 +253,12 @@ namespace OpenIZ.Core.Services
 		/// <returns>Returns the newly inserted concept class.</returns>
 		ConceptClass InsertConceptClass(ConceptClass conceptClass);
 
-        /// <summary>
-        /// Inserts a concept name.
-        /// </summary>
-        /// <param name="conceptName">The concept name to be inserted.</param>
-        /// <returns>Returns the newly inserted concept name.</returns>
-        ConceptName InsertConceptName(ConceptName conceptName);
+        ///// <summary>
+        ///// Inserts a concept name.
+        ///// </summary>
+        ///// <param name="conceptName">The concept name to be inserted.</param>
+        ///// <returns>Returns the newly inserted concept name.</returns>
+        //ConceptName InsertConceptName(ConceptName conceptName);
 
         /// <summary>
         /// Inserts a concept reference term.
@@ -283,12 +282,12 @@ namespace OpenIZ.Core.Services
         /// <returns>Returns the inserted reference term.</returns>
         ReferenceTerm InsertReferenceTerm(ReferenceTerm referenceTerm);
 
-        /// <summary>
-        /// Inserts a reference term name.
-        /// </summary>
-        /// <param name="referenceTermName">The reference term name to be inserted.</param>
-        /// <returns>Returns the inserted reference term name.</returns>
-        ReferenceTermName InsertReferenceTermName(ReferenceTermName referenceTermName);
+        ///// <summary>
+        ///// Inserts a reference term name.
+        ///// </summary>
+        ///// <param name="referenceTermName">The reference term name to be inserted.</param>
+        ///// <returns>Returns the inserted reference term name.</returns>
+        //ReferenceTermName InsertReferenceTermName(ReferenceTermName referenceTermName);
 
 
         /// <summary>
@@ -338,12 +337,12 @@ namespace OpenIZ.Core.Services
 		/// <returns>Returns the saved concept class.</returns>
 		ConceptClass SaveConceptClass(ConceptClass conceptClass);
 
-        /// <summary>
-        /// Inserts or updates a concept name.
-        /// </summary>
-        /// <param name="conceptName">The concept name to be saved.</param>
-        /// <returns>Returns the saved concept name.</returns>
-        ConceptName SaveConceptName(ConceptName conceptName);
+        ///// <summary>
+        ///// Inserts or updates a concept name.
+        ///// </summary>
+        ///// <param name="conceptName">The concept name to be saved.</param>
+        ///// <returns>Returns the saved concept name.</returns>
+        //ConceptName SaveConceptName(ConceptName conceptName);
 
         /// <summary>
         /// Inserts or updates a concept reference term.
@@ -366,11 +365,11 @@ namespace OpenIZ.Core.Services
         /// <returns>Returns a reference term.</returns>
         ReferenceTerm SaveReferenceTerm(ReferenceTerm referenceTerm);
 
-        /// <summary>
-        /// Inserts or updates a reference term name.
-        /// </summary>
-        /// <param name="referenceTermName">The reference term name to be saved.</param>
-        /// <returns>Returns a reference term name.</returns>
-        ReferenceTermName SaveReferenceTermName(ReferenceTermName referenceTermName);
+        ///// <summary>
+        ///// Inserts or updates a reference term name.
+        ///// </summary>
+        ///// <param name="referenceTermName">The reference term name to be saved.</param>
+        ///// <returns>Returns a reference term name.</returns>
+        //ReferenceTermName SaveReferenceTermName(ReferenceTermName referenceTermName);
     }
 }

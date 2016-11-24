@@ -87,7 +87,6 @@ namespace OpenIZ.BusinessRules.Core
 					this.tracer.TraceEvent(TraceEventType.Information, 0, "Adding file {0}", file);
 					// TODO: add the files to the business rules engine.
 				}
-
 				this.Started?.Invoke(this, EventArgs.Empty);
 				return true;
 			}

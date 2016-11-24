@@ -427,9 +427,9 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// </summary>
 		/// <param name="query">The query expression to use to find the devices.</param>
 		/// <returns>Returns a collection of devices which match the specified query.</returns>
-		public AmiCollection<SecurityDevice> GetDevices(Expression<Func<SecurityDevice, bool>> query)
+		public AmiCollection<SecurityDeviceInfo> GetDevices(Expression<Func<SecurityDeviceInfo, bool>> query)
 		{
-			return this.Client.Get<AmiCollection<SecurityDevice>>("device", QueryExpressionBuilder.BuildQuery(query).ToArray());
+			return this.Client.Get<AmiCollection<SecurityDeviceInfo>>("device", QueryExpressionBuilder.BuildQuery(query).ToArray());
 		}
 
 		/// <summary>

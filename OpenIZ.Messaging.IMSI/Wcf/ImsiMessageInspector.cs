@@ -34,6 +34,7 @@ using System.Xml.Serialization;
 using System.Reflection;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Wcf.Compression;
+using MARC.HI.EHRS.SVC.Core;
 
 namespace OpenIZ.Messaging.IMSI.Wcf
 {
@@ -65,17 +66,18 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// </summary>
         public object AfterReceiveRequest(ref Message request, IClientChannel channel, InstanceContext instanceContext)
         {
+
             try
             {
+
                 // Handle compressed requests
                 var compressionScheme = CompressionUtil.GetCompressionScheme(WebOperationContext.Current.IncomingRequest.Headers[System.Net.HttpRequestHeader.ContentEncoding]);
                 if (compressionScheme != null)
                     CompressionUtil.DeCompressMessage(ref request, compressionScheme, this.GetContentFormat(request));
 
-                
                 return null;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
                 return null;
@@ -134,7 +136,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                         byte[] messageContent = null;
 
                         // Read binary contents of the message
-                        switch(this.GetContentFormat(reply))
+                        switch (this.GetContentFormat(reply))
                         {
                             case WebContentFormat.Default:
                             case WebContentFormat.Xml:
@@ -168,7 +170,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     }
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
             }

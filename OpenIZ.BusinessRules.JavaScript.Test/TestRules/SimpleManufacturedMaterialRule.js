@@ -1,5 +1,4 @@
-﻿/// <reference href="openizmodel.js"/>
-
+﻿
 /*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  *

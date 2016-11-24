@@ -117,7 +117,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         public CodeNamespace CreateCodeNamespace(String name, Assembly asm)
         {
             CodeNamespace retVal = new CodeNamespace(name);
-            retVal.Imports.Add(new CodeNamespaceImport("OpenIZ.Core.Model;"));
+            retVal.Imports.Add(new CodeNamespaceImport("OpenIZ.Core.Model"));
 
             foreach (var t in asm.GetTypes().Where(o => o.GetCustomAttribute<JsonObjectAttribute>() != null))
             {
@@ -392,8 +392,8 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 if (typeof(IIdentifiedEntity).IsAssignableFrom(pi.PropertyType.StripGeneric()))
                 {
                     var shouldForceLoadCondition = new CodeBinaryOperatorExpression(new CodePropertyReferenceExpression(_strongKeyReference, "HasValue"), CodeBinaryOperatorType.BooleanAnd, new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(_context, "ShouldForceLoad"), new CodePrimitiveExpression(jsonName), new CodePropertyReferenceExpression(_strongKeyReference, "Value")));
-                    if(typeof(IVersionedEntity).IsAssignableFrom(forType))
-                        shouldForceLoadCondition = new CodeBinaryOperatorExpression(new CodePropertyReferenceExpression(new CodePropertyReferenceExpression(_strongType, "VersionKey"), "HasValue"), CodeBinaryOperatorType.BooleanAnd, shouldForceLoadCondition);
+                    //if(typeof(IVersionedEntity).IsAssignableFrom(forType))
+                    //    shouldForceLoadCondition = new CodeBinaryOperatorExpression(new CodePropertyReferenceExpression(new CodePropertyReferenceExpression(_strongType, "VersionKey"), "HasValue"), CodeBinaryOperatorType.BooleanAnd, shouldForceLoadCondition);
                     var shouldForceLoad = new CodeConditionStatement(shouldForceLoadCondition);
                     // Check persistence
                     nullPropertyValueCondition.TrueStatements.Add(shouldForceLoad);

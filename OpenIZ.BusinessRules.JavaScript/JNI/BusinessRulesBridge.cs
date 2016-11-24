@@ -137,6 +137,27 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         }
 
         /// <summary>
+        /// Generate new guid
+        /// </summary>
+        public String NewGuid()
+        {
+            return Guid.NewGuid().ToString();
+        }
+
+        /// <summary>
+        /// Get data asset
+        /// </summary>
+        public String GetDataAsset(String dataId)
+        {
+            using (Stream ins = (ApplicationServiceContext.Current.GetService(typeof(IDataReferenceResolver)) as IDataReferenceResolver).Resolve(dataId))
+            using (MemoryStream ms = new MemoryStream())
+            {
+                ins.CopyTo(ms);
+                return Convert.ToBase64String(ms.ToArray());
+            }
+        }
+
+        /// <summary>
         /// Expand the view model object to an identified object 
         /// </summary>
         public IdentifiedData ToModel(Object data)

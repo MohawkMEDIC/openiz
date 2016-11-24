@@ -96,6 +96,7 @@
     <Compile Include="Services\Persistence\ActPersistenceService.cs" />
     <Compile Include="Services\Persistence\AlertPersistenceService.cs" />
     <Compile Include="Services\Persistence\AssigningAuthorityPersistenceService.cs" />
+    <Compile Include="Services\Persistence\BundlePersistenceService.cs" />
     <Compile Include="Services\Persistence\ControlActPersistenceService.cs" />
     <Compile Include="Services\Persistence\EncounterPersistenceService.cs" />
     <Compile Include="Services\Persistence\IdentifierTypePersistenceService.cs" />

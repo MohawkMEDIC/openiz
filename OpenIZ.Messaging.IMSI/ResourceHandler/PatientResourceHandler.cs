@@ -83,7 +83,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 				throw new InvalidOperationException("Bundle must have entry of type Patient");
 			else if (processData is Patient)
 			{
-				var patientData = data as Patient;
+				var patientData = processData as Patient;
 				if (updateIfExists)
 					return this.m_repository.Save(patientData);
 				else

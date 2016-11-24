@@ -47,6 +47,7 @@ namespace OpenIZ.BusinessRules.JavaScript.Test
         public static void ClassInitialize(TestContext context)
         {
             ApplicationServiceContext.Current = new SimpleServiceContext();
+            (ApplicationServiceContext.Current as IServiceManager).AddServiceProvider(typeof(TestDataReferenceResolver));
 
             var names = typeof(TestSimpleRules).Assembly.GetManifestResourceNames();
 
@@ -61,6 +62,40 @@ namespace OpenIZ.BusinessRules.JavaScript.Test
                     JavascriptBusinessRulesEngine.Current.AddRules(streamReader);
                 }
             }
+        }
+
+        /// <summary>
+        /// Ensures that the reference range is set properly
+        /// </summary>
+        [TestMethod]
+        public void ObservationShouldSetReferenceRange ()
+        {
+            QuantityObservation qobs = new QuantityObservation()
+            {
+                Value = (Decimal)2.3,
+                Participations = new Core.Model.Collection.VersionedAssociationCollection<ActParticipation>()
+                {
+                    new ActParticipation()
+                    {
+                        ParticipationRole = new Core.Model.DataTypes.Concept() { Mnemonic = "RecordTarget" },
+                        PlayerEntity = new Patient()
+                        {
+                            DateOfBirth = DateTime.Now,
+                            GenderConcept = new Core.Model.DataTypes.Concept()
+                            {
+                                Key = Guid.Parse("094941e9-a3db-48b5-862c-bc289bd7f86c"),
+                                Mnemonic = "Female"
+                            }
+                        }
+                    }
+                },
+                TypeConceptKey = Guid.Parse("a261f8cd-69b0-49aa-91f4-e6d3e5c612ed")
+            };
+
+            var breService = ApplicationServiceContext.Current.GetService(typeof(IBusinessRulesService<QuantityObservation>)) as IBusinessRulesService<QuantityObservation>;
+            Assert.IsNotNull(breService);
+            qobs = breService.BeforeInsert(qobs);
+            Assert.IsNotNull(qobs.InterpretationConceptKey);
         }
 
         /// <summary>

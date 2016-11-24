@@ -46,6 +46,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	[ServiceKnownType(typeof(AlertMessageInfo))]
 	[ServiceKnownType(typeof(SecurityApplication))]
 	[ServiceKnownType(typeof(SecurityApplicationInfo))]
+	[ServiceKnownType(typeof(TfaRequestInfo))]
 	[ServiceKnownType(typeof(SecurityDevice))]
 	[ServiceKnownType(typeof(SecurityDeviceInfo))]
 	[ServiceKnownType(typeof(SecurityPolicy))]

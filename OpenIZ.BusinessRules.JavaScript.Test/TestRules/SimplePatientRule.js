@@ -1,6 +1,4 @@
-﻿/// <reference path="openiz-model.js"/>
-
-/*
+﻿/*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  *
  * 
@@ -19,7 +17,7 @@
  * User: justi
  * Date: 2016-11-8
  */
-
+/// <reference path="openiz.js"/>
 /**
  * Sample Business Rule for Patient
  */
@@ -43,6 +41,13 @@ OpenIZBre.AddBusinessRule("Patient", "AfterInsert", function (patient) {
     console.assert(simplePatient.name.Legal.component.Given == "James", "Expected James as given name");
     console.assert(simplePatient.name.Legal.component.Family == "Smith", "Expected Smith as family");
     simplePatient.dateOfBirth = new Date();
+
+    OpenIZ.Concept.findConceptAsync({
+        query: "mnemonic=Female",
+        continueWith: function (concept) {
+            simplePatient.genderConceptModel = concept.item[0];
+        }
+    });
     return simplePatient;
 });
 

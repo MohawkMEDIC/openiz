@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimpleServiceContext.cs" />
+    <Compile Include="TestDataReferenceResolver.cs" />
     <Compile Include="TestSimpleRules.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -87,6 +88,17 @@
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
     </None>
+    <EmbeddedResource Include="RefData\weight-ranges-female.json" />
+    <EmbeddedResource Include="RefData\weight-ranges-male.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestRules\openiz.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestRules\openiz-model.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestRules\act.observation.weight.js" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

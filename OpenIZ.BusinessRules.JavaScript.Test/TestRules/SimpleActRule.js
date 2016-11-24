@@ -1,5 +1,4 @@
-﻿/// <reference path="openiz-model.js"/>
-
+﻿
 /*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  *
@@ -19,8 +18,6 @@
  * User: justi
  * Date: 2016-11-8
  */
-
-/// <reference path="linq.js"/>
 /**
  * Sample Business Rule for Act
  * If act is type Adjustment then update held entity

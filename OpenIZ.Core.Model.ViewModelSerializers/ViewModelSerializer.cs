@@ -196,7 +196,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                     }
                                                     else {
                                                         if ("$type".Equals(r.Value)) {
-                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                             if ((_type != typeof(OpenIZ.Core.Model.NonVersionedEntityData))) {
                                                                 OpenIZ.Core.Model.NonVersionedEntityData _nretVal = ((OpenIZ.Core.Model.NonVersionedEntityData)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                 _nretVal.CopyObjectData(_retVal);
@@ -452,7 +452,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                             }
                                                             else {
                                                                 if ("$type".Equals(r.Value)) {
-                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                     if ((_type != typeof(OpenIZ.Core.Model.Security.SecurityApplication))) {
                                                                         OpenIZ.Core.Model.Security.SecurityApplication _nretVal = ((OpenIZ.Core.Model.Security.SecurityApplication)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                         _nretVal.CopyObjectData(_retVal);
@@ -710,7 +710,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                             }
                                                             else {
                                                                 if ("$type".Equals(r.Value)) {
-                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                     if ((_type != typeof(OpenIZ.Core.Model.Security.SecurityDevice))) {
                                                                         OpenIZ.Core.Model.Security.SecurityDevice _nretVal = ((OpenIZ.Core.Model.Security.SecurityDevice)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                         _nretVal.CopyObjectData(_retVal);
@@ -938,7 +938,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                     }
                                                     else {
                                                         if ("$type".Equals(r.Value)) {
-                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                             if ((_type != typeof(OpenIZ.Core.Model.Security.SecurityEntity))) {
                                                                 OpenIZ.Core.Model.Security.SecurityEntity _nretVal = ((OpenIZ.Core.Model.Security.SecurityEntity)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                 _nretVal.CopyObjectData(_retVal);
@@ -1209,7 +1209,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                 }
                                                                 else {
                                                                     if ("$type".Equals(r.Value)) {
-                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                         if ((_type != typeof(OpenIZ.Core.Model.Security.SecurityPolicy))) {
                                                                             OpenIZ.Core.Model.Security.SecurityPolicy _nretVal = ((OpenIZ.Core.Model.Security.SecurityPolicy)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                             _nretVal.CopyObjectData(_retVal);
@@ -1412,7 +1412,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                     }
                                     else {
                                         if ("$type".Equals(r.Value)) {
-                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                             if ((_type != typeof(OpenIZ.Core.Model.Security.SecurityPolicyInstance))) {
                                                 OpenIZ.Core.Model.Security.SecurityPolicyInstance _nretVal = ((OpenIZ.Core.Model.Security.SecurityPolicyInstance)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                 _nretVal.CopyObjectData(_retVal);
@@ -1664,7 +1664,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                             }
                                                             else {
                                                                 if ("$type".Equals(r.Value)) {
-                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                     if ((_type != typeof(OpenIZ.Core.Model.Security.SecurityRole))) {
                                                                         OpenIZ.Core.Model.Security.SecurityRole _nretVal = ((OpenIZ.Core.Model.Security.SecurityRole)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                         _nretVal.CopyObjectData(_retVal);
@@ -2087,7 +2087,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                         }
                                                                                                         else {
                                                                                                             if ("$type".Equals(r.Value)) {
-                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                 if ((_type != typeof(OpenIZ.Core.Model.Security.SecurityUser))) {
                                                                                                                     OpenIZ.Core.Model.Security.SecurityUser _nretVal = ((OpenIZ.Core.Model.Security.SecurityUser)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                     _nretVal.CopyObjectData(_retVal);
@@ -2198,8 +2198,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("genderConceptModel")) {
                 if ((_strong.GenderConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("genderConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("genderConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.GenderConceptKey);
                         _strong.GenderConcept = _delay;
@@ -2230,8 +2229,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("language")) {
                 if (((_strong.LanguageCommunication == null) 
                             || (_strong.LanguageCommunication.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("language", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("language", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.PersonLanguageCommunication> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.PersonLanguageCommunication>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.PersonLanguageCommunication>(_strong.Key.Value));
                         _strong.LanguageCommunication = _delay;
@@ -2247,8 +2245,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("template")) {
                 if ((_strong.Template == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.TemplateDefinition _delay = null;
                     }
                 }
@@ -2293,8 +2290,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("classConceptModel")) {
                 if ((_strong.ClassConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ClassConceptKey);
                         _strong.ClassConcept = _delay;
@@ -2310,8 +2306,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("determinerConceptModel")) {
                 if ((_strong.DeterminerConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.DeterminerConceptKey);
                         _strong.DeterminerConcept = _delay;
@@ -2327,8 +2322,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("statusConceptModel")) {
                 if ((_strong.StatusConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.StatusConceptKey);
                         _strong.StatusConcept = _delay;
@@ -2344,8 +2338,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("creationActModel")) {
                 if ((_strong.CreationAct == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Acts.Act _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Acts.Act>(_strong.CreationActKey);
                         _strong.CreationAct = _delay;
@@ -2361,8 +2354,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("typeConceptModel")) {
                 if ((_strong.TypeConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.TypeConceptKey);
                         _strong.TypeConcept = _delay;
@@ -2379,8 +2371,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("identifier")) {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
@@ -2397,8 +2388,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("relationship")) {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
@@ -2415,8 +2405,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("telecom")) {
                 if (((_strong.Telecoms == null) 
                             || (_strong.Telecoms.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(_strong.Key.Value));
                         _strong.Telecoms = _delay;
@@ -2433,8 +2422,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("extension")) {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
@@ -2451,8 +2439,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("name")) {
                 if (((_strong.Names == null) 
                             || (_strong.Names.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityName>(_strong.Key.Value));
                         _strong.Names = _delay;
@@ -2469,8 +2456,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("address")) {
                 if (((_strong.Addresses == null) 
                             || (_strong.Addresses.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityAddress>(_strong.Key.Value));
                         _strong.Addresses = _delay;
@@ -2487,8 +2473,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("note")) {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
@@ -2505,8 +2490,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("tag")) {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
@@ -2523,8 +2507,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("participation")) {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
@@ -2554,8 +2537,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("previousVersionModel")) {
                 if ((_strong.PreviousVersion == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Entities.Entity _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Entities.Entity>(_strong.PreviousVersionKey);
                         _strong.PreviousVersion = _delay;
@@ -2961,7 +2943,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                             }
                                                                                                                                                                             else {
                                                                                                                                                                                 if ("$type".Equals(r.Value)) {
-                                                                                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                                     if ((_type != typeof(OpenIZ.Core.Model.Roles.Patient))) {
                                                                                                                                                                                         OpenIZ.Core.Model.Roles.Patient _nretVal = ((OpenIZ.Core.Model.Roles.Patient)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                         _nretVal.CopyObjectData(_retVal);
@@ -3068,8 +3050,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("providerSpecialtyModel")) {
                 if ((_strong.ProviderSpecialty == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("providerSpecialtyModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("providerSpecialtyModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ProviderSpecialtyKey);
                         _strong.ProviderSpecialty = _delay;
@@ -3100,8 +3081,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("language")) {
                 if (((_strong.LanguageCommunication == null) 
                             || (_strong.LanguageCommunication.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("language", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("language", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.PersonLanguageCommunication> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.PersonLanguageCommunication>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.PersonLanguageCommunication>(_strong.Key.Value));
                         _strong.LanguageCommunication = _delay;
@@ -3117,8 +3097,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("template")) {
                 if ((_strong.Template == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.TemplateDefinition _delay = null;
                     }
                 }
@@ -3163,8 +3142,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("classConceptModel")) {
                 if ((_strong.ClassConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ClassConceptKey);
                         _strong.ClassConcept = _delay;
@@ -3180,8 +3158,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("determinerConceptModel")) {
                 if ((_strong.DeterminerConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.DeterminerConceptKey);
                         _strong.DeterminerConcept = _delay;
@@ -3197,8 +3174,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("statusConceptModel")) {
                 if ((_strong.StatusConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.StatusConceptKey);
                         _strong.StatusConcept = _delay;
@@ -3214,8 +3190,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("creationActModel")) {
                 if ((_strong.CreationAct == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Acts.Act _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Acts.Act>(_strong.CreationActKey);
                         _strong.CreationAct = _delay;
@@ -3231,8 +3206,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("typeConceptModel")) {
                 if ((_strong.TypeConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.TypeConceptKey);
                         _strong.TypeConcept = _delay;
@@ -3249,8 +3223,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("identifier")) {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
@@ -3267,8 +3240,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("relationship")) {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
@@ -3285,8 +3257,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("telecom")) {
                 if (((_strong.Telecoms == null) 
                             || (_strong.Telecoms.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(_strong.Key.Value));
                         _strong.Telecoms = _delay;
@@ -3303,8 +3274,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("extension")) {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
@@ -3321,8 +3291,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("name")) {
                 if (((_strong.Names == null) 
                             || (_strong.Names.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityName>(_strong.Key.Value));
                         _strong.Names = _delay;
@@ -3339,8 +3308,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("address")) {
                 if (((_strong.Addresses == null) 
                             || (_strong.Addresses.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityAddress>(_strong.Key.Value));
                         _strong.Addresses = _delay;
@@ -3357,8 +3325,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("note")) {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
@@ -3375,8 +3342,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("tag")) {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
@@ -3393,8 +3359,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("participation")) {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
@@ -3424,8 +3389,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("previousVersionModel")) {
                 if ((_strong.PreviousVersion == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Entities.Entity _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Entities.Entity>(_strong.PreviousVersionKey);
                         _strong.PreviousVersion = _delay;
@@ -3807,7 +3771,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                 }
                                                                                                                                                                 else {
                                                                                                                                                                     if ("$type".Equals(r.Value)) {
-                                                                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                         if ((_type != typeof(OpenIZ.Core.Model.Roles.Provider))) {
                                                                                                                                                                             OpenIZ.Core.Model.Roles.Provider _nretVal = ((OpenIZ.Core.Model.Roles.Provider)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                             _nretVal.CopyObjectData(_retVal);
@@ -4061,7 +4025,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                     }
                                                     else {
                                                         if ("$type".Equals(r.Value)) {
-                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                             if ((_type != typeof(OpenIZ.Core.Model.Patch.Patch))) {
                                                                 OpenIZ.Core.Model.Patch.Patch _nretVal = ((OpenIZ.Core.Model.Patch.Patch)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                 _nretVal.CopyObjectData(_retVal);
@@ -4153,8 +4117,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("language")) {
                 if (((_strong.LanguageCommunication == null) 
                             || (_strong.LanguageCommunication.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("language", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("language", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.PersonLanguageCommunication> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.PersonLanguageCommunication>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.PersonLanguageCommunication>(_strong.Key.Value));
                         _strong.LanguageCommunication = _delay;
@@ -4170,8 +4133,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("template")) {
                 if ((_strong.Template == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.TemplateDefinition _delay = null;
                     }
                 }
@@ -4216,8 +4178,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("classConceptModel")) {
                 if ((_strong.ClassConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ClassConceptKey);
                         _strong.ClassConcept = _delay;
@@ -4233,8 +4194,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("determinerConceptModel")) {
                 if ((_strong.DeterminerConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.DeterminerConceptKey);
                         _strong.DeterminerConcept = _delay;
@@ -4250,8 +4210,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("statusConceptModel")) {
                 if ((_strong.StatusConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.StatusConceptKey);
                         _strong.StatusConcept = _delay;
@@ -4267,8 +4226,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("creationActModel")) {
                 if ((_strong.CreationAct == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Acts.Act _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Acts.Act>(_strong.CreationActKey);
                         _strong.CreationAct = _delay;
@@ -4284,8 +4242,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("typeConceptModel")) {
                 if ((_strong.TypeConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.TypeConceptKey);
                         _strong.TypeConcept = _delay;
@@ -4302,8 +4259,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("identifier")) {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
@@ -4320,8 +4276,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("relationship")) {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
@@ -4338,8 +4293,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("telecom")) {
                 if (((_strong.Telecoms == null) 
                             || (_strong.Telecoms.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(_strong.Key.Value));
                         _strong.Telecoms = _delay;
@@ -4356,8 +4310,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("extension")) {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
@@ -4374,8 +4327,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("name")) {
                 if (((_strong.Names == null) 
                             || (_strong.Names.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityName>(_strong.Key.Value));
                         _strong.Names = _delay;
@@ -4392,8 +4344,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("address")) {
                 if (((_strong.Addresses == null) 
                             || (_strong.Addresses.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityAddress>(_strong.Key.Value));
                         _strong.Addresses = _delay;
@@ -4410,8 +4361,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("note")) {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
@@ -4428,8 +4378,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("tag")) {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
@@ -4446,8 +4395,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("participation")) {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
@@ -4477,8 +4425,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("previousVersionModel")) {
                 if ((_strong.PreviousVersion == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Entities.Entity _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Entities.Entity>(_strong.PreviousVersionKey);
                         _strong.PreviousVersion = _delay;
@@ -4852,7 +4799,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                             }
                                                                                                                                                             else {
                                                                                                                                                                 if ("$type".Equals(r.Value)) {
-                                                                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                     if ((_type != typeof(OpenIZ.Core.Model.Entities.UserEntity))) {
                                                                                                                                                                         OpenIZ.Core.Model.Entities.UserEntity _nretVal = ((OpenIZ.Core.Model.Entities.UserEntity)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                         _nretVal.CopyObjectData(_retVal);
@@ -4955,8 +4902,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("securityApplicationModel")) {
                 if ((_strong.SecurityApplication == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("securityApplicationModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("securityApplicationModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Security.SecurityApplication _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Security.SecurityApplication>(_strong.SecurityApplicationKey);
                         _strong.SecurityApplication = _delay;
@@ -4993,8 +4939,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("template")) {
                 if ((_strong.Template == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.TemplateDefinition _delay = null;
                     }
                 }
@@ -5039,8 +4984,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("classConceptModel")) {
                 if ((_strong.ClassConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ClassConceptKey);
                         _strong.ClassConcept = _delay;
@@ -5056,8 +5000,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("determinerConceptModel")) {
                 if ((_strong.DeterminerConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.DeterminerConceptKey);
                         _strong.DeterminerConcept = _delay;
@@ -5073,8 +5016,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("statusConceptModel")) {
                 if ((_strong.StatusConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.StatusConceptKey);
                         _strong.StatusConcept = _delay;
@@ -5090,8 +5032,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("creationActModel")) {
                 if ((_strong.CreationAct == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Acts.Act _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Acts.Act>(_strong.CreationActKey);
                         _strong.CreationAct = _delay;
@@ -5107,8 +5048,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("typeConceptModel")) {
                 if ((_strong.TypeConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.TypeConceptKey);
                         _strong.TypeConcept = _delay;
@@ -5125,8 +5065,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("identifier")) {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
@@ -5143,8 +5082,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("relationship")) {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
@@ -5161,8 +5099,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("telecom")) {
                 if (((_strong.Telecoms == null) 
                             || (_strong.Telecoms.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(_strong.Key.Value));
                         _strong.Telecoms = _delay;
@@ -5179,8 +5116,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("extension")) {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
@@ -5197,8 +5133,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("name")) {
                 if (((_strong.Names == null) 
                             || (_strong.Names.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityName>(_strong.Key.Value));
                         _strong.Names = _delay;
@@ -5215,8 +5150,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("address")) {
                 if (((_strong.Addresses == null) 
                             || (_strong.Addresses.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityAddress>(_strong.Key.Value));
                         _strong.Addresses = _delay;
@@ -5233,8 +5167,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("note")) {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
@@ -5251,8 +5184,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("tag")) {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
@@ -5269,8 +5201,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("participation")) {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
@@ -5300,8 +5231,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("previousVersionModel")) {
                 if ((_strong.PreviousVersion == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Entities.Entity _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Entities.Entity>(_strong.PreviousVersionKey);
                         _strong.PreviousVersion = _delay;
@@ -5683,7 +5613,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                 }
                                                                                                                                                                 else {
                                                                                                                                                                     if ("$type".Equals(r.Value)) {
-                                                                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                         if ((_type != typeof(OpenIZ.Core.Model.Entities.ApplicationEntity))) {
                                                                                                                                                                             OpenIZ.Core.Model.Entities.ApplicationEntity _nretVal = ((OpenIZ.Core.Model.Entities.ApplicationEntity)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                             _nretVal.CopyObjectData(_retVal);
@@ -5787,8 +5717,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("securityDeviceModel")) {
                 if ((_strong.SecurityDevice == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("securityDeviceModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("securityDeviceModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Security.SecurityDevice _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Security.SecurityDevice>(_strong.SecurityDeviceKey);
                         _strong.SecurityDevice = _delay;
@@ -5818,8 +5747,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("template")) {
                 if ((_strong.Template == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.TemplateDefinition _delay = null;
                     }
                 }
@@ -5864,8 +5792,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("classConceptModel")) {
                 if ((_strong.ClassConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ClassConceptKey);
                         _strong.ClassConcept = _delay;
@@ -5881,8 +5808,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("determinerConceptModel")) {
                 if ((_strong.DeterminerConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.DeterminerConceptKey);
                         _strong.DeterminerConcept = _delay;
@@ -5898,8 +5824,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("statusConceptModel")) {
                 if ((_strong.StatusConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.StatusConceptKey);
                         _strong.StatusConcept = _delay;
@@ -5915,8 +5840,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("creationActModel")) {
                 if ((_strong.CreationAct == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Acts.Act _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Acts.Act>(_strong.CreationActKey);
                         _strong.CreationAct = _delay;
@@ -5932,8 +5856,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("typeConceptModel")) {
                 if ((_strong.TypeConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.TypeConceptKey);
                         _strong.TypeConcept = _delay;
@@ -5950,8 +5873,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("identifier")) {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
@@ -5968,8 +5890,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("relationship")) {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
@@ -5986,8 +5907,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("telecom")) {
                 if (((_strong.Telecoms == null) 
                             || (_strong.Telecoms.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(_strong.Key.Value));
                         _strong.Telecoms = _delay;
@@ -6004,8 +5924,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("extension")) {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
@@ -6022,8 +5941,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("name")) {
                 if (((_strong.Names == null) 
                             || (_strong.Names.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityName>(_strong.Key.Value));
                         _strong.Names = _delay;
@@ -6040,8 +5958,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("address")) {
                 if (((_strong.Addresses == null) 
                             || (_strong.Addresses.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityAddress>(_strong.Key.Value));
                         _strong.Addresses = _delay;
@@ -6058,8 +5975,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("note")) {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
@@ -6076,8 +5992,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("tag")) {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
@@ -6094,8 +6009,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("participation")) {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
@@ -6125,8 +6039,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("previousVersionModel")) {
                 if ((_strong.PreviousVersion == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Entities.Entity _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Entities.Entity>(_strong.PreviousVersionKey);
                         _strong.PreviousVersion = _delay;
@@ -6500,7 +6413,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                             }
                                                                                                                                                             else {
                                                                                                                                                                 if ("$type".Equals(r.Value)) {
-                                                                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                     if ((_type != typeof(OpenIZ.Core.Model.Entities.DeviceEntity))) {
                                                                                                                                                                         OpenIZ.Core.Model.Entities.DeviceEntity _nretVal = ((OpenIZ.Core.Model.Entities.DeviceEntity)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                         _nretVal.CopyObjectData(_retVal);
@@ -6596,8 +6509,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("template")) {
                 if ((_strong.Template == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.TemplateDefinition _delay = null;
                     }
                 }
@@ -6642,8 +6554,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("classConceptModel")) {
                 if ((_strong.ClassConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ClassConceptKey);
                         _strong.ClassConcept = _delay;
@@ -6659,8 +6570,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("determinerConceptModel")) {
                 if ((_strong.DeterminerConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.DeterminerConceptKey);
                         _strong.DeterminerConcept = _delay;
@@ -6676,8 +6586,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("statusConceptModel")) {
                 if ((_strong.StatusConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.StatusConceptKey);
                         _strong.StatusConcept = _delay;
@@ -6693,8 +6602,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("creationActModel")) {
                 if ((_strong.CreationAct == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Acts.Act _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Acts.Act>(_strong.CreationActKey);
                         _strong.CreationAct = _delay;
@@ -6710,8 +6618,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("typeConceptModel")) {
                 if ((_strong.TypeConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.TypeConceptKey);
                         _strong.TypeConcept = _delay;
@@ -6728,8 +6635,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("identifier")) {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
@@ -6746,8 +6652,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("relationship")) {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
@@ -6764,8 +6669,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("telecom")) {
                 if (((_strong.Telecoms == null) 
                             || (_strong.Telecoms.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(_strong.Key.Value));
                         _strong.Telecoms = _delay;
@@ -6782,8 +6686,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("extension")) {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
@@ -6800,8 +6703,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("name")) {
                 if (((_strong.Names == null) 
                             || (_strong.Names.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityName>(_strong.Key.Value));
                         _strong.Names = _delay;
@@ -6818,8 +6720,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("address")) {
                 if (((_strong.Addresses == null) 
                             || (_strong.Addresses.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityAddress>(_strong.Key.Value));
                         _strong.Addresses = _delay;
@@ -6836,8 +6737,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("note")) {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
@@ -6854,8 +6754,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("tag")) {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
@@ -6872,8 +6771,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("participation")) {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
@@ -6903,8 +6801,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("previousVersionModel")) {
                 if ((_strong.PreviousVersion == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Entities.Entity _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Entities.Entity>(_strong.PreviousVersionKey);
                         _strong.PreviousVersion = _delay;
@@ -7246,7 +7143,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                             }
                                                                                                                                             else {
                                                                                                                                                 if ("$type".Equals(r.Value)) {
-                                                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                     if ((_type != typeof(OpenIZ.Core.Model.Entities.Entity))) {
                                                                                                                                                         OpenIZ.Core.Model.Entities.Entity _nretVal = ((OpenIZ.Core.Model.Entities.Entity)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                         _nretVal.CopyObjectData(_retVal);
@@ -7490,7 +7387,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                             }
                                             else {
                                                 if ("$type".Equals(r.Value)) {
-                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                     if ((_type != typeof(OpenIZ.Core.Model.Entities.EntityAddress))) {
                                                         OpenIZ.Core.Model.Entities.EntityAddress _nretVal = ((OpenIZ.Core.Model.Entities.EntityAddress)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                         _nretVal.CopyObjectData(_retVal);
@@ -7670,7 +7567,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                     }
                                     else {
                                         if ("$type".Equals(r.Value)) {
-                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                             if ((_type != typeof(OpenIZ.Core.Model.Entities.EntityAddressComponent))) {
                                                 OpenIZ.Core.Model.Entities.EntityAddressComponent _nretVal = ((OpenIZ.Core.Model.Entities.EntityAddressComponent)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                 _nretVal.CopyObjectData(_retVal);
@@ -7912,7 +7809,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                             }
                                             else {
                                                 if ("$type".Equals(r.Value)) {
-                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                     if ((_type != typeof(OpenIZ.Core.Model.Entities.EntityName))) {
                                                         OpenIZ.Core.Model.Entities.EntityName _nretVal = ((OpenIZ.Core.Model.Entities.EntityName)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                         _nretVal.CopyObjectData(_retVal);
@@ -8146,7 +8043,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                 }
                                                 else {
                                                     if ("$type".Equals(r.Value)) {
-                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                         if ((_type != typeof(OpenIZ.Core.Model.Entities.EntityNameComponent))) {
                                                             OpenIZ.Core.Model.Entities.EntityNameComponent _nretVal = ((OpenIZ.Core.Model.Entities.EntityNameComponent)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                             _nretVal.CopyObjectData(_retVal);
@@ -8474,7 +8371,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                 }
                                                                 else {
                                                                     if ("$type".Equals(r.Value)) {
-                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                         if ((_type != typeof(OpenIZ.Core.Model.Entities.EntityRelationship))) {
                                                                             OpenIZ.Core.Model.Entities.EntityRelationship _nretVal = ((OpenIZ.Core.Model.Entities.EntityRelationship)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                             _nretVal.CopyObjectData(_retVal);
@@ -8689,7 +8586,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                             }
                                             else {
                                                 if ("$type".Equals(r.Value)) {
-                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                     if ((_type != typeof(OpenIZ.Core.Model.Entities.EntityTelecomAddress))) {
                                                         OpenIZ.Core.Model.Entities.EntityTelecomAddress _nretVal = ((OpenIZ.Core.Model.Entities.EntityTelecomAddress)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                         _nretVal.CopyObjectData(_retVal);
@@ -8785,8 +8682,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("formConceptModel")) {
                 if ((_strong.FormConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("formConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("formConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.FormConceptKey);
                         _strong.FormConcept = _delay;
@@ -8802,8 +8698,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("quantityConceptModel")) {
                 if ((_strong.QuantityConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("quantityConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("quantityConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.QuantityConceptKey);
                         _strong.QuantityConcept = _delay;
@@ -8833,8 +8728,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("template")) {
                 if ((_strong.Template == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.TemplateDefinition _delay = null;
                     }
                 }
@@ -8879,8 +8773,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("classConceptModel")) {
                 if ((_strong.ClassConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ClassConceptKey);
                         _strong.ClassConcept = _delay;
@@ -8896,8 +8789,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("determinerConceptModel")) {
                 if ((_strong.DeterminerConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.DeterminerConceptKey);
                         _strong.DeterminerConcept = _delay;
@@ -8913,8 +8805,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("statusConceptModel")) {
                 if ((_strong.StatusConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.StatusConceptKey);
                         _strong.StatusConcept = _delay;
@@ -8930,8 +8821,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("creationActModel")) {
                 if ((_strong.CreationAct == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Acts.Act _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Acts.Act>(_strong.CreationActKey);
                         _strong.CreationAct = _delay;
@@ -8947,8 +8837,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("typeConceptModel")) {
                 if ((_strong.TypeConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.TypeConceptKey);
                         _strong.TypeConcept = _delay;
@@ -8965,8 +8854,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("identifier")) {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
@@ -8983,8 +8871,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("relationship")) {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
@@ -9001,8 +8888,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("telecom")) {
                 if (((_strong.Telecoms == null) 
                             || (_strong.Telecoms.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(_strong.Key.Value));
                         _strong.Telecoms = _delay;
@@ -9019,8 +8905,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("extension")) {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
@@ -9037,8 +8922,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("name")) {
                 if (((_strong.Names == null) 
                             || (_strong.Names.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityName>(_strong.Key.Value));
                         _strong.Names = _delay;
@@ -9055,8 +8939,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("address")) {
                 if (((_strong.Addresses == null) 
                             || (_strong.Addresses.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityAddress>(_strong.Key.Value));
                         _strong.Addresses = _delay;
@@ -9073,8 +8956,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("note")) {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
@@ -9091,8 +8973,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("tag")) {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
@@ -9109,8 +8990,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("participation")) {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
@@ -9140,8 +9020,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("previousVersionModel")) {
                 if ((_strong.PreviousVersion == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Entities.Entity _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Entities.Entity>(_strong.PreviousVersionKey);
                         _strong.PreviousVersion = _delay;
@@ -9547,7 +9426,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                             }
                                                                                                                                                                             else {
                                                                                                                                                                                 if ("$type".Equals(r.Value)) {
-                                                                                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                                     if ((_type != typeof(OpenIZ.Core.Model.Entities.ManufacturedMaterial))) {
                                                                                                                                                                                         OpenIZ.Core.Model.Entities.ManufacturedMaterial _nretVal = ((OpenIZ.Core.Model.Entities.ManufacturedMaterial)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                         _nretVal.CopyObjectData(_retVal);
@@ -9668,8 +9547,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("formConceptModel")) {
                 if ((_strong.FormConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("formConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("formConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.FormConceptKey);
                         _strong.FormConcept = _delay;
@@ -9685,8 +9563,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("quantityConceptModel")) {
                 if ((_strong.QuantityConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("quantityConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("quantityConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.QuantityConceptKey);
                         _strong.QuantityConcept = _delay;
@@ -9716,8 +9593,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("template")) {
                 if ((_strong.Template == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.TemplateDefinition _delay = null;
                     }
                 }
@@ -9762,8 +9638,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("classConceptModel")) {
                 if ((_strong.ClassConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ClassConceptKey);
                         _strong.ClassConcept = _delay;
@@ -9779,8 +9654,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("determinerConceptModel")) {
                 if ((_strong.DeterminerConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.DeterminerConceptKey);
                         _strong.DeterminerConcept = _delay;
@@ -9796,8 +9670,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("statusConceptModel")) {
                 if ((_strong.StatusConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.StatusConceptKey);
                         _strong.StatusConcept = _delay;
@@ -9813,8 +9686,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("creationActModel")) {
                 if ((_strong.CreationAct == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Acts.Act _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Acts.Act>(_strong.CreationActKey);
                         _strong.CreationAct = _delay;
@@ -9830,8 +9702,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("typeConceptModel")) {
                 if ((_strong.TypeConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.TypeConceptKey);
                         _strong.TypeConcept = _delay;
@@ -9848,8 +9719,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("identifier")) {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
@@ -9866,8 +9736,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("relationship")) {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
@@ -9884,8 +9753,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("telecom")) {
                 if (((_strong.Telecoms == null) 
                             || (_strong.Telecoms.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(_strong.Key.Value));
                         _strong.Telecoms = _delay;
@@ -9902,8 +9770,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("extension")) {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
@@ -9920,8 +9787,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("name")) {
                 if (((_strong.Names == null) 
                             || (_strong.Names.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityName>(_strong.Key.Value));
                         _strong.Names = _delay;
@@ -9938,8 +9804,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("address")) {
                 if (((_strong.Addresses == null) 
                             || (_strong.Addresses.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityAddress>(_strong.Key.Value));
                         _strong.Addresses = _delay;
@@ -9956,8 +9821,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("note")) {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
@@ -9974,8 +9838,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("tag")) {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
@@ -9992,8 +9855,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("participation")) {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
@@ -10023,8 +9885,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("previousVersionModel")) {
                 if ((_strong.PreviousVersion == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Entities.Entity _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Entities.Entity>(_strong.PreviousVersionKey);
                         _strong.PreviousVersion = _delay;
@@ -10422,7 +10283,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                         }
                                                                                                                                                                         else {
                                                                                                                                                                             if ("$type".Equals(r.Value)) {
-                                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                                 if ((_type != typeof(OpenIZ.Core.Model.Entities.Material))) {
                                                                                                                                                                                     OpenIZ.Core.Model.Entities.Material _nretVal = ((OpenIZ.Core.Model.Entities.Material)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                     _nretVal.CopyObjectData(_retVal);
@@ -10528,8 +10389,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("industryConceptModel")) {
                 if ((_strong.IndustryConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("industryConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("industryConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.IndustryConceptKey);
                         _strong.IndustryConcept = _delay;
@@ -10545,8 +10405,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("template")) {
                 if ((_strong.Template == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.TemplateDefinition _delay = null;
                     }
                 }
@@ -10591,8 +10450,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("classConceptModel")) {
                 if ((_strong.ClassConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ClassConceptKey);
                         _strong.ClassConcept = _delay;
@@ -10608,8 +10466,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("determinerConceptModel")) {
                 if ((_strong.DeterminerConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.DeterminerConceptKey);
                         _strong.DeterminerConcept = _delay;
@@ -10625,8 +10482,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("statusConceptModel")) {
                 if ((_strong.StatusConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.StatusConceptKey);
                         _strong.StatusConcept = _delay;
@@ -10642,8 +10498,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("creationActModel")) {
                 if ((_strong.CreationAct == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Acts.Act _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Acts.Act>(_strong.CreationActKey);
                         _strong.CreationAct = _delay;
@@ -10659,8 +10514,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("typeConceptModel")) {
                 if ((_strong.TypeConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.TypeConceptKey);
                         _strong.TypeConcept = _delay;
@@ -10677,8 +10531,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("identifier")) {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
@@ -10695,8 +10548,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("relationship")) {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
@@ -10713,8 +10565,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("telecom")) {
                 if (((_strong.Telecoms == null) 
                             || (_strong.Telecoms.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(_strong.Key.Value));
                         _strong.Telecoms = _delay;
@@ -10731,8 +10582,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("extension")) {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
@@ -10749,8 +10599,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("name")) {
                 if (((_strong.Names == null) 
                             || (_strong.Names.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityName>(_strong.Key.Value));
                         _strong.Names = _delay;
@@ -10767,8 +10616,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("address")) {
                 if (((_strong.Addresses == null) 
                             || (_strong.Addresses.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityAddress>(_strong.Key.Value));
                         _strong.Addresses = _delay;
@@ -10785,8 +10633,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("note")) {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
@@ -10803,8 +10650,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("tag")) {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
@@ -10821,8 +10667,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("participation")) {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
@@ -10852,8 +10697,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("previousVersionModel")) {
                 if ((_strong.PreviousVersion == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Entities.Entity _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Entities.Entity>(_strong.PreviousVersionKey);
                         _strong.PreviousVersion = _delay;
@@ -11211,7 +11055,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                     }
                                                                                                                                                     else {
                                                                                                                                                         if ("$type".Equals(r.Value)) {
-                                                                                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                             if ((_type != typeof(OpenIZ.Core.Model.Entities.Organization))) {
                                                                                                                                                                 OpenIZ.Core.Model.Entities.Organization _nretVal = ((OpenIZ.Core.Model.Entities.Organization)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -11320,8 +11164,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("language")) {
                 if (((_strong.LanguageCommunication == null) 
                             || (_strong.LanguageCommunication.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("language", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("language", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.PersonLanguageCommunication> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.PersonLanguageCommunication>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.PersonLanguageCommunication>(_strong.Key.Value));
                         _strong.LanguageCommunication = _delay;
@@ -11337,8 +11180,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("template")) {
                 if ((_strong.Template == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.TemplateDefinition _delay = null;
                     }
                 }
@@ -11383,8 +11225,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("classConceptModel")) {
                 if ((_strong.ClassConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ClassConceptKey);
                         _strong.ClassConcept = _delay;
@@ -11400,8 +11241,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("determinerConceptModel")) {
                 if ((_strong.DeterminerConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.DeterminerConceptKey);
                         _strong.DeterminerConcept = _delay;
@@ -11417,8 +11257,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("statusConceptModel")) {
                 if ((_strong.StatusConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.StatusConceptKey);
                         _strong.StatusConcept = _delay;
@@ -11434,8 +11273,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("creationActModel")) {
                 if ((_strong.CreationAct == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Acts.Act _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Acts.Act>(_strong.CreationActKey);
                         _strong.CreationAct = _delay;
@@ -11451,8 +11289,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("typeConceptModel")) {
                 if ((_strong.TypeConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.TypeConceptKey);
                         _strong.TypeConcept = _delay;
@@ -11469,8 +11306,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("identifier")) {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
@@ -11487,8 +11323,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("relationship")) {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
@@ -11505,8 +11340,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("telecom")) {
                 if (((_strong.Telecoms == null) 
                             || (_strong.Telecoms.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(_strong.Key.Value));
                         _strong.Telecoms = _delay;
@@ -11523,8 +11357,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("extension")) {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
@@ -11541,8 +11374,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("name")) {
                 if (((_strong.Names == null) 
                             || (_strong.Names.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityName>(_strong.Key.Value));
                         _strong.Names = _delay;
@@ -11559,8 +11391,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("address")) {
                 if (((_strong.Addresses == null) 
                             || (_strong.Addresses.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityAddress>(_strong.Key.Value));
                         _strong.Addresses = _delay;
@@ -11577,8 +11408,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("note")) {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
@@ -11595,8 +11425,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("tag")) {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
@@ -11613,8 +11442,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("participation")) {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
@@ -11644,8 +11472,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("previousVersionModel")) {
                 if ((_strong.PreviousVersion == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Entities.Entity _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Entities.Entity>(_strong.PreviousVersionKey);
                         _strong.PreviousVersion = _delay;
@@ -12011,7 +11838,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                         }
                                                                                                                                                         else {
                                                                                                                                                             if ("$type".Equals(r.Value)) {
-                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                 if ((_type != typeof(OpenIZ.Core.Model.Entities.Person))) {
                                                                                                                                                                     OpenIZ.Core.Model.Entities.Person _nretVal = ((OpenIZ.Core.Model.Entities.Person)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                     _nretVal.CopyObjectData(_retVal);
@@ -12224,7 +12051,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                         }
                                         else {
                                             if ("$type".Equals(r.Value)) {
-                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                 if ((_type != typeof(OpenIZ.Core.Model.Entities.PersonLanguageCommunication))) {
                                                     OpenIZ.Core.Model.Entities.PersonLanguageCommunication _nretVal = ((OpenIZ.Core.Model.Entities.PersonLanguageCommunication)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                     _nretVal.CopyObjectData(_retVal);
@@ -12320,8 +12147,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("service")) {
                 if (((_strong.Services == null) 
                             || (_strong.Services.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("service", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("service", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.PlaceService> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.PlaceService>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.PlaceService>(_strong.Key.Value));
                         _strong.Services = _delay;
@@ -12337,8 +12163,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("template")) {
                 if ((_strong.Template == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.TemplateDefinition _delay = null;
                     }
                 }
@@ -12376,8 +12201,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("classConceptModel")) {
                 if ((_strong.ClassConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ClassConceptKey);
                         _strong.ClassConcept = _delay;
@@ -12393,8 +12217,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("determinerConceptModel")) {
                 if ((_strong.DeterminerConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("determinerConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.DeterminerConceptKey);
                         _strong.DeterminerConcept = _delay;
@@ -12410,8 +12233,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("statusConceptModel")) {
                 if ((_strong.StatusConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.StatusConceptKey);
                         _strong.StatusConcept = _delay;
@@ -12427,8 +12249,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("creationActModel")) {
                 if ((_strong.CreationAct == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("creationActModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Acts.Act _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Acts.Act>(_strong.CreationActKey);
                         _strong.CreationAct = _delay;
@@ -12444,8 +12265,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("typeConceptModel")) {
                 if ((_strong.TypeConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.TypeConceptKey);
                         _strong.TypeConcept = _delay;
@@ -12462,8 +12282,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("identifier")) {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
@@ -12480,8 +12299,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("relationship")) {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
@@ -12498,8 +12316,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("telecom")) {
                 if (((_strong.Telecoms == null) 
                             || (_strong.Telecoms.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("telecom", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityTelecomAddress>(_strong.Key.Value));
                         _strong.Telecoms = _delay;
@@ -12516,8 +12333,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("extension")) {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
@@ -12534,8 +12350,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("name")) {
                 if (((_strong.Names == null) 
                             || (_strong.Names.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityName>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityName>(_strong.Key.Value));
                         _strong.Names = _delay;
@@ -12552,8 +12367,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("address")) {
                 if (((_strong.Addresses == null) 
                             || (_strong.Addresses.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("address", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Entities.EntityAddress>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Entities.EntityAddress>(_strong.Key.Value));
                         _strong.Addresses = _delay;
@@ -12570,8 +12384,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("note")) {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
@@ -12588,8 +12401,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("tag")) {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.EntityTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
@@ -12606,8 +12418,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("participation")) {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
@@ -12637,8 +12448,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("previousVersionModel")) {
                 if ((_strong.PreviousVersion == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Entities.Entity _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Entities.Entity>(_strong.PreviousVersionKey);
                         _strong.PreviousVersion = _delay;
@@ -13012,7 +12822,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                             }
                                                                                                                                                             else {
                                                                                                                                                                 if ("$type".Equals(r.Value)) {
-                                                                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                     if ((_type != typeof(OpenIZ.Core.Model.Entities.Place))) {
                                                                                                                                                                         OpenIZ.Core.Model.Entities.Place _nretVal = ((OpenIZ.Core.Model.Entities.Place)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                         _nretVal.CopyObjectData(_retVal);
@@ -13250,7 +13060,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                             }
                                             else {
                                                 if ("$type".Equals(r.Value)) {
-                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                     if ((_type != typeof(OpenIZ.Core.Model.Entities.PlaceService))) {
                                                         OpenIZ.Core.Model.Entities.PlaceService _nretVal = ((OpenIZ.Core.Model.Entities.PlaceService)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                         _nretVal.CopyObjectData(_retVal);
@@ -13550,7 +13360,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                         }
                                                                         else {
                                                                             if ("$type".Equals(r.Value)) {
-                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                 if ((_type != typeof(OpenIZ.Core.Model.DataTypes.AssigningAuthority))) {
                                                                                     OpenIZ.Core.Model.DataTypes.AssigningAuthority _nretVal = ((OpenIZ.Core.Model.DataTypes.AssigningAuthority)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                     _nretVal.CopyObjectData(_retVal);
@@ -13886,7 +13696,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                 }
                                                                                 else {
                                                                                     if ("$type".Equals(r.Value)) {
-                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                         if ((_type != typeof(OpenIZ.Core.Model.DataTypes.CodeSystem))) {
                                                                                             OpenIZ.Core.Model.DataTypes.CodeSystem _nretVal = ((OpenIZ.Core.Model.DataTypes.CodeSystem)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                             _nretVal.CopyObjectData(_retVal);
@@ -13984,8 +13794,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("statusConceptModel")) {
                 if ((_strong.StatusConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.StatusConceptKey);
                         _strong.StatusConcept = _delay;
@@ -14002,8 +13811,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("relationship")) {
                 if (((_strong.Relationship == null) 
                             || (_strong.Relationship.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ConceptRelationship> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ConceptRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ConceptRelationship>(_strong.Key.Value));
                         _strong.Relationship = _delay;
@@ -14026,8 +13834,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("conceptClassModel")) {
                 if ((_strong.Class == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("conceptClassModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("conceptClassModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.ConceptClass _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.ConceptClass>(_strong.ClassKey);
                         _strong.Class = _delay;
@@ -14044,8 +13851,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("referenceTerm")) {
                 if (((_strong.ReferenceTerms == null) 
                             || (_strong.ReferenceTerms.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("referenceTerm", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("referenceTerm", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm>(_strong.Key.Value));
                         _strong.ReferenceTerms = _delay;
@@ -14062,8 +13868,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("name")) {
                 if (((_strong.ConceptNames == null) 
                             || (_strong.ConceptNames.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("name", _strong.Key.Value))) {
                         System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ConceptName> _delay = null;
                         _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ConceptName>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ConceptName>(_strong.Key.Value));
                         _strong.ConceptNames = _delay;
@@ -14101,8 +13906,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("previousVersionModel")) {
                 if ((_strong.PreviousVersion == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.PreviousVersionKey);
                         _strong.PreviousVersion = _delay;
@@ -14364,7 +14168,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                     }
                                                                                                     else {
                                                                                                         if ("$type".Equals(r.Value)) {
-                                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                             if ((_type != typeof(OpenIZ.Core.Model.DataTypes.Concept))) {
                                                                                                                 OpenIZ.Core.Model.DataTypes.Concept _nretVal = ((OpenIZ.Core.Model.DataTypes.Concept)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -14632,7 +14436,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                             }
                                                             else {
                                                                 if ("$type".Equals(r.Value)) {
-                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                     if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ConceptClass))) {
                                                                         OpenIZ.Core.Model.DataTypes.ConceptClass _nretVal = ((OpenIZ.Core.Model.DataTypes.ConceptClass)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                         _nretVal.CopyObjectData(_retVal);
@@ -14876,7 +14680,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                     }
                                                     else {
                                                         if ("$type".Equals(r.Value)) {
-                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                             if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ConceptName))) {
                                                                 OpenIZ.Core.Model.DataTypes.ConceptName _nretVal = ((OpenIZ.Core.Model.DataTypes.ConceptName)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                 _nretVal.CopyObjectData(_retVal);
@@ -15136,7 +14940,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                 }
                                                 else {
                                                     if ("$type".Equals(r.Value)) {
-                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                         if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm))) {
                                                             OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm _nretVal = ((OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                             _nretVal.CopyObjectData(_retVal);
@@ -15371,7 +15175,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                 }
                                                 else {
                                                     if ("$type".Equals(r.Value)) {
-                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                         if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ConceptRelationship))) {
                                                             OpenIZ.Core.Model.DataTypes.ConceptRelationship _nretVal = ((OpenIZ.Core.Model.DataTypes.ConceptRelationship)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                             _nretVal.CopyObjectData(_retVal);
@@ -15626,7 +15430,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                             }
                                                             else {
                                                                 if ("$type".Equals(r.Value)) {
-                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                     if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ConceptRelationshipType))) {
                                                                         OpenIZ.Core.Model.DataTypes.ConceptRelationshipType _nretVal = ((OpenIZ.Core.Model.DataTypes.ConceptRelationshipType)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                         _nretVal.CopyObjectData(_retVal);
@@ -15915,7 +15719,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     }
                                                                     else {
                                                                         if ("$type".Equals(r.Value)) {
-                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                             if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ConceptSet))) {
                                                                                 OpenIZ.Core.Model.DataTypes.ConceptSet _nretVal = ((OpenIZ.Core.Model.DataTypes.ConceptSet)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -16116,7 +15920,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                         }
                                         else {
                                             if ("$type".Equals(r.Value)) {
-                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                 if ((_type != typeof(OpenIZ.Core.Model.DataTypes.EntityExtension))) {
                                                     OpenIZ.Core.Model.DataTypes.EntityExtension _nretVal = ((OpenIZ.Core.Model.DataTypes.EntityExtension)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                     _nretVal.CopyObjectData(_retVal);
@@ -16334,7 +16138,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                         }
                                         else {
                                             if ("$type".Equals(r.Value)) {
-                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                 if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ActExtension))) {
                                                     OpenIZ.Core.Model.DataTypes.ActExtension _nretVal = ((OpenIZ.Core.Model.DataTypes.ActExtension)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                     _nretVal.CopyObjectData(_retVal);
@@ -16611,7 +16415,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                             }
                                                             else {
                                                                 if ("$type".Equals(r.Value)) {
-                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                     if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ExtensionType))) {
                                                                         OpenIZ.Core.Model.DataTypes.ExtensionType _nretVal = ((OpenIZ.Core.Model.DataTypes.ExtensionType)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                         _nretVal.CopyObjectData(_retVal);
@@ -16834,7 +16638,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                             }
                                             else {
                                                 if ("$type".Equals(r.Value)) {
-                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                     if ((_type != typeof(OpenIZ.Core.Model.DataTypes.EntityIdentifier))) {
                                                         OpenIZ.Core.Model.DataTypes.EntityIdentifier _nretVal = ((OpenIZ.Core.Model.DataTypes.EntityIdentifier)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                         _nretVal.CopyObjectData(_retVal);
@@ -17053,7 +16857,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                             }
                                             else {
                                                 if ("$type".Equals(r.Value)) {
-                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                     if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ActIdentifier))) {
                                                         OpenIZ.Core.Model.DataTypes.ActIdentifier _nretVal = ((OpenIZ.Core.Model.DataTypes.ActIdentifier)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                         _nretVal.CopyObjectData(_retVal);
@@ -17325,7 +17129,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                             }
                                                             else {
                                                                 if ("$type".Equals(r.Value)) {
-                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                     if ((_type != typeof(OpenIZ.Core.Model.DataTypes.IdentifierType))) {
                                                                         OpenIZ.Core.Model.DataTypes.IdentifierType _nretVal = ((OpenIZ.Core.Model.DataTypes.IdentifierType)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                         _nretVal.CopyObjectData(_retVal);
@@ -17539,7 +17343,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                             }
                                             else {
                                                 if ("$type".Equals(r.Value)) {
-                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                     if ((_type != typeof(OpenIZ.Core.Model.DataTypes.EntityNote))) {
                                                         OpenIZ.Core.Model.DataTypes.EntityNote _nretVal = ((OpenIZ.Core.Model.DataTypes.EntityNote)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                         _nretVal.CopyObjectData(_retVal);
@@ -17773,7 +17577,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                             }
                                             else {
                                                 if ("$type".Equals(r.Value)) {
-                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                     if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ActNote))) {
                                                         OpenIZ.Core.Model.DataTypes.ActNote _nretVal = ((OpenIZ.Core.Model.DataTypes.ActNote)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                         _nretVal.CopyObjectData(_retVal);
@@ -18051,7 +17855,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                             }
                                                             else {
                                                                 if ("$type".Equals(r.Value)) {
-                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                     if ((_type != typeof(OpenIZ.Core.Model.DataTypes.PhoneticAlgorithm))) {
                                                                         OpenIZ.Core.Model.DataTypes.PhoneticAlgorithm _nretVal = ((OpenIZ.Core.Model.DataTypes.PhoneticAlgorithm)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                         _nretVal.CopyObjectData(_retVal);
@@ -18358,7 +18162,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     }
                                                                     else {
                                                                         if ("$type".Equals(r.Value)) {
-                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                             if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ReferenceTerm))) {
                                                                                 OpenIZ.Core.Model.DataTypes.ReferenceTerm _nretVal = ((OpenIZ.Core.Model.DataTypes.ReferenceTerm)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -18429,6 +18233,13 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             catch (System.Exception e) {
                 this.m_tracer.TraceError(string.Format("Casting Error: {0}", e));
                 throw new System.ArgumentException(string.Format("Invalid type {0} provided, expected {1}", o.GetType(), typeof(OpenIZ.Core.Model.DataTypes.ReferenceTermName)));
+            }
+            if (context.ShouldSerialize("referencetermkeyModel")) {
+                if ((_strong.ReferenceTermKey == null)) {
+                }
+                else {
+                    context.JsonContext.WritePropertyUtil(w, "referencetermkeyModel", _strong.ReferenceTermKey, context);
+                }
             }
             if (context.ShouldSerialize("language")) {
                 if ((_strong.Language == null)) {
@@ -18641,16 +18452,25 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     }
                                                                 }
                                                                 else {
-                                                                    if ("$type".Equals(r.Value)) {
-                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
-                                                                        if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ReferenceTermName))) {
-                                                                            OpenIZ.Core.Model.DataTypes.ReferenceTermName _nretVal = ((OpenIZ.Core.Model.DataTypes.ReferenceTermName)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
-                                                                            _nretVal.CopyObjectData(_retVal);
-                                                                            return _nretVal;
+                                                                    if ("referencetermkeyModel".Equals(r.Value)) {
+                                                                        r.Read();
+                                                                        System.Guid _instance = ((System.Guid)(context.JsonContext.ReadElementUtil(r, typeof(System.Guid), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("referencetermkeyModel", context.JsonContext, _retVal, context))));
+                                                                        if ((_instance != null)) {
+                                                                            _retVal.ReferenceTermKey = _instance;
                                                                         }
                                                                     }
                                                                     else {
-                                                                        r.Skip();
+                                                                        if ("$type".Equals(r.Value)) {
+                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                            if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ReferenceTermName))) {
+                                                                                OpenIZ.Core.Model.DataTypes.ReferenceTermName _nretVal = ((OpenIZ.Core.Model.DataTypes.ReferenceTermName)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
+                                                                                _nretVal.CopyObjectData(_retVal);
+                                                                                return _nretVal;
+                                                                            }
+                                                                        }
+                                                                        else {
+                                                                            r.Skip();
+                                                                        }
                                                                     }
                                                                 }
                                                             }
@@ -18934,7 +18754,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                             }
                                                             else {
                                                                 if ("$type".Equals(r.Value)) {
-                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                     if ((_type != typeof(OpenIZ.Core.Model.DataTypes.EntityTag))) {
                                                                         OpenIZ.Core.Model.DataTypes.EntityTag _nretVal = ((OpenIZ.Core.Model.DataTypes.EntityTag)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                         _nretVal.CopyObjectData(_retVal);
@@ -19225,7 +19045,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                             }
                                                             else {
                                                                 if ("$type".Equals(r.Value)) {
-                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                     if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ActTag))) {
                                                                         OpenIZ.Core.Model.DataTypes.ActTag _nretVal = ((OpenIZ.Core.Model.DataTypes.ActTag)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                         _nretVal.CopyObjectData(_retVal);
@@ -19537,7 +19357,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     }
                                                                     else {
                                                                         if ("$type".Equals(r.Value)) {
-                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                             if ((_type != typeof(OpenIZ.Core.Model.DataTypes.TemplateDefinition))) {
                                                                                 OpenIZ.Core.Model.DataTypes.TemplateDefinition _nretVal = ((OpenIZ.Core.Model.DataTypes.TemplateDefinition)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -19733,7 +19553,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                         }
                                         else {
                                             if ("$type".Equals(r.Value)) {
-                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                 if ((_type != typeof(OpenIZ.Core.Model.Collection.Bundle))) {
                                                     OpenIZ.Core.Model.Collection.Bundle _nretVal = ((OpenIZ.Core.Model.Collection.Bundle)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                     _nretVal.CopyObjectData(_retVal);
@@ -19807,8 +19627,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("template")) {
                 if ((_strong.Template == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.TemplateDefinition _delay = null;
                     }
                 }
@@ -19874,8 +19693,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("classConceptModel")) {
                 if ((_strong.ClassConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ClassConceptKey);
                         _strong.ClassConcept = _delay;
@@ -19891,8 +19709,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("moodConceptModel")) {
                 if ((_strong.MoodConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("moodConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("moodConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.MoodConceptKey);
                         _strong.MoodConcept = _delay;
@@ -19908,8 +19725,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("reasonConceptModel")) {
                 if ((_strong.ReasonConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("reasonConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("reasonConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ReasonConceptKey);
                         _strong.ReasonConcept = _delay;
@@ -19925,8 +19741,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("statusConceptModel")) {
                 if ((_strong.StatusConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.StatusConceptKey);
                         _strong.StatusConcept = _delay;
@@ -19942,8 +19757,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("typeConceptModel")) {
                 if ((_strong.TypeConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.TypeConceptKey);
                         _strong.TypeConcept = _delay;
@@ -19960,8 +19774,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("identifier")) {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
@@ -19978,8 +19791,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("relationship")) {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
@@ -19996,8 +19808,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("policy")) {
                 if (((_strong.Policies == null) 
                             || (_strong.Policies.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
                         _strong.Policies = _delay;
@@ -20014,8 +19825,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("extension")) {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
@@ -20032,8 +19842,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("note")) {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
@@ -20050,8 +19859,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("tag")) {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
@@ -20068,8 +19876,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("protocolsModel")) {
                 if (((_strong.Protocols == null) 
                             || (_strong.Protocols.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("protocolsModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("protocolsModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
                         _strong.Protocols = _delay;
@@ -20086,8 +19893,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("participation")) {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
@@ -20117,8 +19923,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("previousVersionModel")) {
                 if ((_strong.PreviousVersion == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Acts.Act _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Acts.Act>(_strong.PreviousVersionKey);
                         _strong.PreviousVersion = _delay;
@@ -20484,7 +20289,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                         }
                                                                                                                                                         else {
                                                                                                                                                             if ("$type".Equals(r.Value)) {
-                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                 if ((_type != typeof(OpenIZ.Core.Model.Acts.Act))) {
                                                                                                                                                                     OpenIZ.Core.Model.Acts.Act _nretVal = ((OpenIZ.Core.Model.Acts.Act)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                     _nretVal.CopyObjectData(_retVal);
@@ -20799,7 +20604,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                             }
                                                             else {
                                                                 if ("$type".Equals(r.Value)) {
-                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                     if ((_type != typeof(OpenIZ.Core.Model.Acts.ActParticipation))) {
                                                                         OpenIZ.Core.Model.Acts.ActParticipation _nretVal = ((OpenIZ.Core.Model.Acts.ActParticipation)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                         _nretVal.CopyObjectData(_retVal);
@@ -21013,7 +20818,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                             }
                                             else {
                                                 if ("$type".Equals(r.Value)) {
-                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                     if ((_type != typeof(OpenIZ.Core.Model.Acts.ActProtocol))) {
                                                         OpenIZ.Core.Model.Acts.ActProtocol _nretVal = ((OpenIZ.Core.Model.Acts.ActProtocol)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                         _nretVal.CopyObjectData(_retVal);
@@ -21247,7 +21052,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                 }
                                                 else {
                                                     if ("$type".Equals(r.Value)) {
-                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                         if ((_type != typeof(OpenIZ.Core.Model.Acts.ActRelationship))) {
                                                             OpenIZ.Core.Model.Acts.ActRelationship _nretVal = ((OpenIZ.Core.Model.Acts.ActRelationship)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                             _nretVal.CopyObjectData(_retVal);
@@ -21323,8 +21128,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("template")) {
                 if ((_strong.Template == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.TemplateDefinition _delay = null;
                     }
                 }
@@ -21390,8 +21194,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("classConceptModel")) {
                 if ((_strong.ClassConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ClassConceptKey);
                         _strong.ClassConcept = _delay;
@@ -21407,8 +21210,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("moodConceptModel")) {
                 if ((_strong.MoodConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("moodConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("moodConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.MoodConceptKey);
                         _strong.MoodConcept = _delay;
@@ -21424,8 +21226,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("reasonConceptModel")) {
                 if ((_strong.ReasonConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("reasonConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("reasonConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ReasonConceptKey);
                         _strong.ReasonConcept = _delay;
@@ -21441,8 +21242,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("statusConceptModel")) {
                 if ((_strong.StatusConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.StatusConceptKey);
                         _strong.StatusConcept = _delay;
@@ -21458,8 +21258,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("typeConceptModel")) {
                 if ((_strong.TypeConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.TypeConceptKey);
                         _strong.TypeConcept = _delay;
@@ -21476,8 +21275,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("identifier")) {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
@@ -21494,8 +21292,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("relationship")) {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
@@ -21512,8 +21309,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("policy")) {
                 if (((_strong.Policies == null) 
                             || (_strong.Policies.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
                         _strong.Policies = _delay;
@@ -21530,8 +21326,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("extension")) {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
@@ -21548,8 +21343,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("note")) {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
@@ -21566,8 +21360,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("tag")) {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
@@ -21584,8 +21377,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("protocolsModel")) {
                 if (((_strong.Protocols == null) 
                             || (_strong.Protocols.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("protocolsModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("protocolsModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
                         _strong.Protocols = _delay;
@@ -21602,8 +21394,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("participation")) {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
@@ -21633,8 +21424,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("previousVersionModel")) {
                 if ((_strong.PreviousVersion == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Acts.Act _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Acts.Act>(_strong.PreviousVersionKey);
                         _strong.PreviousVersion = _delay;
@@ -22000,7 +21790,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                         }
                                                                                                                                                         else {
                                                                                                                                                             if ("$type".Equals(r.Value)) {
-                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                 if ((_type != typeof(OpenIZ.Core.Model.Acts.ControlAct))) {
                                                                                                                                                                     OpenIZ.Core.Model.Acts.ControlAct _nretVal = ((OpenIZ.Core.Model.Acts.ControlAct)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                     _nretVal.CopyObjectData(_retVal);
@@ -22109,8 +21899,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("unitOfMeasureModel")) {
                 if ((_strong.UnitOfMeasure == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("unitOfMeasureModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("unitOfMeasureModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.UnitOfMeasureKey);
                         _strong.UnitOfMeasure = _delay;
@@ -22133,8 +21922,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("interpretationConceptModel")) {
                 if ((_strong.InterpretationConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("interpretationConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("interpretationConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.InterpretationConceptKey);
                         _strong.InterpretationConcept = _delay;
@@ -22157,8 +21945,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("template")) {
                 if ((_strong.Template == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.TemplateDefinition _delay = null;
                     }
                 }
@@ -22224,8 +22011,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("classConceptModel")) {
                 if ((_strong.ClassConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ClassConceptKey);
                         _strong.ClassConcept = _delay;
@@ -22241,8 +22027,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("moodConceptModel")) {
                 if ((_strong.MoodConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("moodConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("moodConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.MoodConceptKey);
                         _strong.MoodConcept = _delay;
@@ -22258,8 +22043,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("reasonConceptModel")) {
                 if ((_strong.ReasonConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("reasonConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("reasonConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ReasonConceptKey);
                         _strong.ReasonConcept = _delay;
@@ -22275,8 +22059,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("statusConceptModel")) {
                 if ((_strong.StatusConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.StatusConceptKey);
                         _strong.StatusConcept = _delay;
@@ -22292,8 +22075,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("typeConceptModel")) {
                 if ((_strong.TypeConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.TypeConceptKey);
                         _strong.TypeConcept = _delay;
@@ -22310,8 +22092,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("identifier")) {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
@@ -22328,8 +22109,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("relationship")) {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
@@ -22346,8 +22126,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("policy")) {
                 if (((_strong.Policies == null) 
                             || (_strong.Policies.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
                         _strong.Policies = _delay;
@@ -22364,8 +22143,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("extension")) {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
@@ -22382,8 +22160,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("note")) {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
@@ -22400,8 +22177,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("tag")) {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
@@ -22418,8 +22194,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("protocolsModel")) {
                 if (((_strong.Protocols == null) 
                             || (_strong.Protocols.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("protocolsModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("protocolsModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
                         _strong.Protocols = _delay;
@@ -22436,8 +22211,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("participation")) {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
@@ -22467,8 +22241,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("previousVersionModel")) {
                 if ((_strong.PreviousVersion == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Acts.Act _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Acts.Act>(_strong.PreviousVersionKey);
                         _strong.PreviousVersion = _delay;
@@ -22874,7 +22647,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                             }
                                                                                                                                                                             else {
                                                                                                                                                                                 if ("$type".Equals(r.Value)) {
-                                                                                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                                     if ((_type != typeof(OpenIZ.Core.Model.Acts.QuantityObservation))) {
                                                                                                                                                                                         OpenIZ.Core.Model.Acts.QuantityObservation _nretVal = ((OpenIZ.Core.Model.Acts.QuantityObservation)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                         _nretVal.CopyObjectData(_retVal);
@@ -22988,8 +22761,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("interpretationConceptModel")) {
                 if ((_strong.InterpretationConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("interpretationConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("interpretationConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.InterpretationConceptKey);
                         _strong.InterpretationConcept = _delay;
@@ -23012,8 +22784,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("template")) {
                 if ((_strong.Template == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.TemplateDefinition _delay = null;
                     }
                 }
@@ -23079,8 +22850,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("classConceptModel")) {
                 if ((_strong.ClassConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ClassConceptKey);
                         _strong.ClassConcept = _delay;
@@ -23096,8 +22866,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("moodConceptModel")) {
                 if ((_strong.MoodConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("moodConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("moodConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.MoodConceptKey);
                         _strong.MoodConcept = _delay;
@@ -23113,8 +22882,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("reasonConceptModel")) {
                 if ((_strong.ReasonConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("reasonConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("reasonConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ReasonConceptKey);
                         _strong.ReasonConcept = _delay;
@@ -23130,8 +22898,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("statusConceptModel")) {
                 if ((_strong.StatusConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.StatusConceptKey);
                         _strong.StatusConcept = _delay;
@@ -23147,8 +22914,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("typeConceptModel")) {
                 if ((_strong.TypeConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.TypeConceptKey);
                         _strong.TypeConcept = _delay;
@@ -23165,8 +22931,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("identifier")) {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
@@ -23183,8 +22948,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("relationship")) {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
@@ -23201,8 +22965,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("policy")) {
                 if (((_strong.Policies == null) 
                             || (_strong.Policies.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
                         _strong.Policies = _delay;
@@ -23219,8 +22982,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("extension")) {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
@@ -23237,8 +22999,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("note")) {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
@@ -23255,8 +23016,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("tag")) {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
@@ -23273,8 +23033,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("protocolsModel")) {
                 if (((_strong.Protocols == null) 
                             || (_strong.Protocols.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("protocolsModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("protocolsModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
                         _strong.Protocols = _delay;
@@ -23291,8 +23050,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("participation")) {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
@@ -23322,8 +23080,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("previousVersionModel")) {
                 if ((_strong.PreviousVersion == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Acts.Act _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Acts.Act>(_strong.PreviousVersionKey);
                         _strong.PreviousVersion = _delay;
@@ -23713,7 +23470,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                     }
                                                                                                                                                                     else {
                                                                                                                                                                         if ("$type".Equals(r.Value)) {
-                                                                                                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                             if ((_type != typeof(OpenIZ.Core.Model.Acts.TextObservation))) {
                                                                                                                                                                                 OpenIZ.Core.Model.Acts.TextObservation _nretVal = ((OpenIZ.Core.Model.Acts.TextObservation)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -23818,8 +23575,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("valueModel")) {
                 if ((_strong.Value == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("valueModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("valueModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ValueKey);
                         _strong.Value = _delay;
@@ -23842,8 +23598,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("interpretationConceptModel")) {
                 if ((_strong.InterpretationConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("interpretationConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("interpretationConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.InterpretationConceptKey);
                         _strong.InterpretationConcept = _delay;
@@ -23866,8 +23621,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("template")) {
                 if ((_strong.Template == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.TemplateDefinition _delay = null;
                     }
                 }
@@ -23933,8 +23687,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("classConceptModel")) {
                 if ((_strong.ClassConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ClassConceptKey);
                         _strong.ClassConcept = _delay;
@@ -23950,8 +23703,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("moodConceptModel")) {
                 if ((_strong.MoodConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("moodConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("moodConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.MoodConceptKey);
                         _strong.MoodConcept = _delay;
@@ -23967,8 +23719,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("reasonConceptModel")) {
                 if ((_strong.ReasonConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("reasonConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("reasonConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ReasonConceptKey);
                         _strong.ReasonConcept = _delay;
@@ -23984,8 +23735,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("statusConceptModel")) {
                 if ((_strong.StatusConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.StatusConceptKey);
                         _strong.StatusConcept = _delay;
@@ -24001,8 +23751,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("typeConceptModel")) {
                 if ((_strong.TypeConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.TypeConceptKey);
                         _strong.TypeConcept = _delay;
@@ -24019,8 +23768,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("identifier")) {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
@@ -24037,8 +23785,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("relationship")) {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
@@ -24055,8 +23802,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("policy")) {
                 if (((_strong.Policies == null) 
                             || (_strong.Policies.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
                         _strong.Policies = _delay;
@@ -24073,8 +23819,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("extension")) {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
@@ -24091,8 +23836,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("note")) {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
@@ -24109,8 +23853,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("tag")) {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
@@ -24127,8 +23870,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("protocolsModel")) {
                 if (((_strong.Protocols == null) 
                             || (_strong.Protocols.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("protocolsModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("protocolsModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
                         _strong.Protocols = _delay;
@@ -24145,8 +23887,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("participation")) {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
@@ -24176,8 +23917,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("previousVersionModel")) {
                 if ((_strong.PreviousVersion == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Acts.Act _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Acts.Act>(_strong.PreviousVersionKey);
                         _strong.PreviousVersion = _delay;
@@ -24575,7 +24315,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                         }
                                                                                                                                                                         else {
                                                                                                                                                                             if ("$type".Equals(r.Value)) {
-                                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                                 if ((_type != typeof(OpenIZ.Core.Model.Acts.CodedObservation))) {
                                                                                                                                                                                     OpenIZ.Core.Model.Acts.CodedObservation _nretVal = ((OpenIZ.Core.Model.Acts.CodedObservation)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                     _nretVal.CopyObjectData(_retVal);
@@ -24681,8 +24421,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("dischargeDispositionModel")) {
                 if ((_strong.DischargeDisposition == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("dischargeDispositionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("dischargeDispositionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.DischargeDispositionKey);
                         _strong.DischargeDisposition = _delay;
@@ -24705,8 +24444,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("template")) {
                 if ((_strong.Template == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.TemplateDefinition _delay = null;
                     }
                 }
@@ -24772,8 +24510,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("classConceptModel")) {
                 if ((_strong.ClassConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ClassConceptKey);
                         _strong.ClassConcept = _delay;
@@ -24789,8 +24526,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("moodConceptModel")) {
                 if ((_strong.MoodConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("moodConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("moodConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.MoodConceptKey);
                         _strong.MoodConcept = _delay;
@@ -24806,8 +24542,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("reasonConceptModel")) {
                 if ((_strong.ReasonConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("reasonConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("reasonConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ReasonConceptKey);
                         _strong.ReasonConcept = _delay;
@@ -24823,8 +24558,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("statusConceptModel")) {
                 if ((_strong.StatusConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.StatusConceptKey);
                         _strong.StatusConcept = _delay;
@@ -24840,8 +24574,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("typeConceptModel")) {
                 if ((_strong.TypeConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.TypeConceptKey);
                         _strong.TypeConcept = _delay;
@@ -24858,8 +24591,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("identifier")) {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
@@ -24876,8 +24608,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("relationship")) {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
@@ -24894,8 +24625,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("policy")) {
                 if (((_strong.Policies == null) 
                             || (_strong.Policies.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
                         _strong.Policies = _delay;
@@ -24912,8 +24642,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("extension")) {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
@@ -24930,8 +24659,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("note")) {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
@@ -24948,8 +24676,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("tag")) {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
@@ -24966,8 +24693,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("protocolsModel")) {
                 if (((_strong.Protocols == null) 
                             || (_strong.Protocols.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("protocolsModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("protocolsModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
                         _strong.Protocols = _delay;
@@ -24984,8 +24710,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("participation")) {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
@@ -25015,8 +24740,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("previousVersionModel")) {
                 if ((_strong.PreviousVersion == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Acts.Act _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Acts.Act>(_strong.PreviousVersionKey);
                         _strong.PreviousVersion = _delay;
@@ -25398,7 +25122,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                 }
                                                                                                                                                                 else {
                                                                                                                                                                     if ("$type".Equals(r.Value)) {
-                                                                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                         if ((_type != typeof(OpenIZ.Core.Model.Acts.PatientEncounter))) {
                                                                                                                                                                             OpenIZ.Core.Model.Acts.PatientEncounter _nretVal = ((OpenIZ.Core.Model.Acts.PatientEncounter)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                             _nretVal.CopyObjectData(_retVal);
@@ -25666,7 +25390,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                         }
                                                         else {
                                                             if ("$type".Equals(r.Value)) {
-                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                 if ((_type != typeof(OpenIZ.Core.Model.Acts.Protocol))) {
                                                                     OpenIZ.Core.Model.Acts.Protocol _nretVal = ((OpenIZ.Core.Model.Acts.Protocol)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                     _nretVal.CopyObjectData(_retVal);
@@ -25751,8 +25475,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("routeModel")) {
                 if ((_strong.Route == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("routeModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("routeModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.RouteKey);
                         _strong.Route = _delay;
@@ -25768,8 +25491,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("doseUnitModel")) {
                 if ((_strong.DoseUnit == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("doseUnitModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("doseUnitModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.DoseUnitKey);
                         _strong.DoseUnit = _delay;
@@ -25806,8 +25528,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("siteModel")) {
                 if ((_strong.Site == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("siteModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("siteModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.SiteKey);
                         _strong.Site = _delay;
@@ -25830,8 +25551,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("template")) {
                 if ((_strong.Template == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("template", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.TemplateDefinition _delay = null;
                     }
                 }
@@ -25897,8 +25617,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("classConceptModel")) {
                 if ((_strong.ClassConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("classConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ClassConceptKey);
                         _strong.ClassConcept = _delay;
@@ -25914,8 +25633,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("moodConceptModel")) {
                 if ((_strong.MoodConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("moodConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("moodConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.MoodConceptKey);
                         _strong.MoodConcept = _delay;
@@ -25931,8 +25649,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("reasonConceptModel")) {
                 if ((_strong.ReasonConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("reasonConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("reasonConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.ReasonConceptKey);
                         _strong.ReasonConcept = _delay;
@@ -25948,8 +25665,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("statusConceptModel")) {
                 if ((_strong.StatusConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("statusConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.StatusConceptKey);
                         _strong.StatusConcept = _delay;
@@ -25965,8 +25681,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("typeConceptModel")) {
                 if ((_strong.TypeConcept == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("typeConceptModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.DataTypes.Concept _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.DataTypes.Concept>(_strong.TypeConceptKey);
                         _strong.TypeConcept = _delay;
@@ -25983,8 +25698,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("identifier")) {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
@@ -26001,8 +25715,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("relationship")) {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
@@ -26019,8 +25732,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("policy")) {
                 if (((_strong.Policies == null) 
                             || (_strong.Policies.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
                         _strong.Policies = _delay;
@@ -26037,8 +25749,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("extension")) {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
@@ -26055,8 +25766,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("note")) {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
@@ -26073,8 +25783,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("tag")) {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
@@ -26091,8 +25800,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("protocolsModel")) {
                 if (((_strong.Protocols == null) 
                             || (_strong.Protocols.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("protocolsModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("protocolsModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
                         _strong.Protocols = _delay;
@@ -26109,8 +25817,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if (context.ShouldSerialize("participation")) {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
                         _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
@@ -26140,8 +25847,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("previousVersionModel")) {
                 if ((_strong.PreviousVersion == null)) {
-                    if ((_strong.VersionKey.HasValue 
-                                && (_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value)))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("previousVersionModel", _strong.Key.Value))) {
                         OpenIZ.Core.Model.Acts.Act _delay = null;
                         _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Acts.Act>(_strong.PreviousVersionKey);
                         _strong.PreviousVersion = _delay;
@@ -26571,7 +26277,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                                         }
                                                                                                                                                                                         else {
                                                                                                                                                                                             if ("$type".Equals(r.Value)) {
-                                                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.18283, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.6.14.24604, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                                                 if ((_type != typeof(OpenIZ.Core.Model.Acts.SubstanceAdministration))) {
                                                                                                                                                                                                     OpenIZ.Core.Model.Acts.SubstanceAdministration _nretVal = ((OpenIZ.Core.Model.Acts.SubstanceAdministration)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                                     _nretVal.CopyObjectData(_retVal);

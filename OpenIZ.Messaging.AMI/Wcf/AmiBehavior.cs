@@ -517,7 +517,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			// Now issue the TFA secret
 			tfaRelay.SendSecret(resetInfo.ResetMechanism, securityUser, resetInfo.Verification, tfaSecret);
-
+            WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NoContent;
 		}
 		/// <summary>
 		/// Submits a specific certificate signing request.

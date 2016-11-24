@@ -101,6 +101,7 @@
     <Compile Include="Services\Impl\LocalActRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalAlertRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalAssigningAuthorityRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalBatchRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalDeviceIdentityProviderService.cs" />
     <Compile Include="Services\Impl\LocalEntityRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalIdentifierTypeRepositoryService.cs" />

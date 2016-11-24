@@ -35,6 +35,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Jint;
 using OpenIZ.Core.Model;
+using System.Text.RegularExpressions;
 
 namespace OpenIZ.BusinessRules.JavaScript
 {
@@ -84,13 +85,17 @@ namespace OpenIZ.BusinessRules.JavaScript
             this.m_engine = new Jint.Engine(cfg => cfg.AllowClr(
                     typeof(OpenIZ.Core.Model.BaseEntityData).GetTypeInfo().Assembly,
                     typeof(IBusinessRulesService<>).GetTypeInfo().Assembly
-                ).Strict(true)
+                ).Strict(false)
 #if DEBUG
                 .DebugMode(true)
 #endif
 
                 ).SetValue("OpenIZBre", this.m_bridge)
                 .SetValue("console", new JsConsoleProvider());
+
+            foreach(var itm in typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.GetManifestResourceNames().Where(o=>o.EndsWith(".js")))
+            using (StreamReader sr = new StreamReader(typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.GetManifestResourceStream(itm)))
+                this.AddRules(sr);
         }
 
         /// <summary>
@@ -123,7 +128,22 @@ namespace OpenIZ.BusinessRules.JavaScript
             try
             {
                 this.m_tracer.TraceVerbose("Adding rules to BRE");
-                var executionLog = this.m_engine.Execute(script.ReadToEnd());
+                var rawScript = script.ReadToEnd();
+                // Find all reference paths
+                Regex includeReg = new Regex(@"\/\/\/\s*?\<reference\s*?path\=[""'](.*?)[""']\s?\/\>", RegexOptions.Multiline);
+                var incMatches = includeReg.Matches(rawScript);
+                foreach(Match match in incMatches)
+                {
+                    var include = match.Groups[1].Value;
+                    var incStream = (ApplicationServiceContext.Current.GetService(typeof(IDataReferenceResolver)) as IDataReferenceResolver)?.Resolve(include);
+                    if (incStream == null)
+                        this.m_tracer.TraceError("Include {0} not found", include);
+                    else
+                        using (StreamReader sr = new StreamReader(incStream))
+                            this.m_engine.Execute(rawScript);
+                }
+                var executionLog = this.m_engine.Execute(rawScript);
+
             }
             catch(JavaScriptException ex)
             {
