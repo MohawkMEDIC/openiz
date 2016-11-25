@@ -38,5 +38,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
 			return alert;
 		}
+
+		public override Core.Alert.Alerting.AlertMessage ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
+		{
+			var modelInstance = base.ToModelInstance(dataInstance, context, principal);
+
+			modelInstance.Flags = (AlertMessageFlags)(dataInstance as Data.AlertMessage).Flags;
+			return base.ToModelInstance(dataInstance, context, principal);
+		}
 	}
 }
