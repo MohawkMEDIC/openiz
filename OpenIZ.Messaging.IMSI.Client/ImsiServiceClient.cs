@@ -54,8 +54,9 @@ namespace OpenIZ.Messaging.IMSI.Client
 		/// </summary>
 		/// <typeparam name="TModel">The type of data to be created.</typeparam>
 		/// <param name="data">The data to be created.</param>
+		/// <param name="bundled">Whether the data should be submitted as a bundle.</param>
 		/// <returns>Returns the newly created data.</returns>
-		public TModel Create<TModel>(TModel data) where TModel : IdentifiedData
+		public TModel Create<TModel>(TModel data, bool bundled = true) where TModel : IdentifiedData
 		{
 			if (data == null)
 			{
@@ -68,11 +69,15 @@ namespace OpenIZ.Messaging.IMSI.Client
 			// Create with version?
 			if (data.Key != null)
 			{
-				return this.Client.Post<Bundle, TModel>(String.Format("{0}/{1}", resourceName, data.Key), this.Client.Accept, Bundle.CreateBundle(data));
+				return bundled ? 
+					this.Client.Post<Bundle, TModel>($"Bundle/{data.Key}", this.Client.Accept, Bundle.CreateBundle(data)) : 
+					this.Client.Post<TModel, TModel>($"{resourceName}/{data.Key}", this.Client.Accept, data);
 			}
 			else
 			{
-				return this.Client.Post<Bundle, TModel>(resourceName, this.Client.Accept, Bundle.CreateBundle(data));
+				return bundled ?
+					this.Client.Post<Bundle, TModel>("Bundle", this.Client.Accept, Bundle.CreateBundle(data)) :
+					this.Client.Post<TModel, TModel>(resourceName, this.Client.Accept, data);
 			}
 		}
 
