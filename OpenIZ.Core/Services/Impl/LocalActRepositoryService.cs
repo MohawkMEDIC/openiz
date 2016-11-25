@@ -77,7 +77,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <summary>
 		/// Insert the specified act
 		/// </summary>
-		public TAct Insert<TAct>(TAct insert) where TAct : Act
+		public TAct Insert<TAct>(TAct act) where TAct : Act
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
 
@@ -88,11 +88,11 @@ namespace OpenIZ.Core.Services.Impl
 
 			var businessRulesService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
 
-			insert = businessRulesService != null ? businessRulesService.BeforeInsert(insert) : insert;
+			act = businessRulesService != null ? businessRulesService.BeforeInsert(act) : act;
 
-			insert = persistenceService.Insert(insert, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			act = persistenceService.Insert(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
-			return businessRulesService != null ? businessRulesService.AfterInsert(insert) : insert;
+			return businessRulesService != null ? businessRulesService.AfterInsert(act) : act;
 		}
 
 		/// <summary>

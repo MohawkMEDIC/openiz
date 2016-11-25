@@ -59,7 +59,7 @@ namespace OpenIZ.Core.Model.EntityLoader
             /// </summary>
             public IEnumerable<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence) where TObject : IdentifiedData, IVersionedAssociation, new()
             {
-                throw new NotImplementedException();
+	            return new List<TObject>();
             }
 
             /// <summary>
@@ -67,8 +67,8 @@ namespace OpenIZ.Core.Model.EntityLoader
             /// </summary>
             public IEnumerable<TObject> GetRelations<TObject>(Guid? sourceKey) where TObject : IdentifiedData, ISimpleAssociation, new()
             {
-                throw new NotImplementedException();
-            }
+				return new List<TObject>();
+			}
 
             /// <summary>
             /// Query 
