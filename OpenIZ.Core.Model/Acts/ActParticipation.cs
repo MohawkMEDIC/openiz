@@ -202,7 +202,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <returns></returns>
         public override IdentifiedData Clean()
         {
-            this.PlayerEntity= this.PlayerEntity?.Clean() as Entity;
+            this.m_player = this.m_player?.Clean() as Entity;
             return this;
         }
 

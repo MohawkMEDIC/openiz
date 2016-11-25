@@ -205,7 +205,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <returns></returns>
         public override IdentifiedData Clean()
         {
-            this.TargetEntity = this.TargetEntity?.Clean() as Entity;
+            this.m_targetEntity = this.m_targetEntity?.Clean() as Entity;
             return this;
         }
         /// <summary>

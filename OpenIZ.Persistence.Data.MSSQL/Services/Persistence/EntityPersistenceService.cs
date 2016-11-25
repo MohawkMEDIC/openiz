@@ -318,13 +318,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var loadOptions = base.GetDataLoadOptions();
             loadOptions.LoadWith<Data.EntityVersion>(cs => cs.StatusConcept);
             loadOptions.LoadWith<Data.EntityVersion>(cs => cs.TypeConcept);
-/*            loadOptions.LoadWith<Data.Entity>(cs => cs.EntityTags);
-            loadOptions.LoadWith<Data.Entity>(cs => cs.EntityNames);
-            loadOptions.LoadWith<Data.Entity>(cs => cs.EntityIdentifiers);
-            loadOptions.LoadWith<Data.Entity>(cs => cs.EntityAddresses);
-            loadOptions.LoadWith<Data.Entity>(cs => cs.EntityTelecomAddresses);
-            loadOptions.LoadWith<Data.Entity>(cs => cs.EntityNotes);
-            loadOptions.LoadWith<Data.EntityName>(cs => cs.EntityNameComponents);*/
+            loadOptions.LoadWith<Data.Entity>(cs => cs.ClassConcept);
+            loadOptions.LoadWith<Data.Entity>(cs => cs.DeterminerConcept);
+
+            /*            loadOptions.LoadWith<Data.Entity>(cs => cs.EntityTags);
+                        loadOptions.LoadWith<Data.Entity>(cs => cs.EntityNames);
+                        loadOptions.LoadWith<Data.Entity>(cs => cs.EntityIdentifiers);
+                        loadOptions.LoadWith<Data.Entity>(cs => cs.EntityAddresses);
+                        loadOptions.LoadWith<Data.Entity>(cs => cs.EntityTelecomAddresses);
+                        loadOptions.LoadWith<Data.Entity>(cs => cs.EntityNotes);
+                        loadOptions.LoadWith<Data.EntityName>(cs => cs.EntityNameComponents);*/
             loadOptions.LoadWith<Data.EntityName>(cs => cs.NameUseConcept);
             //loadOptions.LoadWith<Data.EntityAddress>(cs => cs.EntityAddressComponents);
             loadOptions.LoadWith<Data.EntityAddress>(cs => cs.AddressUseConcept);
@@ -337,6 +340,11 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             loadOptions.LoadWith<Data.EntityIdentifier>(cs => cs.AssigningAuthority);
             loadOptions.LoadWith<Data.EntityAssociation>(cs => cs.AssociationTypeConcept);
             loadOptions.LoadWith<Data.EntityExtension>(cs => cs.ExtensionType);
+
+            // CS Version
+            loadOptions.LoadWith<Data.ConceptVersion>(cs => cs.Concept);
+            loadOptions.LoadWith<Data.ConceptVersion>(cs => cs.StatusConcept);
+            loadOptions.LoadWith<Data.ConceptVersion>(cs => cs.ConceptClass);
 
             loadOptions.LoadWith<Data.Material>(m => m.EntityVersion);
             loadOptions.LoadWith<Data.ManufacturedMaterial>(m => m.Material);

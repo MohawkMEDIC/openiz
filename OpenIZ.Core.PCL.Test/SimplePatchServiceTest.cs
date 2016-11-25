@@ -24,6 +24,17 @@ namespace OpenIZ.Core.PCL.Test
     {
 
         /// <summary>
+        /// Guid sanity methods
+        /// </summary>
+        [TestMethod]
+        public void TestGuidSanity()
+        {
+            Guid g = Guid.Parse("880D2A08-8E94-402B-84B6-CB3BC0A576A9");
+            byte[] b = g.ToByteArray();
+
+        }
+
+        /// <summary>
         /// Serialize patch
         /// </summary>
         private void SerializePatch(Patch patch)

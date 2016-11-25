@@ -50,6 +50,7 @@ using Newtonsoft.Json.Converters;
 using OpenIZ.Core.Security.Claims;
 using System.Security.Authentication;
 using OpenIZ.Core.Security.Attribute;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Authentication.OAuth2.Wcf
 {
@@ -107,11 +108,11 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             }
 
             IPrincipal clientPrincipal = ClaimsPrincipal.Current;
-            
+
             // Client is not authenticated
-            if(clientPrincipal == null || !clientPrincipal.Identity.IsAuthenticated)
+            if (clientPrincipal == null || !clientPrincipal.Identity.IsAuthenticated)
                 return this.CreateErrorCondition(OAuthErrorType.unauthorized_client, "Unauthorized Client");
-            
+
             this.m_traceSource.TraceInformation("Begin owner password credential grant for {0}", clientPrincipal.Identity.Name);
 
             if (this.m_configuration.AllowedScopes != null && !this.m_configuration.AllowedScopes.Contains(tokenRequest["scope"]))
@@ -143,7 +144,7 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
                         var signingCredentials = this.CreateSigningCredentials();
                         var signer = new JwtSecurityTokenHandler().SignatureProviderFactory.CreateForVerifying(signingCredentials.SigningKey, signingCredentials.SignatureAlgorithm);
                         // Verify 
-                        var tokenParts = refreshToken.Split('.').Select(o=> Enumerable.Range(0, o.Length)
+                        var tokenParts = refreshToken.Split('.').Select(o => Enumerable.Range(0, o.Length)
                                  .Where(x => x % 2 == 0)
                                  .Select(x => Convert.ToByte(o.Substring(x, 2), 16))
                                  .ToArray()
@@ -179,7 +180,7 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
                     this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, "Error generating token: {0}", e);
                     return this.CreateErrorCondition(OAuthErrorType.invalid_grant, e.Message);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, "Error generating token: {0}", e);
                     return this.CreateErrorCondition(OAuthErrorType.invalid_request, e.Message);
@@ -240,14 +241,9 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
                     roleProvider.GetAllRoles(oizPrincipal.Identity.Name).Select(r => new Claim(ClaimsIdentity.DefaultRoleClaimType, r))
             )
             {
-                new Claim("iss", this.m_configuration.IssuerName),
-                //new Claim(ClaimTypes.AuthenticationInstant, issued.ToString("o")), 
-                new Claim(ClaimTypes.AuthenticationMethod, "OAuth2"),
-                new Claim(ClaimTypes.Name, oizPrincipal.Identity.Name),
-                new Claim(OpenIzClaimTypes.OpenIzApplicationIdentifierClaim,  
-                (clientPrincipal as ClaimsPrincipal).FindFirst(ClaimTypes.Sid).Value)
+                new Claim("iss", this.m_configuration.IssuerName)
             };
-            
+
             // Additional claims
             claims.AddRange(additionalClaims);
 
@@ -255,17 +251,29 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             var oizPrincipalPolicies = pip.GetActivePolicies(oizPrincipal);
 
             // Add grant if not exists
-            if((oizPrincipal as ClaimsPrincipal)?.HasClaim(o=>o.Type == OpenIzClaimTypes.OpenIzGrantedPolicyClaim) == true)
-                claims.AddRange((oizPrincipal as ClaimsPrincipal).FindAll(OpenIzClaimTypes.OpenIzGrantedPolicyClaim));
-            else
-                claims.AddRange(oizPrincipalPolicies.Where(o => o.Rule == PolicyDecisionOutcomeType.Grant).Select(o => new Claim(OpenIzClaimTypes.OpenIzGrantedPolicyClaim, o.Policy.Oid)));
+            if ((oizPrincipal as ClaimsPrincipal)?.FindFirst(ClaimTypes.Actor)?.Value == UserClassKeys.HumanUser.ToString())
+            {
+                claims.AddRange(new Claim[]
+                    {
+                    //new Claim(ClaimTypes.AuthenticationInstant, issued.ToString("o")), 
+                    new Claim(ClaimTypes.AuthenticationMethod, "OAuth2"),
+                    new Claim(ClaimTypes.Name, oizPrincipal.Identity.Name),
+                    new Claim(OpenIzClaimTypes.OpenIzApplicationIdentifierClaim,
+                    (clientPrincipal as ClaimsPrincipal).FindFirst(ClaimTypes.Sid).Value)
+                    });
 
-            // Is the user elevated? If so, add claims for those policies
-            if (claims.Exists(o => o.Type == OpenIzClaimTypes.XspaPurposeOfUseClaim))
-                claims.AddRange(oizPrincipalPolicies.Where(o => o.Rule == PolicyDecisionOutcomeType.Elevate).Select(o => new Claim(OpenIzClaimTypes.OpenIzGrantedPolicyClaim, o.Policy.Oid)));
+                if ((oizPrincipal as ClaimsPrincipal)?.HasClaim(o => o.Type == OpenIzClaimTypes.OpenIzGrantedPolicyClaim) == true)
+                    claims.AddRange((oizPrincipal as ClaimsPrincipal).FindAll(OpenIzClaimTypes.OpenIzGrantedPolicyClaim));
+                else
+                    claims.AddRange(oizPrincipalPolicies.Where(o => o.Rule == PolicyDecisionOutcomeType.Grant).Select(o => new Claim(OpenIzClaimTypes.OpenIzGrantedPolicyClaim, o.Policy.Oid)));
 
-            // Add Email address from idp
-            claims.AddRange((oizPrincipal as ClaimsPrincipal).Claims.Where(o => o.Type == ClaimTypes.Email || o.Type == ClaimTypes.NameIdentifier));
+                // Is the user elevated? If so, add claims for those policies
+                if (claims.Exists(o => o.Type == OpenIzClaimTypes.XspaPurposeOfUseClaim))
+                    claims.AddRange(oizPrincipalPolicies.Where(o => o.Rule == PolicyDecisionOutcomeType.Elevate).Select(o => new Claim(OpenIzClaimTypes.OpenIzGrantedPolicyClaim, o.Policy.Oid)));
+
+                // Add Email address from idp
+                claims.AddRange((oizPrincipal as ClaimsPrincipal).Claims.Where(o => o.Type == ClaimTypes.Email || o.Type == ClaimTypes.NameIdentifier));
+            }
 
             // Find the nameid
             var nameId = claims.Find(o => o.Type == ClaimTypes.NameIdentifier);
@@ -278,7 +286,7 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             var principal = new ClaimsPrincipal(new ClaimsIdentity(oizPrincipal.Identity, claims));
 
             SigningCredentials credentials = this.CreateSigningCredentials();
-            
+
             // Generate security token            
             var jwt = new JwtSecurityToken(
                 signingCredentials: credentials,
@@ -291,7 +299,7 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
             var encoder = handler.SignatureProviderFactory.CreateForSigning(credentials.SigningKey, credentials.SignatureAlgorithm);
             var refreshGrant = idp.CreateRefreshToken(oizPrincipal);
-            var refreshToken = String.Format("{0}.{1}", BitConverter.ToString(encoder.Sign(refreshGrant)).Replace("-",""), BitConverter.ToString(refreshGrant).Replace("-",""));
+            var refreshToken = String.Format("{0}.{1}", BitConverter.ToString(encoder.Sign(refreshGrant)).Replace("-", ""), BitConverter.ToString(refreshGrant).Replace("-", ""));
 
             WebOperationContext.Current.OutgoingResponse.ContentType = "application/json";
             OAuthTokenResponse response = new OAuthTokenResponse()

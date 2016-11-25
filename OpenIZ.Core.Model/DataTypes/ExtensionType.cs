@@ -69,7 +69,14 @@ namespace OpenIZ.Core.Model.DataTypes
         [XmlIgnore, JsonIgnore]
         public IExtensionHandler ExtensionHandlerInstance {  get
             {
-                return Activator.CreateInstance(this.ExtensionHandler) as IExtensionHandler;
+                try
+                {
+                    return Activator.CreateInstance(this.ExtensionHandler) as IExtensionHandler;
+                }
+                catch
+                {
+                    return null;
+                }
             }
         }
 

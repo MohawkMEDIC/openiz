@@ -32,159 +32,195 @@ using OpenIZ.Core.Interfaces;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
-	/// <summary>
-	/// Represents a base entity extension
-	/// </summary>
-	[Classifier(nameof(ExtensionType)), SimpleValue(nameof(ExtensionValueXml))]
-	[XmlType(Namespace = "http://openiz.org/model"), JsonObject("Extension")]
-	public abstract class Extension<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>, new()
-	{
+    /// <summary>
+    /// Represents a base entity extension
+    /// </summary>
+    [Classifier(nameof(ExtensionType)), SimpleValue(nameof(ExtensionValueString))]
+    [XmlType(Namespace = "http://openiz.org/model"), JsonObject("Extension")]
+    public abstract class Extension<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>, new()
+    {
 
 
-		// Extension type key
-		private Guid? m_extensionTypeKey;
-		// Extension type
-		private ExtensionType m_extensionType;
-		// Extension handler
-		private IExtensionHandler m_extensionHandler;
+        // Extension type key
+        private Guid? m_extensionTypeKey;
+        // Extension type
+        private ExtensionType m_extensionType;
+        // Extension handler
+        private IExtensionHandler m_extensionHandler;
 
-		/// <summary>
-		/// Gets or sets the value of the extension
-		/// </summary>
-		[XmlElement("value"), JsonProperty("value")]
-		public byte[] ExtensionValueXml { get; set; }
+        /// <summary>
+        /// Gets or sets the value of the extension
+        /// </summary>
+        [XmlElement("value"), JsonProperty("value")]
+        public byte[] ExtensionValueXml { get; set; }
 
-		/// <summary>
-		/// Gets or sets the ignore value
-		/// </summary>
-		[XmlIgnore, JsonIgnore]
-		public Object ExtensionValue
-		{
-			get
-			{
-				return this.ExtensionType?.ExtensionHandlerInstance.DeSerialize(this.ExtensionValueXml);
-			}
-			set
-			{
-				this.ExtensionValueXml = this.ExtensionType?.ExtensionHandlerInstance.Serialize(value);
-			}
-		}
+        /// <summary>
+        /// Value as string of bytes
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public string ExtensionValueString
+        {
+            get
+            {
+                if (this.ExtensionValueXml == null) return null;
+                try
+                {
+                    return BitConverter.ToString(this.ExtensionValueXml).Replace("-", "");
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+            set
+            {
+                if (value == null) this.ExtensionValueXml = null;
+                try
+                {
+                    if (value.Length % 2 == 1) value = "0" + value;
+                    this.ExtensionValueXml = Enumerable.Range(0, value.Length)
+                                 .Where(x => x % 2 == 0)
+                                 .Select(x => Convert.ToByte(value.Substring(x, 2), 16)).ToArray();
+                }
+                catch
+                {
 
-		/// <summary>
-		/// Gets or sets an extension displayable value
-		/// </summary>
-		[XmlIgnore, JsonIgnore]
-		public String ExtensionDisplay { get; set; }
+                }
+            }
+        }
 
-		/// <summary>
-		/// Gets or sets the extension type key
-		/// </summary>
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		[XmlIgnore, JsonIgnore]
-		public Guid? ExtensionTypeKey
-		{
-			get { return this.m_extensionTypeKey; }
-			set
-			{
-				if (this.m_extensionTypeKey != value)
-				{
-					this.m_extensionTypeKey = value;
-					this.m_extensionType = null;
-				}
-			}
-		}
+        /// <summary>
+        /// Gets or sets the ignore value
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public Object ExtensionValue
+        {
+            get
+            {
+                return this.ExtensionType?.ExtensionHandlerInstance?.DeSerialize(this.ExtensionValueXml);
+            }
+            set
+            {
+                if(this.ExtensionType?.ExtensionHandlerInstance != null)
+                    this.ExtensionValueXml = this.ExtensionType?.ExtensionHandlerInstance?.Serialize(value);
+            }
+        }
 
-		/// <summary>
-		/// Gets or sets the extension type
-		/// </summary>
-		[SerializationReference(nameof(ExtensionTypeKey))]
-		[XmlElement("extensionType"), JsonProperty("extensionType")]
-		[AutoLoad]
-		public ExtensionType ExtensionType
-		{
-			get
-			{
-				this.m_extensionType = base.DelayLoad(this.m_extensionTypeKey, this.m_extensionType);
-				return this.m_extensionType;
-			}
-			set
-			{
-				this.m_extensionType = value;
-				this.m_extensionTypeKey = value?.Key;
-			}
-		}
+        /// <summary>
+        /// Gets or sets an extension displayable value
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public String ExtensionDisplay { get; set; }
 
-		/// <summary>
-		/// Forces refresh 
-		/// </summary>
-		public override void Refresh()
-		{
-			base.Refresh();
-			this.m_extensionType = null;
-		}
+        /// <summary>
+        /// Gets or sets the extension type key
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [XmlIgnore, JsonIgnore]
+        public Guid? ExtensionTypeKey
+        {
+            get { return this.m_extensionTypeKey; }
+            set
+            {
+                if (this.m_extensionTypeKey != value)
+                {
+                    this.m_extensionTypeKey = value;
+                    this.m_extensionType = null;
+                }
+            }
+        }
 
-		/// <summary>
-		/// Determine equality
-		/// </summary>
-		public override bool SemanticEquals(object obj)
-		{
-			Extension<TBoundModel> other = obj as Extension<TBoundModel>;
-			if (other == null) return false;
-			return base.SemanticEquals(obj) && other.ExtensionTypeKey == this.ExtensionTypeKey &&
-				this.ExtensionValue.Equals(other.ExtensionValue);
-		}
-	}
+        /// <summary>
+        /// Gets or sets the extension type
+        /// </summary>
+        [SerializationReference(nameof(ExtensionTypeKey))]
+        [XmlElement("extensionType"), JsonProperty("extensionType")]
+        [AutoLoad]
+        public ExtensionType ExtensionType
+        {
+            get
+            {
+                this.m_extensionType = base.DelayLoad(this.m_extensionTypeKey, this.m_extensionType);
+                return this.m_extensionType;
+            }
+            set
+            {
+                this.m_extensionType = value;
+                this.m_extensionTypeKey = value?.Key;
+            }
+        }
 
-	/// <summary>
-	/// Extension bound to entity
-	/// </summary>
+        /// <summary>
+        /// Forces refresh 
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.m_extensionType = null;
+        }
 
-	[XmlType("EntityExtension", Namespace = "http://openiz.org/model"), JsonObject("EntityExtension")]
-	public class EntityExtension : Extension<Entity>
-	{
+        /// <summary>
+        /// Determine equality
+        /// </summary>
+        public override bool SemanticEquals(object obj)
+        {
+            Extension<TBoundModel> other = obj as Extension<TBoundModel>;
+            if (other == null) return false;
+            return base.SemanticEquals(obj) && other.ExtensionTypeKey == this.ExtensionTypeKey &&
+                this.ExtensionValue.Equals(other.ExtensionValue);
+        }
+    }
 
-		/// <summary>
-		/// Default constructor
-		/// </summary>
-		public EntityExtension()
-		{
+    /// <summary>
+    /// Extension bound to entity
+    /// </summary>
 
-		}
+    [XmlType("EntityExtension", Namespace = "http://openiz.org/model"), JsonObject("EntityExtension")]
+    public class EntityExtension : Extension<Entity>
+    {
 
-		/// <summary>
-		/// Creates an entity extension
-		/// </summary>
-		public EntityExtension(Guid extensionType, byte[] value)
-		{
-			this.ExtensionTypeKey = extensionType;
-			this.ExtensionValueXml = value;
-		}
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public EntityExtension()
+        {
 
-	}
+        }
 
-	/// <summary>
-	/// Act extension
-	/// </summary>
+        /// <summary>
+        /// Creates an entity extension
+        /// </summary>
+        public EntityExtension(Guid extensionType, byte[] value)
+        {
+            this.ExtensionTypeKey = extensionType;
+            this.ExtensionValueXml = value;
+        }
 
-	[XmlType("ActExtension", Namespace = "http://openiz.org/model"), JsonObject("ActExtension")]
-	public class ActExtension : Extension<Act>
-	{
+    }
 
-		/// <summary>
-		/// Default constructor
-		/// </summary>
-		public ActExtension()
-		{
+    /// <summary>
+    /// Act extension
+    /// </summary>
 
-		}
+    [XmlType("ActExtension", Namespace = "http://openiz.org/model"), JsonObject("ActExtension")]
+    public class ActExtension : Extension<Act>
+    {
 
-		/// <summary>
-		/// Creates an entity extension
-		/// </summary>
-		public ActExtension(Guid extensionType, byte[] value)
-		{
-			this.ExtensionTypeKey = extensionType;
-			this.ExtensionValueXml = value;
-		}
-	}
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public ActExtension()
+        {
+
+        }
+
+        /// <summary>
+        /// Creates an entity extension
+        /// </summary>
+        public ActExtension(Guid extensionType, byte[] value)
+        {
+            this.ExtensionTypeKey = extensionType;
+            this.ExtensionValueXml = value;
+        }
+    }
 }

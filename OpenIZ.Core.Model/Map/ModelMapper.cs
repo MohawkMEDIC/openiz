@@ -440,8 +440,12 @@ namespace OpenIZ.Core.Model.Map
 
             // Cache lookup
             var idEnt = retVal as IIdentifiedEntity;
+            var vidEnt = retVal as IVersionedEntity;
+
             PropertyMap iKeyMap = null;
-            if (idEnt != null)
+            if(vidEnt != null)
+                classMap.TryGetModelProperty("VersionKey", out iKeyMap);
+            else if (idEnt != null)
                 classMap.TryGetModelProperty("Key", out iKeyMap);
             if (iKeyMap != null)
             {
@@ -650,7 +654,7 @@ namespace OpenIZ.Core.Model.Map
             if (idEnt != null && useCache)
             {
                 keyStack.Remove(idEnt.Key.Value);
-                FireMappedToModel(this, idEnt.Key ?? Guid.Empty, retVal as IdentifiedData);
+                FireMappedToModel(this, vidEnt?.VersionKey ?? idEnt?.Key ?? Guid.Empty, retVal as IdentifiedData);
             }
            // (retVal as IdentifiedData).SetDelayLoad(true);
 

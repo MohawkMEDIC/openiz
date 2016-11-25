@@ -57,17 +57,18 @@ namespace OpenIZ.Messaging.IMSI.Util
 
                 if (qp.ContainsKey("_all"))
                 {
-                    foreach (var pi in returnValue.GetType().GetRuntimeProperties())
+                    foreach (var pi in returnValue.GetType().GetRuntimeProperties().Where(o=>o.GetCustomAttribute<SerializationReferenceAttribute>() != null &&
+                    o.GetCustomAttribute<DataIgnoreAttribute>() == null))
                     {
                         var scope = pi.GetValue(returnValue);
-                        if (scope is IdentifiedData) // Two levels deep
-                            foreach (var pi2 in scope.GetType().GetRuntimeProperties())
-                                pi2.GetValue(scope);
+                        if (scope is IdentifiedData)
+                            ExpandProperties(scope as IdentifiedData, qp, keyStack);
+                            //foreach (var pi2 in scope.GetType().GetRuntimeProperties())
+                            //    pi2.GetValue(scope);
                         else if (scope is IList)
                             foreach (var itm in scope as IList)
                                 if (itm is IdentifiedData)
-                                    foreach (var pi2 in itm.GetType().GetRuntimeProperties())
-                                        pi2.GetValue(itm);
+                                    ExpandProperties(itm as IdentifiedData, qp, keyStack);
                     }
                 }
                 else if(qp.ContainsKey("_expand"))

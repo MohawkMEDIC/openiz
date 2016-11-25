@@ -157,9 +157,12 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// <summary>
         /// Tru to load from cache
         /// </summary>
-        private TModel CacheLoad(TDomain o, ModelDataContext context, IPrincipal principal)
+        protected virtual TModel CacheLoad(TDomain o, ModelDataContext context, IPrincipal principal)
         {
-            return ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(o.Id) ?? this.ToModelInstance(o, context, principal);
+            if ((o as IDbBaseData)?.ObsoletionTime != null)
+                return this.ToModelInstance(o, context, principal);
+            else
+                return ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(o.Id) ?? this.ToModelInstance(o, context, principal);
         }
 
 

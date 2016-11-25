@@ -345,7 +345,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
                     new Claim(ClaimTypes.Expiration, this.Expiry.ToString("o")), // TODO: Move this to configuration
                     new Claim(ClaimTypes.Name, this.m_securityUser.UserName),
                     new Claim(ClaimTypes.Sid, this.m_securityUser.UserId.ToString()),
-                    new Claim(ClaimTypes.NameIdentifier, this.m_securityUser.UserId.ToString())
+                    new Claim(ClaimTypes.NameIdentifier, this.m_securityUser.UserId.ToString()),
+                    new Claim(ClaimTypes.Actor, this.m_securityUser.UserClass.ToString()),
                 };
 
                 if (this.m_securityUser.Email != null && this.m_securityUser.EmailConfirmed)

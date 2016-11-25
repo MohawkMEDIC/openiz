@@ -124,11 +124,11 @@ namespace OpenIZ.Caching.Memory
             // Throw if disposed
             this.ThrowIfDisposed();
 
-            if ((data as IdentifiedData)?.IsEmpty() == true)
+            var idData = data as IdentifiedData;
+            if (idData == null || idData.IsEmpty() == true)
                 return;
 
             Type objData = data?.GetType();
-            var idData = data as IIdentifiedEntity;
             if (idData == null || !idData.Key.HasValue)
                 return;
 
@@ -174,7 +174,7 @@ namespace OpenIZ.Caching.Memory
                 if (cache.TryGetValue(key.Value, out candidate))
                 {
                     candidate.Touch();
-                    this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cache hit {0}", key.Value);
+                    this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cache hit {0} = {1}", key.Value, candidate.Data);
                     return candidate.Data;
                 }
             }
@@ -330,12 +330,15 @@ namespace OpenIZ.Caching.Memory
             // Load initial data
             this.m_taskPool.QueueUserWorkItem((o) =>
             {
-                var conf = this.m_configuration.Types.FirstOrDefault(c => c.Type == t);
-                if (conf == null) return;
-                foreach (var sd in conf.SeedQueries)
+                lock (s_lock)
                 {
-                    this.m_tracer.TraceInformation("Seeding cache with {0}", sd);
-                    // TODO: Seed cache initial data
+                    var conf = this.m_configuration.Types.FirstOrDefault(c => c.Type == t);
+                    if (conf == null) return;
+                    foreach (var sd in conf.SeedQueries)
+                    {
+                        this.m_tracer.TraceInformation("Seeding cache with {0}", sd);
+                        // TODO: Seed cache initial data
+                    }
                 }
             });
         }

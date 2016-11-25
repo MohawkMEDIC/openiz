@@ -196,7 +196,7 @@ namespace OpenIZ.Core.Model.Collection
             {
                 if (itm == null)
                     continue;
-                if (!retVal.Item.Exists(o => o.Key == itm.Key))
+                if (!retVal.Item.Exists(o => o.Tag == itm.Tag))
                 {
                     retVal.Item.Add(itm.GetLocked());
                     Bundle.ProcessModel(itm.GetLocked() as IdentifiedData, retVal);
@@ -291,31 +291,31 @@ namespace OpenIZ.Core.Model.Collection
                             foreach (var itm in rawValue as IList)
                             {
 
-                                if (itm is IdentifiedData)
+                                var iValue = itm as IdentifiedData;
+                                if (iValue != null)
                                 {
-                                    if (currentBundle.Item.Exists(o => o?.Key == (itm as IdentifiedData)?.Key))
+                                    if (currentBundle.Item.Exists(o => o?.Tag == iValue?.Tag))
                                         continue;
 
                                     if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null)
                                         lock (currentBundle.m_lockObject)
-                                            if (!currentBundle.Item.Exists(o => o.Key == (itm as IdentifiedData).Key))
-                                                currentBundle.Item.Add(itm as IdentifiedData);
-                                    ProcessModel(itm as IdentifiedData, currentBundle, false);
+                                            if (!currentBundle.Item.Exists(o => o.Tag == iValue.Tag))
+                                                currentBundle.Item.Insert(0, iValue);
+                                    ProcessModel(iValue, currentBundle, false);
                                 }
                             }
                         }
                         else if (rawValue is IdentifiedData)
                         {
                             var iValue = rawValue as IdentifiedData;
-                            var versionedValue = rawValue as IVersionedEntity;
 
                             // Check for existing item
-                            if (iValue != null && !currentBundle.Item.Exists(i => i?.Key == iValue.Key && versionedValue?.VersionKey == (i as IVersionedEntity)?.VersionKey))
+                            if (iValue != null && !currentBundle.Item.Exists(i => i?.Tag == iValue.Tag ))
                             {
                                 if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null && iValue != null)
                                     lock (currentBundle.m_lockObject)
-                                        if (!currentBundle.Item.Exists(o => o.Key == iValue.Key))
-                                            currentBundle.Item.Add(iValue);
+                                        if (!currentBundle.Item.Exists(o => o.Tag == iValue.Tag))
+                                            currentBundle.Item.Insert(0, iValue);
                                 ProcessModel(iValue, currentBundle, followList);
                             }
                         }

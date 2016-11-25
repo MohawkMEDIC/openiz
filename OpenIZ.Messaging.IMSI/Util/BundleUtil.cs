@@ -59,7 +59,7 @@ namespace OpenIZ.Messaging.IMSI.Util
                     {
                         if (itm == null)
                             continue;
-                        if (!retVal.Item.Exists(o => o?.Key == itm.Key))
+                        if (!retVal.Item.Exists(o => o?.Tag == itm.Tag))
                         {
                             retVal.Item.Add(itm);
                             wtp.QueueUserWorkItem((o) =>
