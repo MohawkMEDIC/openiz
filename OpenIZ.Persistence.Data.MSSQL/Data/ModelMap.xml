@@ -865,7 +865,7 @@
     </property>
     <property modelName="TypeConceptKey" domainName="TypeConceptId"/>
     <property modelName="StatusConceptKey" domainName="StatusConceptId"/>
-    <!--<property modelName="ReasonConceptKey" domainName="ReasonConceptId"/>-->
+    <property modelName="ReasonConceptKey" domainName="ReasonConceptId"/>
     <property modelName="Identifiers" domainName="Act">
       <via domainName="ActIdentifiers"/>
     </property>
