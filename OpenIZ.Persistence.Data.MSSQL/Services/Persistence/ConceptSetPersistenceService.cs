@@ -68,8 +68,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var retVal = base.Insert(context, data, principal);
 
             // Concept sets 
-            if (retVal.Concepts != null)
-                foreach (var i in retVal.Concepts)
+            if (data.Concepts != null)
+                foreach (var i in data.Concepts)
                 {
                     i.EnsureExists(context, principal);
                     context.ConceptSetMembers.InsertOnSubmit(new Data.ConceptSetMember() { ConceptId = i.Key.Value, ConceptSetId = retVal.Key.Value });
@@ -85,19 +85,19 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var retVal = base.Update(context, data, principal);
 
             // Concept sets 
-            if (retVal.Concepts != null)
+            if (data.Concepts != null)
             {
                 // Special case m2m
                 var existingConceptSets = context.ConceptSetMembers.Where(o => o.ConceptSetId == retVal.Key);
                 // Any new?
-                var newConcepts = retVal.Concepts.Where(o => !existingConceptSets.Select(e => e.ConceptId).ToList().Contains(o.Key.Value));
+                var newConcepts = data.Concepts.Where(o => !existingConceptSets.Select(e => e.ConceptId).ToList().Contains(o.Key.Value));
                 foreach (var i in newConcepts)
                 {
                     i.EnsureExists(context, principal);
                     context.ConceptSetMembers.InsertOnSubmit(new Data.ConceptSetMember() { ConceptId = i.Key.Value, ConceptSetId = retVal.Key.Value });
                 }
 
-                var delConcepts = existingConceptSets.Select(e => e.ConceptId).ToList().Where(o => !retVal.Concepts.Exists(c => c.Key == o));
+                var delConcepts = existingConceptSets.Select(e => e.ConceptId).ToList().Where(o => !data.Concepts.Exists(c => c.Key == o));
                 foreach (var i in delConcepts)
                     context.ConceptSetMembers.DeleteOnSubmit(existingConceptSets.FirstOrDefault(p => p.ConceptId == i && p.ConceptSetId == retVal.Key.Value));
             }

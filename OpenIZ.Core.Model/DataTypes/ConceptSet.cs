@@ -73,7 +73,6 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Concepts as identifiers for XML purposes only
         /// </summary>
         [XmlElement("concept"), JsonProperty("concept")]
-
         //[Bundle(nameof(Concepts))]
         public List<Guid> ConceptsXml { get; set; }
 

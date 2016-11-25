@@ -24,6 +24,7 @@ using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Security;
+using OpenIZ.Core.Services;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -108,6 +109,7 @@ namespace OpenIZ.Core.Persistence
                             if (File.Exists(logFile))
                                 continue; // skip
 
+                            var patchService = ApplicationContext.Current.GetService<IPatchService>();
                             using (var fs = File.OpenRead(f))
                             {
                                 var ds = xsz.Deserialize(fs) as DatasetInstall;
@@ -131,13 +133,15 @@ namespace OpenIZ.Core.Persistence
                                         existing = getMethod.MakeGenericMethod(new Type[] { typeof(Guid) }).Invoke(idpInstance, new object[] { new Identifier<Guid>(itm.Element.Key.Value), AuthenticationContext.SystemPrincipal, false });
                                     if (existing != null)
                                     {
-                                        target = existing;
+                                        existing.CopyObjectData(itm.Element);
+                                        var diff = patchService.Diff(existing as IdentifiedData, itm.Element);
+                                        if (diff.Operation.Count == 0) continue;
+                                        target = patchService.Patch(diff, existing as IdentifiedData, true);
                                         target.CopyObjectData(itm.Element);
                                     }
                                     else
                                         target = itm.Element;
 
-                                   
                                     // Association
                                     if (itm.Association != null)
                                         foreach (var ascn in itm.Association)
