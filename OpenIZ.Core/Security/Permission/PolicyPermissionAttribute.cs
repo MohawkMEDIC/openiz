@@ -39,6 +39,7 @@ namespace OpenIZ.Core.Security.Attribute
     /// </summary>
     public class PolicyPermissionAttribute : CodeAccessSecurityAttribute
     {
+        private TraceSource m_traceSource = new TraceSource(OpenIzConstants.SecurityTraceSourceName);
 
         /// <summary>
         /// Creates a policy permission attribute
@@ -57,7 +58,7 @@ namespace OpenIZ.Core.Security.Attribute
         /// </summary>
         public override IPermission CreatePermission()
         {
-            
+
             // TODO: Configure this 
             if (ApplicationContext.Current.GetService(typeof(IPolicyDecisionService)) == null)
                 return new PolicyPermission(PermissionState.None, this.PolicyId);
@@ -87,6 +88,7 @@ namespace OpenIZ.Core.Security.Attribute
         /// </summary>
         public PolicyPermission(PermissionState state, String policyId, IPrincipal principal)
         {
+            this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Create PolicyPermission - {0}", principal.Identity.Name);
             this.m_isUnrestricted = state == PermissionState.Unrestricted;
             this.m_policyId = policyId;
             this.m_principal = principal;
@@ -99,7 +101,6 @@ namespace OpenIZ.Core.Security.Attribute
         {
             this.m_isUnrestricted = state == PermissionState.Unrestricted;
             this.m_policyId = policyId;
-            this.m_principal = AuthenticationContext.Current.Principal;
         }
 
         /// <summary>
@@ -107,7 +108,7 @@ namespace OpenIZ.Core.Security.Attribute
         /// </summary>
         public IPermission Copy()
         {
-            return new PolicyPermission(this.m_isUnrestricted ? PermissionState.Unrestricted : PermissionState.None, this.m_policyId, this.m_principal);
+            return new PolicyPermission(this.m_isUnrestricted ? PermissionState.Unrestricted : PermissionState.None, this.m_policyId);
         }
 
         /// <summary>
@@ -117,18 +118,20 @@ namespace OpenIZ.Core.Security.Attribute
         {
             var pdp = ApplicationContext.Current.GetService<IPolicyDecisionService>();
 
+            var principal = this.m_principal ?? AuthenticationContext.Current.Principal;
+
             // Non system principals must be authenticated
-            if(!this.m_principal.Identity.IsAuthenticated &&
-                this.m_principal != AuthenticationContext.SystemPrincipal)
+            if(!principal.Identity.IsAuthenticated &&
+                principal != AuthenticationContext.SystemPrincipal)
                 throw new PolicyViolationException(this.m_policyId, PolicyDecisionOutcomeType.Deny);
 
             PolicyDecisionOutcomeType action = PolicyDecisionOutcomeType.Deny;
             if (pdp == null) // No way to verify 
                 action = PolicyDecisionOutcomeType.Deny;
             else if (pdp != null)
-                action = pdp.GetPolicyOutcome(this.m_principal, this.m_policyId);
+                action = pdp.GetPolicyOutcome(principal, this.m_policyId);
 
-            this.m_traceSource.TraceInformation("Policy Enforce: {0}({1}) = {2}", this.m_principal?.Identity?.Name, this.m_policyId, action);
+            this.m_traceSource.TraceInformation("Policy Enforce: {0}({1}) = {2}", principal?.Identity?.Name, this.m_policyId, action);
 
             if (action != PolicyDecisionOutcomeType.Grant)
                 throw new PolicyViolationException(this.m_policyId, action);

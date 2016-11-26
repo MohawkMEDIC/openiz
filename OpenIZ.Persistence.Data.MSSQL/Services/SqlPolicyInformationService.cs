@@ -32,6 +32,7 @@ using OpenIZ.Persistence.Data.MSSQL.Security;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -47,7 +48,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
     {
         // Get the SQL configuration
         private SqlConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.persistence.data.mssql") as SqlConfiguration;
-        
+
+        private TraceSource m_traceSource = new TraceSource(SqlServerConstants.IdentityTraceSourceName);
+
         /// <summary>
         /// Get active policies for the specified securable type
         /// </summary>
@@ -95,6 +98,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                             retVal.AddRange(context.SecurityDevicePolicies.Where(o => o.SecurityDevice.DeviceId == Guid.Parse(devClaim.Value)).Select(o => new SqlSecurityPolicyInstance(o)));
                     }
 
+                    this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Principal {0} effective policy set {1}", user.UserName, String.Join(",", retVal.Select(o => $"{o.Policy.Oid} [{o.Rule}]")));
                     // TODO: Most restrictive
                     return retVal;
                 }

@@ -51,12 +51,25 @@ namespace OpenIZ.Core.Wcf.Security
         private TraceSource m_traceSource = new TraceSource(OpenIzConstants.SecurityTraceSourceName);
 
         /// <summary>
+        /// Check access core
+        /// </summary>
+        protected override bool CheckAccessCore(OperationContext operationContext)
+        {
+            this.m_traceSource.TraceInformation("CheckAccessCore");
+            this.m_traceSource.TraceInformation("User {0} already authenticated", Core.Security.AuthenticationContext.Current.Principal.Identity.Name);
+
+            return base.CheckAccessCore(operationContext);
+        }
+
+        /// <summary>
         /// Check access
         /// </summary>
         public override bool CheckAccess(OperationContext operationContext)
         {
             try
             {
+                this.m_traceSource.TraceInformation("CheckAccess");
+
                 // Http message inbound
                 HttpRequestMessageProperty httpMessage = (HttpRequestMessageProperty)operationContext.IncomingMessageProperties[HttpRequestMessageProperty.Name];
 
@@ -91,6 +104,9 @@ namespace OpenIZ.Core.Wcf.Security
                 operationContext.ServiceSecurityContext.AuthorizationContext.Properties["Identities"] = identities.Identities;
                 operationContext.ServiceSecurityContext.AuthorizationContext.Properties["Principal"] = identities;
                 Core.Security.AuthenticationContext.Current = new Core.Security.AuthenticationContext(identities);
+
+                this.m_traceSource.TraceInformation("User {0} authenticated via JWT", identities.Identity.Name);
+
                 return base.CheckAccess(operationContext);
             }
             catch(UnauthorizedAccessException) { throw; }

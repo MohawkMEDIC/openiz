@@ -383,7 +383,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         public virtual IEnumerable<TData> Query(Expression<Func<TData, bool>> query, IPrincipal authContext)
         {
             var tr = 0;
-            return this.Query(query, 0, null, authContext, out tr);
+            return this.QueryInternal(query, 0, null, authContext, out tr, true);
+
         }
 
         /// <summary>
@@ -391,8 +392,21 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// </summary>
         public virtual IEnumerable<TData> Query(Expression<Func<TData, bool>> query, int offset, int? count, IPrincipal authContext, out int totalCount)
         {
+            return this.QueryInternal(query, offset, count, authContext, out totalCount, false);
+        }
+
+        /// <summary>
+        /// Instructs the service 
+        /// </summary>
+        protected virtual IEnumerable<TData> QueryInternal(Expression<Func<TData, bool>> query, int offset, int? count, IPrincipal authContext, out int totalCount, bool fastQuery)
+        {
             if (query == null)
                 throw new ArgumentNullException(nameof(query));
+
+#if DEBUG
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
 
             PreQueryEventArgs<TData> preArgs = new PreQueryEventArgs<TData>(query, authContext);
             this.Querying?.Invoke(this, preArgs);
@@ -408,7 +422,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                 try
                 {
                     connection.LoadOptions = this.GetDataLoadOptions();
-                    
+
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "QUERY {0}", query);
 
                     // Tracer
@@ -431,8 +445,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     }
                     else
                     {
-                        totalCount = postData.Results.Count();
-
+                        if (!fastQuery)
+                            totalCount = postData.Results.Count();
+                        else
+                            totalCount = -1;
                         // Skip
                         postData.Results = postData.Results.Skip(offset);
                         if (count.HasValue)
@@ -456,7 +472,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
                     throw;
                 }
-
+                finally
+                {
+#if DEBUG
+                    sw.Stop();
+                    this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Query {0} took {1} ms", query, sw.ElapsedMilliseconds);
+#endif
+                }
         }
     }
 }

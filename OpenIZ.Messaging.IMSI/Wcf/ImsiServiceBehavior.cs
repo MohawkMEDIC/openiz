@@ -80,7 +80,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Create the specified resource
         /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         public IdentifiedData Create(string resourceType, IdentifiedData body)
         {
             try
@@ -123,7 +123,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Create or update the specified object
         /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         public IdentifiedData CreateUpdate(string resourceType, string id, IdentifiedData body)
         {
             try
@@ -165,7 +165,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Get the specified object
         /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         public IdentifiedData Get(string resourceType, string id)
         {
 
@@ -194,8 +194,9 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     else if (WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_bundle"] == "true" ||
                         WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_all"] == "true")
                     {
+                        retVal = retVal.GetLocked();
                         ObjectExpander.ExpandProperties(retVal, OpenIZ.Core.Model.Query.NameValueCollection.ParseQueryString(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.RequestUri.Query));
-                        return Bundle.CreateBundle(retVal.GetLocked());
+                        return Bundle.CreateBundle(retVal);
                     }
                     else
                     {
@@ -216,7 +217,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Gets a specific version of a resource
         /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         public IdentifiedData GetVersion(string resourceType, string id, string versionId)
         {
             try
@@ -290,7 +291,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Gets the recent history an object
         /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         public IdentifiedData History(string resourceType, string id)
         {
             try
@@ -332,7 +333,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Perform a search on the specified resource type
         /// </summary>
-        [PolicyPermissionAttribute(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
+        [PolicyPermissionAttribute(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         public IdentifiedData Search(string resourceType)
         {
             try
@@ -351,7 +352,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
 
                     int totalResults = 0;
 
-                    IEnumerable<IdentifiedData> retVal = handler.Query(query, Int32.Parse(offset ?? "0"), Int32.Parse(count ?? "100"), out totalResults);
+                    IEnumerable<IdentifiedData> retVal = handler.Query(query, Int32.Parse(offset ?? "0"), Int32.Parse(count ?? "100"), out totalResults).Select(o=>o.GetLocked());
                     WebOperationContext.Current.OutgoingResponse.LastModified = retVal.OrderByDescending(o => o.ModifiedOn).FirstOrDefault()?.ModifiedOn.DateTime ?? DateTime.Now;
 
 
@@ -366,12 +367,14 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     else
                     {
                         if (query.ContainsKey("_all") || query.ContainsKey("_expand"))
+                        {
                             using (WaitThreadPool wtp = new WaitThreadPool())
                             {
                                 foreach (var itm in retVal)
                                     wtp.QueueUserWorkItem((o) => ObjectExpander.ExpandProperties(o as IdentifiedData, query), itm);
                                 wtp.WaitOne();
                             }
+                        }
                         return BundleUtil.CreateBundle(retVal, totalResults, Int32.Parse(offset ?? "0"), WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_lean"] != null);
                     }
                 }
@@ -398,7 +401,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Update the specified resource
         /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         public IdentifiedData Update(string resourceType, string id, IdentifiedData body)
         {
             try
@@ -481,7 +484,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Obsolete the specified data
         /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         public IdentifiedData Delete(string resourceType, string id)
         {
             try

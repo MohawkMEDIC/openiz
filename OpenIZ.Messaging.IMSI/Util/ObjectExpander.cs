@@ -34,11 +34,99 @@ namespace OpenIZ.Messaging.IMSI.Util
         // Reloated load association
         private static Dictionary<Type, MethodInfo> m_relatedLoadAssociations = new Dictionary<Type, MethodInfo>();
 
+
+        /// <summary>
+        /// Load related object
+        /// </summary>
+        internal static object LoadRelated(Type propertyType, Guid key)
+        {
+            MethodInfo methodInfo = null;
+            if (!m_relatedLoadMethods.TryGetValue(propertyType, out methodInfo))
+            {
+                methodInfo = typeof(ObjectExpander).GetRuntimeMethod(nameof(LoadRelated), new Type[] { typeof(Guid) }).MakeGenericMethod(propertyType);
+                lock (s_syncLock)
+                    if (!m_relatedLoadMethods.ContainsKey(propertyType))
+                        m_relatedLoadMethods.Add(propertyType, methodInfo);
+
+            }
+            return methodInfo.Invoke(null, new object[] { key });
+        }
+
+        /// <summary>
+        /// Load collection
+        /// </summary>
+        internal static  IList LoadCollection(Type propertyType, IIdentifiedEntity entity)
+        {
+            MethodInfo methodInfo = null;
+
+            var key = entity.Key;
+            var versionKey = (entity as IVersionedEntity)?.VersionSequence;
+
+            // Load
+            if (!m_relatedLoadAssociations.TryGetValue(propertyType, out methodInfo))
+            {
+                if(versionKey.HasValue && typeof(IVersionedAssociation).IsAssignableFrom(propertyType.StripGeneric()))
+                    methodInfo = typeof(ObjectExpander).GetRuntimeMethod(nameof(LoadCollection), new Type[] { typeof(Guid), typeof(decimal?) }).MakeGenericMethod(propertyType.StripGeneric());
+                else
+                    methodInfo = typeof(ObjectExpander).GetRuntimeMethod(nameof(LoadCollection), new Type[] { typeof(Guid) }).MakeGenericMethod(propertyType.StripGeneric());
+
+                lock (s_syncLock)
+                    if (!m_relatedLoadAssociations.ContainsKey(propertyType))
+                        m_relatedLoadAssociations.Add(propertyType, methodInfo);
+
+            }
+
+            IList listValue = null;
+            if(methodInfo.GetParameters().Length == 2)
+                listValue = methodInfo.Invoke(null, new object[] { key, versionKey }) as IList;
+            else
+                listValue = methodInfo.Invoke(null, new object[] { key }) as IList;
+            if (propertyType.GetTypeInfo().IsAssignableFrom(listValue.GetType().GetTypeInfo()))
+                return listValue;
+            else
+            {
+                var retVal = Activator.CreateInstance(propertyType, listValue);
+                return retVal as IList;
+            }
+
+        }
+
+        /// <summary>
+        /// Delay loads the specified collection association
+        /// </summary>
+        public static IEnumerable<TAssociation> LoadCollection<TAssociation>(Guid sourceKey, Decimal? sourceSequence) where TAssociation : IdentifiedData, IVersionedAssociation, new()
+        {
+            return EntitySource.Current.Provider.GetRelations<TAssociation>(sourceKey, sourceSequence);
+        }
+
+        /// <summary>
+        /// Delay loads the specified collection association
+        /// </summary>
+        public static IEnumerable<TAssociation> LoadCollection<TAssociation>(Guid sourceKey) where TAssociation : IdentifiedData, ISimpleAssociation, new()
+        {
+            return EntitySource.Current.Provider.GetRelations<TAssociation>(sourceKey);
+        }
+
+        /// <summary>
+        /// Load the related information
+        /// </summary>
+        public static TRelated LoadRelated<TRelated>(Guid? objectKey) where TRelated : IdentifiedData, new()
+        {
+            if (objectKey.HasValue)
+                return EntitySource.Current.Provider.Get<TRelated>(objectKey);
+            else
+                return default(TRelated);
+        }
+
+
         /// <summary>
         /// Expand properties
         /// </summary>
-        public static void ExpandProperties(IdentifiedData returnValue, NameValueCollection qp, Stack<Guid> keyStack = null)
+        public static void ExpandProperties(IdentifiedData returnValue, NameValueCollection qp, Stack<Guid> keyStack = null, Dictionary<Guid, HashSet<String>> emptyCollections = null)
         {
+
+            if (emptyCollections == null)
+                emptyCollections = new Dictionary<Guid, HashSet<string>>();
 
             // Set the stack
             if (keyStack == null)
@@ -57,19 +145,58 @@ namespace OpenIZ.Messaging.IMSI.Util
 
                 if (qp.ContainsKey("_all"))
                 {
-                    foreach (var pi in returnValue.GetType().GetRuntimeProperties().Where(o=>o.GetCustomAttribute<SerializationReferenceAttribute>() != null &&
+                    if (keyStack.Count > 3) return;
+
+                    foreach (var pi in returnValue.GetType().GetRuntimeProperties().Where(o=>(o.GetCustomAttribute<SerializationReferenceAttribute>() != null || o.GetCustomAttributes<XmlElementAttribute>().Count() > 0) &&
                     o.GetCustomAttribute<DataIgnoreAttribute>() == null))
                     {
+      
+                        // Get current value
                         var scope = pi.GetValue(returnValue);
+                        
+                        // Force a load if null!!!
+                        if(scope == null || (scope as IList)?.Count == 0)
+                        {
+                            if(typeof(IdentifiedData).IsAssignableFrom(pi.PropertyType))
+                            {
+                                var keyPi = pi.GetCustomAttribute<SerializationReferenceAttribute>()?.GetProperty(returnValue.GetType());
+                                var keyValue = keyPi?.GetValue(returnValue);
+
+                                // Get the value
+                                if (keyValue != null)
+                                    scope = LoadRelated(pi.PropertyType, (Guid)keyValue);
+                                if (scope != null)
+                                    pi.SetValue(returnValue, scope);
+                            }
+                            else if(typeof(IList).IsAssignableFrom(pi.PropertyType) && !pi.PropertyType.IsArray &&
+                                typeof(IdentifiedData).IsAssignableFrom(pi.PropertyType.StripGeneric()))
+                            {
+                                // Already loaded?
+                                HashSet<String> properties = null;
+                                if (emptyCollections.TryGetValue(returnValue.Key.Value, out properties))
+                                    if (!properties.Contains(pi.Name))
+                                        properties.Add(pi.Name);
+                                    else
+                                        continue;
+                                else
+                                    emptyCollections.Add(returnValue.Key.Value, new HashSet<string>() { pi.Name });
+                                    
+                                scope = LoadCollection(pi.PropertyType, returnValue);
+                                if ((scope as IList).Count > 0)
+                                    pi.SetValue(returnValue, scope);
+                            }
+                        }
+
+                        // Cascade
                         if (scope is IdentifiedData)
                             ExpandProperties(scope as IdentifiedData, qp, keyStack);
-                            //foreach (var pi2 in scope.GetType().GetRuntimeProperties())
-                            //    pi2.GetValue(scope);
                         else if (scope is IList)
                             foreach (var itm in scope as IList)
                                 if (itm is IdentifiedData)
                                     ExpandProperties(itm as IdentifiedData, qp, keyStack);
                     }
+
+                    ApplicationContext.Current.GetService<IDataCachingService>().Add(returnValue);
                 }
                 else if(qp.ContainsKey("_expand"))
                     foreach (var nvs in qp["_expand"])

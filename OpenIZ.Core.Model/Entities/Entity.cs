@@ -300,7 +300,11 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets a list of all telecommunications addresses associated with the entity
         /// </summary>
-        [AutoLoad()]
+        [AutoLoad(EntityClassKeyStrings.Patient)]
+        [AutoLoad(EntityClassKeyStrings.ServiceDeliveryLocation)]
+        [AutoLoad(EntityClassKeyStrings.Provider)]
+        [AutoLoad(EntityClassKeyStrings.Organization)]
+        [AutoLoad(EntityClassKeyStrings.Person)]
         [XmlElement("telecom"), JsonProperty("telecom")]
         public List<EntityTelecomAddress> Telecoms {
             get;
@@ -329,6 +333,16 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets a list of all addresses associated with the entity
         /// </summary>
         [AutoLoad()]
+        [AutoLoad(EntityClassKeyStrings.Patient)]
+        [AutoLoad(EntityClassKeyStrings.ServiceDeliveryLocation)]
+        [AutoLoad(EntityClassKeyStrings.Provider)]
+        [AutoLoad(EntityClassKeyStrings.Person)]
+        [AutoLoad(EntityClassKeyStrings.Place)]
+        [AutoLoad(EntityClassKeyStrings.State)]
+        [AutoLoad(EntityClassKeyStrings.Country)]
+        [AutoLoad(EntityClassKeyStrings.CountyOrParish)]
+        [AutoLoad(EntityClassKeyStrings.CityOrTown)]
+        [AutoLoad(EntityClassKeyStrings.Organization)]
         [XmlElement("address"), JsonProperty("address")]
         public List<EntityAddress> Addresses { get; set; }
 

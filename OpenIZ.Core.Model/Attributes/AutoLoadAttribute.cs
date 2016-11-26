@@ -28,8 +28,29 @@ namespace OpenIZ.Core.Model.Attributes
     /// <summary>
     /// Auto load attribute
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class AutoLoadAttribute : Attribute
     {
+
+        /// <summary>
+        /// Auto load
+        /// </summary>
+        public AutoLoadAttribute()
+        {
+
+        }
+
+        /// <summary>
+        /// Load on attribute
+        /// </summary>
+        public AutoLoadAttribute(String classCode)
+        {
+            this.ClassCode = classCode;
+        }
+
+        /// <summary>
+        /// Gets or sets the value when the class code is true to auto-load
+        /// </summary>
+        public String ClassCode { get; private set; }
     }
 }

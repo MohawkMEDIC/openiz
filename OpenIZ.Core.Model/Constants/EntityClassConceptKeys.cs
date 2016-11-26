@@ -21,10 +21,117 @@ using System;
 
 namespace OpenIZ.Core.Model.Constants
 {
-	/// <summary>
+    /// <summary>
 	/// Entity class concept keys
 	/// </summary>
-	public static class EntityClassKeys
+	internal static class EntityClassKeyStrings
+    {
+        /// <summary>
+        /// Animal
+        /// </summary>
+        public const string Animal = "61fcbf42-b5e0-4fb5-9392-108a5c6dbec7";
+
+        /// <summary>
+        /// Chemical Substance
+        /// </summary>
+        public const string ChemicalSubstance = "2e9fa332-9391-48c6-9fc8-920a750b25d3";
+
+        /// <summary>
+        /// City or town
+        /// </summary>
+        public const string CityOrTown = "79dd4f75-68e8-4722-a7f5-8bc2e08f5cd6";
+
+        /// <summary>
+        /// Container
+        /// </summary>
+        public const string Container = "b76ff324-b174-40b7-a6ac-d1fdf8e23967";
+
+        /// <summary>
+        /// Country or nation
+        /// </summary>
+        public const string Country = "48b2ffb3-07db-47ba-ad73-fc8fb8502471";
+
+        /// <summary>
+        /// County or parish
+        /// </summary>
+        public const string CountyOrParish = "d9489d56-ddac-4596-b5c6-8f41d73d8dc5";
+
+        /// <summary>
+        /// Device
+        /// </summary>
+        public const string Device = "1373ff04-a6ef-420a-b1d0-4a07465fe8e8";
+
+        /// <summary>
+        /// Entity
+        /// </summary>
+        public const string Entity = "e29fcfad-ec1d-4c60-a055-039a494248ae";
+
+        /// <summary>
+        /// Food
+        /// </summary>
+        public const string Food = "e5a09cc2-5ae5-40c2-8e32-687dba06715d";
+
+        /// <summary>
+        /// Living Subject
+        /// </summary>
+        public const string LivingSubject = "8ba5e5c9-693b-49d4-973c-d7010f3a23ee";
+
+        /// <summary>
+        /// Manufactured material
+        /// </summary>
+        public const string ManufacturedMaterial = "fafec286-89d5-420b-9085-054aca9d1eef";
+
+        /// <summary>
+        /// Material
+        /// </summary>
+        public const string Material = "d39073be-0f8f-440e-b8c8-7034cc138a95";
+
+        /// <summary>
+        /// Non living subject
+        /// </summary>
+        public const string NonLivingSubject = "9025e5c9-693b-49d4-973c-d7010f3a23ee";
+
+        /// <summary>
+        /// Organization
+        /// </summary>
+        public const string Organization = "7c08bd55-4d42-49cd-92f8-6388d6c4183f";
+
+        /// <summary>
+        /// Patient
+        /// </summary>
+        public const string Patient = "bacd9c6f-3fa9-481e-9636-37457962804d";
+
+        /// <summary>
+        /// Person
+        /// </summary>
+        public const string Person = "9de2a846-ddf2-4ebc-902e-84508c5089ea";
+
+        /// <summary>
+        /// Place
+        /// </summary>
+        public const string Place = "21ab7873-8ef3-4d78-9c19-4582b3c40631";
+
+        /// <summary>
+        /// Service delivery location
+        /// </summary>
+        public const string Provider = "6b04fed8-c164-469c-910b-f824c2bda4f0";
+
+        /// <summary>
+        /// Service delivery location
+        /// </summary>
+        public const string ServiceDeliveryLocation = "ff34dfa7-c6d3-4f8b-bc9f-14bcdc13ba6c";
+
+        /// <summary>
+        /// State
+        /// </summary>
+        public const string State = "8cf4b0b0-84e5-4122-85fe-6afa8240c218";
+    }
+
+
+    /// <summary>
+    /// Entity class concept keys
+    /// </summary>
+    public static class EntityClassKeys
 	{
 		/// <summary>
 		/// Animal

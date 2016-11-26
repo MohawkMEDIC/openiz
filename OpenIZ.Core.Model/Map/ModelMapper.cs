@@ -466,15 +466,37 @@ namespace OpenIZ.Core.Model.Map
                     return (TModel)cache;
             }
 
+            // Classifier value 
+            String classifierValue = null;
+            var classPropertyName = typeof(TModel).GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty;
+            if (classPropertyName != null) {
+                // Key value
+                classPropertyName = typeof(TModel).GetRuntimeProperty(classPropertyName)?.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty ?? classPropertyName;
+
+                if (classMap.TryGetModelProperty(classPropertyName ?? "____XXX", out iKeyMap))
+                {
+                    object keyValue = typeof(TDomain).GetRuntimeProperty(iKeyMap.DomainName).GetValue(domainInstance);
+                    while (iKeyMap.Via != null)
+                    {
+                        keyValue = keyValue.GetType().GetRuntimeProperty(iKeyMap.Via.DomainName).GetValue(keyValue);
+                        iKeyMap = iKeyMap.Via;
+                    }
+                    classifierValue = keyValue?.ToString();
+                }
+            }
+
             // Are we currently processing this?
             if (idEnt != null)
             {
                 if (keyStack == null)
                     keyStack = new HashSet<Guid>();
-                if (keyStack.Contains(idEnt.Key.Value))
-                    return default(TModel);
-                else
-                    keyStack.Add(idEnt.Key.Value);
+                if (idEnt.Key.HasValue)
+                {
+                    if (keyStack.Contains(idEnt.Key.Value))
+                        return default(TModel);
+                    else
+                        keyStack.Add(idEnt.Key.Value);
+                }
             }
 
             // Iterate the properties and map
@@ -485,7 +507,7 @@ namespace OpenIZ.Core.Model.Map
                 if (modelPropertyInfo == null)
                     continue;
                 else if (modelPropertyInfo.GetCustomAttribute<DataIgnoreAttribute>() != null ||
-                    modelPropertyInfo.GetCustomAttribute<AutoLoadAttribute>() == null &&
+                    modelPropertyInfo.GetCustomAttributes<AutoLoadAttribute>().Where(o=>o.ClassCode == classifierValue || o.ClassCode == null).Count() == 0 &&
                     !primitives.Contains(modelPropertyInfo.PropertyType) && !modelPropertyInfo.PropertyType.GetTypeInfo().IsEnum 
                     || !modelPropertyInfo.CanWrite)
                     continue;

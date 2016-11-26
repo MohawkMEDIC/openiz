@@ -22,6 +22,7 @@ using OpenIZ.Core.Wcf.Serialization;
 using OpenIZ.Messaging.IMSI.Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IdentityModel.Tokens;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -42,6 +43,9 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
     /// </summary>
     public class ImsiErrorHandler : IErrorHandler
     {
+        // Trace source
+        private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.IMSI");
+
         /// <summary>
         /// Handle error
         /// </summary>
@@ -55,6 +59,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
         /// </summary>
         public void ProvideFault(Exception error, MessageVersion version, ref Message fault)
         {
+            this.m_traceSource.TraceEvent(TraceEventType.Error, error.HResult, "Error on IMSI WCF Pipeline: {0}", error);
+
             // Formulate appropriate response
             if (error is PolicyViolationException || error is SecurityException || (error as FaultException)?.Code.SubCode?.Name == "FailedAuthentication")
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Forbidden;
