@@ -74,6 +74,8 @@ namespace OpenIZ.Messaging.HL7.Notifier
 						ADT_A01 message = new ADT_A01();
 
 						msh = message.MSH;
+						msh.MessageType.MessageCode.Value = "ADT";
+						msh.MessageType.MessageStructure.Value = "ADT_A01";
 						msh.MessageType.TriggerEvent.Value = "A01";
 
 						pid = message.PID;
@@ -93,6 +95,8 @@ namespace OpenIZ.Messaging.HL7.Notifier
 						ADT_A39 message = new ADT_A39();
 
 						msh = message.MSH;
+						msh.MessageType.MessageCode.Value = "ADT";
+						msh.MessageType.MessageStructure.Value = "ADT_A40";
 						msh.MessageType.TriggerEvent.Value = "A40";
 
 						pid = message.GetPATIENT(0).PID;
@@ -113,6 +117,8 @@ namespace OpenIZ.Messaging.HL7.Notifier
 						ADT_A01 message = new ADT_A01();
 
 						msh = message.MSH;
+						msh.MessageType.MessageCode.Value = "ADT";
+						msh.MessageType.MessageStructure.Value = "ADT_A08";
 						msh.MessageType.TriggerEvent.Value = "A08";
 
 						pid = message.PID;

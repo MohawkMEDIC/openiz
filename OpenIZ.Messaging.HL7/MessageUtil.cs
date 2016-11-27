@@ -759,14 +759,14 @@ namespace OpenIZ.Messaging.HL7
 			string errCode = MapErrCode(dtl);
 
 			err.HL7ErrorCode.Identifier.Value = errCode;
-			err.HL7ErrorCode.Text.Value = locale.GetString(String.Format("HL7{0}", errCode));
+			err.HL7ErrorCode.Text.Value = locale?.GetString($"HL7{errCode}");
 
 			if (dtl.Location != null && dtl.Location.Contains("^"))
 			{
 				var cmp = dtl.Location.Split('^');
 				for (int i = 0; i < cmp.Length; i++)
 				{
-					var st = err.GetErrorLocation(0).Components[i] as NHapi.Model.V25.Datatype.ST;
+					var st = err.GetErrorLocation(0).Components[i] as ST;
 
 					if (st != null)
 					{
@@ -774,7 +774,7 @@ namespace OpenIZ.Messaging.HL7
 					}
 					else
 					{
-						var nm = err.GetErrorLocation(0).Components[i] as NHapi.Model.V25.Datatype.NM;
+						var nm = err.GetErrorLocation(0).Components[i] as NM;
 
 						if (nm != null)
 						{

@@ -134,6 +134,10 @@ namespace OpenIZ.Messaging.HL7
 
 			strMessage = parser.Encode(message);
 
+#if DEBUG
+			this.tracer.TraceEvent(TraceEventType.Information, 0, strMessage);
+#endif
+
 			// Open a TCP port
 			using (TcpClient client = new TcpClient(AddressFamily.InterNetwork))
 			{
