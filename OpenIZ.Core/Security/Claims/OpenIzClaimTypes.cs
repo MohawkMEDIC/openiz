@@ -39,11 +39,15 @@ namespace OpenIZ.Core.Security.Claims
         static OpenIzClaimTypes()
         {
             foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
-                foreach (var t in asm.GetTypes().Where(o => typeof(IClaimTypeHandler).IsAssignableFrom(o) && o.IsClass))
+                try
                 {
-                    IClaimTypeHandler handler = t.GetConstructor(Type.EmptyTypes).Invoke(null) as IClaimTypeHandler;
-                    s_claimHandlers.Add(handler.ClaimType, handler);
+                    foreach (var t in asm.GetTypes().Where(o => typeof(IClaimTypeHandler).IsAssignableFrom(o) && o.IsClass))
+                    {
+                        IClaimTypeHandler handler = t.GetConstructor(Type.EmptyTypes).Invoke(null) as IClaimTypeHandler;
+                        s_claimHandlers.Add(handler.ClaimType, handler);
+                    }
                 }
+                catch { }
         }
 
         /// <summary>

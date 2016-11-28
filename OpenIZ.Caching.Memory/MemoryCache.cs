@@ -176,7 +176,7 @@ namespace OpenIZ.Caching.Memory
                 {
                     candidate.Touch();
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cache hit {0} = {1}", key.Value, candidate.Data);
-                    return candidate.Data;
+                    return (candidate.Data as IdentifiedData)?.Clone() ?? candidate.Data;
                 }
             }
             this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cache miss {0}", key.Value);

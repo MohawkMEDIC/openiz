@@ -29,6 +29,7 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace OpenIZ.Core.Model.Roles
 {
@@ -77,17 +78,14 @@ namespace OpenIZ.Core.Model.Roles
         /// </summary>
         [XmlElement("genderConcept"), JsonProperty("genderConcept")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-
         public Guid? GenderConceptKey
         {
             get { return this.m_genderConceptKey; }
             set
             {
-                if (value != this.m_genderConceptKey)
-                {
-                    this.m_genderConceptKey = value;
-                    this.m_genderConcept = null;
-                }
+
+                this.m_genderConceptKey = value;
+                this.m_genderConcept = null;
             }
         }
 
@@ -95,7 +93,7 @@ namespace OpenIZ.Core.Model.Roles
         /// Gets or sets the gender concept
         /// </summary>
         [SerializationReference(nameof(GenderConceptKey))]
-        [XmlIgnore, JsonIgnore, AutoLoad]
+        [XmlIgnore, JsonIgnore, DataIgnore]
         public Concept GenderConcept
         {
             get

@@ -868,6 +868,8 @@
     <property modelName="Identifiers" domainName="Act">
       <via domainName="ActIdentifiers"/>
     </property>
+    <property modelName="ModifiedOn" domainName="CreationTime"/>
+
     <!--<property modelName="Notes" domainName="Act">
       <via domainName="ActNotes"/>
     </property>-->
