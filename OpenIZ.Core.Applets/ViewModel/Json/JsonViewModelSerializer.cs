@@ -161,9 +161,19 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 case JsonToken.StartObject:
                     {
                         var formatter = this.GetFormatter(nonGenericT);
+                        bool isList = typeof(IList).GetTypeInfo().IsAssignableFrom(t.GetTypeInfo());
                         // Classifier???
-                        if (classifier == null || !typeof(IList).GetTypeInfo().IsAssignableFrom(t.GetTypeInfo()))
-                            return formatter.Deserialize(r, t, context);
+                        if (classifier == null || !isList)
+                        {
+                            if(isList)
+                            {
+                                var retVal = Activator.CreateInstance(t) as IList;
+                                retVal.Add(formatter.Deserialize(r, t, context));
+                                return retVal;
+                            }
+                            else
+                                return formatter.Deserialize(r, t, context);
+                        }
                         else
                         {
                             // Classifier each of these properties aren't real properties, rather they are classified things

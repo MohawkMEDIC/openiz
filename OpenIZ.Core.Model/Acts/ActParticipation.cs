@@ -167,7 +167,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// The entity that this relationship targets
         /// </summary>
-        [XmlIgnore, JsonIgnore, SerializationReference(nameof(ActKey))]
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(ActKey)), DataIgnore]
         public Act Act
         {
             get

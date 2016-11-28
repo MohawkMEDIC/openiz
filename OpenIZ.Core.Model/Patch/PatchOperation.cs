@@ -38,6 +38,7 @@ namespace OpenIZ.Core.Model.Patch
     [XmlInclude(typeof(EntityRelationship))]
     [XmlInclude(typeof(ActParticipation))]
     [XmlInclude(typeof(ActRelationship))]
+    [XmlInclude(typeof(PersonLanguageCommunication))]
     [XmlInclude(typeof(TemplateDefinition))]
     [XmlInclude(typeof(ActProtocol))]
     public class PatchOperation

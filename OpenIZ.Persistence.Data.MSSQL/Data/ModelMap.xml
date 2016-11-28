@@ -573,12 +573,11 @@
       <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
 
     </property>
-    <property modelName="ModifiedOn" domainName="IdentifierTypeConcept">
-      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId">
-        <via domainName="CreationTime"/>
-      </via>
-    </property>
-
+    <property modelName="ModifiedOn" domainName="CreationTime"/>
+    <property modelName="CreatedBy" domainName="CreatedBy"/>
+    <property modelName="CreationTime" domainName="CreationTime"/>
+    <property modelName="ObsoletionTime" domainName="ObsoletionTime"/>
+    <property modelName="ObsoletedBy" domainName="ObsoletedBy"/>
     <collapseKey propertyName="EntityClassScopeConcept" keyName="EntityClassScopeConceptId"/>
   </class>
 

@@ -278,7 +278,7 @@ namespace OpenIZ.Core.Model.Collection
             {
                 currentBundle.m_modifiedOn = DateTimeOffset.Now;
                 foreach (var pi in model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<SerializationReferenceAttribute>() != null || 
-                    typeof(IList).GetTypeInfo().IsAssignableFrom(p.PropertyType.GetTypeInfo()) && followList))
+                    typeof(IList).GetTypeInfo().IsAssignableFrom(p.PropertyType.GetTypeInfo()) && p.GetCustomAttributes<XmlElementAttribute>().Count() == 0 && followList))
                 {
                     try
                     {

@@ -187,7 +187,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
                 // public abstract IQueryable<TData> Query(ModelDataContext context, Expression<Func<TData, bool>> query, IPrincipal principal);
                 var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 3 && o.GetParameters()[0].ParameterType == typeof(ModelDataContext));
                 var builderMethod = typeof(Expression).GetGenericMethod(nameof(Expression.Lambda), new Type[] { predicateType }, new Type[] { typeof(Expression), typeof(ParameterExpression[]) });
-                var expression = builderMethod.Invoke(null, new object[] { Expression.MakeBinary(ExpressionType.Equal, accessExpr, Expression.Constant(classifierValue)), new ParameterExpression[] { parameterExpr } }) as Expression;
+                var expression = builderMethod.Invoke(null, new object[] { Expression.MakeBinary(ExpressionType.Equal, accessExpr, Expression.Convert(Expression.Constant(classifierValue), accessExpr.Type)), new ParameterExpression[] { parameterExpr } }) as Expression;
 
                 if (queryMethod == null) return null;
                 var iq = queryMethod.Invoke(idpInstance, new object[] { context, expression, principal }) as IQueryable;

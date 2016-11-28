@@ -1,5 +1,5 @@
 ﻿<Database Name="OpenIZ" Class="ModelDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\fyfej\Source\Repos\openiz\OpenIZ\Data\OpenIZ.mdf;Integrated Security=True" SettingsObjectName="OpenIZ.Persistence.Data.MSSQL.Properties.Settings" SettingsPropertyName="OpenIZConnectionString1" Provider="System.Data.SqlClient" />
+  <Connection Mode="AppSettings" ConnectionString="Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\justi\Source\Repos\openiz\OpenIZ\Data\OpenIZ.mdf;Integrated Security=True" SettingsObjectName="OpenIZ.Persistence.Data.MSSQL.Properties.Settings" SettingsPropertyName="OpenIZConnectionString2" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Act" Member="Acts">
     <Type Name="Act">
       <Column Name="ActId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
@@ -730,10 +730,16 @@
       <Column Name="IdentifierTypeId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="IdentifierTypeConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
       <Column Name="EntityClassScopeConceptId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="CreationTime" Type="System.DateTimeOffset" DbType="DateTimeOffset NOT NULL" CanBeNull="false" IsDbGenerated="true" />
+      <Column Name="CreatedBy" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="ObsoletionTime" Type="System.DateTimeOffset" DbType="DateTimeOffset" CanBeNull="true" />
+      <Column Name="ObsoletedBy" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
       <Association Name="IdentifierType_ActIdentifier" Member="ActIdentifiers" ThisKey="IdentifierTypeId" OtherKey="IdentifierTypeId" Type="ActIdentifier" />
       <Association Name="IdentifierType_EntityIdentifier" Member="EntityIdentifiers" ThisKey="IdentifierTypeId" OtherKey="IdentifierTypeId" Type="EntityIdentifier" />
       <Association Name="Concept_IdentifierType" Member="EntityClassScopeConcept" ThisKey="EntityClassScopeConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
       <Association Name="Concept_IdentifierType1" Member="IdentifierTypeConcept" ThisKey="IdentifierTypeConceptId" OtherKey="ConceptId" Type="Concept" IsForeignKey="true" />
+      <Association Name="SecurityUser_IdentifierType" Member="CreatedByEntity" ThisKey="CreatedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
+      <Association Name="SecurityUser_IdentifierType1" Member="ObsoletedByEntity" ThisKey="ObsoletedBy" OtherKey="UserId" Type="SecurityUser" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.ManufacturedMaterial" Member="ManufacturedMaterials">
@@ -1116,6 +1122,8 @@
       <Association Name="SecurityUser_ExtensionType" Member="ExtensionTypesCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="ExtensionType" />
       <Association Name="SecurityUser_ExtensionType1" Member="ExtensionTypesObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="ExtensionType" />
       <Association Name="SecurityUser_ExtensionType2" Member="ExtensionTypesUpdatedBy" ThisKey="UserId" OtherKey="UpdatedBy" Type="ExtensionType" />
+      <Association Name="SecurityUser_IdentifierType" Member="IdentifierTypesCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="IdentifierType" />
+      <Association Name="SecurityUser_IdentifierType1" Member="IdentifierTypesObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="IdentifierType" />
       <Association Name="SecurityUser_PhoneticAlgorithm" Member="PhoneticAlgorithmsCreatedBy" ThisKey="UserId" OtherKey="CreatedBy" Type="PhoneticAlgorithm" />
       <Association Name="SecurityUser_PhoneticAlgorithm1" Member="PhoneticAlgorithmsObsoletedBy" ThisKey="UserId" OtherKey="ObsoletedBy" Type="PhoneticAlgorithm" />
       <Association Name="SecurityUser_PhoneticAlgorithm2" Member="PhoneticAlgorithmsUpdatedBy" ThisKey="UserId" OtherKey="UpdatedBy" Type="PhoneticAlgorithm" />
@@ -1225,13 +1233,6 @@
       <Association Name="Observation_TextObservation" Member="Observation" ThisKey="ActVersionId" OtherKey="ActVersionId" Type="Observation" IsForeignKey="true" />
     </Type>
   </Table>
-  <Function Name="dbo.sp_Authenticate" Method="sp_Authenticate">
-    <Parameter Name="UserName" Parameter="userName" Type="System.String" DbType="NVarChar(128)" />
-    <Parameter Name="PasswordHash" Parameter="passwordHash" Type="System.String" DbType="NVarChar(128)" />
-    <Parameter Name="MaxInvalidLoginAttempts" Parameter="maxInvalidLoginAttempts" Type="System.Int32" DbType="Int" />
-    <Parameter Name="SecurityUserId" Parameter="securityUserId" Type="System.Guid" DbType="UniqueIdentifier" Direction="InOut" />
-    <Return Type="System.Int32" />
-  </Function>
   <Function Name="dbo.fn_AssertConceptClass" Method="fn_AssertConceptClass" IsComposable="true">
     <Parameter Name="ConceptId" Parameter="conceptId" Type="System.Guid" DbType="UniqueIdentifier" />
     <Parameter Name="AssertClassMnemonic" Parameter="assertClassMnemonic" Type="System.String" DbType="NVarChar(32)" />
@@ -1253,5 +1254,12 @@
     <Parameter Name="ConceptId" Parameter="conceptId" Type="System.Guid" DbType="UniqueIdentifier" />
     <Parameter Name="ConceptSetMnemonic" Parameter="conceptSetMnemonic" Type="System.String" DbType="NVarChar(32)" />
     <Return Type="System.Boolean" />
+  </Function>
+  <Function Name="dbo.sp_Authenticate" Method="sp_Authenticate">
+    <Parameter Name="UserName" Parameter="userName" Type="System.String" DbType="NVarChar(128)" />
+    <Parameter Name="PasswordHash" Parameter="passwordHash" Type="System.String" DbType="NVarChar(128)" />
+    <Parameter Name="MaxInvalidLoginAttempts" Parameter="maxInvalidLoginAttempts" Type="System.Int32" DbType="Int" />
+    <Parameter Name="SecurityUserId" Parameter="securityUserId" Type="System.Guid" DbType="UniqueIdentifier" Direction="InOut" />
+    <Return Type="System.Int32" />
   </Function>
 </Database>

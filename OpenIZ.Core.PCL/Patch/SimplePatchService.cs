@@ -283,8 +283,11 @@ namespace OpenIZ.Core.Services.Impl
                             if (instance != null)
                                 (applyTo as IList).Remove(instance);
                         }
+                        else if (op.Value == null)
+                            property.SetValue(applyParent, null);
                         else
-                            throw new PatchException("Remove can only be applied to an IList instance");
+                            throw new PatchException("Remove can only be applied to an IList instance or to remove a value");
+
                         break;
                     case PatchOperationType.Replace:
                         property.SetValue(applyParent, op.Value);

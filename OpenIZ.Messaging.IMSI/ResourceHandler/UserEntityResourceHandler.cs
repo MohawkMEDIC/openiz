@@ -60,7 +60,6 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <summary>
 		/// Creates the specified user entity
 		/// </summary>
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
 		public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
 		{
 			if (data == null)

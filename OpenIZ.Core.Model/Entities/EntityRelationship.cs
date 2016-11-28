@@ -107,7 +107,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// The entity that this relationship targets
         /// </summary>
-        [XmlIgnore, JsonIgnore, SerializationReference(nameof(HolderKey))]
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(HolderKey)), DataIgnore]
         public Entity Holder
         {
             get

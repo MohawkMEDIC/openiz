@@ -169,14 +169,24 @@ namespace OpenIZ.Core.Model.Query
                 Object parmValue = this.ExtractValue(node.Right);
 
                 // Not able to map
-                if (!String.IsNullOrEmpty(parmName) && parmValue != null)
+                if ((node.Left as MethodCallExpression)?.Method.Name == "Any" &&
+                    (node.Left as MethodCallExpression)?.Arguments.Count == 1)
+                {
+                    // Special exists method call - i.e. HAS X
+                    var mci = (node.Left as MethodCallExpression);
+                    parmName = this.ExtractPath(mci.Arguments[0]);
+                    var cci = node.Right is ConstantExpression;
+                    this.m_query.Add(new KeyValuePair<string, object>(parmName, cci ? "null" : "!null"));
+                }
+                else if (!String.IsNullOrEmpty(parmName))
                 {
                     Object fParmValue = parmValue;
                     if (parmValue is DateTime)
                         fParmValue = ((DateTime)parmValue).ToString("o");
                     else if (parmValue is DateTimeOffset)
                         fParmValue = ((DateTimeOffset)parmValue).ToString("o");
-
+                    else if (parmValue == null)
+                        fParmValue = "null";
                     // Node type
                     switch (node.NodeType)
                     {
@@ -199,15 +209,7 @@ namespace OpenIZ.Core.Model.Query
 
                     this.m_query.Add(new KeyValuePair<string, Object>(parmName, fParmValue));
                 }
-                else if((node.Left as MethodCallExpression)?.Method.Name == "Any" && 
-                    (node.Left as MethodCallExpression)?.Arguments.Count == 1)
-                {
-                    // Special exists method call - i.e. HAS X
-                    var mci = (node.Left as MethodCallExpression);
-                    parmName = this.ExtractPath(mci.Arguments[0]);
-                    var cci = node.Right is ConstantExpression;
-                    this.m_query.Add(new KeyValuePair<string, object>(parmName, cci ? "null" : "!null"));
-                }
+                
                 return node;
             }
 

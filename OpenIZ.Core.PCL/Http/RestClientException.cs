@@ -25,7 +25,7 @@ namespace OpenIZ.Core.Http
 	/// <summary>
 	/// Rest client exception.
 	/// </summary>
-	public class RestClientException<TResult> : System.Net.WebException
+	public class RestClientException<TResult> : System.Net.WebException 
 	{
 		/// <summary>
 		/// The result
@@ -36,6 +36,16 @@ namespace OpenIZ.Core.Http
 			get;
 			set;
 		}
+
+        /// <summary>
+        /// Create a new rest client exception
+        /// </summary>
+        public RestClientException(String message, Exception inner) : this(default(TResult), inner, (inner as RestClientException<TResult>)?.Status ?? WebExceptionStatus.UnknownError, (inner as RestClientException<TResult>)?.Response)
+        {
+            if((inner as RestClientException<TResult>)!= null)
+                this.Result = (inner as RestClientException<TResult>).Result;
+
+        }
 
 		/// <summary>
 		/// Create the client exception
@@ -52,7 +62,9 @@ namespace OpenIZ.Core.Http
 		/// <filterpriority>2</filterpriority>
 		public override string ToString()
 		{
-			return string.Format("[RestClientException: {0}, Result={1}]\r\n{2}", this.Message, Result, this.StackTrace);
+			return string.Format("[RestClientException: {0}, Result={1}, HttpResult={2}]\r\n{3}", this.Message, Result, (this.Response as HttpWebResponse).StatusCode, this.StackTrace);
 		}
+
+
 	}
 }
