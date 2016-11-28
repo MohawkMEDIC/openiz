@@ -47,7 +47,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			if (alertRepositoryService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAlertRepositoryService)));
+				throw new InvalidOperationException($"{nameof(IAlertRepositoryService)} not found");
 			}
 
 			var createdAlert = alertRepositoryService.Insert(alertMessageInfo.AlertMessage);
@@ -91,7 +91,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			if (parameters.Count == 0)
 			{
-				throw new ArgumentException(string.Format("{0} cannot be empty", nameof(parameters)));
+				throw new ArgumentException($"{nameof(parameters)} cannot be empty");
 			}
 
 			var expression = QueryExpressionParser.BuildLinqExpression<AlertMessage>(this.CreateQuery(parameters));
@@ -100,10 +100,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			if (alertRepository == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAlertRepositoryService)));
+				throw new InvalidOperationException($"{nameof(IAlertRepositoryService)} not found");
 			}
 
-			AmiCollection<AlertMessageInfo> alerts = new AmiCollection<AlertMessageInfo>();
+			var alerts = new AmiCollection<AlertMessageInfo>();
 
 			int totalCount = 0;
 
@@ -125,14 +125,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			if (!Guid.TryParse(alertId, out key))
 			{
-				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(alertId)));
+				throw new ArgumentException($"{nameof(alertId)} must be a valid GUID");
 			}
 
 			var alertRepository = ApplicationContext.Current.GetService<IAlertRepositoryService>();
 
 			if (alertRepository == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAlertRepositoryService)));
+				throw new InvalidOperationException($"{nameof(IAlertRepositoryService)} not found");
 			}
 
 			var updatedAlert = alertRepository.Save(alert.AlertMessage);

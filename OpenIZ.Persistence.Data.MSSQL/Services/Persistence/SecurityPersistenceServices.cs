@@ -131,6 +131,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 	        }
 
 	        retVal.Policies.ForEach(o => o.EnsureExists(context, principal));
+
 	        context.SecurityRolePolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityRolePolicy()
 	        {
 		        PolicyId = o.PolicyKey.Value,
@@ -154,9 +155,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 		        return retVal;
 	        }
 
-	        context.SecurityRolePolicies.DeleteAllOnSubmit(context.SecurityRolePolicies.Where(o => o.RoleId == retVal.Key.Value));
-	        retVal.Policies.ForEach(o => o.EnsureExists(context, principal));
-	        context.SecurityRolePolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityRolePolicy()
+			retVal.Policies.RemoveAll(p => context.SecurityRolePolicies.Any(c => c.PolicyId == p.PolicyKey));
+
+			context.SecurityRolePolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityRolePolicy()
 	        {
 		        PolicyId = o.PolicyKey.Value,
 		        PolicyAction = (int)o.GrantType,
@@ -235,8 +236,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 		        return retVal;
 	        }
 
-	        context.SecurityDevicePolicies.DeleteAllOnSubmit(context.SecurityDevicePolicies.Where(o => o.DeviceId == retVal.Key.Value));
-	        retVal.Policies.ForEach(o => o.EnsureExists(context, principal));
+	        retVal.Policies.RemoveAll(p => context.SecurityDevicePolicies.Any(c => c.PolicyId == p.PolicyKey));
+
 	        context.SecurityDevicePolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityDevicePolicy
 	        {
 		        PolicyId = o.PolicyKey.Value,
@@ -312,9 +313,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 		        return retVal;
 	        }
 
-	        context.SecurityApplicationPolicies.DeleteAllOnSubmit(context.SecurityApplicationPolicies.Where(o => o.ApplicationId == retVal.Key.Value));
-	        retVal.Policies.ForEach(o => o.EnsureExists(context, principal));
-	        context.SecurityApplicationPolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityApplicationPolicy
+			retVal.Policies.RemoveAll(p => context.SecurityApplicationPolicies.Any(c => c.PolicyId == p.PolicyKey));
+
+			context.SecurityApplicationPolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityApplicationPolicy
 	        {
 		        PolicyId = o.PolicyKey.Value,
 		        PolicyAction = (int)o.GrantType,
