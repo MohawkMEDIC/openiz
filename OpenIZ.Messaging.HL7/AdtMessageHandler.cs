@@ -62,7 +62,7 @@ namespace OpenIZ.Messaging.HL7
 
 			try
 			{
-				if (e.Message.Version == "2.5")
+				if (e.Message.Version == "2.3.1" || e.Message.Version == "2.5")
 				{
 					// Get the MSH segment
 					var terser = new Terser(e.Message);
@@ -184,10 +184,6 @@ namespace OpenIZ.Messaging.HL7
 
 				(response as ACK).MSH.MessageType.TriggerEvent.Value = request.MSH.MessageType.TriggerEvent.Value;
 				(response as ACK).MSH.MessageType.MessageStructure.Value = "ACK";
-
-				var eventArgs = new NotificationEventArgs<Patient>(patient);
-
-				clientRegistryNotificationService?.NotifyRegister(eventArgs);
 			}
 			catch (Exception e)
 			{

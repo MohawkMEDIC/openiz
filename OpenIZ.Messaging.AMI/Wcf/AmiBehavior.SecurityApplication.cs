@@ -50,6 +50,8 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
 			}
 
+			applicationInfo.Application?.Policies.AddRange(applicationInfo.Policies);
+
 			var createdApplication = securityRepositoryService.CreateApplication(applicationInfo.Application);
 
 			return new SecurityApplicationInfo(createdApplication);

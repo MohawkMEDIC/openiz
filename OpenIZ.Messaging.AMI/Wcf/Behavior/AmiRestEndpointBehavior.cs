@@ -54,8 +54,8 @@ namespace OpenIZ.Messaging.AMI.Wcf.Behavior
 
 		public void Validate(ServiceEndpoint endpoint)
 		{
-			BindingElementCollection bindingElements = endpoint.Binding.CreateBindingElements();
-			WebMessageEncodingBindingElement webEncoder = bindingElements.Find<WebMessageEncodingBindingElement>();
+			var bindingElements = endpoint.Binding.CreateBindingElements();
+			var webEncoder = bindingElements.Find<WebMessageEncodingBindingElement>();
 
 			if (webEncoder == null)
 			{

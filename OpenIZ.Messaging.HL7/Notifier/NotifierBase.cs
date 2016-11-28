@@ -138,6 +138,7 @@ namespace OpenIZ.Messaging.HL7.Notifier
 
 			msh.SendingApplication.NamespaceID.Value = configuration.DeviceName;
 			msh.SendingFacility.NamespaceID.Value = configuration.JurisdictionData.Name;
+			msh.VersionID.VersionID.Value = "2.3.1";
 		}
 
 		/// <summary>
@@ -187,12 +188,18 @@ namespace OpenIZ.Messaging.HL7.Notifier
 
 			patient.Identifiers.RemoveAll(i => !targetConfiguration.NotificationDomainConfigurations.Exists(o => o.Domain.Equals(i.Authority.DomainName)));
 
+			if (!patient.Identifiers.Any())
+			{
+				pid.GetPatientIdentifierList(0).IDNumber.Value = patient.Key.GetValueOrDefault(Guid.NewGuid()).ToString();
+				pid.GetPatientIdentifierList(0).AssigningAuthority.UniversalID.Value = "1.3.6.1.4.1.33349.3.1.5.9.2.10000";
+				pid.GetPatientIdentifierList(0).AssigningAuthority.UniversalIDType.Value = "ISO";
+			}
+
 			foreach (var entityIdentifier in patient.Identifiers.Where(item => assigningAuthorityRepositoryService.Find(a => a.DomainName == item.Authority.DomainName).FirstOrDefault() != null))
 			{
+				pid.GetPatientIdentifierList(pid.PatientIdentifierListRepetitionsUsed).IDNumber.Value = entityIdentifier.Value;
 				pid.GetPatientIdentifierList(pid.PatientIdentifierListRepetitionsUsed).AssigningAuthority.UniversalID.Value = entityIdentifier.Authority.Oid;
 				pid.GetPatientIdentifierList(pid.PatientIdentifierListRepetitionsUsed).AssigningAuthority.UniversalIDType.Value = "ISO";
-				pid.GetPatientIdentifierList(pid.PatientIdentifierListRepetitionsUsed).AssigningAuthority.NamespaceID.Value = entityIdentifier.Authority.Oid;
-				pid.GetPatientIdentifierList(pid.PatientIdentifierListRepetitionsUsed).IDNumber.Value = entityIdentifier.Value;
 			}
 
 			foreach (var personLanguage in patient.LanguageCommunication.Where(l => l.IsPreferred))

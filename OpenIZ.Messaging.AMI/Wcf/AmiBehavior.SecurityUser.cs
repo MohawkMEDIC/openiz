@@ -41,6 +41,31 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	public partial class AmiBehavior
 	{
 		/// <summary>
+		/// Changes the password of a user.
+		/// </summary>
+		/// <param name="id">The id of the user whose password is to be changed.</param>
+		/// <param name="password">The new password of the user.</param>
+		/// <returns>Returns the updated user.</returns>
+		public SecurityUser ChangePassword(string id, string password)
+		{
+			Guid userKey = Guid.Empty;
+
+			if (!Guid.TryParse(id, out userKey))
+			{
+				throw new ArgumentException($"{nameof(id)} must be a valid GUID");
+			}
+
+			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			if (securityRepository == null)
+			{
+				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
+			}
+
+			return securityRepository.ChangePassword(userKey, password);
+		}
+
+		/// <summary>
 		/// Creates a security user.
 		/// </summary>
 		/// <param name="user">The security user to be created.</param>
