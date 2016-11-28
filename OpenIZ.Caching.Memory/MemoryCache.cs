@@ -141,14 +141,14 @@ namespace OpenIZ.Caching.Memory
                     lock (this.m_lock)
                     {
                         var entry = cache[key];
-                        entry.Data = (data as IdentifiedData)?.GetLocked() ?? data;
+                        entry.Data =  data;
                         entry.LastUpdateTime = DateTime.Now.Ticks;
                     }
                 else
                     lock (this.m_lock)
                         if (!cache.ContainsKey(key))
                         {
-                            cache.Add(key, new CacheEntry(DateTime.Now, (data as IdentifiedData)?.GetLocked() ?? data));
+                            cache.Add(key, new CacheEntry(DateTime.Now,  data));
                             this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cache for {0} contains {1} entries...", objData, cache.Count);
                         }
             }
@@ -176,7 +176,7 @@ namespace OpenIZ.Caching.Memory
                 {
                     candidate.Touch();
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cache hit {0} = {1}", key.Value, candidate.Data);
-                    return (candidate.Data as IdentifiedData)?.Clone() ?? candidate.Data;
+                    return (candidate.Data as IdentifiedData)?.GetLocked() ?? candidate.Data;
                 }
             }
             this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cache miss {0}", key.Value);
