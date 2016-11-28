@@ -3,7 +3,7 @@
   <update insertIfNotExists="true">
     <CodeSystem xmlns="http://openiz.org/model">
       <id>5b366752-3254-42f4-9d78-559e75f38b3d</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <name>PH_DischargeDisposition_HL7_2x</name>
       <oid>2.16.840.1.113883.12.112</oid>
       <authority>HL70112</authority>
@@ -14,11 +14,11 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>c055a8c7-6ab5-4726-a90a-6e791ab40cec</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>9</mnemonic>
       <codeSystem>5b366752-3254-42f4-9d78-559e75f38b3d</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Admitted as an inpatient to this hospital</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -28,12 +28,12 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>5a6d3db4-cb61-4608-a061-89592f539276</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>DischargeDisposition-Admitted</mnemonic>
+      <mnemonic>Disposition-Admitted</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
@@ -56,11 +56,11 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>0206d279-014c-4087-89f3-bc137d11d14a</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>1</mnemonic>
       <codeSystem>5b366752-3254-42f4-9d78-559e75f38b3d</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Discharged to home or self care (routine discharge)</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -70,12 +70,12 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>499f18c5-56c4-496e-9e23-e5cf862cfab8</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>DischargeDisposition-Home</mnemonic>
+      <mnemonic>Disposition-Home</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
@@ -99,11 +99,11 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>a63ced78-513b-4724-869f-5eeba51aabe2</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>2</mnemonic>
       <codeSystem>5b366752-3254-42f4-9d78-559e75f38b3d</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Discharged/transferred to a short-term general hospital for inpatient care</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -113,12 +113,12 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>01f28777-fc6c-40bd-a50b-e0c98d15892d</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>DischargeDisposition-TransferToHospital</mnemonic>
+      <mnemonic>Disposition-TransferToHospital</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
@@ -142,11 +142,11 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>1f79e8b5-d3bb-4e83-aad6-90f3ad4a2eb4</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>4</mnemonic>
       <codeSystem>5b366752-3254-42f4-9d78-559e75f38b3d</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Discharged/transferred to an intermediate care facility (ICF)</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -156,12 +156,12 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>7347937e-8d0e-43d7-92c0-b0a410173079</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>DischargeDisposition-TransferToICF</mnemonic>
+      <mnemonic>Disposition-TransferToICF</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
@@ -185,11 +185,11 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>f73402f7-3f0d-4749-9350-353e0bd9cae4</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>5</mnemonic>
       <codeSystem>5b366752-3254-42f4-9d78-559e75f38b3d</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Discharged/transferred to another type of institution not defined elsewhere in this code list</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -199,12 +199,12 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>1a117ead-3882-4692-9ecc-e660adbc6d8c</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>DischargeDisposition-TransferToOther</mnemonic>
+      <mnemonic>Disposition-TransferToOther</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
@@ -228,11 +228,11 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>c0a09e01-64bc-4acb-ba60-6069884afbf0</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>20</mnemonic>
       <codeSystem>5b366752-3254-42f4-9d78-559e75f38b3d</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Died</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -240,14 +240,28 @@
     </ReferenceTerm>
   </update>
   <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>c0a09e01-64bc-4acb-ba60-6069884afbf0</id>
+      
+      <mnemonic>397709008</mnemonic>
+      <codeSystem>B3030751-D4DB-420B-B765-E837607820CD</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Patient Died</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>6df3720b-857f-4ba2-826f-b7f1d3c3adbb</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>DischargeDisposition-Died</mnemonic>
+      <mnemonic>Disposition-Died</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
@@ -271,11 +285,11 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>204c8af6-99ed-4965-a307-baa245d1e393</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <mnemonic>7</mnemonic>
       <codeSystem>5b366752-3254-42f4-9d78-559e75f38b3d</codeSystem>
       <name>
-        <creationTime>0001-01-01T00:00:00.0000000+00:00</creationTime>
+        
         <language>en</language>
         <value>Left against medical advice or discontinued care</value>
         <phoneticAlgorithm xsi:nil="true" />
@@ -285,12 +299,12 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>ee99c69d-bfc4-4363-abec-28d8cbfe9976</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>DischargeDisposition-OptedOutOfCare</mnemonic>
+      <mnemonic>Disposition-OptedOutOfCare</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
@@ -313,7 +327,7 @@
   <update insertIfNotExists="true">
     <ConceptSet xmlns="http://openiz.org/model">
       <id>d4630e65-f437-47c4-9d70-1db9bf7b26c9</id>
-      <creationTime>2016-08-06T00:00:00.0000000+03:00</creationTime>
+      
       <name>Subset of Discharge Disposition (HL7)</name>
       <mnemonic>DischargeDisposition</mnemonic>
       <oid>1.3.6.1.4.1.33349.3.1.5.9.3.30</oid>
@@ -325,6 +339,23 @@
       <concept>1a117ead-3882-4692-9ecc-e660adbc6d8c</concept>
       <concept>6df3720b-857f-4ba2-826f-b7f1d3c3adbb</concept>
       <concept>ee99c69d-bfc4-4363-abec-28d8cbfe9976</concept>
+    </ConceptSet>
+  </update>
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>96e3305e-9180-411c-9411-f48c4dbf46c0</id>
+      
+      <name>Subset of Disposition (HL7)</name>
+      <mnemonic>ReactionDisposition</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.47</oid>
+      <url>http://openiz.org/conceptset/ReactionDisposition</url>
+      <!--<concept>5a6d3db4-cb61-4608-a061-89592f539276</concept>-->
+      <!--<concept>499f18c5-56c4-496e-9e23-e5cf862cfab8</concept>-->
+      <concept>01f28777-fc6c-40bd-a50b-e0c98d15892d</concept>
+      <concept>7347937e-8d0e-43d7-92c0-b0a410173079</concept>
+      <concept>1a117ead-3882-4692-9ecc-e660adbc6d8c</concept>
+      <concept>6df3720b-857f-4ba2-826f-b7f1d3c3adbb</concept>
+      <!--<concept>ee99c69d-bfc4-4363-abec-28d8cbfe9976</concept>-->
     </ConceptSet>
   </update>
 </dataset>

@@ -39,9 +39,9 @@
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="UpdatedByEntity" keyName="UpdatedBy"/>
-    
+
   </class>
-  
+
   <!-- Security Users -->
   <class modelClass="OpenIZ.Core.Model.Security.SecurityUser, OpenIZ.Core.Model, Version=0.6.0.0"
 		domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SecurityUser, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0">
@@ -467,7 +467,7 @@
     <collapseKey propertyName="StatusConcept" keyName="StatusConceptId"/>
 
     <cast type="OpenIZ.Core.Model.Roles.Patient, OpenIZ.Core.Model, Version=0.6.0.0" domainName="Person">
-        <via domainName="Patient"/>
+      <via domainName="Patient"/>
     </cast>
     <cast type="OpenIZ.Core.Model.Entities.Person, OpenIZ.Core.Model, Version=0.6.0.0" domainName="Person"/>
   </class>
@@ -609,7 +609,7 @@
     </property>
     <collapseKey propertyName="AssociationTypeConcept" keyName="AssociationTypeConceptId"/>
   </class>
-  
+
   <class modelClass="OpenIZ.Core.Model.Entities.EntityTelecomAddress, OpenIZ.Core.Model, Version=0.6.0.0"
      domainClass="OpenIZ.Persistence.Data.MSSQL.Data.EntityTelecomAddress, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0">
     <property modelName="Key" domainName="EntityTelecomAddressId"/>
@@ -897,19 +897,19 @@
     <property modelName="ClassConceptKey"  domainName="ClassConceptId"/>
     <property modelName="MoodConceptKey"  domainName="MoodConceptId"/>
   </class>
-  
+
   <!-- Substance Administration -->
   <class modelClass="OpenIZ.Core.Model.Acts.SubstanceAdministration, OpenIZ.Core.Model, Version=0.6.0.0"
  domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SubstanceAdministration, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0">
     <base domainName="ActVersion"/>
     <property modelName="Key" domainName="ActVersion">
-        <via domainName="ActId"/>
+      <via domainName="ActId"/>
     </property>
     <property modelName="VersionKey" domainName="ActVersionId"/>
     <property modelName="DoseUnitKey" domainName="DoseUnitConceptId"/>
     <property modelName="RouteKey" domainName="RouteConceptId"/>
     <property modelName="SiteKey" domainName="SiteConceptId"/>
-      <property modelName="SequenceId" domainName="SequenceId"/>
+    <property modelName="SequenceId" domainName="SequenceId"/>
     <property modelName="DoseUnit" domainName="DoseUnitConcept">
       <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
     </property>
@@ -921,6 +921,57 @@
     </property>
   </class>
 
+  <class modelClass="OpenIZ.Core.Model.Acts.Observation, OpenIZ.Core.Model, Version=0.6.0.0"
+ domainClass="OpenIZ.Persistence.Data.MSSQL.Data.Observation, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0">
+    <base domainName="ActVersion"/>
+    <property modelName="Key" domainName="ActVersion">
+        <via domainName="ActId"/>
+    </property>
+    <property modelName="VersionKey" domainName="ActVersionId"/>
+    <property modelName="InterpretationConceptKey" domainName="InterpretationConceptId"/>
+  </class>
+  
+  <class modelClass="OpenIZ.Core.Model.Acts.QuantityObservation, OpenIZ.Core.Model, Version=0.6.0.0"
+ domainClass="OpenIZ.Persistence.Data.MSSQL.Data.QuantityObservation, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0">
+    <base domainName="Observation"/>
+    <property modelName="Key" domainName="Observation">
+      <via domainName="ActVersion">
+        <via domainName="ActId"/>
+      </via>
+    </property>
+
+    <property modelName="VersionKey" domainName="ActVersionId"/>
+    <property modelName="Value" domainName="Quantity"/>
+    <property modelName="UnitOfMeasureKey" domainName="UnitOfMeasureConceptId"/>
+    <property modelName="UnitOfMeasure" domainName="UnitOfMeasureConcept"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.CodedObservation, OpenIZ.Core.Model, Version=0.6.0.0"
+ domainClass="OpenIZ.Persistence.Data.MSSQL.Data.CodedObservation, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0">
+    <base domainName="Observation"/>
+    <property modelName="Key" domainName="Observation">
+      <via domainName="ActVersion">
+        <via domainName="ActId"/>
+      </via>
+    </property>
+    
+    <property modelName="VersionKey" domainName="ActVersionId"/>
+    <property modelName="ValueKey" domainName="ValueConceptId"/>
+    <property modelName="Value" domainName="ValueConcept"/>
+  </class>
+
+    <class modelClass="OpenIZ.Core.Model.Acts.PatientEncounter, OpenIZ.Core.Model, Version=0.6.0.0"
+ domainClass="OpenIZ.Persistence.Data.MSSQL.Data.PatientEncounter, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0">
+    <base domainName="ActVersion"/>
+    <property modelName="Key" domainName="ActVersion">
+        <via domainName="ActId"/>
+    </property>
+    <property modelName="VersionKey" domainName="ActVersionId"/>
+    <property modelName="DischargeDispositionKey" domainName="DischargeDispositionConceptId"/>
+      <property modelName="DischargeDisposition" domainName="DischargeDispositionConcept"/>
+    
+  </class>
+    
   <!-- Substance Administration -->
   <class modelClass="OpenIZ.Core.Model.Acts.ActParticipation, OpenIZ.Core.Model, Version=0.6.0.0"
  domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ActParticipation, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0">

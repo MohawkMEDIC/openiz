@@ -50,8 +50,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var retVal = base.Insert(context, data, principal);
 
             // Roles
-            if (retVal.Roles != null)
-                foreach(var r in retVal.Roles)
+            if (data.Roles != null)
+                foreach(var r in data.Roles)
                 {
                     r.EnsureExists(context, principal);
                     context.SecurityUserRoles.InsertOnSubmit(new SecurityUserRole()
@@ -71,13 +71,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = base.Update(context, data, principal);
 
-	        if (retVal.Roles == null)
+	        if (data.Roles == null)
 	        {
 		        return retVal;
 	        }
 
 	        context.SecurityUserRoles.DeleteAllOnSubmit(context.SecurityUserRoles.Where(o => o.UserId == retVal.Key));
-	        foreach (var r in retVal.Roles)
+	        foreach (var r in data.Roles)
 	        {
 		        r.EnsureExists(context, principal);
 		        context.SecurityUserRoles.InsertOnSubmit(new SecurityUserRole()
@@ -125,13 +125,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = base.Insert(context, data, principal);
 
-			if (retVal.Policies == null)
+			if (data.Policies == null)
 			{
 		        return retVal;
 	        }
 
-	        retVal.Policies.ForEach(o => o.EnsureExists(context, principal));
-	        context.SecurityRolePolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityRolePolicy()
+	        data.Policies.ForEach(o => o.EnsureExists(context, principal));
+	        context.SecurityRolePolicies.InsertAllOnSubmit(data.Policies.Select(o => new Data.SecurityRolePolicy()
 	        {
 		        PolicyId = o.PolicyKey.Value,
 		        PolicyAction = (int)o.GrantType,
@@ -149,14 +149,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = base.Update(context, data, principal);
 
-			if (retVal.Policies == null)
+			if (data.Policies == null)
 			{
 		        return retVal;
 	        }
 
 	        context.SecurityRolePolicies.DeleteAllOnSubmit(context.SecurityRolePolicies.Where(o => o.RoleId == retVal.Key.Value));
-	        retVal.Policies.ForEach(o => o.EnsureExists(context, principal));
-	        context.SecurityRolePolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityRolePolicy()
+	        data.Policies.ForEach(o => o.EnsureExists(context, principal));
+	        context.SecurityRolePolicies.InsertAllOnSubmit(data.Policies.Select(o => new Data.SecurityRolePolicy()
 	        {
 		        PolicyId = o.PolicyKey.Value,
 		        PolicyAction = (int)o.GrantType,
@@ -206,13 +206,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = base.Insert(context, data, principal);
 
-			if (retVal.Policies == null)
+			if (data.Policies == null)
 			{
 		        return retVal;
 	        }
 
-	        retVal.Policies.ForEach(o => o.EnsureExists(context, principal));
-	        context.SecurityDevicePolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityDevicePolicy()
+	        data.Policies.ForEach(o => o.EnsureExists(context, principal));
+	        context.SecurityDevicePolicies.InsertAllOnSubmit(data.Policies.Select(o => new Data.SecurityDevicePolicy()
 	        {
 		        PolicyId = o.PolicyKey.Value,
 		        PolicyAction = (int)o.GrantType,
@@ -230,14 +230,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = base.Update(context, data, principal);
 
-	        if (retVal.Policies == null)
+	        if (data.Policies == null)
 	        {
 		        return retVal;
 	        }
 
 	        context.SecurityDevicePolicies.DeleteAllOnSubmit(context.SecurityDevicePolicies.Where(o => o.DeviceId == retVal.Key.Value));
-	        retVal.Policies.ForEach(o => o.EnsureExists(context, principal));
-	        context.SecurityDevicePolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityDevicePolicy
+	        data.Policies.ForEach(o => o.EnsureExists(context, principal));
+	        context.SecurityDevicePolicies.InsertAllOnSubmit(data.Policies.Select(o => new Data.SecurityDevicePolicy
 	        {
 		        PolicyId = o.PolicyKey.Value,
 		        PolicyAction = (int)o.GrantType,
@@ -286,9 +286,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 	    {
 		    var retVal = base.Insert(context, data, principal);
 
-			if (retVal.Policies == null)
+			if (data.Policies == null)
 			{
-				context.SecurityApplicationPolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityApplicationPolicy()
+				context.SecurityApplicationPolicies.InsertAllOnSubmit(data.Policies.Select(o => new Data.SecurityApplicationPolicy()
 				{
 					PolicyId = o.PolicyKey.Value,
 					PolicyAction = (int)o.GrantType,
@@ -307,14 +307,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         {
             var retVal = base.Update(context, data, principal);
 
-			if (retVal.Policies == null)
+			if (data.Policies == null)
 			{
 		        return retVal;
 	        }
 
 	        context.SecurityApplicationPolicies.DeleteAllOnSubmit(context.SecurityApplicationPolicies.Where(o => o.ApplicationId == retVal.Key.Value));
-	        retVal.Policies.ForEach(o => o.EnsureExists(context, principal));
-	        context.SecurityApplicationPolicies.InsertAllOnSubmit(retVal.Policies.Select(o => new Data.SecurityApplicationPolicy
+	        data.Policies.ForEach(o => o.EnsureExists(context, principal));
+	        context.SecurityApplicationPolicies.InsertAllOnSubmit(data.Policies.Select(o => new Data.SecurityApplicationPolicy
 	        {
 		        PolicyId = o.PolicyKey.Value,
 		        PolicyAction = (int)o.GrantType,

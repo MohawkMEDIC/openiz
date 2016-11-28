@@ -307,6 +307,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                         domainClassType = Type.GetType(itm.DomainClass);
                     idpType = idpType.MakeGenericType(modelClassType);
 
+                    if (modelClassType.IsAbstract || domainClassType.IsAbstract) continue;
 
                     // Already created
                     if (ApplicationContext.Current.GetService(idpType) != null)

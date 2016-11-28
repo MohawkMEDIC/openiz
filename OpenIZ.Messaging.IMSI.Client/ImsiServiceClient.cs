@@ -49,46 +49,41 @@ namespace OpenIZ.Messaging.IMSI.Client
 			this.Client.Accept = client.Accept ?? "application/xml";
 		}
 
-		/// <summary>
-		/// Creates specified data.
-		/// </summary>
-		/// <typeparam name="TModel">The type of data to be created.</typeparam>
-		/// <param name="data">The data to be created.</param>
-		/// <param name="bundled">Whether the data should be submitted as a bundle.</param>
-		/// <returns>Returns the newly created data.</returns>
-		public TModel Create<TModel>(TModel data, bool bundled = true) where TModel : IdentifiedData
-		{
-			if (data == null)
-			{
-				throw new ArgumentNullException(nameof(data));
-			}
+        /// <summary>
+        /// Creates specified data.
+        /// </summary>
+        /// <typeparam name="TModel">The type of data to be created.</typeparam>
+        /// <param name="data">The data to be created.</param>
+        /// <returns>Returns the newly created data.</returns>
+        public TModel Create<TModel>(TModel data) where TModel : IdentifiedData
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
 
-			// Resource name
-			String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+            // Resource name
+            String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
 
-			// Create with version?
-			if (data.Key != null)
-			{
-				return bundled ? 
-					this.Client.Post<Bundle, TModel>($"Bundle/{data.Key}", this.Client.Accept, Bundle.CreateBundle(data)) : 
-					this.Client.Post<TModel, TModel>($"{resourceName}/{data.Key}", this.Client.Accept, data);
-			}
-			else
-			{
-				return bundled ?
-					this.Client.Post<Bundle, TModel>("Bundle", this.Client.Accept, Bundle.CreateBundle(data)) :
-					this.Client.Post<TModel, TModel>(resourceName, this.Client.Accept, data);
-			}
-		}
+            // Create with version?
+            if (data.Key != null)
+            {
+                return this.Client.Post<Bundle, TModel>(String.Format("{0}/{1}", resourceName, data.Key), this.Client.Accept, Bundle.CreateBundle(data));
+            }
+            else
+            {
+                return this.Client.Post<Bundle, TModel>(resourceName, this.Client.Accept, Bundle.CreateBundle(data));
+            }
+        }
 
-		/// <summary>
-		/// Gets a specified object by key and an optional version key.
-		/// </summary>
-		/// <typeparam name="TModel">The type of data for which to retrieve.</typeparam>
-		/// <param name="key">The key of the data.</param>
-		/// <param name="versionKey">The version key of the data.</param>
-		/// <returns>Returns the specified data.</returns>
-		public IdentifiedData Get<TModel>(Guid key, Guid? versionKey) where TModel : IdentifiedData
+        /// <summary>
+        /// Gets a specified object by key and an optional version key.
+        /// </summary>
+        /// <typeparam name="TModel">The type of data for which to retrieve.</typeparam>
+        /// <param name="key">The key of the data.</param>
+        /// <param name="versionKey">The version key of the data.</param>
+        /// <returns>Returns the specified data.</returns>
+        public IdentifiedData Get<TModel>(Guid key, Guid? versionKey) where TModel : IdentifiedData
 		{
 			// Resource name
 			String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
@@ -182,7 +177,7 @@ namespace OpenIZ.Messaging.IMSI.Client
         public Bundle Query<TModel>(Expression<Func<TModel, bool>> query, int offset, int? count) where TModel : IdentifiedData
         {
             // Map the query to HTTP parameters
-            var queryParms = QueryExpressionBuilder.BuildQuery(query).ToList();
+            var queryParms = QueryExpressionBuilder.BuildQuery(query, true).ToList();
             queryParms.Add(new KeyValuePair<string, object>("_offset", offset));
             if(count.HasValue)
                 queryParms.Add(new KeyValuePair<string, object>("_count", count));

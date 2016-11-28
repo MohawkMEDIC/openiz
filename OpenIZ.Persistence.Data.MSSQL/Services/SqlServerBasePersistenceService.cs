@@ -127,7 +127,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         /// Get the specified key.
         /// </summary>
         /// <param name="key">Key.</param>
-        internal TData Get(ModelDataContext context, Guid key, IPrincipal principal)
+        internal virtual TData Get(ModelDataContext context, Guid key, IPrincipal principal)
         {
             return this.Query(context, o => o.Key == key, principal)?.FirstOrDefault();
         }

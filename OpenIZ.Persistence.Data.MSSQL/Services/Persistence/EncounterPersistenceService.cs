@@ -36,8 +36,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public override Core.Model.Acts.PatientEncounter ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
         {
-            var iddat = dataInstance as IDbIdentified;
-            var dbEnc = dataInstance as Data.PatientEncounter ?? context.GetTable<Data.PatientEncounter>().Where(o => o.ActVersionId == iddat.Id).First();
+            var iddat = dataInstance as IDbVersionedData;
+            var dbEnc = dataInstance as Data.PatientEncounter ?? context.GetTable<Data.PatientEncounter>().Where(o => o.ActVersionId == iddat.VersionId).First();
             var dba = dataInstance as Data.ActVersion ?? context.GetTable<Data.ActVersion>().Where(a => a.ActVersionId == dbEnc.ActVersionId).First();
             var retVal = m_actPersister.ToModelInstance<Core.Model.Acts.PatientEncounter>(dba, context, principal);
 

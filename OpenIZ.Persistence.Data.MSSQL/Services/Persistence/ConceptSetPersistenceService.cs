@@ -90,14 +90,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                 // Special case m2m
                 var existingConceptSets = context.ConceptSetMembers.Where(o => o.ConceptSetId == retVal.Key);
                 // Any new?
-                var newConcepts = data.Concepts.Where(o => !existingConceptSets.Select(e => e.ConceptId).ToList().Contains(o.Key.Value));
+                var newConcepts = data.ConceptsXml.Where(o => !existingConceptSets.Select(e => e.ConceptId).ToList().Contains(o));
                 foreach (var i in newConcepts)
                 {
-                    i.EnsureExists(context, principal);
-                    context.ConceptSetMembers.InsertOnSubmit(new Data.ConceptSetMember() { ConceptId = i.Key.Value, ConceptSetId = retVal.Key.Value });
+                    context.ConceptSetMembers.InsertOnSubmit(new Data.ConceptSetMember() { ConceptId = i, ConceptSetId = retVal.Key.Value });
                 }
 
-                var delConcepts = existingConceptSets.Select(e => e.ConceptId).ToList().Where(o => !data.Concepts.Exists(c => c.Key == o));
+                var delConcepts = existingConceptSets.Select(e => e.ConceptId).ToList().Where(o => !data.ConceptsXml.Exists(c => c == o));
                 foreach (var i in delConcepts)
                     context.ConceptSetMembers.DeleteOnSubmit(existingConceptSets.FirstOrDefault(p => p.ConceptId == i && p.ConceptSetId == retVal.Key.Value));
             }

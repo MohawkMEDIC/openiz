@@ -74,6 +74,7 @@
     <Compile Include="Configuration\SqlConfiguration.cs" />
     <Compile Include="Data\IDbAssociatedEntity.cs" />
     <Compile Include="Data\IDbBaseData.cs" />
+    <Compile Include="Data\IDbObservation.cs" />
     <Compile Include="Data\IDbVersionedData.cs" />
     <Compile Include="Data\LinqTraceWriter.cs" />
     <Compile Include="Data\DataModelExtensions.cs" />

@@ -133,10 +133,7 @@ namespace OpenIZ.Core.Persistence
                                         existing = getMethod.MakeGenericMethod(new Type[] { typeof(Guid) }).Invoke(idpInstance, new object[] { new Identifier<Guid>(itm.Element.Key.Value), AuthenticationContext.SystemPrincipal, false });
                                     if (existing != null)
                                     {
-                                        existing.CopyObjectData(itm.Element);
-                                        var diff = patchService.Diff(existing as IdentifiedData, itm.Element);
-                                        if (diff.Operation.Count == 0) continue;
-                                        target = patchService.Patch(diff, existing as IdentifiedData, true);
+                                        target = (existing as IdentifiedData).Clone();
                                         target.CopyObjectData(itm.Element);
                                     }
                                     else

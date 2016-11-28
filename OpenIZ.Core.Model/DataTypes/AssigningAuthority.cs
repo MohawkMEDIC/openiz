@@ -90,7 +90,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Represents scopes to which the authority is bound
         /// </summary>
-        [JsonProperty("scope"), XmlElement("scope")]
+        [AutoLoad, JsonProperty("scope"), XmlElement("scope")]
         public List<Guid> AuthorityScopeXml { get; set; }
 
         /// <summary>

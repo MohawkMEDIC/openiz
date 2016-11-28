@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using OpenIZ.Core.Model.Attributes;
 using System.Linq;
+using System.Collections;
 
 namespace OpenIZ.Core.Model.Query
 {
@@ -316,11 +317,13 @@ namespace OpenIZ.Core.Model.Query
         /// <returns>The query.</returns>
         /// <param name="model">Model.</param>
         /// <typeparam name="TModel">The 1st type parameter.</typeparam>
-        public static IEnumerable<KeyValuePair<String, Object>> BuildQuery<TModel>(Expression<Func<TModel, bool>> model)
+        public static IEnumerable<KeyValuePair<String, Object>> BuildQuery<TModel>(Expression<Func<TModel, bool>> model, bool stripNullChecks = false)
         {
             List<KeyValuePair<String, Object>> retVal = new List<KeyValuePair<string, Object>>();
             var visitor = new HttpQueryExpressionVisitor(retVal);
             visitor.Visit(model);
+            if(stripNullChecks)
+                retVal.RemoveAll(o => retVal.Any(c => c.Key == o.Key && c.Value != o.Value) && o.Value.Equals("!null"));
             return retVal;
         }
 

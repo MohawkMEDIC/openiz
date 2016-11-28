@@ -119,6 +119,9 @@
     <None Include="Data\000-AdministrableDrugForm.dataset">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\000-CauseOfDeath.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Data\000-ControlActClass.dataset">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -127,6 +130,12 @@
     </None>
     <None Include="Data\000-DischargeDisposition.dataset">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\000-ProblemObservationTypes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\000-ReactionObservation.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Data\000-Supplements.dataset">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

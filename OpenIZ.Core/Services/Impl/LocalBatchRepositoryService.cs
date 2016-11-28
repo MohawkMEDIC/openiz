@@ -16,7 +16,7 @@ namespace OpenIZ.Core.Services.Impl
     /// <summary>
     /// Local batch repository service 
     /// </summary>
-    public class LocalBatchRepositoryService
+    public class LocalBatchRepositoryService : IBatchRepositoryService
     {
         /// <summary>
 		/// Insert the bundle
@@ -84,7 +84,7 @@ namespace OpenIZ.Core.Services.Impl
             // BRE validation
             var breService = ApplicationContext.Current.GetService<IBusinessRulesService<Bundle>>();
             var issues = breService?.Validate(bundle);
-            if (issues.Any(i => i.Priority == DetectedIssuePriorityType.Error))
+            if (issues?.Any(i => i.Priority == DetectedIssuePriorityType.Error) == true)
                 throw new DetectedIssueException(issues);
 
             // Bundle items

@@ -129,44 +129,44 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Do the insert
             var retVal = base.Insert(context, data, principal);
 
-            if (retVal.Extensions != null)
+            if (data.Extensions != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActExtension, Data.ActExtension>(
-                    retVal.Extensions.GetLocked(),
+                    data.Extensions.GetLocked(),
                     retVal,
                     context, 
                     principal);
 
-            if (retVal.Identifiers != null)
+            if (data.Identifiers != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActIdentifier, Data.ActIdentifier>(
-                    retVal.Identifiers.GetLocked(),
+                    data.Identifiers.GetLocked(),
                     retVal,
                     context, 
                     principal);
 
-            if (retVal.Notes != null)
+            if (data.Notes != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActNote, Data.ActNote>(
-                    retVal.Notes.GetLocked(),
+                    data.Notes.GetLocked(),
                     retVal,
                     context, 
                     principal);
 
-            if (retVal.Participations != null)
+            if (data.Participations != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActParticipation, Data.ActParticipation>(
-                    retVal.Participations.GetLocked(),
+                    data.Participations.GetLocked(),
                     retVal,
                     context, 
                     principal);
 
-            if (retVal.Relationships != null)
+            if (data.Relationships != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActRelationship, Data.ActRelationship>(
-                    retVal.Relationships.GetLocked(),
+                    data.Relationships.GetLocked(),
                     retVal,
                     context, 
                     principal);
 
-            if (retVal.Tags != null)
+            if (data.Tags != null)
                 base.UpdateAssociatedItems<Core.Model.DataTypes.ActTag, Data.ActTag>(
-                    retVal.Tags.GetLocked(),
+                    data.Tags.GetLocked(),
                     retVal,
                     context, 
                     principal);
@@ -193,44 +193,44 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Do the update
             var retVal = base.Update(context, data, principal);
 
-            if (retVal.Extensions != null)
+            if (data.Extensions != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActExtension, Data.ActExtension>(
-                    retVal.Extensions.GetLocked(),
+                    data.Extensions.GetLocked(),
                     retVal,
                     context,
                     principal);
 
-            if (retVal.Identifiers != null)
+            if (data.Identifiers != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActIdentifier, Data.ActIdentifier>(
-                    retVal.Identifiers.GetLocked(),
+                    data.Identifiers.GetLocked(),
                     retVal,
                     context,
                     principal);
 
-            if (retVal.Notes != null)
+            if (data.Notes != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActNote, Data.ActNote>(
-                    retVal.Notes.GetLocked(),
+                    data.Notes.GetLocked(),
                     retVal,
                     context,
                     principal);
 
-            if (retVal.Participations != null)
+            if (data.Participations != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActParticipation, Data.ActParticipation>(
-                    retVal.Participations.GetLocked(),
+                    data.Participations.GetLocked(),
                     retVal,
                     context,
                     principal);
 
-            if (retVal.Relationships != null)
+            if (data.Relationships != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActRelationship, Data.ActRelationship>(
-                    retVal.Relationships.GetLocked(),
+                    data.Relationships.GetLocked(),
                     retVal,
                     context,
                     principal);
 
-            if (retVal.Tags != null)
+            if (data.Tags != null)
                 base.UpdateAssociatedItems<Core.Model.DataTypes.ActTag, Data.ActTag>(
-                    retVal.Tags.GetLocked(),
+                    data.Tags.GetLocked(),
                     retVal,
                     context,
                     principal);

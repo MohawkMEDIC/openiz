@@ -44,8 +44,16 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Back-reference to reference term
         /// </summary>
-        public Guid  ReferenceTermKey { get; set; }
+        [XmlElement("source"), JsonProperty("source")]
+        public Guid?  ReferenceTermKey { get; set; }
 
+        /// <summary>
+        /// Should serialize reference term key
+        /// </summary>
+        public bool ShouldSerializeReferenceTermKey ()
+        {
+            return ReferenceTermKey.HasValue;
+        }
         /// <summary>
         /// Gets or sets the language code of the object
         /// </summary>

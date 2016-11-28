@@ -20,6 +20,14 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     {
 
         /// <summary>
+        /// Get the specified object
+        /// </summary>
+        internal override TModel Get(ModelDataContext context, Guid key, IPrincipal principal)
+        {
+            return this.Query(context, o => o.Key == key && o.ObsoletionTime == null, principal)?.FirstOrDefault();
+        }
+
+        /// <summary>
         /// Gets the specified object taking version of the entity into consideration
         /// </summary>
         public override TModel Get<TIdentifier>(MARC.HI.EHRS.SVC.Core.Data.Identifier<TIdentifier> containerId, IPrincipal principal, bool loadFast)

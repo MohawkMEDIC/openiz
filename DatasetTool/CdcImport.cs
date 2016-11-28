@@ -100,7 +100,7 @@ namespace OizDevTool
                     Mnemonic = options.ConceptSetName ?? components[1],
                     Name = options.ConceptSetDescription ?? components[0],
                     Oid = options.ConceptSetOid ?? components[2],
-                    CreationTime = DateTime.Parse(components[6]),
+                    CreationTime = DateTime.Parse(String.IsNullOrEmpty(components[6]) ? DateTime.Now.ToString() : components[6]),
                     Url = !String.IsNullOrEmpty(options.ConceptSetName) ? "http://openiz.org/conceptset/" + options.ConceptSetName :
                             "http://openiz.org/conceptsets/contrib/" + components[1]
                 };
@@ -154,7 +154,7 @@ namespace OizDevTool
                     var concept = new Concept()
                     {
                         Key = Guid.NewGuid(),
-                        Mnemonic = components[6] + "-" + components[0],
+                        Mnemonic = components[6] + "-" + components[1].Replace("[","").Replace("]","").Replace("-","").Replace(" ",""),
                         CreationTime = conceptSet.CreationTime,
                         StatusConceptKey = StatusKeys.Active,
                         ClassKey = ConceptClassKeys.Other,

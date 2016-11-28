@@ -99,5 +99,6 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [XmlElement("obsoletionReason")]
         public string ObsoletionReason { get; set; }
+        
     }
 }

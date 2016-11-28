@@ -64,7 +64,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
             var bundle = data as Bundle;
             if (bundle == null)
                 throw new ArgumentException("Bundle required", nameof(data));
-
+            bundle.Reconstitute();
             // Submit
             return this.m_repositoryService.Insert(bundle);
         }

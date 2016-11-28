@@ -30,8 +30,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     /// </summary>
     public abstract class ObservationPersistenceService<TObservation, TDbObservation> : ActDerivedPersistenceService<TObservation, TDbObservation>
         where TObservation : Core.Model.Acts.Observation, new()
-        where TDbObservation : class, IDbIdentified, new()
+        where TDbObservation : class, IDbObservation, new()
     {
+
+        /// <summary>
+        /// Convert from model instance
+        /// </summary>
+        public override object FromModelInstance(TObservation modelInstance, ModelDataContext context, IPrincipal princpal)
+        {
+            var retVal = m_mapper.MapModelInstance<TObservation, TDbObservation>(modelInstance);
+            retVal.Observation = m_mapper.MapModelInstance<Core.Model.Acts.Observation, Data.Observation>(modelInstance);
+            return retVal;
+        }
 
         /// <summary>
         /// Convert a data act and observation instance to an observation
@@ -39,7 +49,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         public virtual TObservation ToModelInstance(TDbObservation dataInstance, Data.ActVersion actInstance, Data.Observation obsInstance, ModelDataContext context, IPrincipal principal)
         {
             var retVal = m_actPersister.ToModelInstance<TObservation>(actInstance, context, principal);
-
             if(obsInstance.InterpretationConceptId != null)
                 retVal.InterpretationConceptKey = obsInstance.InterpretationConceptId;
 
@@ -75,6 +84,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     public class TextObservationPersistenceService : ObservationPersistenceService<Core.Model.Acts.TextObservation, Data.TextObservation>
     {
         /// <summary>
+        /// From model instance
+        /// </summary>
+        public override object FromModelInstance(Core.Model.Acts.TextObservation modelInstance, ModelDataContext context, IPrincipal princpal)
+        {
+            var retVal = base.FromModelInstance(modelInstance, context, princpal) as IDbObservation;
+            retVal.Observation.ValueType = "ST";
+            return retVal;
+        }
+
+        /// <summary>
         /// Convert the specified object to a model instance
         /// </summary>
         public override Core.Model.Acts.TextObservation ToModelInstance(Data.TextObservation dataInstance, Data.ActVersion actInstance, Data.Observation obsInstance, ModelDataContext context, IPrincipal principal)
@@ -102,6 +121,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     /// </summary>
     public class CodedObservationPersistenceService : ObservationPersistenceService<Core.Model.Acts.CodedObservation, Data.CodedObservation>
     {
+        /// <summary>
+        /// From model instance
+        /// </summary>
+        public override object FromModelInstance(Core.Model.Acts.CodedObservation modelInstance, ModelDataContext context, IPrincipal princpal)
+        {
+            var retVal = base.FromModelInstance(modelInstance, context, princpal) as IDbObservation;
+            retVal.Observation.ValueType = "CD";
+            return retVal;
+        }
+
         /// <summary>
         /// Convert the specified object to a model instance
         /// </summary>
@@ -152,6 +181,16 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
     public class QuantityObservationPersistenceService : ObservationPersistenceService<Core.Model.Acts.QuantityObservation, Data.QuantityObservation>
     {
         /// <summary>
+        /// From model instance
+        /// </summary>
+        public override object FromModelInstance(Core.Model.Acts.QuantityObservation modelInstance, ModelDataContext context, IPrincipal princpal)
+        {
+            var retVal = base.FromModelInstance(modelInstance, context, princpal) as IDbObservation;
+            retVal.Observation.ValueType = "PQ";
+            return retVal;
+        }
+
+        /// <summary>
         /// Convert the specified object to a model instance
         /// </summary>
         public override Core.Model.Acts.QuantityObservation ToModelInstance(Data.QuantityObservation dataInstance, Data.ActVersion actInstance, Data.Observation obsInstance, ModelDataContext context, IPrincipal principal)
@@ -160,7 +199,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             if (dataInstance.UnitOfMeasureConceptId != null)
                 retVal.UnitOfMeasureKey = dataInstance.UnitOfMeasureConceptId;
             retVal.Value = dataInstance.Quantity;
-            
             return retVal;
         }
 

@@ -167,6 +167,7 @@ namespace OpenIZ.Core.Model.Collection
         /// </summary>
         public static Bundle CreateBundle(IdentifiedData resourceRoot)
         {
+            if (resourceRoot is Bundle) return resourceRoot as Bundle;
             Bundle retVal = new Bundle();
             retVal.Key = Guid.NewGuid();
             retVal.Count = retVal.TotalResults = 1;

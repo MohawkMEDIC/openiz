@@ -52,8 +52,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var retVal = base.Insert(context, data, principal);
 
             // Scopes?
-            if(retVal.AuthorityScopeXml != null)
-                context.AssigningAuthorityScopes.InsertAllOnSubmit(retVal.AuthorityScopeXml.Select(o => new AssigningAuthorityScope() { ScopeConceptId = o, AssigningAuthorityId = retVal.Key.Value }));
+            if(data.AuthorityScopeXml != null)
+                context.AssigningAuthorityScopes.InsertAllOnSubmit(data.AuthorityScopeXml.Select(o => new AssigningAuthorityScope() { ScopeConceptId = o, AssigningAuthorityId = retVal.Key.Value }));
             return retVal;
         }
 
@@ -65,10 +65,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var retVal = base.Update(context, data, principal);
 
             // Scopes?
-            if (retVal.AuthorityScopeXml != null)
+            if (data.AuthorityScopeXml != null)
             {
                 context.AssigningAuthorityScopes.DeleteAllOnSubmit(context.AssigningAuthorityScopes.Where(o => o.AssigningAuthorityId == retVal.Key.Value));
-                context.AssigningAuthorityScopes.InsertAllOnSubmit(retVal.AuthorityScopeXml.Select(o => new AssigningAuthorityScope() { ScopeConceptId = o, AssigningAuthorityId = retVal.Key.Value }));
+                context.AssigningAuthorityScopes.InsertAllOnSubmit(data.AuthorityScopeXml.Select(o => new AssigningAuthorityScope() { ScopeConceptId = o, AssigningAuthorityId = retVal.Key.Value }));
             }
             return retVal;
         }

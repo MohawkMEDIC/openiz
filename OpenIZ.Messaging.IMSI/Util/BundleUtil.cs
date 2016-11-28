@@ -53,23 +53,15 @@ namespace OpenIZ.Messaging.IMSI.Util
                 if (resourceRoot == null)
                     return retVal;
 
-                using (WaitThreadPool wtp = new WaitThreadPool())
+                foreach (var itm in resourceRoot)
                 {
-                    foreach (var itm in resourceRoot)
+                    if (itm == null)
+                        continue;
+                    if (!retVal.Item.Exists(o => o?.Tag == itm.Tag))
                     {
-                        if (itm == null)
-                            continue;
-                        if (!retVal.Item.Exists(o => o?.Tag == itm.Tag))
-                        {
-                            retVal.Item.Add(itm);
-                            wtp.QueueUserWorkItem((o) =>
-                            {
-                                var iddat = o as IdentifiedData;
-                                Bundle.ProcessModel(iddat.GetLocked(), retVal, !lean);
-                            }, itm.GetLocked());
-                        }
+                        retVal.Item.Add(itm);
+                        Bundle.ProcessModel(itm.GetLocked(), retVal, !lean);
                     }
-                    wtp.WaitOne();
                 }
 
                 return retVal;
