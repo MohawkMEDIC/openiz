@@ -679,14 +679,12 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Concept>)} not found");
 			}
 
-			try
+			if (concept.Key.HasValue && persistenceService.Get(new Identifier<Guid>(concept.Key.Value), AuthenticationContext.Current.Principal, true) != null)
 			{
 				return persistenceService.Update(concept, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 			}
-			catch (KeyNotFoundException)
-			{
-				return persistenceService.Insert(concept, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
+
+			return persistenceService.Insert(concept, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>
@@ -703,14 +701,12 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptClass>)} not found");
 			}
 
-			try
+			if (conceptClass.Key.HasValue && persistenceService.Get(new Identifier<Guid>(conceptClass.Key.Value), AuthenticationContext.Current.Principal, true) != null)
 			{
 				return persistenceService.Update(conceptClass, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 			}
-			catch (KeyNotFoundException)
-			{
-				return persistenceService.Insert(conceptClass, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
+
+			return persistenceService.Insert(conceptClass, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
         /// <summary>
@@ -727,15 +723,13 @@ namespace OpenIZ.Core.Services.Impl
                 throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptName>)} not found");
             }
 
-            try
-            {
-                return persistenceService.Update(conceptName, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-            }
-            catch (KeyNotFoundException)
-            {
-                return persistenceService.Insert(conceptName, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-            }
-        }
+			if (conceptName.Key.HasValue && persistenceService.Get(new Identifier<Guid>(conceptName.Key.Value), AuthenticationContext.Current.Principal, true) != null)
+			{
+				return persistenceService.Update(conceptName, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
+
+			return persistenceService.Insert(conceptName, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
 
         /// <summary>
         /// Inserts or updates a concept reference term.
@@ -751,14 +745,12 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptReferenceTerm>)} not found");
 			}
 
-			try
+			if (conceptReferenceTerm.Key.HasValue && persistenceService.Get(new Identifier<Guid>(conceptReferenceTerm.Key.Value), AuthenticationContext.Current.Principal, true) != null)
 			{
 				return persistenceService.Update(conceptReferenceTerm, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 			}
-			catch (KeyNotFoundException)
-			{
-				return persistenceService.Insert(conceptReferenceTerm, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
+
+			return persistenceService.Insert(conceptReferenceTerm, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>
@@ -775,14 +767,12 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptSet>)} not found");
 			}
 
-			try
+			if (set.Key.HasValue && persistenceService.Get(new Identifier<Guid>(set.Key.Value), AuthenticationContext.Current.Principal, true) != null)
 			{
 				return persistenceService.Update(set, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 			}
-			catch (KeyNotFoundException)
-			{
-				return persistenceService.Insert(set, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
+
+			return persistenceService.Insert(set, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>
@@ -799,14 +789,12 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ReferenceTerm>)} not found");
 			}
 
-			try
+			if (term.Key.HasValue && persistenceService.Get(new Identifier<Guid>(term.Key.Value), AuthenticationContext.Current.Principal, true) != null)
 			{
 				return persistenceService.Update(term, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 			}
-			catch (KeyNotFoundException)
-			{
-				return persistenceService.Insert(term, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
+
+			return persistenceService.Insert(term, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
         /// <summary>
@@ -823,14 +811,12 @@ namespace OpenIZ.Core.Services.Impl
                 throw new InvalidOperationException($"{nameof(IDataPersistenceService<ReferenceTermName>)} not found");
             }
 
-            try
-            {
-                return persistenceService.Update(term, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-            }
-            catch (KeyNotFoundException)
-            {
-                return persistenceService.Insert(term, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-            }
-        }
+			if (term.Key.HasValue && persistenceService.Get(new Identifier<Guid>(term.Key.Value), AuthenticationContext.Current.Principal, true) != null)
+			{
+				return persistenceService.Update(term, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
+
+			return persistenceService.Insert(term, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
     }
 }

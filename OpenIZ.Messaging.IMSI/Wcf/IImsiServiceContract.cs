@@ -47,7 +47,9 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     /// </summary>
     [ServiceContract(Namespace = "http://openiz.org/imsi/1.0", Name = "IMSI", ConfigurationName = "IMSI_1.0")]
     [ServiceKnownType(typeof(Concept))]
-    [ServiceKnownType(typeof(ReferenceTerm))]
+	[ServiceKnownType(typeof(ConceptClass))]
+	[ServiceKnownType(typeof(ConceptRelationship))]
+	[ServiceKnownType(typeof(ReferenceTerm))]
     [ServiceKnownType(typeof(Act))]
     [ServiceKnownType(typeof(TextObservation))]
     [ServiceKnownType(typeof(CodedObservation))]
