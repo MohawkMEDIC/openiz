@@ -37,37 +37,25 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 	public class MaterialResourceHandler : IResourceHandler
 	{
 		// Repository
-		private IMaterialRepositoryService m_repository;
+		private IMaterialRepositoryService repository;
 
 		/// <summary>
 		/// Place resource handler subscription
 		/// </summary>
 		public MaterialResourceHandler()
 		{
-			ApplicationContext.Current.Started += (o, e) => this.m_repository = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
+			ApplicationContext.Current.Started += (o, e) => this.repository = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
 		}
 
 		/// <summary>
 		/// Gets the name of the resource that this handler handles
 		/// </summary>
-		public string ResourceName
-		{
-			get
-			{
-				return "Material";
-			}
-		}
+		public string ResourceName => "Material";
 
 		/// <summary>
 		/// Gets the type of resource that this handler handles
 		/// </summary>
-		public Type Type
-		{
-			get
-			{
-				return typeof(Material);
-			}
-		}
+		public Type Type => typeof(Material);
 
 		/// <summary>
 		/// Creates the specified place
@@ -76,24 +64,28 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
 		{
 			if (data == null)
+			{
 				throw new ArgumentNullException(nameof(data));
+			}
 
 			Bundle bundleData = data as Bundle;
+
 			bundleData?.Reconstitute();
+
 			var processData = bundleData?.Entry ?? data;
 
-			if (processData is Bundle) // Client submitted a bundle
-				throw new InvalidOperationException("Bundle must have an entry point");
-			else if (processData is Place)
+			if (processData is Bundle)
 			{
-				var material = processData as Material;
-				if (updateIfExists)
-					return this.m_repository.SaveMaterial(material);
-				else
-					return this.m_repository.InsertMaterial(material);
+				// Client submitted a bundle
+				throw new InvalidOperationException("Bundle must have an entry point");
 			}
-			else
-				throw new ArgumentException(nameof(data), "Invalid data type");
+
+			if (processData is Material)
+			{
+				return updateIfExists ? this.repository.SaveMaterial(processData as Material) : this.repository.InsertMaterial(processData as Material);
+			}
+
+			throw new ArgumentException(nameof(data), "Invalid data type");
 		}
 
 		/// <summary>
@@ -101,7 +93,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		public IdentifiedData Get(Guid id, Guid versionId)
 		{
-			return this.m_repository.GetMaterial(id, versionId);
+			return this.repository.GetMaterial(id, versionId);
 		}
 
 		/// <summary>
@@ -110,7 +102,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
 		public IdentifiedData Obsolete(Guid key)
 		{
-			return this.m_repository.ObsoleteMaterial(key);
+			return this.repository.ObsoleteMaterial(key);
 		}
 
 		/// <summary>
@@ -118,7 +110,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			return this.m_repository.FindMaterial(QueryExpressionParser.BuildLinqExpression<Material>(queryParameters));
+			return this.repository.FindMaterial(QueryExpressionParser.BuildLinqExpression<Material>(queryParameters));
 		}
 
 		/// <summary>
@@ -126,7 +118,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			return this.m_repository.FindMaterial(QueryExpressionParser.BuildLinqExpression<Material>(queryParameters), offset, count, out totalCount);
+			return this.repository.FindMaterial(QueryExpressionParser.BuildLinqExpression<Material>(queryParameters), offset, count, out totalCount);
 		}
 
 		/// <summary>
@@ -135,18 +127,27 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		public IdentifiedData Update(IdentifiedData data)
 		{
 			if (data == null)
+			{
 				throw new ArgumentNullException(nameof(data));
+			}
 
 			var bundleData = data as Bundle;
+
 			bundleData?.Reconstitute();
+
 			var saveData = bundleData?.Entry ?? data;
 
 			if (saveData is Bundle)
+			{
 				throw new InvalidOperationException("Bundle must have an entry");
-			else if (saveData is Material)
-				return this.m_repository.SaveMaterial(saveData as Material);
-			else
-				throw new ArgumentException(nameof(data), "Invalid storage type");
+			}
+
+			if (saveData is Material)
+			{
+				return this.repository.SaveMaterial(saveData as Material);
+			}
+
+			throw new ArgumentException(nameof(data), "Invalid storage type");
 		}
 	}
 }

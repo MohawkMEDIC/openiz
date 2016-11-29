@@ -27,6 +27,7 @@ using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Permissions;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
@@ -39,18 +40,12 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <summary>
 		/// Gets the resource name
 		/// </summary>
-		public string ResourceName { get { return nameof(Concept); } }
+		public string ResourceName => nameof(Concept);
 
 		/// <summary>
 		/// Gets the model type of the handler
 		/// </summary>
-		public Type Type
-		{
-			get
-			{
-				return typeof(Concept);
-			}
-		}
+		public Type Type => typeof(Concept);
 
 		/// <summary>
 		/// Create the specified object in the database
@@ -65,17 +60,16 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			var processData = bundleData?.Entry ?? data;
 
 			if (processData is Bundle)
-				throw new InvalidOperationException("Bundle must have entry of type Concept");
-			else if (processData is Concept)
 			{
-				var conceptData = data as Concept;
-				if (updateIfExists)
-					return conceptService.SaveConcept(conceptData);
-				else
-					return conceptService.InsertConcept(conceptData);
+				throw new InvalidOperationException("Bundle must have entry of type Concept");
 			}
-			else
-				throw new ArgumentException("Invalid persistence type");
+
+			if (processData is Concept)
+			{
+				return updateIfExists ? conceptService.SaveConcept(processData as Concept) : conceptService.InsertConcept(processData as Concept);
+			}
+
+			throw new ArgumentException("Invalid persistence type");
 		}
 
 		/// <summary>

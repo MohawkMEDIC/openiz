@@ -395,7 +395,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="query">The query to use to match the users.</param>
 		/// <returns>Returns a list of users.</returns>
-		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
 		public IEnumerable<SecurityUser> FindUsers(Expression<Func<SecurityUser, bool>> query)
 		{
 			int totalResults = 0;
@@ -410,7 +410,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <param name="count">The number of users.</param>
 		/// <param name="totalResults">The total number of users.</param>
 		/// <returns>Returns a list of roles.</returns>
-		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
 		public IEnumerable<SecurityUser> FindUsers(Expression<Func<SecurityUser, bool>> query, int offset, int? count, out int totalResults)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
