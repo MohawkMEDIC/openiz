@@ -27,6 +27,8 @@ using OpenIZ.Core.Model.Security;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using OpenIZ.Core.Model.Interfaces;
 using System.Data.Linq;
+using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
@@ -147,25 +149,38 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public override Core.Model.Security.SecurityRole Update(ModelDataContext context, Core.Model.Security.SecurityRole data, IPrincipal principal)
         {
-            var retVal = base.Update(context, data, principal);
+			var domainInstance = this.FromModelInstance(data, context, principal) as Data.SecurityRole;
 
-			if (data.Policies == null)
+			var currentObject = context.GetTable<Data.SecurityRole>().FirstOrDefault(ExpressionRewriter.Rewrite<Data.SecurityRole>(o => o.Id == data.Key));
+
+			if (currentObject == null)
 			{
-		        return retVal;
-	        }
+				throw new KeyNotFoundException(data.Key.ToString());
+			}
 
-	        context.SecurityRolePolicies.DeleteAllOnSubmit(context.SecurityRolePolicies.Where(o => o.RoleId == retVal.Key.Value));
-	        data.Policies.ForEach(o => o.EnsureExists(context, principal));
-	        context.SecurityRolePolicies.InsertAllOnSubmit(data.Policies.Select(o => new Data.SecurityRolePolicy()
-	        {
-		        PolicyId = o.PolicyKey.Value,
-		        PolicyAction = (int)o.GrantType,
-		        RoleId = retVal.Key.Value,
-		        SecurityPolicyInstanceId = Guid.NewGuid()
-	        }));
+			currentObject.CopyObjectData(domainInstance);
 
-	        return retVal;
-        }
+			currentObject.ObsoletedBy = data.ObsoletedByKey == Guid.Empty ? null : data.ObsoletedByKey;
+			currentObject.ObsoletionTime = data.ObsoletionTime;
+
+			context.SubmitChanges();
+
+			context.SecurityRolePolicies.DeleteAllOnSubmit(context.SecurityRolePolicies.Where(o => o.RoleId == domainInstance.Id));
+
+			context.SubmitChanges();
+
+			context.SecurityRolePolicies.InsertAllOnSubmit(data.Policies.Select(o => new Data.SecurityRolePolicy
+			{
+				PolicyId = o.PolicyKey.Value,
+				PolicyAction = (int)o.GrantType,
+				RoleId = domainInstance.Id,
+				SecurityPolicyInstanceId = Guid.NewGuid()
+			}));
+
+			context.SubmitChanges();
+
+			return data;
+		}
 
 		public override object FromModelInstance(Core.Model.Security.SecurityRole modelInstance, ModelDataContext context, IPrincipal princpal)
 		{
@@ -228,24 +243,37 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public override Core.Model.Security.SecurityDevice Update(ModelDataContext context, Core.Model.Security.SecurityDevice data, IPrincipal principal)
         {
-            var retVal = base.Update(context, data, principal);
+			var domainInstance = this.FromModelInstance(data, context, principal) as Data.SecurityDevice;
 
-	        if (data.Policies == null)
+			var currentObject = context.GetTable<Data.SecurityDevice>().FirstOrDefault(ExpressionRewriter.Rewrite<Data.SecurityDevice>(o => o.Id == data.Key));
+
+	        if (currentObject == null)
 	        {
-		        return retVal;
-	        }
+				throw new KeyNotFoundException(data.Key.ToString());
+			}
 
-	        context.SecurityDevicePolicies.DeleteAllOnSubmit(context.SecurityDevicePolicies.Where(o => o.DeviceId == retVal.Key.Value));
-	        data.Policies.ForEach(o => o.EnsureExists(context, principal));
-	        context.SecurityDevicePolicies.InsertAllOnSubmit(data.Policies.Select(o => new Data.SecurityDevicePolicy
+			currentObject.CopyObjectData(domainInstance);
+
+			currentObject.ObsoletedBy = data.ObsoletedByKey == Guid.Empty ? null : data.ObsoletedByKey;
+			currentObject.ObsoletionTime = data.ObsoletionTime;
+
+			context.SubmitChanges();
+
+			context.SecurityDevicePolicies.DeleteAllOnSubmit(context.SecurityDevicePolicies.Where(o => o.DeviceId == domainInstance.Id));
+
+			context.SubmitChanges();
+
+			context.SecurityDevicePolicies.InsertAllOnSubmit(data.Policies.Select(o => new Data.SecurityDevicePolicy
 	        {
 		        PolicyId = o.PolicyKey.Value,
 		        PolicyAction = (int)o.GrantType,
-		        DeviceId = retVal.Key.Value,
+		        DeviceId = domainInstance.Id,
 		        SecurityPolicyInstanceId = Guid.NewGuid()
 	        }));
 
-	        return retVal;
+			context.SubmitChanges();
+
+			return data;
         }
 
 		public override object FromModelInstance(Core.Model.Security.SecurityDevice modelInstance, ModelDataContext context, IPrincipal princpal)
@@ -305,24 +333,37 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         /// </summary>
         public override Core.Model.Security.SecurityApplication Update(ModelDataContext context, Core.Model.Security.SecurityApplication data, IPrincipal principal)
         {
-            var retVal = base.Update(context, data, principal);
+			var domainInstance = this.FromModelInstance(data, context, principal) as Data.SecurityApplication;
 
-			if (data.Policies == null)
+			var currentObject = context.GetTable<Data.SecurityApplication>().FirstOrDefault(ExpressionRewriter.Rewrite<Data.SecurityApplication>(o => o.Id == data.Key));
+
+			if (currentObject == null)
 			{
-		        return retVal;
-	        }
+				throw new KeyNotFoundException(data.Key.ToString());
+			}
 
-	        context.SecurityApplicationPolicies.DeleteAllOnSubmit(context.SecurityApplicationPolicies.Where(o => o.ApplicationId == retVal.Key.Value));
-	        data.Policies.ForEach(o => o.EnsureExists(context, principal));
-	        context.SecurityApplicationPolicies.InsertAllOnSubmit(data.Policies.Select(o => new Data.SecurityApplicationPolicy
-	        {
-		        PolicyId = o.PolicyKey.Value,
-		        PolicyAction = (int)o.GrantType,
-		        ApplicationId = retVal.Key.Value,
-		        SecurityPolicyInstanceId = Guid.NewGuid()
-	        }));
+			currentObject.CopyObjectData(domainInstance);
 
-	        return retVal;
+			currentObject.ObsoletedBy = data.ObsoletedByKey == Guid.Empty ? null : data.ObsoletedByKey;
+			currentObject.ObsoletionTime = data.ObsoletionTime;
+
+			context.SubmitChanges();
+
+			context.SecurityApplicationPolicies.DeleteAllOnSubmit(context.SecurityApplicationPolicies.Where(o => o.ApplicationId == domainInstance.Id));
+
+			context.SubmitChanges();
+
+			context.SecurityApplicationPolicies.InsertAllOnSubmit(data.Policies.Select(o => new Data.SecurityApplicationPolicy
+			{
+				PolicyId = o.PolicyKey.Value,
+				PolicyAction = (int)o.GrantType,
+				ApplicationId = domainInstance.Id,
+				SecurityPolicyInstanceId = Guid.NewGuid()
+			}));
+
+			context.SubmitChanges();
+
+			return data;
         }
 
 		public override object FromModelInstance(Core.Model.Security.SecurityApplication modelInstance, ModelDataContext context, IPrincipal princpal)
