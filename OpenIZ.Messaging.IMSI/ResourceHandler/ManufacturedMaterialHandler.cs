@@ -111,7 +111,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			return this.m_repository.FindManufacturedMaterial(QueryExpressionParser.BuildLinqExpression<ManufacturedMaterial>(queryParameters));
+			return this.m_repository.FindManufacturedMaterial(QueryExpressionParser.BuildLinqExpression<ManufacturedMaterial>(queryParameters, null, false));
 		}
 
 		/// <summary>
