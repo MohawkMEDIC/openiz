@@ -68,6 +68,23 @@
 
   </class>
 
+  <class modelClass="OpenIZ.Core.Model.DataTypes.TemplateDefinition, OpenIZ.Core.Model, Version=0.6.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.TemplateDefinition, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0">
+    <property modelName="Key" domainName="TemplateDefinitionId"/>
+    <proeprty modelName="Tag" domainNAme="RoleId"/>
+    <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
+    <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
+    <property modelName="CreatedBy" domainName="CreatedByEntity"/>
+    <property modelName="ObsoletedBy" domainName="ObsoletedByEntity"/>
+    <property modelName="CreatedByKey" domainName="CreatedBy"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedBy"/>
+    <property modelName="UpdatedBy" domainName="UpdatedByEntity"/>
+    <property modelName="ModifiedOn" domainName="UpdatedTime"/>
+    <property modelName="UpdatedByKey" domainName="UpdatedBy"/>
+    <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
+    <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
+  </class>
+
+
   <class modelClass="OpenIZ.Core.Model.Security.SecurityRole, OpenIZ.Core.Model, Version=0.6.0.0" domainClass="OpenIZ.Persistence.Data.MSSQL.Data.SecurityRole, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0">
     <property modelName="Key" domainName="RoleId"/>
     <proeprty modelName="Tag" domainNAme="RoleId"/>
@@ -405,7 +422,9 @@
     <property modelName="VersionSequence" domainName="VersionSequenceId"/>
     <property modelName="StatusConceptKey" domainName="StatusConceptId"/>
     <property modelName="ModifiedOn" domainName="CreationTime"/>
-
+    <property modelName="Template" domainName="Entity">
+      <via domainName="TemplateDefinition"/>
+    </property>
     <property modelName="ClassConceptKey" domainName="Entity">
       <via domainName="ClassConceptId"/>
     </property>
@@ -837,6 +856,9 @@
     <property modelName="VersionKey"  domainName="ActVersionId"/>
     <property modelName="StartTime" domainName="ActStartTime"/>
     <property modelName="StopTime" domainName="ActStopTime"/>
+    <property modelName="Template" domainName="Act">
+      <via domainName="TemplateDefinition"/>
+    </property>
     <property modelName="ClassConceptKey" domainName="Act">
       <via domainName="ClassConceptId"/>
     </property>

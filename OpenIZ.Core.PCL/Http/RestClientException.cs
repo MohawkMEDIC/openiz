@@ -62,7 +62,7 @@ namespace OpenIZ.Core.Http
 		/// <filterpriority>2</filterpriority>
 		public override string ToString()
 		{
-			return string.Format("[RestClientException: {0}, Result={1}, HttpResult={2}]\r\n{3}", this.Message, Result, (this.Response as HttpWebResponse).StatusCode, this.StackTrace);
+			return string.Format("[RestClientException: {0}, Result={1}, HttpResult={2}]\r\n{3}", this.Message, Result, (this.Response as HttpWebResponse)?.StatusCode, this.StackTrace);
 		}
 
 

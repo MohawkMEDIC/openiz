@@ -419,4 +419,27 @@ namespace OpenIZ.Persistence.Data.MSSQL.Data
         }
         
     }
+
+    /// <summary>
+    /// Nonversioned data base for template definition
+    /// </summary>
+    public partial class TemplateDefinition : IDbNonVersionedBaseData
+    {
+        /// <summary>
+        /// Gets or sets the identifier of the database type
+        /// </summary>
+        [LinqPropertyMap(nameof(TemplateDefinitionId))]
+        public Guid Id
+        {
+            get
+            {
+                return this.TemplateDefinitionId;
+            }
+
+            set
+            {
+                this.TemplateDefinitionId = value;
+            }
+        }
+    }
 }

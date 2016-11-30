@@ -173,7 +173,7 @@ CREATE TABLE Policy
 (
 	PolicyId UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(), -- THE UNIQUE IDENTIFIER FOR THE POLICY
 	PolicyOid NVARCHAR(128) NOT NULL, -- THE OID FOR THE POLICY
-	Name NVARCHAR(64) NOT NULL, -- THE NAME OF THE POLICY
+	Name NVARCHAR(64) NOT NULL UNIQUE, -- THE NAME OF THE POLICY
 	HandlerClass NVARCHAR(256), -- THE HANDLER WHICH IS A PIECE OF .NET CODE WHICH ENFORCES THE POLICY
 	IsPublic BIT NOT NULL DEFAULT 0, -- WHETHER THE POLICY IS INTERNAL (IS DISCLOSED)
 	CanElevate BIT NOT NULL DEFAULT 0, -- WHETHER THE POLICY CAN BE ELEVATED OVER
@@ -496,6 +496,9 @@ CREATE TABLE ConceptSetMember
 	CONSTRAINT FK_ConceptSetMemberConceptId FOREIGN KEY (ConceptId) REFERENCES Concept(ConceptId)
 );
 
+CREATE INDEX IX_ConceptSetMemberConceptidSetId ON ConceptSetMember(ConceptSetId);
+CREATE INDEX IX_ConceptSetMemberConceptId ON ConceptSetMember(ConceptId);
+
 -- SEQUENCE FOR VERSION SEQ
 CREATE SEQUENCE ConceptVersionSequence AS NUMERIC(20) START WITH 1 INCREMENT BY 1;
 
@@ -772,6 +775,7 @@ CREATE TABLE ExtensionType
 	CONSTRAINT CK_ExtensionTypeUpdatedBy CHECK(UpdatedBy IS NOT NULL AND UpdatedTime IS NOT NULL OR UpdatedBy IS NULL AND UpdatedTime IS NULL)
 );
 
+CREATE UNIQUE INDEX IX_ExtensionTypeName ON ExtensionType(Name);
 CREATE INDEX IX_PhoneticValuesPhoneticCode ON PhoneticValues(PhoneticCode, PhoneticAlgorithmId);
 
 
@@ -967,7 +971,7 @@ CREATE TABLE Observation
 	CONSTRAINT PK_Observation PRIMARY KEY (ActVersionId),
 	CONSTRAINT FK_ObservationActVersionId FOREIGN KEY (ActVersionId) REFERENCES ActVersion(ActVersionId),
 	CONSTRAINT FK_ObservationInterpretationConceptId FOREIGN KEY (InterpretationConceptId) REFERENCES Concept(ConceptId),
-	CONSTRAINT CK_ObservationInterpretationConceptClass CHECK (dbo.fn_IsConceptSetMember(InterpretationConceptId, 'ActInterpretation') = 1)
+	CONSTRAINT CK_ObservationInterpretationConceptClass CHECK (InterpretationConceptId IS NULL OR dbo.fn_IsConceptSetMember(InterpretationConceptId, 'ActInterpretation') = 1)
 );
 
 CREATE TABLE QuantityObservation

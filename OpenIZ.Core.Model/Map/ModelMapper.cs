@@ -645,6 +645,7 @@ namespace OpenIZ.Core.Model.Map
                 {
                     // TODO: Clean this up
                     var instance = originalValue; //sourceProperty.GetValue(sourceObject);
+                    
                     var via = propMap?.Via;
                     while (via != null)
                     {
@@ -663,10 +664,12 @@ namespace OpenIZ.Core.Model.Map
                         }
                         via = via.Via;
                     }
-                    var instanceMapFunction = typeof(ModelMapper).GetGenericMethod("MapDomainInstance", new Type[] { instance?.GetType(), modelProperty.PropertyType },
-                       new Type[] { instance.GetType(), typeof(bool), typeof(HashSet<Guid>) });
-                    modelProperty.SetValue(retVal, instanceMapFunction.Invoke(this, new object[] { instance, useCache, keyStack }));
-
+                    if (instance != null)
+                    {
+                        var instanceMapFunction = typeof(ModelMapper).GetGenericMethod("MapDomainInstance", new Type[] { instance?.GetType(), modelProperty.PropertyType },
+                           new Type[] { instance?.GetType(), typeof(bool), typeof(HashSet<Guid>) });
+                        modelProperty.SetValue(retVal, instanceMapFunction.Invoke(this, new object[] { instance, useCache, keyStack }));
+                    }
                 }
             }
 
