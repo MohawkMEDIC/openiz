@@ -98,7 +98,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets or sets the previous version
         /// </summary>
-        [SerializationReference(nameof(PreviousVersionKey))]
+        //[SerializationReference(nameof(PreviousVersionKey))]
         [XmlIgnore, JsonIgnore]
         public virtual THistoryModelType PreviousVersion
         {
