@@ -155,7 +155,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 	        }
 
 	        context.SecurityRolePolicies.DeleteAllOnSubmit(context.SecurityRolePolicies.Where(o => o.RoleId == retVal.Key.Value));
-	        data.Policies.ForEach(o => o.EnsureExists(context, principal));
+
+			context.SubmitChanges();
+
 	        context.SecurityRolePolicies.InsertAllOnSubmit(data.Policies.Select(o => new Data.SecurityRolePolicy()
 	        {
 		        PolicyId = o.PolicyKey.Value,
@@ -163,6 +165,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 		        RoleId = retVal.Key.Value,
 		        SecurityPolicyInstanceId = Guid.NewGuid()
 	        }));
+
+			context.SubmitChanges();
 
 	        return retVal;
         }
@@ -236,8 +240,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 	        }
 
 	        context.SecurityDevicePolicies.DeleteAllOnSubmit(context.SecurityDevicePolicies.Where(o => o.DeviceId == retVal.Key.Value));
-	        data.Policies.ForEach(o => o.EnsureExists(context, principal));
-	        context.SecurityDevicePolicies.InsertAllOnSubmit(data.Policies.Select(o => new Data.SecurityDevicePolicy
+
+			context.SubmitChanges();
+
+			context.SecurityDevicePolicies.InsertAllOnSubmit(data.Policies.Select(o => new Data.SecurityDevicePolicy
 	        {
 		        PolicyId = o.PolicyKey.Value,
 		        PolicyAction = (int)o.GrantType,
@@ -245,7 +251,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 		        SecurityPolicyInstanceId = Guid.NewGuid()
 	        }));
 
-	        return retVal;
+			context.SubmitChanges();
+
+			return retVal;
         }
 
 		public override object FromModelInstance(Core.Model.Security.SecurityDevice modelInstance, ModelDataContext context, IPrincipal princpal)
@@ -313,8 +321,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 	        }
 
 	        context.SecurityApplicationPolicies.DeleteAllOnSubmit(context.SecurityApplicationPolicies.Where(o => o.ApplicationId == retVal.Key.Value));
-	        data.Policies.ForEach(o => o.EnsureExists(context, principal));
-	        context.SecurityApplicationPolicies.InsertAllOnSubmit(data.Policies.Select(o => new Data.SecurityApplicationPolicy
+
+			context.SubmitChanges();
+
+			context.SecurityApplicationPolicies.InsertAllOnSubmit(data.Policies.Select(o => new Data.SecurityApplicationPolicy
 	        {
 		        PolicyId = o.PolicyKey.Value,
 		        PolicyAction = (int)o.GrantType,
@@ -322,7 +332,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 		        SecurityPolicyInstanceId = Guid.NewGuid()
 	        }));
 
-	        return retVal;
+			context.SubmitChanges();
+
+			return retVal;
         }
 
 		public override object FromModelInstance(Core.Model.Security.SecurityApplication modelInstance, ModelDataContext context, IPrincipal princpal)
