@@ -168,6 +168,8 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
 			}
 
+			applicationInfo.Application.Policies.AddRange(applicationInfo.Policies);
+
 			var updatedApplication = securityRepository.SaveApplication(applicationInfo.Application);
 
 			return new SecurityApplicationInfo(updatedApplication);
