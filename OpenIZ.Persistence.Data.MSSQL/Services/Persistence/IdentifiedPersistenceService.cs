@@ -172,7 +172,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         protected IQueryable<TDomain> QueryInternal(ModelDataContext context, Expression<Func<TModel, bool>> query)
         {
             var domainQuery = m_mapper.MapModelExpression<TModel, TDomain>(query);
-            this.m_tracer.TraceEvent(System.Diagnostics.TraceEventType.Information, 0, "LINQ2SQL: {0}", domainQuery);
+            this.m_tracer.TraceEvent(System.Diagnostics.TraceEventType.Verbose, 0, "LINQ2SQL: {0}", domainQuery);
             return context.GetTable<TDomain>().Where(domainQuery);
         }
 

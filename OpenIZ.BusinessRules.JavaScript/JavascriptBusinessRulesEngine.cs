@@ -230,7 +230,7 @@ namespace OpenIZ.BusinessRules.JavaScript
                 if (triggerHandler.TryGetValue(action, out callList))
                     return callList;
             }
-            return null;
+            return new List<Func<object, ExpandoObject>>();
 
         }
 
@@ -245,7 +245,7 @@ namespace OpenIZ.BusinessRules.JavaScript
             List<Func<object, Object[]>> callList = null;
             if (this.m_validatorDefinitions.TryGetValue(className, out callList))
                 return callList;
-            return null;
+            return new List<Func<object, object[]>>();
         }
 
         /// <summary>
