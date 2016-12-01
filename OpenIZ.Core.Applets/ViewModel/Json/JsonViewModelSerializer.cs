@@ -227,6 +227,8 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                             case JsonToken.Float:
                                 if (t.StripNullable() == typeof(Decimal))
                                     return Convert.ToDecimal(r.Value);
+                                else if (t.StripNullable() == typeof(Int32))
+                                    return Convert.ToInt32(r.Value);
                                 else
                                     return (Double)r.Value;
                             case JsonToken.Date:
@@ -346,7 +348,10 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 w.WritePropertyName(propertyName);
                 // Are we to never serialize this?
                 if (context?.ShouldSerialize(propertyName) == false)
+                {
+                    w.WriteNull();
                     return;
+                }
             }
 
             if (instance is IdentifiedData)

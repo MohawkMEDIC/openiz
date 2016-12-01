@@ -75,6 +75,11 @@ namespace OpenIZ.BusinessRules.JavaScript
         }
 
         /// <summary>
+        /// Business rules bridge
+        /// </summary>
+        public BusinessRulesBridge Bridge {  get { return this.m_bridge; } }
+
+        /// <summary>
         /// Initialize javascript BRE
         /// </summary>
         private void Initialize()

@@ -45,9 +45,9 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
     /// </summary>
     public class BusinessRulesBridge
     {
-
+        
         // View model serializer
-        private IViewModelSerializer m_modelSerializer = new JsonViewModelSerializer();
+        private JsonViewModelSerializer m_modelSerializer = new JsonViewModelSerializer();
 
         // Map of view model names to type names
         private Dictionary<String, Type> m_modelMap = new Dictionary<string, Type>();
@@ -57,6 +57,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public BusinessRulesBridge()
         {
+
             foreach(var t in typeof(IdentifiedData).GetTypeInfo().Assembly.ExportedTypes)
             {
                 var jatt = t.GetTypeInfo().GetCustomAttribute<JsonObjectAttribute>();
@@ -65,6 +66,11 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
                     this.m_modelMap.Add(jatt.Id, t);
             }
         }
+
+        /// <summary>
+        /// Gets the serializer
+        /// </summary>
+        public JsonViewModelSerializer Serializer { get { return this.m_modelSerializer; } }
 
         /// <summary>
         /// Add a business rule for the specified object
@@ -117,7 +123,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
                 if (kv.Value is JObject)
                     expandoDic.Add(kv.Key, ConvertToJint(kv.Value as JObject));
                 else if (kv.Value is JArray)
-                    expandoDic.Add(kv.Key, (kv.Value as JArray).Select(o => (o as JValue).Value));
+                    expandoDic.Add(kv.Key, (kv.Value as JArray).Select(o => o is JValue ? (o as JValue).Value : ConvertToJint(o as JObject)).ToArray());
                 else
                     expandoDic.Add(kv.Key, (kv.Value as JValue).Value);
             }
@@ -199,7 +205,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// <summary>
         /// Gets the specified data from the underlying data-store
         /// </summary>
-        public object Get(String type, Guid id)
+        public object Get(String type, String id)
         {
 
             Type dataType = null;
@@ -212,7 +218,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
                 throw new KeyNotFoundException($"The repository service for {type} was not found. Ensure an IRepositoryService<{type}> is registered");
 
             var mi = idp.GetRuntimeMethod("Get", new Type[] { typeof(Guid) });
-            return this.ToViewModel(mi.Invoke(idpInstance, new object[] { id }) as IdentifiedData);
+            return this.ToViewModel(mi.Invoke(idpInstance, new object[] { Guid.Parse(id) }) as IdentifiedData);
         }
 
         /// <summary>

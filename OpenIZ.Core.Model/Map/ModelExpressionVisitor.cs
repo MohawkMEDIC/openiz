@@ -278,7 +278,7 @@ namespace OpenIZ.Core.Model.Map
                     // Ok, we need to find the traversal expression
                     //this.m_mapper.
                     ParameterExpression newParameter = Expression.Parameter(this.m_mapper.ExtractDomainType(retVal[0].Type), lambdaExpression.Parameters[0].Name);
-                    Expression accessExpression = this.m_mapper.CreateLambdaMemberAdjustmentExpression(args.First() as MemberExpression, newParameter);
+                    Expression accessExpression = this.m_mapper.CreateLambdaMemberAdjustmentExpression(retVal.First(), newParameter);
                     Expression newBody = new LambdaCorrectionVisitor(accessExpression, lambdaExpression.Parameters[0], this.m_mapper).Visit(lambdaExpression.Body);
                     Type lambdaType = typeof(Func<,>).MakeGenericType(new Type[] { newParameter.Type, newBody.Type });
                     argExpression = Expression.Lambda(lambdaType, newBody, newParameter);

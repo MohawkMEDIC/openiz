@@ -263,45 +263,53 @@ namespace OpenIZ.Core.Model.Map
         /// <summary>
         /// Create a traversal expression for a lambda expression
         /// </summary>
-        public Expression CreateLambdaMemberAdjustmentExpression(MemberExpression rootExpression, ParameterExpression lambdaParameterExpression)
+        public Expression CreateLambdaMemberAdjustmentExpression(Expression rootExpression, ParameterExpression lambdaParameterExpression)
         {
-            ClassMap classMap = this.m_mapFile.GetModelClassMap(this.ExtractDomainType(rootExpression.Expression.Type));
-
-            if (classMap == null)
-                return lambdaParameterExpression;
-
-            // Expression is the same class? Collapse if it is a key
-            PropertyMap propertyMap = null;
-            while (propertyMap == null && classMap != null)
+            if (rootExpression is MemberExpression) // Property map based re-write
             {
-                classMap.TryGetModelProperty(rootExpression.Member.Name, out propertyMap);
-                if (propertyMap == null)
+                var propertyExpression = rootExpression as MemberExpression;
+                ClassMap classMap = this.m_mapFile.GetModelClassMap(this.ExtractDomainType(propertyExpression.Expression.Type));
+
+                if (classMap == null)
+                    return lambdaParameterExpression;
+
+                // Expression is the same class? Collapse if it is a key
+                PropertyMap propertyMap = null;
+                while (propertyMap == null && classMap != null)
                 {
-                    classMap = this.m_mapFile.GetModelClassMap(classMap.ModelType.GetTypeInfo().BaseType);
-                    //                    var tDomain = rootExpression.Expression.Type.GetRuntimeProperty(classMap.ParentDomainProperty.DomainName);
+                    classMap.TryGetModelProperty(propertyExpression.Member.Name, out propertyMap);
+                    if (propertyMap == null)
+                    {
+                        classMap = this.m_mapFile.GetModelClassMap(classMap.ModelType.GetTypeInfo().BaseType);
+                        //                    var tDomain = rootExpression.Expression.Type.GetRuntimeProperty(classMap.ParentDomainProperty.DomainName);
 
+                    }
                 }
-            }
 
-            // Is there a VIA that we need to express?
-            if (propertyMap.Via != null)
-            {
-                Expression viaExpression = lambdaParameterExpression;
-                var via = propertyMap.Via;
-                while (via != null)
+                // Is there a VIA that we need to express?
+                if (propertyMap.Via != null)
                 {
+                    Expression viaExpression = lambdaParameterExpression;
+                    var via = propertyMap.Via;
+                    while (via != null)
+                    {
 
-                    MemberInfo viaMember = viaExpression.Type.GetRuntimeProperty(via.DomainName);
-                    if (viaMember != null)
-                        viaExpression = Expression.MakeMemberAccess(viaExpression, viaMember);
-                    via = via.Via;
+                        MemberInfo viaMember = viaExpression.Type.GetRuntimeProperty(via.DomainName);
+                        if (viaMember != null)
+                            viaExpression = Expression.MakeMemberAccess(viaExpression, viaMember);
+                        via = via.Via;
+                    }
+                    return viaExpression;
                 }
-                return viaExpression;
+                else
+                    return lambdaParameterExpression;
+
             }
             else
+            {
+
                 return lambdaParameterExpression;
-
-
+            }
         }
 
         /// <summary>

@@ -224,14 +224,22 @@ var OpenIZ = OpenIZ || {
          */
         post: function (controlData) {
             try {
+                console.info("OpenIZ BRE IMS > POST" + JSON.stringify(controlData.data));
+
                 var retVal = OpenIZBre.Insert(controlData.data);
                 controlData.continueWith(retVal);
             }
             catch (e) {
-                controlData.onException(e);
+                console.error(e + "");
+
+                if (controlData.onException)
+                    controlData.onException(e);
+                else
+                    throw e;
             }
             finally {
-                controlData.finally();
+                if (controlData.finally)
+                    controlData.finally();
             }
         },
         /**
@@ -249,14 +257,23 @@ var OpenIZ = OpenIZ || {
         */
         put: function (controlData) {
             try {
+                console.info("OpenIZ BRE IMS > PUT " + JSON.stringify(controlData.data));
+
                 var retVal = OpenIZBre.Save(controlData.data);
                 controlData.continueWith(retVal);
             }
             catch (e) {
-                controlData.onException(e);
+                console.error(e + "");
+
+                if (controlData.onException)
+                    controlData.onException(e);
+                else
+                    throw e;
+
             }
             finally {
-                controlData.finally();
+                if (controlData.finally)
+                    controlData.finally();
             }
         },
         /**
@@ -275,14 +292,25 @@ var OpenIZ = OpenIZ || {
          */
         get: function (controlData) {
             try {
-                var retVal = OpenIZBre.Find(controlData.resource, controlData.query);
+                console.info("OpenIZ BRE IMS > GET " + JSON.stringify(controlData.query));
+                var retVal = null;
+                if (controlData.query._id != null)
+                    retVal = OpenIZBre.Get(controlData.resource, controlData.query._id);
+                else
+                    retVal = OpenIZBre.Find(controlData.resource, controlData.query);
                 controlData.continueWith(retVal);
             }
             catch (e) {
-                controlData.onException(e);
+                console.error(e + "");
+                if (controlData.onException)
+                    controlData.onException(e);
+                else
+                    throw e;
+
             }
             finally {
-                controlData.finally();
+                if (controlData.finally)
+                    controlData.finally();
             }
         },
         /**
@@ -298,14 +326,23 @@ var OpenIZ = OpenIZ || {
          */
         delete: function (controlData) {
             try {
+                console.info("OpenIZ BRE IMS > DELETE" + controlData.id);
+
                 var retVal = OpenIZBre.Obsolete(controlData.resource, controlData.id);
                 controlData.continueWith(retVal);
             }
             catch (e) {
-                controlData.onException(e);
+                console.error(e + "");
+
+                if (controlData.onException)
+                    controlData.onException(e);
+                else
+                    throw e;
+
             }
             finally {
-                controlData.finally();
+                if (controlData.finally)
+                    controlData.finally();
             }
         }
     },
@@ -634,8 +671,7 @@ var OpenIZ = OpenIZ || {
             if (controlData.query !== undefined)
                 url += "&" + controlData.query;
             console.info("Generating care plan...");
-            try
-            {
+            try {
                 var retVal = OpenIZBre.GenerateCarePlan(controlData.data, url);
                 controlData.continueWith(retVal);
             }
@@ -643,7 +679,8 @@ var OpenIZ = OpenIZ || {
                 controlData.onException(e);
             }
             finally {
-                controlData.finally();
+                if (controlData.finally)
+                    controlData.finally();
             }
         },
     },
