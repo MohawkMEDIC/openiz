@@ -170,14 +170,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				idpService.RemoveClaim(user.UserName, OpenIzClaimTypes.OpenIZPasswordlessAuth);
 			}
 
-			if (info.Email != null)
-			{
-				SecurityUserInfo userInfo = new SecurityUserInfo(userRepository.SaveUser(new Core.Model.Security.SecurityUser()
-				{
-					Key = userId,
-					Email = info.Email
-				}));
-			}
+			info = new SecurityUserInfo(userRepository.SaveUser(info.User));
 
 			if (info.Lockout.HasValue)
 			{
@@ -188,7 +181,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			}
 
 			// First, we remove the roles
-			if (info.Roles != null && info.Roles.Count > 0)
+			if (info.Roles != null && info.Roles.Any())
 			{
 				var irps = ApplicationContext.Current.GetService<IRoleProviderService>();
 

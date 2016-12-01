@@ -37,49 +37,29 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			ApplicationContext.Current.Started += (o, e) => this.repository = ApplicationContext.Current.GetService<IProviderRepositoryService>();
 		}
 
-		public string ResourceName
-		{
-			get
-			{
-				return nameof(Provider);
-			}
-		}
+		public string ResourceName => nameof(Provider);
 
-		public Type Type
-		{
-			get
-			{
-				return typeof(Provider);
-			}
-		}
+		public Type Type => typeof(Provider);
 
 		public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
 		{
-			Bundle bundleData = data as Bundle;
+			var bundleData = data as Bundle;
+
 			bundleData?.Reconstitute();
+
 			var processData = bundleData?.Entry ?? data;
 
 			if (processData is Bundle)
 			{
-				throw new InvalidOperationException(string.Format("Bundle must have entry of type {0}", nameof(Provider)));
+				throw new InvalidOperationException($"Bundle must have entry of type {nameof(Provider)}");
 			}
-			else if (processData is Provider)
-			{
-				var providerData = data as Provider;
 
-				if (updateIfExists)
-				{
-					return this.repository.Save(providerData);
-				}
-				else
-				{
-					return this.repository.Insert(providerData);
-				}
-			}
-			else
+			if (processData is Provider)
 			{
-				throw new ArgumentException("Invalid persistence type");
+				return updateIfExists ? this.repository.Save(processData as Provider) : this.repository.Insert(processData as Provider);
 			}
+
+			throw new ArgumentException("Invalid persistence type");
 		}
 
 		public IdentifiedData Get(Guid id, Guid versionId)

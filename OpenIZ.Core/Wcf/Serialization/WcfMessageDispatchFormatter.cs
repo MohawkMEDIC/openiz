@@ -251,6 +251,11 @@ namespace OpenIZ.Core.Wcf.Serialization
                     else
                     {
 
+	                    if (!s_serializers.ContainsKey(result.GetType()))
+	                    {
+		                    throw new KeyNotFoundException($"{result.GetType().Name} serializer not found");
+	                    }
+
                         XmlSerializer xsz = s_serializers[result.GetType()];
                         MemoryStream ms = new MemoryStream();
                         xsz.Serialize(ms, result);

@@ -77,7 +77,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 
 			if (processData is Bundle) // Client submitted a bundle
 				throw new InvalidOperationException("Bundle must have an entry point");
-			else if (processData is Place)
+			else if (processData is ManufacturedMaterial)
 			{
 				var material = processData as ManufacturedMaterial;
 				if (updateIfExists)
