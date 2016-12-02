@@ -585,7 +585,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="key">The key of the concept to be obsoleted.</param>
 		/// <returns>Returns the obsoleted concept.</returns>
-		public IdentifiedData ObsoleteConcept(Guid key)
+		public Concept ObsoleteConcept(Guid key)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
 
@@ -594,7 +594,7 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Concept>)} not found");
 			}
 
-			return persistenceService.Obsolete(new Concept { Key = key }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			return persistenceService.Obsolete(new Concept() { Key = key }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>

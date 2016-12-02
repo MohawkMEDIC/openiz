@@ -300,7 +300,7 @@ namespace OpenIZ.Core.Services
 		/// </summary>
 		/// <param name="key">The key of the concept to be obsoleted.</param>
 		/// <returns>Returns the obsoleted concept.</returns>
-		IdentifiedData ObsoleteConcept(Guid key);
+		Concept ObsoleteConcept(Guid key);
 
 		/// <summary>
 		/// Obsoletes a concept class.

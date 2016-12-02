@@ -148,7 +148,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 				throw new InvalidOperationException("Bundle must have entry of type Concept");
 			else if (processData is ConceptSet)
 			{
-				var conceptData = data as ConceptSet;
+				ConceptSet conceptData = processData as ConceptSet;
 				return this.m_repositoryService.SaveConceptSet(conceptData);
 			}
 			else
