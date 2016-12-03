@@ -26,6 +26,11 @@ namespace OpenIZ.Core.Http.Description
 	/// </summary>
 	public interface IRestClientDescription
 	{
+
+        /// <summary>
+        /// Gets whether a tracing is enabled.
+        /// </summary>
+        bool Trace { get; }
 		/// <summary>
 		/// Gets or sets the endpoints for the client
 		/// </summary>
