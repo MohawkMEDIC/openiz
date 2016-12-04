@@ -24,11 +24,17 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
+using OpenIZ.BusinessRules.JavaScript;
+using OpenIZ.Core;
+using OpenIZ.Core.Applets;
+using OpenIZ.Core.Applets.Model;
 
 namespace OpenIZ.BusinessRules.Core
 {
@@ -82,11 +88,43 @@ namespace OpenIZ.BusinessRules.Core
 			{
 				this.Starting?.Invoke(this, EventArgs.Empty);
 
+				var applets = new AppletCollection();
+
 				foreach (var file in Directory.GetFiles(this.configuration.DirectoryConfiguration.Path, "*.*", SearchOption.AllDirectories).Where(f => this.configuration.DirectoryConfiguration.SupportedExtensions.Contains(Path.GetExtension(f))))
 				{
 					this.tracer.TraceEvent(TraceEventType.Information, 0, "Adding file {0}", file);
-					// TODO: add the files to the business rules engine.
+
+					using (var stream = new FileStream(file, FileMode.Open))
+					{
+						AppletPackage package = null;
+
+						if (file.EndsWith(".pak") || file.EndsWith(".pak.gz"))
+						{
+							using (var gzipStream = new GZipStream(stream, CompressionMode.Decompress))
+							{
+								var serializer = new XmlSerializer(typeof(AppletPackage));
+								package = (AppletPackage)serializer.Deserialize(gzipStream);
+							}
+						}
+
+						using (var memoryStream = new MemoryStream(package.Manifest))
+						{
+							applets.Add(AppletManifest.Load(memoryStream));
+						}
+					}
 				}
+
+				ApplicationServiceContext.Current = ApplicationContext.Current;
+
+				foreach (var applet in applets.SelectMany(a => a.Assets).Where(a => a.Name.StartsWith("rules/")))
+				{
+					using (var reader = new StreamReader(new MemoryStream(applets.RenderAssetContent(applet))))
+					{
+						JavascriptBusinessRulesEngine.Current.AddRules(reader);
+						this.tracer.TraceEvent(TraceEventType.Information, 0, "Added rules from {0}", applet.Name);
+					}
+				}
+
 				this.Started?.Invoke(this, EventArgs.Empty);
 				return true;
 			}

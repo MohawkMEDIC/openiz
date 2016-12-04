@@ -52,6 +52,7 @@
     <Compile Include="Configuration\BusinessRulesCoreConfiguration.cs" />
     <Compile Include="Configuration\ConfigurationSectionHandler.cs" />
     <Compile Include="Configuration\DirectoryConfiguration.cs" />
+    <Compile Include="LocalDataReferenceResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -60,6 +61,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.BusinessRules.JavaScript\OpenIZ.BusinessRules.JavaScript.csproj">
+      <Project>{3bfd6ee6-0267-4d82-be7d-9b48b2f6f3d4}</Project>
+      <Name>OpenIZ.BusinessRules.JavaScript</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.Applets\OpenIZ.Core.Applets.csproj">
+      <Project>{39e61451-f4fe-493d-b754-5f06eb284aac}</Project>
+      <Name>OpenIZ.Core.Applets</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
       <Project>{f1a82a4f-4a57-47d7-ae76-444c8a4ff54a}</Project>
       <Name>OpenIZ.Core.Model</Name>
