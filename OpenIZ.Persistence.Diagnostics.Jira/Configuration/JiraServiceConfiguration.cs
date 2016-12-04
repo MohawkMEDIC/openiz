@@ -67,7 +67,12 @@ namespace OpenIZ.Persistence.Diagnostics.Jira.Configuration
         /// </summary>
         public IRestClientBindingDescription Binding { get; set; }
 
-        /// <summary>
+	    /// <summary>
+	    /// Gets whether a tracing is enabled.
+	    /// </summary>
+	    public bool Trace { get; }
+
+	    /// <summary>
         /// Gets or sets the endpoint information
         /// </summary>
         public List<IRestClientEndpointDescription> Endpoint { get; private set; }

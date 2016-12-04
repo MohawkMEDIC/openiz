@@ -36,7 +36,12 @@ namespace OpenIZ.Core.Http
         /// </summary>
         public IRestClientBindingDescription Binding { get; set; }
 
-        /// <summary>
+	    /// <summary>
+	    /// Gets whether a tracing is enabled.
+	    /// </summary>
+	    public bool Trace { get; }
+
+	    /// <summary>
         /// Gets or sets the endpoints
         /// </summary>
         public List<IRestClientEndpointDescription> Endpoint { get; set; }
