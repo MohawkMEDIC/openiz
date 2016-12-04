@@ -275,12 +275,18 @@ namespace OpenIZ.Core.Model.Map
                 if (argExpression is LambdaExpression)
                 {
                     var lambdaExpression = argExpression as LambdaExpression;
-                    // Ok, we need to find the traversal expression
-                    //this.m_mapper.
-                    ParameterExpression newParameter = Expression.Parameter(this.m_mapper.ExtractDomainType(retVal[0].Type), lambdaExpression.Parameters[0].Name);
-                    Expression accessExpression = this.m_mapper.CreateLambdaMemberAdjustmentExpression(retVal.First(), newParameter);
-                    Expression newBody = new LambdaCorrectionVisitor(accessExpression, lambdaExpression.Parameters[0], this.m_mapper).Visit(lambdaExpression.Body);
-                    Type lambdaType = typeof(Func<,>).MakeGenericType(new Type[] { newParameter.Type, newBody.Type });
+					// Ok, we need to find the traversal expression
+					//this.m_mapper.
+					
+
+					var newParameter = Expression.Parameter(this.m_mapper.ExtractDomainType(retVal[0].Type), lambdaExpression.Parameters[0].Name);
+					//Expression accessExpression = this.m_mapper.CreateLambdaMemberAdjustmentExpression(retVal.First(), newParameter);
+
+					var accessExpression = this.m_mapper.CreateLambdaMemberAdjustmentExpression(args.First() as MemberExpression, newParameter);
+
+					var newBody = new LambdaCorrectionVisitor(accessExpression, lambdaExpression.Parameters[0], this.m_mapper).Visit(lambdaExpression.Body);
+                    var lambdaType = typeof(Func<,>).MakeGenericType(new Type[] { newParameter.Type, newBody.Type });
+
                     argExpression = Expression.Lambda(lambdaType, newBody, newParameter);
 
                 }
