@@ -128,9 +128,11 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
 			}
 
-			var role = roleRepository.SaveRole(roleInfo.Role);
+			roleInfo.Role.Policies.AddRange(roleInfo.Policies.Select(r => new SecurityPolicyInstance(r.Policy, r.Grant)));
 
-			return new SecurityRoleInfo(role);
+			var updatedRole = roleRepository.SaveRole(roleInfo.Role);
+
+			return new SecurityRoleInfo(updatedRole);
 		}
 	}
 }
