@@ -41,9 +41,7 @@ namespace OpenIZ.BusinessRules.Core
 			var start = reference.LastIndexOf('/') + 1;
 			reference = reference.Substring(start, reference.Length - start);
 
-			var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "lib", reference);
-
-			return typeof(IDataReferenceResolver).Assembly.GetManifestResourceStream(path);
+			return typeof(IDataReferenceResolver).Assembly.GetManifestResourceStream("OpenIZ.BusinessRules.JavaScript.lib." + reference);
 		}
 	}
 }
