@@ -188,8 +188,13 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                         if (role == null)
                             throw new KeyNotFoundException(String.Format("Could not locate role {0}", rol));
 
-                        // Remove
-                        dataContext.SecurityUserRoles.DeleteOnSubmit(user.SecurityUserRoles.SingleOrDefault(ur => ur.RoleId == role.RoleId && ur.UserId == user.UserId));
+	                    var securityUserRole = user.SecurityUserRoles.SingleOrDefault(ur => ur.RoleId == role.RoleId && ur.UserId == user.UserId);
+
+	                    if (securityUserRole != null)
+	                    {
+							// Remove
+							dataContext.SecurityUserRoles.DeleteOnSubmit(securityUserRole);
+						}
                     }
                 }
 

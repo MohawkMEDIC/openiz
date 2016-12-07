@@ -20,6 +20,7 @@
 
 using OpenIZ.Core.Model.Security;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
 
@@ -37,6 +38,7 @@ namespace OpenIZ.Core.Model.AMI.Auth
 		/// </summary>
 		public SecurityRoleInfo()
 		{
+			this.Policies = new List<SecurityPolicyInfo>();
 		}
 
 		/// <summary>
@@ -48,7 +50,7 @@ namespace OpenIZ.Core.Model.AMI.Auth
 			this.Id = role.Key;
 			this.Name = role.Name;
 			this.Role = role;
-			this.Policies = role.Policies.Select(o => new SecurityPolicyInfo(o)).ToArray();
+			this.Policies = role.Policies.Select(o => new SecurityPolicyInfo(o)).ToList();
 		}
 
 		/// <summary>
@@ -67,7 +69,7 @@ namespace OpenIZ.Core.Model.AMI.Auth
 		/// Represents policies
 		/// </summary>
 		[XmlElement("policy")]
-		public SecurityPolicyInfo[] Policies { get; set; }
+		public List<SecurityPolicyInfo> Policies { get; set; }
 
 		/// <summary>
 		/// Gets or sets the role information

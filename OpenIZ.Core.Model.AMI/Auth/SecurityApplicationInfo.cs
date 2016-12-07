@@ -37,6 +37,7 @@ namespace OpenIZ.Core.Model.AMI.Auth
 		/// </summary>
 		public SecurityApplicationInfo()
 		{
+			this.Policies = new List<SecurityPolicyInstance>();
 		}
 
 		/// <summary>

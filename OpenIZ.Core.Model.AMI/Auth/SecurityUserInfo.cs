@@ -38,6 +38,7 @@ namespace OpenIZ.Core.Model.AMI.Auth
 		/// </summary>
 		public SecurityUserInfo()
 		{
+			this.Roles = new List<SecurityRoleInfo>();
 		}
 
 		/// <summary>

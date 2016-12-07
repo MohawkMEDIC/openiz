@@ -170,7 +170,12 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				idpService.RemoveClaim(user.UserName, OpenIzClaimTypes.OpenIZPasswordlessAuth);
 			}
 
-			info = new SecurityUserInfo(userRepository.SaveUser(info.User));
+			if (info.UserName == null)
+			{
+				info.UserName = userRepository.GetUser(userId)?.UserName;
+			}
+
+			userRepository.SaveUser(info.User);
 
 			if (info.Lockout.HasValue)
 			{
