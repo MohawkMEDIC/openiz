@@ -40,10 +40,10 @@ namespace OpenIZ.Messaging.IMSI.Client
 	public class ImsiServiceClient : ServiceClientBase, IDisposable
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="OpenIZ.Messaging.IMSI.Client.ImsiServiceClient"/> class
-		/// with a specified <see cref="OpenIZ.Core.Http.IRestClient"/> instance.
+		/// Initializes a new instance of the <see cref="ImsiServiceClient"/> class
+		/// with a specific <see cref="IRestClient"/> instance.
 		/// </summary>
-		/// <param name="client">The <see cref="OpenIZ.Core.Http.IRestClient"/> instance.</param>
+		/// <param name="client">The <see cref="IRestClient"/> instance.</param>
 		public ImsiServiceClient(IRestClient client) : base(client)
 		{
 			this.Client.Accept = client.Accept ?? "application/xml";
@@ -144,17 +144,15 @@ namespace OpenIZ.Messaging.IMSI.Client
 			}
 
 			// Resource name
-			String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+			var resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
 
 			// Create with version?
 			if (data.Key != null)
 			{
-				return this.Client.Delete<TModel>(String.Format("{0}/{1}", resourceName, data.Key));
+				return this.Client.Delete<TModel>($"{resourceName}/{data.Key}");
 			}
-			else
-			{
-				throw new KeyNotFoundException(data.Key.ToString());
-			}
+
+			throw new KeyNotFoundException(data.Key.ToString());
 		}
 
 		/// <summary>
@@ -173,23 +171,36 @@ namespace OpenIZ.Messaging.IMSI.Client
         /// </summary>
         /// <typeparam name="TModel">The type of object to query.</typeparam>
         /// <param name="query">The query parameters as a LINQ expression.</param>
+        /// <param name="offset">The offset of the query.</param>
+        /// <param name="count">The count of the query results.</param>
+        /// <param name="expandProperties">An property traversal for which to expand upon.</param>
         /// <returns>Returns a Bundle containing the data.</returns>
-        public Bundle Query<TModel>(Expression<Func<TModel, bool>> query, int offset, int? count) where TModel : IdentifiedData
+        public Bundle Query<TModel>(Expression<Func<TModel, bool>> query, int offset, int? count, string expandProperties = null) where TModel : IdentifiedData
         {
-            // Map the query to HTTP parameters
-            var queryParms = QueryExpressionBuilder.BuildQuery(query, true).ToList();
-            queryParms.Add(new KeyValuePair<string, object>("_offset", offset));
-            if(count.HasValue)
-                queryParms.Add(new KeyValuePair<string, object>("_count", count));
-            // Resource name
-            String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+			// Map the query to HTTP parameters
+			var queryParms = QueryExpressionBuilder.BuildQuery(query, true).ToList();
 
-            // The IMSI uses the XMLName as the root of the request
-            var retVal = this.Client.Get<Bundle>(resourceName, queryParms.ToArray());
+			queryParms.Add(new KeyValuePair<string, object>("_offset", offset));
 
-            // Return value
-            return retVal;
-        }
+			if (count.HasValue)
+			{
+				queryParms.Add(new KeyValuePair<string, object>("_count", count));
+			}
+
+	        if (!string.IsNullOrEmpty(expandProperties) && !string.IsNullOrWhiteSpace(expandProperties))
+	        {
+		        queryParms.Add(new KeyValuePair<string, object>("_expand", expandProperties));
+	        }
+
+			// Resource name
+			string resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+
+			// The IMSI uses the XMLName as the root of the request
+			var retVal = this.Client.Get<Bundle>(resourceName, queryParms.ToArray());
+
+			// Return value
+			return retVal;
+		}
 
         /// <summary>
         /// Updates a specified object.
@@ -219,24 +230,33 @@ namespace OpenIZ.Messaging.IMSI.Client
 		}
 
         /// <summary>
-        /// Sends a patch operation to the server
+        /// Sends a patch operation to the server.
         /// </summary>
+        /// <param name="patch">The patch containing the information to be patched.</param>
+        /// <returns>Returns the updated version GUID.</returns>
         public Guid Patch(Patch patch)
         {
+	        if (patch == null)
+	        {
+				throw new ArgumentNullException(nameof(patch));
+			}
 
-            if (patch == null)
-                throw new ArgumentNullException(nameof(patch));
-            else if (patch.AppliesTo == null)
-                throw new InvalidOperationException();
+	        if (patch.AppliesTo == null)
+	        {
+		        throw new InvalidOperationException();
+	        }
 
-            // Resource name
-            String resourceName = patch.AppliesTo.Type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+	        // Resource name
+            string resourceName = patch.AppliesTo.Type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
 
             // First we determine which resource we're patching patch
             var tag = patch.AppliesTo.Tag;
             var key = patch.AppliesTo.Key;
+
             patch.AppliesTo = null;
-            var version = this.Client.Patch<Patch>(String.Format("{0}/{1}", resourceName, key.Value), this.Client.Accept, tag, patch);
+
+            var version = this.Client.Patch<Patch>($"{resourceName}/{key.Value}", this.Client.Accept, tag, patch);
+
             return Guid.ParseExact(version, "N");
 
         }
@@ -248,6 +268,7 @@ namespace OpenIZ.Messaging.IMSI.Client
         {
             return this.Client.Options<ServiceOptions>("");
         }
+
         #region IDisposable Support
 
         private bool disposedValue = false; // To detect redundant calls

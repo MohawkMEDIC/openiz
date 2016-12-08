@@ -37,21 +37,9 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			ApplicationContext.Current.Started += (o, e) => this.actRepositorySerivce = ApplicationContext.Current.GetService<IActRepositoryService>();
 		}
 
-		public string ResourceName
-		{
-			get
-			{
-				return "Act";
-			}
-		}
+		public string ResourceName => "Act";
 
-		public Type Type
-		{
-			get
-			{
-				return typeof(Act);
-			}
-		}
+		public Type Type => typeof(Act);
 
 		public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
 		{
@@ -60,7 +48,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 				throw new ArgumentNullException(nameof(data));
 			}
 
-			Bundle bundle = data as Bundle;
+			var bundle = data as Bundle;
 
 			bundle?.Reconstitute();
 
@@ -70,23 +58,15 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			{
 				throw new InvalidOperationException("Bundle must have an entry point");
 			}
-			else if (processData is Act)
+
+			if (processData is Act)
 			{
 				var act = processData as Act;
 
-				if (updateIfExists)
-				{
-					return this.actRepositorySerivce.Save(act);
-				}
-				else
-				{
-					return this.actRepositorySerivce.Insert(act);
-				}
+				return updateIfExists ? this.actRepositorySerivce.Save(act) : this.actRepositorySerivce.Insert(act);
 			}
-			else
-			{
-				throw new ArgumentException(nameof(data), "Invalid data type");
-			}
+
+			throw new ArgumentException(nameof(data), "Invalid data type");
 		}
 
 		public IdentifiedData Get(Guid id, Guid versionId)
@@ -127,14 +107,13 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			{
 				throw new InvalidOperationException("Bundle must have an entry");
 			}
-			else if (processData is Act)
+
+			if (processData is Act)
 			{
 				return this.actRepositorySerivce.Save(processData as Act);
 			}
-			else
-			{
-				throw new ArgumentException(nameof(data), "Invalid data type");
-			}
+
+			throw new ArgumentException(nameof(data), "Invalid data type");
 		}
 	}
 }
