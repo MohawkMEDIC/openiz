@@ -140,14 +140,17 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<AlertMessage>)));
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<AlertMessage>)} not found");
 			}
 
 			AlertMessage alert;
 
 			try
 			{
-				alert = persistenceService.Update(message, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+				alert = message.Flags == AlertMessageFlags.Acknowledged ? 
+						persistenceService.Obsolete(message, AuthenticationContext.Current.Principal, TransactionMode.Commit) : 
+						persistenceService.Update(message, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
 				this.Received?.Invoke(this, new AlertEventArgs(alert));
 			}
 			catch (DataPersistenceException)
