@@ -86,11 +86,10 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 				throw new InvalidOperationException("Bundle must have entry of type ConceptSet");
 			else if (processData is ConceptSet)
 			{
-				var conceptData = data as ConceptSet;
 				if (updateIfExists)
-					return this.m_repositoryService.SaveConceptSet(conceptData);
+					return this.m_repositoryService.SaveConceptSet(processData as ConceptSet);
 				else
-					return this.m_repositoryService.InsertConceptSet(conceptData);
+					return this.m_repositoryService.InsertConceptSet(processData as ConceptSet);
 			}
 			else
 				throw new ArgumentException("Invalid persistence type");
