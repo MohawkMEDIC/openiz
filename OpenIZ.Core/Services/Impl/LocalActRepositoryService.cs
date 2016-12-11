@@ -169,7 +169,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<TAct>)} not found");
 			}
 
 			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TAct>();
@@ -184,11 +184,11 @@ namespace OpenIZ.Core.Services.Impl
 			}
 			catch (DataPersistenceException)
 			{
-				act = businessRulesService != null ? businessRulesService.BeforeInsert(act) : act;
+				//act = businessRulesService != null ? businessRulesService.BeforeInsert(act) : act;
 
 				act = persistenceService.Insert(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
-				act = businessRulesService != null ? businessRulesService.AfterInsert(act) : act;
+				//act = businessRulesService != null ? businessRulesService.AfterInsert(act) : act;
 			}
 
 			return act;
