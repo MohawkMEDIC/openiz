@@ -342,11 +342,8 @@ namespace OpenIZ.Core.Model.Acts
             }
             set
             {
-                this.m_typeConcept = value;
-                if (value == null)
-                    this.m_typeConceptKey = Guid.Empty;
-                else
-                    this.m_typeConceptKey = value.Key;
+	            this.m_typeConceptKey = value?.Key;
+	            this.m_typeConcept = value;
             }
         }
 
