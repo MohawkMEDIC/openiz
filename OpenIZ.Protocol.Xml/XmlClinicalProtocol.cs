@@ -171,7 +171,7 @@ namespace OpenIZ.Protocol.Xml
                             retVal.AddRange(acts);
                         }
                         else
-                            this.m_tracer.TraceInfo("{0} does not meet criteria for rule {1}.{2}", patient, this.Name, rule.Name);
+                            this.m_tracer.TraceInfo("{0} does not meet criteria for rule {1}.{2}", patient, this.Name, rule.Name ?? rule.Id);
 
                     }
 

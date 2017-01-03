@@ -211,5 +211,7 @@ namespace OpenIZ.Core.Model.Entities
             if (other == null) return false;
             return base.SemanticEquals(obj) && this.Value == other.Value && this.AddressUseKey == other.AddressUseKey;
         }
+
+        
     }
 }

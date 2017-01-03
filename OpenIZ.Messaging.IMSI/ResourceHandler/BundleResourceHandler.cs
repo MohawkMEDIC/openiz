@@ -48,12 +48,6 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			{
 				throw new ArgumentNullException(nameof(data));
 			}
-
-			if (updateIfExists)
-			{
-				throw new ArgumentOutOfRangeException(nameof(updateIfExists));
-			}
-
 			var bundle = data as Bundle;
 
 			if (bundle == null)
