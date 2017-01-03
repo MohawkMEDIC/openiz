@@ -57,6 +57,7 @@ using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Interop;
 using OpenIZ.Core;
+using System.Data.Linq;
 
 namespace OpenIZ.Messaging.IMSI.Wcf
 {
@@ -470,11 +471,25 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 retCode = HttpStatusCode.Conflict;
             else if (e is ConstraintException || e is PatchException)
                 retCode = (HttpStatusCode)422;
+            else if(e is DataPersistenceException)
+            {
+                if (e.InnerException is DuplicateKeyException)
+                    retCode = (HttpStatusCode)409;
+                else
+                    retCode = System.Net.HttpStatusCode.InternalServerError;
+            }
             else
                 retCode = System.Net.HttpStatusCode.InternalServerError;
 
             WebOperationContext.Current.OutgoingResponse.StatusCode = retCode;
             //WebOperationContext.Current.OutgoingResponse.Format = WebMessageFormat.Xml;
+
+            e = e.InnerException;
+            while (e != null)
+            {
+                result.Details.Add(new ResultDetail(DetailType.Error, String.Format("Caused by: ({0}) {1}", e.GetType().Name, e.Message)));
+                e = e.InnerException;
+            }
 
 
             return result;

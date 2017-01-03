@@ -114,7 +114,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             // Address component already exists?
             var existing = context.EntityAddressComponentValues.FirstOrDefault(o => o.Value == modelInstance.Value);
             if (existing != null)
-                retVal.EntityAddressComponentValue = existing;
+                retVal.ValueId = existing.ValueId;
             else
             {
                 retVal.EntityAddressComponentValue = new EntityAddressComponentValue()
