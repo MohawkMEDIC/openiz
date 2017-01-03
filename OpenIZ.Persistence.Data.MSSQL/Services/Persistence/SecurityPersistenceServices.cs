@@ -23,7 +23,6 @@ using System.Linq;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
-using OpenIZ.Core.Model.Security;
 using OpenIZ.Persistence.Data.MSSQL.Data;
 using OpenIZ.Core.Model.Interfaces;
 using System.Data.Linq;
@@ -32,6 +31,33 @@ using OpenIZ.Core.Model;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
+	/// <summary>
+	/// Represents a persistence service for security policies.
+	/// </summary>
+	public class SecurityPolicyPersistenceService : BaseDataPersistenceService<Core.Model.Security.SecurityPolicy, Data.Policy>
+	{
+		public override Core.Model.Security.SecurityPolicy Update(ModelDataContext context, Core.Model.Security.SecurityPolicy data, IPrincipal principal)
+		{
+			var domainInstance = this.FromModelInstance(data, context, principal) as Data.Policy;
+
+			var currentObject = context.GetTable<Data.Policy>().FirstOrDefault(ExpressionRewriter.Rewrite<Data.Policy>(o => o.Id == data.Key));
+
+			if (currentObject == null)
+			{
+				throw new KeyNotFoundException(data.Key.ToString());
+			}
+
+			currentObject.CopyObjectData(domainInstance);
+
+			currentObject.ObsoletedBy = data.ObsoletedByKey == Guid.Empty ? null : data.ObsoletedByKey;
+			currentObject.ObsoletionTime = data.ObsoletionTime;
+
+			context.SubmitChanges();
+
+			return data;
+		}
+	}
+
     /// <summary>
     /// Security user persistence
     /// </summary>

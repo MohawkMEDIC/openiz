@@ -34,7 +34,7 @@ namespace OpenIZ.Core.Services.Impl
 	/// <summary>
 	/// Represents an act repository service.
 	/// </summary>
-	public class LocalActRepositoryService : IActRepositoryService
+	public class LocalActRepositoryService : IActRepositoryService, IRepositoryService<Act>
 	{
 		/// <summary>
 		/// Finds acts based on a specific query.
@@ -53,6 +53,15 @@ namespace OpenIZ.Core.Services.Impl
 			var results = persistenceService.Query(filter, offset, count, AuthenticationContext.Current.Principal, out totalResults);
 
 			return businessRulesService != null ? businessRulesService.AfterQuery(results) : results;
+		}
+
+		/// <summary>
+		/// Finds the specified data
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<Act> Find(Expression<Func<Act, bool>> query)
+		{
+			throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -75,6 +84,14 @@ namespace OpenIZ.Core.Services.Impl
 		}
 
 		/// <summary>
+		/// Gets the specified data
+		/// </summary>
+		public Act Get(Guid key)
+		{
+			return this.Get<Act>(key, Guid.Empty);
+		}
+
+		/// <summary>
 		/// Insert the specified act
 		/// </summary>
 		public TAct Insert<TAct>(TAct act) where TAct : Act
@@ -93,6 +110,14 @@ namespace OpenIZ.Core.Services.Impl
 			act = persistenceService.Insert(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
 			return businessRulesService != null ? businessRulesService.AfterInsert(act) : act;
+		}
+
+		/// <summary>
+		/// Inserts the specified data
+		/// </summary>
+		public Act Insert(Act data)
+		{
+			throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -124,6 +149,16 @@ namespace OpenIZ.Core.Services.Impl
 		}
 
 		/// <summary>
+		/// Obsoletes the specified data
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		public Act Obsolete(Guid key)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// Insert or update the specified act
 		/// </summary>
 		/// <param name="act"></param>
@@ -134,7 +169,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<TAct>)} not found");
 			}
 
 			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TAct>();
@@ -149,14 +184,22 @@ namespace OpenIZ.Core.Services.Impl
 			}
 			catch (DataPersistenceException)
 			{
-				act = businessRulesService != null ? businessRulesService.BeforeInsert(act) : act;
+				//act = businessRulesService != null ? businessRulesService.BeforeInsert(act) : act;
 
 				act = persistenceService.Insert(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
-				act = businessRulesService != null ? businessRulesService.AfterInsert(act) : act;
+				//act = businessRulesService != null ? businessRulesService.AfterInsert(act) : act;
 			}
 
 			return act;
+		}
+
+		/// <summary>
+		/// Saves the specified data
+		/// </summary>
+		public Act Save(Act data)
+		{
+			throw new NotImplementedException();
 		}
 
 		/// <summary>

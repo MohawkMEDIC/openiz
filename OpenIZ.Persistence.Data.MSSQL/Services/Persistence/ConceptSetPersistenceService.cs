@@ -50,13 +50,24 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         }
 
         /// <summary>
-        /// Return value
-        /// </summary>
+		/// Converts a <see cref="Data.ConceptSet"/> instance to a <see cref="Core.Model.DataTypes.ConceptSet"/> instance.
+		/// </summary>
+		/// <param name="dataInstance">The <see cref="Data.ConceptSet"/> instance to convert.</param>
+		/// <param name="context">The model data context.</param>
+		/// <param name="principal">The principal.</param>
+		/// <returns>Returns the converted <see cref="Core.Model.DataTypes.ConceptSet"/> instance.</returns>
         public override Core.Model.DataTypes.ConceptSet ToModelInstance(object dataInstance, ModelDataContext context, IPrincipal principal)
         {
-            var retVal = base.ToModelInstance(dataInstance, context, principal);
-            var de = dataInstance as Data.ConceptSet;
-            retVal.ConceptsXml = de.ConceptSetMembers.Select(o => o.ConceptId).ToList();
+	        var conceptSet = dataInstance as Data.ConceptSet;
+
+	        var retVal = base.ToModelInstance(dataInstance, context, principal);
+
+	        retVal.Mnemonic = conceptSet.Mnemonic;
+	        retVal.Name = conceptSet.Name;
+	        retVal.Oid = conceptSet.Oid;
+	        retVal.Url = conceptSet.Url;
+            retVal.ConceptsXml = conceptSet.ConceptSetMembers.Select(o => o.ConceptId).ToList();
+
             return retVal;
         }
 

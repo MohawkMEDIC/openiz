@@ -36,38 +36,28 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 	/// </summary>
 	public class ConceptSetResourceHandler : IResourceHandler
 	{
-		// Repository service
-		private IConceptRepositoryService m_repositoryService;
+		/// <summary>
+		/// The internal reference to the <see cref="IConceptRepositoryService"/> instance.
+		/// </summary>
+		private IConceptRepositoryService repositoryService;
 
 		/// <summary>
 		/// Concept set ctor
 		/// </summary>
 		public ConceptSetResourceHandler()
 		{
-			ApplicationContext.Current.Started += (o, e) => this.m_repositoryService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+			ApplicationContext.Current.Started += (o, e) => this.repositoryService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
 		}
 
 		/// <summary>
 		/// Gets the resource name
 		/// </summary>
-		public string ResourceName
-		{
-			get
-			{
-				return "ConceptSet";
-			}
-		}
+		public string ResourceName => "ConceptSet";
 
 		/// <summary>
 		/// Gets the type of serialization
 		/// </summary>
-		public Type Type
-		{
-			get
-			{
-				return typeof(ConceptSet);
-			}
-		}
+		public Type Type => typeof(ConceptSet);
 
 		/// <summary>
 		/// Creates the specified data
@@ -76,23 +66,27 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
 		{
 			if (data == null)
+			{
 				throw new ArgumentNullException(nameof(data));
+			}
 
-			Bundle bundleData = data as Bundle;
+			var bundleData = data as Bundle;
+
 			bundleData?.Reconstitute();
+
 			var processData = bundleData?.Entry ?? data;
 
 			if (processData is Bundle)
-				throw new InvalidOperationException("Bundle must have entry of type ConceptSet");
-			else if (processData is ConceptSet)
 			{
-				if (updateIfExists)
-					return this.m_repositoryService.SaveConceptSet(processData as ConceptSet);
-				else
-					return this.m_repositoryService.InsertConceptSet(processData as ConceptSet);
+				throw new InvalidOperationException("Bundle must have entry of type ConceptSet");
 			}
-			else
-				throw new ArgumentException("Invalid persistence type");
+
+			if (processData is ConceptSet)
+			{
+				return updateIfExists ? this.repositoryService.SaveConceptSet(processData as ConceptSet) : this.repositoryService.InsertConceptSet(processData as ConceptSet);
+			}
+
+			throw new ArgumentException("Invalid persistence type");
 		}
 
 		/// <summary>
@@ -101,9 +95,11 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		public IdentifiedData Get(Guid id, Guid versionId)
 		{
 			if (versionId != Guid.Empty)
+			{
 				throw new NotSupportedException();
+			}
 
-			return this.m_repositoryService.GetConceptSet(id);
+			return this.repositoryService.GetConceptSet(id);
 		}
 
 		/// <summary>
@@ -112,7 +108,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
 		public IdentifiedData Obsolete(Guid key)
 		{
-			return this.m_repositoryService.ObsoleteConceptSet(key);
+			return this.repositoryService.ObsoleteConceptSet(key);
 		}
 
 		/// <summary>
@@ -120,7 +116,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			return this.m_repositoryService.FindConceptSets(QueryExpressionParser.BuildLinqExpression<ConceptSet>(queryParameters));
+			return this.repositoryService.FindConceptSets(QueryExpressionParser.BuildLinqExpression<ConceptSet>(queryParameters));
 		}
 
 		/// <summary>
@@ -128,7 +124,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			return this.m_repositoryService.FindConceptSets(QueryExpressionParser.BuildLinqExpression<ConceptSet>(queryParameters), offset, count, out totalCount);
+			return this.repositoryService.FindConceptSets(QueryExpressionParser.BuildLinqExpression<ConceptSet>(queryParameters), offset, count, out totalCount);
 		}
 
 		/// <summary>
@@ -139,19 +135,28 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
 		public IdentifiedData Update(IdentifiedData data)
 		{
-			Bundle bundleData = data as Bundle;
+			if (data == null)
+			{
+				throw new ArgumentNullException(nameof(data));
+			}
+
+			var bundleData = data as Bundle;
+
 			bundleData?.Reconstitute();
+
 			var processData = bundleData?.Entry ?? data;
 
 			if (processData is Bundle)
-				throw new InvalidOperationException("Bundle must have entry of type Concept");
-			else if (processData is ConceptSet)
 			{
-				ConceptSet conceptData = processData as ConceptSet;
-				return this.m_repositoryService.SaveConceptSet(conceptData);
+				throw new InvalidOperationException("Bundle must have entry of type Concept");
 			}
-			else
-				throw new ArgumentException("Invalid persistence type");
+
+			if (processData is ConceptSet)
+			{
+				return this.repositoryService.SaveConceptSet(processData as ConceptSet);
+			}
+
+			throw new ArgumentException("Invalid persistence type");
 		}
 	}
 }

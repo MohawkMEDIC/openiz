@@ -32,16 +32,28 @@ namespace OpenIZ.Core.Services.Impl
 	/// <summary>
 	/// Place repository that uses local persistence
 	/// </summary>
-	public class LocalPlaceRepositoryService : IPlaceRepositoryService
+	public class LocalPlaceRepositoryService : IPlaceRepositoryService, IRepositoryService<Place>
 	{
+		/// <summary>
+		/// Gets the specified data
+		/// </summary>
+		public Place Get(Guid key)
+		{
+			return this.Get(key, Guid.Empty);
+		}
+
 		/// <summary>
 		/// Find the specified place
 		/// </summary>
 		public IEnumerable<Place> Find(Expression<Func<Place, bool>> predicate)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
+
 			if (persistenceService == null)
+			{
 				throw new InvalidOperationException("No persistence service found");
+			}
+
 			return persistenceService.Query(predicate, AuthenticationContext.Current.Principal);
 		}
 
@@ -65,8 +77,12 @@ namespace OpenIZ.Core.Services.Impl
 		public Place Get(Guid id, Guid versionId)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
+
 			if (persistenceService == null)
+			{
 				throw new InvalidOperationException("No persistence service found");
+			}
+
 			return persistenceService.Get<Guid>(new Identifier<Guid>(id, versionId), AuthenticationContext.Current.Principal, false);
 		}
 
