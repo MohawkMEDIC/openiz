@@ -112,7 +112,7 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<AssigningAuthority>)} not found");
 			}
 
-			return persistenceService.Obsolete(new AssigningAuthority { Key = key }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			return persistenceService.Obsolete(this.Get(key), AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>
