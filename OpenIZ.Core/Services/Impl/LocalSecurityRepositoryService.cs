@@ -645,7 +645,7 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityPolicy>)));
 			}
 
-			return persistenceService.Obsolete(new SecurityPolicy { Key = policyId }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			return persistenceService.Obsolete(this.GetPolicy(policyId), AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>
