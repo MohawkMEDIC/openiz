@@ -184,11 +184,11 @@ namespace OpenIZ.Core.Services.Impl
 			}
 			catch (DataPersistenceException)
 			{
-				//act = businessRulesService != null ? businessRulesService.BeforeInsert(act) : act;
+				act = businessRulesService != null ? businessRulesService.BeforeInsert(act) : act;
 
 				act = persistenceService.Insert(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
-				//act = businessRulesService != null ? businessRulesService.AfterInsert(act) : act;
+				act = businessRulesService != null ? businessRulesService.AfterInsert(act) : act;
 			}
 
 			return act;

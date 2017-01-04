@@ -124,7 +124,6 @@ namespace OpenIZ.Messaging.IMSI.Util
         /// </summary>
         public static void ExpandProperties(IdentifiedData returnValue, NameValueCollection qp, Stack<Guid> keyStack = null, Dictionary<Guid, HashSet<String>> emptyCollections = null)
         {
-
             if (emptyCollections == null)
                 emptyCollections = new Dictionary<Guid, HashSet<string>>();
 
@@ -198,57 +197,63 @@ namespace OpenIZ.Messaging.IMSI.Util
 
                     ApplicationContext.Current.GetService<IDataCachingService>().Add(returnValue);
                 }
-                else if(qp.ContainsKey("_expand"))
-                    foreach (var nvs in qp["_expand"])
-                    {
-                        // Get the property the user wants to expand
-                        object scope = returnValue;
-                        foreach (var property in nvs.Split('.'))
-                        {
-                            if (scope is IList)
-                            {
-                                foreach (var sc in scope as IList)
-                                {
-                                    PropertyInfo keyPi = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>().FirstOrDefault()?.ElementName == property);
-                                    if (keyPi == null)
-                                        continue;
-                                    // Get the backing property
-                                    PropertyInfo expandProp = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<SerializationReferenceAttribute>().FirstOrDefault()?.RedirectProperty == keyPi.Name);
-                                    if (expandProp != null)
-                                        scope = expandProp.GetValue(sc);
-                                    else
-                                        scope = keyPi.GetValue(sc);
+                else if (qp.ContainsKey("_expand"))
+				{
+					foreach (var nvs in qp["_expand"])
+					{
+						// Get the property the user wants to expand
+						object scope = returnValue;
+						foreach (var property in nvs.Split('.'))
+						{
+							if (scope is IList)
+							{
+								foreach (var sc in scope as IList)
+								{
+									// ensure the object is delay loaded 
+									// in case the property we are looking for is null but it's associated reference key is populated
+									(sc as IdentifiedData)?.SetDelayLoad(true);
+									var keyPi = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>().FirstOrDefault()?.ElementName == property);
 
-                                }
-                            }
-                            else
-                            {
-                                PropertyInfo keyPi = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>().FirstOrDefault()?.ElementName == property);
-                                if (keyPi == null)
-                                    continue;
-                                // Get the backing property
-                                PropertyInfo expandProp = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<SerializationReferenceAttribute>().FirstOrDefault()?.RedirectProperty == keyPi.Name);
+									if (keyPi == null)
+									{
+										continue;
+									}
 
-                                Object existing = null;
-                                Object keyValue = keyPi.GetValue(scope);
+									// Get the backing property
+									var expandProp = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<SerializationReferenceAttribute>().FirstOrDefault()?.RedirectProperty == keyPi.Name);
 
-                                if (expandProp != null && expandProp.CanWrite)
-                                {
-                                    expandProp.SetValue(scope, existing);
-                                    scope = existing;
-                                }
-                                else
-                                {
-                                    if (expandProp != null)
-                                        scope = expandProp.GetValue(scope);
-                                    else
-                                        scope = keyValue;
-                                }
-                            }
-                        }
-                    }
+									scope = expandProp != null ? expandProp.GetValue(sc) : keyPi.GetValue(sc);
+								}
+							}
+							else
+							{
+								PropertyInfo keyPi = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>().FirstOrDefault()?.ElementName == property);
+								if (keyPi == null)
+									continue;
+								// Get the backing property
+								PropertyInfo expandProp = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<SerializationReferenceAttribute>().FirstOrDefault()?.RedirectProperty == keyPi.Name);
 
-                ApplicationContext.Current.GetService<IDataCachingService>()?.Add(returnValue);
+								Object existing = null;
+								Object keyValue = keyPi.GetValue(scope);
+
+								if (expandProp != null && expandProp.CanWrite)
+								{
+									expandProp.SetValue(scope, existing);
+									scope = existing;
+								}
+								else
+								{
+									if (expandProp != null)
+										scope = expandProp.GetValue(scope);
+									else
+										scope = keyValue;
+								}
+							}
+						}
+					}
+
+					ApplicationContext.Current.GetService<IDataCachingService>()?.Add(returnValue);
+				}
             }
             finally
             {
