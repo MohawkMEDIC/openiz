@@ -198,5 +198,13 @@ namespace OpenIZ.Caching.Memory
         {
             MemoryCache.Current.AddUpdateEntry(data);
         }
+
+        /// <summary>
+        /// Remove the object from the cache
+        /// </summary>
+        public void Remove(Type tdata, Guid key)
+        {
+            MemoryCache.Current.RemoveObject(tdata, key);
+        }
     }
 }

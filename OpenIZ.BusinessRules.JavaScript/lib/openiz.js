@@ -717,6 +717,34 @@ var OpenIZ = OpenIZ || {
         getVersion: function () {
             return OpenIZBre.GetVersion();
         },
+        /**
+         * @summary Indicates that the server should clear an object from the cache
+        * @method
+        * @memberof OpenIZ.App
+        * @param {object} controlData The data which controls the operation of the asynchronous operation
+        * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+        * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+        * @param {object} controlData.data The object which is to be removed from the cache. Minimally a $type and id
+        * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+        */
+        deleteCacheAsync: function (controlData) {
+            try
+            {
+                OpenIZBre.DeleteCache(controlData.data.$type, controlData.data.id);
+                if(controlData.continueWith)
+                    controlData.continueWith(null, controlData.state);
+            }
+            catch(e)
+            {
+                if(controlData.onException)
+                    controlData.onException(e, controlData.state);
+            }
+            finally {
+                if(controlData.finally)
+                    controlData.finally();
+            }
+
+        }
     },
     /**
      * @summary Represents functions related to the localization of applets

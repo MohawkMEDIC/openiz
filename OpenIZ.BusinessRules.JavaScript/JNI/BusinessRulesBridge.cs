@@ -89,6 +89,20 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         }
 
         /// <summary>
+        /// Delete cache item
+        /// </summary>
+        public void DeleteCache(String type, String key) {
+            Type dataType = null;
+            if (!this.m_modelMap.TryGetValue(type, out dataType))
+                throw new InvalidOperationException($"Cannot find type information for {type}");
+
+            var idpInstance = ApplicationServiceContext.Current.GetService(typeof(IDataCachingService)) as IDataCachingService;
+            if (idpInstance == null)
+                throw new KeyNotFoundException($"The data caching service for {type} was not found");
+            idpInstance.Remove(dataType, Guid.Parse(key));
+        }
+
+        /// <summary>
         /// Simplifies an IMSI object
         /// </summary>
         public ExpandoObject ToViewModel(IdentifiedData data)

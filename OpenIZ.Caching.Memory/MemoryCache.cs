@@ -233,6 +233,32 @@ namespace OpenIZ.Caching.Memory
         }
 
         /// <summary>
+        /// Remove the specified object from the cache
+        /// </summary>
+        public void RemoveObject(Type objectType, Guid? key)
+        {
+            this.ThrowIfDisposed();
+
+            if (!key.HasValue) return;
+            else if (objectType == null)
+                throw new ArgumentNullException(nameof(objectType));
+
+            Dictionary<Guid, CacheEntry> cache = null;
+            if (this.m_entryTable.TryGetValue(objectType, out cache))
+            {
+                CacheEntry candidate = default(CacheEntry);
+                if (cache.TryGetValue(key.Value, out candidate))
+                {
+                    lock (this.m_lock)
+                    {
+                        cache.Remove(key.Value);
+                    }
+                }
+            }
+            return;
+        }
+
+        /// <summary>
         /// Clears all caches
         /// </summary>
         public void Clear()

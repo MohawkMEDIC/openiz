@@ -42,5 +42,10 @@ namespace OpenIZ.Core.Services
         /// Adds the specified item to the cache
         /// </summary>
         void Add(IdentifiedData data);
+
+        /// <summary>
+        /// Removes an object from the cache
+        /// </summary>
+        void Remove(Type tdata, Guid key);
     }
 }
