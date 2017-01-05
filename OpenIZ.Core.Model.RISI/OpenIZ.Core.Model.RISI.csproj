@@ -47,8 +47,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoCompleteDefinition.cs" />
+    <Compile Include="ListAutoCompleteSourceDefinition.cs" />
     <Compile Include="ParameterDefinition.cs" />
     <Compile Include="ParameterTypeDefinition.cs" />
+    <Compile Include="QueryAutoCompleteSourceDefinition.cs" />
     <Compile Include="ReportDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

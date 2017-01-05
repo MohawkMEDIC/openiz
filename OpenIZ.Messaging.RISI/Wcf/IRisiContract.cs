@@ -17,8 +17,12 @@
  * User: justi
  * Date: 2016-8-28
  */
+
+using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Web;
+using OpenIZ.Core.Model.RISI;
 
 namespace OpenIZ.Messaging.RISI.Wcf
 {
@@ -28,7 +32,26 @@ namespace OpenIZ.Messaging.RISI.Wcf
 	[ServiceContract(Namespace = "http://openiz.org/risi/1.0", Name = "RISI", ConfigurationName = "RISI_1.0")]
 	public interface IRisiContract
 	{
-		[WebGet(UriTemplate = "/temp", BodyStyle = WebMessageBodyStyle.Bare)]
-		object PlaceHolderOperation();
+		/// <summary>
+		/// Deletes a report definition.
+		/// </summary>
+		/// <param name="id">The id of the report definition to delete.</param>
+		/// <returns>Returns the deleted report definition.</returns>
+		[WebInvoke(UriTemplate = "/report/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		ReportDefinition DeleteReportDefinition(string id);
+
+		/// <summary>
+		/// Gets a report definition by id.
+		/// </summary>
+		/// <param name="id">The id of the report definition to retrieve.</param>
+		/// <returns>Returns a report definition.</returns>
+		[WebGet(UriTemplate = "/report/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
+		ReportDefinition GetReportDefinition(string id);
+
+		[WebGet(UriTemplate = "/report/{id}/parm", BodyStyle = WebMessageBodyStyle.Bare)]
+		List<ParameterDefinition> GetReportParameters(string id);
+
+		[WebGet(UriTemplate = "/report/{id}/source", BodyStyle = WebMessageBodyStyle.Bare)]
+		ReportDefinition GetReportSource(string id);
 	}
 }

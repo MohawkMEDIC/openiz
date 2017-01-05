@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -15,18 +15,24 @@
  * the License.
  *
  * User: khannan
- * Date: 2016-12-4
+ * Date: 2017-1-5
  */
 
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.RISI
 {
 	/// <summary>
-	/// Represents an auto complete source definition
+	/// Represents an auto complete source which is fed from a static list of members
 	/// </summary>
-	[XmlType(nameof(AutoCompleteSourceDefinition), Namespace = "http://openiz.org/risi")]
-	public abstract class AutoCompleteSourceDefinition : BaseEntityData
+	[XmlType(nameof(ListAutoCompleteSourceDefinition), Namespace = "http://openiz.org/risi")]
+	public class ListAutoCompleteSourceDefinition : AutoCompleteSourceDefinition
 	{
+		/// <summary>
+		/// Gets or sets the static list of auto-complete items
+		/// </summary>
+		[XmlElement("item")]
+		public List<string> Item { get; set; }
 	}
 }

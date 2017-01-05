@@ -18,14 +18,44 @@
  * Date: 2016-8-28
  */
 using System;
+using System.Collections.Generic;
 using System.ServiceModel;
+using OpenIZ.Core.Model.RISI;
 
 namespace OpenIZ.Messaging.RISI.Wcf
 {
+	/// <summary>
+	/// Provides operations for running and managing reports.
+	/// </summary>
 	[ServiceBehavior(ConfigurationName = "RISI")]
 	public class RisiBehavior : IRisiContract
 	{
-		public object PlaceHolderOperation()
+		/// <summary>
+		/// Deletes a report definition.
+		/// </summary>
+		/// <param name="id">The id of the report definition to delete.</param>
+		/// <returns>Returns the deleted report definition.</returns>
+		public ReportDefinition DeleteReportDefinition(string id)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets a report definition by id.
+		/// </summary>
+		/// <param name="id">The id of the report definition to retrieve.</param>
+		/// <returns>Returns a report definition.</returns>
+		public ReportDefinition GetReportDefinition(string id)
+		{
+			throw new NotImplementedException();
+		}
+
+		public List<ParameterDefinition> GetReportParameters(string id)
+		{
+			throw new NotImplementedException();
+		}
+
+		public ReportDefinition GetReportSource(string id)
 		{
 			throw new NotImplementedException();
 		}
