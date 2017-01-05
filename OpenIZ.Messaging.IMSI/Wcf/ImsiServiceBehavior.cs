@@ -376,7 +376,14 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                                 wtp.WaitOne();
                             }
                         }
-                        return BundleUtil.CreateBundle(retVal, totalResults, Int32.Parse(offset ?? "0"), WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_lean"] != null);
+
+	                    var lean = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_lean"];
+
+	                    bool parsedLean = false;
+
+	                    bool.TryParse(lean, out parsedLean);
+
+						return BundleUtil.CreateBundle(retVal, totalResults, Int32.Parse(offset ?? "0"), parsedLean);
                     }
                 }
                 else
