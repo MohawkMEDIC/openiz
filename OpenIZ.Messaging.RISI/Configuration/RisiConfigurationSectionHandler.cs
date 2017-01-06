@@ -45,28 +45,7 @@ namespace OpenIZ.Messaging.RISI.Configuration
 
 			if (type == null)
 			{
-				throw new ConfigurationErrorsException("The 'reportEngine' element must have a type attribute");
-			}
-
-			if (!Enum.GetNames(typeof(ReportEngineType)).Contains(type))
-			{
-				throw new ConfigurationErrorsException($"The 'type' attribute must be a valid { nameof(ReportEngineType) } value. Valid values: { string.Join(", ", Enum.GetNames(typeof(ReportEngineType))) }");
-			}
-
-			ReportEngineType reportEngineType;
-
-			Enum.TryParse<ReportEngineType>(type, out reportEngineType);
-
-			switch (reportEngineType)
-			{
-				case ReportEngineType.Jasper:
-					break;
-
-				case ReportEngineType.MsSql:
-					break;
-
-				default:
-					throw new ArgumentOutOfRangeException();
+				throw new ConfigurationErrorsException("The 'reportEngine' element must have a 'type' attribute");
 			}
 
 			var address = reportEngineElement.Attributes["address"]?.Value;
@@ -81,7 +60,10 @@ namespace OpenIZ.Messaging.RISI.Configuration
 				throw new ConfigurationErrorsException("The 'address' attribute must be a well formed URI");
 			}
 
-			return new RisiConfiguration(new Uri(address), reportEngineType);
+			//Type.GetType(type, true)
+
+			// TODO: replace with actual type
+			return new RisiConfiguration(new Uri(address), typeof(object));
 		}
 	}
 }

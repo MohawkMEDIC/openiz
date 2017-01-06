@@ -47,13 +47,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoCompleteDefinition.cs" />
+    <Compile Include="Impl\DefaultDataTypeProvider.cs" />
+    <Compile Include="Impl\DefaultParameterProvider.cs" />
+    <Compile Include="Interfaces\IDataTypeProvider.cs" />
+    <Compile Include="Interfaces\IParameterProvider.cs" />
     <Compile Include="ListAutoCompleteSourceDefinition.cs" />
-    <Compile Include="Parameter.cs" />
+    <Compile Include="ReportParameter.cs" />
     <Compile Include="ParameterDefinition.cs" />
     <Compile Include="ParameterManifest.cs" />
-    <Compile Include="ParameterTypeDefinition.cs" />
+    <Compile Include="ReportDataType.cs" />
     <Compile Include="QueryAutoCompleteSourceDefinition.cs" />
-    <Compile Include="ReportDefinition.cs" />
+    <Compile Include="Report.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RisiCollection.cs" />
   </ItemGroup>

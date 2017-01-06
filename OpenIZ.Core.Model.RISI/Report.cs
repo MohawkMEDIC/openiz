@@ -18,51 +18,41 @@
  * Date: 2016-12-4
  */
 
-using System;
+using OpenIZ.Core.Model.Security;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.RISI
 {
 	/// <summary>
-	/// Represents a parameter type definition.
+	/// Represents a stored query to be performed against the RISI.
 	/// </summary>
-	[XmlType(nameof(ParameterTypeDefinition), Namespace = "http://openiz.org/risi")]
-	[XmlRoot(nameof(ParameterTypeDefinition), Namespace = "http://openiz.org/risi")]
-	public class ParameterTypeDefinition : BaseEntityData
+	[XmlType(nameof(Report), Namespace = "http://openiz.org/risi")]
+	[XmlRoot(nameof(Report), Namespace = "http://openiz.org/risi")]
+	public class Report : BaseEntityData
 	{
 		/// <summary>
-		/// Gets or sets the auto-complete source.
+		/// Gets or sets the description of the report.
 		/// </summary>
-		[XmlElement("listAutoComplete", Type = typeof(ListAutoCompleteSourceDefinition))]
-		[XmlElement("queryAutoComplete", Type = typeof(QueryAutoCompleteSourceDefinition))]
-		public AutoCompleteSourceDefinition AutoCompleteSource { get; set; }
+		[XmlElement("description")]
+		public string Description { get; set; }
 
 		/// <summary>
-		/// Gets or sets the name of the type.
+		/// Gets or sets the name of the stored query.
 		/// </summary>
 		[XmlElement("name")]
 		public string Name { get; set; }
 
 		/// <summary>
-		/// Gets or sets the system type.
+		/// Gets or sets a list of parameters which is supported for the specified query.
 		/// </summary>
-		[XmlIgnore]
-		public Type SystemType { get; set; }
+		[XmlElement("parameters")]
+		public List<ReportParameter> Parameters { get; set; }
 
 		/// <summary>
-		/// Gets or sets the system type in XML.
+		/// Gets or sets security policy instances related to the query definition.
 		/// </summary>
-		[XmlElement("systemType")]
-		public string SystemTypeXml
-		{
-			get
-			{
-				return this.SystemType.AssemblyQualifiedName;
-			}
-			set
-			{
-				this.SystemType = System.Type.GetType(value);
-			}
-		}
+		[XmlElement("policy")]
+		public List<SecurityPolicyInstance> Policies { get; set; }
 	}
 }

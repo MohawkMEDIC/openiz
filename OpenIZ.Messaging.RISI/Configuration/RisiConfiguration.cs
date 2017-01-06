@@ -32,18 +32,18 @@ namespace OpenIZ.Messaging.RISI.Configuration
 		/// with a specified report engine type.
 		/// </summary>
 		/// <param name="address">The address of the reporting engine.</param>
-		/// <param name="reportEngineType">The type of report engine.</param>
-		public RisiConfiguration(Uri address, ReportEngineType reportEngineType)
+		/// <param name="handler">The type of report engine.</param>
+		public RisiConfiguration(Uri address, Type handler)
 		{
 			this.Address = address;
-			this.ReportEngineType = reportEngineType;
+			this.Handler = handler;
 		}
 
-		public Uri Address { get; set; }
+		public Uri Address { get; private set; }
 
 		/// <summary>
-		/// Gets the report engine type of the configuration.
+		/// Gets the engine handler of the configuration.
 		/// </summary>
-		public ReportEngineType ReportEngineType { get; private set; }
+		public Type Handler { get; private set; }
 	}
 }
