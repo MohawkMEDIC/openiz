@@ -29,6 +29,14 @@ namespace OpenIZ.Core.Model.RISI
 	public class QueryAutoCompleteSourceDefinition : AutoCompleteSourceDefinition
 	{
 		/// <summary>
+		/// Initializes a new instance of the <see cref="QueryAutoCompleteSourceDefinition"/> class.
+		/// </summary>
+		public QueryAutoCompleteSourceDefinition()
+		{
+			
+		}
+
+		/// <summary>
 		/// Gets or sets the query itself.
 		/// </summary>
 		[XmlElement("query")]

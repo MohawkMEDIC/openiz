@@ -30,9 +30,17 @@ namespace OpenIZ.Core.Model.RISI
 	public class ListAutoCompleteSourceDefinition : AutoCompleteSourceDefinition
 	{
 		/// <summary>
+		/// Initializes a new instance of the <see cref="ListAutoCompleteSourceDefinition"/> class.
+		/// </summary>
+		public ListAutoCompleteSourceDefinition()
+		{
+			
+		}
+
+		/// <summary>
 		/// Gets or sets the static list of auto-complete items.
 		/// </summary>
 		[XmlElement("item")]
-		public List<string> Item { get; set; }
+		public List<KeyValuePair<string, object>> Items { get; set; }
 	}
 }

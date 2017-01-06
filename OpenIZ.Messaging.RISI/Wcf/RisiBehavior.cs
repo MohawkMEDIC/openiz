@@ -79,6 +79,13 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns the report in raw format.</returns>
 		public byte[] ExecuteReport(string id, string format, List<ReportParameter> parameters)
 		{
+			Guid reportId;
+
+			if (!Guid.TryParse(id, out reportId))
+			{
+				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
+			}
+
 			throw new NotImplementedException();
 		}
 

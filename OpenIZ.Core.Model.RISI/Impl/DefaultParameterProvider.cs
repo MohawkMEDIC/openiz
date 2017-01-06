@@ -18,6 +18,7 @@
  * Date: 2017-1-5
  */
 
+using System;
 using OpenIZ.Core.Model.RISI.Interfaces;
 
 namespace OpenIZ.Core.Model.RISI.Impl
@@ -25,13 +26,24 @@ namespace OpenIZ.Core.Model.RISI.Impl
 	/// <summary>
 	/// Represents a default parameter provider.
 	/// </summary>
-	public class DefaultParameterProvider : IParameterProvider
+	internal sealed class DefaultParameterProvider : IParameterProvider
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DefaultParameterProvider"/> class.
 		/// </summary>
-		public DefaultParameterProvider()
+		internal DefaultParameterProvider()
 		{
+		}
+
+		/// <summary>
+		/// Gets a value for a given parameter.
+		/// </summary>
+		/// <typeparam name="T">The type of parameter to retrieve.</typeparam>
+		/// <param name="id">The id of the parameter.</param>
+		/// <returns>Returns the value of the parameter.</returns>
+		public T GetValue<T>(Guid id)
+		{
+			return default(T);
 		}
 	}
 }

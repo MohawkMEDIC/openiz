@@ -18,6 +18,8 @@
  * Date: 2017-1-5
  */
 
+using System;
+using System.Collections.Generic;
 using OpenIZ.Core.Model.RISI.Interfaces;
 
 namespace OpenIZ.Core.Model.RISI.Impl
@@ -25,13 +27,35 @@ namespace OpenIZ.Core.Model.RISI.Impl
 	/// <summary>
 	/// Represents a default data type provider.
 	/// </summary>
-	public class DefaultDataTypeProvider : IDataTypeProvider
+	internal sealed class DefaultDataTypeProvider : IDataTypeProvider
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DefaultDataTypeProvider"/> class.
 		/// </summary>
 		public DefaultDataTypeProvider()
 		{
+		}
+
+		/// <summary>
+		/// Gets the value for a given data type.
+		/// </summary>
+		/// <typeparam name="T">The type of data which is contained in the data type.</typeparam>
+		/// <param name="id">The id of the data type.</param>
+		/// <returns>Returns the value.</returns>
+		public T GetValue<T>(Guid id)
+		{
+			return default(T);
+		}
+
+		/// <summary>
+		/// Gets a list of values for a given data type.
+		/// </summary>
+		/// <typeparam name="T">The type of data which is contained in the data type.</typeparam>
+		/// <param name="id">The id of the data type.</param>
+		/// <returns>Returns a list of values.</returns>
+		public IEnumerable<T> GetValues<T>(Guid id)
+		{
+			return default(IEnumerable<T>);
 		}
 	}
 }

@@ -18,6 +18,8 @@
  * Date: 2017-1-5
  */
 
+using System;
+
 namespace OpenIZ.Core.Model.RISI.Interfaces
 {
 	/// <summary>
@@ -25,5 +27,12 @@ namespace OpenIZ.Core.Model.RISI.Interfaces
 	/// </summary>
 	public interface IParameterProvider
 	{
+		/// <summary>
+		/// Gets a value for a given parameter.
+		/// </summary>
+		/// <typeparam name="T">The type of parameter to retrieve.</typeparam>
+		/// <param name="id">The id of the parameter.</param>
+		/// <returns>Returns the value of the parameter.</returns>
+		T GetValue<T>(Guid id);
 	}
 }

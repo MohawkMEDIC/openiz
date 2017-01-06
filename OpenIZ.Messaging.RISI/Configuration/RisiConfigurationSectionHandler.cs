@@ -18,6 +18,7 @@
  * Date: 2016-8-28
  */
 
+using OpenIZ.Reporting.Core;
 using System;
 using System.Configuration;
 using System.Linq;
@@ -60,10 +61,19 @@ namespace OpenIZ.Messaging.RISI.Configuration
 				throw new ConfigurationErrorsException("The 'address' attribute must be a well formed URI");
 			}
 
-			//Type.GetType(type, true)
+			var handler = Type.GetType(type, true);
 
-			// TODO: replace with actual type
-			return new RisiConfiguration(new Uri(address), typeof(object));
+			if (!handler.IsClass || handler.IsAbstract)
+			{
+				throw new ConfigurationErrorsException($"The type { handler.AssemblyQualifiedName } must be a class and non-abstract");
+			}
+
+			if (handler.GetInterface(nameof(IReportHandler)) == null)
+			{
+				throw new ConfigurationErrorsException($"The type { handler.AssemblyQualifiedName } must implement type { typeof(IReportHandler).AssemblyQualifiedName }");
+			}
+
+			return new RisiConfiguration(new Uri(address), handler);
 		}
 	}
 }

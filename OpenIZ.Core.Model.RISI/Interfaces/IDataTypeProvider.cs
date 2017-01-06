@@ -18,6 +18,10 @@
  * Date: 2017-1-5
  */
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
 namespace OpenIZ.Core.Model.RISI.Interfaces
 {
 	/// <summary>
@@ -25,5 +29,20 @@ namespace OpenIZ.Core.Model.RISI.Interfaces
 	/// </summary>
 	public interface IDataTypeProvider
 	{
+		/// <summary>
+		/// Gets the value for a given data type.
+		/// </summary>
+		/// <typeparam name="T">The type of data which is contained in the data type.</typeparam>
+		/// <param name="id">The id of the data type.</param>
+		/// <returns>Returns the value.</returns>
+		T GetValue<T>(Guid id);
+
+		/// <summary>
+		/// Gets a list of values for a given data type.
+		/// </summary>
+		/// <typeparam name="T">The type of data which is contained in the data type.</typeparam>
+		/// <param name="id">The id of the data type.</param>
+		/// <returns>Returns a list of values.</returns>
+		IEnumerable<T> GetValues<T>(Guid id);
 	}
 }

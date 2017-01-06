@@ -55,7 +55,7 @@ namespace OpenIZ.Core.Model.RISI
 		/// Gets or sets the default provider of the report parameter.
 		/// </summary>
 		[XmlElement("provider")]
-		public IParameterProvider Provider { get; set; }
+		public string Provider { get; set; }
 
 		/// <summary>
 		/// Gets or sets the name of the parameter.
