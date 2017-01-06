@@ -15,22 +15,20 @@
  * the License.
  *
  * User: khannan
- * Date: 2017-1-5
+ * Date: 2017-1-6
  */
-
-using System.Security.Cryptography.X509Certificates;
 
 namespace OpenIZ.Reporting.Core
 {
 	/// <summary>
-	/// Represents a service which supports certificate based authentication.
+	/// Represents a service which supports bearer authentication.
 	/// </summary>
-	public interface ISupportCertificateAuthentication
+	public interface ISupportBearerAuthentication
 	{
 		/// <summary>
-		/// Authenticates against a remote system using a certificate.
+		/// Authenticates against a remote system using a bearer token.
 		/// </summary>
-		/// <param name="certificate">The certificate to use to authenticate.</param>
-		void Authenticate(X509Certificate2 certificate);
+		/// <param name="token">The bearer token used to authenticate against the remote system.</param>
+		void Authenticate(string token);
 	}
 }

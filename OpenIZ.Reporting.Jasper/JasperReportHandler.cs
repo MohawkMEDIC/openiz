@@ -39,7 +39,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// <summary>
 		/// The internal reference to the <see cref="HttpClient"/> instance.
 		/// </summary>
-		private HttpClient client;
+		private readonly HttpClient client;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="JasperReportHandler"/> class
@@ -79,7 +79,7 @@ namespace OpenIZ.Reporting.Jasper
 
 			var orderedParameters = parameters.OrderBy(p => p.Order);
 
-			var output = (format.GetType().GetField(format.ToString()).GetCustomAttributes(typeof(ReportFormat), false) as StringValueAttribute[])?[0]?.Value;
+			var output = (format.GetType().GetField(format.ToString()).GetCustomAttributes(typeof(ReportFormat), false) as FileExtensionAttribute[])?[0]?.Extension;
 
 			if (output == null)
 			{

@@ -18,19 +18,33 @@
  * Date: 2017-1-5
  */
 
-using System.Security.Cryptography.X509Certificates;
+using System;
 
-namespace OpenIZ.Reporting.Core
+namespace OpenIZ.Reporting.Core.Attributes
 {
 	/// <summary>
-	/// Represents a service which supports certificate based authentication.
+	/// Represents an attribute which defines a file extension for a given field.
 	/// </summary>
-	public interface ISupportCertificateAuthentication
+	[AttributeUsage(AttributeTargets.Field)]
+	public sealed class FileExtensionAttribute : Attribute
 	{
 		/// <summary>
-		/// Authenticates against a remote system using a certificate.
+		/// Initializes a new instance of the <see cref="FileExtensionAttribute"/> class.
 		/// </summary>
-		/// <param name="certificate">The certificate to use to authenticate.</param>
-		void Authenticate(X509Certificate2 certificate);
+		/// <param name="extension">The value of the file extension.</param>
+		public FileExtensionAttribute(string extension)
+		{
+			if (extension.StartsWith("."))
+			{
+				throw new ArgumentException("The extension value cannot start with a '.'");
+			}
+
+			this.Extension = extension;
+		}
+
+		/// <summary>
+		/// Gets or sets the file extension.
+		/// </summary>
+		public string Extension { get; }
 	}
 }
