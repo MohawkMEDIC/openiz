@@ -46,10 +46,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\ReportEngineType.cs" />
     <Compile Include="Configuration\RisiConfiguration.cs" />
     <Compile Include="Configuration\RisiConfigurationSectionHandler.cs" />
     <Compile Include="RisiMessageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Wcf\Behavior\RisiRestEndpointBehavior.cs" />
+    <Compile Include="Wcf\Behavior\RisiSerializerOperationBehavior.cs" />
     <Compile Include="Wcf\IRisiContract.cs" />
     <Compile Include="Wcf\RisiBehavior.cs" />
   </ItemGroup>
@@ -60,6 +63,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.Core.Model.RISI\OpenIZ.Core.Model.RISI.csproj">
+      <Project>{f3d2fa84-c398-4390-9834-1272cc2d6f89}</Project>
+      <Name>OpenIZ.Core.Model.RISI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
       <Project>{f1a82a4f-4a57-47d7-ae76-444c8a4ff54a}</Project>
       <Name>OpenIZ.Core.Model</Name>

@@ -222,7 +222,14 @@ namespace OpenIZ.Messaging.IMSI.Util
 									// Get the backing property
 									var expandProp = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<SerializationReferenceAttribute>().FirstOrDefault()?.RedirectProperty == keyPi.Name);
 
-									scope = expandProp != null ? expandProp.GetValue(sc) : keyPi.GetValue(sc);
+									if (expandProp != null)
+									{
+										scope = expandProp.GetValue(sc);
+									}
+									else
+									{
+										scope = keyPi.GetValue(sc);
+									}
 								}
 							}
 							else

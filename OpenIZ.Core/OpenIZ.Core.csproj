@@ -109,6 +109,7 @@
     <Compile Include="Services\Impl\LocalMetadataRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalOrganizationRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalPatientRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalPersonRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalPlaceRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalProviderRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalServiceManager.cs" />
