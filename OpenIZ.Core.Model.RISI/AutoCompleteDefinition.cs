@@ -23,7 +23,7 @@ using System.Xml.Serialization;
 namespace OpenIZ.Core.Model.RISI
 {
 	/// <summary>
-	/// Represents an auto complete source definition
+	/// Represents an auto complete source definition.
 	/// </summary>
 	[XmlType(nameof(AutoCompleteSourceDefinition), Namespace = "http://openiz.org/risi")]
 	public abstract class AutoCompleteSourceDefinition : BaseEntityData

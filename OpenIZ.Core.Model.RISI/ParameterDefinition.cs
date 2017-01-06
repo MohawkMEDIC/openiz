@@ -29,6 +29,29 @@ namespace OpenIZ.Core.Model.RISI
 	[XmlType(nameof(ParameterDefinition), Namespace = "http://openiz.org/risi")]
 	public class ParameterDefinition : BaseEntityData
 	{
+		protected ParameterDefinition()
+		{
+			
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ParameterDefinition"/> class
+		/// with a specific name and type.
+		/// </summary>
+		/// <param name="name">The name of the parameter.</param>
+		/// <param name="typeId">The type of the parameter.</param>
+		public ParameterDefinition(string name, Guid typeId)
+		{
+			this.Name = name;
+			this.TypeId = typeId;
+		}
+
+		/// <summary>
+		/// Gets or sets whether the parameter is a required parameter.
+		/// </summary>
+		[XmlElement("isRequired")]
+		public bool IsRequired { get; set; }
+
 		/// <summary>
 		/// Gets or sets the name of the parameter.
 		/// </summary>

@@ -24,13 +24,13 @@ using System.Xml.Serialization;
 namespace OpenIZ.Core.Model.RISI
 {
 	/// <summary>
-	/// Represents an auto complete source which is fed from a static list of members
+	/// Represents an auto complete source which is fed from a static list of members.
 	/// </summary>
 	[XmlType(nameof(ListAutoCompleteSourceDefinition), Namespace = "http://openiz.org/risi")]
 	public class ListAutoCompleteSourceDefinition : AutoCompleteSourceDefinition
 	{
 		/// <summary>
-		/// Gets or sets the static list of auto-complete items
+		/// Gets or sets the static list of auto-complete items.
 		/// </summary>
 		[XmlElement("item")]
 		public List<string> Item { get; set; }

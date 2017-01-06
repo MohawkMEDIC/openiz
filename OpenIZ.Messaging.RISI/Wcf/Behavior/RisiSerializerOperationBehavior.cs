@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * User: justi
- * Date: 2016-8-2
+ * User: khannan
+ * Date: 2017-1-5
  */
 
 using OpenIZ.Core.Wcf.Serialization;
@@ -23,12 +23,12 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 
-namespace OpenIZ.Messaging.AMI.Wcf.Behavior
+namespace OpenIZ.Messaging.RISI.Wcf.Behavior
 {
 	/// <summary>
-	/// AMI Serializer operation behavior
+	/// Represents serialization operation behavior for the RISI interface.
 	/// </summary>
-	internal class AmiSerializerOperationBehavior : IOperationBehavior
+	internal class RisiSerializerOperationBehavior : IOperationBehavior
 	{
 		public void AddBindingParameters(OperationDescription operationDescription, BindingParameterCollection bindingParameters)
 		{
@@ -45,7 +45,7 @@ namespace OpenIZ.Messaging.AMI.Wcf.Behavior
 		/// <param name="dispatchOperation">The dispatch description.</param>
 		public void ApplyDispatchBehavior(OperationDescription operationDescription, DispatchOperation dispatchOperation)
 		{
-			dispatchOperation.Formatter = new WcfMessageDispatchFormatter<IAmiContract>(operationDescription);
+			dispatchOperation.Formatter = new WcfMessageDispatchFormatter<IRisiContract>(operationDescription);
 		}
 
 		public void Validate(OperationDescription operationDescription)

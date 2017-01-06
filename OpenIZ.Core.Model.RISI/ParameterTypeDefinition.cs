@@ -41,7 +41,7 @@ namespace OpenIZ.Core.Model.RISI
 		/// Gets or sets the name of the type.
 		/// </summary>
 		[XmlElement("name")]
-		public String Name { get; set; }
+		public string Name { get; set; }
 
 		/// <summary>
 		/// Gets or sets the system type.

@@ -31,11 +31,62 @@ namespace OpenIZ.Messaging.RISI.Wcf
 	public class RisiBehavior : IRisiContract
 	{
 		/// <summary>
+		/// Creates a new report parameter type definition.
+		/// </summary>
+		/// <param name="parameterTypeDefinition">The report parameter type definition to create.</param>
+		/// <returns>Returns the created report parameter type definition.</returns>
+		public ParameterTypeDefinition CreateParameterType(ParameterTypeDefinition parameterTypeDefinition)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Creates a new report definition.
+		/// </summary>
+		/// <param name="reportDefinition">The report definition to create.</param>
+		/// <returns>Returns the created report definition.</returns>
+		public ReportDefinition CreateReportDefinition(ReportDefinition reportDefinition)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Deletes a report parameter type.
+		/// </summary>
+		/// <param name="id">The id of the report parameter type to delete.</param>
+		/// <returns>Returns the deleted report parameter type.</returns>
+		public ParameterTypeDefinition DeleteParameterType(string id)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// Deletes a report definition.
 		/// </summary>
 		/// <param name="id">The id of the report definition to delete.</param>
 		/// <returns>Returns the deleted report definition.</returns>
 		public ReportDefinition DeleteReportDefinition(string id)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Executes a report.
+		/// </summary>
+		/// <param name="id">The id of the report.</param>
+		/// <param name="format">The output format of the report.</param>
+		/// <param name="parameters">The list of parameters of the report.</param>
+		/// <returns>Returns the report in raw format.</returns>
+		public byte[] ExecuteReport(string id, string format, List<Parameter> parameters)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets a list of all report parameter types.
+		/// </summary>
+		/// <returns>Returns a list of report parameter types.</returns>
+		public List<ParameterTypeDefinition> GetAllReportParamterTypes()
 		{
 			throw new NotImplementedException();
 		}
@@ -50,12 +101,74 @@ namespace OpenIZ.Messaging.RISI.Wcf
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		/// Gets a list of report definitions based on a specific query.
+		/// </summary>
+		/// <returns>Returns a list of report definitions.</returns>
+		public List<ReportDefinition> GetReportDefintions()
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets detailed information about a given report parameter.
+		/// </summary>
+		/// <param name="id">The id of the report parameter for which to retrieve information.</param>
+		/// <returns>Returns a report parameter manifest.</returns>
+		public ParameterManifest GetReportParameterManifest(string id)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets a list of report parameters.
+		/// </summary>
+		/// <param name="id">The id of the report for which to retrieve parameters.</param>
+		/// <returns>Returns a list of parameters.</returns>
 		public List<ParameterDefinition> GetReportParameters(string id)
 		{
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		/// Gets a list of auto-complete parameters which are applicable for the specified parameter.
+		/// </summary>
+		/// <param name="id">The id of the report.</param>
+		/// <param name="parameterId">The id of the parameter for which to retrieve detailed information.</param>
+		/// <returns>Returns an auto complete source definition of valid parameters values for a given parameter.</returns>
+		public AutoCompleteSourceDefinition GetReportParameterValues(string id, string parameterId)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets the report source.
+		/// </summary>
+		/// <param name="id">The id of the report for which to retrieve the source.</param>
+		/// <returns>Returns the report source.</returns>
 		public ReportDefinition GetReportSource(string id)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Updates a parameter type definition.
+		/// </summary>
+		/// <param name="id">The id of the parameter type.</param>
+		/// <param name="parameterTypeDefinition"></param>
+		/// <returns></returns>
+		public ParameterTypeDefinition UpdateParameterTypeDefinition(string id, ParameterTypeDefinition parameterTypeDefinition)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Updates a report definition.
+		/// </summary>
+		/// <param name="id">The id of the report definition to update.</param>
+		/// <param name="reportDefinition">The updated report definition.</param>
+		/// <returns>Returns the updated report definition.</returns>
+		public ReportDefinition UpdateReportDefinition(string id, ReportDefinition reportDefinition)
 		{
 			throw new NotImplementedException();
 		}
