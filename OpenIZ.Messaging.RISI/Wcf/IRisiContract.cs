@@ -54,6 +54,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns the created report definition.</returns>
 		[WebInvoke(UriTemplate = "/report", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		ReportDefinition CreateReportDefinition(ReportDefinition reportDefinition);
+
 		/// <summary>
 		/// Deletes a report parameter type.
 		/// </summary>
@@ -85,7 +86,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
 		[WebGet(UriTemplate = "/type", BodyStyle = WebMessageBodyStyle.Bare)]
-		List<ParameterTypeDefinition> GetAllReportParamterTypes();
+		RisiCollection GetAllReportParamterTypes();
 
 		/// <summary>
 		/// Gets a report definition by id.
@@ -100,7 +101,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
 		[WebGet(UriTemplate = "/report", BodyStyle = WebMessageBodyStyle.Bare)]
-		List<ReportDefinition> GetReportDefintions();
+		RisiCollection GetReportDefintions();
 
 		/// <summary>
 		/// Gets detailed information about a given report parameter.
@@ -116,7 +117,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="id">The id of the report for which to retrieve parameters.</param>
 		/// <returns>Returns a list of parameters.</returns>
 		[WebGet(UriTemplate = "/report/{id}/parm", BodyStyle = WebMessageBodyStyle.Bare)]
-		List<ParameterDefinition> GetReportParameters(string id);
+		RisiCollection GetReportParameters(string id);
 
 		/// <summary>
 		/// Gets a list of auto-complete parameters which are applicable for the specified parameter.
@@ -140,7 +141,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <param name="id">The id of the parameter type.</param>
 		/// <param name="parameterTypeDefinition"></param>
-		/// <returns></returns>
+		/// <returns>Returns the updated parameter type definition.</returns>
 		[WebInvoke(UriTemplate = "/type/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		ParameterTypeDefinition UpdateParameterTypeDefinition(string id, ParameterTypeDefinition parameterTypeDefinition);
 

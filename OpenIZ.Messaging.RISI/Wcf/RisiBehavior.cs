@@ -86,7 +86,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
-		public List<ParameterTypeDefinition> GetAllReportParamterTypes()
+		public RisiCollection GetAllReportParamterTypes()
 		{
 			throw new NotImplementedException();
 		}
@@ -105,7 +105,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// Gets a list of report definitions based on a specific query.
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
-		public List<ReportDefinition> GetReportDefintions()
+		public RisiCollection GetReportDefintions()
 		{
 			throw new NotImplementedException();
 		}
@@ -125,7 +125,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve parameters.</param>
 		/// <returns>Returns a list of parameters.</returns>
-		public List<ParameterDefinition> GetReportParameters(string id)
+		public RisiCollection GetReportParameters(string id)
 		{
 			throw new NotImplementedException();
 		}
@@ -156,7 +156,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <param name="id">The id of the parameter type.</param>
 		/// <param name="parameterTypeDefinition"></param>
-		/// <returns></returns>
+		/// <returns>Returns the updated parameter type definition.</returns>
 		public ParameterTypeDefinition UpdateParameterTypeDefinition(string id, ParameterTypeDefinition parameterTypeDefinition)
 		{
 			throw new NotImplementedException();
