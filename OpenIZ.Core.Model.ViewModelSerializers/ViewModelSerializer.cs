@@ -1251,7 +1251,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 return null;
             }
             try {
-                _strong = ((string)(o));
+                _strong = o.ToString();
             }
             catch (System.Exception e) {
                 this.m_tracer.TraceError(string.Format("Casting Error: {0}", e));
@@ -7602,7 +7602,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 return null;
             }
             try {
-                _strong = ((string)(o));
+                _strong = o.ToString();
             }
             catch (System.Exception e) {
                 this.m_tracer.TraceError(string.Format("Casting Error: {0}", e));
@@ -8081,7 +8081,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 return null;
             }
             try {
-                _strong = ((string)(o));
+                _strong = o.ToString();
             }
             catch (System.Exception e) {
                 this.m_tracer.TraceError(string.Format("Casting Error: {0}", e));
@@ -14719,7 +14719,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 return null;
             }
             try {
-                _strong = ((string)(o));
+                _strong = o.ToString();
             }
             catch (System.Exception e) {
                 this.m_tracer.TraceError(string.Format("Casting Error: {0}", e));
@@ -15956,7 +15956,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 return null;
             }
             try {
-                _strong = ((string)(o));
+                _strong = o.ToString();
             }
             catch (System.Exception e) {
                 this.m_tracer.TraceError(string.Format("Casting Error: {0}", e));
@@ -16174,7 +16174,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 return null;
             }
             try {
-                _strong = ((string)(o));
+                _strong = o.ToString();
             }
             catch (System.Exception e) {
                 this.m_tracer.TraceError(string.Format("Casting Error: {0}", e));
@@ -17380,7 +17380,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 return null;
             }
             try {
-                _strong = ((string)(o));
+                _strong = o.ToString();
             }
             catch (System.Exception e) {
                 this.m_tracer.TraceError(string.Format("Casting Error: {0}", e));
@@ -17614,7 +17614,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 return null;
             }
             try {
-                _strong = ((string)(o));
+                _strong = o.ToString();
             }
             catch (System.Exception e) {
                 this.m_tracer.TraceError(string.Format("Casting Error: {0}", e));
@@ -18504,7 +18504,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 return null;
             }
             try {
-                _strong = ((string)(o));
+                _strong = o.ToString();
             }
             catch (System.Exception e) {
                 this.m_tracer.TraceError(string.Format("Casting Error: {0}", e));
@@ -18795,7 +18795,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 return null;
             }
             try {
-                _strong = ((string)(o));
+                _strong = o.ToString();
             }
             catch (System.Exception e) {
                 this.m_tracer.TraceError(string.Format("Casting Error: {0}", e));
@@ -19086,7 +19086,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 return null;
             }
             try {
-                _strong = ((string)(o));
+                _strong = o.ToString();
             }
             catch (System.Exception e) {
                 this.m_tracer.TraceError(string.Format("Casting Error: {0}", e));

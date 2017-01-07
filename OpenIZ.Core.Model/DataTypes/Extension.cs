@@ -84,7 +84,7 @@ namespace OpenIZ.Core.Model.DataTypes
                 }
                 catch
                 {
-
+                    this.ExtensionValueXml = Encoding.UTF8.GetBytes(value);
                 }
             }
         }

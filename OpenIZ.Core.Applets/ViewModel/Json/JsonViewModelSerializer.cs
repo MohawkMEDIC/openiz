@@ -391,7 +391,9 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 {
                     w.WriteStartArray();
                     foreach (var itm in instance as IList)
+                    {
                         this.WritePropertyUtil(w, null, itm, new JsonSerializationContext(propertyName, this, instance, context as JsonSerializationContext), noSubContext);
+                    }
                     w.WriteEndArray();
                 }
                 else

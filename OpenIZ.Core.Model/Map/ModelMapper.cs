@@ -92,7 +92,8 @@ namespace OpenIZ.Core.Model.Map
             typeof(DateTimeOffset),
             typeof(DateTimeOffset?),
             typeof(UInt32),
-            typeof(UInt32?)
+            typeof(UInt32?),
+            typeof(byte[])
         };
 
         // The map file
