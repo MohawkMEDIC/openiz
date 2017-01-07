@@ -26,30 +26,20 @@ using System.Xml.Serialization;
 
 namespace OpenIZ.Persistence.Reporting.Model
 {
-	/// <summary>
-	/// Represents a report definition.
-	/// </summary>
-	[XmlRoot(nameof(ReportDefinition), Namespace = "http://openiz.org/risi")]
-	[XmlType(nameof(ReportDefinition), Namespace = "http://openiz.org/risi")]
-	public class ReportDefinition
+	[XmlType(nameof(ParameterValue), Namespace = "http://openiz.org/risi")]
+	public class ParameterValue
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ReportDefinition"/> class.
-		/// </summary>
-		public ReportDefinition()
+		public ParameterValue()
 		{
 			
 		}
 
-		/// <summary>
-		/// Gets or sets the description of the report.
-		/// </summary>
-		[XmlAttribute("description")]
-		public string Description { get; set; }
+		public ParameterValue(object value)
+		{
+			this.Value = value;
+		}
 
-		[XmlAttribute("author")]
-		public string Author { get; set; }
-
-		public List<ReportParameter> Parameters { get; set; }
+		[XmlElement("value")]
+		public object Value { get; set; }
 	}
 }

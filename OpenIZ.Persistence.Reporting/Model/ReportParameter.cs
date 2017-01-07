@@ -26,30 +26,28 @@ using System.Xml.Serialization;
 
 namespace OpenIZ.Persistence.Reporting.Model
 {
-	/// <summary>
-	/// Represents a report definition.
-	/// </summary>
-	[XmlRoot(nameof(ReportDefinition), Namespace = "http://openiz.org/risi")]
-	[XmlType(nameof(ReportDefinition), Namespace = "http://openiz.org/risi")]
-	public class ReportDefinition
+	[XmlType(nameof(ReportParameter), Namespace = "http://openiz.org/risi")]
+	public class ReportParameter
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ReportDefinition"/> class.
-		/// </summary>
-		public ReportDefinition()
+		public ReportParameter()
 		{
-			
+			this.DefaultValues = new List<ParameterValue>();
 		}
 
-		/// <summary>
-		/// Gets or sets the description of the report.
-		/// </summary>
-		[XmlAttribute("description")]
-		public string Description { get; set; }
+		[XmlElement("dataType")]
+		public Guid DataType { get; set; }
 
-		[XmlAttribute("author")]
-		public string Author { get; set; }
+		[XmlAttribute("defaultValue")]
+		public ParameterValue DefaultValue { get; set; }
 
-		public List<ReportParameter> Parameters { get; set; }
+		[XmlArray("defaultValues")]
+		[XmlArrayItem("defaultValue")]
+		public List<ParameterValue> DefaultValues { get; set; }
+
+		[XmlAttribute("isNullable")]
+		public bool IsNullable { get; set; }
+
+		[XmlAttribute("name")]
+		public string Name { get; set; }
 	}
 }
