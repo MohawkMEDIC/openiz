@@ -15,32 +15,20 @@
  * the License.
  *
  * User: khannan
- * Date: 2017-1-5
+ * Date: 2017-1-6
  */
 
-using System.Collections.Generic;
-using System.Xml.Serialization;
-
-namespace OpenIZ.Core.Model.RISI
+namespace OpenIZ.Reporting.Core
 {
 	/// <summary>
-	/// Represents an auto complete source which is fed from a static list of members.
+	/// Represents a service which supports bearer authentication.
 	/// </summary>
-	[XmlType(nameof(ListAutoCompleteSourceDefinition), Namespace = "http://openiz.org/risi")]
-	public class ListAutoCompleteSourceDefinition : AutoCompleteSourceDefinition
+	public interface ISupportBearerAuthentication
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ListAutoCompleteSourceDefinition"/> class.
+		/// Authenticates against a remote system using a bearer token.
 		/// </summary>
-		public ListAutoCompleteSourceDefinition()
-		{
-			
-		}
-
-		/// <summary>
-		/// Gets or sets the static list of auto-complete items.
-		/// </summary>
-		[XmlElement("item")]
-		public List<KeyValuePair<string, object>> Items { get; set; }
+		/// <param name="token">The bearer token used to authenticate against the remote system.</param>
+		void Authenticate(string token);
 	}
 }

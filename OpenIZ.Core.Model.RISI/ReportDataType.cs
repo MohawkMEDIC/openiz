@@ -26,9 +26,9 @@ namespace OpenIZ.Core.Model.RISI
 	/// <summary>
 	/// Represents a parameter type definition.
 	/// </summary>
-	[XmlType(nameof(ParameterTypeDefinition), Namespace = "http://openiz.org/risi")]
-	[XmlRoot(nameof(ParameterTypeDefinition), Namespace = "http://openiz.org/risi")]
-	public class ParameterTypeDefinition : BaseEntityData
+	[XmlType(nameof(ReportDataType), Namespace = "http://openiz.org/risi")]
+	[XmlRoot(nameof(ReportDataType), Namespace = "http://openiz.org/risi")]
+	public class ReportDataType : BaseEntityData
 	{
 		/// <summary>
 		/// Gets or sets the auto-complete source.
@@ -36,6 +36,12 @@ namespace OpenIZ.Core.Model.RISI
 		[XmlElement("listAutoComplete", Type = typeof(ListAutoCompleteSourceDefinition))]
 		[XmlElement("queryAutoComplete", Type = typeof(QueryAutoCompleteSourceDefinition))]
 		public AutoCompleteSourceDefinition AutoCompleteSource { get; set; }
+
+		/// <summary>
+		/// Gets or sets the description of the report data type.
+		/// </summary>
+		[XmlAttribute("description")]
+		public string Description { get; set; }
 
 		/// <summary>
 		/// Gets or sets the name of the type.
@@ -64,5 +70,17 @@ namespace OpenIZ.Core.Model.RISI
 				this.SystemType = System.Type.GetType(value);
 			}
 		}
+
+		/// <summary>
+		/// Gets or sets the value of the report data type.
+		/// </summary>
+		[XmlElement("values")]
+		public object[] Values { get; set; }
+
+		/// <summary>
+		/// Gets or sets the values provider of the report data type.
+		/// </summary>
+		[XmlAttribute("provider")]
+		public string ValuesProvider { get; set; }
 	}
 }

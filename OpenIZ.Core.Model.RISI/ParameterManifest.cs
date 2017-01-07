@@ -1,27 +1,23 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: khannan
  * Date: 2017-1-5
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.RISI
@@ -38,7 +34,6 @@ namespace OpenIZ.Core.Model.RISI
 		/// </summary>
 		public ParameterManifest()
 		{
-			
 		}
 
 		/// <summary>
@@ -56,7 +51,7 @@ namespace OpenIZ.Core.Model.RISI
 		/// with a specific <see cref="ParameterTypeDefinition"/> instance.
 		/// </summary>
 		/// <param name="parameterTypeDefinition">The parameter type definition.</param>
-		public ParameterManifest(ParameterTypeDefinition parameterTypeDefinition)
+		public ParameterManifest(ReportDataType parameterTypeDefinition)
 		{
 			this.ParameterTypeDefinition = parameterTypeDefinition;
 		}
@@ -70,7 +65,7 @@ namespace OpenIZ.Core.Model.RISI
 		/// <summary>
 		/// Gets or sets the parameter type definition.
 		/// </summary>
-		[XmlElement("parameterTypeDefinition", Type = typeof(ParameterTypeDefinition))]
-		public ParameterTypeDefinition ParameterTypeDefinition { get; set; }
+		[XmlElement("parameterTypeDefinition", Type = typeof(ReportDataType))]
+		public ReportDataType ParameterTypeDefinition { get; set; }
 	}
 }

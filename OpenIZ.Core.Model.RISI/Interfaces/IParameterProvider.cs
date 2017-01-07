@@ -18,29 +18,21 @@
  * Date: 2017-1-5
  */
 
-using System.Collections.Generic;
-using System.Xml.Serialization;
+using System;
 
-namespace OpenIZ.Core.Model.RISI
+namespace OpenIZ.Core.Model.RISI.Interfaces
 {
 	/// <summary>
-	/// Represents an auto complete source which is fed from a static list of members.
+	/// Represents a parameter provider.
 	/// </summary>
-	[XmlType(nameof(ListAutoCompleteSourceDefinition), Namespace = "http://openiz.org/risi")]
-	public class ListAutoCompleteSourceDefinition : AutoCompleteSourceDefinition
+	public interface IParameterProvider
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ListAutoCompleteSourceDefinition"/> class.
+		/// Gets a value for a given parameter.
 		/// </summary>
-		public ListAutoCompleteSourceDefinition()
-		{
-			
-		}
-
-		/// <summary>
-		/// Gets or sets the static list of auto-complete items.
-		/// </summary>
-		[XmlElement("item")]
-		public List<KeyValuePair<string, object>> Items { get; set; }
+		/// <typeparam name="T">The type of parameter to retrieve.</typeparam>
+		/// <param name="id">The id of the parameter.</param>
+		/// <returns>Returns the value of the parameter.</returns>
+		T GetValue<T>(Guid id);
 	}
 }

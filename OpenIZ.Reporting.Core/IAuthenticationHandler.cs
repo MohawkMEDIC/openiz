@@ -18,29 +18,14 @@
  * Date: 2017-1-5
  */
 
-using System.Collections.Generic;
-using System.Xml.Serialization;
+using System;
 
-namespace OpenIZ.Core.Model.RISI
+namespace OpenIZ.Reporting.Core
 {
 	/// <summary>
-	/// Represents an auto complete source which is fed from a static list of members.
+	/// Represents an authentication handler.
 	/// </summary>
-	[XmlType(nameof(ListAutoCompleteSourceDefinition), Namespace = "http://openiz.org/risi")]
-	public class ListAutoCompleteSourceDefinition : AutoCompleteSourceDefinition
+	public interface IAuthenticationHandler : IDisposable
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ListAutoCompleteSourceDefinition"/> class.
-		/// </summary>
-		public ListAutoCompleteSourceDefinition()
-		{
-			
-		}
-
-		/// <summary>
-		/// Gets or sets the static list of auto-complete items.
-		/// </summary>
-		[XmlElement("item")]
-		public List<KeyValuePair<string, object>> Items { get; set; }
 	}
 }

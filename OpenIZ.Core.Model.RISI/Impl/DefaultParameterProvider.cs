@@ -18,34 +18,32 @@
  * Date: 2017-1-5
  */
 
-using System.Xml.Serialization;
+using System;
+using OpenIZ.Core.Model.RISI.Interfaces;
 
-namespace OpenIZ.Core.Model.RISI
+namespace OpenIZ.Core.Model.RISI.Impl
 {
 	/// <summary>
-	/// Represents an auto-complete source definition which is that of a query.
+	/// Represents a default parameter provider.
 	/// </summary>
-	[XmlType(nameof(QueryAutoCompleteSourceDefinition), Namespace = "http://openiz.org/risi")]
-	public class QueryAutoCompleteSourceDefinition : AutoCompleteSourceDefinition
+	internal sealed class DefaultParameterProvider : IParameterProvider
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="QueryAutoCompleteSourceDefinition"/> class.
+		/// Initializes a new instance of the <see cref="DefaultParameterProvider"/> class.
 		/// </summary>
-		public QueryAutoCompleteSourceDefinition()
+		internal DefaultParameterProvider()
 		{
-			
 		}
 
 		/// <summary>
-		/// Gets or sets the query itself.
+		/// Gets a value for a given parameter.
 		/// </summary>
-		[XmlElement("query")]
-		public string Query { get; set; }
-
-		/// <summary>
-		/// Gets or sets the source of the auto-complete source.
-		/// </summary>
-		[XmlElement("source")]
-		public string Source { get; set; }
+		/// <typeparam name="T">The type of parameter to retrieve.</typeparam>
+		/// <param name="id">The id of the parameter.</param>
+		/// <returns>Returns the value of the parameter.</returns>
+		public T GetValue<T>(Guid id)
+		{
+			return default(T);
+		}
 	}
 }

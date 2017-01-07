@@ -18,34 +18,33 @@
  * Date: 2017-1-5
  */
 
-using System.Xml.Serialization;
+using System;
 
-namespace OpenIZ.Core.Model.RISI
+namespace OpenIZ.Reporting.Core.Attributes
 {
 	/// <summary>
-	/// Represents an auto-complete source definition which is that of a query.
+	/// Represents an attribute which defines a file extension for a given field.
 	/// </summary>
-	[XmlType(nameof(QueryAutoCompleteSourceDefinition), Namespace = "http://openiz.org/risi")]
-	public class QueryAutoCompleteSourceDefinition : AutoCompleteSourceDefinition
+	[AttributeUsage(AttributeTargets.Field)]
+	public sealed class FileExtensionAttribute : Attribute
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="QueryAutoCompleteSourceDefinition"/> class.
+		/// Initializes a new instance of the <see cref="FileExtensionAttribute"/> class.
 		/// </summary>
-		public QueryAutoCompleteSourceDefinition()
+		/// <param name="extension">The value of the file extension.</param>
+		public FileExtensionAttribute(string extension)
 		{
-			
+			if (extension.StartsWith("."))
+			{
+				throw new ArgumentException("The extension value cannot start with a '.'");
+			}
+
+			this.Extension = extension;
 		}
 
 		/// <summary>
-		/// Gets or sets the query itself.
+		/// Gets or sets the file extension.
 		/// </summary>
-		[XmlElement("query")]
-		public string Query { get; set; }
-
-		/// <summary>
-		/// Gets or sets the source of the auto-complete source.
-		/// </summary>
-		[XmlElement("source")]
-		public string Source { get; set; }
+		public string Extension { get; }
 	}
 }

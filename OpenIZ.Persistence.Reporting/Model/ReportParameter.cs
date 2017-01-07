@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: khannan
- * Date: 2017-1-5
+ * Date: 2017-1-6
  */
 using System;
 using System.Collections.Generic;
@@ -24,35 +24,30 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace OpenIZ.Core.Model.RISI
+namespace OpenIZ.Persistence.Reporting.Model
 {
-	/// <summary>
-	/// Represents a parameter.
-	/// </summary>
-	[XmlType(nameof(Parameter), Namespace = "http://openiz.org/risi")]
-	public class Parameter : ParameterDefinition
+	[XmlType(nameof(ReportParameter), Namespace = "http://openiz.org/risi")]
+	public class ReportParameter
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Parameter"/> class.
-		/// </summary>
-		public Parameter() : base()
+		public ReportParameter()
 		{
-			
+			this.DefaultValues = new List<ParameterValue>();
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Parameter"/> class
-		/// with a specific value.
-		/// </summary>
-		/// <param name="value">The value of the parameter.</param>
-		public Parameter(object value)
-		{
-			this.Value = value;
-		}
+		[XmlElement("dataType")]
+		public Guid DataType { get; set; }
 
-		/// <summary>
-		/// Gets or sets the value of the parameter.
-		/// </summary>
-		public object Value { get; set; }
+		[XmlAttribute("defaultValue")]
+		public ParameterValue DefaultValue { get; set; }
+
+		[XmlArray("defaultValues")]
+		[XmlArrayItem("defaultValue")]
+		public List<ParameterValue> DefaultValues { get; set; }
+
+		[XmlAttribute("isNullable")]
+		public bool IsNullable { get; set; }
+
+		[XmlAttribute("name")]
+		public string Name { get; set; }
 	}
 }

@@ -18,34 +18,28 @@
  * Date: 2017-1-5
  */
 
-using System.Xml.Serialization;
+using OpenIZ.Core.Model.RISI;
+using System;
+using System.Collections.Generic;
 
-namespace OpenIZ.Core.Model.RISI
+namespace OpenIZ.Reporting.Core
 {
 	/// <summary>
-	/// Represents an auto-complete source definition which is that of a query.
+	/// Represents a report handler for a reporting engine.
 	/// </summary>
-	[XmlType(nameof(QueryAutoCompleteSourceDefinition), Namespace = "http://openiz.org/risi")]
-	public class QueryAutoCompleteSourceDefinition : AutoCompleteSourceDefinition
+	public interface IReportHandler : IDisposable
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="QueryAutoCompleteSourceDefinition"/> class.
+		/// Gets or sets the report URI.
 		/// </summary>
-		public QueryAutoCompleteSourceDefinition()
-		{
-			
-		}
+		Uri ReportUri { get; set; }
 
 		/// <summary>
-		/// Gets or sets the query itself.
+		/// Runs a report.
 		/// </summary>
-		[XmlElement("query")]
-		public string Query { get; set; }
-
-		/// <summary>
-		/// Gets or sets the source of the auto-complete source.
-		/// </summary>
-		[XmlElement("source")]
-		public string Source { get; set; }
+		/// <param name="reportId">The id of the report.</param>
+		/// <param name="format">The format of the report.</param>
+		/// <param name="parameters">The parameters of the report.</param>
+		byte[] RunReport(Guid reportId, ReportFormat format, IEnumerable<ReportParameter> parameters);
 	}
 }

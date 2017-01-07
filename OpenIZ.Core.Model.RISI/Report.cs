@@ -18,8 +18,8 @@
  * Date: 2016-12-4
  */
 
-using OpenIZ.Core.Model.Security;
 using System;
+using OpenIZ.Core.Model.Security;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
@@ -28,10 +28,40 @@ namespace OpenIZ.Core.Model.RISI
 	/// <summary>
 	/// Represents a stored query to be performed against the RISI.
 	/// </summary>
-	[XmlType(nameof(ReportDefinition), Namespace = "http://openiz.org/risi")]
-	[XmlRoot(nameof(ReportDefinition), Namespace = "http://openiz.org/risi")]
-	public class ReportDefinition : BaseEntityData
+	[XmlType(nameof(Report), Namespace = "http://openiz.org/risi")]
+	[XmlRoot(nameof(Report), Namespace = "http://openiz.org/risi")]
+	public class Report : BaseEntityData
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Report"/> class.
+		/// </summary>
+		public Report()
+		{
+			
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Report"/> class
+		/// with a specific name.
+		/// </summary>
+		/// <param name="name">The name of the report.</param>
+		public Report(string name)
+		{
+			this.Name = name;
+		}
+
+		/// <summary>
+		/// Gets or sets the correlation id of the report to the report engine.
+		/// </summary>
+		[XmlElement("correlationId")]
+		public Guid CorrelationId { get; set; }
+
+		/// <summary>
+		/// Gets or sets the description of the report.
+		/// </summary>
+		[XmlElement("description")]
+		public string Description { get; set; }
+
 		/// <summary>
 		/// Gets or sets the name of the stored query.
 		/// </summary>
@@ -42,7 +72,7 @@ namespace OpenIZ.Core.Model.RISI
 		/// Gets or sets a list of parameters which is supported for the specified query.
 		/// </summary>
 		[XmlElement("parameters")]
-		public List<ParameterDefinition> Parameters { get; set; }
+		public List<ReportParameter> Parameters { get; set; }
 
 		/// <summary>
 		/// Gets or sets security policy instances related to the query definition.

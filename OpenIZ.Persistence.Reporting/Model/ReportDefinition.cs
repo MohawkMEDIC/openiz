@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: khannan
- * Date: 2017-1-5
+ * Date: 2017-1-6
  */
 using System;
 using System.Collections.Generic;
@@ -24,24 +24,32 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace OpenIZ.Messaging.RISI.Configuration
+namespace OpenIZ.Persistence.Reporting.Model
 {
 	/// <summary>
-	/// Represents a collection of different reporting engine types.
+	/// Represents a report definition.
 	/// </summary>
-	[XmlType(nameof(ReportEngineType), Namespace = "http://openiz.org/risi")]
-	public enum ReportEngineType
+	[XmlRoot(nameof(ReportDefinition), Namespace = "http://openiz.org/risi")]
+	[XmlType(nameof(ReportDefinition), Namespace = "http://openiz.org/risi")]
+	public class ReportDefinition
 	{
 		/// <summary>
-		/// Represents the jasper server report engine.
+		/// Initializes a new instance of the <see cref="ReportDefinition"/> class.
 		/// </summary>
-		[XmlEnum("Jasper")]
-		Jasper,
+		public ReportDefinition()
+		{
+			
+		}
 
 		/// <summary>
-		/// Represents the MsSql reporting engine.
+		/// Gets or sets the description of the report.
 		/// </summary>
-		[XmlEnum("MsSql")]
-		MsSql,
+		[XmlAttribute("description")]
+		public string Description { get; set; }
+
+		[XmlAttribute("author")]
+		public string Author { get; set; }
+
+		public List<ReportParameter> Parameters { get; set; }
 	}
 }

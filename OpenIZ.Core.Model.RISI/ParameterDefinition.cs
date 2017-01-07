@@ -29,11 +29,6 @@ namespace OpenIZ.Core.Model.RISI
 	[XmlType(nameof(ParameterDefinition), Namespace = "http://openiz.org/risi")]
 	public class ParameterDefinition : BaseEntityData
 	{
-		protected ParameterDefinition()
-		{
-			
-		}
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ParameterDefinition"/> class
 		/// with a specific name and type.
@@ -44,6 +39,10 @@ namespace OpenIZ.Core.Model.RISI
 		{
 			this.Name = name;
 			this.TypeId = typeId;
+		}
+
+		protected ParameterDefinition()
+		{
 		}
 
 		/// <summary>

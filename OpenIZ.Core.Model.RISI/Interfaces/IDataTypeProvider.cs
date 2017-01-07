@@ -18,34 +18,31 @@
  * Date: 2017-1-5
  */
 
-using System.Xml.Serialization;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
-namespace OpenIZ.Core.Model.RISI
+namespace OpenIZ.Core.Model.RISI.Interfaces
 {
 	/// <summary>
-	/// Represents an auto-complete source definition which is that of a query.
+	/// Represents a data type provider.
 	/// </summary>
-	[XmlType(nameof(QueryAutoCompleteSourceDefinition), Namespace = "http://openiz.org/risi")]
-	public class QueryAutoCompleteSourceDefinition : AutoCompleteSourceDefinition
+	public interface IDataTypeProvider
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="QueryAutoCompleteSourceDefinition"/> class.
+		/// Gets the value for a given data type.
 		/// </summary>
-		public QueryAutoCompleteSourceDefinition()
-		{
-			
-		}
+		/// <typeparam name="T">The type of data which is contained in the data type.</typeparam>
+		/// <param name="id">The id of the data type.</param>
+		/// <returns>Returns the value.</returns>
+		T GetValue<T>(Guid id);
 
 		/// <summary>
-		/// Gets or sets the query itself.
+		/// Gets a list of values for a given data type.
 		/// </summary>
-		[XmlElement("query")]
-		public string Query { get; set; }
-
-		/// <summary>
-		/// Gets or sets the source of the auto-complete source.
-		/// </summary>
-		[XmlElement("source")]
-		public string Source { get; set; }
+		/// <typeparam name="T">The type of data which is contained in the data type.</typeparam>
+		/// <param name="id">The id of the data type.</param>
+		/// <returns>Returns a list of values.</returns>
+		IEnumerable<T> GetValues<T>(Guid id);
 	}
 }

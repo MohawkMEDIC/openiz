@@ -78,26 +78,26 @@ namespace OpenIZ.Messaging.HL7.Queue
 		/// <returns>Returns true if the message was sent successfully.</returns>
 		public bool TrySend()
 		{
+			var success = false;
+
 			try
 			{
-				// HACK: hard code the endpoint address for now, until configuration is setup
 				var sender = new MllpMessageSender(new Uri(this.targetConfiguration.ConnectionString), this.targetConfiguration.LlpClientCertificate, this.targetConfiguration.TrustedIssuerCertificate);
 
-				var response = sender.SendAndReceive(this.message) as ACK;
+				var response = sender.SendAndReceive(this.message);
 
-				if (response == null)
+				if (response is NHapi.Model.V231.Message.ACK)
+				{
+					success = (response as NHapi.Model.V231.Message.ACK).MSA.AcknowledgementCode.Value == "AA";
+				}
+				else if (response is ACK)
+				{
+					success = (response as ACK).MSA.AcknowledgmentCode.Value == "AA";
+				}
+				else
 				{
 					this.FailCount++;
-					return false;
 				}
-
-				if (response.MSA.AcknowledgmentCode.Value != "AA")
-				{
-					this.FailCount++;
-					return false;
-				}
-
-				return true;
 			}
 			catch (Exception e)
 			{
@@ -106,9 +106,9 @@ namespace OpenIZ.Messaging.HL7.Queue
 				this.tracer.TraceEvent(TraceEventType.Error, 0, e.StackTrace);
 #endif
 				this.tracer.TraceEvent(TraceEventType.Error, 0, e.Message);
-
-				return false;
 			}
+
+			return success;
 		}
 	}
 }

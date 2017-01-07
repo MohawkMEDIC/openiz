@@ -97,7 +97,7 @@ namespace OpenIZ.Messaging.RISI
 				// Start the webhost
 				this.webHost.Open();
 
-				this.traceSource.TraceEvent(TraceEventType.Information, 0, $"RISI configuration loaded, using { Enum.GetName(typeof(ReportEngineType), this.configuration.ReportEngineType) } report engine at address { this.configuration.Address }");
+				this.traceSource.TraceEvent(TraceEventType.Information, 0, $"RISI configuration loaded, using { this.configuration.Handler.AssemblyQualifiedName } report engine at address { this.configuration.Address }");
 
 				this.Started?.Invoke(this, EventArgs.Empty);
 				return true;
