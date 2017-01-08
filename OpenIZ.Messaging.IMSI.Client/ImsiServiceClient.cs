@@ -34,20 +34,20 @@ using System.Xml.Serialization;
 
 namespace OpenIZ.Messaging.IMSI.Client
 {
-	/// <summary>
-	/// Represents the IMSI service client.
-	/// </summary>
-	public class ImsiServiceClient : ServiceClientBase, IDisposable
-	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ImsiServiceClient"/> class
-		/// with a specific <see cref="IRestClient"/> instance.
-		/// </summary>
-		/// <param name="client">The <see cref="IRestClient"/> instance.</param>
-		public ImsiServiceClient(IRestClient client) : base(client)
-		{
-			this.Client.Accept = client.Accept ?? "application/xml";
-		}
+    /// <summary>
+    /// Represents the IMSI service client.
+    /// </summary>
+    public class ImsiServiceClient : ServiceClientBase, IDisposable
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ImsiServiceClient"/> class
+        /// with a specific <see cref="IRestClient"/> instance.
+        /// </summary>
+        /// <param name="client">The <see cref="IRestClient"/> instance.</param>
+        public ImsiServiceClient(IRestClient client) : base(client)
+        {
+            this.Client.Accept = client.Accept ?? "application/xml";
+        }
 
         /// <summary>
         /// Creates specified data.
@@ -56,6 +56,17 @@ namespace OpenIZ.Messaging.IMSI.Client
         /// <param name="data">The data to be created.</param>
         /// <returns>Returns the newly created data.</returns>
         public TModel Create<TModel>(TModel data) where TModel : IdentifiedData
+        {
+            return this.Create(data, false);
+        }
+
+        /// <summary>
+        /// Creates specified data.
+        /// </summary>
+        /// <typeparam name="TModel">The type of data to be created.</typeparam>
+        /// <param name="data">The data to be created.</param>
+        /// <returns>Returns the newly created data.</returns>
+        public TModel Create<TModel>(TModel data, bool asBundle) where TModel : IdentifiedData
         {
             if (data == null)
             {
@@ -68,11 +79,17 @@ namespace OpenIZ.Messaging.IMSI.Client
             // Create with version?
             if (data.Key != null)
             {
-                return this.Client.Post<Bundle, TModel>(String.Format("{0}/{1}", resourceName, data.Key), this.Client.Accept, Bundle.CreateBundle(data));
+                if(asBundle)
+                    return this.Client.Post<Bundle, TModel>(String.Format("{0}/{1}", resourceName, data.Key), this.Client.Accept, Bundle.CreateBundle(data));
+                else
+                    return this.Client.Post<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key), this.Client.Accept, data);
             }
             else
             {
-                return this.Client.Post<Bundle, TModel>(resourceName, this.Client.Accept, Bundle.CreateBundle(data));
+                if (asBundle)
+                    return this.Client.Post<Bundle, TModel>(resourceName, this.Client.Accept, Bundle.CreateBundle(data));
+                else
+                    return this.Client.Post<TModel, TModel>(resourceName, this.Client.Accept, data);
             }
         }
 
@@ -84,87 +101,87 @@ namespace OpenIZ.Messaging.IMSI.Client
         /// <param name="versionKey">The version key of the data.</param>
         /// <returns>Returns the specified data.</returns>
         public IdentifiedData Get<TModel>(Guid key, Guid? versionKey) where TModel : IdentifiedData
-		{
-			// Resource name
-			String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+        {
+            // Resource name
+            String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
 
-			// URL
-			StringBuilder url = new StringBuilder(resourceName);
+            // URL
+            StringBuilder url = new StringBuilder(resourceName);
 
-			url.AppendFormat("/{0}", key);
+            url.AppendFormat("/{0}", key);
 
-			if (versionKey.HasValue)
-			{
-				url.AppendFormat("/history/{0}", versionKey);
-			}
+            if (versionKey.HasValue)
+            {
+                url.AppendFormat("/history/{0}", versionKey);
+            }
 
-			// Optimize?
-			if (this.Client.Description.Binding.Optimize)
-			{
-				var bundle = this.Client.Get<Bundle>(url.ToString(), new KeyValuePair<string, object>("_bundle", "true"));
+            // Optimize?
+            if (this.Client.Description.Binding.Optimize)
+            {
+                var bundle = this.Client.Get<Bundle>(url.ToString(), new KeyValuePair<string, object>("_bundle", "true"));
                 bundle.Reconstitute();
                 return bundle.Entry as TModel;
-			}
-			else
-			{
-				return this.Client.Get<TModel>(url.ToString());
-			}
-		}
+            }
+            else
+            {
+                return this.Client.Get<TModel>(url.ToString());
+            }
+        }
 
-		/// <summary>
-		/// Gets history of the specified object.
-		/// </summary>
-		/// <typeparam name="TModel">The type of object for which to retrieve history.</typeparam>
-		/// <param name="key">The key of the object.</param>
-		/// <returns>Returns a bundle containing the history of the object.</returns>
-		public Bundle History<TModel>(Guid key) where TModel : IdentifiedData
-		{
-			// Resource name
-			String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+        /// <summary>
+        /// Gets history of the specified object.
+        /// </summary>
+        /// <typeparam name="TModel">The type of object for which to retrieve history.</typeparam>
+        /// <param name="key">The key of the object.</param>
+        /// <returns>Returns a bundle containing the history of the object.</returns>
+        public Bundle History<TModel>(Guid key) where TModel : IdentifiedData
+        {
+            // Resource name
+            String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
 
-			// URL
-			StringBuilder url = new StringBuilder(resourceName);
-			url.AppendFormat("/{0}/history", key);
+            // URL
+            StringBuilder url = new StringBuilder(resourceName);
+            url.AppendFormat("/{0}/history", key);
 
-			// Request
-			return this.Client.Get<Bundle>(url.ToString());
-		}
+            // Request
+            return this.Client.Get<Bundle>(url.ToString());
+        }
 
-		/// <summary>
-		/// Obsoletes the specified data.
-		/// </summary>
-		/// <typeparam name="TModel">The type of data to be obsoleted.</typeparam>
-		/// <param name="data">The data to obsolete.</param>
-		/// <returns>Returns the obsoleted data.</returns>
-		public TModel Obsolete<TModel>(TModel data) where TModel : IdentifiedData
-		{
-			if (data == null)
-			{
-				throw new ArgumentNullException(nameof(data));
-			}
+        /// <summary>
+        /// Obsoletes the specified data.
+        /// </summary>
+        /// <typeparam name="TModel">The type of data to be obsoleted.</typeparam>
+        /// <param name="data">The data to obsolete.</param>
+        /// <returns>Returns the obsoleted data.</returns>
+        public TModel Obsolete<TModel>(TModel data) where TModel : IdentifiedData
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
 
-			// Resource name
-			var resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+            // Resource name
+            var resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
 
-			// Create with version?
-			if (data.Key != null)
-			{
-				return this.Client.Delete<TModel>($"{resourceName}/{data.Key}");
-			}
+            // Create with version?
+            if (data.Key != null)
+            {
+                return this.Client.Delete<TModel>($"{resourceName}/{data.Key}");
+            }
 
-			throw new KeyNotFoundException(data.Key.ToString());
-		}
+            throw new KeyNotFoundException(data.Key.ToString());
+        }
 
-		/// <summary>
-		/// Performs a query.
-		/// </summary>
-		/// <typeparam name="TModel">The type of object to query.</typeparam>
-		/// <param name="query">The query parameters as a LINQ expression.</param>
-		/// <returns>Returns a Bundle containing the data.</returns>
-		public Bundle Query<TModel>(Expression<Func<TModel, bool>> query) where TModel : IdentifiedData
-		{
+        /// <summary>
+        /// Performs a query.
+        /// </summary>
+        /// <typeparam name="TModel">The type of object to query.</typeparam>
+        /// <param name="query">The query parameters as a LINQ expression.</param>
+        /// <returns>Returns a Bundle containing the data.</returns>
+        public Bundle Query<TModel>(Expression<Func<TModel, bool>> query) where TModel : IdentifiedData
+        {
             return this.Query(query, 0, null);
-		}
+        }
 
         /// <summary>
         /// Performs a query.
@@ -177,30 +194,30 @@ namespace OpenIZ.Messaging.IMSI.Client
         /// <returns>Returns a Bundle containing the data.</returns>
         public Bundle Query<TModel>(Expression<Func<TModel, bool>> query, int offset, int? count, string expandProperties = null) where TModel : IdentifiedData
         {
-			// Map the query to HTTP parameters
-			var queryParms = QueryExpressionBuilder.BuildQuery(query, true).ToList();
+            // Map the query to HTTP parameters
+            var queryParms = QueryExpressionBuilder.BuildQuery(query, true).ToList();
 
-			queryParms.Add(new KeyValuePair<string, object>("_offset", offset));
+            queryParms.Add(new KeyValuePair<string, object>("_offset", offset));
 
-			if (count.HasValue)
-			{
-				queryParms.Add(new KeyValuePair<string, object>("_count", count));
-			}
+            if (count.HasValue)
+            {
+                queryParms.Add(new KeyValuePair<string, object>("_count", count));
+            }
 
-	        if (!string.IsNullOrEmpty(expandProperties) && !string.IsNullOrWhiteSpace(expandProperties))
-	        {
-		        queryParms.Add(new KeyValuePair<string, object>("_expand", expandProperties));
-	        }
+            if (!string.IsNullOrEmpty(expandProperties) && !string.IsNullOrWhiteSpace(expandProperties))
+            {
+                queryParms.Add(new KeyValuePair<string, object>("_expand", expandProperties));
+            }
 
-			// Resource name
-			string resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+            // Resource name
+            string resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
 
-			// The IMSI uses the XMLName as the root of the request
-			var retVal = this.Client.Get<Bundle>(resourceName, queryParms.ToArray());
+            // The IMSI uses the XMLName as the root of the request
+            var retVal = this.Client.Get<Bundle>(resourceName, queryParms.ToArray());
 
-			// Return value
-			return retVal;
-		}
+            // Return value
+            return retVal;
+        }
 
         /// <summary>
         /// Updates a specified object.
@@ -209,6 +226,17 @@ namespace OpenIZ.Messaging.IMSI.Client
         /// <param name="data">The data to be updated.</param>
         /// <returns>Returns the updated data.</returns>
         public TModel Update<TModel>(TModel data) where TModel : IdentifiedData
+        {
+            return this.Update(data, false);
+        }
+
+        /// <summary>
+        /// Updates a specified object.
+        /// </summary>
+        /// <typeparam name="TModel">The type of data to be updated.</typeparam>
+        /// <param name="data">The data to be updated.</param>
+        /// <returns>Returns the updated data.</returns>
+        public TModel Update<TModel>(TModel data, bool asBundle) where TModel : IdentifiedData
 		{
 			if (data == null)
 			{
@@ -221,7 +249,11 @@ namespace OpenIZ.Messaging.IMSI.Client
 			// Create with version?
 			if (data.Key != null)
 			{
-				return this.Client.Put<Bundle, TModel>(String.Format("{0}/{1}", resourceName, data.Key.Value), this.Client.Accept, Bundle.CreateBundle(data));
+                if(asBundle)
+				    return this.Client.Put<Bundle, TModel>(String.Format("{0}/{1}", resourceName, data.Key.Value), this.Client.Accept, Bundle.CreateBundle(data));
+                else
+				    return this.Client.Put<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key.Value), this.Client.Accept, data);
+
 			}
 			else
 			{

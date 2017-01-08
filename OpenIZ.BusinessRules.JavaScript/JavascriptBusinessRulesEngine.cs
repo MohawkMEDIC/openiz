@@ -142,7 +142,7 @@ namespace OpenIZ.BusinessRules.JavaScript
                     var include = match.Groups[1].Value;
                     var incStream = (ApplicationServiceContext.Current.GetService(typeof(IDataReferenceResolver)) as IDataReferenceResolver)?.Resolve(include);
                     if (incStream == null)
-                        this.m_tracer.TraceError("Include {0} not found", include);
+                        this.m_tracer.TraceWarning("Include {0} not found", include);
                     else
                         using (StreamReader sr = new StreamReader(incStream))
                             this.m_engine.Execute(rawScript);

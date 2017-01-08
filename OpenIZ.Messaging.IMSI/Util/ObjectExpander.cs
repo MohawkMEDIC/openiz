@@ -55,7 +55,7 @@ namespace OpenIZ.Messaging.IMSI.Util
         /// <summary>
         /// Load collection
         /// </summary>
-        internal static  IList LoadCollection(Type propertyType, IIdentifiedEntity entity)
+        internal static IList LoadCollection(Type propertyType, IIdentifiedEntity entity)
         {
             MethodInfo methodInfo = null;
 
@@ -65,7 +65,7 @@ namespace OpenIZ.Messaging.IMSI.Util
             // Load
             if (!m_relatedLoadAssociations.TryGetValue(propertyType, out methodInfo))
             {
-                if(versionKey.HasValue && typeof(IVersionedAssociation).IsAssignableFrom(propertyType.StripGeneric()))
+                if (versionKey.HasValue && typeof(IVersionedAssociation).IsAssignableFrom(propertyType.StripGeneric()))
                     methodInfo = typeof(ObjectExpander).GetRuntimeMethod(nameof(LoadCollection), new Type[] { typeof(Guid), typeof(decimal?) }).MakeGenericMethod(propertyType.StripGeneric());
                 else
                     methodInfo = typeof(ObjectExpander).GetRuntimeMethod(nameof(LoadCollection), new Type[] { typeof(Guid) }).MakeGenericMethod(propertyType.StripGeneric());
@@ -77,7 +77,7 @@ namespace OpenIZ.Messaging.IMSI.Util
             }
 
             IList listValue = null;
-            if(methodInfo.GetParameters().Length == 2)
+            if (methodInfo.GetParameters().Length == 2)
                 listValue = methodInfo.Invoke(null, new object[] { key, versionKey }) as IList;
             else
                 listValue = methodInfo.Invoke(null, new object[] { key }) as IList;
@@ -138,7 +138,7 @@ namespace OpenIZ.Messaging.IMSI.Util
             try
             {
                 // Expand property?
-                if (qp.ContainsKey("_expand") && qp.ContainsKey("_all"))
+                if (qp.ContainsKey("_expand") ^ qp.ContainsKey("_all"))
                     return;
 
 
@@ -146,17 +146,17 @@ namespace OpenIZ.Messaging.IMSI.Util
                 {
                     if (keyStack.Count > 3) return;
 
-                    foreach (var pi in returnValue.GetType().GetRuntimeProperties().Where(o=>(o.GetCustomAttribute<SerializationReferenceAttribute>() != null || o.GetCustomAttributes<XmlElementAttribute>().Count() > 0) &&
+                    foreach (var pi in returnValue.GetType().GetRuntimeProperties().Where(o => (o.GetCustomAttribute<SerializationReferenceAttribute>() != null || o.GetCustomAttributes<XmlElementAttribute>().Count() > 0) &&
                     o.GetCustomAttribute<DataIgnoreAttribute>() == null))
                     {
-      
+
                         // Get current value
                         var scope = pi.GetValue(returnValue);
-                        
+
                         // Force a load if null!!!
-                        if(scope == null || (scope as IList)?.Count == 0)
+                        if (scope == null || (scope as IList)?.Count == 0)
                         {
-                            if(typeof(IdentifiedData).IsAssignableFrom(pi.PropertyType))
+                            if (typeof(IdentifiedData).IsAssignableFrom(pi.PropertyType))
                             {
                                 var keyPi = pi.GetCustomAttribute<SerializationReferenceAttribute>()?.GetProperty(returnValue.GetType());
                                 var keyValue = keyPi?.GetValue(returnValue);
@@ -167,7 +167,7 @@ namespace OpenIZ.Messaging.IMSI.Util
                                 if (scope != null)
                                     pi.SetValue(returnValue, scope);
                             }
-                            else if(typeof(IList).IsAssignableFrom(pi.PropertyType) && !pi.PropertyType.IsArray &&
+                            else if (typeof(IList).IsAssignableFrom(pi.PropertyType) && !pi.PropertyType.IsArray &&
                                 typeof(IdentifiedData).IsAssignableFrom(pi.PropertyType.StripGeneric()))
                             {
                                 // Already loaded?
@@ -179,7 +179,7 @@ namespace OpenIZ.Messaging.IMSI.Util
                                         continue;
                                 else
                                     emptyCollections.Add(returnValue.Key.Value, new HashSet<string>() { pi.Name });
-                                    
+
                                 scope = LoadCollection(pi.PropertyType, returnValue);
                                 if ((scope as IList).Count > 0)
                                     pi.SetValue(returnValue, scope);
@@ -198,69 +198,112 @@ namespace OpenIZ.Messaging.IMSI.Util
                     ApplicationContext.Current.GetService<IDataCachingService>().Add(returnValue);
                 }
                 else if (qp.ContainsKey("_expand"))
-				{
-					foreach (var nvs in qp["_expand"])
-					{
-						// Get the property the user wants to expand
-						object scope = returnValue;
-						foreach (var property in nvs.Split('.'))
-						{
-							if (scope is IList)
-							{
-								foreach (var sc in scope as IList)
-								{
-									// ensure the object is delay loaded 
-									// in case the property we are looking for is null but it's associated reference key is populated
-									(sc as IdentifiedData)?.SetDelayLoad(true);
-									var keyPi = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>().FirstOrDefault()?.ElementName == property);
+                {
+                    foreach (var nvs in qp["_expand"])
+                    {
+                        // Get the property the user wants to expand
+                        object scope = returnValue;
+                        foreach (var property in nvs.Split('.'))
+                        {
+                            if (scope is IList)
+                            {
+                                foreach (var sc in scope as IList)
+                                {
+                                    // ensure the object is delay loaded 
+                                    // in case the property we are looking for is null but it's associated reference key is populated
+                                    (sc as IdentifiedData)?.SetDelayLoad(true);
+                                    var keyPi = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>().FirstOrDefault()?.ElementName == property);
 
-									if (keyPi == null)
-									{
-										continue;
-									}
+                                    if (keyPi == null)
+                                    {
+                                        continue;
+                                    }
 
-									// Get the backing property
-									var expandProp = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<SerializationReferenceAttribute>().FirstOrDefault()?.RedirectProperty == keyPi.Name);
+                                    // Get the backing property
+                                    var expandProp = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<SerializationReferenceAttribute>().FirstOrDefault()?.RedirectProperty == keyPi.Name);
 
-									if (expandProp != null)
-									{
-										scope = expandProp.GetValue(sc);
-									}
-									else
-									{
-										scope = keyPi.GetValue(sc);
-									}
-								}
-							}
-							else
-							{
-								PropertyInfo keyPi = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>().FirstOrDefault()?.ElementName == property);
-								if (keyPi == null)
-									continue;
-								// Get the backing property
-								PropertyInfo expandProp = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<SerializationReferenceAttribute>().FirstOrDefault()?.RedirectProperty == keyPi.Name);
+                                    if (expandProp != null)
+                                    {
+                                        scope = expandProp.GetValue(sc);
+                                    }
+                                    else
+                                    {
+                                        scope = keyPi.GetValue(sc);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                PropertyInfo keyPi = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>().FirstOrDefault()?.ElementName == property);
+                                if (keyPi == null)
+                                    continue;
+                                // Get the backing property
+                                PropertyInfo expandProp = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<SerializationReferenceAttribute>().FirstOrDefault()?.RedirectProperty == keyPi.Name);
 
-								Object existing = null;
-								Object keyValue = keyPi.GetValue(scope);
+                                Object existing = null;
+                                Object keyValue = keyPi.GetValue(scope);
 
-								if (expandProp != null && expandProp.CanWrite)
-								{
-									expandProp.SetValue(scope, existing);
-									scope = existing;
-								}
-								else
-								{
-									if (expandProp != null)
-										scope = expandProp.GetValue(scope);
-									else
-										scope = keyValue;
-								}
-							}
-						}
-					}
+                                if (expandProp != null && expandProp.CanWrite)
+                                {
+                                    expandProp.SetValue(scope, existing);
+                                    scope = existing;
+                                }
+                                else
+                                {
+                                    if (expandProp != null)
+                                        scope = expandProp.GetValue(scope);
+                                    else
+                                        scope = keyValue;
+                                }
+                            }
+                        }
+                    }
 
-					ApplicationContext.Current.GetService<IDataCachingService>()?.Add(returnValue);
-				}
+                    ApplicationContext.Current.GetService<IDataCachingService>()?.Add(returnValue);
+                }
+            }
+            finally
+            {
+                keyStack.Pop();
+            }
+        }
+
+        /// <summary>
+        /// Excludes the specified properties from the result
+        /// </summary>
+        internal static void ExcludeProperties(IdentifiedData returnValue, NameValueCollection qp, Stack<Guid> keyStack = null)
+        {
+            returnValue.SetDelayLoad(false);
+            // Set the stack
+            if (keyStack == null)
+                keyStack = new Stack<Guid>();
+            else if (keyStack.Contains(returnValue.Key.Value))
+                return;
+
+            keyStack.Push(returnValue.Key.Value);
+
+            try
+            {
+                // Expand property?
+                if (!qp.ContainsKey("_exclude"))
+                    return;
+                else
+                {
+                    foreach (var property in qp["_exclude"])
+                    {
+                        PropertyInfo keyPi = returnValue.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>().FirstOrDefault()?.ElementName == property);
+                        if (keyPi == null)
+                            continue;
+                        // Get the backing property
+                        PropertyInfo excludeProp = returnValue.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<SerializationReferenceAttribute>().FirstOrDefault()?.RedirectProperty == keyPi.Name);
+
+                        if (excludeProp != null && excludeProp.CanWrite)
+                            excludeProp.SetValue(returnValue, null);
+                        else if (keyPi.CanWrite)
+                            keyPi.SetValue(returnValue, null);
+                    }
+
+                }
             }
             finally
             {

@@ -175,7 +175,8 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				info.UserName = userRepository.GetUser(userId)?.UserName;
 			}
 
-			userRepository.SaveUser(info.User);
+            if(info.User != null)
+			    userRepository.SaveUser(info.User);
 
 			if (info.Lockout.HasValue)
 			{

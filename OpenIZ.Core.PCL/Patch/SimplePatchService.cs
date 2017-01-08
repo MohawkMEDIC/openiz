@@ -23,6 +23,12 @@ namespace OpenIZ.Core.Services.Impl
     /// </summary>
     public class SimplePatchService : IPatchService
     {
+        // Ignore properties
+        private readonly string[] ignoreProperties = {
+            "previousVersion",
+            "version",
+            "id"
+        };
 
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(SimplePatchService));
@@ -76,13 +82,17 @@ namespace OpenIZ.Core.Services.Impl
 
                 if (existing is IVersionedEntity)
                     retVal.Add(new PatchOperation(PatchOperationType.Test, $"{path}version", (existing as IVersionedEntity).VersionKey));
+
                 // Iterate through properties and determine changes
                 foreach (var pi in properties)
                 {
                     var serializationName = pi.GetCustomAttribute<JsonPropertyAttribute>().PropertyName;
                     object existingValue = pi.GetValue(existing),
                         updatedValue = pi.GetValue(updated);
-                    
+
+                    // Skip ignore properties
+                    if (ignoreProperties.Contains(serializationName)) continue;
+                       
                     // Test
                     if (existingValue == updatedValue)
                         continue; // same 
