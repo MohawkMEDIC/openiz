@@ -52,10 +52,16 @@ namespace OpenIZ.Core.Model.RISI
 		}
 
 		/// <summary>
-		/// Gets or sets the default provider of the report parameter.
+		/// Gets or sets the report data types of the report parameter.
 		/// </summary>
-		[XmlElement("provider")]
-		public string Provider { get; set; }
+		[XmlElement("dataType")]
+		public ReportDataType DataType { get; set; }
+
+		/// <summary>
+		/// Gets or sets whether the report parameter is nullable.
+		/// </summary>
+		[XmlAttribute("isNullable")]
+		public bool IsNullable { get; set; }
 
 		/// <summary>
 		/// Gets or sets the name of the parameter.
@@ -70,11 +76,10 @@ namespace OpenIZ.Core.Model.RISI
 		public int Order { get; set; }
 
 		/// <summary>
-		/// Gets or sets the report data types of the report parameter.
+		/// Gets or sets the default provider of the report parameter.
 		/// </summary>
-		[XmlElement("reportDataTypes")]
-		public List<ReportDataType> ReportDataTypes { get; set; }
-
+		[XmlElement("provider")]
+		public string Provider { get; set; }
 		/// <summary>
 		/// Gets or sets the value of the parameter.
 		/// </summary>
