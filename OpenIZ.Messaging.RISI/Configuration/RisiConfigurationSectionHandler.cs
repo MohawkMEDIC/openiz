@@ -17,7 +17,11 @@
  * User: justi
  * Date: 2016-8-28
  */
+
+using OpenIZ.Reporting.Core;
+using System;
 using System.Configuration;
+using System.Linq;
 using System.Xml;
 
 namespace OpenIZ.Messaging.RISI.Configuration
@@ -36,16 +40,40 @@ namespace OpenIZ.Messaging.RISI.Configuration
 		/// <returns>Returns an instance of the configuration section.</returns>
 		public object Create(object parent, object configContext, XmlNode section)
 		{
-			var serviceElement = section.SelectSingleNode("./*[local-name() = 'service']") as XmlElement;
+			var reportEngineElement = section.SelectSingleNode("./*[local-name() = 'reportEngine']") as XmlElement;
 
-			var wcfServiceName = serviceElement?.Attributes["wcfServiceName"]?.Value;
+			var type = reportEngineElement?.Attributes["type"]?.Value;
 
-			if (wcfServiceName == null)
+			if (type == null)
 			{
-				throw new ConfigurationErrorsException("Missing serviceElement", section);
+				throw new ConfigurationErrorsException("The 'reportEngine' element must have a 'type' attribute");
 			}
 
-			return new RisiConfiguration(wcfServiceName);
+			var address = reportEngineElement.Attributes["address"]?.Value;
+
+			if (address == null)
+			{
+				throw new ConfigurationErrorsException("The 'address' attribute cannot be null");
+			}
+
+			if (!Uri.IsWellFormedUriString(address, UriKind.Absolute))
+			{
+				throw new ConfigurationErrorsException("The 'address' attribute must be a well formed URI");
+			}
+
+			var handler = Type.GetType(type, true);
+
+			if (!handler.IsClass || handler.IsAbstract)
+			{
+				throw new ConfigurationErrorsException($"The type { handler.AssemblyQualifiedName } must be a class and non-abstract");
+			}
+
+			if (handler.GetInterface(nameof(IReportHandler)) == null)
+			{
+				throw new ConfigurationErrorsException($"The type { handler.AssemblyQualifiedName } must implement type { typeof(IReportHandler).AssemblyQualifiedName }");
+			}
+
+			return new RisiConfiguration(new Uri(address), handler);
 		}
 	}
 }

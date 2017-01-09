@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -19,7 +19,12 @@
  */
 using OpenIZ.Core.Interop.Clients;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using OpenIZ.Core.Http;
+using OpenIZ.Core.Model.Query;
+using OpenIZ.Core.Model.RISI;
 
 namespace OpenIZ.Messaging.RISI.Client
 {
@@ -35,6 +40,46 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// <param name="restClient">The REST client instance.</param>
 		public RisiServiceClient(IRestClient restClient) : base(restClient)
 		{
+		}
+
+		/// <summary>
+		/// Creates a new report parameter type definition.
+		/// </summary>
+		/// <param name="parameterTypeDefinition">The report parameter type definition to create.</param>
+		/// <returns>Returns the created report parameter type definition.</returns>
+		public ReportDataType CreateParameterType(ReportDataType parameterTypeDefinition)
+		{
+			return this.Client.Post<ReportDataType, ReportDataType>("type", this.Client.Accept, parameterTypeDefinition);
+		}
+
+		/// <summary>
+		/// Creates a new report definition.
+		/// </summary>
+		/// <param name="reportDefinition">The report definition to create.</param>
+		/// <returns>Returns the created report definition.</returns>
+		public Report CreateReportDefinition(Report reportDefinition)
+		{
+			return this.Client.Post<Report, Report>("report", this.Client.Accept, reportDefinition);
+		}
+
+		/// <summary>
+		/// Deletes a report parameter type.
+		/// </summary>
+		/// <param name="id">The id of the report parameter type to delete.</param>
+		/// <returns>Returns the deleted report parameter type.</returns>
+		public ReportDataType DeleteParameterType(string id)
+		{
+			return this.Client.Delete<ReportDataType>($"type/{id}");
+		}
+
+		/// <summary>
+		/// Deletes a report definition.
+		/// </summary>
+		/// <param name="id">The id of the report definition to delete.</param>
+		/// <returns>Returns the deleted report definition.</returns>
+		public Report DeleteReportDefinition(string id)
+		{
+			return this.Client.Delete<Report>($"report/{id}");
 		}
 
 		#region IDisposable Support
@@ -78,6 +123,100 @@ namespace OpenIZ.Messaging.RISI.Client
 			// TODO: uncomment the following line if the finalizer is overridden above.
 			// GC.SuppressFinalize(this);
 		}
+
 		#endregion
+
+		/// <summary>
+		/// Executes a report.
+		/// </summary>
+		/// <param name="id">The id of the report.</param>
+		/// <param name="format">The output format of the report.</param>
+		/// <param name="parameters">The list of parameters of the report.</param>
+		/// <returns>Returns the report in raw format.</returns>
+		public byte[] ExecuteReport(string id, string format, List<ReportParameter> parameters)
+		{
+			return this.Client.Post<List<ReportParameter>, byte[]>($"report/{id}/{format}", this.Client.Accept, parameters);
+		}
+
+		/// <summary>
+		/// Gets a list of all report parameter types.
+		/// </summary>
+		/// <returns>Returns a list of report parameter types.</returns>
+		public RisiCollection GetAllReportParamterTypes()
+		{
+			return this.Client.Get<RisiCollection>("type", new KeyValuePair<string, object>("_", DateTimeOffset.Now));
+		}
+
+		/// <summary>
+		/// Gets a report definition by id.
+		/// </summary>
+		/// <param name="id">The id of the report definition to retrieve.</param>
+		/// <returns>Returns a report definition.</returns>
+		public Report GetReportDefinition(string id)
+		{
+			return this.Client.Get<Report>($"report/{id}");
+		}
+
+		/// <summary>
+		/// Gets a list of report definitions based on a specific query.
+		/// </summary>
+		/// <returns>Returns a list of report definitions.</returns>
+		public RisiCollection GetReportDefintions(Expression<Func<Report, bool>> query)
+		{
+			return this.Client.Get<RisiCollection>("report", QueryExpressionBuilder.BuildQuery<Report>(query).ToArray());
+		}
+
+		/// <summary>
+		/// Gets detailed information about a given report parameter.
+		/// </summary>
+		/// <param name="id">The id of the report parameter for which to retrieve information.</param>
+		/// <returns>Returns a report parameter manifest.</returns>
+		public ParameterManifest GetReportParameterManifest(string id)
+		{
+			return this.Client.Get<ParameterManifest>($"type/{id}");
+		}
+
+		/// <summary>
+		/// Gets a list of report parameters.
+		/// </summary>
+		/// <param name="id">The id of the report for which to retrieve parameters.</param>
+		/// <returns>Returns a list of parameters.</returns>
+		public RisiCollection GetReportParameters(string id)
+		{
+			return this.Client.Get<RisiCollection>($"report/{id}/parm");
+		}
+
+		/// <summary>
+		/// Gets a list of auto-complete parameters which are applicable for the specified parameter.
+		/// </summary>
+		/// <param name="id">The id of the report.</param>
+		/// <param name="parameterId">The id of the parameter for which to retrieve detailed information.</param>
+		/// <returns>Returns an auto complete source definition of valid parameters values for a given parameter.</returns>
+		public AutoCompleteSourceDefinition GetReportParameterValues(string id, string parameterId)
+		{
+			return this.Client.Get<AutoCompleteSourceDefinition>($"report/{id}/parm/{parameterId}/values");
+		}
+
+		/// <summary>
+		/// Updates a parameter type definition.
+		/// </summary>
+		/// <param name="id">The id of the parameter type.</param>
+		/// <param name="parameterTypeDefinition"></param>
+		/// <returns>Returns the updated parameter type definition.</returns>
+		public ReportDataType UpdateParameterTypeDefinition(string id, ReportDataType parameterTypeDefinition)
+		{
+			return this.Client.Put<ReportDataType, ReportDataType>($"type/{id}", this.Client.Accept, parameterTypeDefinition);
+		}
+
+		/// <summary>
+		/// Updates a report definition.
+		/// </summary>
+		/// <param name="id">The id of the report definition to update.</param>
+		/// <param name="reportDefinition">The updated report definition.</param>
+		/// <returns>Returns the updated report definition.</returns>
+		public Report UpdateReportDefinition(string id, Report reportDefinition)
+		{
+			return this.Client.Put<Report, Report>($"report/{id}", this.Client.Accept, reportDefinition);
+		}
 	}
 }

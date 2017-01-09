@@ -17,6 +17,9 @@
  * User: justi
  * Date: 2016-8-28
  */
+
+using System;
+
 namespace OpenIZ.Messaging.RISI.Configuration
 {
 	/// <summary>
@@ -26,17 +29,21 @@ namespace OpenIZ.Messaging.RISI.Configuration
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RisiConfiguration"/> class
-		/// with a specified service name.
+		/// with a specified report engine type.
 		/// </summary>
-		/// <param name="wcfServiceName"></param>
-		public RisiConfiguration(string wcfServiceName)
+		/// <param name="address">The address of the reporting engine.</param>
+		/// <param name="handler">The type of report engine.</param>
+		public RisiConfiguration(Uri address, Type handler)
 		{
-			this.WcfServiceName = wcfServiceName;
+			this.Address = address;
+			this.Handler = handler;
 		}
 
+		public Uri Address { get; private set; }
+
 		/// <summary>
-		/// Gets the WCF service name of the configuration.
+		/// Gets the engine handler of the configuration.
 		/// </summary>
-		public string WcfServiceName { get; private set; }
+		public Type Handler { get; private set; }
 	}
 }

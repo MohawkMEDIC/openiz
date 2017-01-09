@@ -77,12 +77,13 @@ namespace OpenIZ.Core.Http
 			{
                 foreach (var v in kv.Value)
                 {
-                    queryString += String.Format("{0}={1}", kv.Key, Uri.EscapeDataString(v));
-                    if (!kv.Equals(query.Last()))
-                        queryString += "&";
+                    queryString += String.Format("{0}={1}&", kv.Key, Uri.EscapeDataString(v));
                 }
 			}
-			return queryString;
+            if (queryString.Length > 0)
+                return queryString.Substring(0, queryString.Length - 1);
+            else
+			    return queryString;
 		}
 
 		/// <summary>

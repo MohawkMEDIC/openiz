@@ -59,6 +59,23 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         /// <summary>
         /// Create a instance cast expression
         /// </summary>
+        private CodeStatement CreateToStringTryCatch(CodeExpression targetObject, CodeExpression sourceObject, CodeStatement failExpression)
+        {
+            return new CodeTryCatchFinallyStatement(
+                new CodeStatement[] {
+                    new CodeAssignStatement(targetObject, new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(sourceObject, "ToString"))),
+                },
+                new CodeCatchClause[] {
+
+                new CodeCatchClause("e", new CodeTypeReference(typeof(Exception)),
+                    new CodeExpressionStatement(new CodeMethodInvokeExpression(s_traceError, this.CreateStringFormatExpression("Casting Error: {0}", new CodeVariableReferenceExpression("e")))),
+                    failExpression)
+                });
+
+        }
+        /// <summary>
+        /// Create a instance cast expression
+        /// </summary>
         private CodeStatement CreateCastTryCatch(Type toType, CodeExpression targetObject, CodeExpression sourceObject, CodeStatement failExpression)
         {
             return new CodeTryCatchFinallyStatement(
@@ -254,7 +271,10 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 retVal.Statements.Add(new CodeVariableDeclarationStatement(propertyType.PropertyType, "_strong", s_null));
                 // Ensure not null
                 retVal.Statements.Add(new CodeConditionStatement(new CodeBinaryOperatorExpression(_o, CodeBinaryOperatorType.IdentityEquality, s_null), new CodeMethodReturnStatement(s_null)));
-                retVal.Statements.Add(this.CreateCastTryCatch(propertyType.PropertyType, _strongType, _o, new CodeMethodReturnStatement(s_null)));
+                if (propertyType.PropertyType == typeof(String))
+                    retVal.Statements.Add(this.CreateToStringTryCatch(_strongType, _o, new CodeMethodReturnStatement(s_null)));
+                else
+                    retVal.Statements.Add(this.CreateCastTryCatch(propertyType.PropertyType, _strongType, _o, new CodeMethodReturnStatement(s_null)));
                 retVal.Statements.Add(new CodeVariableDeclarationStatement(forType, "_retVal", new CodeObjectCreateExpression(forType)));
                 // Set the property value
                 retVal.Statements.Add(new CodeAssignStatement(new CodePropertyReferenceExpression(s_retVal, propertyType.Name), _strongType));

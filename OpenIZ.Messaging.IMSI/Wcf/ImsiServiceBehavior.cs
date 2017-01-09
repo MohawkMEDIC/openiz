@@ -197,6 +197,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     {
                         retVal = retVal.GetLocked();
                         ObjectExpander.ExpandProperties(retVal, OpenIZ.Core.Model.Query.NameValueCollection.ParseQueryString(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.RequestUri.Query));
+                        ObjectExpander.ExcludeProperties(retVal, OpenIZ.Core.Model.Query.NameValueCollection.ParseQueryString(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.RequestUri.Query));
                         return Bundle.CreateBundle(retVal);
                     }
                     else
@@ -353,7 +354,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
 
                     int totalResults = 0;
 
-                    IEnumerable<IdentifiedData> retVal = handler.Query(query, Int32.Parse(offset ?? "0"), Int32.Parse(count ?? "100"), out totalResults).Select(o=>o.GetLocked());
+                    var retVal = handler.Query(query, Int32.Parse(offset ?? "0"), Int32.Parse(count ?? "100"), out totalResults).Select(o=>o.GetLocked()).ToList();
                     WebOperationContext.Current.OutgoingResponse.LastModified = retVal.OrderByDescending(o => o.ModifiedOn).FirstOrDefault()?.ModifiedOn.DateTime ?? DateTime.Now;
 
 
@@ -367,16 +368,29 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     }
                     else
                     {
-                        if (query.ContainsKey("_all") || query.ContainsKey("_expand"))
+                        if (query.ContainsKey("_all") || query.ContainsKey("_expand") || query.ContainsKey("_exclude"))
                         {
                             using (WaitThreadPool wtp = new WaitThreadPool())
                             {
                                 foreach (var itm in retVal)
-                                    wtp.QueueUserWorkItem((o) => ObjectExpander.ExpandProperties(o as IdentifiedData, query), itm);
+                                {
+                                    wtp.QueueUserWorkItem((o) => {
+                                        var i = o as IdentifiedData;
+                                        ObjectExpander.ExpandProperties(i, query);
+                                        ObjectExpander.ExcludeProperties(i, query);
+                                    }, itm);
+                                }
                                 wtp.WaitOne();
                             }
                         }
-                        return BundleUtil.CreateBundle(retVal, totalResults, Int32.Parse(offset ?? "0"), WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_lean"] != null);
+
+	                    var lean = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_lean"];
+
+	                    bool parsedLean = false;
+
+	                    bool.TryParse(lean, out parsedLean);
+
+						return BundleUtil.CreateBundle(retVal, totalResults, Int32.Parse(offset ?? "0"), parsedLean);
                     }
                 }
                 else

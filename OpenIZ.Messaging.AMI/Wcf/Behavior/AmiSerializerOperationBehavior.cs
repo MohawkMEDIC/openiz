@@ -39,10 +39,10 @@ namespace OpenIZ.Messaging.AMI.Wcf.Behavior
 		}
 
 		/// <summary>
-		/// Apply the dispatch behavior
+		/// Apply the dispatch behavior.
 		/// </summary>
-		/// <param name="operationDescription"></param>
-		/// <param name="dispatchOperation"></param>
+		/// <param name="operationDescription">The operation description.</param>
+		/// <param name="dispatchOperation">The dispatch description.</param>
 		public void ApplyDispatchBehavior(OperationDescription operationDescription, DispatchOperation dispatchOperation)
 		{
 			dispatchOperation.Formatter = new WcfMessageDispatchFormatter<IAmiContract>(operationDescription);

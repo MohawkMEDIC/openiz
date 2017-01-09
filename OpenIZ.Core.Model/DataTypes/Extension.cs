@@ -84,7 +84,7 @@ namespace OpenIZ.Core.Model.DataTypes
                 }
                 catch
                 {
-
+                    this.ExtensionValueXml = Encoding.UTF8.GetBytes(value);
                 }
             }
         }
@@ -167,7 +167,7 @@ namespace OpenIZ.Core.Model.DataTypes
             Extension<TBoundModel> other = obj as Extension<TBoundModel>;
             if (other == null) return false;
             return base.SemanticEquals(obj) && other.ExtensionTypeKey == this.ExtensionTypeKey &&
-                this.ExtensionValue.Equals(other.ExtensionValue);
+                this.ExtensionValueXml == other.ExtensionValueXml;
         }
     }
 

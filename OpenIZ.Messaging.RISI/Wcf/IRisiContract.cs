@@ -17,18 +17,141 @@
  * User: justi
  * Date: 2016-8-28
  */
+
+using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Web;
+using OpenIZ.Core.Model.RISI;
+using System.Linq.Expressions;
 
 namespace OpenIZ.Messaging.RISI.Wcf
 {
 	/// <summary>
 	/// Provides operations for running and managing reports.
 	/// </summary>
+	[ServiceKnownType(typeof(Report))]
+	[ServiceKnownType(typeof(ParameterDefinition))]
+	[ServiceKnownType(typeof(ReportDataType))]
+	[ServiceKnownType(typeof(AutoCompleteSourceDefinition))]
+	[ServiceKnownType(typeof(ListAutoCompleteSourceDefinition))]
+	[ServiceKnownType(typeof(QueryAutoCompleteSourceDefinition))]
 	[ServiceContract(Namespace = "http://openiz.org/risi/1.0", Name = "RISI", ConfigurationName = "RISI_1.0")]
 	public interface IRisiContract
 	{
-		[WebGet(UriTemplate = "/temp", BodyStyle = WebMessageBodyStyle.Bare)]
-		object PlaceHolderOperation();
+		/// <summary>
+		/// Creates a new report parameter type definition.
+		/// </summary>
+		/// <param name="parameterTypeDefinition">The report parameter type definition to create.</param>
+		/// <returns>Returns the created report parameter type definition.</returns>
+		[WebInvoke(UriTemplate = "/type", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		ReportDataType CreateParameterType(ReportDataType parameterTypeDefinition);
+
+		/// <summary>
+		/// Creates a new report definition.
+		/// </summary>
+		/// <param name="reportDefinition">The report definition to create.</param>
+		/// <returns>Returns the created report definition.</returns>
+		[WebInvoke(UriTemplate = "/report", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		Report CreateReportDefinition(Report reportDefinition);
+
+		/// <summary>
+		/// Deletes a report parameter type.
+		/// </summary>
+		/// <param name="id">The id of the report parameter type to delete.</param>
+		/// <returns>Returns the deleted report parameter type.</returns>
+		[WebInvoke(UriTemplate = "/type/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		ReportDataType DeleteParameterType(string id);
+
+		/// <summary>
+		/// Deletes a report definition.
+		/// </summary>
+		/// <param name="id">The id of the report definition to delete.</param>
+		/// <returns>Returns the deleted report definition.</returns>
+		[WebInvoke(UriTemplate = "/report/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		Report DeleteReportDefinition(string id);
+
+		/// <summary>
+		/// Executes a report.
+		/// </summary>
+		/// <param name="id">The id of the report.</param>
+		/// <param name="format">The output format of the report.</param>
+		/// <param name="parameters">The list of parameters of the report.</param>
+		/// <returns>Returns the report in raw format.</returns>
+		[WebInvoke(UriTemplate = "/report/{id}/{format}", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		byte[] ExecuteReport(string id, string format, List<ReportParameter> parameters);
+
+		/// <summary>
+		/// Gets a list of all report parameter types.
+		/// </summary>
+		/// <returns>Returns a list of report parameter types.</returns>
+		[WebGet(UriTemplate = "/type", BodyStyle = WebMessageBodyStyle.Bare)]
+		RisiCollection GetAllReportParamterTypes();
+
+		/// <summary>
+		/// Gets a report definition by id.
+		/// </summary>
+		/// <param name="id">The id of the report definition to retrieve.</param>
+		/// <returns>Returns a report definition.</returns>
+		[WebGet(UriTemplate = "/report/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
+		Report GetReportDefinition(string id);
+
+		/// <summary>
+		/// Gets a list of report definitions based on a specific query.
+		/// </summary>
+		/// <returns>Returns a list of report definitions.</returns>
+		[WebGet(UriTemplate = "/report", BodyStyle = WebMessageBodyStyle.Bare)]
+		RisiCollection GetReportDefintions();
+
+		/// <summary>
+		/// Gets detailed information about a given report parameter.
+		/// </summary>
+		/// <param name="id">The id of the report parameter for which to retrieve information.</param>
+		/// <returns>Returns a report parameter manifest.</returns>
+		[WebGet(UriTemplate = "/type/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
+		ParameterManifest GetReportParameterManifest(string id);
+
+		/// <summary>
+		/// Gets a list of report parameters.
+		/// </summary>
+		/// <param name="id">The id of the report for which to retrieve parameters.</param>
+		/// <returns>Returns a list of parameters.</returns>
+		[WebGet(UriTemplate = "/report/{id}/parm", BodyStyle = WebMessageBodyStyle.Bare)]
+		RisiCollection GetReportParameters(string id);
+
+		/// <summary>
+		/// Gets a list of auto-complete parameters which are applicable for the specified parameter.
+		/// </summary>
+		/// <param name="id">The id of the report.</param>
+		/// <param name="parameterId">The id of the parameter for which to retrieve detailed information.</param>
+		/// <returns>Returns an auto complete source definition of valid parameters values for a given parameter.</returns>
+		[WebGet(UriTemplate = "/report/{id}/parm/{parameterId}/values")]
+		AutoCompleteSourceDefinition GetReportParameterValues(string id, string parameterId);
+
+		/// <summary>
+		/// Gets the report source.
+		/// </summary>
+		/// <param name="id">The id of the report for which to retrieve the source.</param>
+		/// <returns>Returns the report source.</returns>
+		[WebGet(UriTemplate = "/report/{id}/source", BodyStyle = WebMessageBodyStyle.Bare)]
+		Report GetReportSource(string id);
+
+		/// <summary>
+		/// Updates a parameter type definition.
+		/// </summary>
+		/// <param name="id">The id of the parameter type.</param>
+		/// <param name="parameterTypeDefinition"></param>
+		/// <returns>Returns the updated parameter type definition.</returns>
+		[WebInvoke(UriTemplate = "/type/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		ReportDataType UpdateParameterTypeDefinition(string id, ReportDataType parameterTypeDefinition);
+
+		/// <summary>
+		/// Updates a report definition.
+		/// </summary>
+		/// <param name="id">The id of the report definition to update.</param>
+		/// <param name="reportDefinition">The updated report definition.</param>
+		/// <returns>Returns the updated report definition.</returns>
+		[WebInvoke(UriTemplate = "/report/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		Report UpdateReportDefinition(string id, Report reportDefinition);
 	}
 }

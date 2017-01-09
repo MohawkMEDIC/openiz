@@ -648,7 +648,7 @@
     <property modelName="ExtensionTypeKey" domainName="ExtensionTypeId"/>
     <collapseKey propertyName="ExtensionType" keyName="ExtensionTypeId"/>
     <property modelName="SourceEntityKey" domainName="EntityId"/>
-
+    <property modelName="ExtensionValueXml" domainName="ExtensionValue"/>
   </class>
 
   <class modelClass="OpenIZ.Core.Model.DataTypes.ExtensionType, OpenIZ.Core.Model, Version=0.6.0.0"
@@ -1040,5 +1040,14 @@
       <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
     </property>
     <collapseKey propertyName="RelationshipTypeConcept" keyName="RelationshipTypeConceptId"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ActExtension, OpenIZ.Core.Model, Version=0.6.0.0"
+   domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ActExtension, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0">
+    <property modelName="Key" domainName="ActExtensionId"/>
+    <property modelName="ExtensionTypeKey" domainName="ExtensionTypeId"/>
+    <collapseKey propertyName="ExtensionType" keyName="ExtensionTypeId"/>
+    <property modelName="SourceEntityKey" domainName="ActId"/>
+    <property modelName="ExtensionValueXml" domainName="ExtensionValue"/>
   </class>
 </modelMap>
