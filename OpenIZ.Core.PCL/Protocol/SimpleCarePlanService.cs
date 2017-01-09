@@ -28,6 +28,7 @@ using OpenIZ.Core.Protocol;
 using OpenIZ.Core.Services;
 using System.Threading;
 using OpenIZ.Core.Model.Constants;
+using System.Globalization;
 
 namespace OpenIZ.Core.Protocol
 {
@@ -47,7 +48,7 @@ namespace OpenIZ.Core.Protocol
         public SimpleCarePlanService()
         {
         }
-    
+
         /// <summary>
         /// Gets the protocols
         /// </summary>
@@ -79,38 +80,40 @@ namespace OpenIZ.Core.Protocol
         /// <returns></returns>
         public IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters = false)
         {
-            List<Act> protocolActs = this.Protocols.OrderBy(o => o.Name).AsParallel().SelectMany(o => o.Calculate(p)).OrderBy(o=>o.StopTime - o.StartTime).ToList();
+            List<Act> protocolActs = this.Protocols.OrderBy(o => o.Name).AsParallel().SelectMany(o => o.Calculate(p)).OrderBy(o => o.StopTime - o.StartTime).ToList();
 
             if (asEncounters)
             {
                 List<PatientEncounter> encounters = new List<PatientEncounter>();
-                foreach (var act in new List<Act>(protocolActs))
+                foreach (var act in new List<Act>(protocolActs).Where(o => o.StartTime.HasValue && o.StopTime.HasValue).OrderBy(o => o.StartTime))
                 {
                     // Is there a candidate encounter which is bound by start/end
-                    var candidate = encounters.FirstOrDefault(e => e.ActTime >= act.StartTime && e.ActTime <= act.StopTime);
+                    var candidate = encounters.FirstOrDefault(e => (act.StartTime ?? DateTimeOffset.MinValue) <= (e.StopTime ?? DateTimeOffset.MaxValue) && (act.StopTime ?? DateTimeOffset.MaxValue) >= (e.StartTime ?? DateTimeOffset.MinValue));
 
                     // Create candidate
                     if (candidate == null)
                     {
-                        candidate = new PatientEncounter()
-                        {
-                            Participations = new List<ActParticipation>()
-                        {
-                            new ActParticipation(ActParticipationKey.RecordTarget, p.Key)
-                        },
-                            ActTime = act.ActTime,
-                            StartTime = act.StartTime,
-                            StopTime = act.StopTime,
-                            MoodConceptKey = ActMoodKeys.Propose,
-                            Key = Guid.NewGuid()
-                        };
-                        p.Participations.Add(new ActParticipation()
-                        {
-                            ParticipationRoleKey = ActParticipationKey.RecordTarget,
-                            Act = candidate
-                        });
+                        candidate = this.CreateEncounter(act, p);
                         encounters.Add(candidate);
                         protocolActs.Add(candidate);
+                    }
+                    else
+                    {
+                        TimeSpan[] overlap = {
+                            (candidate.StopTime ?? DateTimeOffset.MaxValue) - (candidate.StartTime ?? DateTimeOffset.MinValue),
+                            (candidate.StopTime ?? DateTimeOffset.MaxValue) - (act.StartTime ?? DateTimeOffset.MinValue),
+                            (act.StopTime ?? DateTimeOffset.MaxValue) - (candidate.StartTime ?? DateTimeOffset.MinValue),
+                            (act.StopTime ?? DateTimeOffset.MaxValue) - (act.StartTime ?? DateTimeOffset.MinValue)
+                        };
+                        // find the minimum overlap
+                        var minOverlap = overlap.Min();
+                        var overlapMin = Array.IndexOf(overlap, minOverlap);
+                        // Adjust the dates based on the start / stop time
+                        if (overlapMin % 2 == 1)
+                            candidate.StartTime = act.StartTime;
+                        if (overlapMin > 1)
+                            candidate.StopTime = act.StopTime;
+                        candidate.ActTime = candidate.StartTime ?? candidate.ActTime;
                     }
 
                     // Add the protocol act
@@ -121,10 +124,58 @@ namespace OpenIZ.Core.Protocol
                     p.Participations.RemoveAll(o => o.Act == act);
 
                 }
-            }
 
+                // for those acts which do not have a stop time, schedule them in the first appointment available
+                foreach (var act in new List<Act>(protocolActs).Where(o => !o.StopTime.HasValue))
+                {
+                    var candidate = encounters.OrderBy(o => o.StartTime).FirstOrDefault(e => e.StartTime >= act.StartTime);
+                    if (candidate == null)
+                    {
+                        candidate = this.CreateEncounter(act, p);
+                        encounters.Add(candidate);
+                        protocolActs.Add(candidate);
+                    }
+                    // Add the protocol act
+                    candidate.Relationships.Add(new ActRelationship(ActRelationshipTypeKeys.HasComponent, act));
+
+                    // Remove so we don't have duplicates
+                    protocolActs.Remove(act);
+                    p.Participations.RemoveAll(o => o.Act == act);
+                }
+
+            }
+            
+            // TODO: Configure for days of week
+            foreach (var itm in protocolActs)
+                while (itm.ActTime.DayOfWeek == DayOfWeek.Sunday || itm.ActTime.DayOfWeek == DayOfWeek.Saturday)
+                    itm.ActTime = itm.ActTime.AddDays(1);
 
             return protocolActs.ToList();
+        }
+
+        /// <summary>
+        /// Create an encounter
+        /// </summary>
+        private PatientEncounter CreateEncounter(Act act, Patient recordTarget)
+        {
+            var retVal = new PatientEncounter()
+            {
+                Participations = new List<ActParticipation>()
+                        {
+                            new ActParticipation(ActParticipationKey.RecordTarget, recordTarget.Key)
+                        },
+                ActTime = act.ActTime,
+                StartTime = act.StartTime,
+                StopTime = act.StopTime,
+                MoodConceptKey = ActMoodKeys.Propose,
+                Key = Guid.NewGuid()
+            };
+            recordTarget.Participations.Add(new ActParticipation()
+            {
+                ParticipationRoleKey = ActParticipationKey.RecordTarget,
+                Act = retVal
+            });
+            return retVal;
         }
     }
 }
