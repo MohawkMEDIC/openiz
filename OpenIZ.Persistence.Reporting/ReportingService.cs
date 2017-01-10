@@ -22,6 +22,7 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Persistence.Reporting.Configuration;
 using System;
+using System.Configuration;
 using System.Diagnostics;
 
 namespace OpenIZ.Persistence.Reporting
@@ -59,12 +60,31 @@ namespace OpenIZ.Persistence.Reporting
 		/// <summary>
 		/// The internal reference to the configuration.
 		/// </summary>
-		public static ReportingConfiguration Configuration => ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.persistence.reporting") as ReportingConfiguration;
+		public static ReportingConfiguration Configuration
+		{
+			get
+			{
+				var configurationManager = ApplicationContext.Current.GetService<IConfigurationManager>();
+
+				ReportingConfiguration config = null;
+
+				if (configurationManager == null)
+				{	
+					config = ConfigurationManager.GetSection("openiz.persistence.reporting") as ReportingConfiguration;
+				}
+				else
+				{
+					config = configurationManager.GetSection("openiz.persistence.reporting") as ReportingConfiguration;
+				}
+
+				return config;
+			}
+		} 
 
 		/// <summary>
 		/// Gets the running state of the message handler.
 		/// </summary>
-		public bool IsRunning => false;
+		public bool IsRunning => true;
 
 		/// <summary>
 		/// Starts the service. Returns true if the service started successfully.
@@ -72,20 +92,40 @@ namespace OpenIZ.Persistence.Reporting
 		/// <returns>Returns true if the service started successfully.</returns>
 		public bool Start()
 		{
+			bool status = false;
+
 			try
 			{
+
 				this.Starting?.Invoke(this, EventArgs.Empty);
 
-				this.traceSource.TraceEvent(TraceEventType.Information, 0, $"Reporting configuration loaded, using connection string: { Configuration.ConnectionString }");
+				this.traceSource.TraceEvent(TraceEventType.Information, 0, $"Reporting configuration loaded, using connection string: { Configuration.ConnectionStringName }");
+
+				using (var connection = new Npgsql.NpgsqlConnection(ConfigurationManager.ConnectionStrings[Configuration.ConnectionStringName].ConnectionString))
+				{
+					// test if we can open the connection
+					try
+					{
+						connection.Open();
+					}
+					catch (Exception e)
+					{
+						this.traceSource.TraceEvent(TraceEventType.Error, 0, e.ToString());
+						status = false;
+						throw;
+					}
+				}
 
 				this.Started?.Invoke(this, EventArgs.Empty);
-				return true;
+				status = true;
 			}
 			catch (Exception e)
 			{
 				this.traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
-				return false;
+				status = false;
 			}
+
+			return status;
 		}
 
 		/// <summary>

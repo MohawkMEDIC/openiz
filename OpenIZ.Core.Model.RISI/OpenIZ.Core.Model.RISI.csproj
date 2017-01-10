@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoCompleteDefinition.cs" />
+    <Compile Include="Constants\DataTypeKeys.cs" />
     <Compile Include="Impl\DefaultDataTypeProvider.cs" />
     <Compile Include="Impl\DefaultParameterProvider.cs" />
     <Compile Include="Interfaces\IDataTypeProvider.cs" />

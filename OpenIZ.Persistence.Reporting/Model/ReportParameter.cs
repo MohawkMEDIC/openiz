@@ -44,11 +44,10 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// with a specific <see cref="Core.Model.RISI.ReportParameter"/> instance.
 		/// </summary>
 		/// <param name="reportParameter">The report parameter instance.</param>
-		public ReportParameter(Core.Model.RISI.ReportParameter reportParameter)
+		public ReportParameter(Core.Model.RISI.ReportParameter reportParameter) : this()
 		{
-			this.DataType = reportParameter.DataType.Key.Value;
-			this.DefaultValue = new ParameterValue(reportParameter.Value);
-			this.DefaultValues = new List<ParameterValue>();
+			this.DataTypeId = reportParameter.DataType.Key.Value;
+			this.DefaultValues.Add(new ParameterValue(reportParameter.Value));
 			this.Id = reportParameter.Key.Value;
 			this.IsNullable = reportParameter.IsNullable;
 			this.Name = reportParameter.Name;
@@ -62,17 +61,17 @@ namespace OpenIZ.Persistence.Reporting.Model
 		public DateTimeOffset CreationTime { get; set; }
 
 		/// <summary>
-		/// Gets or sets the data type of the report parameter.
+		/// Gets or sets the data type reference associated with the report parameter.
+		/// </summary>
+		[ForeignKey("DataTypeId")]
+		public virtual DataType DataType { get; set; }
+
+		/// <summary>
+		/// Gets or sets the id of the data type associated with the report parameter.
 		/// </summary>
 		[Required]
 		[Column("data_type")]
-		public Guid DataType { get; set; }
-
-		/// <summary>
-		/// Gets or sets the default value of the report parameter.
-		/// </summary>
-		[Column("default_value")]
-		public ParameterValue DefaultValue { get; set; }
+		public Guid DataTypeId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the default values associated with the report parameter.
@@ -100,6 +99,13 @@ namespace OpenIZ.Persistence.Reporting.Model
 		[Required]
 		[Column("name")]
 		public string Name { get; set; }
+
+		/// <summary>
+		/// Gets or sets the order of the report parameter.
+		/// </summary>
+		[Required]
+		[Column("order")]
+		public int Order { get; set; }
 
 		/// <summary>
 		/// Gets or sets the report reference associated with the report parameter.

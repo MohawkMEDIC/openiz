@@ -38,16 +38,16 @@ namespace OpenIZ.Persistence.Reporting.Configuration
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ReportingConfiguration"/> class.
 		/// </summary>
-		/// <param name="connectionString">The connection string.</param>
-		public ReportingConfiguration(string connectionString)
+		/// <param name="connectionStringName">The connection string name.</param>
+		public ReportingConfiguration(string connectionStringName)
 		{
-			this.ConnectionString = connectionString;
+			this.ConnectionStringName = connectionStringName;
 		}
 
 		/// <summary>
 		/// Gets or sets the connection string of the configuration.
 		/// </summary>
-		[XmlAttribute("connectionString")]
-		public string ConnectionString { get; set; }
+		[XmlAttribute("name")]
+		public string ConnectionStringName { get; set; }
 	}
 }

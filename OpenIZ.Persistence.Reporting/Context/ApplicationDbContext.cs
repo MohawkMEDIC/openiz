@@ -18,11 +18,14 @@
  * Date: 2017-1-7
  */
 
+using System;
+using System.Configuration;
 using OpenIZ.Persistence.Reporting.Model;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using System.IO;
 
-namespace OpenIZ.Persistence.Reporting
+namespace OpenIZ.Persistence.Reporting.Context
 {
 	/// <summary>
 	/// Represents the application database context.
@@ -32,9 +35,14 @@ namespace OpenIZ.Persistence.Reporting
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ApplicationDbContext"/> class.
 		/// </summary>
-		public ApplicationDbContext() : base(ReportingService.Configuration.ConnectionString)
+		public ApplicationDbContext() : base(ReportingService.Configuration.ConnectionStringName)
 		{
 		}
+
+		/// <summary>
+		/// Gets or sets the data types.
+		/// </summary>
+		public DbSet<DataType> DataTypes { get; set; }
 
 		/// <summary>
 		/// Gets or sets the parameter values.
@@ -67,6 +75,18 @@ namespace OpenIZ.Persistence.Reporting
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
 			modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+
+			using (var connection = new Npgsql.NpgsqlConnection(ConfigurationManager.ConnectionStrings[ReportingService.Configuration.ConnectionStringName].ConnectionString))
+			{
+				connection.Open();
+
+				using (var command = connection.CreateCommand())
+				{
+					command.CommandText = "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\" SCHEMA dbo VERSION \"1.0\";";
+					command.ExecuteNonQuery();
+				}
+			}
+
 			base.OnModelCreating(modelBuilder);
 		}
 	}
