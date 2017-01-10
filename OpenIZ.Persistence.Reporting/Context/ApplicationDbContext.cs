@@ -25,7 +25,7 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.IO;
 
-namespace OpenIZ.Persistence.Reporting
+namespace OpenIZ.Persistence.Reporting.Context
 {
 	/// <summary>
 	/// Represents the application database context.
@@ -35,7 +35,7 @@ namespace OpenIZ.Persistence.Reporting
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ApplicationDbContext"/> class.
 		/// </summary>
-		public ApplicationDbContext() : base(ReportingService.Configuration.ConnectionString)
+		public ApplicationDbContext() : base(ReportingService.Configuration.ConnectionStringName)
 		{
 		}
 
@@ -76,7 +76,7 @@ namespace OpenIZ.Persistence.Reporting
 		{
 			modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
 
-			using (var connection = new Npgsql.NpgsqlConnection(ConfigurationManager.ConnectionStrings[ReportingService.Configuration.ConnectionString].ConnectionString))
+			using (var connection = new Npgsql.NpgsqlConnection(ConfigurationManager.ConnectionStrings[ReportingService.Configuration.ConnectionStringName].ConnectionString))
 			{
 				connection.Open();
 

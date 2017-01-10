@@ -63,10 +63,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationDbContext.cs" />
+    <Compile Include="Context\ApplicationDbContext.cs" />
     <Compile Include="Configuration\ConfigurationSectionHandler.cs" />
     <Compile Include="Configuration\ReportingConfiguration.cs" />
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Migrations\PostgresqlMigrationGenerator.cs" />
     <Compile Include="Model\DataType.cs" />
     <Compile Include="Model\ParameterValue.cs" />
     <Compile Include="Model\ReportDefinition.cs" />

@@ -21,57 +21,55 @@
 using System.Collections.Generic;
 using Npgsql;
 using OpenIZ.Persistence.Reporting.Model;
+using System;
+using System.Data.Entity;
+using System.Data.Entity.Migrations;
+using System.Data.Entity.Migrations.Model;
+using System.Linq;
+using OpenIZ.Persistence.Reporting.Context;
 
 namespace OpenIZ.Persistence.Reporting.Migrations
 {
-	using System;
-	using System.Data.Entity;
-	using System.Data.Entity.Migrations;
-	using System.Data.Entity.Migrations.Model;
-	using System.Linq;
-
-	internal sealed class Configuration : DbMigrationsConfiguration<OpenIZ.Persistence.Reporting.ApplicationDbContext>
+	/// <summary>
+	/// Represents internal configuration for the database migrations.
+	/// </summary>
+	internal sealed class Configuration : DbMigrationsConfiguration<ApplicationDbContext>
     {
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Configuration"/> class.
+		/// </summary>
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
-	        SetSqlGenerator("Npgsql", new CustomSqlGenerator());
+	        SetSqlGenerator("Npgsql", new PostgresqlMigrationGenerator());
         }
 
-        protected override void Seed(OpenIZ.Persistence.Reporting.ApplicationDbContext context)
-        {
-	    //    context.ReportDefinitions.Add(new Model.ReportDefinition
-	    //    {
-		   //     Author = "nityan",
-		   //     Description = "test report definition",
-		   //     Parameters = new List<ReportParameter>
-		   //     {
-					//new ReportParameter
-					//{
-												
-					//}
-		   //     }
-	    //    });
-
-	    //    context.SaveChanges();
-        }
-    }
-
-	internal sealed class CustomSqlGenerator : NpgsqlMigrationSqlGenerator
-	{
-		protected override void Convert(AddColumnOperation addColumnOperation)
+		/// <summary>
+		/// Seeds the database with pre-set data.
+		/// </summary>
+		/// <param name="context">The database context.</param>
+		protected override void Seed(ApplicationDbContext context)
 		{
-			if (addColumnOperation.Column.Name == "creation_time")
+			context.ReportDefinitions.Add(new ReportDefinition
 			{
-				addColumnOperation.Column.DefaultValue = DateTimeOffset.UtcNow;
-			}
+				Author = "nityan",
+				Description = "test description",
+				Parameters = new List<ReportParameter>
+				{
+					new ReportParameter
+					{
+						DataTypeId = Guid.Parse("6CDE9F0D-1DA4-462F-8C41-163969D4E575"),
+						IsNullable = false,
+						Name = "test parameter",
+						DefaultValues = new List<ParameterValue>
+						{
+							new ParameterValue(Guid.NewGuid())
+						}
+					}
+				}
+			});
 
-			if (addColumnOperation.Column.Name == "id")
-			{
-				addColumnOperation.Column.DefaultValue = Guid.NewGuid();
-			}
-
-			base.Convert(addColumnOperation);
+			context.SaveChanges();
 		}
-	}
+    }
 }

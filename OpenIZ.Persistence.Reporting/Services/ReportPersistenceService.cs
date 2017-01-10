@@ -22,6 +22,7 @@ using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Event;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.RISI;
+using OpenIZ.Persistence.Reporting.Context;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

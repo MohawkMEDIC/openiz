@@ -38,7 +38,6 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// </summary>
 		public ReportDefinition()
 		{
-			this.CreationTime = DateTimeOffset.UtcNow;
 			this.Id = Guid.NewGuid();
 			this.Parameters = new List<ReportParameter>();
 		}
@@ -51,7 +50,6 @@ namespace OpenIZ.Persistence.Reporting.Model
 		public ReportDefinition(Report report)
 		{
 			this.Author = report.CreatedBy.UserName;
-			this.CreationTime = DateTimeOffset.UtcNow;
 			this.Description = report.Description;
 			this.Id = report.Key.Value;
 			this.Parameters = report.Parameters.Select(p => new ReportParameter(p)).ToList();
@@ -60,8 +58,16 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// <summary>
 		/// Gets or sets the author of the report.
 		/// </summary>
+		[Required]
 		[Column("author")]
 		public string Author { get; set; }
+
+		/// <summary>
+		/// Gets or sets the correlation id of the report.
+		/// </summary>
+		[Required]
+		[Column("correlation_id")]
+		public Guid CorrelationId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the creation time of the report.

@@ -37,13 +37,13 @@ namespace OpenIZ.Persistence.Reporting.Configuration
 		/// <returns>The created section handler object.</returns>
 		public object Create(object parent, object configContext, XmlNode section)
 		{
-			var providerElement = section.SelectSingleNode("./*[local-name() = 'provider']") as XmlElement;
+			var providerElement = section.SelectSingleNode("./*[local-name() = 'connectionString']") as XmlElement;
 
-			var connectionString = providerElement?.Attributes["connectionString"]?.Value;
+			var connectionString = providerElement?.Attributes["name"]?.Value;
 
 			if (connectionString == null)
 			{
-				throw new ConfigurationErrorsException("The 'provider' element must have a 'connectionString' attribute");
+				throw new ConfigurationErrorsException("The 'connectionString' element must have a 'name' attribute");
 			}
 
 			return new ReportingConfiguration(connectionString);
