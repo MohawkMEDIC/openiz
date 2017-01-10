@@ -21,7 +21,7 @@
 INSERT INTO dbo.data_type VALUES ('41FFA3F1-D886-4E8B-A92C-F20C4DD561C3', current_timestamp, 'Binary');
 INSERT INTO dbo.data_type VALUES ('8C86A76C-EB72-4213-81F7-D56D7D606C2E', current_timestamp, 'Boolean');
 INSERT INTO dbo.data_type VALUES ('8E7CC74A-2008-4F12-88EF-BC49D5E94744', current_timestamp, 'Date');
-INSERT INTO dbo.data_type VALUES ('44DD3308-A503-49F9-87F7-57FACE59CF70', current_timestamp, 'Date');
+INSERT INTO dbo.data_type VALUES ('44DD3308-A503-49F9-87F7-57FACE59CF70', current_timestamp, 'DateTime');
 INSERT INTO dbo.data_type VALUES ('B71859BC-F473-40CF-95DF-0F7C9DE5FCF8', current_timestamp, 'Enum');
 INSERT INTO dbo.data_type VALUES ('52BAE88A-5239-4F83-A2C9-958CE07B0EBE', current_timestamp, 'Float');
 INSERT INTO dbo.data_type VALUES ('6CDE9F0D-1DA4-462F-8C41-163969D4E575', current_timestamp, 'GUID');
