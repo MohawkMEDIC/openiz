@@ -46,7 +46,7 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// <param name="reportParameter">The report parameter instance.</param>
 		public ReportParameter(Core.Model.RISI.ReportParameter reportParameter)
 		{
-			this.DataType = reportParameter.DataType.Key.Value;
+			this.DataTypeId = reportParameter.DataType.Key.Value;
 			this.DefaultValue = new ParameterValue(reportParameter.Value);
 			this.DefaultValues = new List<ParameterValue>();
 			this.Id = reportParameter.Key.Value;
@@ -62,11 +62,17 @@ namespace OpenIZ.Persistence.Reporting.Model
 		public DateTimeOffset CreationTime { get; set; }
 
 		/// <summary>
-		/// Gets or sets the data type of the report parameter.
+		/// Gets or sets the id of the data type associated with the report parameter.
 		/// </summary>
 		[Required]
 		[Column("data_type")]
-		public Guid DataType { get; set; }
+		public Guid DataTypeId { get; set; }
+
+		/// <summary>
+		/// Gets or sets the data type reference associated with the report parameter.
+		/// </summary>
+		[ForeignKey("DataTypeId")]
+		public DataType DataType { get; set; }
 
 		/// <summary>
 		/// Gets or sets the default value of the report parameter.

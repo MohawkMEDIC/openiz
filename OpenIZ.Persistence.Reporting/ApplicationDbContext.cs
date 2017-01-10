@@ -18,9 +18,12 @@
  * Date: 2017-1-7
  */
 
+using System;
+using System.Configuration;
 using OpenIZ.Persistence.Reporting.Model;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using System.IO;
 
 namespace OpenIZ.Persistence.Reporting
 {
@@ -35,6 +38,11 @@ namespace OpenIZ.Persistence.Reporting
 		public ApplicationDbContext() : base(ReportingService.Configuration.ConnectionString)
 		{
 		}
+
+		/// <summary>
+		/// Gets or sets the data types.
+		/// </summary>
+		public DbSet<DataType> DataTypes { get; set; }
 
 		/// <summary>
 		/// Gets or sets the parameter values.
@@ -67,6 +75,18 @@ namespace OpenIZ.Persistence.Reporting
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
 			modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+
+			using (var connection = new Npgsql.NpgsqlConnection(ConfigurationManager.ConnectionStrings[ReportingService.Configuration.ConnectionString].ConnectionString))
+			{
+				connection.Open();
+
+				using (var command = connection.CreateCommand())
+				{
+					command.CommandText = "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\" SCHEMA dbo VERSION \"1.0\";";
+					command.ExecuteNonQuery();
+				}
+			}
+
 			base.OnModelCreating(modelBuilder);
 		}
 	}

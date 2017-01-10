@@ -67,5 +67,18 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// </summary>
 		[Column("value")]
 		public object Value { get; set; }
+
+		/// <summary>
+		/// Gets or sets the report parameter reference associated with the parameter value.
+		/// </summary>
+		[ForeignKey("ReportParameterId")]
+		public virtual ReportParameter ReportParameter { get; set; }
+
+		/// <summary>
+		/// Gets or sets the report parameter id associated with the parameter value.
+		/// </summary>
+		[Required]
+		[Column("report_parameter_id")]
+		public Guid ReportParameterId { get; set; }
 	}
 }

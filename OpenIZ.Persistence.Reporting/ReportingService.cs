@@ -22,6 +22,7 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Persistence.Reporting.Configuration;
 using System;
+using System.Configuration;
 using System.Diagnostics;
 
 namespace OpenIZ.Persistence.Reporting
@@ -59,7 +60,26 @@ namespace OpenIZ.Persistence.Reporting
 		/// <summary>
 		/// The internal reference to the configuration.
 		/// </summary>
-		public static ReportingConfiguration Configuration => ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.persistence.reporting") as ReportingConfiguration;
+		public static ReportingConfiguration Configuration
+		{
+			get
+			{
+				var configurationManager = ApplicationContext.Current.GetService<IConfigurationManager>();
+
+				ReportingConfiguration config = null;
+
+				if (configurationManager == null)
+				{	
+					config = ConfigurationManager.GetSection("openiz.persistence.reporting") as ReportingConfiguration;
+				}
+				else
+				{
+					config = configurationManager.GetSection("openiz.persistence.reporting") as ReportingConfiguration;
+				}
+
+				return config;
+			}
+		} 
 
 		/// <summary>
 		/// Gets the running state of the message handler.
