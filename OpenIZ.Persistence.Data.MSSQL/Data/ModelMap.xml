@@ -884,6 +884,9 @@
     <property modelName="Template" domainName="Act">
       <via domainName="TemplateDefinition"/>
     </property>
+    <property modelName="ReasonConcept" domainName="ReasonConcept">
+      <via domainName="ConceptVersions" aggregate="first" sortOrder="desc" orderBy="VersionSequenceId"/>
+    </property>
     <property modelName="TypeConceptKey" domainName="TypeConceptId"/>
     <property modelName="StatusConceptKey" domainName="StatusConceptId"/>
     <property modelName="ReasonConceptKey" domainName="ReasonConceptId"/>

@@ -49,7 +49,14 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
         public ViewModelDescription()
         {
             this.Model = new List<TypeModelDescription>();
+            this.Include = new List<string>();
         }
+
+        /// <summary>
+        /// Includes
+        /// </summary>
+        [XmlElement("include")]
+        public List<String> Include { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the view model description

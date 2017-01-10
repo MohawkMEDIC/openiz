@@ -513,13 +513,18 @@ namespace OpenIZ.Core.Model.Map
             {
 
                 // no need to load?
-                if (modelPropertyInfo == null)
-                    continue;
-                else if (modelPropertyInfo.GetCustomAttribute<DataIgnoreAttribute>() != null ||
-                    modelPropertyInfo.GetCustomAttributes<AutoLoadAttribute>().Where(o=>o.ClassCode == classifierValue || o.ClassCode == null).Count() == 0 &&
-                    !primitives.Contains(modelPropertyInfo.PropertyType) && !modelPropertyInfo.PropertyType.GetTypeInfo().IsEnum 
+                if (modelPropertyInfo == null ||
+                    modelPropertyInfo.GetCustomAttribute<DataIgnoreAttribute>() != null ||
+                    modelPropertyInfo.GetCustomAttributes<AutoLoadAttribute>().Where(o => o.ClassCode == classifierValue || o.ClassCode == null).Count() == 0 &&
+                    !primitives.Contains(modelPropertyInfo.PropertyType) && !modelPropertyInfo.PropertyType.GetTypeInfo().IsEnum
                     || !modelPropertyInfo.CanWrite)
+                {
+#if VERBOSE_DEBUG
+
+                    Debug.WriteLine("Ignored property ({0}[{1}]).{2}", typeof(TDomain).Name, idEnt.Key, modelPropertyInfo.Name);
+#endif 
                     continue;
+                }
 
                 // Map property
                 PropertyMap propMap = null;
@@ -531,12 +536,16 @@ namespace OpenIZ.Core.Model.Map
                 if (propInfo == null)
                 {
 #if VERBOSE_DEBUG
-                    Debug.WriteLine("Unmapped property ({0}).{1}", typeof(TDomain).Name, modelPropertyInfo.Name);
+                    Debug.WriteLine("Unmapped property ({0}[{1}]).{2}", typeof(TDomain).Name, idEnt.Key, modelPropertyInfo.Name);
 #endif
                     continue;
                 }
 
                 var originalValue = propInfo.GetValue(domainInstance);
+#if VERBOSE_DEBUG
+                Debug.WriteLine("Value property ({0}[{1}]).{2} = {3}", typeof(TDomain).Name, idEnt.Key, modelPropertyInfo.Name, originalValue);
+#endif
+
                 // Property info
                 try
                 {
@@ -583,6 +592,9 @@ namespace OpenIZ.Core.Model.Map
                 if (propMap?.DontLoad == true)
                     continue;
 
+#if VERBOSE_DEBUG
+                Debug.WriteLine("Mapping property ({0}[{1}]).{2} = {3}", typeof(TDomain).Name, idEnt.Key, modelPropertyInfo.Name, originalValue);
+#endif
                 // Set value
                 object pValue = null;
 

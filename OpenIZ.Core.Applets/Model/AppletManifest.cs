@@ -133,6 +133,12 @@ namespace OpenIZ.Core.Applets.Model
         public List<AppletTemplateDefinition> Templates { get; set; }
 
         /// <summary>
+        /// Gets or sets the view model definitions 
+        /// </summary>
+        [XmlElement("viewModel")]
+        public List<AppletViewModelDefinition> ViewModel { get; set; }
+
+        /// <summary>
         /// Gets or sets the assets which are to be used in the applet
         /// </summary>
         [XmlElement("asset")]

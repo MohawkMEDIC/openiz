@@ -56,6 +56,7 @@
     <Compile Include="Model\AppletStrings.cs" />
     <Compile Include="Model\AppletTemplateDefinition.cs" />
     <Compile Include="Model\AppletView.cs" />
+    <Compile Include="Model\AppletViewModelDefinition.cs" />
     <Compile Include="Model\AppletViewState.cs" />
     <Compile Include="Model\AssetData.cs" />
     <Compile Include="RenderBundle.cs" />

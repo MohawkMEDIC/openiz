@@ -39,6 +39,7 @@ using System.Linq.Expressions;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Applets.ViewModel.Description;
 
 namespace OpenIZ.Core.Applets
 {
@@ -58,6 +59,8 @@ namespace OpenIZ.Core.Applets
         private static Dictionary<String, Byte[]> s_cache = new Dictionary<string, byte[]>();
         private static Dictionary<String, List<KeyValuePair<String, String>>> s_stringCache = new Dictionary<string, List<KeyValuePair<string, string>>>();
         private static Dictionary<String, AppletTemplateDefinition> s_templateCache = new Dictionary<string, AppletTemplateDefinition>();
+        private static Dictionary<String, ViewModelDescription> s_viewModelCache = new Dictionary<string, ViewModelDescription>();
+
         private static Object s_syncLock = new object();
 
         public const string APPLET_SCHEME = "app://";
@@ -267,6 +270,36 @@ namespace OpenIZ.Core.Applets
                 }
             return retVal;
         }
+
+        /// <summary>
+        /// Gets the template definition
+        /// </summary>
+        public ViewModel.Description.ViewModelDescription GetViewModelDescription(String viewModelName)
+        {
+            ViewModelDescription retVal = null;
+            viewModelName = viewModelName.ToLowerInvariant();
+            if (!s_viewModelCache.TryGetValue(viewModelName ?? "", out retVal))
+                lock (s_syncLock)
+                {
+                    var viewModelDefinition = this.m_appletManifest.SelectMany(o => o.ViewModel).
+                        FirstOrDefault(o => o.ViewModelId.ToLowerInvariant() == viewModelName);
+
+                    if (viewModelDefinition != null)
+                        viewModelDefinition.DefinitionContent = this.RenderAssetContent(this.ResolveAsset(viewModelDefinition.Definition));
+
+                    // De-serialize
+                    using (MemoryStream ms = new MemoryStream(viewModelDefinition.DefinitionContent))
+                    {
+                        retVal = ViewModelDescription.Load(ms);
+                        foreach (var itm in retVal.Include)
+                            retVal.Model.AddRange(this.GetViewModelDescription(itm).Model);
+                        s_viewModelCache.Add(viewModelName, retVal);
+                    }
+                        
+                }
+            return retVal;
+        }
+
 
         /// <summary>
         /// Resolve the asset 

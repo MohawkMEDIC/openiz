@@ -258,17 +258,24 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public TBinding Invoke<TBinding>(string action, TBinding data) where TBinding : IdentifiedData
         {
-            var callList = this.GetCallList<TBinding>(action);
-            var retVal = data;
-            foreach (var c in callList)
+            try
             {
-                dynamic viewModel = this.m_bridge.ToViewModel(retVal);
-                viewModel = c(viewModel);
-                retVal = (TBinding)this.m_bridge.ToModel(viewModel);
+                var callList = this.GetCallList<TBinding>(action);
+                var retVal = data;
+                foreach (var c in callList)
+                {
+                    dynamic viewModel = this.m_bridge.ToViewModel(retVal);
+                    viewModel = c(viewModel);
+                    retVal = (TBinding)this.m_bridge.ToModel(viewModel);
+                }
+
+                return retVal;
             }
-
-            return retVal;
-
+            catch(Exception e)
+            {
+                this.m_tracer.TraceError("Error running {0} for {1} : {2}", action, data, e);
+                return data;
+            }
         }
 
         /// <summary>
@@ -276,18 +283,33 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public List<DetectedIssue> Validate<TBinding>(TBinding data) where TBinding : IdentifiedData
         {
-            var callList = this.GetValidators<TBinding>();
-            var retVal = new List<DetectedIssue>();
-            foreach (var c in callList)
+            try
             {
-                var issues = c(this.m_bridge.ToViewModel(data));
-                retVal.AddRange(issues.Cast<IDictionary<String, Object>>().Select(o=>new DetectedIssue()
+                var callList = this.GetValidators<TBinding>();
+                var retVal = new List<DetectedIssue>();
+                foreach (var c in callList)
                 {
-                    Text = o.ContainsKey("text") ? o["text"]?.ToString() : null,
-                    Priority = o.ContainsKey("priority") ? (DetectedIssuePriorityType)(int)(double)o["priority"] : DetectedIssuePriorityType.Informational
-                }));
+                    var issues = c(this.m_bridge.ToViewModel(data));
+                    retVal.AddRange(issues.Cast<IDictionary<String, Object>>().Select(o => new DetectedIssue()
+                    {
+                        Text = o.ContainsKey("text") ? o["text"]?.ToString() : null,
+                        Priority = o.ContainsKey("priority") ? (DetectedIssuePriorityType)(int)(double)o["priority"] : DetectedIssuePriorityType.Informational
+                    }));
+                }
+                return retVal;
             }
-            return retVal;
+            catch(Exception e)
+            {
+                this.m_tracer.TraceError("Error validating {0} : {1}", data, e);
+                return new List<DetectedIssue>()
+                {
+                    new DetectedIssue()
+                    {
+                        Priority = DetectedIssuePriorityType.Error,
+                        Text = e.Message
+                    }
+                };
+            }
         }
     }
 }

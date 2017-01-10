@@ -141,7 +141,7 @@ namespace OpenIZ.Core.Model.Collection
         [XmlIgnore, JsonIgnore]
         public IdentifiedData Entry
         {
-            get { return this.Item.Find(o => o.Key == this.EntryKey); }
+            get { if (this.EntryKey.HasValue) return this.Item.Find(o => o.Key == this.EntryKey); else return null; }
         }
 
         /// <summary>
@@ -197,7 +197,7 @@ namespace OpenIZ.Core.Model.Collection
             {
                 if (itm == null)
                     continue;
-                if (!retVal.Item.Exists(o => o.Tag == itm.Tag))
+                if (!retVal.Item.Exists(o => o.Tag == itm.Tag) && itm.Key.HasValue)
                 {
                     retVal.Item.Add(itm.GetLocked());
                     Bundle.ProcessModel(itm.GetLocked() as IdentifiedData, retVal);
@@ -300,7 +300,7 @@ namespace OpenIZ.Core.Model.Collection
 
                                     if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null)
                                         lock (currentBundle.m_lockObject)
-                                            if (!currentBundle.Item.Exists(o => o.Tag == iValue.Tag))
+                                            if (!currentBundle.Item.Exists(o => o.Tag == iValue.Tag) && iValue.Key.HasValue)
                                                 currentBundle.Item.Insert(0, iValue);
                                     ProcessModel(iValue, currentBundle, false);
                                 }
@@ -315,7 +315,7 @@ namespace OpenIZ.Core.Model.Collection
                             {
                                 if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null && iValue != null)
                                     lock (currentBundle.m_lockObject)
-                                        if (!currentBundle.Item.Exists(o => o.Tag == iValue.Tag))
+                                        if (!currentBundle.Item.Exists(o => o.Tag == iValue.Tag) && iValue.Key.HasValue)
                                             currentBundle.Item.Insert(0, iValue);
                                 ProcessModel(iValue, currentBundle, followList);
                             }

@@ -127,16 +127,17 @@ namespace OpenIZ.Caching.Memory
             var idData = data as IdentifiedData;
             if (idData == null || idData.IsEmpty() == true)
                 return;
-            var vidData = data as IVersionedEntity;
+            var vidData = data as IBaseEntityData;
 
             Type objData = data?.GetType();
-            if (idData == null || !idData.Key.HasValue)
+            if (idData == null || !idData.Key.HasValue ||
+                vidData?.ObsoletionTime.HasValue == true || vidData?.CreationTime == default(DateTime))
                 return;
 
             Dictionary<Guid, CacheEntry> cache = null;
             if (this.m_entryTable.TryGetValue(objData, out cache))
             {
-                Guid key = vidData?.VersionKey ?? idData?.Key ?? Guid.Empty;
+                Guid key = idData?.Key ?? Guid.Empty;
                 if (cache.ContainsKey(key))
                     lock (this.m_lock)
                     {
