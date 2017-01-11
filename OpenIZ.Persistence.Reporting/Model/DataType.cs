@@ -30,7 +30,6 @@ namespace OpenIZ.Persistence.Reporting.Model
 	/// <summary>
 	/// Represents a data type.
 	/// </summary>
-	[Table("data_type")]
 	public class DataType
 	{
 		/// <summary>
@@ -38,7 +37,6 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// </summary>
 		public DataType()
 		{
-			this.CreationTime = DateTimeOffset.UtcNow;
 			this.Id = Guid.NewGuid();
 		}
 
@@ -56,14 +54,12 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// Gets or sets the creation time of the report.
 		/// </summary>
 		[Required]
-		[Column("creation_time")]
 		public DateTimeOffset CreationTime { get; set; }
 
 		/// <summary>
 		/// Gets or sets the id of the report.
 		/// </summary>
 		[Key]
-		[Column("id")]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public Guid Id { get; set; }
 
@@ -71,8 +67,7 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// Gets or sets the name of the data type.
 		/// </summary>
 		[Required]
-		[Column("name")]
-		[StringLength(128)]
+		[StringLength(256)]
 		public string Name { get; set; }
 	}
 }

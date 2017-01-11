@@ -28,7 +28,6 @@ namespace OpenIZ.Persistence.Reporting.Model
 	/// <summary>
 	/// Represents a report parameter.
 	/// </summary>
-	[Table("report_parameter")]
 	public class ReportParameter
 	{
 		/// <summary>
@@ -57,7 +56,6 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// Gets or sets the creation time of the parameter.
 		/// </summary>
 		[Required]
-		[Column("creation_time")]
 		public DateTimeOffset CreationTime { get; set; }
 
 		/// <summary>
@@ -70,7 +68,6 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// Gets or sets the id of the data type associated with the report parameter.
 		/// </summary>
 		[Required]
-		[Column("data_type")]
 		public Guid DataTypeId { get; set; }
 
 		/// <summary>
@@ -82,7 +79,6 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// Gets or sets the id of the parameter.
 		/// </summary>
 		[Key]
-		[Column("id")]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public Guid Id { get; set; }
 
@@ -90,21 +86,19 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// Gets or sets whether the report parameter is nullable.
 		/// </summary>
 		[Required]
-		[Column("is_nullable")]
 		public bool IsNullable { get; set; }
 
 		/// <summary>
 		/// Gets or sets the name of the report parameter.
 		/// </summary>
 		[Required]
-		[Column("name")]
+		[StringLength(256)]
 		public string Name { get; set; }
 
 		/// <summary>
 		/// Gets or sets the order of the report parameter.
 		/// </summary>
 		[Required]
-		[Column("order")]
 		public int Order { get; set; }
 
 		/// <summary>
@@ -117,7 +111,6 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// Gets or sets the report ID associated with the report parameter.
 		/// </summary>
 		[Required]
-		[Column("report_id")]
 		public Guid ReportId { get; set; }
 	}
 }

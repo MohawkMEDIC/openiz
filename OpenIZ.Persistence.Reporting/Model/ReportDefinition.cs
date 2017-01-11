@@ -30,7 +30,6 @@ namespace OpenIZ.Persistence.Reporting.Model
 	/// <summary>
 	/// Represents a report definition.
 	/// </summary>
-	[Table("report_definition")]
 	public class ReportDefinition
 	{
 		/// <summary>
@@ -47,7 +46,7 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// with a specific <see cref="Report"/> instance.
 		/// </summary>
 		/// <param name="report">The report instance.</param>
-		public ReportDefinition(Report report)
+		public ReportDefinition(Report report) : this()
 		{
 			this.Author = report.CreatedBy.UserName;
 			this.Description = report.Description;
@@ -59,34 +58,31 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// Gets or sets the author of the report.
 		/// </summary>
 		[Required]
-		[Column("author")]
+		[StringLength(256)]
 		public string Author { get; set; }
 
 		/// <summary>
 		/// Gets or sets the correlation id of the report.
 		/// </summary>
 		[Required]
-		[Column("correlation_id")]
 		public Guid CorrelationId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the creation time of the report.
 		/// </summary>
 		[Required]
-		[Column("creation_time")]
 		public DateTimeOffset CreationTime { get; set; }
 
 		/// <summary>
 		/// Gets or sets the description of the report.
 		/// </summary>
-		[Column("description")]
+		[StringLength(1024)]
 		public string Description { get; set; }
 
 		/// <summary>
 		/// Gets or sets the id of the report.
 		/// </summary>
 		[Key]
-		[Column("id")]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public Guid Id { get; set; }
 

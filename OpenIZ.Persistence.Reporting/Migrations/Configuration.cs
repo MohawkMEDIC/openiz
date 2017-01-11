@@ -34,15 +34,15 @@ namespace OpenIZ.Persistence.Reporting.Migrations
 	/// Represents internal configuration for the database migrations.
 	/// </summary>
 	internal sealed class Configuration : DbMigrationsConfiguration<ApplicationDbContext>
-    {
+	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Configuration"/> class.
 		/// </summary>
-        public Configuration()
-        {
-            AutomaticMigrationsEnabled = true;
-	        SetSqlGenerator("Npgsql", new PostgresqlMigrationGenerator());
-        }
+		public Configuration()
+		{
+			AutomaticMigrationsEnabled = true;
+			SetSqlGenerator("System.Data.SqlClient", new MigrationGenerator());
+		}
 
 		/// <summary>
 		/// Seeds the database with pre-set data.
@@ -50,26 +50,26 @@ namespace OpenIZ.Persistence.Reporting.Migrations
 		/// <param name="context">The database context.</param>
 		protected override void Seed(ApplicationDbContext context)
 		{
-			context.ReportDefinitions.Add(new ReportDefinition
-			{
-				Author = "nityan",
-				Description = "test description",
-				Parameters = new List<ReportParameter>
-				{
-					new ReportParameter
-					{
-						DataTypeId = Guid.Parse("6CDE9F0D-1DA4-462F-8C41-163969D4E575"),
-						IsNullable = false,
-						Name = "test parameter",
-						DefaultValues = new List<ParameterValue>
-						{
-							new ParameterValue(Guid.NewGuid())
-						}
-					}
-				}
-			});
+			//context.ReportDefinitions.Add(new ReportDefinition
+			//{
+			//	Author = "nityan",
+			//	Description = "test description",
+			//	Parameters = new List<ReportParameter>
+			//	{
+			//		new ReportParameter
+			//		{
+			//			DataTypeId = Guid.Parse("6CDE9F0D-1DA4-462F-8C41-163969D4E575"),
+			//			IsNullable = false,
+			//			Name = "test parameter",
+			//			DefaultValues = new List<ParameterValue>
+			//			{
+			//				new ParameterValue(Guid.NewGuid())
+			//			}
+			//		}
+			//	}
+			//});
 
-			context.SaveChanges();
+			//context.SaveChanges();
 		}
-    }
+	}
 }

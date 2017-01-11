@@ -37,6 +37,7 @@ namespace OpenIZ.Persistence.Reporting.Context
 		/// </summary>
 		public ApplicationDbContext() : base(ReportingService.Configuration.ConnectionStringName)
 		{
+			this.Configuration.LazyLoadingEnabled = false;
 		}
 
 		/// <summary>
@@ -75,18 +76,6 @@ namespace OpenIZ.Persistence.Reporting.Context
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
 			modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-
-			using (var connection = new Npgsql.NpgsqlConnection(ConfigurationManager.ConnectionStrings[ReportingService.Configuration.ConnectionStringName].ConnectionString))
-			{
-				connection.Open();
-
-				using (var command = connection.CreateCommand())
-				{
-					command.CommandText = "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\" SCHEMA dbo VERSION \"1.0\";";
-					command.ExecuteNonQuery();
-				}
-			}
-
 			base.OnModelCreating(modelBuilder);
 		}
 	}

@@ -20,35 +20,49 @@
 using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.Migrations.Model;
+using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.Entity.Migrations.Utilities;
 
 namespace OpenIZ.Persistence.Reporting.Migrations
 {
 	/// <summary>
-	/// Represents a SQL migration generator for Postgresql.
+	/// Represents a SQL migration generator for SQL Server.
 	/// </summary>
-	internal sealed class PostgresqlMigrationGenerator : NpgsqlMigrationSqlGenerator
+	internal sealed class MigrationGenerator : SqlServerMigrationSqlGenerator
 	{
-		/// <summary>
-		/// Converts an add column operation.
-		/// </summary>
-		/// <param name="addColumnOperation">The add column operation to convert.</param>
-		protected override void Convert(AddColumnOperation addColumnOperation)
+		protected override void Generate(AddColumnOperation addColumnOperation)
 		{
-			if (addColumnOperation.Column.Name == "creation_time")
-			{
-				addColumnOperation.Column.DefaultValue = DateTimeOffset.UtcNow;
-			}
+			SetCreatedUtcColumn(addColumnOperation.Column);
 
-			if (addColumnOperation.Column.Name == "id")
-			{
-				addColumnOperation.Column.DefaultValue = Guid.NewGuid();
-			}
+			base.Generate(addColumnOperation);
+		}
 
-			base.Convert(addColumnOperation);
+		protected override void Generate(CreateTableOperation createTableOperation)
+		{
+			SetCreatedUtcColumn(createTableOperation.Columns);
+
+			base.Generate(createTableOperation);
+		}
+
+		private static void SetCreatedUtcColumn(IEnumerable<ColumnModel> columns)
+		{
+			foreach (var columnModel in columns)
+			{
+				SetCreatedUtcColumn(columnModel);
+			}
+		}
+
+		private static void SetCreatedUtcColumn(PropertyModel column)
+		{
+			if (column.Name == "CreationTime")
+			{
+				column.DefaultValueSql = "GETUTCDATE()";
+			}
 		}
 	}
 }
