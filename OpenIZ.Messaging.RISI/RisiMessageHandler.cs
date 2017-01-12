@@ -1,32 +1,32 @@
 ﻿/*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: justi
  * Date: 2016-8-28
  */
+
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Wcf.Behavior;
 using OpenIZ.Messaging.RISI.Configuration;
 using OpenIZ.Messaging.RISI.Wcf;
+using OpenIZ.Messaging.RISI.Wcf.Behavior;
 using System;
 using System.Diagnostics;
-using System.ServiceModel.Description;
 using System.ServiceModel.Web;
-using OpenIZ.Messaging.RISI.Wcf.Behavior;
 
 namespace OpenIZ.Messaging.RISI
 {
@@ -36,24 +36,19 @@ namespace OpenIZ.Messaging.RISI
 	public class RisiMessageHandler : IDaemonService
 	{
 		/// <summary>
-		/// The internal reference to the trace source.
-		/// </summary>
-		private readonly TraceSource traceSource = new TraceSource("OpenIZ.Messaging.RISI");
-
-		/// <summary>
 		/// The internal reference to the configuration.
 		/// </summary>
 		private readonly RisiConfiguration configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.risi") as RisiConfiguration;
 
 		/// <summary>
+		/// The internal reference to the trace source.
+		/// </summary>
+		private readonly TraceSource traceSource = new TraceSource("OpenIZ.Messaging.RISI");
+
+		/// <summary>
 		/// The internal reference to the web host.
 		/// </summary>
 		private WebServiceHost webHost;
-
-		/// <summary>
-		/// Gets the running state of the message handler.
-		/// </summary>
-		public bool IsRunning => this.webHost?.State == System.ServiceModel.CommunicationState.Opened;
 
 		/// <summary>
 		/// Fired when the object is starting up.
@@ -74,6 +69,11 @@ namespace OpenIZ.Messaging.RISI
 		/// Fired when the service is stopping.
 		/// </summary>
 		public event EventHandler Stopping;
+
+		/// <summary>
+		/// Gets the running state of the message handler.
+		/// </summary>
+		public bool IsRunning => this.webHost?.State == System.ServiceModel.CommunicationState.Opened;
 
 		/// <summary>
 		/// Starts the service. Returns true if the service started successfully.

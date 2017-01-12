@@ -1,30 +1,32 @@
 ﻿/*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: justi
  * Date: 2016-8-28
  */
-using System;
-using System.Collections.Generic;
-using System.ServiceModel;
+
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.RISI;
 using OpenIZ.Messaging.RISI.Configuration;
 using OpenIZ.Reporting.Core;
+using System;
+using System.Collections.Generic;
+using System.ServiceModel;
+using System.Linq;
 
 namespace OpenIZ.Messaging.RISI.Wcf
 {
@@ -37,21 +39,29 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <summary>
 		/// The internal reference to the RISI configuration.
 		/// </summary>
-		private readonly RisiConfiguration configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.persistence.reporting") as RisiConfiguration;
+		private static readonly RisiConfiguration configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.risi") as RisiConfiguration;
 
 		/// <summary>
 		/// The internal reference to the <see cref="IReportHandler"/> instance.
 		/// </summary>
-		private IReportHandler reportHandler = ApplicationContext.Current.GetService<IReportHandler>();
+		private readonly IReportHandler reportHandler = ApplicationContext.Current.GetService<IReportHandler>();
 
 		/// <summary>
-		/// Creates a new report parameter type definition.
+		/// Initializes a new instance of the <see cref="RisiBehavior"/> class.
 		/// </summary>
-		/// <param name="parameterTypeDefinition">The report parameter type definition to create.</param>
-		/// <returns>Returns the created report parameter type definition.</returns>
-		public ParameterType CreateParameterType(ParameterType parameterTypeDefinition)
+		public RisiBehavior()
 		{
-			throw new NotImplementedException();
+			this.reportHandler.ReportUri = new Uri(configuration.Address);
+		}
+
+		/// <summary>
+		/// Creates a new parameter type.
+		/// </summary>
+		/// <param name="parameterType">The parameter type to create.</param>
+		/// <returns>Returns the created parameter type.</returns>
+		public ParameterType CreateParameterType(ParameterType parameterType)
+		{
+			return this.reportHandler.CreateParameterType(parameterType);
 		}
 
 		/// <summary>
@@ -61,7 +71,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns the created report definition.</returns>
 		public ReportDefinition CreateReportDefinition(ReportDefinition reportDefinition)
 		{
-			throw new NotImplementedException();
+			return this.reportHandler.CreateReportDefinition(reportDefinition);
 		}
 
 		/// <summary>
@@ -71,7 +81,14 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns the deleted report parameter type.</returns>
 		public ParameterType DeleteParameterType(string id)
 		{
-			throw new NotImplementedException();
+			var key = Guid.Empty;
+
+			if (!Guid.TryParse(id, out key))
+			{
+				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
+			}
+
+			return this.reportHandler.DeleteParameterType(key);
 		}
 
 		/// <summary>
@@ -81,7 +98,14 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns the deleted report definition.</returns>
 		public ReportDefinition DeleteReportDefinition(string id)
 		{
-			throw new NotImplementedException();
+			var key = Guid.Empty;
+
+			if (!Guid.TryParse(id, out key))
+			{
+				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
+			}
+
+			return this.reportHandler.DeleteReportDefinition(key);
 		}
 
 		/// <summary>
@@ -119,7 +143,14 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns a report definition.</returns>
 		public ReportDefinition GetReportDefinition(string id)
 		{
-			throw new NotImplementedException();
+			var key = Guid.Empty;
+
+			if (!Guid.TryParse(id, out key))
+			{
+				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
+			}
+
+			return this.reportHandler.GetReportDefinition(key);
 		}
 
 		/// <summary>
@@ -128,7 +159,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns a list of report definitions.</returns>
 		public List<ReportDefinition> GetReportDefintions()
 		{
-			throw new NotImplementedException();
+			return this.reportHandler.GetReportDefintions().ToList();
 		}
 
 		/// <summary>
@@ -138,7 +169,14 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns a report parameter manifest.</returns>
 		public ParameterManifest GetReportParameterManifest(string id)
 		{
-			throw new NotImplementedException();
+			var key = Guid.Empty;
+
+			if (!Guid.TryParse(id, out key))
+			{
+				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
+			}
+
+			return this.reportHandler.GetReportParameterManifest(key);
 		}
 
 		/// <summary>
@@ -148,7 +186,14 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns a list of parameters.</returns>
 		public List<ReportParameter> GetReportParameters(string id)
 		{
-			throw new NotImplementedException();
+			var key = Guid.Empty;
+
+			if (!Guid.TryParse(id, out key))
+			{
+				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
+			}
+
+			return this.reportHandler.GetReportParameters(key).ToList();
 		}
 
 		/// <summary>
@@ -176,11 +221,23 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// Updates a parameter type definition.
 		/// </summary>
 		/// <param name="id">The id of the parameter type.</param>
-		/// <param name="parameterTypeDefinition"></param>
+		/// <param name="parameterType">The parameter type.</param>
 		/// <returns>Returns the updated parameter type definition.</returns>
-		public ParameterType UpdateParameterTypeDefinition(string id, ParameterType parameterTypeDefinition)
+		public ParameterType UpdateParameterType(string id, ParameterType parameterType)
 		{
-			throw new NotImplementedException();
+			var key = Guid.Empty;
+
+			if (!Guid.TryParse(id, out key))
+			{
+				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
+			}
+
+			if (key != parameterType.Key)
+			{
+				throw new ArgumentException($"Unable to update device using id: {id}, and id: {parameterType.Key}");
+			}
+
+			return this.reportHandler.UpdateParameterType(parameterType);
 		}
 
 		/// <summary>
@@ -191,7 +248,19 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns the updated report definition.</returns>
 		public ReportDefinition UpdateReportDefinition(string id, ReportDefinition reportDefinition)
 		{
-			throw new NotImplementedException();
+			var key = Guid.Empty;
+
+			if (!Guid.TryParse(id, out key))
+			{
+				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
+			}
+
+			if (key != reportDefinition.Key)
+			{
+				throw new ArgumentException($"Unable to update device using id: {id}, and id: {reportDefinition.Key}");
+			}
+
+			return this.reportHandler.UpdateReportDefinition(reportDefinition);
 		}
 	}
 }
