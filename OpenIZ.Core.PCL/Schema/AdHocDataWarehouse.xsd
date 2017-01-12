@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://openiz.org/warehousing" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:q1="http://microsoft.com/wsdl/types/" xmlns:q2="http://microsoft.com/wsdl/types/" xmlns:q3="http://microsoft.com/wsdl/types/" targetNamespace="http://openiz.org/warehousing" elementFormDefault="qualified">
+	<xs:import namespace="http://microsoft.com/wsdl/types/" schemaLocation="BaseTypes.xsd"/>
+	<xs:element name="DatamartDefinition" type="tns:DatamartDefinition" nillable="true"/>
+	<xs:complexType name="DatamartDefinition">
+		<xs:sequence>
+			<xs:element name="schema" type="tns:DatamartSchema" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="q1:guid" use="required"/>
+		<xs:attribute name="name" type="xs:string"/>
+		<xs:attribute name="creationTime" type="xs:dateTime" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="DatamartSchema">
+		<xs:sequence>
+			<xs:element name="property" type="tns:DatamartSchemaProperty" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="q2:guid" use="required"/>
+		<xs:attribute name="name" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="DatamartSchemaProperty">
+		<xs:sequence>
+			<xs:element name="property" type="tns:DatamartSchemaProperty" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="q3:guid" use="required"/>
+		<xs:attribute name="name" type="xs:string"/>
+		<xs:attribute name="type" type="tns:SchemaPropertyType" use="required"/>
+		<xs:attribute name="attributes" type="tns:SchemaPropertyAttributes" use="required"/>
+	</xs:complexType>
+	<xs:simpleType name="SchemaPropertyType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="string"/>
+			<xs:enumeration value="int"/>
+			<xs:enumeration value="float"/>
+			<xs:enumeration value="date"/>
+			<xs:enumeration value="bool"/>
+			<xs:enumeration value="uuid"/>
+			<xs:enumeration value="binary"/>
+			<xs:enumeration value="decimal"/>
+			<xs:enumeration value="object"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SchemaPropertyAttributes">
+		<xs:list>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="none"/>
+					<xs:enumeration value="index"/>
+					<xs:enumeration value="nonnull"/>
+					<xs:enumeration value="unique"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:list>
+	</xs:simpleType>
+	<xs:element name="DatamartSchema" type="tns:DatamartSchema" nillable="true"/>
+</xs:schema>

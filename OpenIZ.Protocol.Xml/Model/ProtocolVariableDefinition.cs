@@ -34,6 +34,10 @@ namespace OpenIZ.Protocol.Xml.Model
         [XmlAttribute("name")]
         public string VariableName { get; set; }
 
-
+        /// <summary>
+        /// Gets or sets the type
+        /// </summary>
+        [XmlAttribute("type")]
+        public string VariableType { get; set; }
     }
 }

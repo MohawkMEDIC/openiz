@@ -36,6 +36,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ApplicationServiceContext.cs" />
+    <Compile Include="Data\Warehouse\DatamartDefinition.cs" />
+    <Compile Include="Data\Warehouse\DatamartSchema.cs" />
+    <Compile Include="Data\Warehouse\DatamartSchemaProperty.cs" />
+    <Compile Include="Data\Warehouse\DatamartStoredQuery.cs" />
+    <Compile Include="Data\Warehouse\IDatamartSchemaPropertyContainer.cs" />
     <Compile Include="Diagnostics\Tracer.cs" />
     <Compile Include="Diagnostics\TraceWriter.cs" />
     <Compile Include="Event\NotificationEventArgs.cs" />
@@ -75,6 +80,7 @@
     <Compile Include="Services\IClinicalProtocolRepositoryService.cs" />
     <Compile Include="Services\IConceptRepositoryService.cs" />
     <Compile Include="Services\IDataCacheService.cs" />
+    <Compile Include="Services\IAdHocDatawarehouseService.cs" />
     <Compile Include="Services\IPatchService.cs" />
     <Compile Include="Services\IPersonRepositoryService.cs" />
     <Compile Include="Services\IRepositoryService.cs" />
@@ -116,6 +122,10 @@
   <ItemGroup>
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
+    </None>
+    <None Include="Schema\AdHocDataWarehouse.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup />

@@ -226,6 +226,30 @@ namespace OpenIZ.Protocol.Xml
             using (MemoryStream ms = new MemoryStream(protocolData.Definition))
                 this.Definition = ProtocolDefinition.Load(ms);
 
+            // Add callback rules
+            foreach (var rule in this.Definition.Rules)
+                for (var index = 0; index < rule.Repeat; index++)
+                {
+                    foreach (var itm in rule.Variables)
+                    {
+                        if (!s_callbacks.ContainsKey(itm.VariableName))
+                        {
+                            Func<Object> funcBody = () =>
+                            {
+                                return s_variables[itm.VariableName];
+                            };
+
+                            var varType = Type.GetType(itm.VariableType);
+                            Delegate func = Expression.Lambda(typeof(Func<>).MakeGenericType(varType), Expression.Convert(Expression.Call(funcBody.Target == null ? null : Expression.Constant(funcBody.Target), funcBody.GetMethodInfo()), varType)).Compile();
+                            s_callbacks.Add(itm.VariableName, func);
+                        }
+                    }
+                }
+
+            this.Definition.When.Compile<Patient>(s_callbacks);
+            foreach (var wc in this.Definition.Rules)
+                wc.When.Compile<Patient>(s_callbacks);
+
         }
 
         /// <summary>

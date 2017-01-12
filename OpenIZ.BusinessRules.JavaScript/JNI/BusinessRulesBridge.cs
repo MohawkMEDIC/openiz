@@ -165,6 +165,15 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         }
 
         /// <summary>
+        /// Generate new guid
+        /// </summary>
+        public Guid ParseGuid(String guid)
+        {
+            return Guid.Parse(guid);
+        }
+
+
+        /// <summary>
         /// Get data asset
         /// </summary>
         public String GetDataAsset(String dataId)
