@@ -81,7 +81,7 @@ namespace OpenIZ.Persistence.Reporting
 
 				return config;
 			}
-		} 
+		}
 
 		/// <summary>
 		/// Gets the running state of the message handler.

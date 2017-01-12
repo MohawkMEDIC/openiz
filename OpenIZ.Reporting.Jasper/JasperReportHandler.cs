@@ -1,31 +1,23 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: khannan
  * Date: 2017-1-5
  */
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using System.Linq.Expressions;
+
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
@@ -33,14 +25,18 @@ using OpenIZ.Core.Model.RISI;
 using OpenIZ.Core.Security;
 using OpenIZ.Reporting.Core;
 using OpenIZ.Reporting.Core.Attributes;
-using System.Security;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
 
 namespace OpenIZ.Reporting.Jasper
 {
 	/// <summary>
 	/// Represents a Jasper server report handler.
 	/// </summary>
-    public class JasperReportHandler : IReportHandler, ISupportBasicAuthentication
+	public class JasperReportHandler : IReportHandler, ISupportBasicAuthentication
 	{
 		/// <summary>
 		/// The internal reference to the <see cref="HttpClient"/> instance.
@@ -63,14 +59,11 @@ namespace OpenIZ.Reporting.Jasper
 		private readonly IDataPersistenceService<ReportParameter> reportParameterPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportParameter>>();
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="JasperReportHandler"/> class
-		/// with a specific report URI.
+		/// Initializes a new instance of the <see cref="JasperReportHandler"/> class.
 		/// </summary>
-		/// <param name="reportUri">The URI of the report server.</param>
-		public JasperReportHandler(Uri reportUri)
+		public JasperReportHandler()
 		{
 			this.client = new HttpClient();
-			this.ReportUri = reportUri;
 		}
 
 		/// <summary>
