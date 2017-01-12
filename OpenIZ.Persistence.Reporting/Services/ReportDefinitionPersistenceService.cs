@@ -18,23 +18,22 @@
  * Date: 2017-1-6
  */
 
-using MARC.HI.EHRS.SVC.Core.Data;
-using MARC.HI.EHRS.SVC.Core.Event;
-using MARC.HI.EHRS.SVC.Core.Services;
-using OpenIZ.Core.Model.RISI;
-using OpenIZ.Persistence.Reporting.Context;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Security.Principal;
+using MARC.HI.EHRS.SVC.Core.Data;
+using MARC.HI.EHRS.SVC.Core.Event;
+using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model.RISI;
 
 namespace OpenIZ.Persistence.Reporting.Services
 {
 	/// <summary>
-	/// Represents a report persistence service.
+	/// Represents a ReportDefinition persistence service.
 	/// </summary>
-	public class ReportPersistenceService : IDataPersistenceService<Report>
+	public class ReportDefinitionPersistenceService : IDataPersistenceService<ReportDefinition>
 	{
 		/// <summary>
 		/// The internal reference to the <see cref="TraceSource"/> instance.
@@ -44,52 +43,52 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <summary>
 		/// Fired after a report is inserted.
 		/// </summary>
-		public event EventHandler<PostPersistenceEventArgs<Report>> Inserted;
+		public event EventHandler<PostPersistenceEventArgs<ReportDefinition>> Inserted;
 
 		/// <summary>
 		/// Fired while a report is being inserted.
 		/// </summary>
-		public event EventHandler<PrePersistenceEventArgs<Report>> Inserting;
+		public event EventHandler<PrePersistenceEventArgs<ReportDefinition>> Inserting;
 
 		/// <summary>
 		/// Fired after a report is obsoleted.
 		/// </summary>
-		public event EventHandler<PostPersistenceEventArgs<Report>> Obsoleted;
+		public event EventHandler<PostPersistenceEventArgs<ReportDefinition>> Obsoleted;
 
 		/// <summary>
 		/// Fired while a report is being obsoleted.
 		/// </summary>
-		public event EventHandler<PrePersistenceEventArgs<Report>> Obsoleting;
+		public event EventHandler<PrePersistenceEventArgs<ReportDefinition>> Obsoleting;
 
 		/// <summary>
 		/// Fired after a report is queried.
 		/// </summary>
-		public event EventHandler<PostQueryEventArgs<Report>> Queried;
+		public event EventHandler<PostQueryEventArgs<ReportDefinition>> Queried;
 
 		/// <summary>
 		/// Fired while a report is being queried.
 		/// </summary>
-		public event EventHandler<PreQueryEventArgs<Report>> Querying;
+		public event EventHandler<PreQueryEventArgs<ReportDefinition>> Querying;
 
 		/// <summary>
 		/// Fired after a report is been retrieved.
 		/// </summary>
-		public event EventHandler<PostRetrievalEventArgs<Report>> Retrieved;
+		public event EventHandler<PostRetrievalEventArgs<ReportDefinition>> Retrieved;
 
 		/// <summary>
 		/// Fired while a report is being retrieved.
 		/// </summary>
-		public event EventHandler<PreRetrievalEventArgs<Report>> Retrieving;
+		public event EventHandler<PreRetrievalEventArgs<ReportDefinition>> Retrieving;
 
 		/// <summary>
 		/// Fired after a report is updated.
 		/// </summary>
-		public event EventHandler<PostPersistenceEventArgs<Report>> Updated;
+		public event EventHandler<PostPersistenceEventArgs<ReportDefinition>> Updated;
 
 		/// <summary>
 		/// Fired while a report is being updated.
 		/// </summary>
-		public event EventHandler<PrePersistenceEventArgs<Report>> Updating;
+		public event EventHandler<PrePersistenceEventArgs<ReportDefinition>> Updating;
 
 		/// <summary>
 		/// Gets the count of a query.
@@ -97,7 +96,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <param name="query">The query for which to determine the count.</param>
 		/// <param name="authContext">The authorization context.</param>
 		/// <returns>Returns the count of the query.</returns>
-		public int Count(Expression<Func<Report, bool>> query, IPrincipal authContext)
+		public int Count(Expression<Func<ReportDefinition, bool>> query, IPrincipal authContext)
 		{
 			throw new NotImplementedException();
 		}
@@ -106,32 +105,13 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// Gets a report by id.
 		/// </summary>
 		/// <typeparam name="TIdentifier">The type of identifier.</typeparam>
-		/// <param name="containerId">The id of the report.</param>
+		/// <param name="containerId">The id of the ReportDefinition.</param>
 		/// <param name="principal">The authorization context.</param>
 		/// <param name="loadFast">Whether the result should load fast.</param>
 		/// <returns>Returns the report or null if not found.</returns>
-		public Report Get<TIdentifier>(Identifier<TIdentifier> containerId, IPrincipal principal, bool loadFast)
+		public ReportDefinition Get<TIdentifier>(Identifier<TIdentifier> containerId, IPrincipal principal, bool loadFast)
 		{
-			Report report = null;
-
-			using (var context = ApplicationDbContext.Create())
-			{
-				var result = context.ReportDefinitions.Find(containerId);
-
-				if (result != null)
-				{
-					report = new Report
-					{
-						Key = result.Id,
-						CreatedBy = new Core.Model.Security.SecurityUser
-						{
-							UserName = result.Author
-						}
-					};
-				}
-			}
-
-			return report;
+			throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -141,7 +121,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <param name="principal">The authorization context.</param>
 		/// <param name="mode">The mode of the transaction.</param>
 		/// <returns>Returns the inserted report.</returns>
-		public Report Insert(Report storageData, IPrincipal principal, TransactionMode mode)
+		public ReportDefinition Insert(ReportDefinition storageData, IPrincipal principal, TransactionMode mode)
 		{
 			throw new NotImplementedException();
 		}
@@ -153,7 +133,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <param name="principal">The authorization context.</param>
 		/// <param name="mode">The mode of the transaction.</param>
 		/// <returns>Returns the obsoleted report.</returns>
-		public Report Obsolete(Report storageData, IPrincipal principal, TransactionMode mode)
+		public ReportDefinition Obsolete(ReportDefinition storageData, IPrincipal principal, TransactionMode mode)
 		{
 			throw new NotImplementedException();
 		}
@@ -167,7 +147,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <param name="authContext">The authorization context.</param>
 		/// <param name="totalCount">The total count of the query.</param>
 		/// <returns>Returns a list of reports.</returns>
-		public IEnumerable<Report> Query(Expression<Func<Report, bool>> query, int offset, int? count, IPrincipal authContext, out int totalCount)
+		public IEnumerable<ReportDefinition> Query(Expression<Func<ReportDefinition, bool>> query, int offset, int? count, IPrincipal authContext, out int totalCount)
 		{
 			throw new NotImplementedException();
 		}
@@ -178,7 +158,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <param name="query">The query for which to retrieve results.</param>
 		/// <param name="authContext">The authorization context.</param>
 		/// <returns>Returns a list of reports.</returns>
-		public IEnumerable<Report> Query(Expression<Func<Report, bool>> query, IPrincipal authContext)
+		public IEnumerable<ReportDefinition> Query(Expression<Func<ReportDefinition, bool>> query, IPrincipal authContext)
 		{
 			throw new NotImplementedException();
 		}
@@ -190,7 +170,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <param name="principal">The authorization context.</param>
 		/// <param name="mode">The mode of the transaction.</param>
 		/// <returns>Returns the updated report.</returns>
-		public Report Update(Report storageData, IPrincipal principal, TransactionMode mode)
+		public ReportDefinition Update(ReportDefinition storageData, IPrincipal principal, TransactionMode mode)
 		{
 			throw new NotImplementedException();
 		}

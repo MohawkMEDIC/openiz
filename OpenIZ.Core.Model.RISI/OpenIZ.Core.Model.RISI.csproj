@@ -56,11 +56,10 @@
     <Compile Include="ReportParameter.cs" />
     <Compile Include="ParameterDefinition.cs" />
     <Compile Include="ParameterManifest.cs" />
-    <Compile Include="ReportDataType.cs" />
+    <Compile Include="ParameterType.cs" />
     <Compile Include="QueryAutoCompleteSourceDefinition.cs" />
-    <Compile Include="Report.cs" />
+    <Compile Include="ReportDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RisiCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\OpenIZ.licenseheader">

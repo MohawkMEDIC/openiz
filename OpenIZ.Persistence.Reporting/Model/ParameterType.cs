@@ -28,51 +28,46 @@ using System.Threading.Tasks;
 namespace OpenIZ.Persistence.Reporting.Model
 {
 	/// <summary>
-	/// Represents a data type.
+	/// Represents a parameter type.
 	/// </summary>
-	[Table("data_type")]
-	public class DataType
+	public class ParameterType
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="DataType"/> class.
+		/// Initializes a new instance of the <see cref="ParameterType"/> class.
 		/// </summary>
-		public DataType()
+		public ParameterType()
 		{
-			this.CreationTime = DateTimeOffset.UtcNow;
 			this.Id = Guid.NewGuid();
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="DataType"/> class
+		/// Initializes a new instance of the <see cref="ParameterType"/> class
 		/// with a specific name.
 		/// </summary>
-		/// <param name="name">The name of the data type.</param>
-		public DataType(string name) : this()
+		/// <param name="name">The name of the parameter type.</param>
+		public ParameterType(string name) : this()
 		{
 			this.Name = name;
 		}
 
 		/// <summary>
-		/// Gets or sets the creation time of the report.
+		/// Gets or sets the creation time of the parameter type.
 		/// </summary>
 		[Required]
-		[Column("creation_time")]
 		public DateTimeOffset CreationTime { get; set; }
 
 		/// <summary>
-		/// Gets or sets the id of the report.
+		/// Gets or sets the id of the parameter type.
 		/// </summary>
 		[Key]
-		[Column("id")]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public Guid Id { get; set; }
 
 		/// <summary>
-		/// Gets or sets the name of the data type.
+		/// Gets or sets the name of the parameter type.
 		/// </summary>
 		[Required]
-		[Column("name")]
-		[StringLength(128)]
+		[StringLength(256)]
 		public string Name { get; set; }
 	}
 }

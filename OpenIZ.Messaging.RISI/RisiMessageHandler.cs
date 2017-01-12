@@ -99,6 +99,9 @@ namespace OpenIZ.Messaging.RISI
 
 				this.traceSource.TraceEvent(TraceEventType.Information, 0, $"RISI configuration loaded, using { this.configuration.Handler.AssemblyQualifiedName } report engine at address { this.configuration.Address }");
 
+				this.traceSource.TraceEvent(TraceEventType.Information, 0, $"Loading service provider { this.configuration.Handler.AssemblyQualifiedName }");
+				ApplicationContext.Current.AddServiceProvider(this.configuration.Handler);
+
 				this.Started?.Invoke(this, EventArgs.Empty);
 				return true;
 			}

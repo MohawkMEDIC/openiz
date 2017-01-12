@@ -24,6 +24,8 @@ using OpenIZ.Persistence.Reporting.Configuration;
 using System;
 using System.Configuration;
 using System.Diagnostics;
+using System.Reflection;
+using System.Linq;
 
 namespace OpenIZ.Persistence.Reporting
 {
@@ -92,27 +94,27 @@ namespace OpenIZ.Persistence.Reporting
 		/// <returns>Returns true if the service started successfully.</returns>
 		public bool Start()
 		{
-			bool status = false;
+			var status = false;
 
 			try
 			{
+				this.traceSource.TraceEvent(TraceEventType.Information, 0, "Loading reporting persistence services");
 
 				this.Starting?.Invoke(this, EventArgs.Empty);
 
 				this.traceSource.TraceEvent(TraceEventType.Information, 0, $"Reporting configuration loaded, using connection string: { Configuration.ConnectionStringName }");
 
-				using (var connection = new Npgsql.NpgsqlConnection(ConfigurationManager.ConnectionStrings[Configuration.ConnectionStringName].ConnectionString))
+				// Iterate the persistence services
+				foreach (var t in typeof(ReportingService).GetTypeInfo().Assembly.ExportedTypes.Where(o => o.Namespace == "OpenIZ.Persistence.Reporting.Services" && !o.GetTypeInfo().IsAbstract))
 				{
-					// test if we can open the connection
 					try
 					{
-						connection.Open();
+						this.traceSource.TraceEvent(TraceEventType.Verbose, 0, "Loading {0}...", t.AssemblyQualifiedName);
+						ApplicationContext.Current.AddServiceProvider(t);
 					}
 					catch (Exception e)
 					{
-						this.traceSource.TraceEvent(TraceEventType.Error, 0, e.ToString());
-						status = false;
-						throw;
+						this.traceSource.TraceEvent(TraceEventType.Error, e.HResult, "Error adding service {0} : {1}", t.AssemblyQualifiedName, e);
 					}
 				}
 

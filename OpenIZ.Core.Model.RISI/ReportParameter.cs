@@ -55,7 +55,7 @@ namespace OpenIZ.Core.Model.RISI
 		/// Gets or sets the report data types of the report parameter.
 		/// </summary>
 		[XmlElement("dataType")]
-		public ReportDataType DataType { get; set; }
+		public ParameterType ParameterType { get; set; }
 
 		/// <summary>
 		/// Gets or sets whether the report parameter is nullable.
@@ -80,10 +80,17 @@ namespace OpenIZ.Core.Model.RISI
 		/// </summary>
 		[XmlElement("provider")]
 		public string Provider { get; set; }
+
 		/// <summary>
 		/// Gets or sets the value of the parameter.
 		/// </summary>
 		[XmlElement("value")]
 		public object Value { get; set; }
+
+		/// <summary>
+		/// Gets or sets the report definition associated with the report parameter.
+		/// </summary>
+		[XmlElement("reportDefinition")]
+		public ReportDefinition ReportDefinition { get; set; }
 	}
 }

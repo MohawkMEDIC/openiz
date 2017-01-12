@@ -28,24 +28,24 @@ namespace OpenIZ.Core.Model.RISI
 	/// <summary>
 	/// Represents a stored query to be performed against the RISI.
 	/// </summary>
-	[XmlType(nameof(Report), Namespace = "http://openiz.org/risi")]
-	[XmlRoot(nameof(Report), Namespace = "http://openiz.org/risi")]
-	public class Report : BaseEntityData
+	[XmlType(nameof(ReportDefinition), Namespace = "http://openiz.org/risi")]
+	[XmlRoot(nameof(ReportDefinition), Namespace = "http://openiz.org/risi")]
+	public class ReportDefinition : BaseEntityData
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Report"/> class.
+		/// Initializes a new instance of the <see cref="ReportDefinition"/> class.
 		/// </summary>
-		public Report()
+		public ReportDefinition()
 		{
 			
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Report"/> class
+		/// Initializes a new instance of the <see cref="ReportDefinition"/> class
 		/// with a specific name.
 		/// </summary>
 		/// <param name="name">The name of the report.</param>
-		public Report(string name)
+		public ReportDefinition(string name)
 		{
 			this.Name = name;
 		}

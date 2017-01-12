@@ -35,11 +35,117 @@ namespace OpenIZ.Reporting.Core
 		Uri ReportUri { get; set; }
 
 		/// <summary>
+		/// Creates a new report parameter type.
+		/// </summary>
+		/// <param name="parameterType">The parameter type to create.</param>
+		/// <returns>Returns the created parameter type.</returns>
+		ParameterType CreateParameterType(ParameterType parameterType);
+
+		/// <summary>
+		/// Creates a new report definition.
+		/// </summary>
+		/// <param name="reportDefinition">The report definition to create.</param>
+		/// <returns>Returns the created report definition.</returns>
+		ReportDefinition CreateReportDefinition(ReportDefinition reportDefinition);
+
+		/// <summary>
+		/// Deletes a parameter type.
+		/// </summary>
+		/// <param name="id">The id of the parameter type to delete.</param>
+		/// <returns>Returns the deleted parameter type.</returns>
+		ParameterType DeleteParameterType(Guid id);
+
+		/// <summary>
+		/// Deletes a report definition.
+		/// </summary>
+		/// <param name="id">The id of the report definition to delete.</param>
+		/// <returns>Returns the deleted report definition.</returns>
+		ReportDefinition DeleteReportDefinition(Guid id);
+
+		/// <summary>
+		/// Executes a report.
+		/// </summary>
+		/// <param name="id">The id of the report.</param>
+		/// <param name="format">The output format of the report.</param>
+		/// <param name="parameters">The list of parameters of the report.</param>
+		/// <returns>Returns the report in raw format.</returns>
+		byte[] ExecuteReport(Guid id, Guid format, List<ReportParameter> parameters);
+
+		/// <summary>
+		/// Gets a list of all report parameter types.
+		/// </summary>
+		/// <returns>Returns a list of report parameter types.</returns>
+		IEnumerable<ReportParameter> GetAllReportParamterTypes();
+
+		/// <summary>
+		/// Gets a parameter type by id.
+		/// </summary>
+		/// <param name="id">The id of the parameter type to retrieve.</param>
+		/// <returns>Returns a parameter type.</returns>
+		ParameterType GetParameterType(Guid id);
+
+		/// <summary>
+		/// Gets a report definition by id.
+		/// </summary>
+		/// <param name="id">The id of the report definition to retrieve.</param>
+		/// <returns>Returns a report definition.</returns>
+		ReportDefinition GetReportDefinition(Guid id);
+
+		/// <summary>
+		/// Gets a list of report definitions based on a specific query.
+		/// </summary>
+		/// <returns>Returns a list of report definitions.</returns>
+		IEnumerable<ReportDefinition> GetReportDefintions();
+
+		/// <summary>
+		/// Gets detailed information about a given report parameter.
+		/// </summary>
+		/// <param name="id">The id of the report parameter for which to retrieve information.</param>
+		/// <returns>Returns a report parameter manifest.</returns>
+		ParameterManifest GetReportParameterManifest(Guid id);
+
+		/// <summary>
+		/// Gets a list of report parameters.
+		/// </summary>
+		/// <param name="id">The id of the report for which to retrieve parameters.</param>
+		/// <returns>Returns a list of parameters.</returns>
+		IEnumerable<ReportParameter> GetReportParameters(Guid id);
+
+		/// <summary>
+		/// Gets a list of auto-complete parameters which are applicable for the specified parameter.
+		/// </summary>
+		/// <param name="id">The id of the report.</param>
+		/// <param name="parameterId">The id of the parameter for which to retrieve detailed information.</param>
+		/// <returns>Returns an auto complete source definition of valid parameters values for a given parameter.</returns>
+		AutoCompleteSourceDefinition GetReportParameterValues(Guid id, Guid parameterId);
+
+		/// <summary>
+		/// Gets the report source.
+		/// </summary>
+		/// <param name="id">The id of the report for which to retrieve the source.</param>
+		/// <returns>Returns the report source.</returns>
+		ReportDefinition GetReportSource(Guid id);
+
+		/// <summary>
 		/// Runs a report.
 		/// </summary>
 		/// <param name="reportId">The id of the report.</param>
 		/// <param name="format">The format of the report.</param>
 		/// <param name="parameters">The parameters of the report.</param>
 		byte[] RunReport(Guid reportId, ReportFormat format, IEnumerable<ReportParameter> parameters);
+
+		/// <summary>
+		/// Updates a parameter type.
+		/// </summary>
+		/// <param name="parameterType">The updated parameter type.</param>
+		/// <returns>Returns the updated parameter type.</returns>
+		ParameterType UpdateParameterType(ParameterType parameterType);
+
+		/// <summary>
+		/// Updates a report definition.
+		/// </summary>
+		/// <param name="reportDefinition">The updated report definition.</param>
+		/// <returns>Returns the updated report definition.</returns>
+		ReportDefinition UpdateReportDefinition(ReportDefinition reportDefinition);
 	}
 }

@@ -30,9 +30,9 @@ namespace OpenIZ.Messaging.RISI.Wcf
 	/// <summary>
 	/// Provides operations for running and managing reports.
 	/// </summary>
-	[ServiceKnownType(typeof(Report))]
+	[ServiceKnownType(typeof(ReportDefinition))]
+	[ServiceKnownType(typeof(ParameterType))]
 	[ServiceKnownType(typeof(ParameterDefinition))]
-	[ServiceKnownType(typeof(ReportDataType))]
 	[ServiceKnownType(typeof(AutoCompleteSourceDefinition))]
 	[ServiceKnownType(typeof(ListAutoCompleteSourceDefinition))]
 	[ServiceKnownType(typeof(QueryAutoCompleteSourceDefinition))]
@@ -45,7 +45,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="parameterTypeDefinition">The report parameter type definition to create.</param>
 		/// <returns>Returns the created report parameter type definition.</returns>
 		[WebInvoke(UriTemplate = "/type", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-		ReportDataType CreateParameterType(ReportDataType parameterTypeDefinition);
+		ParameterType CreateParameterType(ParameterType parameterTypeDefinition);
 
 		/// <summary>
 		/// Creates a new report definition.
@@ -53,7 +53,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="reportDefinition">The report definition to create.</param>
 		/// <returns>Returns the created report definition.</returns>
 		[WebInvoke(UriTemplate = "/report", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-		Report CreateReportDefinition(Report reportDefinition);
+		ReportDefinition CreateReportDefinition(ReportDefinition reportDefinition);
 
 		/// <summary>
 		/// Deletes a report parameter type.
@@ -61,7 +61,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="id">The id of the report parameter type to delete.</param>
 		/// <returns>Returns the deleted report parameter type.</returns>
 		[WebInvoke(UriTemplate = "/type/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-		ReportDataType DeleteParameterType(string id);
+		ParameterType DeleteParameterType(string id);
 
 		/// <summary>
 		/// Deletes a report definition.
@@ -69,7 +69,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="id">The id of the report definition to delete.</param>
 		/// <returns>Returns the deleted report definition.</returns>
 		[WebInvoke(UriTemplate = "/report/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-		Report DeleteReportDefinition(string id);
+		ReportDefinition DeleteReportDefinition(string id);
 
 		/// <summary>
 		/// Executes a report.
@@ -86,7 +86,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
 		[WebGet(UriTemplate = "/type", BodyStyle = WebMessageBodyStyle.Bare)]
-		RisiCollection GetAllReportParamterTypes();
+		List<ReportParameter> GetAllReportParamterTypes();
 
 		/// <summary>
 		/// Gets a report definition by id.
@@ -94,14 +94,14 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="id">The id of the report definition to retrieve.</param>
 		/// <returns>Returns a report definition.</returns>
 		[WebGet(UriTemplate = "/report/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
-		Report GetReportDefinition(string id);
+		ReportDefinition GetReportDefinition(string id);
 
 		/// <summary>
 		/// Gets a list of report definitions based on a specific query.
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
 		[WebGet(UriTemplate = "/report", BodyStyle = WebMessageBodyStyle.Bare)]
-		RisiCollection GetReportDefintions();
+		List<ReportDefinition> GetReportDefintions();
 
 		/// <summary>
 		/// Gets detailed information about a given report parameter.
@@ -117,7 +117,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="id">The id of the report for which to retrieve parameters.</param>
 		/// <returns>Returns a list of parameters.</returns>
 		[WebGet(UriTemplate = "/report/{id}/parm", BodyStyle = WebMessageBodyStyle.Bare)]
-		RisiCollection GetReportParameters(string id);
+		List<ReportParameter> GetReportParameters(string id);
 
 		/// <summary>
 		/// Gets a list of auto-complete parameters which are applicable for the specified parameter.
@@ -134,7 +134,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="id">The id of the report for which to retrieve the source.</param>
 		/// <returns>Returns the report source.</returns>
 		[WebGet(UriTemplate = "/report/{id}/source", BodyStyle = WebMessageBodyStyle.Bare)]
-		Report GetReportSource(string id);
+		ReportDefinition GetReportSource(string id);
 
 		/// <summary>
 		/// Updates a parameter type definition.
@@ -143,7 +143,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="parameterTypeDefinition"></param>
 		/// <returns>Returns the updated parameter type definition.</returns>
 		[WebInvoke(UriTemplate = "/type/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
-		ReportDataType UpdateParameterTypeDefinition(string id, ReportDataType parameterTypeDefinition);
+		ParameterType UpdateParameterTypeDefinition(string id, ParameterType parameterTypeDefinition);
 
 		/// <summary>
 		/// Updates a report definition.
@@ -152,6 +152,6 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="reportDefinition">The updated report definition.</param>
 		/// <returns>Returns the updated report definition.</returns>
 		[WebInvoke(UriTemplate = "/report/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
-		Report UpdateReportDefinition(string id, Report reportDefinition);
+		ReportDefinition UpdateReportDefinition(string id, ReportDefinition reportDefinition);
 	}
 }

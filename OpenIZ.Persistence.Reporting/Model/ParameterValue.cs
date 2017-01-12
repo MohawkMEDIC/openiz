@@ -27,7 +27,6 @@ namespace OpenIZ.Persistence.Reporting.Model
 	/// <summary>
 	/// Represents a parameter value.
 	/// </summary>
-	[Table("parameter_value")]
 	public class ParameterValue
 	{
 		/// <summary>
@@ -42,7 +41,7 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// with a specific value.
 		/// </summary>
 		/// <param name="value">The value of the report parameter.</param>
-		public ParameterValue(object value)
+		public ParameterValue(object value) : this()
 		{
 			this.Value = value;
 		}
@@ -51,21 +50,18 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// Gets or sets the creation time of the parameter.
 		/// </summary>
 		[Required]
-		[Column("creation_time")]
 		public DateTimeOffset CreationTime { get; set; }
 
 		/// <summary>
 		/// Gets or sets the id of the parameter.
 		/// </summary>
 		[Key]
-		[Column("id")]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public Guid Id { get; set; }
 
 		/// <summary>
 		/// Gets or sets the value of the parameter.
 		/// </summary>
-		[Column("value")]
 		public object Value { get; set; }
 
 		/// <summary>
@@ -78,7 +74,6 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// Gets or sets the report parameter id associated with the parameter value.
 		/// </summary>
 		[Required]
-		[Column("report_parameter_id")]
 		public Guid ReportParameterId { get; set; }
 	}
 }

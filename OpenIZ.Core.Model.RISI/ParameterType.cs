@@ -26,9 +26,9 @@ namespace OpenIZ.Core.Model.RISI
 	/// <summary>
 	/// Represents a parameter type definition.
 	/// </summary>
-	[XmlType(nameof(ReportDataType), Namespace = "http://openiz.org/risi")]
-	[XmlRoot(nameof(ReportDataType), Namespace = "http://openiz.org/risi")]
-	public class ReportDataType : BaseEntityData
+	[XmlType(nameof(ParameterType), Namespace = "http://openiz.org/risi")]
+	[XmlRoot(nameof(ParameterType), Namespace = "http://openiz.org/risi")]
+	public class ParameterType : BaseEntityData
 	{
 		/// <summary>
 		/// Gets or sets the auto-complete source.
