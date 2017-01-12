@@ -164,7 +164,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// <returns>Returns a parameter type.</returns>
 		public ParameterType GetParameterType(Guid id)
 		{
-			throw new NotImplementedException();
+			return this.parameterTypePersistenceService.Get<Guid>(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, true);
 		}
 
 		/// <summary>
@@ -203,7 +203,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// <returns>Returns a list of parameters.</returns>
 		public IEnumerable<ReportParameter> GetReportParameters(Guid id)
 		{
-			throw new NotImplementedException();
+			return this.reportParameterPersistenceService.Query(r => r.ReportDefinition.Key.Value == id, AuthenticationContext.Current.Principal);
 		}
 
 		/// <summary>
