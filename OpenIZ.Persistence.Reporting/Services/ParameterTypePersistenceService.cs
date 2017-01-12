@@ -19,6 +19,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
@@ -29,13 +30,14 @@ using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Event;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.RISI;
+using OpenIZ.Persistence.Reporting.Context;
 
 namespace OpenIZ.Persistence.Reporting.Services
 {
 	/// <summary>
 	/// Represents a data type persistence service.
 	/// </summary>
-	public class ParameterTypePersistenceService : IDataPersistenceService<ParameterType>
+	internal class ParameterTypePersistenceService : ReportPersistenceServiceBase<ParameterType, Model.ParameterType>, IDataPersistenceService<ParameterType>
 	{
 		/// <summary>
 		/// The internal reference to the <see cref="TraceSource"/> instance.
@@ -104,6 +106,18 @@ namespace OpenIZ.Persistence.Reporting.Services
 		}
 
 		/// <summary>
+		/// Converts a model instance to a domain instance.
+		/// </summary>
+		/// <param name="modelInstance">The model instance to convert.</param>
+		/// <returns>Returns the converted model instance.</returns>
+		internal override Model.ParameterType FromModelInstance(ParameterType modelInstance)
+		{
+			Model.ParameterType domainInstance = null;
+
+			return modelInstance == null ? null : modelMapper.MapModelInstance<ParameterType, Model.ParameterType>(modelInstance);
+		}
+
+		/// <summary>
 		/// Gets a report by id.
 		/// </summary>
 		/// <typeparam name="TIdentifier">The type of identifier.</typeparam>
@@ -113,7 +127,20 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <returns>Returns the report or null if not found.</returns>
 		public ParameterType Get<TIdentifier>(Identifier<TIdentifier> containerId, IPrincipal principal, bool loadFast)
 		{
-			throw new NotImplementedException();
+			ParameterType result = null;
+
+			using (var context = new ApplicationDbContext())
+			{
+				var parameterType = context.ParameterTypes.Find(containerId.Id);
+
+				result = this.ToModelInstance(parameterType);
+
+				this.Retrieving?.Invoke(this, new PreRetrievalEventArgs<ParameterType>(result, principal));
+			}
+
+			this.Retrieved?.Invoke(this, new PostRetrievalEventArgs<ParameterType>(result, principal));
+
+			return result;
 		}
 
 		/// <summary>
@@ -125,7 +152,23 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <returns>Returns the inserted data type.</returns>
 		public ParameterType Insert(ParameterType storageData, IPrincipal principal, TransactionMode mode)
 		{
-			throw new NotImplementedException();
+			ParameterType result = null;
+
+			this.Inserting?.Invoke(this, new PrePersistenceEventArgs<ParameterType>(storageData, principal));
+
+			using (var context = new ApplicationDbContext())
+			{
+				var entity = this.FromModelInstance(storageData);
+
+				context.ParameterTypes.Add(entity);
+				context.SaveChanges();
+
+				result = this.ToModelInstance(entity);
+			}
+
+			this.Inserted?.Invoke(this, new PostPersistenceEventArgs<ParameterType>(result, principal));
+
+			return result;
 		}
 
 		/// <summary>
@@ -162,6 +205,30 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <returns>Returns a list of data types.</returns>
 		public IEnumerable<ParameterType> Query(Expression<Func<ParameterType, bool>> query, IPrincipal authContext)
 		{
+			IEnumerable<ParameterType> results = new List<ParameterType>();
+
+			using (var context = new ApplicationDbContext())
+			{
+
+			}
+
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Converts a domain instance to a model instance.
+		/// </summary>
+		/// <param name="domainInstance">The domain instance to convert.</param>
+		/// <returns>Returns the converted model instance.</returns>
+		internal override ParameterType ToModelInstance(Model.ParameterType domainInstance)
+		{
+			ParameterType modelInstance = null;
+
+			if (domainInstance == null)
+			{
+				return null;
+			}
+
 			throw new NotImplementedException();
 		}
 
@@ -174,7 +241,24 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <returns>Returns the updated data type.</returns>
 		public ParameterType Update(ParameterType storageData, IPrincipal principal, TransactionMode mode)
 		{
-			throw new NotImplementedException();
+			ParameterType result = null;
+
+			this.Updating?.Invoke(this, new PrePersistenceEventArgs<ParameterType>(storageData, principal));
+
+			using (var context = new ApplicationDbContext())
+			{
+				var domainInstance = this.FromModelInstance(storageData);
+
+				context.Entry(domainInstance).State = EntityState.Modified;
+
+				context.SaveChanges();
+
+				result = this.ToModelInstance(domainInstance);
+			}
+
+			this.Updated?.Invoke(this, new PostPersistenceEventArgs<ParameterType>(result, principal));
+
+			return result;
 		}
 	}
 }

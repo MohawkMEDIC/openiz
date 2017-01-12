@@ -69,6 +69,8 @@
     <Compile Include="Services\ParameterTypePersistenceService.cs" />
     <Compile Include="Services\ReportParameterPersistenceService.cs" />
     <Compile Include="Services\ReportDefinitionPersistenceService.cs" />
+    <Compile Include="Services\ReportPersistenceServiceBase.cs" />
+    <EmbeddedResource Include="Data\ModelMap.xml" />
     <Content Include="Sql\OpenIZReporting-DataTypes.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

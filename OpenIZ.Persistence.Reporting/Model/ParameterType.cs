@@ -69,5 +69,10 @@ namespace OpenIZ.Persistence.Reporting.Model
 		[Required]
 		[StringLength(256)]
 		public string Name { get; set; }
+
+		/// <summary>
+		/// Gets or sets a list of report parameters associated with the parameter type.
+		/// </summary>
+		public virtual ICollection<ReportParameter> ReportParameters { get; set; }
 	}
 }

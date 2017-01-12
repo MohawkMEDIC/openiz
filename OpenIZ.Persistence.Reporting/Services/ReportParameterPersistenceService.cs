@@ -36,7 +36,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 	/// <summary>
 	/// Represents a report persistence service.
 	/// </summary>
-	public class ReportParameterPersistenceService : IDataPersistenceService<ReportParameter>
+	internal class ReportParameterPersistenceService : ReportPersistenceServiceBase<ReportParameter, Model.ReportParameter>, IDataPersistenceService<ReportParameter>
 	{
 		/// <summary>
 		/// The internal reference to the <see cref="TraceSource"/> instance.
@@ -174,6 +174,26 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <param name="mode">The mode of the transaction.</param>
 		/// <returns>Returns the updated report.</returns>
 		public ReportParameter Update(ReportParameter storageData, IPrincipal principal, TransactionMode mode)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Converts a domain instance to a model instance.
+		/// </summary>
+		/// <param name="domainInstance">The domain instance to convert.</param>
+		/// <returns>Returns the converted model instance.</returns>
+		internal override ReportParameter ToModelInstance(Model.ReportParameter domainInstance)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Converts a model instance to a domain instance.
+		/// </summary>
+		/// <param name="modelInstance">The model instance to convert.</param>
+		/// <returns>Returns the converted model instance.</returns>
+		internal override Model.ReportParameter FromModelInstance(ReportParameter modelInstance)
 		{
 			throw new NotImplementedException();
 		}

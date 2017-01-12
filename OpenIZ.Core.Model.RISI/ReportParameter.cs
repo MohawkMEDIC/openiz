@@ -52,9 +52,9 @@ namespace OpenIZ.Core.Model.RISI
 		}
 
 		/// <summary>
-		/// Gets or sets the report data types of the report parameter.
+		/// Gets or sets the parameter types of the report parameter.
 		/// </summary>
-		[XmlElement("dataType")]
+		[XmlElement("parameterType")]
 		public ParameterType ParameterType { get; set; }
 
 		/// <summary>

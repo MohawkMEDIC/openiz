@@ -26,6 +26,8 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Reflection;
 using System.Linq;
+using OpenIZ.Core.Exceptions;
+using OpenIZ.Core.Model.Map;
 
 namespace OpenIZ.Persistence.Reporting
 {
@@ -38,6 +40,30 @@ namespace OpenIZ.Persistence.Reporting
 		/// The internal reference to the trace source.
 		/// </summary>
 		private readonly TraceSource traceSource = new TraceSource("OpenIZ.Persistence.Reporting");
+		
+		/// <summary>
+		/// The internal reference to the model mapper.
+		/// </summary>
+		private static readonly ModelMapper modelMapper = null;
+
+		static ReportingService()
+		{
+			//var tracer = new TraceSource("OpenIZ.Persistence.Reporting");
+			//try
+			//{
+			//	modelMapper = new ModelMapper(typeof(ReportingService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Persistence.Reporting.Data.ModelMap.xml"));
+			//}
+			//catch (ModelMapValidationException ex)
+			//{
+			//	tracer.TraceEvent(TraceEventType.Error, ex.HResult, "Error validating model map: {0}", ex);
+			//	throw ex;
+			//}
+			//catch (Exception ex)
+			//{
+			//	tracer.TraceEvent(TraceEventType.Error, ex.HResult, "Error validating model map: {0}", ex);
+			//	throw ex;
+			//}
+		}
 
 		/// <summary>
 		/// Fired when the object is starting up.
@@ -82,6 +108,11 @@ namespace OpenIZ.Persistence.Reporting
 				return config;
 			}
 		}
+
+		/// <summary>
+		/// Gets the model mapper.
+		/// </summary>
+		public static ModelMapper ModelMapper => modelMapper;
 
 		/// <summary>
 		/// Gets the running state of the message handler.
