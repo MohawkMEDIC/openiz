@@ -47,9 +47,9 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// </summary>
 		/// <param name="parameterTypeDefinition">The report parameter type definition to create.</param>
 		/// <returns>Returns the created report parameter type definition.</returns>
-		public ReportDataType CreateParameterType(ReportDataType parameterTypeDefinition)
+		public ParameterType CreateParameterType(ParameterType parameterTypeDefinition)
 		{
-			return this.Client.Post<ReportDataType, ReportDataType>("type", this.Client.Accept, parameterTypeDefinition);
+			return this.Client.Post<ParameterType, ParameterType>("type", this.Client.Accept, parameterTypeDefinition);
 		}
 
 		/// <summary>
@@ -57,9 +57,9 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// </summary>
 		/// <param name="reportDefinition">The report definition to create.</param>
 		/// <returns>Returns the created report definition.</returns>
-		public Report CreateReportDefinition(Report reportDefinition)
+		public ReportDefinition CreateReportDefinition(ReportDefinition reportDefinition)
 		{
-			return this.Client.Post<Report, Report>("report", this.Client.Accept, reportDefinition);
+			return this.Client.Post<ReportDefinition, ReportDefinition>("report", this.Client.Accept, reportDefinition);
 		}
 
 		/// <summary>
@@ -67,9 +67,9 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// </summary>
 		/// <param name="id">The id of the report parameter type to delete.</param>
 		/// <returns>Returns the deleted report parameter type.</returns>
-		public ReportDataType DeleteParameterType(string id)
+		public ParameterType DeleteParameterType(string id)
 		{
-			return this.Client.Delete<ReportDataType>($"type/{id}");
+			return this.Client.Delete<ParameterType>($"type/{id}");
 		}
 
 		/// <summary>
@@ -77,9 +77,9 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// </summary>
 		/// <param name="id">The id of the report definition to delete.</param>
 		/// <returns>Returns the deleted report definition.</returns>
-		public Report DeleteReportDefinition(string id)
+		public ReportDefinition DeleteReportDefinition(string id)
 		{
-			return this.Client.Delete<Report>($"report/{id}");
+			return this.Client.Delete<ReportDefinition>($"report/{id}");
 		}
 
 		#region IDisposable Support
@@ -142,9 +142,9 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
-		public RisiCollection GetAllReportParamterTypes()
+		public List<ReportParameter> GetAllReportParamterTypes()
 		{
-			return this.Client.Get<RisiCollection>("type", new KeyValuePair<string, object>("_", DateTimeOffset.Now));
+			return this.Client.Get<List<ReportParameter>>("type", new KeyValuePair<string, object>("_", DateTimeOffset.Now));
 		}
 
 		/// <summary>
@@ -152,18 +152,18 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// </summary>
 		/// <param name="id">The id of the report definition to retrieve.</param>
 		/// <returns>Returns a report definition.</returns>
-		public Report GetReportDefinition(string id)
+		public ReportDefinition GetReportDefinition(string id)
 		{
-			return this.Client.Get<Report>($"report/{id}");
+			return this.Client.Get<ReportDefinition>($"report/{id}");
 		}
 
 		/// <summary>
 		/// Gets a list of report definitions based on a specific query.
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
-		public RisiCollection GetReportDefintions(Expression<Func<Report, bool>> query)
+		public List<ReportDefinition> GetReportDefintions()
 		{
-			return this.Client.Get<RisiCollection>("report", QueryExpressionBuilder.BuildQuery<Report>(query).ToArray());
+			return this.Client.Get<List<ReportDefinition>>("report", new KeyValuePair<string, object>("_", DateTimeOffset.UtcNow));
 		}
 
 		/// <summary>
@@ -181,9 +181,9 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve parameters.</param>
 		/// <returns>Returns a list of parameters.</returns>
-		public RisiCollection GetReportParameters(string id)
+		public List<ReportParameter> GetReportParameters(string id)
 		{
-			return this.Client.Get<RisiCollection>($"report/{id}/parm");
+			return this.Client.Get<List<ReportParameter>>($"report/{id}/parm");
 		}
 
 		/// <summary>
@@ -203,9 +203,9 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// <param name="id">The id of the parameter type.</param>
 		/// <param name="parameterTypeDefinition"></param>
 		/// <returns>Returns the updated parameter type definition.</returns>
-		public ReportDataType UpdateParameterTypeDefinition(string id, ReportDataType parameterTypeDefinition)
+		public ParameterType UpdateParameterTypeDefinition(string id, ParameterType parameterTypeDefinition)
 		{
-			return this.Client.Put<ReportDataType, ReportDataType>($"type/{id}", this.Client.Accept, parameterTypeDefinition);
+			return this.Client.Put<ParameterType, ParameterType>($"type/{id}", this.Client.Accept, parameterTypeDefinition);
 		}
 
 		/// <summary>
@@ -214,9 +214,9 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// <param name="id">The id of the report definition to update.</param>
 		/// <param name="reportDefinition">The updated report definition.</param>
 		/// <returns>Returns the updated report definition.</returns>
-		public Report UpdateReportDefinition(string id, Report reportDefinition)
+		public ReportDefinition UpdateReportDefinition(string id, ReportDefinition reportDefinition)
 		{
-			return this.Client.Put<Report, Report>($"report/{id}", this.Client.Accept, reportDefinition);
+			return this.Client.Put<ReportDefinition, ReportDefinition>($"report/{id}", this.Client.Accept, reportDefinition);
 		}
 	}
 }

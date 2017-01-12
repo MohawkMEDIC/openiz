@@ -43,10 +43,10 @@ namespace OpenIZ.Persistence.Reporting.Model
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ReportDefinition"/> class
-		/// with a specific <see cref="Report"/> instance.
+		/// with a specific <see cref="Core.Model.RISI.ReportDefinition"/> instance.
 		/// </summary>
 		/// <param name="report">The report instance.</param>
-		public ReportDefinition(Report report) : this()
+		public ReportDefinition(Core.Model.RISI.ReportDefinition report) : this()
 		{
 			this.Author = report.CreatedBy.UserName;
 			this.Description = report.Description;

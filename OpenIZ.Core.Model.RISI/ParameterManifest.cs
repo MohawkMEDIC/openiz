@@ -51,7 +51,7 @@ namespace OpenIZ.Core.Model.RISI
 		/// with a specific <see cref="ParameterTypeDefinition"/> instance.
 		/// </summary>
 		/// <param name="parameterTypeDefinition">The parameter type definition.</param>
-		public ParameterManifest(ReportDataType parameterTypeDefinition)
+		public ParameterManifest(ParameterType parameterTypeDefinition)
 		{
 			this.ParameterTypeDefinition = parameterTypeDefinition;
 		}
@@ -65,7 +65,7 @@ namespace OpenIZ.Core.Model.RISI
 		/// <summary>
 		/// Gets or sets the parameter type definition.
 		/// </summary>
-		[XmlElement("parameterTypeDefinition", Type = typeof(ReportDataType))]
-		public ReportDataType ParameterTypeDefinition { get; set; }
+		[XmlElement("parameterTypeDefinition", Type = typeof(ParameterType))]
+		public ParameterType ParameterTypeDefinition { get; set; }
 	}
 }

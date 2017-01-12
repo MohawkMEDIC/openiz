@@ -25,9 +25,15 @@ using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Data;
+using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.RISI;
+using OpenIZ.Core.Security;
 using OpenIZ.Reporting.Core;
 using OpenIZ.Reporting.Core.Attributes;
+using System.Security;
 
 namespace OpenIZ.Reporting.Jasper
 {
@@ -40,6 +46,21 @@ namespace OpenIZ.Reporting.Jasper
 		/// The internal reference to the <see cref="HttpClient"/> instance.
 		/// </summary>
 		private readonly HttpClient client;
+
+		/// <summary>
+		/// The internal reference to the <see cref="ParameterType"/> <see cref="IDataPersistenceService{TData}"/> instance.
+		/// </summary>
+		private readonly IDataPersistenceService<ParameterType> parameterTypePersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ParameterType>>();
+
+		/// <summary>
+		/// The internal reference to the <see cref="ReportDefinition"/> <see cref="IDataPersistenceService{TData}"/> instance.
+		/// </summary>
+		private readonly IDataPersistenceService<ReportDefinition> reportDefinitionPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinition>>();
+
+		/// <summary>
+		/// The internal reference to the <see cref="ReportParameter"/> <see cref="IDataPersistenceService{TData}"/> instance.
+		/// </summary>
+		private readonly IDataPersistenceService<ReportParameter> reportParameterPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportParameter>>();
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="JasperReportHandler"/> class
@@ -65,6 +86,145 @@ namespace OpenIZ.Reporting.Jasper
 		public void Authenticate(string username, string password)
 		{
 			this.client.DefaultRequestHeaders.Add("Authorization", "BASIC " + Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password)));
+		}
+
+		/// <summary>
+		/// Creates a new report parameter type.
+		/// </summary>
+		/// <param name="parameterType">The report parameter type to create.</param>
+		/// <returns>Returns the created report parameter type.</returns>
+		public ParameterType CreateParameterType(ParameterType parameterType)
+		{
+			return this.parameterTypePersistenceService.Insert(parameterType, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
+		/// Creates a new report definition.
+		/// </summary>
+		/// <param name="reportDefinition">The report definition to create.</param>
+		/// <returns>Returns the created report definition.</returns>
+		public ReportDefinition CreateReportDefinition(ReportDefinition reportDefinition)
+		{
+			return this.reportDefinitionPersistenceService.Insert(reportDefinition, null, TransactionMode.Commit);
+		}
+
+		/// <summary>
+		/// Deletes a report parameter type.
+		/// </summary>
+		/// <param name="id">The id of the report parameter type to delete.</param>
+		/// <returns>Returns the deleted report parameter type.</returns>
+		public ParameterType DeleteParameterType(Guid id)
+		{
+			return this.parameterTypePersistenceService.Obsolete(this.GetParameterType(id), AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
+		/// Deletes a report definition.
+		/// </summary>
+		/// <param name="id">The id of the report definition to delete.</param>
+		/// <returns>Returns the deleted report definition.</returns>
+		public ReportDefinition DeleteReportDefinition(Guid id)
+		{
+			return this.reportDefinitionPersistenceService.Obsolete(this.GetReportDefinition(id), AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+		/// </summary>
+		public void Dispose()
+		{
+			this.client?.Dispose();
+		}
+
+		/// <summary>
+		/// Executes a report.
+		/// </summary>
+		/// <param name="id">The id of the report.</param>
+		/// <param name="format">The output format of the report.</param>
+		/// <param name="parameters">The list of parameters of the report.</param>
+		/// <returns>Returns the report in raw format.</returns>
+		public byte[] ExecuteReport(Guid id, Guid format, List<ReportParameter> parameters)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets a list of all report parameter types.
+		/// </summary>
+		/// <returns>Returns a list of report parameter types.</returns>
+		public IEnumerable<ReportParameter> GetAllReportParamterTypes()
+		{
+			return this.reportParameterPersistenceService.Query(r => r.ObsoletionTime == null, null);
+		}
+
+		/// <summary>
+		/// Gets a parameter type by id.
+		/// </summary>
+		/// <param name="id">The id of the parameter type to retrieve.</param>
+		/// <returns>Returns a parameter type.</returns>
+		public ParameterType GetParameterType(Guid id)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets a report definition by id.
+		/// </summary>
+		/// <param name="id">The id of the report definition to retrieve.</param>
+		/// <returns>Returns a report definition.</returns>
+		public ReportDefinition GetReportDefinition(Guid id)
+		{
+			return this.reportDefinitionPersistenceService.Get<Guid>(new Identifier<Guid>(id), null, true);
+		}
+
+		/// <summary>
+		/// Gets a list of report definitions based on a specific query.
+		/// </summary>
+		/// <returns>Returns a list of report definitions.</returns>
+		public IEnumerable<ReportDefinition> GetReportDefintions()
+		{
+			return this.reportDefinitionPersistenceService.Query(r => r.ObsoletionTime == null, null);
+		}
+
+		/// <summary>
+		/// Gets detailed information about a given report parameter.
+		/// </summary>
+		/// <param name="id">The id of the report parameter for which to retrieve information.</param>
+		/// <returns>Returns a report parameter manifest.</returns>
+		public ParameterManifest GetReportParameterManifest(Guid id)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets a list of report parameters.
+		/// </summary>
+		/// <param name="id">The id of the report for which to retrieve parameters.</param>
+		/// <returns>Returns a list of parameters.</returns>
+		public IEnumerable<ReportParameter> GetReportParameters(Guid id)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets a list of auto-complete parameters which are applicable for the specified parameter.
+		/// </summary>
+		/// <param name="id">The id of the report.</param>
+		/// <param name="parameterId">The id of the parameter for which to retrieve detailed information.</param>
+		/// <returns>Returns an auto complete source definition of valid parameters values for a given parameter.</returns>
+		public AutoCompleteSourceDefinition GetReportParameterValues(Guid id, Guid parameterId)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets the report source.
+		/// </summary>
+		/// <param name="id">The id of the report for which to retrieve the source.</param>
+		/// <returns>Returns the report source.</returns>
+		public ReportDefinition GetReportSource(Guid id)
+		{
+			throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -114,11 +274,24 @@ namespace OpenIZ.Reporting.Jasper
 		}
 
 		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+		/// Updates a parameter type definition.
 		/// </summary>
-		public void Dispose()
+		/// <param name="parameterType"></param>
+		/// <returns>Returns the updated parameter type definition.</returns>
+		public ParameterType UpdateParameterType(ParameterType parameterType)
 		{
-			this.client?.Dispose();
+			return this.parameterTypePersistenceService.Update(parameterType, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
+		/// Updates a report definition.
+		/// </summary>
+		/// <param name="id">The id of the report definition to update.</param>
+		/// <param name="reportDefinition">The updated report definition.</param>
+		/// <returns>Returns the updated report definition.</returns>
+		public ReportDefinition UpdateReportDefinition(ReportDefinition reportDefinition)
+		{
+			return this.reportDefinitionPersistenceService.Update(reportDefinition, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 	}
 }

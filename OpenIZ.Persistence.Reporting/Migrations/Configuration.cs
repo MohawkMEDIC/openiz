@@ -19,7 +19,6 @@
  */
 
 using System.Collections.Generic;
-using Npgsql;
 using OpenIZ.Persistence.Reporting.Model;
 using System;
 using System.Data.Entity;

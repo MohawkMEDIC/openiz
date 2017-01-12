@@ -20,7 +20,11 @@
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.RISI;
+using OpenIZ.Messaging.RISI.Configuration;
+using OpenIZ.Reporting.Core;
 
 namespace OpenIZ.Messaging.RISI.Wcf
 {
@@ -31,11 +35,21 @@ namespace OpenIZ.Messaging.RISI.Wcf
 	public class RisiBehavior : IRisiContract
 	{
 		/// <summary>
+		/// The internal reference to the RISI configuration.
+		/// </summary>
+		private readonly RisiConfiguration configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.persistence.reporting") as RisiConfiguration;
+
+		/// <summary>
+		/// The internal reference to the <see cref="IReportHandler"/> instance.
+		/// </summary>
+		private IReportHandler reportHandler = ApplicationContext.Current.GetService<IReportHandler>();
+
+		/// <summary>
 		/// Creates a new report parameter type definition.
 		/// </summary>
 		/// <param name="parameterTypeDefinition">The report parameter type definition to create.</param>
 		/// <returns>Returns the created report parameter type definition.</returns>
-		public ReportDataType CreateParameterType(ReportDataType parameterTypeDefinition)
+		public ParameterType CreateParameterType(ParameterType parameterTypeDefinition)
 		{
 			throw new NotImplementedException();
 		}
@@ -45,7 +59,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <param name="reportDefinition">The report definition to create.</param>
 		/// <returns>Returns the created report definition.</returns>
-		public Report CreateReportDefinition(Report reportDefinition)
+		public ReportDefinition CreateReportDefinition(ReportDefinition reportDefinition)
 		{
 			throw new NotImplementedException();
 		}
@@ -55,7 +69,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <param name="id">The id of the report parameter type to delete.</param>
 		/// <returns>Returns the deleted report parameter type.</returns>
-		public ReportDataType DeleteParameterType(string id)
+		public ParameterType DeleteParameterType(string id)
 		{
 			throw new NotImplementedException();
 		}
@@ -65,7 +79,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <param name="id">The id of the report definition to delete.</param>
 		/// <returns>Returns the deleted report definition.</returns>
-		public Report DeleteReportDefinition(string id)
+		public ReportDefinition DeleteReportDefinition(string id)
 		{
 			throw new NotImplementedException();
 		}
@@ -93,7 +107,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
-		public RisiCollection GetAllReportParamterTypes()
+		public List<ReportParameter> GetAllReportParamterTypes()
 		{
 			throw new NotImplementedException();
 		}
@@ -103,7 +117,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <param name="id">The id of the report definition to retrieve.</param>
 		/// <returns>Returns a report definition.</returns>
-		public Report GetReportDefinition(string id)
+		public ReportDefinition GetReportDefinition(string id)
 		{
 			throw new NotImplementedException();
 		}
@@ -112,7 +126,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// Gets a list of report definitions based on a specific query.
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
-		public RisiCollection GetReportDefintions()
+		public List<ReportDefinition> GetReportDefintions()
 		{
 			throw new NotImplementedException();
 		}
@@ -132,7 +146,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve parameters.</param>
 		/// <returns>Returns a list of parameters.</returns>
-		public RisiCollection GetReportParameters(string id)
+		public List<ReportParameter> GetReportParameters(string id)
 		{
 			throw new NotImplementedException();
 		}
@@ -153,7 +167,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve the source.</param>
 		/// <returns>Returns the report source.</returns>
-		public Report GetReportSource(string id)
+		public ReportDefinition GetReportSource(string id)
 		{
 			throw new NotImplementedException();
 		}
@@ -164,7 +178,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="id">The id of the parameter type.</param>
 		/// <param name="parameterTypeDefinition"></param>
 		/// <returns>Returns the updated parameter type definition.</returns>
-		public ReportDataType UpdateParameterTypeDefinition(string id, ReportDataType parameterTypeDefinition)
+		public ParameterType UpdateParameterTypeDefinition(string id, ParameterType parameterTypeDefinition)
 		{
 			throw new NotImplementedException();
 		}
@@ -175,7 +189,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="id">The id of the report definition to update.</param>
 		/// <param name="reportDefinition">The updated report definition.</param>
 		/// <returns>Returns the updated report definition.</returns>
-		public Report UpdateReportDefinition(string id, Report reportDefinition)
+		public ReportDefinition UpdateReportDefinition(string id, ReportDefinition reportDefinition)
 		{
 			throw new NotImplementedException();
 		}

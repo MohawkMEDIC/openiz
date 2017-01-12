@@ -17,7 +17,6 @@
  * User: Nityan
  * Date: 2017-1-9
  */
-using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure.Annotations;

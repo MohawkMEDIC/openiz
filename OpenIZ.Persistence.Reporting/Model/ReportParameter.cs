@@ -62,7 +62,7 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// Gets or sets the data type reference associated with the report parameter.
 		/// </summary>
 		[ForeignKey("DataTypeId")]
-		public virtual DataType DataType { get; set; }
+		public virtual ParameterType DataType { get; set; }
 
 		/// <summary>
 		/// Gets or sets the id of the data type associated with the report parameter.
