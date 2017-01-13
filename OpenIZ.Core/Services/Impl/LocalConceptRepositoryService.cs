@@ -593,8 +593,8 @@ namespace OpenIZ.Core.Services.Impl
 			{
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Concept>)} not found");
 			}
-
-			return persistenceService.Obsolete(new Concept() { Key = key }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            
+			return persistenceService.Obsolete(this.GetConcept(key, Guid.Empty) as Concept, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>
