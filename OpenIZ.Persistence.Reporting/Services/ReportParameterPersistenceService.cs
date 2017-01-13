@@ -19,6 +19,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
@@ -30,6 +31,7 @@ using MARC.HI.EHRS.SVC.Core.Event;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.RISI;
 using OpenIZ.Persistence.Reporting.Context;
+using OpenIZ.Persistence.Reporting.Exceptions;
 
 namespace OpenIZ.Persistence.Reporting.Services
 {
@@ -105,6 +107,17 @@ namespace OpenIZ.Persistence.Reporting.Services
 		}
 
 		/// <summary>
+		/// Converts a model instance to a domain instance.
+		/// </summary>
+		/// <param name="modelInstance">The model instance to convert.</param>
+		/// <returns>Returns the converted model instance.</returns>
+		internal override Model.ReportParameter FromModelInstance(ReportParameter modelInstance)
+		{
+			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(Model.ReportParameter) } to { nameof(ReportParameter) }");
+			return modelInstance == null ? null : modelMapper.MapModelInstance<ReportParameter, Model.ReportParameter>(modelInstance);
+		}
+
+		/// <summary>
 		/// Gets a report by id.
 		/// </summary>
 		/// <typeparam name="TIdentifier">The type of identifier.</typeparam>
@@ -114,7 +127,20 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <returns>Returns the report or null if not found.</returns>
 		public ReportParameter Get<TIdentifier>(Identifier<TIdentifier> containerId, IPrincipal principal, bool loadFast)
 		{
-			throw new NotImplementedException();
+			ReportParameter result = null;
+
+			using (var context = new ApplicationDbContext())
+			{
+				var parameterType = context.ReportParameters.Find(containerId.Id);
+
+				result = this.ToModelInstance(parameterType);
+
+				this.Retrieving?.Invoke(this, new PreRetrievalEventArgs<ReportParameter>(result, principal));
+			}
+
+			this.Retrieved?.Invoke(this, new PostRetrievalEventArgs<ReportParameter>(result, principal));
+
+			return result;
 		}
 
 		/// <summary>
@@ -126,7 +152,23 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <returns>Returns the inserted report.</returns>
 		public ReportParameter Insert(ReportParameter storageData, IPrincipal principal, TransactionMode mode)
 		{
-			throw new NotImplementedException();
+			ReportParameter result = null;
+
+			this.Inserting?.Invoke(this, new PrePersistenceEventArgs<ReportParameter>(storageData, principal));
+
+			using (var context = new ApplicationDbContext())
+			{
+				var entity = this.FromModelInstance(storageData);
+
+				context.ReportParameters.Add(entity);
+				context.SaveChanges();
+
+				result = this.ToModelInstance(entity);
+			}
+
+			this.Inserted?.Invoke(this, new PostPersistenceEventArgs<ReportParameter>(result, principal));
+
+			return result;
 		}
 
 		/// <summary>
@@ -138,7 +180,25 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <returns>Returns the obsoleted report.</returns>
 		public ReportParameter Obsolete(ReportParameter storageData, IPrincipal principal, TransactionMode mode)
 		{
-			throw new NotImplementedException();
+			ReportParameter result = null;
+
+			this.Obsoleting?.Invoke(this, new PrePersistenceEventArgs<ReportParameter>(storageData, principal));
+
+			using (var context = new ApplicationDbContext())
+			{
+				var entity = context.ReportParameters.Find(storageData.Key);
+
+				if (entity == null)
+				{
+					throw new EntityNotFoundException();
+				}
+
+				result = this.ToModelInstance(context.ReportParameters.Remove(entity));
+			}
+
+			this.Obsoleted?.Invoke(this, new PostPersistenceEventArgs<ReportParameter>(result, principal));
+
+			return result;
 		}
 
 		/// <summary>
@@ -152,7 +212,22 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <returns>Returns a list of reports.</returns>
 		public IEnumerable<ReportParameter> Query(Expression<Func<ReportParameter, bool>> query, int offset, int? count, IPrincipal authContext, out int totalCount)
 		{
-			throw new NotImplementedException();
+			IEnumerable<ReportParameter> results = new List<ReportParameter>();
+
+			this.Querying?.Invoke(this, new PreQueryEventArgs<ReportParameter>(query, authContext));
+
+			using (var context = new ApplicationDbContext())
+			{
+				var expression = modelMapper.MapModelExpression<ReportParameter, Model.ReportParameter>(query);
+
+				results = context.ReportParameters.Where(expression).Select(r => this.ToModelInstance(r));
+			}
+
+			totalCount = results.Count();
+
+			this.Queried?.Invoke(this, new PostQueryEventArgs<ReportParameter>(query, results.AsQueryable(), authContext));
+
+			return results;
 		}
 
 		/// <summary>
@@ -163,7 +238,19 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <returns>Returns a list of reports.</returns>
 		public IEnumerable<ReportParameter> Query(Expression<Func<ReportParameter, bool>> query, IPrincipal authContext)
 		{
-			throw new NotImplementedException();
+			var totalCount = 0;
+			return this.Query(query, 0, null, authContext, out totalCount);
+		}
+
+		/// <summary>
+		/// Converts a domain instance to a model instance.
+		/// </summary>
+		/// <param name="domainInstance">The domain instance to convert.</param>
+		/// <returns>Returns the converted model instance.</returns>
+		internal override ReportParameter ToModelInstance(Model.ReportParameter domainInstance)
+		{
+			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(ReportParameter) } to { nameof(Model.ReportParameter) }");
+			return domainInstance == null ? null : modelMapper.MapDomainInstance<Model.ReportParameter, ReportParameter>(domainInstance);
 		}
 
 		/// <summary>
@@ -175,27 +262,24 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <returns>Returns the updated report.</returns>
 		public ReportParameter Update(ReportParameter storageData, IPrincipal principal, TransactionMode mode)
 		{
-			throw new NotImplementedException();
-		}
+			ReportParameter result = null;
 
-		/// <summary>
-		/// Converts a domain instance to a model instance.
-		/// </summary>
-		/// <param name="domainInstance">The domain instance to convert.</param>
-		/// <returns>Returns the converted model instance.</returns>
-		internal override ReportParameter ToModelInstance(Model.ReportParameter domainInstance)
-		{
-			throw new NotImplementedException();
-		}
+			this.Updating?.Invoke(this, new PrePersistenceEventArgs<ReportParameter>(storageData, principal));
 
-		/// <summary>
-		/// Converts a model instance to a domain instance.
-		/// </summary>
-		/// <param name="modelInstance">The model instance to convert.</param>
-		/// <returns>Returns the converted model instance.</returns>
-		internal override Model.ReportParameter FromModelInstance(ReportParameter modelInstance)
-		{
-			throw new NotImplementedException();
+			using (var context = new ApplicationDbContext())
+			{
+				var domainInstance = this.FromModelInstance(storageData);
+
+				context.Entry(domainInstance).State = EntityState.Modified;
+
+				context.SaveChanges();
+
+				result = this.ToModelInstance(domainInstance);
+			}
+
+			this.Updated?.Invoke(this, new PostPersistenceEventArgs<ReportParameter>(result, principal));
+
+			return result;
 		}
 	}
 }

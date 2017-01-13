@@ -28,9 +28,9 @@
     <property modelName="Name" domainName="Name"/>
     <property modelName="Description" domainName="Description"/>
     <property modelName="CorrelationId" domainName="CorrelationId"/>
-    <property modelName="Parameters" domainName="Parameters">
-      <via domainName="ReportParameter"/>
-    </property>
+    <!--<property modelName="Parameters" domainName="Parameters">
+      <via domainName="Parameters"/>
+    </property>-->
   </class>
 
   <!-- Report Parameters -->
@@ -39,7 +39,7 @@
     <property modelName="Key" domainName="Id"/>
     <property modelName="Name" domainName="Name"/>
     <property modelName="Order" domainName="Order"/>
-    <property modelName="Value" domainName="Value"/>
+    <!--<property modelName="Value" domainName="Value"/>-->
     <property modelName="IsNullable" domainName="IsNullable"/>
     <property modelName="ReportDefinition" domainName="ReportDefinition" />
   </class>
@@ -49,9 +49,9 @@
 		domainClass="OpenIZ.Persistence.Reporting.Model.ParameterType, OpenIZ.Persistence.Reporting, Version=0.6.0.0">
     <property modelName="Key" domainName="Id"/>
     <property modelName="Name" domainName="Name"/>
-    <property modelName="RcptTo" domainName="AlertMessageRecipients">
-      <via domainName="SecurityUser"/>
-    </property>
+    <!--<property modelName="ReportParameters" domainName="ReportParameters">
+      <via domainName="ReportParameters"/>
+    </property>-->
   </class>
   
 </modelMap>

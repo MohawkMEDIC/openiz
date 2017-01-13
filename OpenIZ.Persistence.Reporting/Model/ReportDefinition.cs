@@ -87,6 +87,12 @@ namespace OpenIZ.Persistence.Reporting.Model
 		public Guid Id { get; set; }
 
 		/// <summary>
+		/// Gets or sets the name of the report.
+		/// </summary>
+		[Required]
+		public string Name { get; set; }
+
+		/// <summary>
 		/// Gets or sets the report parameters associated with the report.
 		/// </summary>
 		public virtual ICollection<ReportParameter> Parameters { get; set; }

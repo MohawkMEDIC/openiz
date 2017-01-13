@@ -40,29 +40,24 @@ namespace OpenIZ.Persistence.Reporting
 		/// The internal reference to the trace source.
 		/// </summary>
 		private readonly TraceSource traceSource = new TraceSource("OpenIZ.Persistence.Reporting");
-		
-		/// <summary>
-		/// The internal reference to the model mapper.
-		/// </summary>
-		private static readonly ModelMapper modelMapper = null;
 
 		static ReportingService()
 		{
-			//var tracer = new TraceSource("OpenIZ.Persistence.Reporting");
-			//try
-			//{
-			//	modelMapper = new ModelMapper(typeof(ReportingService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Persistence.Reporting.Data.ModelMap.xml"));
-			//}
-			//catch (ModelMapValidationException ex)
-			//{
-			//	tracer.TraceEvent(TraceEventType.Error, ex.HResult, "Error validating model map: {0}", ex);
-			//	throw ex;
-			//}
-			//catch (Exception ex)
-			//{
-			//	tracer.TraceEvent(TraceEventType.Error, ex.HResult, "Error validating model map: {0}", ex);
-			//	throw ex;
-			//}
+			var tracer = new TraceSource("OpenIZ.Persistence.Reporting");
+			try
+			{
+				ModelMapper = new ModelMapper(typeof(ReportingService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Persistence.Reporting.Data.ModelMap.xml"));
+			}
+			catch (ModelMapValidationException ex)
+			{
+				tracer.TraceEvent(TraceEventType.Error, ex.HResult, "Error validating model map: {0}", ex);
+				throw ex;
+			}
+			catch (Exception ex)
+			{
+				tracer.TraceEvent(TraceEventType.Error, ex.HResult, "Error validating model map: {0}", ex);
+				throw ex;
+			}
 		}
 
 		/// <summary>
@@ -112,7 +107,7 @@ namespace OpenIZ.Persistence.Reporting
 		/// <summary>
 		/// Gets the model mapper.
 		/// </summary>
-		public static ModelMapper ModelMapper => modelMapper;
+		public static ModelMapper ModelMapper { get; }
 
 		/// <summary>
 		/// Gets the running state of the message handler.

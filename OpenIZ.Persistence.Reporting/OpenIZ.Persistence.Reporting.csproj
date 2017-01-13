@@ -58,6 +58,7 @@
     <Compile Include="Context\ApplicationDbContext.cs" />
     <Compile Include="Configuration\ConfigurationSectionHandler.cs" />
     <Compile Include="Configuration\ReportingConfiguration.cs" />
+    <Compile Include="Exceptions\EntityNotFoundException.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\MigrationGenerator.cs" />
     <Compile Include="Model\ParameterType.cs" />

@@ -19,6 +19,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.RISI
@@ -82,5 +83,12 @@ namespace OpenIZ.Core.Model.RISI
 		/// </summary>
 		[XmlAttribute("provider")]
 		public string ValuesProvider { get; set; }
+
+		/// <summary>
+		/// Gets or sets a list of report parameters associated with the paramter type.
+		/// </summary>
+		[XmlElement("reportParameters")]
+		public List<ReportParameter> ReportParameters { get; set; }
+
 	}
 }

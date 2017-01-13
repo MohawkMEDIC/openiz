@@ -26,11 +26,13 @@ using System.Linq.Expressions;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Event;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.RISI;
 using OpenIZ.Persistence.Reporting.Context;
+using OpenIZ.Persistence.Reporting.Exceptions;
 
 namespace OpenIZ.Persistence.Reporting.Services
 {
@@ -112,8 +114,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <returns>Returns the converted model instance.</returns>
 		internal override Model.ParameterType FromModelInstance(ParameterType modelInstance)
 		{
-			Model.ParameterType domainInstance = null;
-
+			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(Model.ParameterType) } to { nameof(ParameterType) }");
 			return modelInstance == null ? null : modelMapper.MapModelInstance<ParameterType, Model.ParameterType>(modelInstance);
 		}
 
@@ -121,7 +122,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// Gets a report by id.
 		/// </summary>
 		/// <typeparam name="TIdentifier">The type of identifier.</typeparam>
-		/// <param name="containerId">The id of the ReportDefinition.</param>
+		/// <param name="containerId">The id of the report definition.</param>
 		/// <param name="principal">The authorization context.</param>
 		/// <param name="loadFast">Whether the result should load fast.</param>
 		/// <returns>Returns the report or null if not found.</returns>
@@ -180,7 +181,25 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <returns>Returns the obsoleted report.</returns>
 		public ParameterType Obsolete(ParameterType storageData, IPrincipal principal, TransactionMode mode)
 		{
-			throw new NotImplementedException();
+			ParameterType result = null;
+
+			this.Obsoleting?.Invoke(this, new PrePersistenceEventArgs<ParameterType>(storageData, principal));
+
+			using (var context = new ApplicationDbContext())
+			{
+				var entity = context.ParameterTypes.Find(storageData.Key);
+
+				if (entity == null)
+				{
+					throw new EntityNotFoundException();
+				}
+
+				result = this.ToModelInstance(context.ParameterTypes.Remove(entity));
+			}
+
+			this.Obsoleted?.Invoke(this, new PostPersistenceEventArgs<ParameterType>(result, principal));
+
+			return result;
 		}
 
 		/// <summary>
@@ -194,7 +213,22 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <returns>Returns a list of data types.</returns>
 		public IEnumerable<ParameterType> Query(Expression<Func<ParameterType, bool>> query, int offset, int? count, IPrincipal authContext, out int totalCount)
 		{
-			throw new NotImplementedException();
+			IEnumerable<ParameterType> results = new List<ParameterType>();
+
+			this.Querying?.Invoke(this, new PreQueryEventArgs<ParameterType>(query, authContext));
+
+			using (var context = new ApplicationDbContext())
+			{
+				var expression = modelMapper.MapModelExpression<ParameterType, Model.ParameterType>(query);
+
+				results = context.ParameterTypes.Where(expression).Select(r => this.ToModelInstance(r));
+			}
+
+			totalCount = results.Count();
+
+			this.Queried?.Invoke(this, new PostQueryEventArgs<ParameterType>(query, results.AsQueryable(), authContext));
+
+			return results;
 		}
 
 		/// <summary>
@@ -205,14 +239,8 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <returns>Returns a list of data types.</returns>
 		public IEnumerable<ParameterType> Query(Expression<Func<ParameterType, bool>> query, IPrincipal authContext)
 		{
-			IEnumerable<ParameterType> results = new List<ParameterType>();
-
-			using (var context = new ApplicationDbContext())
-			{
-
-			}
-
-			throw new NotImplementedException();
+			var totalCount = 0;
+			return this.Query(query, 0, null, authContext, out totalCount);
 		}
 
 		/// <summary>
@@ -222,14 +250,8 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <returns>Returns the converted model instance.</returns>
 		internal override ParameterType ToModelInstance(Model.ParameterType domainInstance)
 		{
-			ParameterType modelInstance = null;
-
-			if (domainInstance == null)
-			{
-				return null;
-			}
-
-			throw new NotImplementedException();
+			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(ParameterType) } to { nameof(Model.ParameterType) }");
+			return domainInstance == null ? null : modelMapper.MapDomainInstance<Model.ParameterType, ParameterType>(domainInstance);
 		}
 
 		/// <summary>
