@@ -18,6 +18,7 @@
  * Date: 2016-8-17
  */
 
+using PetaPoco;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,9 +30,15 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Extensibility
     /// <summary>
     /// Represents a database template definition
     /// </summary>
-    [TableName("template")]
+    [TableName("tpl_def_tbl")]
     public class DbTemplateDefinition : DbBaseData
     {
+        /// <summary>
+        /// Gets or sets the key
+        /// </summary>
+        [Column("tpl_id")]
+        public override Guid Key { get; set; }
+
         /// <summary>
         /// Gets the OID of the template
         /// </summary>
@@ -41,7 +48,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Extensibility
         /// <summary>
         /// Gets the name of the template
         /// </summary>
-        [Column("name")]
+        [Column("tpl_name")]
         public String Name { get; set; }
 
         /// <summary>
@@ -49,6 +56,12 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Extensibility
         /// </summary>
         [Column("mnemonic")]
         public String Mnemonic { get; set; }
+
+        /// <summary>
+        /// Gets the mnemonic
+        /// </summary>
+        [Column("descr")]
+        public String Description { get; set; }
 
     }
 }

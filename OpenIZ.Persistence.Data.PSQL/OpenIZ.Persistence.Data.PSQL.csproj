@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Model\Acts\DbActProtocol.cs" />
     <Compile Include="Data\Model\Acts\DbActVersion.cs" />
     <Compile Include="Data\Model\Acts\DbAct.cs" />
     <Compile Include="Data\Model\Acts\DbActParticipation.cs" />
@@ -54,25 +55,32 @@
     <Compile Include="Data\Model\Acts\DbControlAct.cs" />
     <Compile Include="Data\Model\Acts\DbObservation.cs" />
     <Compile Include="Data\Model\Acts\DbPatientEncounter.cs" />
+    <Compile Include="Data\Model\Acts\DbProtocol.cs" />
     <Compile Include="Data\Model\Acts\DbSubstanceAdministration.cs" />
+    <Compile Include="Data\Model\Concepts\DbCodeSystem.cs" />
+    <Compile Include="Data\Model\Concepts\DbConceptReferenceTerm.cs" />
+    <Compile Include="Data\Model\Concepts\DbConceptVersion.cs" />
     <Compile Include="Data\Model\Concepts\DbConcept.cs" />
     <Compile Include="Data\Model\Concepts\DbConceptClass.cs" />
     <Compile Include="Data\Model\Concepts\DbConceptName.cs" />
     <Compile Include="Data\Model\Concepts\DbConceptRelationship.cs" />
     <Compile Include="Data\Model\Concepts\DbConceptRelationshipType.cs" />
     <Compile Include="Data\Model\Concepts\DbConceptSet.cs" />
+    <Compile Include="Data\Model\Concepts\DbReferenceTerm.cs" />
+    <Compile Include="Data\Model\Concepts\DbReferenceTermName.cs" />
     <Compile Include="Data\Model\DataType\DbAssigningAuthority.cs" />
     <Compile Include="Data\Model\DataType\DbIdentifier.cs" />
     <Compile Include="Data\Model\DataType\DbIdentifierType.cs" />
+    <Compile Include="Data\Model\DataType\DbPhonetics.cs" />
     <Compile Include="Data\Model\DbAssociatedEntity.cs" />
     <Compile Include="Data\Model\DbBaseData.cs" />
     <Compile Include="Data\Model\DbIdentified.cs" />
     <Compile Include="Data\Model\DbVersionedData.cs" />
     <Compile Include="Data\Model\Entities\DbApplicationEntity.cs" />
     <Compile Include="Data\Model\Entities\DbDeviceEntity.cs" />
+    <Compile Include="Data\Model\Entities\DbEntityVersion.cs" />
     <Compile Include="Data\Model\Entities\DbEntity.cs" />
     <Compile Include="Data\Model\Entities\DbEntityAddress.cs" />
-    <Compile Include="Data\Model\Entities\DbEntityLink.cs" />
     <Compile Include="Data\Model\Entities\DbEntityName.cs" />
     <Compile Include="Data\Model\Entities\DbEntityRelationship.cs" />
     <Compile Include="Data\Model\Entities\DbGenericNameComponent.cs" />

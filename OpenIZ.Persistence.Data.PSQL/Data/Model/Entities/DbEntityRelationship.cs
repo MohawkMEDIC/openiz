@@ -19,6 +19,7 @@
  */
 
 
+using PetaPoco;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,38 +31,40 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
     /// <summary>
     /// Represents a relationship between two entities
     /// </summary>
-    [TableName("entity_relationship")] 
-    public class DbEntityRelationship : IDbVersionedAssociation
+    [TableName("ent_rel_tbl")] 
+    public class DbEntityRelationship : DbVersionedAssociation
     {
 
-        /// <summary>
-        /// Gets or sets the entity identifier.
-        /// </summary>
-        /// <value>The entity identifier.</value>
-        [Column("ent_id"), NotNull]
-        public Guid EntityUuid
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the target entity
-        /// </summary>
-        [Column("target"), NotNull]
-        public Guid TargetKey { get; set; }
 
 
         /// <summary>
         /// Gets or sets the link type concept
         /// </summary>
-        [Column("relationshipType")]
+        [Column("rel_type_cd_id")]
         public Guid RelationshipTypeKey { get; set; }
 
         /// <summary>
         /// Quantity 
         /// </summary>
-        [Column("quantity")]
+        [Column("qty")]
         public int Quantity { get; set; }
+
+        /// <summary>
+        /// Gets or sets the source entity id
+        /// </summary>
+        [Column("src_ent_id")]
+        public override Guid SourceKey { get; set; }
+
+        /// <summary>
+        /// Target entity key
+        /// </summary>
+        [Column("trg_ent_id")]
+        public Guid TargetKey { get; set; }
+
+        /// <summary>
+        /// Gets or sets the entity relationship id
+        /// </summary>
+        [Column("ent_rel_id")]
+        public override Guid Key { get; set; }
     }
 }

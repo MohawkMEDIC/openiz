@@ -19,6 +19,7 @@
  */
 
 
+using PetaPoco;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,21 +31,26 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
     /// <summary>
     /// Represents the orm class for place service
     /// </summary>
-    [TableName("place_service")]
-    public class DbPlaceService : DbEntityLink
+    [TableName("plc_svc_tbl")]
+    public class DbPlaceService : DbEntityVersionedAssociation
     {
 
         /// <summary>
         /// Gets or sets the service schedule information
         /// </summary>
-        [Column("serviceSchedule")]
+        [Column("schdl")]
         public Guid ServiceSchedule { get; set; }
 
         /// <summary>
         /// Gets or sets the service concept
         /// </summary>
-        [Column("serviceConcept")]
+        [Column("svc_cd_id")]
         public Guid ServiceConceptKey { get; set; }
 
+        /// <summary>
+        /// Primary key
+        /// </summary>
+        [Column("svc_id")]
+        public override Guid Key { get; set; }
     }
 }

@@ -17,30 +17,43 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
-
-
 
 namespace OpenIZ.Persistence.Data.PSQL.Data.Model.DataType
 {
 	/// <summary>
 	/// Identifier type table.
 	/// </summary>
-	[TableName("identifier_type")]
-	public class DbIdentifierType : IDbVersionedAssociation
+	[TableName("id_typ_tbl")]
+	public class DbIdentifierType : DbBaseData
 	{
-		
-		/// <summary>
-		/// Gets or sets the type concept identifier.
-		/// </summary>
-		/// <value>The type concept identifier.</value>
-		[Column("typeConcept")]
+        /// <summary>
+        /// Gets or sets the id type
+        /// </summary>
+        [Column("id_typ_id")]
+        public override Guid Key { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type concept identifier.
+        /// </summary>
+        /// <value>The type concept identifier.</value>
+        [Column("typ_cd_id")]
 		public Guid TypeConceptKey {
 			get;
 			set;
 		}
 
-
-	}
+        /// <summary>
+        /// Gets or sets the type concept identifier.
+        /// </summary>
+        /// <value>The type concept identifier.</value>
+        [Column("ent_scp_cd_id")]
+        public Guid EntityScopeKey
+        {
+            get;
+            set;
+        }
+    }
 }
 

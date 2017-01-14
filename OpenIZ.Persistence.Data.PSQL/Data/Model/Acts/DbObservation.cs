@@ -19,6 +19,7 @@
  */
 
 
+using PetaPoco;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,20 +31,20 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Acts
     /// <summary>
     /// Stores data related to an observation act
     /// </summary>
-    [TableName("observation")]
-    public class DbObservation : IDbVersionedAssociation
+    [TableName("obs_tbl")]
+    public class DbObservation : DbActSubTable
     {
 
         /// <summary>
         /// Gets or sets the interpretation concept
         /// </summary>
-        [Column("interpretationConcept")]
+        [Column("int_cd_id")]
         public Guid InterpretationConceptKey { get; set; }
 
         /// <summary>
         /// Identifies the value type
         /// </summary>
-        [Column("valueType"), MaxLength(2)]
+        [Column("val_typ")]
         public String ValueType { get; set; }
 
     }
@@ -51,34 +52,40 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Acts
     /// <summary>
     /// Represents additional data related to a quantified observation
     /// </summary>
-    [TableName("quantity_observation")]
-    public class DbQuantityObservation : IDbVersionedAssociation
+    [TableName("qty_obs_tbl")]
+    public class DbQuantityObservation : DbActSubTable
     {
 
         /// <summary>
         /// Represents the unit of measure
         /// </summary>
-        [Column("unitOfMeasure")]
+        [Column("uom_cd_id")]
         public Guid UnitOfMeasureKey { get; set; }
 
         /// <summary>
         /// Gets or sets the value of the measure
         /// </summary>
-        [Column("value")]
+        [Column("qty")]
         public Decimal Value { get; set; }
+
+        /// <summary>
+        /// Gets or sets the value of the measure
+        /// </summary>
+        [Column("qty_prec")]
+        public Decimal Precision { get; set; }
 
     }
 
     /// <summary>
     /// Identifies the observation as a text obseration
     /// </summary>
-    [TableName("text_observation")]
-    public class DbTextObservation : IDbVersionedAssociation
+    [TableName("txt_obs_tbl")]
+    public class DbTextObservation : DbActSubTable
     {
         /// <summary>
         /// Gets the value of the observation as a string
         /// </summary>
-        [Column("value")]
+        [Column("obs_val")]
         public String Value { get; set; }
 
     }
@@ -86,14 +93,14 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Acts
     /// <summary>
     /// Identifies data related to a coded observation
     /// </summary>
-    [TableName("coded_observation")]
-    public class DbCodedObservation : IDbVersionedAssociation
+    [TableName("cd_obs_tbl")]
+    public class DbCodedObservation : DbActSubTable
     {
 
         /// <summary>
         /// Gets or sets the concept representing the value of this
         /// </summary>
-        [Column("value")] 
+        [Column("val_cd_id")] 
         public Guid Value { get; set; }
 
     }

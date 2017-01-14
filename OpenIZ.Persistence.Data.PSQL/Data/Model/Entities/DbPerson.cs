@@ -20,22 +20,22 @@
 using System;
 
 using OpenIZ.Core.Model.DataTypes;
-
+using PetaPoco;
 
 namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
 {
 	/// <summary>
 	/// Represents a person
 	/// </summary>
-	[TableName("person")]
-	public class DbPerson : IDbVersionedAssociation
+	[TableName("psn_tbl")]
+	public class DbPerson : DbEntitySubTable
 	{
 
 		/// <summary>
 		/// Gets or sets the date of birth.
 		/// </summary>
 		/// <value>The date of birth.</value>
-		[Column("dateOfBirth")]
+		[Column("dob")]
 		public DateTime? DateOfBirth {
 			get;
 			set;
@@ -45,7 +45,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
 		/// Gets or sets the date of birth precision.
 		/// </summary>
 		/// <value>The date of birth precision.</value>
-		[Column("dateOfBirthPrecision"), MaxLength(1)]
+		[Column("dob_prec")]
 		public string DateOfBirthPrecision {
 			get;
 			set;

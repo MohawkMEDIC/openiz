@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
 
 
@@ -26,13 +27,13 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
 	/// <summary>
 	/// Represents a place in the local database
 	/// </summary>
-	[TableName("place")]
-	public class DbPlace : IDbVersionedAssociation
+	[TableName("plc_tbl")]
+	public class DbPlace : DbEntitySubTable
     {
         /// <summary>
         /// Identifies whether the place is mobile
         /// </summary>
-        [Column("isMobile")]
+        [Column("mob_ind")]
         public bool IsMobile { get; set; }
 
         /// <summary>

@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-8-2
  */
+using PetaPoco;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model
     /// <summary>
     /// Gets or sets the identified data
     /// </summary>
+    [ExplicitColumns]
     public abstract class DbIdentified
     {
         /// <summary>
@@ -36,4 +38,38 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model
         public abstract Guid Key { get; set; }
     }
 
+    /// <summary>
+    /// Gets or sets the derived parent class
+    /// </summary>
+    public abstract class DbSubTable
+    {
+        /// <summary>
+        /// Parent key
+        /// </summary>
+        public abstract Guid ParentKey { get; set; }
+    }
+
+    /// <summary>
+    /// Act based sub-table
+    /// </summary>
+    public abstract class DbActSubTable : DbSubTable
+    {
+        /// <summary>
+        /// Gets or sets the parent key
+        /// </summary>
+        [Column("act_vrsn_id")]
+        public override Guid ParentKey { get; set; }
+    }
+
+    /// <summary>
+    /// Act based sub-table
+    /// </summary>
+    public abstract class DbEntitySubTable : DbSubTable
+    {
+        /// <summary>
+        /// Gets or sets the parent key
+        /// </summary>
+        [Column("ent_vrsn_id")]
+        public override Guid ParentKey { get; set; }
+    }
 }

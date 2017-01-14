@@ -17,24 +17,28 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
-
-
 
 namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
 {
 	/// <summary>
 	/// Represents one or more entity addresses linked to an Entity
 	/// </summary>
-	[TableName("entity_address")]
-	public class DbEntityAddress : DbEntityLink
+	[TableName("ent_addr_tbl")]
+	public class DbEntityAddress : DbEntityVersionedAssociation
 	{
-		
-		/// <summary>
-		/// Gets or sets the use concept identifier.
-		/// </summary>
-		/// <value>The use concept identifier.</value>
-		[Column("use")]
+        /// <summary>
+        /// Gets or sets the key
+        /// </summary>
+        [Column("addr_id")]
+        public override Guid Key { get; set; }
+
+        /// <summary>
+        /// Gets or sets the use concept identifier.
+        /// </summary>
+        /// <value>The use concept identifier.</value>
+        [Column("use_cd_id")]
 		public Guid UseConceptKey {
 			get;
 			set;
@@ -45,7 +49,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
 	/// <summary>
 	/// Represents an identified address component
 	/// </summary>
-	[TableName("entity_address_comp")]
+	[TableName("ent_addr_cmp_tbl")]
 	public class DbEntityAddressComponent : DbGenericNameComponent
 	{
 
@@ -53,14 +57,32 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
 		/// Gets or sets the address identifier.
 		/// </summary>
 		/// <value>The address identifier.</value>
-		[Column("address_uuid")]
+		[Column("addr_id")]
 		public Guid AddressKey {
 			get;
 			set;
 		}
-	
 
 	}
+
+    /// <summary>
+    /// Gets or sets the entity address component value
+    /// </summary>
+    [TableName("ent_addr_cmp_val_tbl")]
+    public class DbEntityAddressComponentValue : DbIdentified
+    {
+        /// <summary>
+        /// Gets or sets the pk of the val
+        /// </summary>
+        [Column("val_id")]
+        public override Guid Key { get; set; }
+
+        /// <summary>
+        /// Gets or sets the value
+        /// </summary>
+        [Column("val")]
+        public String Value { get; set; }
+    }
 
 }
 

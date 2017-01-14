@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
 
 
@@ -27,74 +28,68 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Security
 	/// Represents a security policy instance which includes a link to a policy and
 	/// to a decision
 	/// </summary>
-	public abstract class DbSecurityPolicyInstance : IDbVersionedAssociation
+	public abstract class DbSecurityPolicyInstance : DbAssociation
 	{
+        /// <summary>
+        /// Gets or sets the key 
+        /// </summary>
+        [Column("pol_inst_id")]
+        public override Guid Key { get; set; }
 
-		/// <summary>
-		/// Gets or sets the type of the grant.
-		/// </summary>
-		/// <value>The type of the grant.</value>
-		[Column("grant_type")]
+        /// <summary>
+        /// Gets or sets the type of the grant.
+        /// </summary>
+        /// <value>The type of the grant.</value>
+        [Column("pol_act")]
 		public int GrantType {
 			get;
 			set;
 		}
-	}
+
+        /// <summary>
+        /// Gets or sets the policy identifier.
+        /// </summary>
+        /// <value>The policy identifier.</value>
+        [Column("pol_id")]
+        public int PolicyId
+        {
+            get;
+            set;
+        }
+    }
 
 	/// <summary>
 	/// Represents a relationship between an entity and security policy
 	/// </summary>
-	[TableName("entity_security_policy")]
+	[TableName("ent_sec_pol_assoc_tbl")]
 	public class DbEntitySecurityPolicy : DbSecurityPolicyInstance
 	{
         /// <summary>
         /// Gets or sets the source
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("entity_id"), Indexed(Name = "entity_security_policy_source_policy", Unique = true)]
-        public int EntityId
+        [Column("ent_id")]
+        public override Guid SourceKey
         {
             get;
             set;
         }
-
-        /// <summary>
-        /// Gets or sets the policy identifier.
-        /// </summary>
-        /// <value>The policy identifier.</value>
-        [Column("policy_id"), Indexed(Name = "entity_security_policy_source_policy", Unique = true)]
-        public int PolicyId
-        {
-            get;
-            set;
-        }
-
+        
 
     }
 
     /// <summary>
     /// Represents a security policy applied to an act
     /// </summary>
-    [TableName("act_security_policy")]
+    [TableName("act_pol_assoc_tbl")]
 	public class DbActSecurityPolicy : DbSecurityPolicyInstance
 	{
         /// <summary>
         /// Gets or sets the source
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("act_id"), Indexed(Name = "act_security_policy_source_policy", Unique = true)]
-        public int ActId
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the policy identifier.
-        /// </summary>
-        /// <value>The policy identifier.</value>
-        [Column("policy_id"), Indexed(Name = "act_security_policy_source_policy", Unique = true)]
-        public int PolicyId
+        [Column("act_id")]
+        public override Guid SourceKey
         {
             get;
             set;
@@ -105,88 +100,60 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Security
     /// <summary>
     /// Represents a security policy applied to a role
     /// </summary>
-    [TableName("security_role_policy")]
+    [TableName("sec_rol_pol_assoc_tbl")]
 	public class DbSecurityRolePolicy : DbSecurityPolicyInstance
 	{
         /// <summary>
         /// Gets or sets the source
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("role_id"), Indexed(Name = "security_role_policy_source_policy", Unique = true)]
-        public Guid RoleId
+        [Column("role_id")]
+        public override Guid SourceKey
         {
             get;
             set;
         }
 
-        /// <summary>
-        /// Gets or sets the policy identifier.
-        /// </summary>
-        /// <value>The policy identifier.</value>
-        [Column("policy_id"), Indexed(Name = "security_role_policy_source_policy", Unique = true)]
-        public Guid PolicyId
-        {
-            get;
-            set;
-        }
+       
     }
 
 	/// <summary>
 	/// Represents a security policy applied to an application (this is "my" data)
 	/// </summary>
-	[TableName("security_application_policy")]
+	[TableName("sec_app_pol_assoc_tbl")]
 	public class DbSecurityApplicationPolicy : DbSecurityPolicyInstance
 	{
         /// <summary>
         /// Gets or sets the source
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("application_id"), Indexed(Name = "security_application_policy_source_policy", Unique = true)]
-        public Guid ApplicationId
+        [Column("app_id")]
+        public override Guid SourceKey
         {
             get;
             set;
         }
-
-        /// <summary>
-        /// Gets or sets the policy identifier.
-        /// </summary>
-        /// <value>The policy identifier.</value>
-        [Column("policy_id"), Indexed(Name = "security_application_policy_source_policy", Unique = true)]
-        public Guid PolicyId
-        {
-            get;
-            set;
-        }
+        
     }
 
 	/// <summary>
 	/// Represents a security policy applied to a device
 	/// </summary>
-	[TableName("security_device_policy")]
+	[TableName("sec_dev_pol_assoc_tbl")]
 	public class DbSecurityDevicePolicy : DbSecurityPolicyInstance
 	{
         /// <summary>
         /// Gets or sets the source
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("device_id"), Indexed(Name = "security_device_policy_source_policy", Unique = true)]
-        public Guid DeviceId
+        [Column("dev_id")]
+        public override Guid SourceKey
         {
             get;
             set;
         }
 
-        /// <summary>
-        /// Gets or sets the policy identifier.
-        /// </summary>
-        /// <value>The policy identifier.</value>
-        [Column("policy_id"), Indexed(Name = "security_device_policy_source_policy", Unique = true)]
-        public Guid PolicyId
-        {
-            get;
-            set;
-        }
+
     }
 }
 

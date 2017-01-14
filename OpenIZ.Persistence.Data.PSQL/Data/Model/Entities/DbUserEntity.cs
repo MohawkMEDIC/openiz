@@ -19,6 +19,7 @@
  */
 
 
+using PetaPoco;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,14 +31,14 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
     /// <summary>
     /// User entity ORM
     /// </summary>
-    [TableName("user")]
-    public class DbUserEntity : IDbVersionedAssociation
+    [TableName("usr_ent_tbl")]
+    public class DbUserEntity : DbEntitySubTable
     {
 
         /// <summary>
         /// Gets or sets the security user which is associated with this entity
         /// </summary>
-        [Column("securityUser")]
+        [Column("sec_usr_id")]
         public Guid SecurityUserKey { get; set; }
 
     }

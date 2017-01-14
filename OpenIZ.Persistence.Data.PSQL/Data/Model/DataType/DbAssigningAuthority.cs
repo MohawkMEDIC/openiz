@@ -19,6 +19,7 @@
  */
 
 
+using PetaPoco;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,20 +31,20 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.DataType
     /// <summary>
     /// Represents an assigning authority
     /// </summary>
-    [TableName("assigning_authority")]
+    [TableName("asgn_aut_tbl")]
     public class DbAssigningAuthority : DbBaseData
     {
 
         /// <summary>
         /// Gets or sets the name of the aa
         /// </summary>
-        [Column("name")]
+        [Column("aut_name")]
         public String Name { get; set; }
 
         /// <summary>
         /// Gets or sets the short HL7 code of the AA
         /// </summary>
-        [Column("domainName"), Indexed, MaxLength(32)]
+        [Column("nsid")]
         public String DomainName { get; set; }
 
         /// <summary>
@@ -55,7 +56,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.DataType
         /// <summary>
         /// Gets or sets the description of the AA
         /// </summary>
-        [Column("description")]
+        [Column("descr")]
         public String Description { get; set; }
 
         /// <summary>
@@ -67,28 +68,33 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.DataType
         /// <summary>
         /// Assigning device identifier
         /// </summary>
-        [Column("assigningDevice")]
+        [Column("dev_id")]
         public Guid AssigningDeviceKey { get; set; }
 
+        /// <summary>
+        /// Gets or sets the key
+        /// </summary>
+        [Column("aut_id")]
+        public override Guid Key { get; set; }
     }
 
 
     /// <summary>
     /// Identifier scope
     /// </summary>
-    [TableName("assigning_authority_scope")]
-    public class DbAuthorityScope : IDbVersionedAssociation
+    [TableName("asgn_aut_scp_tbl")]
+    public class DbAuthorityScope 
     {
         /// <summary>
         /// Gets or sets the scope of the auhority
         /// </summary>
-        [Column("authority")]
+        [Column("aut_id")]
         public Guid AssigningAuthorityKey { get; set; }
 
         /// <summary>
         /// Gets or sets the scope of the auhority
         /// </summary>
-        [Column("concept")]
+        [Column("cd_id")]
         public Guid ScopeConceptKey { get; set; }
 
     }

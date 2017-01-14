@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
 
 
@@ -26,15 +27,15 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Concepts
 	/// <summary>
 	/// Concept relationship type.
 	/// </summary>
-	[TableName("concept_relationship_type")]
-	public class DbConceptRelationshipType: IDbVersionedAssociation
+	[TableName("cd_rel_typ_cdtbl")]
+	public class DbConceptRelationshipType: DbNonVersionedBaseData
 	{
 
 		/// <summary>
 		/// Gets or sets the name.
 		/// </summary>
 		/// <value>The name.</value>
-		[Column("name")]
+		[Column("rel_name")]
 		public String Name {
 			get;
 			set;
@@ -50,6 +51,11 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Concepts
 			set;
 		}
 
-	}
+        /// <summary>
+        /// Gets or sets the key
+        /// </summary>
+        [Column("rel_typ_id")]
+        public override Guid Key { get; set; }
+    }
 }
 

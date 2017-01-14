@@ -45,7 +45,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Acts
         /// Gets or sets the target entity key
         /// </summary>
         [Column("trg_act_id")]
-        public override Guid TargetKey { get; set; }
+        public Guid TargetKey { get; set; }
 
         /// <summary>
         /// Gets or sets the link type concept

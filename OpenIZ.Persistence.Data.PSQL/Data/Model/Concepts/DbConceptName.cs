@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
 
 
@@ -26,25 +27,15 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Concepts
 	/// <summary>
 	/// Represents a concept name
 	/// </summary>
-	[TableName("concept_name")]
-	public class DbConceptName : IDbVersionedAssociation
+	[TableName("cd_name_tbl")]
+	public class DbConceptName : DbConceptVersionedAssociation
 	{
 	
-		/// <summary>
-		/// Gets or sets the concept identifier.
-		/// </summary>
-		/// <value>The concept identifier.</value>
-		[Column("concept_uuid")]
-		public Guid ConceptKey {
-			get;
-			set;
-		}
-
 		/// <summary>
 		/// Gets or sets the language.
 		/// </summary>
 		/// <value>The language.</value>
-		[Column("language")]
+		[Column("lang_cs")]
 		public String Language {
 			get;
 			set;
@@ -54,7 +45,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Concepts
 		/// Gets or sets the name.
 		/// </summary>
 		/// <value>The name.</value>
-		[Column("value")]
+		[Column("val")]
 		public String Name {
 			get;
 			set;
@@ -64,7 +55,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Concepts
 		/// Gets or sets the phonetic code.
 		/// </summary>
 		/// <value>The phonetic code.</value>
-		[Column("phoneticCode")]
+		[Column("phon_cs")]
 		public String PhoneticCode {
 			get;
 			set;
@@ -74,11 +65,17 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Concepts
 		/// Gets or sets the phonetic algorithm identifier.
 		/// </summary>
 		/// <value>The phonetic algorithm identifier.</value>
-		[Column("phoneticAlgorithm")]
+		[Column("phon_alg_id")]
 		public Guid PhoneticAlgorithmKey {
 			get;
 			set;
 		}
-	}
+        
+        /// <summary>
+        /// Gets or sets the id of the name
+        /// </summary>
+        [Column("name_id")]
+        public override Guid Key { get; set; }
+    }
 }
 

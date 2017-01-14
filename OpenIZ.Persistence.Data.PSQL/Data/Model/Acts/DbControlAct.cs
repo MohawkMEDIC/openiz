@@ -19,6 +19,7 @@
  */
 
 
+using PetaPoco;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,8 +31,9 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Acts
     /// <summary>
     /// Represents controlling actions
     /// </summary>
-    [TableName("control_act")]
-    public class DbControlAct : IDbVersionedAssociation
+    [TableName("cntrl_act_tbl")]
+    public class DbControlAct : DbActSubTable
     {
+
     }
 }

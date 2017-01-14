@@ -17,56 +17,60 @@
  * User: justi
  * Date: 2016-6-14
  */
-using PetaPoco;
 using System;
+using System.Linq;
 
-namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
+using System.Collections.Generic;
+using PetaPoco;
+
+namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Concepts
 {
 	/// <summary>
-	/// Represents an entity which is used to represent an application
+	/// Physical data layer implemntation of concept
 	/// </summary>
-	[TableName("app_ent_tbl")]
-	public class DbApplicationEntity : DbEntitySubTable
-    {
+	[TableName("cd_vrsn_tbl")]
+	public class DbConceptVersion : DbVersionedData
+	{
+
 		/// <summary>
-		/// Gets or sets the security application.
+		/// Gets or sets the object mnemonic
 		/// </summary>
-		/// <value>The security application.</value>
-		[Column("sec_app_id")]
-		public Guid SecurityApplicationKey {
+		/// <value>The mnemonic.</value>
+		[Column("mnemonic")]
+		public string Mnemonic {
 			get;
 			set;
 		}
 
 		/// <summary>
-		/// Gets or sets the name of the software.
+		/// Gets or sets the status concept id
 		/// </summary>
-		/// <value>The name of the software.</value>
-		[Column("soft_name")]
-		public String SoftwareName {
+		[Column("sts_cd_id")]
+		public Guid StatusKey {
 			get;
 			set;
 		}
 
 		/// <summary>
-		/// Gets or sets the name of the version.
+		/// Gets or sets the concept classification
 		/// </summary>
-		/// <value>The name of the version.</value>
-		[Column("ver_name")]
-		public String VersionName {
+		[Column("cls_id")]
+		public Guid ClassKey {
 			get;
 			set;
 		}
 
-		/// <summary>
-		/// Gets or sets the name of the vendor.
-		/// </summary>
-		/// <value>The name of the vendor.</value>
-		[Column("vnd_name")]
-		public String VendorName {
-			get;
-			set;
-		}
-	}
+        /// <summary>
+        /// The version identifier
+        /// </summary>
+        [Column("cd_vrsn_id")]
+        public override Guid VersionId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the key
+        /// </summary>
+        [Column("cd_id")]
+        public override Guid Key { get; set; }
+    }
 }
 

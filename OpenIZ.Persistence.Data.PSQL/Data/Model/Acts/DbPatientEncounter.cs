@@ -19,6 +19,7 @@
  */
 
 
+using PetaPoco;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,14 +31,14 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Acts
     /// <summary>
     /// Represents storage class for a patient encounter
     /// </summary>
-    [TableName("encounter")]
-    public class DbPatientEncounter : IDbVersionedAssociation
+    [TableName("pat_enc_tbl")]
+    public class DbPatientEncounter : DbActSubTable
     {
 
         /// <summary>
         /// Identifies the manner in which the patient was discharged
         /// </summary>
-        [Column("dischargeDisposition")]
+        [Column("dsch_dsp_cd_id")]
         public Guid DischargeDispositionKey { get; set; }
     }
 }

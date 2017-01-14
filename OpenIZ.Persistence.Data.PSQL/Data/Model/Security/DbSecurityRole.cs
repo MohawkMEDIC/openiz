@@ -17,23 +17,29 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
-
-
 
 namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Security
 {
 	/// <summary>
 	/// Represents a security role
 	/// </summary>
-	[TableName("security_role")]
-	public class DbSecurityRole : IDbVersionedAssociation
+	[TableName("sec_rol_tbl")]
+	public class DbSecurityRole : DbNonVersionedBaseData
 	{
-		/// <summary>
-		/// Gets or sets the name.
-		/// </summary>
-		/// <value>The name.</value>
-		[Column("name"), NotNull, Unique, Collation("NOCASE")]
+
+        /// <summary>
+        /// Gets or sets the role id
+        /// </summary>
+        [Column("rol_id")]
+        public override Guid Key { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        /// <value>The name.</value>
+        [Column("rol_name")]
 		public String Name {
 			get;
 			set;
@@ -43,7 +49,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Security
 		/// Gets or sets the description.
 		/// </summary>
 		/// <value>The description.</value>
-		[Column("description")]
+		[Column("descr")]
 		public String Description {
 			get;
 			set;

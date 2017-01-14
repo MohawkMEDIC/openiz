@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
 
 
@@ -26,15 +27,43 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Extensibility
 	/// <summary>
 	/// Represents a simpe tag (version independent)
 	/// </summary>
-	public abstract class DbTag : IDbVersionedAssociation
+	public abstract class DbTag : DbAssociation, IDbBaseData
 	{
+        /// <summary>
+        /// Gets or sets the key
+        /// </summary>
+        [Column("tag_id")]
+        public override Guid Key { get; set; }
 
+        /// <summary>
+        /// Created by 
+        /// </summary>
+        [Column("crt_usr_id")]
+        public Guid CreatedBy { get; set; }
 
-		/// <summary>
-		/// Gets or sets the key.
-		/// </summary>
-		/// <value>The key.</value>
-		[Column("key")]
+        /// <summary>
+        /// Creation time
+        /// </summary>
+        [Column("crt_utc")]
+        public DateTimeOffset CreationTime { get; set; }
+
+        /// <summary>
+        /// Obsoleted by 
+        /// </summary>
+        [Column("obslt_usr_id")]
+        public Guid? ObsoletedBy { get; set; }
+
+        /// <summary>
+        /// Gets or sets the obsoletion time
+        /// </summary>
+        [Column("obslt_utc")]
+        public DateTimeOffset? ObsoletionTime { get; set; }
+
+        /// <summary>
+        /// Gets or sets the key.
+        /// </summary>
+        /// <value>The key.</value>
+        [Column("tag_name")]
 		public String TagKey {
 			get;
 			set;
@@ -44,7 +73,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Extensibility
 		/// Gets or sets the value.
 		/// </summary>
 		/// <value>The value.</value>
-		[Column("value")]
+		[Column("tag_value")]
 		public String Value {
 			get;
 			set;
@@ -54,15 +83,16 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Extensibility
 	/// <summary>
 	/// Represents a tag associated with an enttiy
 	/// </summary>
-	[TableName("entity_tag")]
+	[TableName("ent_tag_tbl")]
 	public class DbEntityTag : DbTag
 	{
+
         /// <summary>
         /// Gets or sets the source.
         /// </summary>
         /// <value>The source.</value>
-        [Column("ent_id"), NotNull]
-        public Guid EntityUuid
+        [Column("ent_id")]
+        public override Guid SourceKey
         {
             get;
             set;
@@ -72,15 +102,15 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Extensibility
 	/// <summary>
 	/// Represents a tag associated with an act
 	/// </summary>
-	[TableName("act_tag")]
+	[TableName("act_tag_tbl")]
 	public class DbActTag : DbTag
 	{
         /// <summary>
         /// Gets or sets the source.
         /// </summary>
         /// <value>The source.</value>
-        [Column("act_id"), NotNull]
-        public Guid ActUuid
+        [Column("act_id")]
+        public override Guid SourceKey
         {
             get;
             set;

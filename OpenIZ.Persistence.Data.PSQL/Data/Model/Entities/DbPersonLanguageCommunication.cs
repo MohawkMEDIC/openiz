@@ -19,6 +19,7 @@
  */
 
 
+using PetaPoco;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,21 +31,25 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
     /// <summary>
     /// Represents a person's languages of communication
     /// </summary>
-    [TableName("person_language")]
-    public class DbPersonLanguageCommunication : DbEntityLink
+    [TableName("psn_lng_tbl")]
+    public class DbPersonLanguageCommunication : DbEntityVersionedAssociation
     {
         /// <summary>
         /// Gets or sets the language code of the communication language
         /// </summary>
-        [Column("languageCode")]
+        [Column("lng_cs")]
         public string LanguageCode { get; set; }
 
         /// <summary>
         /// Gets or sets wheter this person prefers to be contacted in this language
         /// </summary>
-        [Column("isPreferred")]
+        [Column("pref_ind")]
         public bool IsPreferred { get; set; }
 
-
+        /// <summary>
+        /// Get or set the pkey
+        /// </summary>
+        [Column("lng_id")]
+        public override Guid Key { get; set; }
     }
 }

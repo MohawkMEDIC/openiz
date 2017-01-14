@@ -17,47 +17,44 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
-
-
 
 namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Concepts
 {
 	/// <summary>
 	/// Represents concept relationships
 	/// </summary>
-	[TableName("concept_relationship")]
-	public class DbConceptRelationship : IDbVersionedAssociation
+	[TableName("cd_rel_assoc_tbl")]
+	public class DbConceptRelationship : DbVersionedAssociation
 	{
+        /// <summary>
+        /// Get the identifier of the key
+        /// </summary>
+        [Column("cd_rel_id")]
+        public override Guid Key { get; set; }
 
-		/// <summary>
-		/// Gets or sets the source concept.
-		/// </summary>
-		[Column("source_concept")]
-		public Guid SourceConceptKey {
-			get;
-			set;
-		}
-
-		/// <summary>
-		/// Gets or sets the target concept identifier.
-		/// </summary>
-		/// <value>The target concept identifier.</value>
-		[Column("targetConcept")]
-		public Guid TargetConceptKey {
-			get;
-			set;
-		}
-
-		/// <summary>
-		/// Gets or sets the relationship type identifier.
-		/// </summary>
-		/// <value>The relationship type identifier.</value>
-		[Column("relationshipType")]
+        /// <summary>
+        /// Gets or sets the relationship type identifier.
+        /// </summary>
+        /// <value>The relationship type identifier.</value>
+        [Column("rel_typ_id")]
 		public Guid RelationshipTypeKey {
 			get;
 			set;
 		}
-	}
+
+        /// <summary>
+        /// Gets or sets the source act key
+        /// </summary>
+        [Column("src_cd_id")]
+        public override Guid SourceKey { get; set; }
+
+        /// <summary>
+        /// Gets or sets the target entity key
+        /// </summary>
+        [Column("trg_cd_id")]
+        public Guid TargetKey { get; set; }
+    }
 }
 

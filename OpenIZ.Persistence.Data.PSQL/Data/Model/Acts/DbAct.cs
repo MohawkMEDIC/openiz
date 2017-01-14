@@ -57,4 +57,5 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Acts
         [Column("act_id")]
         public override Guid Key { get; set; }
     }
+
 }

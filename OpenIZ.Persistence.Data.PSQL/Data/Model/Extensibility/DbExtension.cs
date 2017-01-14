@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
 
 
@@ -26,14 +27,14 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Extensibility
 	/// <summary>
 	/// Extension.
 	/// </summary>
-	public abstract class DbExtension : IDbVersionedAssociation
+	public abstract class DbExtension : DbVersionedAssociation
 	{
 
 		/// <summary>
 		/// Gets or sets the extension identifier.
 		/// </summary>
 		/// <value>The extension identifier.</value>
-		[Column ("extensionType")]
+		[Column ("ext_typ_id")]
 		public Guid ExtensionTypeKey {
 			get;
 			set;
@@ -43,27 +44,38 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Extensibility
 		/// Gets or sets the value.
 		/// </summary>
 		/// <value>The value.</value>
-		[Column ("value")]
-		public Guid Value {
+		[Column ("ext_val")]
+		public byte[] Value {
 			get;
 			set;
 		}
 
-	}
+        /// <summary>
+        /// Gets or sets the display
+        /// </summary>
+        [Column("exp_disp")]
+        public String Display { get; set; }
+
+    }
 
 	/// <summary>
 	/// Entity extension.
 	/// </summary>
-	[TableName ("entity_extension")]
+	[TableName ("ent_ext_tbl")]
 	public class DbEntityExtension : DbExtension
 	{
+        /// <summary>
+        /// Gets or sets the primary key
+        /// </summary>
+        [Column("ent_ext_id")]
+        public override Guid Key { get; set; }
 
         /// <summary>
         /// Gets or sets the source identifier.
         /// </summary>
         /// <value>The source identifier.</value>
         [Column("ent_id")]
-        public Guid EntityUuid
+        public override Guid SourceKey
         {
             get;
             set;
@@ -78,11 +90,17 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Extensibility
 	public class DbActExtension : DbExtension
 	{
         /// <summary>
+        /// Get or sets the key
+        /// </summary>
+        [Column("act_ext_id")]
+        public override Guid Key { get; set; }
+
+        /// <summary>
         /// Gets or sets the source identifier.
         /// </summary>
         /// <value>The source identifier.</value>
         [Column("act_id")]
-        public Guid ActUuid
+        public override Guid SourceKey
         {
             get;
             set;

@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
 
 
@@ -34,13 +35,29 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Security
 		/// Gets or sets the public identifier.
 		/// </summary>
 		/// <value>The public identifier.</value>
-		[Column("public_id"), Unique]
+		[Column("dev_pub_id")]
 		public String PublicId {
 			get;
 			set;
 		}
 
+        /// <summary>
+        /// Device secret
+        /// </summary>
+        [Column("dev_scrt")]
+        public String Secret { get; set; }
 
-	}
+        /// <summary>
+        /// Replaces the specified device identifier
+        /// </summary>
+        [Column("rplc_dev_id")]
+        public Guid? ReplacesDeviceKey { get; set; }
+
+        /// <summary>
+        /// Gets or sets the key
+        /// </summary>
+        [Column("dev_id")]
+        public override Guid Key { get; set; }
+    }
 }
 

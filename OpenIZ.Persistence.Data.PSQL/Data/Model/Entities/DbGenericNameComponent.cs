@@ -19,6 +19,7 @@
  */
 
 
+using PetaPoco;
 using System;
 
 namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
@@ -26,24 +27,25 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
     /// <summary>
     /// Generic name component
     /// </summary>
-    public abstract class DbGenericNameComponent : IDbVersionedAssociation
+    public abstract class DbGenericNameComponent : DbIdentified
     {
+
+        /// <summary>
+        /// Gets or sets the key of the component
+        /// </summary>
+        [Column("cmp_id")]
+        public override Guid Key { get; set; }
 
         /// <summary>
         /// Gets or sets the type of the component
         /// </summary>
-        [Column("type")]
+        [Column("typ_cd_id")]
         public Guid ComponentTypeKey { get; set; }
 
         /// <summary>
-        /// Gets or sets the value.
+        /// Gets or sets the value key
         /// </summary>
-        /// <value>The value.</value>
-        [Column("value")]
-        public String Value
-        {
-            get;
-            set;
-        }
+        [Column("val_id")]
+        public Guid ValueKey { get; set; }
     }
 }

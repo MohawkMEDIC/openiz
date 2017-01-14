@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
 
 
@@ -26,19 +27,37 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Security
 	/// <summary>
 	/// Security application data. Should only be one entry here as well
 	/// </summary>
-	[TableName("security_application")]
+	[TableName("sec_app_tbl")]
 	public class DbSecurityApplication : DbBaseData
 	{
 
-		/// <summary>
-		/// Gets or sets the public identifier.
-		/// </summary>
-		/// <value>The public identifier.</value>
-		[Column("public_id"), Unique]
+        /// <summary>
+        /// Gets or sets the application id
+        /// </summary>
+        [Column("app_id")]
+        public override Guid Key { get; set; }
+
+        /// <summary>
+        /// Gets or sets the public identifier.
+        /// </summary>
+        /// <value>The public identifier.</value>
+        [Column("app_pub_id")]
 		public String PublicId {
 			get;
 			set;
 		}
-	}
+
+        /// <summary>
+        /// Application authentication secret
+        /// </summary>
+        [Column("app_scrt")]
+        public String Secret { get; set; }
+
+        /// <summary>
+        /// Replaces application identifier
+        /// </summary>
+        [Column("rplc_app_id")]
+        public Guid? ReplacesApplicationKey { get; set; }
+    }
 }
 

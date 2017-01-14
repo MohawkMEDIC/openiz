@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
 
 
@@ -26,58 +27,36 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
 	/// <summary>
 	/// Represents an entity name related to an entity
 	/// </summary>
-	[TableName("entity_name")]
-	public class DbEntityName : DbEntityLink
-	{
-		
-		/// <summary>
-		/// Gets or sets the use concept.
-		/// </summary>
-		/// <value>The use concept.</value>
-		[Column("use")]
+	[TableName("ent_name_tbl")]
+	public class DbEntityName : DbEntityVersionedAssociation
+    {
+        [Column("name_id")]
+        public override Guid Key { get; set; }
+
+        /// <summary>
+        /// Gets or sets the use concept.
+        /// </summary>
+        /// <value>The use concept.</value>
+        [Column("use_cd_id")]
 		public Guid UseConceptKey {
 			get;
 			set;
 		}
 	}
 
-	/// <summary>
-	/// Represents a component of a name
-	/// </summary>
-	[TableName("entity_name_comp")]
-	public class DbEntityNameComponent : DbGenericNameComponent
-	{
+    /// <summary>
+    /// Represents a component of a name
+    /// </summary>
+    [TableName("ent_name_cmp_tbl")]
+    public class DbEntityNameComponent : DbGenericNameComponent
+    {
+        /// <summary>
+        /// Gets or sets the linked name
+        /// </summary>
+        [Column("name_id")]
+        public Guid NameKey { get; set; }
+    }
 
-		/// <summary>
-		/// Gets or sets the name identifier.
-		/// </summary>
-		/// <value>The name identifier.</value>
-		[Column("name_uuid")]
-		public Guid NameKey {
-			get;
-			set;
-		}
-        
-		/// <summary>
-		/// Gets or sets the phonetic code.
-		/// </summary>
-		/// <value>The phonetic code.</value>
-		[Column("phoneticCode")]
-		public String PhoneticCode {
-			get;
-			set;
-		}
-
-		/// <summary>
-		/// Gets or sets the phonetic algorithm identifier.
-		/// </summary>
-		/// <value>The phonetic algorithm identifier.</value>
-		[Column("phoneticAlgorithm")]
-		public Guid PhoneticAlgorithmKey {
-			get;
-			set;
-		}
-	}
 
 }
 

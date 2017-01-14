@@ -29,68 +29,61 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Acts
     /// <summary>
     /// Represents a table which can store act data
     /// </summary>
-    [TableName("act_tbl")]
+    [TableName("act_vrsn_id")]
     public class DbActVersion : DbVersionedData
     {
         /// <summary>
-        /// Gets or sets the template
-        /// </summary>
-        [Column("template")]
-        public Guid TemplateKey { get; set; }
-
-        /// <summary>
         /// True if negated
         /// </summary>
-        [Column("isNegated")]
+        [Column("neg_ind")]
         public bool IsNegated { get; set; }
 
         /// <summary>
         /// Identifies the time that the act occurred
         /// </summary>
-        [Column("actTime")]
+        [Column("act_utc")]
         public DateTime? ActTime { get; set; }
 
         /// <summary>
         /// Identifies the start time of the act
         /// </summary>
-        [Column("startTime")]
+        [Column("act_start_utc")]
         public DateTime? StartTime { get; set; }
 
         /// <summary>
         /// Identifies the stop time of the act
         /// </summary>
-        [Column("stopTime")]
+        [Column("act_stop_utc")]
         public DateTime? StopTime { get; set; }
-
-        /// <summary>
-        /// Identifies the class concept
-        /// </summary>
-        [Column("classConcept")]
-        public Guid ClassConceptKey { get; set; }
-
-        /// <summary>
-        /// Gets or sets the mood of the act
-        /// </summary>
-        [Column("moodConcept")]
-        public Guid MoodConceptKey { get; set; }
 
         /// <summary>
         /// Gets or sets the reason concept
         /// </summary>
-        [Column("reasonConcept")]
+        [Column("rsn_cd_id")]
         public Guid ReasonConceptKey { get; set; }
 
         /// <summary>
         /// Gets or sets the status concept
         /// </summary>
-        [Column("statusConcept")]
+        [Column("sts_cd_id")]
         public Guid StatusConceptKey { get; set; }
 
         /// <summary>
         /// Gets or sets the type concept
         /// </summary>
-        [Column("typeConcept")]
+        [Column("typ_cd_id")]
         public Guid TypeConceptKey { get; set; }
 
+        /// <summary>
+        /// Version identifier
+        /// </summary>
+        [Column("act_vrsn_id")]
+        public override Guid VersionId { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the act identifier
+        /// </summary>
+        [Column("act_id")]
+        public override Guid Key { get; set; }
     }
 }

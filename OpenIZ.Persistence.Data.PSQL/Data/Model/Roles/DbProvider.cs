@@ -19,23 +19,22 @@
  */
 using System;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
-
-
+using PetaPoco;
 
 namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Roles
 {
 	/// <summary>
 	/// Represents a health care provider in the database
 	/// </summary>
-	[TableName("provider")]
-	public class DbProvider : IDbVersionedAssociation
+	[TableName("pvdr_tbl")]
+	public class DbProvider : DbEntitySubTable
     {
 
 		/// <summary>
 		/// Gets or sets the specialty.
 		/// </summary>
 		/// <value>The specialty.</value>
-		[Column("specialty")]
+		[Column("spec_cd_id")]
 		public Guid Specialty {
 			get;
 			set;

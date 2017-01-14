@@ -19,6 +19,7 @@
  */
 
 
+using PetaPoco;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,37 +31,37 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Acts
     /// <summary>
     /// Represents storage class for a substance administration
     /// </summary>
-    [TableName("substance_administration")]
-    public class DbSubstanceAdministration : IDbVersionedAssociation
+    [TableName("sub_adm_tbl")]
+    public class DbSubstanceAdministration : DbActSubTable
     {
         /// <summary>
         /// Gets or sets the route of administration
         /// </summary>
-        [Column("routeConcept")]
+        [Column("rte_cd_id")]
         public Guid RouteConceptKey { get; set; }
 
         /// <summary>
         /// Gets or sets the dose unit
         /// </summary>
-        [Column("doseUnit")]
+        [Column("dos_unt_cd_id")]
         public Guid DoseUnitConceptKey { get; set; }
 
         /// <summary>
         /// Gets or sets the site
         /// </summary>
-        [Column("site")]
+        [Column("ste_cd_id")]
         public Guid SiteConceptKey { get; set; }
 
         /// <summary>
         /// Gets or sets the dose quantity
         /// </summary>
-        [Column("doseQuantity")]
+        [Column("dos_qty")]
         public Decimal DoseQuantity { get; set; }
 
         /// <summary>
         /// Gets or sets the sequence number
         /// </summary>
-        [Column("sequenceId")]
+        [Column("seq_id")]
         public int SequenceId { get; set; }
 
     }

@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
 
 
@@ -26,15 +27,15 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Concepts
 	/// <summary>
 	/// Represents storage entity for concept class
 	/// </summary>
-	[TableName("concept_class")]
-	public class DbConceptClass : IDbVersionedAssociation
+	[TableName("cd_cls_tbl")]
+	public class DbConceptClass : DbNonVersionedBaseData
 	{
 
 		/// <summary>
 		/// Gets or sets the name.
 		/// </summary>
 		/// <value>The name.</value>
-		[Column("name")]
+		[Column("cls_name")]
 		public string Name {
 			get;
 			set;
@@ -44,11 +45,17 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Concepts
 		/// Gets or sets the mnemonic.
 		/// </summary>
 		/// <value>The mnemonic.</value>
-		[Column("mnemonic"), Unique]
+		[Column("mnemonic")]
 		public String Mnemonic {
 			get;
 			set;
 		}
-	}
+
+        /// <summary>
+        /// Gets or sets the key
+        /// </summary>
+        [Column("cls_id")]
+        public override Guid Key { get; set; }
+    }
 }
 

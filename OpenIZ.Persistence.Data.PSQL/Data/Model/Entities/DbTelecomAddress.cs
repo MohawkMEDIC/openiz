@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
 
 
@@ -26,15 +27,20 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
 	/// <summary>
 	/// Represents a telecommunications address
 	/// </summary>
-	[TableName("entity_telecom")]
-	public class DbTelecomAddress : DbEntityLink
+	[TableName("ent_tel_tbl")]
+	public class DbTelecomAddress : DbEntityVersionedAssociation
 	{
+        /// <summary>
+        /// Gets or sets the primary key
+        /// </summary>
+        [Column("tel_id")]
+        public override Guid Key { get; set; }
 
-		/// <summary>
-		/// Gets or sets the telecom use.
-		/// </summary>
-		/// <value>The telecom use.</value>
-		[Column("use")]
+        /// <summary>
+        /// Gets or sets the telecom use.
+        /// </summary>
+        /// <value>The telecom use.</value>
+        [Column("use_cd_id")]
 		public Guid TelecomUseKey {
 			get;
 			set;
@@ -44,7 +50,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
 		/// Gets or sets the value.
 		/// </summary>
 		/// <value>The value.</value>
-		[Column("value")
+		[Column("tel_cal")]
 		public String Value {
 			get;
 			set;

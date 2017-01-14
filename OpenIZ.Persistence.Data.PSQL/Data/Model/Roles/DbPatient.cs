@@ -22,22 +22,22 @@ using OpenIZ.Core.Model.Entities;
 
 using OpenIZ.Mobile.Core.Data.Model.Entities;
 using OpenIZ.Core.Model.DataTypes;
-
+using PetaPoco;
 
 namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Roles
 {
 	/// <summary>
 	/// Represents a patient in the SQLite store
 	/// </summary>
-	[TableName("patient")]
-	public class DbPatient : IDbVersionedAssociation
+	[TableName("pat_tbl")]
+	public class DbPatient : DbEntitySubTable
 	{
 
 		/// <summary>
 		/// Gets or sets the gender concept
 		/// </summary>
 		/// <value>The gender concept.</value>
-		[Column("genderConcept")]
+		[Column("gndr_cd_id")]
 		public Guid GenderConceptKey {
 			get;
 			set;
@@ -47,7 +47,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Roles
 		/// Gets or sets the deceased date.
 		/// </summary>
 		/// <value>The deceased date.</value>
-		[Column("deceasedDate")]
+		[Column("dcsd_utc")]
 		public DateTime? DeceasedDate {
 			get;
 			set;
@@ -57,7 +57,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Roles
 		/// Gets or sets the deceased date precision.
 		/// </summary>
 		/// <value>The deceased date precision.</value>
-		[Column("deceasedDatePrevision"), MaxLength(1)]
+		[Column("dcsd_prec")]
 		public string DeceasedDatePrecision {
 			get;
 			set;
@@ -67,7 +67,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Roles
 		/// Gets or sets the multiple birth order.
 		/// </summary>
 		/// <value>The multiple birth order.</value>
-		[Column("birth_order")]
+		[Column("mb_ord")]
 		public int? MultipleBirthOrder {
 			get;
 			set;

@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
 
 
@@ -26,15 +27,15 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Security
 	/// <summary>
 	/// Represents a single security policy
 	/// </summary>
-	[TableName("security_policy")]
-	public class DbSecurityPolicy : IDbVersionedAssociation
+	[TableName("sec_pol_tbl")]
+	public class DbSecurityPolicy : DbBaseData
 	{
 
 		/// <summary>
 		/// Gets or sets the handler.
 		/// </summary>
 		/// <value>The handler.</value>
-		[Column("handler")]
+		[Column("hdlr_cls")]
 		public String Handler {
 			get;
 			set;
@@ -44,7 +45,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Security
 		/// Gets or sets the name.
 		/// </summary>
 		/// <value>The name.</value>
-		[Column("name")]
+		[Column("pol_name")]
 		public String Name {
 			get;
 			set;
@@ -54,7 +55,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Security
 		/// Gets or sets a value indicating whether this instance is public.
 		/// </summary>
 		/// <value><c>true</c> if this instance is public; otherwise, <c>false</c>.</value>
-		[Column("is_public")]
+		[Column("is_pub")]
 		public bool IsPublic {
 			get;
 			set;
@@ -64,7 +65,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Security
 		/// Gets or sets a value indicating whether this instance can override.
 		/// </summary>
 		/// <value><c>true</c> if this instance can override; otherwise, <c>false</c>.</value>
-		[Column("can_override")]
+		[Column("is_elev")]
 		public bool CanOverride {
 			get;
 			set;
@@ -73,13 +74,18 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Security
         /// <summary>
         /// Gets or sets the policy oid
         /// </summary>
-        [Column("oid"), Unique]
+        [Column("oid")]
         public String Oid
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// Gets or sets the primary key
+        /// </summary>
+        [Column("pol_id")]
+        public override Guid Key { get; set; }
 
     }
 }

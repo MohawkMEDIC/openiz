@@ -54,6 +54,6 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Acts
         /// Target entity key
         /// </summary>
         [Column("ent_id")]
-        public override Guid TargetKey { get; set; }
+        public Guid TargetKey { get; set; }
     }
 }

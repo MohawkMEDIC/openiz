@@ -17,83 +17,90 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
 
 
 
 namespace OpenIZ.Persistence.Data.PSQL.Data.Model.DataType
 {
-	/// <summary>
-	/// Represents an identifier
-	/// </summary>
-	public abstract class DbIdentifier : IDbVersionedAssociation
-	{
+    /// <summary>
+    /// Represents an identifier
+    /// </summary>
+    public abstract class DbIdentifier : DbVersionedAssociation
+    {
 
-		/// <summary>
-		/// Gets or sets the value.
-		/// </summary>
-		[Column("value")]
-		public String Value {
-			get;
-			set;
-		}
-
-		/// <summary>
-		/// Gets or sets the type identifier.
-		/// </summary>
-		/// <value>The type identifier.</value>
-		[Column("type")]
-		public Guid TypeKey {
-			get;
-			set;
-		}
-
-		/// <summary>
-		/// Gets or sets the authority identifier.
-		/// </summary>
-		/// <value>The authority identifier.</value>
-		[Column("authority")]
-		public Guid AuthorityKey {
-			get;
-			set;
-		}
-
-	}
-
-	/// <summary>
-	/// Entity identifier storage.
-	/// </summary>
-	[TableName("entity_identifier")]
-	public class DbEntityIdentifier : DbIdentifier
-	{
         /// <summary>
-        /// Gets or sets the source identifier.
+        /// Gets or sets the value.
         /// </summary>
-        /// <value>The source identifier.</value>
-        [Column("ent_id")]
-        public Guid EntityUuid
+        [Column("id_val")]
+        public String Value
         {
             get;
             set;
         }
+
+        /// <summary>
+        /// Gets or sets the type identifier.
+        /// </summary>
+        /// <value>The type identifier.</value>
+        [Column("id_typ_id")]
+        public Guid TypeKey
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the authority identifier.
+        /// </summary>
+        /// <value>The authority identifier.</value>
+        [Column("aut_id")]
+        public Guid AuthorityKey
+        {
+            get;
+            set;
+        }
+
     }
 
-	/// <summary>
-	/// Act identifier storage.
-	/// </summary>
-	[TableName("act_identifier")]
-	public class DbActIdentifier : DbIdentifier
-	{
+    /// <summary>
+    /// Entity identifier storage.
+    /// </summary>
+    [TableName("ent_id_tbl")]
+    public class DbEntityIdentifier : DbIdentifier
+    {
+
         /// <summary>
-        /// Gets or sets the source identifier.
+        /// Gets or sets the key
         /// </summary>
-        /// <value>The source identifier.</value>
+        [Column("ent_id_id")]
+        public override Guid Key { get; set; }
+
+        /// <summary>
+        /// Gets the source key
+        /// </summary>
+        [Column("ent_id")]
+        public override Guid SourceKey { get; set; }
+    }
+
+    /// <summary>
+    /// Act identifier storage.
+    /// </summary>
+    [TableName("act_id_tbl")]
+    public class DbActIdentifier : DbIdentifier
+    {
+        /// <summary>
+        /// Gets or sets the act key
+        /// </summary>
+        [Column("act_id_id")]
+        public override Guid Key { get; set; }
+
+        /// <summary>
+        /// Gets or sets the source key
+        /// </summary>
         [Column("act_id")]
-        public Guid ActUuid
-        {
-            get;
-            set;
-        }
+        public override Guid SourceKey { get; set; ]
     }
 }
 

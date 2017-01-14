@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
 
 
@@ -26,14 +27,14 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Concepts
 	/// <summary>
 	/// Concept set
 	/// </summary>
-	[TableName("concept_set")]
-	public class DbConceptSet : IDbVersionedAssociation
+	[TableName("cd_set_tbl")]
+	public class DbConceptSet : DbNonVersionedBaseData
 	{
 		/// <summary>
 		/// Gets or sets the name.
 		/// </summary>
 		/// <value>The name.</value>
-		[Column("name")]
+		[Column("set_name")]
 		public String Name {
 			get;
 			set;
@@ -61,20 +62,25 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Concepts
         [Column("url")]
         public String Url { get; set; }
 
+        /// <summary>
+        /// Gets or sets the id
+        /// </summary>
+        [Column("set_id")]
+        public override Guid Key { get; set; }
     }
 
 	/// <summary>
 	/// Concept set concept association.
 	/// </summary>
-	[TableName("concept_concept_set")]
-	public class DbConceptSetConceptAssociation : IDbVersionedAssociation
+	[TableName("cd_set_mem_assoc_tbl")]
+	public class DbConceptSetConceptAssociation : DbIdentified
 	{
 
 		/// <summary>
 		/// Gets or sets the concept identifier.
 		/// </summary>
 		/// <value>The concept identifier.</value>
-		[Column("concept_uuid"), NotNull, Indexed(Name = "concept_concept_set_concept_set", Unique = true)]
+		[Column("cd_id")]
 		public Guid ConceptKey {
 			get;
 			set;
@@ -84,11 +90,16 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Concepts
 		/// Gets or sets the concept set identifier.
 		/// </summary>
 		/// <value>The concept set identifier.</value>
-		[Column("concept_set_uuid"), Indexed(Name = "concept_concept_set_concept_set", Unique = true)]
+		[Column("set_id")]
 		public Guid ConceptSetKey {
 			get;
 			set;
 		}
-	}
+
+        /// <summary>
+        /// Mapping for key
+        /// </summary>
+        public override Guid Key { get; set; }
+    }
 }
 

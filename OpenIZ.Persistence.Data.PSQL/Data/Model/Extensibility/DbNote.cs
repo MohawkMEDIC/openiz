@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
 
 
@@ -26,14 +27,19 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Extensibility
 	/// <summary>
 	/// Represents note storage
 	/// </summary>
-	public abstract class DbNote : IDbVersionedAssociation
+	public abstract class DbNote : DbVersionedAssociation
 	{
+        /// <summary>
+        /// Gets or sets the key
+        /// </summary>
+        [Column("note_id")]
+        public override Guid Key { get; set; }
 
         /// <summary>
 		/// Gets or sets the author identifier.
 		/// </summary>
 		/// <value>The author identifier.</value>
-		[Column("author")]
+		[Column("auth_ent_id")]
 		public Guid AuthorKey {
 			get;
 			set;
@@ -43,7 +49,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Extensibility
 		/// Gets or sets the text.
 		/// </summary>
 		/// <value>The text.</value>
-		[Column("text")]
+		[Column("note_txt")]
 		public String Text {
 			get;
 			set;
@@ -53,15 +59,16 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Extensibility
 	/// <summary>
 	/// Entity note.
 	/// </summary>
-	[TableName("entity_note")]
+	[TableName("ent_note_tbl")]
 	public class DbEntityNote : DbNote
 	{
+
         /// <summary>
         /// Gets or sets the source identifier.
         /// </summary>
         /// <value>The source identifier.</value>
         [Column("ent_id")]
-        public Guid EntityUuid
+        public override Guid SourceKey
         {
             get;
             set;
@@ -72,7 +79,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Extensibility
     /// <summary>
     /// Act note.
     /// </summary>
-    [TableName("act_note")]
+    [TableName("act_note_tbl")]
 	public class DbActNote : DbNote
 	{
         /// <summary>

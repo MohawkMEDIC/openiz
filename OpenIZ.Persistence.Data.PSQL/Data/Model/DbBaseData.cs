@@ -28,9 +28,32 @@ using System.Threading.Tasks;
 namespace OpenIZ.Persistence.Data.PSQL.Data.Model
 {
     /// <summary>
+    /// Base data interface
+    /// </summary>
+    public interface IDbBaseData
+    {
+        /// <summary>
+        /// Gets or sets the entity id which created this
+        /// </summary>
+        Guid CreatedBy { get; set; }
+        /// <summary>
+        /// Gets or sets the id which obsoleted this
+        /// </summary>
+        Guid? ObsoletedBy { get; set; }
+        /// <summary>
+        /// Gets or sets the creation time
+        /// </summary>
+        DateTimeOffset CreationTime { get; set; }
+        /// <summary>
+        /// Gets or sets the obsoletion time
+        /// </summary>
+        DateTimeOffset? ObsoletionTime { get; set; }
+    }
+
+    /// <summary>
     /// Represents base data
     /// </summary>
-    public abstract class DbBaseData : DbVersionedAssociation
+    public abstract class DbBaseData : DbIdentified, IDbBaseData
     {
         /// <summary>
         /// Gets or sets the entity id which created this

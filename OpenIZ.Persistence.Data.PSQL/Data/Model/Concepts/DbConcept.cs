@@ -21,54 +21,31 @@ using System;
 using System.Linq;
 
 using System.Collections.Generic;
-
+using PetaPoco;
 
 namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Concepts
 {
 	/// <summary>
 	/// Physical data layer implemntation of concept
 	/// </summary>
-	[TableName("concept")]
-	public class DbConcept : IDbVersionedAssociation
+	[TableName("cd_tbl")]
+	public class DbConcept : DbIdentified
 	{
 
 		/// <summary>
 		/// Gets or sets whether the object is a system concept or not
 		/// </summary>
-		[Column("isReadonly")]
+		[Column("is_sys")]
 		public bool IsSystemConcept {
 			get;
 			set;
 		}
 
-		/// <summary>
-		/// Gets or sets the object mnemonic
-		/// </summary>
-		/// <value>The mnemonic.</value>
-		[Column("mnemonic"), Unique]
-		public string Mnemonic {
-			get;
-			set;
-		}
-
-		/// <summary>
-		/// Gets or sets the status concept id
-		/// </summary>
-		[Column("statusConcept")]
-		public Guid StatusKey {
-			get;
-			set;
-		}
-
-		/// <summary>
-		/// Gets or sets the concept classification
-		/// </summary>
-		[Column("class")]
-		public Guid ClassKey {
-			get;
-			set;
-		}
-
+        /// <summary>
+        /// Gets or sets the code identifier
+        /// </summary>
+        [Column("cd_id")]
+        public override Guid Key { get; set; }
     }
 }
 

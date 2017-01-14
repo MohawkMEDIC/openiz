@@ -26,20 +26,28 @@ using System.Threading.Tasks;
 
 namespace OpenIZ.Persistence.Data.PSQL.Data.Model
 {
+
+    /// <summary>
+    /// Database association
+    /// </summary>
+    public interface IDbAssociation
+    {
+        /// <summary>
+        /// Gets or sets the source of the association
+        /// </summary>
+        Guid SourceKey { get; set; }
+    }
+
     /// <summary>
     /// Represents the databased associated entity
     /// </summary>
-    public abstract class DbAssociation : DbIdentified
+    public abstract class DbAssociation : DbIdentified, IDbAssociation
     {
         /// <summary>
         /// Gets or sets the key of the item associated with this object
         /// </summary>
         public abstract Guid SourceKey { get; set; }
 
-        /// <summary>
-        /// Gets or sets the target entity
-        /// </summary>
-        public abstract Guid TargetKey { get; set; }
     }
 
     /// <summary>
@@ -114,4 +122,18 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model
         public override Guid SourceKey { get; set; }
 
     }
+
+    /// <summary>
+    /// Represents an concept association
+    /// </summary>
+    public abstract class DbConceptVersionedAssociation : DbVersionedAssociation
+    {
+
+        /// <summary>
+        /// Gets or sets the source entity id
+        /// </summary>
+        [Column("cd_id")]
+        public override Guid SourceKey { get; set; }
+    }
+
 }

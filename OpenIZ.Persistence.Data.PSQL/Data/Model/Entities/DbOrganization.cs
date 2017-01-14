@@ -17,23 +17,22 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
-
-
 
 namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
 {
 	/// <summary>
 	/// Represents an organization in the data store
 	/// </summary>
-	[TableName("organization")]
-	public class DbOrganization : IDbVersionedAssociation
+	[TableName("org_tbl")]
+	public class DbOrganization : DbEntitySubTable
 	{
 		/// <summary>
 		/// Gets or sets the industry concept.
 		/// </summary>
 		/// <value>The industry concept.</value>
-		[Column("industryConcept")]
+		[Column("ind_cd_id")]
 		public Guid IndustryConceptKey {
 			get;
 			set;
