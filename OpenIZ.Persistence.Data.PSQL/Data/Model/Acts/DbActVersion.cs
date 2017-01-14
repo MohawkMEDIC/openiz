@@ -30,7 +30,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Acts
     /// Represents a table which can store act data
     /// </summary>
     [TableName("act_vrsn_id")]
-    public class DbActVersion : DbVersionedData
+    public class DbActVersion : DbVersionedData<DbAct>
     {
         /// <summary>
         /// True if negated

@@ -100,7 +100,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.DataType
         /// Gets or sets the source key
         /// </summary>
         [Column("act_id")]
-        public override Guid SourceKey { get; set; ]
+        public override Guid SourceKey { get; set; }
     }
 }
 

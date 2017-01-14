@@ -29,12 +29,12 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model
     /// <summary>
     /// Versioned Database data
     /// </summary>
-    public abstract class DbVersionedData : DbBaseData
+    public abstract class DbVersionedData<TBaseType> : DbBaseData
     {
         /// <summary>
         /// Gets whether the object is readonly 
         /// </summary>
-        public bool IsReadonly { get; }
+        public virtual bool IsReadonly { get; }
 
         /// <summary>
         /// Gets or sets the version identifier

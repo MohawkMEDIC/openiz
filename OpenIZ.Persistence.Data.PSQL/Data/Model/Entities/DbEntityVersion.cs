@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using PetaPoco;
 using System;
 
 namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
@@ -25,39 +26,19 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
 	/// Represents an entity in the database
 	/// </summary>
 	[TableName("ent_vrsn_tbl")]
-	public class DbEntityVersion : DbVersionedData
-	{
+	public class DbEntityVersion : DbVersionedData<DbEntity>
+    {
         /// <summary>
-        /// Gets or sets the template
+        /// Gets or sets the key
         /// </summary>
-        [Column("template")]
-        public Guid TemplateKey { get; set; }
+        [Column("ent_id")]
+        public override Guid Key { get; set; }
 
         /// <summary>
-        /// Gets or sets the class concept identifier.
+        /// Gets or sets the status concept identifier.
         /// </summary>
-        /// <value>The class concept identifier.</value>
-        [Column("classConcept"), NotNull]
-		public Guid ClassConceptKey {
-			get;
-			set;
-		}
-
-		/// <summary>
-		/// Gets or sets the determiner concept identifier.
-		/// </summary>
-		/// <value>The determiner concept identifier.</value>
-		[Column("determinerConcept")]
-		public Guid DeterminerConceptKey {
-			get;
-			set;
-		}
-
-		/// <summary>
-		/// Gets or sets the status concept identifier.
-		/// </summary>
-		/// <value>The status concept identifier.</value>
-		[Column("statusConcept")]
+        /// <value>The status concept identifier.</value>
+        [Column("sts_cd_id")]
 		public Guid StatusConceptKey {
 			get;
 			set;
@@ -67,13 +48,17 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Entities
 		/// Gets or sets the type concept identifier.
 		/// </summary>
 		/// <value>The type concept identifier.</value>
-		[Column("typeConcept")]
+		[Column("typ_cd_id")]
 		public Guid TypeConceptKey {
 			get;
 			set;
 		}
 
-
-	}
+        /// <summary>
+        /// Gets or sets the version id
+        /// </summary>
+        [Column("ent_vrsn_id")]
+        public override Guid VersionId { get; set; }
+    }
 }
 

@@ -18,7 +18,6 @@
  * Date: 2016-6-14
  */
 using System;
-using OpenIZ.Mobile.Core.Data.Model.Entities;
 using PetaPoco;
 
 namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Roles

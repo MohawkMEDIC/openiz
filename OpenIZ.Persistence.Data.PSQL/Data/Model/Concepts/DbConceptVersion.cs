@@ -29,7 +29,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Concepts
 	/// Physical data layer implemntation of concept
 	/// </summary>
 	[TableName("cd_vrsn_tbl")]
-	public class DbConceptVersion : DbVersionedData
+	public class DbConceptVersion : DbVersionedData<DbConcept>
 	{
 
 		/// <summary>

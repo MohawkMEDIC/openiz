@@ -19,8 +19,6 @@
  */
 using System;
 using OpenIZ.Core.Model.Entities;
-
-using OpenIZ.Mobile.Core.Data.Model.Entities;
 using OpenIZ.Core.Model.DataTypes;
 using PetaPoco;
 

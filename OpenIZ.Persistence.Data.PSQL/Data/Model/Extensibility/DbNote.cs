@@ -87,7 +87,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Data.Model.Extensibility
         /// </summary>
         /// <value>The source identifier.</value>
         [Column("act_id")]
-        public Guid ActUuid
+        public override Guid SourceKey
         {
             get;
             set;
