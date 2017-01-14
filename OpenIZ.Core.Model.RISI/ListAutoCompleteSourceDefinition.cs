@@ -34,7 +34,7 @@ namespace OpenIZ.Core.Model.RISI
 		/// </summary>
 		public ListAutoCompleteSourceDefinition()
 		{
-			
+			this.Items = new List<KeyValuePair<string, object>>();
 		}
 
 		/// <summary>

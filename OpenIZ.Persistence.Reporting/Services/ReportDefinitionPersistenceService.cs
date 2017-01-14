@@ -121,7 +121,23 @@ namespace OpenIZ.Persistence.Reporting.Services
 			{
 				var reportDefinition = context.ReportDefinitions.Find(containerId.Id);
 
+				reportDefinition = this.LoadRelations(context, reportDefinition);
+
 				result = this.ToModelInstance(reportDefinition);
+				result.Parameters = reportDefinition.Parameters.ToList().Select(p => new ReportParameter
+				{
+					Key = p.Id,
+					CreationTime = p.CreationTime,
+					Name = p.Name,
+					IsNullable = p.IsNullable,
+					Order = p.Order,
+					//ParameterType = new ParameterType
+					//{
+					//	Key = p.ParameterType.Id,
+					//	Name = p.ParameterType.Name,
+					//	CreationTime = p.ParameterType.CreationTime,
+					//},
+				}).ToList();
 
 				this.Retrieving?.Invoke(this, new PreRetrievalEventArgs<ReportDefinition>(result, principal));
 			}
@@ -157,6 +173,23 @@ namespace OpenIZ.Persistence.Reporting.Services
 			this.Inserted?.Invoke(this, new PostPersistenceEventArgs<ReportDefinition>(result, principal));
 
 			return result;
+		}
+
+		/// <summary>
+		/// Loads the relations for a given domain instance.
+		/// </summary>
+		/// <param name="context">The application database context.</param>
+		/// <param name="domainInstance">The domain instance for which the load the relations.</param>
+		/// <returns>Returns the updated domain instance.</returns>
+		protected override Model.ReportDefinition LoadRelations(ApplicationDbContext context, Model.ReportDefinition domainInstance)
+		{
+			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Loading report parameters for report: { domainInstance.Id }");
+			context.Entry(domainInstance).Collection(r => r.Parameters).Load();
+
+			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Loading report format for report: { domainInstance.Id }");
+			context.Entry(domainInstance).Reference(r => r.ReportFormat).Load();
+
+			return domainInstance;
 		}
 
 		/// <summary>
@@ -206,7 +239,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 
 			using (var context = new ApplicationDbContext())
 			{
-				var expression = modelMapper.MapModelExpression<ReportDefinition, Model.ReportDefinition>(query);
+				var expression = ModelMapper.MapModelExpression<ReportDefinition, Model.ReportDefinition>(query);
 
 				results = context.ReportDefinitions.Where(expression).ToList().Select(this.ToModelInstance);
 			}
@@ -277,7 +310,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 		internal override Model.ReportDefinition FromModelInstance(ReportDefinition modelInstance)
 		{
 			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(Model.ReportDefinition) } to { nameof(ReportDefinition) }");
-			return modelInstance == null ? null : modelMapper.MapModelInstance<ReportDefinition, Model.ReportDefinition>(modelInstance);
+			return modelInstance == null ? null : ModelMapper.MapModelInstance<ReportDefinition, Model.ReportDefinition>(modelInstance);
 		}
 
 		/// <summary>
@@ -288,7 +321,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 		internal override ReportDefinition ToModelInstance(Model.ReportDefinition domainInstance)
 		{
 			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(ReportDefinition) } to { nameof(Model.ReportDefinition) }");
-			return domainInstance == null ? null : modelMapper.MapDomainInstance<Model.ReportDefinition, ReportDefinition>(domainInstance);
+			return domainInstance == null ? null : ModelMapper.MapDomainInstance<Model.ReportDefinition, ReportDefinition>(domainInstance);
 		}
 	}
 }

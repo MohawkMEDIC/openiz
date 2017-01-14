@@ -55,7 +55,7 @@ namespace OpenIZ.Core.Model.RISI
 		/// <summary>
 		/// Gets or sets the list of items in the <see cref="RisiCollection{T}"/>.
 		/// </summary>
-		[XmlAttribute("item")]
+		[XmlElement("item")]
 		public List<T> Items { get; set; }
 
 		/// <summary>

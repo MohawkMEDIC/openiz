@@ -19,6 +19,7 @@
  */
 
 using OpenIZ.Core.Model.Map;
+using OpenIZ.Persistence.Reporting.Context;
 
 namespace OpenIZ.Persistence.Reporting.Services
 {
@@ -28,9 +29,9 @@ namespace OpenIZ.Persistence.Reporting.Services
 	internal abstract class ReportPersistenceServiceBase<TModel, TDomain>
 	{
 		/// <summary>
-		/// The internal reference to the model mapper.
+		/// Gets the model mapper.
 		/// </summary>
-		protected static ModelMapper modelMapper = ReportingService.ModelMapper;
+		protected static ModelMapper ModelMapper => ReportingService.ModelMapper;
 
 		/// <summary>
 		/// Converts a model instance to a domain instance.
@@ -45,5 +46,13 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <param name="domainInstance">The domain instance to convert.</param>
 		/// <returns>Returns the converted model instance.</returns>
 		internal abstract TModel ToModelInstance(TDomain domainInstance);
+
+		/// <summary>
+		/// Loads the relations for a given domain instance.
+		/// </summary>
+		/// <param name="context">The application database context.</param>
+		/// <param name="domainInstance">The domain instance for which the load the relations.</param>
+		/// <returns>Returns the updated domain instance.</returns>
+		protected abstract TDomain LoadRelations(ApplicationDbContext context, TDomain domainInstance);
 	}
 }

@@ -160,6 +160,17 @@ namespace OpenIZ.Persistence.Reporting.Services
 		}
 
 		/// <summary>
+		/// Loads the relations for a given domain instance.
+		/// </summary>
+		/// <param name="context">The application database context.</param>
+		/// <param name="domainInstance">The domain instance for which the load the relations.</param>
+		/// <returns>Returns the updated domain instance.</returns>
+		protected override Model.ReportFormat LoadRelations(ApplicationDbContext context, Model.ReportFormat domainInstance)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// Obsoletes a report.
 		/// </summary>
 		/// <param name="storageData">The report to obsolete.</param>
@@ -206,7 +217,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 
 			using (var context = new ApplicationDbContext())
 			{
-				var expression = modelMapper.MapModelExpression<ReportFormat, Model.ReportFormat>(query);
+				var expression = ModelMapper.MapModelExpression<ReportFormat, Model.ReportFormat>(query);
 
 				results = context.ReportFormats.Where(expression).ToList().Select(this.ToModelInstance);
 			}
@@ -277,7 +288,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 		internal override Model.ReportFormat FromModelInstance(ReportFormat modelInstance)
 		{
 			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(Model.ReportFormat) } to { nameof(ReportFormat) }");
-			return modelInstance == null ? null : modelMapper.MapModelInstance<ReportFormat, Model.ReportFormat>(modelInstance);
+			return modelInstance == null ? null : ModelMapper.MapModelInstance<ReportFormat, Model.ReportFormat>(modelInstance);
 		}
 
 		/// <summary>
@@ -288,7 +299,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 		internal override ReportFormat ToModelInstance(Model.ReportFormat domainInstance)
 		{
 			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(ReportFormat) } to { nameof(Model.ReportFormat) }");
-			return domainInstance == null ? null : modelMapper.MapDomainInstance<Model.ReportFormat, ReportFormat>(domainInstance);
+			return domainInstance == null ? null : ModelMapper.MapDomainInstance<Model.ReportFormat, ReportFormat>(domainInstance);
 		}
 	}
 }

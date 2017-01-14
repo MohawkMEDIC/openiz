@@ -164,7 +164,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// <returns>Returns a list of report parameter types.</returns>
 		public RisiCollection<ReportParameter> GetAllReportParamterTypes()
 		{
-			return this.Client.Get<RisiCollection<ReportParameter>>("type", new KeyValuePair<string, object>("_", DateTimeOffset.Now));
+			return this.Client.Get<RisiCollection<ReportParameter>>("type", null);
 		}
 
 		/// <summary>
@@ -183,7 +183,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// <returns>Returns a list of report definitions.</returns>
 		public RisiCollection<ReportDefinition> GetReportDefintions()
 		{
-			return this.Client.Get<RisiCollection<ReportDefinition>>("report", new KeyValuePair<string, object>("_", DateTimeOffset.UtcNow));
+			return this.Client.Get<RisiCollection<ReportDefinition>>("report", null);
 		}
 
 		/// <summary>
@@ -193,7 +193,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// <returns>Returns a report format.</returns>
 		public ReportFormat GetReportFormat(string id)
 		{
-			return this.Client.Get<ReportFormat>($"format/{id}", new KeyValuePair<string, object>("_", DateTimeOffset.UtcNow));
+			return this.Client.Get<ReportFormat>($"format/{id}", null);
 		}
 
 		/// <summary>

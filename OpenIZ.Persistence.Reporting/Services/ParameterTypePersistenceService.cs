@@ -160,6 +160,17 @@ namespace OpenIZ.Persistence.Reporting.Services
 		}
 
 		/// <summary>
+		/// Loads the relations for a given domain instance.
+		/// </summary>
+		/// <param name="context">The application database context.</param>
+		/// <param name="domainInstance">The domain instance for which the load the relations.</param>
+		/// <returns>Returns the updated domain instance.</returns>
+		protected override Model.ParameterType LoadRelations(ApplicationDbContext context, Model.ParameterType domainInstance)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// Obsoletes a data type.
 		/// </summary>
 		/// <param name="storageData">The data type to obsolete.</param>
@@ -206,7 +217,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 
 			using (var context = new ApplicationDbContext())
 			{
-				var expression = modelMapper.MapModelExpression<ParameterType, Model.ParameterType>(query);
+				var expression = ModelMapper.MapModelExpression<ParameterType, Model.ParameterType>(query);
 
 				results = context.ParameterTypes.Where(expression).ToList().Select(this.ToModelInstance);
 			}
@@ -277,7 +288,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 		internal override Model.ParameterType FromModelInstance(ParameterType modelInstance)
 		{
 			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(Model.ParameterType) } to { nameof(ParameterType) }");
-			return modelInstance == null ? null : modelMapper.MapModelInstance<ParameterType, Model.ParameterType>(modelInstance);
+			return modelInstance == null ? null : ModelMapper.MapModelInstance<ParameterType, Model.ParameterType>(modelInstance);
 		}
 
 		/// <summary>
@@ -288,7 +299,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 		internal override ParameterType ToModelInstance(Model.ParameterType domainInstance)
 		{
 			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(ParameterType) } to { nameof(Model.ParameterType) }");
-			return domainInstance == null ? null : modelMapper.MapDomainInstance<Model.ParameterType, ParameterType>(domainInstance);
+			return domainInstance == null ? null : ModelMapper.MapDomainInstance<Model.ParameterType, ParameterType>(domainInstance);
 		}
 	}
 }

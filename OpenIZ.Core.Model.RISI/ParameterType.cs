@@ -32,6 +32,14 @@ namespace OpenIZ.Core.Model.RISI
 	public class ParameterType : BaseEntityData
 	{
 		/// <summary>
+		/// Initializes a new instance of the <see cref="ParameterType"/> class.
+		/// </summary>
+		public ParameterType()
+		{
+			this.ReportParameters = new List<ReportParameter>();
+		}
+
+		/// <summary>
 		/// Gets or sets the auto-complete source.
 		/// </summary>
 		[XmlElement("listAutoComplete", Type = typeof(ListAutoCompleteSourceDefinition))]
