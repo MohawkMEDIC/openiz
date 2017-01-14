@@ -54,6 +54,7 @@
     <Compile Include="Interfaces\IDataTypeProvider.cs" />
     <Compile Include="Interfaces\IParameterProvider.cs" />
     <Compile Include="ListAutoCompleteSourceDefinition.cs" />
+    <Compile Include="ReportFormat.cs" />
     <Compile Include="ReportParameter.cs" />
     <Compile Include="ParameterDefinition.cs" />
     <Compile Include="ParameterManifest.cs" />

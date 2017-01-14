@@ -64,5 +64,15 @@ namespace OpenIZ.Persistence.Reporting.Context
 		/// Gets or sets the report parameters.
 		/// </summary>
 		public DbSet<ReportParameter> ReportParameters { get; set; }
+
+		/// <summary>
+		/// Configures the model builder.
+		/// </summary>
+		/// <param name="modelBuilder">The model builder to configure.</param>
+		protected override void OnModelCreating(DbModelBuilder modelBuilder)
+		{
+			modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+			base.OnModelCreating(modelBuilder);
+		}
 	}
 }

@@ -38,6 +38,7 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// </summary>
 		public ParameterType()
 		{
+			this.CreationTime = DateTimeOffset.UtcNow;
 			this.Id = Guid.NewGuid();
 		}
 

@@ -130,9 +130,9 @@ namespace OpenIZ.Reporting.Core
 		/// Runs a report.
 		/// </summary>
 		/// <param name="reportId">The id of the report.</param>
-		/// <param name="format">The format of the report.</param>
+		/// <param name="reportFormat">The format of the report.</param>
 		/// <param name="parameters">The parameters of the report.</param>
-		byte[] RunReport(Guid reportId, ReportFormat format, IEnumerable<ReportParameter> parameters);
+		byte[] RunReport(Guid reportId, Guid reportFormat, IEnumerable<ReportParameter> parameters);
 
 		/// <summary>
 		/// Updates a parameter type.

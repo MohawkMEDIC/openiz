@@ -25,6 +25,7 @@ using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Data.Entity.Migrations.Model;
 using System.Linq;
+using OpenIZ.Core.Model.RISI.Constants;
 using OpenIZ.Persistence.Reporting.Context;
 
 namespace OpenIZ.Persistence.Reporting.Migrations
@@ -54,12 +55,13 @@ namespace OpenIZ.Persistence.Reporting.Migrations
 			//	Author = "nityan",
 			//	Description = "test description",
 			//	CorrelationId = Guid.NewGuid(),
+			//	ReportFormatId = ReportFormatKeys.Pdf,
 			//	Name = "test report",
 			//	Parameters = new List<ReportParameter>
 			//	{
 			//		new ReportParameter
 			//		{
-			//			ParameterTypeId = Guid.Parse("6CDE9F0D-1DA4-462F-8C41-163969D4E575"),
+			//			ParameterTypeId = ParameterTypeKeys.Guid,
 			//			IsNullable = false,
 			//			Order = 0,
 			//			Name = "test parameter",

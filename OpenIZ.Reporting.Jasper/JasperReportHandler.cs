@@ -54,6 +54,11 @@ namespace OpenIZ.Reporting.Jasper
 		private readonly IDataPersistenceService<ReportDefinition> reportDefinitionPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinition>>();
 
 		/// <summary>
+		/// The internal reference to the <see cref="ReportFormat"/> <see cref="IDataPersistenceService{TData}"/> instance.
+		/// </summary>
+		private readonly IDataPersistenceService<ReportFormat> reportFormatPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportFormat>>();
+
+		/// <summary>
 		/// The internal reference to the <see cref="ReportParameter"/> <see cref="IDataPersistenceService{TData}"/> instance.
 		/// </summary>
 		private readonly IDataPersistenceService<ReportParameter> reportParameterPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportParameter>>();
@@ -230,22 +235,17 @@ namespace OpenIZ.Reporting.Jasper
 		/// Runs a report.
 		/// </summary>
 		/// <param name="reportId">The id of the report.</param>
-		/// <param name="format">The format of the report.</param>
+		/// <param name="reportFormat">The format of the report.</param>
 		/// <param name="parameters">The parameters of the report.</param>
-		public byte[] RunReport(Guid reportId, ReportFormat format, IEnumerable<ReportParameter> parameters)
+		public byte[] RunReport(Guid reportId, Guid reportFormat, IEnumerable<ReportParameter> parameters)
 		{
 			byte[] report = null;
 
 			var orderedParameters = parameters.OrderBy(p => p.Order);
 
-			var output = (format.GetType().GetField(format.ToString()).GetCustomAttributes(typeof(ReportFormat), false) as FileExtensionAttribute[])?[0]?.Extension;
+			var format = this.reportFormatPersistenceService.Get(new Identifier<Guid>(reportFormat), AuthenticationContext.Current.Principal, true);
 
-			if (output == null)
-			{
-				throw new ArgumentException($"Invalid report format { format }");
-			}
-
-			var path = this.ReportUri + "/" + reportId + "." + output;
+			var path = this.ReportUri + "/" + reportId + "." + format.Format;
 
 			var first = true;
 

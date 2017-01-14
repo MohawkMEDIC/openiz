@@ -37,6 +37,7 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// </summary>
 		public ReportDefinition()
 		{
+			this.CreationTime = DateTimeOffset.UtcNow;
 			this.Id = Guid.NewGuid();
 			this.Parameters = new List<ReportParameter>();
 		}

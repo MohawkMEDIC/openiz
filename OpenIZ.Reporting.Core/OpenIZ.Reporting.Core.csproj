@@ -48,7 +48,6 @@
     <Compile Include="ISupportBearerAuthentication.cs" />
     <Compile Include="ISupportCertificateAuthentication.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReportFormat.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\OpenIZ.licenseheader">
