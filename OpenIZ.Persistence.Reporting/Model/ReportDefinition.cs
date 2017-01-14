@@ -96,5 +96,15 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// Gets or sets the report parameters associated with the report.
 		/// </summary>
 		public virtual ICollection<ReportParameter> Parameters { get; set; }
+
+		/// <summary>
+		/// Gets or sets the id of the report format associated with the report definition.
+		/// </summary>
+		public Guid ReportFormatId { get; set; }
+
+		/// <summary>
+		/// Gets or sets the report format associated with the report definition.
+		/// </summary>
+		public virtual ReportFormat ReportFormat { get; set; }
 	}
 }

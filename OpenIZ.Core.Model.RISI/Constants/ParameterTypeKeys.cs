@@ -28,7 +28,7 @@ namespace OpenIZ.Core.Model.RISI.Constants
 	/// <summary>
 	/// Represents a collection of data type keys.
 	/// </summary>
-	public static class DataTypeKeys
+	public static class ParameterTypeKeys
 	{
 		/// <summary>
 		/// Represents a binary value.

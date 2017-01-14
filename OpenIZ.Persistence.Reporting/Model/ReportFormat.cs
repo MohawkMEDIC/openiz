@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * User: khannan
- * Date: 2017-1-9
+ * User: Nityan
+ * Date: 2017-1-13
  */
 
 using System;
@@ -29,51 +29,52 @@ using System.Threading.Tasks;
 namespace OpenIZ.Persistence.Reporting.Model
 {
 	/// <summary>
-	/// Represents a parameter type.
+	/// Represents a report format.
 	/// </summary>
-	public class ParameterType
+	public class ReportFormat
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ParameterType"/> class.
+		/// Initializes a new instance of the <see cref="ReportFormat"/> class.
 		/// </summary>
-		public ParameterType()
+		public ReportFormat()
 		{
+			this.CreationTime = DateTimeOffset.UtcNow;
 			this.Id = Guid.NewGuid();
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ParameterType"/> class
-		/// with a specific name.
+		/// Initializes a new instance of the <see cref="ReportFormat"/> class
+		/// with a specific report format name.
 		/// </summary>
-		/// <param name="name">The name of the parameter type.</param>
-		public ParameterType(string name) : this()
+		/// <param name="name">The name of the report format.</param>
+		public ReportFormat(string name) : this()
 		{
 			this.Name = name;
 		}
 
 		/// <summary>
-		/// Gets or sets the creation time of the parameter type.
+		/// Gets or sets the creation time of the report format.
 		/// </summary>
 		[Required]
 		public DateTimeOffset CreationTime { get; set; }
 
 		/// <summary>
-		/// Gets or sets the id of the parameter type.
+		/// Gets or sets the id of the report format.
 		/// </summary>
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public Guid Id { get; set; }
 
 		/// <summary>
-		/// Gets or sets the name of the parameter type.
+		/// Gets or sets the name of the report format.
 		/// </summary>
 		[Required]
 		[StringLength(256)]
 		public string Name { get; set; }
 
 		/// <summary>
-		/// Gets or sets a list of report parameters associated with the parameter type.
+		/// Gets or sets the report definitions associated with the report format.
 		/// </summary>
-		public virtual ICollection<ReportParameter> ReportParameters { get; set; }
+		public virtual ICollection<ReportDefinition> ReportDefinitions { get; set; }
 	}
 }

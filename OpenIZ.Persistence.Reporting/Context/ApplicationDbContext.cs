@@ -56,27 +56,13 @@ namespace OpenIZ.Persistence.Reporting.Context
 		public DbSet<ReportDefinition> ReportDefinitions { get; set; }
 
 		/// <summary>
+		/// Gets or sets the report formats.
+		/// </summary>
+		public DbSet<ReportFormat> ReportFormats { get; set; }
+
+		/// <summary>
 		/// Gets or sets the report parameters.
 		/// </summary>
 		public DbSet<ReportParameter> ReportParameters { get; set; }
-
-		/// <summary>
-		/// Creates a new instance of the <see cref="ApplicationDbContext"/> instance.
-		/// </summary>
-		/// <returns>Returns a new instance of the application database context.</returns>
-		public static ApplicationDbContext Create()
-		{
-			return new ApplicationDbContext();
-		}
-
-		/// <summary>
-		/// Runs setup and configuration when the model is being created.
-		/// </summary>
-		/// <param name="modelBuilder">The model builder used to create and run the configuration.</param>
-		protected override void OnModelCreating(DbModelBuilder modelBuilder)
-		{
-			modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-			base.OnModelCreating(modelBuilder);
-		}
 	}
 }
