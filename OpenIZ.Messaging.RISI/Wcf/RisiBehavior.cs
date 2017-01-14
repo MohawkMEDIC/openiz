@@ -131,7 +131,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
-		public List<ReportParameter> GetAllReportParamterTypes()
+		public RisiCollection<ReportParameter> GetAllReportParamterTypes()
 		{
 			throw new NotImplementedException();
 		}
@@ -157,9 +157,9 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// Gets a list of report definitions based on a specific query.
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
-		public List<ReportDefinition> GetReportDefintions()
+		public RisiCollection<ReportDefinition> GetReportDefintions()
 		{
-			return this.reportHandler.GetReportDefintions().ToList();
+			return this.reportHandler.GetReportDefintions();
 		}
 
 		/// <summary>
@@ -184,7 +184,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve parameters.</param>
 		/// <returns>Returns a list of parameters.</returns>
-		public List<ReportParameter> GetReportParameters(string id)
+		public RisiCollection<ReportParameter> GetReportParameters(string id)
 		{
 			var key = Guid.Empty;
 
@@ -193,7 +193,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
 			}
 
-			return this.reportHandler.GetReportParameters(key).ToList();
+			return this.reportHandler.GetReportParameters(key);
 		}
 
 		/// <summary>

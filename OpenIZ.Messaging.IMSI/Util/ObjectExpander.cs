@@ -138,7 +138,7 @@ namespace OpenIZ.Messaging.IMSI.Util
             try
             {
                 // Expand property?
-                if (qp.ContainsKey("_expand") ^ qp.ContainsKey("_all"))
+                if (qp.ContainsKey("_expand") && qp.ContainsKey("_all"))
                     return;
 
 

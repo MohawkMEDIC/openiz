@@ -133,18 +133,18 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// <param name="format">The output format of the report.</param>
 		/// <param name="parameters">The list of parameters of the report.</param>
 		/// <returns>Returns the report in raw format.</returns>
-		public byte[] ExecuteReport(string id, string format, List<ReportParameter> parameters)
+		public byte[] ExecuteReport(string id, string format, RisiCollection<ReportParameter> parameters)
 		{
-			return this.Client.Post<List<ReportParameter>, byte[]>($"report/{id}/{format}", this.Client.Accept, parameters);
+			return this.Client.Post<RisiCollection<ReportParameter>, byte[]>($"report/{id}/{format}", this.Client.Accept, parameters);
 		}
 
 		/// <summary>
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
-		public List<ReportParameter> GetAllReportParamterTypes()
+		public RisiCollection<ReportParameter> GetAllReportParamterTypes()
 		{
-			return this.Client.Get<List<ReportParameter>>("type", new KeyValuePair<string, object>("_", DateTimeOffset.Now));
+			return this.Client.Get<RisiCollection<ReportParameter>>("type", new KeyValuePair<string, object>("_", DateTimeOffset.Now));
 		}
 
 		/// <summary>
@@ -161,9 +161,9 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// Gets a list of report definitions based on a specific query.
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
-		public List<ReportDefinition> GetReportDefintions()
+		public RisiCollection<ReportDefinition> GetReportDefintions()
 		{
-			return this.Client.Get<List<ReportDefinition>>("report", new KeyValuePair<string, object>("_", DateTimeOffset.UtcNow));
+			return this.Client.Get<RisiCollection<ReportDefinition>>("report", new KeyValuePair<string, object>("_", DateTimeOffset.UtcNow));
 		}
 
 		/// <summary>
@@ -181,9 +181,9 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve parameters.</param>
 		/// <returns>Returns a list of parameters.</returns>
-		public List<ReportParameter> GetReportParameters(string id)
+		public RisiCollection<ReportParameter> GetReportParameters(string id)
 		{
-			return this.Client.Get<List<ReportParameter>>($"report/{id}/parm");
+			return this.Client.Get<RisiCollection<ReportParameter>>($"report/{id}/parm");
 		}
 
 		/// <summary>

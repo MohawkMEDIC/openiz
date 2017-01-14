@@ -53,12 +53,15 @@ namespace OpenIZ.Persistence.Reporting.Migrations
 			//{
 			//	Author = "nityan",
 			//	Description = "test description",
+			//	CorrelationId = Guid.NewGuid(),
+			//	Name = "test report",
 			//	Parameters = new List<ReportParameter>
 			//	{
 			//		new ReportParameter
 			//		{
-			//			DataTypeId = Guid.Parse("6CDE9F0D-1DA4-462F-8C41-163969D4E575"),
+			//			ParameterTypeId = Guid.Parse("6CDE9F0D-1DA4-462F-8C41-163969D4E575"),
 			//			IsNullable = false,
+			//			Order = 0,
 			//			Name = "test parameter",
 			//			DefaultValues = new List<ParameterValue>
 			//			{

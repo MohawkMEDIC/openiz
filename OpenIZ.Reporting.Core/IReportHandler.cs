@@ -75,7 +75,7 @@ namespace OpenIZ.Reporting.Core
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
-		IEnumerable<ReportParameter> GetAllReportParamterTypes();
+		RisiCollection<ReportParameter> GetAllReportParamterTypes();
 
 		/// <summary>
 		/// Gets a parameter type by id.
@@ -95,7 +95,7 @@ namespace OpenIZ.Reporting.Core
 		/// Gets a list of report definitions based on a specific query.
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
-		IEnumerable<ReportDefinition> GetReportDefintions();
+		RisiCollection<ReportDefinition> GetReportDefintions();
 
 		/// <summary>
 		/// Gets detailed information about a given report parameter.
@@ -109,7 +109,7 @@ namespace OpenIZ.Reporting.Core
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve parameters.</param>
 		/// <returns>Returns a list of parameters.</returns>
-		IEnumerable<ReportParameter> GetReportParameters(Guid id);
+		RisiCollection<ReportParameter> GetReportParameters(Guid id);
 
 		/// <summary>
 		/// Gets a list of auto-complete parameters which are applicable for the specified parameter.

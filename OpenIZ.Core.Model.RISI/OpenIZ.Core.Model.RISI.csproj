@@ -60,6 +60,7 @@
     <Compile Include="QueryAutoCompleteSourceDefinition.cs" />
     <Compile Include="ReportDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RisiCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\OpenIZ.licenseheader">

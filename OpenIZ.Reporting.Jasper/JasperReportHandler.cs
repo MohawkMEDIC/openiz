@@ -145,9 +145,11 @@ namespace OpenIZ.Reporting.Jasper
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
-		public IEnumerable<ReportParameter> GetAllReportParamterTypes()
+		public RisiCollection<ReportParameter> GetAllReportParamterTypes()
 		{
-			return this.reportParameterPersistenceService.Query(r => r.ObsoletionTime == null, null);
+			var reportParameterTypes = this.reportParameterPersistenceService.Query(r => r.Key != null, null);
+
+			return new RisiCollection<ReportParameter>(reportParameterTypes);
 		}
 
 		/// <summary>
@@ -174,9 +176,11 @@ namespace OpenIZ.Reporting.Jasper
 		/// Gets a list of report definitions based on a specific query.
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
-		public IEnumerable<ReportDefinition> GetReportDefintions()
+		public RisiCollection<ReportDefinition> GetReportDefintions()
 		{
-			return this.reportDefinitionPersistenceService.Query(r => r.ObsoletionTime == null, null);
+			var reports = this.reportDefinitionPersistenceService.Query(r => r.Key != null, null);
+
+			return new RisiCollection<ReportDefinition>(reports);
 		}
 
 		/// <summary>
@@ -194,9 +198,11 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve parameters.</param>
 		/// <returns>Returns a list of parameters.</returns>
-		public IEnumerable<ReportParameter> GetReportParameters(Guid id)
+		public RisiCollection<ReportParameter> GetReportParameters(Guid id)
 		{
-			return this.reportParameterPersistenceService.Query(r => r.ReportDefinition.Key.Value == id, AuthenticationContext.Current.Principal);
+			var reportParameters = this.reportParameterPersistenceService.Query(r => r.ReportDefinition.Key.Value == id, AuthenticationContext.Current.Principal);
+
+			return new RisiCollection<ReportParameter>(reportParameters);
 		}
 
 		/// <summary>
@@ -267,10 +273,10 @@ namespace OpenIZ.Reporting.Jasper
 		}
 
 		/// <summary>
-		/// Updates a parameter type definition.
+		/// Updates a parameter type.
 		/// </summary>
-		/// <param name="parameterType"></param>
-		/// <returns>Returns the updated parameter type definition.</returns>
+		/// <param name="parameterType">The updated parameter type.</param>
+		/// <returns>Returns the updated parameter type.</returns>
 		public ParameterType UpdateParameterType(ParameterType parameterType)
 		{
 			return this.parameterTypePersistenceService.Update(parameterType, AuthenticationContext.Current.Principal, TransactionMode.Commit);
@@ -279,7 +285,6 @@ namespace OpenIZ.Reporting.Jasper
 		/// <summary>
 		/// Updates a report definition.
 		/// </summary>
-		/// <param name="id">The id of the report definition to update.</param>
 		/// <param name="reportDefinition">The updated report definition.</param>
 		/// <returns>Returns the updated report definition.</returns>
 		public ReportDefinition UpdateReportDefinition(ReportDefinition reportDefinition)

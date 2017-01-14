@@ -221,10 +221,20 @@ namespace OpenIZ.Persistence.Reporting.Services
 			{
 				var expression = modelMapper.MapModelExpression<ParameterType, Model.ParameterType>(query);
 
-				results = context.ParameterTypes.Where(expression).Select(r => this.ToModelInstance(r));
+				results = context.ParameterTypes.Where(expression).ToList().Select(this.ToModelInstance);
 			}
 
 			totalCount = results.Count();
+
+			if (offset > 0)
+			{
+				results = results.Skip(offset);
+			}
+
+			if (count != null)
+			{
+				results = results.Take(count.Value);
+			}
 
 			this.Queried?.Invoke(this, new PostQueryEventArgs<ParameterType>(query, results.AsQueryable(), authContext));
 

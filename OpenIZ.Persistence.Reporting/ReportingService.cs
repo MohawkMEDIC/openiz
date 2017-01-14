@@ -131,7 +131,7 @@ namespace OpenIZ.Persistence.Reporting
 				this.traceSource.TraceEvent(TraceEventType.Information, 0, $"Reporting configuration loaded, using connection string: { Configuration.ConnectionStringName }");
 
 				// Iterate the persistence services
-				foreach (var t in typeof(ReportingService).GetTypeInfo().Assembly.ExportedTypes.Where(o => o.Namespace == "OpenIZ.Persistence.Reporting.Services" && !o.GetTypeInfo().IsAbstract))
+				foreach (var t in typeof(ReportingService).GetTypeInfo().Assembly.DefinedTypes.Where(o => o.Namespace == "OpenIZ.Persistence.Reporting.Services" && !o.GetTypeInfo().IsAbstract))
 				{
 					try
 					{

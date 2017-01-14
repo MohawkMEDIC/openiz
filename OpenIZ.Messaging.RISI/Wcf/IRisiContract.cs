@@ -28,8 +28,9 @@ namespace OpenIZ.Messaging.RISI.Wcf
 	/// <summary>
 	/// Provides operations for running and managing reports.
 	/// </summary>
-	[ServiceKnownType(typeof(ReportDefinition))]
 	[ServiceKnownType(typeof(ParameterType))]
+	[ServiceKnownType(typeof(ReportDefinition))]
+	[ServiceKnownType(typeof(RisiCollection<>))]
 	[ServiceKnownType(typeof(ParameterDefinition))]
 	[ServiceKnownType(typeof(AutoCompleteSourceDefinition))]
 	[ServiceKnownType(typeof(ListAutoCompleteSourceDefinition))]
@@ -84,7 +85,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
 		[WebGet(UriTemplate = "/type", BodyStyle = WebMessageBodyStyle.Bare)]
-		List<ReportParameter> GetAllReportParamterTypes();
+		RisiCollection<ReportParameter> GetAllReportParamterTypes();
 
 		/// <summary>
 		/// Gets a report definition by id.
@@ -99,7 +100,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
 		[WebGet(UriTemplate = "/report", BodyStyle = WebMessageBodyStyle.Bare)]
-		List<ReportDefinition> GetReportDefintions();
+		RisiCollection<ReportDefinition> GetReportDefintions();
 
 		/// <summary>
 		/// Gets detailed information about a given report parameter.
@@ -115,7 +116,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="id">The id of the report for which to retrieve parameters.</param>
 		/// <returns>Returns a list of parameters.</returns>
 		[WebGet(UriTemplate = "/report/{id}/parm", BodyStyle = WebMessageBodyStyle.Bare)]
-		List<ReportParameter> GetReportParameters(string id);
+		RisiCollection<ReportParameter> GetReportParameters(string id);
 
 		/// <summary>
 		/// Gets a list of auto-complete parameters which are applicable for the specified parameter.
