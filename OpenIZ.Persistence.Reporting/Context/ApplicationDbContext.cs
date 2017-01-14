@@ -18,12 +18,9 @@
  * Date: 2017-1-7
  */
 
-using System;
-using System.Configuration;
 using OpenIZ.Persistence.Reporting.Model;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
-using System.IO;
 
 namespace OpenIZ.Persistence.Reporting.Context
 {

@@ -20,14 +20,14 @@
 
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Exceptions;
+using OpenIZ.Core.Model.Map;
 using OpenIZ.Persistence.Reporting.Configuration;
 using System;
 using System.Configuration;
 using System.Diagnostics;
-using System.Reflection;
 using System.Linq;
-using OpenIZ.Core.Exceptions;
-using OpenIZ.Core.Model.Map;
+using System.Reflection;
 
 namespace OpenIZ.Persistence.Reporting
 {
@@ -92,7 +92,7 @@ namespace OpenIZ.Persistence.Reporting
 				ReportingConfiguration config = null;
 
 				if (configurationManager == null)
-				{	
+				{
 					config = ConfigurationManager.GetSection("openiz.persistence.reporting") as ReportingConfiguration;
 				}
 				else

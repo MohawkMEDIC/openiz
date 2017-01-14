@@ -1,22 +1,29 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: khannan
  * Date: 2017-1-13
  */
+
+using MARC.HI.EHRS.SVC.Core.Data;
+using MARC.HI.EHRS.SVC.Core.Event;
+using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model.RISI;
+using OpenIZ.Persistence.Reporting.Context;
+using OpenIZ.Persistence.Reporting.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -24,12 +31,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Principal;
-using MARC.HI.EHRS.SVC.Core.Data;
-using MARC.HI.EHRS.SVC.Core.Event;
-using MARC.HI.EHRS.SVC.Core.Services;
-using OpenIZ.Persistence.Reporting.Context;
-using OpenIZ.Persistence.Reporting.Exceptions;
-using OpenIZ.Core.Model.RISI;
 
 namespace OpenIZ.Persistence.Reporting.Services
 {
@@ -102,17 +103,6 @@ namespace OpenIZ.Persistence.Reporting.Services
 		public int Count(Expression<Func<ReportFormat, bool>> query, IPrincipal authContext)
 		{
 			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Converts a model instance to a domain instance.
-		/// </summary>
-		/// <param name="modelInstance">The model instance to convert.</param>
-		/// <returns>Returns the converted model instance.</returns>
-		internal override Model.ReportFormat FromModelInstance(ReportFormat modelInstance)
-		{
-			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(Model.ReportFormat) } to { nameof(ReportFormat) }");
-			return modelInstance == null ? null : modelMapper.MapModelInstance<ReportFormat, Model.ReportFormat>(modelInstance);
 		}
 
 		/// <summary>
@@ -251,17 +241,6 @@ namespace OpenIZ.Persistence.Reporting.Services
 		}
 
 		/// <summary>
-		/// Converts a domain instance to a model instance.
-		/// </summary>
-		/// <param name="domainInstance">The domain instance to convert.</param>
-		/// <returns>Returns the converted model instance.</returns>
-		internal override ReportFormat ToModelInstance(Model.ReportFormat domainInstance)
-		{
-			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(ReportFormat) } to { nameof(Model.ReportFormat) }");
-			return domainInstance == null ? null : modelMapper.MapDomainInstance<Model.ReportFormat, ReportFormat>(domainInstance);
-		}
-
-		/// <summary>
 		/// Updates a report.
 		/// </summary>
 		/// <param name="storageData">The report to update.</param>
@@ -288,6 +267,28 @@ namespace OpenIZ.Persistence.Reporting.Services
 			this.Updated?.Invoke(this, new PostPersistenceEventArgs<ReportFormat>(result, principal));
 
 			return result;
+		}
+
+		/// <summary>
+		/// Converts a model instance to a domain instance.
+		/// </summary>
+		/// <param name="modelInstance">The model instance to convert.</param>
+		/// <returns>Returns the converted model instance.</returns>
+		internal override Model.ReportFormat FromModelInstance(ReportFormat modelInstance)
+		{
+			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(Model.ReportFormat) } to { nameof(ReportFormat) }");
+			return modelInstance == null ? null : modelMapper.MapModelInstance<ReportFormat, Model.ReportFormat>(modelInstance);
+		}
+
+		/// <summary>
+		/// Converts a domain instance to a model instance.
+		/// </summary>
+		/// <param name="domainInstance">The domain instance to convert.</param>
+		/// <returns>Returns the converted model instance.</returns>
+		internal override ReportFormat ToModelInstance(Model.ReportFormat domainInstance)
+		{
+			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(ReportFormat) } to { nameof(Model.ReportFormat) }");
+			return domainInstance == null ? null : modelMapper.MapDomainInstance<Model.ReportFormat, ReportFormat>(domainInstance);
 		}
 	}
 }

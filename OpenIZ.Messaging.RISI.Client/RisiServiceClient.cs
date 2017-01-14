@@ -63,6 +63,16 @@ namespace OpenIZ.Messaging.RISI.Client
 		}
 
 		/// <summary>
+		/// Creates a report format.
+		/// </summary>
+		/// <param name="reportFormat">The report format to create.</param>
+		/// <returns>Returns the created report format.</returns>
+		public ReportFormat CreateReportFormat(ReportFormat reportFormat)
+		{
+			return this.Client.Post<ReportFormat, ReportFormat>("format", this.Client.Accept, reportFormat);
+		}
+
+		/// <summary>
 		/// Deletes a report parameter type.
 		/// </summary>
 		/// <param name="id">The id of the report parameter type to delete.</param>
@@ -80,6 +90,16 @@ namespace OpenIZ.Messaging.RISI.Client
 		public ReportDefinition DeleteReportDefinition(string id)
 		{
 			return this.Client.Delete<ReportDefinition>($"report/{id}");
+		}
+
+		/// <summary>
+		/// Deletes a report format.
+		/// </summary>
+		/// <param name="id">The id of the report format.</param>
+		/// <returns>Returns the report deleted report format.</returns>
+		public ReportFormat DeleteReportFormat(string id)
+		{
+			return this.Client.Delete<ReportFormat>($"format/{id}");
 		}
 
 		#region IDisposable Support
@@ -167,6 +187,16 @@ namespace OpenIZ.Messaging.RISI.Client
 		}
 
 		/// <summary>
+		/// Gets a report format by id.
+		/// </summary>
+		/// <param name="id">The id of the report format to retrieve.</param>
+		/// <returns>Returns a report format.</returns>
+		public ReportFormat GetReportFormat(string id)
+		{
+			return this.Client.Get<ReportFormat>($"format/{id}", new KeyValuePair<string, object>("_", DateTimeOffset.UtcNow));
+		}
+
+		/// <summary>
 		/// Gets detailed information about a given report parameter.
 		/// </summary>
 		/// <param name="id">The id of the report parameter for which to retrieve information.</param>
@@ -217,6 +247,17 @@ namespace OpenIZ.Messaging.RISI.Client
 		public ReportDefinition UpdateReportDefinition(string id, ReportDefinition reportDefinition)
 		{
 			return this.Client.Put<ReportDefinition, ReportDefinition>($"report/{id}", this.Client.Accept, reportDefinition);
+		}
+
+		/// <summary>
+		/// Updates a report format.
+		/// </summary>
+		/// <param name="id">The id of the report format to update.</param>
+		/// <param name="reportFormat">The updated report format.</param>
+		/// <returns>Returns the update report format.</returns>
+		public ReportFormat UpdateReportFormat(string id, ReportFormat reportFormat)
+		{
+			return this.Client.Put<ReportFormat, ReportFormat>($"format/{id}", this.Client.Accept, reportFormat);
 		}
 	}
 }

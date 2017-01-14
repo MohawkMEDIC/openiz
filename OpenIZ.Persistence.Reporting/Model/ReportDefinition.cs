@@ -18,7 +18,6 @@
  * Date: 2017-1-6
  */
 
-using OpenIZ.Core.Model.RISI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -99,13 +98,13 @@ namespace OpenIZ.Persistence.Reporting.Model
 		public virtual ICollection<ReportParameter> Parameters { get; set; }
 
 		/// <summary>
-		/// Gets or sets the id of the report format associated with the report definition.
-		/// </summary>
-		public Guid ReportFormatId { get; set; }
-
-		/// <summary>
 		/// Gets or sets the report format associated with the report definition.
 		/// </summary>
 		public virtual ReportFormat ReportFormat { get; set; }
+
+		/// <summary>
+		/// Gets or sets the id of the report format associated with the report definition.
+		/// </summary>
+		public Guid ReportFormatId { get; set; }
 	}
 }

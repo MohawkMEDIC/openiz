@@ -61,18 +61,6 @@ namespace OpenIZ.Persistence.Reporting.Model
 		public DateTimeOffset CreationTime { get; set; }
 
 		/// <summary>
-		/// Gets or sets the parameter type reference associated with the report parameter.
-		/// </summary>
-		[ForeignKey("ParameterTypeId")]
-		public virtual ParameterType ParameterType { get; set; }
-
-		/// <summary>
-		/// Gets or sets the id of the parameter type associated with the report parameter.
-		/// </summary>
-		[Required]
-		public Guid ParameterTypeId { get; set; }
-
-		/// <summary>
 		/// Gets or sets the default values associated with the report parameter.
 		/// </summary>
 		public virtual ICollection<ParameterValue> DefaultValues { get; set; }
@@ -102,6 +90,18 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// </summary>
 		[Required]
 		public int Order { get; set; }
+
+		/// <summary>
+		/// Gets or sets the parameter type reference associated with the report parameter.
+		/// </summary>
+		[ForeignKey("ParameterTypeId")]
+		public virtual ParameterType ParameterType { get; set; }
+
+		/// <summary>
+		/// Gets or sets the id of the parameter type associated with the report parameter.
+		/// </summary>
+		[Required]
+		public Guid ParameterTypeId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the report reference associated with the report parameter.

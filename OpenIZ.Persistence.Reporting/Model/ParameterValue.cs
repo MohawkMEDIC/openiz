@@ -62,11 +62,6 @@ namespace OpenIZ.Persistence.Reporting.Model
 		public Guid Id { get; set; }
 
 		/// <summary>
-		/// Gets or sets the value of the parameter.
-		/// </summary>
-		public object Value { get; set; }
-
-		/// <summary>
 		/// Gets or sets the report parameter reference associated with the parameter value.
 		/// </summary>
 		[ForeignKey("ReportParameterId")]
@@ -77,5 +72,10 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// </summary>
 		[Required]
 		public Guid ReportParameterId { get; set; }
+
+		/// <summary>
+		/// Gets or sets the value of the parameter.
+		/// </summary>
+		public object Value { get; set; }
 	}
 }
