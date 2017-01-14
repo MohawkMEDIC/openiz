@@ -49,6 +49,13 @@ namespace OpenIZ.Reporting.Core
 		ReportDefinition CreateReportDefinition(ReportDefinition reportDefinition);
 
 		/// <summary>
+		/// Creates a report format.
+		/// </summary>
+		/// <param name="reportFormat">The report format to create.</param>
+		/// <returns>Returns the created report format.</returns>
+		ReportFormat CreateReportFormat(ReportFormat reportFormat);
+
+		/// <summary>
 		/// Deletes a parameter type.
 		/// </summary>
 		/// <param name="id">The id of the parameter type to delete.</param>
@@ -61,6 +68,13 @@ namespace OpenIZ.Reporting.Core
 		/// <param name="id">The id of the report definition to delete.</param>
 		/// <returns>Returns the deleted report definition.</returns>
 		ReportDefinition DeleteReportDefinition(Guid id);
+
+		/// <summary>
+		/// Deletes a report format.
+		/// </summary>
+		/// <param name="id">The id of the report format.</param>
+		/// <returns>Returns the report deleted report format.</returns>
+		ReportFormat DeleteReportFormat(Guid id);
 
 		/// <summary>
 		/// Executes a report.
@@ -96,6 +110,13 @@ namespace OpenIZ.Reporting.Core
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
 		RisiCollection<ReportDefinition> GetReportDefintions();
+
+		/// <summary>
+		/// Gets a report format by id.
+		/// </summary>
+		/// <param name="id">The id of the report format to retrieve.</param>
+		/// <returns>Returns a report format.</returns>
+		ReportFormat GetReportFormat(Guid id);
 
 		/// <summary>
 		/// Gets detailed information about a given report parameter.
@@ -147,5 +168,12 @@ namespace OpenIZ.Reporting.Core
 		/// <param name="reportDefinition">The updated report definition.</param>
 		/// <returns>Returns the updated report definition.</returns>
 		ReportDefinition UpdateReportDefinition(ReportDefinition reportDefinition);
+
+		/// <summary>
+		/// Updates a report format.
+		/// </summary>
+		/// <param name="reportFormat">The updated report format.</param>
+		/// <returns>Returns the update report format.</returns>
+		ReportFormat UpdateReportFormat(ReportFormat reportFormat);
 	}
 }

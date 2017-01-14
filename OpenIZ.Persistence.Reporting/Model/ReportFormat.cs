@@ -70,6 +70,7 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// </summary>
 		[Required]
 		[StringLength(256)]
+		[Index(IsUnique = true)]
 		public string Name { get; set; }
 
 		/// <summary>

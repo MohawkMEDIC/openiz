@@ -107,6 +107,16 @@ namespace OpenIZ.Reporting.Jasper
 		}
 
 		/// <summary>
+		/// Creates a report format.
+		/// </summary>
+		/// <param name="reportFormat">The report format to create.</param>
+		/// <returns>Returns the created report format.</returns>
+		public ReportFormat CreateReportFormat(ReportFormat reportFormat)
+		{
+			return this.reportFormatPersistenceService.Insert(reportFormat, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
 		/// Deletes a report parameter type.
 		/// </summary>
 		/// <param name="id">The id of the report parameter type to delete.</param>
@@ -124,6 +134,16 @@ namespace OpenIZ.Reporting.Jasper
 		public ReportDefinition DeleteReportDefinition(Guid id)
 		{
 			return this.reportDefinitionPersistenceService.Obsolete(this.GetReportDefinition(id), AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
+		/// Deletes a report format.
+		/// </summary>
+		/// <param name="id">The id of the report format.</param>
+		/// <returns>Returns the report deleted report format.</returns>
+		public ReportFormat DeleteReportFormat(Guid id)
+		{
+			return this.reportFormatPersistenceService.Obsolete(this.GetReportFormat(id), AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>
@@ -186,6 +206,16 @@ namespace OpenIZ.Reporting.Jasper
 			var reports = this.reportDefinitionPersistenceService.Query(r => r.Key != null, null);
 
 			return new RisiCollection<ReportDefinition>(reports);
+		}
+
+		/// <summary>
+		/// Gets a report format by id.
+		/// </summary>
+		/// <param name="id">The id of the report format to retrieve.</param>
+		/// <returns>Returns a report format.</returns>
+		public ReportFormat GetReportFormat(Guid id)
+		{
+			return this.reportFormatPersistenceService.Get(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, true);
 		}
 
 		/// <summary>
@@ -290,6 +320,17 @@ namespace OpenIZ.Reporting.Jasper
 		public ReportDefinition UpdateReportDefinition(ReportDefinition reportDefinition)
 		{
 			return this.reportDefinitionPersistenceService.Update(reportDefinition, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
+		/// Updates a report format.
+		/// </summary>
+		/// <param name="id">The id of the report format to update.</param>
+		/// <param name="reportFormat">The updated report format.</param>
+		/// <returns>Returns the update report format.</returns>
+		public ReportFormat UpdateReportFormat(ReportFormat reportFormat)
+		{
+			return this.reportFormatPersistenceService.Update(reportFormat, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 	}
 }

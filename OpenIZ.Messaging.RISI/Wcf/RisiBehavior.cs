@@ -75,6 +75,16 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		}
 
 		/// <summary>
+		/// Creates a report format.
+		/// </summary>
+		/// <param name="reportFormat">The report format to create.</param>
+		/// <returns>Returns the created report format.</returns>
+		public ReportFormat CreateReportFormat(ReportFormat reportFormat)
+		{
+			return this.reportHandler.CreateReportFormat(reportFormat);
+		}
+
+		/// <summary>
 		/// Deletes a report parameter type.
 		/// </summary>
 		/// <param name="id">The id of the report parameter type to delete.</param>
@@ -106,6 +116,23 @@ namespace OpenIZ.Messaging.RISI.Wcf
 			}
 
 			return this.reportHandler.DeleteReportDefinition(key);
+		}
+
+		/// <summary>
+		/// Deletes a report format.
+		/// </summary>
+		/// <param name="id">The id of the report format.</param>
+		/// <returns>Returns the report deleted report format.</returns>
+		public ReportFormat DeleteReportFormat(string id)
+		{
+			var key = Guid.Empty;
+
+			if (!Guid.TryParse(id, out key))
+			{
+				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
+			}
+
+			return this.reportHandler.DeleteReportFormat(key);
 		}
 
 		/// <summary>
@@ -160,6 +187,23 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		public RisiCollection<ReportDefinition> GetReportDefintions()
 		{
 			return this.reportHandler.GetReportDefintions();
+		}
+
+		/// <summary>
+		/// Gets a report format by id.
+		/// </summary>
+		/// <param name="id">The id of the report format to retrieve.</param>
+		/// <returns>Returns a report format.</returns>
+		public ReportFormat GetReportFormat(string id)
+		{
+			var key = Guid.Empty;
+
+			if (!Guid.TryParse(id, out key))
+			{
+				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
+			}
+
+			return this.reportHandler.GetReportFormat(key);
 		}
 
 		/// <summary>
@@ -234,7 +278,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 
 			if (key != parameterType.Key)
 			{
-				throw new ArgumentException($"Unable to update device using id: {id}, and id: {parameterType.Key}");
+				throw new ArgumentException($"Unable to update parameter type using id: {id}, and id: {parameterType.Key}");
 			}
 
 			return this.reportHandler.UpdateParameterType(parameterType);
@@ -257,10 +301,33 @@ namespace OpenIZ.Messaging.RISI.Wcf
 
 			if (key != reportDefinition.Key)
 			{
-				throw new ArgumentException($"Unable to update device using id: {id}, and id: {reportDefinition.Key}");
+				throw new ArgumentException($"Unable to update report definition using id: {id}, and id: {reportDefinition.Key}");
 			}
 
 			return this.reportHandler.UpdateReportDefinition(reportDefinition);
+		}
+
+		/// <summary>
+		/// Updates a report format.
+		/// </summary>
+		/// <param name="id">The id of the report format to update.</param>
+		/// <param name="reportFormat">The updated report format.</param>
+		/// <returns>Returns the update report format.</returns>
+		public ReportFormat UpdateReportFormat(string id, ReportFormat reportFormat)
+		{
+			var key = Guid.Empty;
+
+			if (!Guid.TryParse(id, out key))
+			{
+				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
+			}
+
+			if (key != reportFormat.Key)
+			{
+				throw new ArgumentException($"Unable to update report format using id: {id}, and id: {reportFormat.Key}");
+			}
+
+			return this.reportHandler.UpdateReportFormat(reportFormat);
 		}
 	}
 }

@@ -28,6 +28,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 	/// <summary>
 	/// Provides operations for running and managing reports.
 	/// </summary>
+	[ServiceKnownType(typeof(ReportFormat))]
 	[ServiceKnownType(typeof(ParameterType))]
 	[ServiceKnownType(typeof(ReportDefinition))]
 	[ServiceKnownType(typeof(RisiCollection<>))]
@@ -55,6 +56,14 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		ReportDefinition CreateReportDefinition(ReportDefinition reportDefinition);
 
 		/// <summary>
+		/// Creates a report format.
+		/// </summary>
+		/// <param name="reportFormat">The report format to create.</param>
+		/// <returns>Returns the created report format.</returns>
+		[WebInvoke(UriTemplate = "/format", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		ReportFormat CreateReportFormat(ReportFormat reportFormat);
+
+		/// <summary>
 		/// Deletes a report parameter type.
 		/// </summary>
 		/// <param name="id">The id of the report parameter type to delete.</param>
@@ -69,6 +78,14 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns the deleted report definition.</returns>
 		[WebInvoke(UriTemplate = "/report/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
 		ReportDefinition DeleteReportDefinition(string id);
+
+		/// <summary>
+		/// Deletes a report format.
+		/// </summary>
+		/// <param name="id">The id of the report format.</param>
+		/// <returns>Returns the report deleted report format.</returns>
+		[WebInvoke(UriTemplate = "/format/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		ReportFormat DeleteReportFormat(string id);
 
 		/// <summary>
 		/// Executes a report.
@@ -101,6 +118,14 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns a list of report definitions.</returns>
 		[WebGet(UriTemplate = "/report", BodyStyle = WebMessageBodyStyle.Bare)]
 		RisiCollection<ReportDefinition> GetReportDefintions();
+
+		/// <summary>
+		/// Gets a report format by id.
+		/// </summary>
+		/// <param name="id">The id of the report format to retrieve.</param>
+		/// <returns>Returns a report format.</returns>
+		[WebGet(UriTemplate = "/format/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
+		ReportFormat GetReportFormat(string id);
 
 		/// <summary>
 		/// Gets detailed information about a given report parameter.
@@ -152,5 +177,14 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns the updated report definition.</returns>
 		[WebInvoke(UriTemplate = "/report/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		ReportDefinition UpdateReportDefinition(string id, ReportDefinition reportDefinition);
+
+		/// <summary>
+		/// Updates a report format.
+		/// </summary>
+		/// <param name="id">The id of the report format to update.</param>
+		/// <param name="reportFormat">The updated report format.</param>
+		/// <returns>Returns the update report format.</returns>
+		[WebInvoke(UriTemplate = "/format/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		ReportFormat UpdateReportFormat(string id, ReportFormat reportFormat);
 	}
 }
