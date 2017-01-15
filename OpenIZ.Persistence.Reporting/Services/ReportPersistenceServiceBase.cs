@@ -18,6 +18,8 @@
  * Date: 2017-1-12
  */
 
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using OpenIZ.Core.Model.Map;
 using OpenIZ.Persistence.Reporting.Context;
 
@@ -54,5 +56,44 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// <param name="domainInstance">The domain instance for which the load the relations.</param>
 		/// <returns>Returns the updated domain instance.</returns>
 		protected abstract TDomain LoadRelations(ApplicationDbContext context, TDomain domainInstance);
+
+		/// <summary>
+		/// Converts a byte array to an object.
+		/// </summary>
+		/// <param name="content">The byte array to convert.</param>
+		/// <returns>Returns the converted object.</returns>
+		protected virtual object ToObject(byte[] content)
+		{
+			object value = null;
+
+			var binaryFormatter = new BinaryFormatter();
+
+			using (var memoryStream = new MemoryStream(content))
+			{
+				value = binaryFormatter.Deserialize(memoryStream);
+			}
+
+			return value;
+		}
+
+		/// <summary>
+		/// Converts an object to a byte array.
+		/// </summary>
+		/// <param name="content">The object to convert.</param>
+		/// <returns>Returns the converted byte array.</returns>
+		protected virtual byte[] ToByteArray(object content)
+		{
+			byte[] value = null;
+
+			var binaryFormatter = new BinaryFormatter();
+
+			using (var memoryStream = new MemoryStream())
+			{
+				binaryFormatter.Serialize(memoryStream, content);
+				value = memoryStream.ToArray();
+			}
+
+			return value;
+		}
 	}
 }

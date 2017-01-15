@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace OpenIZ.Persistence.Reporting.Model
 {
@@ -37,7 +38,6 @@ namespace OpenIZ.Persistence.Reporting.Model
 		{
 			this.CreationTime = DateTimeOffset.UtcNow;
 			this.Id = Guid.NewGuid();
-			this.DefaultValues = new List<ParameterValue>();
 		}
 
 		/// <summary>
@@ -47,11 +47,11 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// <param name="reportParameter">The report parameter instance.</param>
 		public ReportParameter(Core.Model.RISI.ReportParameter reportParameter) : this()
 		{
-			this.DefaultValues.Add(new ParameterValue(reportParameter.Value));
 			this.Id = reportParameter.Key.Value;
 			this.IsNullable = reportParameter.IsNullable;
 			this.Name = reportParameter.Name;
 			this.ParameterTypeId = reportParameter.ParameterType.Key.Value;
+			this.Value = reportParameter.Value;
 		}
 
 		/// <summary>
@@ -59,11 +59,6 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// </summary>
 		[Required]
 		public DateTimeOffset CreationTime { get; set; }
-
-		/// <summary>
-		/// Gets or sets the default values associated with the report parameter.
-		/// </summary>
-		public virtual ICollection<ParameterValue> DefaultValues { get; set; }
 
 		/// <summary>
 		/// Gets or sets the id of the parameter.
@@ -92,10 +87,10 @@ namespace OpenIZ.Persistence.Reporting.Model
 		public int Order { get; set; }
 
 		/// <summary>
-		/// Gets or sets the parameter type reference associated with the report parameter.
+		/// Gets or sets the parameter type associated with the report parameter.
 		/// </summary>
 		[ForeignKey("ParameterTypeId")]
-		public virtual ParameterType ParameterType { get; set; }
+		public ParameterType ParameterType { get; set; }
 
 		/// <summary>
 		/// Gets or sets the id of the parameter type associated with the report parameter.
@@ -110,9 +105,14 @@ namespace OpenIZ.Persistence.Reporting.Model
 		public virtual ReportDefinition ReportDefinition { get; set; }
 
 		/// <summary>
-		/// Gets or sets the report ID associated with the report parameter.
+		/// Gets or sets the report id associated with the report parameter.
 		/// </summary>
 		[Required]
 		public Guid ReportId { get; set; }
+
+		/// <summary>
+		/// Get or set the value of the report parameter.
+		/// </summary>
+		public byte[] Value { get; set; }
 	}
 }

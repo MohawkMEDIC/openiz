@@ -34,18 +34,13 @@ namespace OpenIZ.Persistence.Reporting.Context
 		/// </summary>
 		public ApplicationDbContext() : base(ReportingService.Configuration.ConnectionStringName)
 		{
-			this.Configuration.LazyLoadingEnabled = false;
+
 		}
 
 		/// <summary>
 		/// Gets or sets the data types.
 		/// </summary>
 		public DbSet<ParameterType> ParameterTypes { get; set; }
-
-		/// <summary>
-		/// Gets or sets the parameter values.
-		/// </summary>
-		public DbSet<ParameterValue> ParameterValues { get; set; }
 
 		/// <summary>
 		/// Gets or sets the report definitions.

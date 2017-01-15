@@ -269,37 +269,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// <param name="parameters">The parameters of the report.</param>
 		public byte[] RunReport(Guid reportId, Guid reportFormat, IEnumerable<ReportParameter> parameters)
 		{
-			byte[] report = null;
-
-			var orderedParameters = parameters.OrderBy(p => p.Order);
-
-			var format = this.reportFormatPersistenceService.Get(new Identifier<Guid>(reportFormat), AuthenticationContext.Current.Principal, true);
-
-			var path = this.ReportUri + "/" + reportId + "." + format.Format;
-
-			var first = true;
-
-			foreach (var parameter in orderedParameters)
-			{
-				if (first)
-				{
-					path += "?" + orderedParameters.First().Name + "=" + orderedParameters.First().Value;
-					first = false;
-				}
-				else
-				{
-					path += "&" + parameter.Name + "=" + parameter.Value;
-				}
-			}
-
-			var response = this.client.GetAsync(path, HttpCompletionOption.ResponseContentRead).Result;
-
-			if (response.IsSuccessStatusCode)
-			{
-				report = response.Content.ReadAsByteArrayAsync().Result;
-			}
-
-			return report;
+			throw new NotImplementedException();
 		}
 
 		/// <summary>

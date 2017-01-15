@@ -18,8 +18,12 @@
  * Date: 2017-1-9
  */
 
+using System;
+using System.Collections.Generic;
 using OpenIZ.Persistence.Reporting.Context;
 using System.Data.Entity.Migrations;
+using OpenIZ.Core.Model.RISI.Constants;
+using OpenIZ.Persistence.Reporting.Model;
 
 namespace OpenIZ.Persistence.Reporting.Migrations
 {
@@ -54,14 +58,11 @@ namespace OpenIZ.Persistence.Reporting.Migrations
 			//	{
 			//		new ReportParameter
 			//		{
-			//			ParameterTypeId = ParameterTypeKeys.Guid,
 			//			IsNullable = false,
 			//			Order = 0,
 			//			Name = "test parameter",
-			//			DefaultValues = new List<ParameterValue>
-			//			{
-			//				new ParameterValue(Guid.NewGuid())
-			//			}
+			//			ParameterTypeId = ParameterTypeKeys.Guid,
+			//			Value = Guid.NewGuid().ToByteArray()
 			//		}
 			//	}
 			//});

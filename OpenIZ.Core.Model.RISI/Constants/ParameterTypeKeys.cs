@@ -31,19 +31,9 @@ namespace OpenIZ.Core.Model.RISI.Constants
 	public static class ParameterTypeKeys
 	{
 		/// <summary>
-		/// Represents a binary value.
-		/// </summary>
-		public static Guid Binary = Guid.Parse("41FFA3F1-D886-4E8B-A92C-F20C4DD561C3");
-
-		/// <summary>
 		/// Represents a boolean value.
 		/// </summary>
 		public static readonly Guid Boolean = Guid.Parse("8C86A76C-EB72-4213-81F7-D56D7D606C2E");
-
-		/// <summary>
-		/// Represents a date value.
-		/// </summary>
-		public static readonly Guid Date = Guid.Parse("8E7CC74A-2008-4F12-88EF-BC49D5E94744");
 
 		/// <summary>
 		/// Represents a date time value.

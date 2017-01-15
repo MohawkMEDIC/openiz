@@ -26,11 +26,9 @@
 		domainClass="OpenIZ.Persistence.Reporting.Model.ReportDefinition, OpenIZ.Persistence.Reporting, Version=0.6.0.0">
     <property modelName="Key" domainName="Id" />
     <property modelName="Name" domainName="Name" />
+    <property modelName="CreationTime" domainName="CreationTime"/>
     <property modelName="Description" domainName="Description" />
     <property modelName="CorrelationId" domainName="CorrelationId" />
-    <!--<property modelName="Parameters" domainName="Parameters">
-      <via domainName="Parameters" />
-    </property>-->
   </class>
 
   <!-- Report Parameters -->
@@ -39,7 +37,8 @@
     <property modelName="Key" domainName="Id" />
     <property modelName="Name" domainName="Name" />
     <property modelName="Order" domainName="Order" />
-    <!--<property modelName="Value" domainName="Value" />-->
+    <property modelName="CreationTime" domainName="CreationTime"/>
+    <property modelName="Value" domainName="Value" />
     <property modelName="IsNullable" domainName="IsNullable" />
     <property modelName="ReportDefinition" domainName="ReportDefinition" />
   </class>
@@ -48,9 +47,6 @@
   <class modelClass="OpenIZ.Core.Model.RISI.ParameterType, OpenIZ.Core.Model.RISI, Version=0.6.0.0"
 		domainClass="OpenIZ.Persistence.Reporting.Model.ParameterType, OpenIZ.Persistence.Reporting, Version=0.6.0.0">
     <property modelName="Key" domainName="Id" />
-    <property modelName="Name" domainName="Name" />
-    <!--<property modelName="ReportParameters" domainName="ReportParameters">
-      <via domainName="ReportParameters" />
-    </property>-->
+    <property modelName="CreationTime" domainName="CreationTime"/>
   </class>
 </modelMap>

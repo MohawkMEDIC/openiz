@@ -31,6 +31,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Principal;
+using MARC.HI.EHRS.SVC.Core;
+using OpenIZ.Core.Security;
 
 namespace OpenIZ.Persistence.Reporting.Services
 {
@@ -43,6 +45,19 @@ namespace OpenIZ.Persistence.Reporting.Services
 		/// The internal reference to the <see cref="TraceSource"/> instance.
 		/// </summary>
 		private readonly TraceSource tracer = new TraceSource("OpenIZ.Persistence.Reporting");
+
+		/// <summary>
+		/// The internal reference to the <see cref="ParameterType"/> <see cref="IDataPersistenceService{TData}"/>.
+		/// </summary>
+		private readonly IDataPersistenceService<ParameterType> parameterTypePersistenceService;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ReportDefinitionPersistenceService"/> class.
+		/// </summary>
+		public ReportDefinitionPersistenceService()
+		{
+			this.parameterTypePersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ParameterType>>();
+		}
 
 		/// <summary>
 		/// Fired after a report is inserted.
@@ -106,6 +121,18 @@ namespace OpenIZ.Persistence.Reporting.Services
 		}
 
 		/// <summary>
+		/// Converts a model instance to a domain instance.
+		/// </summary>
+		/// <param name="modelInstance">The model instance to convert.</param>
+		/// <returns>Returns the converted model instance.</returns>
+		internal override Model.ReportDefinition FromModelInstance(ReportDefinition modelInstance)
+		{
+			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(Model.ReportDefinition) } to { nameof(ReportDefinition) }");
+
+			return modelInstance == null ? null : ModelMapper.MapModelInstance<ReportDefinition, Model.ReportDefinition>(modelInstance);
+		}
+
+		/// <summary>
 		/// Gets a report by id.
 		/// </summary>
 		/// <typeparam name="TIdentifier">The type of identifier.</typeparam>
@@ -121,9 +148,8 @@ namespace OpenIZ.Persistence.Reporting.Services
 			{
 				var reportDefinition = context.ReportDefinitions.Find(containerId.Id);
 
-				reportDefinition = this.LoadRelations(context, reportDefinition);
-
 				result = this.ToModelInstance(reportDefinition);
+
 				result.Parameters = reportDefinition.Parameters.ToList().Select(p => new ReportParameter
 				{
 					Key = p.Id,
@@ -131,12 +157,8 @@ namespace OpenIZ.Persistence.Reporting.Services
 					Name = p.Name,
 					IsNullable = p.IsNullable,
 					Order = p.Order,
-					//ParameterType = new ParameterType
-					//{
-					//	Key = p.ParameterType.Id,
-					//	Name = p.ParameterType.Name,
-					//	CreationTime = p.ParameterType.CreationTime,
-					//},
+					ParameterType = this.parameterTypePersistenceService.Get<Guid>(new Identifier<Guid>(p.ParameterTypeId), AuthenticationContext.Current.Principal, true),
+					Value = p.Value
 				}).ToList();
 
 				this.Retrieving?.Invoke(this, new PreRetrievalEventArgs<ReportDefinition>(result, principal));
@@ -274,6 +296,18 @@ namespace OpenIZ.Persistence.Reporting.Services
 		}
 
 		/// <summary>
+		/// Converts a domain instance to a model instance.
+		/// </summary>
+		/// <param name="domainInstance">The domain instance to convert.</param>
+		/// <returns>Returns the converted model instance.</returns>
+		internal override ReportDefinition ToModelInstance(Model.ReportDefinition domainInstance)
+		{
+			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(ReportDefinition) } to { nameof(Model.ReportDefinition) }");
+
+			return domainInstance == null ? null : ModelMapper.MapDomainInstance<Model.ReportDefinition, ReportDefinition>(domainInstance);
+		}
+
+		/// <summary>
 		/// Updates a report.
 		/// </summary>
 		/// <param name="storageData">The report to update.</param>
@@ -300,28 +334,6 @@ namespace OpenIZ.Persistence.Reporting.Services
 			this.Updated?.Invoke(this, new PostPersistenceEventArgs<ReportDefinition>(result, principal));
 
 			return result;
-		}
-
-		/// <summary>
-		/// Converts a model instance to a domain instance.
-		/// </summary>
-		/// <param name="modelInstance">The model instance to convert.</param>
-		/// <returns>Returns the converted model instance.</returns>
-		internal override Model.ReportDefinition FromModelInstance(ReportDefinition modelInstance)
-		{
-			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(Model.ReportDefinition) } to { nameof(ReportDefinition) }");
-			return modelInstance == null ? null : ModelMapper.MapModelInstance<ReportDefinition, Model.ReportDefinition>(modelInstance);
-		}
-
-		/// <summary>
-		/// Converts a domain instance to a model instance.
-		/// </summary>
-		/// <param name="domainInstance">The domain instance to convert.</param>
-		/// <returns>Returns the converted model instance.</returns>
-		internal override ReportDefinition ToModelInstance(Model.ReportDefinition domainInstance)
-		{
-			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(ReportDefinition) } to { nameof(Model.ReportDefinition) }");
-			return domainInstance == null ? null : ModelMapper.MapDomainInstance<Model.ReportDefinition, ReportDefinition>(domainInstance);
 		}
 	}
 }

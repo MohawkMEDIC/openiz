@@ -43,10 +43,10 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// Initializes a new instance of the <see cref="ParameterType"/> class
 		/// with a specific name.
 		/// </summary>
-		/// <param name="name">The name of the parameter type.</param>
-		public ParameterType(string name) : this()
+		/// <param name="type">The type of parameter.</param>
+		public ParameterType(string type) : this()
 		{
-			this.Name = name;
+			this.Type = type;
 		}
 
 		/// <summary>
@@ -66,8 +66,7 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// Gets or sets the name of the parameter type.
 		/// </summary>
 		[Required]
-		[StringLength(256)]
-		public string Name { get; set; }
+		public string Type { get; set; }
 
 		/// <summary>
 		/// Gets or sets a list of report parameters associated with the parameter type.

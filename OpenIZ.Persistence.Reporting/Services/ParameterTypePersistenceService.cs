@@ -122,6 +122,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 				var parameterType = context.ParameterTypes.Find(containerId.Id);
 
 				result = this.ToModelInstance(parameterType);
+				result.SystemType = Type.GetType(parameterType.Type);
 
 				this.Retrieving?.Invoke(this, new PreRetrievalEventArgs<ParameterType>(result, principal));
 			}

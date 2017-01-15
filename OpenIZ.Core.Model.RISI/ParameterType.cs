@@ -47,18 +47,6 @@ namespace OpenIZ.Core.Model.RISI
 		public AutoCompleteSourceDefinition AutoCompleteSource { get; set; }
 
 		/// <summary>
-		/// Gets or sets the description of the report data type.
-		/// </summary>
-		[XmlAttribute("description")]
-		public string Description { get; set; }
-
-		/// <summary>
-		/// Gets or sets the name of the type.
-		/// </summary>
-		[XmlElement("name")]
-		public string Name { get; set; }
-
-		/// <summary>
 		/// Gets or sets the system type.
 		/// </summary>
 		[XmlIgnore]
@@ -81,19 +69,13 @@ namespace OpenIZ.Core.Model.RISI
 		}
 
 		/// <summary>
-		/// Gets or sets the value of the report data type.
-		/// </summary>
-		[XmlElement("values")]
-		public object[] Values { get; set; }
-
-		/// <summary>
 		/// Gets or sets the values provider of the report data type.
 		/// </summary>
 		[XmlAttribute("provider")]
 		public string ValuesProvider { get; set; }
 
 		/// <summary>
-		/// Gets or sets a list of report parameters associated with the paramter type.
+		/// Gets or sets a list of report parameters associated with the parameter type.
 		/// </summary>
 		[XmlElement("reportParameters")]
 		public List<ReportParameter> ReportParameters { get; set; }
