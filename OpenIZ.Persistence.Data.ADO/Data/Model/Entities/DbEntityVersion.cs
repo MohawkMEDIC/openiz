@@ -59,7 +59,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
         /// Gets or sets the version id
         /// </summary>
         [Column("ent_vrsn_id"), PrimaryKey]
-        public override Guid VersionId { get; set; }
+        public override Guid VersionKey { get; set; }
     }
 }
 

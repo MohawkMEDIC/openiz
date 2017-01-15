@@ -39,7 +39,7 @@ namespace OpenIZ.Persistence.Data.ADO.Util
 
             this.OrmType = t;
             this.TableName = t.GetCustomAttribute<TableAttribute>()?.Name ?? t.Name;
-            this.Columns = t.GetProperties().Where(o => o.GetCustomAttributes<ColumnAttribute>() != null).Select(o => ColumnMapping.Get(o));
+            this.Columns = t.GetProperties().Where(o => o.GetCustomAttributes<ColumnAttribute>() != null).Select(o => ColumnMapping.Get(o, this));
             foreach (var itm in this.Columns)
                 this.m_mappings.Add(itm.SourceProperty.Name, itm);
 
@@ -70,6 +70,16 @@ namespace OpenIZ.Persistence.Data.ADO.Util
         {
             ColumnMapping map = null;
             this.m_mappings.TryGetValue(mi.Name, out map);
+            return map;
+        }
+
+        /// <summary>
+        /// Get the column mapping for the named property
+        /// </summary>
+        public ColumnMapping GetColumn(string propertyName)
+        {
+            ColumnMapping map = null;
+            this.m_mappings.TryGetValue(propertyName, out map);
             return map;
         }
     }

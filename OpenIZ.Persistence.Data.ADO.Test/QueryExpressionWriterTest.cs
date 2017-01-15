@@ -5,6 +5,8 @@ using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
 using System.Linq;
 using System.Diagnostics;
 using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Roles;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Persistence.Data.ADO.Test
 {
@@ -79,7 +81,7 @@ namespace OpenIZ.Persistence.Data.ADO.Test
             Guid mg = Guid.NewGuid();
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            SqlStatement sql = new SqlStatement<DbActVersion>().SelectFrom("foo").Where(o=>o.Key == mg || o.Key == Guid.NewGuid() && o.CreationTime <= DateTime.Now).Build();
+            SqlStatement sql = new SqlStatement<DbActVersion>().SelectFrom("foo").Where(o => o.Key == mg || o.Key == Guid.NewGuid() && o.CreationTime <= DateTime.Now).Build();
             sw.Stop();
 
             Assert.IsTrue(sql.SQL.Contains("AS foo"));
@@ -95,13 +97,68 @@ namespace OpenIZ.Persistence.Data.ADO.Test
         /// Test re
         /// </summary>
         [TestMethod]
-        public void TestRewriteQueryParameter()
+        public void TestModelQueryShouldJoin()
         {
 
-            var query = QueryBuilder.CreateQuery<Act>(o => o.ActTime == DateTime.Now);
-
+            var query = QueryBuilder.CreateQuery<Patient>(o => o.DeterminerConceptKey == DeterminerKeys.Specific).Build();
+            Assert.IsTrue(query.SQL.Contains("SELECT * FROM pat_tbl"));
+            Assert.IsTrue(query.SQL.Contains("INNER JOIN ent_vrsn_tbl"));
 
         }
 
+        /// <summary>
+        /// Test re
+        /// </summary>
+        [TestMethod]
+        public void TestModelQueryShouldExistsClause()
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            var query = QueryBuilder.CreateQuery<Patient>(o => o.DeterminerConcept.Mnemonic == "Instance").Build();
+            sw.Stop();
+
+            Assert.IsTrue(query.SQL.Contains("SELECT * FROM pat_tbl"));
+            Assert.IsTrue(query.SQL.Contains("INNER JOIN ent_vrsn_tbl"));
+            Assert.IsTrue(query.SQL.Contains("WITH"));
+            Assert.IsTrue(query.SQL.Contains("cte0"));
+            Assert.AreEqual(1, query.Arguments.Count());
+        }
+
+        /// <summary>
+        /// Test re
+        /// </summary>
+        [TestMethod]
+        public void TestModelQueryShouldSubQueryClause()
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            var query = QueryBuilder.CreateQuery<Patient>(o => o.Participations.Where(guard => guard.ParticipationRole.Mnemonic == "RecordTarget").Any(sub => sub.PlayerEntity.ObsoletionTime == null));
+            sw.Stop();
+
+            Assert.IsTrue(query.SQL.Contains("SELECT * FROM pat_tbl"));
+            Assert.IsTrue(query.SQL.Contains("INNER JOIN ent_vrsn_tbl"));
+            Assert.IsTrue(query.SQL.Contains("WITH"));
+            Assert.IsTrue(query.SQL.Contains("cte0"));
+            Assert.AreEqual(1, query.Arguments.Count());
+        }
+
+        /// <summary>
+        /// Test re
+        /// </summary>
+        [TestMethod]
+        public void TestModelQueryShouldSubQueryIntersect()
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            var query = QueryBuilder.CreateQuery<Patient>(o => o.Names.Where(guard => guard.NameUse.Mnemonic == "Legal").Any(v => v.Component.Where(b => b.ComponentType.Mnemonic == "Family").Any(n => n.Value == "Smith")) &&
+                o.Names.Where(guard => guard.NameUse.Mnemonic == "Legal").Any(v => v.Component.Where(b => b.ComponentType.Mnemonic == "Given").Any(n => n.Value == "John")));
+            sw.Stop();
+
+            Assert.IsTrue(query.SQL.Contains("SELECT * FROM pat_tbl"));
+            Assert.IsTrue(query.SQL.Contains("INNER JOIN ent_vrsn_tbl"));
+            Assert.IsTrue(query.SQL.Contains("WITH"));
+            Assert.IsTrue(query.SQL.Contains("cte0"));
+            Assert.AreEqual(1, query.Arguments.Count());
+        }
     }
 }

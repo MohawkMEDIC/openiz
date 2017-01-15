@@ -64,7 +64,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
         /// The version identifier
         /// </summary>
         [Column("cd_vrsn_id"), PrimaryKey]
-        public override Guid VersionId { get; set; }
+        public override Guid VersionKey { get; set; }
 
         /// <summary>
         /// Gets or sets the key

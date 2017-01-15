@@ -99,7 +99,7 @@ namespace OpenIZ.Core.Model.Map
         internal ClassMap GetModelClassMap(Type modelType, Type domainType)
         {
             var retVal = this.GetModelClassMap(modelType);
-            if (retVal?.DomainType == domainType)
+            if (retVal?.DomainType == (domainType ?? retVal?.DomainType))
                 return retVal;
             else
                 return this.Class.Find(o => o.ModelType == modelType && o.DomainType == domainType);

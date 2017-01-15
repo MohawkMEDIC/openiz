@@ -116,7 +116,9 @@ namespace OpenIZ.Persistence.Data.ADO.Util
         /// <returns></returns>
         public SqlStatement Where(SqlStatement clause)
         {
-            return this.Append( new SqlStatement("WHERE ").Append(clause));
+            if (String.IsNullOrEmpty(clause.SQL) && clause.m_rhs == null)
+                return this;
+            return this.Append(new SqlStatement("WHERE ").Append(clause));
         }
 
         /// <summary>
@@ -132,7 +134,10 @@ namespace OpenIZ.Persistence.Data.ADO.Util
         /// </summary>
         public SqlStatement And(SqlStatement clause)
         {
-            return this.Append( new SqlStatement("AND (").Append(clause).Append(") "));
+            if (String.IsNullOrEmpty(this.m_sql) && this.m_rhs == null)
+                return this.Append(clause);
+            else
+                return this.Append( new SqlStatement("AND (").Append(clause).Append(") "));
         }
 
         /// <summary>

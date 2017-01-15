@@ -99,15 +99,23 @@ namespace OpenIZ.Core.Model.Map
         /// <summary>
         /// Maps a model property at a root level only
         /// </summary>
-        public PropertyInfo MapModelProperty<TModel>(PropertyInfo propertyInfo)
+        public PropertyInfo MapModelProperty(Type tmodel, PropertyInfo propertyInfo)
         {
-            var classMap = this.m_mapFile.GetModelClassMap(typeof(TModel));
+            return this.MapModelProperty(tmodel, null, propertyInfo);
+        }
+
+        /// <summary>
+        /// Maps a model property at a root level only
+        /// </summary>
+        public PropertyInfo MapModelProperty(Type tmodel, Type tdomain, PropertyInfo propertyInfo)
+        {
+            var classMap = this.m_mapFile.GetModelClassMap(tmodel, tdomain);
+            tdomain = tdomain ?? classMap?.DomainType;
             PropertyMap propMap = null;
-            if (classMap == null) return null;
-            else if (classMap.TryGetModelProperty(propertyInfo.Name, out propMap))
-                return classMap.DomainType.GetRuntimeProperty(propMap.DomainName);
+            if (classMap?.TryGetModelProperty(propertyInfo.Name, out propMap) == true)
+                return tdomain?.GetRuntimeProperty(propMap.DomainName);
             else
-                return null;
+                return tdomain?.GetRuntimeProperty(propertyInfo.Name);
         }
 
         // The map file

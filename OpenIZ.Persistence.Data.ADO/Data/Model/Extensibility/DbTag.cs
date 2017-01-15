@@ -42,7 +42,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility
         /// Created by 
         /// </summary>
         [Column("crt_usr_id"), ForeignKey(typeof(DbSecurityUser), nameof(DbSecurityUser.Key))]
-        public Guid CreatedBy { get; set; }
+        public Guid CreatedByKey { get; set; }
 
         /// <summary>
         /// Creation time
@@ -54,7 +54,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility
         /// Obsoleted by 
         /// </summary>
         [Column("obslt_usr_id"), ForeignKey(typeof(DbSecurityUser), nameof(DbSecurityUser.Key))]
-        public Guid? ObsoletedBy { get; set; }
+        public Guid? ObsoletedByKey { get; set; }
 
         /// <summary>
         /// Gets or sets the obsoletion time

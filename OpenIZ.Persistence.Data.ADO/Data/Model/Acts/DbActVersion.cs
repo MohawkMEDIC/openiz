@@ -79,7 +79,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// Version identifier
         /// </summary>
         [Column("act_vrsn_id"), PrimaryKey]
-        public override Guid VersionId { get; set; }
+        public override Guid VersionKey { get; set; }
         
         /// <summary>
         /// Gets or sets the act identifier

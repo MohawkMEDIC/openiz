@@ -257,14 +257,14 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Get a property based on XML property and/or serialization redirect
         /// </summary>
-        public static PropertyInfo GetXmlProperty(this Type type, string propertyName)
+        public static PropertyInfo GetXmlProperty(this Type type, string propertyName, bool followReferences = false)
         {
             PropertyInfo retVal = null;
-            var key = String.Format("{0}.{1}", type.FullName, propertyName);
+            var key = String.Format("{0}.{1}[{2}]", type.FullName, propertyName, followReferences);
             if (!s_propertyCache.TryGetValue(key, out retVal))
             {
                 retVal = type.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<XmlElementAttribute>()?.ElementName == propertyName);
-                retVal = type.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty == retVal.Name) ?? retVal;
+                if(followReferences) retVal = type.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty == retVal.Name) ?? retVal;
                 lock (s_propertyCache)
                     if (!s_propertyCache.ContainsKey(key))
                         s_propertyCache.Add(key, retVal);
