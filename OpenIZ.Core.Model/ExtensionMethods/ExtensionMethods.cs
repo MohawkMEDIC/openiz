@@ -27,6 +27,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model
 {
@@ -35,7 +36,10 @@ namespace OpenIZ.Core.Model
     /// </summary>
     public static class ExtensionMethods
     {
-        
+
+        // Property cache
+        private static Dictionary<String, PropertyInfo> s_propertyCache = new Dictionary<string, PropertyInfo>();
+
         /// <summary>
         /// Compute a basic hash string
         /// </summary>
@@ -69,6 +73,7 @@ namespace OpenIZ.Core.Model
                 return t.GetTypeInfo().GenericTypeArguments[0];
             return t;
         }
+
         /// <summary>
         /// Strips any nullable typing
         /// </summary>
@@ -249,6 +254,23 @@ namespace OpenIZ.Core.Model
             //return Type.DefaultBinder.SelectMethod(flags, methods.ToArray(), argTypes, null);
         }
 
+        /// <summary>
+        /// Get a property based on XML property and/or serialization redirect
+        /// </summary>
+        public static PropertyInfo GetXmlProperty(this Type type, string propertyName)
+        {
+            PropertyInfo retVal = null;
+            var key = String.Format("{0}.{1}", type.FullName, propertyName);
+            if (!s_propertyCache.TryGetValue(key, out retVal))
+            {
+                retVal = type.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<XmlElementAttribute>()?.ElementName == propertyName);
+                retVal = type.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty == retVal.Name) ?? retVal;
+                lock (s_propertyCache)
+                    if (!s_propertyCache.ContainsKey(key))
+                        s_propertyCache.Add(key, retVal);
+            }
+            return retVal;
+        }
 
     }
 }

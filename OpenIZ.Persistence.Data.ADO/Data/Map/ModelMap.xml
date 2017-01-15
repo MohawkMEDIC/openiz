@@ -1,0 +1,400 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-6-14
+ -->
+<modelMap xmlns="http://openiz.org/model/map">
+  <!-- Security Users -->
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityUser, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Persistence.Data.ADO.Model.Security.DbSecurityUser, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="ObsoletionTime" domainName="ObsoletionTime"/>
+    <property modelName="CreatedByKey" domainName="CreatedByKey"/>
+    <property modelName="UpdatedByKey" domainName="UpdatedByKey"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedByKey"/>
+  </class>
+
+  <!-- Security Application -->
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityApplication, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Persistence.Data.ADO.Model.Security.DbSecurityApplication, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="CreatedByKey" domainName="CreatedByKey"/>
+    <property modelName="UpdatedByKey" domainName="UpdatedByKey"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedByKey"/>
+    <property modelName="Name" domainName="PublicId"/>
+  </class>
+
+  <!-- Security Device -->
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityDevice, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Persistence.Data.ADO.Model.Security.DbSecurityDevice, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="CreatedByKey" domainName="CreatedByKey"/>
+    <property modelName="UpdatedByKey" domainName="UpdatedByKey"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedByKey"/>
+    <property modelName="Name" domainName="PublicId"/>
+  </class>
+
+  <!-- Security Role -->
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityRole, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Persistence.Data.ADO.Model.Security.DbSecurityRole, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="Name" domainName="Name"/>
+
+  </class>
+
+  <!-- Security Role -->
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityPolicyInstance, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Persistence.Data.ADO.Model.Security.DbSecurityRolePolicy, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="SourceEntityKey" domainName="RoleId"/>
+    <property modelName="PolicyKey" domainName="PolicyId"/>
+  </class>
+
+  <!-- Security Role -->
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityPolicy, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Persistence.Data.ADO.Model.Security.DbSecurityPolicy, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="Name" domainName="Name"/>
+    <property modelName="CanOverride" domainName="CanOverride"/>
+    <property modelName="Oid" domainName="Oid"/>
+  </class>
+
+  <!-- Concepts -->
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptSet, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Persistence.Data.ADO.Model.Concepts.DbConceptSet, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+  </class>
+  <class modelClass="OpenIZ.Core.Model.DataTypes.Concept, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Model.Concepts.DbConcept, OpenIZ.Mobile.Core, Version=0.5.0.0">
+
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="VersionKey" domainName="VersionKey"/>
+    <property modelName="PreviousVersionKey" domainName="PreviousVersionKey"/>
+    <property modelName="StatusConceptKey" domainName="StatusKey"/>
+    <property modelName="ClassKey" domainName="ClassKey"/>
+    <property modelName="CreatedByKey" domainName="CreatedByKey"    />
+    <property modelName="CreatedByKey" domainName="UpdatedByKey"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedByKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptClass, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Model.Concepts.DbConceptClass, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+  </class>
+
+  <!-- Concept Names -->
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptName, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Model.Concepts.DbConceptName, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="PhoneticAlgorithmKey" domainName="PhoneticAlgorithmKey"/>
+    <property modelName="SourceEntityKey" domainName="ConceptKey"/>
+  </class>
+
+  <!-- Entity Maps -->
+  <class modelClass="OpenIZ.Core.Model.Entities.Entity, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Model.Entities.DbEntity, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="VersionKey" domainName="VersionKey"/>
+    <property modelName="PreviousVersionKey" domainName="PreviousVersionKey"/>
+    <property modelName="StatusConceptKey" domainName="StatusConceptKey"/>
+    <property modelName="ClassConceptKey" domainName="ClassConceptKey"/>
+    <property modelName="DeterminerConceptKey" domainName="DeterminerConceptKey"/>
+    <property modelName="TypeConceptKey" domainName="TypeConceptKey"/>
+    <property modelName="CreatedByKey" domainName="CreatedByKey"    />
+    <property modelName="CreatedByKey" domainName="UpdatedByKey"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedByKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityName, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Model.Entities.DbEntityName, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="NameUseKey" domainName="UseConceptKey"/>
+    <property modelName="SourceEntityKey" domainName="EntityKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityNameComponent, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Model.Entities.DbEntityNameComponent, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="SourceEntityKey" domainName="NameKey"/>
+    <property modelName="ComponentTypeKey" domainName="ComponentTypeKey"/>
+    <property modelName="PhoneticAlgorithmKey" domainName="PhoneticAlgorithmKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityAddress, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Entities.DbEntityAddress, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="AddressUseKey" domainName="UseConceptKey"/>
+    <property modelName="SourceEntityKey" domainName="EntityKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityAddressComponent, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Model.Entities.DbEntityAddressComponent, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="SourceEntityKey" domainName="AddressKey"/>
+    <property modelName="ComponentTypeKey" domainName="ComponentTypeKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityRelationship, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Entities.DbEntityRelationship, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="SourceEntityKey" domainName="EntityKey"/>
+    <property modelName="TargetEntityKey" domainName="TargetKey"/>
+    <property modelName="RelationshipTypeKey" domainName="RelationshipTypeKey"/>
+    <property modelName="Quantity" domainName="Quantity"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.EntityIdentifier, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Model.DataType.DbEntityIdentifier, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="IdentifierTypeKey" domainName="TypeKey"/>
+    <property modelName="AuthorityKey" domainName="AuthorityKey"/>
+    <property modelName="SourceEntityKey" domainName="EntityKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.IdentifierType, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Model.DataType.DbIdentifierType, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="TypeConceptKey" domainName="TypeConceptKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.AssigningAuthority, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.DataType.DbAssigningAuthority, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="AssigningDeviceKey" domainName="AssigningDeviceKey"/>
+    <property modelName="CreatedByKey" domainName="CreatedByKey"    />
+    <property modelName="CreatedByKey" domainName="UpdatedByKey"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedByKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityTelecomAddress, OpenIZ.Core.Model, Version=1.0.0.0"
+     domainClass="OpenIZ.Persistence.Data.ADO.Model.Entities.DbTelecomAddress, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="AddressUseKey" domainName="TelecomUseKey"/>
+    <property modelName="SourceEntityKey" domainName="EntityKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.EntityExtension, OpenIZ.Core.Model, Version=1.0.0.0"
+   domainClass="OpenIZ.Persistence.Data.ADO.Model.Extensibility.DbEntityExtension, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="ExtensionTypeKey" domainName="ExtensionTypeKey"/>
+    <property modelName="SourceEntityKey" domainName="EntityKey"/>
+    <property modelName="ExtensionValueXml" domainName="Value"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.EntityNote, OpenIZ.Core.Model, Version=1.0.0.0"
+ domainClass="OpenIZ.Persistence.Data.ADO.Model.Extensibility.DbEntityNote, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="SourceEntityKey" domainName="EntityKey"/>
+    <property modelName="AuthorKey" domainName="AuthorKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.EntityTag, OpenIZ.Core.Model, Version=1.0.0.0"
+ domainClass="OpenIZ.Persistence.Data.ADO.Model.Extensibility.DbEntityTag, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="SourceEntityKey" domainName="EntityKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ExtensionType, OpenIZ.Core.Model, Version=1.0.0.0"
+   domainClass="OpenIZ.Persistence.Data.ADO.Model.Extensibility.DbExtensionType, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+  </class>
+
+  <!-- Person Maps -->
+  <class modelClass="OpenIZ.Core.Model.Entities.Person, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Entities.DbPerson, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.PersonLanguageCommunication, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Entities.DbPersonLanguageCommunication, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="SourceEntityKey" domainName="EntityKey"/>
+  </class>
+
+  <!-- Patient Maps -->
+  <class modelClass="OpenIZ.Core.Model.Roles.Patient, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Roles.DbPatient, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="GenderConceptKey" domainName="GenderConceptKey"/>
+  </class>
+
+  <!-- Material Maps -->
+  <class modelClass="OpenIZ.Core.Model.Entities.Material, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Entities.DbMaterial, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="FormConceptKey" domainName="FormConceptKey"/>
+    <property modelName="QuantityConceptKey" domainName="QuantityConceptKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.ManufacturedMaterial, OpenIZ.Core.Model, Version=1.0.0.0"
+     domainClass="OpenIZ.Persistence.Data.ADO.Model.Entities.DbManufacturedMaterial, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+  </class>
+
+  <!-- Provider Maps -->
+  <class modelClass="OpenIZ.Core.Model.Roles.Provider, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Roles.DbProvider, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="ProviderSpecialtyKey" domainName="Specialty"/>
+  </class>
+
+  <!-- Industry Maps -->
+  <class modelClass="OpenIZ.Core.Model.Entities.Organization, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Entities.DbOrganization, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="IndustryConceptKey" domainName="IndustryConceptKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.Place, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Entities.DbPlace, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.PlaceService, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Entities.DbPlaceService, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="SourceEntityKey" domainName="EntityKey"/>
+    <property modelName="ServiceConceptKey" domainName="ServiceConceptKey"/>
+  </class>
+
+  <!-- Security entities -->
+  <class modelClass="OpenIZ.Core.Model.Entities.ApplicationEntity, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Entities.DbApplicationEntity, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="SecurityApplicationKey" domainName="SecurityApplicationKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.DeviceEntity, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Entities.DbDeviceEntity, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="SecurityDeviceKey" domainName="SecurityDeviceKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.UserEntity, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Entities.DbUserEntity, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="SecurityUserKey" domainName="SecurityUserKey"/>
+  </class>
+
+  <!-- Represents Act Model -->
+  <class modelClass="OpenIZ.Core.Model.Acts.Act, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Model.Acts.DbAct, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="VersionKey" domainName="VersionKey"/>
+    <property modelName="PreviousVersionKey" domainName="PreviousVersionKey"/>
+    <property modelName="StatusConceptKey" domainName="StatusConceptKey"/>
+    <property modelName="ClassConceptKey" domainName="ClassConceptKey"/>
+    <property modelName="MoodConceptKey" domainName="MoodConceptKey"/>
+    <property modelName="ReasonConceptKey" domainName="ReasonConceptKey"/>
+    <property modelName="TypeConceptKey" domainName="TypeConceptKey"/>
+    <property modelName="CreatedByKey" domainName="CreatedByKey"    />
+    <property modelName="CreatedByKey" domainName="UpdatedByKey"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedByKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ActExtension, OpenIZ.Core.Model, Version=1.0.0.0"
+ domainClass="OpenIZ.Persistence.Data.ADO.Model.Extensibility.DbActExtension, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="ExtensionTypeKey" domainName="ExtensionTypeKey"/>
+    <property modelName="SourceEntityKey" domainName="ActKey"/>
+    <property modelName="ExtensionValueXml" domainName="Value"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ActNote, OpenIZ.Core.Model, Version=1.0.0.0"
+ domainClass="OpenIZ.Persistence.Data.ADO.Model.Extensibility.DbActNote, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="SourceEntityKey" domainName="ActKey"/>
+    <property modelName="AuthorKey" domainName="AuthorKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ActTag, OpenIZ.Core.Model, Version=1.0.0.0"
+ domainClass="OpenIZ.Persistence.Data.ADO.Model.Extensibility.DbActTag, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="SourceEntityKey" domainName="ActKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.ActRelationship, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Acts.DbActRelationship, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="SourceEntityKey" domainName="ActKey"/>
+    <property modelName="TargetActKey" domainName="TargetKey"/>
+    <property modelName="RelationshipTypeKey" domainName="RelationshipTypeKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ActIdentifier, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Model.DataType.DbActIdentifier, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="IdentifierTypeKey" domainName="TypeKey"/>
+    <property modelName="AuthorityKey" domainName="AuthorityKey"/>
+    <property modelName="SourceEntityKey" domainName="ActKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.ActParticipation, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Model.Acts.DbActParticipation, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="PlayerEntityKey" domainName="EntityKey"/>
+    <property modelName="PlayerEntityKey" domainName="Quantity"/>
+    <property modelName="SourceEntityKey" domainName="ActKey"/>
+    <property modelName="ParticipationRoleKey" domainName="ParticipationRoleKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.SubstanceAdministration, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Acts.DbSubstanceAdministration, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="RouteKey" domainName="RouteConceptKey"/>
+    <property modelName="SiteKey" domainName="SiteConceptKey"/>
+    <property modelName="DoseUnitKey" domainName="DoseUnitConceptKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.PatientEncounter, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Acts.DbPatientEncounter, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="DischargeDispositionKey" domainName="DischargeDispositionKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.Observation, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Acts.DbObservation, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="InterpretationConceptKey" domainName="InterpretationConceptKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.QuantityObservation, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Acts.DbQuantityObservation, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="UnitOfMeasureKey" domainName="UnitOfMeasureKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.CodedObservation, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Acts.DbCodedObservation, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="ValueKey" domainName="Value"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.TextObservation, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Model.Acts.DbTextObservation, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.TemplateDefinition, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Model.Extensibility.DbTemplateDefinition, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="CreatedByKey" domainName="CreatedByKey"/>
+    <property modelName="UpdatedByKey" domainName="UpdatedByKey"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedByKey"/>
+  </class>
+</modelMap>
