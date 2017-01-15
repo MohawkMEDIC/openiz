@@ -46,18 +46,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutoCompleteDefinition.cs" />
+    <Compile Include="AutoCompleteSourceDefinition.cs" />
     <Compile Include="Constants\ParameterTypeKeys.cs" />
     <Compile Include="Constants\ReportFormatKeys.cs" />
-    <Compile Include="Impl\DefaultDataTypeProvider.cs" />
-    <Compile Include="Impl\DefaultParameterProvider.cs" />
-    <Compile Include="Interfaces\IDataTypeProvider.cs" />
-    <Compile Include="Interfaces\IParameterProvider.cs" />
+    <Compile Include="Interfaces\IParameterValueProvider.cs" />
     <Compile Include="ListAutoCompleteSourceDefinition.cs" />
     <Compile Include="ReportFormat.cs" />
     <Compile Include="ReportParameter.cs" />
-    <Compile Include="ParameterDefinition.cs" />
-    <Compile Include="ParameterManifest.cs" />
     <Compile Include="ParameterType.cs" />
     <Compile Include="QueryAutoCompleteSourceDefinition.cs" />
     <Compile Include="ReportDefinition.cs" />

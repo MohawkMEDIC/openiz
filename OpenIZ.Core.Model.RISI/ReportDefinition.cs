@@ -18,8 +18,8 @@
  * Date: 2016-12-4
  */
 
-using System;
 using OpenIZ.Core.Model.Security;
+using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 

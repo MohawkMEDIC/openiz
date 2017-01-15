@@ -18,6 +18,7 @@
  * Date: 2016-12-4
  */
 
+using OpenIZ.Core.Model.RISI.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
@@ -25,7 +26,7 @@ using System.Xml.Serialization;
 namespace OpenIZ.Core.Model.RISI
 {
 	/// <summary>
-	/// Represents a parameter type definition.
+	/// Represents a parameter type.
 	/// </summary>
 	[XmlType(nameof(ParameterType), Namespace = "http://openiz.org/risi")]
 	[XmlRoot(nameof(ParameterType), Namespace = "http://openiz.org/risi")]
@@ -44,7 +45,13 @@ namespace OpenIZ.Core.Model.RISI
 		/// </summary>
 		[XmlElement("listAutoComplete", Type = typeof(ListAutoCompleteSourceDefinition))]
 		[XmlElement("queryAutoComplete", Type = typeof(QueryAutoCompleteSourceDefinition))]
-		public AutoCompleteSourceDefinition AutoCompleteSource { get; set; }
+		public AutoCompleteSourceDefinition AutoCompleteSourceDefinition { get; set; }
+
+		/// <summary>
+		/// Gets or sets a list of report parameters associated with the parameter type.
+		/// </summary>
+		[XmlElement("reportParameters")]
+		public List<ReportParameter> ReportParameters { get; set; }
 
 		/// <summary>
 		/// Gets or sets the system type.
@@ -73,12 +80,5 @@ namespace OpenIZ.Core.Model.RISI
 		/// </summary>
 		[XmlAttribute("provider")]
 		public string ValuesProvider { get; set; }
-
-		/// <summary>
-		/// Gets or sets a list of report parameters associated with the parameter type.
-		/// </summary>
-		[XmlElement("reportParameters")]
-		public List<ReportParameter> ReportParameters { get; set; }
-
 	}
 }

@@ -23,12 +23,13 @@ namespace OpenIZ.Reporting.Core
 	/// <summary>
 	/// Represents a service which supports bearer authentication.
 	/// </summary>
-	public interface ISupportBearerAuthentication
+	public interface ISupportBearerAuthentication : IAuthenticationHandler
 	{
 		/// <summary>
 		/// Authenticates against a remote system using a bearer token.
 		/// </summary>
 		/// <param name="token">The bearer token used to authenticate against the remote system.</param>
-		void Authenticate(string token);
+		/// <returns>Returns an authentication result.</returns>
+		AuthenticationResult Authenticate(string token);
 	}
 }

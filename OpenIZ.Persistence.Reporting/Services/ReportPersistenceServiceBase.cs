@@ -50,14 +50,6 @@ namespace OpenIZ.Persistence.Reporting.Services
 		internal abstract TModel ToModelInstance(TDomain domainInstance);
 
 		/// <summary>
-		/// Loads the relations for a given domain instance.
-		/// </summary>
-		/// <param name="context">The application database context.</param>
-		/// <param name="domainInstance">The domain instance for which the load the relations.</param>
-		/// <returns>Returns the updated domain instance.</returns>
-		protected abstract TDomain LoadRelations(ApplicationDbContext context, TDomain domainInstance);
-
-		/// <summary>
 		/// Converts a byte array to an object.
 		/// </summary>
 		/// <param name="content">The byte array to convert.</param>

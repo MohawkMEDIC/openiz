@@ -197,13 +197,13 @@ namespace OpenIZ.Messaging.RISI.Client
 		}
 
 		/// <summary>
-		/// Gets detailed information about a given report parameter.
+		/// Gets a report parameter by id.
 		/// </summary>
-		/// <param name="id">The id of the report parameter for which to retrieve information.</param>
-		/// <returns>Returns a report parameter manifest.</returns>
-		public ParameterManifest GetReportParameterManifest(string id)
+		/// <param name="id">The id of the report parameter to retrieve.</param>
+		/// <returns>Returns a report parameter.</returns>
+		public ReportParameter GetReportParameter(string id)
 		{
-			return this.Client.Get<ParameterManifest>($"type/{id}");
+			return this.Client.Get<ReportParameter>($"type/{id}");
 		}
 
 		/// <summary>

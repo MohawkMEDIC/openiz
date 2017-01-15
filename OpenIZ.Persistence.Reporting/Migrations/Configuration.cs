@@ -19,10 +19,13 @@
  */
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using OpenIZ.Persistence.Reporting.Context;
 using System.Data.Entity.Migrations;
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.RISI.Constants;
+using System.Reflection;
 using OpenIZ.Persistence.Reporting.Model;
 
 namespace OpenIZ.Persistence.Reporting.Migrations

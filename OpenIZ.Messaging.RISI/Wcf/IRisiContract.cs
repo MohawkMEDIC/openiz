@@ -31,7 +31,6 @@ namespace OpenIZ.Messaging.RISI.Wcf
 	[ServiceKnownType(typeof(ReportFormat))]
 	[ServiceKnownType(typeof(ParameterType))]
 	[ServiceKnownType(typeof(ReportDefinition))]
-	[ServiceKnownType(typeof(ParameterDefinition))]
 	[ServiceKnownType(typeof(AutoCompleteSourceDefinition))]
 	[ServiceKnownType(typeof(RisiCollection<ReportParameter>))]
 	[ServiceKnownType(typeof(RisiCollection<ReportDefinition>))]
@@ -129,12 +128,12 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		ReportFormat GetReportFormat(string id);
 
 		/// <summary>
-		/// Gets detailed information about a given report parameter.
+		/// Gets a report parameter by id.
 		/// </summary>
-		/// <param name="id">The id of the report parameter for which to retrieve information.</param>
-		/// <returns>Returns a report parameter manifest.</returns>
+		/// <param name="id">The id of the report parameter to retrieve.</param>
+		/// <returns>Returns a report parameter.</returns>
 		[WebGet(UriTemplate = "/type/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
-		ParameterManifest GetReportParameterManifest(string id);
+		ReportParameter GetReportParameter(string id);
 
 		/// <summary>
 		/// Gets a list of report parameters.

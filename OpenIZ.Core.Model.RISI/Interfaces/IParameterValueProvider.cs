@@ -18,33 +18,20 @@
  * Date: 2017-1-5
  */
 
-using System;
+using System.Collections.Generic;
 
-namespace OpenIZ.Reporting.Core.Attributes
+namespace OpenIZ.Core.Model.RISI.Interfaces
 {
 	/// <summary>
-	/// Represents an attribute which defines a file extension for a given field.
+	/// Represents a parameter provider.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Field)]
-	public sealed class FileExtensionAttribute : Attribute
+	public interface IParameterValuesProvider
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="FileExtensionAttribute"/> class.
+		/// Gets a list of values.
 		/// </summary>
-		/// <param name="extension">The value of the file extension.</param>
-		public FileExtensionAttribute(string extension)
-		{
-			if (extension.StartsWith("."))
-			{
-				throw new ArgumentException("The extension value cannot start with a '.'");
-			}
-
-			this.Extension = extension;
-		}
-
-		/// <summary>
-		/// Gets or sets the file extension.
-		/// </summary>
-		public string Extension { get; }
+		/// <typeparam name="T">The type of parameter for which to retrieve values.</typeparam>
+		/// <returns>Returns a list of values.</returns>
+		IEnumerable<T> GetValues<T>() where T : IdentifiedData;
 	}
 }

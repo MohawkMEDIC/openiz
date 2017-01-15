@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 
 namespace OpenIZ.Persistence.Reporting.Model
 {
@@ -90,7 +89,7 @@ namespace OpenIZ.Persistence.Reporting.Model
 		/// Gets or sets the parameter type associated with the report parameter.
 		/// </summary>
 		[ForeignKey("ParameterTypeId")]
-		public ParameterType ParameterType { get; set; }
+		public virtual ParameterType ParameterType { get; set; }
 
 		/// <summary>
 		/// Gets or sets the id of the parameter type associated with the report parameter.

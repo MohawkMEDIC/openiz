@@ -23,13 +23,14 @@ namespace OpenIZ.Reporting.Core
 	/// <summary>
 	/// Represents a service which supports basic authentication.
 	/// </summary>
-	public interface ISupportBasicAuthentication
+	public interface ISupportBasicAuthentication : IAuthenticationHandler
 	{
 		/// <summary>
 		/// Authenticates against a remote system using a username and password.
 		/// </summary>
 		/// <param name="username">The username of the user.</param>
 		/// <param name="password">The password of the user.</param>
-		void Authenticate(string username, string password);
+		/// <returns>Returns an authentication result.</returns>
+		AuthenticationResult Authenticate(string username, string password);
 	}
 }

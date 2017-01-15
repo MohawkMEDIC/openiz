@@ -160,17 +160,6 @@ namespace OpenIZ.Persistence.Reporting.Services
 		}
 
 		/// <summary>
-		/// Loads the relations for a given domain instance.
-		/// </summary>
-		/// <param name="context">The application database context.</param>
-		/// <param name="domainInstance">The domain instance for which the load the relations.</param>
-		/// <returns>Returns the updated domain instance.</returns>
-		protected override Model.ReportFormat LoadRelations(ApplicationDbContext context, Model.ReportFormat domainInstance)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
 		/// Obsoletes a report.
 		/// </summary>
 		/// <param name="storageData">The report to obsolete.</param>

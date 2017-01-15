@@ -33,7 +33,6 @@ namespace OpenIZ.Core.Model.RISI
 		/// </summary>
 		public QueryAutoCompleteSourceDefinition()
 		{
-			
 		}
 
 		/// <summary>

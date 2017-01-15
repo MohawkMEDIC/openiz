@@ -24,12 +24,14 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.RISI;
 using OpenIZ.Core.Security;
 using OpenIZ.Reporting.Core;
-using OpenIZ.Reporting.Core.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.RISI.Interfaces;
 
 namespace OpenIZ.Reporting.Jasper
 {
@@ -72,6 +74,11 @@ namespace OpenIZ.Reporting.Jasper
 		}
 
 		/// <summary>
+		/// Gets or sets the authentication result of the authentication handler.
+		/// </summary>
+		public AuthenticationResult AuthenticationResult { get; set; }
+
+		/// <summary>
 		/// Gets or sets the report URI.
 		/// </summary>
 		public Uri ReportUri { get; set; }
@@ -81,9 +88,13 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		/// <param name="username">The username of the user.</param>
 		/// <param name="password">The password of the user.</param>
-		public void Authenticate(string username, string password)
+		public AuthenticationResult Authenticate(string username, string password)
 		{
-			this.client.DefaultRequestHeaders.Add("Authorization", "BASIC " + Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password)));
+			this.client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/x-www-form-urlencoded");
+
+			var result = this.client.PostAsync(this.ReportUri + "/rest/login", new StringContent($"j_username={ username }&j_password={ password }")).Result;
+
+			return this.AuthenticationResult;
 		}
 
 		/// <summary>
@@ -219,13 +230,13 @@ namespace OpenIZ.Reporting.Jasper
 		}
 
 		/// <summary>
-		/// Gets detailed information about a given report parameter.
+		/// Gets a report parameter by id.
 		/// </summary>
-		/// <param name="id">The id of the report parameter for which to retrieve information.</param>
-		/// <returns>Returns a report parameter manifest.</returns>
-		public ParameterManifest GetReportParameterManifest(Guid id)
+		/// <param name="id">The id of the report parameter to retrieve.</param>
+		/// <returns>Returns a report parameter.</returns>
+		public ReportParameter GetReportParameter(Guid id)
 		{
-			throw new NotImplementedException();
+			return this.reportParameterPersistenceService.Get<Guid>(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, true);
 		}
 
 		/// <summary>
@@ -248,6 +259,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// <returns>Returns an auto complete source definition of valid parameters values for a given parameter.</returns>
 		public AutoCompleteSourceDefinition GetReportParameterValues(Guid id, Guid parameterId)
 		{
+			var reportParameters = this.reportParameterPersistenceService.Query(r => r.ReportDefinition.Key == id && r.Key == parameterId, AuthenticationContext.Current.Principal);
 			throw new NotImplementedException();
 		}
 

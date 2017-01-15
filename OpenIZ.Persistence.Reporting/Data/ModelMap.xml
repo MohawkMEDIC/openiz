@@ -48,5 +48,6 @@
 		domainClass="OpenIZ.Persistence.Reporting.Model.ParameterType, OpenIZ.Persistence.Reporting, Version=0.6.0.0">
     <property modelName="Key" domainName="Id" />
     <property modelName="CreationTime" domainName="CreationTime"/>
+    <property modelName="ValuesProvider" domainName="ValuesProvider" />
   </class>
 </modelMap>

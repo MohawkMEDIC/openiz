@@ -38,7 +38,7 @@ namespace OpenIZ.Persistence.Reporting.Context
 		}
 
 		/// <summary>
-		/// Gets or sets the data types.
+		/// Gets or sets the parameter types.
 		/// </summary>
 		public DbSet<ParameterType> ParameterTypes { get; set; }
 

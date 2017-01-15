@@ -47,7 +47,7 @@ namespace OpenIZ.Persistence.Reporting.Services
 		private readonly TraceSource tracer = new TraceSource("OpenIZ.Persistence.Reporting");
 
 		/// <summary>
-		/// The internal reference to the <see cref="ParameterType"/> <see cref="IDataPersistenceService{TData}"/>.
+		/// The internal reference to the <see cref="ParameterType"/> <see cref="IDataPersistenceService{TData}"/> instance.
 		/// </summary>
 		private readonly IDataPersistenceService<ParameterType> parameterTypePersistenceService;
 
@@ -195,23 +195,6 @@ namespace OpenIZ.Persistence.Reporting.Services
 			this.Inserted?.Invoke(this, new PostPersistenceEventArgs<ReportDefinition>(result, principal));
 
 			return result;
-		}
-
-		/// <summary>
-		/// Loads the relations for a given domain instance.
-		/// </summary>
-		/// <param name="context">The application database context.</param>
-		/// <param name="domainInstance">The domain instance for which the load the relations.</param>
-		/// <returns>Returns the updated domain instance.</returns>
-		protected override Model.ReportDefinition LoadRelations(ApplicationDbContext context, Model.ReportDefinition domainInstance)
-		{
-			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Loading report parameters for report: { domainInstance.Id }");
-			context.Entry(domainInstance).Collection(r => r.Parameters).Load();
-
-			this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Loading report format for report: { domainInstance.Id }");
-			context.Entry(domainInstance).Reference(r => r.ReportFormat).Load();
-
-			return domainInstance;
 		}
 
 		/// <summary>

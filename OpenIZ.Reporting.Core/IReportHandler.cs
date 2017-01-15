@@ -119,11 +119,11 @@ namespace OpenIZ.Reporting.Core
 		ReportFormat GetReportFormat(Guid id);
 
 		/// <summary>
-		/// Gets detailed information about a given report parameter.
+		/// Gets a report parameter by id.
 		/// </summary>
-		/// <param name="id">The id of the report parameter for which to retrieve information.</param>
-		/// <returns>Returns a report parameter manifest.</returns>
-		ParameterManifest GetReportParameterManifest(Guid id);
+		/// <param name="id">The id of the report parameter to retrieve.</param>
+		/// <returns>Returns a report parameter.</returns>
+		ReportParameter GetReportParameter(Guid id);
 
 		/// <summary>
 		/// Gets a list of report parameters.

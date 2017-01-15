@@ -31,6 +31,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Principal;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.RISI.Interfaces;
 
 namespace OpenIZ.Persistence.Reporting.Services
 {
@@ -124,6 +126,21 @@ namespace OpenIZ.Persistence.Reporting.Services
 				result = this.ToModelInstance(parameterType);
 				result.SystemType = Type.GetType(parameterType.Type);
 
+				if (result.ValuesProvider != null)
+				{
+					try
+					{
+						var valuesProviderType = Type.GetType(result.ValuesProvider);
+						var valuesProvider = (IParameterValuesProvider)Activator.CreateInstance(valuesProviderType);
+
+						result.AutoCompleteSourceDefinition = new ListAutoCompleteSourceDefinition(valuesProvider.GetValues<IdentifiedData>());
+					}
+					catch (Exception e)
+					{
+						this.tracer.TraceEvent(TraceEventType.Error, 0, $"Unable to initialize values provider { result.ValuesProvider } { e }");
+					}
+				}
+
 				this.Retrieving?.Invoke(this, new PreRetrievalEventArgs<ParameterType>(result, principal));
 			}
 
@@ -158,17 +175,6 @@ namespace OpenIZ.Persistence.Reporting.Services
 			this.Inserted?.Invoke(this, new PostPersistenceEventArgs<ParameterType>(result, principal));
 
 			return result;
-		}
-
-		/// <summary>
-		/// Loads the relations for a given domain instance.
-		/// </summary>
-		/// <param name="context">The application database context.</param>
-		/// <param name="domainInstance">The domain instance for which the load the relations.</param>
-		/// <returns>Returns the updated domain instance.</returns>
-		protected override Model.ParameterType LoadRelations(ApplicationDbContext context, Model.ParameterType domainInstance)
-		{
-			throw new NotImplementedException();
 		}
 
 		/// <summary>

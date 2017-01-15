@@ -63,14 +63,19 @@ namespace OpenIZ.Persistence.Reporting.Model
 		public Guid Id { get; set; }
 
 		/// <summary>
-		/// Gets or sets the name of the parameter type.
+		/// Gets or sets a list of report parameters associated with the parameter type.
+		/// </summary>
+		public virtual ICollection<ReportParameter> ReportParameters { get; set; }
+
+		/// <summary>
+		/// Gets or sets the type of the parameter type.
 		/// </summary>
 		[Required]
 		public string Type { get; set; }
 
 		/// <summary>
-		/// Gets or sets a list of report parameters associated with the parameter type.
+		/// Gets or sets the values provider of the parameter type.
 		/// </summary>
-		public virtual ICollection<ReportParameter> ReportParameters { get; set; }
+		public string ValuesProvider { get; set; }
 	}
 }

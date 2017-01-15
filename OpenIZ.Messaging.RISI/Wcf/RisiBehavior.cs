@@ -144,14 +144,20 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns the report in raw format.</returns>
 		public byte[] ExecuteReport(string id, string format, List<ReportParameter> parameters)
 		{
-			Guid reportId;
+			var reportId = Guid.Empty;
+			var formatId = Guid.Empty;
 
 			if (!Guid.TryParse(id, out reportId))
 			{
 				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
 			}
 
-			throw new NotImplementedException();
+			if (!Guid.TryParse(format, out formatId))
+			{
+				throw new ArgumentException($"The parameter { format } must be a valid { nameof(Guid) }");
+			}
+
+			return this.reportHandler.ExecuteReport(reportId, formatId, parameters);
 		}
 
 		/// <summary>
@@ -160,7 +166,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns a list of report parameter types.</returns>
 		public RisiCollection<ReportParameter> GetAllReportParamterTypes()
 		{
-			throw new NotImplementedException();
+			return this.reportHandler.GetAllReportParamterTypes();
 		}
 
 		/// <summary>
@@ -207,11 +213,11 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		}
 
 		/// <summary>
-		/// Gets detailed information about a given report parameter.
+		/// Gets a report parameter by id.
 		/// </summary>
-		/// <param name="id">The id of the report parameter for which to retrieve information.</param>
-		/// <returns>Returns a report parameter manifest.</returns>
-		public ParameterManifest GetReportParameterManifest(string id)
+		/// <param name="id">The id of the report parameter to retrieve.</param>
+		/// <returns>Returns a report parameter.</returns>
+		public ReportParameter GetReportParameter(string id)
 		{
 			var key = Guid.Empty;
 
@@ -220,7 +226,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
 			}
 
-			return this.reportHandler.GetReportParameterManifest(key);
+			return this.reportHandler.GetReportParameter(key);
 		}
 
 		/// <summary>
@@ -248,7 +254,20 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns an auto complete source definition of valid parameters values for a given parameter.</returns>
 		public AutoCompleteSourceDefinition GetReportParameterValues(string id, string parameterId)
 		{
-			throw new NotImplementedException();
+			var reportKey = Guid.Empty;
+			var parameterKey = Guid.Empty;
+
+			if (!Guid.TryParse(id, out reportKey))
+			{
+				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
+			}
+
+			if (!Guid.TryParse(parameterId, out parameterKey))
+			{
+				throw new ArgumentException($"The parameter { parameterId } must be a valid { nameof(Guid) }");
+			}
+
+			return this.reportHandler.GetReportParameterValues(reportKey, parameterKey);
 		}
 
 		/// <summary>
@@ -258,7 +277,14 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns the report source.</returns>
 		public ReportDefinition GetReportSource(string id)
 		{
-			throw new NotImplementedException();
+			var key = Guid.Empty;
+
+			if (!Guid.TryParse(id, out key))
+			{
+				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
+			}
+
+			return this.reportHandler.GetReportSource(key);
 		}
 
 		/// <summary>

@@ -119,9 +119,9 @@ namespace OpenIZ.Persistence.Reporting.Services
 
 			using (var context = new ApplicationDbContext())
 			{
-				var parameterType = context.ReportParameters.Find(containerId.Id);
+				var reportParameter = context.ReportParameters.Find(containerId.Id);
 
-				result = this.ToModelInstance(parameterType);
+				result = this.ToModelInstance(reportParameter);
 
 				this.Retrieving?.Invoke(this, new PreRetrievalEventArgs<ReportParameter>(result, principal));
 			}
@@ -157,17 +157,6 @@ namespace OpenIZ.Persistence.Reporting.Services
 			this.Inserted?.Invoke(this, new PostPersistenceEventArgs<ReportParameter>(result, principal));
 
 			return result;
-		}
-
-		/// <summary>
-		/// Loads the relations for a given domain instance.
-		/// </summary>
-		/// <param name="context">The application database context.</param>
-		/// <param name="domainInstance">The domain instance for which the load the relations.</param>
-		/// <returns>Returns the updated domain instance.</returns>
-		protected override Model.ReportParameter LoadRelations(ApplicationDbContext context, Model.ReportParameter domainInstance)
-		{
-			throw new NotImplementedException();
 		}
 
 		/// <summary>

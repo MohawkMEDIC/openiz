@@ -18,8 +18,6 @@
  * Date: 2017-1-5
  */
 
-using OpenIZ.Core.Model.RISI.Interfaces;
-using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.RISI
@@ -70,18 +68,6 @@ namespace OpenIZ.Core.Model.RISI
 		public int Order { get; set; }
 
 		/// <summary>
-		/// Gets or sets the default provider of the report parameter.
-		/// </summary>
-		[XmlElement("provider")]
-		public string Provider { get; set; }
-
-		/// <summary>
-		/// Gets or sets the value of the parameter.
-		/// </summary>
-		[XmlElement("value")]
-		public byte[] Value { get; set; }
-
-		/// <summary>
 		/// Gets or sets the parameter type associated with the report parameter.
 		/// </summary>
 		[XmlElement("type")]
@@ -92,5 +78,11 @@ namespace OpenIZ.Core.Model.RISI
 		/// </summary>
 		[XmlElement("reportDefinition")]
 		public ReportDefinition ReportDefinition { get; set; }
+
+		/// <summary>
+		/// Gets or sets the value of the parameter.
+		/// </summary>
+		[XmlElement("value")]
+		public byte[] Value { get; set; }
 	}
 }
