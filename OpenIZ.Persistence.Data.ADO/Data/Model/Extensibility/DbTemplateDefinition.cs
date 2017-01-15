@@ -36,7 +36,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [Column("tpl_id")]
+        [Column("tpl_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>

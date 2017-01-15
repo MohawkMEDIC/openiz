@@ -20,6 +20,7 @@
 
 
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using System;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
@@ -33,19 +34,19 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
         /// <summary>
         /// Gets or sets the key of the component
         /// </summary>
-        [Column("cmp_id")]
+        [Column("cmp_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>
         /// Gets or sets the type of the component
         /// </summary>
-        [Column("typ_cd_id")]
+        [Column("typ_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public Guid ComponentTypeKey { get; set; }
 
         /// <summary>
         /// Gets or sets the value key
         /// </summary>
         [Column("val_id")]
-        public Guid ValueKey { get; set; }
+        public virtual Guid ValueKey { get; set; }
     }
 }

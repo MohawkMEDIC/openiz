@@ -20,6 +20,7 @@
 
 
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,13 +45,13 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
         /// <summary>
         /// Gets or sets the service concept
         /// </summary>
-        [Column("svc_cd_id")]
+        [Column("svc_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public Guid ServiceConceptKey { get; set; }
 
         /// <summary>
         /// Primary key
         /// </summary>
-        [Column("svc_id")]
+        [Column("svc_id"), PrimaryKey]
         public override Guid Key { get; set; }
     }
 }

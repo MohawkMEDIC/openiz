@@ -18,6 +18,7 @@
  * Date: 2016-6-14
  */
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using System;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
@@ -31,14 +32,14 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [Column("addr_id")]
+        [Column("addr_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>
         /// Gets or sets the use concept identifier.
         /// </summary>
         /// <value>The use concept identifier.</value>
-        [Column("use_cd_id")]
+        [Column("use_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
 		public Guid UseConceptKey {
 			get;
 			set;
@@ -57,13 +58,18 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
 		/// Gets or sets the address identifier.
 		/// </summary>
 		/// <value>The address identifier.</value>
-		[Column("addr_id")]
+		[Column("addr_id"), ForeignKey(typeof(DbEntityAddress), nameof(DbEntityAddress.Key))]
 		public Guid AddressKey {
 			get;
 			set;
 		}
 
-	}
+        /// <summary>
+        /// Gets or sets the address value
+        /// </summary>
+        [Column("val_id"), ForeignKey(typeof(DbEntityAddressComponentValue), nameof(DbEntityAddressComponentValue.Key))]
+        public override Guid ValueKey { get; set; }
+    }
 
     /// <summary>
     /// Gets or sets the entity address component value
@@ -74,7 +80,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
         /// <summary>
         /// Gets or sets the pk of the val
         /// </summary>
-        [Column("val_id")]
+        [Column("val_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>
@@ -82,6 +88,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
         /// </summary>
         [Column("val")]
         public String Value { get; set; }
+        
     }
 
 }

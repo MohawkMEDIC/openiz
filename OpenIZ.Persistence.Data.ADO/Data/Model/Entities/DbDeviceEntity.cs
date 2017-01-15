@@ -18,6 +18,7 @@
  * Date: 2016-6-14
  */
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
 using System;
 
 
@@ -35,7 +36,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
 		/// Gets or sets the security device identifier.
 		/// </summary>
 		/// <value>The security device identifier.</value>
-		[Column("sec_dev_id")]
+		[Column("sec_dev_id"), ForeignKey(typeof(DbSecurityDevice), nameof(DbSecurityDevice.Key))]
 		public Guid SecurityDeviceKey {
 			get;
 			set;

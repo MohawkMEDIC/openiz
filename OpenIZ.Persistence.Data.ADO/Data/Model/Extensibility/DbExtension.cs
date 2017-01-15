@@ -18,6 +18,8 @@
  * Date: 2016-6-14
  */
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
 using System;
 
 
@@ -34,7 +36,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility
 		/// Gets or sets the extension identifier.
 		/// </summary>
 		/// <value>The extension identifier.</value>
-		[Column ("ext_typ_id")]
+		[Column ("ext_typ_id"), ForeignKey(typeof(DbExtensionType), nameof(DbExtensionType.Key))]
 		public Guid ExtensionTypeKey {
 			get;
 			set;
@@ -67,14 +69,14 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility
         /// <summary>
         /// Gets or sets the primary key
         /// </summary>
-        [Column("ent_ext_id")]
+        [Column("ent_ext_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>
         /// Gets or sets the source identifier.
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("ent_id")]
+        [Column("ent_id"), ForeignKey(typeof(DbEntity), nameof(DbEntity.Key))]
         public override Guid SourceKey
         {
             get;
@@ -92,14 +94,14 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility
         /// <summary>
         /// Get or sets the key
         /// </summary>
-        [Column("act_ext_id")]
+        [Column("act_ext_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>
         /// Gets or sets the source identifier.
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("act_id")]
+        [Column("act_id"), ForeignKey(typeof(DbAct), nameof(DbAct.Key))]
         public override Guid SourceKey
         {
             get;

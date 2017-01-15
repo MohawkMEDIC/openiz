@@ -18,6 +18,7 @@
  * Date: 2016-6-14
  */
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using System;
 
 
@@ -33,14 +34,14 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
         /// <summary>
         /// Gets or sets the primary key
         /// </summary>
-        [Column("tel_id")]
+        [Column("tel_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>
         /// Gets or sets the telecom use.
         /// </summary>
         /// <value>The telecom use.</value>
-        [Column("use_cd_id")]
+        [Column("use_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
 		public Guid TelecomUseKey {
 			get;
 			set;

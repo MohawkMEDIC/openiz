@@ -20,6 +20,7 @@
 
 
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,13 +35,11 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
     [Table("ent_rel_tbl")] 
     public class DbEntityRelationship : DbVersionedAssociation
     {
-
-
-
+        
         /// <summary>
         /// Gets or sets the link type concept
         /// </summary>
-        [Column("rel_type_cd_id")]
+        [Column("rel_type_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public Guid RelationshipTypeKey { get; set; }
 
         /// <summary>
@@ -52,19 +51,19 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
         /// <summary>
         /// Gets or sets the source entity id
         /// </summary>
-        [Column("src_ent_id")]
+        [Column("src_ent_id"), ForeignKey(typeof(DbEntity), nameof(DbEntity.Key))]
         public override Guid SourceKey { get; set; }
 
         /// <summary>
         /// Target entity key
         /// </summary>
-        [Column("trg_ent_id")]
+        [Column("trg_ent_id"), ForeignKey(typeof(DbEntity), nameof(DbEntity.Key))]
         public Guid TargetKey { get; set; }
 
         /// <summary>
         /// Gets or sets the entity relationship id
         /// </summary>
-        [Column("ent_rel_id")]
+        [Column("ent_rel_id"), PrimaryKey]
         public override Guid Key { get; set; }
     }
 }

@@ -18,6 +18,7 @@
  * Date: 2016-6-14
  */
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using System;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
@@ -32,7 +33,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
 		/// Gets or sets the industry concept.
 		/// </summary>
 		/// <value>The industry concept.</value>
-		[Column("ind_cd_id")]
+		[Column("ind_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
 		public Guid IndustryConceptKey {
 			get;
 			set;

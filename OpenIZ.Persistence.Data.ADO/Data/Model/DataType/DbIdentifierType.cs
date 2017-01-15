@@ -18,6 +18,7 @@
  * Date: 2016-6-14
  */
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using System;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.DataType
@@ -31,14 +32,14 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.DataType
         /// <summary>
         /// Gets or sets the id type
         /// </summary>
-        [Column("id_typ_id")]
+        [Column("id_typ_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>
         /// Gets or sets the type concept identifier.
         /// </summary>
         /// <value>The type concept identifier.</value>
-        [Column("typ_cd_id")]
+        [Column("typ_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
 		public Guid TypeConceptKey {
 			get;
 			set;
@@ -48,7 +49,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.DataType
         /// Gets or sets the type concept identifier.
         /// </summary>
         /// <value>The type concept identifier.</value>
-        [Column("ent_scp_cd_id")]
+        [Column("ent_scp_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public Guid EntityScopeKey
         {
             get;

@@ -49,7 +49,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
         /// <summary>
         /// Get or set the pkey
         /// </summary>
-        [Column("lng_id")]
+        [Column("lng_id"), PrimaryKey]
         public override Guid Key { get; set; }
     }
 }

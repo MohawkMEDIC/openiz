@@ -16,7 +16,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
         /// <summary>
         /// Gets or sets the code system id
         /// </summary>
-        [Column("cs_id")]
+        [Column("cs_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>

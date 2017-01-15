@@ -19,6 +19,7 @@
  */
 using System;
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.Roles
 {
@@ -33,7 +34,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Roles
 		/// Gets or sets the specialty.
 		/// </summary>
 		/// <value>The specialty.</value>
-		[Column("spec_cd_id")]
+		[Column("spec_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
 		public Guid Specialty {
 			get;
 			set;

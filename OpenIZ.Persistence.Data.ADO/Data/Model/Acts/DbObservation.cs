@@ -20,6 +20,7 @@
 
 
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// <summary>
         /// Gets or sets the interpretation concept
         /// </summary>
-        [Column("int_cd_id")]
+        [Column("int_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public Guid InterpretationConceptKey { get; set; }
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// <summary>
         /// Represents the unit of measure
         /// </summary>
-        [Column("uom_cd_id")]
+        [Column("uom_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public Guid UnitOfMeasureKey { get; set; }
 
         /// <summary>
@@ -100,7 +101,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// <summary>
         /// Gets or sets the concept representing the value of this
         /// </summary>
-        [Column("val_cd_id")] 
+        [Column("val_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))] 
         public Guid Value { get; set; }
 
     }

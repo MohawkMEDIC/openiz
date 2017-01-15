@@ -18,6 +18,8 @@
  * Date: 2016-6-14
  */
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility;
 using System;
 
 
@@ -33,14 +35,14 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
         /// <summary>
         /// Gets or sets the template
         /// </summary>
-        [Column("tpl_id")]
+        [Column("tpl_id"), ForeignKey(typeof(DbTemplateDefinition), nameof(DbTemplateDefinition.Key))]
         public Guid TemplateKey { get; set; }
 
         /// <summary>
         /// Gets or sets the class concept identifier.
         /// </summary>
         /// <value>The class concept identifier.</value>
-        [Column("cls_cd_id")]
+        [Column("cls_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
 		public Guid ClassConceptKey {
 			get;
 			set;
@@ -50,7 +52,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
 		/// Gets or sets the determiner concept identifier.
 		/// </summary>
 		/// <value>The determiner concept identifier.</value>
-		[Column("dtr_cd_id")]
+		[Column("dtr_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
 		public Guid DeterminerConceptKey {
 			get;
 			set;
@@ -59,7 +61,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [Column("ent_id")]
+        [Column("ent_id"), PrimaryKey]
         public override Guid Key { get; set; }
     }
 }

@@ -44,7 +44,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
         /// <summary>
         /// Gets or sets the code identifier
         /// </summary>
-        [Column("cd_id")]
+        [Column("cd_id"), PrimaryKey]
         public override Guid Key { get; set; }
     }
 }

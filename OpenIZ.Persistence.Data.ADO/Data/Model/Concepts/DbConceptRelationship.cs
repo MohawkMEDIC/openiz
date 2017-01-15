@@ -31,14 +31,14 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
         /// <summary>
         /// Get the identifier of the key
         /// </summary>
-        [Column("cd_rel_id")]
+        [Column("cd_rel_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>
         /// Gets or sets the relationship type identifier.
         /// </summary>
         /// <value>The relationship type identifier.</value>
-        [Column("rel_typ_id")]
+        [Column("rel_typ_id"), ForeignKey(typeof(DbConceptRelationshipType), nameof(DbConceptRelationshipType.Key))]
 		public Guid RelationshipTypeKey {
 			get;
 			set;
@@ -47,13 +47,13 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
         /// <summary>
         /// Gets or sets the source act key
         /// </summary>
-        [Column("src_cd_id")]
+        [Column("src_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public override Guid SourceKey { get; set; }
 
         /// <summary>
         /// Gets or sets the target entity key
         /// </summary>
-        [Column("trg_cd_id")]
+        [Column("trg_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public Guid TargetKey { get; set; }
     }
 }

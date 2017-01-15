@@ -18,6 +18,9 @@
  * Date: 2016-8-2
  */
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,7 +81,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
         /// <summary>
         /// Gets or sets the source entity id
         /// </summary>
-        [Column("act_id")]
+        [Column("act_id"), ForeignKey(typeof(DbAct), nameof(DbAct.Key))]
         public override Guid SourceKey { get; set; }
     }
 
@@ -91,7 +94,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
         /// <summary>
         /// Gets or sets the source entity id
         /// </summary>
-        [Column("act_id")]
+        [Column("act_id"), ForeignKey(typeof(DbAct), nameof(DbAct.Key))]
         public override Guid SourceKey { get; set; }
     }
 
@@ -105,7 +108,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
         /// <summary>
         /// Gets or sets the source entity id
         /// </summary>
-        [Column("ent_id")]
+        [Column("ent_id"), ForeignKey(typeof(DbEntity), nameof(DbEntity.Key))]
         public override Guid SourceKey { get; set; }
     }
 
@@ -118,7 +121,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
         /// <summary>
         /// Gets or sets the source entity id
         /// </summary>
-        [Column("ent_id")]
+        [Column("ent_id"), ForeignKey(typeof(DbEntity), nameof(DbEntity.Key))]
         public override Guid SourceKey { get; set; }
 
     }
@@ -132,7 +135,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
         /// <summary>
         /// Gets or sets the source entity id
         /// </summary>
-        [Column("cd_id")]
+        [Column("cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public override Guid SourceKey { get; set; }
     }
 

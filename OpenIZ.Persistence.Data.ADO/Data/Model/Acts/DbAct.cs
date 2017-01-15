@@ -23,6 +23,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
 {
@@ -36,25 +38,25 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// <summary>
         /// Gets or sets the template
         /// </summary>
-        [Column("tpl_id")]
+        [Column("tpl_id"), ForeignKey(typeof(DbTemplateDefinition), nameof(DbTemplateDefinition.Key))]
         public Guid TemplateKey { get; set; }
 
         /// <summary>
         /// Identifies the class concept
         /// </summary>
-        [Column("cls_cd_id")]
+        [Column("cls_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public Guid ClassConceptKey { get; set; }
 
         /// <summary>
         /// Gets or sets the mood of the act
         /// </summary>
-        [Column("mod_cd_id")]
+        [Column("mod_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public Guid MoodConceptKey { get; set; }
 
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [Column("act_id")]
+        [Column("act_id"), PrimaryKey]
         public override Guid Key { get; set; }
     }
 

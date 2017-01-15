@@ -18,6 +18,7 @@
  * Date: 2016-6-14
  */
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
 using System;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
@@ -32,7 +33,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
 		/// Gets or sets the security application.
 		/// </summary>
 		/// <value>The security application.</value>
-		[Column("sec_app_id")]
+		[Column("sec_app_id"), ForeignKey(typeof(DbSecurityApplication), nameof(DbSecurityApplication.Key))]
 		public Guid SecurityApplicationKey {
 			get;
 			set;

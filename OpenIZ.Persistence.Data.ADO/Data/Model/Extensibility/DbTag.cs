@@ -18,6 +18,9 @@
  * Date: 2016-6-14
  */
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
 using System;
 
 
@@ -32,13 +35,13 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [Column("tag_id")]
+        [Column("tag_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>
         /// Created by 
         /// </summary>
-        [Column("crt_usr_id")]
+        [Column("crt_usr_id"), ForeignKey(typeof(DbSecurityUser), nameof(DbSecurityUser.Key))]
         public Guid CreatedBy { get; set; }
 
         /// <summary>
@@ -50,7 +53,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility
         /// <summary>
         /// Obsoleted by 
         /// </summary>
-        [Column("obslt_usr_id")]
+        [Column("obslt_usr_id"), ForeignKey(typeof(DbSecurityUser), nameof(DbSecurityUser.Key))]
         public Guid? ObsoletedBy { get; set; }
 
         /// <summary>
@@ -91,7 +94,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility
         /// Gets or sets the source.
         /// </summary>
         /// <value>The source.</value>
-        [Column("ent_id")]
+        [Column("ent_id"), ForeignKey(typeof(DbEntity), nameof(DbEntity.Key))]
         public override Guid SourceKey
         {
             get;
@@ -109,7 +112,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility
         /// Gets or sets the source.
         /// </summary>
         /// <value>The source.</value>
-        [Column("act_id")]
+        [Column("act_id"), ForeignKey(typeof(DbAct), nameof(DbAct.Key))]
         public override Guid SourceKey
         {
             get;

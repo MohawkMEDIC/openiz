@@ -39,19 +39,19 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// <summary>
         /// Gets or sets the source act key
         /// </summary>
-        [Column("src_act_id"), ForeignKey(typeof(DbAct), "act_id")]
+        [Column("src_act_id"), ForeignKey(typeof(DbAct), nameof(DbAct.Key))]
         public override Guid SourceKey { get; set; }
 
         /// <summary>
         /// Gets or sets the target entity key
         /// </summary>
-        [Column("trg_act_id"), ForeignKey(typeof(DbAct), "act_id")]
+        [Column("trg_act_id"), ForeignKey(typeof(DbAct), nameof(DbAct.Key))]
         public Guid TargetKey { get; set; }
 
         /// <summary>
         /// Gets or sets the link type concept
         /// </summary>
-        [Column("relationshipType"), ForeignKey(typeof(DbConcept), "cd_id")]
+        [Column("relationshipType"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public Guid RelationshipTypeKey { get; set; }
 
         /// <summary>

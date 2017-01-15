@@ -142,7 +142,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Security
         /// <summary>
         /// Gets or sets the user identifier
         /// </summary>
-        [Column("usr_id")]
+        [Column("usr_id"), PrimaryKey]
         public override Guid Key { get; set; }
     }
 
@@ -155,13 +155,13 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Security
         /// <summary>
         /// Gets or sets the user key
         /// </summary>
-        [Column("usr_id")]
+        [Column("usr_id"), PrimaryKey, ForeignKey(typeof(DbSecurityUser), nameof(DbSecurityUser.Key))]
         public Guid UserKey { get; set; }
 
         /// <summary>
         /// Gets or sets the role key
         /// </summary>
-        [Column("rol_id")]
+        [Column("rol_id"), PrimaryKey, ForeignKey(typeof(DbSecurityRole), nameof(DbSecurityRole.Key))]
         public Guid RoleKey { get; set; }
 
     }
@@ -175,19 +175,19 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Security
         /// <summary>
         /// Gets or sets the source key
         /// </summary>
-        [Column("usr_id")]
+        [Column("usr_id"), PrimaryKey, ForeignKey(typeof(DbSecurityUser), nameof(DbSecurityUser.Key))]
         public Guid SourceKey { get; set; }
 
         /// <summary>
         /// The provider key for login
         /// </summary>
-        [Column("pvd_key")]
+        [Column("pvd_key"), PrimaryKey]
         public String ProviderKey { get; set; }
 
         /// <summary>
         /// Provider name
         /// </summary>
-        [Column("lgn_pvdr")]
+        [Column("lgn_pvdr"), PrimaryKey]
         public String Provider { get; set; }
     }
 
@@ -200,13 +200,13 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Security
         /// <summary>
         /// Gets or sets the primary key for the claim
         /// </summary>
-        [Column("clm_id")]
+        [Column("clm_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>
         /// Gets or sets the source key
         /// </summary>
-        [Column("usr_id")]
+        [Column("usr_id"), ForeignKey(typeof(DbSecurityUser), nameof(DbSecurityUser.Key))]
         public override Guid SourceKey { get; set; }
 
         /// <summary>

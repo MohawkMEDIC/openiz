@@ -20,6 +20,8 @@
 
 
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,13 +70,13 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.DataType
         /// <summary>
         /// Assigning device identifier
         /// </summary>
-        [Column("dev_id")]
+        [Column("dev_id"), ForeignKey(typeof(DbSecurityDevice), nameof(DbSecurityDevice.Key))]
         public Guid AssigningDeviceKey { get; set; }
 
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [Column("aut_id")]
+        [Column("aut_id"), PrimaryKey]
         public override Guid Key { get; set; }
     }
 
@@ -88,13 +90,13 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.DataType
         /// <summary>
         /// Gets or sets the scope of the auhority
         /// </summary>
-        [Column("aut_id")]
+        [Column("aut_id"), PrimaryKey, ForeignKey(typeof(DbAssigningAuthority), nameof(DbAssigningAuthority.Key))]
         public Guid AssigningAuthorityKey { get; set; }
 
         /// <summary>
         /// Gets or sets the scope of the auhority
         /// </summary>
-        [Column("cd_id")]
+        [Column("cd_id"), PrimaryKey, ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public Guid ScopeConceptKey { get; set; }
 
     }

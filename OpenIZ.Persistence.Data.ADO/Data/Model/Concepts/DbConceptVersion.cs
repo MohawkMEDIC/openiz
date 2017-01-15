@@ -29,7 +29,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
 	/// Physical data layer implemntation of concept
 	/// </summary>
 	[Table("cd_vrsn_tbl")]
-	public class DbConceptVersion : DbVersionedData<DbConcept>
+	public class DbConceptVersion : DbVersionedData
 	{
 
 		/// <summary>
@@ -45,7 +45,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
 		/// <summary>
 		/// Gets or sets the status concept id
 		/// </summary>
-		[Column("sts_cd_id")]
+		[Column("sts_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
 		public Guid StatusKey {
 			get;
 			set;
@@ -54,7 +54,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
 		/// <summary>
 		/// Gets or sets the concept classification
 		/// </summary>
-		[Column("cls_id")]
+		[Column("cls_id"), ForeignKey(typeof(DbConceptClass), nameof(DbConceptClass.Key))]
 		public Guid ClassKey {
 			get;
 			set;
@@ -63,13 +63,13 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
         /// <summary>
         /// The version identifier
         /// </summary>
-        [Column("cd_vrsn_id")]
+        [Column("cd_vrsn_id"), PrimaryKey]
         public override Guid VersionId { get; set; }
 
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [Column("cd_id")]
+        [Column("cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public override Guid Key { get; set; }
     }
 }

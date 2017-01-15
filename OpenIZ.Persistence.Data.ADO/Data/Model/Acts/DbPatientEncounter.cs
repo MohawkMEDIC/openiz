@@ -20,6 +20,7 @@
 
 
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// <summary>
         /// Identifies the manner in which the patient was discharged
         /// </summary>
-        [Column("dsch_dsp_cd_id")]
+        [Column("dsch_dsp_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public Guid DischargeDispositionKey { get; set; }
     }
 }

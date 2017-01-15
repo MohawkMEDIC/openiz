@@ -23,6 +23,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
 {
@@ -59,31 +60,31 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// <summary>
         /// Gets or sets the reason concept
         /// </summary>
-        [Column("rsn_cd_id")]
+        [Column("rsn_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public Guid ReasonConceptKey { get; set; }
 
         /// <summary>
         /// Gets or sets the status concept
         /// </summary>
-        [Column("sts_cd_id")]
+        [Column("sts_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public Guid StatusConceptKey { get; set; }
 
         /// <summary>
         /// Gets or sets the type concept
         /// </summary>
-        [Column("typ_cd_id")]
+        [Column("typ_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public Guid TypeConceptKey { get; set; }
 
         /// <summary>
         /// Version identifier
         /// </summary>
-        [Column("act_vrsn_id")]
+        [Column("act_vrsn_id"), PrimaryKey]
         public override Guid VersionId { get; set; }
         
         /// <summary>
         /// Gets or sets the act identifier
         /// </summary>
-        [Column("act_id"), ForeignKey(typeof(DbAct), "act_id")]
+        [Column("act_id"), ForeignKey(typeof(DbAct), nameof(DbAct.Key))]
         public override Guid Key { get; set; }
     }
 }

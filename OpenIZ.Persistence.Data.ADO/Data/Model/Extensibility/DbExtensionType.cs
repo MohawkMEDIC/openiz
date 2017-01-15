@@ -60,7 +60,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility
         /// <summary>
         /// Extension type key
         /// </summary>
-        [Column("ext_typ_id")]
+        [Column("ext_typ_id"), PrimaryKey]
         public override Guid Key { get; set; }
     }
 }

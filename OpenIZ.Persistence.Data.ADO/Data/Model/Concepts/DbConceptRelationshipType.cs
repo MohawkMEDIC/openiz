@@ -54,7 +54,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [Column("rel_typ_id")]
+        [Column("rel_typ_id"), PrimaryKey]
         public override Guid Key { get; set; }
     }
 }

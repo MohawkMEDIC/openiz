@@ -18,6 +18,8 @@
  * Date: 2016-7-1
  */
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,13 +37,13 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// <summary>
         /// Gets or sets the primary key
         /// </summary>
-        [Column("act_ptcpt_id")]
+        [Column("act_ptcpt_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>
         /// Gets or sets the role that the player plays in the act
         /// </summary>
-        [Column("rol_cd_id")]
+        [Column("rol_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public Guid ParticipationRoleKey { get; set; }
 
         /// <summary>
@@ -53,7 +55,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// <summary>
         /// Target entity key
         /// </summary>
-        [Column("ent_id")]
+        [Column("ent_id"), ForeignKey(typeof(DbEntity), nameof(DbEntity.Key))]
         public Guid TargetKey { get; set; }
     }
 }

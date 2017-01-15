@@ -16,7 +16,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// <summary>
         /// Gets or sets the protocol id
         /// </summary>
-        [Column("proto_id")]
+        [Column("proto_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// <summary>
         /// Gets or sets the handler identifier
         /// </summary>
-        [Column("hdlr_id")]
+        [Column("hdlr_id"), ForeignKey(typeof(DbProtocolHandler), nameof(DbProtocolHandler.Key))]
         public Guid HandlerKey { get; set; }
 
         /// <summary>

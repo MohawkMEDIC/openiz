@@ -17,13 +17,13 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// <summary>
         /// Gets or sets the protocol key
         /// </summary>
-        [Column("proto_id")]
+        [Column("proto_id"), ForeignKey(typeof(DbProtocol), nameof(DbProtocol.Key)), PrimaryKey]
         public Guid ProtocolKey { get; set; }
 
         /// <summary>
         /// Source key
         /// </summary>
-        [Column("act_id")]
+        [Column("act_id"), ForeignKey(typeof(DbAct), nameof(DbAct.Key)), PrimaryKey]
         public Guid SourceKey { get; set; }
 
         /// <summary>

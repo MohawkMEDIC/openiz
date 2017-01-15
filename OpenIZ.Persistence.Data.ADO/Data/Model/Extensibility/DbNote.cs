@@ -18,6 +18,8 @@
  * Date: 2016-6-14
  */
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
 using System;
 
 
@@ -32,14 +34,14 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [Column("note_id")]
+        [Column("note_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>
 		/// Gets or sets the author identifier.
 		/// </summary>
 		/// <value>The author identifier.</value>
-		[Column("auth_ent_id")]
+		[Column("auth_ent_id"), ForeignKey(typeof(DbEntity), nameof(DbEntity.Key))]
 		public Guid AuthorKey {
 			get;
 			set;
@@ -67,7 +69,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility
         /// Gets or sets the source identifier.
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("ent_id")]
+        [Column("ent_id"), ForeignKey(typeof(DbEntity), nameof(DbEntity.Key))]
         public override Guid SourceKey
         {
             get;
@@ -86,7 +88,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility
         /// Gets or sets the source identifier.
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("act_id")]
+        [Column("act_id"), ForeignKey(typeof(DbAct), nameof(DbAct.Key))]
         public override Guid SourceKey
         {
             get;

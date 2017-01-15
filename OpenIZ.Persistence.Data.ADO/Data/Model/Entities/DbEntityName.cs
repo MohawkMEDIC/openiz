@@ -18,6 +18,8 @@
  * Date: 2016-6-14
  */
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
+using OpenIZ.Persistence.Data.ADO.Data.Model.DataType;
 using System;
 
 
@@ -30,14 +32,14 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
 	[Table("ent_name_tbl")]
 	public class DbEntityName : DbEntityVersionedAssociation
     {
-        [Column("name_id")]
+        [Column("name_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>
         /// Gets or sets the use concept.
         /// </summary>
         /// <value>The use concept.</value>
-        [Column("use_cd_id")]
+        [Column("use_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
 		public Guid UseConceptKey {
 			get;
 			set;
@@ -53,8 +55,14 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
         /// <summary>
         /// Gets or sets the linked name
         /// </summary>
-        [Column("name_id")]
+        [Column("name_id"), ForeignKey(typeof(DbEntityName), nameof(DbEntityName.Key))]
         public Guid NameKey { get; set; }
+
+        /// <summary>
+        /// Value of the component
+        /// </summary>
+        [Column("val_id"), ForeignKey(typeof(DbPhoneticValue), nameof(DbPhoneticValue.Key))]
+        public override Guid ValueKey { get; set; }
     }
 
 

@@ -65,7 +65,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
         /// <summary>
         /// Gets or sets the id
         /// </summary>
-        [Column("set_id")]
+        [Column("set_id"), PrimaryKey]
         public override Guid Key { get; set; }
     }
 
@@ -73,14 +73,14 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
 	/// Concept set concept association.
 	/// </summary>
 	[Table("cd_set_mem_assoc_tbl")]
-	public class DbConceptSetConceptAssociation : DbIdentified
+	public class DbConceptSetConceptAssociation 
 	{
 
 		/// <summary>
 		/// Gets or sets the concept identifier.
 		/// </summary>
 		/// <value>The concept identifier.</value>
-		[Column("cd_id")]
+		[Column("cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key)), PrimaryKey]
 		public Guid ConceptKey {
 			get;
 			set;
@@ -90,16 +90,13 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
 		/// Gets or sets the concept set identifier.
 		/// </summary>
 		/// <value>The concept set identifier.</value>
-		[Column("set_id")]
+		[Column("set_id"), ForeignKey(typeof(DbConceptSet), nameof(DbConceptSet.Key)), PrimaryKey]
 		public Guid ConceptSetKey {
 			get;
 			set;
 		}
 
-        /// <summary>
-        /// Mapping for key
-        /// </summary>
-        public override Guid Key { get; set; }
+       
     }
 }
 

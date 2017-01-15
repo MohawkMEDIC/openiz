@@ -36,7 +36,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.DataType
         /// Gets or sets the phonetic algorithm identifier.
         /// </summary>
         /// <value>The phonetic algorithm identifier.</value>
-        [Column("alg_id")]
+        [Column("alg_id"), ForeignKey(typeof(DbPhoneticAlgorithm), nameof(DbPhoneticAlgorithm.Key))]
         public Guid PhoneticAlgorithmKey
         {
             get;
@@ -46,7 +46,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.DataType
         /// <summary>
         /// Gets or sets the key of the phonetic code
         /// </summary>
-        [Column("phon_val_id")]
+        [Column("phon_val_id"), PrimaryKey]
         public override Guid Key { get; set; }
     }
 
@@ -59,7 +59,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.DataType
         /// <summary>
         /// Gets or sets the algorithm key
         /// </summary>
-        [Column("alg_id")]
+        [Column("alg_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>

@@ -20,6 +20,7 @@
 
 
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,19 +38,19 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// <summary>
         /// Gets or sets the route of administration
         /// </summary>
-        [Column("rte_cd_id")]
+        [Column("rte_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public Guid RouteConceptKey { get; set; }
 
         /// <summary>
         /// Gets or sets the dose unit
         /// </summary>
-        [Column("dos_unt_cd_id")]
+        [Column("dos_unt_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public Guid DoseUnitConceptKey { get; set; }
 
         /// <summary>
         /// Gets or sets the site
         /// </summary>
-        [Column("ste_cd_id")]
+        [Column("ste_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
         public Guid SiteConceptKey { get; set; }
 
         /// <summary>

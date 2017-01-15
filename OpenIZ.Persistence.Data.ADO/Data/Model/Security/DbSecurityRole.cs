@@ -32,7 +32,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Security
         /// <summary>
         /// Gets or sets the role id
         /// </summary>
-        [Column("rol_id")]
+        [Column("rol_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>

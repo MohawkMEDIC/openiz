@@ -18,6 +18,7 @@
  * Date: 2016-6-14
  */
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using System;
 
 
@@ -45,7 +46,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
 		/// Gets or sets the form concept.
 		/// </summary>
 		/// <value>The form concept.</value>
-		[Column("frm_cd_id")]
+		[Column("frm_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
 		public Guid FormConceptKey {
 			get;
 			set;
@@ -55,7 +56,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
 		/// Gets or sets the quantity concept.
 		/// </summary>
 		/// <value>The quantity concept.</value>
-		[Column("qty_cd_id")]
+		[Column("qty_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
 		public Guid QuantityConceptKey {
 			get;
 			set;

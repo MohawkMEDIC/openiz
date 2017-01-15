@@ -1,4 +1,5 @@
 ﻿using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.DataType;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,13 +17,13 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [Column("ref_term_name_id")]
+        [Column("ref_term_name_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>
         /// Gets or sets the ref term to which the nae applies
         /// </summary>
-        [Column("ref_term_id")]
+        [Column("ref_term_id"), ForeignKey(typeof(DbReferenceTerm), nameof(DbReferenceTerm.Key))]
         public Guid SourceKey { get; set; }
 
         /// <summary>
@@ -46,7 +47,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
         /// <summary>
         /// Gets or sets the algorithm id
         /// </summary>
-        [Column("phon_alg_id")]
+        [Column("phon_alg_id"), ForeignKey(typeof(DbPhoneticAlgorithm), nameof(DbPhoneticAlgorithm.Key))]
         public Guid PhoneticAlgorithm { get; set; }
     }
 }

@@ -18,6 +18,7 @@
  * Date: 2016-8-2
  */
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,12 +58,12 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
         /// <summary>
         /// Gets or sets the entity id which created this
         /// </summary>
-        [Column("crt_usr_id")]
+        [Column("crt_usr_id"), ForeignKey(typeof(DbSecurityUser), nameof(DbSecurityUser.Key))]
         public Guid CreatedBy { get; set; }
         /// <summary>
         /// Gets or sets the id which obsoleted this
         /// </summary>
-        [Column("obslt_usr_id")]
+        [Column("obslt_usr_id"), ForeignKey(typeof(DbSecurityUser), nameof(DbSecurityUser.Key))]
         public Guid? ObsoletedBy { get; set; }
         /// <summary>
         /// Gets or sets the creation time
@@ -85,7 +86,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
         /// <summary>
         /// Gets or sets the updated user
         /// </summary>
-        [Column("upd_usr_id")]
+        [Column("upd_usr_id"), ForeignKey(typeof(DbSecurityUser), nameof(DbSecurityUser.Key))]
         public Guid? UpdatedBy { get; set; }
 
         /// <summary>

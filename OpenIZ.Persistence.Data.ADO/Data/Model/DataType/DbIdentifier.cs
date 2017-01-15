@@ -18,6 +18,8 @@
  * Date: 2016-6-14
  */
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
 using System;
 
 
@@ -44,7 +46,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.DataType
         /// Gets or sets the type identifier.
         /// </summary>
         /// <value>The type identifier.</value>
-        [Column("id_typ_id")]
+        [Column("id_typ_id"), ForeignKey(typeof(DbIdentifierType), nameof(DbIdentifierType.Key))]
         public Guid TypeKey
         {
             get;
@@ -55,7 +57,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.DataType
         /// Gets or sets the authority identifier.
         /// </summary>
         /// <value>The authority identifier.</value>
-        [Column("aut_id")]
+        [Column("aut_id"), ForeignKey(typeof(DbAssigningAuthority), nameof(DbAssigningAuthority.Key))]
         public Guid AuthorityKey
         {
             get;
@@ -74,13 +76,13 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.DataType
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [Column("ent_id_id")]
+        [Column("ent_id_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>
         /// Gets the source key
         /// </summary>
-        [Column("ent_id")]
+        [Column("ent_id"), ForeignKey(typeof(DbEntity), nameof(DbEntity.Key))]
         public override Guid SourceKey { get; set; }
     }
 
@@ -93,13 +95,13 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.DataType
         /// <summary>
         /// Gets or sets the act key
         /// </summary>
-        [Column("act_id_id")]
+        [Column("act_id_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>
         /// Gets or sets the source key
         /// </summary>
-        [Column("act_id")]
+        [Column("act_id"), ForeignKey(typeof(DbAct), nameof(DbAct.Key))]
         public override Guid SourceKey { get; set; }
     }
 }

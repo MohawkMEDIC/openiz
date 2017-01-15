@@ -84,7 +84,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Security
         /// <summary>
         /// Gets or sets the primary key
         /// </summary>
-        [Column("pol_id")]
+        [Column("pol_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
     }

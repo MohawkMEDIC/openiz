@@ -1,4 +1,5 @@
 ﻿using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
         /// <summary>
         /// Gets or sets the parent key
         /// </summary>
-        [Column("act_vrsn_id"), ForeignKey(typeof(DbActVersionedAssociation), "act_vrsn_id")]
+        [Column("act_vrsn_id"), ForeignKey(typeof(DbActVersion), nameof(DbActVersion.VersionId)), PrimaryKey]
         public override Guid ParentKey { get; set; }
     }
 
@@ -39,7 +40,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
         /// <summary>
         /// Gets or sets the parent key
         /// </summary>
-        [Column("ent_vrsn_id"), ForeignKey(typeof(DbEntityVersion), "ent_vrsn_id")]
+        [Column("ent_vrsn_id"), ForeignKey(typeof(DbEntityVersion), nameof(DbEntityVersion.VersionId)), PrimaryKey]
         public override Guid ParentKey { get; set; }
     }
 
@@ -51,7 +52,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
         /// <summary>
         /// Gets or sets the parent key
         /// </summary>
-        [Column("ent_vrsn_id"), ForeignKey(typeof(DbPerson), "ent_vrsn_id")]
+        [Column("ent_vrsn_id"), ForeignKey(typeof(DbPerson), nameof(DbPerson.ParentKey)), PrimaryKey]
         public override Guid ParentKey { get; set; }
     }
 }
