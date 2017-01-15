@@ -19,12 +19,16 @@
  */
 
 using System.Xml.Serialization;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Core.Model.RISI
 {
 	/// <summary>
 	/// Represents an auto complete source definition.
 	/// </summary>
+	[XmlInclude(typeof(Place))]
+	[XmlInclude(typeof(Material))]
+	[XmlInclude(typeof(Organization))]
 	[XmlType(nameof(AutoCompleteSourceDefinition), Namespace = "http://openiz.org/risi")]
 	public abstract class AutoCompleteSourceDefinition : BaseEntityData
 	{

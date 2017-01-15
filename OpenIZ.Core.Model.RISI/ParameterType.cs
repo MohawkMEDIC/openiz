@@ -67,7 +67,7 @@ namespace OpenIZ.Core.Model.RISI
 		{
 			get
 			{
-				return this.SystemType.AssemblyQualifiedName;
+				return this.SystemType?.AssemblyQualifiedName;
 			}
 			set
 			{

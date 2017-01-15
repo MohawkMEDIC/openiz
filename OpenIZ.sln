@@ -115,9 +115,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Reporting.Core", "Op
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Reporting", "Reporting", "{9983DFE5-1223-4E66-AF85-F592347655A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Persistence.Reporting", "OpenIZ.Persistence.Reporting\OpenIZ.Persistence.Reporting.csproj", "{88022285-A290-4E5C-AD96-523AA6BD4032}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Persistence.Reporting.MSSQL", "OpenIZ.Persistence.Reporting.MSSQL\OpenIZ.Persistence.Reporting.MSSQL.csproj", "{88022285-A290-4E5C-AD96-523AA6BD4032}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PostgreSQL", "PostgreSQL", "{219B42C9-D256-44A4-AB99-C0B31E0DDACA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Persistence.Reporting.PSQL", "OpenIZ.Persistence.Reporting.PSQL\OpenIZ.Persistence.Reporting.PSQL.csproj", "{AA364BAC-BA47-4548-BD4B-31C0A73277B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -289,6 +291,10 @@ Global
 		{88022285-A290-4E5C-AD96-523AA6BD4032}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88022285-A290-4E5C-AD96-523AA6BD4032}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88022285-A290-4E5C-AD96-523AA6BD4032}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA364BAC-BA47-4548-BD4B-31C0A73277B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA364BAC-BA47-4548-BD4B-31C0A73277B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA364BAC-BA47-4548-BD4B-31C0A73277B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA364BAC-BA47-4548-BD4B-31C0A73277B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -345,5 +351,6 @@ Global
 		{9983DFE5-1223-4E66-AF85-F592347655A4} = {2914F4AD-4661-4C73-ADB6-B1D91C11C569}
 		{88022285-A290-4E5C-AD96-523AA6BD4032} = {9983DFE5-1223-4E66-AF85-F592347655A4}
 		{219B42C9-D256-44A4-AB99-C0B31E0DDACA} = {2914F4AD-4661-4C73-ADB6-B1D91C11C569}
+		{AA364BAC-BA47-4548-BD4B-31C0A73277B7} = {9983DFE5-1223-4E66-AF85-F592347655A4}
 	EndGlobalSection
 EndGlobal

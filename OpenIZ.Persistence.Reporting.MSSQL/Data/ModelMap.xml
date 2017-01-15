@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ -
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License"); you
+ - may not use this file except in compliance with the License. You may
+ - obtain a copy of the License at
+ -
+ - http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ - License for the specific language governing permissions and limitations under
+ - the License.
+ -
+ - User: khannan
+ - Date: 2017-1-12
+ -->
+<modelMap xmlns="http://openiz.org/model/map">
+
+  <!-- Report Definitions -->
+  <class modelClass="OpenIZ.Core.Model.RISI.ReportDefinition, OpenIZ.Core.Model.RISI, Version=0.6.0.0"
+		domainClass="OpenIZ.Persistence.Reporting.MSSQL.Model.ReportDefinition, OpenIZ.Persistence.Reporting.MSSQL, Version=0.6.0.0">
+    <property modelName="Key" domainName="Id" />
+    <property modelName="Name" domainName="Name" />
+    <property modelName="CreationTime" domainName="CreationTime"/>
+    <property modelName="Description" domainName="Description" />
+    <property modelName="CorrelationId" domainName="CorrelationId" />
+  </class>
+
+  <!-- Report Parameters -->
+  <class modelClass="OpenIZ.Core.Model.RISI.ReportParameter, OpenIZ.Core.Model.RISI, Version=0.6.0.0"
+		domainClass="OpenIZ.Persistence.Reporting.MSSQL.Model.ReportParameter, OpenIZ.Persistence.Reporting.MSSQL, Version=0.6.0.0">
+    <property modelName="Key" domainName="Id" />
+    <property modelName="Name" domainName="Name" />
+    <property modelName="Order" domainName="Order" />
+    <property modelName="CreationTime" domainName="CreationTime"/>
+    <property modelName="Value" domainName="Value" />
+    <property modelName="IsNullable" domainName="IsNullable" />
+    <property modelName="ReportDefinition" domainName="ReportDefinition" />
+  </class>
+
+  <!-- Parameter Types -->
+  <class modelClass="OpenIZ.Core.Model.RISI.ParameterType, OpenIZ.Core.Model.RISI, Version=0.6.0.0"
+		domainClass="OpenIZ.Persistence.Reporting.MSSQL.Model.ParameterType, OpenIZ.Persistence.Reporting.MSSQL, Version=0.6.0.0">
+    <property modelName="Key" domainName="Id" />
+    <property modelName="CreationTime" domainName="CreationTime"/>
+    <property modelName="ValuesProvider" domainName="ValuesProvider" />
+  </class>
+</modelMap>
