@@ -113,7 +113,7 @@ namespace OpenIZ.Persistence.Data.ADO.Util
                     subProperty = matches.Groups[SubPropertyRegexGroup].Value;
 
                 // Next, we want to construct the 
-                var otherParms = workingParameters.Where(o => re.Match(o.Key).Groups[PropertyRegexGroup].Value == propertyPath);
+                var otherParms = workingParameters.Where(o => re.Match(o.Key).Groups[PropertyRegexGroup].Value == propertyPath).ToArray();
 
                 // Remove the working parameters if the column is FK then all parameters
                 if (otherParms.Any() || !String.IsNullOrEmpty(guard) || !String.IsNullOrEmpty(subProperty))

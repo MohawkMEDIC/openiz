@@ -7,6 +7,7 @@ using System.Diagnostics;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Persistence.Data.ADO.Test
 {
@@ -160,5 +161,6 @@ namespace OpenIZ.Persistence.Data.ADO.Test
             Assert.IsTrue(query.SQL.Contains("cte0"));
             Assert.AreEqual(1, query.Arguments.Count());
         }
+
     }
 }

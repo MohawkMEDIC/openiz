@@ -28,7 +28,9 @@ using OpenIZ.Core.Security;
 using OpenIZ.Core.Security.Claims;
 using OpenIZ.Persistence.Data.ADO.Configuration;
 using OpenIZ.Persistence.Data.ADO.Data;
-using OpenIZ.Persistence.Data.ADO.Security;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
+using OpenIZ.Persistence.Data.ADO.Util;
+using OpenIZ.Persistence.Data.PSQL.Security;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -47,7 +49,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
     public class AdoPolicyInformationService : IPolicyInformationService
     {
         // Get the SQL configuration
-        private AdoConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("OpenIZ.Persistence.Data.ADO") as AdoConfiguration;
+        private AdoConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection(AdoDataConstants.ConfigurationSectionName) as AdoConfiguration;
 
         private TraceSource m_traceSource = new TraceSource(AdoDataConstants.IdentityTraceSourceName);
 
@@ -56,63 +58,111 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// </summary>
         public IEnumerable<IPolicyInstance> GetActivePolicies(object securable)
         {
-            using (Database context = new Database(this.m_configuration.ReadonlyConnectionString))
-                // Security device
-                if (securable is Core.Model.Security.SecurityDevice)
-                    return context.SecurityDevicePolicies.Where(o => o.DeviceId == (securable as IdentifiedData).Key && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o)).ToList();
-                else if (securable is Core.Model.Security.SecurityRole)
-                    return context.SecurityRolePolicies.Where(o => o.RoleId == (securable as IdentifiedData).Key && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o)).ToList();
-                else if (securable is Core.Model.Security.SecurityApplication)
-                    return context.SecurityApplicationPolicies.Where(o => o.ApplicationId == (securable as IdentifiedData).Key && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o)).ToList();
-                else if (securable is ApplicationPrincipal)
+            using (DataContext context = this.m_configuration.Provider.GetReadonlyConnection())
+                try
                 {
-                    var sid = (securable as ApplicationPrincipal).FindFirst(ClaimTypes.Sid);
-                    Guid appId = Guid.Parse(sid.Value);
-                    return context.SecurityApplicationPolicies.Where(o => o.ApplicationId == appId && o.Policy.ObsoletionTime == null).Select(o => new SqlSecurityPolicyInstance(o)).ToList();
-                }
-                else if (securable is IPrincipal || securable is IIdentity)
-                {
-                    var identity = (securable as IPrincipal)?.Identity ?? securable as IIdentity;
-                    var user = context.SecurityUsers.SingleOrDefault(u => u.UserName == identity.Name);
-                    if (user == null)
-                        throw new KeyNotFoundException("Identity not found");
-
-                    List<IPolicyInstance> retVal = new List<IPolicyInstance>();
-
-                    // Role policies
-                    var roleIds = user.SecurityUserRoles.Select(o => o.RoleId).ToList();
-                    retVal.AddRange(context.SecurityRolePolicies.Where(o => roleIds.Contains(o.RoleId)).Select(o => new SqlSecurityPolicyInstance(o)));
-
-                    // Claims principal, then we want device and app SID
-                    if (securable is ClaimsPrincipal)
+                    context.Open();
+                    // Security device
+                    if (securable is Core.Model.Security.SecurityDevice)
                     {
-                        var cp = securable as ClaimsPrincipal;
-                        var appClaim = cp.FindAll(OpenIzClaimTypes.OpenIzApplicationIdentifierClaim).SingleOrDefault();
-                        var devClaim = cp.FindAll(OpenIzClaimTypes.OpenIzDeviceIdentifierClaim).SingleOrDefault();
+                        var query = new SqlStatement<DbSecurityDevicePolicy>().SelectFrom()
+                            .InnerJoin<DbSecurityPolicy, DbSecurityDevicePolicy>()
+                            .Where(o => o.SourceKey == (securable as IdentifiedData).Key);
 
-                        // There is an application claim so we want to add the application policies - most restrictive
-                        if (appClaim != null)
-                            retVal.AddRange(context.SecurityApplicationPolicies.Where(o => o.SecurityApplication.ApplicationId == Guid.Parse(appClaim.Value)).Select(o => new SqlSecurityPolicyInstance(o)));
-                        // There is an device claim so we want to add the device policies - most restrictive
-                        if (devClaim != null)
-                            retVal.AddRange(context.SecurityDevicePolicies.Where(o => o.SecurityDevice.DeviceId == Guid.Parse(devClaim.Value)).Select(o => new SqlSecurityPolicyInstance(o)));
+                        return context.Query<MultiTypeResult<DbSecurityPolicy, DbSecurityDevicePolicy>>(query)
+                                                    .Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, securable));
                     }
+                    else if (securable is Core.Model.Security.SecurityRole)
+                    {
+                        var query = new SqlStatement<DbSecurityRolePolicy>().SelectFrom()
+                            .InnerJoin<DbSecurityPolicy, DbSecurityRolePolicy>()
+                            .Where(o => o.SourceKey == (securable as IdentifiedData).Key);
 
-                    this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Principal {0} effective policy set {1}", user.UserName, String.Join(",", retVal.Select(o => $"{o.Policy.Oid} [{o.Rule}]")));
-                    // TODO: Most restrictive
-                    return retVal;
+                        return context.Query<MultiTypeResult<DbSecurityPolicy, DbSecurityRolePolicy>>(query)
+                            .Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, securable));
+                    }
+                    else if (securable is Core.Model.Security.SecurityApplication || securable is ApplicationPrincipal)
+                    {
+                        var query = new SqlStatement<DbSecurityApplicationPolicy>().SelectFrom()
+                            .InnerJoin<DbSecurityPolicy, DbSecurityApplicationPolicy>();
+
+                        if (securable is ApplicationPrincipal)
+                            query.InnerJoin<DbSecurityApplication, DbSecurityApplication>()
+                                    .Where(o => o.PublicId == (securable as ApplicationPrincipal).Identity.Name);
+                        else
+                            query.Where(o => o.Key == (securable as IdentifiedData).Key);
+
+                        return context.Query<MultiTypeResult<DbSecurityPolicy, DbSecurityApplicationPolicy>>(query)
+                            .Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, securable));
+                    }
+                    else if (securable is IPrincipal || securable is IIdentity)
+                    {
+                        var identity = (securable as IPrincipal)?.Identity ?? securable as IIdentity;
+                        var user = context.SingleOrDefault<DbSecurityUser>(u => u.UserName == identity.Name.IgnoreCase());
+                        if (user == null)
+                            throw new KeyNotFoundException("Identity not found");
+
+                        List<IPolicyInstance> retVal = new List<IPolicyInstance>();
+
+                        // Role policies
+                        SqlStatement query = new SqlStatement<DbSecurityRolePolicy>().SelectFrom()
+                            .InnerJoin<DbSecurityPolicy>(o=>o.PolicyKey, o=>o.Key)
+                            .InnerJoin<DbSecurityUserRole>(o=>o.SourceKey, o=>o.RoleKey)
+                            .Where<DbSecurityUserRole>(o => o.UserKey == user.Key);
+
+                        retVal.AddRange(context.Query<MultiTypeResult<DbSecurityPolicy, DbSecurityRolePolicy>>(query).Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, user)));
+
+                        // Claims principal, then we want device and app SID
+                        if (securable is ClaimsPrincipal)
+                        {
+                            var cp = securable as ClaimsPrincipal;
+                            var appClaim = cp.FindAll(OpenIzClaimTypes.OpenIzApplicationIdentifierClaim).SingleOrDefault();
+                            var devClaim = cp.FindAll(OpenIzClaimTypes.OpenIzDeviceIdentifierClaim).SingleOrDefault();
+
+                            // There is an application claim so we want to add the application policies - most restrictive
+                            if (appClaim != null)
+                            {
+                                query = new SqlStatement<DbSecurityApplicationPolicy>().SelectFrom()
+                                   .InnerJoin<DbSecurityPolicy, DbSecurityApplicationPolicy>()
+                                   .Where(o => o.SourceKey == Guid.Parse(appClaim.Value));
+                                retVal.AddRange(context.Query<MultiTypeResult<DbSecurityPolicy, DbSecurityApplicationPolicy>>(query).Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, user)));
+                            }
+                            // There is an device claim so we want to add the device policies - most restrictive
+                            if (devClaim != null)
+                            {
+                                query = new SqlStatement<DbSecurityDevicePolicy>().SelectFrom()
+                                   .InnerJoin<DbSecurityPolicy, DbSecurityDevicePolicy>()
+                                   .Where(o => o.SourceKey == Guid.Parse(devClaim.Value));
+                                retVal.AddRange(context.Query<MultiTypeResult<DbSecurityPolicy, DbSecurityDevicePolicy>>(query).Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, user)));
+                            }
+                        }
+
+                        this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Principal {0} effective policy set {1}", user.UserName, String.Join(",", retVal.Select(o => $"{o.Policy.Oid} [{o.Rule}]")));
+                        // TODO: Most restrictive
+                        return retVal;
+                    }
+                    else if (securable is Core.Model.Acts.Act)
+                    {
+                        var pAct = securable as Core.Model.Acts.Act;
+                        var query = new SqlStatement<DbActSecurityPolicy>().SelectFrom()
+                                  .InnerJoin<DbSecurityPolicy, DbActSecurityPolicy>()
+                                  .Where(o => o.SourceKey == pAct.Key);
+
+                        return context.Query<MultiTypeResult<DbSecurityPolicy, DbActSecurityPolicy>>(query)
+                            .Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, securable));
+                    }
+                    else if (securable is Core.Model.Entities.Entity)
+                    {
+                        throw new NotImplementedException();
+                    }
+                    else
+                        return new List<IPolicyInstance>();
                 }
-                else if (securable is Core.Model.Acts.Act)
+                catch (Exception e)
                 {
-                    var pAct = securable as Core.Model.Acts.Act;
-                    return context.ActPolicies.Where(o => o.ActId == (securable as IdentifiedData).Key && o.Policy.ObsoletionTime == null && pAct.VersionSequence >= o.EffectiveVersionSequenceId && (pAct.VersionSequence < o.ObsoleteVersionSequenceId || o.ObsoleteVersionSequenceId == null)).Select(o => new SqlSecurityPolicyInstance(o));
+                    this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, "Error getting active policies for {0} : {1}", securable, e);
+                    throw;
                 }
-                else if (securable is Core.Model.Entities.Entity)
-                {
-                    throw new NotImplementedException();
-                }
-                else
-                    return new List<IPolicyInstance>();
         }
 
         /// <summary>
@@ -120,8 +170,17 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// </summary>
         public IEnumerable<IPolicy> GetPolicies()
         {
-            using (var dataContext = new Database(this.m_configuration.ReadonlyConnectionString))
-                return dataContext.Policies.Where(o => o.ObsoletionTime == null).Select(o => new SqlSecurityPolicy(o));
+            using (var dataContext = this.m_configuration.Provider.GetReadonlyConnection())
+                try
+                {
+                    dataContext.Open();
+                    return dataContext.Query<DbSecurityPolicy>(o => o.ObsoletionTime == null).Select(o => new AdoSecurityPolicy(o)).ToArray();
+                }
+                catch (Exception e)
+                {
+                    this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, "Error getting policies: {0}", e);
+                    throw;
+                }
         }
 
         /// <summary>
@@ -129,13 +188,23 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// </summary>
         public IPolicy GetPolicy(string policyOid)
         {
-            using (var dataContext = new Database(this.m_configuration.ReadonlyConnectionString))
+            using (var dataContext = this.m_configuration.Provider.GetReadonlyConnection())
             {
-                var policy = dataContext.Policies.SingleOrDefault(o => o.PolicyOid == policyOid);
-                if(policy != null)
-                    return new SqlSecurityPolicy(policy);
-                return null;
+                try
+                {
+                    dataContext.Open();
+                    var policy = dataContext.SingleOrDefault<DbSecurityPolicy>(o => o.Oid == policyOid);
+                    if (policy != null)
+                        return new AdoSecurityPolicy(policy);
+                    return null;
+                }
+                catch (Exception e)
+                {
+                    this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, "Error getting policy {0} : {1}", policyOid, e);
+                    throw;
+                }
             }
+
         }
     }
 }

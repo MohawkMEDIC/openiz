@@ -5,6 +5,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
+using OpenIZ.Persistence.Data.ADO.Util;
 
 namespace OpenIZ.Persistence.Data.ADO.Data
 {

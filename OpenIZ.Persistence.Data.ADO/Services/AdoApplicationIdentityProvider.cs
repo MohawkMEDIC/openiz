@@ -18,7 +18,6 @@
  * Date: 2016-6-14
  */
 using OpenIZ.Core.Services;
-using OpenIZ.Persistence.Data.ADO.Data.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +36,7 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
 using OpenIZ.Persistence.Data.ADO.Util;
+using System.Security.Authentication;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {
@@ -68,16 +68,26 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             // Data context
             using (DataContext dataContext = this.m_configuration.Provider.GetReadonlyConnection())
             {
-                IPasswordHashingService hashService = ApplicationContext.Current.GetService<IPasswordHashingService>();
+                try
+                {
+                    dataContext.Open();
+                    IPasswordHashingService hashService = ApplicationContext.Current.GetService<IPasswordHashingService>();
 
-                var client = dataContext.ExecStoredProcedure<DbSecurityApplication>("auth_app", applicationId, applicationSecret);
-                if (client == null)
-                    throw new SecurityException("Invalid application credentials");
+                    var client = dataContext.FirstOrDefault<DbSecurityApplication>("auth_app", applicationId, applicationSecret);
+                    if (client == null)
+                        throw new SecurityException("Invalid application credentials");
 
-                IPrincipal applicationPrincipal = new ApplicationPrincipal(new OpenIZ.Core.Security.ApplicationIdentity(client.Key, client.PublicId, true));
-                new PolicyPermission(System.Security.Permissions.PermissionState.None, PermissionPolicyIdentifiers.Login, applicationPrincipal).Demand();
-                return applicationPrincipal;
+                    IPrincipal applicationPrincipal = new ApplicationPrincipal(new OpenIZ.Core.Security.ApplicationIdentity(client.Key, client.PublicId, true));
+                    new PolicyPermission(System.Security.Permissions.PermissionState.None, PermissionPolicyIdentifiers.Login, applicationPrincipal).Demand();
+                    return applicationPrincipal;
+                }
+                catch (Exception e)
+                {
+                    this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, "Error authenticating {0} : {1}", applicationId, e);
+                    throw new AuthenticationException("Error authenticating application", e);
+                }
             }
+
 
         }
 
@@ -88,11 +98,19 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         {
             // Data context
             using (DataContext dataContext = this.m_configuration.Provider.GetReadonlyConnection())
-            {
-                var client = dataContext.Query<DbSecurityApplication>(o => o.PublicId == name);
-                return new OpenIZ.Core.Security.ApplicationIdentity(client.ApplicationId, client.ApplicationPublicId, false);
+                try
+                {
+                    dataContext.Open();
+                    var client = dataContext.FirstOrDefault<DbSecurityApplication>(o => o.PublicId == name);
+                    return new OpenIZ.Core.Security.ApplicationIdentity(client.Key, client.PublicId, false);
 
-            }
+                }
+                catch (Exception e)
+                {
+                    this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, "Error getting identity data for {0} : {1}", name, e);
+                    throw;
+                }
+
         }
     }
 }

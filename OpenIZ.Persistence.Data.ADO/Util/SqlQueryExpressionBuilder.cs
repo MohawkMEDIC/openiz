@@ -8,6 +8,21 @@ using System.Threading.Tasks;
 
 namespace OpenIZ.Persistence.Data.ADO.Util
 {
+
+    /// <summary>
+    /// String etensions
+    /// </summary>
+    public static class StringExtensions
+    {
+        /// <summary>
+        ///  True if case should be ignored
+        /// </summary>
+        public static string IgnoreCase(this String me)
+        {
+            return me;
+        }
+
+    }
     /// <summary>
     /// Postgresql query expression builder
     /// </summary>
@@ -67,6 +82,7 @@ namespace OpenIZ.Persistence.Data.ADO.Util
                 case ExpressionType.Convert:
                 case ExpressionType.Not:
                 case ExpressionType.Negate:
+                case ExpressionType.TypeAs:
                     return this.VisitUnary((UnaryExpression)node);
                 default:
                     return this.Visit(node);
@@ -97,6 +113,8 @@ namespace OpenIZ.Persistence.Data.ADO.Util
                     break;
                 case ExpressionType.Convert:
                     break;
+                case ExpressionType.TypeAs:
+                    break;
                 default:
                     return null;
             }
@@ -113,13 +131,29 @@ namespace OpenIZ.Persistence.Data.ADO.Util
             this.m_sqlStatement.Append("(");
             this.Visit(node.Left);
 
+            bool skipRight = false;
+
             switch (node.NodeType)
             {
                 case ExpressionType.Equal:
-                    this.m_sqlStatement.Append(" = ");
+                    if ((node.Right is ConstantExpression) &&
+                        (node.Right as ConstantExpression).Value == null)
+                    {
+                        skipRight = true;
+                        this.m_sqlStatement.Append(" IS NULL ");
+                    }
+                    else
+                        this.m_sqlStatement.Append(" = ");
                     break;
                 case ExpressionType.NotEqual:
-                    this.m_sqlStatement.Append(" <> ");
+                    if ((node.Right is ConstantExpression) &&
+                        (node.Right as ConstantExpression).Value == null)
+                    {
+                        skipRight = true;
+                        this.m_sqlStatement.Append(" IS NOT NULL ");
+                    }
+                    else
+                        this.m_sqlStatement.Append(" <> ");
                     break;
                 case ExpressionType.GreaterThan:
                     this.m_sqlStatement.Append(" > ");
@@ -143,7 +177,8 @@ namespace OpenIZ.Persistence.Data.ADO.Util
                     break;
             }
 
-            this.Visit(node.Right);
+            if (!skipRight)
+                this.Visit(node.Right);
             this.m_sqlStatement.Append(")");
             return node;
         }
@@ -188,10 +223,52 @@ namespace OpenIZ.Persistence.Data.ADO.Util
                 case "NewGuid":
                     this.m_sqlStatement.Append("uuid_generate_v4()");
                     break;
+                case "IgnoreCase":
+                    this.Visit(node.Arguments[0]);
+                    this.m_sqlStatement.Append("::citext");
+                    break;
                 default:
                     throw new NotSupportedException(node.Method.Name);
             }
             return node;
+        }
+
+        /// <summary>
+        /// Attempt to get constant value
+        /// </summary>
+        private Object GetConstantValue(Expression expression)
+        {
+            if (expression == null)
+                return null;
+            else if (expression is ConstantExpression)
+                return (expression as ConstantExpression).Value;
+            else if (expression is UnaryExpression)
+            {
+                var un = expression as UnaryExpression;
+                switch (expression.NodeType)
+                {
+                    case ExpressionType.TypeAs:
+                        return this.GetConstantValue(un.Operand);
+                    case ExpressionType.Convert:
+                        return this.GetConstantValue(un.Operand);
+                    default:
+                        throw new InvalidOperationException($"Expression {expression} not supported for constant extraction");
+                }
+            }
+            else if (expression is MemberExpression)
+            {
+                var mem = expression as MemberExpression;
+                var obj = this.GetConstantValue(mem.Expression);
+                if (mem.Member is PropertyInfo)
+                    return (mem.Member as PropertyInfo).GetValue(obj);
+                else if (mem.Member is FieldInfo)
+                    return (mem.Member as FieldInfo).GetValue(obj);
+                else
+                    throw new NotSupportedException();
+            }
+            else
+                throw new InvalidOperationException($"Expression {expression} not supported for constant extraction");
+
         }
 
 
@@ -201,11 +278,12 @@ namespace OpenIZ.Persistence.Data.ADO.Util
         private Expression VisitMemberAccess(MemberExpression node)
         {
             // Member expression is node... This has the limitation of only going one deep :/
-            if(node.Expression != null)
+            if (node.Expression != null)
+            {
+                // Ignore typeas
                 switch (node.Expression.NodeType)
                 {
                     case ExpressionType.Parameter:
-
                         // Translate
                         var tableMap = TableMapping.Get(node.Expression.Type);
                         var columnMap = tableMap.GetColumn(node.Member);
@@ -214,9 +292,10 @@ namespace OpenIZ.Persistence.Data.ADO.Util
                         this.m_sqlStatement.Append($".{columnMap.Name}");
                         break;
                     case ExpressionType.Constant:
-
+                    case ExpressionType.TypeAs:
+                    case ExpressionType.MemberAccess:
                         // Ok, this is a constant member access.. so ets get the value
-                        var cons = (node.Expression as ConstantExpression).Value;
+                        var cons = this.GetConstantValue(node.Expression);
                         if (node.Member is PropertyInfo)
                             this.m_sqlStatement.Append(" ? ", (node.Member as PropertyInfo).GetValue(cons));
                         else if (node.Member is FieldInfo)
@@ -225,9 +304,10 @@ namespace OpenIZ.Persistence.Data.ADO.Util
                             throw new NotSupportedException();
                         break;
                 }
+            }
             else // constant expression
             {
-                switch(node.Member.Name)
+                switch (node.Member.Name)
                 {
                     case "Now":
                         this.m_sqlStatement.Append("CURRENT_TIMESTAMP");

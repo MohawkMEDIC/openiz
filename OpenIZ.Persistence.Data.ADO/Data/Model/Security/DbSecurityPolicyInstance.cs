@@ -35,7 +35,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Security
         /// <summary>
         /// Gets or sets the key 
         /// </summary>
-        [Column("pol_inst_id"), PrimaryKey]
+        [Column("sec_pol_inst_id"), PrimaryKey]
         public override Guid Key { get; set; }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Security
         /// Gets or sets the source
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("role_id"), ForeignKey(typeof(DbSecurityRole), nameof(DbSecurityRole.Key))]
+        [Column("rol_id"), ForeignKey(typeof(DbSecurityRole), nameof(DbSecurityRole.Key))]
         public override Guid SourceKey
         {
             get;

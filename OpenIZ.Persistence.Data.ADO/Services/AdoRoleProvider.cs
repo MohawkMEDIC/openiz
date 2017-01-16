@@ -31,11 +31,13 @@ using MARC.HI.EHRS.SVC.Core.Exceptions;
 using OpenIZ.Persistence.Data.ADO.Configuration;
 using System.Configuration;
 using OpenIZ.Persistence.Data.ADO.Data;
-using OpenIZ.Persistence.Data.ADO.Security;
 using System.Security;
 using System.Security.Principal;
 using OpenIZ.Core.Security;
 using OpenIZ.Core.Security.Attribute;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
+using System.Diagnostics;
+using OpenIZ.Persistence.Data.ADO.Util;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {
@@ -44,10 +46,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services
     /// </summary>
     public class AdoRoleProvider : IRoleProviderService
     {
+
+        // Tracer
+        private TraceSource m_tracer = new TraceSource(AdoDataConstants.IdentityTraceSourceName);
+
         /// <summary>
         /// Configuration 
         /// </summary>
-        protected AdoConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("OpenIZ.Persistence.Data.ADO") as AdoConfiguration;
+        protected AdoConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection(AdoDataConstants.ConfigurationSectionName) as AdoConfiguration;
 
         /// <summary>
         /// Verify principal
@@ -58,7 +64,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 throw new ArgumentNullException(nameof(authPrincipal));
 
             new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, policyId, authPrincipal).Demand();
-            
+
         }
 
         /// <summary>
@@ -69,24 +75,46 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             this.VerifyPrincipal(authPrincipal, PermissionPolicyIdentifiers.AlterRoles);
 
             // Add users to role
-            using (var dataContext = new Data.Database(this.m_configuration.ReadWriteConnectionString))
+            using (DataContext dataContext = this.m_configuration.Provider.GetWriteConnection())
             {
-                foreach(var un in users)
+                try
                 {
-                    SecurityUser user = dataContext.SecurityUsers.SingleOrDefault(u => u.UserName == un);
-                    if (user == null)
-                        throw new KeyNotFoundException(String.Format("Could not locate user {0}", un));
-                    foreach(var rol in roles)
+                    dataContext.Open();
+                    using (var tx = dataContext.BeginTransaction())
                     {
-                        SecurityRole role = dataContext.SecurityRoles.SingleOrDefault(r => r.Name == rol);
-                        if (role == null)
-                            throw new KeyNotFoundException(String.Format("Could not locate role {0}", rol));
-                        if (!user.SecurityUserRoles.Any(o => o.RoleId == role.RoleId))
-                            user.SecurityUserRoles.Add(new SecurityUserRole() { UserId = user.UserId, RoleId = role.RoleId });
+                        try
+                        {
+                            foreach (var un in users)
+                            {
+                                DbSecurityUser user = dataContext.SingleOrDefault<DbSecurityUser>(u => u.UserName == un);
+                                if (user == null)
+                                    throw new KeyNotFoundException(String.Format("Could not locate user {0}", un));
+                                foreach (var rol in roles)
+                                {
+                                    DbSecurityRole role = dataContext.SingleOrDefault<DbSecurityRole>(r => r.Name == rol);
+                                    if (role == null)
+                                        throw new KeyNotFoundException(String.Format("Could not locate role {0}", rol));
+                                    if (!dataContext.Any<DbSecurityUserRole>(o => o.RoleKey == role.Key && o.UserKey == user.Key))
+                                    {
+                                        // Insert
+                                        dataContext.Insert(new DbSecurityUserRole() { UserKey = user.Key, RoleKey = role.Key });
+                                    }
+                                }
+                            }
+                            tx.Commit();
+                        }
+                        catch
+                        {
+                            tx.Rollback();
+                            throw;
+                        }
                     }
                 }
-
-                dataContext.SubmitChanges();
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceEvent(TraceEventType.Error, e.HResult, "Error adding {0} to {1} : {2}", String.Join(",", users), String.Join(",", roles), e);
+                    throw;
+                }
             }
         }
 
@@ -99,21 +127,41 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             this.VerifyPrincipal(authPrincipal, PermissionPolicyIdentifiers.CreateRoles);
 
             // Add users to role
-            using (var dataContext = new Data.Database(this.m_configuration.ReadWriteConnectionString))
+            using (DataContext dataContext = this.m_configuration.Provider.GetWriteConnection())
             {
-                SecurityUser user = dataContext.SecurityUsers.SingleOrDefault(u => u.UserName == authPrincipal.Identity.Name);
-                if (user == null)
-                    throw new SecurityException(String.Format("Could not verify identity of {0}", authPrincipal.Identity.Name));
-
-                // Insert
-                dataContext.SecurityRoles.InsertOnSubmit(new SecurityRole()
+                try
                 {
-                    RoleId = Guid.NewGuid(),
-                    CreatedByEntity = user,
-                    Name = roleName
-                });
-                dataContext.SubmitChanges();
+                    dataContext.Open();
+                    using (var tx = dataContext.BeginTransaction())
+                    {
+                        try
+                        {
+                            DbSecurityUser user = dataContext.SingleOrDefault<DbSecurityUser>(u => u.UserName == authPrincipal.Identity.Name);
+                            if (user == null)
+                                throw new SecurityException(String.Format("Could not verify identity of {0}", authPrincipal.Identity.Name));
+
+                            // Insert
+                            dataContext.Insert(new DbSecurityRole()
+                            {
+                                CreatedByKey = user.Key,
+                                Name = roleName
+                            });
+                            tx.Commit();
+                        }
+                        catch
+                        {
+                            tx.Rollback();
+                            throw;
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceEvent(TraceEventType.Error, e.HResult, "Error creating role {0} : {1}", roleName, e);
+                    throw;
+                }
             }
+
         }
 
         /// <summary>
@@ -121,12 +169,26 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// </summary>
         public string[] FindUsersInRole(string role)
         {
-            using (var dataContext = new Database(this.m_configuration.ReadonlyConnectionString))
+            using (DataContext dataContext = this.m_configuration.Provider.GetReadonlyConnection())
             {
-                var securityRole = dataContext.SecurityRoles.SingleOrDefault(r => r.Name == role);
-                if (securityRole == null)
-                    throw new KeyNotFoundException(String.Format("Role {0} not found", role));
-                return securityRole.SecurityUserRoles.Select(o => o.SecurityUser.UserName).ToArray();
+                try
+                {
+                    dataContext.Open();
+                    var securityRole = dataContext.SingleOrDefault<DbSecurityRole>(r => r.Name == role);
+                    if (securityRole == null)
+                        throw new KeyNotFoundException(String.Format("Role {0} not found", role));
+
+                    var query = new SqlStatement<DbSecurityUserRole>().SelectFrom()
+                        .InnerJoin<DbSecurityUser, DbSecurityUserRole>()
+                        .Where(o => o.RoleKey == securityRole.Key);
+
+                    return dataContext.Query<DbSecurityUser>(query).Select(o => o.UserName).ToArray();
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceEvent(TraceEventType.Error, e.HResult, "Error finding users for role {0} : {1}", role, e);
+                    throw;
+                }
             }
         }
 
@@ -136,8 +198,17 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// <returns></returns>
         public string[] GetAllRoles()
         {
-            using (var dataContext = new Database(this.m_configuration.ReadonlyConnectionString))
-                return dataContext.SecurityRoles.Select(o => o.Name).ToArray();
+            using (var dataContext = this.m_configuration.Provider.GetReadonlyConnection())
+                try
+                {
+                    dataContext.Open();
+                    return dataContext.Query<DbSecurityRole>(o => o.ObsoletionTime != null).Select(o => o.Name).ToArray();
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceEvent(TraceEventType.Error, e.HResult, "Error executing GetAllRoles() : {0}", e);
+                    throw;
+                }
         }
 
         /// <summary>
@@ -146,8 +217,27 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// <returns></returns>
         public string[] GetAllRoles(String userName)
         {
-            using (var dataContext = new Database(this.m_configuration.ReadonlyConnectionString))
-                return dataContext.SecurityUsers.SingleOrDefault(o => o.UserName == userName)?.SecurityUserRoles.Select(r => r.SecurityRole.Name).ToArray();
+            using (var dataContext = this.m_configuration.Provider.GetReadonlyConnection())
+            {
+                try
+                {
+                    dataContext.Open();
+                    var securityUser = dataContext.SingleOrDefault<DbSecurityUser>(u => u.UserName == userName);
+                    if (securityUser == null)
+                        throw new KeyNotFoundException(String.Format("User {0} not found", userName));
+
+                    var query = new SqlStatement<DbSecurityUserRole>().SelectFrom()
+                        .InnerJoin<DbSecurityRole, DbSecurityUserRole>()
+                        .Where(o => o.UserKey == securityUser.Key);
+
+                    return dataContext.Query<DbSecurityRole>(query).Select(o => o.Name).ToArray();
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceEvent(TraceEventType.Error, e.HResult, "Error executing getting roles for {0} : {1}", userName, e);
+                    throw;
+                }
+            }
         }
 
         /// <summary>
@@ -163,8 +253,27 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// </summary>
         public bool IsUserInRole(string userName, string roleName)
         {
-            using (var dataContext = new Database(this.m_configuration.ReadonlyConnectionString))
-                return dataContext.SecurityUserRoles.Any(ur => ur.SecurityRole.Name == roleName && ur.SecurityUser.UserName == userName);
+            using (var dataContext = this.m_configuration.Provider.GetReadonlyConnection())
+            {
+                try
+                {
+                    dataContext.Open();
+                    DbSecurityUser user = dataContext.SingleOrDefault<DbSecurityUser>(u => u.UserName == userName);
+                    if (user == null)
+                        throw new KeyNotFoundException(String.Format("Could not locate user {0}", userName));
+                    DbSecurityRole role = dataContext.SingleOrDefault<DbSecurityRole>(r => r.Name == roleName);
+                    if (role == null)
+                        throw new KeyNotFoundException(String.Format("Could not locate role {0}", roleName));
+
+                    // Select
+                    return dataContext.Any<DbSecurityUserRole>(o => o.UserKey == user.Key && o.RoleKey == role.Key);
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceEvent(TraceEventType.Error, e.HResult, "Error determining role membership of user {0} in {1} : {2}", userName, roleName, e);
+                    throw;
+                }
+            }
         }
 
         /// <summary>
@@ -174,32 +283,44 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         {
             this.VerifyPrincipal(authPrincipal, PermissionPolicyIdentifiers.AlterRoles);
 
-            // Add users to role
-            using (var dataContext = new Data.Database(this.m_configuration.ReadWriteConnectionString))
-            {
-                foreach (var un in users)
+            using (DataContext dataContext = this.m_configuration.Provider.GetWriteConnection())
+                try
                 {
-                    SecurityUser user = dataContext.SecurityUsers.SingleOrDefault(u => u.UserName == un);
-                    if (user == null)
-                        throw new KeyNotFoundException(String.Format("Could not locate user {0}", un));
-                    foreach (var rol in roles)
+                    dataContext.Open();
+                    using (var tx = dataContext.BeginTransaction())
                     {
-                        SecurityRole role = dataContext.SecurityRoles.SingleOrDefault(r => r.Name == rol);
-                        if (role == null)
-                            throw new KeyNotFoundException(String.Format("Could not locate role {0}", rol));
+                        try
+                        {
+                            foreach (var un in users)
+                            {
+                                DbSecurityUser user = dataContext.SingleOrDefault<DbSecurityUser>(u => u.UserName == un);
+                                if (user == null)
+                                    throw new KeyNotFoundException(String.Format("Could not locate user {0}", un));
+                                foreach (var rol in roles)
+                                {
+                                    DbSecurityRole role = dataContext.SingleOrDefault<DbSecurityRole>(r => r.Name == rol);
+                                    if (role == null)
+                                        throw new KeyNotFoundException(String.Format("Could not locate role {0}", rol));
 
-	                    var securityUserRole = user.SecurityUserRoles.SingleOrDefault(ur => ur.RoleId == role.RoleId && ur.UserId == user.UserId);
+                                    // Insert
+                                    dataContext.Delete<DbSecurityUserRole>(o => o.UserKey == user.Key && o.RoleKey == role.Key);
+                                }
+                            }
+                            tx.Commit();
+                        }
+                        catch 
+                        {
+                            tx.Rollback();
+                            throw;
+                        }
 
-	                    if (securityUserRole != null)
-	                    {
-							// Remove
-							dataContext.SecurityUserRoles.DeleteOnSubmit(securityUserRole);
-						}
                     }
                 }
-
-                dataContext.SubmitChanges();
-            }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceEvent(TraceEventType.Error, e.HResult, "Error removing {0} from {1} : {2}", String.Join(",", users), String.Join(",", roles), e);
+                    throw;
+                }
         }
     }
 }

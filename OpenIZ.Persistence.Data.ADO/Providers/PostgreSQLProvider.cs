@@ -9,6 +9,7 @@ using System.Configuration;
 using System.Data.Common;
 using OpenIZ.Persistence.Data.ADO.Data;
 using System.Linq.Expressions;
+using System.Diagnostics;
 
 namespace OpenIZ.Persistence.Data.ADO.Providers
 {
@@ -17,9 +18,17 @@ namespace OpenIZ.Persistence.Data.ADO.Providers
     /// </summary>
     public class PostgreSQLProvider : IDbProvider
     {
-        
+
+        // Trace source
+        private TraceSource m_traceSource = new TraceSource(AdoDataConstants.TraceSourceName);
+
         // DB provider factory
         private DbProviderFactory m_provider = null;
+
+        /// <summary>
+        /// Trace SQL commands
+        /// </summary>
+        public bool TraceSql { get; set; }
 
         /// <summary>
         /// Gets or sets the connection string
@@ -69,34 +78,50 @@ namespace OpenIZ.Persistence.Data.ADO.Providers
         public IDbCommand CreateCommand(DataContext context, SqlStatement stmt)
         {
             var finStmt = stmt.Build();
-            return this.CreateCommandInternal(context, CommandType.Text, finStmt.SQL, finStmt.Arguments);
+            return this.CreateCommandInternal(context, CommandType.Text, finStmt.SQL, finStmt.Arguments.ToArray());
         }
-        
+
         /// <summary>
         /// Create command internally
         /// </summary>
-        private IDbCommand CreateCommandInternal(DataContext context, CommandType type, String sql, params object[] parms) {
+        private IDbCommand CreateCommandInternal(DataContext context, CommandType type, String sql, params object[] parms)
+        {
+
+            var pno = 0;
+            while (sql.Contains("?"))
+            {
+                var idx = sql.IndexOf("?");
+                sql = sql.Remove(idx, 1).Insert(idx, $"@parm{pno++}");
+            }
+
+            if (pno !=  parms.Length)
+                throw new ArgumentOutOfRangeException(nameof(sql), $"Parameter mismatch query expected {pno} but {parms.Length} supplied");
 
             var cmd = context.Connection.CreateCommand();
             cmd.CommandType = type;
             cmd.CommandText = sql;
             cmd.Transaction = context.Transaction;
 
-            foreach(var itm in parms)
+            if (this.TraceSql)
+                this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "[{0}] {1}", type, sql);
+
+            pno = 0;
+            foreach (var itm in parms)
             {
                 var parm = cmd.CreateParameter();
+                var value = itm;
 
                 // Parameter type
-                if (itm is String) parm.DbType = System.Data.DbType.String;
-                else if (itm is DateTime || itm is DateTimeOffset) parm.DbType = System.Data.DbType.DateTime;
-                else if (itm is Int32) parm.DbType = System.Data.DbType.Int32;
-                else if (itm is Boolean) parm.DbType = System.Data.DbType.Boolean;
-                else if (itm is byte[])
+                if (value is String) parm.DbType = System.Data.DbType.String;
+                else if (value is DateTime || value is DateTimeOffset) parm.DbType = System.Data.DbType.DateTime;
+                else if (value is Int32) parm.DbType = System.Data.DbType.Int32;
+                else if (value is Boolean) parm.DbType = System.Data.DbType.Boolean;
+                else if (value is byte[])
                     parm.DbType = System.Data.DbType.Binary;
-                else if (itm is Guid || itm is Guid?)
+                else if (value is Guid || value is Guid?)
                     parm.DbType = System.Data.DbType.Guid;
-                else if (itm is float || itm is double) parm.DbType = System.Data.DbType.Double;
-                else if (itm is Decimal) parm.DbType = System.Data.DbType.Decimal;
+                else if (value is float || value is double) parm.DbType = System.Data.DbType.Double;
+                else if (value is Decimal) parm.DbType = System.Data.DbType.Decimal;
 
                 // Set value
                 if (itm == null)
@@ -104,8 +129,13 @@ namespace OpenIZ.Persistence.Data.ADO.Providers
                 else
                     parm.Value = itm;
 
+                parm.ParameterName = $"parm{pno++}";
                 parm.Direction = ParameterDirection.Input;
-                
+
+                if (this.TraceSql)
+                    this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "\t [{0}] {1} ({2})", cmd.Parameters.Count, parm.Value, parm.DbType);
+
+
                 cmd.Parameters.Add(parm);
             }
 
@@ -161,5 +191,22 @@ namespace OpenIZ.Persistence.Data.ADO.Providers
             return sql.Append($"OFFSET {offset} ");
         }
 
+        /// <summary>
+        /// Return exists
+        /// </summary>
+        public SqlStatement Exists(SqlStatement sqlStatement)
+        {
+            return new SqlStatement("SELECT CASE WHEN EXISTS (").Append(sqlStatement).Append(") THEN true ELSE false END");
+        }
+
+        /// <summary>
+        /// Append a returning statement
+        /// </summary>
+        public SqlStatement Returning(SqlStatement sqlStatement, params ColumnMapping[] returnColumns)
+        {
+            if (returnColumns.Length == 0)
+                return sqlStatement;
+            return sqlStatement.Append($" RETURNING {String.Join(",", returnColumns.Select(o => o.Name))}");
+        }
     }
 }

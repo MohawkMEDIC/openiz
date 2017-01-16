@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 
 namespace OpenIZ.Persistence.Data.ADO.Util
@@ -163,6 +164,29 @@ namespace OpenIZ.Persistence.Data.ADO.Util
         {
             return this.And(new SqlStatement(clause, args));
         }
+
+        /// <summary>
+        /// Inner join
+        /// </summary>
+        public SqlStatement InnerJoin<TLeft, TRight>(Expression<Func<TLeft, dynamic>> leftColumn, Expression<Func<TRight, dynamic>> rightColumn)
+        {
+            var leftMap = TableMapping.Get(typeof(TLeft));
+            var rightMap = TableMapping.Get(typeof(TRight));
+            var joinStatement = this.Append($"INNER JOIN {rightMap.TableName} ON");
+            var rhsPk = rightMap.GetColumn(this.GetMember(rightColumn.Body));
+            var lhsPk = leftMap.GetColumn(this.GetMember(leftColumn.Body));
+            return joinStatement.Append($"({lhsPk.Table.TableName}.{lhsPk.Name} = {rhsPk.Table.TableName}.{rhsPk.Name}) ");
+        }
+
+        /// <summary>
+        /// Get member information from lambda
+        /// </summary>
+        protected MemberInfo GetMember(Expression expression)
+        {
+            if (expression is MemberExpression) return (expression as MemberExpression).Member;
+            else if (expression is UnaryExpression) return this.GetMember((expression as UnaryExpression).Operand);
+            else throw new InvalidOperationException($"{expression} not supported, please use a member access expression");
+        }
     }
 
     /// <summary>
@@ -208,6 +232,20 @@ namespace OpenIZ.Persistence.Data.ADO.Util
             return this;
         }
 
+        /// <summary>
+        /// Inner join
+        /// </summary>
+        public SqlStatement<T> InnerJoin<TRight>(Expression<Func<T, dynamic>> leftColumn, Expression<Func<TRight, dynamic>> rightColumn)
+        {
+            var leftMap = TableMapping.Get(typeof(T));
+            var rightMap = TableMapping.Get(typeof(TRight));
+            var joinStatement = this.Append($"INNER JOIN {rightMap.TableName} ON ");
+            var rhsPk = rightMap.GetColumn(this.GetMember(rightColumn.Body));
+            var lhsPk = leftMap.GetColumn(this.GetMember(leftColumn.Body));
+            var retVal = new SqlStatement<T>();
+            retVal.Append(joinStatement).Append($"({lhsPk.Table.TableName}.{lhsPk.Name} = {rhsPk.Table.TableName}.{rhsPk.Name}) ");
+            return retVal;
+        }
 
         /// <summary>
         /// Construct a where clause on the expression tree
@@ -218,6 +256,42 @@ namespace OpenIZ.Persistence.Data.ADO.Util
             var queryBuilder = new SqlQueryExpressionBuilder(this.m_alias ?? tableMap.TableName);
             queryBuilder.Visit(expression.Body);
             return this.Append(new SqlStatement("WHERE ").Append(queryBuilder.SqlStatement));
+        }
+
+        /// <summary>
+        /// Construct a where clause on the expression tree
+        /// </summary>
+        public SqlStatement Where<TExpression>(Expression<Func<TExpression, bool>> expression)
+        {
+            var tableMap = TableMapping.Get(typeof(TExpression));
+            var queryBuilder = new SqlQueryExpressionBuilder(this.m_alias ?? tableMap.TableName);
+            queryBuilder.Visit(expression.Body);
+            return this.Append(new SqlStatement("WHERE ").Append(queryBuilder.SqlStatement));
+        }
+
+        /// <summary>
+        /// Appends an inner join
+        /// </summary>
+        public SqlStatement<TReturn> InnerJoin<TJoinTable, TReturn>()
+        {
+            var tableMap = TableMapping.Get(typeof(TJoinTable));
+            var joinStatement = this.Append($"INNER JOIN {tableMap.TableName} ON ");
+            var rhsPk = tableMap.Columns.SingleOrDefault(o => o.IsPrimaryKey);
+            var lhsPk = TableMapping.Get(typeof(T)).Columns.SingleOrDefault(o => o.ForeignKey?.Column == rhsPk.SourceProperty.Name && o.ForeignKey?.Table == tableMap.OrmType);
+            if (lhsPk == null || rhsPk == null) throw new InvalidOperationException("PK not found");
+            joinStatement.Append($"({lhsPk.Table.TableName}.{lhsPk.Name} = {rhsPk.Table.TableName}.{rhsPk.Name}) ");
+            var retVal = new SqlStatement<TReturn>();
+            retVal.Append(joinStatement);
+            return retVal;
+        }
+
+        /// <summary>
+        /// Create a delete from
+        /// </summary>
+        public SqlStatement<T> DeleteFrom()
+        {
+            var tableMap = TableMapping.Get(typeof(T));
+            return this.Append(new SqlStatement<T>($"DELETE FROM {tableMap.TableName} "));
         }
 
         /// <summary>

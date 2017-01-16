@@ -17,6 +17,11 @@ namespace OpenIZ.Persistence.Data.ADO.Providers
     public interface IDbProvider
     {
         /// <summary>
+        /// Trace SQL commands
+        /// </summary>
+        bool TraceSql { get; set; }
+
+        /// <summary>
         /// Readonly (mirror) connection string
         /// </summary>
         ConnectionStringSettings ReadonlyConnectionString { get; set; }
@@ -70,5 +75,15 @@ namespace OpenIZ.Persistence.Data.ADO.Providers
         /// Generates the offset function
         /// </summary>
         SqlStatement Skip(SqlStatement sql, int offset);
+
+        /// <summary>
+        /// Creates an Exists statement
+        /// </summary>
+        SqlStatement Exists(SqlStatement sqlStatement);
+
+        /// <summary>
+        /// Appends a RETURNING statement
+        /// </summary>
+        SqlStatement Returning(SqlStatement sqlStatement, params ColumnMapping[] returnColumns);
     }
 }

@@ -125,7 +125,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Security
         /// User classification
         /// </summary>
         [Column("cls_id")]
-        public Guid Userclass { get; set; }
+        public Guid UserClass { get; set; }
 
         /// <summary>
         /// Email confirmed

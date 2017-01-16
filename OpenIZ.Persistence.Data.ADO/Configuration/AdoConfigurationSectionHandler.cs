@@ -48,9 +48,9 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration
                 if (connectionNode.Attributes["readWriteConnection"] == null)
                     throw new ConfigurationErrorsException("Connection manager must have a read/write connection", connectionNode);
                 else
-                    retVal.ReadWriteConnectionString = ConfigurationManager.ConnectionStrings[connectionNode.Attributes["readWriteConnection"].Value]?.ConnectionString;
+                    retVal.ReadWriteConnectionString = connectionNode.Attributes["readWriteConnection"].Value;
                 if (connectionNode.Attributes["readonlyConnection"] != null)
-                    retVal.ReadonlyConnectionString = ConfigurationManager.ConnectionStrings[connectionNode.Attributes["readonlyConnection"].Value]?.ConnectionString;
+                    retVal.ReadonlyConnectionString = connectionNode.Attributes["readonlyConnection"].Value;
                 else
                     retVal.ReadonlyConnectionString = retVal.ReadWriteConnectionString;
                 if (connectionNode.Attributes["insertUpdate"] != null)
@@ -66,8 +66,10 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration
                     retVal.Provider = dbp;
                     retVal.Provider.ReadonlyConnectionString = ConfigurationManager.ConnectionStrings[retVal.ReadonlyConnectionString];
                     retVal.Provider.ConnectionString = ConfigurationManager.ConnectionStrings[retVal.ReadWriteConnectionString];
-
+                    retVal.Provider.TraceSql = retVal.TraceSql;
                 }
+                else
+                    throw new ConfigurationErrorsException("ADO.NET persistence provider requires a [provider] attribute");
 
                 if (retVal.ReadWriteConnectionString == null || retVal.ReadonlyConnectionString == null)
                     throw new ConfigurationErrorsException("Connection string not found");
