@@ -77,6 +77,7 @@ CREATE TABLE report_parameter
 (
 	id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 	creation_time timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	description varchar(1024) NULL,
 	is_nullable bit NOT NULL,
 	name varchar(256) NOT NULL,
 	position int NOT NULL,

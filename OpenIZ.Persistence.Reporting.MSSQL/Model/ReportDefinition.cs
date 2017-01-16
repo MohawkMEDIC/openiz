@@ -65,7 +65,7 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Model
 		/// Gets or sets the correlation id of the report.
 		/// </summary>
 		[Required]
-		public Guid CorrelationId { get; set; }
+		public string CorrelationId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the creation time of the report.
@@ -90,6 +90,7 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Model
 		/// Gets or sets the name of the report.
 		/// </summary>
 		[Required]
+		[StringLength(256)]
 		public string Name { get; set; }
 
 		/// <summary>

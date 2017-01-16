@@ -44,12 +44,12 @@ namespace OpenIZ.Messaging.RISI.Configuration
 		/// Gets or sets the address of the reporting engine.
 		/// </summary>
 		[XmlAttribute("address")]
-		public string Address { get; private set; }
+		public string Address { get; }
 
 		/// <summary>
 		/// Gets the engine handler of the configuration.
 		/// </summary>
 		[XmlAttribute("type")]
-		public Type Handler { get; private set; }
+		public Type Handler { get; }
 	}
 }

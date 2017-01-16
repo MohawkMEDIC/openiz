@@ -59,6 +59,12 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Model
 		public DateTimeOffset CreationTime { get; set; }
 
 		/// <summary>
+		/// Gets or sets the description of the report parameter.
+		/// </summary>
+		[StringLength(1024)]
+		public string Description { get; set; }
+
+		/// <summary>
 		/// Gets or sets the id of the parameter.
 		/// </summary>
 		[Key]

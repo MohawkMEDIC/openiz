@@ -77,15 +77,6 @@ namespace OpenIZ.Reporting.Core
 		ReportFormat DeleteReportFormat(Guid id);
 
 		/// <summary>
-		/// Executes a report.
-		/// </summary>
-		/// <param name="id">The id of the report.</param>
-		/// <param name="format">The output format of the report.</param>
-		/// <param name="parameters">The list of parameters of the report.</param>
-		/// <returns>Returns the report in raw format.</returns>
-		byte[] ExecuteReport(Guid id, Guid format, List<ReportParameter> parameters);
-
-		/// <summary>
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>

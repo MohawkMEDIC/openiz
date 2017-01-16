@@ -1,30 +1,27 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: justi
  * Date: 2016-8-28
  */
-using OpenIZ.Core.Interop.Clients;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
+
 using OpenIZ.Core.Http;
-using OpenIZ.Core.Model.Query;
+using OpenIZ.Core.Interop.Clients;
 using OpenIZ.Core.Model.RISI;
+using System;
 
 namespace OpenIZ.Messaging.RISI.Client
 {
@@ -106,6 +103,18 @@ namespace OpenIZ.Messaging.RISI.Client
 
 		private bool disposedValue = false; // To detect redundant calls
 
+		// This code added to correctly implement the disposable pattern.
+		/// <summary>
+		/// Dispose of any managed resources.
+		/// </summary>
+		public void Dispose()
+		{
+			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+			Dispose(true);
+			// TODO: uncomment the following line if the finalizer is overridden above.
+			// GC.SuppressFinalize(this);
+		}
+
 		/// <summary>
 		/// Dispose of any managed resources.
 		/// </summary>
@@ -132,31 +141,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		//   Dispose(false);
 		// }
 
-		// This code added to correctly implement the disposable pattern.
-		/// <summary>
-		/// Dispose of any managed resources.
-		/// </summary>
-		public void Dispose()
-		{
-			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-			Dispose(true);
-			// TODO: uncomment the following line if the finalizer is overridden above.
-			// GC.SuppressFinalize(this);
-		}
-
-		#endregion
-
-		/// <summary>
-		/// Executes a report.
-		/// </summary>
-		/// <param name="id">The id of the report.</param>
-		/// <param name="format">The output format of the report.</param>
-		/// <param name="parameters">The list of parameters of the report.</param>
-		/// <returns>Returns the report in raw format.</returns>
-		public byte[] ExecuteReport(string id, string format, RisiCollection<ReportParameter> parameters)
-		{
-			return this.Client.Post<RisiCollection<ReportParameter>, byte[]>($"report/{id}/{format}", this.Client.Accept, parameters);
-		}
+		#endregion IDisposable Support
 
 		/// <summary>
 		/// Gets a list of all report parameter types.
@@ -225,6 +210,28 @@ namespace OpenIZ.Messaging.RISI.Client
 		public AutoCompleteSourceDefinition GetReportParameterValues(string id, string parameterId)
 		{
 			return this.Client.Get<AutoCompleteSourceDefinition>($"report/{id}/parm/{parameterId}/values");
+		}
+
+		/// <summary>
+		/// Gets the report source.
+		/// </summary>
+		/// <param name="id">The id of the report for which to retrieve the source.</param>
+		/// <returns>Returns the report source.</returns>
+		public ReportDefinition GetReportSource(string id)
+		{
+			return this.Client.Get<ReportDefinition>($"report/{id}/source");
+		}
+
+		/// <summary>
+		/// Executes a report.
+		/// </summary>
+		/// <param name="id">The id of the report.</param>
+		/// <param name="format">The output format of the report.</param>
+		/// <param name="parameters">The list of parameters of the report.</param>
+		/// <returns>Returns the report in raw format.</returns>
+		public byte[] RunReport(string id, string format, RisiCollection<ReportParameter> parameters)
+		{
+			return this.Client.Post<RisiCollection<ReportParameter>, byte[]>($"report/{id}/{format}", this.Client.Accept, parameters);
 		}
 
 		/// <summary>

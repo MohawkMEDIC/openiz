@@ -50,6 +50,12 @@ namespace OpenIZ.Core.Model.RISI
 		}
 
 		/// <summary>
+		/// Gets or sets the description of the report parameter.
+		/// </summary>
+		[XmlElement("description")]
+		public string Description { get; set; }
+
+		/// <summary>
 		/// Gets or sets whether the report parameter is nullable.
 		/// </summary>
 		[XmlAttribute("isNullable")]

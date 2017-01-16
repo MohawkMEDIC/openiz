@@ -88,16 +88,6 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		ReportFormat DeleteReportFormat(string id);
 
 		/// <summary>
-		/// Executes a report.
-		/// </summary>
-		/// <param name="id">The id of the report.</param>
-		/// <param name="format">The output format of the report.</param>
-		/// <param name="parameters">The list of parameters of the report.</param>
-		/// <returns>Returns the report in raw format.</returns>
-		[WebInvoke(UriTemplate = "/report/{id}/{format}", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-		byte[] ExecuteReport(string id, string format, List<ReportParameter> parameters);
-
-		/// <summary>
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
@@ -159,6 +149,16 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns the report source.</returns>
 		[WebGet(UriTemplate = "/report/{id}/source", BodyStyle = WebMessageBodyStyle.Bare)]
 		ReportDefinition GetReportSource(string id);
+
+		/// <summary>
+		/// Executes a report.
+		/// </summary>
+		/// <param name="id">The id of the report.</param>
+		/// <param name="format">The output format of the report.</param>
+		/// <param name="parameters">The list of parameters of the report.</param>
+		/// <returns>Returns the report in raw format.</returns>
+		[WebInvoke(UriTemplate = "/report/{id}/{format}", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		byte[] RunReport(string id, string format, List<ReportParameter> parameters);
 
 		/// <summary>
 		/// Updates a parameter type definition.

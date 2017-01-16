@@ -54,8 +54,8 @@ namespace OpenIZ.Core.Model.RISI
 		/// <summary>
 		/// Gets or sets the correlation id of the report to the report engine.
 		/// </summary>
-		[XmlElement("correlationId")]
-		public Guid CorrelationId { get; set; }
+		[XmlAttribute("correlationId")]
+		public string CorrelationId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the description of the report.

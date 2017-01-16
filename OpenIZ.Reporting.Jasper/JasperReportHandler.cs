@@ -26,12 +26,7 @@ using OpenIZ.Core.Security;
 using OpenIZ.Reporting.Core;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
-using OpenIZ.Core.Model;
-using OpenIZ.Core.Model.Entities;
-using OpenIZ.Core.Model.RISI.Interfaces;
 
 namespace OpenIZ.Reporting.Jasper
 {
@@ -163,18 +158,6 @@ namespace OpenIZ.Reporting.Jasper
 		public void Dispose()
 		{
 			this.client?.Dispose();
-		}
-
-		/// <summary>
-		/// Executes a report.
-		/// </summary>
-		/// <param name="id">The id of the report.</param>
-		/// <param name="format">The output format of the report.</param>
-		/// <param name="parameters">The list of parameters of the report.</param>
-		/// <returns>Returns the report in raw format.</returns>
-		public byte[] ExecuteReport(Guid id, Guid format, List<ReportParameter> parameters)
-		{
-			throw new NotImplementedException();
 		}
 
 		/// <summary>

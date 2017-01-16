@@ -136,31 +136,6 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		}
 
 		/// <summary>
-		/// Executes a report.
-		/// </summary>
-		/// <param name="id">The id of the report.</param>
-		/// <param name="format">The output format of the report.</param>
-		/// <param name="parameters">The list of parameters of the report.</param>
-		/// <returns>Returns the report in raw format.</returns>
-		public byte[] ExecuteReport(string id, string format, List<ReportParameter> parameters)
-		{
-			var reportId = Guid.Empty;
-			var formatId = Guid.Empty;
-
-			if (!Guid.TryParse(id, out reportId))
-			{
-				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
-			}
-
-			if (!Guid.TryParse(format, out formatId))
-			{
-				throw new ArgumentException($"The parameter { format } must be a valid { nameof(Guid) }");
-			}
-
-			return this.reportHandler.ExecuteReport(reportId, formatId, parameters);
-		}
-
-		/// <summary>
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
@@ -285,6 +260,31 @@ namespace OpenIZ.Messaging.RISI.Wcf
 			}
 
 			return this.reportHandler.GetReportSource(key);
+		}
+
+		/// <summary>
+		/// Executes a report.
+		/// </summary>
+		/// <param name="id">The id of the report.</param>
+		/// <param name="format">The output format of the report.</param>
+		/// <param name="parameters">The list of parameters of the report.</param>
+		/// <returns>Returns the report in raw format.</returns>
+		public byte[] RunReport(string id, string format, List<ReportParameter> parameters)
+		{
+			var reportId = Guid.Empty;
+			var formatId = Guid.Empty;
+
+			if (!Guid.TryParse(id, out reportId))
+			{
+				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
+			}
+
+			if (!Guid.TryParse(format, out formatId))
+			{
+				throw new ArgumentException($"The parameter { format } must be a valid { nameof(Guid) }");
+			}
+
+			return this.reportHandler.RunReport(reportId, formatId, parameters);
 		}
 
 		/// <summary>
