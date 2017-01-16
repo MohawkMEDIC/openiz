@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -18,8 +18,8 @@
  * Date: 2016-12-4
  */
 
-using System.Xml.Serialization;
 using OpenIZ.Core.Model.Entities;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.RISI
 {
