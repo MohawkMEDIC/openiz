@@ -53,6 +53,11 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration
         public bool AutoUpdateExisting { get; set; }
 
         /// <summary>
+        /// When true, indicates that inserts can allow auto inserts of child properties
+        /// </summary>
+        public bool AutoInsertChildren { get; set; }
+
+        /// <summary>
         /// Provider type
         /// </summary>
         public IDbProvider Provider { get; set; }

@@ -70,6 +70,7 @@
     <Compile Include="Data\Model\Acts\DbPatientEncounter.cs" />
     <Compile Include="Data\Model\Acts\DbProtocol.cs" />
     <Compile Include="Data\Model\Acts\DbSubstanceAdministration.cs" />
+    <Compile Include="Security\AdoBasePersistenceService.cs" />
     <Compile Include="Data\Model\Concepts\DbCodeSystem.cs" />
     <Compile Include="Data\Model\Concepts\DbConceptReferenceTerm.cs" />
     <Compile Include="Data\Model\Concepts\DbConceptVersion.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="Data\Model\Entities\DbPlaceService.cs" />
     <Compile Include="Data\Model\Entities\DbTelecomAddress.cs" />
     <Compile Include="Data\Model\Entities\DbUserEntity.cs" />
+    <Compile Include="Data\Model\Error\FunctionErrorCode.cs" />
     <Compile Include="Data\Model\Extensibility\DbExtension.cs" />
     <Compile Include="Data\Model\Extensibility\DbExtensionType.cs" />
     <Compile Include="Data\Model\Extensibility\DbNote.cs" />
@@ -128,6 +130,7 @@
     <Compile Include="Security\AdoSecurityPolicyInstance.cs" />
     <Compile Include="Services\AdoApplicationIdentityProvider.cs" />
     <Compile Include="Services\AdoIdentityProvider.cs" />
+    <Compile Include="Services\AdoPersistenceService.cs" />
     <Compile Include="Services\AdoPolicyInformationService.cs" />
     <Compile Include="Services\AdoRoleProvider.cs" />
     <Compile Include="Util\ColumnMapping.cs" />

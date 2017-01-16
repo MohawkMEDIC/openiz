@@ -34,5 +34,9 @@ namespace OpenIZ.Persistence.Data.ADO
         /// The refresh secret
         /// </summary>
         public const string RefreshExpiryClaimType = "http://openiz.org/claims/sec-ado/refreshExpiry";
+        /// <summary>
+        /// The map resource file name
+        /// </summary>
+        public const string MapResourceName = "OpenIZ.Persistence.Data.ADO.Data.Map.ModelMap.xml";
     }
 }

@@ -58,7 +58,7 @@ namespace OpenIZ.Persistence.Data.ADO.Util
         private const string m_extractionRegex = @"^(\w*?)(\[(\w*)\])?(\@(\w*))?(\.(.*))?$";
 
         // Mapper
-        private static ModelMapper m_mapper = new ModelMapper(typeof(QueryBuilder).Assembly.GetManifestResourceStream("OpenIZ.Persistence.Data.ADO.Data.Map.ModelMap.xml"));
+        private static ModelMapper m_mapper = new ModelMapper(typeof(QueryBuilder).Assembly.GetManifestResourceStream(AdoDataConstants.MapResourceName));
         private const int PropertyRegexGroup = 1;
         private const int GuardRegexGroup = 3;
         private const int CastRegexGroup = 5;

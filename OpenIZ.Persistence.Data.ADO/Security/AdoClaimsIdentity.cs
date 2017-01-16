@@ -47,6 +47,8 @@ using OpenIZ.Persistence.Data.ADO.Configuration;
 using OpenIZ.Persistence.Data.ADO.Util;
 using System.Data;
 using System.Data.Common;
+using OpenIZ.Persistence.Data.ADO.Data;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Error;
 
 namespace OpenIZ.Persistence.Data.ADO.Security
 {
@@ -108,11 +110,10 @@ namespace OpenIZ.Persistence.Data.ADO.Security
                     var hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
 
                     var passwordHash = hashingService.EncodePassword(password);
-                    var user = dataContext.FirstOrDefault<DbSecurityUser>("auth_usr", userName, passwordHash, 3);
-
-                    // TODO: Make this more friendly
-                    if (user.Key == Guid.Empty)
-                        throw new AuthenticationException(user.UserName);
+                    var fnResult = dataContext.FirstOrDefault<CompositeResult<DbSecurityUser, FunctionErrorCode>>("auth_usr", userName, passwordHash, 3);
+                    if(!String.IsNullOrEmpty(fnResult.Object2.ErrorCode))
+                        throw new AuthenticationException(fnResult.Object2.ErrorCode);
+                    var user = fnResult.Object1;
 
                     var roles = dataContext.Query<DbSecurityRole>(new SqlStatement<DbSecurityRole>().SelectFrom()
                         .InnerJoin<DbSecurityUserRole>(o => o.Key, o => o.RoleKey)

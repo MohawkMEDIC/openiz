@@ -27,9 +27,21 @@ using System.Threading.Tasks;
 namespace OpenIZ.Persistence.Data.ADO.Data.Model
 {
     /// <summary>
+    /// Represents identified data
+    /// </summary>
+
+    public interface IDbIdentified
+    {
+        /// <summary>
+        /// Gets or sets the key of the object
+        /// </summary>
+        Guid Key { get; set; }
+    }
+
+    /// <summary>
     /// Gets or sets the identified data
     /// </summary>
-    public abstract class DbIdentified : IAdoLoadedData
+    public abstract class DbIdentified : IAdoLoadedData, IDbIdentified
     {
         /// <summary>
         /// Create database identified

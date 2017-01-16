@@ -15,7 +15,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
     /// <summary>
     /// Multi type result used when a result set is a join
     /// </summary>
-    public abstract class MultiTypeResult
+    public abstract class CompositeResult
     {
         /// <summary>
         /// Gets or sets the values
@@ -47,7 +47,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
     /// <summary>
     /// Multi-type result for two types
     /// </summary>
-    public class MultiTypeResult<TData1, TData2> : MultiTypeResult
+    public class CompositeResult<TData1, TData2> : CompositeResult
     {
 
         public TData1 Object1 { get { return (TData1)this.Values[0]; } }
@@ -62,7 +62,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
     /// <summary>
     /// Multi-type result for three types
     /// </summary>
-    public class MultiTypeResult<TData1, TData2, TData3> : MultiTypeResult<TData1, TData2>
+    public class CompositeResult<TData1, TData2, TData3> : CompositeResult<TData1, TData2>
     {
         public TData3 Object3 { get { return (TData3)this.Values[2]; } }
 
@@ -75,7 +75,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
     /// <summary>
     /// Multi-type result for four types
     /// </summary>
-    public class MultiTypeResult<TData1, TData2, TData3, TData4> : MultiTypeResult<TData1, TData2, TData3>
+    public class CompositeResult<TData1, TData2, TData3, TData4> : CompositeResult<TData1, TData2, TData3>
     {
         public TData4 Object4 { get { return (TData4)this.Values[3]; } }
 
@@ -115,11 +115,11 @@ namespace OpenIZ.Persistence.Data.ADO.Data
         /// </summary>
         private TModel MapObject<TModel>(IDataReader rdr)
         {
-            if (typeof(MultiTypeResult).IsAssignableFrom(typeof(TModel)))
+            if (typeof(CompositeResult).IsAssignableFrom(typeof(TModel)))
             {
                 var retVal = Activator.CreateInstance(typeof(TModel));
-                (retVal as MultiTypeResult).ParseValues(rdr);
-                foreach (var itm in (retVal as MultiTypeResult).Values.OfType<IAdoLoadedData>())
+                (retVal as CompositeResult).ParseValues(rdr);
+                foreach (var itm in (retVal as CompositeResult).Values.OfType<IAdoLoadedData>())
                     itm.Context = this;
                 return (TModel)retVal;
             }

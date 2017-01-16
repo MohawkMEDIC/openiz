@@ -32,7 +32,6 @@ using OpenIZ.Persistence.Data.ADO.Data;
 using System.Security.Principal;
 using System.Diagnostics;
 using MARC.HI.EHRS.SVC.Core;
-using OpenIZ.Persistence.Data.ADO.Services.Persistence;
 using OpenIZ.Core.Exceptions;
 using OpenIZ.Persistence.Data.ADO.Configuration;
 using System.Threading;
@@ -63,11 +62,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// </summary>
         static AdoPersistenceService()
         {
-            var tracer = new TraceSource("OpenIZ.Persistence.Data.ADO.Services.Persistence");
+            var tracer = new TraceSource(AdoDataConstants.TraceSourceName);
 
             try
             {
-                s_mapper = new ModelMapper(typeof(AdoPersistenceService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Persistence.Data.ADO.Data.ModelMap.xml"));
+                s_mapper = new ModelMapper(typeof(AdoPersistenceService).GetTypeInfo().Assembly.GetManifestResourceStream(AdoDataConstants.MapResourceName));
             }
             catch (ModelMapValidationException ex)
             {
@@ -81,61 +80,19 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             }
         }
 
-        ///// <summary>
-        ///// Generic versioned persister service for any non-customized persister
-        ///// </summary>
-        //internal class GenericVersionedPersistenceService<TModel, TDomain> : VersionedDataPersistenceService<TModel, TDomain>
-        //    where TDomain : class, IDbVersionedData, new()
-        //    where TModel : VersionedEntityData<TModel>, new()
-        //{
-
-        //    /// <summary>
-        //    /// Ensure exists
-        //    /// </summary>
-        //    public override TModel Insert(Database context, TModel data, IPrincipal principal)
-        //    {
-        //        foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
-        //        {
-        //            var instance = rp.GetValue(data);
-        //            if (instance != null)
-        //            {
-        //                (instance as IIdentifiedEntity).EnsureExists(principal, context);
-        //                data.UpdateParentKeys(rp);
-        //            }
-        //        }
-        //            return base.Insert(context, data);
-        //    }
-
-        //    /// <summary>
-        //    /// Update the specified object
-        //    /// </summary>
-        //    public override TModel Update(Database context, TModel data)
-        //    {
-        //        foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
-        //        {
-        //            var instance = rp.GetValue(data);
-        //            if (instance != null)
-        //            {
-        //                ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
-        //                data.UpdateParentKeys(rp);
-        //            }
-        //        }
-        //        return base.Update(context, data);
-        //    }
-        //}
-
+        
         /// <summary>
         /// Generic versioned persister service for any non-customized persister
         /// </summary>
         internal class GenericBasePersistenceService<TModel, TDomain> : BaseDataPersistenceService<TModel, TDomain>
-            where TDomain : class, DbBaseData, new()
+            where TDomain : class, IDbBaseData, new()
             where TModel : BaseEntityData, new()
         {
 
             /// <summary>
             /// Ensure exists
             /// </summary>
-            public override TModel Insert(Database context, TModel data, IPrincipal principal)
+            public override TModel Insert(DataContext context, TModel data, IPrincipal principal)
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
@@ -144,10 +101,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                     var instance = rp.GetValue(data);
                     if (instance != null)
-                    {
-                        DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal);
                         data.UpdateParentKeys(rp);
-                    }
                 }
                 return base.Insert(context, data, principal);
             }
@@ -155,7 +109,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             /// <summary>
             /// Update the specified object
             /// </summary>
-            public override TModel Update(Database context, TModel data, IPrincipal principal)
+            public override TModel Update(DataContext context, TModel data, IPrincipal principal)
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
@@ -164,10 +118,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                     var instance = rp.GetValue(data);
                     if (instance != null)
-                    {
                         DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal);
-                        data.UpdateParentKeys(rp);
-                    }
                 }
                 return base.Update(context, data, principal);
             }
@@ -178,12 +129,12 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// </summary>
         internal class GenericIdentityPersistenceService<TModel, TDomain> : IdentifiedPersistenceService<TModel, TDomain>
             where TModel : IdentifiedData, new()
-            where TDomain : class, DbIdentified, new()
+            where TDomain : class, IDbIdentified, new()
         {
             /// <summary>
             /// Ensure exists
             /// </summary>
-            public override TModel Insert(Database context, TModel data, IPrincipal principal)
+            public override TModel Insert(DataContext context, TModel data, IPrincipal principal)
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
@@ -192,10 +143,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                     var instance = rp.GetValue(data);
                     if (instance != null)
-                    {
                         DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal);
-                        data.UpdateParentKeys(rp);
-                    }
                 }
                 return base.Insert(context, data, principal);
             }
@@ -203,7 +151,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             /// <summary>
             /// Update the specified object
             /// </summary>
-            public override TModel Update(Database context, TModel data, IPrincipal principal)
+            public override TModel Update(DataContext context, TModel data, IPrincipal principal)
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
@@ -212,18 +160,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                     var instance = rp.GetValue(data);
                     if (instance != null)
-                    {
                         DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal);
-                        data.UpdateParentKeys(rp);
-                    }
-
                 }
                 return base.Update(context, data, principal);
             }
         }
 
         // Tracer
-        private TraceSource m_tracer = new TraceSource("OpenIZ.Persistence.Data.ADO.Services.Persistence");
+        private TraceSource m_tracer = new TraceSource(AdoDataConstants.TraceSourceName);
 
         // When service is running
         private bool m_running = false;
@@ -231,7 +175,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// <summary>
         /// SqlConfiguration
         /// </summary>
-        private AdoConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection(PAdoDataConstants.ConfigurationSectionName) as AdoConfiguration;
+        private AdoConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection(AdoDataConstants.ConfigurationSectionName) as AdoConfiguration;
 
         /// <summary>
         /// Service is starting
@@ -271,9 +215,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             if (this.m_running) return true;
 
             // Verify schema version
-            using (Database mdc = new Database(this.m_configuration.ReadonlyConnectionString))
+            using (DataContext mdc = this.m_configuration.Provider.GetReadonlyConnection())
             {
-                Version dbVer = new Version(mdc.ExecuteScalar<String>("SELECT")),
+                Version dbVer = new Version(mdc.FirstOrDefault<String>("get_sch_vrsn")),
                     oizVer = typeof(AdoPersistenceService).Assembly.GetName().Version;
 
                 if (oizVer < dbVer)

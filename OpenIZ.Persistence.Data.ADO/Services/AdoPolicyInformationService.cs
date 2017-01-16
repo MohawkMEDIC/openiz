@@ -69,7 +69,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                             .InnerJoin<DbSecurityPolicy, DbSecurityDevicePolicy>()
                             .Where(o => o.SourceKey == (securable as IdentifiedData).Key);
 
-                        return context.Query<MultiTypeResult<DbSecurityPolicy, DbSecurityDevicePolicy>>(query)
+                        return context.Query<CompositeResult<DbSecurityPolicy, DbSecurityDevicePolicy>>(query)
                                                     .Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, securable));
                     }
                     else if (securable is Core.Model.Security.SecurityRole)
@@ -78,7 +78,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                             .InnerJoin<DbSecurityPolicy, DbSecurityRolePolicy>()
                             .Where(o => o.SourceKey == (securable as IdentifiedData).Key);
 
-                        return context.Query<MultiTypeResult<DbSecurityPolicy, DbSecurityRolePolicy>>(query)
+                        return context.Query<CompositeResult<DbSecurityPolicy, DbSecurityRolePolicy>>(query)
                             .Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, securable));
                     }
                     else if (securable is Core.Model.Security.SecurityApplication || securable is ApplicationPrincipal)
@@ -92,7 +92,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         else
                             query.Where(o => o.Key == (securable as IdentifiedData).Key);
 
-                        return context.Query<MultiTypeResult<DbSecurityPolicy, DbSecurityApplicationPolicy>>(query)
+                        return context.Query<CompositeResult<DbSecurityPolicy, DbSecurityApplicationPolicy>>(query)
                             .Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, securable));
                     }
                     else if (securable is IPrincipal || securable is IIdentity)
@@ -110,7 +110,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                             .InnerJoin<DbSecurityUserRole>(o=>o.SourceKey, o=>o.RoleKey)
                             .Where<DbSecurityUserRole>(o => o.UserKey == user.Key);
 
-                        retVal.AddRange(context.Query<MultiTypeResult<DbSecurityPolicy, DbSecurityRolePolicy>>(query).Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, user)));
+                        retVal.AddRange(context.Query<CompositeResult<DbSecurityPolicy, DbSecurityRolePolicy>>(query).Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, user)));
 
                         // Claims principal, then we want device and app SID
                         if (securable is ClaimsPrincipal)
@@ -125,7 +125,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                                 query = new SqlStatement<DbSecurityApplicationPolicy>().SelectFrom()
                                    .InnerJoin<DbSecurityPolicy, DbSecurityApplicationPolicy>()
                                    .Where(o => o.SourceKey == Guid.Parse(appClaim.Value));
-                                retVal.AddRange(context.Query<MultiTypeResult<DbSecurityPolicy, DbSecurityApplicationPolicy>>(query).Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, user)));
+                                retVal.AddRange(context.Query<CompositeResult<DbSecurityPolicy, DbSecurityApplicationPolicy>>(query).Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, user)));
                             }
                             // There is an device claim so we want to add the device policies - most restrictive
                             if (devClaim != null)
@@ -133,7 +133,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                                 query = new SqlStatement<DbSecurityDevicePolicy>().SelectFrom()
                                    .InnerJoin<DbSecurityPolicy, DbSecurityDevicePolicy>()
                                    .Where(o => o.SourceKey == Guid.Parse(devClaim.Value));
-                                retVal.AddRange(context.Query<MultiTypeResult<DbSecurityPolicy, DbSecurityDevicePolicy>>(query).Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, user)));
+                                retVal.AddRange(context.Query<CompositeResult<DbSecurityPolicy, DbSecurityDevicePolicy>>(query).Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, user)));
                             }
                         }
 
@@ -148,7 +148,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                                   .InnerJoin<DbSecurityPolicy, DbActSecurityPolicy>()
                                   .Where(o => o.SourceKey == pAct.Key);
 
-                        return context.Query<MultiTypeResult<DbSecurityPolicy, DbActSecurityPolicy>>(query)
+                        return context.Query<CompositeResult<DbSecurityPolicy, DbActSecurityPolicy>>(query)
                             .Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, securable));
                     }
                     else if (securable is Core.Model.Entities.Entity)
