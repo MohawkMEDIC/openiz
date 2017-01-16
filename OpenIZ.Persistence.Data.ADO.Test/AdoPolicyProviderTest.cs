@@ -11,7 +11,7 @@ using System.Security.Principal;
 namespace OpenIZ.Persistence.Data.ADO.Test
 {
     [TestClass]
-    public class SecurityServicesTests : DataTest
+    public class AdoPolicyProviderTest : DataTest
     {
 
         /// <summary>

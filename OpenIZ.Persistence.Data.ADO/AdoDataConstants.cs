@@ -25,5 +25,14 @@ namespace OpenIZ.Persistence.Data.ADO
         /// Represents the configuration section name
         /// </summary>
         public const string ConfigurationSectionName = "openiz.persistence.data.ado";
+
+        /// <summary>
+        /// Refresh secret claim
+        /// </summary>
+        public const string RefreshSecretClaimType = "http://openiz.org/claims/sec-ado/refreshSecret";
+        /// <summary>
+        /// The refresh secret
+        /// </summary>
+        public const string RefreshExpiryClaimType = "http://openiz.org/claims/sec-ado/refreshExpiry";
     }
 }

@@ -63,7 +63,8 @@
     <Compile Include="DataTest.cs" />
     <Compile Include="QueryExpressionWriterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SecurityServicesTests.cs" />
+    <Compile Include="AdoPolicyProviderTest.cs" />
+    <Compile Include="AdoIdentityProviderTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">

@@ -94,7 +94,7 @@ namespace OpenIZ.Persistence.Data.ADO.Providers
                 sql = sql.Remove(idx, 1).Insert(idx, $"@parm{pno++}");
             }
 
-            if (pno !=  parms.Length)
+            if (pno !=  parms.Length && type == CommandType.Text)
                 throw new ArgumentOutOfRangeException(nameof(sql), $"Parameter mismatch query expected {pno} but {parms.Length} supplied");
 
             var cmd = context.Connection.CreateCommand();
@@ -129,7 +129,8 @@ namespace OpenIZ.Persistence.Data.ADO.Providers
                 else
                     parm.Value = itm;
 
-                parm.ParameterName = $"parm{pno++}";
+                if(type == CommandType.Text)
+                    parm.ParameterName = $"parm{pno++}";
                 parm.Direction = ParameterDirection.Input;
 
                 if (this.TraceSql)
@@ -163,7 +164,7 @@ namespace OpenIZ.Persistence.Data.ADO.Providers
         /// </summary>
         public SqlStatement OrderBy(SqlStatement sql, string columnName)
         {
-            return sql.Append($"ORDER BY {columnName} ASC ");
+            return sql.Append($" ORDER BY {columnName} ASC ");
         }
 
         /// <summary>
@@ -171,7 +172,7 @@ namespace OpenIZ.Persistence.Data.ADO.Providers
         /// </summary>
         public SqlStatement OrderByDescending(SqlStatement sql, string columnName)
         {
-            return sql.Append($"ORDER BY {columnName} DESC ");
+            return sql.Append($" ORDER BY {columnName} DESC ");
         }
 
         /// <summary>
@@ -179,7 +180,7 @@ namespace OpenIZ.Persistence.Data.ADO.Providers
         /// </summary>
         public SqlStatement Take(SqlStatement sql, int quantity)
         {
-            return sql.Append($"LIMIT {quantity} ");
+            return sql.Append($" LIMIT {quantity} ");
 
         }
 
@@ -188,7 +189,7 @@ namespace OpenIZ.Persistence.Data.ADO.Providers
         /// </summary>
         public SqlStatement Skip(SqlStatement sql, int offset)
         {
-            return sql.Append($"OFFSET {offset} ");
+            return sql.Append($" OFFSET {offset} ");
         }
 
         /// <summary>

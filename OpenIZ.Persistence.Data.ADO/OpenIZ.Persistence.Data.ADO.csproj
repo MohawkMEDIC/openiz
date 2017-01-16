@@ -59,6 +59,7 @@
     <Compile Include="Data\Attributes\TableAttribute.cs" />
     <Compile Include="Data\DataContext.Command.cs" />
     <Compile Include="Data\DataContext.cs" />
+    <Compile Include="Data\Extensions\UtilityExtensions.cs" />
     <Compile Include="Data\Model\Acts\DbActProtocol.cs" />
     <Compile Include="Data\Model\Acts\DbActVersion.cs" />
     <Compile Include="Data\Model\Acts\DbAct.cs" />
@@ -110,6 +111,7 @@
     <Compile Include="Data\Model\Extensibility\DbNote.cs" />
     <Compile Include="Data\Model\Extensibility\DbTag.cs" />
     <Compile Include="Data\Model\Extensibility\DbTemplateDefinition.cs" />
+    <Compile Include="Data\Model\IAdoLoadedData.cs" />
     <Compile Include="Data\Model\Roles\DbPatient.cs" />
     <Compile Include="Data\Model\Roles\DbProvider.cs" />
     <Compile Include="Data\Model\Security\DbSecurityApplication.cs" />
@@ -121,9 +123,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\IDbProvider.cs" />
     <Compile Include="Providers\PostgreSQLProvider.cs" />
+    <Compile Include="Security\AdoClaimsIdentity.cs" />
     <Compile Include="Security\AdoSecurityPolicy.cs" />
     <Compile Include="Security\AdoSecurityPolicyInstance.cs" />
     <Compile Include="Services\AdoApplicationIdentityProvider.cs" />
+    <Compile Include="Services\AdoIdentityProvider.cs" />
     <Compile Include="Services\AdoPolicyInformationService.cs" />
     <Compile Include="Services\AdoRoleProvider.cs" />
     <Compile Include="Util\ColumnMapping.cs" />

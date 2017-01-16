@@ -109,8 +109,10 @@ namespace OpenIZ.Persistence.Data.ADO.Util
                     this.m_sqlStatement.Append(" -");
                     break;
                 case ExpressionType.Not:
-                    this.m_sqlStatement.Append(" NOT ");
-                    break;
+                    this.m_sqlStatement.Append(" NOT (");
+                    this.Visit(node.Operand);
+                    this.m_sqlStatement.Append(")");
+                    return node;
                 case ExpressionType.Convert:
                     break;
                 case ExpressionType.TypeAs:
@@ -213,19 +215,23 @@ namespace OpenIZ.Persistence.Data.ADO.Util
                 case "ToLower":
                     this.m_sqlStatement.Append("LOWER(");
                     this.Visit(node.Object);
-                    this.m_sqlStatement.Append(")");
+                    this.m_sqlStatement.Append(") ");
                     break;
                 case "ToUpper":
                     this.m_sqlStatement.Append("LOWER(");
                     this.Visit(node.Object);
-                    this.m_sqlStatement.Append(")");
+                    this.m_sqlStatement.Append(") ");
                     break;
                 case "NewGuid":
-                    this.m_sqlStatement.Append("uuid_generate_v4()");
+                    this.m_sqlStatement.Append("uuid_generate_v4() ");
                     break;
                 case "IgnoreCase":
                     this.Visit(node.Arguments[0]);
-                    this.m_sqlStatement.Append("::citext");
+                    this.m_sqlStatement.Append("::citext ");
+                    break;
+                case "HasValue":
+                    this.Visit(node.Object);
+                    this.m_sqlStatement.Append(" IS NOT NULL ");
                     break;
                 default:
                     throw new NotSupportedException(node.Method.Name);
@@ -277,52 +283,58 @@ namespace OpenIZ.Persistence.Data.ADO.Util
         /// </summary>
         private Expression VisitMemberAccess(MemberExpression node)
         {
-            // Member expression is node... This has the limitation of only going one deep :/
-            if (node.Expression != null)
+            switch (node.Member.Name)
             {
-                // Ignore typeas
-                switch (node.Expression.NodeType)
-                {
-                    case ExpressionType.Parameter:
-                        // Translate
-                        var tableMap = TableMapping.Get(node.Expression.Type);
-                        var columnMap = tableMap.GetColumn(node.Member);
-                        this.Visit(node.Expression);
-                        // Now write out the expression
-                        this.m_sqlStatement.Append($".{columnMap.Name}");
-                        break;
-                    case ExpressionType.Constant:
-                    case ExpressionType.TypeAs:
-                    case ExpressionType.MemberAccess:
-                        // Ok, this is a constant member access.. so ets get the value
-                        var cons = this.GetConstantValue(node.Expression);
-                        if (node.Member is PropertyInfo)
-                            this.m_sqlStatement.Append(" ? ", (node.Member as PropertyInfo).GetValue(cons));
-                        else if (node.Member is FieldInfo)
-                            this.m_sqlStatement.Append(" ? ", (node.Member as FieldInfo).GetValue(cons));
-                        else
-                            throw new NotSupportedException();
-                        break;
-                }
-            }
-            else // constant expression
-            {
-                switch (node.Member.Name)
-                {
-                    case "Now":
-                        this.m_sqlStatement.Append("CURRENT_TIMESTAMP");
-                        break;
-                    case "NewGuid":
-                        this.m_sqlStatement.Append("uuid_generate_v4()");
-                        break;
-                    default:
+                case "Now":
+                    this.m_sqlStatement.Append(" CURRENT_TIMESTAMP ");
+                    break;
+                case "NewGuid":
+                    this.m_sqlStatement.Append(" uuid_generate_v4() ");
+                    break;
+                case "HasValue":
+                    this.Visit(node.Expression);
+                    this.m_sqlStatement.Append(" IS NOT NULL ");
+                    break;
+                default:
+                    if (node.Expression != null)
+                    {
+                        // Ignore typeas
+                        switch (node.Expression.NodeType)
+                        {
+                            case ExpressionType.Parameter:
+                                // Translate
+                                var tableMap = TableMapping.Get(node.Expression.Type);
+                                var columnMap = tableMap.GetColumn(node.Member);
+                                this.Visit(node.Expression);
+                                // Now write out the expression
+                                this.m_sqlStatement.Append($".{columnMap.Name}");
+                                break;
+                            case ExpressionType.Constant:
+                            case ExpressionType.TypeAs:
+                            case ExpressionType.MemberAccess:
+                                // Ok, this is a constant member access.. so ets get the value
+                                var cons = this.GetConstantValue(node.Expression);
+                                if (node.Member is PropertyInfo)
+                                    this.m_sqlStatement.Append(" ? ", (node.Member as PropertyInfo).GetValue(cons));
+                                else if (node.Member is FieldInfo)
+                                    this.m_sqlStatement.Append(" ? ", (node.Member as FieldInfo).GetValue(cons));
+                                else
+                                    throw new NotSupportedException();
+                                break;
+                        }
+                    }
+                    else // constant expression
+                    {
                         if (node.Member is PropertyInfo)
                             this.m_sqlStatement.Append(" ? ", (node.Member as PropertyInfo).GetValue(null));
                         else if (node.Member is FieldInfo)
                             this.m_sqlStatement.Append(" ? ", (node.Member as FieldInfo).GetValue(null));
-                        break;
-                }
+                    }
+                    break;
             }
+
+            // Member expression is node... This has the limitation of only going one deep :/
+
             return node;
         }
     }

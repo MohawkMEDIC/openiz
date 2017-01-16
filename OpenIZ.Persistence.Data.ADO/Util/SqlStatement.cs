@@ -187,6 +187,18 @@ namespace OpenIZ.Persistence.Data.ADO.Util
             else if (expression is UnaryExpression) return this.GetMember((expression as UnaryExpression).Operand);
             else throw new InvalidOperationException($"{expression} not supported, please use a member access expression");
         }
+
+        /// <summary>
+        /// Removes the last statement from the list
+        /// </summary>
+        internal void RemoveLast()
+        {
+            var t = this;
+            while (t.m_rhs?.m_rhs != null)
+                t = t.m_rhs;
+            if(t != null)
+                t.m_rhs = null;
+        }
     }
 
     /// <summary>
@@ -306,5 +318,13 @@ namespace OpenIZ.Persistence.Data.ADO.Util
             });
         }
 
+        /// <summary>
+        /// Generate an update statement
+        /// </summary>
+        public SqlStatement<T> UpdateSet()
+        {
+            var tableMap = TableMapping.Get(typeof(T));
+            return this.Append(new SqlStatement<T>($"UPDATE {tableMap.TableName} SET "));
+        }
     }
 }

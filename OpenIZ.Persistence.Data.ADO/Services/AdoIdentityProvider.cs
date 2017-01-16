@@ -42,6 +42,9 @@ using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Security.Claims;
 using OpenIZ.Core.Services;
+using OpenIZ.Persistence.Data.ADO.Security;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
+using OpenIZ.Persistence.Data.ADO.Data.Extensions;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {
@@ -82,7 +85,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
             try
             {
-                var principal = SqlClaimsIdentity.Create(userName, password).CreateClaimsPrincipal();
+                var principal = AdoClaimsIdentity.Create(userName, password).CreateClaimsPrincipal();
                 this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(userName, principal, true));
                 return principal;
             }
@@ -101,7 +104,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// </summary>
         public IIdentity GetIdentity(string userName)
         {
-            return SqlClaimsIdentity.Create(userName);
+            return AdoClaimsIdentity.Create(userName);
         }
 
         /// <summary>
@@ -128,42 +131,58 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             // Try to authenticate
             try
             {
-                using (var dataContext = new Database(this.m_configuration.ReadWriteConnectionString))
+                using (var dataContext = this.m_configuration.Provider.GetWriteConnection())
                 {
-                    var user = dataContext.SecurityUsers.FirstOrDefault(o => o.UserName == userName);
-                    if (user == null)
-                        throw new KeyNotFoundException(userName);
-                    SecurityUserClaim tfaClaim = dataContext.SecurityUserClaims.FirstOrDefault(o => o.UserId == user.Id && o.ClaimType == OpenIzClaimTypes.OpenIZTfaSecretClaim),
-                        tfaExpiry = dataContext.SecurityUserClaims.FirstOrDefault(o => o.UserId == user.Id && o.ClaimType == OpenIzClaimTypes.OpenIZTfaSecretExpiry),
-                        noPassword = dataContext.SecurityUserClaims.FirstOrDefault(o => o.UserId == user.Id && o.ClaimType == OpenIzClaimTypes.OpenIZPasswordlessAuth);
+                    dataContext.Open();
 
-                    if (tfaClaim == null || tfaExpiry == null)
-                        throw new InvalidOperationException("Cannot find appropriate claims for TFA");
-
-                    // Expiry check
-                    ClaimsPrincipal retVal = null;
-                    DateTime expiryDate = DateTime.Parse(tfaExpiry.ClaimValue);
-                    if (expiryDate < DateTime.Now)
-                        throw new SecurityException("TFA secret expired");
-                    else if (String.IsNullOrEmpty(password) &&
-                        Boolean.Parse(noPassword?.ClaimValue ?? "false") &&
-                        tfaSecret == tfaClaim.ClaimValue) // Last known password hash sent as password, this is a password reset token - It will be set to expire ASAP
+                    using (var tx = dataContext.BeginTransaction())
                     {
-                        retVal = SqlClaimsIdentity.Create(user, true, "Tfa+LastPasswordHash").CreateClaimsPrincipal();
-                        (retVal.Identity as ClaimsIdentity).AddClaim(new Claim(OpenIzClaimTypes.OpenIzGrantedPolicyClaim, PermissionPolicyIdentifiers.ChangePassword));
-                        (retVal.Identity as ClaimsIdentity).RemoveClaim(retVal.FindFirst(ClaimTypes.Expiration));
-                        // TODO: Add to configuration
-                        (retVal.Identity as ClaimsIdentity).AddClaim(new Claim(ClaimTypes.Expiration, DateTime.Now.AddMinutes(5).ToString("o")));
+                        try
+                        {
+                            var user = dataContext.FirstOrDefault<DbSecurityUser>(o => o.UserName == userName);
+                            if (user == null)
+                                throw new KeyNotFoundException(userName);
+
+                            var claims = dataContext.Query<DbUserClaim>(o => o.SourceKey == user.Key && (o.ClaimType == OpenIzClaimTypes.OpenIZTfaSecretClaim || o.ClaimType == OpenIzClaimTypes.OpenIZTfaSecretExpiry || o.ClaimType == OpenIzClaimTypes.OpenIZPasswordlessAuth));
+                            DbUserClaim tfaClaim = claims.FirstOrDefault(o => o.ClaimType == OpenIzClaimTypes.OpenIZTfaSecretClaim),
+                                tfaExpiry = claims.FirstOrDefault(o => o.ClaimType == OpenIzClaimTypes.OpenIZTfaSecretExpiry),
+                                noPassword = claims.FirstOrDefault(o => o.ClaimType == OpenIzClaimTypes.OpenIZPasswordlessAuth);
+
+                            if (tfaClaim == null || tfaExpiry == null)
+                                throw new InvalidOperationException("Cannot find appropriate claims for TFA");
+
+                            // Expiry check
+                            ClaimsPrincipal retVal = null;
+                            DateTime expiryDate = DateTime.Parse(tfaExpiry.ClaimValue);
+                            if (expiryDate < DateTime.Now)
+                                throw new SecurityException("TFA secret expired");
+                            else if (String.IsNullOrEmpty(password) &&
+                                Boolean.Parse(noPassword?.ClaimValue ?? "false") &&
+                                tfaSecret == tfaClaim.ClaimValue) // Last known password hash sent as password, this is a password reset token - It will be set to expire ASAP
+                            {
+                                retVal = AdoClaimsIdentity.Create(user, true, "Tfa+LastPasswordHash").CreateClaimsPrincipal();
+                                (retVal.Identity as ClaimsIdentity).AddClaim(new Claim(OpenIzClaimTypes.OpenIzGrantedPolicyClaim, PermissionPolicyIdentifiers.ChangePassword));
+                                (retVal.Identity as ClaimsIdentity).RemoveClaim(retVal.FindFirst(ClaimTypes.Expiration));
+                                // TODO: Add to configuration
+                                (retVal.Identity as ClaimsIdentity).AddClaim(new Claim(ClaimTypes.Expiration, DateTime.Now.AddMinutes(5).ToString("o")));
+                            }
+                            else if (!String.IsNullOrEmpty(password))
+                                retVal = this.Authenticate(userName, password) as ClaimsPrincipal;
+                            else
+                                throw new PolicyViolationException(PermissionPolicyIdentifiers.Login, PolicyDecisionOutcomeType.Deny);
+
+                            // Now we want to fire authenticated
+                            this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(userName, retVal, true));
+
+                            tx.Commit();
+                            return retVal;
+                        }
+                        catch
+                        {
+                            tx.Rollback();
+                            throw;
+                        }
                     }
-                    else if (!String.IsNullOrEmpty(password))
-                        retVal = this.Authenticate(userName, password) as ClaimsPrincipal;
-                    else
-                        throw new PolicyViolationException(PermissionPolicyIdentifiers.Login, PolicyDecisionOutcomeType.Deny);
-
-                    // Now we want to fire authenticated
-                    this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(userName, retVal, true));
-                    return retVal;
-
                 }
             }
             catch (Exception e)
@@ -190,24 +209,40 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             try
             {
                 // Create the hasher and load the user
-                using (var dataContext = new Database(this.m_configuration.ReadWriteConnectionString))
+                using (var dataContext = this.m_configuration.Provider.GetWriteConnection())
                 {
-                    var user = dataContext.SecurityUsers.Where(u => u.UserName == userName && !u.ObsoletionTime.HasValue).SingleOrDefault();
-                    if (user == null)
-                        throw new InvalidOperationException(String.Format("Cannot locate user {0}", userName));
+                    dataContext.Open();
 
-                    // Security check
-                    var policyDecisionService = ApplicationContext.Current.GetService<IPolicyDecisionService>();
-                    var passwordHashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
+                    using (var tx = dataContext.BeginTransaction())
+                        try
+                        {
+                            var user = dataContext.SingleOrDefault<DbSecurityUser>(u => u.UserName == userName && !u.ObsoletionTime.HasValue);
+                            if (user == null)
+                                throw new InvalidOperationException(String.Format("Cannot locate user {0}", userName));
 
-                    var pdpOutcome = policyDecisionService?.GetPolicyOutcome(principal, PermissionPolicyIdentifiers.ChangePassword);
-                    if (userName != principal.Identity.Name &&
-                        pdpOutcome.HasValue &&
-                        pdpOutcome != PolicyDecisionOutcomeType.Grant)
-                        throw new PolicyViolationException(PermissionPolicyIdentifiers.ChangePassword, pdpOutcome.Value);
+                            // Security check
+                            var policyDecisionService = ApplicationContext.Current.GetService<IPolicyDecisionService>();
+                            var passwordHashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
 
-                    user.UserPassword = passwordHashingService.EncodePassword(newPassword);
-                    dataContext.SubmitChanges();
+                            var pdpOutcome = policyDecisionService?.GetPolicyOutcome(principal, PermissionPolicyIdentifiers.ChangePassword);
+                            if (userName != principal.Identity.Name &&
+                                pdpOutcome.HasValue &&
+                                pdpOutcome != PolicyDecisionOutcomeType.Grant)
+                                throw new PolicyViolationException(PermissionPolicyIdentifiers.ChangePassword, pdpOutcome.Value);
+
+                            user.PasswordHash = passwordHashingService.EncodePassword(newPassword);
+                            user.SecurityHash = Guid.NewGuid().ToString();
+                            user.UpdatedByKey = principal.GetUserKey(dataContext);
+
+                            dataContext.Update(user);
+                            tx.Commit();
+                        }
+                        catch
+                        {
+                            tx.Rollback();
+                            throw;
+                        }
+
                 }
             }
             catch (Exception e)
@@ -249,31 +284,40 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
             try
             {
-                using (var dataContext = new Database(this.m_configuration.ReadWriteConnectionString))
+                using (var dataContext = this.m_configuration.Provider.GetWriteConnection())
                 {
-                    var hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
-                    var pdpService = ApplicationContext.Current.GetService<IPolicyDecisionService>();
+                    dataContext.Open();
 
-                    // Demand create identity
-                    new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.CreateIdentity, authContext).Demand();
+                    using (var tx = dataContext.BeginTransaction())
+                        try
+                        {
+                            var hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
+                            var pdpService = ApplicationContext.Current.GetService<IPolicyDecisionService>();
 
-                    // Does this principal have the ability to 
-                    Data.SecurityUser newIdentityUser = new Data.SecurityUser()
-                    {
-                        UserId = Guid.NewGuid(),
-                        UserName = userName,
-                        UserPassword = hashingService.EncodePassword(password),
-                        SecurityStamp = Guid.NewGuid().ToString(),
-                        UserClass = UserClassKeys.HumanUser
-                    };
-                    if (authContext != null)
-                        newIdentityUser.CreatedByEntity = dataContext.SecurityUsers.Single(u => u.UserName == authContext.Identity.Name);
+                            // Demand create identity
+                            new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.CreateIdentity, authContext).Demand();
 
-                    dataContext.SecurityUsers.InsertOnSubmit(newIdentityUser);
-                    dataContext.SubmitChanges();
+                            // Does this principal have the ability to 
+                            DbSecurityUser newIdentityUser = new DbSecurityUser()
+                            {
+                                UserName = userName,
+                                PasswordHash = hashingService.EncodePassword(password),
+                                SecurityHash = Guid.NewGuid().ToString(),
+                                UserClass = UserClassKeys.HumanUser
+                            };
+                            if (authContext != null)
+                                newIdentityUser.CreatedByKey = authContext.GetUserKey(dataContext).Value;
 
-                    return SqlClaimsIdentity.Create(newIdentityUser);
-
+                            dataContext.Insert(newIdentityUser);
+                            var retVal = AdoClaimsIdentity.Create(newIdentityUser);
+                            tx.Commit();
+                            return retVal;
+                        }
+                        catch
+                        {
+                            tx.Rollback();
+                            throw;
+                        }
                 }
             }
             catch (Exception e)
@@ -296,20 +340,22 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             try
             {
                 // submit the changes
-                using (var dataContext = new Database(this.m_configuration.ReadWriteConnectionString))
+                using (var dataContext = this.m_configuration.Provider.GetWriteConnection())
                 {
+                    dataContext.Open();
+
                     new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.UnrestrictedAdministration, authContext).Demand();
 
-                    var user = dataContext.SecurityUsers.FirstOrDefault(o => o.UserName == userName);
+                    var user = dataContext.FirstOrDefault<DbSecurityUser>(o => o.UserName == userName);
                     if (user == null)
                         throw new KeyNotFoundException("Specified user does not exist!");
 
                     // Obsolete
                     user.ObsoletionTime = DateTimeOffset.Now;
-                    user.ObsoletedByEntity = authContext.GetUser(dataContext);
-                    user.SecurityStamp = Guid.NewGuid().ToString();
+                    user.ObsoletedByKey = authContext.GetUserKey(dataContext);
+                    user.SecurityHash = Guid.NewGuid().ToString();
 
-                    dataContext.SubmitChanges();
+                    dataContext.Update(user);
                 }
 
             }
@@ -332,26 +378,24 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             try
             {
                 // submit the changes
-                using (var dataContext = new Database(this.m_configuration.ReadWriteConnectionString))
+                using (var dataContext = this.m_configuration.Provider.GetWriteConnection())
                 {
                     new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.UnrestrictedAdministration, authContext).Demand();
 
-                    var user = dataContext.SecurityUsers.FirstOrDefault(o => o.UserName == userName);
+                    var user = dataContext.FirstOrDefault<DbSecurityUser>(o => o.UserName == userName);
                     if (user == null)
                         throw new KeyNotFoundException("Specified user does not exist!");
 
                     // Obsolete
                     if (lockout)
-                    {
-                        user.Lockout = DateTimeOffset.Now;
-                    }
+                        user.Lockout = DateTime.Now;
                     user.ObsoletionTime = null;
-                    user.ObsoletedBy = null;
-                    user.UpdatedByEntity = authContext.GetUser(dataContext);
+                    user.ObsoletedByKey = null;
+                    user.UpdatedByKey = authContext.GetUserKey(dataContext);
                     user.UpdatedTime = DateTimeOffset.Now;
-                    user.SecurityStamp = Guid.NewGuid().ToString();
+                    user.SecurityHash = Guid.NewGuid().ToString();
 
-                    dataContext.SubmitChanges();
+                    dataContext.Update(user);
                 }
 
             }
@@ -374,29 +418,33 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
             try
             {
-                using (var dataContext = new Database(this.m_configuration.ReadWriteConnectionString))
+                using (var dataContext = this.m_configuration.Provider.GetWriteConnection())
                 {
-                    var user = dataContext.SecurityUsers.FirstOrDefault(o => o.UserName == userName);
+                    var user = dataContext.FirstOrDefault<DbSecurityUser>(o => o.UserName == userName);
                     if (user == null)
                         throw new KeyNotFoundException(userName);
 
                     lock (this.m_syncLock)
                     {
-                        var existingClaim = dataContext.SecurityUserClaims.FirstOrDefault(o => o.ClaimType == claim.Type && o.UserId == user.Id);
+                        var existingClaim = dataContext.FirstOrDefault<DbUserClaim>(o => o.ClaimType == claim.Type && o.SourceKey == user.Key);
 
                         // Set the secret
                         if (existingClaim == null)
-                            dataContext.SecurityUserClaims.InsertOnSubmit(new SecurityUserClaim()
+                        {
+                            existingClaim = new DbUserClaim()
                             {
-                                ClaimId = Guid.NewGuid(),
                                 ClaimType = claim.Type,
                                 ClaimValue = claim.Value,
-                                SecurityUser = user
-                            });
+                                SourceKey = user.Key
+                            };
+                            dataContext.Insert(existingClaim);
+                        }
                         else
+                        {
                             existingClaim.ClaimValue = claim.Value;
+                            dataContext.Update(existingClaim);
+                        }
 
-                        dataContext.SubmitChanges();
                     }
                 }
             }
@@ -419,19 +467,13 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
             try
             {
-                using (var dataContext = new Database(this.m_configuration.ReadWriteConnectionString))
+                using (var dataContext = this.m_configuration.Provider.GetWriteConnection())
                 {
-                    var user = dataContext.SecurityUsers.FirstOrDefault(o => o.UserName == userName);
+                    var user = dataContext.FirstOrDefault<DbSecurityUser>(o => o.UserName == userName);
                     if (user == null)
                         throw new KeyNotFoundException(userName);
 
-                    var existingClaim = dataContext.SecurityUserClaims.FirstOrDefault(o => o.ClaimType == claimType && o.UserId == user.Id);
-
-                    // Set the secret
-                    if (existingClaim != null)
-                        dataContext.SecurityUserClaims.DeleteOnSubmit(existingClaim);
-
-                    dataContext.SubmitChanges();
+                    dataContext.Delete<DbUserClaim>(o => o.ClaimType == claimType && o.SourceKey == user.Key);
                 }
             }
             catch (Exception e)
@@ -492,7 +534,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
             try
             {
-                var principal = SqlClaimsIdentity.Create(refreshToken).CreateClaimsPrincipal();
+                var principal = AdoClaimsIdentity.Create(refreshToken).CreateClaimsPrincipal();
                 this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(trokenName, principal, true));
                 return principal;
             }

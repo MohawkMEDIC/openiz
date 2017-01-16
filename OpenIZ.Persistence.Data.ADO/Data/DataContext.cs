@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
 using OpenIZ.Persistence.Data.ADO.Util;
+using System.Diagnostics;
 
 namespace OpenIZ.Persistence.Data.ADO.Data
 {
@@ -23,6 +24,9 @@ namespace OpenIZ.Persistence.Data.ADO.Data
 
         // The provider
         private IDbProvider m_provider;
+
+        // Trace source
+        private TraceSource m_traceSource = new TraceSource(AdoDataConstants.TraceSourceName);
 
         /// <summary>
         /// Connection
@@ -56,7 +60,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
         /// </summary>
         public IDbTransaction BeginTransaction()
         {
-            if(this.m_transaction != null)
+            if(this.m_transaction == null)
                 this.m_transaction = this.m_connection.BeginTransaction();
             return this.m_transaction;
         }
