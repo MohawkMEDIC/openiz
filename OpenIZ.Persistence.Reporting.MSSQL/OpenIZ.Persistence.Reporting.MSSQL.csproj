@@ -74,9 +74,7 @@
     <Compile Include="Services\ReportPersistenceServiceBase.cs" />
     <Content Include="Sql\OpenIZReporting-ReportFormats.sql" />
     <EmbeddedResource Include="Data\ModelMap.xml" />
-    <Content Include="Sql\OpenIZReporting-ParameterTypes.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Sql\OpenIZReporting-ParameterTypes.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\OpenIZ.licenseheader">
