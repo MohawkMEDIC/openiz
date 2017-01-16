@@ -52,6 +52,10 @@ namespace OpenIZ.Messaging.RISI.Wcf.Behavior
 			}
 		}
 
+		/// <summary>
+		/// Validates a service endpoint.
+		/// </summary>
+		/// <param name="endpoint">The service endpoint to validate.</param>
 		public void Validate(ServiceEndpoint endpoint)
 		{
 			var bindingElements = endpoint.Binding.CreateBindingElements();

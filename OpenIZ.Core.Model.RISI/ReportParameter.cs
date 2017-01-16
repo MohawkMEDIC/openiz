@@ -18,8 +18,6 @@
  * Date: 2017-1-5
  */
 
-using OpenIZ.Core.Model.RISI.Interfaces;
-using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.RISI
@@ -44,7 +42,7 @@ namespace OpenIZ.Core.Model.RISI
 		/// <param name="name">The name of the parameter.</param>
 		/// <param name="order">The order of the parameter.</param>
 		/// <param name="value">The value of the parameter.</param>
-		public ReportParameter(string name, int order, object value)
+		public ReportParameter(string name, int order, byte[] value)
 		{
 			this.Name = name;
 			this.Order = order;
@@ -52,10 +50,10 @@ namespace OpenIZ.Core.Model.RISI
 		}
 
 		/// <summary>
-		/// Gets or sets the parameter types of the report parameter.
+		/// Gets or sets the description of the report parameter.
 		/// </summary>
-		[XmlElement("parameterType")]
-		public ParameterType ParameterType { get; set; }
+		[XmlElement("description")]
+		public string Description { get; set; }
 
 		/// <summary>
 		/// Gets or sets whether the report parameter is nullable.
@@ -76,21 +74,21 @@ namespace OpenIZ.Core.Model.RISI
 		public int Order { get; set; }
 
 		/// <summary>
-		/// Gets or sets the default provider of the report parameter.
+		/// Gets or sets the parameter type associated with the report parameter.
 		/// </summary>
-		[XmlElement("provider")]
-		public string Provider { get; set; }
-
-		/// <summary>
-		/// Gets or sets the value of the parameter.
-		/// </summary>
-		[XmlElement("value")]
-		public object Value { get; set; }
+		[XmlElement("type")]
+		public ParameterType ParameterType { get; set; }
 
 		/// <summary>
 		/// Gets or sets the report definition associated with the report parameter.
 		/// </summary>
 		[XmlElement("reportDefinition")]
 		public ReportDefinition ReportDefinition { get; set; }
+
+		/// <summary>
+		/// Gets or sets the value of the parameter.
+		/// </summary>
+		[XmlElement("value")]
+		public byte[] Value { get; set; }
 	}
 }

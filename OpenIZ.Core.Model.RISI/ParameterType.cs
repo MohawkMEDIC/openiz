@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -25,30 +25,32 @@ using System.Xml.Serialization;
 namespace OpenIZ.Core.Model.RISI
 {
 	/// <summary>
-	/// Represents a parameter type definition.
+	/// Represents a parameter type.
 	/// </summary>
 	[XmlType(nameof(ParameterType), Namespace = "http://openiz.org/risi")]
 	[XmlRoot(nameof(ParameterType), Namespace = "http://openiz.org/risi")]
 	public class ParameterType : BaseEntityData
 	{
 		/// <summary>
+		/// Initializes a new instance of the <see cref="ParameterType"/> class.
+		/// </summary>
+		public ParameterType()
+		{
+			this.ReportParameters = new List<ReportParameter>();
+		}
+
+		/// <summary>
 		/// Gets or sets the auto-complete source.
 		/// </summary>
 		[XmlElement("listAutoComplete", Type = typeof(ListAutoCompleteSourceDefinition))]
 		[XmlElement("queryAutoComplete", Type = typeof(QueryAutoCompleteSourceDefinition))]
-		public AutoCompleteSourceDefinition AutoCompleteSource { get; set; }
+		public AutoCompleteSourceDefinition AutoCompleteSourceDefinition { get; set; }
 
 		/// <summary>
-		/// Gets or sets the description of the report data type.
+		/// Gets or sets a list of report parameters associated with the parameter type.
 		/// </summary>
-		[XmlAttribute("description")]
-		public string Description { get; set; }
-
-		/// <summary>
-		/// Gets or sets the name of the type.
-		/// </summary>
-		[XmlElement("name")]
-		public string Name { get; set; }
+		[XmlElement("reportParameters")]
+		public List<ReportParameter> ReportParameters { get; set; }
 
 		/// <summary>
 		/// Gets or sets the system type.
@@ -64,7 +66,7 @@ namespace OpenIZ.Core.Model.RISI
 		{
 			get
 			{
-				return this.SystemType.AssemblyQualifiedName;
+				return this.SystemType?.AssemblyQualifiedName;
 			}
 			set
 			{
@@ -73,22 +75,9 @@ namespace OpenIZ.Core.Model.RISI
 		}
 
 		/// <summary>
-		/// Gets or sets the value of the report data type.
-		/// </summary>
-		[XmlElement("values")]
-		public object[] Values { get; set; }
-
-		/// <summary>
 		/// Gets or sets the values provider of the report data type.
 		/// </summary>
 		[XmlAttribute("provider")]
 		public string ValuesProvider { get; set; }
-
-		/// <summary>
-		/// Gets or sets a list of report parameters associated with the paramter type.
-		/// </summary>
-		[XmlElement("reportParameters")]
-		public List<ReportParameter> ReportParameters { get; set; }
-
 	}
 }

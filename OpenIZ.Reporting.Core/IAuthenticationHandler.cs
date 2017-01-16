@@ -27,5 +27,9 @@ namespace OpenIZ.Reporting.Core
 	/// </summary>
 	public interface IAuthenticationHandler : IDisposable
 	{
+		/// <summary>
+		/// Gets or sets the authentication result of the authentication handler.
+		/// </summary>
+		AuthenticationResult AuthenticationResult { get; set; }
 	}
 }

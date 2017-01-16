@@ -25,7 +25,7 @@ namespace OpenIZ.Reporting.Core
 	/// <summary>
 	/// Represents a service which supports certificate based authentication.
 	/// </summary>
-	public interface ISupportCertificateAuthentication
+	public interface ISupportCertificateAuthentication : IAuthenticationHandler
 	{
 		/// <summary>
 		/// Authenticates against a remote system using a certificate.

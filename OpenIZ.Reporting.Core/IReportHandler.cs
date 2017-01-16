@@ -49,6 +49,13 @@ namespace OpenIZ.Reporting.Core
 		ReportDefinition CreateReportDefinition(ReportDefinition reportDefinition);
 
 		/// <summary>
+		/// Creates a report format.
+		/// </summary>
+		/// <param name="reportFormat">The report format to create.</param>
+		/// <returns>Returns the created report format.</returns>
+		ReportFormat CreateReportFormat(ReportFormat reportFormat);
+
+		/// <summary>
 		/// Deletes a parameter type.
 		/// </summary>
 		/// <param name="id">The id of the parameter type to delete.</param>
@@ -63,13 +70,11 @@ namespace OpenIZ.Reporting.Core
 		ReportDefinition DeleteReportDefinition(Guid id);
 
 		/// <summary>
-		/// Executes a report.
+		/// Deletes a report format.
 		/// </summary>
-		/// <param name="id">The id of the report.</param>
-		/// <param name="format">The output format of the report.</param>
-		/// <param name="parameters">The list of parameters of the report.</param>
-		/// <returns>Returns the report in raw format.</returns>
-		byte[] ExecuteReport(Guid id, Guid format, List<ReportParameter> parameters);
+		/// <param name="id">The id of the report format.</param>
+		/// <returns>Returns the report deleted report format.</returns>
+		ReportFormat DeleteReportFormat(Guid id);
 
 		/// <summary>
 		/// Gets a list of all report parameter types.
@@ -98,11 +103,18 @@ namespace OpenIZ.Reporting.Core
 		RisiCollection<ReportDefinition> GetReportDefintions();
 
 		/// <summary>
-		/// Gets detailed information about a given report parameter.
+		/// Gets a report format by id.
 		/// </summary>
-		/// <param name="id">The id of the report parameter for which to retrieve information.</param>
-		/// <returns>Returns a report parameter manifest.</returns>
-		ParameterManifest GetReportParameterManifest(Guid id);
+		/// <param name="id">The id of the report format to retrieve.</param>
+		/// <returns>Returns a report format.</returns>
+		ReportFormat GetReportFormat(Guid id);
+
+		/// <summary>
+		/// Gets a report parameter by id.
+		/// </summary>
+		/// <param name="id">The id of the report parameter to retrieve.</param>
+		/// <returns>Returns a report parameter.</returns>
+		ReportParameter GetReportParameter(Guid id);
 
 		/// <summary>
 		/// Gets a list of report parameters.
@@ -130,9 +142,9 @@ namespace OpenIZ.Reporting.Core
 		/// Runs a report.
 		/// </summary>
 		/// <param name="reportId">The id of the report.</param>
-		/// <param name="format">The format of the report.</param>
+		/// <param name="reportFormat">The format of the report.</param>
 		/// <param name="parameters">The parameters of the report.</param>
-		byte[] RunReport(Guid reportId, ReportFormat format, IEnumerable<ReportParameter> parameters);
+		byte[] RunReport(Guid reportId, Guid reportFormat, IEnumerable<ReportParameter> parameters);
 
 		/// <summary>
 		/// Updates a parameter type.
@@ -147,5 +159,12 @@ namespace OpenIZ.Reporting.Core
 		/// <param name="reportDefinition">The updated report definition.</param>
 		/// <returns>Returns the updated report definition.</returns>
 		ReportDefinition UpdateReportDefinition(ReportDefinition reportDefinition);
+
+		/// <summary>
+		/// Updates a report format.
+		/// </summary>
+		/// <param name="reportFormat">The updated report format.</param>
+		/// <returns>Returns the update report format.</returns>
+		ReportFormat UpdateReportFormat(ReportFormat reportFormat);
 	}
 }

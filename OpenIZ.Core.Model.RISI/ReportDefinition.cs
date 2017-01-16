@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -18,7 +18,6 @@
  * Date: 2016-12-4
  */
 
-using System;
 using OpenIZ.Core.Model.Security;
 using System.Collections.Generic;
 using System.Xml.Serialization;
@@ -37,7 +36,8 @@ namespace OpenIZ.Core.Model.RISI
 		/// </summary>
 		public ReportDefinition()
 		{
-			
+			this.Parameters = new List<ReportParameter>();
+			this.Policies = new List<SecurityPolicyInstance>();
 		}
 
 		/// <summary>
@@ -45,7 +45,7 @@ namespace OpenIZ.Core.Model.RISI
 		/// with a specific name.
 		/// </summary>
 		/// <param name="name">The name of the report.</param>
-		public ReportDefinition(string name)
+		public ReportDefinition(string name) : this()
 		{
 			this.Name = name;
 		}
@@ -53,8 +53,8 @@ namespace OpenIZ.Core.Model.RISI
 		/// <summary>
 		/// Gets or sets the correlation id of the report to the report engine.
 		/// </summary>
-		[XmlElement("correlationId")]
-		public Guid CorrelationId { get; set; }
+		[XmlAttribute("correlationId")]
+		public string CorrelationId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the description of the report.
@@ -69,7 +69,7 @@ namespace OpenIZ.Core.Model.RISI
 		public string Name { get; set; }
 
 		/// <summary>
-		/// Gets or sets a list of parameters which is supported for the specified query.
+		/// Gets or sets a list of parameters which are supported for the specified query.
 		/// </summary>
 		[XmlElement("parameters")]
 		public List<ReportParameter> Parameters { get; set; }

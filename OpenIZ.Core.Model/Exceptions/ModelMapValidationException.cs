@@ -29,7 +29,7 @@ namespace OpenIZ.Core.Exceptions
     /// <summary>
     /// Represents a validation exception of a model map
     /// </summary>
-    public class ModelMapValidationException : ModelValidationException
+	public class ModelMapValidationException : ModelValidationException
     {
 
         /// <summary>

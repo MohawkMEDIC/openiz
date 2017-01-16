@@ -47,6 +47,8 @@
   <ItemGroup>
     <Compile Include="JasperReportHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Provider\MaterialValueProvider.cs" />
+    <Compile Include="Provider\PlaceValueProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\OpenIZ.licenseheader">

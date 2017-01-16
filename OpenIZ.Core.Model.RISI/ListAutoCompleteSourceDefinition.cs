@@ -19,6 +19,7 @@
  */
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.RISI
@@ -34,13 +35,23 @@ namespace OpenIZ.Core.Model.RISI
 		/// </summary>
 		public ListAutoCompleteSourceDefinition()
 		{
-			
+			this.Items = new List<IdentifiedData>();
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ListAutoCompleteSourceDefinition"/> class
+		/// with a specific list of items.
+		/// </summary>
+		/// <param name="items">The list of items.</param>
+		public ListAutoCompleteSourceDefinition(IEnumerable<IdentifiedData> items)
+		{
+			this.Items = items.ToList();
 		}
 
 		/// <summary>
 		/// Gets or sets the static list of auto-complete items.
 		/// </summary>
-		[XmlElement("item")]
-		public List<KeyValuePair<string, object>> Items { get; set; }
+		[XmlElement("items")]
+		public List<IdentifiedData> Items { get; set; }
 	}
 }
