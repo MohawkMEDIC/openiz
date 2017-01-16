@@ -17,8 +17,41 @@ namespace OpenIZ.Persistence.Data.ADO.Util
 {
 
     /// <summary>
-    /// Query builder
+    /// Query builder for model objects
     /// </summary>
+    /// <remarks>
+    /// Because the ORM used in the ADO persistence layer is very very lightweight, this query builder exists to parse 
+    /// LINQ or HTTP query parameters into complex queries which implement joins/CTE/etc. across tables. Stuff that the
+    /// classes in the little data model can't possibly support via LINQ expression.
+    /// 
+    /// To use this, simply pass a model based LINQ expression to the CreateQuery method. Examples are in the test project. 
+    /// 
+    /// Some reasons to use this:
+    ///     - The generated SQL will gather all table instances up the object hierarchy for you (one hit instead of multiple)
+    ///     - The queries it writes use efficient CTE tables
+    ///     - It can do intelligent join conditions
+    ///     - It uses Model LINQ expressions directly to SQL without the need to translate from Model LINQ to Domain LINQ queries
+    /// </remarks>
+    /// <example lang="cs" name="LINQ Expression illustrating join across tables">
+    /// <![CDATA[QueryBuilder.CreateQuery<Patient>(o => o.DeterminerConcept.Mnemonic == "Instance")]]>
+    /// </example>
+    /// <example lang="sql" name="Resulting SQL query">
+    /// <![CDATA[
+    /// WITH 
+    ///     cte0 AS (
+    ///         SELECT cd_tbl.cd_id 
+    ///         FROM cd_vrsn_tbl AS cd_vrsn_tbl 
+    ///             INNER JOIN cd_tbl AS cd_tbl ON (cd_tbl.cd_id = cd_vrsn_tbl.cd_id) 
+    ///         WHERE (cd_vrsn_tbl.mnemonic = ? )
+    ///     )
+    /// SELECT * 
+    /// FROM pat_tbl AS pat_tbl 
+    ///     INNER JOIN psn_tbl AS psn_tbl ON (pat_tbl.ent_vrsn_id = psn_tbl.ent_vrsn_id) 
+    ///     INNER JOIN ent_vrsn_tbl AS ent_vrsn_tbl ON (psn_tbl.ent_vrsn_id = ent_vrsn_tbl.ent_vrsn_id) 
+    ///     INNER JOIN ent_tbl AS ent_tbl ON (ent_tbl.ent_id = ent_vrsn_tbl.ent_id) 
+    ///     INNER JOIN cte0 ON (ent_tbl.dtr_cd_id = cte0.cd_id)
+    /// ]]>
+    /// </example>
     public static class QueryBuilder
     {
         // Regex to extract property, guards and cast
@@ -58,14 +91,28 @@ namespace OpenIZ.Persistence.Data.ADO.Util
             var tableMap = TableMapping.Get(tableType);
             List<TableMapping> scopedTables = new List<TableMapping>() { tableMap };
 
+            bool skipParentJoin = true;
             SqlStatement selectStatement = null;
             if (selector == null || selector.Length == 0)
+            {
+                skipParentJoin = false;
                 selectStatement = new SqlStatement($"SELECT * FROM {tableMap.TableName} AS {tablePrefix}{tableMap.TableName} ");
+            }
             else
-                selectStatement = new SqlStatement($"SELECT {String.Join(",", selector.Select(o => $"{tablePrefix}{o.Table.TableName}.{o.Name}").ToArray())} FROM {tableMap.TableName} AS {tablePrefix}{tableMap.TableName} ");
+            {
+                var columnList = String.Join(",", selector.Select(o => {
+                    var rootCol = tableMap.GetColumn(o.SourceProperty);
+                    skipParentJoin &= rootCol != null;
+                    if (skipParentJoin)
+                        return $"{tablePrefix}{rootCol.Table.TableName}.{rootCol.Name}";
+                    else
+                        return $"{tablePrefix}{o.Table.TableName}.{o.Name}";
+                }));
+                selectStatement = new SqlStatement($"SELECT {columnList} FROM {tableMap.TableName} AS {tablePrefix}{tableMap.TableName} ");
+            }
 
             // Is this a sub-type, if so we want to join
-            if (typeof(DbSubTable).IsAssignableFrom(tableMap.OrmType))
+            if (typeof(DbSubTable).IsAssignableFrom(tableMap.OrmType) && !skipParentJoin)
             {
                 var joinTableMap = tableMap;
                 var parentKeyProp = tableMap.OrmType.GetProperty("ParentKey");
@@ -84,7 +131,7 @@ namespace OpenIZ.Persistence.Data.ADO.Util
                 // Join non versioned root key?
                 selectStatement.Append(CreateBaseTableJoin(joinTableMap, tablePrefix, scopedTables));
             }
-            else
+            else if(!skipParentJoin)
                 selectStatement.Append(CreateBaseTableJoin(tableMap, tablePrefix, scopedTables));
 
             // We want to process each query and build WHERE clauses - these where clauses are based off of the JSON / XML names
