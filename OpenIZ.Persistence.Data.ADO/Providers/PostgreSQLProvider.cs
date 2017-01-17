@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 using OpenIZ.Persistence.Data.ADO.Util;
 using System.Configuration;
 using System.Data.Common;
-using OpenIZ.Persistence.Data.ADO.Data;
+using OpenIZ.Persistence.Data.ADO.Data.Model;
 using System.Linq.Expressions;
 using System.Diagnostics;
+using OpenIZ.Persistence.Data.ADO.Data;
 
 namespace OpenIZ.Persistence.Data.ADO.Providers
 {
@@ -160,36 +161,11 @@ namespace OpenIZ.Persistence.Data.ADO.Providers
         }
 
         /// <summary>
-        /// Construct an ORDER BY statement
+        /// Return exists
         /// </summary>
-        public SqlStatement OrderBy(SqlStatement sql, string columnName)
+        public SqlStatement Count(SqlStatement sqlStatement)
         {
-            return sql.Append($" ORDER BY {columnName} ASC ");
-        }
-
-        /// <summary>
-        /// Construct an ORDER BY DESCENDING statement
-        /// </summary>
-        public SqlStatement OrderByDescending(SqlStatement sql, string columnName)
-        {
-            return sql.Append($" ORDER BY {columnName} DESC ");
-        }
-
-        /// <summary>
-        /// Construct an appropriate TAKE function
-        /// </summary>
-        public SqlStatement Take(SqlStatement sql, int quantity)
-        {
-            return sql.Append($" LIMIT {quantity} ");
-
-        }
-
-        /// <summary>
-        /// Construct an appropriate SKIP function
-        /// </summary>
-        public SqlStatement Skip(SqlStatement sql, int offset)
-        {
-            return sql.Append($" OFFSET {offset} ");
+            return new SqlStatement("SELECT COUNT(*) FROM (").Append(sqlStatement).Append(")");
         }
 
         /// <summary>

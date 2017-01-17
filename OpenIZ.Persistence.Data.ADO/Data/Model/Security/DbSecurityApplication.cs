@@ -25,7 +25,7 @@ using System;
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.Security
 {
 	/// <summary>
-	/// Security application data. Should only be one entry here as well
+	/// Security applicationDb Should only be one entry here as well
 	/// </summary>
 	[Table("sec_app_tbl")]
 	public class DbSecurityApplication : DbBaseData

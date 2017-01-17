@@ -28,7 +28,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
     /// <summary>
     /// Generic name component
     /// </summary>
-    public abstract class DbGenericNameComponent : DbIdentified
+    public abstract class DbGenericNameComponent : DbAssociation, IDbIdentified
     {
 
         /// <summary>

@@ -29,6 +29,7 @@ using System.Threading.Tasks;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
 {
+ 
     /// <summary>
     /// Stores data related to an observation act
     /// </summary>
@@ -102,7 +103,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// Gets or sets the concept representing the value of this
         /// </summary>
         [Column("val_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))] 
-        public Guid Value { get; set; }
-
+        public Guid? Value { get; set; }
+        
     }
 }

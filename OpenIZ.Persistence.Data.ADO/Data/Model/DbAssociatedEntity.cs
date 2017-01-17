@@ -33,13 +33,31 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
     /// <summary>
     /// Database association
     /// </summary>
-    public interface IDbAssociation
+    public interface IDbAssociation : IDbIdentified
     {
         /// <summary>
         /// Gets or sets the source of the association
         /// </summary>
         Guid SourceKey { get; set; }
     }
+
+    /// <summary>
+    /// Versioned association
+    /// </summary>
+    public interface IDbVersionedAssociation : IDbAssociation {
+        /// <summary>
+        /// Gets or sets the version when the relationship is effective
+        /// </summary>
+        [Column("efft_vrsn_seq_id")]
+        decimal EffectiveVersionSequenceId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the verson when the relationship is not effecitve
+        /// </summary>
+        [Column("obslt_vrsn_seq_id")]
+        Decimal? ObsoleteVersionSequenceId { get; set; }
+    }
+
 
     /// <summary>
     /// Represents the databased associated entity
@@ -56,7 +74,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
     /// <summary>
     /// Represents the versioned copy of an association
     /// </summary>
-    public abstract class DbVersionedAssociation : DbAssociation
+    public abstract class DbVersionedAssociation : DbAssociation, IDbVersionedAssociation
     { 
         /// <summary>
         /// Gets or sets the version when the relationship is effective
@@ -68,7 +86,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
         /// Gets or sets the verson when the relationship is not effecitve
         /// </summary>
         [Column("obslt_vrsn_seq_id")]
-        Decimal? ObsoleteVersionSequenceId { get; set; }
+        public Decimal? ObsoleteVersionSequenceId { get; set; }
 
     }
 

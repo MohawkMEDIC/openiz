@@ -56,7 +56,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
         /// Gets or sets the linked name
         /// </summary>
         [Column("name_id"), ForeignKey(typeof(DbEntityName), nameof(DbEntityName.Key))]
-        public Guid NameKey { get; set; }
+        public override Guid SourceKey { get; set; }
 
         /// <summary>
         /// Value of the component

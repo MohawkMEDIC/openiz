@@ -1,4 +1,5 @@
 ﻿using OpenIZ.Persistence.Data.ADO.Data;
+using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Util;
 using System;
 using System.Collections.Generic;
@@ -57,24 +58,9 @@ namespace OpenIZ.Persistence.Data.ADO.Providers
         IDbCommand CreateCommand(DataContext context, String sql, params object[] parms);
 
         /// <summary>
-        /// Generates a SQL statement for the order by condition
+        /// Creates an Exists statement
         /// </summary>
-        SqlStatement OrderBy(SqlStatement sql, String columnName);
-
-        /// <summary>
-        /// Generates a SQL statement for the order by condition
-        /// </summary>
-        SqlStatement OrderByDescending(SqlStatement sql, String columnName);
-
-        /// <summary>
-        /// Generates the offset function
-        /// </summary>
-        SqlStatement Take(SqlStatement sql, int quantity);
-
-        /// <summary>
-        /// Generates the offset function
-        /// </summary>
-        SqlStatement Skip(SqlStatement sql, int offset);
+        SqlStatement Count(SqlStatement sqlStatement);
 
         /// <summary>
         /// Creates an Exists statement

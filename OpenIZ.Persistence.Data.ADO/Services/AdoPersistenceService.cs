@@ -38,6 +38,7 @@ using System.Threading;
 using OpenIZ.Core.Services;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.Persistence.Data.ADO.Services.Persistence;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {
@@ -50,6 +51,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services
     {
 
         private static ModelMapper s_mapper;
+        private static AdoConfiguration s_configuration;
+        // Cache
+        private static Dictionary<Type, IAdoPersistenceService> s_persistenceCache = new Dictionary<Type, IAdoPersistenceService>();
+
+        /// <summary>
+        /// Get configuration
+        /// </summary>
+        public static AdoConfiguration GetConfiguration() { return s_configuration; }
 
         /// <summary>
         /// Gets the mode mapper
@@ -58,12 +67,30 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         public static ModelMapper GetMapper() { return s_mapper; }
 
         /// <summary>
+        /// Get the specified persister type
+        /// </summary>
+        public static IAdoPersistenceService GetPersister(Type tDomain)
+        {
+            IAdoPersistenceService retVal = null;
+            if(!s_persistenceCache.TryGetValue(tDomain, out retVal))
+            {
+                var idpType = typeof(IDataPersistenceService<>).MakeGenericType(tDomain);
+                retVal = ApplicationContext.Current.GetService(idpType) as IAdoPersistenceService;
+                if (retVal != null)
+                    lock (s_persistenceCache)
+                        if (!s_persistenceCache.ContainsKey(tDomain))
+                            s_persistenceCache.Add(tDomain, retVal);
+            }
+            return retVal;
+        }
+
+        /// <summary>
         /// Static CTOR
         /// </summary>
         static AdoPersistenceService()
         {
             var tracer = new TraceSource(AdoDataConstants.TraceSourceName);
-
+            s_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection(AdoDataConstants.ConfigurationSectionName) as AdoConfiguration;
             try
             {
                 s_mapper = new ModelMapper(typeof(AdoPersistenceService).GetTypeInfo().Assembly.GetManifestResourceStream(AdoDataConstants.MapResourceName));
@@ -171,12 +198,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
         // When service is running
         private bool m_running = false;
-
-        /// <summary>
-        /// SqlConfiguration
-        /// </summary>
-        private AdoConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection(AdoDataConstants.ConfigurationSectionName) as AdoConfiguration;
-
         /// <summary>
         /// Service is starting
         /// </summary>
@@ -215,7 +236,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             if (this.m_running) return true;
 
             // Verify schema version
-            using (DataContext mdc = this.m_configuration.Provider.GetReadonlyConnection())
+            using (DataContext mdc = s_configuration.Provider.GetReadonlyConnection())
             {
                 Version dbVer = new Version(mdc.FirstOrDefault<String>("get_sch_vrsn")),
                     oizVer = typeof(AdoPersistenceService).Assembly.GetName().Version;
@@ -232,6 +253,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 {
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Loading {0}...", t.AssemblyQualifiedName);
                     ApplicationContext.Current.AddServiceProvider(t);
+
+                    // Add to cache since we're here anyways
+                    s_persistenceCache.Add(t.GetGenericArguments()[0], Activator.CreateInstance(t) as IAdoPersistenceService);
                 }
                 catch (Exception e)
                 {
@@ -269,6 +293,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         var pclass = typeof(GenericBasePersistenceService<,>);
                         pclass = pclass.MakeGenericType(modelClassType, domainClassType);
                         ApplicationContext.Current.AddServiceProvider(pclass);
+                        // Add to cache since we're here anyways
+                        s_persistenceCache.Add(modelClassType, Activator.CreateInstance(pclass) as IAdoPersistenceService);
                     }
                     else
                     {
@@ -276,6 +302,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         var pclass = typeof(GenericIdentityPersistenceService<,>);
                         pclass = pclass.MakeGenericType(modelClassType, domainClassType);
                         ApplicationContext.Current.AddServiceProvider(pclass);
+                        s_persistenceCache.Add(modelClassType, Activator.CreateInstance(pclass) as IAdoPersistenceService);
                     }
 
                 }

@@ -30,7 +30,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
     /// <summary>
     /// Base data interface
     /// </summary>
-    public interface IDbBaseData
+    public interface IDbBaseData : IDbIdentified
     {
         /// <summary>
         /// Gets or sets the entity id which created this
@@ -48,6 +48,22 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
         /// Gets or sets the obsoletion time
         /// </summary>
         DateTimeOffset? ObsoletionTime { get; set; }
+    }
+
+    /// <summary>
+    /// Represents non-versioendd base data
+    /// </summary>
+    public interface IDbNonVersionedBaseData : IDbBaseData
+    {
+        /// <summary>
+        /// Gets or sets the updated user
+        /// </summary>
+        Guid? UpdatedByKey { get; set; }
+
+        /// <summary>
+        /// Gets or sets the time of updating
+        /// </summary>
+        DateTimeOffset? UpdatedTime { get; set; }
     }
 
     /// <summary>
@@ -80,7 +96,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
     /// <summary>
     /// Non-versioned base data
     /// </summary>
-    public abstract class DbNonVersionedBaseData : DbBaseData
+    public abstract class DbNonVersionedBaseData : DbBaseData, IDbNonVersionedBaseData
     {
 
         /// <summary>

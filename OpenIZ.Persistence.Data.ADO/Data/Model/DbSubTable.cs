@@ -12,12 +12,15 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
     /// <summary>
     /// Gets or sets the derived parent class
     /// </summary>
-    public abstract class DbSubTable
+    public abstract class DbSubTable 
     {
+
         /// <summary>
         /// Parent key
         /// </summary>
         public abstract Guid ParentKey { get; set; }
+
+
     }
 
     /// <summary>
@@ -28,7 +31,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
         /// <summary>
         /// Gets or sets the parent key
         /// </summary>
-        [Column("act_vrsn_id"), ForeignKey(typeof(DbActVersion), nameof(DbActVersion.VersionKey)), PrimaryKey]
+        [Column("act_vrsn_id"), ForeignKey(typeof(DbActVersion), nameof(DbActVersion.Key)), PrimaryKey]
         public override Guid ParentKey { get; set; }
     }
 
@@ -40,14 +43,14 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
         /// <summary>
         /// Gets or sets the parent key
         /// </summary>
-        [Column("ent_vrsn_id"), ForeignKey(typeof(DbEntityVersion), nameof(DbEntityVersion.VersionKey)), PrimaryKey]
+        [Column("ent_vrsn_id"), ForeignKey(typeof(DbEntityVersion), nameof(DbEntityVersion.Key)), PrimaryKey]
         public override Guid ParentKey { get; set; }
     }
 
     /// <summary>
     /// Represents a person based sub-table
     /// </summary>
-    public abstract class DbPersonSubTable : DbSubTable
+    public abstract class DbPersonSubTable : DbEntitySubTable
     {
         /// <summary>
         /// Gets or sets the parent key

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenIZ.Core.Model.Map;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -189,6 +190,54 @@ namespace OpenIZ.Persistence.Data.ADO.Util
         }
 
         /// <summary>
+        /// Return a select from
+        /// </summary>
+        public SqlStatement SelectFrom(Type dataType)
+        {
+            var tableMap = TableMapping.Get(dataType);
+            return this.Append(new SqlStatement($"SELECT * FROM {tableMap.TableName} AS {tableMap.TableName} "));
+        }
+
+        /// <summary>
+        /// Construct a where clause on the expression tree
+        /// </summary>
+        public SqlStatement Where<TExpression>(Expression<Func<TExpression, bool>> expression)
+        {
+            var tableMap = TableMapping.Get(typeof(TExpression));
+            var queryBuilder = new SqlQueryExpressionBuilder(tableMap.TableName);
+            queryBuilder.Visit(expression.Body);
+            return this.Append(new SqlStatement("WHERE ").Append(queryBuilder.SqlStatement));
+        }
+
+        /// <summary>
+        /// Append an offset statement
+        /// </summary>
+        public SqlStatement Offset(int offset)
+        {
+            return this.Append($" OFFSET {offset} ");
+        }
+
+        /// <summary>
+        /// Limit of the 
+        /// </summary>
+        /// <param name="value"></param>
+        public SqlStatement Limit(int limit)
+        {
+            return this.Append($" LIMIT {limit} ");
+        }
+
+        /// <summary>
+        /// Construct an order by 
+        /// </summary>
+        public SqlStatement OrderBy<TExpression>(Expression<Func<TExpression, dynamic>> orderField, SortOrderType sortOperation = SortOrderType.OrderBy)
+        {
+            var orderMap = TableMapping.Get(typeof(TExpression));
+            var orderCol = orderMap.GetColumn(this.GetMember(orderField.Body));
+            return this.Append($"ORDER BY {orderMap.TableName}.{orderCol.Name} ").Append(sortOperation == SortOrderType.OrderBy ? " ASC " : " DESC ");
+        }
+
+
+        /// <summary>
         /// Removes the last statement from the list
         /// </summary>
         internal void RemoveLast()
@@ -199,6 +248,7 @@ namespace OpenIZ.Persistence.Data.ADO.Util
             if(t != null)
                 t.m_rhs = null;
         }
+
     }
 
     /// <summary>
@@ -265,17 +315,6 @@ namespace OpenIZ.Persistence.Data.ADO.Util
         public SqlStatement Where(Expression<Func<T, bool>> expression)
         {
             var tableMap = TableMapping.Get(typeof(T));
-            var queryBuilder = new SqlQueryExpressionBuilder(this.m_alias ?? tableMap.TableName);
-            queryBuilder.Visit(expression.Body);
-            return this.Append(new SqlStatement("WHERE ").Append(queryBuilder.SqlStatement));
-        }
-
-        /// <summary>
-        /// Construct a where clause on the expression tree
-        /// </summary>
-        public SqlStatement Where<TExpression>(Expression<Func<TExpression, bool>> expression)
-        {
-            var tableMap = TableMapping.Get(typeof(TExpression));
             var queryBuilder = new SqlQueryExpressionBuilder(this.m_alias ?? tableMap.TableName);
             queryBuilder.Visit(expression.Body);
             return this.Append(new SqlStatement("WHERE ").Append(queryBuilder.SqlStatement));

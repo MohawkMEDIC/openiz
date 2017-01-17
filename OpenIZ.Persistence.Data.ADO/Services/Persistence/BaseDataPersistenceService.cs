@@ -1,0 +1,148 @@
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-8-2
+ */
+using System;
+using System.Linq;
+using OpenIZ.Core.Model;
+using System.Collections.Generic;
+using OpenIZ.Persistence.Data.ADO.Data;
+using System.Security.Principal;
+using OpenIZ.Core;
+using System.Linq.Expressions;
+using OpenIZ.Persistence.Data.ADO.Data.Model;
+using OpenIZ.Persistence.Data.ADO.Exceptions;
+
+namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
+{
+    /// <summary>
+    /// Base persistence service
+    /// </summary>
+    public abstract class BaseDataPersistenceService<TModel, TDomain> : BaseDataPersistenceService<TModel, TDomain, TDomain>
+        where TModel : BaseEntityData, new()
+        where TDomain : class, IDbBaseData, new()
+    { }
+
+    /// <summary>
+    /// Base data persistence service
+    /// </summary>
+    public abstract class BaseDataPersistenceService<TModel, TDomain, TQueryResult> : IdentifiedPersistenceService<TModel, TDomain, TQueryResult>
+        where TModel : BaseEntityData, new()
+        where TDomain : class, IDbBaseData, new()
+    {
+
+        /// <summary>
+        /// Performthe actual insert.
+        /// </summary>
+        /// <param name="context">Context.</param>
+        /// <param name="data">Data.</param>
+        public override TModel Insert(DataContext context, TModel data, IPrincipal principal)
+        {
+            data.CreatedBy?.EnsureExists(context, principal);
+            data.CreatedByKey = data.CreatedBy?.Key ?? data.CreatedByKey;
+
+            var domainObject = this.FromModelInstance(data, context, principal) as TDomain;
+
+            // Ensure created by exists
+            data.CreatedByKey = domainObject.CreatedByKey = domainObject.CreatedByKey == Guid.Empty ? principal.GetUser(context).Key : domainObject.CreatedByKey;
+            domainObject = context.Insert<TDomain>(domainObject);
+            data.CreationTime = (DateTimeOffset)domainObject.CreationTime;
+            data.Key = domainObject.Key;
+            return data;
+
+        }
+
+        /// <summary>
+        /// Perform the actual update.
+        /// </summary>
+        /// <param name="context">Context.</param>
+        /// <param name="data">Data.</param>
+        public override TModel Update(DataContext context, TModel data, IPrincipal principal)
+        {
+            var nvd = data as NonVersionedEntityData;
+            if (nvd?.UpdatedBy != null)
+            {
+                nvd.UpdatedBy?.EnsureExists(context, principal);
+                nvd.UpdatedByKey = nvd.UpdatedBy?.Key ?? nvd.UpdatedByKey;
+            }
+
+            // Check for key
+            if (data.Key == Guid.Empty)
+                throw new AdoFormalConstraintException(AdoFormalConstraintType.NonIdentityUpdate);
+
+            // Get current object
+            var domainObject = this.FromModelInstance(data, context, principal) as TDomain;
+            var currentObject = context.FirstOrDefault<TDomain>(o => o.Key == data.Key);
+            // Not found
+            if (currentObject == null)
+                throw new KeyNotFoundException(data.Key.ToString());
+
+            // VObject
+            var vobject = domainObject as IDbNonVersionedBaseData;
+            if (vobject != null)
+            {
+                nvd.UpdatedByKey = vobject.UpdatedByKey = nvd.UpdatedByKey ?? principal.GetUser(context).Key;
+                nvd.UpdatedTime = vobject.UpdatedTime = DateTimeOffset.Now;
+            }
+
+            currentObject.CopyObjectData(domainObject);
+            currentObject = context.Update<TDomain>(currentObject);
+
+            return data;
+        }
+
+        /// <summary>
+        /// Query the specified object ordering by creation time
+        /// </summary>
+        /// <returns></returns>
+        public override IEnumerable<TModel> Query(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal)
+        {
+            var qresult = this.QueryInternal(context, query, offset, count, out totalResults);
+            return qresult.Select(o => this.CacheConvert(o, context, principal));
+        }
+
+        /// <summary>
+        /// Performs the actual obsoletion
+        /// </summary>
+        /// <param name="context">Context.</param>
+        /// <param name="data">Data.</param>
+        public override TModel Obsolete(DataContext context, TModel data, IPrincipal principal)
+        {
+            if (data.Key == Guid.Empty)
+                throw new AdoFormalConstraintException(AdoFormalConstraintType.NonIdentityUpdate);
+
+            data.ObsoletedBy?.EnsureExists(context, principal);
+            data.ObsoletedByKey = data.ObsoletedBy?.Key ?? data.ObsoletedByKey;
+
+            // Current object
+            var currentObject = context.FirstOrDefault<TDomain>(o => o.Key == data.Key);
+            if (currentObject == null)
+                throw new KeyNotFoundException(data.Key.ToString());
+
+            //data.ObsoletedBy?.EnsureExists(context, principal);
+            data.ObsoletedByKey = currentObject.ObsoletedByKey = data.ObsoletedBy?.Key ?? principal.GetUser(context).Key;
+            data.ObsoletionTime = currentObject.ObsoletionTime = currentObject.ObsoletionTime ?? DateTimeOffset.Now;
+
+            context.Update(currentObject);
+            return data;
+        }
+
+
+    }
+}
+

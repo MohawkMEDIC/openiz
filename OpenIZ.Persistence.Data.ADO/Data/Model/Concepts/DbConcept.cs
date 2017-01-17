@@ -29,14 +29,14 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
 	/// Physical data layer implemntation of concept
 	/// </summary>
 	[Table("cd_tbl")]
-	public class DbConcept : DbIdentified
+	public class DbConcept : DbIdentified, IDbReadonly
 	{
 
 		/// <summary>
 		/// Gets or sets whether the object is a system concept or not
 		/// </summary>
 		[Column("is_sys")]
-		public bool IsSystemConcept {
+		public bool IsReadonly {
 			get;
 			set;
 		}

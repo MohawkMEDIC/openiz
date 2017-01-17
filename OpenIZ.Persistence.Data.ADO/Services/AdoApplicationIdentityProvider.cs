@@ -24,7 +24,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Principal;
-using OpenIZ.Persistence.Data.ADO.Data;
+using OpenIZ.Persistence.Data.ADO.Data.Model;
 using System.Diagnostics;
 using OpenIZ.Persistence.Data.ADO.Configuration;
 using MARC.HI.EHRS.SVC.Core;
@@ -37,6 +37,7 @@ using MARC.HI.EHRS.SVC.Core.Services.Security;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
 using OpenIZ.Persistence.Data.ADO.Util;
 using System.Security.Authentication;
+using OpenIZ.Persistence.Data.ADO.Data;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {

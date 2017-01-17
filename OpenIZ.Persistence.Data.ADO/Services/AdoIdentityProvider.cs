@@ -33,7 +33,7 @@ using OpenIZ.Core.Model.Security;
 using MARC.HI.EHRS.SVC.Core.Services.Policy;
 using OpenIZ.Persistence.Data.ADO.Configuration;
 using System.Configuration;
-using OpenIZ.Persistence.Data.ADO.Data;
+using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Core.Security;
 using MARC.HI.EHRS.SVC.Core.Exceptions;
 using MARC.HI.EHRS.SVC.Core.Event;

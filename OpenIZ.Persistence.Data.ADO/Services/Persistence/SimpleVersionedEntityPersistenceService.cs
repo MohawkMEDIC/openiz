@@ -1,0 +1,116 @@
+﻿using System.Security.Principal;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.Persistence.Data.ADO.Data.Model;
+using MARC.HI.EHRS.SVC.Core.Data;
+using System;
+using MARC.HI.EHRS.SVC.Core;
+using OpenIZ.Core.Services;
+using System.Linq;
+using OpenIZ.Persistence.Data.ADO.Data;
+using MARC.HI.EHRS.SVC.Core.Event;
+using System.Diagnostics;
+using OpenIZ.Core.Exceptions;
+using OpenIZ.Persistence.Data.ADO.Util;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
+
+namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
+{
+    /// <summary>
+    /// Represents a simple versioned entity persistence service
+    /// </summary>
+    public abstract class SimpleVersionedEntityPersistenceService<TModel, TData, TQueryReturn, TRootEntity> : CorePersistenceService<TModel, TData, TQueryReturn>
+        where TModel : BaseEntityData, IVersionedEntity, new()
+        where TData : DbSubTable, new()
+        where TRootEntity : class, IDbVersionedData, new()
+        where TQueryReturn : CompositeResult
+    {
+
+        /// <summary>
+        /// Get the specified object
+        /// </summary>
+        internal override TModel Get(DataContext context, Guid key, IPrincipal principal)
+        {
+            // We need to join, but to what?
+            // True to get the cache item
+            var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(key) as TModel;
+            if (cacheItem != null)
+                return cacheItem;
+            else
+            {
+                var domainQuery = QueryBuilder.CreateQuery<TModel>(o => o.Key == key && o.ObsoletionTime == null).Build();
+                domainQuery.OrderBy<TRootEntity>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
+                return this.ToModelInstance(context.FirstOrDefault<TData>(domainQuery), context, principal);
+            }
+        }
+
+        /// <summary>
+        /// Gets the specified object taking version of the entity into consideration
+        /// </summary>
+        public override TModel Get<TIdentifier>(MARC.HI.EHRS.SVC.Core.Data.Identifier<TIdentifier> containerId, IPrincipal principal, bool loadFast)
+        {
+            var tr = 0;
+            var uuid = containerId as Identifier<Guid>;
+
+            if (uuid.Id != Guid.Empty)
+            {
+                var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(uuid.Id) as TModel;
+                if (cacheItem != null && (cacheItem.VersionKey.HasValue && uuid.VersionId == cacheItem.VersionKey.Value || uuid.VersionId == Guid.Empty))
+                    return cacheItem;
+            }
+
+#if DEBUG
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
+
+            PreRetrievalEventArgs preArgs = new PreRetrievalEventArgs(containerId, principal);
+            this.FireRetrieving(preArgs);
+            if (preArgs.Cancel)
+            {
+                this.m_tracer.TraceEvent(TraceEventType.Warning, 0, "Pre-Event handler indicates abort retrieve {0}", containerId.Id);
+                return null;
+            }
+
+            // Query object
+            using (var connection = m_configuration.Provider.GetReadonlyConnection())
+                try
+                {
+
+                    this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "GET {0}", containerId);
+
+                    TModel retVal = null;
+                    // Get most recent version
+                    if (uuid.VersionId == Guid.Empty)
+                        retVal = this.Get(connection, uuid.Id, principal);
+                    else
+                        retVal = this.CacheConvert(this.QueryInternal(connection, o => o.Key == uuid.Id && o.VersionKey == uuid.VersionId, 0, 1, out tr).FirstOrDefault(), connection, principal);
+
+                    var postData = new PostRetrievalEventArgs<TModel>(retVal, principal);
+                    this.FireRetrieved(postData);
+                    retVal.SetDelayLoad(true);
+
+                    return retVal;
+
+                }
+                catch (NotSupportedException e)
+                {
+                    throw new DataPersistenceException("Cannot perform LINQ query", e);
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
+                    throw;
+                }
+                finally
+                {
+#if DEBUG
+                    sw.Stop();
+                    this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Retrieve took {0} ms", sw.ElapsedMilliseconds);
+#endif
+                }
+        }
+
+    }
+}
