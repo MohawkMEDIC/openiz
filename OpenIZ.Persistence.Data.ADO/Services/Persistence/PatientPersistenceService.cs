@@ -113,6 +113,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.Roles.Patient Obsolete(DataContext context, Core.Model.Roles.Patient data, IPrincipal principal)
         {
             this.m_personPersister.Obsolete(context, data, principal);
+            return data;
         }
         
     }

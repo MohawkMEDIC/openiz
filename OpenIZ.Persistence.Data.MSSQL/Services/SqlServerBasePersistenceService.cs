@@ -68,7 +68,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         public event EventHandler<PostPersistenceEventArgs<TData>> Updated;
         public event EventHandler<PrePersistenceEventArgs<TData>> Obsoleting;
         public event EventHandler<PostPersistenceEventArgs<TData>> Obsoleted;
-        public event EventHandler<PreRetrievalEventArgs<TData>> Retrieving;
+        public event EventHandler<PreRetrievalEventArgs> Retrieving;
         public event EventHandler<PostRetrievalEventArgs<TData>> Retrieved;
         public event EventHandler<PreQueryEventArgs<TData>> Querying;
         public event EventHandler<PostQueryEventArgs<TData>> Queried;

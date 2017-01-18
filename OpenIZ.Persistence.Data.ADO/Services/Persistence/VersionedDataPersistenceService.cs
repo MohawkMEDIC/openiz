@@ -162,7 +162,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Query internal
         /// </summary>
-        protected override IEnumerable<TDomain> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults)
+        protected override IEnumerable<CompositeResult<TDomain, TDomainKey>> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults)
         {
             var domainQuery = QueryBuilder.CreateQuery(query).Build();
             domainQuery.OrderBy<TDomain>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
@@ -171,7 +171,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 domainQuery.Offset(offset);
             if (count.HasValue)
                 domainQuery.Limit(count.Value);
-            return context.Query<TDomain>(domainQuery);
+            return context.Query<CompositeResult<TDomain, TDomainKey>>(domainQuery);
 
         }
 
@@ -259,7 +259,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         internal virtual void UpdateVersionedAssociatedItems<TAssociation, TDomainAssociation>(IEnumerable<TAssociation> storage, TModel source, DataContext context, IPrincipal principal)
             where TAssociation : VersionedAssociation<TModel>, new()
-            where TDomainAssociation : class, IDbVersionedAssociation, new()
+            where TDomainAssociation : class, IDbVersionedAssociation, IDbIdentified, new()
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAssociation>>() as AdoBasePersistenceService<TAssociation>;
             if (persistenceService == null)

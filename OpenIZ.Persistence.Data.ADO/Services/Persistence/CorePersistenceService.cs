@@ -94,7 +94,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Perform the query 
         /// </summary>
-        protected virtual IEnumerable<TDomain> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults)
+        protected virtual IEnumerable<TQueryReturn> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults)
         {
             var domainQuery = QueryBuilder.CreateQuery(query);
             totalResults = context.Count(domainQuery);

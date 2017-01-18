@@ -157,8 +157,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                             .Where<DbActVersion>(o => o.StatusConceptKey == StatusKeys.Active);
 
                         // Disable inserting duplicate classified objects
-                       DbSetDelayLoad(false);
-                        var existing =DbTryGetExisting(connection, principal);
+                       data.SetDelayLoad(false);
+                        var existing =data.TryGetExisting(connection, principal);
                         if (existing != null)
                         {
                             if (m_configuration.AutoUpdateExisting)
@@ -198,7 +198,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     }
                     finally
                     {
-                       DbSetDelayLoad(true);
+                       data.SetDelayLoad(true);
                     }
             }
         }
@@ -236,7 +236,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                         this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "UPDATE {0}", data);
 
-                       DbSetDelayLoad(false);
+                       data.SetDelayLoad(false);
                         data = this.Update(connection, data, principal);
 
                         if (mode == TransactionMode.Commit)
@@ -262,7 +262,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     }
                     finally
                     {
-                       DbSetDelayLoad(true);
+                       data.SetDelayLoad(true);
                     }
 
             }
@@ -297,7 +297,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                         this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "OBSOLETE {0}", data);
 
-                       DbSetDelayLoad(false);
+                       data.SetDelayLoad(false);
                         data = this.Obsolete(connection, data, principal);
 
                         if (mode == TransactionMode.Commit)
@@ -322,7 +322,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     }
                     finally
                     {
-                       DbSetDelayLoad(true);
+                       data.SetDelayLoad(true);
                     }
 
             }

@@ -33,7 +33,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
     /// <summary>
     /// Database association
     /// </summary>
-    public interface IDbAssociation : IDbIdentified
+    public interface IDbAssociation
     {
         /// <summary>
         /// Gets or sets the source of the association

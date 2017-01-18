@@ -59,8 +59,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             var dbUser = dataInstance as DbSecurityUser;
             var retVal = base.ToModelInstance(dataInstance, context, principal);
 
-            var rolesQuery = new SqlStatement<DbSecurityRole>().SelectFrom()
-                .InnerJoin<DbSecurityUserRole>(o => o.Key, o => o.RoleKey)
+            var rolesQuery = new SqlStatement<DbSecurityUserRole>().SelectFrom()
+                .InnerJoin<DbSecurityRole>(o => o.RoleKey, o => o.Key)
                 .Where<DbSecurityUserRole>(o => o.UserKey == dbUser.Key);
 
             retVal.Roles = context.Query<DbSecurityRole>(rolesQuery).Select(o => m_mapper.MapDomainInstance<DbSecurityRole, Core.Model.Security.SecurityRole>(o)).ToList();
@@ -128,14 +128,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             var retVal = base.ToModelInstance(dataInstance, context, principal);
 
-            var policyQuery = new SqlStatement<DbSecurityPolicy>().SelectFrom()
-                .InnerJoin<DbSecurityRolePolicy>(o => o.Key, o => o.PolicyKey)
+            var policyQuery = new SqlStatement<DbSecurityRolePolicy>().SelectFrom()
+                .InnerJoin<DbSecurityPolicy>(o => o.PolicyKey, o => o.Key)
                 .Where<DbSecurityRolePolicy>(o => o.SourceKey == retVal.Key);
 
-            retVal.Policies = context.Query<DbSecurityPolicy>(policyQuery).Select(o => m_mapper.MapDomainInstance<DbSecurityPolicy, SecurityPolicyInstance>(o)).ToList();
+            retVal.Policies = context.Query<CompositeResult<DbSecurityRolePolicy, DbSecurityPolicy>>(policyQuery).Select(o => new SecurityPolicyInstance(m_mapper.MapDomainInstance<DbSecurityPolicy, SecurityPolicy>(o.Object2), (PolicyGrantType)o.Object1.GrantType)).ToList();
 
-            var rolesQuery = new SqlStatement<DbSecurityUser>().SelectFrom()
-                .InnerJoin<DbSecurityUserRole>(o => o.Key, o => o.UserKey)
+            var rolesQuery = new SqlStatement<DbSecurityUserRole>().SelectFrom()
+                .InnerJoin<DbSecurityUser>(o => o.UserKey, o => o.Key)
                 .Where<DbSecurityUserRole>(o => o.RoleKey == retVal.Key);
 
             retVal.Users = context.Query<SecurityUser>(rolesQuery).Select(o => m_mapper.MapDomainInstance<SecurityUser, Core.Model.Security.SecurityUser>(o)).ToList();
@@ -154,7 +154,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             {
 
                 // TODO: Clean this up
-                data.Policies.ForEach(o => o.EnsureExists(context, principal));
+                data.Policies.ForEach(o => o.Policy?.EnsureExists(context, principal));
                 foreach (var pol in data.Policies.Select(o => new DbSecurityRolePolicy()
 
                 {
@@ -208,7 +208,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.Security.SecurityDevice ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
         {
             var retVal = base.ToModelInstance(dataInstance, context, principal);
-            retVal.Policies = (dataInstance as DbSecurityDevice).SecurityDevicePolicies.Select(o => m_mapper.MapDomainInstance<Data.SecurityDevicePolicy, Core.Model.Security.SecurityPolicyInstance>(o)).ToList();
+            var policyQuery = new SqlStatement<DbSecurityDevicePolicy>().SelectFrom()
+                .InnerJoin<DbSecurityPolicy>(o => o.PolicyKey, o => o.Key)
+                .Where<DbSecurityDevicePolicy>(o => o.SourceKey == retVal.Key);
+
+            retVal.Policies = context.Query<CompositeResult<DbSecurityDevicePolicy, DbSecurityPolicy>>(policyQuery).Select(o => new SecurityPolicyInstance(m_mapper.MapDomainInstance<DbSecurityPolicy, SecurityPolicy>(o.Object2), (PolicyGrantType)o.Object1.GrantType)).ToList();
             return retVal;
         }
 
@@ -220,20 +224,17 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             var retVal = base.Insert(context, data, principal);
 
             if (data.Policies == null)
-            {
                 return retVal;
-            }
 
-            DbPolicies.ForEach(o => o.EnsureExists(context, principal));
-            context.SecurityDevicePolicies.InsertAllOnSubmit(data.Policies.Select(o => newDbSecurityDevicePolicy()
-
+            data.Policies.ForEach(o => o.Policy?.EnsureExists(context, principal));
+            foreach (var itm in data.Policies.Select(o => new DbSecurityDevicePolicy()
             {
-                PolicyId = o.PolicyKey.Value,
-		        PolicyAction = (int)o.GrantType,
-		        DeviceId = retVal.Key.Value,
-		        SecurityPolicyInstanceId = Guid.NewGuid()
-
-            }));
+                PolicyKey = o.PolicyKey.Value,
+                GrantType = (int)o.GrantType,
+                SourceKey = retVal.Key.Value,
+                Key = Guid.NewGuid()
+            }))
+                context.Insert(itm);
 
             return retVal;
         }
@@ -243,55 +244,25 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Security.SecurityDevice Update(DataContext context, Core.Model.Security.SecurityDevice data, IPrincipal principal)
         {
-            var domainInstance = this.FromModelInstance(data, context, principal) as DbSecurityDevice;
+            data = base.Update(context, data, principal);
 
-            var currentObject = context.GetTable<Data.SecurityDevice>().FirstOrDefault(ExpressionRewriter.Rewrite<Data.SecurityDevice>(o => o.Id == DbKey));
-
-            if (currentObject == null)
+            if (data.Policies != null)
             {
-                throw new KeyNotFoundException(data.Key.ToString());
+                context.Delete<DbSecurityDevicePolicy>(o => o.SourceKey == data.Key);
+                foreach (var pol in data.Policies.Select(o => new DbSecurityDevicePolicy
+                {
+                    PolicyKey = o.PolicyKey.Value,
+                    GrantType = (int)o.GrantType,
+                    SourceKey = data.Key.Value,
+                    Key = Guid.NewGuid()
+
+                }))
+                    context.Insert(pol);
             }
-
-            currentObject.CopyObjectData(domainInstance);
-
-            currentObject.ObsoletedBy = DbObsoletedByKey == Guid.Empty ? null : DbObsoletedByKey;
-            currentObject.ObsoletionTime = DbObsoletionTime;
-
-            context.SubmitChanges();
-
-            context.SecurityDevicePolicies.DeleteAllOnSubmit(context.SecurityDevicePolicies.Where(o => o.DeviceId == domainInstance.Id));
-
-            context.SubmitChanges();
-
-            context.SecurityDevicePolicies.InsertAllOnSubmit(data.Policies.Select(o => newDbSecurityDevicePolicy
-
-            {
-                PolicyId = o.PolicyKey.Value,
-		        PolicyAction = (int)o.GrantType,
-		        DeviceId = domainInstance.Id,
-		        SecurityPolicyInstanceId = Guid.NewGuid()
-
-            }));
-
-            context.SubmitChanges();
 
             return data;
         }
 
-        public override object FromModelInstance(Core.Model.Security.SecurityDevice modelInstance, DataContext context, IPrincipal princpal)
-        {
-            var domainInstance = base.FromModelInstance(modelInstance, context, princpal) as DbSecurityDevice;
-
-            domainInstance.SecurityDevicePolicies.AddRange(modelInstance.Policies.Select(o => new SecurityDevicePolicy
-            {
-                PolicyId = o.PolicyKey.Value,
-                PolicyAction = (int)o.GrantType,
-                DeviceId = modelInstance.Key.GetValueOrDefault(Guid.NewGuid()),
-                SecurityPolicyInstanceId = Guid.NewGuid()
-            }));
-
-            return domainInstance;
-        }
     }
 
     /// <summary>
@@ -305,7 +276,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.Security.SecurityApplication ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
         {
             var retVal = base.ToModelInstance(dataInstance, context, principal);
-            retVal.Policies = (dataInstance as DbSecurityApplication).SecurityApplicationPolicies.Select(o => m_mapper.MapDomainInstance<Data.SecurityApplicationPolicy, Core.Model.Security.SecurityPolicyInstance>(o)).ToList();
+            var policyQuery = new SqlStatement<DbSecurityApplicationPolicy>().SelectFrom()
+                .InnerJoin<DbSecurityPolicy>(o => o.PolicyKey, o => o.Key)
+                .Where<DbSecurityApplicationPolicy>(o => o.SourceKey == retVal.Key);
+
+            retVal.Policies = context.Query<CompositeResult<DbSecurityApplicationPolicy, DbSecurityPolicy>>(policyQuery).Select(o => new SecurityPolicyInstance(m_mapper.MapDomainInstance<DbSecurityPolicy, SecurityPolicy>(o.Object2), (PolicyGrantType)o.Object1.GrantType)).ToList();
             return retVal;
         }
 
@@ -317,17 +292,17 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             var retVal = base.Insert(context, data, principal);
 
             if (data.Policies == null)
+                return retVal;
+
+            data.Policies.ForEach(o => o.Policy?.EnsureExists(context, principal));
+            foreach (var itm in data.Policies.Select(o => new DbSecurityApplicationPolicy()
             {
-                context.SecurityApplicationPolicies.InsertAllOnSubmit(data.Policies.Select(o => newDbSecurityApplicationPolicy()
-
-                {
-                    PolicyId = o.PolicyKey.Value,
-					PolicyAction = (int)o.GrantType,
-					ApplicationId = retVal.Key.Value,
-					SecurityPolicyInstanceId = Guid.NewGuid()
-
-                }));
-            }
+                PolicyKey = o.PolicyKey.Value,
+                GrantType = (int)o.GrantType,
+                SourceKey = retVal.Key.Value,
+                Key = Guid.NewGuid()
+            }))
+                context.Insert(itm);
 
             return retVal;
         }
@@ -337,55 +312,25 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Security.SecurityApplication Update(DataContext context, Core.Model.Security.SecurityApplication data, IPrincipal principal)
         {
-            var domainInstance = this.FromModelInstance(data, context, principal) as DbSecurityApplication;
+            data = base.Update(context, data, principal);
 
-            var currentObject = context.GetTable<Data.SecurityApplication>().FirstOrDefault(ExpressionRewriter.Rewrite<Data.SecurityApplication>(o => o.Id == DbKey));
-
-            if (currentObject == null)
+            if (data.Policies != null)
             {
-                throw new KeyNotFoundException(data.Key.ToString());
+                context.Delete<DbSecurityDevicePolicy>(o => o.SourceKey == data.Key);
+                foreach (var pol in data.Policies.Select(o => new DbSecurityApplicationPolicy
+                {
+                    PolicyKey = o.PolicyKey.Value,
+                    GrantType = (int)o.GrantType,
+                    SourceKey = data.Key.Value,
+                    Key = Guid.NewGuid()
+
+                }))
+                    context.Insert(pol);
             }
-
-            currentObject.CopyObjectData(domainInstance);
-
-            currentObject.ObsoletedBy = DbObsoletedByKey == Guid.Empty ? null : DbObsoletedByKey;
-            currentObject.ObsoletionTime = DbObsoletionTime;
-
-            context.SubmitChanges();
-
-            context.SecurityApplicationPolicies.DeleteAllOnSubmit(context.SecurityApplicationPolicies.Where(o => o.ApplicationId == domainInstance.Id));
-
-            context.SubmitChanges();
-
-            context.SecurityApplicationPolicies.InsertAllOnSubmit(data.Policies.Select(o => newDbSecurityApplicationPolicy
-
-            {
-                PolicyId = o.PolicyKey.Value,
-				PolicyAction = (int)o.GrantType,
-				ApplicationId = domainInstance.Id,
-				SecurityPolicyInstanceId = Guid.NewGuid()
-
-            }));
-
-            context.SubmitChanges();
 
             return data;
         }
 
-        public override object FromModelInstance(Core.Model.Security.SecurityApplication modelInstance, DataContext context, IPrincipal princpal)
-        {
-            var domainInstance = base.FromModelInstance(modelInstance, context, princpal) as DbSecurityApplication;
-
-            domainInstance.SecurityApplicationPolicies.AddRange(modelInstance.Policies.Select(o => new SecurityApplicationPolicy
-            {
-                PolicyId = o.PolicyKey.Value,
-                PolicyAction = (int)o.GrantType,
-                ApplicationId = modelInstance.Key.GetValueOrDefault(Guid.NewGuid()),
-                SecurityPolicyInstanceId = Guid.NewGuid()
-            }));
-
-            return domainInstance;
-        }
 
     }
 }

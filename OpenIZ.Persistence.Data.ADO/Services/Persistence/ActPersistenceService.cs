@@ -101,36 +101,32 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                         case "ST":
                             return new TextObservationPersistenceService().ToModelInstance(
                                 (dataInstance as CompositeResult)?.Values.OfType<DbTextObservation>().First() ?? context.FirstOrDefault<DbTextObservation>(o=>o.ParentKey == dbObs.ParentKey),
-                                (dataInstance as CompositeResult)?.Values.OfType<DbObservation>().First() ?? context.FirstOrDefault<DbObservation>(o => o.ParentKey == dbObs.ParentKey),
+                                dbObs,
                                 dbActVersion, 
                                 dbAct,
-                                dbObs, 
                                 context,
                                 principal);
                         case "CD":
                             return new CodedObservationPersistenceService().ToModelInstance(
                                 (dataInstance as CompositeResult)?.Values.OfType<DbCodedObservation>().First() ?? context.FirstOrDefault<DbCodedObservation>(o=>o.ParentKey == dbObs.ParentKey),
-                                (dataInstance as CompositeResult)?.Values.OfType<DbObservation>().First() ?? context.FirstOrDefault<DbObservation>(o => o.ParentKey == dbObs.ParentKey),
+                                dbObs,
                                 dbActVersion, 
                                 dbAct,
-                                dbObs, 
                                 context,
                                 principal);
                         case "PQ":
                             return new QuantityObservationPersistenceService().ToModelInstance(
                                 (dataInstance as CompositeResult)?.Values.OfType<DbQuantityObservation>().First() ?? context.FirstOrDefault<DbQuantityObservation>(o=>o.ParentKey == dbObs.ParentKey),
-                                (dataInstance as CompositeResult)?.Values.OfType<DbObservation>().First() ?? context.FirstOrDefault<DbObservation>(o => o.ParentKey == dbObs.ParentKey),
+                                dbObs,
                                 dbActVersion, 
                                 dbAct,
-                                dbObs, 
                                 context, 
                                 principal);
                         default:
                             return new ObservationPersistenceService().ToModelInstance(
-                                (dataInstance as CompositeResult)?.Values.OfType<DbObservation>().First() ?? context.FirstOrDefault<DbObservation>(o => o.ParentKey == dbObs.ParentKey),
+                                dbObs,
                                 dbActVersion,
                                 dbAct,
-                                dbObs,
                                 context,
                                 principal);
                     }

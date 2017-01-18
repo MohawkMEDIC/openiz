@@ -82,7 +82,7 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Services
 		/// <summary>
 		/// Fired while a report is being retrieved.
 		/// </summary>
-		public event EventHandler<PreRetrievalEventArgs<ReportParameter>> Retrieving;
+		public event EventHandler<PreRetrievalEventArgs> Retrieving;
 
 		/// <summary>
 		/// Fired after a report is updated.
@@ -119,11 +119,15 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Services
 
 			using (var context = new ApplicationDbContext())
 			{
-				var reportParameter = context.ReportParameters.Find(containerId.Id);
+                var e = new PreRetrievalEventArgs(containerId, principal);
+                this.Retrieving?.Invoke(this, e);
+                if (e.Cancel)
+                    throw new OperationCanceledException();
+
+                var reportParameter = context.ReportParameters.Find(containerId.Id);
 
 				result = this.ToModelInstance(reportParameter);
 
-				this.Retrieving?.Invoke(this, new PreRetrievalEventArgs<ReportParameter>(result, principal));
 			}
 
 			this.Retrieved?.Invoke(this, new PostRetrievalEventArgs<ReportParameter>(result, principal));

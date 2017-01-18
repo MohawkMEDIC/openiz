@@ -97,7 +97,7 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Services
 		/// <summary>
 		/// Fired while a report is being retrieved.
 		/// </summary>
-		public event EventHandler<PreRetrievalEventArgs<ReportDefinition>> Retrieving;
+		public event EventHandler<PreRetrievalEventArgs> Retrieving;
 
 		/// <summary>
 		/// Fired after a report is updated.
@@ -146,7 +146,12 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Services
 
 			using (var context = new ApplicationDbContext())
 			{
-				var reportDefinition = context.ReportDefinitions.Find(containerId.Id);
+                var evt = new PreRetrievalEventArgs(containerId, principal);
+                this.Retrieving?.Invoke(this, evt);
+                if (evt.Cancel)
+                    throw new OperationCanceledException();
+
+                var reportDefinition = context.ReportDefinitions.Find(containerId.Id);
 
 				result = this.ToModelInstance(reportDefinition);
 
@@ -161,7 +166,6 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Services
 					Value = p.Value
 				}).ToList();
 
-				this.Retrieving?.Invoke(this, new PreRetrievalEventArgs<ReportDefinition>(result, principal));
 			}
 
 			this.Retrieved?.Invoke(this, new PostRetrievalEventArgs<ReportDefinition>(result, principal));

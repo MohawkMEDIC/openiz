@@ -84,7 +84,7 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Services
 		/// <summary>
 		/// Fired while a data type is being retrieved.
 		/// </summary>
-		public event EventHandler<PreRetrievalEventArgs<ParameterType>> Retrieving;
+		public event EventHandler<PreRetrievalEventArgs> Retrieving;
 
 		/// <summary>
 		/// Fired after a data type is updated.
@@ -121,7 +121,12 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Services
 
 			using (var context = new ApplicationDbContext())
 			{
-				var parameterType = context.ParameterTypes.Find(containerId.Id);
+                var evt = new PreRetrievalEventArgs(containerId, principal);
+                this.Retrieving?.Invoke(this, evt);
+                if (evt.Cancel)
+                    throw new OperationCanceledException();
+
+                var parameterType = context.ParameterTypes.Find(containerId.Id);
 
 				result = this.ToModelInstance(parameterType);
 				result.SystemType = Type.GetType(parameterType.Type);
@@ -141,7 +146,6 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Services
 					}
 				}
 
-				this.Retrieving?.Invoke(this, new PreRetrievalEventArgs<ParameterType>(result, principal));
 			}
 
 			this.Retrieved?.Invoke(this, new PostRetrievalEventArgs<ParameterType>(result, principal));

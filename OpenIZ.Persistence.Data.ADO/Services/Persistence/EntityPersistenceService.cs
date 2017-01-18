@@ -162,7 +162,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                         context,
                         principal);
                 case Material:
-                    return new MaterialPersistenceService().ToModelInstance(
+                    return new MaterialPersistenceService().ToModelInstance<Material>(
                         (dataInstance as CompositeResult)?.Values.OfType<DbMaterial>().First() ?? context.FirstOrDefault<DbMaterial>(o => o.ParentKey == dbEntityVersion.VersionKey),
                         dbEntityVersion,
                         dbEntity,

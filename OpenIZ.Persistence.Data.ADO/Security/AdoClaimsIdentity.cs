@@ -49,6 +49,7 @@ using System.Data;
 using System.Data.Common;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Error;
+using OpenIZ.Persistence.Data.ADO.Data;
 
 namespace OpenIZ.Persistence.Data.ADO.Security
 {
