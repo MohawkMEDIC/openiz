@@ -57,6 +57,9 @@ namespace OpenIZ.Persistence.Data.ADO.Util
         // Regex to extract property, guards and cast
         private const string m_extractionRegex = @"^(\w*?)(\[(\w*)\])?(\@(\w*))?(\.(.*))?$";
 
+        // Join cache
+        private static Dictionary<String, KeyValuePair<SqlStatement, List<TableMapping>>> s_joinCache = new Dictionary<String, KeyValuePair<SqlStatement, List<TableMapping>>>();
+
         // Mapper
         private static ModelMapper m_mapper = new ModelMapper(typeof(QueryBuilder).Assembly.GetManifestResourceStream(AdoDataConstants.MapResourceName));
         private const int PropertyRegexGroup = 1;
@@ -93,46 +96,69 @@ namespace OpenIZ.Persistence.Data.ADO.Util
 
             bool skipParentJoin = true;
             SqlStatement selectStatement = null;
-            if (selector == null || selector.Length == 0)
+            KeyValuePair<SqlStatement, List<TableMapping>> cacheHit;
+            if (!s_joinCache.TryGetValue($"{tablePrefix}.{typeof(TModel).Name}", out cacheHit))
             {
-                skipParentJoin = false;
-                selectStatement = new SqlStatement($"SELECT * FROM {tableMap.TableName} AS {tablePrefix}{tableMap.TableName} ");
+                if (selector == null || selector.Length == 0)
+                {
+                    skipParentJoin = false;
+                    selectStatement = new SqlStatement($"SELECT * FROM {tableMap.TableName} AS {tablePrefix}{tableMap.TableName} ");
+                }
+                else
+                {
+                    var columnList = String.Join(",", selector.Select(o =>
+                    {
+                        var rootCol = tableMap.GetColumn(o.SourceProperty);
+                        skipParentJoin &= rootCol != null;
+                        if (skipParentJoin)
+                            return $"{tablePrefix}{rootCol.Table.TableName}.{rootCol.Name}";
+                        else
+                            return $"{tablePrefix}{o.Table.TableName}.{o.Name}";
+                    }));
+                    selectStatement = new SqlStatement($"SELECT {columnList} FROM {tableMap.TableName} AS {tablePrefix}{tableMap.TableName} ");
+                }
+
+                // Is this a sub-type, if so we want to join
+                if (typeof(DbSubTable).IsAssignableFrom(tableMap.OrmType) && !skipParentJoin)
+                {
+                    var joinTableMap = tableMap;
+                    var parentKeyProp = tableMap.OrmType.GetProperty("ParentKey");
+                    while (parentKeyProp != null)
+                    {
+                        var parentFk = joinTableMap.GetColumn(parentKeyProp);
+                        var fkAtt = parentFk.ForeignKey;
+                        var subMap = TableMapping.Get(fkAtt.Table);
+                        scopedTables.Add(subMap);
+                        var subCol = subMap.GetColumn(fkAtt.Column);
+                        selectStatement.Append($"INNER JOIN {subMap.TableName} AS {tablePrefix}{subMap.TableName} ON ({tablePrefix}{joinTableMap.TableName}.{parentFk.Name} = {tablePrefix}{subMap.TableName}.{subCol.Name}) ");
+                        parentKeyProp = fkAtt.Table.GetProperty("ParentKey");
+                        joinTableMap = TableMapping.Get(fkAtt.Table);
+                    }
+                    //while(t.)
+                    // Join non versioned root key?
+                    selectStatement.Append(CreateBaseTableJoin(joinTableMap, tablePrefix, scopedTables));
+                }
+                else if (!skipParentJoin)
+                    selectStatement.Append(CreateBaseTableJoin(tableMap, tablePrefix, scopedTables));
+
+                // Always join tables?
+                foreach (var jt in tableMap.Columns.Where(o => o.IsAlwaysJoin))
+                {
+                    var fkAtt = TableMapping.Get(jt.ForeignKey.Table).GetColumn(jt.ForeignKey.Column);
+                    selectStatement.Append($"INNER JOIN {fkAtt.Table.TableName} AS {tablePrefix}{fkAtt.Table.TableName} ON ({tablePrefix}{jt.Table.TableName}.{jt.Name} = {tablePrefix}{fkAtt.Table.TableName}.{fkAtt.Name}) ");
+                    scopedTables.Add(fkAtt.Table);
+                }
+
+                // Add the heavy work to the cache
+                lock (s_joinCache)
+                    s_joinCache.Add($"{tablePrefix}.{typeof(TModel).Name}", new KeyValuePair<SqlStatement, List<TableMapping>>(selectStatement.Build(), scopedTables));
             }
             else
             {
-                var columnList = String.Join(",", selector.Select(o => {
-                    var rootCol = tableMap.GetColumn(o.SourceProperty);
-                    skipParentJoin &= rootCol != null;
-                    if (skipParentJoin)
-                        return $"{tablePrefix}{rootCol.Table.TableName}.{rootCol.Name}";
-                    else
-                        return $"{tablePrefix}{o.Table.TableName}.{o.Name}";
-                }));
-                selectStatement = new SqlStatement($"SELECT {columnList} FROM {tableMap.TableName} AS {tablePrefix}{tableMap.TableName} ");
+                
+                selectStatement = cacheHit.Key.Build();
+                scopedTables = cacheHit.Value;
             }
-
-            // Is this a sub-type, if so we want to join
-            if (typeof(DbSubTable).IsAssignableFrom(tableMap.OrmType) && !skipParentJoin)
-            {
-                var joinTableMap = tableMap;
-                var parentKeyProp = tableMap.OrmType.GetProperty("ParentKey");
-                while (parentKeyProp != null)
-                {
-                    var parentFk = joinTableMap.GetColumn(parentKeyProp);
-                    var fkAtt = parentFk.ForeignKey;
-                    var subMap = TableMapping.Get(fkAtt.Table);
-                    scopedTables.Add(subMap);
-                    var subCol = subMap.GetColumn(fkAtt.Column);
-                    selectStatement.Append($"INNER JOIN {subMap.TableName} AS {tablePrefix}{subMap.TableName} ON ({tablePrefix}{joinTableMap.TableName}.{parentFk.Name} = {tablePrefix}{subMap.TableName}.{subCol.Name}) ");
-                    parentKeyProp = fkAtt.Table.GetProperty("ParentKey");
-                    joinTableMap = TableMapping.Get(fkAtt.Table);
-                }
-                //while(t.)
-                // Join non versioned root key?
-                selectStatement.Append(CreateBaseTableJoin(joinTableMap, tablePrefix, scopedTables));
-            }
-            else if(!skipParentJoin)
-                selectStatement.Append(CreateBaseTableJoin(tableMap, tablePrefix, scopedTables));
 
             // We want to process each query and build WHERE clauses - these where clauses are based off of the JSON / XML names
             // on the model, so we have to use those for the time being before translating to SQL
@@ -169,8 +195,8 @@ namespace OpenIZ.Persistence.Data.ADO.Util
                         workingParameters.Remove(o);
 
                     // We need to do a sub query
-                    IEnumerable<KeyValuePair<String, Object>> subQuery = new List<KeyValuePair<String, Object>>() { new KeyValuePair<string, object>(subProperty, parm.Value) };
-                    subQuery = otherParms.Select(o => new KeyValuePair<String, Object>(re.Match(o.Key).Groups[PropertyRegexGroup].Value, o.Value)).Union(subQuery);
+
+                    IEnumerable<KeyValuePair<String, Object>> queryParms = new List<KeyValuePair<String, Object>>() { parm }.Union(otherParms);
 
                     // Grab the appropriate builder
                     var subProp = typeof(TModel).GetXmlProperty(propertyPath, true);
@@ -178,48 +204,71 @@ namespace OpenIZ.Persistence.Data.ADO.Util
 
                     // Link to this table in the other?
                     // Is this a collection?
-                    if (typeof(IEnumerable).IsAssignableFrom(subProp.PropertyType)) // Other table points at this on
+                    if (typeof(IList).IsAssignableFrom(subProp.PropertyType)) // Other table points at this on
                     {
                         var propertyType = subProp.PropertyType.StripGeneric();
                         // map and get ORM def'n
                         var subTableType = m_mapper.MapModelType(propertyType);
                         var subTableMap = TableMapping.Get(subTableType);
-                        var linkColumn = subTableMap.Columns.SingleOrDefault(o => o.ForeignKey.Table == tableMap.OrmType);
+                        var linkColumn = subTableMap.Columns.SingleOrDefault(o => scopedTables.Any(s=>s.OrmType == o.ForeignKey?.Table));
                         if (linkColumn == null) throw new InvalidOperationException($"Cannot find foreign key reference to table {tableMap.TableName} in {subTableMap.TableName}");
 
-                        // Generate method
-                        var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { propertyType }, new Type[] { subQuery.GetType(), typeof(String), typeof(ColumnMapping[]) });
-                        SqlStatement subQueryStatement = genMethod.Invoke(null, new Object[] { subQuery, IncrementSubQueryAlias(tablePrefix), new ColumnMapping[] { linkColumn } }) as SqlStatement;
+                        var guardConditions = queryParms.GroupBy(o => re.Match(o.Key).Groups[GuardRegexGroup].Value);
+                        SqlStatement subQueryStatement = new SqlStatement();
+                        foreach (var guardClause in guardConditions)
+                        {
+                            var subQuery = guardClause.Select(o => new KeyValuePair<String, Object>(re.Match(o.Key).Groups[SubPropertyRegexGroup].Value, o.Value));
 
-                        // TODO: Check if limiting the the query is better
+                            // Generate method
+                            var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { propertyType }, new Type[] { subQuery.GetType(), typeof(String), typeof(ColumnMapping[]) });
+                            subQueryStatement.Append(genMethod.Invoke(null, new Object[] { subQuery, IncrementSubQueryAlias(tablePrefix), new ColumnMapping[] { linkColumn } }) as SqlStatement);
+
+                            // TODO: GUARD CONDITION HERE!!!!
+
+                            // TODO: Check if limiting the the query is better
+                            if (guardConditions.Last().Key != guardClause.Key)
+                                subQueryStatement.Append(" INTERSECT ");
+                        }
+
                         var localTable = scopedTables.Where(o => o.GetColumn(linkColumn.ForeignKey.Column) != null).FirstOrDefault();
-                        whereClause.And($"{localTable.TableName}.{localTable.GetColumn(linkColumn.ForeignKey.Column)} IN (").Append(subQueryStatement).Append(")");
+                        whereClause.And($"{tablePrefix}{localTable.TableName}.{localTable.GetColumn(linkColumn.ForeignKey.Column).Name} IN (").Append(subQueryStatement).Append(")");
 
                     }
                     else // this table points at other
                     {
+                        var subQuery = queryParms.Select(o => new KeyValuePair<String, Object>(re.Match(o.Key).Groups[SubPropertyRegexGroup].Value, o.Value));
                         TableMapping tableMapping = null;
                         var subPropKey = typeof(TModel).GetXmlProperty(propertyPath);
 
                         // Get column info
-                        PropertyInfo domainProperty = scopedTables.Select(o => { tableMapping = o; return m_mapper.MapModelProperty(typeof(TModel), o.OrmType, subPropKey); }).FirstOrDefault(o => o != null);
-                        var linkColumn = tableMapping.GetColumn(domainProperty);
+                        PropertyInfo domainProperty = scopedTables.Select(o => { tableMapping = o; return m_mapper.MapModelProperty(typeof(TModel), o.OrmType, subPropKey); })?.FirstOrDefault(o => o != null);
+                        ColumnMapping linkColumn = null;
+                        // If the domain property is not set, we may have to infer the link
+                        if (domainProperty == null)
+                        {
+                            var subPropType = m_mapper.MapModelType(subProp.PropertyType);
+                            // We find the first column with a foreign key that points to the other !!!
+                            linkColumn = scopedTables.SelectMany(o => o.Columns).FirstOrDefault(o => o.ForeignKey?.Table == subPropType);
+                        }
+                        else
+                            linkColumn = tableMapping.GetColumn(domainProperty);
+
                         var fkTableDef = TableMapping.Get(linkColumn.ForeignKey.Table);
                         var fkColumnDef = fkTableDef.GetColumn(linkColumn.ForeignKey.Column);
 
                         // Create the sub-query
                         var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { subProp.PropertyType }, new Type[] { subQuery.GetType(), typeof(ColumnMapping[]) });
                         SqlStatement subQueryStatement = genMethod.Invoke(null, new Object[] { subQuery, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
-                        cteStatements.Add(new SqlStatement($"cte{cteStatements.Count} AS (").Append(subQueryStatement).Append(")"));
+                        cteStatements.Add(new SqlStatement($"{tablePrefix}cte{cteStatements.Count} AS (").Append(subQueryStatement).Append(")"));
                         //subQueryStatement.And($"{tablePrefix}{tableMapping.TableName}.{linkColumn.Name} = {sqName}{fkTableDef.TableName}.{fkColumnDef.Name} ");
 
-                        selectStatement.Append($"INNER JOIN cte{cteStatements.Count - 1} ON ({tablePrefix}{tableMapping.TableName}.{linkColumn.Name} = cte{cteStatements.Count - 1}.{fkColumnDef.Name})");
+                        selectStatement.Append($"INNER JOIN {tablePrefix}cte{cteStatements.Count - 1} ON ({tablePrefix}{tableMapping.TableName}.{linkColumn.Name} = {tablePrefix}cte{cteStatements.Count - 1}.{fkColumnDef.Name})");
 
                     }
 
                 }
                 else
-                    whereClause.Append(CreateWhereCondition<TModel>(propertyPath, parm.Value, tablePrefix, scopedTables));
+                    whereClause.And(CreateWhereCondition<TModel>(propertyPath, parm.Value, tablePrefix, scopedTables));
 
             }
 
@@ -289,7 +338,7 @@ namespace OpenIZ.Persistence.Data.ADO.Util
 
             // Now map the property path
             var tableAlias = $"{tablePrefix}{tableMapping.TableName}";
-            var columnData = tableMapping.GetColumn(propertyInfo);
+            var columnData = tableMapping.GetColumn(domainProperty);
 
             // List of parameters
             var lValue = value as IList;
@@ -339,7 +388,7 @@ namespace OpenIZ.Persistence.Data.ADO.Util
                     retVal.Append(" = ? ", CreateParameterValue(iValue, propertyInfo.PropertyType));
 
                 if (lValue.IndexOf(itm) < lValue.Count - 1)
-                    retVal.Append(" AND ");
+                    retVal.Append(" OR ");
             }
             retVal.Append(")");
 

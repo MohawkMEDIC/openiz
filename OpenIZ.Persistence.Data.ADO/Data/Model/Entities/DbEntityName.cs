@@ -61,7 +61,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
         /// <summary>
         /// Value of the component
         /// </summary>
-        [Column("val_id"), ForeignKey(typeof(DbPhoneticValue), nameof(DbPhoneticValue.Key))]
+        [Column("val_id"), ForeignKey(typeof(DbPhoneticValue), nameof(DbPhoneticValue.Key)), AlwaysJoin]
         public override Guid ValueKey { get; set; }
     }
 

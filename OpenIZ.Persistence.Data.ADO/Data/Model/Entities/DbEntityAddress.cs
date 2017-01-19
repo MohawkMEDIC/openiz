@@ -67,7 +67,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
         /// <summary>
         /// Gets or sets the address value
         /// </summary>
-        [Column("val_id"), ForeignKey(typeof(DbEntityAddressComponentValue), nameof(DbEntityAddressComponentValue.Key))]
+        [Column("val_id"), ForeignKey(typeof(DbEntityAddressComponentValue), nameof(DbEntityAddressComponentValue.Key)), AlwaysJoin]
         public override Guid ValueKey { get; set; }
     }
 

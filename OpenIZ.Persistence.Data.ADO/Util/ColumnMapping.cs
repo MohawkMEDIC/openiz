@@ -39,6 +39,10 @@ namespace OpenIZ.Persistence.Data.ADO.Util
         /// The table mapping which this column belongs to
         /// </summary>
         public TableMapping Table { get; private set; }
+        /// <summary>
+        /// True if always join condition
+        /// </summary>
+        public bool IsAlwaysJoin { get; private set; }
 
         /// <summary>
         /// Create a column mapping
@@ -52,6 +56,7 @@ namespace OpenIZ.Persistence.Data.ADO.Util
             this.SourceProperty = pi;
             this.ForeignKey = pi.GetCustomAttribute<ForeignKeyAttribute>();
             this.Table = table;
+            this.IsAlwaysJoin = pi.GetCustomAttribute<AlwaysJoinAttribute>() != null;
         }
 
         /// <summary>

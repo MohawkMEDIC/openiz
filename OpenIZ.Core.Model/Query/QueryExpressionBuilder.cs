@@ -53,6 +53,23 @@ namespace OpenIZ.Core.Model.Query
             }
 
             /// <summary>
+            /// Add a condition if not already present
+            /// </summary>
+            private void AddCondition(String key, Object value)
+            {
+                var cvalue = this.m_query.FirstOrDefault(o=>o.Key == key);
+                if (cvalue.Value == null)
+                    this.m_query.Add(new KeyValuePair<string, object>(key, value));
+                else if (cvalue.Value is IList)
+                    (cvalue.Value as IList).Add(value);
+                else
+                {
+                    this.m_query.Remove(cvalue);
+                    this.m_query.Add(new KeyValuePair<String, Object>(key, new List<Object>() { cvalue.Value, value }));
+                }
+            }
+
+            /// <summary>
             /// Visit a query expression
             /// </summary>
             /// <returns>The modified expression list, if any one of the elements were modified; otherwise, returns the original
@@ -105,7 +122,7 @@ namespace OpenIZ.Core.Model.Query
                         {
                             var parmName = this.ExtractPath(node.Object);
                             object parmValue = this.ExtractValue(node.Arguments[0]);
-                            this.m_query.Add(new KeyValuePair<String, Object>(parmName, "~" + parmValue.ToString()));
+                            this.AddCondition(parmName, "~" + parmValue.ToString());
                             return null;
                         }
                     case "Any":
@@ -120,7 +137,7 @@ namespace OpenIZ.Core.Model.Query
 
                                 // Result
                                 foreach (var itm in result)
-                                    this.m_query.Add(new KeyValuePair<string, object>(String.Format("{0}.{1}", parmName, itm.Key), itm.Value));
+                                    this.AddCondition(String.Format("{0}.{1}", parmName, itm.Key), itm.Value);
                                 return null;
                             }
                             else
@@ -177,7 +194,7 @@ namespace OpenIZ.Core.Model.Query
                     var mci = (node.Left as MethodCallExpression);
                     parmName = this.ExtractPath(mci.Arguments[0]);
                     var cci = node.Right is ConstantExpression;
-                    this.m_query.Add(new KeyValuePair<string, object>(parmName, cci ? "null" : "!null"));
+                    this.AddCondition(parmName, cci ? "null" : "!null");
                 }
                 else if (!String.IsNullOrEmpty(parmName))
                 {
@@ -208,7 +225,7 @@ namespace OpenIZ.Core.Model.Query
                             break;
                     }
 
-                    this.m_query.Add(new KeyValuePair<string, Object>(parmName, fParmValue));
+                    this.AddCondition(parmName, fParmValue);
                 }
                 
                 return node;
