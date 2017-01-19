@@ -30,7 +30,7 @@ using OpenIZ.Core.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Exceptions;
-using OpenIZ.Persistence.Data.ADO.Util;
+using OpenIZ.OrmLite;
 using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence

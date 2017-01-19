@@ -4,15 +4,13 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OpenIZ.Persistence.Data.ADO.Util;
+using OpenIZ.OrmLite.Util;
 using System.Configuration;
 using System.Data.Common;
-using OpenIZ.Persistence.Data.ADO.Data.Model;
 using System.Linq.Expressions;
 using System.Diagnostics;
-using OpenIZ.Persistence.Data.ADO.Data;
 
-namespace OpenIZ.Persistence.Data.ADO.Providers
+namespace OpenIZ.OrmLite.Util.Providers
 {
     /// <summary>
     /// Represents a IDbProvider for PostgreSQL
@@ -21,7 +19,7 @@ namespace OpenIZ.Persistence.Data.ADO.Providers
     {
 
         // Trace source
-        private TraceSource m_traceSource = new TraceSource(AdoDataConstants.TraceSourceName);
+        private TraceSource m_traceSource = new TraceSource(Constants.TraceSourceName);
 
         // DB provider factory
         private DbProviderFactory m_provider = null;

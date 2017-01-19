@@ -21,7 +21,7 @@ using System;
 using System.Linq;
 
 using System.Collections.Generic;
-using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.OrmLite.Attributes;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
 {
@@ -69,7 +69,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
         /// <summary>
         /// Gets or sets the key
         /// </summary>
-        [Column("cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
+        [Column("cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key)), AlwaysJoin]
         public override Guid Key { get; set; }
     }
 }

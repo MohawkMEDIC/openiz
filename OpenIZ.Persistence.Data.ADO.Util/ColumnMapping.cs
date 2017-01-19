@@ -1,8 +1,8 @@
-﻿using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+﻿using OpenIZ.OrmLite.Attributes;
 using System;
 using System.Reflection;
 
-namespace OpenIZ.Persistence.Data.ADO.Util
+namespace OpenIZ.OrmLite
 {
     /// <summary>
     /// Column mapping

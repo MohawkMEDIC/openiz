@@ -26,7 +26,7 @@ using OpenIZ.Core.Services;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
 using OpenIZ.Persistence.Data.ADO.Services;
-using OpenIZ.Persistence.Data.ADO.Util;
+using OpenIZ.OrmLite;
 using System;
 using System.Collections;
 using System.Collections.Generic;

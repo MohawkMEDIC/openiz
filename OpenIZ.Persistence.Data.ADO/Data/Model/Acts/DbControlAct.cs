@@ -19,7 +19,7 @@
  */
 
 
-using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.OrmLite.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;

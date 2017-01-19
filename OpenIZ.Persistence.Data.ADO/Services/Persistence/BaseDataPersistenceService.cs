@@ -28,6 +28,8 @@ using System.Linq.Expressions;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Exceptions;
 using OpenIZ.Core.Model.Security;
+using OpenIZ.OrmLite;
+
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {

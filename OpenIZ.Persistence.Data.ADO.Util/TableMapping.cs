@@ -1,4 +1,4 @@
-﻿using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+﻿using OpenIZ.OrmLite.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Persistence.Data.ADO.Util
+namespace OpenIZ.OrmLite
 {
     /// <summary>
     /// Table information tool

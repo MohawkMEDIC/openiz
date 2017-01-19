@@ -28,6 +28,8 @@ using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.OrmLite;
+
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {

@@ -1,6 +1,5 @@
 ﻿using OpenIZ.Core.Model.Map;
-using OpenIZ.Persistence.Data.ADO.Data.Model;
-using OpenIZ.Persistence.Data.ADO.Util;
+using OpenIZ.OrmLite.Util;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,7 +10,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Persistence.Data.ADO.Data
+namespace OpenIZ.OrmLite
 {
     /// <summary>
     /// Multi type result used when a result set is a join
@@ -397,7 +396,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
         /// <summary>
         /// Represents the count function
         /// </summary>
-        internal int Count(SqlStatement querySpec)
+        public int Count(SqlStatement querySpec)
         {
 #if DEBUG
             var sw = new Stopwatch();

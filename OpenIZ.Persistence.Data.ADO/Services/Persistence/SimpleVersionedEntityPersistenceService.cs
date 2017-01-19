@@ -12,7 +12,7 @@ using OpenIZ.Persistence.Data.ADO.Data;
 using MARC.HI.EHRS.SVC.Core.Event;
 using System.Diagnostics;
 using OpenIZ.Core.Exceptions;
-using OpenIZ.Persistence.Data.ADO.Util;
+using OpenIZ.OrmLite;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
@@ -39,7 +39,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 return cacheItem;
             else
             {
-                var domainQuery = QueryBuilder.CreateQuery<TModel>(o => o.Key == key && o.ObsoletionTime == null).Build();
+                var domainQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery<TModel>(o => o.Key == key && o.ObsoletionTime == null).Build();
                 domainQuery.OrderBy<TRootEntity>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
                 return this.ToModelInstance(context.FirstOrDefault<TQueryReturn>(domainQuery), context, principal);
             }

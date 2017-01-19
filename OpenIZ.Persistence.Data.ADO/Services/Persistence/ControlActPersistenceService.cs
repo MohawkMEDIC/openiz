@@ -21,6 +21,8 @@ using OpenIZ.Core.Model.Acts;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
+using OpenIZ.OrmLite;
+
 using System.Linq;
 using System.Security.Principal;
 

@@ -18,7 +18,7 @@
  * Date: 2016-6-14
  */
 using System;
-using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.OrmLite.Attributes;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.Roles

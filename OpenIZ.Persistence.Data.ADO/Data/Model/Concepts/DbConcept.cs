@@ -21,7 +21,7 @@ using System;
 using System.Linq;
 
 using System.Collections.Generic;
-using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.OrmLite.Attributes;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
 {

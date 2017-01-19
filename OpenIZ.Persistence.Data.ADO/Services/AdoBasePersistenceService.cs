@@ -41,10 +41,10 @@ using OpenIZ.Persistence.Data.ADO.Configuration;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using System.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
-using OpenIZ.Persistence.Data.ADO.Util;
 using OpenIZ.Persistence.Data.ADO.Data.Model.DataType;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Persistence.Data.ADO.Data;
+using OpenIZ.OrmLite;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {

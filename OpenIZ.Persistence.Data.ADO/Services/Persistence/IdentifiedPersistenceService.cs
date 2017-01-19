@@ -34,7 +34,8 @@ using System.Reflection;
 using OpenIZ.Core.Services;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Exceptions;
-using OpenIZ.Persistence.Data.ADO.Util;
+using OpenIZ.OrmLite;
+
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {

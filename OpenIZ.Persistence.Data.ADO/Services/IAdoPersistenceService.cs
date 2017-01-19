@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Security.Principal;
 using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.OrmLite;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {

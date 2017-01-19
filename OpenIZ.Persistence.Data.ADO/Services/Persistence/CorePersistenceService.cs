@@ -6,7 +6,8 @@ using OpenIZ.Core.Services;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Exceptions;
-using OpenIZ.Persistence.Data.ADO.Util;
+using OpenIZ.OrmLite;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -119,7 +120,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             catch (Exception e)
             {
                 m_tracer.TraceEvent(System.Diagnostics.TraceEventType.Warning, e.HResult, "Will use slow query construction due to {0}", e.Message);
-                domainQuery = QueryBuilder.CreateQuery(query);
+                domainQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query);
             }
 
             if (incudeCount)

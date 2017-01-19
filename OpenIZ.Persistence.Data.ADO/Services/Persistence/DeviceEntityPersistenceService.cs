@@ -22,6 +22,8 @@ using OpenIZ.Core.Model.Security;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
+using OpenIZ.OrmLite;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +54,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Insert the specified device entity
         /// </summary>
-        public override Core.Model.Entities.DeviceEntity Insert(Data.DataContext context, Core.Model.Entities.DeviceEntity data, IPrincipal principal)
+        public override Core.Model.Entities.DeviceEntity Insert(DataContext context, Core.Model.Entities.DeviceEntity data, IPrincipal principal)
         {
             if(data.SecurityDevice != null) data.SecurityDevice = data.SecurityDevice?.EnsureExists(context, principal) as SecurityDevice;
             data.SecurityDeviceKey = data.SecurityDevice?.Key ?? data.SecurityDeviceKey;

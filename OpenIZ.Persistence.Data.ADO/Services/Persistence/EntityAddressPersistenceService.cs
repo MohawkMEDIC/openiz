@@ -29,6 +29,8 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
+using OpenIZ.OrmLite;
+
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -50,7 +52,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Insert the specified object
         /// </summary>
-        public override Core.Model.Entities.EntityAddress Insert(Data.DataContext context, Core.Model.Entities.EntityAddress data, IPrincipal principal)
+        public override Core.Model.Entities.EntityAddress Insert(DataContext context, EntityAddress data, IPrincipal principal)
         {
 
             // Ensure exists

@@ -4,24 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Persistence.Data.ADO.Data.Attributes
+namespace OpenIZ.OrmLite.Attributes
 {
     /// <summary>
-    /// Represents an attribute for marking columns
+    /// Represents a table mapping attribute
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ColumnAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Class)]
+    public class TableAttribute: Attribute
     {
         /// <summary>
-        /// gets or sets the database name
+        /// Constructor with name
         /// </summary>
-        public ColumnAttribute(string name)
+        public TableAttribute(String name)
         {
             this.Name = name;
         }
-        
         /// <summary>
-        /// Gets or sets the name of the attribute
+        /// Gets or sets the name
         /// </summary>
         public String Name { get; set; }
     }

@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
-namespace OpenIZ.Persistence.Data.ADO.Util
+namespace OpenIZ.OrmLite
 {
     /// <summary>
     /// Represents a SQL statement builder tool

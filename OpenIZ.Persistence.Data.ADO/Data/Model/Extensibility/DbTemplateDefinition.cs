@@ -18,7 +18,7 @@
  * Date: 2016-8-17
  */
 
-using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.OrmLite.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;

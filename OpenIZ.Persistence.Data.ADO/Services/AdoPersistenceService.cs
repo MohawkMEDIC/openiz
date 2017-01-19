@@ -37,9 +37,10 @@ using OpenIZ.Persistence.Data.ADO.Configuration;
 using System.Threading;
 using OpenIZ.Core.Services;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
-using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.OrmLite;
 using OpenIZ.Persistence.Data.ADO.Services.Persistence;
 using System.Collections;
+using OpenIZ.OrmLite;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {
@@ -56,6 +57,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         // Cache
         private static Dictionary<Type, IAdoPersistenceService> s_persistenceCache = new Dictionary<Type, IAdoPersistenceService>();
 
+        // Query builder
+        private static QueryBuilder s_queryBuilder;
+
         /// <summary>
         /// Get configuration
         /// </summary>
@@ -66,6 +70,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// </summary>
         /// <returns></returns>
         public static ModelMapper GetMapper() { return s_mapper; }
+
+        /// <summary>
+        /// Get query builder
+        /// </summary>
+        public static QueryBuilder GetQueryBuilder()
+        {
+            return s_queryBuilder;
+        }
 
         /// <summary>
         /// Get the specified persister type
@@ -95,6 +107,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             try
             {
                 s_mapper = new ModelMapper(typeof(AdoPersistenceService).GetTypeInfo().Assembly.GetManifestResourceStream(AdoDataConstants.MapResourceName));
+                s_queryBuilder = new QueryBuilder(s_mapper);
             }
             catch (ModelMapValidationException ex)
             {

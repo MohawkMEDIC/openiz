@@ -17,7 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
-using OpenIZ.Persistence.Data.ADO.Providers;
+using OpenIZ.OrmLite.Util.Providers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

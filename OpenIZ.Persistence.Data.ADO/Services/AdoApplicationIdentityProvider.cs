@@ -35,7 +35,7 @@ using OpenIZ.Core.Security;
 using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
-using OpenIZ.Persistence.Data.ADO.Util;
+using OpenIZ.OrmLite;
 using System.Security.Authentication;
 using OpenIZ.Persistence.Data.ADO.Data;
 

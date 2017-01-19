@@ -31,6 +31,7 @@ using OpenIZ.Core.Services;
 using System.Linq.Expressions;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using OpenIZ.Persistence.Data.ADO.Data;
+using OpenIZ.OrmLite;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {

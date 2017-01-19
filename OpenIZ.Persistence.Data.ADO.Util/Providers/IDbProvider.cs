@@ -1,7 +1,4 @@
-﻿using OpenIZ.Persistence.Data.ADO.Data;
-using OpenIZ.Persistence.Data.ADO.Data.Model;
-using OpenIZ.Persistence.Data.ADO.Util;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -10,7 +7,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Persistence.Data.ADO.Providers
+namespace OpenIZ.OrmLite.Util.Providers
 {
     /// <summary>
     /// Data provider

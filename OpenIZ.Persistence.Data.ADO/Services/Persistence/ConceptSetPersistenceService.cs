@@ -24,6 +24,7 @@ using OpenIZ.Persistence.Data.ADO.Data.Model;
 using System.Security.Principal;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using OpenIZ.Persistence.Data.ADO.Data;
+using OpenIZ.OrmLite;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {

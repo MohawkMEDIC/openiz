@@ -1,15 +1,13 @@
-﻿using OpenIZ.Persistence.Data.ADO.Providers;
+﻿using OpenIZ.OrmLite.Util.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
-using OpenIZ.Persistence.Data.ADO.Util;
 using System.Diagnostics;
 
-namespace OpenIZ.Persistence.Data.ADO.Data
+namespace OpenIZ.OrmLite
 {
     /// <summary>
     /// Represents a data context
@@ -26,7 +24,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
         private IDbProvider m_provider;
 
         // Trace source
-        private TraceSource m_traceSource = new TraceSource(AdoDataConstants.TraceSourceName);
+        private TraceSource m_traceSource = new TraceSource(Constants.TraceSourceName);
 
         /// <summary>
         /// Connection

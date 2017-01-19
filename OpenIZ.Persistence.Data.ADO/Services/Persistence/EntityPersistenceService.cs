@@ -34,6 +34,8 @@ using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Roles;
 using OpenIZ.Persistence.Data.ADO.Data.Model.DataType;
+using OpenIZ.OrmLite;
+
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {

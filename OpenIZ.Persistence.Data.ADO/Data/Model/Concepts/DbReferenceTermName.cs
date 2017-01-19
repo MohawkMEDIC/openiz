@@ -1,4 +1,4 @@
-﻿using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+﻿using OpenIZ.OrmLite.Attributes;
 using OpenIZ.Persistence.Data.ADO.Data.Model.DataType;
 using System;
 using System.Collections.Generic;
