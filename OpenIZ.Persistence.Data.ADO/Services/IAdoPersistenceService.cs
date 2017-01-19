@@ -1,7 +1,9 @@
 ﻿using OpenIZ.Core.Services;
 using OpenIZ.Persistence.Data.ADO.Data;
 using System;
+using System.Collections;
 using System.Security.Principal;
+using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {
@@ -30,5 +32,20 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// </summary>
         Object Get(DataContext context, Guid id, IPrincipal principal);
 
+        /// <summary>
+        /// Map to model instance
+        /// </summary>
+        Object ToModelInstance(object domainInstance, DataContext context, IPrincipal principal);
+    }
+
+    /// <summary>
+    /// ADO associative persistence service
+    /// </summary>
+    public interface IAdoAssociativePersistenceService : IAdoPersistenceService
+    {
+        /// <summary>
+        /// Get the set objects from the source
+        /// </summary>
+        IEnumerable GetFromSource(DataContext context, Guid id, decimal? versionSequenceId, IPrincipal principal);
     }
 }

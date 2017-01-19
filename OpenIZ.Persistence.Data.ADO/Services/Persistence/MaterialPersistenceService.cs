@@ -27,6 +27,7 @@ using OpenIZ.Core.Model.Entities;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
 using OpenIZ.Persistence.Data.ADO.Data;
+using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -57,8 +58,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.Material Insert(DataContext context, Core.Model.Entities.Material data, IPrincipal principal)
         {
-           data.FormConcept?.EnsureExists(context, principal);
-            data.QuantityConcept?.EnsureExists(context, principal);
+            if(data.FormConcept != null) data.FormConcept = data.FormConcept?.EnsureExists(context, principal) as Concept;
+            if(data.QuantityConcept != null) data.QuantityConcept = data.QuantityConcept?.EnsureExists(context, principal) as Concept;
             data.FormConceptKey = data.FormConcept?.Key ?? data.FormConceptKey;
             data.QuantityConceptKey = data.QuantityConcept?.Key ?? data.QuantityConceptKey;
             return base.Insert(context, data, principal);
@@ -69,8 +70,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.Material Update(DataContext context, Core.Model.Entities.Material data, IPrincipal principal)
         {
-            data.FormConcept?.EnsureExists(context, principal);
-            data.QuantityConcept?.EnsureExists(context, principal);
+            if (data.FormConcept != null) data.FormConcept = data.FormConcept?.EnsureExists(context, principal) as Concept;
+            if (data.QuantityConcept != null) data.QuantityConcept = data.QuantityConcept?.EnsureExists(context, principal) as Concept;
             data.FormConceptKey = data.FormConcept?.Key ?? data.FormConceptKey;
             data.QuantityConceptKey = data.QuantityConcept?.Key ?? data.QuantityConceptKey;
             return base.Update(context, data, principal);

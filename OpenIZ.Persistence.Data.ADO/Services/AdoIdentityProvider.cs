@@ -44,7 +44,7 @@ using OpenIZ.Core.Security.Claims;
 using OpenIZ.Core.Services;
 using OpenIZ.Persistence.Data.ADO.Security;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
-using OpenIZ.Persistence.Data.ADO.Data.Extensions;
+using OpenIZ.Persistence.Data.ADO.Data;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {
@@ -232,7 +232,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                             user.PasswordHash = passwordHashingService.EncodePassword(newPassword);
                             user.SecurityHash = Guid.NewGuid().ToString();
-                            user.UpdatedByKey = principal.GetUserKey(dataContext);
+                            user.UpdatedByKey = principal.GetUser(dataContext).Key;
 
                             dataContext.Update(user);
                             tx.Commit();
@@ -306,7 +306,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                                 UserClass = UserClassKeys.HumanUser
                             };
                             if (authContext != null)
-                                newIdentityUser.CreatedByKey = authContext.GetUserKey(dataContext).Value;
+                                newIdentityUser.CreatedByKey = authContext.GetUser(dataContext).Key;
 
                             dataContext.Insert(newIdentityUser);
                             var retVal = AdoClaimsIdentity.Create(newIdentityUser);
@@ -352,7 +352,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                     // Obsolete
                     user.ObsoletionTime = DateTimeOffset.Now;
-                    user.ObsoletedByKey = authContext.GetUserKey(dataContext);
+                    user.ObsoletedByKey = authContext.GetUser(dataContext).Key;
                     user.SecurityHash = Guid.NewGuid().ToString();
 
                     dataContext.Update(user);
@@ -391,7 +391,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         user.Lockout = DateTime.Now;
                     user.ObsoletionTime = null;
                     user.ObsoletedByKey = null;
-                    user.UpdatedByKey = authContext.GetUserKey(dataContext);
+                    user.UpdatedByKey = authContext.GetUser(dataContext).Key;
                     user.UpdatedTime = DateTimeOffset.Now;
                     user.SecurityHash = Guid.NewGuid().ToString();
 

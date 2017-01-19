@@ -18,6 +18,7 @@
  * Date: 2016-8-3
  */
 using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
@@ -50,7 +51,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Acts.PatientEncounter Insert(DataContext context, Core.Model.Acts.PatientEncounter data, IPrincipal principal)
         {
-            data.DischargeDisposition?.EnsureExists(context, principal);
+            if(data.DischargeDisposition != null) data.DischargeDisposition = data.DischargeDisposition?.EnsureExists(context, principal) as Concept;
             data.DischargeDispositionKey = data.DischargeDisposition?.Key ?? data.DischargeDispositionKey;
             return base.Insert(context, data, principal);
         }
@@ -60,7 +61,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Acts.PatientEncounter Update(DataContext context, Core.Model.Acts.PatientEncounter data, IPrincipal principal)
         {
-            data.DischargeDisposition?.EnsureExists(context, principal);
+            if (data.DischargeDisposition != null) data.DischargeDisposition = data.DischargeDisposition?.EnsureExists(context, principal) as Concept;
             data.DischargeDispositionKey = data.DischargeDisposition?.Key ?? data.DischargeDispositionKey;
             return base.Update(context, data, principal);
         }

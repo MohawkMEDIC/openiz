@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-8-2
  */
+using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
@@ -45,7 +46,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override object FromModelInstance(Patient modelInstance, DataContext context, IPrincipal principal)
         {
             var dbPatient = base.FromModelInstance(modelInstance, context, principal) as DbPatient;
-            
+
             if (modelInstance.DeceasedDatePrecision.HasValue)
                 dbPatient.DeceasedDatePrecision = PersonPersistenceService.PrecisionMap[modelInstance.DeceasedDatePrecision.Value];
             return dbPatient;
@@ -88,7 +89,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Roles.Patient Insert(DataContext context, Core.Model.Roles.Patient data, IPrincipal principal)
         {
-            data.GenderConcept?.EnsureExists(context, principal);
+            if (data.GenderConcept != null) data.GenderConcept = data.GenderConcept?.EnsureExists(context, principal) as Concept;
             data.GenderConceptKey = data.GenderConcept?.Key ?? data.GenderConceptKey;
             this.m_personPersister.Insert(context, data, principal);
             return base.Insert(context, data, principal);
@@ -100,8 +101,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.Roles.Patient Update(DataContext context, Core.Model.Roles.Patient data, IPrincipal principal)
         {
             // Ensure exists
-           data.GenderConcept?.EnsureExists(context, principal);
-           data.GenderConceptKey =data.GenderConcept?.Key ??data.GenderConceptKey;
+            if (data.GenderConcept != null) data.GenderConcept = data.GenderConcept?.EnsureExists(context, principal) as Concept;
+            data.GenderConceptKey = data.GenderConcept?.Key ?? data.GenderConceptKey;
 
             this.m_personPersister.Update(context, data, principal);
             return base.Update(context, data, principal);
@@ -115,6 +116,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             this.m_personPersister.Obsolete(context, data, principal);
             return data;
         }
-        
+
     }
 }

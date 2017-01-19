@@ -18,6 +18,7 @@
  * Date: 2016-8-2
  */
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Security;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
@@ -53,7 +54,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.DeviceEntity Insert(Data.DataContext context, Core.Model.Entities.DeviceEntity data, IPrincipal principal)
         {
-            data.SecurityDevice?.EnsureExists(context, principal);
+            if(data.SecurityDevice != null) data.SecurityDevice = data.SecurityDevice?.EnsureExists(context, principal) as SecurityDevice;
             data.SecurityDeviceKey = data.SecurityDevice?.Key ?? data.SecurityDeviceKey;
 
             return base.Insert(context, data, principal);
@@ -64,7 +65,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.DeviceEntity Update(DataContext context, Core.Model.Entities.DeviceEntity data, IPrincipal principal)
         {
-            data.SecurityDevice?.EnsureExists(context, principal);
+            if (data.SecurityDevice != null) data.SecurityDevice = data.SecurityDevice?.EnsureExists(context, principal) as SecurityDevice;
             data.SecurityDeviceKey = data.SecurityDevice?.Key ?? data.SecurityDeviceKey;
             return base.Update(context, data, principal);
         }

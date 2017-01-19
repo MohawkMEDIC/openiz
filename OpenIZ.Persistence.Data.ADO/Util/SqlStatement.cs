@@ -139,7 +139,7 @@ namespace OpenIZ.Persistence.Data.ADO.Util
             if (String.IsNullOrEmpty(this.m_sql) && this.m_rhs == null)
                 return this.Append(clause);
             else
-                return this.Append( new SqlStatement("AND (").Append(clause).Append(") "));
+                return this.Append( new SqlStatement("AND (").Append(clause.Build()).Append(") "));
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace OpenIZ.Persistence.Data.ADO.Util
         /// </summary>
         public SqlStatement Or(SqlStatement clause)
         {
-            return this.Append(new SqlStatement("OR (").Append(clause).Append(") "));
+            return this.Append(new SqlStatement("OR (").Append(clause.Build()).Append(") "));
         }
 
         /// <summary>
@@ -177,6 +177,22 @@ namespace OpenIZ.Persistence.Data.ADO.Util
             var rhsPk = rightMap.GetColumn(this.GetMember(rightColumn.Body));
             var lhsPk = leftMap.GetColumn(this.GetMember(leftColumn.Body));
             return joinStatement.Append($"({lhsPk.Table.TableName}.{lhsPk.Name} = {rhsPk.Table.TableName}.{rhsPk.Name}) ");
+        }
+
+        /// <summary>
+        /// Inner join left and right
+        /// </summary>
+        public SqlStatement InnerJoin(Type tLeft, Type tRight)
+        {
+            var tableMap = TableMapping.Get(tRight);
+            var joinStatement = this.Append($"INNER JOIN {tableMap.TableName} ON ");
+
+            // For RHS we need to find a column which references the tLEFT table ... 
+            var rhsPk = tableMap.Columns.SingleOrDefault(o => o.ForeignKey?.Table == tLeft);
+            var lhsPk = TableMapping.Get(rhsPk.ForeignKey.Table).GetColumn(rhsPk.ForeignKey.Column);
+            if (lhsPk == null || rhsPk == null) throw new InvalidOperationException("Unambiguous linked keys not found");
+            joinStatement.Append($"({lhsPk.Table.TableName}.{lhsPk.Name} = {rhsPk.Table.TableName}.{rhsPk.Name}) ");
+            return joinStatement;
         }
 
         /// <summary>
@@ -325,15 +341,10 @@ namespace OpenIZ.Persistence.Data.ADO.Util
         /// </summary>
         public SqlStatement<TReturn> InnerJoin<TJoinTable, TReturn>()
         {
-            var tableMap = TableMapping.Get(typeof(TJoinTable));
-            var joinStatement = this.Append($"INNER JOIN {tableMap.TableName} ON ");
-            var rhsPk = tableMap.Columns.SingleOrDefault(o => o.IsPrimaryKey);
-            var lhsPk = TableMapping.Get(typeof(T)).Columns.SingleOrDefault(o => o.ForeignKey?.Column == rhsPk.SourceProperty.Name && o.ForeignKey?.Table == tableMap.OrmType);
-            if (lhsPk == null || rhsPk == null) throw new InvalidOperationException("PK not found");
-            joinStatement.Append($"({lhsPk.Table.TableName}.{lhsPk.Name} = {rhsPk.Table.TableName}.{rhsPk.Name}) ");
             var retVal = new SqlStatement<TReturn>();
-            retVal.Append(joinStatement);
+            retVal.InnerJoin(typeof(T), typeof(TJoinTable));
             return retVal;
+            
         }
 
         /// <summary>

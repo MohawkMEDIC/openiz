@@ -59,8 +59,7 @@
     <Compile Include="Data\Attributes\TableAttribute.cs" />
     <Compile Include="Data\DataContext.Command.cs" />
     <Compile Include="Data\DataContext.cs" />
-    <Compile Include="Data\DataModelExtensions.cs" />
-    <Compile Include="Data\Extensions\UtilityExtensions.cs" />
+    <Compile Include="Data\Extensions\DataModelExtensions.cs" />
     <Compile Include="Data\Model\Acts\DbActProtocol.cs" />
     <Compile Include="Data\Model\Acts\DbActVersion.cs" />
     <Compile Include="Data\Model\Acts\DbAct.cs" />

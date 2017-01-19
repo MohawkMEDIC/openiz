@@ -41,7 +41,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             {
                 var domainQuery = QueryBuilder.CreateQuery<TModel>(o => o.Key == key && o.ObsoletionTime == null).Build();
                 domainQuery.OrderBy<TRootEntity>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
-                return this.ToModelInstance(context.FirstOrDefault<TData>(domainQuery), context, principal);
+                return this.ToModelInstance(context.FirstOrDefault<TQueryReturn>(domainQuery), context, principal);
             }
         }
 
@@ -77,7 +77,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             using (var connection = m_configuration.Provider.GetReadonlyConnection())
                 try
                 {
-
+                    connection.Open();
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "GET {0}", containerId);
 
                     TModel retVal = null;

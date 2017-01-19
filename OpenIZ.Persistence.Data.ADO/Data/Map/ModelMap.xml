@@ -70,6 +70,7 @@
          domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Concepts.DbConceptVersion, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
     <property modelName="PreviousVersionKey" domainName="ReplacesVersionKey"/>
     <property modelName="StatusConceptKey" domainName="StatusKey"/>
+    <property modelName="VersionSequence" domainName="VersionSequenceId"/>
     
   </class>
 
@@ -78,10 +79,14 @@
     
   </class>
 
+  <class modelClass="OpenIZ.Core.Model.DataTypes.PhoneticAlgorithm, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.DataType.DbPhoneticAlgorithm, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="Handler" domainName="HandlerClass"/>
+    
+  </class>
   <!-- Concept Names -->
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptName, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Concepts.DbConceptName, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
-    <property modelName="PhoneticAlgorithmKey" domainName="PhoneticAlgorithmKey"/>
     <property modelName="SourceEntityKey" domainName="SourceKey"/>
   </class>
 
@@ -89,6 +94,8 @@
   <class modelClass="OpenIZ.Core.Model.Entities.Entity, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbEntityVersion, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
     <property modelName="PreviousVersionKey" domainName="ReplacesVersionKey"/>
+    <property modelName="VersionSequence" domainName="VersionSequenceId"/>
+
   </class>
 
   <class modelClass="OpenIZ.Core.Model.Entities.EntityName, OpenIZ.Core.Model, Version=1.0.0.0"
@@ -99,8 +106,7 @@
 
   <class modelClass="OpenIZ.Core.Model.Entities.EntityNameComponent, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbEntityNameComponent, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
-    <property modelName="SourceEntityKey" domainName="NameKey"/>
-    <property modelName="ComponentTypeKey" domainName="ComponentTypeKey"/>
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
   </class>
 
   <class modelClass="OpenIZ.Core.Model.Entities.EntityAddress, OpenIZ.Core.Model, Version=1.0.0.0"
@@ -111,7 +117,7 @@
 
   <class modelClass="OpenIZ.Core.Model.Entities.EntityAddressComponent, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbEntityAddressComponent, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
-    <property modelName="SourceEntityKey" domainName="AddressKey"/>
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
   </class>
 
   <class modelClass="OpenIZ.Core.Model.Entities.EntityRelationship, OpenIZ.Core.Model, Version=1.0.0.0"
@@ -221,6 +227,8 @@
   <class modelClass="OpenIZ.Core.Model.Acts.Act, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Acts.DbActVersion, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
     <property modelName="PreviousVersionKey" domainName="ReplacesVersionKey"/>
+    <property modelName="VersionSequence" domainName="VersionSequenceId"/>
+
   </class>
 
   <class modelClass="OpenIZ.Core.Model.DataTypes.ActExtension, OpenIZ.Core.Model, Version=1.0.0.0"

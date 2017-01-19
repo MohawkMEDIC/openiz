@@ -25,6 +25,7 @@ using System.Linq;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -76,7 +77,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Observation Insert(DataContext context, Observation data, IPrincipal principal)
         {
-            data.InterpretationConcept?.EnsureExists(context, principal);
+            if(data.InterpretationConcept != null) data.InterpretationConcept = data.InterpretationConcept?.EnsureExists(context, principal) as Concept;
             data.InterpretationConceptKey = data.InterpretationConcept?.Key ?? data.InterpretationConceptKey;
             return base.Insert(context, data, principal);
         }
@@ -86,7 +87,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Observation Update(DataContext context, Observation data, IPrincipal principal)
         {
-            data.InterpretationConcept?.EnsureExists(context, principal);
+            if (data.InterpretationConcept != null) data.InterpretationConcept = data.InterpretationConcept?.EnsureExists(context, principal) as Concept;
             data.InterpretationConceptKey = data.InterpretationConcept?.Key ?? data.InterpretationConceptKey;
 
             return base.Update(context, data, principal);
@@ -173,7 +174,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Acts.CodedObservation Insert(DataContext context, Core.Model.Acts.CodedObservation data, IPrincipal principal)
         {
-            data.Value?.EnsureExists(context, principal);
+            if(data.Value != null) data.Value =data.Value?.EnsureExists(context, principal) as Concept;
             data.ValueKey = data.Value?.Key ?? data.ValueKey;
             var obsData = this.m_observationPersistence.Insert(context, data, principal);
             context.Insert(new DbCodedObservation()
@@ -189,7 +190,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Acts.CodedObservation Update(DataContext context, Core.Model.Acts.CodedObservation data, IPrincipal principal)
         {
-            data.Value?.EnsureExists(context, principal);
+            if (data.Value != null) data.Value = data.Value?.EnsureExists(context, principal) as Concept;
             data.ValueKey = data.Value?.Key ?? data.ValueKey;
             var obsData = this.m_observationPersistence.Insert(context, data, principal);
             context.Update(new DbCodedObservation()
@@ -227,7 +228,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Acts.QuantityObservation Insert(DataContext context, Core.Model.Acts.QuantityObservation data, IPrincipal principal)
         {
-            data.UnitOfMeasure?.EnsureExists(context, principal);
+            if(data.UnitOfMeasure != null) data.UnitOfMeasure = data.UnitOfMeasure?.EnsureExists(context, principal) as Concept;
             data.UnitOfMeasureKey = data.UnitOfMeasure?.Key ?? data.UnitOfMeasureKey;
             return base.Insert(context, data, principal);
         }
@@ -237,7 +238,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Acts.QuantityObservation Update(DataContext context, Core.Model.Acts.QuantityObservation data, IPrincipal principal)
         {
-            data.UnitOfMeasure?.EnsureExists(context, principal);
+            if(data.UnitOfMeasure != null) data.UnitOfMeasure = data.UnitOfMeasure?.EnsureExists(context, principal) as Concept;
             data.UnitOfMeasureKey = data.UnitOfMeasure?.Key ?? data.UnitOfMeasureKey;
             return base.Update(context, data, principal);
         }

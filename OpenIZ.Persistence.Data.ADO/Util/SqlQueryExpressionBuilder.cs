@@ -70,6 +70,7 @@ namespace OpenIZ.Persistence.Data.ADO.Util
                 case ExpressionType.AndAlso:
                 case ExpressionType.Or:
                 case ExpressionType.OrElse:
+                case ExpressionType.Coalesce:
                     return this.VisitBinary((BinaryExpression)node);
                 case ExpressionType.MemberAccess:
                     return this.VisitMemberAccess((MemberExpression)node);
@@ -84,6 +85,7 @@ namespace OpenIZ.Persistence.Data.ADO.Util
                 case ExpressionType.Negate:
                 case ExpressionType.TypeAs:
                     return this.VisitUnary((UnaryExpression)node);
+
                 default:
                     return this.Visit(node);
             }
@@ -130,6 +132,9 @@ namespace OpenIZ.Persistence.Data.ADO.Util
         /// </summary>
         protected override Expression VisitBinary(BinaryExpression node)
         {
+            if (node.NodeType == ExpressionType.Coalesce)
+                this.m_sqlStatement.Append(" COALESCE");
+
             this.m_sqlStatement.Append("(");
             this.Visit(node.Left);
 
@@ -138,6 +143,7 @@ namespace OpenIZ.Persistence.Data.ADO.Util
             switch (node.NodeType)
             {
                 case ExpressionType.Equal:
+                    
                     if ((node.Right is ConstantExpression) &&
                         (node.Right as ConstantExpression).Value == null)
                     {
@@ -176,6 +182,9 @@ namespace OpenIZ.Persistence.Data.ADO.Util
                 case ExpressionType.Or:
                 case ExpressionType.OrElse:
                     this.m_sqlStatement.Append(" OR ");
+                    break;
+                case ExpressionType.Coalesce:
+                    this.m_sqlStatement.Append(",");
                     break;
             }
 

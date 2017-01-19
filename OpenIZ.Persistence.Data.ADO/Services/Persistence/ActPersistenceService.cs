@@ -64,6 +64,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             retVal.MoodConceptKey = actInstance.MoodConceptKey;
             var template = context.FirstOrDefault<DbTemplateDefinition>(o => o.Key == actInstance.TemplateKey);
             retVal.Template = m_mapper.MapDomainInstance<DbTemplateDefinition, TemplateDefinition>(template);
+
             return retVal;
         }
 
@@ -73,74 +74,86 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.Acts.Act ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
         {
             // Alright first, which type am I mapping to?
-            DbActVersion dbActVersion = (dataInstance as CompositeResult)?.Values.OfType<DbActVersion>().First() ?? dataInstance as DbActVersion ?? context.FirstOrDefault<DbActVersion>(o => o.VersionKey == (dataInstance as DbActSubTable).ParentKey);
-            DbAct dbAct = (dataInstance as CompositeResult)?.Values.OfType<DbAct>().First() ?? context.FirstOrDefault<DbAct>(o => o.Key == dbActVersion.Key);
+            DbActVersion dbActVersion = (dataInstance as CompositeResult)?.Values.OfType<DbActVersion>().FirstOrDefault() ?? dataInstance as DbActVersion ?? context.FirstOrDefault<DbActVersion>(o => o.VersionKey == (dataInstance as DbActSubTable).ParentKey);
+            DbAct dbAct = (dataInstance as CompositeResult)?.Values.OfType<DbAct>().FirstOrDefault() ?? context.FirstOrDefault<DbAct>(o => o.Key == dbActVersion.Key);
+            Act retVal = null;
 
             // 
             switch (dbAct.ClassConceptKey.ToString().ToUpper())
             {
                 case ControlAct:
-                    return new ControlActPersistenceService().ToModelInstance(
-                                (dataInstance as CompositeResult)?.Values.OfType<DbControlAct>().First() ?? context.FirstOrDefault<DbControlAct>(o => o.ParentKey == dbActVersion.VersionKey),
+                    retVal = new ControlActPersistenceService().ToModelInstance(
+                                (dataInstance as CompositeResult)?.Values.OfType<DbControlAct>().FirstOrDefault() ?? context.FirstOrDefault<DbControlAct>(o => o.ParentKey == dbActVersion.VersionKey),
                                 dbActVersion,
                                 dbAct,
                                 context,
                                 principal);
+                    break;
                 case SubstanceAdministration:
-                    return new SubstanceAdministrationPersistenceService().ToModelInstance(
-                                (dataInstance as CompositeResult)?.Values.OfType<DbSubstanceAdministration>().First() ?? context.FirstOrDefault<DbSubstanceAdministration>(o => o.ParentKey == dbActVersion.VersionKey),
+                    retVal = new SubstanceAdministrationPersistenceService().ToModelInstance(
+                                (dataInstance as CompositeResult)?.Values.OfType<DbSubstanceAdministration>().FirstOrDefault() ?? context.FirstOrDefault<DbSubstanceAdministration>(o => o.ParentKey == dbActVersion.VersionKey),
                                 dbActVersion,
                                 dbAct,
                                 context,
                                 principal);
+                    break;
                 case Condition:
                 case Observation:
-                    var dbObs = (dataInstance as CompositeResult)?.Values.OfType<DbObservation>().First() ?? context.FirstOrDefault<DbObservation>(o => o.ParentKey == dbActVersion.Key);
-                    switch(dbObs.ValueType)
+                    var dbObs = (dataInstance as CompositeResult)?.Values.OfType<DbObservation>().FirstOrDefault() ?? context.FirstOrDefault<DbObservation>(o => o.ParentKey == dbActVersion.Key);
+                    switch (dbObs.ValueType)
                     {
                         case "ST":
-                            return new TextObservationPersistenceService().ToModelInstance(
-                                (dataInstance as CompositeResult)?.Values.OfType<DbTextObservation>().First() ?? context.FirstOrDefault<DbTextObservation>(o=>o.ParentKey == dbObs.ParentKey),
+                            retVal = new TextObservationPersistenceService().ToModelInstance(
+                                (dataInstance as CompositeResult)?.Values.OfType<DbTextObservation>().FirstOrDefault() ?? context.FirstOrDefault<DbTextObservation>(o => o.ParentKey == dbObs.ParentKey),
                                 dbObs,
-                                dbActVersion, 
+                                dbActVersion,
                                 dbAct,
                                 context,
                                 principal);
+                            break;
                         case "CD":
-                            return new CodedObservationPersistenceService().ToModelInstance(
-                                (dataInstance as CompositeResult)?.Values.OfType<DbCodedObservation>().First() ?? context.FirstOrDefault<DbCodedObservation>(o=>o.ParentKey == dbObs.ParentKey),
+                            retVal = new CodedObservationPersistenceService().ToModelInstance(
+                                (dataInstance as CompositeResult)?.Values.OfType<DbCodedObservation>().FirstOrDefault() ?? context.FirstOrDefault<DbCodedObservation>(o => o.ParentKey == dbObs.ParentKey),
                                 dbObs,
-                                dbActVersion, 
+                                dbActVersion,
                                 dbAct,
                                 context,
                                 principal);
+                            break;
                         case "PQ":
-                            return new QuantityObservationPersistenceService().ToModelInstance(
-                                (dataInstance as CompositeResult)?.Values.OfType<DbQuantityObservation>().First() ?? context.FirstOrDefault<DbQuantityObservation>(o=>o.ParentKey == dbObs.ParentKey),
+                            retVal = new QuantityObservationPersistenceService().ToModelInstance(
+                                (dataInstance as CompositeResult)?.Values.OfType<DbQuantityObservation>().FirstOrDefault() ?? context.FirstOrDefault<DbQuantityObservation>(o => o.ParentKey == dbObs.ParentKey),
                                 dbObs,
-                                dbActVersion, 
+                                dbActVersion,
                                 dbAct,
-                                context, 
+                                context,
                                 principal);
+                            break;
                         default:
-                            return new ObservationPersistenceService().ToModelInstance(
+                            retVal = new ObservationPersistenceService().ToModelInstance(
                                 dbObs,
                                 dbActVersion,
                                 dbAct,
                                 context,
                                 principal);
+                            break;
                     }
+                    break;
                 case Encounter:
-                    return new EncounterPersistenceService().ToModelInstance(
-                                (dataInstance as CompositeResult)?.Values.OfType<DbPatientEncounter>().First() ?? context.FirstOrDefault<DbPatientEncounter>(o => o.ParentKey == dbActVersion.VersionKey),
+                    retVal = new EncounterPersistenceService().ToModelInstance(
+                                (dataInstance as CompositeResult)?.Values.OfType<DbPatientEncounter>().FirstOrDefault() ?? context.FirstOrDefault<DbPatientEncounter>(o => o.ParentKey == dbActVersion.VersionKey),
                                 dbActVersion,
                                 dbAct,
                                 context,
                                 principal);
+                    break;
                 default:
-                    return this.ToModelInstance<Core.Model.Acts.Act>(dbActVersion, dbAct, context, principal);
-
+                    retVal = this.ToModelInstance<Core.Model.Acts.Act>(dbActVersion, dbAct, context, principal);
+                    break;
             }
+
+            retVal.LoadAssociations(context, principal);
+            return retVal;
         }
 
         /// <summary>
@@ -148,17 +161,17 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Acts.Act Insert(DataContext context, Core.Model.Acts.Act data, IPrincipal principal)
         {
-           data.ClassConcept?.EnsureExists(context, principal);
-           data.MoodConcept?.EnsureExists(context, principal);
-           data.ReasonConcept?.EnsureExists(context, principal);
-           data.StatusConcept?.EnsureExists(context, principal);
-           data.TypeConcept?.EnsureExists(context, principal);
+            if (data.ClassConcept != null) data.ClassConcept = data.ClassConcept?.EnsureExists(context, principal) as Concept;
+            if (data.MoodConcept != null) data.MoodConcept = data.MoodConcept?.EnsureExists(context, principal) as Concept;
+            if (data.ReasonConcept != null) data.ReasonConcept = data.ReasonConcept?.EnsureExists(context, principal) as Concept;
+            if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept?.EnsureExists(context, principal) as Concept;
+            if (data.TypeConcept != null) data.TypeConcept = data.TypeConcept?.EnsureExists(context, principal) as Concept;
 
-           data.ClassConceptKey =data.ClassConcept?.Key ??data.ClassConceptKey;
-           data.MoodConceptKey =data.MoodConcept?.Key ??data.MoodConceptKey;
-           data.ReasonConceptKey =data.ReasonConcept?.Key ??data.ReasonConceptKey;
-           data.StatusConceptKey =data.StatusConcept?.Key ??data.StatusConceptKey ?? StatusKeys.New;
-           data.TypeConceptKey =data.TypeConcept?.Key ??data.TypeConceptKey;
+            data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
+            data.MoodConceptKey = data.MoodConcept?.Key ?? data.MoodConceptKey;
+            data.ReasonConceptKey = data.ReasonConcept?.Key ?? data.ReasonConceptKey;
+            data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey ?? StatusKeys.New;
+            data.TypeConceptKey = data.TypeConcept?.Key ?? data.TypeConceptKey;
 
             // Do the insert
             var retVal = base.Insert(context, data, principal);
@@ -167,42 +180,42 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActExtension, DbActExtension>(
                    data.Extensions.GetLocked(),
                     retVal,
-                    context, 
+                    context,
                     principal);
 
             if (data.Identifiers != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActIdentifier, DbActIdentifier>(
                    data.Identifiers.GetLocked(),
                     retVal,
-                    context, 
+                    context,
                     principal);
 
             if (data.Notes != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActNote, DbActNote>(
                    data.Notes.GetLocked(),
                     retVal,
-                    context, 
+                    context,
                     principal);
 
             if (data.Participations != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActParticipation, DbActParticipation>(
                    data.Participations.GetLocked(),
                     retVal,
-                    context, 
+                    context,
                     principal);
 
             if (data.Relationships != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActRelationship, DbActRelationship>(
                    data.Relationships.GetLocked(),
                     retVal,
-                    context, 
+                    context,
                     principal);
 
             if (data.Tags != null)
                 base.UpdateAssociatedItems<Core.Model.DataTypes.ActTag, DbActTag>(
                    data.Tags.GetLocked(),
                     retVal,
-                    context, 
+                    context,
                     principal);
 
             return retVal;
@@ -213,16 +226,16 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Acts.Act Update(DataContext context, Core.Model.Acts.Act data, IPrincipal principal)
         {
-           data.ClassConcept?.EnsureExists(context, principal);
-           data.MoodConcept?.EnsureExists(context, principal);
-           data.ReasonConcept?.EnsureExists(context, principal);
-           data.StatusConcept?.EnsureExists(context, principal);
-           data.TypeConcept?.EnsureExists(context, principal);
+            if (data.ClassConcept != null) data.ClassConcept = data.ClassConcept?.EnsureExists(context, principal) as Concept;
+            if (data.MoodConcept != null) data.MoodConcept = data.MoodConcept?.EnsureExists(context, principal) as Concept;
+            if (data.ReasonConcept != null) data.ReasonConcept = data.ReasonConcept?.EnsureExists(context, principal) as Concept;
+            if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept?.EnsureExists(context, principal) as Concept;
+            if (data.TypeConcept != null) data.TypeConcept = data.TypeConcept?.EnsureExists(context, principal) as Concept;
 
-           data.ClassConceptKey =data.ClassConcept?.Key ??data.ClassConceptKey;
-           data.MoodConceptKey =data.MoodConcept?.Key ??data.MoodConceptKey;
-           data.ReasonConceptKey =data.ReasonConcept?.Key ??data.ReasonConceptKey;
-           data.StatusConceptKey =data.StatusConcept?.Key ??data.StatusConceptKey ?? StatusKeys.New;
+            data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
+            data.MoodConceptKey = data.MoodConcept?.Key ?? data.MoodConceptKey;
+            data.ReasonConceptKey = data.ReasonConcept?.Key ?? data.ReasonConceptKey;
+            data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey ?? StatusKeys.New;
 
             // Do the update
             var retVal = base.Update(context, data, principal);
@@ -278,7 +291,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <param name="context"></param>
         public override Core.Model.Acts.Act Obsolete(DataContext context, Core.Model.Acts.Act data, IPrincipal principal)
         {
-           data.StatusConceptKey = StatusKeys.Obsolete;
+            data.StatusConceptKey = StatusKeys.Obsolete;
             return base.Obsolete(context, data, principal);
         }
     }

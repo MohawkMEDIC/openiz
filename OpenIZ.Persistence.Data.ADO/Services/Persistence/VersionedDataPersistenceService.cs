@@ -61,8 +61,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override TModel Insert(DataContext context, TModel data, IPrincipal principal)
         {
             // Ensure exists
-           data.CreatedBy?.EnsureExists(context, principal);
-           data.CreatedByKey =data.CreatedBy?.Key ??data.CreatedByKey;
+            data.CreatedBy?.EnsureExists(context, principal);
+            data.CreatedByKey = data.CreatedBy?.Key ?? data.CreatedByKey;
 
             // first we map the TDataKey entity
             var nonVersionedPortion = m_mapper.MapModelInstance<TModel, TDomainKey>(data);
@@ -78,27 +78,27 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if (nonVersionedPortion.Key == null ||
                 nonVersionedPortion.Key == Guid.Empty)
             {
-               data.Key = Guid.NewGuid();
-                nonVersionedPortion.Key =data.Key.Value;
+                data.Key = Guid.NewGuid();
+                domainObject.Key = nonVersionedPortion.Key = data.Key.Value;
             }
-            if (domainObject.Key == null ||
-                domainObject.Key == Guid.Empty)
+            if (domainObject.VersionKey == null ||
+                domainObject.VersionKey == Guid.Empty)
             {
-               data.VersionKey = Guid.NewGuid();
-                domainObject.Key =data.VersionKey.Value;
+                data.VersionKey = Guid.NewGuid();
+                domainObject.VersionKey = data.VersionKey.Value;
             }
 
             // Now we want to insert the non versioned portion first
-            nonVersionedPortion = context.Insert<TDomainKey>(nonVersionedPortion);
+            nonVersionedPortion = context.Insert(nonVersionedPortion);
 
             // Ensure created by exists
-           data.CreatedByKey = domainObject.CreatedByKey = domainObject.CreatedByKey == Guid.Empty ? principal.GetUser(context).Key : domainObject.CreatedByKey;
+            data.CreatedByKey = domainObject.CreatedByKey = domainObject.CreatedByKey == Guid.Empty ? principal.GetUser(context).Key : domainObject.CreatedByKey;
 
-            domainObject = context.Insert<TDomain>(domainObject);
-           data.VersionSequence = domainObject.VersionSequenceId;
-           data.VersionKey = domainObject.Key;
-           data.Key = domainObject.Key;
-           data.CreationTime = (DateTimeOffset)domainObject.CreationTime;
+            domainObject = context.Insert(domainObject);
+            data.VersionSequence = domainObject.VersionSequenceId;
+            data.VersionKey = domainObject.Key;
+            data.Key = domainObject.Key;
+            data.CreationTime = (DateTimeOffset)domainObject.CreationTime;
             return data;
 
         }
@@ -111,16 +111,16 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if (data.Key == Guid.Empty)
                 throw new AdoFormalConstraintException(AdoFormalConstraintType.NonIdentityUpdate);
 
-           data.CreatedBy.EnsureExists(context, principal);
-           data.CreatedByKey =data.CreatedBy?.Key ??data.CreatedByKey;
+            data.CreatedBy.EnsureExists(context, principal);
+            data.CreatedByKey = data.CreatedBy?.Key ?? data.CreatedByKey;
 
             // This is technically an insert and not an update
             SqlStatement currentVersionQuery = new SqlStatement<TDomain>().SelectFrom()
-                .Where(o => o.Key ==data.Key && !o.ObsoletionTime.HasValue)
+                .Where(o => o.Key == data.Key && !o.ObsoletionTime.HasValue)
                 .OrderBy<TDomain>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
 
             var existingObject = context.FirstOrDefault<TDomain>(currentVersionQuery); // Get the last version (current)
-            var nonVersionedObect = context.FirstOrDefault<TDomainKey>(o => o.Key ==data.Key);
+            var nonVersionedObect = context.FirstOrDefault<TDomainKey>(o => o.Key == data.Key);
 
             if (existingObject == null)
                 throw new KeyNotFoundException(data.Key.ToString());
@@ -139,21 +139,21 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             // Client did not change on update, so we need to update!!!
             if (!data.VersionKey.HasValue ||
                data.VersionKey.Value == existingObject.Key)
-               data.VersionKey = newEntityVersion.Key = Guid.NewGuid();
+                data.VersionKey = newEntityVersion.Key = Guid.NewGuid();
 
-           data.VersionSequence = newEntityVersion.VersionSequenceId = null;
-            newEntityVersion.Key =data.Key.Value;
-           data.PreviousVersionKey = newEntityVersion.ReplacesVersionKey = existingObject.Key;
-           data.CreatedByKey = newEntityVersion.CreatedByKey =data.CreatedByKey ?? user.Key;
+            data.VersionSequence = newEntityVersion.VersionSequenceId = null;
+            newEntityVersion.Key = data.Key.Value;
+            data.PreviousVersionKey = newEntityVersion.ReplacesVersionKey = existingObject.Key;
+            data.CreatedByKey = newEntityVersion.CreatedByKey = data.CreatedByKey ?? user.Key;
             // Obsolete the old version 
-            existingObject.ObsoletedByKey =data.CreatedByKey ?? user.Key;
+            existingObject.ObsoletedByKey = data.CreatedByKey ?? user.Key;
             existingObject.ObsoletionTime = DateTime.Now;
             newEntityVersion = context.Insert<TDomain>(newEntityVersion);
             existingObject = context.Update<TDomain>(existingObject);
 
             // Pull database generated fields
-           data.VersionSequence = newEntityVersion.VersionSequenceId;
-           data.CreationTime = newEntityVersion.CreationTime;
+            data.VersionSequence = newEntityVersion.VersionSequenceId;
+            data.CreationTime = newEntityVersion.CreationTime;
 
             return data;
             //return base.Update(context, data, principal);
@@ -162,11 +162,28 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Query internal
         /// </summary>
-        protected override IEnumerable<CompositeResult<TDomain, TDomainKey>> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults)
+        protected override IEnumerable<CompositeResult<TDomain, TDomainKey>> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, bool countResults = true)
         {
-            var domainQuery = QueryBuilder.CreateQuery(query).Build();
+            SqlStatement domainQuery = null;
+            try
+            {
+                domainQuery = new SqlStatement<TDomain>().SelectFrom()
+                    .InnerJoin<TDomain, TDomainKey>(o => o.Key, o => o.Key)
+                    .Where<TDomain>(m_mapper.MapModelExpression<TModel, TDomain>(query)).Build();
+
+            }
+            catch (Exception e)
+            {
+                m_tracer.TraceEvent(System.Diagnostics.TraceEventType.Warning, e.HResult, "Will use slow query construction due to {0}", e.Message);
+                domainQuery = QueryBuilder.CreateQuery(query).Build();
+            }
             domainQuery.OrderBy<TDomain>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
-            totalResults = context.Count(domainQuery);
+
+            if (countResults)
+                totalResults = context.Count(domainQuery);
+            else
+                totalResults = 0;
+
             if (offset > 0)
                 domainQuery.Offset(offset);
             if (count.HasValue)
@@ -180,9 +197,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         internal override TModel Get(DataContext context, Guid key, IPrincipal principal)
         {
-            var domainQuery = QueryBuilder.CreateQuery<TModel>(o => o.Key == key && o.ObsoletionTime == null).Build();
-            domainQuery.OrderBy<TDomain>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
-            return this.CacheConvert(context.FirstOrDefault<TDomain>(domainQuery), context, principal);
+            var domainQuery = new SqlStatement<TDomain>().SelectFrom()
+                .InnerJoin<TDomain, TDomainKey>(o => o.Key, o => o.Key)
+                .Where<TDomain>(o => o.Key == key && o.ObsoletionTime == null)
+                .OrderBy<TDomain>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
+            return this.CacheConvert(context.FirstOrDefault<CompositeResult<TDomain, TDomainKey>>(domainQuery), context, principal);
 
         }
 
@@ -218,7 +237,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             using (var connection = m_configuration.Provider.GetReadonlyConnection())
                 try
                 {
-
+                    connection.Open();
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "GET {0}", containerId);
 
                     TModel retVal = null;

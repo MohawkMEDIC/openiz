@@ -89,7 +89,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             //        InversionIndicator = true
             //    }));
             //}
-
             return retVal;
         }
 
@@ -98,88 +97,102 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.Entity ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
         {
-            // Alright first, which type am I mapping to?
-            var dbEntityVersion = (dataInstance as CompositeResult)?.Values.OfType<DbEntityVersion>().First() ?? dataInstance as DbEntityVersion ?? context.FirstOrDefault<DbEntityVersion>(o => o.VersionKey == (dataInstance as DbEntitySubTable).ParentKey);
-            var dbEntity = (dataInstance as CompositeResult)?.Values.OfType<DbEntity>().First() ?? context.FirstOrDefault<DbEntity>(o => o.Key == dbEntityVersion.Key);
 
+            // Alright first, which type am I mapping to?
+            var dbEntityVersion = (dataInstance as CompositeResult)?.Values.OfType<DbEntityVersion>().FirstOrDefault() ?? dataInstance as DbEntityVersion ?? context.FirstOrDefault<DbEntityVersion>(o => o.VersionKey == (dataInstance as DbEntitySubTable).ParentKey);
+            var dbEntity = (dataInstance as CompositeResult)?.Values.OfType<DbEntity>().FirstOrDefault() ?? context.FirstOrDefault<DbEntity>(o => o.Key == dbEntityVersion.Key);
+            Entity retVal = null;
+             
             switch (dbEntity.ClassConceptKey.ToString().ToUpper())
             {
                 case Device:
-                    return new DeviceEntityPersistenceService().ToModelInstance(
-                        (dataInstance as CompositeResult)?.Values.OfType<DbDeviceEntity>().First() ?? context.FirstOrDefault<DbDeviceEntity>(o => o.ParentKey == dbEntityVersion.VersionKey),
+                    retVal = new DeviceEntityPersistenceService().ToModelInstance(
+                        (dataInstance as CompositeResult)?.Values.OfType<DbDeviceEntity>().FirstOrDefault() ?? context.FirstOrDefault<DbDeviceEntity>(o => o.ParentKey == dbEntityVersion.VersionKey),
                         dbEntityVersion,
                         dbEntity,
                         context,
                         principal);
+                    break;
                 case NonLivingSubject:
-                    return new ApplicationEntityPersistenceService().ToModelInstance(
-                        (dataInstance as CompositeResult)?.Values.OfType<DbApplicationEntity>().First() ?? context.FirstOrDefault<DbApplicationEntity>(o => o.ParentKey == dbEntityVersion.VersionKey),
+                    retVal = new ApplicationEntityPersistenceService().ToModelInstance(
+                        (dataInstance as CompositeResult)?.Values.OfType<DbApplicationEntity>().FirstOrDefault() ?? context.FirstOrDefault<DbApplicationEntity>(o => o.ParentKey == dbEntityVersion.VersionKey),
                         dbEntityVersion,
                         dbEntity,
                         context,
                         principal);
+                    break;
                 case Person:
-                    return new PersonPersistenceService().ToModelInstance(
-                        (dataInstance as CompositeResult)?.Values.OfType<DbPerson>().First() ?? context.FirstOrDefault<DbPerson>(o => o.ParentKey == dbEntityVersion.VersionKey),
+                    retVal = new PersonPersistenceService().ToModelInstance(
+                        (dataInstance as CompositeResult)?.Values.OfType<DbPerson>().FirstOrDefault() ?? context.FirstOrDefault<DbPerson>(o => o.ParentKey == dbEntityVersion.VersionKey),
                         dbEntityVersion,
                         dbEntity,
                         context,
                         principal);
+                    break;
                 case Patient:
-                    return new PatientPersistenceService().ToModelInstance(
-                        (dataInstance as CompositeResult)?.Values.OfType<DbPatient>().First() ?? context.FirstOrDefault<DbPatient>(o => o.ParentKey == dbEntityVersion.VersionKey),
-                        (dataInstance as CompositeResult)?.Values.OfType<DbPerson>().First() ?? context.FirstOrDefault<DbPerson>(o => o.ParentKey == dbEntityVersion.VersionKey),
+                    retVal = new PatientPersistenceService().ToModelInstance(
+                        (dataInstance as CompositeResult)?.Values.OfType<DbPatient>().FirstOrDefault() ?? context.FirstOrDefault<DbPatient>(o => o.ParentKey == dbEntityVersion.VersionKey),
+                        (dataInstance as CompositeResult)?.Values.OfType<DbPerson>().FirstOrDefault() ?? context.FirstOrDefault<DbPerson>(o => o.ParentKey == dbEntityVersion.VersionKey),
                         dbEntityVersion,
                         dbEntity,
                         context,
                         principal);
-
+                    break;
                 case Provider:
-                    return new ProviderPersistenceService().ToModelInstance(
-                        (dataInstance as CompositeResult)?.Values.OfType<DbProvider>().First() ?? context.FirstOrDefault<DbProvider>(o => o.ParentKey == dbEntityVersion.VersionKey),
-                        (dataInstance as CompositeResult)?.Values.OfType<DbPerson>().First() ?? context.FirstOrDefault<DbPerson>(o => o.ParentKey == dbEntityVersion.VersionKey),
+                    retVal = new ProviderPersistenceService().ToModelInstance(
+                        (dataInstance as CompositeResult)?.Values.OfType<DbProvider>().FirstOrDefault() ?? context.FirstOrDefault<DbProvider>(o => o.ParentKey == dbEntityVersion.VersionKey),
+                        (dataInstance as CompositeResult)?.Values.OfType<DbPerson>().FirstOrDefault() ?? context.FirstOrDefault<DbPerson>(o => o.ParentKey == dbEntityVersion.VersionKey),
                         dbEntityVersion,
                         dbEntity,
                         context,
                         principal);
+                    break;
                 case Place:
                 case CityOrTown:
                 case Country:
                 case CountyOrParish:
                 case State:
                 case ServiceDeliveryLocation:
-                    return new PlacePersistenceService().ToModelInstance(
-                        (dataInstance as CompositeResult)?.Values.OfType<DbPlace>().First() ?? context.FirstOrDefault<DbPlace>(o => o.ParentKey == dbEntityVersion.VersionKey),
+                    retVal = new PlacePersistenceService().ToModelInstance(
+                        (dataInstance as CompositeResult)?.Values.OfType<DbPlace>().FirstOrDefault() ?? context.FirstOrDefault<DbPlace>(o => o.ParentKey == dbEntityVersion.VersionKey),
                         dbEntityVersion,
                         dbEntity,
                         context,
                         principal);
+                    break;
                 case Organization:
-                    return new OrganizationPersistenceService().ToModelInstance(
-                        (dataInstance as CompositeResult)?.Values.OfType<DbOrganization>().First() ?? context.FirstOrDefault<DbOrganization>(o => o.ParentKey == dbEntityVersion.VersionKey),
+                    retVal = new OrganizationPersistenceService().ToModelInstance(
+                        (dataInstance as CompositeResult)?.Values.OfType<DbOrganization>().FirstOrDefault() ?? context.FirstOrDefault<DbOrganization>(o => o.ParentKey == dbEntityVersion.VersionKey),
                         dbEntityVersion,
                         dbEntity,
                         context,
                         principal);
+                    break;
                 case Material:
-                    return new MaterialPersistenceService().ToModelInstance<Material>(
-                        (dataInstance as CompositeResult)?.Values.OfType<DbMaterial>().First() ?? context.FirstOrDefault<DbMaterial>(o => o.ParentKey == dbEntityVersion.VersionKey),
+                    retVal = new MaterialPersistenceService().ToModelInstance<Material>(
+                        (dataInstance as CompositeResult)?.Values.OfType<DbMaterial>().FirstOrDefault() ?? context.FirstOrDefault<DbMaterial>(o => o.ParentKey == dbEntityVersion.VersionKey),
                         dbEntityVersion,
                         dbEntity,
                         context,
                         principal);
+                    break;
                 case ManufacturedMaterial:
-                    return new ManufacturedMaterialPersistenceService().ToModelInstance(
-                        (dataInstance as CompositeResult)?.Values.OfType<DbManufacturedMaterial>().First() ?? context.FirstOrDefault<DbManufacturedMaterial>(o => o.ParentKey == dbEntityVersion.VersionKey),
-                        (dataInstance as CompositeResult)?.Values.OfType<DbMaterial>().First() ?? context.FirstOrDefault<DbMaterial>(o => o.ParentKey == dbEntityVersion.VersionKey),
+                    retVal = new ManufacturedMaterialPersistenceService().ToModelInstance(
+                        (dataInstance as CompositeResult)?.Values.OfType<DbManufacturedMaterial>().FirstOrDefault() ?? context.FirstOrDefault<DbManufacturedMaterial>(o => o.ParentKey == dbEntityVersion.VersionKey),
+                        (dataInstance as CompositeResult)?.Values.OfType<DbMaterial>().FirstOrDefault() ?? context.FirstOrDefault<DbMaterial>(o => o.ParentKey == dbEntityVersion.VersionKey),
                         dbEntityVersion,
                         dbEntity,
                         context,
                         principal);
+                    break;
                 default:
-                    return base.ToModelInstance(dataInstance, context, principal);
+                    retVal = this.ToModelInstance<Entity>(dbEntityVersion, dbEntity, context, principal);
+                    break;
 
             }
+
+            retVal.LoadAssociations(context, principal);
+            return retVal;
         }
 
         /// <summary>
@@ -189,10 +202,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
 
             // Ensure FK exists
-            data.ClassConcept?.EnsureExists(context, principal);
-            data.DeterminerConcept?.EnsureExists(context, principal);
-            data.StatusConcept?.EnsureExists(context, principal);
-            data.TypeConcept?.EnsureExists(context, principal);
+            if(data.ClassConcept != null) data.ClassConcept = data.ClassConcept?.EnsureExists(context, principal) as Concept;
+            if(data.DeterminerConcept != null) data.DeterminerConcept = data.DeterminerConcept?.EnsureExists(context, principal) as Concept;
+            if(data.StatusConcept != null) data.StatusConcept = data.StatusConcept?.EnsureExists(context, principal) as Concept;
+            if(data.TypeConcept != null) data.TypeConcept = data.TypeConcept?.EnsureExists(context, principal) as Concept;
             data.TypeConceptKey = data.TypeConcept?.Key ?? data.TypeConceptKey;
             data.DeterminerConceptKey = data.DeterminerConcept?.Key ?? data.DeterminerConceptKey;
             data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
@@ -275,14 +288,15 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.Entities.Entity Update(DataContext context, Core.Model.Entities.Entity data, IPrincipal principal)
         {
             // Esnure exists
-            data.ClassConcept?.EnsureExists(context, principal);
-            data.DeterminerConcept?.EnsureExists(context, principal);
-            data.StatusConcept?.EnsureExists(context, principal);
-            data.TypeConcept?.EnsureExists(context, principal);
-            data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
-            data.DeterminerConceptKey = data.DeterminerConcept?.Key ?? data.DeterminerConceptKey;
-            data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
+            if (data.ClassConcept != null) data.ClassConcept = data.ClassConcept?.EnsureExists(context, principal) as Concept;
+            if (data.DeterminerConcept != null) data.DeterminerConcept = data.DeterminerConcept?.EnsureExists(context, principal) as Concept;
+            if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept?.EnsureExists(context, principal) as Concept;
+            if (data.TypeConcept != null) data.TypeConcept = data.TypeConcept?.EnsureExists(context, principal) as Concept;
             data.TypeConceptKey = data.TypeConcept?.Key ?? data.TypeConceptKey;
+            data.DeterminerConceptKey = data.DeterminerConcept?.Key ?? data.DeterminerConceptKey;
+            data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
+            data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
+            data.StatusConceptKey = data.StatusConceptKey == Guid.Empty || data.StatusConceptKey == null ? StatusKeys.New : data.StatusConceptKey;
 
             var retVal = base.Update(context, data, principal);
 

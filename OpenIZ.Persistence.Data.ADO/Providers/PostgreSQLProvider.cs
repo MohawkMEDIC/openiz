@@ -165,7 +165,7 @@ namespace OpenIZ.Persistence.Data.ADO.Providers
         /// </summary>
         public SqlStatement Count(SqlStatement sqlStatement)
         {
-            return new SqlStatement("SELECT COUNT(*) FROM (").Append(sqlStatement).Append(")");
+            return new SqlStatement("SELECT COUNT(*) FROM (").Append(sqlStatement.Build()).Append(") Q0");
         }
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace OpenIZ.Persistence.Data.ADO.Providers
         /// </summary>
         public SqlStatement Exists(SqlStatement sqlStatement)
         {
-            return new SqlStatement("SELECT CASE WHEN EXISTS (").Append(sqlStatement).Append(") THEN true ELSE false END");
+            return new SqlStatement("SELECT CASE WHEN EXISTS (").Append(sqlStatement.Build()).Append(") THEN true ELSE false END");
         }
 
         /// <summary>

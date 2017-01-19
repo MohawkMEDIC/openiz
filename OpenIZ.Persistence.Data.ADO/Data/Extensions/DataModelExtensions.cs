@@ -28,7 +28,9 @@ using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
 using OpenIZ.Persistence.Data.ADO.Services;
 using OpenIZ.Persistence.Data.ADO.Util;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -43,93 +45,23 @@ namespace OpenIZ.Persistence.Data.ADO.Data
 
 
     /// <summary>
-    /// An attribute used by the LINQ expression rewriter to handle the queries on interface properties
-    /// </summary>
-    public class LinqPropertyMapAttribute : Attribute
-    {
-
-        /// <summary>
-        /// Creates a new instance of the concept map attribute
-        /// </summary>
-        public LinqPropertyMapAttribute(String linqMember)
-        {
-            this.LinqMember = linqMember;
-        }
-
-        /// <summary>
-        /// Gets or sets the name of the column which is the source for this
-        /// </summary>
-        public String LinqMember { get; set; }
-    }
-
-    /// <summary>
-    /// Http query expression visitor.
-    /// </summary>
-    public class ExpressionRewriter : ExpressionVisitor
-    {
-
-        /// <summary>
-        /// Visit a query expression
-        /// </summary>
-        /// <returns>The modified expression list, if any one of the elements were modified; otherwise, returns the original
-        /// expression list.</returns>
-        /// <param name="nodes">The expressions to visit.</param>
-        /// <param name="node">Node.</param>
-        public override Expression Visit(Expression node)
-        {
-            if (node == null)
-                return node;
-
-            // Convert node type
-            switch (node.NodeType)
-            {
-                case ExpressionType.MemberAccess:
-                    return this.VisitMemberAccess((MemberExpression)node);
-                default:
-                    return base.Visit(node);
-            }
-        }
-
-        /// <summary>
-        /// Visits the member access.
-        /// </summary>
-        /// <returns>The member access.</returns>
-        /// <param name="expr">Expr.</param>
-        protected virtual Expression VisitMemberAccess(MemberExpression node)
-        {
-            var cma = node.Expression.Type.GetMember(node.Member.Name)[0].GetCustomAttribute<LinqPropertyMapAttribute>();
-            if (cma != null)
-            {
-                var rwMember = node.Expression.Type.GetMember(cma.LinqMember).Single();
-                node = Expression.MakeMemberAccess(this.Visit(node.Expression), rwMember);
-            }
-            return node;
-        }
-
-        /// <summary>
-        /// Rewrites the query mapping any mapped data elements 
-        /// </summary>
-        public static Expression<Func<TDomain, bool>> Rewrite<TDomain>(Expression<Func<TDomain, bool>> expr)
-        {
-            ExpressionRewriter rw = new ExpressionRewriter();
-            var rwExpr = rw.Visit(expr.Body);
-            return Expression.Lambda<Func<TDomain, bool>>(rwExpr, expr.Parameters);
-        }
-    }
-
-    /// <summary>
     /// Model extension methods
     /// </summary>
     public static class DataModelExtensions
     {
 
 
+        // Trace source
+        private static TraceSource s_traceSource = new TraceSource(AdoDataConstants.TraceSourceName);
 
         // Field cache
         private static Dictionary<Type, FieldInfo[]> s_fieldCache = new Dictionary<Type, FieldInfo[]>();
 
         // Lock object
         private static Object s_lockObject = new object();
+
+        // Classification properties for autoload
+        private static Dictionary<Type, PropertyInfo> s_classificationProperties = new Dictionary<Type, PropertyInfo>();
 
         /// <summary>
         /// Get fields
@@ -192,8 +124,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
 
                 var dataObject = context.FirstOrDefault(dataType, stmt);
                 if (dataObject != null)
-                    existing = AdoPersistenceService.GetMapper().MapDomainInstance(dataType, me.GetType(), dataObject) as IIdentifiedEntity;
-
+                    existing = idpInstance.ToModelInstance(dataObject, context, principal) as IIdentifiedEntity;
             }
             return existing;
 
@@ -218,10 +149,10 @@ namespace OpenIZ.Persistence.Data.ADO.Data
         /// <summary>
         /// Ensures a model has been persisted
         /// </summary>
-        public static void EnsureExists(this IIdentifiedEntity me, DataContext context, IPrincipal principal)
+        public static IIdentifiedEntity EnsureExists(this IIdentifiedEntity me, DataContext context, IPrincipal principal)
         {
 
-            if (!AdoPersistenceService.GetConfiguration().AutoInsertChildren) return;
+            if (me == null) return null;
 
             // Me
             var vMe = me as IVersionedEntity;
@@ -229,6 +160,19 @@ namespace OpenIZ.Persistence.Data.ADO.Data
 
             IIdentifiedEntity existing = me.TryGetExisting(context, principal);
             var idpInstance = AdoPersistenceService.GetPersister(me.GetType());
+
+            // Don't touch the child just return reference
+            if (!AdoPersistenceService.GetConfiguration().AutoInsertChildren)
+            {
+                if (existing != null)
+                {
+                    if(me.Key != existing.Key ||
+                        vMe?.VersionKey != (existing as IVersionedEntity)?.VersionKey)
+                        me.CopyObjectData(existing); // copy data into reference
+                    return existing;
+                }
+                else throw new KeyNotFoundException(me.Key.Value.ToString());
+            }
 
             // Existing exists?
             if (existing != null && me.Key.HasValue)
@@ -242,7 +186,9 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                     me.Key = updated.Key;
                     if (vMe != null)
                         vMe.VersionKey = (updated as IVersionedEntity).VersionKey;
+                    return updated;
                 }
+                return existing;
             }
             else // Insert
             {
@@ -251,6 +197,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
 
                 if (vMe != null)
                     vMe.VersionKey = (inserted as IVersionedEntity).VersionKey;
+                return inserted;
             }
         }
 
@@ -304,6 +251,80 @@ namespace OpenIZ.Persistence.Data.ADO.Data
         {
             var stmt = new SqlStatement<TData>().SelectFrom().Where(o => !o.ObsoletionTime.HasValue).OrderBy<TData>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
             return (TData)context.FirstOrDefault<TData>(stmt);
+        }
+
+        /// <summary>
+        /// This method will load all basic properties for the specified model object
+        /// </summary>
+        public static void LoadAssociations<TModel>(this TModel me, DataContext context, IPrincipal principal) where TModel : IIdentifiedEntity
+        {
+            if (me == null)
+                return;
+            else if (context.Transaction != null)
+                return;
+
+#if DEBUG
+            // Start stopwatch
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
+
+            // Cache get classification property
+            PropertyInfo classProperty = null;
+            if (!s_classificationProperties.TryGetValue(typeof(TModel), out classProperty))
+            {
+                classProperty = typeof(TModel).GetRuntimeProperty(typeof(TModel).GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty ?? "____XXX");
+                if (classProperty != null)
+                    classProperty = typeof(TModel).GetRuntimeProperty(classProperty.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty ?? classProperty.Name);
+                lock (s_lockObject)
+                    if (!s_classificationProperties.ContainsKey(typeof(TModel)))
+                        s_classificationProperties.Add(typeof(TModel), classProperty);
+            }
+
+            // Classification property?
+            String classValue = classProperty?.GetValue(me)?.ToString();
+
+            foreach(var pi in me.GetType().GetRuntimeProperties().Where(o=>o.GetCustomAttribute<DataIgnoreAttribute>() == null && o.GetCustomAttributes<AutoLoadAttribute>().Any(p=>p.ClassCode == classValue || p.ClassCode == null)))
+            {
+                // Map model type to domain
+                var domainType= AdoPersistenceService.GetMapper().MapModelType(pi.PropertyType.StripGeneric());
+                var adoPersister = AdoPersistenceService.GetPersister(pi.PropertyType.StripGeneric());
+
+                // Loading associations, so what is the associated type?
+                if (typeof(IList).IsAssignableFrom(pi.PropertyType) &&
+                    adoPersister is IAdoAssociativePersistenceService &&
+                    me.Key.HasValue) // List so we select from the assoc table where we are the master table
+                {
+                    var assocPersister = adoPersister as IAdoAssociativePersistenceService;
+
+                    // We want to query based on our PK and version if applicable
+                    decimal? versionSequence = (me as IVersionedEntity)?.VersionSequence;
+                    var assoc = assocPersister.GetFromSource(context, me.Key.Value, versionSequence, principal);
+                    var listValue = Activator.CreateInstance(pi.PropertyType, assoc);
+                    pi.SetValue(me, listValue);
+                }
+                else if(typeof(IIdentifiedEntity).IsAssignableFrom(pi.PropertyType)) // Single
+                {
+                    // Single property, we want to execute a get on the key property
+                    var redirectAtt = pi.GetCustomAttribute<SerializationReferenceAttribute>();
+                    if (redirectAtt == null)
+                        continue; // cannot get key property
+
+                    // We want to issue a query
+                    var keyProperty = pi.DeclaringType.GetProperty(redirectAtt.RedirectProperty);
+                    var keyValue = keyProperty?.GetValue(me);
+                    if (keyValue == null ||
+                        Guid.Empty.Equals(keyValue))
+                        continue; // No key specified
+
+                    pi.SetValue(me, adoPersister.Get(context, (Guid)keyValue, principal));
+                }
+
+            }
+#if DEBUG
+            sw.Stop();
+            s_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Load associations for {0} took {1} ms", me,  sw.ElapsedMilliseconds);
+#endif 
         }
     }
 }

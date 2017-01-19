@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-18
  */
+using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
@@ -27,14 +28,24 @@ using System.Linq;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
     /// <summary>
     /// Represents a persistence service for entity addresses
     /// </summary>
-    public class EntityAddressPersistenceService : IdentifiedPersistenceService<Core.Model.Entities.EntityAddress, DbEntityAddress>
+    public class EntityAddressPersistenceService : IdentifiedPersistenceService<Core.Model.Entities.EntityAddress, DbEntityAddress>, IAdoAssociativePersistenceService
     {
+
+        /// <summary>
+        /// Get addresses from source
+        /// </summary>
+        public IEnumerable GetFromSource(DataContext context, Guid id, decimal? versionSequenceId, IPrincipal principal)
+        {
+            int tr = 0;
+            return this.Query(context, base.BuildSourceQuery<EntityAddress>(id, versionSequenceId), 0, null, out tr, principal, false);
+        }
 
         /// <summary>
         /// Insert the specified object
@@ -43,7 +54,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
 
             // Ensure exists
-            data.AddressUse?.EnsureExists(context, principal);
+            if (data.AddressUse != null) data.AddressUse = data.AddressUse?.EnsureExists(context, principal) as Concept;
             data.AddressUseKey = data.AddressUse?.Key ?? data.AddressUseKey;
 
             var retVal = base.Insert(context, data, principal);
@@ -66,7 +77,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
 
             // Ensure exists
-            data.AddressUse?.EnsureExists(context, principal);
+            if (data.AddressUse != null) data.AddressUse = data.AddressUse?.EnsureExists(context, principal) as Concept;
             data.AddressUseKey = data.AddressUse?.Key ?? data.AddressUseKey;
 
             var retVal = base.Update(context, data, principal);
@@ -84,14 +95,29 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             return retVal;
         }
 
-        
+
     }
 
     /// <summary>
     /// Entity address component persistence service
     /// </summary>
-    public class EntityAddressComponentPersistenceService : IdentifiedPersistenceService<Core.Model.Entities.EntityAddressComponent, DbEntityAddressComponent>
+    public class EntityAddressComponentPersistenceService : IdentifiedPersistenceService<Core.Model.Entities.EntityAddressComponent, DbEntityAddressComponent>, IAdoAssociativePersistenceService
     {
+
+        /// <summary>
+        /// To model instance
+        /// </summary>
+        public override EntityAddressComponent ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
+        {
+            var addrComp = (dataInstance as CompositeResult)?.Values.OfType<DbEntityAddressComponent>().FirstOrDefault() ?? dataInstance as DbEntityAddressComponent;
+            var addrValue = (dataInstance as CompositeResult)?.Values.OfType<DbEntityAddressComponentValue>().FirstOrDefault() ?? context.FirstOrDefault<DbEntityAddressComponentValue>(o => o.Key == addrComp.ValueKey);
+            return new EntityAddressComponent()
+            {
+                ComponentTypeKey = addrComp.ComponentTypeKey,
+                Value = addrValue.Value
+            };
+        }
+
         /// <summary>
         /// From the model instance
         /// </summary>
@@ -117,7 +143,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.EntityAddressComponent Insert(DataContext context, Core.Model.Entities.EntityAddressComponent data, IPrincipal principal)
         {
-            data.ComponentType?.EnsureExists(context, principal);
+            if (data.ComponentType != null) data.ComponentType = data.ComponentType?.EnsureExists(context, principal) as Concept;
             data.ComponentTypeKey = data.ComponentType?.Key ?? data.ComponentTypeKey;
             return base.Insert(context, data, principal);
         }
@@ -127,9 +153,20 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.EntityAddressComponent Update(DataContext context, Core.Model.Entities.EntityAddressComponent data, IPrincipal principal)
         {
-            data.ComponentType?.EnsureExists(context, principal);
+            if (data.ComponentType != null) data.ComponentType = data.ComponentType?.EnsureExists(context, principal) as Concept;
+
             data.ComponentTypeKey = data.ComponentType?.Key ?? data.ComponentTypeKey;
             return base.Update(context, data, principal);
         }
+
+        /// <summary>
+        /// Get components from source
+        /// </summary>
+        public IEnumerable GetFromSource(DataContext context, Guid id, decimal? versionSequenceId, IPrincipal principal)
+        {
+            int tr = 0;
+            return this.Query(context, base.BuildSourceQuery<EntityAddressComponent>(id), 0, null, out tr, principal, false);
+        }
+
     }
 }

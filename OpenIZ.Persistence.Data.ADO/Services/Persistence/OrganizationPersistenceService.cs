@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-8-2
  */
+using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
@@ -52,7 +53,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.Entities.Organization Insert(DataContext context, Core.Model.Entities.Organization data, IPrincipal principal)
         {
             // ensure industry concept exists
-           data.IndustryConcept?.EnsureExists(context, principal);
+            if(data.IndustryConcept != null) data.IndustryConcept = data.IndustryConcept?.EnsureExists(context, principal) as Concept;
             data.IndustryConceptKey = data.IndustryConcept?.Key ?? data.IndustryConceptKey;
 
             return base.Insert(context, data, principal);
@@ -63,7 +64,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.Organization Update(DataContext context, Core.Model.Entities.Organization data, IPrincipal principal)
         {
-            data.IndustryConcept?.EnsureExists(context, principal);
+            if (data.IndustryConcept != null) data.IndustryConcept = data.IndustryConcept?.EnsureExists(context, principal) as Concept;
             data.IndustryConceptKey = data.IndustryConcept?.Key ?? data.IndustryConceptKey;
             return base.Update(context, data, principal);
         }

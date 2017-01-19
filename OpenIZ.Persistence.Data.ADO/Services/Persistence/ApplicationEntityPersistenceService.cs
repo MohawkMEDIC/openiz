@@ -18,6 +18,7 @@
  * Date: 2016-8-2
  */
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Security;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
@@ -54,7 +55,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.ApplicationEntity Insert(DataContext context, Core.Model.Entities.ApplicationEntity data, IPrincipal principal)
         {
-           data.SecurityApplication?.EnsureExists(context, principal);
+            if(data.SecurityApplication != null) data.SecurityApplication = data.SecurityApplication?.EnsureExists(context, principal) as SecurityApplication;
             data.SecurityApplicationKey = data.SecurityApplication?.Key ?? data.SecurityApplicationKey;
             return base.Insert(context, data, principal);
         }
@@ -64,7 +65,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.ApplicationEntity Update(DataContext context, Core.Model.Entities.ApplicationEntity data, IPrincipal principal)
         {
-            data.SecurityApplication?.EnsureExists(context, principal);
+            if(data.SecurityApplication != null) data.SecurityApplication = data.SecurityApplication?.EnsureExists(context, principal) as SecurityApplication;
             data.SecurityApplicationKey = data.SecurityApplication?.Key ?? data.SecurityApplicationKey;
             return base.Update(context, data, principal);
         }

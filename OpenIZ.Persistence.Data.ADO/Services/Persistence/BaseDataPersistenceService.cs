@@ -27,6 +27,7 @@ using OpenIZ.Core;
 using System.Linq.Expressions;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Exceptions;
+using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -53,7 +54,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <param name="data">Data.</param>
         public override TModel Insert(DataContext context, TModel data, IPrincipal principal)
         {
-            data.CreatedBy?.EnsureExists(context, principal);
+            if(data.CreatedBy != null) data.CreatedBy = data.CreatedBy?.EnsureExists(context, principal) as SecurityUser;
             data.CreatedByKey = data.CreatedBy?.Key ?? data.CreatedByKey;
 
             var domainObject = this.FromModelInstance(data, context, principal) as TDomain;
@@ -77,7 +78,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             var nvd = data as NonVersionedEntityData;
             if (nvd?.UpdatedBy != null)
             {
-                nvd.UpdatedBy?.EnsureExists(context, principal);
+                if (nvd.UpdatedBy != null) nvd.UpdatedBy = nvd.UpdatedBy?.EnsureExists(context, principal) as SecurityUser;
                 nvd.UpdatedByKey = nvd.UpdatedBy?.Key ?? nvd.UpdatedByKey;
             }
 
@@ -110,9 +111,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// Query the specified object ordering by creation time
         /// </summary>
         /// <returns></returns>
-        public override IEnumerable<TModel> Query(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal)
+        public override IEnumerable<TModel> Query(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
         {
-            var qresult = this.QueryInternal(context, query, offset, count, out totalResults);
+            var qresult = this.QueryInternal(context, query, offset, count, out totalResults, countResults);
             return qresult.Select(o => this.CacheConvert(o, context, principal));
         }
 
@@ -126,7 +127,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if (data.Key == Guid.Empty)
                 throw new AdoFormalConstraintException(AdoFormalConstraintType.NonIdentityUpdate);
 
-            data.ObsoletedBy?.EnsureExists(context, principal);
+            if(data.ObsoletedBy != null) data.ObsoletedBy = data.ObsoletedBy?.EnsureExists(context, principal) as SecurityUser;
             data.ObsoletedByKey = data.ObsoletedBy?.Key ?? data.ObsoletedByKey;
 
             // Current object

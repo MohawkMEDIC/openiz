@@ -117,12 +117,19 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Performs the actual query
         /// </summary>
-        public override IEnumerable<TModel> Query (DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal)
+        public override IEnumerable<TModel> Query (DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = false)
 		{
-            return this.QueryInternal(context, query, offset, count, out totalResults).Select(o=>this.CacheConvert(o, context, principal));
+            return this.QueryInternal(context, query, offset, count, out totalResults, countResults).Select(o=>this.CacheConvert(o, context, principal));
 		}
 
-        
+        /// <summary>
+        /// Get the specified object
+        /// </summary>
+        internal override TModel Get(DataContext context, Guid key, IPrincipal principal)
+        {
+            return this.CacheConvert(context.FirstOrDefault<TDomain>(o => o.Key == key), context, principal);
+        }
+
         #endregion
     }
 }

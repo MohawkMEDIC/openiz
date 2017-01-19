@@ -363,7 +363,6 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets the acts in which this entity participates
         /// </summary>
-        [AutoLoad()]
         [XmlElement("participation"), JsonProperty("participation")]
         public List<ActParticipation> Participations { get; set; }
 

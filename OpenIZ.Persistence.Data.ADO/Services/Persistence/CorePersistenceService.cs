@@ -8,6 +8,7 @@ using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Exceptions;
 using OpenIZ.Persistence.Data.ADO.Util;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -31,7 +32,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <param name="dataInstance">Data instance.</param>
         public override TModel ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
         {
-            var retVal = m_mapper.MapDomainInstance<TDomain, TModel>(dataInstance as TDomain);
+            var dInstance = (dataInstance as CompositeResult)?.Values.OfType<TDomain>().FirstOrDefault() ?? dataInstance as TDomain;
+            var retVal = m_mapper.MapDomainInstance<TDomain, TModel>(dInstance);
+            retVal.LoadAssociations(context, principal);
             this.m_tracer.TraceEvent(System.Diagnostics.TraceEventType.Verbose, 0, "Model instance {0} created", dataInstance);
 
             return retVal;
@@ -86,23 +89,66 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Performs the actual query
         /// </summary>
-        public override IEnumerable<TModel> Query(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal)
+        public override IEnumerable<TModel> Query(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
         {
-            return this.QueryInternal(context, query, offset, count, out totalResults).Select(o => this.CacheConvert(o, context, principal));
+            return this.QueryInternal(context, query, offset, count, out totalResults, countResults).Select(o => this.CacheConvert(o, context, principal));
         }
         
         /// <summary>
         /// Perform the query 
         /// </summary>
-        protected virtual IEnumerable<TQueryReturn> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults)
+        protected virtual IEnumerable<TQueryReturn> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, bool incudeCount = true)
         {
-            var domainQuery = QueryBuilder.CreateQuery(query);
-            totalResults = context.Count(domainQuery);
+            SqlStatement domainQuery = null;
+            try
+            {
+                domainQuery = new SqlStatement<TDomain>().SelectFrom();
+                Type lastJoined = typeof(TDomain);
+                if (typeof(CompositeResult).IsAssignableFrom(typeof(TQueryReturn)))
+                    foreach (var p in typeof(TQueryReturn).GenericTypeArguments)
+                        if (p != typeof(TDomain))
+                        {
+                            // Find the FK to join
+                            domainQuery.InnerJoin(lastJoined, p);
+                            lastJoined = p;
+                        }
+
+                domainQuery.Where<TDomain>(m_mapper.MapModelExpression<TModel, TDomain>(query));
+
+            }
+            catch (Exception e)
+            {
+                m_tracer.TraceEvent(System.Diagnostics.TraceEventType.Warning, e.HResult, "Will use slow query construction due to {0}", e.Message);
+                domainQuery = QueryBuilder.CreateQuery(query);
+            }
+
+            if (incudeCount)
+                totalResults = context.Count(domainQuery);
+            else
+                totalResults = 0;
+
             if (offset > 0)
                 domainQuery.Offset(offset);
             if (count.HasValue)
                 domainQuery.Limit(count.Value);
             return context.Query<TQueryReturn>(domainQuery);
+        }
+
+
+        /// <summary>
+        /// Build source query
+        /// </summary>
+        protected Expression<Func<TAssociation, bool>> BuildSourceQuery<TAssociation>(Guid sourceId) where TAssociation : ISimpleAssociation
+        {
+            return o => o.SourceEntityKey == sourceId;
+        }
+
+        /// <summary>
+        /// Build source query
+        /// </summary>
+        protected Expression<Func<TAssociation, bool>> BuildSourceQuery<TAssociation>(Guid sourceId, decimal? versionSequenceId) where TAssociation : IVersionedAssociation
+        {
+            return o => o.SourceEntityKey == sourceId && o.EffectiveVersionSequenceId <= versionSequenceId && (o.ObsoleteVersionSequenceId == null || o.ObsoleteVersionSequenceId >= versionSequenceId);
         }
 
         /// <summary>

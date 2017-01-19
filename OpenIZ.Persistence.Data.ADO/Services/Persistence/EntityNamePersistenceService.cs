@@ -31,14 +31,24 @@ using System.Threading.Tasks;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
 using OpenIZ.Persistence.Data.ADO.Data.Model.DataType;
+using OpenIZ.Core.Model.DataTypes;
+using System.Collections;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
     /// <summary>
     /// Entity name persistence service
     /// </summary>
-    public class EntityNamePersistenceService : IdentifiedPersistenceService<Core.Model.Entities.EntityName, DbEntityName>
+    public class EntityNamePersistenceService : IdentifiedPersistenceService<Core.Model.Entities.EntityName, DbEntityName>, IAdoAssociativePersistenceService
     {
+        /// <summary>
+        /// Get from source
+        /// </summary>
+        public IEnumerable GetFromSource(DataContext context, Guid id, decimal? versionSequenceId, IPrincipal principal)
+        {
+            int tr = 0;
+            return this.Query(context, base.BuildSourceQuery<EntityName>(id, versionSequenceId), 0, null, out tr, principal, false);
+        }
 
         /// <summary>
         /// Insert the specified object
@@ -46,7 +56,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.Entities.EntityName Insert(DataContext context, Core.Model.Entities.EntityName data, IPrincipal principal)
         {
             // Ensure exists
-            data.NameUse?.EnsureExists(context, principal);
+            if(data.NameUse != null) data.NameUse = data.NameUse?.EnsureExists(context, principal) as Concept;
             data.NameUseKey = data.NameUse?.Key ?? data.NameUseKey;
             var retVal = base.Insert(context, data, principal);
 
@@ -67,7 +77,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.Entities.EntityName Update(DataContext context, Core.Model.Entities.EntityName data, IPrincipal principal)
         {
             // Ensure exists
-            data.NameUse?.EnsureExists(context, principal);
+            if (data.NameUse != null) data.NameUse = data.NameUse?.EnsureExists(context, principal) as Concept;
+
             data.NameUseKey = data.NameUse?.Key ?? data.NameUseKey;
 
             var retVal = base.Update(context, data, principal);
@@ -90,7 +101,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
     /// <summary>
     /// Represents an entity name component persistence service
     /// </summary>
-    public class EntityNameComponentPersistenceService : IdentifiedPersistenceService<Core.Model.Entities.EntityNameComponent, DbEntityNameComponent>
+    public class EntityNameComponentPersistenceService : IdentifiedPersistenceService<Core.Model.Entities.EntityNameComponent, DbEntityNameComponent>, IAdoAssociativePersistenceService
     {
         /// <summary>
         /// From model instance
@@ -117,9 +128,20 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             return retVal;
         }
 
+        /// <summary>
+        /// Convert to model instance
+        /// </summary>
         public override EntityNameComponent ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
         {
-            return base.ToModelInstance(dataInstance, context, principal);
+            var nameComp = (dataInstance as CompositeResult)?.Values.OfType<DbEntityNameComponent>().FirstOrDefault() ?? dataInstance as DbEntityNameComponent;
+            var nameValue = (dataInstance as CompositeResult)?.Values.OfType<DbPhoneticValue>().FirstOrDefault() ?? context.FirstOrDefault<DbPhoneticValue>(o => o.Key == nameComp.ValueKey);
+            return new EntityNameComponent()
+            {
+                ComponentTypeKey = nameComp.ComponentTypeKey,
+                PhoneticAlgorithmKey = nameValue.PhoneticAlgorithmKey,
+                PhoneticCode = nameValue.PhoneticCode,
+                Value = nameValue.Value
+            };
         }
 
         /// <summary>
@@ -127,7 +149,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.EntityNameComponent Insert(DataContext context, Core.Model.Entities.EntityNameComponent data, IPrincipal principal)
         {
-            data.ComponentType?.EnsureExists(context, principal);
+            if(data.ComponentType != null) data.ComponentType = data.ComponentType?.EnsureExists(context, principal) as Concept;
             data.ComponentTypeKey = data.ComponentType?.Key ?? data.ComponentTypeKey;
             return base.Insert(context, data, principal);
         }
@@ -137,9 +159,19 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.EntityNameComponent Update(DataContext context, Core.Model.Entities.EntityNameComponent data, IPrincipal principal)
         {
-            data.ComponentType?.EnsureExists(context, principal);
+            if (data.ComponentType != null) data.ComponentType = data.ComponentType?.EnsureExists(context, principal) as Concept;
+
             data.ComponentTypeKey = data.ComponentType?.Key ?? data.ComponentTypeKey;
             return base.Update(context, data, principal);
+        }
+
+        /// <summary>
+        /// Get components from source
+        /// </summary>
+        public IEnumerable GetFromSource(DataContext context, Guid id, decimal? versionSequenceId, IPrincipal principal)
+        {
+            int tr = 0;
+            return this.Query(context, base.BuildSourceQuery<EntityNameComponent>(id), 0, null, out tr, principal, false);
         }
     }
 }

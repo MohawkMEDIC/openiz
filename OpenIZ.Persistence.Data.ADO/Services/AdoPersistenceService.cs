@@ -39,6 +39,7 @@ using OpenIZ.Core.Services;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Attributes;
 using OpenIZ.Persistence.Data.ADO.Services.Persistence;
+using System.Collections;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {
@@ -72,7 +73,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         public static IAdoPersistenceService GetPersister(Type tDomain)
         {
             IAdoPersistenceService retVal = null;
-            if(!s_persistenceCache.TryGetValue(tDomain, out retVal))
+            if (!s_persistenceCache.TryGetValue(tDomain, out retVal))
             {
                 var idpType = typeof(IDataPersistenceService<>).MakeGenericType(tDomain);
                 retVal = ApplicationContext.Current.GetService(idpType) as IAdoPersistenceService;
@@ -107,7 +108,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             }
         }
 
-        
+
         /// <summary>
         /// Generic versioned persister service for any non-customized persister
         /// </summary>
@@ -123,12 +124,12 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
-                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null)
+                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null || !rp.CanRead || !rp.CanWrite)
                         continue;
 
                     var instance = rp.GetValue(data);
                     if (instance != null)
-                        data.UpdateParentKeys(rp);
+                        rp.SetValue(data, DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal));
                 }
                 return base.Insert(context, data, principal);
             }
@@ -140,12 +141,13 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
-                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null)
+                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null || !rp.CanRead || !rp.CanWrite)
                         continue;
 
                     var instance = rp.GetValue(data);
                     if (instance != null)
-                        DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal);
+                        rp.SetValue(data, DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal));
+
                 }
                 return base.Update(context, data, principal);
             }
@@ -165,12 +167,13 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
-                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null)
+                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null || !rp.CanRead || !rp.CanWrite)
                         continue;
 
                     var instance = rp.GetValue(data);
                     if (instance != null)
-                        DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal);
+                        rp.SetValue(data, DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal));
+
                 }
                 return base.Insert(context, data, principal);
             }
@@ -182,16 +185,54 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
-                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null)
+                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null || !rp.CanRead || !rp.CanWrite)
                         continue;
 
                     var instance = rp.GetValue(data);
                     if (instance != null)
-                        DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal);
+                        rp.SetValue(data, DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal));
+
                 }
                 return base.Update(context, data, principal);
             }
         }
+
+        /// <summary>
+        /// Generic association persistence service
+        /// </summary>
+        internal class GenericIdentityAssociationPersistenceService<TModel, TDomain> :
+            GenericIdentityPersistenceService<TModel, TDomain>, IAdoAssociativePersistenceService
+            where TModel : IdentifiedData, ISimpleAssociation, new()
+            where TDomain : class, IDbIdentified, new()
+        {
+            /// <summary>
+            /// Get all the matching TModel object from source
+            /// </summary>
+            public IEnumerable GetFromSource(DataContext context, Guid sourceId, decimal? versionSequenceId, IPrincipal principal)
+            {
+                int tr = 0;
+                return this.Query(context, base.BuildSourceQuery<TModel>(sourceId), 0, null, out tr, principal, false);
+            }
+        }
+
+        /// <summary>
+        /// Generic association persistence service
+        /// </summary>
+        internal class GenericIdentityVersionedAssociationPersistenceService<TModel, TDomain> :
+            GenericIdentityPersistenceService<TModel, TDomain>, IAdoAssociativePersistenceService
+            where TModel : IdentifiedData, IVersionedAssociation, new()
+            where TDomain : class, IDbIdentified, new()
+        {
+            /// <summary>
+            /// Get all the matching TModel object from source
+            /// </summary>
+            public IEnumerable GetFromSource(DataContext context, Guid sourceId, decimal? versionSequenceId, IPrincipal principal)
+            {
+                int tr = 0;
+                return this.Query(context, base.BuildSourceQuery<TModel>(sourceId, versionSequenceId), 0, null, out tr, principal, false);
+            }
+        }
+
 
         // Tracer
         private TraceSource m_tracer = new TraceSource(AdoDataConstants.TraceSourceName);
@@ -235,15 +276,24 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             this.Starting?.Invoke(this, EventArgs.Empty);
             if (this.m_running) return true;
 
-            // Verify schema version
-            using (DataContext mdc = s_configuration.Provider.GetReadonlyConnection())
+            try
             {
-                Version dbVer = new Version(mdc.FirstOrDefault<String>("get_sch_vrsn")),
-                    oizVer = typeof(AdoPersistenceService).Assembly.GetName().Version;
+                // Verify schema version
+                using (DataContext mdc = s_configuration.Provider.GetReadonlyConnection())
+                {
+                    mdc.Open();
+                    Version dbVer = new Version(mdc.FirstOrDefault<String>("get_sch_vrsn")),
+                        oizVer = typeof(AdoPersistenceService).Assembly.GetName().Version;
 
-                if (oizVer < dbVer)
-                    throw new InvalidOperationException(String.Format("Invalid Schema Version. OpenIZ version {0} is older than the database schema version {1}", oizVer, dbVer));
-                this.m_tracer.TraceInformation("OpenIZ Schema Version {0}", dbVer);
+                    if (oizVer < dbVer)
+                        throw new InvalidOperationException(String.Format("Invalid Schema Version. OpenIZ version {0} is older than the database schema version {1}", oizVer, dbVer));
+                    this.m_tracer.TraceInformation("OpenIZ Schema Version {0}", dbVer);
+                }
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceEvent(TraceEventType.Error, e.HResult, "Error starting ADO provider: {0}", e);
+                return false;
             }
 
             // Iterate the persistence services
@@ -255,7 +305,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     ApplicationContext.Current.AddServiceProvider(t);
 
                     // Add to cache since we're here anyways
-                    s_persistenceCache.Add(t.GetGenericArguments()[0], Activator.CreateInstance(t) as IAdoPersistenceService);
+
+                    //s_persistenceCache.Add(t.GetGenericArguments()[0], Activator.CreateInstance(t) as IAdoPersistenceService);
                 }
                 catch (Exception e)
                 {
@@ -268,7 +319,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             {
                 this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Creating secondary model maps...");
 
-                var map = ModelMap.Load(typeof(AdoPersistenceService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Persistence.Data.ADO.Data.ModelMap.xml"));
+                var map = ModelMap.Load(typeof(AdoPersistenceService).GetTypeInfo().Assembly.GetManifestResourceStream(AdoDataConstants.MapResourceName));
                 foreach (var itm in map.Class)
                 {
                     // Is there a persistence service?
@@ -296,14 +347,24 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         // Add to cache since we're here anyways
                         s_persistenceCache.Add(modelClassType, Activator.CreateInstance(pclass) as IAdoPersistenceService);
                     }
-                    else
+                    else if (modelClassType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IIdentifiedEntity)) &&
+                        domainClassType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IDbIdentified)))
                     {
                         // Construct a type
-                        var pclass = typeof(GenericIdentityPersistenceService<,>);
+                        Type pclass = null;
+                        if (modelClassType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IVersionedAssociation)))
+                            pclass = typeof(GenericIdentityVersionedAssociationPersistenceService<,>);
+                        else if (modelClassType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(ISimpleAssociation)))
+                            pclass = typeof(GenericIdentityAssociationPersistenceService<,>);
+                        else
+                            pclass = typeof(GenericIdentityPersistenceService<,>);
+
                         pclass = pclass.MakeGenericType(modelClassType, domainClassType);
                         ApplicationContext.Current.AddServiceProvider(pclass);
                         s_persistenceCache.Add(modelClassType, Activator.CreateInstance(pclass) as IAdoPersistenceService);
                     }
+                    else
+                        this.m_tracer.TraceEvent(TraceEventType.Warning, 0, "Classmap {0}>{1} cannot be created, ignoring", modelClassType, domainClassType);
 
                 }
             }

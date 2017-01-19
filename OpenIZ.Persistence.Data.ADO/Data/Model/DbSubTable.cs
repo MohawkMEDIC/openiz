@@ -43,7 +43,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
         /// <summary>
         /// Gets or sets the parent key
         /// </summary>
-        [Column("ent_vrsn_id"), ForeignKey(typeof(DbEntityVersion), nameof(DbEntityVersion.Key)), PrimaryKey]
+        [Column("ent_vrsn_id"), ForeignKey(typeof(DbEntityVersion), nameof(DbEntityVersion.VersionKey)), PrimaryKey]
         public override Guid ParentKey { get; set; }
     }
 

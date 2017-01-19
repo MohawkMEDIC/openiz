@@ -43,7 +43,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             var dataAA = dataInstance as DbAssigningAuthority;
             var retVal = base.ToModelInstance(dataInstance, context, principal);
-            retVal.AuthorityScopeXml = context.Query<DbAuthorityScope>(o => o.AssigningAuthorityKey == retVal.Key.Value).Select(o=>o.ScopeConceptKey).ToList();
+            if(retVal != null)
+                retVal.AuthorityScopeXml = context.Query<DbAuthorityScope>(o => o.AssigningAuthorityKey == retVal.Key.Value).Select(o=>o.ScopeConceptKey).ToList();
             return retVal;
         }
 

@@ -44,9 +44,16 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.DataTypes.Concept ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
         {
-            var retVal = base.ToModelInstance(dataInstance, context, principal);
-            var de = dataInstance as DbConceptVersion;
+            var dbConceptVersion = (dataInstance as CompositeResult)?.Values.OfType<DbConceptVersion>().FirstOrDefault() ?? dataInstance as DbConceptVersion;
+            var retVal = base.ToModelInstance(dbConceptVersion, context, principal);
+
+            if (dbConceptVersion != null)
+            {
+                var dbConcept = (dataInstance as CompositeResult)?.Values.OfType<DbConcept>().FirstOrDefault() ?? context.FirstOrDefault<DbConcept>(o => o.Key == dbConceptVersion.Key);
+                retVal.IsSystemConcept = dbConcept.IsReadonly;
+            }
             //retVal.ConceptSetsXml = de.Concept.ConceptSetMembers.Select(o => o.ConceptSetId).ToList();
+            //retVal.LoadAssociations(context, principal);
             return retVal;
         }
 
@@ -56,11 +63,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.DataTypes.Concept Insert(DataContext context, Core.Model.DataTypes.Concept data, IPrincipal principal)
         {
             data.StatusConceptKey = data.StatusConceptKey ?? StatusKeys.Active;
-            data.ClassKey = data.ClassKey == Guid.Empty ? ConceptClassKeys.Other : data.ClassKey;
+            data.ClassKey = data.ClassKey ?? ConceptClassKeys.Other;
 
             // Ensure exists
-            data.Class?.EnsureExists(context, principal);
-            data.StatusConcept?.EnsureExists(context, principal);
+            if(data.Class != null) data.Class = data.Class?.EnsureExists(context, principal) as ConceptClass;
+            if(data.StatusConcept != null) data.StatusConcept = data.StatusConcept?.EnsureExists(context, principal) as Concept;
             data.ClassKey = data.Class?.Key ?? data.ClassKey;
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
 
@@ -105,6 +112,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.DataTypes.Concept Update(DataContext context, Core.Model.DataTypes.Concept data, IPrincipal principal)
         {
+            if (data.Class != null) data.Class = data.Class?.EnsureExists(context, principal) as ConceptClass;
+            if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept?.EnsureExists(context, principal) as Concept;
+            data.ClassKey = data.Class?.Key ?? data.ClassKey;
+            data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
 
             var retVal = base.Update(context, data, principal);
 

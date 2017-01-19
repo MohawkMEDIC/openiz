@@ -18,6 +18,7 @@
  * Date: 2016-8-3
  */
 using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
@@ -54,8 +55,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Acts.SubstanceAdministration Insert(DataContext context, Core.Model.Acts.SubstanceAdministration data, IPrincipal principal)
         {
-           data.DoseUnit?.EnsureExists(context, principal);
-            data.Route?.EnsureExists(context, principal);
+            if(data.DoseUnit != null) data.DoseUnit = data.DoseUnit?.EnsureExists(context, principal) as Concept;
+            if(data.Route != null) data.Route = data.Route?.EnsureExists(context, principal) as Concept;
             data.DoseUnitKey = data.DoseUnit?.Key ?? data.DoseUnitKey;
             data.RouteKey = data.Route?.Key ?? data.RouteKey;
             return base.Insert(context, data, principal);
@@ -67,8 +68,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Acts.SubstanceAdministration Update(DataContext context, Core.Model.Acts.SubstanceAdministration data, IPrincipal principal)
         {
-            data.DoseUnit?.EnsureExists(context, principal);
-            data.Route?.EnsureExists(context, principal);
+            if (data.DoseUnit != null) data.DoseUnit = data.DoseUnit?.EnsureExists(context, principal) as Concept;
+            if (data.Route != null) data.Route = data.Route?.EnsureExists(context, principal) as Concept;
             data.DoseUnitKey = data.DoseUnit?.Key ?? data.DoseUnitKey;
             data.RouteKey = data.Route?.Key ?? data.RouteKey;
             return base.Update(context, data, principal);

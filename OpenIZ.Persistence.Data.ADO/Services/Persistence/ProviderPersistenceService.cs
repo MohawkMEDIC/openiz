@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-8-2
  */
+using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
@@ -67,7 +68,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Roles.Provider Insert(DataContext context, Core.Model.Roles.Provider data, IPrincipal principal)
         {
-           data.ProviderSpecialty?.EnsureExists(context, principal);
+            if(data.ProviderSpecialty != null) data.ProviderSpecialty = data.ProviderSpecialty?.EnsureExists(context, principal) as Concept;
             data.ProviderSpecialtyKey = data.ProviderSpecialty?.Key ?? data.ProviderSpecialtyKey;
 
             var inserted = this.m_personPersister.Insert(context, data, principal);
@@ -80,7 +81,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.Roles.Provider Update(DataContext context, Core.Model.Roles.Provider data, IPrincipal principal)
         {
             // Ensure exists
-            data.ProviderSpecialty?.EnsureExists(context, principal);
+            if (data.ProviderSpecialty != null) data.ProviderSpecialty = data.ProviderSpecialty?.EnsureExists(context, principal) as Concept;
             data.ProviderSpecialtyKey = data.ProviderSpecialty?.Key ?? data.ProviderSpecialtyKey;
 
             this.m_personPersister.Update(context, data, principal);

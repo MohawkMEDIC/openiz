@@ -117,7 +117,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        public abstract IEnumerable<TData> Query(DataContext context, Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal);
+        public abstract IEnumerable<TData> Query(DataContext context, Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true);
 
         /// <summary>
         /// Get the specified key.
@@ -152,9 +152,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 using (IDbTransaction tx = connection.BeginTransaction())
                     try
                     {
-                        SqlStatement statement = new SqlStatement<DbActVersion>().SelectFrom()
-                            .InnerJoin<DbActIdentifier>(o => o.Key, o => o.SourceKey)
-                            .Where<DbActVersion>(o => o.StatusConceptKey == StatusKeys.Active);
 
                         // Disable inserting duplicate classified objects
                        data.SetDelayLoad(false);
@@ -232,7 +229,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 using (IDbTransaction tx = connection.BeginTransaction())
                     try
                     {
-                        connection.Connection.Open();
+                        //connection.Connection.Open();
 
                         this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "UPDATE {0}", data);
 
@@ -293,7 +290,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 using (IDbTransaction tx = connection.BeginTransaction())
                     try
                     {
-                        connection.Connection.Open();
+                        //connection.Connection.Open();
 
                         this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "OBSOLETE {0}", data);
 
@@ -360,7 +357,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 using (var connection = m_configuration.Provider.GetReadonlyConnection())
                     try
                     {
-
+                        connection.Open();
                         this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "GET {0}", containerId);
 
                         var result = this.Get(connection, guidIdentifier.Id, principal);
@@ -444,6 +441,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             using (var connection = m_configuration.Provider.GetReadonlyConnection())
                 try
                 {
+                    connection.Open();
 
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "QUERY {0}", query);
 
@@ -538,6 +536,15 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         object IDataPersistenceService.Get(Guid id)
         {
             return this.Get(new Identifier<Guid>(id, Guid.Empty), AuthenticationContext.Current.Principal, false);
+        }
+
+        /// <summary>
+        /// Generic to model instance for other callers
+        /// </summary>
+        /// <returns></returns>
+        object IAdoPersistenceService.ToModelInstance(object domainInstance, DataContext context, IPrincipal principal)
+        {
+            return this.ToModelInstance(domainInstance, context, principal);
         }
 
         #region Event Handler Helpers

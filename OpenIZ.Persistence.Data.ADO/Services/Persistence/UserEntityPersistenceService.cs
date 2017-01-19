@@ -18,6 +18,7 @@
  * Date: 2016-8-2
  */
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Security;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
@@ -70,7 +71,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.UserEntity Insert(DataContext context, Core.Model.Entities.UserEntity data, IPrincipal principal)
         {
-           data.SecurityUser?.EnsureExists(context, principal);
+            if(data.SecurityUser != null) data.SecurityUser = data.SecurityUser?.EnsureExists(context, principal) as SecurityUser;
             data.SecurityUserKey = data.SecurityUser?.Key ?? data.SecurityUserKey;
             var inserted = this.m_personPersister.Insert(context, data, principal);
 
@@ -82,7 +83,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override Core.Model.Entities.UserEntity Update(DataContext context, Core.Model.Entities.UserEntity data, IPrincipal principal)
         {
-            data.SecurityUser?.EnsureExists(context, principal);
+            if (data.SecurityUser != null) data.SecurityUser = data.SecurityUser?.EnsureExists(context, principal) as SecurityUser;
             data.SecurityUserKey = data.SecurityUser?.Key ?? data.SecurityUserKey;
             this.m_personPersister.Update(context, data, principal);
             return base.Insert(context, data, principal);
