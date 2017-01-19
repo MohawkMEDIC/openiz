@@ -349,6 +349,7 @@ namespace OpenIZ.Persistence.Data.ADO.Util
             foreach (var itm in lValue)
             {
                 retVal.Append($"{tableAlias}.{columnData.Name}");
+                var semantic = " OR ";
                 var iValue = itm;
                 if (iValue is String)
                 {
@@ -356,18 +357,21 @@ namespace OpenIZ.Persistence.Data.ADO.Util
                     switch (sValue[0])
                     {
                         case '<':
+                            semantic = " AND ";
                             if (sValue[1] == '=')
                                 retVal.Append(" <= ?", CreateParameterValue(sValue.Substring(2), propertyInfo.PropertyType));
                             else
                                 retVal.Append(" < ?", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
                             break;
                         case '>':
+                            semantic = " AND ";
                             if (sValue[1] == '=')
                                 retVal.Append(" >= ?", CreateParameterValue(sValue.Substring(2), propertyInfo.PropertyType));
                             else
                                 retVal.Append(" > ?", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
                             break;
                         case '!':
+                            semantic = " AND ";
                             if (sValue.Equals("!null"))
                                 retVal.Append(" IS NOT NULL");
                             else
@@ -388,7 +392,7 @@ namespace OpenIZ.Persistence.Data.ADO.Util
                     retVal.Append(" = ? ", CreateParameterValue(iValue, propertyInfo.PropertyType));
 
                 if (lValue.IndexOf(itm) < lValue.Count - 1)
-                    retVal.Append(" OR ");
+                    retVal.Append(semantic);
             }
             retVal.Append(")");
 
