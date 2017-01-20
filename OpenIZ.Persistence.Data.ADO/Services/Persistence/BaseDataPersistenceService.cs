@@ -28,6 +28,8 @@ using System.Linq.Expressions;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Exceptions;
 using OpenIZ.Core.Model.Security;
+using OpenIZ.OrmLite;
+
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -76,7 +78,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override TModel Update(DataContext context, TModel data, IPrincipal principal)
         {
             var nvd = data as NonVersionedEntityData;
-            if (nvd?.UpdatedBy != null)
+            if (nvd != null)
             {
                 if (nvd.UpdatedBy != null) nvd.UpdatedBy = nvd.UpdatedBy?.EnsureExists(context, principal) as SecurityUser;
                 nvd.UpdatedByKey = nvd.UpdatedBy?.Key ?? nvd.UpdatedByKey;

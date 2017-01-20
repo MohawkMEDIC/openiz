@@ -40,20 +40,15 @@ namespace OpenIZ.Core.Model.DataTypes
         // Algorithm used to generate the code
         
         private PhoneticAlgorithm m_phoneticAlgorithm;
-
-        /// <summary>
-        /// Back-reference to reference term
-        /// </summary>
-        [XmlElement("source"), JsonProperty("source")]
-        public Guid?  ReferenceTermKey { get; set; }
-
+        
         /// <summary>
         /// Should serialize reference term key
         /// </summary>
-        public bool ShouldSerializeReferenceTermKey ()
+        public bool ShouldSerializeSourceEntityKey ()
         {
-            return ReferenceTermKey.HasValue;
+            return this.SourceEntityKey.HasValue;
         }
+
         /// <summary>
         /// Gets or sets the language code of the object
         /// </summary>
@@ -110,7 +105,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets the source entity key
         /// </summary>
-        [XmlIgnore, JsonIgnore]
+        [XmlElement("source"), JsonProperty("source")]
         public Guid? SourceEntityKey
         {
             get;set;

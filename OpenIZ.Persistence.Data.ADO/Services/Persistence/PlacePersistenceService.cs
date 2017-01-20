@@ -21,6 +21,7 @@ using OpenIZ.Core.Model.Entities;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
+using OpenIZ.OrmLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,6 +43,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
 
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Entities.Place>(entityVersionInstance, entityInstance, context, principal);
+            if (retVal == null) return null;
             retVal.IsMobile = placeInstance?.IsMobile == true;
             retVal.Lat = placeInstance?.Lat;
             retVal.Lng = placeInstance?.Lng;

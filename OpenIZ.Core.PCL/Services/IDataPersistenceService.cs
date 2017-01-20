@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -32,7 +34,10 @@ namespace OpenIZ.Core.Services
         /// </summary>
         Object Get(Guid id);
 
-
+        /// <summary>
+        /// Query based on the expression given
+        /// </summary>
+        IEnumerable Query(Expression query, int offset, int? count, out int totalResults);
     }
 
 }

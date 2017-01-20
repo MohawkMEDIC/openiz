@@ -1,4 +1,4 @@
-﻿namespace OpenIZ.Persistence.Data.ADO.Data.Model
+﻿namespace OpenIZ.OrmLite
 {
     /// <summary>
     /// Represents ADO loaded data

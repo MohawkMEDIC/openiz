@@ -22,6 +22,7 @@ using OpenIZ.Core.Model.Security;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
+using OpenIZ.OrmLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +44,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
 
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Entities.ApplicationEntity>(entityVersion, entity, context, principal);
+
+            if (retVal == null) return null;
+
             retVal.SecurityApplicationKey = applicationEntity.SecurityApplicationKey;
             retVal.SoftwareName = applicationEntity.SoftwareName;
             retVal.VersionName = applicationEntity.VersionName;

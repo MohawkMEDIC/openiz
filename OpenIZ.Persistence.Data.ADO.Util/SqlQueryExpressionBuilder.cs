@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Persistence.Data.ADO.Util
+namespace OpenIZ.OrmLite
 {
 
     /// <summary>
@@ -307,14 +307,17 @@ namespace OpenIZ.Persistence.Data.ADO.Util
                 default:
                     if (node.Expression != null)
                     {
+                        var expr = node.Expression;
+                        while (expr.NodeType == ExpressionType.Convert)
+                            expr = (expr as UnaryExpression)?.Operand;
                         // Ignore typeas
-                        switch (node.Expression.NodeType)
+                        switch (expr.NodeType)
                         {
                             case ExpressionType.Parameter:
                                 // Translate
-                                var tableMap = TableMapping.Get(node.Expression.Type);
+                                var tableMap = TableMapping.Get(expr.Type);
                                 var columnMap = tableMap.GetColumn(node.Member);
-                                this.Visit(node.Expression);
+                                this.Visit(expr);
                                 // Now write out the expression
                                 this.m_sqlStatement.Append($".{columnMap.Name}");
                                 break;
@@ -322,7 +325,7 @@ namespace OpenIZ.Persistence.Data.ADO.Util
                             case ExpressionType.TypeAs:
                             case ExpressionType.MemberAccess:
                                 // Ok, this is a constant member access.. so ets get the value
-                                var cons = this.GetConstantValue(node.Expression);
+                                var cons = this.GetConstantValue(expr);
                                 if (node.Member is PropertyInfo)
                                     this.m_sqlStatement.Append(" ? ", (node.Member as PropertyInfo).GetValue(cons));
                                 else if (node.Member is FieldInfo)

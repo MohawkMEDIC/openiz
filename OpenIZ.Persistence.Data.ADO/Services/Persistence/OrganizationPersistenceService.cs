@@ -22,6 +22,7 @@ using OpenIZ.Core.Model.Entities;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
+using OpenIZ.OrmLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +44,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public Core.Model.Entities.Organization ToModelInstance(DbOrganization orgInstance, DbEntityVersion dbEntityVersion, DbEntity dbEntity, DataContext context, IPrincipal principal)
         {
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Entities.Organization>(dbEntityVersion, dbEntity, context, principal);
+            if (retVal == null) return null;
             retVal.IndustryConceptKey = orgInstance?.IndustryConceptKey;
             return retVal;
         }

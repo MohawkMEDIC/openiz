@@ -41,10 +41,10 @@ using OpenIZ.Persistence.Data.ADO.Configuration;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using System.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
-using OpenIZ.Persistence.Data.ADO.Util;
 using OpenIZ.Persistence.Data.ADO.Data.Model.DataType;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Persistence.Data.ADO.Data;
+using OpenIZ.OrmLite;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {
@@ -363,7 +363,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         var result = this.Get(connection, guidIdentifier.Id, principal);
                         var postData = new PostRetrievalEventArgs<TData>(result, principal);
                         this.Retrieved?.Invoke(this, postData);
-                        result.SetDelayLoad(true);
+                        result?.SetDelayLoad(true);
 
                         return result;
 
@@ -449,7 +449,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     var postData = new PostQueryEventArgs<TData>(query, results.AsQueryable(), authContext);
                     this.Queried?.Invoke(this, postData);
 
-                    var retVal = postData.Results.AsParallel().ToList();
+                    var retVal = postData.Results.ToList();
                     retVal.ForEach((o) => o.SetDelayLoad(true)); // Enable delay load for items
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Returning {0}..{1} or {2} results", offset, offset + (count ?? 1000), totalCount);
 
@@ -546,6 +546,15 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         {
             return this.ToModelInstance(domainInstance, context, principal);
         }
+
+        /// <summary>
+        /// Perform generic query
+        /// </summary>
+        IEnumerable IDataPersistenceService.Query(Expression query, int offset, int? count, out int totalResults)
+        {
+            return this.Query((Expression<Func<TData, bool>>)query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
+        }
+
 
         #region Event Handler Helpers
 

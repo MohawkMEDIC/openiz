@@ -24,6 +24,8 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Caching.Memory.Configuration;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.Core.Model.Query;
+using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -81,7 +83,28 @@ namespace OpenIZ.Caching.Memory
             foreach (var t in this.m_configuration.Types)
             {
                 this.RegisterCacheType(t.Type);
-                
+                // TODO: Initialize the cache
+                ApplicationContext.Current.Started += (o, e) =>
+                {
+                    ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(x =>
+                    {
+                        var xt = (x as TypeCacheConfigurationInfo);
+                        this.m_tracer.TraceEvent(TraceEventType.Information, 0, "Initialize cache for {0}", xt.Type);
+                        var idpInstance = ApplicationContext.Current.GetService(typeof(IDataPersistenceService<>).MakeGenericType(xt.Type)) as IDataPersistenceService;
+                        if(idpInstance != null)
+                            foreach(var itm in xt.SeedQueries)
+                            {
+                                this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, itm);
+                                var query = typeof(QueryExpressionParser).GetGenericMethod("BuildLinqExpression", new Type[] { xt.Type }, new Type[] { typeof(NameValueCollection) }).Invoke(null, new object[] { NameValueCollection.ParseQueryString(itm) }) as Expression;
+                                int offset = 0, totalResults = 1;
+                                while (offset < totalResults)
+                                {
+                                    idpInstance.Query(query, offset, 100, out totalResults);
+                                    offset += 100;
+                                }
+                            }
+                    }, t);
+                };
             }
         }
 

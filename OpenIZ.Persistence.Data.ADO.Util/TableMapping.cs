@@ -1,4 +1,4 @@
-﻿using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+﻿using OpenIZ.OrmLite.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Persistence.Data.ADO.Util
+namespace OpenIZ.OrmLite
 {
     /// <summary>
     /// Table information tool
@@ -15,6 +15,9 @@ namespace OpenIZ.Persistence.Data.ADO.Util
     {
         // Hashmap
         private Dictionary<String, ColumnMapping> m_mappings = new Dictionary<string, ColumnMapping>();
+
+        // Tabl mappings 
+        private static Dictionary<Type, TableMapping> m_tableMappings = new Dictionary<Type, TableMapping>();
 
         /// <summary>
         /// ORM type model
@@ -50,6 +53,11 @@ namespace OpenIZ.Persistence.Data.ADO.Util
         /// </summary>
         public static TableMapping Get(Type t)
         {
+            TableMapping retVal = null;
+            if (!m_tableMappings.TryGetValue(t, out retVal))
+                lock (m_tableMappings)
+                    if (!m_tableMappings.ContainsKey(t))
+                        m_tableMappings.Add(t, new TableMapping(t));
             return new TableMapping(t);
         }
 

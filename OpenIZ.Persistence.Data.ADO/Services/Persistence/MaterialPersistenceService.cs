@@ -28,6 +28,8 @@ using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.OrmLite;
+
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -44,6 +46,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             where TModel : Core.Model.Entities.Material, new()
         {
             var retVal = this.m_entityPersister.ToModelInstance<TModel>(dbEntVersion, dbEnt, context, principal);
+            if (retVal == null) return null;
+
             retVal.ExpiryDate = dbMat.ExpiryDate;
             retVal.IsAdministrative = dbMat.IsAdministrative;
             retVal.Quantity = dbMat.Quantity;

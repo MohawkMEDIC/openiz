@@ -34,7 +34,8 @@ using System.Reflection;
 using OpenIZ.Core.Services;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Exceptions;
-using OpenIZ.Persistence.Data.ADO.Util;
+using OpenIZ.OrmLite;
+
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -127,7 +128,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         internal override TModel Get(DataContext context, Guid key, IPrincipal principal)
         {
-            return this.CacheConvert(context.FirstOrDefault<TDomain>(o => o.Key == key), context, principal);
+            var retVal = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(key);
+            if (retVal != null)
+                return retVal;
+            else
+                return this.CacheConvert(context.FirstOrDefault<TDomain>(o => o.Key == key), context, principal);
         }
 
         #endregion

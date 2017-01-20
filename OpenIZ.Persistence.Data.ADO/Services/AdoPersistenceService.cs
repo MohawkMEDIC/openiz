@@ -37,9 +37,10 @@ using OpenIZ.Persistence.Data.ADO.Configuration;
 using System.Threading;
 using OpenIZ.Core.Services;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
-using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.OrmLite;
 using OpenIZ.Persistence.Data.ADO.Services.Persistence;
 using System.Collections;
+using OpenIZ.OrmLite;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {
@@ -56,6 +57,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         // Cache
         private static Dictionary<Type, IAdoPersistenceService> s_persistenceCache = new Dictionary<Type, IAdoPersistenceService>();
 
+        // Query builder
+        private static QueryBuilder s_queryBuilder;
+
         /// <summary>
         /// Get configuration
         /// </summary>
@@ -66,6 +70,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// </summary>
         /// <returns></returns>
         public static ModelMapper GetMapper() { return s_mapper; }
+
+        /// <summary>
+        /// Get query builder
+        /// </summary>
+        public static QueryBuilder GetQueryBuilder()
+        {
+            return s_queryBuilder;
+        }
 
         /// <summary>
         /// Get the specified persister type
@@ -95,6 +107,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             try
             {
                 s_mapper = new ModelMapper(typeof(AdoPersistenceService).GetTypeInfo().Assembly.GetManifestResourceStream(AdoDataConstants.MapResourceName));
+                s_queryBuilder = new QueryBuilder(s_mapper);
             }
             catch (ModelMapValidationException ex)
             {
@@ -301,7 +314,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             {
                 try
                 {
-                    this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Loading {0}...", t.AssemblyQualifiedName);
+                    this.m_tracer.TraceEvent(TraceEventType.Information, 0, "Loading {0}...", t.AssemblyQualifiedName);
                     ApplicationContext.Current.AddServiceProvider(t);
 
                     // Add to cache since we're here anyways
@@ -317,7 +330,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             // Now iterate through the map file and ensure we have all the mappings, if a class does not exist create it
             try
             {
-                this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Creating secondary model maps...");
+                this.m_tracer.TraceEvent(TraceEventType.Information, 0, "Creating secondary model maps...");
 
                 var map = ModelMap.Load(typeof(AdoPersistenceService).GetTypeInfo().Assembly.GetManifestResourceStream(AdoDataConstants.MapResourceName));
                 foreach (var itm in map.Class)
@@ -387,14 +400,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
             // Attempt to cache concepts
             this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Caching concept dictionary...");
-            if (ApplicationContext.Current.GetService<IDataCachingService>() != null)
-                new Thread((o) =>
-                {
-                    int t;
-                    ApplicationContext.Current.GetService<IDataPersistenceService<Core.Model.DataTypes.Concept>>().Query(c => c.Key == c.Key, 0, 10000, null, out t);
-                    ApplicationContext.Current.GetService<IDataPersistenceService<Core.Model.DataTypes.ConceptSet>>().Query(c => c.Key == c.Key, 0, 1000, null, out t);
-
-                }).Start();
             this.m_running = true;
             this.Started?.Invoke(this, EventArgs.Empty);
 

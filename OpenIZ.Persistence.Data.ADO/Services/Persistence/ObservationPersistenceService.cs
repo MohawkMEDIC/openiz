@@ -26,6 +26,7 @@ using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.OrmLite;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -66,6 +67,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             where TObservation : Observation, new()
         {
             var retVal = m_actPersister.ToModelInstance<TObservation>(actVersionInstance, actInstance, context, principal);
+            if (retVal == null) return null;
+
             if (dataInstance.InterpretationConceptKey != null)
                 retVal.InterpretationConceptKey = dataInstance.InterpretationConceptKey;
 
@@ -108,6 +111,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public Core.Model.Acts.TextObservation ToModelInstance(DbTextObservation dataInstance, DbObservation obsInstance, DbActVersion actVersionInstance, DbAct actInstance, DataContext context, IPrincipal principal)
         {
             var retVal = this.m_observationPersistence.ToModelInstance<TextObservation>(obsInstance, actVersionInstance, actInstance, context, principal);
+            if (retVal == null) return null;
             retVal.Value = dataInstance.Value;
             return retVal;
         }
@@ -164,6 +168,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public Core.Model.Acts.CodedObservation ToModelInstance(DbCodedObservation dataInstance, DbObservation obsInstance, DbActVersion actVersionInstance, DbAct actInstance, DataContext context, IPrincipal principal)
         {
             var retVal = this.m_observationPersistence.ToModelInstance<CodedObservation>(obsInstance, actVersionInstance, actInstance, context, principal);
+            if (retVal == null) return null;
             if (dataInstance.Value != null)
                 retVal.ValueKey = dataInstance.Value;
             return retVal;
@@ -217,6 +222,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public Core.Model.Acts.QuantityObservation ToModelInstance(DbQuantityObservation dataInstance, DbObservation obsInstance, DbActVersion actVersionInstance, DbAct actInstance, DataContext context, IPrincipal principal)
         {
             var retVal = this.m_observationPersistence.ToModelInstance<QuantityObservation>(obsInstance, actVersionInstance, actInstance, context, principal);
+            if (retVal == null) return null;
             if (dataInstance.UnitOfMeasureKey != null)
                 retVal.UnitOfMeasureKey = dataInstance.UnitOfMeasureKey;
             retVal.Value = dataInstance.Value;

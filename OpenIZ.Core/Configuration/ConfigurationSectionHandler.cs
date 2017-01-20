@@ -65,8 +65,10 @@ namespace OpenIZ.Core.Configuration
             OpenIzConfiguration retVal = new OpenIzConfiguration();
 
             // Nodes
-            XmlElement securityNode = section.SelectSingleNode("./security") as XmlElement;
+            XmlElement securityNode = section.SelectSingleNode("./security") as XmlElement,
+                threadingNode = section.SelectSingleNode("./threading") as XmlElement;
 
+            retVal.ThreadPoolSize = Int32.Parse(threadingNode?.Attributes["poolSize"].Value ?? Environment.ProcessorCount.ToString());
             // Security?
             if (securityNode != null)
             {

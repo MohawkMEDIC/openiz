@@ -29,7 +29,8 @@ namespace OpenIZ.Persistence.Data.ADO.Test
                 if (!adoPersistenceService.IsRunning)
                 {
                     ApplicationContext.Current.Configuration.ServiceProviders.Add(typeof(LocalConfigurationManager));
-                    adoPersistenceService.Start();
+                    //adoPersistenceService.Start();
+                    ApplicationContext.Current.Start();
                 }
                 started = true;
             }

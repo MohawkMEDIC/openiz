@@ -353,7 +353,7 @@ namespace OpenIZ.Core.Model.Map
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Error converting {0}. {1}", expression, e.ToString());
+               // Debug.WriteLine("Error converting {0}. {1}", expression, e);
                 throw;
             }
         }

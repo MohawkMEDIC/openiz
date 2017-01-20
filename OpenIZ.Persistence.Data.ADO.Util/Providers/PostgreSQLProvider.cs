@@ -4,15 +4,12 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OpenIZ.Persistence.Data.ADO.Util;
 using System.Configuration;
 using System.Data.Common;
-using OpenIZ.Persistence.Data.ADO.Data.Model;
 using System.Linq.Expressions;
 using System.Diagnostics;
-using OpenIZ.Persistence.Data.ADO.Data;
 
-namespace OpenIZ.Persistence.Data.ADO.Providers
+namespace OpenIZ.OrmLite.Providers
 {
     /// <summary>
     /// Represents a IDbProvider for PostgreSQL
@@ -21,7 +18,7 @@ namespace OpenIZ.Persistence.Data.ADO.Providers
     {
 
         // Trace source
-        private TraceSource m_traceSource = new TraceSource(AdoDataConstants.TraceSourceName);
+        private TraceSource m_traceSource = new TraceSource(Constants.TraceSourceName);
 
         // DB provider factory
         private DbProviderFactory m_provider = null;
@@ -47,6 +44,9 @@ namespace OpenIZ.Persistence.Data.ADO.Providers
         /// <returns></returns>
         private DbProviderFactory GetProviderFactory()
         {
+            if (this.ConnectionString == null ||
+                this.ConnectionString.ProviderName == null)
+                throw new ConfigurationErrorsException("Missing connection string for ADO.NET provider");
             if (this.m_provider == null)
                 this.m_provider = DbProviderFactories.GetFactory(this.ConnectionString.ProviderName);
             return this.m_provider;

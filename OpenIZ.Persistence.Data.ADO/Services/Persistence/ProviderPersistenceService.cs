@@ -22,6 +22,7 @@ using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Roles;
+using OpenIZ.OrmLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,6 +46,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public Core.Model.Roles.Provider ToModelInstance(DbProvider providerInstance, DbPerson personInstance, DbEntityVersion entityVersionInstance, DbEntity entityInstance, DataContext context, IPrincipal principal)
         {
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Roles.Provider>(entityVersionInstance, entityInstance, context, principal);
+            if (retVal == null) return null;
 
             retVal.DateOfBirth = personInstance?.DateOfBirth;
 

@@ -27,6 +27,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
+using OpenIZ.OrmLite;
 
 namespace OpenIZ.Persistence.Data.PSQL.Security
 {

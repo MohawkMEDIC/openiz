@@ -1,15 +1,13 @@
-﻿using OpenIZ.Persistence.Data.ADO.Providers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
-using OpenIZ.Persistence.Data.ADO.Util;
 using System.Diagnostics;
+using OpenIZ.OrmLite.Providers;
 
-namespace OpenIZ.Persistence.Data.ADO.Data
+namespace OpenIZ.OrmLite
 {
     /// <summary>
     /// Represents a data context
@@ -25,13 +23,21 @@ namespace OpenIZ.Persistence.Data.ADO.Data
         // The provider
         private IDbProvider m_provider;
 
+        // Data dictionary
+        private Dictionary<String, Object> m_dataDictionary = new Dictionary<string, object>();
+
         // Trace source
-        private TraceSource m_traceSource = new TraceSource(AdoDataConstants.TraceSourceName);
+        private TraceSource m_traceSource = new TraceSource(Constants.TraceSourceName);
 
         /// <summary>
         /// Connection
         /// </summary>
         public IDbConnection Connection { get { return this.m_connection; } }
+
+        /// <summary>
+        /// Data dictionary
+        /// </summary>
+        public IDictionary<String, Object> Data { get { return this.m_dataDictionary; } }
 
         /// <summary>
         /// Current Transaction

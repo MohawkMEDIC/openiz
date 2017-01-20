@@ -31,6 +31,7 @@ using OpenIZ.Core.Services;
 using System.Linq.Expressions;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using OpenIZ.Persistence.Data.ADO.Data;
+using OpenIZ.OrmLite;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -46,6 +47,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             var dbConceptVersion = (dataInstance as CompositeResult)?.Values.OfType<DbConceptVersion>().FirstOrDefault() ?? dataInstance as DbConceptVersion;
             var retVal = base.ToModelInstance(dbConceptVersion, context, principal);
+
+            if (retVal == null) return null;
 
             if (dbConceptVersion != null)
             {

@@ -22,6 +22,8 @@ using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
+using OpenIZ.OrmLite;
+
 using System;
 using System.Linq;
 using System.Security.Principal;
@@ -40,6 +42,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public Core.Model.Acts.PatientEncounter ToModelInstance(DbPatientEncounter dbEnc, DbActVersion actVersionInstance, DbAct actInstance, DataContext context, IPrincipal principal)
         {
             var retVal = m_actPersister.ToModelInstance<Core.Model.Acts.PatientEncounter>(actVersionInstance, actInstance, context, principal);
+            if (retVal == null) return null;
 
             if (dbEnc.DischargeDispositionKey != null)
                 retVal.DischargeDispositionKey = dbEnc.DischargeDispositionKey;

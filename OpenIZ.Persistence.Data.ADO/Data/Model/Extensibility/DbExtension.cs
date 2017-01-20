@@ -17,7 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
-using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.OrmLite.Attributes;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
 using System;
@@ -55,7 +55,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility
         /// <summary>
         /// Gets or sets the display
         /// </summary>
-        [Column("exp_disp")]
+        [Column("ext_disp")]
         public String Display { get; set; }
 
     }

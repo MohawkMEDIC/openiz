@@ -22,6 +22,7 @@ using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
+using OpenIZ.OrmLite;
 using System;
 using System.Linq;
 using System.Security.Principal;
@@ -39,6 +40,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public Core.Model.Acts.SubstanceAdministration ToModelInstance(DbSubstanceAdministration sbadmInstance, DbActVersion actVersionInstance, DbAct actInstance, DataContext context, IPrincipal principal)
         {
             var retVal = m_actPersister.ToModelInstance<Core.Model.Acts.SubstanceAdministration>(actVersionInstance, actInstance, context, principal);
+            if (retVal == null) return null;
 
             if (sbadmInstance.DoseUnitConceptKey != null)
                 retVal.DoseUnitKey = sbadmInstance.DoseUnitConceptKey;

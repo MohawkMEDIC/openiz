@@ -12,6 +12,8 @@ using MARC.HI.EHRS.SVC.Core;
 using System.Reflection;
 using OpenIZ.Core.Model;
 using OpenIZ.Persistence.Data.ADO.Data;
+using OpenIZ.OrmLite;
+
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {

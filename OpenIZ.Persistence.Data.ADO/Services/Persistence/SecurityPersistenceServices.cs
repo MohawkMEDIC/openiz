@@ -30,7 +30,7 @@ using OpenIZ.Core.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Exceptions;
-using OpenIZ.Persistence.Data.ADO.Util;
+using OpenIZ.OrmLite;
 using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
@@ -58,6 +58,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             var dbUser = dataInstance as DbSecurityUser;
             var retVal = base.ToModelInstance(dataInstance, context, principal);
+            if (retVal == null) return null;
 
             var rolesQuery = new SqlStatement<DbSecurityUserRole>().SelectFrom()
                 .InnerJoin<DbSecurityRole>(o => o.RoleKey, o => o.Key)
@@ -127,6 +128,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.Security.SecurityRole ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
         {
             var retVal = base.ToModelInstance(dataInstance, context, principal);
+            if (retVal == null) return null;
 
             var policyQuery = new SqlStatement<DbSecurityRolePolicy>().SelectFrom()
                 .InnerJoin<DbSecurityPolicy>(o => o.PolicyKey, o => o.Key)
@@ -208,6 +210,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.Security.SecurityDevice ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
         {
             var retVal = base.ToModelInstance(dataInstance, context, principal);
+            if (retVal == null) return null;
             var policyQuery = new SqlStatement<DbSecurityDevicePolicy>().SelectFrom()
                 .InnerJoin<DbSecurityPolicy>(o => o.PolicyKey, o => o.Key)
                 .Where<DbSecurityDevicePolicy>(o => o.SourceKey == retVal.Key);
@@ -276,6 +279,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.Security.SecurityApplication ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
         {
             var retVal = base.ToModelInstance(dataInstance, context, principal);
+            if (retVal == null) return null;
             var policyQuery = new SqlStatement<DbSecurityApplicationPolicy>().SelectFrom()
                 .InnerJoin<DbSecurityPolicy>(o => o.PolicyKey, o => o.Key)
                 .Where<DbSecurityApplicationPolicy>(o => o.SourceKey == retVal.Key);

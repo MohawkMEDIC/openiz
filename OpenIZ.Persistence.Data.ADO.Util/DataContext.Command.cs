@@ -1,6 +1,4 @@
 ﻿using OpenIZ.Core.Model.Map;
-using OpenIZ.Persistence.Data.ADO.Data.Model;
-using OpenIZ.Persistence.Data.ADO.Util;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,7 +9,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Persistence.Data.ADO.Data
+namespace OpenIZ.OrmLite
 {
     /// <summary>
     /// Multi type result used when a result set is a join
@@ -397,7 +395,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
         /// <summary>
         /// Represents the count function
         /// </summary>
-        internal int Count(SqlStatement querySpec)
+        public int Count(SqlStatement querySpec)
         {
 #if DEBUG
             var sw = new Stopwatch();
@@ -459,6 +457,16 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                 this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "QUERY {0} executed in {1} ms", querySpec, sw.ElapsedMilliseconds);
             }
 #endif
+        }
+
+        /// <summary>
+        /// Adds data in a safe way
+        /// </summary>
+        public void AddData(string key, object value)
+        {
+            lock (this.m_dataDictionary)
+                if (!this.m_dataDictionary.ContainsKey(key))
+                    this.m_dataDictionary.Add(key, value);
         }
 
         /// <summary>
@@ -643,6 +651,14 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                 foreach (var itm in tableMap.Columns)
                 {
                     var itmValue = itm.SourceProperty.GetValue(value);
+
+                    if (itmValue == null ||
+                        itmValue.Equals(default(Guid)) ||
+                        itmValue.Equals(default(DateTime)) ||
+                        itmValue.Equals(default(DateTimeOffset)) ||
+                        itmValue.Equals(default(Decimal)))
+                        itmValue = null;
+
                     query.Append($"{itm.Name} = ? ", itmValue);
                     if (itm != tableMap.Columns.Last())
                         query.Append(",");

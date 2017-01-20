@@ -17,7 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
-using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.OrmLite.Attributes;
 using System;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.Security

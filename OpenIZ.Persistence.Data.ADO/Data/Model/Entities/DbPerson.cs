@@ -20,7 +20,7 @@
 using System;
 
 using OpenIZ.Core.Model.DataTypes;
-using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.OrmLite.Attributes;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
 {

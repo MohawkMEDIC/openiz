@@ -265,6 +265,10 @@ namespace OpenIZ.Core.Model
             {
                 retVal = type.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>()?.FirstOrDefault()?.ElementName == propertyName);
                 if(followReferences) retVal = type.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty == retVal.Name) ?? retVal;
+
+                if (retVal.Name.EndsWith("Xml"))
+                    retVal = type.GetRuntimeProperty(retVal.Name.Substring(0, retVal.Name.Length - 3));
+
                 lock (s_propertyCache)
                     if (!s_propertyCache.ContainsKey(key))
                         s_propertyCache.Add(key, retVal);

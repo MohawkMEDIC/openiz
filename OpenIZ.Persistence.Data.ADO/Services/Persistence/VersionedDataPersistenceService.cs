@@ -36,7 +36,7 @@ using System.Reflection;
 using System.Linq.Expressions;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Exceptions;
-using OpenIZ.Persistence.Data.ADO.Util;
+using OpenIZ.OrmLite;
 using MARC.HI.EHRS.SVC.Core.Event;
 using System.Diagnostics;
 using OpenIZ.Core.Exceptions;
@@ -96,7 +96,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             domainObject = context.Insert(domainObject);
             data.VersionSequence = domainObject.VersionSequenceId;
-            data.VersionKey = domainObject.Key;
+            data.VersionKey = domainObject.VersionKey;
             data.Key = domainObject.Key;
             data.CreationTime = (DateTimeOffset)domainObject.CreationTime;
             return data;
@@ -138,19 +138,19 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             // Client did not change on update, so we need to update!!!
             if (!data.VersionKey.HasValue ||
-               data.VersionKey.Value == existingObject.Key)
-                data.VersionKey = newEntityVersion.Key = Guid.NewGuid();
+               data.VersionKey.Value == existingObject.VersionKey)
+                data.VersionKey = newEntityVersion.VersionKey = Guid.NewGuid();
 
             data.VersionSequence = newEntityVersion.VersionSequenceId = null;
             newEntityVersion.Key = data.Key.Value;
-            data.PreviousVersionKey = newEntityVersion.ReplacesVersionKey = existingObject.Key;
+            data.PreviousVersionKey = newEntityVersion.ReplacesVersionKey = existingObject.VersionKey;
             data.CreatedByKey = newEntityVersion.CreatedByKey = data.CreatedByKey ?? user.Key;
             // Obsolete the old version 
             existingObject.ObsoletedByKey = data.CreatedByKey ?? user.Key;
             existingObject.ObsoletionTime = DateTime.Now;
             newEntityVersion = context.Insert<TDomain>(newEntityVersion);
-            existingObject = context.Update<TDomain>(existingObject);
-
+            nonVersionedObect = context.Update<TDomainKey>(nonVersionedObect);
+            context.Update(existingObject);
             // Pull database generated fields
             data.VersionSequence = newEntityVersion.VersionSequenceId;
             data.CreationTime = newEntityVersion.CreationTime;
@@ -175,7 +175,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             catch (Exception e)
             {
                 m_tracer.TraceEvent(System.Diagnostics.TraceEventType.Warning, e.HResult, "Will use slow query construction due to {0}", e.Message);
-                domainQuery = QueryBuilder.CreateQuery(query).Build();
+                domainQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query).Build();
             }
             domainQuery.OrderBy<TDomain>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
 
@@ -197,12 +197,18 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         internal override TModel Get(DataContext context, Guid key, IPrincipal principal)
         {
-            var domainQuery = new SqlStatement<TDomain>().SelectFrom()
-                .InnerJoin<TDomain, TDomainKey>(o => o.Key, o => o.Key)
-                .Where<TDomain>(o => o.Key == key && o.ObsoletionTime == null)
-                .OrderBy<TDomain>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
-            return this.CacheConvert(context.FirstOrDefault<CompositeResult<TDomain, TDomainKey>>(domainQuery), context, principal);
-
+            // Attempt to get a cahce item
+            var retVal = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(key);
+            if (retVal != null)
+                return retVal;
+            else
+            {
+                var domainQuery = new SqlStatement<TDomain>().SelectFrom()
+                    .InnerJoin<TDomain, TDomainKey>(o => o.Key, o => o.Key)
+                    .Where<TDomain>(o => o.Key == key && o.ObsoletionTime == null)
+                    .OrderBy<TDomain>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
+                return this.CacheConvert(context.FirstOrDefault<CompositeResult<TDomain, TDomainKey>>(domainQuery), context, principal);
+            }
         }
 
         /// <summary>
@@ -249,7 +255,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
                     var postData = new PostRetrievalEventArgs<TModel>(retVal, principal);
                     this.FireRetrieved(postData);
-                    retVal.SetDelayLoad(true);
+                    retVal?.SetDelayLoad(true);
 
                     return retVal;
 

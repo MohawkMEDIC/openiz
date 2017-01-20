@@ -24,6 +24,7 @@ using OpenIZ.Persistence.Data.ADO.Data.Model;
 using System.Security.Principal;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using OpenIZ.Persistence.Data.ADO.Data;
+using OpenIZ.OrmLite;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -46,11 +47,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
 	        var retVal = base.ToModelInstance(dataInstance, context, principal);
 
-	        retVal.Mnemonic = conceptSet.Mnemonic;
-	        retVal.Name = conceptSet.Name;
-	        retVal.Oid = conceptSet.Oid;
-	        retVal.Url = conceptSet.Url;
-            retVal.ConceptsXml = context.Query<DbConceptSetConceptAssociation>(o => o.ConceptSetKey == retVal.Key).Select(o => o.ConceptKey).ToList();
+            if (retVal != null)
+            {
+                retVal.Mnemonic = conceptSet.Mnemonic;
+                retVal.Name = conceptSet.Name;
+                retVal.Oid = conceptSet.Oid;
+                retVal.Url = conceptSet.Url;
+                retVal.ConceptsXml = context.Query<DbConceptSetConceptAssociation>(o => o.ConceptSetKey == retVal.Key).Select(o => o.ConceptKey).ToList();
+            }
 
             return retVal;
         }
