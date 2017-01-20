@@ -90,11 +90,17 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
 	public class DbManufacturedMaterial : DbEntitySubTable
 	{
 
-		/// <summary>
-		/// Gets or sets the lot number.
-		/// </summary>
-		/// <value>The lot number.</value>
-		[Column("lot_no")]
+        /// <summary>
+        /// Gets or sets the parent key
+        /// </summary>
+        [Column("ent_vrsn_id"), ForeignKey(typeof(DbMaterial), nameof(DbMaterial.ParentKey)), PrimaryKey, AlwaysJoin]
+        public override Guid ParentKey { get; set; }
+
+        /// <summary>
+        /// Gets or sets the lot number.
+        /// </summary>
+        /// <value>The lot number.</value>
+        [Column("lot_no")]
 		public String LotNumber {
 			get;
 			set;

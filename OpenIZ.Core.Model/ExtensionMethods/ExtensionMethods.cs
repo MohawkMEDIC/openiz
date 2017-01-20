@@ -139,7 +139,7 @@ namespace OpenIZ.Core.Model
         /// <param name="parm"></param>
         /// <param name="domainInstance"></param>
         /// <returns></returns>
-        public static Expression IsActive<TDomain>(this Expression me, TDomain domainInstance)
+        public static Expression IsActive(this Expression me, Object domainInstance)
         {
             // Extract boundary properties
             var effectiveVersionMethod = me.Type.GetTypeInfo().GenericTypeArguments[0].GetRuntimeProperty("EffectiveVersionSequenceId");
@@ -155,7 +155,7 @@ namespace OpenIZ.Core.Model
 
             // Create Where Expression
             var guardParameter = Expression.Parameter(me.Type.GetTypeInfo().GenericTypeArguments[0], "x");
-            var currentSequenceId = typeof(TDomain).GetRuntimeProperty("VersionSequenceId").GetValue(domainInstance);
+            var currentSequenceId = domainInstance?.GetType().GetRuntimeProperty("VersionSequenceId").GetValue(domainInstance);
             var bodyExpression = Expression.MakeBinary(ExpressionType.AndAlso,
                 Expression.MakeBinary(ExpressionType.LessThanOrEqual, Expression.MakeMemberAccess(guardParameter, effectiveVersionMethod), Expression.Constant(currentSequenceId)),
                 Expression.MakeBinary(ExpressionType.OrElse,

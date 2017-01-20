@@ -103,7 +103,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
     /// <summary>
     /// Entity address component persistence service
     /// </summary>
-    public class EntityAddressComponentPersistenceService : IdentifiedPersistenceService<Core.Model.Entities.EntityAddressComponent, DbEntityAddressComponent, CompositeResult<DbEntityNameComponent, DbEntityAddressComponentValue>>, IAdoAssociativePersistenceService
+    public class EntityAddressComponentPersistenceService : IdentifiedPersistenceService<Core.Model.Entities.EntityAddressComponent, DbEntityAddressComponent, CompositeResult<DbEntityAddressComponent, DbEntityAddressComponentValue>>, IAdoAssociativePersistenceService
     {
 
         /// <summary>

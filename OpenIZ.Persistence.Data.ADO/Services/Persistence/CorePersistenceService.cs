@@ -51,7 +51,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             var domainObject = this.FromModelInstance(data, context, principal) as TDomain;
 
             domainObject = context.Insert<TDomain>(domainObject);
-            data.CopyObjectData(this.ToModelInstance(domainObject, context, principal));
+
+            data.Key = (domainObject as IDbIdentified)?.Key;
+            //data.CopyObjectData(this.ToModelInstance(domainObject, context, principal));
+            //data.Key = domainObject.Key
             return data;
         }
 

@@ -324,7 +324,8 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                         pclass = pclass.MakeGenericType(modelClassType, domainClassType);
                         ApplicationContext.Current.AddServiceProvider(pclass);
                     }
-                    else
+                    else if (modelClassType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IIdentifiedEntity)) &&
+                        domainClassType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IDbIdentified)))
                     {
                         // Construct a type
                         var pclass = typeof(GenericIdentityPersistenceService<,>);

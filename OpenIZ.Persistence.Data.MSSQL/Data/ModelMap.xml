@@ -373,7 +373,7 @@
          domainClass="OpenIZ.Persistence.Data.MSSQL.Data.ReferenceTermDisplayName, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0">
     <property modelName="Key" domainName="ReferenceTermDisplayNameId"/>
     <property modelName="Tag" dontLoad="true" domainName="ReferenceTermDisplayNameId"/>
-    <property modelName="ReferenceTermKey" domainName="ReferenceTermId"/>
+    <property modelName="SourceEntityKey" domainName="ReferenceTermId"/>
     <collapseKey propertyName="CreatedByEntity" keyName="CreatedBy"/>
     <collapseKey propertyName="ObsoletedByEntity" keyName="ObsoletedBy"/>
     <collapseKey propertyName="PhoneticAlgorithm" keyName="PhoneticAlgorithmId"/>

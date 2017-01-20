@@ -128,7 +128,8 @@ namespace OpenIZ.OrmLite
 
                 // Add the heavy work to the cache
                 lock (s_joinCache)
-                    s_joinCache.Add($"{tablePrefix}.{typeof(TModel).Name}", new KeyValuePair<SqlStatement, List<TableMapping>>(selectStatement.Build(), scopedTables));
+                    if(!s_joinCache.ContainsKey($"{tablePrefix}.{typeof(TModel).Name}"))
+                        s_joinCache.Add($"{tablePrefix}.{typeof(TModel).Name}", new KeyValuePair<SqlStatement, List<TableMapping>>(selectStatement.Build(), scopedTables));
             }
             else
             {
