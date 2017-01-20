@@ -60,7 +60,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                         Key = o.Key
                     })
                     .ToList();
-            retVal.ProviderSpecialtyKey = providerInstance.Specialty;
+            retVal.ProviderSpecialtyKey = providerInstance?.Specialty;
 
             return retVal;
         }

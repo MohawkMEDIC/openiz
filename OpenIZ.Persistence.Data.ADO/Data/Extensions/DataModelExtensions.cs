@@ -169,7 +169,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
             {
                 if (existing != null)
                 {
-                    if(me.Key != existing.Key ||
+                    if (me.Key != existing.Key ||
                         vMe?.VersionKey != (existing as IVersionedEntity)?.VersionKey)
                         me.CopyObjectData(existing); // copy data into reference
                     return existing;
@@ -193,7 +193,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                 }
                 return existing;
             }
-            else // Insert
+            else if (existing == null) // Insert
             {
                 IIdentifiedEntity inserted = idpInstance.Insert(context, me, principal) as IIdentifiedEntity;
                 me.Key = inserted.Key;
@@ -202,6 +202,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                     vMe.VersionKey = (inserted as IVersionedEntity).VersionKey;
                 return inserted;
             }
+            return existing;
         }
 
         /// <summary>
@@ -261,18 +262,27 @@ namespace OpenIZ.Persistence.Data.ADO.Data
         /// </summary>
         public static void LoadAssociations<TModel>(this TModel me, DataContext context, IPrincipal principal) where TModel : IIdentifiedEntity
         {
+            // I duz not haz a chzbrgr?
             if (me == null)
                 return;
-            else if (context.Transaction != null)
+            else if (context.Transaction != null) // kk.. I haz a transaction
                 return;
 
 #if DEBUG
-            // Start stopwatch
+            /*
+             * Me neez all the timez
+
+               /\_/\
+               >^.^<.---.
+              _'-`-'     )\
+             (6--\ |--\ (`.`-.
+                 --'  --'  ``-'
+            */
             Stopwatch sw = new Stopwatch();
             sw.Start();
 #endif
 
-            // Cache get classification property
+            // Cache get classification property - thiz makez us fasters
             PropertyInfo classProperty = null;
             if (!s_classificationProperties.TryGetValue(typeof(TModel), out classProperty))
             {
@@ -287,6 +297,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
             // Classification property?
             String classValue = classProperty?.GetValue(me)?.ToString();
 
+            // Cache the props so future kitties can call it
             IEnumerable<PropertyInfo> properties = null;
             var propertyCacheKey = $"{me.GetType()}.FullName[{classValue}]";
             if (!s_runtimeProperties.TryGetValue(propertyCacheKey, out properties))
@@ -296,6 +307,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                     s_runtimeProperties.Add(propertyCacheKey, properties);
                 }
 
+            // Iterate over the properties and load the properties
             foreach (var pi in properties)
             {
                 // Map model type to domain
@@ -314,7 +326,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                     var listValue = Activator.CreateInstance(pi.PropertyType, assoc);
                     pi.SetValue(me, listValue);
                 }
-                else if(typeof(IIdentifiedEntity).IsAssignableFrom(pi.PropertyType)) // Single
+                else if (typeof(IIdentifiedEntity).IsAssignableFrom(pi.PropertyType)) // Single
                 {
                     // Single property, we want to execute a get on the key property
                     var redirectAtt = pi.GetCustomAttribute<SerializationReferenceAttribute>();
@@ -328,8 +340,9 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                         Guid.Empty.Equals(keyValue))
                         continue; // No key specified
 
+                    // This is kinda messy.. maybe iz to be changez
                     object value = null;
-                    if(!context.Data.TryGetValue(keyValue.ToString(), out value))
+                    if (!context.Data.TryGetValue(keyValue.ToString(), out value))
                     {
                         value = adoPersister.Get(context, (Guid)keyValue, principal);
                         context.AddData(keyValue.ToString(), value);
@@ -340,8 +353,8 @@ namespace OpenIZ.Persistence.Data.ADO.Data
             }
 #if DEBUG
             sw.Stop();
-            s_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Load associations for {0} took {1} ms", me,  sw.ElapsedMilliseconds);
-#endif 
+            s_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Load associations for {0} took {1} ms", me, sw.ElapsedMilliseconds);
+#endif
         }
     }
 }

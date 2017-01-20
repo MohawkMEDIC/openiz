@@ -593,7 +593,9 @@ namespace OpenIZ.Core.Model.Map
 
                 // Go through the via elements in the object map. This code traces a path 
                 // through the domain class instantiating any necessary associative entity
-                // classes. Example when a model entity is really two or three tables in the DB..
+                // Example when a model entity is really two or three tables in the DB..
+                // This piece of code does whatever is necessary to traverse the data model,
+                // kinda reminds me of a song:
                 // 🎶 Ah for just one time, I would take the northwest passage
                 // To find the hand of Franklin reaching for the Beaufort Sea.
                 // Tracing one warm line, through a land so wide and savage

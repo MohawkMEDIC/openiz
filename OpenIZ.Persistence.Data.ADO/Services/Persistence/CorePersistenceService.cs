@@ -104,6 +104,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             try
             {
                 domainQuery = new SqlStatement<TDomain>().SelectFrom();
+                var expression = m_mapper.MapModelExpression<TModel, TDomain>(query);
                 Type lastJoined = typeof(TDomain);
                 if (typeof(CompositeResult).IsAssignableFrom(typeof(TQueryReturn)))
                     foreach (var p in typeof(TQueryReturn).GenericTypeArguments)
@@ -114,7 +115,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                             lastJoined = p;
                         }
 
-                domainQuery.Where<TDomain>(m_mapper.MapModelExpression<TModel, TDomain>(query));
+                domainQuery.Where<TDomain>(expression);
 
             }
             catch (Exception e)

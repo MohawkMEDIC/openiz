@@ -37,7 +37,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility
 		/// </summary>
 		/// <value>The extension identifier.</value>
 		[Column ("ext_typ_id"), ForeignKey(typeof(DbExtensionType), nameof(DbExtensionType.Key))]
-		public Guid ExtensionTypeKey {
+		public Guid ExtensionTypeKey { 
 			get;
 			set;
 		}

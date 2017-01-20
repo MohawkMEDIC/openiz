@@ -108,14 +108,23 @@ namespace OpenIZ.OrmLite
             if (!s_joinCache.TryGetValue($"{tablePrefix}.{typeof(TModel).Name}", out cacheHit))
             {
                 selectStatement = new SqlStatement($" FROM {tableMap.TableName} AS {tablePrefix}{tableMap.TableName} ");
-                
+
+                Stack<TableMapping> fkStack = new Stack<TableMapping>();
+                fkStack.Push(tableMap);
                 // Always join tables?
-                foreach (var jt in tableMap.Columns.Where(o => o.IsAlwaysJoin))
+                do
                 {
-                    var fkAtt = TableMapping.Get(jt.ForeignKey.Table).GetColumn(jt.ForeignKey.Column);
-                    selectStatement.Append($"INNER JOIN {fkAtt.Table.TableName} AS {tablePrefix}{fkAtt.Table.TableName} ON ({tablePrefix}{jt.Table.TableName}.{jt.Name} = {tablePrefix}{fkAtt.Table.TableName}.{fkAtt.Name}) ");
-                    scopedTables.Add(fkAtt.Table);
-                }
+                    var dt = fkStack.Pop();
+                    foreach (var jt in dt.Columns.Where(o => o.IsAlwaysJoin))
+                    {
+                        var fkTbl = TableMapping.Get(jt.ForeignKey.Table);
+                        var fkAtt = fkTbl.GetColumn(jt.ForeignKey.Column);
+                        selectStatement.Append($"INNER JOIN {fkAtt.Table.TableName} AS {tablePrefix}{fkAtt.Table.TableName} ON ({tablePrefix}{jt.Table.TableName}.{jt.Name} = {tablePrefix}{fkAtt.Table.TableName}.{fkAtt.Name}) ");
+                        if (!scopedTables.Contains(fkTbl))
+                            fkStack.Push(fkTbl);
+                        scopedTables.Add(fkAtt.Table);
+                    }
+                } while (fkStack.Count > 0);
 
                 // Add the heavy work to the cache
                 lock (s_joinCache)
@@ -151,7 +160,7 @@ namespace OpenIZ.OrmLite
             // Where clause
             SqlStatement whereClause = new SqlStatement();
             List<SqlStatement> cteStatements = new List<SqlStatement>();
-            
+
             // Construct
             while (workingParameters.Count > 0)
             {
@@ -193,7 +202,7 @@ namespace OpenIZ.OrmLite
                         // map and get ORM def'n
                         var subTableType = m_mapper.MapModelType(propertyType);
                         var subTableMap = TableMapping.Get(subTableType);
-                        var linkColumn = subTableMap.Columns.SingleOrDefault(o => scopedTables.Any(s=>s.OrmType == o.ForeignKey?.Table));
+                        var linkColumn = subTableMap.Columns.SingleOrDefault(o => scopedTables.Any(s => s.OrmType == o.ForeignKey?.Table));
                         if (linkColumn == null) throw new InvalidOperationException($"Cannot find foreign key reference to table {tableMap.TableName} in {subTableMap.TableName}");
 
                         var guardConditions = queryParms.GroupBy(o => re.Match(o.Key).Groups[GuardRegexGroup].Value);
@@ -287,7 +296,7 @@ namespace OpenIZ.OrmLite
                     return "sq0";
             }
         }
-        
+
         /// <summary>
         /// Create a single where condition based on the property info
         /// </summary>
@@ -301,7 +310,7 @@ namespace OpenIZ.OrmLite
             var propertyInfo = typeof(TModel).GetXmlProperty(propertyPath);
             if (propertyInfo == null)
                 throw new ArgumentOutOfRangeException(propertyPath);
-            PropertyInfo domainProperty = scopedTables.Select(o=> { tableMapping = o; return m_mapper.MapModelProperty(typeof(TModel), o.OrmType, propertyInfo); }).FirstOrDefault(o=>o != null);
+            PropertyInfo domainProperty = scopedTables.Select(o => { tableMapping = o; return m_mapper.MapModelProperty(typeof(TModel), o.OrmType, propertyInfo); }).FirstOrDefault(o => o != null);
 
             // Now map the property path
             var tableAlias = $"{tablePrefix}{tableMapping.TableName}";

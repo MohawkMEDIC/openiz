@@ -112,7 +112,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             var dbEntityVersion = (dataInstance as CompositeResult)?.Values.OfType<DbEntityVersion>().FirstOrDefault() ?? dataInstance as DbEntityVersion ?? context.FirstOrDefault<DbEntityVersion>(o => o.VersionKey == (dataInstance as DbEntitySubTable).ParentKey);
             var dbEntity = (dataInstance as CompositeResult)?.Values.OfType<DbEntity>().FirstOrDefault() ?? context.FirstOrDefault<DbEntity>(o => o.Key == dbEntityVersion.Key);
             Entity retVal = null;
-             
+
             switch (dbEntity.ClassConceptKey.ToString().ToUpper())
             {
                 case Device:
@@ -132,12 +132,23 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                         principal);
                     break;
                 case Person:
-                    retVal = new PersonPersistenceService().ToModelInstance(
-                        (dataInstance as CompositeResult)?.Values.OfType<DbPerson>().FirstOrDefault() ?? context.FirstOrDefault<DbPerson>(o => o.ParentKey == dbEntityVersion.VersionKey),
-                        dbEntityVersion,
-                        dbEntity,
-                        context,
-                        principal);
+                    var ue = (dataInstance as CompositeResult)?.Values.OfType<DbUserEntity>().FirstOrDefault() ?? context.FirstOrDefault<DbUserEntity>(o => o.ParentKey == dbEntityVersion.VersionKey);
+
+                    if (ue != null)
+                        retVal = new UserEntityPersistenceService().ToModelInstance(
+                            ue,
+                            (dataInstance as CompositeResult)?.Values.OfType<DbPerson>().FirstOrDefault() ?? context.FirstOrDefault<DbPerson>(o => o.ParentKey == dbEntityVersion.VersionKey),
+                            dbEntityVersion,
+                            dbEntity,
+                            context,
+                            principal);
+                    else
+                        retVal = new PersonPersistenceService().ToModelInstance(
+                            (dataInstance as CompositeResult)?.Values.OfType<DbPerson>().FirstOrDefault() ?? context.FirstOrDefault<DbPerson>(o => o.ParentKey == dbEntityVersion.VersionKey),
+                            dbEntityVersion,
+                            dbEntity,
+                            context,
+                            principal);
                     break;
                 case Patient:
                     retVal = new PatientPersistenceService().ToModelInstance(
@@ -216,10 +227,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
 
             // Ensure FK exists
-            if(data.ClassConcept != null) data.ClassConcept = data.ClassConcept?.EnsureExists(context, principal) as Concept;
-            if(data.DeterminerConcept != null) data.DeterminerConcept = data.DeterminerConcept?.EnsureExists(context, principal) as Concept;
-            if(data.StatusConcept != null) data.StatusConcept = data.StatusConcept?.EnsureExists(context, principal) as Concept;
-            if(data.TypeConcept != null) data.TypeConcept = data.TypeConcept?.EnsureExists(context, principal) as Concept;
+            if (data.ClassConcept != null) data.ClassConcept = data.ClassConcept?.EnsureExists(context, principal) as Concept;
+            if (data.DeterminerConcept != null) data.DeterminerConcept = data.DeterminerConcept?.EnsureExists(context, principal) as Concept;
+            if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept?.EnsureExists(context, principal) as Concept;
+            if (data.TypeConcept != null) data.TypeConcept = data.TypeConcept?.EnsureExists(context, principal) as Concept;
             data.TypeConceptKey = data.TypeConcept?.Key ?? data.TypeConceptKey;
             data.DeterminerConceptKey = data.DeterminerConcept?.Key ?? data.DeterminerConceptKey;
             data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;

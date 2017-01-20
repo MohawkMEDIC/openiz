@@ -43,6 +43,8 @@ using OpenIZ.Core.Exceptions;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
+using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -309,17 +311,17 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
                     // We need to figure out what the current version of the source item is ... 
                     // Since this is a versioned association an a versioned association only exists between Concept, Act, or Entity
-                    if (itm is DbConceptVersionedAssociation)
+                    if (itm is VersionedAssociation<Concept>)
                     {
                         versionQuery = new SqlStatement<DbConceptVersion>().SelectFrom().Where(o => o.VersionKey == source.Key && !o.ObsoletionTime.HasValue).OrderBy<DbConceptVersion>(o => o.VersionSequenceId);
                         currentVersion = context.FirstOrDefault<DbConceptVersion>(versionQuery);
                     }
-                    else if (itm is DbActVersionedAssociation)
+                    else if (itm is VersionedAssociation<Act>)
                     {
                         versionQuery = new SqlStatement<DbActVersion>().SelectFrom().Where(o => o.Key == source.Key && !o.ObsoletionTime.HasValue).OrderBy<DbActVersion>(o => o.VersionSequenceId);
                         currentVersion = context.FirstOrDefault<DbActVersion>(versionQuery);
                     }
-                    else if (itm is DbEntityVersion)
+                    else if (itm is VersionedAssociation<Entity>)
                     {
                         versionQuery = new SqlStatement<DbEntityVersion>().SelectFrom().Where(o => o.Key == source.Key && !o.ObsoletionTime.HasValue).OrderBy<DbEntityVersion>(o => o.VersionSequenceId);
                         currentVersion = context.FirstOrDefault<DbEntityVersion>(versionQuery);

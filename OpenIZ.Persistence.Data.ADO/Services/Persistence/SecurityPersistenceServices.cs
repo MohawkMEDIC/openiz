@@ -140,7 +140,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 .InnerJoin<DbSecurityUser>(o => o.UserKey, o => o.Key)
                 .Where<DbSecurityUserRole>(o => o.RoleKey == retVal.Key);
 
-            retVal.Users = context.Query<SecurityUser>(rolesQuery).Select(o => m_mapper.MapDomainInstance<SecurityUser, Core.Model.Security.SecurityUser>(o)).ToList();
+            retVal.Users = context.Query<DbSecurityUser>(rolesQuery).Select(o => m_mapper.MapDomainInstance<DbSecurityUser, Core.Model.Security.SecurityUser>(o)).ToList();
 
             return retVal;
         }

@@ -306,7 +306,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             catch (Exception e)
             {
                 this.m_tracer.TraceEvent(TraceEventType.Error, e.HResult, "Error starting ADO provider: {0}", e);
-                return false;
+                throw;
             }
 
             // Iterate the persistence services

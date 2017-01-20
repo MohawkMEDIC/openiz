@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Persistence", "Persistence", "{2914F4AD-4661-4C73-ADB6-B1D91C11C569}"
 EndProject
@@ -127,7 +127,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Persistence.Data.ADO
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Persistence.Data.ADO.Test", "OpenIZ.Persistence.Data.ADO.Test\OpenIZ.Persistence.Data.ADO.Test.csproj", "{11407ADB-E336-4C0C-AF8E-EA6B601BA69E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.OrmLite", "OpenIZ.Persistence.Data.ADO.Util\OpenIZ.OrmLite.csproj", "{407C87E6-A1F3-45E6-B883-A8176B350817}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.OrmLite", "OpenIZ.OrmLite\OpenIZ.OrmLite.csproj", "{407C87E6-A1F3-45E6-B883-A8176B350817}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
