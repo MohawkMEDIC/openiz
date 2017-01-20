@@ -43,6 +43,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
 
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Entities.Place>(entityVersionInstance, entityInstance, context, principal);
+            if (retVal == null) return null;
             retVal.IsMobile = placeInstance?.IsMobile == true;
             retVal.Lat = placeInstance?.Lat;
             retVal.Lng = placeInstance?.Lng;

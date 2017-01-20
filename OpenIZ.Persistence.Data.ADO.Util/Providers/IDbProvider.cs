@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.OrmLite.Util.Providers
+namespace OpenIZ.OrmLite.Providers
 {
     /// <summary>
     /// Data provider

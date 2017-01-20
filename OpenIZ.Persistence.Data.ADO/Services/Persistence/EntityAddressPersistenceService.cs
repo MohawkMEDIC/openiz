@@ -103,7 +103,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
     /// <summary>
     /// Entity address component persistence service
     /// </summary>
-    public class EntityAddressComponentPersistenceService : IdentifiedPersistenceService<Core.Model.Entities.EntityAddressComponent, DbEntityAddressComponent>, IAdoAssociativePersistenceService
+    public class EntityAddressComponentPersistenceService : IdentifiedPersistenceService<Core.Model.Entities.EntityAddressComponent, DbEntityAddressComponent, CompositeResult<DbEntityNameComponent, DbEntityAddressComponentValue>>, IAdoAssociativePersistenceService
     {
 
         /// <summary>
@@ -111,6 +111,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override EntityAddressComponent ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
         {
+            if (dataInstance == null) return null;
+
             var addrComp = (dataInstance as CompositeResult)?.Values.OfType<DbEntityAddressComponent>().FirstOrDefault() ?? dataInstance as DbEntityAddressComponent;
             var addrValue = (dataInstance as CompositeResult)?.Values.OfType<DbEntityAddressComponentValue>().FirstOrDefault() ?? context.FirstOrDefault<DbEntityAddressComponentValue>(o => o.Key == addrComp.ValueKey);
             return new EntityAddressComponent()

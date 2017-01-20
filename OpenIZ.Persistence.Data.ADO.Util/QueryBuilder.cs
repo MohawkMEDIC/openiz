@@ -107,25 +107,8 @@ namespace OpenIZ.OrmLite
             KeyValuePair<SqlStatement, List<TableMapping>> cacheHit;
             if (!s_joinCache.TryGetValue($"{tablePrefix}.{typeof(TModel).Name}", out cacheHit))
             {
-                if (selector == null || selector.Length == 0)
-                {
-                    skipParentJoin = false;
-                    selectStatement = new SqlStatement($"SELECT * FROM {tableMap.TableName} AS {tablePrefix}{tableMap.TableName} ");
-                }
-                else
-                {
-                    var columnList = String.Join(",", selector.Select(o =>
-                    {
-                        var rootCol = tableMap.GetColumn(o.SourceProperty);
-                        skipParentJoin &= rootCol != null;
-                        if (skipParentJoin)
-                            return $"{tablePrefix}{rootCol.Table.TableName}.{rootCol.Name}";
-                        else
-                            return $"{tablePrefix}{o.Table.TableName}.{o.Name}";
-                    }));
-                    selectStatement = new SqlStatement($"SELECT {columnList} FROM {tableMap.TableName} AS {tablePrefix}{tableMap.TableName} ");
-                }
-
+                selectStatement = new SqlStatement($" FROM {tableMap.TableName} AS {tablePrefix}{tableMap.TableName} ");
+                
                 // Always join tables?
                 foreach (var jt in tableMap.Columns.Where(o => o.IsAlwaysJoin))
                 {
@@ -140,11 +123,26 @@ namespace OpenIZ.OrmLite
             }
             else
             {
-                
                 selectStatement = cacheHit.Key.Build();
                 scopedTables = cacheHit.Value;
             }
 
+            // Column definitions
+            if (selector == null || selector.Length == 0)
+                selectStatement = new SqlStatement($"SELECT * ").Append(selectStatement);
+            else
+            {
+                var columnList = String.Join(",", selector.Select(o =>
+                {
+                    var rootCol = tableMap.GetColumn(o.SourceProperty);
+                    skipParentJoin &= rootCol != null;
+                    if (skipParentJoin)
+                        return $"{tablePrefix}{rootCol.Table.TableName}.{rootCol.Name}";
+                    else
+                        return $"{tablePrefix}{o.Table.TableName}.{o.Name}";
+                }));
+                selectStatement = new SqlStatement($"SELECT {columnList} ").Append(selectStatement);
+            }
             // We want to process each query and build WHERE clauses - these where clauses are based off of the JSON / XML names
             // on the model, so we have to use those for the time being before translating to SQL
             Regex re = new Regex(m_extractionRegex);
@@ -206,7 +204,7 @@ namespace OpenIZ.OrmLite
 
                             // Generate method
                             var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { propertyType }, new Type[] { subQuery.GetType(), typeof(String), typeof(ColumnMapping[]) });
-                            subQueryStatement.Append(genMethod.Invoke(null, new Object[] { subQuery, IncrementSubQueryAlias(tablePrefix), new ColumnMapping[] { linkColumn } }) as SqlStatement);
+                            subQueryStatement.Append(genMethod.Invoke(this, new Object[] { subQuery, IncrementSubQueryAlias(tablePrefix), new ColumnMapping[] { linkColumn } }) as SqlStatement);
 
                             // TODO: GUARD CONDITION HERE!!!!
 
@@ -243,7 +241,7 @@ namespace OpenIZ.OrmLite
 
                         // Create the sub-query
                         var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { subProp.PropertyType }, new Type[] { subQuery.GetType(), typeof(ColumnMapping[]) });
-                        SqlStatement subQueryStatement = genMethod.Invoke(null, new Object[] { subQuery, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
+                        SqlStatement subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
                         cteStatements.Add(new SqlStatement($"{tablePrefix}cte{cteStatements.Count} AS (").Append(subQueryStatement).Append(")"));
                         //subQueryStatement.And($"{tablePrefix}{tableMapping.TableName}.{linkColumn.Name} = {sqName}{fkTableDef.TableName}.{fkColumnDef.Name} ");
 

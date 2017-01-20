@@ -51,6 +51,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
 
             var retVal = this.m_materialPersister.ToModelInstance<Core.Model.Entities.ManufacturedMaterial>(dbMat, dbEntityVersion, dbEntity, context, principal);
+            if (retVal == null) return null;
+
             retVal.LotNumber = dbMmat.LotNumber;
             return retVal;
 

@@ -40,6 +40,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public Core.Model.Acts.SubstanceAdministration ToModelInstance(DbSubstanceAdministration sbadmInstance, DbActVersion actVersionInstance, DbAct actInstance, DataContext context, IPrincipal principal)
         {
             var retVal = m_actPersister.ToModelInstance<Core.Model.Acts.SubstanceAdministration>(actVersionInstance, actInstance, context, principal);
+            if (retVal == null) return null;
 
             if (sbadmInstance.DoseUnitConceptKey != null)
                 retVal.DoseUnitKey = sbadmInstance.DoseUnitConceptKey;

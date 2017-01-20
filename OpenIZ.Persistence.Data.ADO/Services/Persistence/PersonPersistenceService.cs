@@ -70,6 +70,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
 
             var retVal = m_entityPersister.ToModelInstance<Person>(entityVersionInstance, entityInstance, context, principal);
+            if (retVal == null) return null;
             retVal.DateOfBirth = personInstance?.DateOfBirth;
 
             // Reverse lookup

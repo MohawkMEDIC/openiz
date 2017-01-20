@@ -60,9 +60,12 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public virtual TActType ToModelInstance<TActType>(DbActVersion dbInstance, DbAct actInstance, DataContext context, IPrincipal principal) where TActType : Core.Model.Acts.Act, new()
         {
+
             var retVal = m_mapper.MapDomainInstance<DbActVersion, TActType>(dbInstance);
-            retVal.ClassConceptKey = actInstance.ClassConceptKey;
-            retVal.MoodConceptKey = actInstance.MoodConceptKey;
+            if (retVal == null) return null;
+
+            retVal.ClassConceptKey = actInstance?.ClassConceptKey;
+            retVal.MoodConceptKey = actInstance?.MoodConceptKey;
             var template = context.FirstOrDefault<DbTemplateDefinition>(o => o.Key == actInstance.TemplateKey);
             retVal.Template = m_mapper.MapDomainInstance<DbTemplateDefinition, TemplateDefinition>(template);
 
@@ -75,6 +78,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.Acts.Act ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
         {
             // Alright first, which type am I mapping to?
+
+            if(dataInstance == null) return null;
+
             DbActVersion dbActVersion = (dataInstance as CompositeResult)?.Values.OfType<DbActVersion>().FirstOrDefault() ?? dataInstance as DbActVersion ?? context.FirstOrDefault<DbActVersion>(o => o.VersionKey == (dataInstance as DbActSubTable).ParentKey);
             DbAct dbAct = (dataInstance as CompositeResult)?.Values.OfType<DbAct>().FirstOrDefault() ?? context.FirstOrDefault<DbAct>(o => o.Key == dbActVersion.Key);
             Act retVal = null;

@@ -197,7 +197,8 @@ namespace OpenIZ.Persistence.Data.ADO.Test
 
             // Assert
             Assert.AreEqual(StatusKeys.Obsolete, afterObsolete.StatusConcept.Key);
-
+            Assert.IsNotNull(afterObsolete.PreviousVersionKey);
+            Assert.IsNotNull(afterObsolete.PreviousVersion);
 
         }
 
@@ -222,7 +223,7 @@ namespace OpenIZ.Persistence.Data.ADO.Test
 
             // Query 
             var query = base.DoTestQuery(o => o.CreationTime > DateTimeOffset.MinValue && o.ClassConcept.Key == EntityClassKeys.Place && o.Names.Any(n => n.NameUse.Key == NameUseKeys.Assigned && n.Component.Any(c => c.Value == "Some Clinic")), id, s_authorization);
-            Assert.AreEqual(1, query.Count());
+            Assert.AreNotEqual(0, query.Count());
 
             // No results
             var idp = ApplicationContext.Current.GetService<IDataPersistenceService<Entity>>();
@@ -231,7 +232,7 @@ namespace OpenIZ.Persistence.Data.ADO.Test
 
             // One result (like)
             query = idp.Query(o => o.Names.Any(n=>n.Component.Any(c => c.Value.Contains("Clinic"))), s_authorization);
-            Assert.AreEqual(1, query.Count());
+            Assert.AreNotEqual(0, query.Count());
 
         }
 

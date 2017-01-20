@@ -44,6 +44,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
 
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Entities.ApplicationEntity>(entityVersion, entity, context, principal);
+
+            if (retVal == null) return null;
+
             retVal.SecurityApplicationKey = applicationEntity.SecurityApplicationKey;
             retVal.SoftwareName = applicationEntity.SoftwareName;
             retVal.VersionName = applicationEntity.VersionName;

@@ -42,6 +42,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public Core.Model.Acts.PatientEncounter ToModelInstance(DbPatientEncounter dbEnc, DbActVersion actVersionInstance, DbAct actInstance, DataContext context, IPrincipal principal)
         {
             var retVal = m_actPersister.ToModelInstance<Core.Model.Acts.PatientEncounter>(actVersionInstance, actInstance, context, principal);
+            if (retVal == null) return null;
 
             if (dbEnc.DischargeDispositionKey != null)
                 retVal.DischargeDispositionKey = dbEnc.DischargeDispositionKey;

@@ -97,7 +97,7 @@ namespace OpenIZ.Core.Model.DataTypes
             get
             {
                 if(this.m_displayNames == null && this.IsDelayLoadEnabled)
-                    this.m_displayNames = EntitySource.Current.Provider.Query<ReferenceTermName>(o => o.ReferenceTermKey == this.Key && o.ObsoletionTime == null).ToList();
+                    this.m_displayNames = EntitySource.Current.Provider.Query<ReferenceTermName>(o => o.SourceEntityKey == this.Key && o.ObsoletionTime == null).ToList();
                 return this.m_displayNames;
             }
             set

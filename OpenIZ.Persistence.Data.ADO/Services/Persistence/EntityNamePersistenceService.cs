@@ -103,7 +103,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
     /// <summary>
     /// Represents an entity name component persistence service
     /// </summary>
-    public class EntityNameComponentPersistenceService : IdentifiedPersistenceService<Core.Model.Entities.EntityNameComponent, DbEntityNameComponent>, IAdoAssociativePersistenceService
+    public class EntityNameComponentPersistenceService : IdentifiedPersistenceService<Core.Model.Entities.EntityNameComponent, DbEntityNameComponent, CompositeResult<DbEntityNameComponent, DbPhoneticValue>>, IAdoAssociativePersistenceService
     {
         /// <summary>
         /// From model instance
@@ -135,6 +135,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override EntityNameComponent ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
         {
+            if(dataInstance == null) return null;
+
             var nameComp = (dataInstance as CompositeResult)?.Values.OfType<DbEntityNameComponent>().FirstOrDefault() ?? dataInstance as DbEntityNameComponent;
             var nameValue = (dataInstance as CompositeResult)?.Values.OfType<DbPhoneticValue>().FirstOrDefault() ?? context.FirstOrDefault<DbPhoneticValue>(o => o.Key == nameComp.ValueKey);
             return new EntityNameComponent()

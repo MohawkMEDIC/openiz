@@ -35,7 +35,7 @@ using OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Roles;
 using OpenIZ.Persistence.Data.ADO.Data.Model.DataType;
 using OpenIZ.OrmLite;
-
+using System.Diagnostics;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -75,6 +75,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             var retVal = m_mapper.MapDomainInstance<DbEntityVersion, TEntityType>(dbVersionInstance);
 
+            if (retVal == null) return null;
+
             retVal.ClassConceptKey = entInstance.ClassConceptKey;
             retVal.DeterminerConceptKey = entInstance.DeterminerConceptKey;
             var template = context.FirstOrDefault<DbTemplateDefinition>(o => o.Key == entInstance.TemplateKey);
@@ -100,6 +102,12 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.Entities.Entity ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
         {
 
+#if DEBUG
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif 
+            if (dataInstance == null)
+                return null;
             // Alright first, which type am I mapping to?
             var dbEntityVersion = (dataInstance as CompositeResult)?.Values.OfType<DbEntityVersion>().FirstOrDefault() ?? dataInstance as DbEntityVersion ?? context.FirstOrDefault<DbEntityVersion>(o => o.VersionKey == (dataInstance as DbEntitySubTable).ParentKey);
             var dbEntity = (dataInstance as CompositeResult)?.Values.OfType<DbEntity>().FirstOrDefault() ?? context.FirstOrDefault<DbEntity>(o => o.Key == dbEntityVersion.Key);
@@ -193,6 +201,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             }
 
+#if DEBUG
+            sw.Stop();
+            this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Basic conversion took: {0}", sw.ElapsedMilliseconds);
+#endif 
             retVal.LoadAssociations(context, principal);
             return retVal;
         }

@@ -1,5 +1,4 @@
 ﻿using OpenIZ.Core.Model.Map;
-using OpenIZ.OrmLite.Util;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -461,6 +460,16 @@ namespace OpenIZ.OrmLite
         }
 
         /// <summary>
+        /// Adds data in a safe way
+        /// </summary>
+        public void AddData(string key, object value)
+        {
+            lock (this.m_dataDictionary)
+                if (!this.m_dataDictionary.ContainsKey(key))
+                    this.m_dataDictionary.Add(key, value);
+        }
+
+        /// <summary>
         /// Query using the specified statement
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -642,6 +651,14 @@ namespace OpenIZ.OrmLite
                 foreach (var itm in tableMap.Columns)
                 {
                     var itmValue = itm.SourceProperty.GetValue(value);
+
+                    if (itmValue == null ||
+                        itmValue.Equals(default(Guid)) ||
+                        itmValue.Equals(default(DateTime)) ||
+                        itmValue.Equals(default(DateTimeOffset)) ||
+                        itmValue.Equals(default(Decimal)))
+                        itmValue = null;
+
                     query.Append($"{itm.Name} = ? ", itmValue);
                     if (itm != tableMap.Columns.Last())
                         query.Append(",");

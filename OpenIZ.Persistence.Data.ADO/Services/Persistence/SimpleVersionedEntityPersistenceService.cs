@@ -89,7 +89,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
                     var postData = new PostRetrievalEventArgs<TModel>(retVal, principal);
                     this.FireRetrieved(postData);
-                    retVal.SetDelayLoad(true);
+                    retVal?.SetDelayLoad(true);
 
                     return retVal;
 

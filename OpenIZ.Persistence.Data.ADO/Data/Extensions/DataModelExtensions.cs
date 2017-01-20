@@ -63,6 +63,9 @@ namespace OpenIZ.Persistence.Data.ADO.Data
         // Classification properties for autoload
         private static Dictionary<Type, PropertyInfo> s_classificationProperties = new Dictionary<Type, PropertyInfo>();
 
+        // Runtime properties
+        private static Dictionary<String, IEnumerable<PropertyInfo>> s_runtimeProperties = new Dictionary<string, IEnumerable<PropertyInfo>>();
+
         /// <summary>
         /// Get fields
         /// </summary>
@@ -284,10 +287,18 @@ namespace OpenIZ.Persistence.Data.ADO.Data
             // Classification property?
             String classValue = classProperty?.GetValue(me)?.ToString();
 
-            foreach(var pi in me.GetType().GetRuntimeProperties().Where(o=>o.GetCustomAttribute<DataIgnoreAttribute>() == null && o.GetCustomAttributes<AutoLoadAttribute>().Any(p=>p.ClassCode == classValue || p.ClassCode == null)))
+            IEnumerable<PropertyInfo> properties = null;
+            var propertyCacheKey = $"{me.GetType()}.FullName[{classValue}]";
+            if (!s_runtimeProperties.TryGetValue(propertyCacheKey, out properties))
+                lock (s_runtimeProperties)
+                {
+                    properties = me.GetType().GetRuntimeProperties().Where(o => o.GetCustomAttribute<DataIgnoreAttribute>() == null && o.GetCustomAttributes<AutoLoadAttribute>().Any(p => p.ClassCode == classValue || p.ClassCode == null));
+                    s_runtimeProperties.Add(propertyCacheKey, properties);
+                }
+
+            foreach (var pi in properties)
             {
                 // Map model type to domain
-                var domainType= AdoPersistenceService.GetMapper().MapModelType(pi.PropertyType.StripGeneric());
                 var adoPersister = AdoPersistenceService.GetPersister(pi.PropertyType.StripGeneric());
 
                 // Loading associations, so what is the associated type?
@@ -317,7 +328,13 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                         Guid.Empty.Equals(keyValue))
                         continue; // No key specified
 
-                    pi.SetValue(me, adoPersister.Get(context, (Guid)keyValue, principal));
+                    object value = null;
+                    if(!context.Data.TryGetValue(keyValue.ToString(), out value))
+                    {
+                        value = adoPersister.Get(context, (Guid)keyValue, principal);
+                        context.AddData(keyValue.ToString(), value);
+                    }
+                    pi.SetValue(me, value);
                 }
 
             }

@@ -4,13 +4,12 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OpenIZ.OrmLite.Util;
 using System.Configuration;
 using System.Data.Common;
 using System.Linq.Expressions;
 using System.Diagnostics;
 
-namespace OpenIZ.OrmLite.Util.Providers
+namespace OpenIZ.OrmLite.Providers
 {
     /// <summary>
     /// Represents a IDbProvider for PostgreSQL
@@ -45,6 +44,9 @@ namespace OpenIZ.OrmLite.Util.Providers
         /// <returns></returns>
         private DbProviderFactory GetProviderFactory()
         {
+            if (this.ConnectionString == null ||
+                this.ConnectionString.ProviderName == null)
+                throw new ConfigurationErrorsException("Missing connection string for ADO.NET provider");
             if (this.m_provider == null)
                 this.m_provider = DbProviderFactories.GetFactory(this.ConnectionString.ProviderName);
             return this.m_provider;

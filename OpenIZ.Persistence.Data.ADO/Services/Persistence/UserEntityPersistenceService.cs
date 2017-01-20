@@ -48,6 +48,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
 
             var retVal = this.m_entityPersister.ToModelInstance<UserEntity>(entityVersionInstance, entityInstance, context, principal);
+            if (retVal == null) return null;
 
             // Copy from person 
             retVal.DateOfBirth = personInstance?.DateOfBirth;

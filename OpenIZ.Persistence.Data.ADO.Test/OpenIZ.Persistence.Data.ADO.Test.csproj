@@ -76,6 +76,10 @@
     <Compile Include="SecurityUserPersistenceServiceTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.Caching.Memory\OpenIZ.Caching.Memory.csproj">
+      <Project>{8553abc7-abfa-4a21-b0e8-68b7de76129d}</Project>
+      <Name>OpenIZ.Caching.Memory</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
       <Project>{F1A82A4F-4A57-47D7-AE76-444C8A4FF54A}</Project>
       <Name>OpenIZ.Core.Model</Name>

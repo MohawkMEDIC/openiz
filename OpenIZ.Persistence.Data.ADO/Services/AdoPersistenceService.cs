@@ -314,7 +314,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             {
                 try
                 {
-                    this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Loading {0}...", t.AssemblyQualifiedName);
+                    this.m_tracer.TraceEvent(TraceEventType.Information, 0, "Loading {0}...", t.AssemblyQualifiedName);
                     ApplicationContext.Current.AddServiceProvider(t);
 
                     // Add to cache since we're here anyways
@@ -330,7 +330,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             // Now iterate through the map file and ensure we have all the mappings, if a class does not exist create it
             try
             {
-                this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Creating secondary model maps...");
+                this.m_tracer.TraceEvent(TraceEventType.Information, 0, "Creating secondary model maps...");
 
                 var map = ModelMap.Load(typeof(AdoPersistenceService).GetTypeInfo().Assembly.GetManifestResourceStream(AdoDataConstants.MapResourceName));
                 foreach (var itm in map.Class)
@@ -400,14 +400,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
             // Attempt to cache concepts
             this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Caching concept dictionary...");
-            if (ApplicationContext.Current.GetService<IDataCachingService>() != null)
-                new Thread((o) =>
-                {
-                    int t;
-                    ApplicationContext.Current.GetService<IDataPersistenceService<Core.Model.DataTypes.Concept>>().Query(c => c.Key == c.Key, 0, 10000, null, out t);
-                    ApplicationContext.Current.GetService<IDataPersistenceService<Core.Model.DataTypes.ConceptSet>>().Query(c => c.Key == c.Key, 0, 1000, null, out t);
-
-                }).Start();
             this.m_running = true;
             this.Started?.Invoke(this, EventArgs.Empty);
 

@@ -59,6 +59,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public Core.Model.Roles.Patient ToModelInstance(DbPatient patientInstance, DbPerson personInstance, DbEntityVersion entityVersionInstance, DbEntity entityInstance, DataContext context, IPrincipal principal)
         {
             var retVal = this.m_entityPersister.ToModelInstance<Core.Model.Roles.Patient>(entityVersionInstance, entityInstance, context, principal);
+            if (retVal == null) return null;
 
             retVal.DeceasedDate = patientInstance.DeceasedDate;
             // Reverse lookup

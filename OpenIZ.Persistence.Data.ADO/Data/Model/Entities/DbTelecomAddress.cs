@@ -51,7 +51,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
 		/// Gets or sets the value.
 		/// </summary>
 		/// <value>The value.</value>
-		[Column("tel_cal")]
+		[Column("tel_val")]
 		public String Value {
 			get;
 			set;

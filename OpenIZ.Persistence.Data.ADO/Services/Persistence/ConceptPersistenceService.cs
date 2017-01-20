@@ -48,6 +48,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             var dbConceptVersion = (dataInstance as CompositeResult)?.Values.OfType<DbConceptVersion>().FirstOrDefault() ?? dataInstance as DbConceptVersion;
             var retVal = base.ToModelInstance(dbConceptVersion, context, principal);
 
+            if (retVal == null) return null;
+
             if (dbConceptVersion != null)
             {
                 var dbConcept = (dataInstance as CompositeResult)?.Values.OfType<DbConcept>().FirstOrDefault() ?? context.FirstOrDefault<DbConcept>(o => o.Key == dbConceptVersion.Key);

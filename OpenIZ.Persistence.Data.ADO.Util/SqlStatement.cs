@@ -139,7 +139,7 @@ namespace OpenIZ.OrmLite
             if (String.IsNullOrEmpty(this.m_sql) && this.m_rhs == null)
                 return this.Append(clause);
             else
-                return this.Append( new SqlStatement("AND (").Append(clause.Build()).Append(") "));
+                return this.Append(" AND ").Append(clause.Build());
         }
 
         /// <summary>
@@ -155,7 +155,10 @@ namespace OpenIZ.OrmLite
         /// </summary>
         public SqlStatement Or(SqlStatement clause)
         {
-            return this.Append(new SqlStatement("OR (").Append(clause.Build()).Append(") "));
+            if (String.IsNullOrEmpty(this.m_sql) && this.m_rhs == null)
+                return this.Append(clause);
+            else
+                return this.Append(new SqlStatement(" OR ")).Append(clause.Build());
         }
 
         /// <summary>
@@ -189,7 +192,14 @@ namespace OpenIZ.OrmLite
 
             // For RHS we need to find a column which references the tLEFT table ... 
             var rhsPk = tableMap.Columns.SingleOrDefault(o => o.ForeignKey?.Table == tLeft);
-            var lhsPk = TableMapping.Get(rhsPk.ForeignKey.Table).GetColumn(rhsPk.ForeignKey.Column);
+            ColumnMapping lhsPk = null;
+            if (rhsPk == null) // look for primary key instead
+            {
+                rhsPk = tableMap.Columns.SingleOrDefault(o => o.IsPrimaryKey);
+                lhsPk = TableMapping.Get(tLeft).Columns.SingleOrDefault(o => o.ForeignKey?.Table == rhsPk.Table.OrmType && o.ForeignKey?.Column == rhsPk.SourceProperty.Name);
+            }
+            else
+                lhsPk = TableMapping.Get(rhsPk.ForeignKey.Table).GetColumn(rhsPk.ForeignKey.Column);
             if (lhsPk == null || rhsPk == null) throw new InvalidOperationException("Unambiguous linked keys not found");
             joinStatement.Append($"({lhsPk.Table.TableName}.{lhsPk.Name} = {rhsPk.Table.TableName}.{rhsPk.Name}) ");
             return joinStatement;
@@ -342,9 +352,8 @@ namespace OpenIZ.OrmLite
         public SqlStatement<TReturn> InnerJoin<TJoinTable, TReturn>()
         {
             var retVal = new SqlStatement<TReturn>();
-            retVal.InnerJoin(typeof(T), typeof(TJoinTable));
+            retVal.Append(this).InnerJoin(typeof(T), typeof(TJoinTable));
             return retVal;
-            
         }
 
         /// <summary>

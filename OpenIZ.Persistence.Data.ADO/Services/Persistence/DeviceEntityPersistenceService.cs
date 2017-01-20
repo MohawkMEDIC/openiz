@@ -45,6 +45,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public Core.Model.Entities.DeviceEntity ToModelInstance(DbDeviceEntity deviceEntity, DbEntityVersion entityVersion, DbEntity entity, DataContext context, IPrincipal principal)
         {
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Entities.DeviceEntity>(entityVersion, entity, context, principal);
+            if (retVal == null) return null;
+
             retVal.SecurityDeviceKey = deviceEntity.SecurityDeviceKey;
             retVal.ManufacturedModelName = deviceEntity.ManufacturerModelName;
             retVal.OperatingSystemName = deviceEntity.OperatingSystemName;

@@ -55,7 +55,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility
         /// <summary>
         /// Gets or sets the display
         /// </summary>
-        [Column("exp_disp")]
+        [Column("ext_disp")]
         public String Display { get; set; }
 
     }

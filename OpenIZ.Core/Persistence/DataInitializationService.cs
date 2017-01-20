@@ -91,6 +91,9 @@ namespace OpenIZ.Core.Persistence
 
                 try
                 {
+                    // Set system principal 
+                    AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
+
                     String dataDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Data");
                     this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Scanning Directory {0} for datasets", dataDirectory);
 
@@ -100,7 +103,6 @@ namespace OpenIZ.Core.Persistence
                     // Perform migrations
                     foreach (var f in datasetFiles)
                     {
-						
 
                         try
                         {
@@ -121,7 +123,7 @@ namespace OpenIZ.Core.Persistence
                                     // IDP Type
                                     Type idpType = typeof(IDataPersistenceService<>);
                                     idpType = idpType.MakeGenericType(new Type[] { itm.Element.GetType() });
-                                    var idpInstance = ApplicationContext.Current.GetService(idpType);
+                                    var idpInstance = ApplicationContext.Current.GetService(idpType) as IDataPersistenceService;
 
                                     // Don't insert duplicates
                                     var getMethod = idpType.GetMethod("Get");
@@ -129,8 +131,8 @@ namespace OpenIZ.Core.Persistence
                                     this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "{0} {1}", itm.ActionName, itm.Element);
 
                                     Object target = null, existing = null;
-                                    if(itm.Element.Key.HasValue)
-                                        existing = getMethod.MakeGenericMethod(new Type[] { typeof(Guid) }).Invoke(idpInstance, new object[] { new Identifier<Guid>(itm.Element.Key.Value), AuthenticationContext.SystemPrincipal, false });
+                                    if (itm.Element.Key.HasValue)
+                                        existing = idpInstance.Get(itm.Element.Key.Value);
                                     if (existing != null)
                                     {
                                         target = (existing as IdentifiedData).Clone();
@@ -149,9 +151,9 @@ namespace OpenIZ.Core.Persistence
                                         }
 
                                     if (existing == null && (itm is DataInsert || (itm is DataUpdate && (itm as DataUpdate).InsertIfNotExists)))
-                                        idpType.GetMethod("Insert", new Type[] { itm.Element.GetType(), typeof(IPrincipal), typeof(TransactionMode) }).Invoke(idpInstance, new object[] { target, AuthenticationContext.SystemPrincipal, TransactionMode.Commit });
+                                        idpInstance.Insert(target);
                                     else if (!(itm is DataInsert))
-                                        idpType.GetMethod(itm.ActionName, new Type[] { itm.Element.GetType(), typeof(IPrincipal), typeof(TransactionMode) }).Invoke(idpInstance, new object[] { target, AuthenticationContext.SystemPrincipal, TransactionMode.Commit });
+                                        typeof(IDataPersistenceService).GetMethod(itm.ActionName, new Type[] { typeof(Object) }).Invoke(idpInstance, new object[] { target });
 
                                 }
                                 this.m_traceSource.TraceInformation("Applied {0} changes", ds.Action.Count);
