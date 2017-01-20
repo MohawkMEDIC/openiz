@@ -361,8 +361,21 @@ namespace OpenIZ.Core.Model.Map
                             break;
                     }
                 }
-               
-                return Expression.MakeBinary(node.NodeType, left, Expression.Convert(right, left.Type));
+				else if ((right.Type == typeof(DateTimeOffset) || right.Type == typeof(DateTimeOffset?)) && (left.Type == typeof(DateTime?) || left.Type == typeof(DateTime)))
+				{
+					DateTime dateTime;
+
+					if (!DateTime.TryParse((right as ConstantExpression)?.Value.ToString(), out dateTime))
+					{
+						throw new InvalidOperationException($"Unable to convert { (right as ConstantExpression)?.Value } to a valid date time");
+					}
+
+					right = Expression.Constant(dateTime, left.Type);
+
+					return Expression.MakeBinary(node.NodeType, left, Expression.Convert(right, left.Type));
+				}
+
+				return Expression.MakeBinary(node.NodeType, left, Expression.Convert(right, left.Type));
             }
             else if (right != node.Right || left != node.Left)
             {
