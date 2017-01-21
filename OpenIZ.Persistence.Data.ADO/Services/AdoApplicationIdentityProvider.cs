@@ -24,7 +24,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Principal;
-using OpenIZ.Persistence.Data.ADO.Data;
+using OpenIZ.Persistence.Data.ADO.Data.Model;
 using System.Diagnostics;
 using OpenIZ.Persistence.Data.ADO.Configuration;
 using MARC.HI.EHRS.SVC.Core;
@@ -35,8 +35,9 @@ using OpenIZ.Core.Security;
 using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
-using OpenIZ.Persistence.Data.ADO.Util;
+using OpenIZ.OrmLite;
 using System.Security.Authentication;
+using OpenIZ.Persistence.Data.ADO.Data;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {
@@ -73,7 +74,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     dataContext.Open();
                     IPasswordHashingService hashService = ApplicationContext.Current.GetService<IPasswordHashingService>();
 
-                    var client = dataContext.FirstOrDefault<DbSecurityApplication>("auth_app", applicationId, applicationSecret);
+                    var client = dataContext.FirstOrDefault<DbSecurityApplication>("auth_app", applicationId, hashService.EncodePassword(applicationSecret));
                     if (client == null)
                         throw new SecurityException("Invalid application credentials");
 

@@ -36,5 +36,9 @@ namespace OpenIZ.Core.Configuration
         /// </summary>
         public OpenIzSecurityConfiguration Security { get; set; }
 
+        /// <summary>
+        /// Thread pool size
+        /// </summary>
+        public int ThreadPoolSize { get; set; }
     }
 }

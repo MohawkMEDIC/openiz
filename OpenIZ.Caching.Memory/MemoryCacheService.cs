@@ -91,6 +91,8 @@ namespace OpenIZ.Caching.Memory
 
             this.Starting?.Invoke(this, EventArgs.Empty);
 
+            MemoryCache.Current.Clear();
+
             // handles when a item is being mapped
             this.m_mappingHandler = (o, e) =>
             {

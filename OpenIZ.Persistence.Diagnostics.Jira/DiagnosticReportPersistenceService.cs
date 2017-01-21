@@ -90,7 +90,7 @@ namespace OpenIZ.Persistence.Diagnostics.Jira
         /// <summary>
         /// Not supported
         /// </summary>
-        public event EventHandler<PreRetrievalEventArgs<DiagnosticReport>> Retrieving;
+        public event EventHandler<PreRetrievalEventArgs> Retrieving;
         /// <summary>
         /// Not supported
         /// </summary>

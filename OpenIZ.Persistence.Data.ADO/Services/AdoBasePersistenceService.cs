@@ -29,38 +29,42 @@ using OpenIZ.Core.Exceptions;
 using OpenIZ.Core.Model.Query;
 using MARC.HI.EHRS.SVC.Core.Services;
 using System.Diagnostics;
-using OpenIZ.Persistence.Data.Ado.Configuration;
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Event;
 using System.Security.Principal;
-using OpenIZ.Persistence.Data.Ado.Data;
 using System.Data.SqlClient;
-using OpenIZ.Persistence.Data.Ado.Exceptions;
 using OpenIZ.Core.Security;
 using MARC.HI.EHRS.SVC.Core.Data;
-using System.Data.Linq;
 using System.Data.Common;
 using OpenIZ.Core.Services;
+using OpenIZ.Persistence.Data.ADO.Configuration;
+using OpenIZ.Persistence.Data.ADO.Data.Model;
+using System.Data;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
+using OpenIZ.Persistence.Data.ADO.Data.Model.DataType;
+using OpenIZ.Core.Model.Constants;
+using OpenIZ.Persistence.Data.ADO.Data;
+using OpenIZ.OrmLite;
 
-namespace OpenIZ.Persistence.Data.Ado.Services
+namespace OpenIZ.Persistence.Data.ADO.Services
 {
     /// <summary>
     /// Represents a data persistence service which stores data in the local SQLite data store
     /// </summary>
-    public abstract class AdoBasePersistenceService<TData> : IDataPersistenceService<TData> where TData : IdentifiedData
+    public abstract class AdoBasePersistenceService<TData> : IDataPersistenceService<TData>, IAdoPersistenceService where TData : IdentifiedData
     {
 
         // Lock for editing 
         protected object m_synkLock = new object();
 
         // Get tracer
-        protected TraceSource m_tracer = new TraceSource("OpenIZ.Persistence.Data.ADO.Services.Persistence");
+        protected TraceSource m_tracer = new TraceSource(AdoDataConstants.TraceSourceName);
 
         // Configuration
-        protected static AdoConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.persistence.data.ado") as AdoConfiguration;
+        protected static AdoConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection(AdoDataConstants.ConfigurationSectionName) as AdoConfiguration;
 
         // Mapper
-        protected static ModelMapper m_mapper = AdoDataPersistenceService.GetMapper();
+        protected static ModelMapper m_mapper = AdoPersistenceService.GetMapper();
 
         public event EventHandler<PrePersistenceEventArgs<TData>> Inserting;
         public event EventHandler<PostPersistenceEventArgs<TData>> Inserted;
@@ -68,68 +72,61 @@ namespace OpenIZ.Persistence.Data.Ado.Services
         public event EventHandler<PostPersistenceEventArgs<TData>> Updated;
         public event EventHandler<PrePersistenceEventArgs<TData>> Obsoleting;
         public event EventHandler<PostPersistenceEventArgs<TData>> Obsoleted;
-        public event EventHandler<PreRetrievalEventArgs<TData>> Retrieving;
+        public event EventHandler<PreRetrievalEventArgs> Retrieving;
         public event EventHandler<PostRetrievalEventArgs<TData>> Retrieved;
         public event EventHandler<PreQueryEventArgs<TData>> Querying;
         public event EventHandler<PostQueryEventArgs<TData>> Queried;
 
-		/// <summary>
-		/// Maps the data to a model instance
-		/// </summary>
-		/// <returns>The model instance.</returns>
-		/// <param name="dataInstance">Data instance.</param>
-		public abstract TData ToModelInstance(Object dataInstance, Database context, IPrincipal principal);
+        /// <summary>
+        /// Maps the data to a model instance
+        /// </summary>
+        /// <returns>The model instance.</returns>
+        /// <param name="dataInstance">Data instance.</param>
+        public abstract TData ToModelInstance(Object dataInstance, DataContext context, IPrincipal principal);
 
-		/// <summary>
-		/// Froms the model instance.
-		/// </summary>
-		/// <returns>The model instance.</returns>
-		/// <param name="modelInstance">Model instance.</param>
-		public abstract Object FromModelInstance (TData modelInstance, Database context, IPrincipal principal);
+        /// <summary>
+        /// Froms the model instance.
+        /// </summary>
+        /// <returns>The model instance.</returns>
+        /// <param name="modelInstance">Model instance.</param>
+        public abstract Object FromModelInstance(TData modelInstance, DataContext context, IPrincipal principal);
 
-		/// <summary>
-		/// Performthe actual insert.
-		/// </summary>
-		/// <param name="context">Context.</param>
-		/// <param name="data">Data.</param>
-		public abstract TData Insert(Database context, TData data, IPrincipal principal);
+        /// <summary>
+        /// Performthe actual insert.
+        /// </summary>
+        /// <param name="context">Context.</param>
+        /// <param name="data">Data.</param>
+        public abstract TData Insert(DataContext context, TData data, IPrincipal principal);
 
         /// <summary>
         /// Perform the actual update.
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public abstract TData Update(Database context, TData data, IPrincipal principal);
+        public abstract TData Update(DataContext context, TData data, IPrincipal principal);
 
         /// <summary>
         /// Performs the actual obsoletion
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public abstract TData Obsolete(Database context, TData data, IPrincipal principal);
+        public abstract TData Obsolete(DataContext context, TData data, IPrincipal principal);
 
         /// <summary>
         /// Performs the actual query
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        public abstract IQueryable<TData> Query(Database context, Expression<Func<TData, bool>> query, IPrincipal principal);
-
-        /// <summary>
-        /// Get data load options
-        /// </summary>
-        internal virtual DataLoadOptions GetDataLoadOptions()
-        {
-            return new DataLoadOptions();
-        }
+        public abstract IEnumerable<TData> Query(DataContext context, Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true);
 
         /// <summary>
         /// Get the specified key.
         /// </summary>
         /// <param name="key">Key.</param>
-        internal virtual TData Get(Database context, Guid key, IPrincipal principal)
+        internal virtual TData Get(DataContext context, Guid key, IPrincipal principal)
         {
-            return this.Query(context, o => o.Key == key, principal)?.FirstOrDefault();
+            int tr = 0;
+            return this.Query(context, o => o.Key == key, 0, 1, out tr, principal)?.FirstOrDefault();
         }
 
         /// <summary>
@@ -139,7 +136,7 @@ namespace OpenIZ.Persistence.Data.Ado.Services
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
-           
+
             PrePersistenceEventArgs<TData> preArgs = new PrePersistenceEventArgs<TData>(data, principal);
             this.Inserting?.Invoke(this, preArgs);
             if (preArgs.Cancel)
@@ -149,64 +146,57 @@ namespace OpenIZ.Persistence.Data.Ado.Services
             }
 
             // Persist object
-            using (var connection = new Database(m_configuration.ReadWriteConnectionString))
+            using (var connection = m_configuration.Provider.GetWriteConnection())
             {
-                DbTransaction tx = null;
-                try
-                {
-                    connection.Connection.Open();
-                    connection.Transaction = tx = connection.Connection.BeginTransaction();
-
-                    if (m_configuration.TraceSql)
-                        connection.Log = new LinqTraceWriter();
-
-                    // Disable inserting duplicate classified objects
-                    data.SetDelayLoad(false);
-                    var existing = data.TryGetExisting(connection, principal);
-                    if(existing != null)
+                connection.Open();
+                using (IDbTransaction tx = connection.BeginTransaction())
+                    try
                     {
-                        if (m_configuration.AutoUpdateExisting)
+
+                        // Disable inserting duplicate classified objects
+                       data.SetDelayLoad(false);
+                        var existing =data.TryGetExisting(connection, principal);
+                        if (existing != null)
                         {
-                            this.m_tracer.TraceEvent(TraceEventType.Warning, 0, "INSERT WOULD RESULT IN DUPLICATE CLASSIFIER: UPDATING INSTEAD {0}", data);
-                            data = this.Update(connection, data, principal);
+                            if (m_configuration.AutoUpdateExisting)
+                            {
+                                this.m_tracer.TraceEvent(TraceEventType.Warning, 0, "INSERT WOULD RESULT IN DUPLICATE CLASSIFIER: UPDATING INSTEAD {0}", data);
+                                data = this.Update(connection, data, principal);
+                            }
+                            else
+                                throw new DuplicateNameException(data.Key?.ToString());
                         }
                         else
-                            throw new DuplicateKeyException(data);
+                        {
+                            this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "INSERT {0}", data);
+                            data = this.Insert(connection, data, principal);
+                        }
+
+                        if (mode == TransactionMode.Commit)
+                            tx.Commit();
+                        else
+                            tx.Rollback();
+
+                        var args = new PostPersistenceEventArgs<TData>(data, principal)
+                        {
+                            Mode = mode
+                        };
+
+                        this.Inserted?.Invoke(this, args);
+
+                        return data;
+
                     }
-                    else
+                    catch (Exception e)
                     {
-                        this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "INSERT {0}", data);
-                        data = this.Insert(connection, data, principal);
+                        this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
+                        tx?.Rollback();
+                        throw new DataPersistenceException(e.Message, e);
                     }
-
-                    connection.SubmitChanges();
-
-
-                    if (mode == TransactionMode.Commit)
-                        tx.Commit();
-                    else
-                        tx.Rollback();
-
-					var args = new PostPersistenceEventArgs<TData>(data, principal)
-					{
-						Mode = mode
-					};
-
-                    this.Inserted?.Invoke(this, args);
-
-                    return data;
-
-                }
-                catch (Exception e)
-                {
-                    this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
-                    tx?.Rollback();
-                    throw new DataPersistenceException(e.Message, e);
-                }
-                finally
-                {
-                    data.SetDelayLoad(true);
-                }
+                    finally
+                    {
+                       data.SetDelayLoad(true);
+                    }
             }
         }
 
@@ -233,50 +223,44 @@ namespace OpenIZ.Persistence.Data.Ado.Services
             }
 
             // Persist object
-            using (var connection = new Database(m_configuration.ReadWriteConnectionString))
+            using (var connection = m_configuration.Provider.GetWriteConnection())
             {
-                DbTransaction tx = null;
-                try
-                {
-                    connection.Connection.Open();
-                    connection.Transaction = tx = connection.Connection.BeginTransaction();
+                connection.Open();
+                using (IDbTransaction tx = connection.BeginTransaction())
+                    try
+                    {
+                        //connection.Connection.Open();
 
-                    // Tracer
-                    if (m_configuration.TraceSql)
-                        connection.Log = new LinqTraceWriter();
+                        this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "UPDATE {0}", data);
 
-                    this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "UPDATE {0}", data);
+                       data.SetDelayLoad(false);
+                        data = this.Update(connection, data, principal);
 
-                    data.SetDelayLoad(false);
-                    data = this.Update(connection, data, principal);
-                    connection.SubmitChanges();
+                        if (mode == TransactionMode.Commit)
+                            tx.Commit();
+                        else
+                            tx.Rollback();
 
+                        var args = new PostPersistenceEventArgs<TData>(data, principal)
+                        {
+                            Mode = mode
+                        };
 
-                    if (mode == TransactionMode.Commit)
-                        tx.Commit();
-                    else
-                        tx.Rollback();
+                        this.Updated?.Invoke(this, args);
 
-					var args = new PostPersistenceEventArgs<TData>(data, principal)
-					{
-						Mode = mode
-					};
+                        return data;
+                    }
+                    catch (Exception e)
+                    {
+                        this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
+                        tx?.Rollback();
+                        throw new DataPersistenceException(e.Message, e);
 
-					this.Updated?.Invoke(this, args);
-
-                    return data;
-                }
-                catch (Exception e)
-                {
-                    this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
-                    tx?.Rollback();
-                    throw new DataPersistenceException(e.Message, e);
-
-                }
-                finally
-                {
-                    data.SetDelayLoad(true);
-                }
+                    }
+                    finally
+                    {
+                       data.SetDelayLoad(true);
+                    }
 
             }
         }
@@ -300,50 +284,43 @@ namespace OpenIZ.Persistence.Data.Ado.Services
             }
 
             // Obsolete object
-            using (var connection = new Database(m_configuration.ReadWriteConnectionString))
+            using (var connection = m_configuration.Provider.GetWriteConnection())
             {
-                DbTransaction tx = null;
-                try
-                {
-                    connection.Connection.Open();
-
-                    tx = connection.Transaction = connection.Connection.BeginTransaction();
-
-                    // Tracer
-                    if (m_configuration.TraceSql)
-                        connection.Log = new LinqTraceWriter();
-
-                    this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "OBSOLETE {0}", data);
-
-                    data.SetDelayLoad(false);
-                    data = this.Obsolete(connection, data, principal);
-                    connection.SubmitChanges();
-
-
-                    if (mode == TransactionMode.Commit)
-                        tx.Commit();
-                    else
-                        tx.Rollback();
-
-                    var args = new PostPersistenceEventArgs<TData>(data, principal)
+                connection.Open();
+                using (IDbTransaction tx = connection.BeginTransaction())
+                    try
                     {
-                        Mode = mode
-                    };
+                        //connection.Connection.Open();
 
-                    this.Obsoleted?.Invoke(this, args);
+                        this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "OBSOLETE {0}", data);
 
-                    return data;
-                }
-                catch (Exception e)
-                {
-                    this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
-                    tx?.Rollback();
-                    throw new DataPersistenceException(e.Message, e);
-                }
-                finally
-                {
-                    data.SetDelayLoad(true);
-                }
+                       data.SetDelayLoad(false);
+                        data = this.Obsolete(connection, data, principal);
+
+                        if (mode == TransactionMode.Commit)
+                            tx.Commit();
+                        else
+                            tx.Rollback();
+
+                        var args = new PostPersistenceEventArgs<TData>(data, principal)
+                        {
+                            Mode = mode
+                        };
+
+                        this.Obsoleted?.Invoke(this, args);
+
+                        return data;
+                    }
+                    catch (Exception e)
+                    {
+                        this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
+                        tx?.Rollback();
+                        throw new DataPersistenceException(e.Message, e);
+                    }
+                    finally
+                    {
+                       data.SetDelayLoad(true);
+                    }
 
             }
         }
@@ -356,14 +333,57 @@ namespace OpenIZ.Persistence.Data.Ado.Services
             // Try the cache if available
             var guidIdentifier = containerId as Identifier<Guid>;
             var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TData>(guidIdentifier.Id) as TData;
-	        if (loadFast && cacheItem != null)
-	        {
-				return cacheItem;
-			}
+            if (loadFast && cacheItem != null)
+            {
+                return cacheItem;
+            }
             else
             {
-                var tr = 0;
-                return this.Query(o => o.Key == guidIdentifier.Id, 0, 1, principal, out tr)?.SingleOrDefault();
+
+#if DEBUG
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+#endif
+
+                PreRetrievalEventArgs preArgs = new PreRetrievalEventArgs(containerId, principal);
+                this.Retrieving?.Invoke(this, preArgs);
+                if (preArgs.Cancel)
+                {
+                    this.m_tracer.TraceEvent(TraceEventType.Warning, 0, "Pre-Event handler indicates abort retrieve {0}", containerId.Id);
+                    return null;
+                }
+
+                // Query object
+                using (var connection = m_configuration.Provider.GetReadonlyConnection())
+                    try
+                    {
+                        connection.Open();
+                        this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "GET {0}", containerId);
+
+                        var result = this.Get(connection, guidIdentifier.Id, principal);
+                        var postData = new PostRetrievalEventArgs<TData>(result, principal);
+                        this.Retrieved?.Invoke(this, postData);
+                        result?.SetDelayLoad(true);
+
+                        return result;
+
+                    }
+                    catch (NotSupportedException e)
+                    {
+                        throw new DataPersistenceException("Cannot perform LINQ query", e);
+                    }
+                    catch (Exception e)
+                    {
+                        this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
+                        throw;
+                    }
+                    finally
+                    {
+#if DEBUG
+                        sw.Stop();
+                        this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Retrieve took {0} ms", sw.ElapsedMilliseconds);
+#endif
+                    }
             }
         }
 
@@ -418,53 +438,26 @@ namespace OpenIZ.Persistence.Data.Ado.Services
             }
 
             // Query object
-            using (var connection = new Database(m_configuration.ReadonlyConnectionString))
+            using (var connection = m_configuration.Provider.GetReadonlyConnection())
                 try
                 {
-                    connection.LoadOptions = this.GetDataLoadOptions();
+                    connection.Open();
 
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "QUERY {0}", query);
 
-                    // Tracer
-                    if (m_configuration.TraceSql)
-                        connection.Log = new LinqTraceWriter();
-
-
-                    var results = this.Query(connection, query, authContext);
-                    var postData = new PostQueryEventArgs<TData>(query, results, authContext);
+                    var results = this.Query(connection, query, offset, count, out totalCount, authContext);
+                    var postData = new PostQueryEventArgs<TData>(query, results.AsQueryable(), authContext);
                     this.Queried?.Invoke(this, postData);
 
-                    if (count == 1 && offset == 0)
-                    {
-                        var result = postData.Results.Take(1).ToList();
-                        totalCount = result.Count;
-                        this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Returning {0}..{1} or {2} results", offset, offset + (count ?? 1000), totalCount);
-                        result.ForEach((o) => o.SetDelayLoad(true)); // Enable delay load for items
+                    var retVal = postData.Results.ToList();
+                    retVal.ForEach((o) => o.SetDelayLoad(true)); // Enable delay load for items
+                    this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Returning {0}..{1} or {2} results", offset, offset + (count ?? 1000), totalCount);
 
-                        return result;
-                    }
-                    else
-                    {
-                        if (!fastQuery)
-                            totalCount = postData.Results.Count();
-                        else
-                            totalCount = -1;
-                        // Skip
-                        postData.Results = postData.Results.Skip(offset);
-                        if (count.HasValue)
-                            postData.Results = postData.Results.Take(count.Value);
-
-                        var retVal = postData.Results.AsParallel().ToList();
-                        retVal.ForEach((o) => o.SetDelayLoad(true)); // Enable delay load for items
-                        this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Returning {0}..{1} or {2} results", offset, offset + (count ?? 1000), totalCount);
-
-                        return retVal;
-                    }
+                    return retVal;
 
                 }
                 catch (NotSupportedException e)
                 {
-                    this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cannot perform LINQ query, switching to stored query sqp_{0}", typeof(TData).Name);
                     throw new DataPersistenceException("Cannot perform LINQ query", e);
                 }
                 catch (Exception e)
@@ -480,6 +473,109 @@ namespace OpenIZ.Persistence.Data.Ado.Services
 #endif
                 }
         }
+
+        /// <summary>
+        /// Insert the object for generic methods
+        /// </summary>
+        object IAdoPersistenceService.Insert(DataContext context, object data, IPrincipal principal)
+        {
+            return this.Insert(context, (TData)data, principal);
+        }
+
+        /// <summary>
+        /// Update the object for generic methods
+        /// </summary>
+        object IAdoPersistenceService.Update(DataContext context, object data, IPrincipal principal)
+        {
+            return this.Update(context, (TData)data, principal);
+        }
+
+        /// <summary>
+        /// Obsolete the object for generic methods
+        /// </summary>
+        object IAdoPersistenceService.Obsolete(DataContext context, object data, IPrincipal principal)
+        {
+            return this.Obsolete(context, (TData)data, principal);
+        }
+
+        /// <summary>
+        /// Get the specified data
+        /// </summary>
+        object IAdoPersistenceService.Get(DataContext context, Guid id, IPrincipal principal)
+        {
+            return this.Get(context, id, principal);
+        }
+
+        /// <summary>
+        /// Insert the object
+        /// </summary>
+        object IDataPersistenceService.Insert(object data)
+        {
+            return this.Insert((TData)data, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+        }
+
+        /// <summary>
+        /// Update the specified data
+        /// </summary>
+        object IDataPersistenceService.Update(object data)
+        {
+            return this.Update((TData)data, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+        }
+
+        /// <summary>
+        /// Obsolete specified data
+        /// </summary>
+        object IDataPersistenceService.Obsolete(object data)
+        {
+            return this.Obsolete((TData)data, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+        }
+
+        /// <summary>
+        /// Get the specified data
+        /// </summary>
+        object IDataPersistenceService.Get(Guid id)
+        {
+            return this.Get(new Identifier<Guid>(id, Guid.Empty), AuthenticationContext.Current.Principal, false);
+        }
+
+        /// <summary>
+        /// Generic to model instance for other callers
+        /// </summary>
+        /// <returns></returns>
+        object IAdoPersistenceService.ToModelInstance(object domainInstance, DataContext context, IPrincipal principal)
+        {
+            return this.ToModelInstance(domainInstance, context, principal);
+        }
+
+        /// <summary>
+        /// Perform generic query
+        /// </summary>
+        IEnumerable IDataPersistenceService.Query(Expression query, int offset, int? count, out int totalResults)
+        {
+            return this.Query((Expression<Func<TData, bool>>)query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
+        }
+
+
+        #region Event Handler Helpers
+
+        /// <summary>
+        /// Fire retrieving
+        /// </summary>
+        protected void FireRetrieving(PreRetrievalEventArgs e)
+        {
+            this.Retrieving?.Invoke(this, e);
+        }
+
+        /// <summary>
+        /// Fire retrieving
+        /// </summary>
+        protected void FireRetrieved(PostRetrievalEventArgs<TData> e)
+        {
+            this.Retrieved?.Invoke(this, e);
+        }
+
+        #endregion
+
     }
 }
 

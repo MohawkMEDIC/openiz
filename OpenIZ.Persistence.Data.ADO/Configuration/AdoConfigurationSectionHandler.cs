@@ -17,7 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
-using OpenIZ.Persistence.Data.ADO.Providers;
+using OpenIZ.OrmLite.Providers;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -56,7 +56,7 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration
                 if (connectionNode.Attributes["insertUpdate"] != null)
                     retVal.AutoUpdateExisting = bool.Parse(connectionNode.Attributes["insertUpdate"].Value);
                 if(connectionNode.Attributes["autoInsertChildren"] != null)
-                    retVal.AutoUpdateExisting = bool.Parse(connectionNode.Attributes["autoInsertChildren"].Value);
+                    retVal.AutoInsertChildren = bool.Parse(connectionNode.Attributes["autoInsertChildren"].Value);
 
                 if (connectionNode.Attributes["traceSql"] != null)
                     retVal.TraceSql = Boolean.Parse(connectionNode.Attributes["traceSql"].Value);

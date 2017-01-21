@@ -17,7 +17,7 @@
  * User: justi
  * Date: 2016-8-2
  */
-using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.OrmLite.Attributes;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
@@ -42,6 +42,24 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
     }
 
     /// <summary>
+    /// Versioned association
+    /// </summary>
+    public interface IDbVersionedAssociation : IDbAssociation {
+        /// <summary>
+        /// Gets or sets the version when the relationship is effective
+        /// </summary>
+        [Column("efft_vrsn_seq_id")]
+        decimal EffectiveVersionSequenceId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the verson when the relationship is not effecitve
+        /// </summary>
+        [Column("obslt_vrsn_seq_id")]
+        Decimal? ObsoleteVersionSequenceId { get; set; }
+    }
+
+
+    /// <summary>
     /// Represents the databased associated entity
     /// </summary>
     public abstract class DbAssociation : DbIdentified, IDbAssociation
@@ -56,7 +74,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
     /// <summary>
     /// Represents the versioned copy of an association
     /// </summary>
-    public abstract class DbVersionedAssociation : DbAssociation
+    public abstract class DbVersionedAssociation : DbAssociation, IDbVersionedAssociation
     { 
         /// <summary>
         /// Gets or sets the version when the relationship is effective
@@ -68,7 +86,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
         /// Gets or sets the verson when the relationship is not effecitve
         /// </summary>
         [Column("obslt_vrsn_seq_id")]
-        Decimal? ObsoleteVersionSequenceId { get; set; }
+        public Decimal? ObsoleteVersionSequenceId { get; set; }
 
     }
 

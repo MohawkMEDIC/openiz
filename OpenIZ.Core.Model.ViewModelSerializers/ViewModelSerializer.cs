@@ -5732,10 +5732,10 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 }
             }
             if (context.ShouldSerialize("manufacturerModelName")) {
-                if ((_strong.ManufacturedModelName == null)) {
+                if ((_strong.ManufacturerModelName == null)) {
                 }
                 else {
-                    context.JsonContext.WritePropertyUtil(w, "manufacturerModelName", _strong.ManufacturedModelName, context);
+                    context.JsonContext.WritePropertyUtil(w, "manufacturerModelName", _strong.ManufacturerModelName, context);
                 }
             }
             if (context.ShouldSerialize("operatingSystemName")) {
@@ -6392,7 +6392,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                         r.Read();
                                                                                                                                                         string _instance = ((string)(context.JsonContext.ReadElementUtil(r, typeof(string), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("manufacturerModelName", context.JsonContext, _retVal, context))));
                                                                                                                                                         if ((_instance != null)) {
-                                                                                                                                                            _retVal.ManufacturedModelName = _instance;
+                                                                                                                                                            _retVal.ManufacturerModelName = _instance;
                                                                                                                                                         }
                                                                                                                                                     }
                                                                                                                                                     else {
@@ -18235,10 +18235,10 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 throw new System.ArgumentException(string.Format("Invalid type {0} provided, expected {1}", o.GetType(), typeof(OpenIZ.Core.Model.DataTypes.ReferenceTermName)));
             }
             if (context.ShouldSerialize("referencetermkeyModel")) {
-                if ((_strong.ReferenceTermKey == null)) {
+                if ((_strong.SourceEntityKey == null)) {
                 }
                 else {
-                    context.JsonContext.WritePropertyUtil(w, "referencetermkeyModel", _strong.ReferenceTermKey, context);
+                    context.JsonContext.WritePropertyUtil(w, "referencetermkeyModel", _strong.SourceEntityKey, context);
                 }
             }
             if (context.ShouldSerialize("language")) {
@@ -18456,7 +18456,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                         r.Read();
                                                                         System.Guid _instance = ((System.Guid)(context.JsonContext.ReadElementUtil(r, typeof(System.Guid), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("referencetermkeyModel", context.JsonContext, _retVal, context))));
                                                                         if ((_instance != null)) {
-                                                                            _retVal.ReferenceTermKey = _instance;
+                                                                            _retVal.SourceEntityKey = _instance;
                                                                         }
                                                                     }
                                                                     else {

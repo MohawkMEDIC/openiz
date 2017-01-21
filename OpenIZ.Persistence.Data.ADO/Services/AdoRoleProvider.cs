@@ -37,7 +37,7 @@ using OpenIZ.Core.Security;
 using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
 using System.Diagnostics;
-using OpenIZ.Persistence.Data.ADO.Util;
+using OpenIZ.OrmLite;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {

@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OpenIZ.Persistence.Data.ADO.Util;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Acts;
 using System.Linq;
 using System.Diagnostics;
@@ -8,12 +7,19 @@ using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Security;
+using OpenIZ.Core.Model.Entities;
+using OpenIZ.OrmLite;
+using OpenIZ.Core.Model.Map;
+using OpenIZ.Persistence.Data.ADO.Services;
 
 namespace OpenIZ.Persistence.Data.ADO.Test
 {
     [TestClass]
     public class QueryExpressionWriterTest
     {
+
+        private QueryBuilder m_builder = new QueryBuilder(new ModelMapper(typeof(AdoPersistenceService).Assembly.GetManifestResourceStream(AdoDataConstants.MapResourceName)));
+
         /// <summary>
         /// Test that the function constructs an empty select statement
         /// </summary>
@@ -101,7 +107,7 @@ namespace OpenIZ.Persistence.Data.ADO.Test
         public void TestModelQueryShouldJoin()
         {
 
-            var query = QueryBuilder.CreateQuery<Patient>(o => o.DeterminerConceptKey == DeterminerKeys.Specific).Build();
+            var query = m_builder.CreateQuery<Patient>(o => o.DeterminerConceptKey == DeterminerKeys.Specific).Build();
             Assert.IsTrue(query.SQL.Contains("SELECT * FROM pat_tbl"));
             Assert.IsTrue(query.SQL.Contains("INNER JOIN ent_vrsn_tbl"));
 
@@ -115,7 +121,25 @@ namespace OpenIZ.Persistence.Data.ADO.Test
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            var query = QueryBuilder.CreateQuery<Patient>(o => o.DeterminerConcept.Mnemonic == "Instance").Build();
+            var query = m_builder.CreateQuery<Patient>(o => o.DeterminerConcept.Mnemonic == "Instance").Build();
+            sw.Stop();
+
+            Assert.IsTrue(query.SQL.Contains("SELECT * FROM pat_tbl"));
+            Assert.IsTrue(query.SQL.Contains("INNER JOIN ent_vrsn_tbl"));
+            Assert.IsTrue(query.SQL.Contains("WITH"));
+            Assert.IsTrue(query.SQL.Contains("cte0"));
+            Assert.AreEqual(1, query.Arguments.Count());
+        }
+
+        /// <summary>
+        /// Test re
+        /// </summary>
+        [TestMethod]
+        public void TestQueryShouldWriteNestedJoin()
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            var query = m_builder.CreateQuery<Entity>(o => o.Identifiers.Any(i => i.Value == "123" && i.Authority.Oid == "1.2.3.4.6.7.8.9" || i.Value == "321" && i.Authority.Oid == "1.2.3.4.5.6.7.8") && o.ClassConceptKey == EntityClassKeys.Organization);
             sw.Stop();
 
             Assert.IsTrue(query.SQL.Contains("SELECT * FROM pat_tbl"));
@@ -133,7 +157,7 @@ namespace OpenIZ.Persistence.Data.ADO.Test
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            var query = QueryBuilder.CreateQuery<Patient>(o => o.Participations.Where(guard => guard.ParticipationRole.Mnemonic == "RecordTarget").Any(sub => sub.PlayerEntity.ObsoletionTime == null));
+            var query = m_builder.CreateQuery<Patient>(o => o.Participations.Where(guard => guard.ParticipationRole.Mnemonic == "RecordTarget").Any(sub => sub.PlayerEntity.ObsoletionTime == null));
             sw.Stop();
 
             Assert.IsTrue(query.SQL.Contains("SELECT * FROM pat_tbl"));
@@ -151,12 +175,12 @@ namespace OpenIZ.Persistence.Data.ADO.Test
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            var query = QueryBuilder.CreateQuery<Patient>(o => o.Names.Where(guard => guard.NameUse.Mnemonic == "Legal").Any(v => v.Component.Where(b => b.ComponentType.Mnemonic == "Family").Any(n => n.Value == "Smith")) &&
-                o.Names.Where(guard => guard.NameUse.Mnemonic == "Legal").Any(v => v.Component.Where(b => b.ComponentType.Mnemonic == "Given").Any(n => n.Value == "John")));
+            var query = m_builder.CreateQuery<Entity>(o => o.Names.Where(guard => guard.NameUse.Mnemonic == "Legal").Any(v => v.Component.Where(b => b.ComponentType.Mnemonic == "Family").Any(n => n.Value == "Smith")) &&
+                o.Names.Where(guard => guard.NameUse.Mnemonic == "Legal").Any(v => v.Component.Where(b => b.ComponentType.Mnemonic == "Given").Any(n => n.Value == "John" || n.Value == "Jacob"))).Build();
             sw.Stop();
 
-            Assert.IsTrue(query.SQL.Contains("SELECT * FROM pat_tbl"));
-            Assert.IsTrue(query.SQL.Contains("INNER JOIN ent_vrsn_tbl"));
+            Assert.IsTrue(query.SQL.Contains("SELECT * FROM ent_vrsn_tbl"));
+            Assert.IsTrue(query.SQL.Contains("INNER JOIN ent_tbl"));
             Assert.IsTrue(query.SQL.Contains("WITH"));
             Assert.IsTrue(query.SQL.Contains("cte0"));
             Assert.AreEqual(1, query.Arguments.Count());

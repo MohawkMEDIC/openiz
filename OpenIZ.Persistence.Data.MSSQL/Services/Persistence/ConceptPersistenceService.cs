@@ -55,7 +55,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
         public override Core.Model.DataTypes.Concept Insert(ModelDataContext context, Core.Model.DataTypes.Concept data, IPrincipal principal)
         {
             data.StatusConceptKey = data.StatusConceptKey ?? StatusKeys.Active;
-            data.ClassKey = data.ClassKey == Guid.Empty ? ConceptClassKeys.Other : data.ClassKey;
+            data.ClassKey = data.ClassKey ?? ConceptClassKeys.Other ;
             
             // Ensure exists
             data.Class?.EnsureExists(context, principal);

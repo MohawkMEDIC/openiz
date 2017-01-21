@@ -19,7 +19,7 @@
  */
 
 
-using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+using OpenIZ.OrmLite.Attributes;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
 using System;
 using System.Collections.Generic;

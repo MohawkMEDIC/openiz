@@ -353,7 +353,7 @@ namespace OpenIZ.Core.Model.Map
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Error converting {0}. {1}", expression, e.ToString());
+               // Debug.WriteLine("Error converting {0}. {1}", expression, e);
                 throw;
             }
         }
@@ -447,15 +447,22 @@ namespace OpenIZ.Core.Model.Map
         /// </summary>
         public TModel MapDomainInstance<TDomain, TModel>(TDomain domainInstance, bool useCache = true, HashSet<Guid> keyStack = null) where TModel : new()
         {
+            return (TModel)MapDomainInstance(typeof(TDomain), typeof(TModel), domainInstance, useCache, keyStack);
+        }
 
-            ClassMap classMap = this.m_mapFile.GetModelClassMap(typeof(TModel), typeof(TDomain));
+        /// <summary>
+        /// Map domain instance
+        /// </summary>
+        public object MapDomainInstance(Type tDomain, Type tModel, object domainInstance, bool useCache = true, HashSet<Guid> keyStack = null)
+        { 
+            ClassMap classMap = this.m_mapFile.GetModelClassMap(tModel, tDomain);
 
             if (domainInstance == null)
-                return default(TModel);
+                return null;
             else
             {
-                var cType = typeof(TModel);
-                while (cType != null && classMap == null || !typeof(TDomain).GetTypeInfo().IsAssignableFrom(Type.GetType(classMap.DomainClass).GetTypeInfo()))
+                var cType = tModel;
+                while (cType != null && classMap == null || !tDomain.GetTypeInfo().IsAssignableFrom(Type.GetType(classMap.DomainClass).GetTypeInfo()))
                 {
                     cType = cType.GetTypeInfo().BaseType;
                     classMap = this.m_mapFile.GetModelClassMap(cType);
@@ -463,7 +470,7 @@ namespace OpenIZ.Core.Model.Map
             }
 
             // Now the property maps
-            TModel retVal = new TModel();
+            object retVal = Activator.CreateInstance(tModel);
 
             // Key?
             if (classMap == null)
@@ -480,7 +487,7 @@ namespace OpenIZ.Core.Model.Map
                 classMap.TryGetModelProperty("Key", out iKeyMap);
             if (iKeyMap != null)
             {
-                object keyValue = typeof(TDomain).GetRuntimeProperty(iKeyMap.DomainName).GetValue(domainInstance);
+                object keyValue = tDomain.GetRuntimeProperty(iKeyMap.DomainName).GetValue(domainInstance);
                 while (iKeyMap.Via != null)
                 {
                     keyValue = keyValue.GetType().GetRuntimeProperty(iKeyMap.Via.DomainName).GetValue(keyValue);
@@ -494,19 +501,19 @@ namespace OpenIZ.Core.Model.Map
 
                 var cache = FireMappingToModel(this, (Guid)keyValue, retVal as IdentifiedData);
                 if (cache != null && useCache)
-                    return (TModel)cache;
+                    return cache;
             }
 
             // Classifier value 
             String classifierValue = null;
-            var classPropertyName = typeof(TModel).GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty;
+            var classPropertyName = tModel.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty;
             if (classPropertyName != null) {
                 // Key value
-                classPropertyName = typeof(TModel).GetRuntimeProperty(classPropertyName)?.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty ?? classPropertyName;
+                classPropertyName = tModel.GetRuntimeProperty(classPropertyName)?.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty ?? classPropertyName;
 
                 if (classMap.TryGetModelProperty(classPropertyName ?? "____XXX", out iKeyMap))
                 {
-                    object keyValue = typeof(TDomain).GetRuntimeProperty(iKeyMap.DomainName).GetValue(domainInstance);
+                    object keyValue = tDomain.GetRuntimeProperty(iKeyMap.DomainName).GetValue(domainInstance);
                     while (iKeyMap.Via != null)
                     {
                         keyValue = keyValue.GetType().GetRuntimeProperty(iKeyMap.Via.DomainName).GetValue(keyValue);
@@ -524,14 +531,14 @@ namespace OpenIZ.Core.Model.Map
                 if (idEnt.Key.HasValue)
                 {
                     if (keyStack.Contains(idEnt.Key.Value))
-                        return default(TModel);
+                        return null;
                     else
                         keyStack.Add(idEnt.Key.Value);
                 }
             }
 
             // Iterate the properties and map
-            foreach (var modelPropertyInfo in typeof(TModel).GetRuntimeProperties())
+            foreach (var modelPropertyInfo in tModel.GetRuntimeProperties())
             {
 
                 // no need to load?
@@ -554,7 +561,7 @@ namespace OpenIZ.Core.Model.Map
 
                 if (propMap?.DontLoad == true)
                     continue;
-                var propInfo = typeof(TDomain).GetRuntimeProperty(propMap?.DomainName ?? modelPropertyInfo.Name);
+                var propInfo = tDomain.GetRuntimeProperty(propMap?.DomainName ?? modelPropertyInfo.Name);
                 if (propInfo == null)
                 {
 #if VERBOSE_DEBUG
@@ -580,13 +587,15 @@ namespace OpenIZ.Core.Model.Map
                 }
 
                 // Traversal stuff
-                PropertyInfo modelProperty = propMap == null ? modelPropertyInfo : typeof(TModel).GetRuntimeProperty(propMap.ModelName); ;
+                PropertyInfo modelProperty = propMap == null ? modelPropertyInfo : tModel.GetRuntimeProperty(propMap.ModelName); ;
                 object sourceObject = domainInstance;
                 PropertyInfo sourceProperty = propInfo;
 
                 // Go through the via elements in the object map. This code traces a path 
                 // through the domain class instantiating any necessary associative entity
-                // classes. Example when a model entity is really two or three tables in the DB..
+                // Example when a model entity is really two or three tables in the DB..
+                // This piece of code does whatever is necessary to traverse the data model,
+                // kinda reminds me of a song:
                 // 🎶 Ah for just one time, I would take the northwest passage
                 // To find the hand of Franklin reaching for the Beaufort Sea.
                 // Tracing one warm line, through a land so wide and savage
@@ -672,7 +681,7 @@ namespace OpenIZ.Core.Model.Map
                     var listValue = sourceProperty.GetValue(sourceObject);
 
                     // Is this list a versioned association??
-                    if (typeof(TDomain).GetRuntimeProperty("VersionSequenceId") != null &&
+                    if (tDomain.GetRuntimeProperty("VersionSequenceId") != null &&
                         sourceProperty.PropertyType.GenericTypeArguments[0].GetRuntimeProperty("EffectiveVersionSequenceId") != null) // Filter!!! Yay!
                     {
                         var parm = Expression.Parameter(listValue.GetType());

@@ -36,7 +36,7 @@ namespace OpenIZ.Core.Model.Acts
     /// </summary>
     [XmlType("Observation",  Namespace = "http://openiz.org/model"), JsonObject("Observation")]
     
-    public abstract class Observation : Act
+    public class Observation : Act
     {
 
         // Interpreation concept key

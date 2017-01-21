@@ -29,7 +29,7 @@ using OpenIZ.Core.Security.Claims;
 using OpenIZ.Persistence.Data.ADO.Configuration;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
-using OpenIZ.Persistence.Data.ADO.Util;
+using OpenIZ.OrmLite;
 using OpenIZ.Persistence.Data.PSQL.Security;
 using System;
 using System.Collections.Generic;

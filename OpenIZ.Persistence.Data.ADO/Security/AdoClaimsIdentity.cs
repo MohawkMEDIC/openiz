@@ -44,11 +44,12 @@ using System.Threading.Tasks;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
 using OpenIZ.Persistence.Data.ADO.Configuration;
-using OpenIZ.Persistence.Data.ADO.Util;
 using System.Data;
 using System.Data.Common;
-using OpenIZ.Persistence.Data.ADO.Data;
+using OpenIZ.Persistence.Data.ADO.Data.Model;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Error;
+using OpenIZ.Persistence.Data.ADO.Data;
+using OpenIZ.OrmLite;
 
 namespace OpenIZ.Persistence.Data.ADO.Security
 {

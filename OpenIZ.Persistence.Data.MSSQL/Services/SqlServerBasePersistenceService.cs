@@ -47,7 +47,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
     /// <summary>
     /// Represents a data persistence service which stores data in the local SQLite data store
     /// </summary>
-    public abstract class SqlServerBasePersistenceService<TData> : IDataPersistenceService<TData> where TData : IdentifiedData
+    public abstract class SqlServerBasePersistenceService<TData> : IDataPersistenceService<TData>, IDataPersistenceService where TData : IdentifiedData
     {
 
         // Lock for editing 
@@ -68,7 +68,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
         public event EventHandler<PostPersistenceEventArgs<TData>> Updated;
         public event EventHandler<PrePersistenceEventArgs<TData>> Obsoleting;
         public event EventHandler<PostPersistenceEventArgs<TData>> Obsoleted;
-        public event EventHandler<PreRetrievalEventArgs<TData>> Retrieving;
+        public event EventHandler<PreRetrievalEventArgs> Retrieving;
         public event EventHandler<PostRetrievalEventArgs<TData>> Retrieved;
         public event EventHandler<PreQueryEventArgs<TData>> Querying;
         public event EventHandler<PostQueryEventArgs<TData>> Queried;
@@ -479,6 +479,46 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Query {0} took {1} ms", query, sw.ElapsedMilliseconds);
 #endif
                 }
+        }
+
+        /// <summary>
+        /// Insert
+        /// </summary>
+        public object Insert(object data)
+        {
+            return this.Insert((TData)data, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+        }
+
+        /// <summary>
+        /// Update
+        /// </summary>
+        public object Update(object data)
+        {
+            return this.Update((TData)data, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+        }
+
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        public object Obsolete(object data)
+        {
+            return this.Obsolete((TData)data, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+        }
+
+        /// <summary>
+        /// Get
+        /// </summary>
+        public object Get(Guid id)
+        {
+            return this.Get(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, false);
+        }
+
+        /// <summary>
+        /// Query
+        /// </summary>
+        public IEnumerable Query(Expression query, int offset, int? count, out int totalResults)
+        {
+            return this.Query((Expression<Func<TData, bool>>)query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
         }
     }
 }

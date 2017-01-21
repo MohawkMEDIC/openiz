@@ -43,7 +43,7 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var dbe = dataInstance as Data.EntityVersion ?? context.GetTable<Data.EntityVersion>().Where(o => o.EntityVersionId == deviceEntity.EntityVersionId).First();
             var retVal = m_entityPersister.ToModelInstance<Core.Model.Entities.DeviceEntity>(dbe, context, principal);
             retVal.SecurityDeviceKey = deviceEntity.DeviceId;
-            retVal.ManufacturedModelName = deviceEntity.ManufacturedModelName;
+            retVal.ManufacturerModelName = deviceEntity.ManufacturedModelName;
             retVal.OperatingSystemName = deviceEntity.OperatingSystemName;
             return retVal;
         }

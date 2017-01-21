@@ -1,8 +1,9 @@
-﻿using OpenIZ.Persistence.Data.ADO.Data.Attributes;
+﻿using OpenIZ.OrmLite.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using OpenIZ.OrmLite.Attributes;
 using System.Threading.Tasks;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
