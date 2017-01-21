@@ -63,6 +63,7 @@
     <Compile Include="Data\Model\Acts\DbPatientEncounter.cs" />
     <Compile Include="Data\Model\Acts\DbProtocol.cs" />
     <Compile Include="Data\Model\Acts\DbSubstanceAdministration.cs" />
+    <Compile Include="Data\Model\Alerts\DbAlertMessage.cs" />
     <Compile Include="Exceptions\AdoFormalConstraintException.cs" />
     <Compile Include="Services\AdoBasePersistenceService.cs" />
     <Compile Include="Data\Model\Concepts\DbCodeSystem.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="Services\IAdoPersistenceService.cs" />
     <Compile Include="Services\Persistence\ActDerivedPersistenceService.cs" />
     <Compile Include="Services\Persistence\ActPersistenceService.cs" />
+    <Compile Include="Services\Persistence\AlertPersistenceService.cs" />
     <Compile Include="Services\Persistence\ApplicationEntityPersistenceService.cs" />
     <Compile Include="Services\Persistence\AssigningAuthorityPersistenceService.cs" />
     <Compile Include="Services\Persistence\BaseDataPersistenceService.cs" />
@@ -158,6 +160,10 @@
     <Compile Include="Services\Persistence\VersionedDataPersistenceService.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.Core.Alert\OpenIZ.Core.Alert.csproj">
+      <Project>{cceaa09f-7b59-45ec-b969-3a740c2aebaa}</Project>
+      <Name>OpenIZ.Core.Alert</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
       <Project>{f1a82a4f-4a57-47d7-ae76-444c8a4ff54a}</Project>
       <Name>OpenIZ.Core.Model</Name>

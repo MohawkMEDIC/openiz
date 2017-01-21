@@ -19,6 +19,23 @@
  - Date: 2016-6-14
  -->
 <modelMap xmlns="http://openiz.org/model/map">
+  
+  <!-- Alerts -->
+  <class modelClass="OpenIZ.Core.Alert.Alerting.AlertMessage, OpenIZ.Core.Alert, Version=0.6.0.0"
+  domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Alerts.DbAlertMessage, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="CreationTime" domainName="CreationTime" />
+    <property modelName="CreatedByKey" domainName="CreatedByKey"/>
+    <property modelName="UpdatedByKey" domainName="UpdatedByKey"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedByKey"/>
+    <property modelName="ModifiedOn" domainName="UpdatedTime"/>
+    <property modelName="From" domainName="FromInfo"/>
+    <property modelName="TimeStamp" domainName="MessageUtc" />
+    <property modelName="Subject" domainName="Subject"/>
+    <property modelName="Body" domainName="Body"/>
+    <property modelName="To" domainName="ToInfo"/>
+  </class>
+  
   <!-- Security Users -->
   <class modelClass="OpenIZ.Core.Model.Security.SecurityUser, OpenIZ.Core.Model, Version=1.0.0.0"
 		domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Security.DbSecurityUser, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
