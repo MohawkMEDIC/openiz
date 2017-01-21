@@ -130,7 +130,7 @@ namespace OpenIZ.Messaging.IMSI.Util
             // Set the stack
             if (keyStack == null)
                 keyStack = new Stack<Guid>();
-            else if (keyStack.Contains(returnValue.Key.Value))
+            else if (returnValue.Key.HasValue &&  keyStack.Contains(returnValue.Key.Value))
                 return;
 
             keyStack.Push(returnValue.Key.Value);

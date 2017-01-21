@@ -242,6 +242,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             public IEnumerable GetFromSource(DataContext context, Guid sourceId, decimal? versionSequenceId, IPrincipal principal)
             {
                 int tr = 0;
+                // TODO: Check that this query is actually building what it is supposed to.
                 return this.Query(context, base.BuildSourceQuery<TModel>(sourceId, versionSequenceId), 0, null, out tr, principal, false);
             }
         }

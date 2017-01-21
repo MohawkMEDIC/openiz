@@ -123,9 +123,12 @@ namespace OizDevTool
             var idp = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
             WaitThreadPool wtp = new WaitThreadPool();
             var mat = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>().Query(o => o.ClassConceptKey == EntityClassKeys.Material, AuthenticationContext.SystemPrincipal);
+            Console.WriteLine("Database has {0} materials", mat.Count());
 
             int tr = 0, ofs = 0;
+            Console.WriteLine("Querying for places");
             var results = idp.Query(o => o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation, ofs, 25, AuthenticationContext.SystemPrincipal, out tr);
+            Console.WriteLine("Will create fake stock for {0} places", tr);
             var r = new Random();
 
             while (ofs + 25 < tr)
@@ -134,20 +137,29 @@ namespace OizDevTool
                 {
                     wtp.QueueUserWorkItem((parm) =>
                     {
-                        Place target = parm as Place;
-                        // Add some stock!!! :)
-                        foreach (var m in mat)
+                        try
                         {
-                            var mmats = m.Relationships.Where(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.ManufacturedProduct).OrderBy(o => r.Next()).FirstOrDefault();
+                            Place target = parm as Place;
+                            Console.WriteLine("Starting seeding for {0} currently {1} relationships", target.Names.FirstOrDefault().Component.FirstOrDefault().Value, target.Relationships.Count);
 
-                            var rdp = ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>();
-                            if (mmats != null)
+                            // Add some stock!!! :)
+                            foreach (var m in mat)
                             {
+                                var mmats = m.Relationships.Where(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.ManufacturedProduct).OrderBy(o => r.Next()).FirstOrDefault();
+                                Console.WriteLine("Selected {0} out of {1} materials", mmats, m.Relationships.Count);
+                                var rdp = ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>();
+                                if (mmats != null)
+                                {
 
-                                var er = new EntityRelationship(EntityRelationshipTypeKeys.OwnedEntity, mmats.TargetEntityKey) { Quantity = r.Next(0, 100), SourceEntityKey = target.Key, EffectiveVersionSequenceId = target.VersionSequence };
-                                Console.WriteLine("{0} > {1} {2}", target.Names.FirstOrDefault().Component.FirstOrDefault().Value, er.Quantity, m.Names.FirstOrDefault().Component.FirstOrDefault().Value);
-                                rdp.Insert(er, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
+                                    var er = new EntityRelationship(EntityRelationshipTypeKeys.OwnedEntity, mmats.TargetEntityKey) { Quantity = r.Next(0, 100), SourceEntityKey = target.Key, EffectiveVersionSequenceId = target.VersionSequence };
+                                    Console.WriteLine("{0} > {1} {2}", target.Names.FirstOrDefault().Component.FirstOrDefault().Value, er.Quantity, m.Names.FirstOrDefault().Component.FirstOrDefault().Value);
+                                    rdp.Insert(er, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
+                                }
                             }
+                        }
+                        catch(Exception e)
+                        {
+                            Console.WriteLine(e);
                         }
 
                     }, p);

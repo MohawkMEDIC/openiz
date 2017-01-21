@@ -118,7 +118,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             return new EntityAddressComponent()
             {
                 ComponentTypeKey = addrComp.ComponentTypeKey,
-                Value = addrValue.Value
+                Value = addrValue.Value,
+                Key = addrComp.Key,
+                SourceEntityKey = addrComp.SourceKey
             };
         }
 

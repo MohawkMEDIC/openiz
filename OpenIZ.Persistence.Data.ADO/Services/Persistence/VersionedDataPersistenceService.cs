@@ -313,17 +313,17 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     // Since this is a versioned association an a versioned association only exists between Concept, Act, or Entity
                     if (itm is VersionedAssociation<Concept>)
                     {
-                        versionQuery = new SqlStatement<DbConceptVersion>().SelectFrom().Where(o => o.VersionKey == source.Key && !o.ObsoletionTime.HasValue).OrderBy<DbConceptVersion>(o => o.VersionSequenceId);
+                        versionQuery = new SqlStatement<DbConceptVersion>().SelectFrom().Where(o => o.VersionKey == itm.SourceEntityKey && !o.ObsoletionTime.HasValue).OrderBy<DbConceptVersion>(o => o.VersionSequenceId);
                         currentVersion = context.FirstOrDefault<DbConceptVersion>(versionQuery);
                     }
                     else if (itm is VersionedAssociation<Act>)
                     {
-                        versionQuery = new SqlStatement<DbActVersion>().SelectFrom().Where(o => o.Key == source.Key && !o.ObsoletionTime.HasValue).OrderBy<DbActVersion>(o => o.VersionSequenceId);
+                        versionQuery = new SqlStatement<DbActVersion>().SelectFrom().Where(o => o.Key == itm.SourceEntityKey && !o.ObsoletionTime.HasValue).OrderBy<DbActVersion>(o => o.VersionSequenceId);
                         currentVersion = context.FirstOrDefault<DbActVersion>(versionQuery);
                     }
                     else if (itm is VersionedAssociation<Entity>)
                     {
-                        versionQuery = new SqlStatement<DbEntityVersion>().SelectFrom().Where(o => o.Key == source.Key && !o.ObsoletionTime.HasValue).OrderBy<DbEntityVersion>(o => o.VersionSequenceId);
+                        versionQuery = new SqlStatement<DbEntityVersion>().SelectFrom().Where(o => o.Key == itm.SourceEntityKey && !o.ObsoletionTime.HasValue).OrderBy<DbEntityVersion>(o => o.VersionSequenceId);
                         currentVersion = context.FirstOrDefault<DbEntityVersion>(versionQuery);
                     }
 

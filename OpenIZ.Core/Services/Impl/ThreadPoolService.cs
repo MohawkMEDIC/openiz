@@ -79,7 +79,8 @@ namespace OpenIZ.Core.Services.Impl
         {
             this.Starting?.Invoke(this, EventArgs.Empty);
 
-            this.m_threadPool = new WaitThreadPool((ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.core") as OpenIzConfiguration).ThreadPoolSize);
+            int concurrency = (ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.core") as OpenIzConfiguration)?.ThreadPoolSize ?? Environment.ProcessorCount;
+            this.m_threadPool = new WaitThreadPool(concurrency);
 
             this.Started?.Invoke(this, EventArgs.Empty);
             return true;

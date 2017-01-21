@@ -144,7 +144,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 ComponentTypeKey = nameComp.ComponentTypeKey,
                 PhoneticAlgorithmKey = nameValue.PhoneticAlgorithmKey,
                 PhoneticCode = nameValue.PhoneticCode,
-                Value = nameValue.Value
+                Value = nameValue.Value,
+                Key = nameComp.Key,
+                SourceEntityKey = nameComp.SourceKey
             };
         }
 
