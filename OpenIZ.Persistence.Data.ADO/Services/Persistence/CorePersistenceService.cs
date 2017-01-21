@@ -52,7 +52,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             domainObject = context.Insert<TDomain>(domainObject);
 
-            data.Key = (domainObject as IDbIdentified)?.Key;
+            if(domainObject is IDbIdentified)
+                data.Key = (domainObject as IDbIdentified)?.Key;
             //data.CopyObjectData(this.ToModelInstance(domainObject, context, principal));
             //data.Key = domainObject.Key
             return data;
@@ -161,10 +162,12 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         protected virtual TModel CacheConvert(Object o, DataContext context, IPrincipal principal)
         {
-            if ((o as IDbBaseData)?.ObsoletionTime != null || !(o is IDbIdentified))
+            var idData = (o as CompositeResult)?.Values.OfType<IDbIdentified>().FirstOrDefault() ?? o as IDbIdentified;
+            var objData = (o as CompositeResult)?.Values.OfType<IDbBaseData>().FirstOrDefault() ?? o as IDbBaseData ;
+            if (objData?.ObsoletionTime != null || idData == null)
                 return this.ToModelInstance(o, context, principal);
             else
-                return ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>((o as IDbIdentified).Key) ?? this.ToModelInstance(o, context, principal);
+                return ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(idData?.Key ?? Guid.Empty) ??  this.ToModelInstance(o, context, principal);
         }
 
         /// <summary>

@@ -95,7 +95,7 @@ namespace OpenIZ.Core.Model.Entities
         /// Gets or sets the manufacturer model name
         /// </summary>
         [XmlElement("manufacturerModelName"), JsonProperty("manufacturerModelName")]
-        public String ManufacturedModelName { get; set; }
+        public String ManufacturerModelName { get; set; }
         /// <summary>
         /// Gets or sets the operating system name
         /// </summary>
@@ -120,7 +120,7 @@ namespace OpenIZ.Core.Model.Entities
             if (other == null) return false;
             return base.SemanticEquals(obj) &&
                 this.SecurityDeviceKey == other.SecurityDeviceKey &&
-                this.ManufacturedModelName == other.ManufacturedModelName &&
+                this.ManufacturerModelName == other.ManufacturerModelName &&
                 this.OperatingSystemName == other.OperatingSystemName;
         }
     }

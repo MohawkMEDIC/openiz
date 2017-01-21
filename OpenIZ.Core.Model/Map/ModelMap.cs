@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -101,8 +102,12 @@ namespace OpenIZ.Core.Model.Map
             var retVal = this.GetModelClassMap(modelType);
             if (retVal?.DomainType == (domainType ?? retVal?.DomainType))
                 return retVal;
-            else
-                return this.Class.Find(o => o.ModelType == modelType && o.DomainType == domainType);
+            while (modelType != typeof(Object) && retVal?.DomainType != (domainType ?? retVal?.DomainType))
+            {
+                modelType = modelType.GetTypeInfo().BaseType;
+                retVal = this.Class.Find(o => o.ModelType == modelType && o.DomainType == domainType);
+            }
+            return retVal;
         }
     }
 }

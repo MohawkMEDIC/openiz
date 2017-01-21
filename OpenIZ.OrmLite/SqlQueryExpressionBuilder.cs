@@ -143,26 +143,29 @@ namespace OpenIZ.OrmLite
             switch (node.NodeType)
             {
                 case ExpressionType.Equal:
-                    
-                    if ((node.Right is ConstantExpression) &&
-                        (node.Right as ConstantExpression).Value == null)
                     {
-                        skipRight = true;
-                        this.m_sqlStatement.Append(" IS NULL ");
+                        var cexpr = this.ExtractConstantExpression(node.Right);
+                        if (cexpr != null && cexpr.Value == null)
+                        {
+                            skipRight = true;
+                            this.m_sqlStatement.Append(" IS NULL ");
+                        }
+                        else
+                            this.m_sqlStatement.Append(" = ");
+                        break;
                     }
-                    else
-                        this.m_sqlStatement.Append(" = ");
-                    break;
                 case ExpressionType.NotEqual:
-                    if ((node.Right is ConstantExpression) &&
-                        (node.Right as ConstantExpression).Value == null)
                     {
-                        skipRight = true;
-                        this.m_sqlStatement.Append(" IS NOT NULL ");
+                        var cexpr = this.ExtractConstantExpression(node.Right);
+                        if (cexpr != null && cexpr.Value == null)
+                        {
+                            skipRight = true;
+                            this.m_sqlStatement.Append(" IS NOT NULL ");
+                        }
+                        else
+                            this.m_sqlStatement.Append(" <> ");
+                        break;
                     }
-                    else
-                        this.m_sqlStatement.Append(" <> ");
-                    break;
                 case ExpressionType.GreaterThan:
                     this.m_sqlStatement.Append(" > ");
                     break;
@@ -194,6 +197,7 @@ namespace OpenIZ.OrmLite
             return node;
         }
 
+      
         /// <summary>
         /// Visit a parameter reference
         /// </summary>
@@ -286,6 +290,17 @@ namespace OpenIZ.OrmLite
 
         }
 
+        /// <summary>
+        /// Extract constant expression
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        public ConstantExpression ExtractConstantExpression(Expression e)
+        {
+            if (e.NodeType == ExpressionType.TypeAs || e.NodeType == ExpressionType.Convert)
+                return this.ExtractConstantExpression((e as UnaryExpression).Operand);
+            return e as ConstantExpression;
+        }
 
         /// <summary>
         /// Visit member access

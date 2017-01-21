@@ -381,6 +381,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 // submit the changes
                 using (var dataContext = this.m_configuration.Provider.GetWriteConnection())
                 {
+                    dataContext.Open();
                     new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.UnrestrictedAdministration, authContext).Demand();
 
                     var user = dataContext.FirstOrDefault<DbSecurityUser>(o => o.UserName == userName);
@@ -421,6 +422,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             {
                 using (var dataContext = this.m_configuration.Provider.GetWriteConnection())
                 {
+                    dataContext.Open();
+
                     var user = dataContext.FirstOrDefault<DbSecurityUser>(o => o.UserName == userName);
                     if (user == null)
                         throw new KeyNotFoundException(userName);
@@ -470,6 +473,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             {
                 using (var dataContext = this.m_configuration.Provider.GetWriteConnection())
                 {
+                    dataContext.Open();
+
                     var user = dataContext.FirstOrDefault<DbSecurityUser>(o => o.UserName == userName);
                     if (user == null)
                         throw new KeyNotFoundException(userName);

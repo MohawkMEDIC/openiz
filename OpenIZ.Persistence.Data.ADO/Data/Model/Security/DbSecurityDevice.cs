@@ -45,7 +45,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Security
         /// Device secret
         /// </summary>
         [Column("dev_scrt")]
-        public String Secret { get; set; }
+        public String DeviceSecret { get; set; }
 
         /// <summary>
         /// Replaces the specified device identifier

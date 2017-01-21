@@ -194,6 +194,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Security
     /// <summary>
     /// User claim
     /// </summary>
+    [Table("sec_usr_clm_tbl")]
     public class DbUserClaim : DbAssociation
     {
 

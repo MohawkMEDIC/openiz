@@ -130,7 +130,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			deviceEntityPersistenceService.Insert(new DeviceEntity
 			{
-				ManufacturedModelName = device.Name,
+				ManufacturerModelName = device.Name,
 				SecurityDevice = createdDevice,
 				StatusConceptKey = StatusKeys.Active
 			}, AuthenticationContext.Current.Principal, TransactionMode.Commit);

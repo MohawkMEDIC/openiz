@@ -315,6 +315,8 @@ namespace OpenIZ.OrmLite
 
             // Now map the property path
             var tableAlias = $"{tablePrefix}{tableMapping.TableName}";
+            if (domainProperty == null)
+                throw new ArgumentException($"Can't find SQL based property for {propertyPath} on {tableMapping.TableName}");
             var columnData = tableMapping.GetColumn(domainProperty);
 
             // List of parameters

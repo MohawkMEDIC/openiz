@@ -186,6 +186,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Data\SQL\PSQL\openiz-fn.sql" />
+    <Content Include="Data\SQL\PSQL\openiz-test.sql" />
     <EmbeddedResource Include="Data\Map\ModelMap.xml" />
     <Content Include="Data\SQL\PSQL\openiz-codes.sql" />
     <Content Include="Data\SQL\PSQL\openiz-ddl.sql" />

@@ -48,7 +48,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if (retVal == null) return null;
 
             retVal.SecurityDeviceKey = deviceEntity.SecurityDeviceKey;
-            retVal.ManufacturedModelName = deviceEntity.ManufacturerModelName;
+            retVal.ManufacturerModelName = deviceEntity.ManufacturerModelName;
             retVal.OperatingSystemName = deviceEntity.OperatingSystemName;
             return retVal;
         }

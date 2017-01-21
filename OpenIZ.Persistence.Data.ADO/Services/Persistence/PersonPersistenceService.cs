@@ -70,8 +70,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
 
             var retVal = m_entityPersister.ToModelInstance<Person>(entityVersionInstance, entityInstance, context, principal);
-            if (retVal == null) return null;
-            retVal.DateOfBirth = personInstance?.DateOfBirth;
+            if (retVal == null || personInstance == null) return retVal;
+            retVal.DateOfBirth = personInstance.DateOfBirth;
 
             // Reverse lookup
             if (!String.IsNullOrEmpty(personInstance?.DateOfBirthPrecision))
@@ -96,7 +96,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.Entities.Person Insert(DataContext context, Core.Model.Entities.Person data, IPrincipal principal)
         {
             var retVal = base.Insert(context, data, principal);
-            byte[] sourceKey = retVal.Key.Value.ToByteArray();
+            //byte[] sourceKey = retVal.Key.Value.ToByteArray();
 
             // Language communication
             if (data.LanguageCommunication != null)

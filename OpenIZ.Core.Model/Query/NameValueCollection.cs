@@ -18,6 +18,7 @@
  * Date: 2016-8-2
  */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -60,7 +61,10 @@ namespace OpenIZ.Core.Model.Query
         public NameValueCollection(KeyValuePair<string, object>[] kvpa)
         {
             foreach (var kv in kvpa)
-                this.Add(kv.Key, kv.Value?.ToString());
+                if(kv.Value is IList)
+                    this.Add(kv.Key, (kv.Value as IList).OfType<Object>().Select(o=>o.ToString()).ToList());
+                else
+                    this.Add(kv.Key, kv.Value?.ToString());
         }
 
         /// <summary>

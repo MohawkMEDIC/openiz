@@ -74,7 +74,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     dataContext.Open();
                     IPasswordHashingService hashService = ApplicationContext.Current.GetService<IPasswordHashingService>();
 
-                    var client = dataContext.FirstOrDefault<DbSecurityApplication>("auth_app", applicationId, applicationSecret);
+                    var client = dataContext.FirstOrDefault<DbSecurityApplication>("auth_app", applicationId, hashService.EncodePassword(applicationSecret));
                     if (client == null)
                         throw new SecurityException("Invalid application credentials");
 
