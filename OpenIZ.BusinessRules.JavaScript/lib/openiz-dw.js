@@ -105,12 +105,14 @@ var OpenIZWarehouse = OpenIZWarehouse || {
          * @memberof OpenIZWarehouse.Adhoc
          * @method
          * @summary Creates a new datamart with the specified schema
-         * @param {String} name The name of the datamart
-         * @param {OpenIZWarehouse.DatamartSchema} schema The schema (definition) of the object being stored in the datamart
+         * @param {object} controlData the control data
+         * @param {String} controlData.name The name of the datamart
+         * @param {OpenIZWarehouse.DatamartSchema} controlData.schema The schema (definition) of the object being stored in the datamart
          * @return {OpenIZWarehouse.DatamartDefinition} The created datamart definition
          */
-        createDatamart: function (name, schema) {
+        createDatamartAsync: function (controlData) {
             try {
+
 
                 // Get service
                 var service = OpenIZBre.GetService("IAdHocDatawarehouseService");
@@ -120,19 +122,25 @@ var OpenIZWarehouse = OpenIZWarehouse || {
                 }
 
                 // Execute a create datamart
-                return serivce.CreateDatamart(name, schema);
+                if(controlData.continueWith)
+                    controlData.continueWith(serivce.CreateDatamart(controlData.name, controlData.schema));
             }
             catch (e) {
                 console.error(e);
+                if(controlData.onException)
+                    controlData.onException(e);
+            }
+            finally {
+                if(controlData.finally)
+                    controlData.finally();
             }
         },
         /** 
          * @method
          * @memberof OpenIZWarehouse.Adhoc
          * @summary Gets a list of all available datamarts
-         * @return {OpenIZWarehouse.DatamartDefinition} The datamarts in the warehouse file
          */
-        getDatamarts: function () {
+        getDatamarts: function (controlData) {
             try {
 
                 // Get service
@@ -143,10 +151,18 @@ var OpenIZWarehouse = OpenIZWarehouse || {
                 }
 
                 // Execute get datamart
-                return service.GetDatamarts();
+                if(controlData.continueWith)
+                    controlData.continueWith(service.GetDatamarts());
             }
             catch (e) {
                 console.error(e);
+                if (controlData.onException)
+                    controlData.onException(e);
+            }
+            finally
+            {
+                if (controlData.finally)
+                    controlData.finally();
             }
         },
         /**
@@ -154,7 +170,7 @@ var OpenIZWarehouse = OpenIZWarehouse || {
          * @memberof OpenIZWarehouse.Adhoc
          * @summary Deletes a datamart
          */
-        deleteDatamart: function (martId) {
+        deleteDatamart: function (controlData) {
             try {
 
                 // Get service
@@ -165,10 +181,17 @@ var OpenIZWarehouse = OpenIZWarehouse || {
                 }
 
                 // Execute get datamart
-                return service.DeleteDatamart(OpenIZBre.ParseGuid(martId));
+                if (controlData.continueWith)
+                    controlData.continueWith(service.DeleteDatamart(OpenIZBre.ParseGuid(controlData.martId)));
             }
             catch (e) {
                 console.error(e);
+                if (controlData.onException)
+                    controlData.onException(e);
+            }
+            finally {
+                if (controlData.finally)
+                    controlData.finally();
             }
 
         },
@@ -190,22 +213,30 @@ var OpenIZWarehouse = OpenIZWarehouse || {
                 }
 
                 // Execute get datamart
-                return service.Get(OpenIZBre.ParseGuid(martId), OpenIZBre.ParseGuid(tupleId));
+                if(controlData.continueWith)
+                    controlData.continueWith(service.Get(OpenIZBre.ParseGuid(controlData.martId), OpenIZBre.ParseGuid(controlData.tupleId)));
             }
             catch (e) {
                 console.error(e);
+                if (controlData.onException)
+                    controlData.onException(e);
+            }
+            finally {
+                if (controlData.finally)
+                    controlData.finally();
             }
         },
         /**
          * @method
          * @memberof OpenIZWarehouse.Adhoc
          * @summary Executes a stored query on the datamart with the specified parameters
-         * @param {string} martId The datamart from which the object should be retrieved
-         * @param {string} queryName The query to be executed
-         * @param {Object} parameter The object representing query parameters to the mart
+         * @param {Object} controlData The control data for the operation
+         * @param {string} controlData.martId The datamart from which the object should be retrieved
+         * @param {string} controlData.queryName The query to be executed
+         * @param {Object} controlData.parameter The object representing query parameters to the mart
          * @return {Object} A list of matching tuple or aggregates
          */
-        query: function (martId, queryName, parameters) {
+        query: function (controlData) {
             try {
 
                 // Get service
@@ -216,21 +247,29 @@ var OpenIZWarehouse = OpenIZWarehouse || {
                 }
 
                 // Execute get datamart
-                return service.StoredQuery(OpenIZBre.ParseGuid(martId), queryName, parameters);
+                if (controlData.continueWith)
+                    controlData.continueWith(service.StoredQuery(OpenIZBre.ParseGuid(controlData.martId), controlData.queryName, controlData.parameters));
             }
             catch (e) {
                 console.error(e);
+                if (controlData.onException)
+                    controlData.onException(e);
+            }
+            finally {
+                if (controlData.finally)
+                    controlData.finally();
             }
         },
         /**
          * @method
          * @memberof OpenIZWarehouse.Adhoc
          * @summary Adds the specified tuple to the datamart
-         * @param {string} martId The datamart to which the object should be stored
-         * @param {Object} object The object to be stored in the datamart
+        * @param {Object} controlData The control data for the operation
+         * @param {string} controlData.martId The datamart to which the object should be stored
+         * @param {Object} controlData.object The object to be stored in the datamart
          * @return {string} The tuple identifier of the object stored
          */
-        add: function (martId, object) {
+        add: function (controlData) {
             try {
 
                 // Get service
@@ -241,21 +280,29 @@ var OpenIZWarehouse = OpenIZWarehouse || {
                 }
 
                 // Execute get datamart
-                return service.StoredQuery(OpenIZBre.ParseGuid(martId), object);
+                if (controlData.continueWith)
+                    controlData.continueWith(service.StoredQuery(OpenIZBre.ParseGuid(controlData.martId), controlData.object));
             }
             catch (e) {
                 console.error(e);
+                if (controlData.onException)
+                    controlData.onException(e);
+            }
+            finally {
+                if(controlData.finally)
+                    controlData.finally();
             }
         },
         /** 
          * @method
          * @memberof OpenIZWarehouse.Adhoc
          * @summary Removes the specified tuple from the warehouse
-         * @param {string} martId The datamart from which the object should be removed
-         * @param {string} tupleId The identifier of the tuple to be deleted
+        * @param {Object} controlData The control data for the operation
+         * @param {string} controlData.martId The datamart from which the object should be removed
+         * @param {string} controlData.tupleId The identifier of the tuple to be deleted
          * @return {string} The tuple identifier of the object stored
          */
-        remove: function (martId, tupleId) {
+        remove: function (controlData) {
             try {
 
                 // Get service
@@ -266,10 +313,17 @@ var OpenIZWarehouse = OpenIZWarehouse || {
                 }
 
                 // Execute get datamart
-                return service.Delete(OpenIZBre.ParseGuid(martId), OpenIZBre.ParseGuid(tupleId));
+                if (controlData.continueWith)
+                    controlData.continueWith(service.Delete(OpenIZBre.ParseGuid(controlData.martId), OpenIZBre.ParseGuid(controlData.tupleId)));
             }
             catch (e) {
                 console.error(e);
+                if (controlData.onException)
+                    controlData.onException(e);
+            }
+            finally {
+                if (controlData.finally)
+                    controlData.finally();
             }
         }
     }

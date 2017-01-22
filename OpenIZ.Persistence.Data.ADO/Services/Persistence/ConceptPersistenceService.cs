@@ -32,6 +32,7 @@ using System.Linq.Expressions;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.OrmLite;
+using System.Collections;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -175,7 +176,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
     /// <summary>
     /// Persistence service for concept names
     /// </summary>
-    public class ConceptNamePersistenceService : IdentifiedPersistenceService<Core.Model.DataTypes.ConceptName, DbConceptName>
+    public class ConceptNamePersistenceService : IdentifiedPersistenceService<Core.Model.DataTypes.ConceptName, DbConceptName>, IAdoAssociativePersistenceService
     {
         /// <summary>
         /// Concept name service
@@ -187,6 +188,20 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             retVal.PhoneticAlgorithmKey = phoneticCoder?.AlgorithmId ?? PhoneticAlgorithmKeys.None;
             retVal.PhoneticCode = phoneticCoder?.GenerateCode(modelInstance.Name);
             return retVal;
+        }
+
+        /// <summary>
+        /// Get names from source
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="id"></param>
+        /// <param name="versionSequenceId"></param>
+        /// <param name="principal"></param>
+        /// <returns></returns>
+        public IEnumerable GetFromSource(DataContext context, Guid id, decimal? versionSequenceId, IPrincipal principal)
+        {
+            int tr = 0;
+            return this.Query(context, this.BuildSourceQuery<ConceptName>(id, versionSequenceId), 0, null, out tr, principal, false);
         }
     }
 }
