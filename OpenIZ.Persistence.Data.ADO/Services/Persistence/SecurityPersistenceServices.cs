@@ -29,6 +29,8 @@ using System.Security.Principal;
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -303,6 +305,26 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 				}
 
 			return retVal;
+		}
+
+		public override IEnumerable<SecurityUser> Query(DataContext context, Expression<Func<SecurityUser, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
+		{
+			var results = base.Query(context, query, offset, count, out totalResults, principal, countResults);
+
+			var users = new List<SecurityUser>();
+
+			foreach (var user in results)
+			{
+				var rolesQuery = new SqlStatement<DbSecurityUserRole>().SelectFrom()
+					.InnerJoin<DbSecurityRole>(o => o.RoleKey, o => o.Key)
+					.Where<DbSecurityUserRole>(o => o.UserKey == user.Key);
+
+				user.Roles = context.Query<DbSecurityRole>(rolesQuery).Select(o => m_mapper.MapDomainInstance<DbSecurityRole, SecurityRole>(o)).ToList();
+
+				users.Add(user);
+			}
+
+			return users;
 		}
 
 		public override Core.Model.Security.SecurityUser ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)

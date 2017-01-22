@@ -122,17 +122,23 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                             // There is an application claim so we want to add the application policies - most restrictive
                             if (appClaim != null)
                             {
-                                query = new SqlStatement<DbSecurityApplicationPolicy>().SelectFrom()
+								var claim = Guid.Parse(appClaim.Value);
+
+								query = new SqlStatement<DbSecurityApplicationPolicy>().SelectFrom()
                                    .InnerJoin<DbSecurityPolicy, DbSecurityApplicationPolicy>()
-                                   .Where(o => o.SourceKey == Guid.Parse(appClaim.Value));
+                                   .Where(o => o.SourceKey == claim);
+
                                 retVal.AddRange(context.Query<CompositeResult<DbSecurityPolicy, DbSecurityApplicationPolicy>>(query).Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, user)));
                             }
                             // There is an device claim so we want to add the device policies - most restrictive
                             if (devClaim != null)
                             {
+	                            var claim = Guid.Parse(devClaim.Value);
+
                                 query = new SqlStatement<DbSecurityDevicePolicy>().SelectFrom()
                                    .InnerJoin<DbSecurityPolicy, DbSecurityDevicePolicy>()
-                                   .Where(o => o.SourceKey == Guid.Parse(devClaim.Value));
+                                   .Where(o => o.SourceKey == claim);
+
                                 retVal.AddRange(context.Query<CompositeResult<DbSecurityPolicy, DbSecurityDevicePolicy>>(query).Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, user)));
                             }
                         }
