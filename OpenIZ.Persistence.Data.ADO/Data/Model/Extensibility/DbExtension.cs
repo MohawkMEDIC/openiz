@@ -88,7 +88,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility
     /// <summary>
     /// Act extensions
     /// </summary>
-    [Table ("act_extension")]
+    [Table ("act_ext_tbl")]
 	public class DbActExtension : DbExtension
 	{
         /// <summary>

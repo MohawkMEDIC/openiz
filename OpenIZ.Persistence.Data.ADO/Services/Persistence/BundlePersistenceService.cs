@@ -68,7 +68,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override IEnumerable<Bundle> Query(DataContext context, Expression<Func<Bundle, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
         {
-            throw new NotImplementedException();
+            totalResults = 0;
+            return new List<Bundle>().AsQueryable();
         }
 
         /// <summary>

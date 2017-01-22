@@ -47,7 +47,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.DataType
         /// </summary>
         /// <value>The type identifier.</value>
         [Column("id_typ_id"), ForeignKey(typeof(DbIdentifierType), nameof(DbIdentifierType.Key))]
-        public Guid TypeKey
+        public Guid? TypeKey
         {
             get;
             set;

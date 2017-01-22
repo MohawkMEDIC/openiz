@@ -41,7 +41,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
         /// Gets or sets the type of the component
         /// </summary>
         [Column("typ_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
-        public Guid ComponentTypeKey { get; set; }
+        public Guid? ComponentTypeKey { get; set; }
 
         /// <summary>
         /// Gets or sets the value key

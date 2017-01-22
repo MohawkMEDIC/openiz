@@ -71,7 +71,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.DataType
         /// Assigning device identifier
         /// </summary>
         [Column("dev_id"), ForeignKey(typeof(DbSecurityDevice), nameof(DbSecurityDevice.Key))]
-        public Guid AssigningDeviceKey { get; set; }
+        public Guid? AssigningDeviceKey { get; set; }
 
         /// <summary>
         /// Gets or sets the key

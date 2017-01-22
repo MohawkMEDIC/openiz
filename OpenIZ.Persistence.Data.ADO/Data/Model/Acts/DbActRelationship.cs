@@ -32,7 +32,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
     /// <summary>
     /// Identifies relationships between acts
     /// </summary>
-    [Table("act_relationship")]
+    [Table("act_rel_tbl")]
     public class DbActRelationship : DbVersionedAssociation
     {
 

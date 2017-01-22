@@ -50,7 +50,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
 		/// </summary>
 		/// <value>The type concept identifier.</value>
 		[Column("typ_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
-		public Guid TypeConceptKey {
+		public Guid? TypeConceptKey {
 			get;
 			set;
 		}

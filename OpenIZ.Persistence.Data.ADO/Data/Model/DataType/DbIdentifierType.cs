@@ -51,7 +51,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.DataType
         /// </summary>
         /// <value>The type concept identifier.</value>
         [Column("ent_scp_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
-        public Guid EntityScopeKey
+        public Guid? EntityScopeKey
         {
             get;
             set;
