@@ -64,6 +64,7 @@
     <Compile Include="Data\Model\Acts\DbProtocol.cs" />
     <Compile Include="Data\Model\Acts\DbSubstanceAdministration.cs" />
     <Compile Include="Data\Model\Alerts\DbAlertMessage.cs" />
+    <Compile Include="Data\Model\Alerts\DbAlertRcptTo.cs" />
     <Compile Include="Exceptions\AdoFormalConstraintException.cs" />
     <Compile Include="Services\AdoBasePersistenceService.cs" />
     <Compile Include="Data\Model\Concepts\DbCodeSystem.cs" />

@@ -183,16 +183,52 @@ namespace OpenIZ.Messaging.IMSI.Client
             return this.Query(query, 0, null);
         }
 
-        /// <summary>
-        /// Performs a query.
-        /// </summary>
-        /// <typeparam name="TModel">The type of object to query.</typeparam>
-        /// <param name="query">The query parameters as a LINQ expression.</param>
-        /// <param name="offset">The offset of the query.</param>
-        /// <param name="count">The count of the query results.</param>
-        /// <param name="expandProperties">An property traversal for which to expand upon.</param>
-        /// <returns>Returns a Bundle containing the data.</returns>
-        public Bundle Query<TModel>(Expression<Func<TModel, bool>> query, int offset, int? count, string expandProperties = null) where TModel : IdentifiedData
+		/// <summary>
+		/// Performs a query.
+		/// </summary>
+		/// <typeparam name="TModel">The type of object to query.</typeparam>
+		/// <param name="query">The query parameters as a LINQ expression.</param>
+		/// <param name="offset">The offset of the query.</param>
+		/// <param name="count">The count of the query results.</param>
+		/// <param name="all">Whether the query should return all nested properties.</param>
+		/// <returns>Returns a Bundle containing the data.</returns>
+		public Bundle Query<TModel>(Expression<Func<TModel, bool>> query, int offset, int? count, bool all) where TModel : IdentifiedData
+		{
+			// Map the query to HTTP parameters
+			var queryParms = QueryExpressionBuilder.BuildQuery(query, true).ToList();
+
+			queryParms.Add(new KeyValuePair<string, object>("_offset", offset));
+
+			if (count.HasValue)
+			{
+				queryParms.Add(new KeyValuePair<string, object>("_count", count));
+			}
+
+			if (all)
+			{
+				queryParms.Add(new KeyValuePair<string, object>("_all", true));
+			}
+
+			// Resource name
+			string resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+
+			// The IMSI uses the XMLName as the root of the request
+			var retVal = this.Client.Get<Bundle>(resourceName, queryParms.ToArray());
+
+			// Return value
+			return retVal;
+		}
+
+		/// <summary>
+		/// Performs a query.
+		/// </summary>
+		/// <typeparam name="TModel">The type of object to query.</typeparam>
+		/// <param name="query">The query parameters as a LINQ expression.</param>
+		/// <param name="offset">The offset of the query.</param>
+		/// <param name="count">The count of the query results.</param>
+		/// <param name="expandProperties">An property traversal for which to expand upon.</param>
+		/// <returns>Returns a Bundle containing the data.</returns>
+		public Bundle Query<TModel>(Expression<Func<TModel, bool>> query, int offset, int? count, string expandProperties = null) where TModel : IdentifiedData
         {
             // Map the query to HTTP parameters
             var queryParms = QueryExpressionBuilder.BuildQuery(query, true).ToList();
