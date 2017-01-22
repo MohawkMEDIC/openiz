@@ -183,43 +183,43 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             // Do the insert
             var retVal = base.Insert(context, data, principal);
 
-            if (data.Extensions != null)
+            if (data.Extensions != null && data.Extensions.Any())
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActExtension, DbActExtension>(
                    data.Extensions.GetLocked(),
                     retVal,
                     context,
                     principal);
 
-            if (data.Identifiers != null)
+            if (data.Identifiers != null && data.Identifiers.Any())
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActIdentifier, DbActIdentifier>(
                    data.Identifiers.GetLocked(),
                     retVal,
                     context,
                     principal);
 
-            if (data.Notes != null)
+            if (data.Notes != null && data.Notes.Any())
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActNote, DbActNote>(
                    data.Notes.GetLocked(),
                     retVal,
                     context,
                     principal);
 
-            if (data.Participations != null)
-                base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActParticipation, DbActParticipation>(
+            if (data.Participations != null && data.Participations.Any())
+				base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActParticipation, DbActParticipation>(
                    data.Participations.GetLocked(),
                     retVal,
                     context,
                     principal);
 
-            if (data.Relationships != null)
-                base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActRelationship, DbActRelationship>(
+            if (data.Relationships != null && data.Relationships.Any())
+				base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActRelationship, DbActRelationship>(
                    data.Relationships.GetLocked(),
                     retVal,
                     context,
                     principal);
 
-            if (data.Tags != null)
-                base.UpdateAssociatedItems<Core.Model.DataTypes.ActTag, DbActTag>(
+            if (data.Tags != null && data.Tags.Any())
+				base.UpdateAssociatedItems<Core.Model.DataTypes.ActTag, DbActTag>(
                    data.Tags.GetLocked(),
                     retVal,
                     context,
