@@ -23,6 +23,7 @@ using System.Linq;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Alert.Alerting;
 using OpenIZ.OrmLite;
 using OpenIZ.Persistence.Data.ADO.Data.Model;
@@ -47,6 +48,25 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 			var alert = base.FromModelInstance(modelInstance, context, princpal) as DbAlertMessage;
 
 			alert.Flags = (int)modelInstance.Flags;
+
+			return alert;
+		}
+
+		/// <summary>
+		/// Inserts an alert.
+		/// </summary>
+		/// <param name="context">The data context.</param>
+		/// <param name="data">The alert to insert.</param>
+		/// <param name="principal">The authentication context.</param>
+		/// <returns>Returns the inserted alert.</returns>
+		public override AlertMessage Insert(DataContext context, AlertMessage data, IPrincipal principal)
+		{
+			var alert = base.Insert(context, data, principal);
+
+			foreach (var securityUser in alert.RcptTo)
+			{
+				context.Insert(new DbAlertRcptTo(data.Key.Value, securityUser.Key.Value));
+			}
 
 			return alert;
 		}
