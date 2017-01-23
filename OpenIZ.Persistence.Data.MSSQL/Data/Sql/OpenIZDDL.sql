@@ -792,6 +792,7 @@ CREATE TABLE AssigningAuthority
 	CreatedBy UNIQUEIDENTIFIER NOT NULL, -- THE USER WHO CREATED THE AA
 	ObsoletionTime DATETIMEOFFSET, -- THE TIME WHEN THE ASSINGING AUTHORITY IS OBSOLETE
 	ObsoletedBy UNIQUEIDENTIFIER, -- THE USER WHO OBSOLETED THE AA
+	ValidationRegex VARCHAR(64), 
 	CONSTRAINT PK_AssigningAuthority PRIMARY KEY (AssigningAuthorityId),
 	CONSTRAINT FK_AssigningAuthorityCreatedBy FOREIGN KEY (CreatedBy) REFERENCES SecurityUser(UserId),
 	CONSTRAINT FK_AssigningAuthorityObsoletedBy FOREIGN KEY (ObsoletedBy) REFERENCES SecurityUser(UserId),

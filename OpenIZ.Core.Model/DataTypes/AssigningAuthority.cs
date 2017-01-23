@@ -106,7 +106,13 @@ namespace OpenIZ.Core.Model.DataTypes
                 this.m_assigningDevice = null;
             }
         }
-        
+
+        /// <summary>
+        /// Gets or sets the validation regex
+        /// </summary>
+        [XmlElement("validation"), JsonProperty("validation")]
+        public String ValidationRegex { get; set; }
+
         /// <summary>
         /// Gets or sets the assigning device
         /// </summary>
