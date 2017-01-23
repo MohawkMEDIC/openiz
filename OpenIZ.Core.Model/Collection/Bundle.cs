@@ -73,6 +73,7 @@ namespace OpenIZ.Core.Model.Collection
     [XmlInclude(typeof(ConceptRelationshipType))]
     [XmlInclude(typeof(SecurityUser))]
 	[XmlInclude(typeof(SecurityRole))]
+	[XmlInclude(typeof(CodeSystem))]
 	public class Bundle : IdentifiedData
     {
         /// <summary>
