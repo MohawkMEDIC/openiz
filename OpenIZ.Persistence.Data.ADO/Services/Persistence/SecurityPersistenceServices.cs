@@ -275,7 +275,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		internal override SecurityUser Get(DataContext context, Guid key, IPrincipal principal)
 		{
 			var user = base.Get(context, key, principal);
-
+            if (user == null) return null;
 			var rolesQuery = new SqlStatement<DbSecurityUserRole>().SelectFrom()
 				.InnerJoin<DbSecurityRole>(o => o.RoleKey, o => o.Key)
 				.Where<DbSecurityUserRole>(o => o.UserKey == key);

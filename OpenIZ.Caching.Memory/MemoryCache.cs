@@ -200,7 +200,7 @@ namespace OpenIZ.Caching.Memory
                 {
                     candidate.Touch();
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cache hit {0} = {1}", key.Value, candidate.Data);
-                    return (candidate.Data as IdentifiedData)?.GetLocked() ?? candidate.Data;
+                    return candidate.Data;
                 }
             }
             this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cache miss {0}", key.Value);

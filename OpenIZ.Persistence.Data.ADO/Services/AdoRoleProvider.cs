@@ -84,12 +84,12 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     {
                         try
                         {
-                            foreach (var un in users.Select(o=>o.ToLower()))
+                            foreach (var un in users)
                             {
                                 DbSecurityUser user = dataContext.SingleOrDefault<DbSecurityUser>(u => u.UserName == un);
                                 if (user == null)
                                     throw new KeyNotFoundException(String.Format("Could not locate user {0}", un));
-                                foreach (var rol in roles.Select(o=>o.ToLower()))
+                                foreach (var rol in roles)
                                 {
                                     DbSecurityRole role = dataContext.SingleOrDefault<DbSecurityRole>(r => r.Name == rol);
                                     if (role == null)
@@ -136,7 +136,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     {
                         try
                         {
-                            DbSecurityUser user = dataContext.SingleOrDefault<DbSecurityUser>(u => u.UserName == authPrincipal.Identity.Name.ToLower());
+                            DbSecurityUser user = dataContext.SingleOrDefault<DbSecurityUser>(u => u.UserName == authPrincipal.Identity.Name);
                             if (user == null)
                                 throw new SecurityException(String.Format("Could not verify identity of {0}", authPrincipal.Identity.Name));
 
@@ -144,7 +144,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                             dataContext.Insert(new DbSecurityRole()
                             {
                                 CreatedByKey = user.Key,
-                                Name = roleName.ToLower()
+                                Name = roleName
                             });
                             tx.Commit();
                         }
@@ -174,7 +174,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 try
                 {
                     dataContext.Open();
-                    var securityRole = dataContext.SingleOrDefault<DbSecurityRole>(r => r.Name == role.ToLower());
+                    var securityRole = dataContext.SingleOrDefault<DbSecurityRole>(r => r.Name == role);
                     if (securityRole == null)
                         throw new KeyNotFoundException(String.Format("Role {0} not found", role));
 
@@ -222,7 +222,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 try
                 {
                     dataContext.Open();
-                    var securityUser = dataContext.SingleOrDefault<DbSecurityUser>(u => u.UserName == userName.ToLower());
+                    var securityUser = dataContext.SingleOrDefault<DbSecurityUser>(u => u.UserName == userName);
                     if (securityUser == null)
                         throw new KeyNotFoundException(String.Format("User {0} not found", userName));
 
@@ -258,10 +258,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 try
                 {
                     dataContext.Open();
-                    DbSecurityUser user = dataContext.SingleOrDefault<DbSecurityUser>(u => u.UserName == userName.ToLower());
+                    DbSecurityUser user = dataContext.SingleOrDefault<DbSecurityUser>(u => u.UserName == userName);
                     if (user == null)
                         throw new KeyNotFoundException(String.Format("Could not locate user {0}", userName));
-                    DbSecurityRole role = dataContext.SingleOrDefault<DbSecurityRole>(r => r.Name == roleName.ToLower());
+                    DbSecurityRole role = dataContext.SingleOrDefault<DbSecurityRole>(r => r.Name == roleName);
                     if (role == null)
                         throw new KeyNotFoundException(String.Format("Could not locate role {0}", roleName));
 
@@ -293,12 +293,12 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         {
                             foreach (var un in users)
                             {
-                                DbSecurityUser user = dataContext.SingleOrDefault<DbSecurityUser>(u => u.UserName == un.ToLower());
+                                DbSecurityUser user = dataContext.SingleOrDefault<DbSecurityUser>(u => u.UserName == un);
                                 if (user == null)
                                     throw new KeyNotFoundException(String.Format("Could not locate user {0}", un));
                                 foreach (var rol in roles)
                                 {
-                                    DbSecurityRole role = dataContext.SingleOrDefault<DbSecurityRole>(r => r.Name == rol.ToLower());
+                                    DbSecurityRole role = dataContext.SingleOrDefault<DbSecurityRole>(r => r.Name == rol);
                                     if (role == null)
                                         throw new KeyNotFoundException(String.Format("Could not locate role {0}", rol));
 
@@ -308,7 +308,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                             }
                             tx.Commit();
                         }
-                        catch 
+                        catch
                         {
                             tx.Rollback();
                             throw;

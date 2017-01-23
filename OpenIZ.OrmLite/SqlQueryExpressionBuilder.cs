@@ -9,7 +9,20 @@ using System.Threading.Tasks;
 namespace OpenIZ.OrmLite
 {
 
-   
+    /// <summary>
+    /// String etensions
+    /// </summary>
+    public static class StringExtensions
+    {
+        /// <summary>
+        ///  True if case should be ignored
+        /// </summary>
+        public static string IgnoreCase(this String me)
+        {
+            return me;
+        }
+
+    }
     /// <summary>
     /// Postgresql query expression builder
     /// </summary>
@@ -184,7 +197,7 @@ namespace OpenIZ.OrmLite
             return node;
         }
 
-      
+
         /// <summary>
         /// Visit a parameter reference
         /// </summary>
@@ -225,7 +238,10 @@ namespace OpenIZ.OrmLite
                 case "NewGuid":
                     this.m_sqlStatement.Append("uuid_generate_v4() ");
                     break;
-                
+                case "IgnoreCase":
+                    this.Visit(node.Arguments[0]);
+                    this.m_sqlStatement.Append("::citext ");
+                    break;
                 case "HasValue":
                     this.Visit(node.Object);
                     this.m_sqlStatement.Append(" IS NOT NULL ");

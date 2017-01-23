@@ -112,7 +112,7 @@ namespace OpenIZ.Persistence.Data.ADO.Security
 
                     var passwordHash = hashingService.EncodePassword(password);
                     var fnResult = dataContext.FirstOrDefault<CompositeResult<DbSecurityUser, FunctionErrorCode>>("auth_usr", userName, passwordHash, 3);
-                    if(!String.IsNullOrEmpty(fnResult.Object2.ErrorCode))
+                    if (!String.IsNullOrEmpty(fnResult.Object2.ErrorCode))
                         throw new AuthenticationException(fnResult.Object2.ErrorCode);
                     var user = fnResult.Object1;
 
@@ -263,7 +263,7 @@ namespace OpenIZ.Persistence.Data.ADO.Security
                 using (var dataContext = s_configuration.Provider.GetReadonlyConnection())
                 {
                     dataContext.Open();
-                    var user = dataContext.SingleOrDefault<DbSecurityUser>(u => u.ObsoletionTime == null && u.UserName == userName.ToLower());
+                    var user = dataContext.SingleOrDefault<DbSecurityUser>(u => u.ObsoletionTime == null && u.UserName == userName);
                     if (user == null)
                         return null;
 

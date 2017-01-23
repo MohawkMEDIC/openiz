@@ -98,7 +98,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     else if (securable is IPrincipal || securable is IIdentity)
                     {
                         var identity = (securable as IPrincipal)?.Identity ?? securable as IIdentity;
-                        var user = context.SingleOrDefault<DbSecurityUser>(u => u.UserName == identity.Name.ToLower());
+                        var user = context.SingleOrDefault<DbSecurityUser>(u => u.UserName == identity.Name.IgnoreCase());
                         if (user == null)
                             throw new KeyNotFoundException("Identity not found");
 
@@ -106,8 +106,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                         // Role policies
                         SqlStatement query = new SqlStatement<DbSecurityRolePolicy>().SelectFrom()
-                            .InnerJoin<DbSecurityPolicy>(o=>o.PolicyKey, o=>o.Key)
-                            .InnerJoin<DbSecurityUserRole>(o=>o.SourceKey, o=>o.RoleKey)
+                            .InnerJoin<DbSecurityPolicy>(o => o.PolicyKey, o => o.Key)
+                            .InnerJoin<DbSecurityUserRole>(o => o.SourceKey, o => o.RoleKey)
                             .Where<DbSecurityUserRole>(o => o.UserKey == user.Key);
 
                         retVal.AddRange(context.Query<CompositeResult<DbSecurityPolicy, DbSecurityRolePolicy>>(query).Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, user)));
@@ -122,9 +122,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                             // There is an application claim so we want to add the application policies - most restrictive
                             if (appClaim != null)
                             {
-								var claim = Guid.Parse(appClaim.Value);
+                                var claim = Guid.Parse(appClaim.Value);
 
-								query = new SqlStatement<DbSecurityApplicationPolicy>().SelectFrom()
+                                query = new SqlStatement<DbSecurityApplicationPolicy>().SelectFrom()
                                    .InnerJoin<DbSecurityPolicy, DbSecurityApplicationPolicy>()
                                    .Where(o => o.SourceKey == claim);
 
@@ -133,7 +133,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                             // There is an device claim so we want to add the device policies - most restrictive
                             if (devClaim != null)
                             {
-	                            var claim = Guid.Parse(devClaim.Value);
+                                var claim = Guid.Parse(devClaim.Value);
 
                                 query = new SqlStatement<DbSecurityDevicePolicy>().SelectFrom()
                                    .InnerJoin<DbSecurityPolicy, DbSecurityDevicePolicy>()

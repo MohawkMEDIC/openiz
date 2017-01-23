@@ -277,7 +277,7 @@ namespace OpenIZ.Core.Applets
         public ViewModel.Description.ViewModelDescription GetViewModelDescription(String viewModelName)
         {
             ViewModelDescription retVal = null;
-            viewModelName = viewModelName.ToLowerInvariant();
+            viewModelName = viewModelName?.ToLowerInvariant();
             if (!s_viewModelCache.TryGetValue(viewModelName ?? "", out retVal))
                 lock (s_syncLock)
                 {
