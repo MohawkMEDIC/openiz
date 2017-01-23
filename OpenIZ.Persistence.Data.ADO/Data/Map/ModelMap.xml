@@ -87,7 +87,7 @@
   <!-- Concepts -->
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptSet, OpenIZ.Core.Model, Version=1.0.0.0"
 		domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Concepts.DbConceptSet, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
-    
+    <property modelName="ModifiedOn" domainName="UpdatedTime"/>
   </class>
   <class modelClass="OpenIZ.Core.Model.DataTypes.Concept, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Concepts.DbConceptVersion, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">

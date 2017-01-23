@@ -125,6 +125,45 @@ namespace OpenIZ.Core.Model.Map
         private Stack<ParameterExpression> m_scope = new Stack<ParameterExpression>();
 
         /// <summary>
+        /// Attempt to get constant value
+        /// </summary>
+        private Object GetConstantValue(Expression expression)
+        {
+            if (expression == null)
+                return null;
+            else if (expression is ConstantExpression)
+                return (expression as ConstantExpression).Value;
+            else if (expression is UnaryExpression)
+            {
+                var un = expression as UnaryExpression;
+                switch (expression.NodeType)
+                {
+                    case ExpressionType.TypeAs:
+                        return this.GetConstantValue(un.Operand);
+                    case ExpressionType.Convert:
+                        return this.GetConstantValue(un.Operand);
+                    default:
+                        throw new InvalidOperationException($"Expression {expression} not supported for constant extraction");
+                }
+            }
+            else if (expression is MemberExpression)
+            {
+                var mem = expression as MemberExpression;
+                var obj = this.GetConstantValue(mem.Expression);
+                if (mem.Member is PropertyInfo)
+                    return (mem.Member as PropertyInfo).GetValue(obj);
+                else if (mem.Member is FieldInfo)
+                    return (mem.Member as FieldInfo).GetValue(obj);
+                else
+                    throw new NotSupportedException();
+            }
+            else
+                throw new InvalidOperationException($"Expression {expression} not supported for constant extraction");
+
+        }
+
+
+        /// <summary>
         /// Model conversion visitor 
         /// </summary>
         public ModelExpressionVisitor(ModelMapper mapData, params ParameterExpression[] parameters)
@@ -364,15 +403,21 @@ namespace OpenIZ.Core.Model.Map
 				else if ((right.Type == typeof(DateTimeOffset) || right.Type == typeof(DateTimeOffset?)) && (left.Type == typeof(DateTime?) || left.Type == typeof(DateTime)))
 				{
 					DateTime dateTime;
+                    var cvalue = this.GetConstantValue(right );
 
-					if (!DateTime.TryParse((right as ConstantExpression)?.Value.ToString(), out dateTime))
-					{
-						throw new InvalidOperationException($"Unable to convert { (right as ConstantExpression)?.Value } to a valid date time");
-					}
-
-					right = Expression.Constant(dateTime, left.Type);
-
-					return Expression.MakeBinary(node.NodeType, left, Expression.Convert(right, left.Type));
+                    if (cvalue == null)
+                    {
+                        return Expression.MakeBinary(node.NodeType, left, Expression.Constant(null));
+                    }
+                    else if (!DateTime.TryParse(cvalue.ToString(), out dateTime))
+                    {
+                        throw new InvalidOperationException($"Unable to convert { (right as ConstantExpression)?.Value } to a valid date time");
+                    }
+                    else
+                    {
+                        right = Expression.Constant(dateTime, left.Type);
+                        return Expression.MakeBinary(node.NodeType, left, Expression.Convert(right, left.Type));
+                    }
 				}
 
 				return Expression.MakeBinary(node.NodeType, left, Expression.Convert(right, left.Type));

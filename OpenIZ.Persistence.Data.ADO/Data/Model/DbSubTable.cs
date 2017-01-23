@@ -31,7 +31,19 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
         /// <summary>
         /// Gets or sets the parent key
         /// </summary>
-        [Column("act_vrsn_id"), ForeignKey(typeof(DbActVersion), nameof(DbActVersion.Key)), PrimaryKey, AlwaysJoin]
+        [Column("act_vrsn_id"), ForeignKey(typeof(DbActVersion), nameof(DbActVersion.VersionKey)), PrimaryKey, AlwaysJoin]
+        public override Guid ParentKey { get; set; }
+    }
+
+    /// <summary>
+    /// Act based sub-table
+    /// </summary>
+    public abstract class DbObsSubTable : DbActSubTable
+    {
+        /// <summary>
+        /// Gets or sets the parent key
+        /// </summary>
+        [Column("act_vrsn_id"), ForeignKey(typeof(DbObservation), nameof(DbObservation.ParentKey)), PrimaryKey, AlwaysJoin]
         public override Guid ParentKey { get; set; }
     }
 

@@ -98,7 +98,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     else if (securable is IPrincipal || securable is IIdentity)
                     {
                         var identity = (securable as IPrincipal)?.Identity ?? securable as IIdentity;
-                        var user = context.SingleOrDefault<DbSecurityUser>(u => u.UserName == identity.Name.IgnoreCase());
+                        var user = context.SingleOrDefault<DbSecurityUser>(u => u.UserName == identity.Name.ToLower());
                         if (user == null)
                             throw new KeyNotFoundException("Identity not found");
 

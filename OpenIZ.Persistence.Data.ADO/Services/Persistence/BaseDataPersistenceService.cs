@@ -56,8 +56,16 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <param name="data">Data.</param>
         public override TModel Insert(DataContext context, TModel data, IPrincipal principal)
         {
-            if(data.CreatedBy != null) data.CreatedBy = data.CreatedBy?.EnsureExists(context, principal) as SecurityUser;
+            if (data.CreatedBy != null) data.CreatedBy = data.CreatedBy?.EnsureExists(context, principal) as SecurityUser;
             data.CreatedByKey = data.CreatedBy?.Key ?? data.CreatedByKey;
+
+            // HACK: For now, modified on can only come from one property, some non-versioned data elements are bound on UpdatedTime
+            var nvd = data as NonVersionedEntityData;
+            if (nvd != null)
+            {
+                nvd.UpdatedByKey = nvd.UpdatedByKey ?? principal.GetUser(context).Key;
+                nvd.UpdatedTime = DateTimeOffset.Now;
+            }
 
             var domainObject = this.FromModelInstance(data, context, principal) as TDomain;
 
@@ -129,7 +137,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if (data.Key == Guid.Empty)
                 throw new AdoFormalConstraintException(AdoFormalConstraintType.NonIdentityUpdate);
 
-            if(data.ObsoletedBy != null) data.ObsoletedBy = data.ObsoletedBy?.EnsureExists(context, principal) as SecurityUser;
+            if (data.ObsoletedBy != null) data.ObsoletedBy = data.ObsoletedBy?.EnsureExists(context, principal) as SecurityUser;
             data.ObsoletedByKey = data.ObsoletedBy?.Key ?? data.ObsoletedByKey;
 
             // Current object

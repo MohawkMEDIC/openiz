@@ -157,7 +157,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
     /// <summary>
     /// Coded observation service
     /// </summary>
-    public class CodedObservationPersistenceService : ActDerivedPersistenceService<Core.Model.Acts.CodedObservation, DbCodedObservation, CompositeResult<DbTextObservation, DbObservation, DbActVersion, DbAct>>
+    public class CodedObservationPersistenceService : ActDerivedPersistenceService<Core.Model.Acts.CodedObservation, DbCodedObservation, CompositeResult<DbCodedObservation, DbObservation, DbActVersion, DbAct>>
     {
 
         private ObservationPersistenceService m_observationPersistence = new ObservationPersistenceService();
@@ -211,7 +211,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
     /// <summary>
     /// Quantity observation persistence service
     /// </summary>
-    public class QuantityObservationPersistenceService : ActDerivedPersistenceService<Core.Model.Acts.QuantityObservation, DbQuantityObservation, CompositeResult<DbTextObservation, DbObservation, DbActVersion, DbAct>>
+    public class QuantityObservationPersistenceService : ActDerivedPersistenceService<Core.Model.Acts.QuantityObservation, DbQuantityObservation, CompositeResult<DbQuantityObservation, DbObservation, DbActVersion, DbAct>>
     {
 
         private ObservationPersistenceService m_observationPersistence = new ObservationPersistenceService();
@@ -236,7 +236,15 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             if(data.UnitOfMeasure != null) data.UnitOfMeasure = data.UnitOfMeasure?.EnsureExists(context, principal) as Concept;
             data.UnitOfMeasureKey = data.UnitOfMeasure?.Key ?? data.UnitOfMeasureKey;
-            return base.Insert(context, data, principal);
+            var retVal = this.m_observationPersistence.Insert(context, data, principal);
+            context.Insert(new DbQuantityObservation()
+            {
+                ParentKey = data.VersionKey.Value,
+                UnitOfMeasureKey = data.UnitOfMeasureKey.Value,
+                Value = data.Value
+
+            });
+            return data;
         }
 
         /// <summary>
@@ -246,7 +254,15 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             if(data.UnitOfMeasure != null) data.UnitOfMeasure = data.UnitOfMeasure?.EnsureExists(context, principal) as Concept;
             data.UnitOfMeasureKey = data.UnitOfMeasure?.Key ?? data.UnitOfMeasureKey;
-            return base.Update(context, data, principal);
+            this.m_observationPersistence.Update(context, data, principal);
+            context.Update(new DbQuantityObservation()
+            {
+                ParentKey = data.VersionKey.Value,
+                UnitOfMeasureKey = data.UnitOfMeasureKey.Value,
+                Value = data.Value
+
+            });
+            return data;
         }
     }
 }

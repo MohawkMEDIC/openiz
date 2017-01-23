@@ -106,7 +106,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     break;
                 case Condition:
                 case Observation:
-                    var dbObs = (dataInstance as CompositeResult)?.Values.OfType<DbObservation>().FirstOrDefault() ?? context.FirstOrDefault<DbObservation>(o => o.ParentKey == dbActVersion.Key);
+                    var dbObs = (dataInstance as CompositeResult)?.Values.OfType<DbObservation>().FirstOrDefault() ?? context.FirstOrDefault<DbObservation>(o => o.ParentKey == dbActVersion.VersionKey);
                     switch (dbObs.ValueType)
                     {
                         case "ST":

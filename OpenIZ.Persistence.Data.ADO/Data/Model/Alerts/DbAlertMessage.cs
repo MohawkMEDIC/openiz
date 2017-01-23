@@ -34,6 +34,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Alerts
 	/// Represents an alert message.
 	/// </summary>
 	[Table("alrt_tbl")]
+    [AssociativeTable(typeof(DbSecurityUser), typeof(DbAlertRcptTo))]
 	public class DbAlertMessage : DbNonVersionedBaseData
 	{
 		/// <summary>

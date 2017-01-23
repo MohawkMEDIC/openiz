@@ -90,5 +90,17 @@ namespace OpenIZ.OrmLite
             this.m_mappings.TryGetValue(propertyName, out map);
             return map;
         }
+
+
+        /// <summary>
+        /// Gets the association table mapping
+        /// </summary>
+        public TableMapping AssociationWith(TableMapping subTableMap)
+        {
+            var att = this.OrmType.GetCustomAttributes<AssociativeTableAttribute>().FirstOrDefault(o => o.TargetTable == subTableMap.OrmType);
+            if (att == null) return null;
+            else
+                return TableMapping.Get(att.AssociationTable);
+        }
     }
 }

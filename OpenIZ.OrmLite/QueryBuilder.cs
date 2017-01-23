@@ -204,17 +204,30 @@ namespace OpenIZ.OrmLite
                         var subTableType = m_mapper.MapModelType(propertyType);
                         var subTableMap = TableMapping.Get(subTableType);
                         var linkColumn = subTableMap.Columns.SingleOrDefault(o => scopedTables.Any(s => s.OrmType == o.ForeignKey?.Table));
-                        if (linkColumn == null) throw new InvalidOperationException($"Cannot find foreign key reference to table {tableMap.TableName} in {subTableMap.TableName}");
-
-                        var guardConditions = queryParms.GroupBy(o => re.Match(o.Key).Groups[GuardRegexGroup].Value);
+                        // Link column is null, is there an assoc attrib?
                         SqlStatement subQueryStatement = new SqlStatement();
+
+                        var subTableColumn = linkColumn;
+                        if (linkColumn == null)
+                        {
+                            var tableWithJoin = scopedTables.Select(o => o.AssociationWith(subTableMap)).FirstOrDefault();
+                            linkColumn = tableWithJoin.Columns.SingleOrDefault(o => scopedTables.Any(s => s.OrmType == o.ForeignKey?.Table));
+                            var targetColumn = tableWithJoin.Columns.SingleOrDefault(o => o.ForeignKey.Table == subTableMap.OrmType);
+                            subTableColumn = subTableMap.GetColumn(targetColumn.ForeignKey.Column);
+                            // The sub-query statement needs to be joined as well 
+                            var lnkPfx = IncrementSubQueryAlias(tablePrefix);
+                            subQueryStatement.Append($"SELECT {lnkPfx}{tableWithJoin.TableName}.{linkColumn.Name} FROM {tableWithJoin.TableName} AS {lnkPfx}{tableWithJoin.TableName} WHERE {lnkPfx}{tableWithJoin.TableName}.{targetColumn.Name} IN (");
+                            //throw new InvalidOperationException($"Cannot find foreign key reference to table {tableMap.TableName} in {subTableMap.TableName}");
+                        }
+                            
+                        var guardConditions = queryParms.GroupBy(o => re.Match(o.Key).Groups[GuardRegexGroup].Value);
                         foreach (var guardClause in guardConditions)
                         {
                             var subQuery = guardClause.Select(o => new KeyValuePair<String, Object>(re.Match(o.Key).Groups[SubPropertyRegexGroup].Value, o.Value));
 
                             // Generate method
                             var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { propertyType }, new Type[] { subQuery.GetType(), typeof(String), typeof(ColumnMapping[]) });
-                            subQueryStatement.Append(genMethod.Invoke(this, new Object[] { subQuery, IncrementSubQueryAlias(tablePrefix), new ColumnMapping[] { linkColumn } }) as SqlStatement);
+                            subQueryStatement.Append(genMethod.Invoke(this, new Object[] { subQuery, IncrementSubQueryAlias(tablePrefix), new ColumnMapping[] { subTableColumn } }) as SqlStatement);
 
                             // TODO: GUARD CONDITION HERE!!!!
 
@@ -223,6 +236,9 @@ namespace OpenIZ.OrmLite
                                 subQueryStatement.Append(" INTERSECT ");
                         }
 
+                        if (subTableColumn != linkColumn)
+                            subQueryStatement.Append(")");
+                        
                         var localTable = scopedTables.Where(o => o.GetColumn(linkColumn.ForeignKey.Column) != null).FirstOrDefault();
                         whereClause.And($"{tablePrefix}{localTable.TableName}.{localTable.GetColumn(linkColumn.ForeignKey.Column).Name} IN (").Append(subQueryStatement).Append(")");
 

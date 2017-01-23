@@ -84,7 +84,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// <summary>
         /// Gets or sets the act identifier
         /// </summary>
-        [Column("act_id"), ForeignKey(typeof(DbAct), nameof(DbAct.Key))]
+        [Column("act_id"), ForeignKey(typeof(DbAct), nameof(DbAct.Key)), AlwaysJoin]
         public override Guid Key { get; set; }
     }
 }

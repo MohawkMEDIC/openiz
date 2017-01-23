@@ -55,9 +55,9 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
     /// Represents additional data related to a quantified observation
     /// </summary>
     [Table("qty_obs_tbl")]
-    public class DbQuantityObservation : DbActSubTable
+    public class DbQuantityObservation : DbObsSubTable
     {
-
+        
         /// <summary>
         /// Represents the unit of measure
         /// </summary>
@@ -73,8 +73,8 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// <summary>
         /// Gets or sets the value of the measure
         /// </summary>
-        [Column("qty_prec")]
-        public Decimal Precision { get; set; }
+        [Column("qty_prc")]
+        public Decimal? Precision { get; set; }
 
     }
 
@@ -82,7 +82,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
     /// Identifies the observation as a text obseration
     /// </summary>
     [Table("txt_obs_tbl")]
-    public class DbTextObservation : DbActSubTable
+    public class DbTextObservation : DbObsSubTable
     {
         /// <summary>
         /// Gets the value of the observation as a string
@@ -96,7 +96,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
     /// Identifies data related to a coded observation
     /// </summary>
     [Table("cd_obs_tbl")]
-    public class DbCodedObservation : DbActSubTable
+    public class DbCodedObservation : DbObsSubTable
     {
 
         /// <summary>
