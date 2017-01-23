@@ -304,7 +304,11 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                 lock (s_runtimeProperties)
                 {
                     properties = me.GetType().GetRuntimeProperties().Where(o => o.GetCustomAttribute<DataIgnoreAttribute>() == null && o.GetCustomAttributes<AutoLoadAttribute>().Any(p => p.ClassCode == classValue || p.ClassCode == null));
-                    s_runtimeProperties.Add(propertyCacheKey, properties);
+
+	                if (!s_runtimeProperties.ContainsKey(propertyCacheKey))
+	                {
+						s_runtimeProperties.Add(propertyCacheKey, properties);
+					}
                 }
 
             // Iterate over the properties and load the properties
