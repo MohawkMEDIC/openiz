@@ -6,6 +6,15 @@ DELETE FROM SEC_APP_TBL WHERE APP_PUB_ID = 'fiddler';
 INSERT INTO SEC_USR_TBL (USR_NAME, SEC_STMP, PASSWD, EMAIL, PHN_NUM, EMAIL_CNF, PHN_CNF, CRT_USR_ID)
 	VALUES ('Administrator', UUID_GENERATE_V4(), '59ff5973691ff75f8baa45f1e38fae24875f77ef00987ed22b02df075fb144f9', 'administrator@marc-hi.ca', 'tel:+19055751212;ext=4085', TRUE, TRUE, 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
 
+INSERT INTO ent_tbl (ent_id, cls_cd_id, dtr_cd_id) 
+	VALUES ('b55f0836-40e6-4ee2-9522-27e3f8bfe532', '9de2a846-ddf2-4ebc-902e-84508c5089ea', 'f29f08de-78a7-4a5e-aeaf-7b545ba19a09');
+	
+INSERT INTO ent_vrsn_tbl(ent_vrsn_id, ent_id, sts_cd_id, crt_usr_id) 
+	VALUES ('abfaffc1-5021-40fd-a8e6-9b290f34ead7', 'b55f0836-40e6-4ee2-9522-27e3f8bfe532', 'c8064cbd-fa06-4530-b430-1a52f1530c27', 'fadca076-3690-4a6e-af9e-f1cd68e8c7e8');
+
+INSERT INTO psn_tbl (ent_vrsn_id) VALUES ('abfaffc1-5021-40fd-a8e6-9b290f34ead7');
+INSERT INTO usr_ent_tbl (ent_vrsn_id, sec_usr_id) SELECT 'abfaffc1-5021-40fd-a8e6-9b290f34ead7', usr_id FROM sec_usr_tbl WHERE usr_name = 'Administrator';
+
 INSERT INTO SEC_USR_ROL_ASSOC_TBL (USR_ID, ROL_ID)
 	SELECT USR_ID, ROL_ID FROM SEC_USR_TBL, SEC_ROL_TBL 
 	WHERE SEC_USR_TBL.USR_NAME = 'Administrator' AND SEC_ROL_TBL.ROL_Name IN ('ADMINISTRATORS');
