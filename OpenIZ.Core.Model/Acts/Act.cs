@@ -84,6 +84,12 @@ namespace OpenIZ.Core.Model.Acts
         [XmlIgnore, JsonIgnore]
         public DateTimeOffset ActTime { get; set; }
 
+        /// <summary>
+        /// Gets the template key
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public Guid? TemplateKey { get { return this.Template?.Key; } set { } }
+
 
         /// <summary>
         /// Gets or sets the template identifier 

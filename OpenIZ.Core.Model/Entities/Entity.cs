@@ -80,6 +80,12 @@ namespace OpenIZ.Core.Model.Entities
         }
 
         /// <summary>
+        /// Gets the template key
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public Guid? TemplateKey { get { return this.Template?.Key; } set { } }
+
+        /// <summary>
         /// Gets or sets the template identifier 
         /// </summary>
         [AutoLoad, XmlElement("template"), JsonProperty("template")]

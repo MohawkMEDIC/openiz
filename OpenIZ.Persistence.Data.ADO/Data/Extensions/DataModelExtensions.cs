@@ -322,6 +322,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                     adoPersister is IAdoAssociativePersistenceService &&
                     me.Key.HasValue) // List so we select from the assoc table where we are the master table
                 {
+                    // Is there not a value?
                     var assocPersister = adoPersister as IAdoAssociativePersistenceService;
 
                     // We want to query based on our PK and version if applicable

@@ -66,8 +66,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         private const String CountyOrParish = "D9489D56-DDAC-4596-B5C6-8F41D73D8DC5";
         private const String Country = "48B2FFB3-07DB-47BA-AD73-FC8FB8502471";
         private const String NonLivingSubject = "9025E5C9-693B-49D4-973C-D7010F3A23EE";
-
-
+        
         /// <summary>
         /// To model instance
         /// </summary>
@@ -231,12 +230,13 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if (data.DeterminerConcept != null) data.DeterminerConcept = data.DeterminerConcept?.EnsureExists(context, principal) as Concept;
             if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept?.EnsureExists(context, principal) as Concept;
             if (data.TypeConcept != null) data.TypeConcept = data.TypeConcept?.EnsureExists(context, principal) as Concept;
+            if (data.Template != null) data.Template = data.Template?.EnsureExists(context, principal) as TemplateDefinition;
             data.TypeConceptKey = data.TypeConcept?.Key ?? data.TypeConceptKey;
             data.DeterminerConceptKey = data.DeterminerConcept?.Key ?? data.DeterminerConceptKey;
             data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
             data.StatusConceptKey = data.StatusConceptKey == Guid.Empty || data.StatusConceptKey == null ? StatusKeys.New : data.StatusConceptKey;
-
+            
             var retVal = base.Insert(context, data, principal);
 
             // Identifiers
@@ -316,6 +316,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if (data.ClassConcept != null) data.ClassConcept = data.ClassConcept?.EnsureExists(context, principal) as Concept;
             if (data.DeterminerConcept != null) data.DeterminerConcept = data.DeterminerConcept?.EnsureExists(context, principal) as Concept;
             if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept?.EnsureExists(context, principal) as Concept;
+            if (data.Template != null) data.Template = data.Template?.EnsureExists(context, principal) as TemplateDefinition;
             if (data.TypeConcept != null) data.TypeConcept = data.TypeConcept?.EnsureExists(context, principal) as Concept;
             data.TypeConceptKey = data.TypeConcept?.Key ?? data.TypeConceptKey;
             data.DeterminerConceptKey = data.DeterminerConcept?.Key ?? data.DeterminerConceptKey;

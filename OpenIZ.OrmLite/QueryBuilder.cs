@@ -203,7 +203,8 @@ namespace OpenIZ.OrmLite
                         // map and get ORM def'n
                         var subTableType = m_mapper.MapModelType(propertyType);
                         var subTableMap = TableMapping.Get(subTableType);
-                        var linkColumn = subTableMap.Columns.SingleOrDefault(o => scopedTables.Any(s => s.OrmType == o.ForeignKey?.Table));
+                        var linkColumns = subTableMap.Columns.Where(o => scopedTables.Any(s => s.OrmType == o.ForeignKey?.Table));
+                        var linkColumn = linkColumns.Count() > 1 ? linkColumns.FirstOrDefault(o=>o.SourceProperty.Name == "SourceKey") : linkColumns.FirstOrDefault();
                         // Link column is null, is there an assoc attrib?
                         SqlStatement subQueryStatement = new SqlStatement();
 
@@ -226,9 +227,10 @@ namespace OpenIZ.OrmLite
                             var subQuery = guardClause.Select(o => new KeyValuePair<String, Object>(re.Match(o.Key).Groups[SubPropertyRegexGroup].Value, o.Value));
 
                             // Generate method
+                            var prefix = IncrementSubQueryAlias(tablePrefix);
                             var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { propertyType }, new Type[] { subQuery.GetType(), typeof(String), typeof(ColumnMapping[]) });
-                            subQueryStatement.Append(genMethod.Invoke(this, new Object[] { subQuery, IncrementSubQueryAlias(tablePrefix), new ColumnMapping[] { subTableColumn } }) as SqlStatement);
-
+                            subQueryStatement.Append(genMethod.Invoke(this, new Object[] { subQuery, prefix, new ColumnMapping[] { subTableColumn } }) as SqlStatement);
+                            
                             // TODO: GUARD CONDITION HERE!!!!
 
                             // TODO: Check if limiting the the query is better
@@ -373,7 +375,7 @@ namespace OpenIZ.OrmLite
                                 retVal.Append(" <> ?", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
                             break;
                         case '~':
-                            retVal.Append(" LIKE '%' || ? || '%'", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
+                            retVal.Append(" ILIKE '%' || ? || '%'", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
                             break;
                         default:
                             if (sValue.Equals("null"))
@@ -389,6 +391,7 @@ namespace OpenIZ.OrmLite
                 if (lValue.IndexOf(itm) < lValue.Count - 1)
                     retVal.Append(semantic);
             }
+
             retVal.Append(")");
 
             return retVal;

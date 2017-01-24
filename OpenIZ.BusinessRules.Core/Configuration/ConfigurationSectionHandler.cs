@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -54,7 +55,10 @@ namespace OpenIZ.BusinessRules.Core.Configuration
 			{
 				throw new ConfigurationErrorsException("Path cannot be null");
 			}
-
+            else if (!Path.IsPathRooted(path))
+            {
+                path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), path);
+            }
 			if (!Directory.Exists(path))
 			{
 				throw new ConfigurationErrorsException($"Path {path} does not exist");

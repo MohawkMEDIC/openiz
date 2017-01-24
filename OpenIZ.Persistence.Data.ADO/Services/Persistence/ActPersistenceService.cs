@@ -173,6 +173,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if (data.ReasonConcept != null) data.ReasonConcept = data.ReasonConcept?.EnsureExists(context, principal) as Concept;
             if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept?.EnsureExists(context, principal) as Concept;
             if (data.TypeConcept != null) data.TypeConcept = data.TypeConcept?.EnsureExists(context, principal) as Concept;
+            if (data.Template != null) data.Template = data.Template?.EnsureExists(context, principal) as TemplateDefinition;
 
             data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
             data.MoodConceptKey = data.MoodConcept?.Key ?? data.MoodConceptKey;
@@ -238,7 +239,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if (data.ReasonConcept != null) data.ReasonConcept = data.ReasonConcept?.EnsureExists(context, principal) as Concept;
             if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept?.EnsureExists(context, principal) as Concept;
             if (data.TypeConcept != null) data.TypeConcept = data.TypeConcept?.EnsureExists(context, principal) as Concept;
-
+            if (data.Template != null) data.Template = data.Template?.EnsureExists(context, principal) as TemplateDefinition;
+            
             data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
             data.MoodConceptKey = data.MoodConcept?.Key ?? data.MoodConceptKey;
             data.ReasonConceptKey = data.ReasonConcept?.Key ?? data.ReasonConceptKey;

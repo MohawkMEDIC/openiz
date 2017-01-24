@@ -61,8 +61,14 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Set delay load
         /// </summary>
-        public virtual void SetDelayLoad(bool v)
+        public virtual void SetDelayLoad(bool v, HashSet<Guid?> keyStack = null)
         {
+
+            if (keyStack == null)
+                keyStack = new HashSet<Guid?>();
+            if (keyStack.Contains(this.Key))
+                return;
+            keyStack.Add(this.Key);
 
             List<FieldInfo> fields = new List<FieldInfo>();
 
@@ -80,16 +86,18 @@ namespace OpenIZ.Core.Model
                 object value = fi.GetValue(this);
                 if (value is IdentifiedData &&
                     (value as IdentifiedData).IsDelayLoadEnabled != v)
-                    (value as IdentifiedData).SetDelayLoad(v); // Let it go
+                    (value as IdentifiedData).SetDelayLoad(v, keyStack); // Let it go
                 else if (value is IList &&
                     fi.FieldType.GenericTypeArguments.Length > 0 &&
                     typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(fi.FieldType.GenericTypeArguments[0].GetTypeInfo()))
                 {
                     foreach (IdentifiedData itm in value as IList)
                         if (itm.IsDelayLoadEnabled != v)
-                            itm?.SetDelayLoad(v);
+                            itm?.SetDelayLoad(v, keyStack);
                 }
             }
+
+            keyStack.Remove(this.Key);
         }
 
         /// <summary>

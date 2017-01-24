@@ -221,7 +221,7 @@ namespace OpenIZ.OrmLite
             {
                 case "Contains":
                     this.Visit(node.Object);
-                    this.m_sqlStatement.Append(" LIKE '%' || ");
+                    this.m_sqlStatement.Append(" ILIKE '%' || ");
                     this.Visit(node.Arguments[0]);
                     this.m_sqlStatement.Append(" || '%' ");
                     break;
