@@ -56,9 +56,12 @@ namespace OpenIZ.OrmLite
             TableMapping retVal = null;
             if (!m_tableMappings.TryGetValue(t, out retVal))
                 lock (m_tableMappings)
+                {
+                    retVal = new TableMapping(t);
                     if (!m_tableMappings.ContainsKey(t))
-                        m_tableMappings.Add(t, new TableMapping(t));
-            return new TableMapping(t);
+                        m_tableMappings.Add(t, retVal);
+                }
+            return retVal;
         }
 
         /// <summary>

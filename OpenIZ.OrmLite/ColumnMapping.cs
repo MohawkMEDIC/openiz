@@ -1,5 +1,6 @@
 ﻿using OpenIZ.OrmLite.Attributes;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace OpenIZ.OrmLite
@@ -9,6 +10,9 @@ namespace OpenIZ.OrmLite
     /// </summary>
     public class ColumnMapping
     {
+
+        // Column mapping
+        private static Dictionary<PropertyInfo, ColumnMapping> s_columnCache = new Dictionary<PropertyInfo, ColumnMapping>();
 
         /// <summary>
         /// Gets the source property
@@ -64,7 +68,16 @@ namespace OpenIZ.OrmLite
         /// </summary>
         public static ColumnMapping Get(PropertyInfo pi, TableMapping ownerTable)
         {
-            return new ColumnMapping(pi, ownerTable);
+
+            ColumnMapping retVal = null;
+            if(!s_columnCache.TryGetValue(pi, out retVal)) 
+                lock(s_columnCache)
+                {
+                    retVal = new ColumnMapping(pi, ownerTable);
+                    if (!s_columnCache.ContainsKey(pi))
+                        s_columnCache.Add(pi, retVal);
+                }
+            return retVal;
         }
     }
 }

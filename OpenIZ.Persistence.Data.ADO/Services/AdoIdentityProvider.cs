@@ -140,7 +140,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     {
                         try
                         {
-                            var user = dataContext.FirstOrDefault<DbSecurityUser>(o => o.UserName == userName);
+                            var user = dataContext.FirstOrDefault<DbSecurityUser>(o => o.UserName.ToLower() == userName.ToLower());
                             if (user == null)
                                 throw new KeyNotFoundException(userName);
 
@@ -217,7 +217,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     using (var tx = dataContext.BeginTransaction())
                         try
                         {
-                            var user = dataContext.SingleOrDefault<DbSecurityUser>(u => u.UserName == userName && !u.ObsoletionTime.HasValue);
+                            var user = dataContext.SingleOrDefault<DbSecurityUser>(u => u.UserName.ToLower() == userName.ToLower() && !u.ObsoletionTime.HasValue);
                             if (user == null)
                                 throw new InvalidOperationException(String.Format("Cannot locate user {0}", userName));
 
@@ -347,7 +347,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                     new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.UnrestrictedAdministration, authContext).Demand();
 
-                    var user = dataContext.FirstOrDefault<DbSecurityUser>(o => o.UserName == userName);
+                    var user = dataContext.FirstOrDefault<DbSecurityUser>(o => o.UserName.ToLower() == userName.ToLower());
                     if (user == null)
                         throw new KeyNotFoundException("Specified user does not exist!");
 
@@ -384,7 +384,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     dataContext.Open();
                     new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.UnrestrictedAdministration, authContext).Demand();
 
-                    var user = dataContext.FirstOrDefault<DbSecurityUser>(o => o.UserName == userName);
+                    var user = dataContext.FirstOrDefault<DbSecurityUser>(o => o.UserName.ToLower() == userName.ToLower());
                     if (user == null)
                         throw new KeyNotFoundException("Specified user does not exist!");
 
@@ -424,7 +424,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 {
                     dataContext.Open();
 
-                    var user = dataContext.FirstOrDefault<DbSecurityUser>(o => o.UserName == userName);
+                    var user = dataContext.FirstOrDefault<DbSecurityUser>(o => o.UserName.ToLower() == userName.ToLower());
                     if (user == null)
                         throw new KeyNotFoundException(userName);
 
@@ -475,7 +475,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 {
                     dataContext.Open();
 
-                    var user = dataContext.FirstOrDefault<DbSecurityUser>(o => o.UserName == userName);
+                    var user = dataContext.FirstOrDefault<DbSecurityUser>(o => o.UserName.ToLower() == userName.ToLower());
                     if (user == null)
                         throw new KeyNotFoundException(userName);
 

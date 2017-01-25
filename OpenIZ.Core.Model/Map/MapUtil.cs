@@ -33,7 +33,7 @@ namespace OpenIZ.Core.Model.Map
     /// </summary>
     public static class MapUtil
     {
-        
+
         /// <summary>
         /// Flavor validation
         /// </summary>
@@ -44,7 +44,10 @@ namespace OpenIZ.Core.Model.Map
         /// Value - MethodInfo of the method that will perform the operation to convert
         /// </summary>
         private static Dictionary<string, MethodInfo> s_wireMaps = new Dictionary<string, MethodInfo>();
-        
+
+        // Conversion maps
+        private static Dictionary<KeyValuePair<Type, Type>, MethodInfo> m_converterMaps = new Dictionary<KeyValuePair<Type, Type>, MethodInfo>();
+
         /// <summary>
         /// Register a map
         /// </summary>
@@ -53,7 +56,7 @@ namespace OpenIZ.Core.Model.Map
         /// <param name="method"></param>
         public static void RegisterMap(Type sourceType, Type destType, MethodInfo method)
         {
-            lock(s_wireMaps)
+            lock (s_wireMaps)
                 s_wireMaps.Add(String.Format("{0}>{1}", sourceType, destType), method);
         }
 
@@ -76,21 +79,25 @@ namespace OpenIZ.Core.Model.Map
         /// <returns></returns>
         internal static MethodInfo FindConverter(Type scanType, Type sourceType, Type destType)
         {
-
+            var key = new KeyValuePair<Type, Type>(sourceType, destType);
             MethodInfo retVal = null;
-			lock (scanType) {
-				var rtm = scanType.GetRuntimeMethods ();
-				foreach (MethodInfo mi in rtm)
-					if (mi.GetParameters ().Length == 2 &&
-					                   (mi.ReturnType.GetTypeInfo ().IsSubclassOf (destType) || destType == mi.ReturnType) &&
-					                   mi.GetParameters () [0].ParameterType.FullName == sourceType.FullName &&
-					                   mi.GetParameters () [1].ParameterType.FullName == typeof(IFormatProvider).FullName)
-						retVal = mi;
-					else if (mi.GetParameters ().Length == 1 &&
-					                        (mi.ReturnType.GetTypeInfo ().IsSubclassOf (destType) || destType == mi.ReturnType) &&
-					                        mi.GetParameters () [0].ParameterType.FullName == sourceType.FullName && retVal == null)
-						retVal = mi;
-			}
+            if (!m_converterMaps.TryGetValue(key, out retVal))
+            {
+                var rtm = scanType.GetRuntimeMethods();
+                foreach (MethodInfo mi in rtm)
+                    if (mi.GetParameters().Length == 2 &&
+                                       (mi.ReturnType.GetTypeInfo().IsSubclassOf(destType) || destType == mi.ReturnType) &&
+                                       mi.GetParameters()[0].ParameterType.FullName == sourceType.FullName &&
+                                       mi.GetParameters()[1].ParameterType.FullName == typeof(IFormatProvider).FullName)
+                        retVal = mi;
+                    else if (mi.GetParameters().Length == 1 &&
+                                            (mi.ReturnType.GetTypeInfo().IsSubclassOf(destType) || destType == mi.ReturnType) &&
+                                            mi.GetParameters()[0].ParameterType.FullName == sourceType.FullName && retVal == null)
+                        retVal = mi;
+                lock (m_converterMaps)
+                    if (!m_converterMaps.ContainsKey(key)) 
+                        m_converterMaps.Add(key, retVal);
+            }
             return retVal;
 
         }

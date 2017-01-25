@@ -660,8 +660,7 @@ namespace OpenIZ.OrmLite
                         itmValue = null;
 
                     query.Append($"{itm.Name} = ? ", itmValue);
-                    if (itm != tableMap.Columns.Last())
-                        query.Append(",");
+                    query.Append(",");
                     if (itm.IsPrimaryKey)
                         whereClause.And($"{itm.Name} = ?", itmValue);
                 }

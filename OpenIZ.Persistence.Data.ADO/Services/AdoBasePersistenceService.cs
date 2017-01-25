@@ -449,7 +449,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     var postData = new PostQueryEventArgs<TData>(query, results.AsQueryable(), authContext);
                     this.Queried?.Invoke(this, postData);
 
-                    var retVal = postData.Results.ToList();
+                    var retVal = postData.Results.AsParallel().ToList();
                     retVal.ForEach((o) => o.SetDelayLoad(true)); // Enable delay load for items
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Returning {0}..{1} or {2} results", offset, offset + (count ?? 1000), totalCount);
 

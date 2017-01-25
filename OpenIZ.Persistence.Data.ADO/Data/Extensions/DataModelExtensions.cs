@@ -236,7 +236,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
             if (principal == null)
                 return null;
 
-            var user = dataContext.SingleOrDefault<DbSecurityUser>(o => o.UserName == principal.Identity.Name && !o.ObsoletionTime.HasValue);
+            var user = dataContext.SingleOrDefault<DbSecurityUser>(o => o.UserName.ToLower() == principal.Identity.Name.ToLower() && !o.ObsoletionTime.HasValue);
             // TODO: Enable auto-creation of users via configuration
             if (user == null)
                 throw new SecurityException("User in authorization context does not exist or is obsolete");
