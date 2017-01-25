@@ -114,7 +114,8 @@ namespace OpenIZ.OrmLite.Providers
 
                 // Parameter type
                 if (value is String) parm.DbType = System.Data.DbType.String;
-                else if (value is DateTime || value is DateTimeOffset) parm.DbType = System.Data.DbType.DateTime;
+                else if (value is DateTime) parm.DbType = System.Data.DbType.DateTime;
+                else if (value is DateTimeOffset) parm.DbType = DbType.DateTimeOffset;
                 else if (value is Int32) parm.DbType = System.Data.DbType.Int32;
                 else if (value is Boolean) parm.DbType = System.Data.DbType.Boolean;
                 else if (value is byte[])

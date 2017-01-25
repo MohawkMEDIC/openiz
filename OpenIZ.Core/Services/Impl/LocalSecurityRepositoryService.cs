@@ -774,9 +774,12 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="user">The security user containing the updated information.</param>
 		/// <returns>Returns the updated user.</returns>
-		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
 		public SecurityUser SaveUser(SecurityUser user)
 		{
+            // Only the current user can update themselves or an administrator
+            if (AuthenticationContext.Current.Principal.Identity.Name != user.UserName)
+                new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.AlterIdentity).Demand();
+
 			var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
 			user.PasswordHash = null; // Don't update the password hash here
 			if (pers == null)
