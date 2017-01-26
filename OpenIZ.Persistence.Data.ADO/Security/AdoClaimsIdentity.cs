@@ -181,6 +181,8 @@ namespace OpenIZ.Persistence.Data.ADO.Security
                         .InnerJoin<DbSecurityUserRole>(o => o.Key, o => o.RoleKey)
                         .Where<DbSecurityUserRole>(o => o.UserKey == user.Key));
 
+                    if (user.ObsoletionTime.HasValue)
+                        throw new AuthenticationException("Security user is not active");
                     var userIdentity = new AdoClaimsIdentity(user, roles, true) { m_authenticationType = "Refresh" };
 
                     // Is user allowed to login?

@@ -167,7 +167,17 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if (objData?.ObsoletionTime != null || idData == null)
                 return this.ToModelInstance(o, context, principal);
             else
-                return ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(idData?.Key ?? Guid.Empty) ??  this.ToModelInstance(o, context, principal);
+            {
+                var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(idData?.Key ?? Guid.Empty);
+                if (cacheItem != null)
+                    return cacheItem;
+                else
+                {
+                    cacheItem = this.ToModelInstance(o, context, principal);
+                    ApplicationContext.Current.GetService<IDataCachingService>().Add(cacheItem);
+                }
+                return cacheItem;
+            }
         }
 
         /// <summary>

@@ -148,7 +148,7 @@ namespace OpenIZ.Caching.Memory
             this.ThrowIfDisposed();
 
             var idData = data as IdentifiedData;
-            if (idData == null || idData.IsEmpty() == true)
+            if (idData == null || idData.IsEmpty() == true || !idData.Key.HasValue)
                 return;
             var vidData = data as IBaseEntityData;
 
