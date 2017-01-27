@@ -208,7 +208,7 @@ namespace OpenIZ.Core.Model
             var other = obj as IdentifiedData;
             if (other == null)
                 return false;
-            return this.Key == other.Key && this.Type == other.Type;
+            return this.Type == other.Type;
         }
     }
 }

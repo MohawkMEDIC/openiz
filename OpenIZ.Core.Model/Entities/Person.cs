@@ -29,6 +29,7 @@ using System.Threading.Tasks;
 using OpenIZ.Core.Model.EntityLoader;
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Security;
+using System.Globalization;
 
 namespace OpenIZ.Core.Model.Entities
 {
@@ -55,8 +56,46 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets or sets the person's date of birth
         /// </summary>
-        [XmlElement("dateOfBirth"), JsonProperty("dateOfBirth")]
+        [XmlIgnore, JsonIgnore]
         public DateTime? DateOfBirth { get; set; }
+
+        /// <summary>
+        /// Gets the date of birth as XML
+        /// </summary>
+        [XmlElement("dateOfBirth"), JsonProperty("dateOfBirth"), DataIgnore]
+        public String DateOfBirthXml
+        {
+            get
+            {
+                switch(this.DateOfBirthPrecision.GetValueOrDefault())
+                {
+                    case DatePrecision.Year:
+                        return this.DateOfBirth?.Date.ToString("yyyy");
+                    case DatePrecision.Month:
+                        return this.DateOfBirth?.Date.ToString("yyyy-MM");
+                    default:
+                        return this.DateOfBirth?.Date.ToString("yyyy-MM-dd");
+                }
+            }
+            set
+            {
+                switch(value.Length)
+                {
+                    case 4:
+                        this.DateOfBirthPrecision = DatePrecision.Year;
+                        this.DateOfBirth = DateTime.ParseExact(value, "yyyy", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+                        break;
+                    case 7:
+                        this.DateOfBirthPrecision = DatePrecision.Month;
+                        this.DateOfBirth = DateTime.ParseExact(value, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+                        break;
+                    case 10:
+                        this.DateOfBirthPrecision = DatePrecision.Day;
+                        this.DateOfBirth = DateTime.ParseExact(value, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+                        break;
+                }
+            }
+        }
 
         /// <summary>
         /// Gets or sets the precision ofthe date of birth

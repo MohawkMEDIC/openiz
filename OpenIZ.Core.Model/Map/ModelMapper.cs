@@ -422,7 +422,7 @@ namespace OpenIZ.Core.Model.Map
                 if (domainProperty == null)
                     continue;
                 //Debug.WriteLine ("Unmapped property ({0}).{1}", typeof(TModel).Name, propInfo.Name);
-                else if (domainProperty.PropertyType == typeof(byte[]) && propInfo.PropertyType == typeof(Guid))
+                else if (domainProperty.PropertyType == typeof(byte[]) && propInfo.PropertyType.StripNullable() == typeof(Guid))
                     domainProperty.SetValue(targetObject, ((Guid)propInfo.GetValue(modelInstance)).ToByteArray());
                 else if (
                     (domainProperty.PropertyType == typeof(DateTime) || domainProperty.PropertyType == typeof(DateTime?))
@@ -630,7 +630,7 @@ namespace OpenIZ.Core.Model.Map
                 object pValue = null;
 
                 //DebugWriteLine("Unmapped property ({0}).{1}", typeof(TDomain).Name, propInfo.Name);
-                if (sourceProperty.PropertyType == typeof(byte[]) && modelProperty.PropertyType == typeof(Guid)) // Guid to BA
+                if (sourceProperty.PropertyType == typeof(byte[]) && modelProperty.PropertyType.StripNullable() == typeof(Guid)) // Guid to BA
                     modelProperty.SetValue(retVal, new Guid((byte[])sourceProperty.GetValue(sourceObject)));
                 else if (modelProperty.PropertyType.GetTypeInfo().IsAssignableFrom(sourceProperty.PropertyType.GetTypeInfo()))
                     modelProperty.SetValue(retVal, sourceProperty.GetValue(sourceObject));

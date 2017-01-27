@@ -167,7 +167,7 @@ namespace OpenIZ.Core.Model.DataTypes
             Extension<TBoundModel> other = obj as Extension<TBoundModel>;
             if (other == null) return false;
             return base.SemanticEquals(obj) && other.ExtensionTypeKey == this.ExtensionTypeKey &&
-                this.ExtensionValueXml == other.ExtensionValueXml;
+                this.ExtensionValueString == other.ExtensionValueString;
         }
     }
 

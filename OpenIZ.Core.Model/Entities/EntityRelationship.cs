@@ -225,7 +225,8 @@ namespace OpenIZ.Core.Model.Entities
         {
             var other = obj as EntityRelationship;
             if (other == null) return false;
-            return base.SemanticEquals(obj) && this.TargetEntityKey == other.TargetEntityKey;
+            return base.SemanticEquals(obj) && this.TargetEntityKey == other.TargetEntityKey &&
+                this.RelationshipTypeKey == other.RelationshipTypeKey;
         }
 
     }

@@ -30,6 +30,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace OpenIZ.Core.Model.Roles
 {
@@ -60,8 +61,45 @@ namespace OpenIZ.Core.Model.Roles
         /// <summary>
         /// Gets or sets the date the patient was deceased
         /// </summary>
-        [XmlElement("deceasedDate"), JsonProperty("deceasedDate")]
+        [XmlIgnore, JsonIgnore]
         public DateTime? DeceasedDate { get; set; }
+
+        /// <summary>
+        /// Deceased date XML
+        /// </summary>
+        [XmlElement("deceasedDate"), JsonProperty("deceasedDate"), DataIgnore]
+        public String DeceasedDateXml {
+            get
+            {
+                switch (this.DeceasedDatePrecision.GetValueOrDefault())
+                {
+                    case DatePrecision.Year:
+                        return this.DeceasedDate?.Date.ToString("yyyy");
+                    case DatePrecision.Month:
+                        return this.DeceasedDate?.Date.ToString("yyyy-MM");
+                    default:
+                        return this.DeceasedDate?.Date.ToString("yyyy-MM-dd");
+                }
+            }
+            set
+            {
+                switch (value.Length)
+                {
+                    case 4:
+                        this.DeceasedDatePrecision = DatePrecision.Year;
+                        this.DeceasedDate = DateTime.ParseExact(value, "yyyy", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+                        break;
+                    case 7:
+                        this.DeceasedDatePrecision = DatePrecision.Month;
+                        this.DeceasedDate = DateTime.ParseExact(value, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+                        break;
+                    case 10:
+                        this.DeceasedDatePrecision = DatePrecision.Day;
+                        this.DeceasedDate = DateTime.ParseExact(value, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+                        break;
+                }
+            }
+        }
         /// <summary>
         /// Gets or sets the precision of the date of deceased
         /// </summary>

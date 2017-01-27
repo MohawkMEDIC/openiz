@@ -395,6 +395,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Identifies protocols attached to the act
         /// </summary>
+        [AutoLoad, XmlElement("protocol"), JsonProperty("protocol")]
         public VersionedAssociationCollection<ActProtocol> Protocols { get; set; }
 
         /// <summary>

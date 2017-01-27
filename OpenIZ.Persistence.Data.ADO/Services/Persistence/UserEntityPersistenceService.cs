@@ -88,7 +88,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if (data.SecurityUser != null) data.SecurityUser = data.SecurityUser?.EnsureExists(context, principal) as SecurityUser;
             data.SecurityUserKey = data.SecurityUser?.Key ?? data.SecurityUserKey;
             this.m_personPersister.Update(context, data, principal);
-            return base.Insert(context, data, principal);
+            return base.Update(context, data, principal);
         }
 
         /// <summary>

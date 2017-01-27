@@ -20,6 +20,7 @@
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Protocol;
+using System;
 using System.Collections.Generic;
 
 namespace OpenIZ.Core.Services
@@ -37,7 +38,16 @@ namespace OpenIZ.Core.Services
 		/// <summary>
 		/// Create a care plam
 		/// </summary>
-		IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters = false);
+		IEnumerable<Act> CreateCarePlan(Patient p);
 
+        /// <summary>
+        /// Create a care plan controlling the creation of encounters
+        /// </summary>
+        IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters);
+
+        /// <summary>
+        /// Creates a care plan for the patient with the specified protocolsonly
+        /// </summary>
+        IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters, params Guid[] protocols);
 	}
 }

@@ -342,5 +342,79 @@ namespace OpenIZ.Core.Services.Impl
             return filterMethod.Invoke(null, new object[] { source, lambda });
 
         }
+
+        /// <summary>
+        /// Test that a patch can be applied
+        /// </summary>
+        public bool Test(Patch patch, IdentifiedData data)
+        {
+
+            this.m_tracer.TraceVerbose("-->> {0} test with:\r\n{1}", data, patch);
+            bool retVal = true;
+
+            // We want to run through the patch operations and execute them
+            foreach (var op in patch.Operation)
+            {
+                // Grab the right property
+                var propertyName = op.Path.Split('.');
+                String pathName = String.Empty;
+                PropertyInfo property = null;
+                object applyTo = retVal, applyParent = null;
+
+                foreach (var itm in propertyName)
+                {
+                    // Get the properties
+                    IEnumerable<PropertyInfo> properties = null;
+                    if (!this.m_properties.TryGetValue(applyTo.GetType(), out properties))
+                        lock (this.m_lockObject)
+                            if (!this.m_properties.ContainsKey(applyTo.GetType()))
+                            {
+                                properties = data.GetType().GetRuntimeProperties().Where(o => o.CanRead && o.CanWrite && o.GetCustomAttribute<JsonPropertyAttribute>() != null);
+                                this.m_properties.Add(data.GetType(), properties);
+                            }
+
+                    var subProperty = properties.FirstOrDefault(o => o.GetCustomAttribute<JsonPropertyAttribute>().PropertyName == itm);
+                    if (subProperty != null)
+                    {
+                        applyParent = applyTo;
+                        applyTo = subProperty.GetValue(applyTo);
+                        if (applyTo is IList)
+                        {
+                            applyTo = Activator.CreateInstance(subProperty.PropertyType, applyTo);
+                        }
+                        property = subProperty;
+                        pathName += itm + ".";
+                    }
+                    else
+                        break;
+                } 
+
+                // Operation type
+                switch (op.OperationType)
+                {
+                    case PatchOperationType.Test:
+                        // We test the value! Also pretty cool
+                        if (applyTo is IdentifiedData && !(applyTo as IdentifiedData).SemanticEquals(op.Value as IdentifiedData))
+                            retVal = false;
+                        else if (applyTo is IList)
+                        {
+                            // Identified data
+                            if (typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(property.PropertyType.StripGeneric().GetTypeInfo()))
+                            {
+                                var result = this.ExecuteLambda("Any", applyTo, property, pathName, op);
+                                if (!(bool)result)
+                                    retVal = false;
+                            }
+                            else if (!(applyTo as IList).OfType<Object>().Any(o => o.Equals(op.Value)))
+                                retVal = false;
+
+                        }
+                        else if (applyTo?.Equals(op.Value) == false && applyTo != op.Value)
+                            retVal = false;
+                        break;
+                }
+            }
+            return retVal;
+        }
     }
 }

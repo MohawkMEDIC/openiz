@@ -72,15 +72,31 @@ namespace OpenIZ.Core.Protocol
             }
         }
 
+        /// <summary>
+        /// Create a care plan for the specified patient
+        /// </summary>
+        public IEnumerable<Act> CreateCarePlan(Patient p)
+        {
+            return this.CreateCarePlan(p, false);
+        }
+
 
         /// <summary>
         /// Create a care plan
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
-        public IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters = false)
+        public IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters)
         {
-            List<Act> protocolActs = this.Protocols.OrderBy(o => o.Name).AsParallel().SelectMany(o => o.Calculate(p)).OrderBy(o => o.StopTime - o.StartTime).ToList();
+            return this.CreateCarePlan(p, asEncounters, this.Protocols.Select(o=>o.Id).ToArray());
+        }
+
+        /// <summary>
+        /// Create a care plan with the specified protocols only
+        /// </summary>
+        public IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters, params Guid[] protocols)
+        {
+            List<Act> protocolActs = this.Protocols.Where(o=>protocols.Contains(o.Id)).OrderBy(o => o.Name).AsParallel().SelectMany(o => o.Calculate(p)).OrderBy(o => o.StopTime - o.StartTime).ToList();
 
             if (asEncounters)
             {
@@ -144,7 +160,7 @@ namespace OpenIZ.Core.Protocol
                 }
 
             }
-            
+
             // TODO: Configure for days of week
             foreach (var itm in protocolActs)
                 while (itm.ActTime.DayOfWeek == DayOfWeek.Sunday || itm.ActTime.DayOfWeek == DayOfWeek.Saturday)
