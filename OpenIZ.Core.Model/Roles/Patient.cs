@@ -71,33 +71,15 @@ namespace OpenIZ.Core.Model.Roles
         public String DeceasedDateXml {
             get
             {
-                switch (this.DeceasedDatePrecision.GetValueOrDefault())
-                {
-                    case DatePrecision.Year:
-                        return this.DeceasedDate?.Date.ToString("yyyy");
-                    case DatePrecision.Month:
-                        return this.DeceasedDate?.Date.ToString("yyyy-MM");
-                    default:
-                        return this.DeceasedDate?.Date.ToString("yyyy-MM-dd");
-                }
+                return this.DeceasedDate?.ToUniversalTime().ToString("o");
             }
             set
             {
-                switch (value.Length)
-                {
-                    case 4:
-                        this.DeceasedDatePrecision = DatePrecision.Year;
-                        this.DeceasedDate = DateTime.ParseExact(value, "yyyy", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
-                        break;
-                    case 7:
-                        this.DeceasedDatePrecision = DatePrecision.Month;
-                        this.DeceasedDate = DateTime.ParseExact(value, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
-                        break;
-                    case 10:
-                        this.DeceasedDatePrecision = DatePrecision.Day;
-                        this.DeceasedDate = DateTime.ParseExact(value, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
-                        break;
-                }
+                if (!String.IsNullOrEmpty(value))
+                    this.DeceasedDate = DateTime.ParseExact(value, "o", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+                else
+                    this.DeceasedDate = null;
+
             }
         }
         /// <summary>
@@ -131,7 +113,7 @@ namespace OpenIZ.Core.Model.Roles
         /// Gets or sets the gender concept
         /// </summary>
         [SerializationReference(nameof(GenderConceptKey))]
-        [XmlIgnore, JsonIgnore, DataIgnore]
+        [XmlIgnore, JsonIgnore, AutoLoad]
         public Concept GenderConcept
         {
             get

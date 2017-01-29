@@ -26,6 +26,7 @@ using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Map;
+using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
@@ -132,9 +133,24 @@ namespace OpenIZ.Caching.Memory
             }
             if (ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>() != null)
             {
-                ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>().Updated += (o, e) => MemoryCache.Current.RemoveObject(e.Data.SourceEntity.GetType(), e.Data.SourceEntityKey);
-                ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>().Inserted += (o, e) => MemoryCache.Current.RemoveObject(e.Data.SourceEntity.GetType(), e.Data.SourceEntityKey);
-                ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>().Obsoleted += (o, e) => MemoryCache.Current.RemoveObject(e.Data.SourceEntity.GetType(), e.Data.SourceEntityKey);
+                EventHandler<PostPersistenceEventArgs<EntityRelationship>> clearSource = (o, e) =>
+                {
+                    if (e.Data != null && e.Data.SourceEntity != null)
+                        MemoryCache.Current.RemoveObject(e.Data.SourceEntity.GetType(), e.Data.SourceEntityKey);
+                    else
+                    {
+                        MemoryCache.Current.RemoveObject(typeof(Patient), e.Data.SourceEntityKey);
+                        MemoryCache.Current.RemoveObject(typeof(ManufacturedMaterial), e.Data.SourceEntityKey);
+                        MemoryCache.Current.RemoveObject(typeof(Place), e.Data.SourceEntityKey);
+                        MemoryCache.Current.RemoveObject(typeof(Organization), e.Data.SourceEntityKey);
+                        MemoryCache.Current.RemoveObject(typeof(Provider), e.Data.SourceEntityKey);
+                        MemoryCache.Current.RemoveObject(typeof(Material), e.Data.SourceEntityKey);
+                        MemoryCache.Current.RemoveObject(typeof(Entity), e.Data.SourceEntityKey);
+                    }
+                };
+                ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>().Updated += clearSource;
+                ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>().Inserted += clearSource;
+                ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>().Obsoleted += clearSource;
             }
 
             // Now we start timers

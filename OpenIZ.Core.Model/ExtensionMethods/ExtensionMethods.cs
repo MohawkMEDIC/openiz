@@ -58,9 +58,12 @@ namespace OpenIZ.Core.Model
         {
 
             if (other == null) return false;
-            bool equals = true;
+            bool equals = me.Count() == other.Count();
             foreach (var itm in me)
                 equals &= other.Any(o => o.SemanticEquals(itm));
+            foreach(var itm in other)
+                equals &= me.Any(o => o.SemanticEquals(itm));
+
             return equals;
         }
 

@@ -36,8 +36,8 @@ namespace OpenIZ.Core.Model.Entities
     /// <summary>
     /// Represents an entity which is a person
     /// </summary>
-    
-    [XmlType("Person",  Namespace = "http://openiz.org/model"), JsonObject("Person")]
+
+    [XmlType("Person", Namespace = "http://openiz.org/model"), JsonObject("Person")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Person")]
     public class Person : Entity
     {
@@ -67,33 +67,14 @@ namespace OpenIZ.Core.Model.Entities
         {
             get
             {
-                switch(this.DateOfBirthPrecision.GetValueOrDefault())
-                {
-                    case DatePrecision.Year:
-                        return this.DateOfBirth?.Date.ToString("yyyy");
-                    case DatePrecision.Month:
-                        return this.DateOfBirth?.Date.ToString("yyyy-MM");
-                    default:
-                        return this.DateOfBirth?.Date.ToString("yyyy-MM-dd");
-                }
+                return this.DateOfBirth?.ToUniversalTime().ToString("o");
             }
             set
             {
-                switch(value.Length)
-                {
-                    case 4:
-                        this.DateOfBirthPrecision = DatePrecision.Year;
-                        this.DateOfBirth = DateTime.ParseExact(value, "yyyy", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
-                        break;
-                    case 7:
-                        this.DateOfBirthPrecision = DatePrecision.Month;
-                        this.DateOfBirth = DateTime.ParseExact(value, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
-                        break;
-                    case 10:
-                        this.DateOfBirthPrecision = DatePrecision.Day;
-                        this.DateOfBirth = DateTime.ParseExact(value, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
-                        break;
-                }
+                if (!String.IsNullOrEmpty(value))
+                    this.DateOfBirth = DateTime.ParseExact(value, "o", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+                else
+                    this.DateOfBirth = null;
             }
         }
 

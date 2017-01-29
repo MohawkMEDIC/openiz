@@ -409,7 +409,7 @@ namespace OpenIZ.Caching.Memory
         public void HandlePostPersistenceEvent(TransactionMode txMode, Object data)
         {
             if (txMode == TransactionMode.Commit)
-                this.AddUpdateEntry(data);
+                this.RemoveObject(data.GetType(), (data as IIdentifiedEntity).Key.Value); //this.AddUpdateEntry(data);
 
         }
 
