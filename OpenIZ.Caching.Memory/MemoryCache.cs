@@ -154,7 +154,7 @@ namespace OpenIZ.Caching.Memory
 
             Type objData = data?.GetType();
             if (idData == null || !idData.Key.HasValue ||
-                vidData?.ObsoletionTime.HasValue == true || vidData?.CreationTime == default(DateTime))
+                vidData?.ObsoletionTime.HasValue == true || vidData?.CreationTime == default(DateTimeOffset))
                 return;
 
             Dictionary<Guid, CacheEntry> cache = null;
