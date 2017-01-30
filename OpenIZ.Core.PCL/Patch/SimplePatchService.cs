@@ -292,6 +292,8 @@ namespace OpenIZ.Core.Services.Impl
                             var instance = this.ExecuteLambda("FirstOrDefault", applyTo, property, pathName, op);
                             if (instance != null)
                                 (applyTo as IList).Remove(instance);
+                            else
+                                throw new PatchAssertionException("Cannot remove a non-existing relationship");
                         }
                         else if (op.Value == null)
                             property.SetValue(applyParent, null);
@@ -359,7 +361,7 @@ namespace OpenIZ.Core.Services.Impl
                 var propertyName = op.Path.Split('.');
                 String pathName = String.Empty;
                 PropertyInfo property = null;
-                object applyTo = retVal, applyParent = null;
+                object applyTo = data, applyParent = null;
 
                 foreach (var itm in propertyName)
                 {
@@ -369,8 +371,8 @@ namespace OpenIZ.Core.Services.Impl
                         lock (this.m_lockObject)
                             if (!this.m_properties.ContainsKey(applyTo.GetType()))
                             {
-                                properties = data.GetType().GetRuntimeProperties().Where(o => o.CanRead && o.CanWrite && o.GetCustomAttribute<JsonPropertyAttribute>() != null);
-                                this.m_properties.Add(data.GetType(), properties);
+                                properties = applyTo.GetType().GetRuntimeProperties().Where(o => o.CanRead && o.CanWrite && o.GetCustomAttribute<JsonPropertyAttribute>() != null);
+                                this.m_properties.Add(applyTo.GetType(), properties);
                             }
 
                     var subProperty = properties.FirstOrDefault(o => o.GetCustomAttribute<JsonPropertyAttribute>().PropertyName == itm);
@@ -379,19 +381,28 @@ namespace OpenIZ.Core.Services.Impl
                         applyParent = applyTo;
                         applyTo = subProperty.GetValue(applyTo);
                         if (applyTo is IList)
-                        {
                             applyTo = Activator.CreateInstance(subProperty.PropertyType, applyTo);
-                        }
                         property = subProperty;
                         pathName += itm + ".";
                     }
                     else
                         break;
-                } 
+                }
+
+                if (this.ignoreProperties.Contains(op.Path))
+                    continue;
 
                 // Operation type
                 switch (op.OperationType)
                 {
+                    case PatchOperationType.Remove:
+                        // We add the value!!! Yay!
+                        if (applyTo is IList)
+                        {
+                            var instance = this.ExecuteLambda("FirstOrDefault", applyTo, property, pathName, op);
+                            retVal &= instance != null;
+                        }
+                        break;
                     case PatchOperationType.Test:
                         // We test the value! Also pretty cool
                         if (applyTo is IdentifiedData && !(applyTo as IdentifiedData).SemanticEquals(op.Value as IdentifiedData))

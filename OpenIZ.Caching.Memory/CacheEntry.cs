@@ -67,5 +67,14 @@ namespace OpenIZ.Caching.Memory
         {
             Interlocked.Exchange(ref m_lastReadTime, DateTime.Now.Ticks);
         }
+
+        /// <summary>
+        /// Update the cache entry
+        /// </summary>
+        internal void Update(object data)
+        {
+            this.Data = data;
+            this.Touch();
+        }
     }
 }

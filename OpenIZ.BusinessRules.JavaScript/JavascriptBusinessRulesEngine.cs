@@ -86,7 +86,7 @@ namespace OpenIZ.BusinessRules.JavaScript
         {
             // Set up javascript ening 
             this.m_tracer.TraceInfo("OpenIZ Javascript Business Rules Host Initialize");
-
+            
             this.m_engine = new Jint.Engine(cfg => cfg.AllowClr(
                     typeof(OpenIZ.Core.Model.BaseEntityData).GetTypeInfo().Assembly,
                     typeof(IBusinessRulesService<>).GetTypeInfo().Assembly
@@ -225,7 +225,14 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public List<Func<object, ExpandoObject>> GetCallList<TBinding>(String action)
         {
-            var className = typeof(TBinding).GetTypeInfo().GetCustomAttribute<JsonObjectAttribute>()?.Id;
+            return this.GetCallList(typeof(TBinding), action);
+        }
+
+        /// <summary>
+        /// Generic method for bindig call list
+        /// </summary>
+        public List<Func<object, ExpandoObject>> GetCallList(Type tbinding, String action) { 
+            var className = tbinding.GetTypeInfo().GetCustomAttribute<JsonObjectAttribute>()?.Id;
 
             // Try to get the binding
             Dictionary<String, List<Func<object, ExpandoObject>>> triggerHandler = null;
@@ -261,6 +268,8 @@ namespace OpenIZ.BusinessRules.JavaScript
             try
             {
                 var callList = this.GetCallList<TBinding>(action);
+                if(callList.Count == 0)
+                    callList = this.GetCallList(data.GetType(), action);
                 var retVal = data;
                 foreach (var c in callList)
                 {

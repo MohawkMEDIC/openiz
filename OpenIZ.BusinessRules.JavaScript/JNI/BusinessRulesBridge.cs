@@ -89,6 +89,16 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         }
 
         /// <summary>
+        /// Executes the business rule
+        /// </summary>
+        public object ExecuteRule(String action, Object data)
+        {
+            var sData = this.ToModel(data);
+            var retVal = JavascriptBusinessRulesEngine.Current.Invoke(action, sData);
+            return this.ToViewModel(retVal);
+        }
+
+        /// <summary>
         /// Delete cache item
         /// </summary>
         public void DeleteCache(String type, String key) {
@@ -125,6 +135,19 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
                 }
             }
         }
+
+        /// <summary>
+        /// Execute bundle rules
+        /// </summary>
+        public Object ExecuteBundleRules(String trigger, Object bundle)
+        {
+            var bdl = this.ToModel(bundle) as Bundle;
+            foreach (var itm in bdl.Item)
+                JavascriptBusinessRulesEngine.Current.Invoke(trigger, itm);
+            return bundle;
+
+        }
+
         /// <summary>
         /// Convert to Jint object
         /// </summary>

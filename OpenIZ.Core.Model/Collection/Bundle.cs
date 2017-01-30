@@ -234,7 +234,7 @@ namespace OpenIZ.Core.Model.Collection
             data.SetDelayLoad(false);
 
             // Iterate over properties
-            foreach (var pi in data.GetType().GetRuntimeProperties())
+            foreach (var pi in data.GetType().GetRuntimeProperties().Where(o=>o.GetCustomAttribute<DataIgnoreAttribute>() == null))
             {
 
                 // Is this property not null? If so, we want to iterate

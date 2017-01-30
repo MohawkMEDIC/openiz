@@ -321,9 +321,10 @@ namespace OpenIZ.Messaging.IMSI.Client
             var tag = patch.AppliesTo.Tag;
             var key = patch.AppliesTo.Key;
 
-            patch.AppliesTo = null;
+            var sPatch = patch.Clone() as Patch;
+            sPatch.AppliesTo = null;
 
-            var version = this.Client.Patch<Patch>($"{resourceName}/{key.Value}", this.Client.Accept, tag, patch);
+            var version = this.Client.Patch<Patch>($"{resourceName}/{key.Value}", this.Client.Accept, tag, sPatch);
 
             return Guid.ParseExact(version, "N");
 

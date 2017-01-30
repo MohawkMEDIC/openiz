@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using OpenIZ.Core.Model;
 using System.Collections;
 using System.Text.RegularExpressions;
+using OpenIZ.Core.Model.Attributes;
+using System.Xml.Serialization;
 
 namespace OpenIZ.OrmLite
 {
@@ -224,14 +226,33 @@ namespace OpenIZ.OrmLite
                         var guardConditions = queryParms.GroupBy(o => re.Match(o.Key).Groups[GuardRegexGroup].Value);
                         foreach (var guardClause in guardConditions)
                         {
-                            var subQuery = guardClause.Select(o => new KeyValuePair<String, Object>(re.Match(o.Key).Groups[SubPropertyRegexGroup].Value, o.Value));
+                            var subQuery = guardClause.Select(o => new KeyValuePair<String, Object>(re.Match(o.Key).Groups[SubPropertyRegexGroup].Value, o.Value)).ToList();
+
+                            // TODO: GUARD CONDITION HERE!!!!
+                            if(!String.IsNullOrEmpty(guardClause.Key))
+                            {
+                                StringBuilder guardCondition = new StringBuilder();
+                                var clsModel = propertyType;
+                                while(clsModel.GetCustomAttribute<ClassifierAttribute>() != null)
+                                {
+                                    var clsProperty = clsModel.GetRuntimeProperty(clsModel.GetCustomAttribute<ClassifierAttribute>().ClassifierProperty);
+                                    clsModel = clsProperty.PropertyType.StripGeneric();
+                                    var redirectProperty = clsProperty.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty;
+                                    if (redirectProperty != null)
+                                        clsProperty = clsProperty.DeclaringType.GetRuntimeProperty(redirectProperty);
+
+                                    guardCondition.Append(clsProperty.GetCustomAttributes<XmlElementAttribute>().First().ElementName);
+                                    if (typeof(IdentifiedData).IsAssignableFrom(clsModel))
+                                        guardCondition.Append(".");
+                                }
+                                subQuery.Add(new KeyValuePair<string, object>(guardCondition.ToString(), guardClause.Key));
+                            }
 
                             // Generate method
                             var prefix = IncrementSubQueryAlias(tablePrefix);
-                            var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { propertyType }, new Type[] { subQuery.GetType(), typeof(String), typeof(ColumnMapping[]) });
+                            var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { propertyType }, new Type[] { subQuery.GetType(), typeof(String), typeof(ColumnMapping[])});
                             subQueryStatement.Append(genMethod.Invoke(this, new Object[] { subQuery, prefix, new ColumnMapping[] { subTableColumn } }) as SqlStatement);
-                            
-                            // TODO: GUARD CONDITION HERE!!!!
+
 
                             // TODO: Check if limiting the the query is better
                             if (guardConditions.Last().Key != guardClause.Key)

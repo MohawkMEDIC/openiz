@@ -111,7 +111,7 @@ namespace OpenIZ.Caching.Memory
             // Handles when an item is no longer being mapped
             this.m_mappedHandler = (o, e) =>
             {
-                this.GetOrUpdateCacheItem(e);
+                //this.GetOrUpdateCacheItem(e);
             };
 
             // Subscribe to message mapping

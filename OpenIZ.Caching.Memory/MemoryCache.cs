@@ -23,6 +23,7 @@ using MARC.HI.EHRS.SVC.Core.Event;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Caching.Memory.Configuration;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Services;
@@ -164,9 +165,7 @@ namespace OpenIZ.Caching.Memory
                 if (cache.ContainsKey(key))
                     lock (this.m_lock)
                     {
-                        var entry = cache[key];
-                        entry.Data =  data;
-                        entry.LastUpdateTime = DateTime.Now.Ticks;
+                        cache[key].Update(data);
                     }
                 else
                     lock (this.m_lock)
@@ -409,8 +408,32 @@ namespace OpenIZ.Caching.Memory
         public void HandlePostPersistenceEvent(TransactionMode txMode, Object data)
         {
             if (txMode == TransactionMode.Commit)
-                this.RemoveObject(data.GetType(), (data as IIdentifiedEntity).Key.Value); //this.AddUpdateEntry(data);
+            {
+                // Bundles are special cases.
+                if (data is Bundle)
+                {
+                    foreach (var itm in (data as Bundle).Item)
+                        HandlePostPersistenceEvent(txMode, itm);
+                }
+                else
+                {
+                    //this.RemoveObject(data.GetType(), (data as IIdentifiedEntity).Key.Value);
+                    var idData = data as IIdentifiedEntity;
+                    var objData = data.GetType();
 
+                    Dictionary<Guid, CacheEntry> cache = null;
+                    if (this.m_entryTable.TryGetValue(objData, out cache))
+                    {
+                        Guid key = idData?.Key ?? Guid.Empty;
+                        if (cache.ContainsKey(key))
+                            lock (this.m_lock)
+                            {
+                                cache[key].Update(data);
+                            }
+                        //cache.Remove(key);
+                    }
+                }
+            }
         }
 
         /// <summary>

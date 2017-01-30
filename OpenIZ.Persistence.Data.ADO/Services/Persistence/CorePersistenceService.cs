@@ -174,7 +174,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 else
                 {
                     cacheItem = this.ToModelInstance(o, context, principal);
-                    ApplicationContext.Current.GetService<IDataCachingService>().Add(cacheItem);
+                    if(context.Transaction == null)
+                        ApplicationContext.Current.GetService<IDataCachingService>().Add(cacheItem);
                 }
                 return cacheItem;
             }
