@@ -131,10 +131,13 @@ namespace OpenIZ.Persistence.Data.ADO.Security
                     return userIdentity;
                 }
             }
-            catch (AuthenticationException)
+            catch (AuthenticationException e)
             {
                 // TODO: Audit this
-                throw;
+                if (e.Message.Contains("AUTH_INV:") || e.Message.Contains("AUTH_LCK:") || e.Message.Contains("AUTH_TFA:"))
+                    throw new AuthenticationException(e.Message.Substring(0, e.Message.IndexOf(":")), e);
+                else
+                    throw;
             }
             catch (SecurityException)
             {

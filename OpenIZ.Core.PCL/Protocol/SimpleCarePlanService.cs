@@ -96,6 +96,11 @@ namespace OpenIZ.Core.Protocol
         /// </summary>
         public IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters, params Guid[] protocols)
         {
+            // We want to flatten the patient's encounters 
+            p = p.Clone() as Patient;
+            p.Participations = new List<ActParticipation>(p.Participations);
+            // The record target here is also a record target for any relationships
+            p.Participations = p.Participations.Union(p.Participations.SelectMany(pt => pt.Act.Relationships.Select(r => new ActParticipation(ActParticipationKey.RecordTarget, p) { Act = r.TargetAct, ParticipationRole = new Model.DataTypes.Concept() { Mnemonic = "RecordTarget", Key = ActParticipationKey.RecordTarget } }))).ToList();
             List<Act> protocolActs = this.Protocols.Where(o=>protocols.Contains(o.Id)).OrderBy(o => o.Name).AsParallel().SelectMany(o => o.Calculate(p)).OrderBy(o => o.StopTime - o.StartTime).ToList();
 
             if (asEncounters)
