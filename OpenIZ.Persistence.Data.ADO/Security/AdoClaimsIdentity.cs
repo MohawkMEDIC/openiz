@@ -170,7 +170,8 @@ namespace OpenIZ.Persistence.Data.ADO.Security
                     dataContext.Open();
 
                     // Attempt to get a user
-                    var securityClaims = dataContext.Query<DbUserClaim>(o => o.ClaimType == AdoDataConstants.RefreshSecretClaimType && o.ClaimValue == BitConverter.ToString(refreshToken).Replace("-", "") || o.ClaimType == AdoDataConstants.RefreshExpiryClaimType);
+                    var cvalue = BitConverter.ToString(refreshToken).Replace("-", "");
+                    var securityClaims = dataContext.Query<DbUserClaim>(o => o.ClaimType == AdoDataConstants.RefreshSecretClaimType && o.ClaimValue == cvalue || o.ClaimType == AdoDataConstants.RefreshExpiryClaimType);
                     DbUserClaim secretClaim = securityClaims.FirstOrDefault(o => o.ClaimType == AdoDataConstants.RefreshSecretClaimType),
                         expiryClaim = securityClaims.FirstOrDefault(o => o.ClaimType == AdoDataConstants.RefreshExpiryClaimType);
 

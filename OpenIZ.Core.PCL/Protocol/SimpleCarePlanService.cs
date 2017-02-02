@@ -58,7 +58,8 @@ namespace OpenIZ.Core.Protocol
             {
                 int c;
                 var repo = ApplicationServiceContext.Current.GetService(typeof(IClinicalProtocolRepositoryService)) as IClinicalProtocolRepositoryService;
-                foreach (var proto in repo.FindProtocol(o => !o.ObsoletionTime.HasValue, 0, null, out c))
+                var protos = repo.FindProtocol(o => !o.ObsoletionTime.HasValue, 0, null, out c).ToArray();
+                foreach (var proto in protos)
                 {
                     // First , do we already have this?
                     if (!this.m_protocols.Any(p => p.Id == proto.Key))

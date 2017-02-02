@@ -576,19 +576,26 @@ namespace OpenIZ.Core.Applets
                     else
                         using (MemoryStream ms = new MemoryStream(this.RenderAssetContent(includeAsset, preProcessLocalization)))
                         {
-                            var xel = XDocument.Load(ms).Elements().First() as XElement;
-                            if (xel.Name == xs_xhtml + "html")
-                                inc.AddAfterSelf(xel.Element(xs_xhtml + "body").Elements());
-                            else
+                            try
                             {
-                                //var headerInjection = this.GetInjectionHeaders(includeAsset);
+                                var xel = XDocument.Load(ms).Elements().First() as XElement;
+                                if (xel.Name == xs_xhtml + "html")
+                                    inc.AddAfterSelf(xel.Element(xs_xhtml + "body").Elements());
+                                else
+                                {
+                                    //var headerInjection = this.GetInjectionHeaders(includeAsset);
 
-                                //var headElement = htmlContent.Element(xs_xhtml + "head");
-                                //headElement?.Add(headerInjection.Where(o => !headElement.Elements(o.Name).Any(e => (e.Attributes("src") != null && (e.Attributes("src") == o.Attributes("src"))) || (e.Attributes("href") != null && (e.Attributes("href") == o.Attributes("href"))))));
+                                    //var headElement = htmlContent.Element(xs_xhtml + "head");
+                                    //headElement?.Add(headerInjection.Where(o => !headElement.Elements(o.Name).Any(e => (e.Attributes("src") != null && (e.Attributes("src") == o.Attributes("src"))) || (e.Attributes("href") != null && (e.Attributes("href") == o.Attributes("href"))))));
 
-                                inc.AddAfterSelf(xel);
+                                    inc.AddAfterSelf(xel);
+                                }
+                                inc.Remove();
                             }
-                            inc.Remove();
+                            catch(Exception e)
+                            {
+                                throw new XmlException($"Error in Asset: {includeAsset}", e);
+                            }
                         }
                 }
 
