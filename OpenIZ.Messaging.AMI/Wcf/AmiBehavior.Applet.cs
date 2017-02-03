@@ -52,7 +52,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				appletManifestInfo.FileExtension = appletManifestInfo.FileExtension.Insert(0, ".");
 			}
 
-			switch (appletManifestInfo.FileExtension)
+			switch (appletManifestInfo.FileExtension.ToLowerInvariant())
 			{
 				case ".pak":
 				case ".pak.gz":
