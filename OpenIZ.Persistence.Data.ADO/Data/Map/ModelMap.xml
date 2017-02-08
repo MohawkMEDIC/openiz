@@ -47,7 +47,7 @@
 		domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Security.DbSecurityApplication, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
     <property modelName="Name" domainName="PublicId"/>
     <property modelName="ModifiedOn" domainName="CreationTime"/>
-
+    <property modelName="ApplicationSecret" domainName="Secret" />
   </class>
 
   <!-- Security Device -->
