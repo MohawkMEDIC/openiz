@@ -82,7 +82,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 
 			if (processData is Material)
 			{
-				return updateIfExists ? this.repository.SaveMaterial(processData as Material) : this.repository.InsertMaterial(processData as Material);
+				return updateIfExists ? this.repository.Save(processData as Material) : this.repository.Insert(processData as Material);
 			}
 
 			throw new ArgumentException(nameof(data), "Invalid data type");
@@ -110,7 +110,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			return this.repository.FindMaterial(QueryExpressionParser.BuildLinqExpression<Material>(queryParameters));
+			return this.repository.Find(QueryExpressionParser.BuildLinqExpression<Material>(queryParameters));
 		}
 
 		/// <summary>
@@ -118,7 +118,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			return this.repository.FindMaterial(QueryExpressionParser.BuildLinqExpression<Material>(queryParameters), offset, count, out totalCount);
+			return this.repository.Find(QueryExpressionParser.BuildLinqExpression<Material>(queryParameters), offset, count, out totalCount);
 		}
 
 		/// <summary>
@@ -144,7 +144,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 
 			if (saveData is Material)
 			{
-				return this.repository.SaveMaterial(saveData as Material);
+				return this.repository.Save(saveData as Material);
 			}
 
 			throw new ArgumentException(nameof(data), "Invalid storage type");

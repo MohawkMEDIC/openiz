@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using OpenIZ.OrmLite.Providers;
+using OpenIZ.Core.Diagnostics;
+using System.Threading;
 
 namespace OpenIZ.OrmLite
 {
@@ -14,6 +16,36 @@ namespace OpenIZ.OrmLite
     /// </summary>
     public partial class DataContext : IDisposable
     {
+
+        /// <summary>
+        /// Context lock
+        /// </summary>
+        public class ContextLock : IDisposable
+        {
+            // Lock object
+            private object m_lockObject = null;
+
+            /// <summary>
+            /// Locks the lock object
+            /// </summary>
+            /// <param name="lockObject"></param>
+            public ContextLock(Object lockObject)
+            {
+                this.m_lockObject = lockObject;
+                bool lockTaken = false;
+                Monitor.Enter(this.m_lockObject, ref lockTaken);
+            }
+
+            /// <summary>
+            /// Dispose of the lock
+            /// </summary>
+            public void Dispose()
+            {
+                if (Monitor.IsEntered(this.m_lockObject))
+                    Monitor.Exit(this.m_lockObject);
+            }
+        }
+
         // the connection
         private IDbConnection m_connection;
 
@@ -27,7 +59,7 @@ namespace OpenIZ.OrmLite
         private Dictionary<String, Object> m_dataDictionary = new Dictionary<string, object>();
 
         // Trace source
-        private TraceSource m_traceSource = new TraceSource(Constants.TraceSourceName);
+        private Tracer m_tracer = Tracer.GetTracer(typeof(DataContext));
 
         /// <summary>
         /// Connection
@@ -43,6 +75,14 @@ namespace OpenIZ.OrmLite
         /// Current Transaction
         /// </summary>
         public IDbTransaction Transaction { get { return this.m_transaction; } }
+
+        /// <summary>
+        /// Gets a lock for the specific connection
+        /// </summary>
+        public ContextLock Lock()
+        {
+            return new ContextLock(this.m_provider.Lock(this.m_connection));
+        }
 
         /// <summary>
         /// Creates a new data context
@@ -66,7 +106,7 @@ namespace OpenIZ.OrmLite
         /// </summary>
         public IDbTransaction BeginTransaction()
         {
-            if(this.m_transaction == null)
+            if (this.m_transaction == null)
                 this.m_transaction = this.m_connection.BeginTransaction();
             return this.m_transaction;
         }
@@ -76,7 +116,13 @@ namespace OpenIZ.OrmLite
         /// </summary>
         public void Open()
         {
-            this.m_connection.Open();
+            if (this.m_connection.State == ConnectionState.Closed)
+                this.m_connection.Open();
+            else if (this.m_connection.State == ConnectionState.Broken)
+            {
+                this.m_connection.Close();
+                this.m_connection.Open();
+            }
         }
 
         /// <summary>

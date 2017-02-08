@@ -59,7 +59,8 @@ namespace OpenIZ.Core.Model.DataTypes
         private Guid? m_conceptStatusId;
         // Status
         private Concept m_conceptStatus;
-        
+        // Concept sets
+        private List<ConceptSet> m_conceptSets;
 
         /// <summary>
         /// Gets or sets an indicator which dictates whether the concept is a system concept
@@ -193,11 +194,16 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                return this.ConceptSetsXml?.Select(o=>EntitySource.Current.Get<ConceptSet>(o)).ToList();
+                
+                if(this.m_conceptSets == null)
+                    this.m_conceptSets = this.ConceptSetsXml?.Select(o=>EntitySource.Current.Get<ConceptSet>(o)).ToList();
+                return this.m_conceptSets;
             }
             set
             {
+
                 this.ConceptSetsXml = value?.Where(o=>o.Key.HasValue).Select(o => o.Key.Value).ToList();
+                this.m_conceptSets = value;
             }
         }
 

@@ -37,7 +37,7 @@ namespace OpenIZ.Core.Model.Collection
     /// </summary>
     [XmlType(Namespace = "http://openiz.org/model")]
     [JsonObject]
-    public class SimpleAssociationCollection<TEntity> : IList<TEntity>, ICollection<TEntity>, IEnumerable<TEntity>, IList where TEntity : IdentifiedData, ISimpleAssociation, new()
+    public class SimpleAssociationCollection<TEntity> : IList<TEntity>, ICollection<TEntity>, IEnumerable<TEntity>, IList, ILockable where TEntity : IdentifiedData, ISimpleAssociation, new()
     {
 
         // Sync root
@@ -364,6 +364,15 @@ namespace OpenIZ.Core.Model.Collection
         public void CopyTo(Array array, int index)
         {
             this.CopyTo((TEntity[])array, index);
+        }
+
+        /// <summary>
+        /// Get locked version
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable ILockable.GetLocked()
+        {
+            return this.GetLocked();
         }
 
         /// <summary>

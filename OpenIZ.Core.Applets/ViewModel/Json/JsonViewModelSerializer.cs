@@ -59,6 +59,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
 
         // Reloated load association
         private Dictionary<Type, MethodInfo> m_relatedLoadAssociations = new Dictionary<Type, MethodInfo>();
+        private Dictionary<Guid, IEnumerable> m_loadedAssociations = new Dictionary<Guid, IEnumerable>();
 
         /// <summary>
         /// Creates a json view model serializer
@@ -316,8 +317,15 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
 #if DEBUG
             this.m_tracer.TraceVerbose("Delay loading collection for object : {0}", sourceKey);
 #endif
-
-            return EntitySource.Current.Provider.GetRelations<TAssociation>(sourceKey);
+            // Have we already loaded this in the current serializer?
+            IEnumerable association = null;
+            if(!this.m_loadedAssociations.TryGetValue(sourceKey, out association))
+            {
+                association = EntitySource.Current.Provider.GetRelations<TAssociation>(sourceKey);
+                if(this.m_loadedAssociations.ContainsKey(sourceKey))
+                    this.m_loadedAssociations.Add(sourceKey, association);
+            }
+            return association as IEnumerable<TAssociation>;
         }
 
         /// <summary>

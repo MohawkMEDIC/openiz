@@ -36,7 +36,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
     /// <summary>
     /// Persistence service which is used to persist patients
     /// </summary>
-    public class PatientPersistenceService : EntityDerivedPersistenceService<Patient, DbPatient, CompositeResult<Patient, DbPerson, DbEntityVersion, DbEntity>>
+    public class PatientPersistenceService : EntityDerivedPersistenceService<Patient, DbPatient, CompositeResult<DbPatient, DbPerson, DbEntityVersion, DbEntity>>
     {
 
         private PersonPersistenceService m_personPersister = new PersonPersistenceService();

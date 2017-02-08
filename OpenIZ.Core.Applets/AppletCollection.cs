@@ -243,11 +243,13 @@ namespace OpenIZ.Core.Applets
             if (!s_stringCache.TryGetValue(locale ?? "", out retVal))
                 lock (s_syncLock)
                 {
-                    retVal = this.m_appletManifest.SelectMany(o => o.Strings).
+                    if (!s_stringCache.TryGetValue(locale ?? "", out retVal)) {
+                        retVal = this.m_appletManifest.SelectMany(o => o.Strings).
                         Where(o => o.Language == locale).
                         SelectMany(o => o.String).
                         Select(o => new KeyValuePair<String, String>(o.Key, o.Value)).ToList();
-                    s_stringCache.Add(locale, retVal);
+                        s_stringCache.Add(locale, retVal);
+                    }
                 }
             return retVal;
         }

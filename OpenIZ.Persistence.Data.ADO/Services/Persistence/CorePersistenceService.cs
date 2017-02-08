@@ -111,7 +111,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 var expression = m_mapper.MapModelExpression<TModel, TDomain>(query);
                 Type lastJoined = typeof(TDomain);
                 if (typeof(CompositeResult).IsAssignableFrom(typeof(TQueryReturn)))
-                    foreach (var p in typeof(TQueryReturn).GenericTypeArguments)
+                    foreach (var p in typeof(TQueryReturn).GenericTypeArguments.Select(o => AdoPersistenceService.GetMapper().MapModelType(o)))
                         if (p != typeof(TDomain))
                         {
                             // Find the FK to join

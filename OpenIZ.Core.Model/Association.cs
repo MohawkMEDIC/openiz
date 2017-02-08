@@ -49,8 +49,8 @@ namespace OpenIZ.Core.Model
         {
             get
             {
-                if(this.SourceEntity != null)
-                    return this.SourceEntity.ModifiedOn;
+                if(this.m_sourceEntity != null)
+                    return this.m_sourceEntity.ModifiedOn;
                 return DateTime.Now;
             }
         }

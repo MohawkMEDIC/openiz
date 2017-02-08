@@ -32,22 +32,22 @@ namespace OpenIZ.Core.Services
 		/// <summary>
 		/// Finds the specified ManufacturedMaterial
 		/// </summary>
-		IEnumerable<ManufacturedMaterial> FindManufacturedMaterial(Expression<Func<ManufacturedMaterial, bool>> expression);
+		IEnumerable<ManufacturedMaterial> Find(Expression<Func<ManufacturedMaterial, bool>> expression);
 
 		/// <summary>
 		/// Finds the specified ManufacturedMaterial with the specified restrictions
 		/// </summary>
-		IEnumerable<ManufacturedMaterial> FindManufacturedMaterial(Expression<Func<ManufacturedMaterial, bool>> expression, int offset, int count, out int totalCount);
+		IEnumerable<ManufacturedMaterial> Find(Expression<Func<ManufacturedMaterial, bool>> expression, int offset, int? count, out int totalCount);
 
 		/// <summary>
 		/// Finds the specified material
 		/// </summary>
-		IEnumerable<Material> FindMaterial(Expression<Func<Material, bool>> expression);
+		IEnumerable<Material> Find(Expression<Func<Material, bool>> expression);
 
 		/// <summary>
 		/// Finds the specified material with the specified restrictions
 		/// </summary>
-		IEnumerable<Material> FindMaterial(Expression<Func<Material, bool>> expression, int offset, int count, out int totalCount);
+		IEnumerable<Material> Find(Expression<Func<Material, bool>> expression, int offset, int? count, out int totalCount);
 
 		/// <summary>
 		/// Gets the specified ManufacturedMaterial from the database
@@ -62,12 +62,12 @@ namespace OpenIZ.Core.Services
 		/// <summary>
 		/// Inserts the ManufacturedMaterial in the persistence layer
 		/// </summary>
-		ManufacturedMaterial InsertManufacturedMaterial(ManufacturedMaterial ManufacturedMaterial);
+		ManufacturedMaterial Insert(ManufacturedMaterial ManufacturedMaterial);
 
 		/// <summary>
 		/// Inserts the material in the persistence layer
 		/// </summary>
-		Material InsertMaterial(Material material);
+		Material Insert(Material material);
 
 		/// <summary>
 		/// Obsoletes the specified ManufacturedMaterial
@@ -82,11 +82,11 @@ namespace OpenIZ.Core.Services
 		/// <summary>
 		/// Saves the specified ManufacturedMaterial from data layer
 		/// </summary>
-		ManufacturedMaterial SaveManufacturedMaterial(ManufacturedMaterial ManufacturedMaterial);
+		ManufacturedMaterial Save(ManufacturedMaterial ManufacturedMaterial);
 
 		/// <summary>
 		/// Saves the specified material from data layer
 		/// </summary>
-		Material SaveMaterial(Material material);
+		Material Save(Material material);
 	}
 }

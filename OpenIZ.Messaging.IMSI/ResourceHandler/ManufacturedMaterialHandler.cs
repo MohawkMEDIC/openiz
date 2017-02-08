@@ -81,9 +81,9 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			{
 				var material = processData as ManufacturedMaterial;
 				if (updateIfExists)
-					return this.m_repository.SaveManufacturedMaterial(material);
+					return this.m_repository.Save(material);
 				else
-					return this.m_repository.InsertManufacturedMaterial(material);
+					return this.m_repository.Insert(material);
 			}
 			else
 				throw new ArgumentException(nameof(data), "Invalid data type");
@@ -111,7 +111,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			return this.m_repository.FindManufacturedMaterial(QueryExpressionParser.BuildLinqExpression<ManufacturedMaterial>(queryParameters, null, false));
+			return this.m_repository.Find(QueryExpressionParser.BuildLinqExpression<ManufacturedMaterial>(queryParameters, null, false));
 		}
 
 		/// <summary>
@@ -119,7 +119,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			return this.m_repository.FindManufacturedMaterial(QueryExpressionParser.BuildLinqExpression<ManufacturedMaterial>(queryParameters), offset, count, out totalCount);
+			return this.m_repository.Find(QueryExpressionParser.BuildLinqExpression<ManufacturedMaterial>(queryParameters), offset, count, out totalCount);
 		}
 
 		/// <summary>
@@ -137,7 +137,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			if (saveData is Bundle)
 				throw new InvalidOperationException("Bundle must have an entry");
 			else if (saveData is ManufacturedMaterial)
-				return this.m_repository.SaveManufacturedMaterial(saveData as ManufacturedMaterial);
+				return this.m_repository.Save(saveData as ManufacturedMaterial);
 			else
 				throw new ArgumentException(nameof(data), "Invalid storage type");
 		}

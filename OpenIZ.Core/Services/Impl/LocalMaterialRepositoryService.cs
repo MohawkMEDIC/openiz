@@ -36,7 +36,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <summary>
 		/// Find manufactured material
 		/// </summary>
-		public IEnumerable<ManufacturedMaterial> FindManufacturedMaterial(Expression<Func<ManufacturedMaterial, bool>> expression)
+		public IEnumerable<ManufacturedMaterial> Find(Expression<Func<ManufacturedMaterial, bool>> expression)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
 
@@ -51,7 +51,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <summary>
 		/// Find manufactured material
 		/// </summary>
-		public IEnumerable<ManufacturedMaterial> FindManufacturedMaterial(Expression<Func<ManufacturedMaterial, bool>> expression, int offset, int count, out int totalCount)
+		public IEnumerable<ManufacturedMaterial> Find(Expression<Func<ManufacturedMaterial, bool>> expression, int offset, int? count, out int totalCount)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
 
@@ -66,7 +66,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <summary>
 		/// Finds the specified material
 		/// </summary>
-		public IEnumerable<Material> FindMaterial(Expression<Func<Material, bool>> expression)
+		public IEnumerable<Material> Find(Expression<Func<Material, bool>> expression)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>();
 
@@ -81,7 +81,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <summary>
 		/// Find the specified material
 		/// </summary>
-		public IEnumerable<Material> FindMaterial(Expression<Func<Material, bool>> expression, int offset, int count, out int totalCount)
+		public IEnumerable<Material> Find(Expression<Func<Material, bool>> expression, int offset, int? count, out int totalCount)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>();
 
@@ -126,7 +126,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <summary>
 		/// Insert manufactured material
 		/// </summary>
-		public ManufacturedMaterial InsertManufacturedMaterial(ManufacturedMaterial material)
+		public ManufacturedMaterial Insert(ManufacturedMaterial material)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
 
@@ -141,7 +141,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <summary>
 		/// Inserts the specified material
 		/// </summary>
-		public Material InsertMaterial(Material material)
+		public Material Insert(Material material)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>();
 
@@ -186,7 +186,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <summary>
 		/// Save the specified manufactured material
 		/// </summary>
-		public ManufacturedMaterial SaveManufacturedMaterial(ManufacturedMaterial material)
+		public ManufacturedMaterial Save(ManufacturedMaterial material)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
 
@@ -206,7 +206,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <summary>
 		/// Save the specified material
 		/// </summary>
-		public Material SaveMaterial(Material material)
+		public Material Save(Material material)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>();
 

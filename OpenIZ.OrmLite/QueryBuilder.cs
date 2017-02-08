@@ -140,11 +140,15 @@ namespace OpenIZ.OrmLite
             }
 
             // Column definitions
+            var columnSelector = selector;
             if (selector == null || selector.Length == 0)
+            {
                 selectStatement = new SqlStatement($"SELECT * ").Append(selectStatement);
+                // columnSelector = scopedTables.SelectMany(o => o.Columns).ToArray();
+            }
             else
             {
-                var columnList = String.Join(",", selector.Select(o =>
+                var columnList = String.Join(",", columnSelector.Select(o =>
                 {
                     var rootCol = tableMap.GetColumn(o.SourceProperty);
                     skipParentJoin &= rootCol != null;
@@ -155,6 +159,7 @@ namespace OpenIZ.OrmLite
                 }));
                 selectStatement = new SqlStatement($"SELECT {columnList} ").Append(selectStatement);
             }
+
             // We want to process each query and build WHERE clauses - these where clauses are based off of the JSON / XML names
             // on the model, so we have to use those for the time being before translating to SQL
             Regex re = new Regex(m_extractionRegex);

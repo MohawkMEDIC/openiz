@@ -82,5 +82,11 @@ namespace AppletCompiler
         [Parameter("i")]
         [Parameter("include")]
         public StringCollection References { get; set; }
+
+        /// <summary>
+        /// Optimize the output files
+        /// </summary>
+        [Parameter("optimize")]
+        public bool Optimize { get; set; }
     }
 }

@@ -14,6 +14,11 @@ namespace OpenIZ.OrmLite.Providers
     /// </summary>
     public interface IDbProvider
     {
+
+        /// <summary>
+        /// Gets the features of the database back-end
+        /// </summary>
+        SqlEngineFeatures Features { get; }
         /// <summary>
         /// Trace SQL commands
         /// </summary>
@@ -22,12 +27,12 @@ namespace OpenIZ.OrmLite.Providers
         /// <summary>
         /// Readonly (mirror) connection string
         /// </summary>
-        ConnectionStringSettings ReadonlyConnectionString { get; set; }
+        String ReadonlyConnectionString { get; set; }
 
         /// <summary>
         /// Read/write connection string
         /// </summary>
-        ConnectionStringSettings ConnectionString { get; set; }
+        String ConnectionString { get; set; }
 
         /// <summary>
         /// Retrieves a readonly connection
@@ -68,5 +73,16 @@ namespace OpenIZ.OrmLite.Providers
         /// Appends a RETURNING statement
         /// </summary>
         SqlStatement Returning(SqlStatement sqlStatement, params ColumnMapping[] returnColumns);
+
+        /// <summary>
+        /// Get a lock for the database
+        /// </summary>
+        Object Lock(IDbConnection connection);
+
+        /// <summary>
+        /// Convert value
+        /// </summary>
+        Object ConvertValue(Object value, Type toType);
+
     }
 }

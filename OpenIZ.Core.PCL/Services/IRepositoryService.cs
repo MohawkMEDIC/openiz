@@ -26,6 +26,12 @@ namespace OpenIZ.Core.Services
         IEnumerable<TModel> Find(Expression<Func<TModel, bool>> query);
 
         /// <summary>
+        /// Finds the specified data
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<TModel> Find(Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults);
+
+        /// <summary>
         /// Inserts the specified data
         /// </summary>
         TModel Insert(TModel data);

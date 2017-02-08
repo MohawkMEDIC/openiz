@@ -32,6 +32,10 @@ namespace OpenIZ.Core.Model.Serialization
     /// </summary>
     public class ModelSerializationBinder : SerializationBinder
     {
+
+        private static Dictionary<String, Type> s_typeCache = new Dictionary<string, Type>();
+        private static object s_lock = new object();
+
         /// <summary>
         /// Bind to type
         /// </summary>
@@ -43,9 +47,16 @@ namespace OpenIZ.Core.Model.Serialization
                 asm = Assembly.Load(new AssemblyName(assemblyName));
 
             // The type
-            var type = asm.ExportedTypes.SingleOrDefault(
-                t => t.GetTypeInfo().GetCustomAttribute<JsonObjectAttribute>(false)?.Id == typeName
-                );
+            Type type = null;
+            if(!s_typeCache.TryGetValue(typeName, out type))
+                lock(s_lock)
+                {
+                    type = asm.ExportedTypes.SingleOrDefault(
+                        t => t.GetTypeInfo().GetCustomAttribute<JsonObjectAttribute>(false)?.Id == typeName
+                        );
+                    if(!s_typeCache.ContainsKey(typeName))
+                        s_typeCache.Add(typeName, type);
+                }
             if (type == null)
                 type = asm.GetType(typeName);
             return type ?? typeof(IdentifiedData);

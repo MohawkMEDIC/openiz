@@ -8,6 +8,8 @@ using System.Configuration;
 using System.Data.Common;
 using System.Linq.Expressions;
 using System.Diagnostics;
+using OpenIZ.Core.Diagnostics;
+using OpenIZ.Core.Model.Map;
 
 namespace OpenIZ.OrmLite.Providers
 {
@@ -18,7 +20,7 @@ namespace OpenIZ.OrmLite.Providers
     {
 
         // Trace source
-        private TraceSource m_traceSource = new TraceSource(Constants.TraceSourceName);
+        private Tracer m_tracer = Tracer.GetTracer(typeof(PostgreSQLProvider));
 
         // DB provider factory
         private DbProviderFactory m_provider = null;
@@ -31,12 +33,23 @@ namespace OpenIZ.OrmLite.Providers
         /// <summary>
         /// Gets or sets the connection string
         /// </summary>
-        public ConnectionStringSettings ReadonlyConnectionString { get; set; }
+        public String ReadonlyConnectionString { get; set; }
 
         /// <summary>
         /// Gets or sets the connection string
         /// </summary>
-        public ConnectionStringSettings ConnectionString { get; set; }
+        public String ConnectionString { get; set; }
+
+        /// <summary>
+        /// SQL Engine features
+        /// </summary>
+        public SqlEngineFeatures Features
+        {
+            get
+            {
+                return SqlEngineFeatures.AutoGenerateGuids | SqlEngineFeatures.AutoGenerateTimestamps | SqlEngineFeatures.ReturnedInserts;
+            }
+        }
 
         /// <summary>
         /// Get provider factory
@@ -44,11 +57,11 @@ namespace OpenIZ.OrmLite.Providers
         /// <returns></returns>
         private DbProviderFactory GetProviderFactory()
         {
-            if (this.ConnectionString == null ||
-                this.ConnectionString.ProviderName == null)
-                throw new ConfigurationErrorsException("Missing connection string for ADO.NET provider");
+            if (this.m_provider == null) // HACK for Mono
+                this.m_provider = typeof(DbProviderFactories).GetMethod("GetFactory", new Type[] { typeof(String) }).Invoke(null, new object[] { "Npgsql" }) as DbProviderFactory;
+
             if (this.m_provider == null)
-                this.m_provider = DbProviderFactories.GetFactory(this.ConnectionString.ProviderName);
+                throw new InvalidOperationException("Missing Npgsql provider");
             return this.m_provider;
         }
 
@@ -58,7 +71,7 @@ namespace OpenIZ.OrmLite.Providers
         public DataContext GetReadonlyConnection()
         {
             var conn = this.GetProviderFactory().CreateConnection();
-            conn.ConnectionString = this.ReadonlyConnectionString.ConnectionString;
+            conn.ConnectionString = this.ReadonlyConnectionString;
             return new DataContext(this, conn);
         }
 
@@ -69,7 +82,7 @@ namespace OpenIZ.OrmLite.Providers
         public DataContext GetWriteConnection()
         {
             var conn = this.GetProviderFactory().CreateConnection();
-            conn.ConnectionString = this.ConnectionString.ConnectionString;
+            conn.ConnectionString = this.ConnectionString;
             return new DataContext(this, conn);
         }
 
@@ -104,7 +117,7 @@ namespace OpenIZ.OrmLite.Providers
             cmd.Transaction = context.Transaction;
 
             if (this.TraceSql)
-                this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "[{0}] {1}", type, sql);
+                this.m_tracer.TraceVerbose("[{0}] {1}", type, sql);
 
             pno = 0;
             foreach (var itm in parms)
@@ -136,7 +149,7 @@ namespace OpenIZ.OrmLite.Providers
                 parm.Direction = ParameterDirection.Input;
 
                 if (this.TraceSql)
-                    this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "\t [{0}] {1} ({2})", cmd.Parameters.Count, parm.Value, parm.DbType);
+                    this.m_tracer.TraceVerbose("\t [{0}] {1} ({2})", cmd.Parameters.Count, parm.Value, parm.DbType);
 
 
                 cmd.Parameters.Add(parm);
@@ -185,6 +198,24 @@ namespace OpenIZ.OrmLite.Providers
             if (returnColumns.Length == 0)
                 return sqlStatement;
             return sqlStatement.Append($" RETURNING {String.Join(",", returnColumns.Select(o => o.Name))}");
+        }
+
+        /// <summary>
+        /// Gets a lock
+        /// </summary>
+        public object Lock(IDbConnection conn)
+        {
+            return new object();
+        }
+
+        /// <summary>
+        /// Convert value just uses the mapper if needed
+        /// </summary>
+        public object ConvertValue(object value, Type toType)
+        {
+            object retVal = null;
+            MapUtil.TryConvert(value, toType, out retVal);
+            return retVal;
         }
     }
 }

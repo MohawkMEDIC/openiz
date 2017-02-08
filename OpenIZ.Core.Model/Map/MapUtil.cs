@@ -94,9 +94,11 @@ namespace OpenIZ.Core.Model.Map
                                             (mi.ReturnType.GetTypeInfo().IsSubclassOf(destType) || destType == mi.ReturnType) &&
                                             mi.GetParameters()[0].ParameterType.FullName == sourceType.FullName && retVal == null)
                         retVal = mi;
-                lock (m_converterMaps)
-                    if (!m_converterMaps.ContainsKey(key)) 
-                        m_converterMaps.Add(key, retVal);
+
+                if(retVal != null)
+                    lock (m_converterMaps)
+                        if (!m_converterMaps.ContainsKey(key)) 
+                            m_converterMaps.Add(key, retVal);
             }
             return retVal;
 
@@ -165,7 +167,9 @@ namespace OpenIZ.Core.Model.Map
             {
                 // Try to find a map first...
                 // Using an operator overload
-                mi = FindConverter(m_destType, value.GetType(), destType);
+                mi = FindConverter(typeof(OpenIZConvert), value.GetType(), destType);
+                if(mi == null)
+                    mi = FindConverter(m_destType, value.GetType(), destType);
                 if (mi == null)
                     mi = FindConverter(value.GetType(), value.GetType(), destType);
                 if (mi == null && m_destType != destType) // Using container type
@@ -174,8 +178,6 @@ namespace OpenIZ.Core.Model.Map
                     mi = FindConverter(typeof(System.Xml.XmlConvert), value.GetType(), destType);
                 if (mi == null) // Using System.Convert as a last resort
                     mi = FindConverter(typeof(System.Convert), value.GetType(), destType);
-                if (mi == null)
-                    mi = FindConverter(typeof(OpenIZConvert), value.GetType(), destType);
                 if (mi != null)
                 {
                     lock (s_wireMaps)

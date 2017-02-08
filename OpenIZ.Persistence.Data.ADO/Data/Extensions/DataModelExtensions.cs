@@ -303,7 +303,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
             if (!s_runtimeProperties.TryGetValue(propertyCacheKey, out properties))
                 lock (s_runtimeProperties)
                 {
-                    properties = me.GetType().GetRuntimeProperties().Where(o => o.GetCustomAttribute<DataIgnoreAttribute>() == null && o.GetCustomAttributes<AutoLoadAttribute>().Any(p => p.ClassCode == classValue || p.ClassCode == null));
+                    properties = me.GetType().GetRuntimeProperties().Where(o => o.GetCustomAttribute<DataIgnoreAttribute>() == null && o.GetCustomAttributes<AutoLoadAttribute>().Any(p => p.ClassCode == classValue || p.ClassCode == null) && typeof(IdentifiedData).IsAssignableFrom(o.PropertyType.StripGeneric()));
 
 	                if (!s_runtimeProperties.ContainsKey(propertyCacheKey))
 	                {

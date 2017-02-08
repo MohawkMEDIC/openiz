@@ -87,6 +87,10 @@ namespace OpenIZ.Core.Model.Collection
         // Lock object
         private object m_lockObject = new object();
 
+        // Property cache
+        private static Dictionary<Type, IEnumerable<PropertyInfo>> m_propertyCache = new Dictionary<System.Type, IEnumerable<PropertyInfo>>();
+        private static object s_lockObject = new object();
+
         /// <summary>
         /// Represents bundle contents
         /// </summary>
@@ -234,7 +238,7 @@ namespace OpenIZ.Core.Model.Collection
             data.SetDelayLoad(false);
 
             // Iterate over properties
-            foreach (var pi in data.GetType().GetRuntimeProperties().Where(o=>o.GetCustomAttribute<DataIgnoreAttribute>() == null))
+            foreach (var pi in data.GetType().GetRuntimeProperties().Where(o => o.GetCustomAttribute<DataIgnoreAttribute>() == null))
             {
 
                 // Is this property not null? If so, we want to iterate
@@ -278,9 +282,19 @@ namespace OpenIZ.Core.Model.Collection
         {
             try
             {
+
+                // Iterate over properties
+                IEnumerable<PropertyInfo> properties = null;
+                if (!m_propertyCache.TryGetValue(model.GetType(), out properties))
+                    lock (s_lockObject)
+                    {
+                        properties = model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<SerializationReferenceAttribute>() != null ||
+                            typeof(IList).GetTypeInfo().IsAssignableFrom(p.PropertyType.GetTypeInfo()) && p.GetCustomAttributes<XmlElementAttribute>().Count() > 0 && followList);
+                        m_propertyCache.Add(model.GetType(), properties);
+                    }
+                
                 currentBundle.m_modifiedOn = DateTimeOffset.Now;
-                foreach (var pi in model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<SerializationReferenceAttribute>() != null || 
-                    typeof(IList).GetTypeInfo().IsAssignableFrom(p.PropertyType.GetTypeInfo()) && p.GetCustomAttributes<XmlElementAttribute>().Count() > 0 && followList))
+                foreach (var pi in properties)
                 {
                     try
                     {

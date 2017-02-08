@@ -15,6 +15,6 @@ namespace OpenIZ.OrmLite
         /// <summary>
         /// Represents the trace source name
         /// </summary>
-        public const string TraceSourceName = "OpenIZ.OrmLite";
+        public const string TracerName = "OpenIZ.OrmLite";
     }
 }

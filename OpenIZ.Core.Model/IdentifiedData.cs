@@ -19,6 +19,7 @@
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Model.Interfaces;
 using System;
@@ -84,6 +85,9 @@ namespace OpenIZ.Core.Model
             foreach (FieldInfo fi in fields)
             {
                 object value = fi.GetValue(this);
+                if (value is ILockable)
+                    value = (value as ILockable).GetLocked();
+
                 if (value is IdentifiedData &&
                     (value as IdentifiedData).IsDelayLoadEnabled != v)
                     (value as IdentifiedData).SetDelayLoad(v, keyStack); // Let it go

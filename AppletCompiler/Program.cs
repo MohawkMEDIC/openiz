@@ -101,7 +101,7 @@ namespace AppletCompiler
                 using (var fs = File.OpenRead(manifestFile))
                 {
                     AppletManifest mfst = xsz.Deserialize(fs) as AppletManifest;
-                    mfst.Assets.AddRange(ProcessDirectory(parameters.Source, parameters.Source));
+                    mfst.Assets.AddRange(ProcessDirectory(parameters.Source, parameters.Source, parameters));
                     foreach (var i in mfst.Assets)
                         i.Name = i.Name.Substring(1);
 
@@ -198,7 +198,7 @@ namespace AppletCompiler
         /// <summary>
         /// Process the specified directory
         /// </summary>
-        private static IEnumerable<AppletAsset> ProcessDirectory(string source, String path)
+        private static IEnumerable<AppletAsset> ProcessDirectory(string source, String path, ConsoleParameters parms)
         {
             List<AppletAsset> retVal = new List<AppletAsset>();
             foreach(var itm in Directory.GetFiles(source))
@@ -271,15 +271,22 @@ namespace AppletCompiler
                             {
                                 Name = ResolveName(itm.Replace(path, "")),
                                 MimeType = "text/css",
-                                Content = File.ReadAllText(itm)
+                                Content = parms.Optimize ? new Microsoft.Ajax.Utilities.Minifier().MinifyStyleSheet(File.ReadAllText(itm)) : File.ReadAllText(itm)
                             });
                             break;
                         case ".js":
-                        case ".json":
                             retVal.Add(new AppletAsset()
                             {
                                 Name = ResolveName(itm.Replace(path, "")),
                                 MimeType = "text/javascript",
+                                Content = parms.Optimize ? new Microsoft.Ajax.Utilities.Minifier().MinifyJavaScript(File.ReadAllText(itm)) : File.ReadAllText(itm)
+                            });
+                            break;
+                        case ".json":
+                            retVal.Add(new AppletAsset()
+                            {
+                                Name = ResolveName(itm.Replace(path, "")),
+                                MimeType = "application/json",
                                 Content = File.ReadAllText(itm)
                             });
                             break;
@@ -299,7 +306,7 @@ namespace AppletCompiler
             // Process sub directories
             foreach (var dir in Directory.GetDirectories(source))
                 if (!Path.GetFileName(dir).StartsWith("."))
-                    retVal.AddRange(ProcessDirectory(dir, path));
+                    retVal.AddRange(ProcessDirectory(dir, path, parms));
                 else
                     Console.WriteLine("Skipping directory {0}", dir);
 

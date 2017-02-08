@@ -236,6 +236,17 @@ namespace OpenIZ.OrmLite
         }
 
         /// <summary>
+        /// Expression
+        /// </summary>
+        public SqlStatement And<TExpression>(Expression<Func<TExpression, bool>> expression)
+        {
+            var tableMap = TableMapping.Get(typeof(TExpression));
+            var queryBuilder = new SqlQueryExpressionBuilder(tableMap.TableName);
+            queryBuilder.Visit(expression.Body);
+            return this.And(queryBuilder.SqlStatement);
+        }
+
+        /// <summary>
         /// Append an offset statement
         /// </summary>
         public SqlStatement Offset(int offset)

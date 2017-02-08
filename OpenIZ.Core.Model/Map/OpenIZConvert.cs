@@ -24,7 +24,7 @@ namespace OpenIZ.Core.Model.Map
     /// <summary>
     /// OpenIZ conversion helper functions
     /// </summary>
-    internal class OpenIZConvert
+    public class OpenIZConvert
     {
 
         /// <summary>
@@ -41,6 +41,22 @@ namespace OpenIZ.Core.Model.Map
         public static Guid? ByteToNullGuid(byte[] b)
         {
             return b == null ? null : (Guid?)new Guid(b);
+        }
+
+        /// <summary>
+        /// Boolean to int
+        /// </summary>
+        public static int BooleanToInt(Boolean b)
+        {
+            return b ? 1 : 0;
+        }
+
+        /// <summary>
+        /// Boolean to int
+        /// </summary>
+        public static Boolean IntToBoolean(Int32 i)
+        {
+            return i != 0;
         }
 
         /// <summary>
@@ -90,6 +106,41 @@ namespace OpenIZ.Core.Model.Map
         public static DateTime DateTimeOffsetToDateTime(DateTimeOffset dto)
         {
             return dto.DateTime;
+        }
+
+        // Constant epoch
+        private static readonly DateTime EPOCH = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+
+        /// <summary>
+        /// Parse a date time into an object
+        /// </summary>
+        public static Int32 ToDateTime(DateTime date)
+        {
+            return (int)(date.ToUniversalTime() - EPOCH).TotalSeconds;
+        }
+
+        /// <summary>
+        /// Parse a date time from an object
+        /// </summary>
+        public static DateTime ParseDateTime(Int32 date)
+        {
+            return EPOCH.AddSeconds(date).ToLocalTime();
+        }
+
+        /// <summary>
+        /// Parse a date time into an object
+        /// </summary>
+        public static Int32 ToDateTimeOffset(DateTimeOffset date)
+        {
+            return (int)(date.ToLocalTime() - EPOCH).TotalSeconds;
+        }
+
+        /// <summary>
+        /// Parse a date time from an object
+        /// </summary>
+        public static DateTimeOffset ParseDateTimeOffset(Int32 date)
+        {
+            return EPOCH.AddSeconds(date).ToLocalTime();
         }
     }
 }
