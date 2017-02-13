@@ -76,7 +76,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             if (typeof(TModel).BaseType == typeof(Core.Model.Entities.Entity))
             {
-                var inserted = this.m_entityPersister.Insert(context, data, principal);
+                var inserted = this.m_entityPersister.InsertCoreProperties(context, data, principal);
                 data.Key = inserted.Key;
                 data.VersionKey = inserted.VersionKey;
             }
@@ -90,7 +90,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override TModel Update(DataContext context, TModel data, IPrincipal principal)
         {
             if (typeof(TModel).BaseType == typeof(Core.Model.Entities.Entity))
-                this.m_entityPersister.Update(context, data, principal);
+                this.m_entityPersister.UpdateCoreProperties(context, data, principal);
             return base.Insert(context, data, principal);
             //return base.Update(context, data, principal);
         }

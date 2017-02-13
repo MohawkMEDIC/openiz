@@ -78,8 +78,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override TModel Insert(DataContext context, TModel data, IPrincipal principal)
         {
-            var inserted = this.m_actPersister.Insert(context, data, principal);
-            data.Key = inserted.Key;
+            if (typeof(TModel).BaseType == typeof(Act))
+            {
+                var inserted = this.m_actPersister.InsertCoreProperties(context, data, principal);
+                data.Key = inserted.Key;
+            }
             return base.Insert(context, data, principal);
         }
 
@@ -88,7 +91,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override TModel Update(DataContext context, TModel data, IPrincipal principal)
         {
-            this.m_actPersister.Update(context, data, principal);
+            if (typeof(TModel).BaseType == typeof(Act))
+                this.m_actPersister.UpdateCoreProperties(context, data, principal);
             return base.Update(context, data, principal);
         }
 

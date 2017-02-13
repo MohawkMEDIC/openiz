@@ -37,6 +37,23 @@ namespace OpenIZ.Core.Model
     public static class ExtensionMethods
     {
 
+        /// <summary>
+        /// The purpose of this method is to convert object <paramref name="me"/> to <typeparamref name="TReturn"/>. Why? 
+        /// Because if you have an instance of Act that actually needs to be a SubstanceAdministration we can't just cast
+        /// so we have to copy.
+        /// </summary>
+        public static TReturn Convert<TReturn>(this Object me) where TReturn : new()
+        {
+
+            if (me is TReturn) return (TReturn)me;
+            else
+            {
+                var retVal = new TReturn();
+                retVal.CopyObjectData(me);
+                return retVal;
+            }
+        }
+
         // Property cache
         private static Dictionary<String, PropertyInfo> s_propertyCache = new Dictionary<string, PropertyInfo>();
 

@@ -35,6 +35,9 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         // Classifier attribute
         private ClassifierAttribute m_classifierAttribute;
 
+        // Classifier hash map
+        private static Dictionary<Type, ClassifierAttribute> m_classifierCache = new Dictionary<Type, ClassifierAttribute>();
+
         // Type
         private Type m_type;
 
@@ -158,7 +161,15 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 classProperty.SetValue(o, classifierObj);
             }
 
-            classifierAttribute = classifierObj?.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
+            if(classifierObj != null) {
+                if (!m_classifierCache.TryGetValue(classifierObj.GetType(), out classifierAttribute))
+                    lock (m_classifierCache)
+                        if (!m_classifierCache.ContainsKey(classifierAttribute))
+                        {
+                            classifierAttribute = classifierObj?.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
+                            m_classifierCache.Add(classifierObj.GetType(), classifierObj.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>());
+                        }
+
             if (classifierAttribute != null)
                 return this.GetClassifierObj(classifierObj, classifierAttribute);
             return classifierObj;

@@ -36,6 +36,7 @@ using OpenIZ.Persistence.Data.ADO.Data.Model.Roles;
 using OpenIZ.Persistence.Data.ADO.Data.Model.DataType;
 using OpenIZ.OrmLite;
 using System.Diagnostics;
+using OpenIZ.Core.Model.Roles;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -66,7 +67,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         private const String CountyOrParish = "D9489D56-DDAC-4596-B5C6-8F41D73D8DC5";
         private const String Country = "48B2FFB3-07DB-47BA-AD73-FC8FB8502471";
         private const String NonLivingSubject = "9025E5C9-693B-49D4-973C-D7010F3A23EE";
-        
+
         /// <summary>
         /// To model instance
         /// </summary>
@@ -222,7 +223,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Insert the specified entity into the data context
         /// </summary>
-        public override Core.Model.Entities.Entity Insert(DataContext context, Core.Model.Entities.Entity data, IPrincipal principal)
+        public Core.Model.Entities.Entity InsertCoreProperties(DataContext context, Core.Model.Entities.Entity data, IPrincipal principal)
         {
 
             // Ensure FK exists
@@ -236,7 +237,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
             data.StatusConceptKey = data.StatusConceptKey == Guid.Empty || data.StatusConceptKey == null ? StatusKeys.New : data.StatusConceptKey;
-            
+
             var retVal = base.Insert(context, data, principal);
 
             // Identifiers
@@ -310,7 +311,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Update the specified entity
         /// </summary>
-        public override Core.Model.Entities.Entity Update(DataContext context, Core.Model.Entities.Entity data, IPrincipal principal)
+        public Core.Model.Entities.Entity UpdateCoreProperties(DataContext context, Core.Model.Entities.Entity data, IPrincipal principal)
         {
             // Esnure exists
             if (data.ClassConcept != null) data.ClassConcept = data.ClassConcept?.EnsureExists(context, principal) as Concept;
@@ -404,5 +405,76 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             return base.Update(context, data, principal);
         }
 
+        /// <summary>
+        /// Insert the entity
+        /// </summary>
+        public override Entity Insert(DataContext context, Entity data, IPrincipal principal)
+        {
+            switch (data.ClassConceptKey.ToString().ToUpper())
+            {
+                case Device:
+                    return new DeviceEntityPersistenceService().Insert(context, data.Convert<DeviceEntity>(), principal);
+                case NonLivingSubject:
+                    return new ApplicationEntityPersistenceService().Insert(context, data.Convert<ApplicationEntity>(), principal);
+                case Person:
+                    return new PersonPersistenceService().Insert(context, data.Convert<Person>(), principal);
+                case Patient:
+                    return new PatientPersistenceService().Insert(context, data.Convert<Patient>(), principal);
+                case Provider:
+                    return new ProviderPersistenceService().Insert(context, data.Convert<Provider>(), principal);
+                case Place:
+                case CityOrTown:
+                case Country:
+                case CountyOrParish:
+                case State:
+                case ServiceDeliveryLocation:
+                    return new PlacePersistenceService().Insert(context, data.Convert<Place>(), principal);
+                case Organization:
+                    return new OrganizationPersistenceService().Insert(context, data.Convert<Organization>(), principal);
+                case Material:
+                    return new MaterialPersistenceService().Insert(context, data.Convert<Material>(), principal);
+                case ManufacturedMaterial:
+                    return new ManufacturedMaterialPersistenceService().Insert(context, data.Convert<ManufacturedMaterial>(), principal);
+                default:
+                    return this.InsertCoreProperties(context, data, principal);
+
+            }
+        }
+
+        /// <summary>
+        /// Update entity
+        /// </summary>
+        public override Entity Update(DataContext context, Entity data, IPrincipal principal)
+        {
+            switch (data.ClassConceptKey.ToString().ToUpper())
+            {
+                case Device:
+                    return new DeviceEntityPersistenceService().Update(context, data.Convert<DeviceEntity>(), principal);
+                case NonLivingSubject:
+                    return new ApplicationEntityPersistenceService().Update(context, data.Convert<ApplicationEntity>(), principal);
+                case Person:
+                    return new PersonPersistenceService().Update(context, data.Convert<Person>(), principal);
+                case Patient:
+                    return new PatientPersistenceService().Update(context, data.Convert<Patient>(), principal);
+                case Provider:
+                    return new ProviderPersistenceService().Update(context, data.Convert<Provider>(), principal);
+                case Place:
+                case CityOrTown:
+                case Country:
+                case CountyOrParish:
+                case State:
+                case ServiceDeliveryLocation:
+                    return new PlacePersistenceService().Update(context, data.Convert<Place>(), principal);
+                case Organization:
+                    return new OrganizationPersistenceService().Update(context, data.Convert<Organization>(), principal);
+                case Material:
+                    return new MaterialPersistenceService().Update(context, data.Convert<Material>(), principal);
+                case ManufacturedMaterial:
+                    return new ManufacturedMaterialPersistenceService().Update(context, data.Convert<ManufacturedMaterial>(), principal);
+                default:
+                    return this.UpdateCoreProperties(context, data, principal);
+
+            }
+        }
     }
 }
