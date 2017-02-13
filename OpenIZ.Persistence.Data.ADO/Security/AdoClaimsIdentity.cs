@@ -176,8 +176,8 @@ namespace OpenIZ.Persistence.Data.ADO.Security
                         expiryClaim = securityClaims.FirstOrDefault(o => o.ClaimType == AdoDataConstants.RefreshExpiryClaimType);
 
                     if (secretClaim == null) throw new SecurityException("Invalid refresh token");
-                    if (expiryClaim == null || DateTimeOffset.Parse(expiryClaim.ClaimValue) < DateTime.Now)
-                        throw new SecurityException("Token expired");
+                    if (expiryClaim == null || DateTimeOffset.Parse(expiryClaim.ClaimValue) < DateTimeOffset.Now)
+                        throw new SecurityException($"Token expired {expiryClaim?.ClaimValue}");
 
                     // Grab the user and re-authenticate them
                     var user = dataContext.SingleOrDefault<DbSecurityUser>(u => u.Key == secretClaim.SourceKey);

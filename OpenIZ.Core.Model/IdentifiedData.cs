@@ -130,7 +130,7 @@ namespace OpenIZ.Core.Model
         {
             get
             {
-                if (this.m_typeId == null)
+                if (String.IsNullOrEmpty(this.m_typeId))
                     this.m_typeId = this.GetType().GetTypeInfo().GetCustomAttribute<JsonObjectAttribute>().Id;
                 return this.m_typeId;
             }
