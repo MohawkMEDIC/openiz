@@ -78,15 +78,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             // Persist
             var retVal = base.Insert(context, data, principal);
 
-            // Concept sets 
-            if (data.ConceptSets != null)
-                foreach (var i in data.ConceptSets)
+            // Concept sets xml
+            if (data.ConceptSetsXml != null)
+                foreach (var i in data.ConceptSetsXml)
                 {
-                    i.EnsureExists(context, principal);
                     context.Insert(new DbConceptSetConceptAssociation()
                     {
                         ConceptKey = retVal.Key.Value,
-                        ConceptSetKey = i.Key.Value
+                        ConceptSetKey = i
                     }
                     );
                 }
@@ -141,20 +140,20 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                  );
 
             // Concept sets 
-            if (retVal.ConceptSets != null)
+            if (retVal.ConceptSetsXml != null)
             {
                 // Special case m2m
-                var existingConceptSets = context.Query<DbConceptSetConceptAssociation>(o => o.ConceptKey == retVal.Key);
+                var existingConceptSets = context.Query<DbConceptSetConceptAssociation>(o => o.ConceptKey == retVal.Key).Select(o=>o.ConceptSetKey);
                 
                 // Any new?
-                var newConcepts = data.ConceptSets.Where(o => !existingConceptSets.Select(e => e.ConceptSetKey).ToList().Contains(o.Key.Value));
+                var newConcepts = data.ConceptSetsXml.Where(o => !existingConceptSets.Contains(o));
                 foreach (var i in newConcepts)
                 {
-                    i.EnsureExists(context, principal);
-                    context.Insert(new DbConceptSetConceptAssociation() { ConceptKey = retVal.Key.Value, ConceptSetKey = i.Key.Value });
+                    //i.EnsureExists(context, principal);
+                    context.Insert(new DbConceptSetConceptAssociation() { ConceptKey = retVal.Key.Value, ConceptSetKey = i });
                 }
 
-                var delConcepts = existingConceptSets.Select(e => e.ConceptSetKey).ToList().Where(o => !data.ConceptSets.Exists(c => c.Key == o));
+                var delConcepts = existingConceptSets.ToList().Where(o => !data.ConceptSetsXml.Exists(c => c == o));
                 foreach (var i in delConcepts)
                     context.Delete<DbConceptSetConceptAssociation>(p => p.ConceptKey == retVal.Key.Value && p.ConceptSetKey == i);
             }

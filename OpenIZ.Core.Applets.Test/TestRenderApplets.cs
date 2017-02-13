@@ -98,10 +98,6 @@ namespace OpenIZ.Core.Applets.Test
                             {
                                 new ConceptName() { Language = "en" ,Name = "Male" },
                                 new ConceptName() { Language = "sw" , Name = "Kiume" }
-                            },
-                            ConceptSets = new List<ConceptSet>()
-                            {
-                                new ConceptSet() { Mnemonic = "AdministrativeGenderCode" }
                             }
                         },
                         new Concept()
@@ -112,10 +108,6 @@ namespace OpenIZ.Core.Applets.Test
                             {
                                 new ConceptName() { Language = "en" ,Name = "Female" },
                                 new ConceptName() { Language = "sw" , Name = "Kike" }
-                            },
-                            ConceptSets = new List<ConceptSet>()
-                            {
-                                new ConceptSet() { Mnemonic = "AdministrativeGenderCode" }
                             }
                         },
                     }.OfType<TObject>();

@@ -60,6 +60,7 @@ namespace OpenIZ.Core.Applets
         private static Dictionary<String, List<KeyValuePair<String, String>>> s_stringCache = new Dictionary<string, List<KeyValuePair<string, string>>>();
         private static Dictionary<String, AppletTemplateDefinition> s_templateCache = new Dictionary<string, AppletTemplateDefinition>();
         private static Dictionary<String, ViewModelDescription> s_viewModelCache = new Dictionary<string, ViewModelDescription>();
+        private static List<AppletAsset> s_viewStateAssets = null;
 
         private static Object s_syncLock = new object();
 
@@ -129,7 +130,15 @@ namespace OpenIZ.Core.Applets
         /// <summary>
         /// Gets a list of all view states of all loaded applets
         /// </summary>
-        public List<AppletAsset> ViewStateAssets {  get { return this.m_appletManifest.SelectMany(m => m.Assets).Where(a => ((a.Content == null && this.Resolver != null ? this.Resolver(a) : a.Content) as AppletAssetHtml)?.ViewState != null).ToList();  } }
+        public List<AppletAsset> ViewStateAssets
+        {
+            get
+            {
+                if (s_viewStateAssets == null)
+                    s_viewStateAssets = this.m_appletManifest.SelectMany(m => m.Assets).Where(a => ((a.Content == null && this.Resolver != null ? this.Resolver(a) : a.Content) as AppletAssetHtml)?.ViewState != null).ToList();
+                return s_viewStateAssets;
+            }
+        }
 
         /// <summary>
         /// Return true if the collection is readonly
@@ -243,7 +252,8 @@ namespace OpenIZ.Core.Applets
             if (!s_stringCache.TryGetValue(locale ?? "", out retVal))
                 lock (s_syncLock)
                 {
-                    if (!s_stringCache.TryGetValue(locale ?? "", out retVal)) {
+                    if (!s_stringCache.TryGetValue(locale ?? "", out retVal))
+                    {
                         retVal = this.m_appletManifest.SelectMany(o => o.Strings).
                         Where(o => o.Language == locale).
                         SelectMany(o => o.String).
@@ -296,10 +306,10 @@ namespace OpenIZ.Core.Applets
                         foreach (var itm in retVal.Include)
                             retVal.Model.AddRange(this.GetViewModelDescription(itm).Model);
 
-                        if(!s_viewModelCache.ContainsKey(viewModelName))
+                        if (!s_viewModelCache.ContainsKey(viewModelName))
                             s_viewModelCache.Add(viewModelName, retVal);
                     }
-                        
+
                 }
             return retVal;
         }
@@ -396,7 +406,8 @@ namespace OpenIZ.Core.Applets
             {
                 // Is the content HTML?
                 var sourceAsset = content as AppletAssetHtml;
-                var htmlAsset = new AppletAssetHtml() {
+                var htmlAsset = new AppletAssetHtml()
+                {
                     Html = new XElement(sourceAsset.Html),
                     Layout = sourceAsset.Layout,
                     Script = new List<String>(sourceAsset.Script),
@@ -411,7 +422,7 @@ namespace OpenIZ.Core.Applets
                     case "html": // The content is a complete HTML page
                         {
                             htmlContent = htmlAsset.Html as XElement;
-                            var headerInjection = this.GetInjectionHeaders(asset, htmlContent.DescendantNodes().OfType<XElement>().Any(o=>o.Name == xs_xhtml + "ui-view"));
+                            var headerInjection = this.GetInjectionHeaders(asset, htmlContent.DescendantNodes().OfType<XElement>().Any(o => o.Name == xs_xhtml + "ui-view"));
 
                             // STRIP - OPENIZJS references
                             var xel = htmlContent.Descendants().OfType<XElement>().Where(o => o.Name == xs_xhtml + "script" && o.Attribute("src")?.Value.Contains("openiz") == true).ToArray();
@@ -424,15 +435,15 @@ namespace OpenIZ.Core.Applets
 
                             head.Add(headerInjection.Where(o => !head.Elements(o.Name).Any(e => (e.Attributes("src") != null && (e.Attributes("src") == o.Attributes("src"))) || (e.Attributes("href") != null && (e.Attributes("href") == o.Attributes("href"))))));
 
-//                            head.Add(headerInjection);
+                            //                            head.Add(headerInjection);
                             break;
                         }
                     case "body": // The content is an HTML Body element, we must inject the HTML header
                         {
-							htmlContent = htmlAsset.Html as XElement;
+                            htmlContent = htmlAsset.Html as XElement;
 
-							// Inject special headers
-							var headerInjection = this.GetInjectionHeaders(asset, htmlContent.DescendantNodes().OfType<XElement>().Any(o => o.Name == xs_xhtml + "ui-view"));
+                            // Inject special headers
+                            var headerInjection = this.GetInjectionHeaders(asset, htmlContent.DescendantNodes().OfType<XElement>().Any(o => o.Name == xs_xhtml + "ui-view"));
 
                             // Render the bundles
                             var bodyElement = htmlAsset.Html as XElement;
@@ -594,7 +605,7 @@ namespace OpenIZ.Core.Applets
                                 }
                                 inc.Remove();
                             }
-                            catch(Exception e)
+                            catch (Exception e)
                             {
                                 throw new XmlException($"Error in Asset: {includeAsset}", e);
                             }
@@ -712,7 +723,7 @@ namespace OpenIZ.Core.Applets
                 if (assetName == "content")
                     continue;
                 var includeAsset = this.ResolveAsset(assetName, asset);
-                if(includeAsset != null)
+                if (includeAsset != null)
                     headerInjection.AddRange(this.GetInjectionHeaders(includeAsset, isUiContainer));
             }
 
@@ -733,7 +744,7 @@ namespace OpenIZ.Core.Applets
             public bool Equals(XElement x, XElement y)
             {
                 bool equals = true;
-                foreach(var xa in x.Attributes())
+                foreach (var xa in x.Attributes())
                 {
                     var ya = y.Attribute(xa.Name);
                     equals &= xa.Value == ya?.Value;

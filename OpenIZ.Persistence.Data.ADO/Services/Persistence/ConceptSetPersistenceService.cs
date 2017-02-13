@@ -67,11 +67,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             var retVal = base.Insert(context, data, principal);
 
             // Concept sets 
-            if (data.Concepts != null)
-                foreach (var i in data.Concepts)
+            if (data.ConceptsXml != null)
+                foreach (var i in data.ConceptsXml)
                 {
-                    i.EnsureExists(context, principal);
-                    context.Insert(new DbConceptSetConceptAssociation() { ConceptKey = i.Key.Value, ConceptSetKey = retVal.Key.Value });
+                    //i.EnsureExists(context, principal);
+                    context.Insert(new DbConceptSetConceptAssociation() { ConceptKey = i, ConceptSetKey = retVal.Key.Value });
                 }
             return retVal;
         }
@@ -84,7 +84,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             var retVal = base.Update(context, data, principal);
 
             // Concept sets 
-            if (data.Concepts != null)
+            if (data.ConceptsXml != null)
             {
                 // Special case m2m
                 var existingConceptSets = context.Query<DbConceptSetConceptAssociation>(o => o.ConceptSetKey == retVal.Key);

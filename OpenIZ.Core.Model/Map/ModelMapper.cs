@@ -96,6 +96,8 @@ namespace OpenIZ.Core.Model.Map
             typeof(byte[])
         };
 
+        private static Dictionary<Type, Dictionary<String, PropertyInfo[]>> s_modelPropertyCache = new Dictionary<Type, Dictionary<String, PropertyInfo[]>>();
+
         /// <summary>
         /// Maps a model property at a root level only
         /// </summary>
@@ -277,7 +279,7 @@ namespace OpenIZ.Core.Model.Map
             ClassMap classMap = this.m_mapFile.GetModelClassMap(modelType);
             if (classMap == null)
                 return modelType;
-            Type domainType = Type.GetType(classMap.DomainClass);
+            Type domainType = classMap.DomainType;
             if (domainType == null)
                 throw new InvalidOperationException(String.Format("Cannot find class {0}", classMap.DomainClass));
             return domainType;
@@ -377,19 +379,38 @@ namespace OpenIZ.Core.Model.Map
 
             // Now the property maps
             TDomain retVal = new TDomain();
-            foreach (var propInfo in typeof(TModel).GetRuntimeProperties())
+
+            // Properties
+            PropertyInfo[] properties = null;
+            Dictionary<String, PropertyInfo[]> propertyClassMap = null;
+            if (!s_modelPropertyCache.TryGetValue(typeof(TModel), out propertyClassMap))
+            {
+                lock (s_modelPropertyCache)
+                {
+                    if (!s_modelPropertyCache.TryGetValue(typeof(TModel), out propertyClassMap))
+                        propertyClassMap = new Dictionary<string, PropertyInfo[]>();
+                    s_modelPropertyCache.Add(typeof(TModel), propertyClassMap);
+                }
+            }
+
+            if(!propertyClassMap.TryGetValue(String.Empty, out properties))
+            { 
+                lock (s_modelPropertyCache)
+                {
+                    properties = typeof(TModel).GetRuntimeProperties().Where(m => m != null &&
+                    m.GetCustomAttribute<DataIgnoreAttribute>() == null &&
+                    (primitives.Contains(m.PropertyType) || m.PropertyType.GetTypeInfo().IsEnum) &&
+                    m.CanWrite).ToArray();
+                    if (!propertyClassMap.ContainsKey(String.Empty))
+                        propertyClassMap.Add(String.Empty, properties);
+                }
+            }
+
+            // Iterate through properties
+            foreach (var propInfo in properties)
             {
 
-                // no need to load?
-                if (propInfo == null)
-                    continue;
-                else if (!primitives.Contains(propInfo.PropertyType) && !propInfo.PropertyType.GetTypeInfo().IsEnum)
-                    continue;
-                else if (propInfo.GetCustomAttribute<DataIgnoreAttribute>() != null 
-                    || !propInfo.CanWrite)
-                    continue;
-
-
+               
                 // Property info
                 if (propInfo.GetValue(modelInstance) == null)
                     continue;
@@ -537,23 +558,37 @@ namespace OpenIZ.Core.Model.Map
                 }
             }
 
-            // Iterate the properties and map
-            foreach (var modelPropertyInfo in tModel.GetRuntimeProperties())
+            // Properties
+            // Properties
+            PropertyInfo[] properties = null;
+            Dictionary<String, PropertyInfo[]> propertyClassMap = null;
+            if (!s_modelPropertyCache.TryGetValue(tModel, out propertyClassMap))
             {
-
-                // no need to load?
-                if (modelPropertyInfo == null ||
-                    modelPropertyInfo.GetCustomAttribute<DataIgnoreAttribute>() != null ||
-                    modelPropertyInfo.GetCustomAttributes<AutoLoadAttribute>().Where(o => o.ClassCode == classifierValue || o.ClassCode == null).Count() == 0 &&
-                    !primitives.Contains(modelPropertyInfo.PropertyType) && !modelPropertyInfo.PropertyType.GetTypeInfo().IsEnum
-                    || !modelPropertyInfo.CanWrite)
+                lock (s_modelPropertyCache)
                 {
-#if VERBOSE_DEBUG
-
-                    Debug.WriteLine("Ignored property ({0}[{1}]).{2}", typeof(TDomain).Name, idEnt.Key, modelPropertyInfo.Name);
-#endif 
-                    continue;
+                    if (!s_modelPropertyCache.TryGetValue(tModel, out propertyClassMap))
+                        propertyClassMap = new Dictionary<string, PropertyInfo[]>();
+                    s_modelPropertyCache.Add(tModel, propertyClassMap);
                 }
+            }
+            if (!propertyClassMap.TryGetValue(classifierValue ?? String.Empty, out properties))
+            {
+                lock (s_modelPropertyCache)
+                {
+                    properties = tModel.GetRuntimeProperties().Where(m => m != null &&
+                    m.GetCustomAttribute<DataIgnoreAttribute>() == null &&
+                    (primitives.Contains(m.PropertyType) || m.PropertyType.GetTypeInfo().IsEnum ||
+                    m.GetCustomAttributes<AutoLoadAttribute>().Any(o => o.ClassCode == classifierValue || o.ClassCode == null)) &&
+                    m.CanWrite).ToArray();
+                    if (!propertyClassMap.ContainsKey(classifierValue ?? String.Empty))
+                        propertyClassMap.Add(classifierValue ?? String.Empty, properties);
+                }
+            }
+
+
+            // Iterate the properties and map
+            foreach (var modelPropertyInfo in properties)
+            {
 
                 // Map property
                 PropertyMap propMap = null;

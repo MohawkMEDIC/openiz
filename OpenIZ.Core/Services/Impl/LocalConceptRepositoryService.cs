@@ -577,7 +577,7 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptSet>)} not found");
 			}
 
-			return persistence.Count(o => o.Concepts.Any(c => c.Key == concept.Key), AuthenticationContext.Current.Principal) > 0;
+			return persistence.Count(o => o.ConceptsXml.Any(c => c == concept.Key), AuthenticationContext.Current.Principal) > 0;
 		}
 
 		/// <summary>

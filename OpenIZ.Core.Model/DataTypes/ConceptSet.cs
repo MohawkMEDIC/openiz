@@ -79,9 +79,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets the concepts in the set
         /// </summary>
-        
-        [AutoLoad]
-        [XmlIgnore, JsonIgnore]
+        [DataIgnore, XmlIgnore, JsonIgnore]
         public List<Concept> Concepts
         {
             get

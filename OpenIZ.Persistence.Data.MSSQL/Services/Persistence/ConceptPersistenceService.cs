@@ -67,11 +67,10 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
             var retVal = base.Insert(context, data, principal);
 
             // Concept sets 
-            if (data.ConceptSets != null)
-                foreach (var i in data.ConceptSets)
+            if (data.ConceptSetsXml != null)
+                foreach (var i in data.ConceptSetsXml)
                 {
-                    i.EnsureExists(context, principal);
-                    context.ConceptSetMembers.InsertOnSubmit(new Data.ConceptSetMember() { ConceptId = retVal.Key.Value, ConceptSetId = i.Key.Value });
+                    context.ConceptSetMembers.InsertOnSubmit(new Data.ConceptSetMember() { ConceptId = retVal.Key.Value, ConceptSetId = i });
                 }
 
             // Concept names
@@ -120,19 +119,18 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
                  );
 
             // Concept sets 
-            if (retVal.ConceptSets != null)
+            if (retVal.ConceptSetsXml != null)
             {
                 // Special case m2m
                 var existingConceptSets = context.ConceptSetMembers.Where(o => o.ConceptId == retVal.Key);
                 // Any new?
-                var newConcepts = data.ConceptSets.Where(o => !existingConceptSets.Select(e => e.ConceptSetId).ToList().Contains(o.Key.Value));
+                var newConcepts = data.ConceptSetsXml.Where(o => !existingConceptSets.Select(e => e.ConceptSetId).ToList().Contains(o));
                 foreach (var i in newConcepts)
                 {
-                    i.EnsureExists(context, principal);
-                    context.ConceptSetMembers.InsertOnSubmit(new Data.ConceptSetMember() { ConceptId = retVal.Key.Value, ConceptSetId = i.Key.Value });
+                    context.ConceptSetMembers.InsertOnSubmit(new Data.ConceptSetMember() { ConceptId = retVal.Key.Value, ConceptSetId = i });
                 }
 
-                var delConcepts = existingConceptSets.Select(e => e.ConceptSetId).ToList().Where(o => !data.ConceptSets.Exists(c => c.Key == o));
+                var delConcepts = existingConceptSets.Select(e => e.ConceptSetId).ToList().Where(o => !data.ConceptSetsXml.Exists(c => c == o));
                 foreach (var i in delConcepts)
                     context.ConceptSetMembers.DeleteOnSubmit(existingConceptSets.FirstOrDefault(p => p.ConceptId == retVal.Key.Value && p.ConceptSetId == i));
             }
