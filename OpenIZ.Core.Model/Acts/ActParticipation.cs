@@ -76,7 +76,6 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the target entity reference
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         [XmlElement("player"), JsonProperty("player")]
         public Guid? PlayerEntityKey
         {

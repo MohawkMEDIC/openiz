@@ -188,11 +188,19 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Data\SQL\PSQL\openiz-fn.sql" />
-    <Content Include="Data\SQL\PSQL\openiz-test.sql" />
+    <Content Include="Data\SQL\PSQL\openiz-fn.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\SQL\PSQL\openiz-test.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <EmbeddedResource Include="Data\Map\ModelMap.xml" />
-    <Content Include="Data\SQL\PSQL\openiz-codes.sql" />
-    <Content Include="Data\SQL\PSQL\openiz-ddl.sql" />
+    <Content Include="Data\SQL\PSQL\openiz-codes.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\SQL\PSQL\openiz-ddl.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\Interfaces\" />

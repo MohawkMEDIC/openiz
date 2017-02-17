@@ -161,14 +161,16 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 classProperty.SetValue(o, classifierObj);
             }
 
-            if(classifierObj != null) {
+            if (classifierObj != null)
+            {
                 if (!m_classifierCache.TryGetValue(classifierObj.GetType(), out classifierAttribute))
                     lock (m_classifierCache)
-                        if (!m_classifierCache.ContainsKey(classifierAttribute))
+                        if (!m_classifierCache.ContainsKey(classifierObj.GetType()))
                         {
                             classifierAttribute = classifierObj?.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
                             m_classifierCache.Add(classifierObj.GetType(), classifierObj.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>());
                         }
+            }
 
             if (classifierAttribute != null)
                 return this.GetClassifierObj(classifierObj, classifierAttribute);
