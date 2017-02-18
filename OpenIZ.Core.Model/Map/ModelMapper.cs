@@ -568,7 +568,11 @@ namespace OpenIZ.Core.Model.Map
                 {
                     if (!s_modelPropertyCache.TryGetValue(tModel, out propertyClassMap))
                         propertyClassMap = new Dictionary<string, PropertyInfo[]>();
-                    s_modelPropertyCache.Add(tModel, propertyClassMap);
+
+	                if (!s_modelPropertyCache.ContainsKey(tModel))
+	                {
+						s_modelPropertyCache.Add(tModel, propertyClassMap);
+					}
                 }
             }
             if (!propertyClassMap.TryGetValue(classifierValue ?? String.Empty, out properties))
