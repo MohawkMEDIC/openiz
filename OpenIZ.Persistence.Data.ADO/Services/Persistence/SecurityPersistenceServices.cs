@@ -18,19 +18,17 @@
  * Date: 2016-8-2
  */
 
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.OrmLite;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
 using OpenIZ.Persistence.Data.ADO.Exceptions;
 using System;
-using System.Linq;
-using System.Security.Principal;
-using MARC.HI.EHRS.SVC.Core;
-using MARC.HI.EHRS.SVC.Core.Data;
-using MARC.HI.EHRS.SVC.Core.Services;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Principal;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -78,11 +76,29 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		}
 
 		/// <summary>
-		/// Update the roles to security user
+		/// Updates a security application.
 		/// </summary>
+		/// <param name="context">The data context.</param>
+		/// <param name="data">The security application to update.</param>
+		/// <param name="principal">The authentication principal.</param>
+		/// <returns>Returns the updated security application.</returns>
 		public override Core.Model.Security.SecurityApplication Update(DataContext context, Core.Model.Security.SecurityApplication data, IPrincipal principal)
 		{
-			data = base.Update(context, data, principal);
+			var domainInstance = this.FromModelInstance(data, context, principal);
+
+			var currentObject = context.FirstOrDefault<DbSecurityApplication>(d => d.Key == data.Key);
+
+			if (currentObject == null)
+			{
+				throw new KeyNotFoundException(data.Key.ToString());
+			}
+
+			currentObject.CopyObjectData(domainInstance);
+
+			currentObject.ObsoletedByKey = data.ObsoletedByKey == Guid.Empty ? null : data.ObsoletedByKey;
+			currentObject.ObsoletionTime = data.ObsoletionTime;
+
+			context.Update(currentObject);
 
 			if (data.Policies != null)
 			{
@@ -149,7 +165,21 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		/// </summary>
 		public override Core.Model.Security.SecurityDevice Update(DataContext context, Core.Model.Security.SecurityDevice data, IPrincipal principal)
 		{
-			data = base.Update(context, data, principal);
+			var domainInstance = this.FromModelInstance(data, context, principal);
+
+			var currentObject = context.FirstOrDefault<DbSecurityDevice>(d => d.Key == data.Key);
+
+			if (currentObject == null)
+			{
+				throw new KeyNotFoundException(data.Key.ToString());
+			}
+
+			currentObject.CopyObjectData(domainInstance);
+
+			currentObject.ObsoletedByKey = data.ObsoletedByKey == Guid.Empty ? null : data.ObsoletedByKey;
+			currentObject.ObsoletionTime = data.ObsoletionTime;
+
+			context.Update(currentObject);
 
 			if (data.Policies != null)
 			{
@@ -240,7 +270,21 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		/// </summary>
 		public override Core.Model.Security.SecurityRole Update(DataContext context, Core.Model.Security.SecurityRole data, IPrincipal principal)
 		{
-			data = base.Update(context, data, principal);
+			var domainInstance = this.FromModelInstance(data, context, principal);
+
+			var currentObject = context.FirstOrDefault<DbSecurityRole>(d => d.Key == data.Key);
+
+			if (currentObject == null)
+			{
+				throw new KeyNotFoundException(data.Key.ToString());
+			}
+
+			currentObject.CopyObjectData(domainInstance);
+
+			currentObject.ObsoletedByKey = data.ObsoletedByKey == Guid.Empty ? null : data.ObsoletedByKey;
+			currentObject.ObsoletionTime = data.ObsoletionTime;
+
+			context.Update(currentObject);
 
 			if (data.Policies != null)
 			{
@@ -265,26 +309,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 	/// </summary>
 	public class SecurityUserPersistenceService : BaseDataPersistenceService<Core.Model.Security.SecurityUser, DbSecurityUser>
 	{
-		/// <summary>
-		/// Gets a security user.
-		/// </summary>
-		/// <param name="context">The data context.</param>
-		/// <param name="key">The key of the user to retrieve.</param>
-		/// <param name="principal">The authentication context.</param>
-		/// <returns>Returns a security user or null if no user is found.</returns>
-		internal override SecurityUser Get(DataContext context, Guid key, IPrincipal principal)
-		{
-			var user = base.Get(context, key, principal);
-            if (user == null) return null;
-			var rolesQuery = new SqlStatement<DbSecurityUserRole>().SelectFrom()
-				.InnerJoin<DbSecurityRole>(o => o.RoleKey, o => o.Key)
-				.Where<DbSecurityUserRole>(o => o.UserKey == key);
-
-			user.Roles = context.Query<DbSecurityRole>(rolesQuery).Select(o => m_mapper.MapDomainInstance<DbSecurityRole, SecurityRole>(o)).ToList();
-
-			return user;
-		}
-
 		/// <summary>
 		/// Insert the specified object
 		/// </summary>
@@ -365,6 +389,26 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 			}
 
 			return retVal;
+		}
+
+		/// <summary>
+		/// Gets a security user.
+		/// </summary>
+		/// <param name="context">The data context.</param>
+		/// <param name="key">The key of the user to retrieve.</param>
+		/// <param name="principal">The authentication context.</param>
+		/// <returns>Returns a security user or null if no user is found.</returns>
+		internal override SecurityUser Get(DataContext context, Guid key, IPrincipal principal)
+		{
+			var user = base.Get(context, key, principal);
+			if (user == null) return null;
+			var rolesQuery = new SqlStatement<DbSecurityUserRole>().SelectFrom()
+				.InnerJoin<DbSecurityRole>(o => o.RoleKey, o => o.Key)
+				.Where<DbSecurityUserRole>(o => o.UserKey == key);
+
+			user.Roles = context.Query<DbSecurityRole>(rolesQuery).Select(o => m_mapper.MapDomainInstance<DbSecurityRole, SecurityRole>(o)).ToList();
+
+			return user;
 		}
 	}
 }
