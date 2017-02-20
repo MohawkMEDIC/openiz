@@ -12,25 +12,25 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
     /// Represents a link between act and protocol
     /// </summary>
     [Table("act_proto_assoc_tbl")]
-    public class DbActProtocol : IDbAssociation
+    public class DbActProtocol : DbAssociation
     {
 
         /// <summary>
         /// Gets or sets the protocol key
         /// </summary>
         [Column("proto_id"), ForeignKey(typeof(DbProtocol), nameof(DbProtocol.Key)), PrimaryKey]
-        public Guid ProtocolKey { get; set; }
+        public override Guid Key { get; set; }
 
         /// <summary>
         /// Source key
         /// </summary>
         [Column("act_id"), ForeignKey(typeof(DbAct), nameof(DbAct.Key)), PrimaryKey]
-        public Guid SourceKey { get; set; }
+        public override Guid SourceKey { get; set; }
 
         /// <summary>
         /// Gets or sets the state
         /// </summary>
-        [Column("stat_dat")]
+        [Column("state_dat")]
         public byte[] State { get; set; }
 
         /// <summary>
