@@ -50,7 +50,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
 			}
 
-			applicationInfo.Application?.Policies.AddRange(applicationInfo.Policies);
+			applicationInfo.Application?.Policies.AddRange(applicationInfo.Policies.Select(p => new SecurityPolicyInstance(p.Policy, p.Grant)));
 
 			var createdApplication = securityRepositoryService.CreateApplication(applicationInfo.Application);
 
@@ -168,7 +168,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
 			}
 
-			applicationInfo.Application.Policies.AddRange(applicationInfo.Policies);
+			applicationInfo.Application.Policies.AddRange(applicationInfo.Policies.Select(p => new SecurityPolicyInstance(p.Policy, p.Grant)));
 
 			var updatedApplication = securityRepository.SaveApplication(applicationInfo.Application);
 

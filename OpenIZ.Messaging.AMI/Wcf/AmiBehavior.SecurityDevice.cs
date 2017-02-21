@@ -50,7 +50,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
 			}
 
-			deviceInfo.Device?.Policies.AddRange(deviceInfo.Policies);
+			deviceInfo.Device?.Policies.AddRange(deviceInfo.Policies.Select(p => new SecurityPolicyInstance(p.Policy, p.Grant)));
 
 			var createdDevice = securityRepository.CreateDevice(deviceInfo.Device);
 
@@ -160,7 +160,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				throw new InvalidOperationException($"{nameof(ISecurityRepositoryService)} not found");
 			}
 
-			deviceInfo.Device.Policies.AddRange(deviceInfo.Policies);
+			deviceInfo.Device.Policies.AddRange(deviceInfo.Policies.Select(p => new SecurityPolicyInstance(p.Policy, p.Grant)));
 
 			var updatedDevice = securityRepository.SaveDevice(deviceInfo.Device);
 

@@ -21,6 +21,7 @@
 using OpenIZ.Core.Model.Security;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.AMI.Auth
@@ -37,7 +38,7 @@ namespace OpenIZ.Core.Model.AMI.Auth
 		/// </summary>
 		public SecurityApplicationInfo()
 		{
-			this.Policies = new List<SecurityPolicyInstance>();
+			this.Policies = new List<SecurityPolicyInfo>();
 		}
 
 		/// <summary>
@@ -51,7 +52,7 @@ namespace OpenIZ.Core.Model.AMI.Auth
 			this.ApplicationSecret = application.ApplicationSecret;
 			this.Id = application.Key;
 			this.Name = application.Name;
-			this.Policies = application.Policies;
+			this.Policies = application.Policies.Select(p => new SecurityPolicyInfo(p)).ToList();
 		}
 
 		/// <summary>
@@ -82,6 +83,6 @@ namespace OpenIZ.Core.Model.AMI.Auth
 		/// Gets or sets the policies associated with the application.
 		/// </summary>
 		[XmlElement("policy")]
-		public List<SecurityPolicyInstance> Policies { get; set; }
+		public List<SecurityPolicyInfo> Policies { get; set; }
 	}
 }

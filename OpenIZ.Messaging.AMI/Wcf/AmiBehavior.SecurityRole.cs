@@ -44,11 +44,15 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		public SecurityRoleInfo CreateRole(SecurityRoleInfo role)
 		{
 			var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-			var roleToCreate = new SecurityRole()
+
+			var roleToCreate = new SecurityRole
 			{
 				Name = role.Name,
 				Description = role.Role.Description
 			};
+
+			roleToCreate.Policies.AddRange(role.Role.Policies.Select(p => new SecurityPolicyInstance(p.Policy, p.GrantType)));
+
 			return new SecurityRoleInfo(roleRepository.CreateRole(roleToCreate));
 		}
 

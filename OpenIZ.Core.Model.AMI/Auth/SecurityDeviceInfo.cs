@@ -21,6 +21,7 @@
 using OpenIZ.Core.Model.Security;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.AMI.Auth
@@ -37,7 +38,7 @@ namespace OpenIZ.Core.Model.AMI.Auth
 		/// </summary>
 		public SecurityDeviceInfo()
 		{
-			this.Policies = new List<SecurityPolicyInstance>();
+			this.Policies = new List<SecurityPolicyInfo>();
 		}
 
 		/// <summary>
@@ -51,7 +52,7 @@ namespace OpenIZ.Core.Model.AMI.Auth
 			this.Name = device.Name;
 			this.DeviceSecret = device.DeviceSecret;
 			this.Device = device;
-			this.Policies = device.Policies;
+			this.Policies = device.Policies.Select(p => new SecurityPolicyInfo(p)).ToList();
 		}
 
 		/// <summary>
@@ -82,6 +83,6 @@ namespace OpenIZ.Core.Model.AMI.Auth
 		/// Gets or sets the list of security policies associated with the security device.
 		/// </summary>
 		[XmlElement("policy")]
-		public List<SecurityPolicyInstance> Policies { get; set; }
+		public List<SecurityPolicyInfo> Policies { get; set; }
 	}
 }
