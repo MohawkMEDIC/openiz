@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml.Serialization;
 using System.Linq;
+using System.Linq.Expressions;
 using OpenIZ.Core.Model.EntityLoader;
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Constants;
@@ -164,5 +165,38 @@ namespace OpenIZ.Core.Model.Entities
                 this.Component?.SemanticEquals(other.Component) == true;
         }
 
-    }
+		/// <summary>
+		/// Gets the string representation of the entity name.
+		/// </summary>
+		/// <returns>Returns a string representation of the entity name.</returns>
+		public override string ToString()
+		{
+			string value = null;
+
+			if (this.Component?.Any() == true)
+			{
+				value = string.Join(" ", this.Component.Select(c => c.Value));
+			}
+
+			return value;
+		}
+
+		/// <summary>
+		/// Gets the string representation of the entity name with a given filter expression.
+		/// </summary>
+		/// <param name="filterExpression">The filter expression to use to filter the entity name components.</param>
+		/// <returns>Returns a string representation of the entity name.</returns>
+	    public string ToString(Expression<Func<EntityNameComponent, bool>> filterExpression)
+		{
+			string value = null;
+
+			if (this.Component?.Any() == true)
+			{
+				value = string.Join(" ", this.Component.AsQueryable().Where(filterExpression).Select(c => c.Value));
+			}
+
+			return value;
+		}
+
+	}
 }
