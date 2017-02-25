@@ -17,6 +17,8 @@
  * User: justi
  * Date: 2016-8-18
  */
+using OpenIZ.Core.Applets.Model;
+using OpenIZ.Core.Applets.ViewModel.Description;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -72,6 +74,12 @@ namespace OpenIZ.Protocol.Xml.Model
         public List<ProtocolRuleDefinition> Rules { get; set; }
 
         /// <summary>
+        /// View model description
+        /// </summary>
+        [XmlElement("initialize", Namespace = "http://openiz.org/model/view")]
+        public ViewModelDescription Initialize { get; set; }
+
+        /// <summary>
         /// Save the rules definition to the specified stream
         /// </summary>
         public void Save(Stream ms)
@@ -94,7 +102,7 @@ namespace OpenIZ.Protocol.Xml.Model
     /// <summary>
     /// Represents a ruleset trigger
     /// </summary>
-    [XmlType(nameof(RuleSetDefinition), Namespace = "http://openiz.org/cdss")]
+    [XmlType(nameof(RuleSetTrigger), Namespace = "http://openiz.org/cdss")]
     public class RuleSetTrigger
     {
 

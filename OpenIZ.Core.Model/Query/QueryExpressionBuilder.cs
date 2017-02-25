@@ -324,6 +324,12 @@ namespace OpenIZ.Core.Model.Query
 
                     }
                 }
+                else if(access.NodeType == ExpressionType.Convert ||
+                    access.NodeType == ExpressionType.ConvertChecked)
+                {
+                    UnaryExpression ua = (UnaryExpression)access;
+                    return this.ExtractPath(ua.Operand);
+                } 
                 return null;
             }
         }

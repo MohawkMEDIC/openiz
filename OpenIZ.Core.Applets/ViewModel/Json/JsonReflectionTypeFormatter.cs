@@ -110,13 +110,13 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         /// <summary>
         /// Get property name
         /// </summary>
-        protected String GetPropertyName(PropertyInfo info)
+        protected String GetPropertyName(PropertyInfo info, bool includeIgnored = false)
         {
 
             String retVal = null;
-            if (!this.m_jsonPropertyNames.TryGetValue(info, out retVal))
+            if (!this.m_jsonPropertyNames.TryGetValue(info, out retVal) || includeIgnored)
             {
-                if (info.GetCustomAttribute<DataIgnoreAttribute>() != null && info.GetCustomAttribute<JsonPropertyAttribute>() == null ||
+                if (!includeIgnored && info.GetCustomAttribute<DataIgnoreAttribute>() != null && info.GetCustomAttribute<JsonPropertyAttribute>() == null ||
                     info.GetCustomAttribute<JsonIgnoreAttribute>() != null && info.GetCustomAttribute<SerializationReferenceAttribute>() == null)
                     retVal = null;
                 else
@@ -177,7 +177,8 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 // Null ,do we want to force load?
                 if (value == null || (value as IList)?.Count == 0)
                 {
-                    if (o.Key.HasValue && context.ShouldForceLoad(propertyName, o.Key.Value))
+                    var tkey = o.Key.HasValue ? o.Key.Value : Guid.NewGuid();
+                    if (context.ShouldForceLoad(propertyName, tkey))
                     {
                         if (value is IList && !propertyInfo.PropertyType.IsArray)
                         {

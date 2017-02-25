@@ -1,256 +1,278 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!--
- - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
- - 
- - 
- - Licensed under the Apache License, Version 2.0 (the "License"); you 
- - may not use this file except in compliance with the License. You may 
- - obtain a copy of the License at 
- - 
- - http://www.apache.org/licenses/LICENSE-2.0 
- - 
- - Unless required by applicable law or agreed to in writing, software
- - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- - License for the specific language governing permissions and limitations under 
- - the License.
- - 
- - User: justi
- - Date: 2016-8-2
- -->
-<xs:schema xmlns:tns="http://openiz.org/cdss" elementFormDefault="qualified" targetNamespace="http://openiz.org/cdss" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import namespace="http://microsoft.com/wsdl/types/" />
-  <xs:import namespace="http://openiz.org/model" />
-  <xs:complexType name="BaseProtocolElement" abstract="true">
-    <xs:attribute name="uuid" xmlns:q1="http://microsoft.com/wsdl/types/" type="q1:guid" use="required" />
-    <xs:attribute name="id" type="xs:string" />
-    <xs:attribute name="name" type="xs:string" />
-    <xs:attribute name="version" type="xs:string" />
-  </xs:complexType>
-  <xs:complexType name="ProtocolCollection">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:BaseProtocolElement">
-        <xs:sequence>
-          <xs:element minOccurs="0" maxOccurs="unbounded" name="protocol" type="tns:ProtocolDefinition" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="ProtocolDefinition">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:BaseProtocolElement">
-        <xs:sequence>
-          <xs:element minOccurs="0" maxOccurs="1" name="when" type="tns:ProtocolWhenClauseCollection" />
-          <xs:element minOccurs="0" maxOccurs="unbounded" name="rule" type="tns:ProtocolRuleDefinition" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="ProtocolWhenClauseCollection">
-    <xs:sequence>
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element minOccurs="0" maxOccurs="1" name="imsiExpression" type="tns:WhenClauseImsiExpression" />
-        <xs:element minOccurs="0" maxOccurs="1" name="linqXmlExpression" type="tns:XmlLambdaExpression" />
-        <xs:element minOccurs="0" maxOccurs="1" name="linqExpression" type="xs:string" />
-      </xs:choice>
-    </xs:sequence>
-    <xs:attribute name="evaluation" type="tns:BinaryOperatorType" use="required" />
-  </xs:complexType>
-  <xs:complexType name="WhenClauseImsiExpression">
-    <xs:simpleContent>
-      <xs:extension base="xs:string">
-        <xs:attribute name="negationIndicator" type="xs:boolean" use="required" />
-      </xs:extension>
-    </xs:simpleContent>
-  </xs:complexType>
-  <xs:complexType name="XmlLambdaExpression">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:XmlBoundExpression">
-        <xs:sequence>
-          <xs:element minOccurs="0" maxOccurs="unbounded" name="argument" type="tns:XmlParameterExpression" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="XmlBoundExpression" abstract="true">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:XmlExpression">
-        <xs:sequence>
-          <xs:choice minOccurs="1" maxOccurs="1">
-            <xs:element minOccurs="0" maxOccurs="1" name="constantExpression" type="tns:XmlConstantExpression" />
-            <xs:element minOccurs="0" maxOccurs="1" name="memberExpression" type="tns:XmlMemberExpression" />
-            <xs:element minOccurs="0" maxOccurs="1" name="parameterExpression" type="tns:XmlParameterExpression" />
-            <xs:element minOccurs="0" maxOccurs="1" name="binaryExpression" type="tns:XmlBinaryExpression" />
-            <xs:element minOccurs="0" maxOccurs="1" name="unaryExpression" type="tns:XmlUnaryExpression" />
-            <xs:element minOccurs="0" maxOccurs="1" name="methodCallExpression" type="tns:XmlMethodCallExpression" />
-            <xs:element minOccurs="0" maxOccurs="1" name="typeBinaryExpression" type="tns:XmlTypeBinaryExpression" />
-          </xs:choice>
-        </xs:sequence>
-        <xs:attribute name="staticClass" type="xs:string" />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="XmlExpression" abstract="true" />
-  <xs:complexType name="XmlBinaryExpression">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:XmlExpression">
-        <xs:sequence>
-          <xs:choice minOccurs="0" maxOccurs="unbounded">
-            <xs:element minOccurs="0" maxOccurs="1" name="constantExpression" type="tns:XmlConstantExpression" />
-            <xs:element minOccurs="0" maxOccurs="1" name="memberExpression" type="tns:XmlMemberExpression" />
-            <xs:element minOccurs="0" maxOccurs="1" name="parameterExpression" type="tns:XmlParameterExpression" />
-            <xs:element minOccurs="0" maxOccurs="1" name="binaryExpression" type="tns:XmlBinaryExpression" />
-            <xs:element minOccurs="0" maxOccurs="1" name="unaryExpression" type="tns:XmlUnaryExpression" />
-            <xs:element minOccurs="0" maxOccurs="1" name="methodCallExpression" type="tns:XmlMethodCallExpression" />
-            <xs:element minOccurs="0" maxOccurs="1" name="typeBinaryExpression" type="tns:XmlTypeBinaryExpression" />
-          </xs:choice>
-        </xs:sequence>
-        <xs:attribute name="operator" type="tns:BinaryOperatorType" use="required" />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="XmlConstantExpression">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:XmlExpression">
-        <xs:sequence>
-          <xs:element minOccurs="0" maxOccurs="1" name="value" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="XmlMemberExpression">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:XmlBoundExpression">
-        <xs:attribute name="memberName" type="xs:string" />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="XmlParameterExpression">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:XmlExpression">
-        <xs:attribute name="type" type="xs:string" />
-        <xs:attribute name="parameterName" type="xs:string" />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="XmlUnaryExpression">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:XmlBoundExpression">
-        <xs:attribute name="operator" type="tns:UnaryOperatorType" use="required" />
-        <xs:attribute name="type" type="xs:string" />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:simpleType name="UnaryOperatorType">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="not" />
-      <xs:enumeration value="convert" />
-      <xs:enumeration value="neg" />
-      <xs:enumeration value="as" />
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:complexType name="XmlMethodCallExpression">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:XmlBoundExpression">
-        <xs:sequence>
-          <xs:element minOccurs="0" maxOccurs="unbounded" name="methodTypeArgument" type="xs:string" />
-          <xs:element minOccurs="0" maxOccurs="1" name="argument" type="tns:XmlExpressionList" />
-        </xs:sequence>
-        <xs:attribute name="methodName" type="xs:string" />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="XmlExpressionList">
-    <xs:sequence>
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element minOccurs="0" maxOccurs="1" name="constantExpression" type="tns:XmlConstantExpression" />
-        <xs:element minOccurs="0" maxOccurs="1" name="memberExpression" type="tns:XmlMemberExpression" />
-        <xs:element minOccurs="0" maxOccurs="1" name="parameterExpression" type="tns:XmlParameterExpression" />
-        <xs:element minOccurs="0" maxOccurs="1" name="binaryExpression" type="tns:XmlBinaryExpression" />
-        <xs:element minOccurs="0" maxOccurs="1" name="unaryExpression" type="tns:XmlUnaryExpression" />
-        <xs:element minOccurs="0" maxOccurs="1" name="methodCallExpression" type="tns:XmlMethodCallExpression" />
-        <xs:element minOccurs="0" maxOccurs="1" name="lambdaExpression" type="tns:XmlLambdaExpression" />
-        <xs:element minOccurs="0" maxOccurs="1" name="typeBinaryExpression" type="tns:XmlTypeBinaryExpression" />
-      </xs:choice>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="XmlTypeBinaryExpression">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:XmlBoundExpression">
-        <xs:attribute name="operandType" type="xs:string" />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:simpleType name="BinaryOperatorType">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="eq" />
-      <xs:enumeration value="lt" />
-      <xs:enumeration value="lte" />
-      <xs:enumeration value="gt" />
-      <xs:enumeration value="gte" />
-      <xs:enumeration value="ne" />
-      <xs:enumeration value="and" />
-      <xs:enumeration value="or" />
-      <xs:enumeration value="add" />
-      <xs:enumeration value="sub" />
-      <xs:enumeration value="is" />
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:complexType name="ProtocolRuleDefinition">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:BaseProtocolElement">
-        <xs:sequence>
-          <xs:element minOccurs="0" maxOccurs="1" name="when" type="tns:ProtocolWhenClauseCollection" />
-          <xs:element minOccurs="0" maxOccurs="1" name="then" type="tns:ProtocolThenClauseCollection" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="ProtocolThenClauseCollection">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:BaseProtocolElement">
-        <xs:sequence>
-          <xs:element minOccurs="0" maxOccurs="unbounded" name="action" type="tns:ProtocolDataAction" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="ProtocolDataAction">
-    <xs:sequence>
-      <xs:choice minOccurs="1" maxOccurs="1">
-        <xs:element minOccurs="0" maxOccurs="1" xmlns:q2="http://openiz.org/model" ref="q2:Act" />
-        <xs:element minOccurs="0" maxOccurs="1" xmlns:q3="http://openiz.org/model" ref="q3:TextObservation" />
-        <xs:element minOccurs="0" maxOccurs="1" xmlns:q4="http://openiz.org/model" ref="q4:SubstanceAdministration" />
-        <xs:element minOccurs="0" maxOccurs="1" xmlns:q5="http://openiz.org/model" ref="q5:QuantityObservation" />
-        <xs:element minOccurs="0" maxOccurs="1" xmlns:q6="http://openiz.org/model" ref="q6:CodedObseration" />
-        <xs:element minOccurs="0" maxOccurs="1" xmlns:q7="http://openiz.org/model" ref="q7:PatientEncounter" />
-        <xs:element minOccurs="0" maxOccurs="1" name="jsonModel" type="xs:string" />
-      </xs:choice>
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element minOccurs="0" maxOccurs="1" name="assign" type="tns:PropertyAssignAction" />
-        <xs:element minOccurs="0" maxOccurs="1" name="add" type="tns:PropertyAddAction" />
-      </xs:choice>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="PropertyAssignAction" mixed="true">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:PropertyAction">
-        <xs:attribute name="scope" type="xs:string" />
-        <xs:attribute name="where" type="xs:string" />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="PropertyAction" abstract="true">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:ProtocolDataAction">
-        <xs:attribute name="propertyName" type="xs:string" />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="PropertyAddAction">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:PropertyAction" />
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="ProtocolDefinition" nillable="true" type="tns:ProtocolDefinition" />
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2015 rel. 4 (http://www.altova.com) by Justin Fyfe (Mohawk College) -->
+<xs:schema xmlns:tns="http://openiz.org/cdss" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:q1="http://microsoft.com/wsdl/types/" xmlns:q2="http://openiz.org/model/view" xmlns:q3="http://openiz.org/model" xmlns:q4="http://openiz.org/model" xmlns:q5="http://openiz.org/model" xmlns:q6="http://openiz.org/model" xmlns:q7="http://openiz.org/model" xmlns:q8="http://openiz.org/model" xmlns:q9="http://openiz.org/model/view" targetNamespace="http://openiz.org/cdss" elementFormDefault="qualified">
+	<xs:import namespace="http://microsoft.com/wsdl/types/" schemaLocation="BaseTypes.xsd"/>
+	<xs:import namespace="http://openiz.org/model" schemaLocation="OpenIZModel.xsd"/>
+	<xs:import namespace="http://openiz.org/model/view" schemaLocation="ViewModelDescription.xsd"/>
+	<xs:complexType name="DecisionSupportBaseElement" abstract="true">
+		<xs:attribute name="uuid" type="q1:guid" use="optional"/>
+		<xs:attribute name="id" type="xs:string"/>
+		<xs:attribute name="name" type="xs:string"/>
+		<xs:attribute name="version" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="ProtocolCollection" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:DecisionSupportBaseElement">
+				<xs:sequence>
+					<xs:element name="protocol" type="tns:ProtocolDefinition" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ProtocolDefinition" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:DecisionSupportBaseElement">
+				<xs:sequence>
+					<xs:element name="when" type="tns:ProtocolWhenClauseCollection" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="rule" type="tns:ProtocolRuleDefinition" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="q2:loaderModel" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ProtocolWhenClauseCollection">
+		<xs:sequence>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="imsiExpression" type="tns:WhenClauseImsiExpression" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="linqXmlExpression" type="tns:XmlLambdaExpression" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="linqExpression" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="evaluation" type="tns:BinaryOperatorType" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="WhenClauseImsiExpression">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="negationIndicator" type="xs:boolean" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XmlLambdaExpression" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:XmlBoundExpression">
+				<xs:sequence>
+					<xs:element name="argument" type="tns:XmlParameterExpression" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XmlBoundExpression" abstract="true" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:XmlExpression">
+				<xs:sequence>
+					<xs:choice minOccurs="1" maxOccurs="1">
+						<xs:element name="constantExpression" type="tns:XmlConstantExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="memberExpression" type="tns:XmlMemberExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="parameterExpression" type="tns:XmlParameterExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="binaryExpression" type="tns:XmlBinaryExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="unaryExpression" type="tns:XmlUnaryExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="methodCallExpression" type="tns:XmlMethodCallExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="typeBinaryExpression" type="tns:XmlTypeBinaryExpression" minOccurs="0" maxOccurs="1"/>
+					</xs:choice>
+				</xs:sequence>
+				<xs:attribute name="staticClass" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XmlExpression" abstract="true"/>
+	<xs:complexType name="XmlBinaryExpression" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:XmlExpression">
+				<xs:sequence>
+					<xs:choice minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="constantExpression" type="tns:XmlConstantExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="memberExpression" type="tns:XmlMemberExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="parameterExpression" type="tns:XmlParameterExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="binaryExpression" type="tns:XmlBinaryExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="unaryExpression" type="tns:XmlUnaryExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="methodCallExpression" type="tns:XmlMethodCallExpression" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="typeBinaryExpression" type="tns:XmlTypeBinaryExpression" minOccurs="0" maxOccurs="1"/>
+					</xs:choice>
+				</xs:sequence>
+				<xs:attribute name="operator" type="tns:BinaryOperatorType" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XmlConstantExpression" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:XmlExpression">
+				<xs:sequence>
+					<xs:element name="value" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XmlMemberExpression" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:XmlBoundExpression">
+				<xs:attribute name="memberName" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XmlParameterExpression" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:XmlExpression">
+				<xs:attribute name="type" type="xs:string"/>
+				<xs:attribute name="parameterName" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XmlUnaryExpression" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:XmlBoundExpression">
+				<xs:attribute name="operator" type="tns:UnaryOperatorType" use="required"/>
+				<xs:attribute name="type" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:simpleType name="UnaryOperatorType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="not"/>
+			<xs:enumeration value="convert"/>
+			<xs:enumeration value="neg"/>
+			<xs:enumeration value="as"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="XmlMethodCallExpression" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:XmlBoundExpression">
+				<xs:sequence>
+					<xs:element name="methodTypeArgument" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="argument" type="tns:XmlExpressionList" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+				<xs:attribute name="methodName" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XmlExpressionList">
+		<xs:sequence>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="constantExpression" type="tns:XmlConstantExpression" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="memberExpression" type="tns:XmlMemberExpression" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="parameterExpression" type="tns:XmlParameterExpression" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="binaryExpression" type="tns:XmlBinaryExpression" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="unaryExpression" type="tns:XmlUnaryExpression" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="methodCallExpression" type="tns:XmlMethodCallExpression" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="lambdaExpression" type="tns:XmlLambdaExpression" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="typeBinaryExpression" type="tns:XmlTypeBinaryExpression" minOccurs="0" maxOccurs="1"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="XmlTypeBinaryExpression" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:XmlBoundExpression">
+				<xs:attribute name="operandType" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:simpleType name="BinaryOperatorType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="eq"/>
+			<xs:enumeration value="lt"/>
+			<xs:enumeration value="lte"/>
+			<xs:enumeration value="gt"/>
+			<xs:enumeration value="gte"/>
+			<xs:enumeration value="ne"/>
+			<xs:enumeration value="and"/>
+			<xs:enumeration value="or"/>
+			<xs:enumeration value="add"/>
+			<xs:enumeration value="sub"/>
+			<xs:enumeration value="is"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="ProtocolRuleDefinition" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:DecisionSupportBaseElement">
+				<xs:sequence>
+					<xs:element name="variable" type="tns:ProtocolVariableDefinition" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="when" type="tns:ProtocolWhenClauseCollection" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="then" type="tns:ProtocolThenClauseCollection" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+				<xs:attribute name="repeat" type="xs:int" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ProtocolVariableDefinition">
+		<xs:complexContent>
+			<xs:extension base="tns:PropertyAssignAction">
+				<xs:attribute name="name" type="xs:string"/>
+				<xs:attribute name="type" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PropertyAssignAction" mixed="1">
+		<xs:complexContent>
+			<xs:extension base="tns:PropertyAction">
+				<xs:attribute name="scope" type="xs:string"/>
+				<xs:attribute name="where" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PropertyAction" abstract="true" mixed="1">
+		<xs:complexContent>
+			<xs:extension base="tns:ProtocolDataAction">
+				<xs:attribute name="propertyName" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ProtocolDataAction" mixed="1">
+		<xs:sequence>
+			<xs:choice minOccurs="1" maxOccurs="1">
+				<xs:element ref="q3:Act" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="q4:TextObservation" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="q5:SubstanceAdministration" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="q6:QuantityObservation" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="q7:CodedObservation" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="q8:PatientEncounter" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="jsonModel" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			</xs:choice>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="assign" type="tns:PropertyAssignAction" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="add" type="tns:PropertyAddAction" minOccurs="0" maxOccurs="1"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PropertyAddAction" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:PropertyAction"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ProtocolThenClauseCollection" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:DecisionSupportBaseElement">
+				<xs:sequence>
+					<xs:element name="action" type="tns:ProtocolDataAction" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="ProtocolDefinition" type="tns:ProtocolDefinition" nillable="true"/>
+	<xs:simpleType name="RuleSetTriggerEvent">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Inserting"/>
+			<xs:enumeration value="Inserted"/>
+			<xs:enumeration value="Updating"/>
+			<xs:enumeration value="Updated"/>
+			<xs:enumeration value="Obsoleting"/>
+			<xs:enumeration value="Obsoleted"/>
+			<xs:enumeration value="Queried"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="RuleSetDefinition" type="tns:RuleSetDefinition" nillable="true"/>
+	<xs:complexType name="RuleSetDefinition" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:DecisionSupportBaseElement">
+				<xs:sequence>
+					<xs:element name="trigger" type="tns:RuleSetTrigger" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="when" type="tns:ProtocolWhenClauseCollection" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="rule" type="tns:ProtocolRuleDefinition" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="q2:loaderModel" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="RuleSetTrigger">
+		<xs:attribute name="type" type="xs:string"/>
+		<xs:attribute name="event" type="tns:RuleSetTriggerEvent" use="required"/>
+	</xs:complexType>
 </xs:schema>

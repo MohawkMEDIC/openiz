@@ -84,6 +84,10 @@
     <Compile Include="ViewModel\Json\JsonSerializationContext.cs" />
     <Compile Include="ViewModel\Json\JsonViewModelSerializer.cs" />
     <Compile Include="ViewModel\IViewModelSerializer.cs" />
+    <Compile Include="ViewModel\Null\INullTypeFormatter.cs" />
+    <Compile Include="ViewModel\Null\NullReflectionTypeFormatter.cs" />
+    <Compile Include="ViewModel\Null\NullSerializationContext.cs" />
+    <Compile Include="ViewModel\Null\NullViewModelSerializer.cs" />
     <Compile Include="ViewModel\SerializationContext.cs" />
   </ItemGroup>
   <ItemGroup>

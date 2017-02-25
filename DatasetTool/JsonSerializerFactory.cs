@@ -340,7 +340,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
             foreach (var pi in forType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
 
-                var jsonName = this.GetPropertyName(pi);
+                var jsonName = this.GetPropertyName(pi, true);
                 if (jsonName == null || jsonName.StartsWith("$") || !pi.CanWrite) continue;
                 propertyCondition = new CodeConditionStatement(this.CreateEqualsStatement(new CodePrimitiveExpression(jsonName), readerValue), new CodeStatement[] { }, new CodeStatement[] { propertyCondition });
                 propertyCondition.TrueStatements.Add(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(_reader, "Read")));

@@ -29,6 +29,8 @@ using OpenIZ.Core.Services;
 using System.Threading;
 using OpenIZ.Core.Model.Constants;
 using System.Globalization;
+using OpenIZ.Core.Diagnostics;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Core.Protocol
 {
@@ -39,6 +41,8 @@ namespace OpenIZ.Core.Protocol
     public class SimpleCarePlanService : ICarePlanService
     {
 
+        // Tracer
+        private Tracer m_tracer = Tracer.GetTracer(typeof(SimpleCarePlanService));
         // Protocols 
         private List<IClinicalProtocol> m_protocols = new List<IClinicalProtocol>();
 
@@ -89,7 +93,7 @@ namespace OpenIZ.Core.Protocol
         /// <returns></returns>
         public IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters)
         {
-            return this.CreateCarePlan(p, asEncounters, this.Protocols.Select(o=>o.Id).ToArray());
+            return this.CreateCarePlan(p, asEncounters, this.Protocols.Select(o => o.Id).ToArray());
         }
 
         /// <summary>
@@ -97,82 +101,109 @@ namespace OpenIZ.Core.Protocol
         /// </summary>
         public IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters, params Guid[] protocols)
         {
-            // We want to flatten the patient's encounters 
-            p = p.Clone() as Patient;
-            p.Participations = new List<ActParticipation>(p.Participations);
-            // The record target here is also a record target for any relationships
-            p.Participations = p.Participations.Union(p.Participations.SelectMany(pt => pt.Act.Relationships.Select(r => new ActParticipation(ActParticipationKey.RecordTarget, p) { Act = r.TargetAct, ParticipationRole = new Model.DataTypes.Concept() { Mnemonic = "RecordTarget", Key = ActParticipationKey.RecordTarget } }))).ToList();
-            List<Act> protocolActs = this.Protocols.Where(o=>protocols.Contains(o.Id)).OrderBy(o => o.Name).AsParallel().SelectMany(o => o.Calculate(p)).OrderBy(o => o.StopTime - o.StartTime).ToList();
-
-            if (asEncounters)
+            try
             {
-                List<PatientEncounter> encounters = new List<PatientEncounter>();
-                foreach (var act in new List<Act>(protocolActs).Where(o => o.StartTime.HasValue && o.StopTime.HasValue).OrderBy(o => o.StartTime))
+                // Allow each protocol to initialize itself
+                var execProtocols = this.Protocols.Where(o => protocols.Contains(o.Id)).OrderBy(o => o.Name).Distinct().ToList();
+                // We want to flatten the patient's encounters 
+                p = p.Clone() as Patient;
+                p.Participations = new List<ActParticipation>(p.Participations);
+                // The record target here is also a record target for any /relationships
+                p.Participations = p.Participations.Union(p.Participations.SelectMany(pt =>
                 {
-                    // Is there a candidate encounter which is bound by start/end
-                    var candidate = encounters.FirstOrDefault(e => (act.StartTime ?? DateTimeOffset.MinValue) <= (e.StopTime ?? DateTimeOffset.MaxValue) && (act.StopTime ?? DateTimeOffset.MaxValue) >= (e.StartTime ?? DateTimeOffset.MinValue));
-
-                    // Create candidate
-                    if (candidate == null)
+                    if (pt.Act == null)
+                        pt.Act = EntitySource.Current.Get<Act>(pt.ActKey);
+                    return pt.Act?.Relationships?.Select(r =>
                     {
-                        candidate = this.CreateEncounter(act, p);
-                        encounters.Add(candidate);
-                        protocolActs.Add(candidate);
+                        var retVal = new ActParticipation(ActParticipationKey.RecordTarget, p)
+                        {
+                            ActKey = r.TargetActKey,
+                            ParticipationRole = new Model.DataTypes.Concept() { Mnemonic = "RecordTarget", Key = ActParticipationKey.RecordTarget }
+                        };
+                        if (r.TargetAct != null)
+                            retVal.Act = r.TargetAct;
+                        return retVal;
                     }
-                    else
+                    );
+                })).ToList();
+                foreach (var o in execProtocols.Distinct()) o.Initialize(p);
+                List<Act> protocolActs = execProtocols.AsParallel().SelectMany(o => o.Calculate(p)).OrderBy(o => o.StopTime - o.StartTime).ToList();
+
+                if (asEncounters)
+                {
+                    List<PatientEncounter> encounters = new List<PatientEncounter>();
+                    foreach (var act in new List<Act>(protocolActs).Where(o => o.StartTime.HasValue && o.StopTime.HasValue).OrderBy(o => o.StartTime))
                     {
-                        TimeSpan[] overlap = {
+                        // Is there a candidate encounter which is bound by start/end
+                        var candidate = encounters.FirstOrDefault(e => (act.StartTime ?? DateTimeOffset.MinValue) <= (e.StopTime ?? DateTimeOffset.MaxValue) && (act.StopTime ?? DateTimeOffset.MaxValue) >= (e.StartTime ?? DateTimeOffset.MinValue));
+
+                        // Create candidate
+                        if (candidate == null)
+                        {
+                            candidate = this.CreateEncounter(act, p);
+                            encounters.Add(candidate);
+                            protocolActs.Add(candidate);
+                        }
+                        else
+                        {
+                            TimeSpan[] overlap = {
                             (candidate.StopTime ?? DateTimeOffset.MaxValue) - (candidate.StartTime ?? DateTimeOffset.MinValue),
                             (candidate.StopTime ?? DateTimeOffset.MaxValue) - (act.StartTime ?? DateTimeOffset.MinValue),
                             (act.StopTime ?? DateTimeOffset.MaxValue) - (candidate.StartTime ?? DateTimeOffset.MinValue),
                             (act.StopTime ?? DateTimeOffset.MaxValue) - (act.StartTime ?? DateTimeOffset.MinValue)
                         };
-                        // find the minimum overlap
-                        var minOverlap = overlap.Min();
-                        var overlapMin = Array.IndexOf(overlap, minOverlap);
-                        // Adjust the dates based on the start / stop time
-                        if (overlapMin % 2 == 1)
-                            candidate.StartTime = act.StartTime;
-                        if (overlapMin > 1)
-                            candidate.StopTime = act.StopTime;
-                        candidate.ActTime = candidate.StartTime ?? candidate.ActTime;
+                            // find the minimum overlap
+                            var minOverlap = overlap.Min();
+                            var overlapMin = Array.IndexOf(overlap, minOverlap);
+                            // Adjust the dates based on the start / stop time
+                            if (overlapMin % 2 == 1)
+                                candidate.StartTime = act.StartTime;
+                            if (overlapMin > 1)
+                                candidate.StopTime = act.StopTime;
+                            candidate.ActTime = candidate.StartTime ?? candidate.ActTime;
+                        }
+
+                        // Add the protocol act
+                        candidate.Relationships.Add(new ActRelationship(ActRelationshipTypeKeys.HasComponent, act));
+
+                        // Remove so we don't have duplicates
+                        protocolActs.Remove(act);
+                        p.Participations.RemoveAll(o => o.Act == act);
+
                     }
 
-                    // Add the protocol act
-                    candidate.Relationships.Add(new ActRelationship(ActRelationshipTypeKeys.HasComponent, act));
-
-                    // Remove so we don't have duplicates
-                    protocolActs.Remove(act);
-                    p.Participations.RemoveAll(o => o.Act == act);
-
-                }
-
-                // for those acts which do not have a stop time, schedule them in the first appointment available
-                foreach (var act in new List<Act>(protocolActs).Where(o => !o.StopTime.HasValue))
-                {
-                    var candidate = encounters.OrderBy(o => o.StartTime).FirstOrDefault(e => e.StartTime >= act.StartTime);
-                    if (candidate == null)
+                    // for those acts which do not have a stop time, schedule them in the first appointment available
+                    foreach (var act in new List<Act>(protocolActs).Where(o => !o.StopTime.HasValue))
                     {
-                        candidate = this.CreateEncounter(act, p);
-                        encounters.Add(candidate);
-                        protocolActs.Add(candidate);
-                    }
-                    // Add the protocol act
-                    candidate.Relationships.Add(new ActRelationship(ActRelationshipTypeKeys.HasComponent, act));
+                        var candidate = encounters.OrderBy(o => o.StartTime).FirstOrDefault(e => e.StartTime >= act.StartTime);
+                        if (candidate == null)
+                        {
+                            candidate = this.CreateEncounter(act, p);
+                            encounters.Add(candidate);
+                            protocolActs.Add(candidate);
+                        }
+                        // Add the protocol act
+                        candidate.Relationships.Add(new ActRelationship(ActRelationshipTypeKeys.HasComponent, act));
 
-                    // Remove so we don't have duplicates
-                    protocolActs.Remove(act);
-                    p.Participations.RemoveAll(o => o.Act == act);
+                        // Remove so we don't have duplicates
+                        protocolActs.Remove(act);
+                        p.Participations.RemoveAll(o => o.Act == act);
+                    }
+
                 }
 
+                // TODO: Configure for days of week
+                foreach (var itm in protocolActs)
+                    while (itm.ActTime.DayOfWeek == DayOfWeek.Sunday || itm.ActTime.DayOfWeek == DayOfWeek.Saturday)
+                        itm.ActTime = itm.ActTime.AddDays(1);
+
+                return protocolActs.ToList();
             }
-
-            // TODO: Configure for days of week
-            foreach (var itm in protocolActs)
-                while (itm.ActTime.DayOfWeek == DayOfWeek.Sunday || itm.ActTime.DayOfWeek == DayOfWeek.Saturday)
-                    itm.ActTime = itm.ActTime.AddDays(1);
-
-            return protocolActs.ToList();
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error creating care plan: {0}", e);
+                return new List<Act>();
+            }
         }
 
         /// <summary>
@@ -198,6 +229,7 @@ namespace OpenIZ.Core.Protocol
                 Act = retVal
             });
             return retVal;
+
         }
     }
 }

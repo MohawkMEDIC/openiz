@@ -33,6 +33,7 @@ using System.Threading;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Diagnostics;
+using OpenIZ.Core.Applets.ViewModel.Null;
 
 namespace OpenIZ.Protocol.Xml
 {
@@ -44,7 +45,10 @@ namespace OpenIZ.Protocol.Xml
 
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(XmlClinicalProtocol));
-        
+
+        // Null view model serializer
+        private NullViewModelSerializer m_viewModel = new NullViewModelSerializer();
+
         /// <summary>
         /// Default ctor
         /// </summary>
@@ -258,6 +262,20 @@ namespace OpenIZ.Protocol.Xml
         public List<Act> Update(Patient p, List<Act> existingPlan)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Initialize the patient
+        /// </summary>
+        public void Initialize(Patient p)
+        {
+            if (this.m_viewModel.ViewModel == null)
+            {
+                this.m_viewModel.ViewModel = this.Definition.Initialize;
+                this.m_viewModel.ViewModel?.Initialize();
+            }
+            // serialize - This will load data
+            this.m_viewModel.Serialize(p);
         }
     }
 }

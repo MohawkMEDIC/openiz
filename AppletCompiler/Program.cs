@@ -267,11 +267,12 @@ namespace AppletCompiler
                             });
                             break;
                         case ".css":
+
                             retVal.Add(new AppletAsset()
                             {
                                 Name = ResolveName(itm.Replace(path, "")),
                                 MimeType = "text/css",
-                                Content = parms.Optimize ? new Microsoft.Ajax.Utilities.Minifier().MinifyStyleSheet(File.ReadAllText(itm)) : File.ReadAllText(itm)
+                                Content = parms.Optimize && !itm.Contains(".min") ? new Microsoft.Ajax.Utilities.Minifier().MinifyStyleSheet(File.ReadAllText(itm)) : File.ReadAllText(itm)
                             });
                             break;
                         case ".js":
@@ -279,7 +280,7 @@ namespace AppletCompiler
                             {
                                 Name = ResolveName(itm.Replace(path, "")),
                                 MimeType = "text/javascript",
-                                Content = parms.Optimize ? new Microsoft.Ajax.Utilities.Minifier().MinifyJavaScript(File.ReadAllText(itm)) : File.ReadAllText(itm)
+                                Content = parms.Optimize && !itm.Contains(".min") ? new Microsoft.Ajax.Utilities.Minifier().MinifyJavaScript(File.ReadAllText(itm)) : File.ReadAllText(itm)
                             });
                             break;
                         case ".json":

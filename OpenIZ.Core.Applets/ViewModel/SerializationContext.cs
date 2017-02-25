@@ -63,6 +63,23 @@ namespace OpenIZ.Core.Applets.ViewModel
         }
 
         /// <summary>
+        /// Get the debug view
+        /// </summary>
+        public string DebugView {
+            get
+            {
+                var c = this;
+                String retVal = String.Empty;
+                while(c != null)
+                {
+                    retVal = "." + c.ToString() + retVal;
+                    c = c.Parent;
+                }
+                return retVal;
+            }
+        }
+
+        /// <summary>
         /// Gets the name of the element
         /// </summary>
         public String PropertyName { get; private set; }
@@ -80,11 +97,11 @@ namespace OpenIZ.Core.Applets.ViewModel
             {
                 if (this.m_elementDescription == null)
                 {
-                    var elementDescription = this.ViewModelDescription.FindDescription(this.PropertyName, this.Parent?.ElementDescription);
+                    var elementDescription = this.ViewModelDescription?.FindDescription(this.PropertyName, this.Parent?.ElementDescription);
                     if (elementDescription == null)
-                        elementDescription = this.ViewModelDescription.FindDescription(this.Instance?.GetType().StripGeneric());
+                        elementDescription = this.ViewModelDescription?.FindDescription(this.Instance?.GetType().StripGeneric());
                     if (!String.IsNullOrEmpty(elementDescription?.Ref))
-                        elementDescription = this.ViewModelDescription.FindDescription(elementDescription.Ref) ?? elementDescription;
+                        elementDescription = this.ViewModelDescription?.FindDescription(elementDescription.Ref) ?? elementDescription;
                     this.m_elementDescription = elementDescription;
                 }
                 return this.m_elementDescription;

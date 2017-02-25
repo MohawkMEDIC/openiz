@@ -48,11 +48,11 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         // Classifiers
         private Dictionary<Type, IViewModelClassifier> m_classifiers = new Dictionary<Type, IViewModelClassifier>();
 
-        // Sync lock
-        private Object m_syncLock = new object();
-
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(JsonViewModelSerializer));
+
+        // Sync lock
+        private Object m_syncLock = new object();
 
         // Related load methods
         private Dictionary<Type, MethodInfo> m_relatedLoadMethods = new Dictionary<Type, MethodInfo>();

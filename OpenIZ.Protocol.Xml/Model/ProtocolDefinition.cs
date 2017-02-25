@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-8-2
  */
+using OpenIZ.Core.Applets.ViewModel.Description;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,6 +44,12 @@ namespace OpenIZ.Protocol.Xml.Model
         /// </summary>
         [XmlElement("rule")]
         public List<ProtocolRuleDefinition> Rules { get; set; }
+
+        /// <summary>
+        /// View model description
+        /// </summary>
+        [XmlElement("loaderModel", Namespace = "http://openiz.org/model/view")]
+        public ViewModelDescription Initialize { get; set; }
 
         /// <summary>
         /// Save the protocol definition to the specified stream

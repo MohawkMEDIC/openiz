@@ -92,6 +92,7 @@ namespace OpenIZ.Core.Applets
         public AppletCollection()
         {
             this.CachePages = true;
+            AppletCollection.ClearCaches();
         }
 
         /// <summary>
@@ -101,8 +102,21 @@ namespace OpenIZ.Core.Applets
         {
             this.CachePages = true;
             this.m_baseUrl = baseUrl;
+            AppletCollection.ClearCaches();
+
         }
 
+        /// <summary>
+        /// Clear all caches
+        /// </summary>
+        public static void ClearCaches()
+        {
+            s_cache?.Clear();
+            s_stringCache?.Clear();
+            s_templateCache?.Clear();
+            s_viewModelCache?.Clear();
+            s_viewStateAssets = null;
+        }
         /// <summary>
         /// The current default scope applet
         /// </summary>

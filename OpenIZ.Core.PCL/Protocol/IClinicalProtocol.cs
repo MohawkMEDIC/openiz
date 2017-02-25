@@ -63,5 +63,10 @@ namespace OpenIZ.Core.Protocol
         /// </summary>
         List<Act> Update(Patient p, List<Act> existingPlan);
 
+        /// <summary>
+        /// Called prior to performing calculation of the care protocol allowing the object to prepare the object for whatever 
+        /// pre-requisite data is needed for the protocol
+        /// </summary>
+        void Initialize(Patient p);
     }
 }
