@@ -220,18 +220,24 @@ namespace OpenIZ.BusinessRules.JavaScript
             }
         }
 
-        /// <summary>
-        /// Get call list of action
-        /// </summary>
-        public List<Func<object, ExpandoObject>> GetCallList<TBinding>(String action)
+		/// <summary>
+		/// Get call list of action
+		/// </summary>
+		/// <typeparam name="TBinding">The type of the t binding.</typeparam>
+		/// <param name="action">The action.</param>
+		/// <returns>List&lt;Func&lt;System.Object, ExpandoObject&gt;&gt;.</returns>
+		public List<Func<object, ExpandoObject>> GetCallList<TBinding>(String action)
         {
             return this.GetCallList(typeof(TBinding), action);
         }
 
-        /// <summary>
-        /// Generic method for bindig call list
-        /// </summary>
-        public List<Func<object, ExpandoObject>> GetCallList(Type tbinding, String action) { 
+		/// <summary>
+		/// Generic method for bindig call list
+		/// </summary>
+		/// <param name="tbinding">The tbinding.</param>
+		/// <param name="action">The action.</param>
+		/// <returns>List&lt;Func&lt;System.Object, ExpandoObject&gt;&gt;.</returns>
+		public List<Func<object, ExpandoObject>> GetCallList(Type tbinding, String action) { 
             var className = tbinding.GetTypeInfo().GetCustomAttribute<JsonObjectAttribute>()?.Id;
 
             // Try to get the binding

@@ -1,4 +1,6 @@
-﻿/*
+﻿/// <reference path="openiz.js"/>
+
+/*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  * 
  * 
@@ -23,7 +25,7 @@
  * @namespace
  * @property {uuid} EmptyGuid A property which represents an empty UUID
  */
-var OpenIZModel = {
+var OpenIZModel = OpenIZModel || {
     // OpenIZ.Core.Model.BaseEntityData, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
     /**
      * @class
@@ -44,9 +46,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.BaseEntityData} copyData Copy constructor (if present)
      */
-    BaseEntityData: function (copyData) {
+    BaseEntityData: function (copyData)
+    {
         this.$type = 'BaseEntityData';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -74,9 +78,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.Association} copyData Copy constructor (if present)
      */
-    Association: function (copyData) {
+    Association: function (copyData)
+    {
         this.$type = 'Association';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -97,9 +103,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.IdentifiedData} copyData Copy constructor (if present)
      */
-    IdentifiedData: function (copyData) {
+    IdentifiedData: function (copyData)
+    {
         this.$type = 'IdentifiedData';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.modifiedOn = copyData.modifiedOn;
             this.id = copyData.id;
@@ -126,9 +134,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.NonVersionedEntityData} copyData Copy constructor (if present)
      */
-    NonVersionedEntityData: function (copyData) {
+    NonVersionedEntityData: function (copyData)
+    {
         this.$type = 'NonVersionedEntityData';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -160,9 +170,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.VersionedAssociation} copyData Copy constructor (if present)
      */
-    VersionedAssociation: function (copyData) {
+    VersionedAssociation: function (copyData)
+    {
         this.$type = 'VersionedAssociation';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -196,9 +208,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.VersionedEntityData} copyData Copy constructor (if present)
      */
-    VersionedEntityData: function (copyData) {
+    VersionedEntityData: function (copyData)
+    {
         this.$type = 'VersionedEntityData';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -237,9 +251,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.SecurityApplication} copyData Copy constructor (if present)
      */
-    SecurityApplication: function (copyData) {
+    SecurityApplication: function (copyData)
+    {
         this.$type = 'SecurityApplication';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -278,9 +294,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.SecurityDevice} copyData Copy constructor (if present)
      */
-    SecurityDevice: function (copyData) {
+    SecurityDevice: function (copyData)
+    {
         this.$type = 'SecurityDevice';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -317,9 +335,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.NonVersionedEntityData} copyData Copy constructor (if present)
      */
-    NonVersionedEntityData: function (copyData) {
+    NonVersionedEntityData: function (copyData)
+    {
         this.$type = 'NonVersionedEntityData';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -357,9 +377,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.SecurityPolicy} copyData Copy constructor (if present)
      */
-    SecurityPolicy: function (copyData) {
+    SecurityPolicy: function (copyData)
+    {
         this.$type = 'SecurityPolicy';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -391,9 +413,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.SecurityPolicyInstance} copyData Copy constructor (if present)
      */
-    SecurityPolicyInstance: function (copyData) {
+    SecurityPolicyInstance: function (copyData)
+    {
         this.$type = 'SecurityPolicyInstance';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -424,9 +448,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.NonVersionedEntityData} copyData Copy constructor (if present)
      */
-    NonVersionedEntityData: function (copyData) {
+    NonVersionedEntityData: function (copyData)
+    {
         this.$type = 'NonVersionedEntityData';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -476,9 +502,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.SecurityUser} copyData Copy constructor (if present)
      */
-    SecurityUser: function (copyData) {
+    SecurityUser: function (copyData)
+    {
         this.$type = 'SecurityUser';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -810,9 +838,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.Patient} copyData Copy constructor (if present)
      */
-    Patient: function (copyData) {
+    Patient: function (copyData)
+    {
         this.$type = 'Patient';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -1158,9 +1188,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.Provider} copyData Copy constructor (if present)
      */
-    Provider: function (copyData) {
+    Provider: function (copyData)
+    {
         this.$type = 'Provider';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -1503,9 +1535,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.UserEntity} copyData Copy constructor (if present)
      */
-    UserEntity: function (copyData) {
+    UserEntity: function (copyData)
+    {
         this.$type = 'UserEntity';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -1848,9 +1882,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.ApplicationEntity} copyData Copy constructor (if present)
      */
-    ApplicationEntity: function (copyData) {
+    ApplicationEntity: function (copyData)
+    {
         this.$type = 'ApplicationEntity';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -2192,9 +2228,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.DeviceEntity} copyData Copy constructor (if present)
      */
-    DeviceEntity: function (copyData) {
+    DeviceEntity: function (copyData)
+    {
         this.$type = 'DeviceEntity';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -2531,9 +2569,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.Entity} copyData Copy constructor (if present)
      */
-    Entity: function (copyData) {
+    Entity: function (copyData)
+    {
         this.$type = 'Entity';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -2618,9 +2658,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.EntityAddress} copyData Copy constructor (if present)
      */
-    EntityAddress: function (copyData) {
+    EntityAddress: function (copyData)
+    {
         this.$type = 'EntityAddress';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -2651,9 +2693,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.AddressComponent} copyData Copy constructor (if present)
      */
-    AddressComponent: function (copyData) {
+    AddressComponent: function (copyData)
+    {
         this.$type = 'AddressComponent';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -2691,9 +2735,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.EntityName} copyData Copy constructor (if present)
      */
-    EntityName: function (copyData) {
+    EntityName: function (copyData)
+    {
         this.$type = 'EntityName';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -2727,9 +2773,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.EntityNameComponent} copyData Copy constructor (if present)
      */
-    EntityNameComponent: function (copyData) {
+    EntityNameComponent: function (copyData)
+    {
         this.$type = 'EntityNameComponent';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -2768,9 +2816,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.EntityRelationship} copyData Copy constructor (if present)
      */
-    EntityRelationship: function (copyData) {
+    EntityRelationship: function (copyData)
+    {
         this.$type = 'EntityRelationship';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -2808,9 +2858,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.EntityTelecomAddress} copyData Copy constructor (if present)
      */
-    EntityTelecomAddress: function (copyData) {
+    EntityTelecomAddress: function (copyData)
+    {
         this.$type = 'EntityTelecomAddress';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -2842,9 +2894,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.GenericComponentValues} copyData Copy constructor (if present)
      */
-    GenericComponentValues: function (copyData) {
+    GenericComponentValues: function (copyData)
+    {
         this.$type = 'GenericComponentValues';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -3160,9 +3214,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.ManufacturedMaterial} copyData Copy constructor (if present)
      */
-    ManufacturedMaterial: function (copyData) {
+    ManufacturedMaterial: function (copyData)
+    {
         this.$type = 'ManufacturedMaterial';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -3510,9 +3566,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.Material} copyData Copy constructor (if present)
      */
-    Material: function (copyData) {
+    Material: function (copyData)
+    {
         this.$type = 'Material';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -3854,9 +3912,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.Organization} copyData Copy constructor (if present)
      */
-    Organization: function (copyData) {
+    Organization: function (copyData)
+    {
         this.$type = 'Organization';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -4194,9 +4254,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.Person} copyData Copy constructor (if present)
      */
-    Person: function (copyData) {
+    Person: function (copyData)
+    {
         this.$type = 'Person';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -4254,9 +4316,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.PersonLanguageCommunication} copyData Copy constructor (if present)
      */
-    PersonLanguageCommunication: function (copyData) {
+    PersonLanguageCommunication: function (copyData)
+    {
         this.$type = 'PersonLanguageCommunication';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -4569,9 +4633,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.Place} copyData Copy constructor (if present)
      */
-    Place: function (copyData) {
+    Place: function (copyData)
+    {
         this.$type = 'Place';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -4631,9 +4697,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.PlaceService} copyData Copy constructor (if present)
      */
-    PlaceService: function (copyData) {
+    PlaceService: function (copyData)
+    {
         this.$type = 'PlaceService';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -4674,9 +4742,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.AssigningAuthority} copyData Copy constructor (if present)
      */
-    AssigningAuthority: function (copyData) {
+    AssigningAuthority: function (copyData)
+    {
         this.$type = 'AssigningAuthority';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -4724,9 +4794,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.CodeSystem} copyData Copy constructor (if present)
      */
-    CodeSystem: function (copyData) {
+    CodeSystem: function (copyData)
+    {
         this.$type = 'CodeSystem';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -4789,9 +4861,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.Concept} copyData Copy constructor (if present)
      */
-    Concept: function (copyData) {
+    Concept: function (copyData)
+    {
         this.$type = 'Concept';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -4841,9 +4915,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.ConceptClass} copyData Copy constructor (if present)
      */
-    ConceptClass: function (copyData) {
+    ConceptClass: function (copyData)
+    {
         this.$type = 'ConceptClass';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -4881,9 +4957,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.ConceptName} copyData Copy constructor (if present)
      */
-    ConceptName: function (copyData) {
+    ConceptName: function (copyData)
+    {
         this.$type = 'ConceptName';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -4919,9 +4997,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.ConceptReferenceTerm} copyData Copy constructor (if present)
      */
-    ConceptReferenceTerm: function (copyData) {
+    ConceptReferenceTerm: function (copyData)
+    {
         this.$type = 'ConceptReferenceTerm';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -4956,9 +5036,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.ConceptRelationship} copyData Copy constructor (if present)
      */
-    ConceptRelationship: function (copyData) {
+    ConceptRelationship: function (copyData)
+    {
         this.$type = 'ConceptRelationship';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -4995,9 +5077,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.ConceptRelationshipType} copyData Copy constructor (if present)
      */
-    ConceptRelationshipType: function (copyData) {
+    ConceptRelationshipType: function (copyData)
+    {
         this.$type = 'ConceptRelationshipType';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -5037,9 +5121,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.ConceptSet} copyData Copy constructor (if present)
      */
-    ConceptSet: function (copyData) {
+    ConceptSet: function (copyData)
+    {
         this.$type = 'ConceptSet';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -5076,9 +5162,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.Extension} copyData Copy constructor (if present)
      */
-    Extension: function (copyData) {
+    Extension: function (copyData)
+    {
         this.$type = 'Extension';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -5109,9 +5197,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.EntityExtension} copyData Copy constructor (if present)
      */
-    EntityExtension: function (copyData) {
+    EntityExtension: function (copyData)
+    {
         this.$type = 'EntityExtension';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -5142,9 +5232,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.ActExtension} copyData Copy constructor (if present)
      */
-    ActExtension: function (copyData) {
+    ActExtension: function (copyData)
+    {
         this.$type = 'ActExtension';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -5179,9 +5271,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.ExtensionType} copyData Copy constructor (if present)
      */
-    ExtensionType: function (copyData) {
+    ExtensionType: function (copyData)
+    {
         this.$type = 'ExtensionType';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -5217,9 +5311,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.EntityIdentifier} copyData Copy constructor (if present)
      */
-    EntityIdentifier: function (copyData) {
+    EntityIdentifier: function (copyData)
+    {
         this.$type = 'EntityIdentifier';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -5252,9 +5348,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.ActIdentifier} copyData Copy constructor (if present)
      */
-    ActIdentifier: function (copyData) {
+    ActIdentifier: function (copyData)
+    {
         this.$type = 'ActIdentifier';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -5288,9 +5386,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.IdentifierBase} copyData Copy constructor (if present)
      */
-    IdentifierBase: function (copyData) {
+    IdentifierBase: function (copyData)
+    {
         this.$type = 'IdentifierBase';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -5326,9 +5426,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.IdentifierType} copyData Copy constructor (if present)
      */
-    IdentifierType: function (copyData) {
+    IdentifierType: function (copyData)
+    {
         this.$type = 'IdentifierType';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -5365,9 +5467,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.Note} copyData Copy constructor (if present)
      */
-    Note: function (copyData) {
+    Note: function (copyData)
+    {
         this.$type = 'Note';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -5400,9 +5504,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.EntityNote} copyData Copy constructor (if present)
      */
-    EntityNote: function (copyData) {
+    EntityNote: function (copyData)
+    {
         this.$type = 'EntityNote';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -5435,9 +5541,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.ActNote} copyData Copy constructor (if present)
      */
-    ActNote: function (copyData) {
+    ActNote: function (copyData)
+    {
         this.$type = 'ActNote';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -5473,9 +5581,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.PhoneticAlgorithm} copyData Copy constructor (if present)
      */
-    PhoneticAlgorithm: function (copyData) {
+    PhoneticAlgorithm: function (copyData)
+    {
         this.$type = 'PhoneticAlgorithm';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -5517,9 +5627,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.ReferenceTerm} copyData Copy constructor (if present)
      */
-    ReferenceTerm: function (copyData) {
+    ReferenceTerm: function (copyData)
+    {
         this.$type = 'ReferenceTerm';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -5561,9 +5673,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.ReferenceTermName} copyData Copy constructor (if present)
      */
-    ReferenceTermName: function (copyData) {
+    ReferenceTermName: function (copyData)
+    {
         this.$type = 'ReferenceTermName';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -5604,9 +5718,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.Tag} copyData Copy constructor (if present)
      */
-    Tag: function (copyData) {
+    Tag: function (copyData)
+    {
         this.$type = 'Tag';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -5645,9 +5761,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.EntityTag} copyData Copy constructor (if present)
      */
-    EntityTag: function (copyData) {
+    EntityTag: function (copyData)
+    {
         this.$type = 'EntityTag';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -5686,9 +5804,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.ActTag} copyData Copy constructor (if present)
      */
-    ActTag: function (copyData) {
+    ActTag: function (copyData)
+    {
         this.$type = 'ActTag';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -5729,9 +5849,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.TemplateDefinition} copyData Copy constructor (if present)
      */
-    TemplateDefinition: function (copyData) {
+    TemplateDefinition: function (copyData)
+    {
         this.$type = 'TemplateDefinition';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -5767,9 +5889,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.Bundle} copyData Copy constructor (if present)
      */
-    Bundle: function (copyData) {
+    Bundle: function (copyData)
+    {
         this.$type = 'Bundle';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.totalResults = copyData.totalResults;
@@ -5909,9 +6033,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.Act} copyData Copy constructor (if present)
      */
-    Act: function (copyData) {
+    Act: function (copyData)
+    {
         this.$type = 'Act';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -5973,9 +6099,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.ActParticipation} copyData Copy constructor (if present)
      */
-    ActParticipation: function (copyData) {
+    ActParticipation: function (copyData)
+    {
         this.$type = 'ActParticipation';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -6012,9 +6140,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.ActProtocol} copyData Copy constructor (if present)
      */
-    ActProtocol: function (copyData) {
+    ActProtocol: function (copyData)
+    {
         this.$type = 'ActProtocol';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -6048,9 +6178,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.ActRelationship} copyData Copy constructor (if present)
      */
-    ActRelationship: function (copyData) {
+    ActRelationship: function (copyData)
+    {
         this.$type = 'ActRelationship';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.sourceModel = copyData.sourceModel;
@@ -6193,9 +6325,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.ControlAct} copyData Copy constructor (if present)
      */
-    ControlAct: function (copyData) {
+    ControlAct: function (copyData)
+    {
         this.$type = 'ControlAct';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -6365,9 +6499,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.Observation} copyData Copy constructor (if present)
      */
-    Observation: function (copyData) {
+    Observation: function (copyData)
+    {
         this.$type = 'Observation';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -6541,9 +6677,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.QuantityObservation} copyData Copy constructor (if present)
      */
-    QuantityObservation: function (copyData) {
+    QuantityObservation: function (copyData)
+    {
         this.$type = 'QuantityObservation';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -6718,9 +6856,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.TextObservation} copyData Copy constructor (if present)
      */
-    TextObservation: function (copyData) {
+    TextObservation: function (copyData)
+    {
         this.$type = 'TextObservation';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -6894,9 +7034,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.CodedObservation} copyData Copy constructor (if present)
      */
-    CodedObservation: function (copyData) {
+    CodedObservation: function (copyData)
+    {
         this.$type = 'CodedObservation';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -7069,9 +7211,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.PatientEncounter} copyData Copy constructor (if present)
      */
-    PatientEncounter: function (copyData) {
+    PatientEncounter: function (copyData)
+    {
         this.$type = 'PatientEncounter';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -7133,9 +7277,11 @@ var OpenIZModel = {
      * @property {string} etag            Gets a tag which changes whenever the object is updated            
      * @param {OpenIZModel.Protocol} copyData Copy constructor (if present)
      */
-    Protocol: function (copyData) {
+    Protocol: function (copyData)
+    {
         this.$type = 'Protocol';
-        if (copyData) {
+        if (copyData)
+        {
             this.etag = copyData.etag;
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
@@ -7287,9 +7433,11 @@ var OpenIZModel = {
      * @property {string} $type            Gets the type            
      * @param {OpenIZModel.SubstanceAdministration} copyData Copy constructor (if present)
      */
-    SubstanceAdministration: function (copyData) {
+    SubstanceAdministration: function (copyData)
+    {
         this.$type = 'SubstanceAdministration';
-        if (copyData) {
+        if (copyData)
+        {
             this.id = copyData.id;
             this.obsoletedBy = copyData.obsoletedBy;
             this.createdBy = copyData.createdBy;
@@ -9124,7 +9272,8 @@ var OpenIZModel = {
          * @param {Object} detail Any detail / diagnostic information
          * @param {OpenIZModel#Exception} cause The cause of the exception
          */
-    Exception: function (type, message, detail, cause) {
+    Exception: function (type, message, detail, cause)
+    {
         _self = this;
 
         this.type = type;
@@ -9132,5 +9281,21 @@ var OpenIZModel = {
         this.details = detail;
         this.caused_by = cause;
 
-    }
+    },  // Exception
+    // OpenIZ.Core.Model.Constants.DatePrecisionFormats, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    /**
+     * @enum {String}
+     * @memberof OpenIZModel
+     * @public
+     * @readonly
+     * @summary Date formats for using date precision
+     */
+    DatePrecisionFormats: {
+        DateFormatYear: 'YYYY',
+        DateFormatMonth: 'YYYY-MM',
+        DateFormatDay: 'YYYY-MM-DD',
+        DateFormatHour: 'YYYY-MM-DD HH',
+        DateFormatMinute: 'YYYY-MM-DD HH:mm',
+        DateFormatSecond: 'YYYY-MM-DD HH:mm:ss'
+    }  // Date Precision Formats
 } // OpenIZModel

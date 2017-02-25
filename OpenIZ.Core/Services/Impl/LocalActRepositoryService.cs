@@ -180,6 +180,9 @@ namespace OpenIZ.Core.Services.Impl
 
 			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TAct>();
 
+			// validate the act
+			this.Validate<TAct>(act);
+
 			try
 			{
 				act = businessRulesService != null ? businessRulesService.BeforeUpdate(act) : act;
@@ -211,16 +214,36 @@ namespace OpenIZ.Core.Services.Impl
 		/// <summary>
 		/// Validates an act.
 		/// </summary>
+		/// <exception cref="DetectedIssueException">Thrown if there are any validation errors during validation.</exception>
 		public TAct Validate<TAct>(TAct data) where TAct : Act
 		{
+			var businessRulesService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
+
+			if (businessRulesService == null)
+			{
+				return data;
+			}
+
+			var details = businessRulesService.Validate(data);
+
+			if (details.Any(d => d.Priority == DetectedIssuePriorityType.Error))
+			{
+				throw new DetectedIssueException(details);
+			}
+
 			// Correct author information and controlling act information
 			data = data.Clean() as TAct;
 
-			ISecurityRepositoryService userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+			if (data == null)
+			{
+				throw new InvalidOperationException($"{nameof(data)} cannot be null");
+			}
+
+			var userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
 			var currentUserEntity = userService.GetUserEntity(AuthenticationContext.Current.Principal.Identity);
 
-			if (!data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator))
+			if (data.Participations.All(o => o.ParticipationRoleKey != ActParticipationKey.Authororiginator))
 			{
 				data.Participations.Add(new ActParticipation(ActParticipationKey.Authororiginator, currentUserEntity));
 			}
