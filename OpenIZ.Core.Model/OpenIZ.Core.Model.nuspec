@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>OpenIZ.Core.Model</id>
-    <version>0.6.14.0</version>
+    <version>0.6.14.2</version>
     <title>OpenIZ Core Model Classes</title>
     <authors>Mohawk College of Applied Arts and Technology</authors>
     <owners>Mohawk College of Applied Arts and Technology</owners>
@@ -16,7 +16,7 @@
     <tags>OpenIZ OpenImmunize</tags>
   </metadata>
   <files>
-	<file src="..\bin\Debug\Newtonsoft.Json.dll" target="lib\net4.5\Newtonsoft.Json.dll" />
-	<file src="..\bin\Debug\Newtonsoft.Json.xml" target="lib\net4.5\Newtonsoft.Json.xml" />
+	<file src="..\bin\Debug\OpenIZ.Core.Model.dll" target="lib\net4.5\OpenIZ.Core.Model.dll" />
+	<file src="..\bin\Debug\OpenIZ.Core.Model.xml" target="lib\net4.5\OpenIZ.Core.Model.xml" />
   </files>
 </package>
