@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>OpenIZ.Core.Model</id>
+    <version>0.6.14.0</version>
+    <title>OpenIZ Core Model Classes</title>
+    <authors>Mohawk College of Applied Arts and Technology</authors>
+    <owners>Mohawk College of Applied Arts and Technology</owners>
+    <licenseUrl>https://openiz.codeplex.com/license</licenseUrl>
+    <projectUrl>https://openiz.codeplex.com</projectUrl>
+    <iconUrl>http://openiz.org/img/logo.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>OpenIZ Core Model Classes</description>
+    <releaseNotes>Core classes implemented.</releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>OpenIZ OpenImmunize</tags>
+  </metadata>
+  <files>
+	<file src="..\bin\Debug\Newtonsoft.Json.dll" target="lib\net4.5\Newtonsoft.Json.dll" />
+	<file src="..\bin\Debug\Newtonsoft.Json.xml" target="lib\net4.5\Newtonsoft.Json.xml" />
+  </files>
+</package>
