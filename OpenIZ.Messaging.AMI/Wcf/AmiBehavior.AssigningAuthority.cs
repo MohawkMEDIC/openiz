@@ -25,7 +25,6 @@ using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Services;
 using System;
-using System.Data;
 using System.Linq;
 using System.ServiceModel.Web;
 
@@ -41,13 +40,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="assigningAuthorityInfo">The assigning authority to be created.</param>
 		/// <returns>Returns the created assigning authority.</returns>
+		/// <exception cref="System.InvalidOperationException">If the IAssigningAuthorityRepositoryService is not found.</exception>
 		public AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo)
 		{
 			var assigningAuthorityRepositoryService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
 
 			if (assigningAuthorityRepositoryService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAssigningAuthorityRepositoryService)));
+				throw new InvalidOperationException($"{nameof(IAssigningAuthorityRepositoryService)} not found");
 			}
 
 			var createdAssigningAuthority = assigningAuthorityRepositoryService.Insert(assigningAuthorityInfo.AssigningAuthority);
@@ -60,26 +60,28 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="assigningAuthorityId">The id of the assigning authority to be deleted.</param>
 		/// <returns>Returns the deleted assigning authority.</returns>
+		/// <exception cref="System.ArgumentException">Assigning authority not found.</exception>
+		/// <exception cref="System.InvalidOperationException">If the IAssigningAuthorityRepositoryService is not found.</exception>
 		public AssigningAuthorityInfo DeleteAssigningAuthority(string assigningAuthorityId)
 		{
-			Guid assigningAuthorityKey = Guid.Empty;
+			Guid id;
 
-			if (!Guid.TryParse(assigningAuthorityId, out assigningAuthorityKey))
+			if (!Guid.TryParse(assigningAuthorityId, out id))
 			{
-				throw new ArgumentException(string.Format("{0} must be a valid GUID", nameof(assigningAuthorityId)));
+				throw new ArgumentException($"{nameof(assigningAuthorityId)} must be a valid GUID");
 			}
 
 			var assigningAuthorityService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
 
 			if (assigningAuthorityService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IAssigningAuthorityRepositoryService)));
+				throw new InvalidOperationException($"{nameof(IAssigningAuthorityRepositoryService)} not found");
 			}
 
-			return new AssigningAuthorityInfo()
+			return new AssigningAuthorityInfo
 			{
-				AssigningAuthority = assigningAuthorityService.Obsolete(assigningAuthorityKey),
-				Id = assigningAuthorityKey
+				AssigningAuthority = assigningAuthorityService.Obsolete(id),
+				Id = id
 			};
 		}
 
@@ -87,6 +89,8 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// Gets a list of assigning authorities for a specific query.
 		/// </summary>
 		/// <returns>Returns a list of assigning authorities which match the specific query.</returns>
+		/// <exception cref="System.ArgumentException"></exception>
+		/// <exception cref="System.InvalidOperationException">If the IAssigningAuthorityRepositoryService is not found.</exception>
 		public AmiCollection<AssigningAuthorityInfo> GetAssigningAuthorities()
 		{
 			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
@@ -105,9 +109,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				throw new InvalidOperationException($"{nameof(IAssigningAuthorityRepositoryService)} not found");
 			}
 
-			AmiCollection<AssigningAuthorityInfo> assigningAuthorities = new AmiCollection<AssigningAuthorityInfo>();
+			var assigningAuthorities = new AmiCollection<AssigningAuthorityInfo>();
 
-			int totalCount = 0;
+			var totalCount = 0;
 
 			assigningAuthorities.CollectionItem = assigningAuthorityRepositoryService.Find(expression, 0, null, out totalCount).Select(a => new AssigningAuthorityInfo(a)).ToList();
 			assigningAuthorities.Size = totalCount;
@@ -120,11 +124,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="assigningAuthorityId">The id of the assigning authority to retrieve.</param>
 		/// <returns>Returns the assigning authority.</returns>
+		/// <exception cref="System.ArgumentException">If the assigning authority is not found.</exception>
+		/// <exception cref="System.InvalidOperationException">If the IAssigningAuthorityRepositoryService is not found.</exception>
 		public AssigningAuthorityInfo GetAssigningAuthority(string assigningAuthorityId)
 		{
-			var key = Guid.Empty;
+			Guid id;
 
-			if (!Guid.TryParse(assigningAuthorityId, out key))
+			if (!Guid.TryParse(assigningAuthorityId, out id))
 			{
 				throw new ArgumentException($"{nameof(assigningAuthorityId)} must be a valid GUID");
 			}
@@ -136,7 +142,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				throw new InvalidOperationException($"{nameof(IAssigningAuthorityRepositoryService)} not found");
 			}
 
-			return new AssigningAuthorityInfo(assigningAuthorityRepositoryService.Get(key));
+			return new AssigningAuthorityInfo(assigningAuthorityRepositoryService.Get(id));
 		}
 
 		/// <summary>
@@ -145,9 +151,11 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="assigningAuthorityId">The id of the assigning authority to be updated.</param>
 		/// <param name="assigningAuthorityInfo">The assigning authority containing the updated information.</param>
 		/// <returns>Returns the updated assigning authority.</returns>
+		/// <exception cref="System.ArgumentException">If the assigning authority is not found.</exception>
+		/// <exception cref="System.InvalidOperationException">If the IAssigningAuthorityRepositoryService is not found.</exception>
 		public AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo)
 		{
-			var id = Guid.Empty;
+			Guid id;
 
 			if (!Guid.TryParse(assigningAuthorityId, out id))
 			{

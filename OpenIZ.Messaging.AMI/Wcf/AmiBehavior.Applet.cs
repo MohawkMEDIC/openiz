@@ -22,7 +22,6 @@ using OpenIZ.Core.Applets.Model;
 using OpenIZ.Core.Model.AMI.Applet;
 using OpenIZ.Core.Model.AMI.Security;
 using System;
-using System.Data;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -42,7 +41,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the created applet manifest info.</returns>
 		public AppletManifestInfo CreateApplet(AppletManifestInfo appletManifestInfo)
 		{
-			// creates the applets directory where the applets will live
 			var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
 			var appletDirectory = Path.Combine(baseDirectory, "applets");
@@ -55,7 +53,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			switch (appletManifestInfo.FileExtension.ToLowerInvariant())
 			{
 				case ".pak":
-				case ".pak.gz":
 					using (var fileStream = File.Create(Path.Combine(appletDirectory, appletManifestInfo.AppletManifest.Info.Id + appletManifestInfo.FileExtension)))
 					using (var gzipStream = new GZipStream(fileStream, CompressionMode.Compress))
 					{
@@ -75,6 +72,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="appletId">The id of the applet to be deleted.</param>
 		/// <returns>Returns the deleted applet.</returns>
+		/// <exception cref="System.ArgumentException">Applet not found.</exception>
 		public AppletManifestInfo DeleteApplet(string appletId)
 		{
 			var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -98,6 +96,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="appletId">The id of the applet to retrieve.</param>
 		/// <returns>Returns the applet.</returns>
+		/// <exception cref="System.InvalidOperationException">Applet not found.</exception>
 		public AppletManifestInfo GetApplet(string appletId)
 		{
 			var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -107,6 +106,11 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			var files = Directory.GetFiles(appletDirectory).Select(Path.GetFileName);
 
 			var file = files.FirstOrDefault(f => f.StartsWith(appletId));
+
+			if (file == null)
+			{
+				throw new InvalidOperationException("Applet not found");
+			}
 
 			var applet = new AppletManifestInfo();
 
@@ -125,8 +129,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 				using (var memoryStream = new MemoryStream(package.Manifest))
 				{
-					applet = new AppletManifestInfo(AppletManifest.Load(memoryStream));
-					applet.FileExtension = file.EndsWith(".pak.gz") ? ".pak.gz" : ".pak";
+					applet = new AppletManifestInfo(AppletManifest.Load(memoryStream))
+					{
+						FileExtension = file.EndsWith(".pak.gz") ? ".pak.gz" : ".pak"
+					};
 				}
 			}
 
@@ -155,7 +161,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 					if (file.EndsWith(".pak") || file.EndsWith(".pak.gz"))
 					{
-						using (GZipStream gzipStream = new GZipStream(stream, CompressionMode.Decompress))
+						using (var gzipStream = new GZipStream(stream, CompressionMode.Decompress))
 						{
 							var serializer = new XmlSerializer(typeof(AppletPackage));
 							package = (AppletPackage)serializer.Deserialize(gzipStream);
@@ -177,12 +183,15 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="appletId">The id of the applet to be updated.</param>
 		/// <param name="appletManifestInfo">The applet containing the updated information.</param>
+		/// <returns>Returns the updated applet.</returns>
+		/// <exception cref="System.ArgumentException">Applet not found.</exception>
 		public AppletManifestInfo UpdateApplet(string appletId, AppletManifestInfo appletManifestInfo)
 		{
 			if (appletId != appletManifestInfo.AppletManifest.Info.Id)
 			{
 				throw new ArgumentException($"Unable to update applet using id {appletId} and {appletManifestInfo.AppletManifest.Info.Id}");
 			}
+
 			var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
 			var appletDirectory = Path.Combine(baseDirectory, "applets");
