@@ -30,6 +30,7 @@ namespace OpenIZ.Core.Services
 		/// <summary>
 		/// Add the specified service provider
 		/// </summary>
+		/// <param name="serviceType">Type of the service.</param>
 		void AddServiceProvider(Type serviceType);
 	}
 }

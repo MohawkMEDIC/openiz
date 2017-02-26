@@ -31,10 +31,11 @@ namespace OpenIZ.Core.Services.Impl
     /// </summary>
     public class LocalServiceManager : IServiceManager
     {
-        /// <summary>
-        /// Add service provider
-        /// </summary>
-        public void AddServiceProvider(Type serviceType)
+		/// <summary>
+		/// Add service provider
+		/// </summary>
+		/// <param name="serviceType">Type of the service.</param>
+		public void AddServiceProvider(Type serviceType)
         {
             ApplicationContext.Current.AddServiceProvider(serviceType);
         }
