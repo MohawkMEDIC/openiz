@@ -46,12 +46,12 @@ namespace OpenIZ.BusinessRules.Core
 		/// <summary>
 		/// The internal reference to the trace source.
 		/// </summary>
-		private TraceSource tracer = new TraceSource("OpenIZ.BusinessRules.Core");
+		private readonly TraceSource tracer = new TraceSource("OpenIZ.BusinessRules.Core");
 
 		/// <summary>
 		/// The internal reference to the configuration.
 		/// </summary>
-		private BusinessRulesCoreConfiguration configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.businessrules.core") as BusinessRulesCoreConfiguration;
+		private readonly BusinessRulesCoreConfiguration configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.businessrules.core") as BusinessRulesCoreConfiguration;
 
 		/// <summary>
 		/// Gets the running state of the message handler.
