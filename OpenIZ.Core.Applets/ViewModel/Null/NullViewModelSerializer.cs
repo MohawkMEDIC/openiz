@@ -228,7 +228,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Null
                         if (cls.Value.Count == 1)
                             value = cls.Value[0];
                         // Now write
-                        this.WritePropertyUtil(cls.Key, value, new NullSerializationContext(propertyName, this, instance, context as NullSerializationContext), true);
+                        this.WritePropertyUtil(cls.Key, value, new NullSerializationContext(propertyName, this, instance, context as NullSerializationContext), value is IList);
                     }
                 }
             }

@@ -20,7 +20,7 @@ namespace OpenIZ.Core.Services.Impl
 
         // Constructs a thread pool
         private WaitThreadPool m_threadPool;
-
+        
         /// <summary>
         /// True if the service is running
         /// </summary>
@@ -44,6 +44,17 @@ namespace OpenIZ.Core.Services.Impl
         public void Dispose()
         {
             this.m_threadPool?.Dispose();
+        }
+
+        /// <summary>
+        /// Queues a non-pooled work item
+        /// </summary>
+        public void QueueNonPooledWorkItem(Action<object> action, object parm)
+        {
+            Thread thd = new Thread(new ParameterizedThreadStart(action));
+            thd.IsBackground = true;
+            thd.Name = $"OpenIZBackground-{action}";
+            thd.Start(parm);
         }
 
         /// <summary>
