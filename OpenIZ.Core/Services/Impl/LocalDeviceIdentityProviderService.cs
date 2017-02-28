@@ -37,6 +37,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="deviceCertificate">The certificate of the device used to authenticate the device.</param>
 		/// <returns>Returns the principal of the device.</returns>
+		/// <exception cref="System.NotImplementedException"></exception>
 		public IPrincipal Authenticate(X509Certificate2 deviceCertificate)
 		{
 			throw new NotImplementedException();

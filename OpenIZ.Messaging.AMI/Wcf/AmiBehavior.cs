@@ -27,7 +27,6 @@ using OpenIZ.Core.Model.AMI.Auth;
 using OpenIZ.Core.Model.AMI.Diagnostics;
 using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Core.Model.Query;
-using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Security;
 using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Core.Security.Claims;

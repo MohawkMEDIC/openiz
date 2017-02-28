@@ -43,6 +43,8 @@ namespace OpenIZ.Core.Services.Impl
 		/// <param name="place">The facility for which the stock is to be adjusted.</param>
 		/// <param name="quantity">The quantity to be adjusted.</param>
 		/// <param name="reason">The reason for the stock to be adjusted.</param>
+		/// <returns>Act.</returns>
+		/// <exception cref="System.NotImplementedException"></exception>
 		public Act Adjust(ManufacturedMaterial manufacturedMaterial, Place place, int quantity, Concept reason)
 		{
 			throw new NotImplementedException();
@@ -53,15 +55,23 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="place">The facility for which to get the balance of stock.</param>
 		/// <param name="manufacturedMaterial">The manufactured material for which to retrieve the balance.</param>
+		/// <returns>System.Int32.</returns>
+		/// <exception cref="System.NotImplementedException"></exception>
 		public int GetBalance(Place place, ManufacturedMaterial manufacturedMaterial)
 		{
 			throw new NotImplementedException();
 		}
 
-        /// <summary>
-        /// Find adjustments
-        /// </summary>
-        public IEnumerable<Act> FindAdjustments(Guid manufacturedMaterialKey, Guid placeKey, DateTimeOffset? startPeriod, DateTimeOffset? endPeriod)
+		/// <summary>
+		/// Find adjustments
+		/// </summary>
+		/// <param name="manufacturedMaterialKey">The manufactured material key.</param>
+		/// <param name="placeKey">The place key.</param>
+		/// <param name="startPeriod">The start period.</param>
+		/// <param name="endPeriod">The end period.</param>
+		/// <returns>IEnumerable&lt;Act&gt;.</returns>
+		/// <exception cref="System.InvalidOperationException"></exception>
+		public IEnumerable<Act> FindAdjustments(Guid manufacturedMaterialKey, Guid placeKey, DateTimeOffset? startPeriod, DateTimeOffset? endPeriod)
         {
             IDataPersistenceService<Act> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
             if (persistenceService == null)

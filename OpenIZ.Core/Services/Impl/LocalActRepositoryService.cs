@@ -34,7 +34,14 @@ namespace OpenIZ.Core.Services.Impl
 	/// <summary>
 	/// Represents an act repository service.
 	/// </summary>
-	public class LocalActRepositoryService : IActRepositoryService, IRepositoryService<Act>,
+	/// <seealso cref="IActRepositoryService" />
+	/// <seealso cref="Services.IRepositoryService{Act}" />
+	/// <seealso cref="Services.IRepositoryService{SubstanceAdministration}" />
+	/// <seealso cref="Services.IRepositoryService{QuantityObservation}" />
+	/// <seealso cref="Services.IRepositoryService{PatientEncounter}" />
+	/// <seealso cref="Services.IRepositoryService{CodedObservation}" />
+	/// <seealso cref="Services.IRepositoryService{TextObservation}" />
+	public partial class LocalActRepositoryService : IActRepositoryService, IRepositoryService<Act>,
         IRepositoryService<SubstanceAdministration>,
         IRepositoryService<QuantityObservation>,
         IRepositoryService<PatientEncounter>,
@@ -44,26 +51,34 @@ namespace OpenIZ.Core.Services.Impl
 		/// <summary>
 		/// Finds acts based on a specific query.
 		/// </summary>
-		public IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> filter, int offset, int? count, out int totalResults) where TAct : Act
+		/// <typeparam name="TAct">The type of the t act.</typeparam>
+		/// <param name="query">The query.</param>
+		/// <param name="offset">The offset.</param>
+		/// <param name="count">The count.</param>
+		/// <param name="totalResults">The total results.</param>
+		/// <returns>Returns a list of acts which match the specific query.</returns>
+		/// <exception cref="System.InvalidOperationException">Unable to locate persistence service.</exception>
+		public IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> query, int offset, int? count, out int totalResults) where TAct : Act
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException("No concept persistence service found");
+				throw new InvalidOperationException($"Unable to locate persistence service {nameof(IDataPersistenceService<TAct>)}");
 			}
 
 			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TAct>();
 
-			var results = persistenceService.Query(filter, offset, count, AuthenticationContext.Current.Principal, out totalResults);
+			var results = persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
 
-			return businessRulesService != null ? businessRulesService.AfterQuery(results) : results;
+			return businessRulesService?.AfterQuery(results) ?? results;
 		}
 
 		/// <summary>
 		/// Finds the specified data
 		/// </summary>
-		/// <returns></returns>
+		/// <param name="query">The query.</param>
+		/// <returns>Returns a list of identified data.</returns>
 		public IEnumerable<Act> Find(Expression<Func<Act, bool>> query)
 		{
             int tr;
@@ -71,8 +86,26 @@ namespace OpenIZ.Core.Services.Impl
 		}
 
 		/// <summary>
-		/// Get the specified act
+		/// Find specified act
 		/// </summary>
+		/// <param name="query">The query.</param>
+		/// <param name="offset">The offset.</param>
+		/// <param name="count">The count.</param>
+		/// <param name="totalResults">The total results.</param>
+		/// <returns>Returns a list of identified data.</returns>
+		public IEnumerable<Act> Find(Expression<Func<Act, bool>> query, int offset, int? count, out int totalResults)
+		{
+			return this.Find<Act>(query, offset, count, out totalResults);
+		}
+
+		/// <summary>
+		/// Get the specified act.
+		/// </summary>
+		/// <typeparam name="TAct">The type of the act.</typeparam>
+		/// <param name="key">The key.</param>
+		/// <param name="versionId">The version identifier.</param>
+		/// <returns>Returns the act.</returns>
+		/// <exception cref="System.InvalidOperationException">If the persistence service is not found</exception>
 		public TAct Get<TAct>(Guid key, Guid versionId) where TAct : Act
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
@@ -90,16 +123,22 @@ namespace OpenIZ.Core.Services.Impl
 		}
 
 		/// <summary>
-		/// Gets the specified data
+		/// Gets the specified model.
 		/// </summary>
+		/// <param name="key">The key.</param>
+		/// <returns>Returns the model.</returns>
 		public Act Get(Guid key)
 		{
 			return this.Get<Act>(key, Guid.Empty);
 		}
 
 		/// <summary>
-		/// Insert the specified act
+		/// Insert the specified act.
 		/// </summary>
+		/// <typeparam name="TAct">The type of the act.</typeparam>
+		/// <param name="act">The act.</param>
+		/// <returns>Returns the act.</returns>
+		/// <exception cref="System.InvalidOperationException">TAct</exception>
 		public TAct Insert<TAct>(TAct act) where TAct : Act
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
@@ -119,16 +158,23 @@ namespace OpenIZ.Core.Services.Impl
 		}
 
 		/// <summary>
-		/// Inserts the specified data
+		/// Inserts the specified data.
 		/// </summary>
+		/// <param name="data">The data.</param>
+		/// <returns>TModel.</returns>
+		/// <exception cref="System.NotImplementedException"></exception>
 		public Act Insert(Act data)
 		{
 			throw new NotImplementedException();
 		}
 
 		/// <summary>
-		/// Obsolete the specified act
+		/// Obsoletes a specific act.
 		/// </summary>
+		/// <typeparam name="TAct">The type of the act.</typeparam>
+		/// <param name="key">The key.</param>
+		/// <returns>Returns the act.</returns>
+		/// <exception cref="System.InvalidOperationException">The persistence service is not found.</exception>
 		public TAct Obsolete<TAct>(Guid key) where TAct : Act
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
@@ -155,20 +201,23 @@ namespace OpenIZ.Core.Services.Impl
 		}
 
 		/// <summary>
-		/// Obsoletes the specified data
+		/// Obsoletes the specified data.
 		/// </summary>
-		/// <param name="key"></param>
-		/// <returns></returns>
+		/// <param name="key">The key.</param>
+		/// <returns>Returns the model.</returns>
+		/// <exception cref="System.NotImplementedException"></exception>
 		public Act Obsolete(Guid key)
 		{
 			throw new NotImplementedException();
 		}
 
 		/// <summary>
-		/// Insert or update the specified act
+		/// Inserts or updates the specific act.
 		/// </summary>
-		/// <param name="act"></param>
-		/// <returns></returns>
+		/// <typeparam name="TAct">The type of the act.</typeparam>
+		/// <param name="act">The act.</param>
+		/// <returns>Returns the act.</returns>
+		/// <exception cref="System.InvalidOperationException">TAct</exception>
 		public TAct Save<TAct>(TAct act) where TAct : Act
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
@@ -179,6 +228,9 @@ namespace OpenIZ.Core.Services.Impl
 			}
 
 			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TAct>();
+
+			// validate the act
+			this.Validate<TAct>(act);
 
 			try
 			{
@@ -201,8 +253,11 @@ namespace OpenIZ.Core.Services.Impl
 		}
 
 		/// <summary>
-		/// Saves the specified data
+		/// Saves the specified data.
 		/// </summary>
+		/// <param name="data">The data.</param>
+		/// <returns>Returns the model.</returns>
+		/// <exception cref="System.NotImplementedException"></exception>
 		public Act Save(Act data)
 		{
 			throw new NotImplementedException();
@@ -211,279 +266,45 @@ namespace OpenIZ.Core.Services.Impl
 		/// <summary>
 		/// Validates an act.
 		/// </summary>
+		/// <typeparam name="TAct">The type of the act.</typeparam>
+		/// <param name="data">The data.</param>
+		/// <returns>TAct.</returns>
+		/// <exception cref="DetectedIssueException">If there are any validation errors detected.</exception>
+		/// <exception cref="System.InvalidOperationException">If the data is null.</exception>
 		public TAct Validate<TAct>(TAct data) where TAct : Act
 		{
+			var businessRulesService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
+
+			if (businessRulesService == null)
+			{
+				return data;
+			}
+
+			var details = businessRulesService.Validate(data);
+
+			if (details.Any(d => d.Priority == DetectedIssuePriorityType.Error))
+			{
+				throw new DetectedIssueException(details);
+			}
+
 			// Correct author information and controlling act information
 			data = data.Clean() as TAct;
 
-			ISecurityRepositoryService userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+			if (data == null)
+			{
+				throw new InvalidOperationException($"{nameof(data)} cannot be null");
+			}
+
+			var userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
 			var currentUserEntity = userService.GetUserEntity(AuthenticationContext.Current.Principal.Identity);
 
-			if (!data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator))
+			if (data.Participations.All(o => o.ParticipationRoleKey != ActParticipationKey.Authororiginator))
 			{
 				data.Participations.Add(new ActParticipation(ActParticipationKey.Authororiginator, currentUserEntity));
 			}
 
 			return data;
 		}
-
-        /// <summary>
-        /// Find specified act
-        /// </summary>
-        public IEnumerable<Act> Find(Expression<Func<Act, bool>> query, int offset, int? count, out int totalResults)
-        {
-            return this.Find<Act>(query, offset, count, out totalResults);
-        }
-
-        /// <summary>
-        /// Get sbadm
-        /// </summary>
-        SubstanceAdministration IRepositoryService<SubstanceAdministration>.Get(Guid key)
-        {
-            return this.Get<SubstanceAdministration>(key, Guid.Empty);
-        }
-
-        /// <summary>
-        /// Find sbadm
-        /// </summary>
-        public IEnumerable<SubstanceAdministration> Find(Expression<Func<SubstanceAdministration, bool>> query)
-        {
-            int tr = 0;
-            return this.Find<SubstanceAdministration>(query, 0, null, out tr);
-        }
-
-        /// <summary>
-        /// Find the specified oject
-        /// </summary>
-        public IEnumerable<SubstanceAdministration> Find(Expression<Func<SubstanceAdministration, bool>> query, int offset, int? count, out int totalResults)
-        {
-            return this.Find<SubstanceAdministration>(query, offset, count, out totalResults);
-        }
-
-        /// <summary>
-        /// Insert SBADM
-        /// </summary>
-        public SubstanceAdministration Insert(SubstanceAdministration data)
-        {
-            return this.Insert<SubstanceAdministration>(data);
-        }
-
-        /// <summary>
-        /// Save sbadm
-        /// </summary>
-        public SubstanceAdministration Save(SubstanceAdministration data)
-        {
-            return this.Save<SubstanceAdministration>(data);
-        }
-
-        /// <summary>
-        /// Obsolete
-        /// </summary>
-        SubstanceAdministration IRepositoryService<SubstanceAdministration>.Obsolete(Guid key)
-        {
-            return this.Obsolete<SubstanceAdministration>(key);
-        }
-
-
-        /// <summary>
-        /// Get sbadm
-        /// </summary>
-        QuantityObservation IRepositoryService<QuantityObservation>.Get(Guid key)
-        {
-            return this.Get<QuantityObservation>(key, Guid.Empty);
-        }
-
-        /// <summary>
-        /// Find sbadm
-        /// </summary>
-        public IEnumerable<QuantityObservation> Find(Expression<Func<QuantityObservation, bool>> query)
-        {
-            int tr = 0;
-            return this.Find<QuantityObservation>(query, 0, null, out tr);
-        }
-
-        /// <summary>
-        /// Find the specified oject
-        /// </summary>
-        public IEnumerable<QuantityObservation> Find(Expression<Func<QuantityObservation, bool>> query, int offset, int? count, out int totalResults)
-        {
-            return this.Find<QuantityObservation>(query, offset, count, out totalResults);
-        }
-
-        /// <summary>
-        /// Insert SBADM
-        /// </summary>
-        public QuantityObservation Insert(QuantityObservation data)
-        {
-            return this.Insert<QuantityObservation>(data);
-        }
-
-        /// <summary>
-        /// Save sbadm
-        /// </summary>
-        public QuantityObservation Save(QuantityObservation data)
-        {
-            return this.Save<QuantityObservation>(data);
-        }
-
-        /// <summary>
-        /// Obsolete
-        /// </summary>
-        QuantityObservation IRepositoryService<QuantityObservation>.Obsolete(Guid key)
-        {
-            return this.Obsolete<QuantityObservation>(key);
-        }
-
-
-        /// <summary>
-        /// Get sbadm
-        /// </summary>
-        CodedObservation IRepositoryService<CodedObservation>.Get(Guid key)
-        {
-            return this.Get<CodedObservation>(key, Guid.Empty);
-        }
-
-        /// <summary>
-        /// Find sbadm
-        /// </summary>
-        public IEnumerable<CodedObservation> Find(Expression<Func<CodedObservation, bool>> query)
-        {
-            int tr = 0;
-            return this.Find<CodedObservation>(query, 0, null, out tr);
-        }
-
-        /// <summary>
-        /// Find the specified oject
-        /// </summary>
-        public IEnumerable<CodedObservation> Find(Expression<Func<CodedObservation, bool>> query, int offset, int? count, out int totalResults)
-        {
-            return this.Find<CodedObservation>(query, offset, count, out totalResults);
-        }
-
-        /// <summary>
-        /// Insert SBADM
-        /// </summary>
-        public CodedObservation Insert(CodedObservation data)
-        {
-            return this.Insert<CodedObservation>(data);
-        }
-
-        /// <summary>
-        /// Save sbadm
-        /// </summary>
-        public CodedObservation Save(CodedObservation data)
-        {
-            return this.Save<CodedObservation>(data);
-        }
-
-        /// <summary>
-        /// Obsolete
-        /// </summary>
-        CodedObservation IRepositoryService<CodedObservation>.Obsolete(Guid key)
-        {
-            return this.Obsolete<CodedObservation>(key);
-        }
-
-
-        /// <summary>
-        /// Get sbadm
-        /// </summary>
-        TextObservation IRepositoryService<TextObservation>.Get(Guid key)
-        {
-            return this.Get<TextObservation>(key, Guid.Empty);
-        }
-
-        /// <summary>
-        /// Find sbadm
-        /// </summary>
-        public IEnumerable<TextObservation> Find(Expression<Func<TextObservation, bool>> query)
-        {
-            int tr = 0;
-            return this.Find<TextObservation>(query, 0, null, out tr);
-        }
-
-        /// <summary>
-        /// Find the specified oject
-        /// </summary>
-        public IEnumerable<TextObservation> Find(Expression<Func<TextObservation, bool>> query, int offset, int? count, out int totalResults)
-        {
-            return this.Find<TextObservation>(query, offset, count, out totalResults);
-        }
-
-        /// <summary>
-        /// Insert SBADM
-        /// </summary>
-        public TextObservation Insert(TextObservation data)
-        {
-            return this.Insert<TextObservation>(data);
-        }
-
-        /// <summary>
-        /// Save sbadm
-        /// </summary>
-        public TextObservation Save(TextObservation data)
-        {
-            return this.Save<TextObservation>(data);
-        }
-
-        /// <summary>
-        /// Obsolete
-        /// </summary>
-        TextObservation IRepositoryService<TextObservation>.Obsolete(Guid key)
-        {
-            return this.Obsolete<TextObservation>(key);
-        }
-
-
-        /// <summary>
-        /// Get sbadm
-        /// </summary>
-        PatientEncounter IRepositoryService<PatientEncounter>.Get(Guid key)
-        {
-            return this.Get<PatientEncounter>(key, Guid.Empty);
-        }
-
-        /// <summary>
-        /// Find sbadm
-        /// </summary>
-        public IEnumerable<PatientEncounter> Find(Expression<Func<PatientEncounter, bool>> query)
-        {
-            int tr = 0;
-            return this.Find<PatientEncounter>(query, 0, null, out tr);
-        }
-
-        /// <summary>
-        /// Find the specified oject
-        /// </summary>
-        public IEnumerable<PatientEncounter> Find(Expression<Func<PatientEncounter, bool>> query, int offset, int? count, out int totalResults)
-        {
-            return this.Find<PatientEncounter>(query, offset, count, out totalResults);
-        }
-
-        /// <summary>
-        /// Insert SBADM
-        /// </summary>
-        public PatientEncounter Insert(PatientEncounter data)
-        {
-            return this.Insert<PatientEncounter>(data);
-        }
-
-        /// <summary>
-        /// Save sbadm
-        /// </summary>
-        public PatientEncounter Save(PatientEncounter data)
-        {
-            return this.Save<PatientEncounter>(data);
-        }
-
-        /// <summary>
-        /// Obsolete
-        /// </summary>
-        PatientEncounter IRepositoryService<PatientEncounter>.Obsolete(Guid key)
-        {
-            return this.Obsolete<PatientEncounter>(key);
-        }
-
     }
 }

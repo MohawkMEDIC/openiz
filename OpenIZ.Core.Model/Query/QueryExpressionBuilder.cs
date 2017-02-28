@@ -252,7 +252,14 @@ namespace OpenIZ.Core.Model.Query
                     var expressionValue = this.ExtractValue(expr.Expression);
                     if (expr.Member is PropertyInfo)
                     {
-                        return (expr.Member as PropertyInfo).GetValue(expressionValue);
+	                    try
+	                    {
+							return (expr.Member as PropertyInfo).GetValue(expressionValue);
+						}
+	                    catch
+	                    {
+		                    return null;
+	                    }
                     }
                     else if (expr.Member is FieldInfo)
                     {

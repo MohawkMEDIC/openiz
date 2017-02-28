@@ -1,22 +1,23 @@
 ﻿/*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: justi
  * Date: 2016-8-15
  */
+
 using Newtonsoft.Json;
 using OpenIZ.Core.Model;
 using System;
@@ -95,27 +96,26 @@ namespace OpenIZ.Core.Services
 	/// <summary>
 	/// Represents a detected issue
 	/// </summary>
-    [JsonObject(nameof(DetectedIssue))]
-    [XmlType(nameof(DetectedIssue), Namespace = "http://openiz.org/issue")]
+	[JsonObject(nameof(DetectedIssue))]
+	[XmlType(nameof(DetectedIssue), Namespace = "http://openiz.org/issue")]
 	public class DetectedIssue
 	{
-
 		/// <summary>
 		/// Represents a detected issue priority
 		/// </summary>
-        [XmlAttribute("priority"), JsonProperty("priority")]
+		[XmlAttribute("priority"), JsonProperty("priority")]
 		public DetectedIssuePriorityType Priority { get; set; }
 
 		/// <summary>
 		/// Text related to the issue
 		/// </summary>
-        [XmlText, JsonProperty("text")]
+		[XmlText, JsonProperty("text")]
 		public String Text { get; set; }
 
 		/// <summary>
 		/// The type of issue (a concept)
 		/// </summary>
-        [XmlAttribute("type"), JsonProperty("type")]
+		[XmlAttribute("type"), JsonProperty("type")]
 		public Guid TypeKey { get; set; }
 	}
 }
