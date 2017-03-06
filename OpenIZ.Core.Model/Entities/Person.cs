@@ -94,7 +94,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Gets the security user account associated with this person if applicable
         /// </summary>
-        [XmlIgnore, JsonIgnore]
+        [XmlIgnore, JsonIgnore, DataIgnore]
         public SecurityUser AsSecurityUser
         {
             get
