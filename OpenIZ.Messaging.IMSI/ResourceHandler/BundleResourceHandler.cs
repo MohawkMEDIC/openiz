@@ -57,8 +57,15 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 
 			bundle.Reconstitute();
 
-			// Submit
-			return this.repositoryService.Insert(bundle);
+			if (updateIfExists)
+			{
+				return this.repositoryService.Update(bundle);
+			}
+			else
+			{
+				// Submit
+				return this.repositoryService.Insert(bundle);
+			}
 		}
 
 		/// <summary>

@@ -108,12 +108,6 @@ namespace OpenIZ.Caching.Memory
                 //this.GetOrUpdateCacheItem(e);
             };
 
-            // Handles when an item is no longer being mapped
-            this.m_mappedHandler = (o, e) =>
-            {
-                //this.GetOrUpdateCacheItem(e);
-            };
-
             // Subscribe to message mapping
             ModelMapper.MappingToModel += this.m_mappingHandler;
             ModelMapper.MappedToModel += this.m_mappedHandler;
@@ -135,7 +129,7 @@ namespace OpenIZ.Caching.Memory
             {
                 EventHandler<PostPersistenceEventArgs<EntityRelationship>> clearSource = (o, e) =>
                 {
-                    if (e.Data != null && e.Data.SourceEntity != null)
+                    if (e.Data?.SourceEntity != null)
                         MemoryCache.Current.RemoveObject(e.Data.SourceEntity.GetType(), e.Data.SourceEntityKey);
                     else
                     {
@@ -145,7 +139,9 @@ namespace OpenIZ.Caching.Memory
                         MemoryCache.Current.RemoveObject(typeof(Organization), e.Data.SourceEntityKey);
                         MemoryCache.Current.RemoveObject(typeof(Provider), e.Data.SourceEntityKey);
                         MemoryCache.Current.RemoveObject(typeof(Material), e.Data.SourceEntityKey);
-                        MemoryCache.Current.RemoveObject(typeof(Entity), e.Data.SourceEntityKey);
+						MemoryCache.Current.RemoveObject(typeof(Person), e.Data.SourceEntityKey);
+						MemoryCache.Current.RemoveObject(typeof(UserEntity), e.Data.SourceEntityKey);
+						MemoryCache.Current.RemoveObject(typeof(Entity), e.Data.SourceEntityKey);
                     }
                 };
                 ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>().Updated += clearSource;
