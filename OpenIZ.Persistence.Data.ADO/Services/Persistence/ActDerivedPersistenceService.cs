@@ -76,32 +76,32 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Insert the specified TModel into the database
         /// </summary>
-        public override TModel Insert(DataContext context, TModel data, IPrincipal principal)
+        public override TModel InsertInternal(DataContext context, TModel data, IPrincipal principal)
         {
             if (typeof(TModel).BaseType == typeof(Act))
             {
                 var inserted = this.m_actPersister.InsertCoreProperties(context, data, principal);
                 data.Key = inserted.Key;
             }
-            return base.Insert(context, data, principal);
+            return base.InsertInternal(context, data, principal);
         }
 
         /// <summary>
         /// Update the specified TModel
         /// </summary>
-        public override TModel Update(DataContext context, TModel data, IPrincipal principal)
+        public override TModel UpdateInternal(DataContext context, TModel data, IPrincipal principal)
         {
             if (typeof(TModel).BaseType == typeof(Act))
                 this.m_actPersister.UpdateCoreProperties(context, data, principal);
-            return base.Update(context, data, principal);
+            return base.UpdateInternal(context, data, principal);
         }
 
         /// <summary>
         /// Obsolete the object
         /// </summary>
-        public override TModel Obsolete(DataContext context, TModel data, IPrincipal principal)
+        public override TModel ObsoleteInternal(DataContext context, TModel data, IPrincipal principal)
         {
-            var retVal = this.m_actPersister.Obsolete(context, data, principal);
+            var retVal = this.m_actPersister.ObsoleteInternal(context, data, principal);
             return data;
         }
 

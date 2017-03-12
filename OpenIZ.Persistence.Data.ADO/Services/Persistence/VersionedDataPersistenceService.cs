@@ -60,7 +60,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Insert the data
         /// </summary>
-        public override TModel Insert(DataContext context, TModel data, IPrincipal principal)
+        public override TModel InsertInternal(DataContext context, TModel data, IPrincipal principal)
         {
             // Ensure exists
             data.CreatedBy?.EnsureExists(context, principal);
@@ -108,7 +108,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Update the data with new version information
         /// </summary>
-        public override TModel Update(DataContext context, TModel data, IPrincipal principal)
+        public override TModel UpdateInternal(DataContext context, TModel data, IPrincipal principal)
         {
             if (data.Key == Guid.Empty)
                 throw new AdoFormalConstraintException(AdoFormalConstraintType.NonIdentityUpdate);
@@ -348,7 +348,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             // Update those that need it
             var updateRecords = storage.Where(o => existing.Any(ecn => ecn.Key == o.Key && o.Key != Guid.Empty && o != ecn));
             foreach (var upd in updateRecords)
-                persistenceService.Update(context, upd, principal);
+                persistenceService.UpdateInternal(context, upd, principal);
 
             // Insert those that do not exist
             var insertRecords = storage.Where(o => !existing.Any(ecn => ecn.Key == o.Key));
@@ -359,7 +359,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     eftVersion = source.VersionSequence.GetValueOrDefault();
                 ins.EffectiveVersionSequenceId = eftVersion;
 
-                persistenceService.Insert(context, ins, principal);
+                persistenceService.InsertInternal(context, ins, principal);
             }
         }
     }

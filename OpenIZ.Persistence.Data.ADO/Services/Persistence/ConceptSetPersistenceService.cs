@@ -62,9 +62,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Inser the specified concept set
         /// </summary>
-        public override Core.Model.DataTypes.ConceptSet Insert(DataContext context, Core.Model.DataTypes.ConceptSet data, IPrincipal principal)
+        public override Core.Model.DataTypes.ConceptSet InsertInternal(DataContext context, Core.Model.DataTypes.ConceptSet data, IPrincipal principal)
         {
-            var retVal = base.Insert(context, data, principal);
+            var retVal = base.InsertInternal(context, data, principal);
 
             // Concept sets 
             if (data.ConceptsXml != null)
@@ -79,9 +79,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Update the specified conceptset
         /// </summary>
-        public override Core.Model.DataTypes.ConceptSet Update(DataContext context, Core.Model.DataTypes.ConceptSet data, IPrincipal principal)
+        public override Core.Model.DataTypes.ConceptSet UpdateInternal(DataContext context, Core.Model.DataTypes.ConceptSet data, IPrincipal principal)
         {
-            var retVal = base.Update(context, data, principal);
+            var retVal = base.UpdateInternal(context, data, principal);
 
             // Concept sets 
             if (data.ConceptsXml != null)

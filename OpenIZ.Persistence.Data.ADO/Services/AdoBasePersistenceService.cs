@@ -96,28 +96,28 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public abstract TData Insert(DataContext context, TData data, IPrincipal principal);
+        public abstract TData InsertInternal(DataContext context, TData data, IPrincipal principal);
 
         /// <summary>
         /// Perform the actual update.
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public abstract TData Update(DataContext context, TData data, IPrincipal principal);
+        public abstract TData UpdateInternal(DataContext context, TData data, IPrincipal principal);
 
         /// <summary>
         /// Performs the actual obsoletion
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public abstract TData Obsolete(DataContext context, TData data, IPrincipal principal);
+        public abstract TData ObsoleteInternal(DataContext context, TData data, IPrincipal principal);
 
         /// <summary>
         /// Performs the actual query
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        public abstract IEnumerable<TData> Query(DataContext context, Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true);
+        public abstract IEnumerable<TData> QueryInternal(DataContext context, Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true);
 
         /// <summary>
         /// Get the specified key.
@@ -126,7 +126,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         internal virtual TData Get(DataContext context, Guid key, IPrincipal principal)
         {
             int tr = 0;
-            return this.Query(context, o => o.Key == key, 0, 1, out tr, principal)?.FirstOrDefault();
+            return this.QueryInternal(context, o => o.Key == key, 0, 1, out tr, principal)?.FirstOrDefault();
         }
 
         /// <summary>
@@ -173,7 +173,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         }
 
                         if (mode == TransactionMode.Commit)
+                        {
                             tx.Commit();
+                            foreach (var itm in connection.CacheOnCommit)
+                                ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
+                        }
                         else
                             tx.Rollback();
 
@@ -237,7 +241,12 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         data = this.Update(connection, data, principal);
 
                         if (mode == TransactionMode.Commit)
+                        {
                             tx.Commit();
+                            foreach (var itm in connection.CacheOnCommit)
+                                ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
+
+                        }
                         else
                             tx.Rollback();
 
@@ -298,7 +307,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         data = this.Obsolete(connection, data, principal);
 
                         if (mode == TransactionMode.Commit)
+                        {
                             tx.Commit();
+                            foreach (var itm in connection.CacheOnCommit)
+                                ApplicationContext.Current.GetService<IDataCachingService>()?.Remove(itm.GetType(), itm.Key.Value);
+                        }
                         else
                             tx.Rollback();
 
@@ -364,6 +377,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         var postData = new PostRetrievalEventArgs<TData>(result, principal);
                         this.Retrieved?.Invoke(this, postData);
                         result?.SetDelayLoad(true);
+
+                        foreach (var itm in connection.CacheOnCommit)
+                            ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
 
                         return result;
 
@@ -445,12 +461,15 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "QUERY {0}", query);
 
-                    var results = this.Query(connection, query, offset, count, out totalCount, authContext);
+                    var results = this.Query(connection, query, offset, count ?? 1000, out totalCount, true, authContext);
                     var postData = new PostQueryEventArgs<TData>(query, results.AsQueryable(), authContext);
                     this.Queried?.Invoke(this, postData);
 
                     var retVal = postData.Results.AsParallel().ToList();
                     retVal.ForEach((o) => o.SetDelayLoad(true)); // Enable delay load for items
+                    foreach (var itm in connection.CacheOnCommit)
+                        ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
+
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Returning {0}..{1} or {2} results", offset, offset + (count ?? 1000), totalCount);
 
                     return retVal;
@@ -474,12 +493,78 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 }
         }
 
+
+        /// <summary>
+        /// Performthe actual insert.
+        /// </summary>
+        /// <param name="context">Context.</param>
+        /// <param name="data">Data.</param>
+        public TData Insert(DataContext context, TData data, IPrincipal principal)
+        {
+            var retVal = this.InsertInternal(context, data, principal);
+            //if (retVal != data) System.Diagnostics.Debugger.Break();
+            context.AddCacheCommit(retVal);
+            return retVal;
+        }
+        /// <summary>
+        /// Perform the actual update.
+        /// </summary>
+        /// <param name="context">Context.</param>
+        /// <param name="data">Data.</param>
+        public TData Update(DataContext context, TData data, IPrincipal principal)
+        {
+            // Make sure we're updating the right thing
+            if (data.Key.HasValue)
+            {
+                var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem(data.GetType(), data.Key.Value);
+                if (cacheItem != null)
+                {
+                    cacheItem.CopyObjectData(data);
+                    data = cacheItem as TData;
+                }
+            }
+
+            var retVal = this.UpdateInternal(context, data, principal);
+            //if (retVal != data) System.Diagnostics.Debugger.Break();
+            context.AddCacheCommit(retVal);
+            return retVal;
+
+        }
+        /// <summary>
+        /// Performs the actual obsoletion
+        /// </summary>
+        /// <param name="context">Context.</param>
+        /// <param name="data">Data.</param>
+        public TData Obsolete(DataContext context, TData data, IPrincipal principal)
+        {
+            var retVal = this.ObsoleteInternal(context, data, principal);
+            //if (retVal != data) System.Diagnostics.Debugger.Break();
+            context.AddCacheCommit(retVal);
+            return retVal;
+        }
+        /// <summary>
+        /// Performs the actual query
+        /// </summary>
+        /// <param name="context">Context.</param>
+        /// <param name="query">Query.</param>
+        public IEnumerable<TData> Query(DataContext context, Expression<Func<TData, bool>> query, int offset, int count, out int totalResults, bool countResults, IPrincipal principal)
+        {
+            var retVal = this.QueryInternal(context, query, offset, count, out totalResults, principal, countResults);
+            foreach (var i in retVal.Where(i => i != null))
+            {
+                context.AddCacheCommit(i);
+            }
+            return retVal;
+
+        }
+       
+
         /// <summary>
         /// Insert the object for generic methods
         /// </summary>
         object IAdoPersistenceService.Insert(DataContext context, object data, IPrincipal principal)
         {
-            return this.Insert(context, (TData)data, principal);
+            return this.InsertInternal(context, (TData)data, principal);
         }
 
         /// <summary>
@@ -487,7 +572,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// </summary>
         object IAdoPersistenceService.Update(DataContext context, object data, IPrincipal principal)
         {
-            return this.Update(context, (TData)data, principal);
+            return this.UpdateInternal(context, (TData)data, principal);
         }
 
         /// <summary>
@@ -495,7 +580,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// </summary>
         object IAdoPersistenceService.Obsolete(DataContext context, object data, IPrincipal principal)
         {
-            return this.Obsolete(context, (TData)data, principal);
+            return this.ObsoleteInternal(context, (TData)data, principal);
         }
 
         /// <summary>

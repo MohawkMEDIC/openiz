@@ -71,32 +71,32 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Inserts the user entity
         /// </summary>
-        public override Core.Model.Entities.UserEntity Insert(DataContext context, Core.Model.Entities.UserEntity data, IPrincipal principal)
+        public override Core.Model.Entities.UserEntity InsertInternal(DataContext context, Core.Model.Entities.UserEntity data, IPrincipal principal)
         {
             if(data.SecurityUser != null) data.SecurityUser = data.SecurityUser?.EnsureExists(context, principal) as SecurityUser;
             data.SecurityUserKey = data.SecurityUser?.Key ?? data.SecurityUserKey;
-            var inserted = this.m_personPersister.Insert(context, data, principal);
+            var inserted = this.m_personPersister.InsertInternal(context, data, principal);
 
-            return base.Insert(context, data, principal);
+            return base.InsertInternal(context, data, principal);
         }
 
         /// <summary>
         /// Update the specified user entity
         /// </summary>
-        public override Core.Model.Entities.UserEntity Update(DataContext context, Core.Model.Entities.UserEntity data, IPrincipal principal)
+        public override Core.Model.Entities.UserEntity UpdateInternal(DataContext context, Core.Model.Entities.UserEntity data, IPrincipal principal)
         {
             if (data.SecurityUser != null) data.SecurityUser = data.SecurityUser?.EnsureExists(context, principal) as SecurityUser;
             data.SecurityUserKey = data.SecurityUser?.Key ?? data.SecurityUserKey;
-            this.m_personPersister.Update(context, data, principal);
-            return base.Update(context, data, principal);
+            this.m_personPersister.UpdateInternal(context, data, principal);
+            return base.UpdateInternal(context, data, principal);
         }
 
         /// <summary>
         /// Obsolete the specified user instance
         /// </summary>
-        public override Core.Model.Entities.UserEntity Obsolete(DataContext context, Core.Model.Entities.UserEntity data, IPrincipal principal)
+        public override Core.Model.Entities.UserEntity ObsoleteInternal(DataContext context, Core.Model.Entities.UserEntity data, IPrincipal principal)
         {
-            var retVal = this.m_personPersister.Obsolete(context, data, principal);
+            var retVal = this.m_personPersister.ObsoleteInternal(context, data, principal);
             return data;
         }
     }

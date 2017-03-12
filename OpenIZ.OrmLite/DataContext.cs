@@ -8,6 +8,7 @@ using System.Diagnostics;
 using OpenIZ.OrmLite.Providers;
 using OpenIZ.Core.Diagnostics;
 using System.Threading;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.OrmLite
 {
@@ -58,6 +59,9 @@ namespace OpenIZ.OrmLite
         // Data dictionary
         private Dictionary<String, Object> m_dataDictionary = new Dictionary<string, object>();
 
+        // Items to be added to cache after an action
+        private Dictionary<Guid, IdentifiedData> m_cacheCommit = new Dictionary<Guid, IdentifiedData>();
+
         // Trace source
         private Tracer m_tracer = Tracer.GetTracer(typeof(DataContext));
 
@@ -70,6 +74,17 @@ namespace OpenIZ.OrmLite
         /// Data dictionary
         /// </summary>
         public IDictionary<String, Object> Data { get { return this.m_dataDictionary; } }
+
+        /// <summary>
+        /// Cache on commit
+        /// </summary>
+        public IEnumerable<IdentifiedData> CacheOnCommit
+        {
+            get
+            {
+                return this.m_cacheCommit.Values;
+            }
+        }
 
         /// <summary>
         /// Current Transaction
@@ -134,5 +149,13 @@ namespace OpenIZ.OrmLite
             this.m_connection?.Dispose();
         }
 
+        /// <summary>
+        /// Add cache commit
+        /// </summary>
+        public void AddCacheCommit(IdentifiedData data)
+        {
+            if (data.Key.HasValue && !this.m_cacheCommit.ContainsKey(data.Key.Value) && data.Key.HasValue)
+                this.m_cacheCommit.Add(data.Key.Value, data);
+        }
     }
 }

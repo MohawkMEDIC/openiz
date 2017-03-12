@@ -21,7 +21,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
         /// Represents a request for issuance of an inventory report
         /// </summary>
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Xml, ResponseFormat = WebMessageFormat.Xml, UriTemplate = "/inventoryReport")]
-        LogisticsInventoryReportMessageType IssueInventoryReportRequest();
+        LogisticsInventoryReportMessageType IssueInventoryReportRequest(LogisticsInventoryReportRequestType parameters);
         
     }
 }

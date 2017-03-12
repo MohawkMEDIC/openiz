@@ -133,7 +133,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             /// <summary>
             /// Ensure exists
             /// </summary>
-            public override TModel Insert(DataContext context, TModel data, IPrincipal principal)
+            public override TModel InsertInternal(DataContext context, TModel data, IPrincipal principal)
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
@@ -144,13 +144,13 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     if (instance != null)
                         rp.SetValue(data, DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal));
                 }
-                return base.Insert(context, data, principal);
+                return base.InsertInternal(context, data, principal);
             }
 
             /// <summary>
             /// Update the specified object
             /// </summary>
-            public override TModel Update(DataContext context, TModel data, IPrincipal principal)
+            public override TModel UpdateInternal(DataContext context, TModel data, IPrincipal principal)
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
@@ -162,7 +162,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         rp.SetValue(data, DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal));
 
                 }
-                return base.Update(context, data, principal);
+                return base.UpdateInternal(context, data, principal);
             }
         }
 
@@ -176,7 +176,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             /// <summary>
             /// Ensure exists
             /// </summary>
-            public override TModel Insert(DataContext context, TModel data, IPrincipal principal)
+            public override TModel InsertInternal(DataContext context, TModel data, IPrincipal principal)
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
@@ -188,13 +188,13 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         rp.SetValue(data, DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal));
 
                 }
-                return base.Insert(context, data, principal);
+                return base.InsertInternal(context, data, principal);
             }
 
             /// <summary>
             /// Update the specified object
             /// </summary>
-            public override TModel Update(DataContext context, TModel data, IPrincipal principal)
+            public override TModel UpdateInternal(DataContext context, TModel data, IPrincipal principal)
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
@@ -206,7 +206,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         rp.SetValue(data, DataModelExtensions.EnsureExists(instance as IdentifiedData, context, principal));
 
                 }
-                return base.Update(context, data, principal);
+                return base.UpdateInternal(context, data, principal);
             }
         }
 
@@ -224,7 +224,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             public IEnumerable GetFromSource(DataContext context, Guid sourceId, decimal? versionSequenceId, IPrincipal principal)
             {
                 int tr = 0;
-                return this.Query(context, base.BuildSourceQuery<TModel>(sourceId), 0, null, out tr, principal, false);
+                return this.QueryInternal(context, base.BuildSourceQuery<TModel>(sourceId), 0, null, out tr, principal, false);
             }
         }
 
@@ -243,7 +243,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             {
                 int tr = 0;
                 // TODO: Check that this query is actually building what it is supposed to.
-                return this.Query(context, base.BuildSourceQuery<TModel>(sourceId, versionSequenceId), 0, null, out tr, principal, false);
+                return this.QueryInternal(context, base.BuildSourceQuery<TModel>(sourceId, versionSequenceId), 0, null, out tr, principal, false);
             }
         }
 

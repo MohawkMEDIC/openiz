@@ -72,7 +72,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Insert the specified TModel into the database
         /// </summary>
-        public override TModel Insert(DataContext context, TModel data, IPrincipal principal)
+        public override TModel InsertInternal(DataContext context, TModel data, IPrincipal principal)
         {
             if (typeof(TModel).BaseType == typeof(Core.Model.Entities.Entity))
             {
@@ -80,18 +80,18 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 data.Key = inserted.Key;
                 data.VersionKey = inserted.VersionKey;
             }
-            return base.Insert(context, data, principal);
+            return base.InsertInternal(context, data, principal);
 
         }
 
         /// <summary>
         /// Update the specified TModel
         /// </summary>
-        public override TModel Update(DataContext context, TModel data, IPrincipal principal)
+        public override TModel UpdateInternal(DataContext context, TModel data, IPrincipal principal)
         {
             if (typeof(TModel).BaseType == typeof(Core.Model.Entities.Entity))
                 this.m_entityPersister.UpdateCoreProperties(context, data, principal);
-            return base.Insert(context, data, principal);
+            return base.InsertInternal(context, data, principal);
             //return base.Update(context, data, principal);
         }
 
@@ -121,10 +121,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Obsolete the object
         /// </summary>
-        public override TModel Obsolete(DataContext context, TModel data, IPrincipal principal)
+        public override TModel ObsoleteInternal(DataContext context, TModel data, IPrincipal principal)
         {
             if (typeof(TModel).BaseType == typeof(Core.Model.Entities.Entity))
-                this.m_entityPersister.Obsolete(context, data, principal);
+                this.m_entityPersister.ObsoleteInternal(context, data, principal);
             return data;
         }
 

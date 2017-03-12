@@ -182,7 +182,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             data.TypeConceptKey = data.TypeConcept?.Key ?? data.TypeConceptKey;
 
             // Do the insert
-            var retVal = base.Insert(context, data, principal);
+            var retVal = base.InsertInternal(context, data, principal);
 
             if (data.Extensions != null && data.Extensions.Any())
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActExtension, DbActExtension>(
@@ -258,7 +258,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey ?? StatusKeys.New;
 
             // Do the update
-            var retVal = base.Update(context, data, principal);
+            var retVal = base.UpdateInternal(context, data, principal);
 
             if (data.Extensions != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActExtension, DbActExtension>(
@@ -309,38 +309,38 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// Obsolete the act
         /// </summary>
         /// <param name="context"></param>
-        public override Core.Model.Acts.Act Obsolete(DataContext context, Core.Model.Acts.Act data, IPrincipal principal)
+        public override Core.Model.Acts.Act ObsoleteInternal(DataContext context, Core.Model.Acts.Act data, IPrincipal principal)
         {
             data.StatusConceptKey = StatusKeys.Obsolete;
-            return base.Obsolete(context, data, principal);
+            return base.ObsoleteInternal(context, data, principal);
         }
 
         /// <summary>
         /// Perform insert
         /// </summary>
-        public override Act Insert(DataContext context, Act data, IPrincipal principal)
+        public override Act InsertInternal(DataContext context, Act data, IPrincipal principal)
         {
             switch (data.ClassConceptKey.ToString().ToUpper())
             {
                 case ControlAct:
-                    return new ControlActPersistenceService().Insert(context, data.Convert<ControlAct>(), principal);
+                    return new ControlActPersistenceService().InsertInternal(context, data.Convert<ControlAct>(), principal);
                 case SubstanceAdministration:
-                    return new SubstanceAdministrationPersistenceService().Insert(context, data.Convert<SubstanceAdministration>(), principal);
+                    return new SubstanceAdministrationPersistenceService().InsertInternal(context, data.Convert<SubstanceAdministration>(), principal);
                 case Condition:
                 case Observation:
                     switch (data.GetType().Name)
                     {
                         case "TextObservation":
-                            return new TextObservationPersistenceService().Insert(context, data.Convert<TextObservation>(), principal);
+                            return new TextObservationPersistenceService().InsertInternal(context, data.Convert<TextObservation>(), principal);
                         case "CodedObservation":
-                            return new CodedObservationPersistenceService().Insert(context, data.Convert<CodedObservation>(), principal);
+                            return new CodedObservationPersistenceService().InsertInternal(context, data.Convert<CodedObservation>(), principal);
                         case "QuantityObservation":
-                            return new QuantityObservationPersistenceService().Insert(context, data.Convert<QuantityObservation>(), principal);
+                            return new QuantityObservationPersistenceService().InsertInternal(context, data.Convert<QuantityObservation>(), principal);
                         default:
                             return this.InsertCoreProperties(context, data, principal);
                     }
                 case Encounter:
-                    return new EncounterPersistenceService().Insert(context, data.Convert<PatientEncounter>(), principal);
+                    return new EncounterPersistenceService().InsertInternal(context, data.Convert<PatientEncounter>(), principal);
                 default:
                     return this.InsertCoreProperties(context, data, principal);
 
@@ -350,29 +350,29 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Perform update
         /// </summary>
-        public override Act Update(DataContext context, Act data, IPrincipal principal)
+        public override Act UpdateInternal(DataContext context, Act data, IPrincipal principal)
         {
             switch (data.ClassConceptKey.ToString().ToUpper())
             {
                 case ControlAct:
-                    return new ControlActPersistenceService().Update(context, data.Convert<ControlAct>(), principal);
+                    return new ControlActPersistenceService().UpdateInternal(context, data.Convert<ControlAct>(), principal);
                 case SubstanceAdministration:
-                    return new SubstanceAdministrationPersistenceService().Update(context, data.Convert<SubstanceAdministration>(), principal);
+                    return new SubstanceAdministrationPersistenceService().UpdateInternal(context, data.Convert<SubstanceAdministration>(), principal);
                 case Condition:
                 case Observation:
                     switch (data.GetType().Name)
                     {
                         case "TextObservation":
-                            return new TextObservationPersistenceService().Update(context, data.Convert<TextObservation>(), principal);
+                            return new TextObservationPersistenceService().UpdateInternal(context, data.Convert<TextObservation>(), principal);
                         case "CodedObservation":
-                            return new CodedObservationPersistenceService().Update(context, data.Convert<CodedObservation>(), principal);
+                            return new CodedObservationPersistenceService().UpdateInternal(context, data.Convert<CodedObservation>(), principal);
                         case "QuantityObservation":
-                            return new QuantityObservationPersistenceService().Update(context, data.Convert<QuantityObservation>(), principal);
+                            return new QuantityObservationPersistenceService().UpdateInternal(context, data.Convert<QuantityObservation>(), principal);
                         default:
                             return this.UpdateCoreProperties(context, data, principal);
                     }
                 case Encounter:
-                    return new EncounterPersistenceService().Update(context, data.Convert<PatientEncounter>(), principal);
+                    return new EncounterPersistenceService().UpdateInternal(context, data.Convert<PatientEncounter>(), principal);
                 default:
                     return this.UpdateCoreProperties(context, data, principal);
 

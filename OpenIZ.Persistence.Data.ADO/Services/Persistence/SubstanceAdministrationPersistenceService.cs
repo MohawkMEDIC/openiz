@@ -55,26 +55,26 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Insert the specified sbadm
         /// </summary>
-        public override Core.Model.Acts.SubstanceAdministration Insert(DataContext context, Core.Model.Acts.SubstanceAdministration data, IPrincipal principal)
+        public override Core.Model.Acts.SubstanceAdministration InsertInternal(DataContext context, Core.Model.Acts.SubstanceAdministration data, IPrincipal principal)
         {
             if(data.DoseUnit != null) data.DoseUnit = data.DoseUnit?.EnsureExists(context, principal) as Concept;
             if(data.Route != null) data.Route = data.Route?.EnsureExists(context, principal) as Concept;
             data.DoseUnitKey = data.DoseUnit?.Key ?? data.DoseUnitKey;
             data.RouteKey = data.Route?.Key ?? data.RouteKey;
-            return base.Insert(context, data, principal);
+            return base.InsertInternal(context, data, principal);
         }
 
 
         /// <summary>
         /// Insert the specified sbadm
         /// </summary>
-        public override Core.Model.Acts.SubstanceAdministration Update(DataContext context, Core.Model.Acts.SubstanceAdministration data, IPrincipal principal)
+        public override Core.Model.Acts.SubstanceAdministration UpdateInternal(DataContext context, Core.Model.Acts.SubstanceAdministration data, IPrincipal principal)
         {
             if (data.DoseUnit != null) data.DoseUnit = data.DoseUnit?.EnsureExists(context, principal) as Concept;
             if (data.Route != null) data.Route = data.Route?.EnsureExists(context, principal) as Concept;
             data.DoseUnitKey = data.DoseUnit?.Key ?? data.DoseUnitKey;
             data.RouteKey = data.Route?.Key ?? data.RouteKey;
-            return base.Update(context, data, principal);
+            return base.UpdateInternal(context, data, principal);
         }
     }
 }

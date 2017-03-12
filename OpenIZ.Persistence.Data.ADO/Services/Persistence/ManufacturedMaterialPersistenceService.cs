@@ -61,27 +61,27 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Insert the specified manufactured material
         /// </summary>
-        public override Core.Model.Entities.ManufacturedMaterial Insert(DataContext context, Core.Model.Entities.ManufacturedMaterial data, IPrincipal principal)
+        public override Core.Model.Entities.ManufacturedMaterial InsertInternal(DataContext context, Core.Model.Entities.ManufacturedMaterial data, IPrincipal principal)
         {
-            var retVal = this.m_materialPersister.Insert(context, data, principal);
-            return base.Insert(context, data, principal);
+            var retVal = this.m_materialPersister.InsertInternal(context, data, principal);
+            return base.InsertInternal(context, data, principal);
         }
 
         /// <summary>
         /// Updates the manufactured material
         /// </summary>
-        public override Core.Model.Entities.ManufacturedMaterial Update(DataContext context, Core.Model.Entities.ManufacturedMaterial data, IPrincipal principal)
+        public override Core.Model.Entities.ManufacturedMaterial UpdateInternal(DataContext context, Core.Model.Entities.ManufacturedMaterial data, IPrincipal principal)
         {
-            var updated = this.m_materialPersister.Update(context, data, principal);
-            return base.Insert(context, data, principal);
+            var updated = this.m_materialPersister.UpdateInternal(context, data, principal);
+            return base.InsertInternal(context, data, principal);
         }
 
         /// <summary>
         /// Obsolete the specified manufactured material
         /// </summary>
-        public override Core.Model.Entities.ManufacturedMaterial Obsolete(DataContext context, Core.Model.Entities.ManufacturedMaterial data, IPrincipal principal)
+        public override Core.Model.Entities.ManufacturedMaterial ObsoleteInternal(DataContext context, Core.Model.Entities.ManufacturedMaterial data, IPrincipal principal)
         {
-            var obsoleted = this.m_materialPersister.Obsolete(context, data, principal);
+            var obsoleted = this.m_materialPersister.ObsoleteInternal(context, data, principal);
             return data;
         }
     }

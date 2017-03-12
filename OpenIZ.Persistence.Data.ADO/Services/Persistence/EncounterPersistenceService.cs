@@ -52,21 +52,21 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Insert the patient encounter
         /// </summary>
-        public override Core.Model.Acts.PatientEncounter Insert(DataContext context, Core.Model.Acts.PatientEncounter data, IPrincipal principal)
+        public override Core.Model.Acts.PatientEncounter InsertInternal(DataContext context, Core.Model.Acts.PatientEncounter data, IPrincipal principal)
         {
             if(data.DischargeDisposition != null) data.DischargeDisposition = data.DischargeDisposition?.EnsureExists(context, principal) as Concept;
             data.DischargeDispositionKey = data.DischargeDisposition?.Key ?? data.DischargeDispositionKey;
-            return base.Insert(context, data, principal);
+            return base.InsertInternal(context, data, principal);
         }
 
         /// <summary>
         /// Updates the specified data
         /// </summary>
-        public override Core.Model.Acts.PatientEncounter Update(DataContext context, Core.Model.Acts.PatientEncounter data, IPrincipal principal)
+        public override Core.Model.Acts.PatientEncounter UpdateInternal(DataContext context, Core.Model.Acts.PatientEncounter data, IPrincipal principal)
         {
             if (data.DischargeDisposition != null) data.DischargeDisposition = data.DischargeDisposition?.EnsureExists(context, principal) as Concept;
             data.DischargeDispositionKey = data.DischargeDisposition?.Key ?? data.DischargeDispositionKey;
-            return base.Update(context, data, principal);
+            return base.UpdateInternal(context, data, principal);
         }
     }
 }

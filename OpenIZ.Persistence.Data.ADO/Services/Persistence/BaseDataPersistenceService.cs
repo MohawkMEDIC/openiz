@@ -54,7 +54,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public override TModel Insert(DataContext context, TModel data, IPrincipal principal)
+        public override TModel InsertInternal(DataContext context, TModel data, IPrincipal principal)
         {
             if (data.CreatedBy != null) data.CreatedBy = data.CreatedBy?.EnsureExists(context, principal) as SecurityUser;
             data.CreatedByKey = data.CreatedBy?.Key ?? data.CreatedByKey;
@@ -83,7 +83,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public override TModel Update(DataContext context, TModel data, IPrincipal principal)
+        public override TModel UpdateInternal(DataContext context, TModel data, IPrincipal principal)
         {
             var nvd = data as NonVersionedEntityData;
             if (nvd != null)
@@ -121,7 +121,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// Query the specified object ordering by creation time
         /// </summary>
         /// <returns></returns>
-        public override IEnumerable<TModel> Query(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
+        public override IEnumerable<TModel> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
         {
             var qresult = this.QueryInternal(context, query, offset, count, out totalResults, countResults);
             return qresult.Select(o => this.CacheConvert(o, context, principal));
@@ -132,7 +132,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public override TModel Obsolete(DataContext context, TModel data, IPrincipal principal)
+        public override TModel ObsoleteInternal(DataContext context, TModel data, IPrincipal principal)
         {
             if (data.Key == Guid.Empty)
                 throw new AdoFormalConstraintException(AdoFormalConstraintType.NonIdentityUpdate);

@@ -89,33 +89,33 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Insert the specified person into the database
         /// </summary>
-        public override Core.Model.Roles.Patient Insert(DataContext context, Core.Model.Roles.Patient data, IPrincipal principal)
+        public override Core.Model.Roles.Patient InsertInternal(DataContext context, Core.Model.Roles.Patient data, IPrincipal principal)
         {
             if (data.GenderConcept != null) data.GenderConcept = data.GenderConcept?.EnsureExists(context, principal) as Concept;
             data.GenderConceptKey = data.GenderConcept?.Key ?? data.GenderConceptKey;
-            this.m_personPersister.Insert(context, data, principal);
-            return base.Insert(context, data, principal);
+            this.m_personPersister.InsertInternal(context, data, principal);
+            return base.InsertInternal(context, data, principal);
         }
 
         /// <summary>
         /// Update the specified person
         /// </summary>
-        public override Core.Model.Roles.Patient Update(DataContext context, Core.Model.Roles.Patient data, IPrincipal principal)
+        public override Core.Model.Roles.Patient UpdateInternal(DataContext context, Core.Model.Roles.Patient data, IPrincipal principal)
         {
             // Ensure exists
             if (data.GenderConcept != null) data.GenderConcept = data.GenderConcept?.EnsureExists(context, principal) as Concept;
             data.GenderConceptKey = data.GenderConcept?.Key ?? data.GenderConceptKey;
 
-            this.m_personPersister.Update(context, data, principal);
-            return base.Update(context, data, principal);
+            this.m_personPersister.UpdateInternal(context, data, principal);
+            return base.UpdateInternal(context, data, principal);
         }
 
         /// <summary>
         /// Obsolete the object
         /// </summary>
-        public override Core.Model.Roles.Patient Obsolete(DataContext context, Core.Model.Roles.Patient data, IPrincipal principal)
+        public override Core.Model.Roles.Patient ObsoleteInternal(DataContext context, Core.Model.Roles.Patient data, IPrincipal principal)
         {
-            this.m_personPersister.Obsolete(context, data, principal);
+            this.m_personPersister.ObsoleteInternal(context, data, principal);
             return data;
         }
 

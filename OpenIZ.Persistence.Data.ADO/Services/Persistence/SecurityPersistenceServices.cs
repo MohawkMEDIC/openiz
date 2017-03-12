@@ -40,9 +40,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		/// <summary>
 		/// Insert the specified object
 		/// </summary>
-		public override Core.Model.Security.SecurityApplication Insert(DataContext context, Core.Model.Security.SecurityApplication data, IPrincipal principal)
+		public override Core.Model.Security.SecurityApplication InsertInternal(DataContext context, Core.Model.Security.SecurityApplication data, IPrincipal principal)
 		{
-			var retVal = base.Insert(context, data, principal);
+			var retVal = base.InsertInternal(context, data, principal);
 
 			if (data.Policies == null)
 				return retVal;
@@ -82,7 +82,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		/// <param name="data">The security application to update.</param>
 		/// <param name="principal">The authentication principal.</param>
 		/// <returns>Returns the updated security application.</returns>
-		public override Core.Model.Security.SecurityApplication Update(DataContext context, Core.Model.Security.SecurityApplication data, IPrincipal principal)
+		public override Core.Model.Security.SecurityApplication UpdateInternal(DataContext context, Core.Model.Security.SecurityApplication data, IPrincipal principal)
 		{
 			var domainInstance = this.FromModelInstance(data, context, principal);
 
@@ -125,9 +125,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		/// <summary>
 		/// Insert the specified object
 		/// </summary>
-		public override Core.Model.Security.SecurityDevice Insert(DataContext context, Core.Model.Security.SecurityDevice data, IPrincipal principal)
+		public override Core.Model.Security.SecurityDevice InsertInternal(DataContext context, Core.Model.Security.SecurityDevice data, IPrincipal principal)
 		{
-			var retVal = base.Insert(context, data, principal);
+			var retVal = base.InsertInternal(context, data, principal);
 
 			if (data.Policies == null)
 				return retVal;
@@ -163,7 +163,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		/// <summary>
 		/// Update the roles to security user
 		/// </summary>
-		public override Core.Model.Security.SecurityDevice Update(DataContext context, Core.Model.Security.SecurityDevice data, IPrincipal principal)
+		public override Core.Model.Security.SecurityDevice UpdateInternal(DataContext context, Core.Model.Security.SecurityDevice data, IPrincipal principal)
 		{
 			var domainInstance = this.FromModelInstance(data, context, principal);
 
@@ -206,7 +206,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		/// <summary>
 		/// Updating policies is a security risk and not permitted... ever
 		/// </summary>
-		public override Core.Model.Security.SecurityPolicy Update(DataContext context, Core.Model.Security.SecurityPolicy data, IPrincipal principal)
+		public override Core.Model.Security.SecurityPolicy UpdateInternal(DataContext context, Core.Model.Security.SecurityPolicy data, IPrincipal principal)
 		{
 			throw new AdoFormalConstraintException(AdoFormalConstraintType.UpdatedReadonlyObject);
 		}
@@ -220,9 +220,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		/// <summary>
 		/// Insert the specified object
 		/// </summary>
-		public override Core.Model.Security.SecurityRole Insert(DataContext context, Core.Model.Security.SecurityRole data, IPrincipal principal)
+		public override Core.Model.Security.SecurityRole InsertInternal(DataContext context, Core.Model.Security.SecurityRole data, IPrincipal principal)
 		{
-			var retVal = base.Insert(context, data, principal);
+			var retVal = base.InsertInternal(context, data, principal);
 
 			if (data.Policies != null)
 			{
@@ -268,7 +268,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		/// <summary>
 		/// Update the roles to security user
 		/// </summary>
-		public override Core.Model.Security.SecurityRole Update(DataContext context, Core.Model.Security.SecurityRole data, IPrincipal principal)
+		public override Core.Model.Security.SecurityRole UpdateInternal(DataContext context, Core.Model.Security.SecurityRole data, IPrincipal principal)
 		{
 			var domainInstance = this.FromModelInstance(data, context, principal);
 
@@ -312,9 +312,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		/// <summary>
 		/// Insert the specified object
 		/// </summary>
-		public override Core.Model.Security.SecurityUser Insert(DataContext context, Core.Model.Security.SecurityUser data, IPrincipal principal)
+		public override Core.Model.Security.SecurityUser InsertInternal(DataContext context, Core.Model.Security.SecurityUser data, IPrincipal principal)
 		{
-			var retVal = base.Insert(context, data, principal);
+			var retVal = base.InsertInternal(context, data, principal);
 
 			// Roles
 			if (data.Roles != null)
@@ -331,9 +331,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 			return retVal;
 		}
 
-		public override IEnumerable<SecurityUser> Query(DataContext context, Expression<Func<SecurityUser, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
+		public override IEnumerable<SecurityUser> QueryInternal(DataContext context, Expression<Func<SecurityUser, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
 		{
-			var results = base.Query(context, query, offset, count, out totalResults, principal, countResults);
+			var results = base.QueryInternal(context, query, offset, count, out totalResults, principal, countResults);
 
 			var users = new List<SecurityUser>();
 
@@ -368,9 +368,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		/// <summary>
 		/// Update the roles to security user
 		/// </summary>
-		public override Core.Model.Security.SecurityUser Update(DataContext context, Core.Model.Security.SecurityUser data, IPrincipal principal)
+		public override Core.Model.Security.SecurityUser UpdateInternal(DataContext context, Core.Model.Security.SecurityUser data, IPrincipal principal)
 		{
-			var retVal = base.Update(context, data, principal);
+			var retVal = base.UpdateInternal(context, data, principal);
 
 			if (data.Roles == null)
 			{

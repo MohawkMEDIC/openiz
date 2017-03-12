@@ -238,7 +238,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
             data.StatusConceptKey = data.StatusConceptKey == Guid.Empty || data.StatusConceptKey == null ? StatusKeys.New : data.StatusConceptKey;
 
-            var retVal = base.Insert(context, data, principal);
+            var retVal = base.InsertInternal(context, data, principal);
 
             // Identifiers
             if (data.Identifiers != null)
@@ -325,7 +325,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
             data.StatusConceptKey = data.StatusConceptKey == Guid.Empty || data.StatusConceptKey == null ? StatusKeys.New : data.StatusConceptKey;
 
-            var retVal = base.Update(context, data, principal);
+            var retVal = base.UpdateInternal(context, data, principal);
 
 
             // Identifiers
@@ -399,42 +399,42 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Obsoleted status key
         /// </summary>
-        public override Core.Model.Entities.Entity Obsolete(DataContext context, Core.Model.Entities.Entity data, IPrincipal principal)
+        public override Core.Model.Entities.Entity ObsoleteInternal(DataContext context, Core.Model.Entities.Entity data, IPrincipal principal)
         {
             data.StatusConceptKey = StatusKeys.Obsolete;
-            return base.Update(context, data, principal);
+            return base.UpdateInternal(context, data, principal);
         }
 
         /// <summary>
         /// Insert the entity
         /// </summary>
-        public override Entity Insert(DataContext context, Entity data, IPrincipal principal)
+        public override Entity InsertInternal(DataContext context, Entity data, IPrincipal principal)
         {
             switch (data.ClassConceptKey.ToString().ToUpper())
             {
                 case Device:
-                    return new DeviceEntityPersistenceService().Insert(context, data.Convert<DeviceEntity>(), principal);
+                    return new DeviceEntityPersistenceService().InsertInternal(context, data.Convert<DeviceEntity>(), principal);
                 case NonLivingSubject:
-                    return new ApplicationEntityPersistenceService().Insert(context, data.Convert<ApplicationEntity>(), principal);
+                    return new ApplicationEntityPersistenceService().InsertInternal(context, data.Convert<ApplicationEntity>(), principal);
                 case Person:
-                    return new PersonPersistenceService().Insert(context, data.Convert<Person>(), principal);
+                    return new PersonPersistenceService().InsertInternal(context, data.Convert<Person>(), principal);
                 case Patient:
-                    return new PatientPersistenceService().Insert(context, data.Convert<Patient>(), principal);
+                    return new PatientPersistenceService().InsertInternal(context, data.Convert<Patient>(), principal);
                 case Provider:
-                    return new ProviderPersistenceService().Insert(context, data.Convert<Provider>(), principal);
+                    return new ProviderPersistenceService().InsertInternal(context, data.Convert<Provider>(), principal);
                 case Place:
                 case CityOrTown:
                 case Country:
                 case CountyOrParish:
                 case State:
                 case ServiceDeliveryLocation:
-                    return new PlacePersistenceService().Insert(context, data.Convert<Place>(), principal);
+                    return new PlacePersistenceService().InsertInternal(context, data.Convert<Place>(), principal);
                 case Organization:
-                    return new OrganizationPersistenceService().Insert(context, data.Convert<Organization>(), principal);
+                    return new OrganizationPersistenceService().InsertInternal(context, data.Convert<Organization>(), principal);
                 case Material:
-                    return new MaterialPersistenceService().Insert(context, data.Convert<Material>(), principal);
+                    return new MaterialPersistenceService().InsertInternal(context, data.Convert<Material>(), principal);
                 case ManufacturedMaterial:
-                    return new ManufacturedMaterialPersistenceService().Insert(context, data.Convert<ManufacturedMaterial>(), principal);
+                    return new ManufacturedMaterialPersistenceService().InsertInternal(context, data.Convert<ManufacturedMaterial>(), principal);
                 default:
                     return this.InsertCoreProperties(context, data, principal);
 
@@ -444,33 +444,33 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Update entity
         /// </summary>
-        public override Entity Update(DataContext context, Entity data, IPrincipal principal)
+        public override Entity UpdateInternal(DataContext context, Entity data, IPrincipal principal)
         {
             switch (data.ClassConceptKey.ToString().ToUpper())
             {
                 case Device:
-                    return new DeviceEntityPersistenceService().Update(context, data.Convert<DeviceEntity>(), principal);
+                    return new DeviceEntityPersistenceService().UpdateInternal(context, data.Convert<DeviceEntity>(), principal);
                 case NonLivingSubject:
-                    return new ApplicationEntityPersistenceService().Update(context, data.Convert<ApplicationEntity>(), principal);
+                    return new ApplicationEntityPersistenceService().UpdateInternal(context, data.Convert<ApplicationEntity>(), principal);
                 case Person:
-                    return new PersonPersistenceService().Update(context, data.Convert<Person>(), principal);
+                    return new PersonPersistenceService().UpdateInternal(context, data.Convert<Person>(), principal);
                 case Patient:
-                    return new PatientPersistenceService().Update(context, data.Convert<Patient>(), principal);
+                    return new PatientPersistenceService().UpdateInternal(context, data.Convert<Patient>(), principal);
                 case Provider:
-                    return new ProviderPersistenceService().Update(context, data.Convert<Provider>(), principal);
+                    return new ProviderPersistenceService().UpdateInternal(context, data.Convert<Provider>(), principal);
                 case Place:
                 case CityOrTown:
                 case Country:
                 case CountyOrParish:
                 case State:
                 case ServiceDeliveryLocation:
-                    return new PlacePersistenceService().Update(context, data.Convert<Place>(), principal);
+                    return new PlacePersistenceService().UpdateInternal(context, data.Convert<Place>(), principal);
                 case Organization:
-                    return new OrganizationPersistenceService().Update(context, data.Convert<Organization>(), principal);
+                    return new OrganizationPersistenceService().UpdateInternal(context, data.Convert<Organization>(), principal);
                 case Material:
-                    return new MaterialPersistenceService().Update(context, data.Convert<Material>(), principal);
+                    return new MaterialPersistenceService().UpdateInternal(context, data.Convert<Material>(), principal);
                 case ManufacturedMaterial:
-                    return new ManufacturedMaterialPersistenceService().Update(context, data.Convert<ManufacturedMaterial>(), principal);
+                    return new ManufacturedMaterialPersistenceService().UpdateInternal(context, data.Convert<ManufacturedMaterial>(), principal);
                 default:
                     return this.UpdateCoreProperties(context, data, principal);
 

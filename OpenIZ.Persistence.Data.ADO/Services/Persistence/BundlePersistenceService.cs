@@ -34,7 +34,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// Insert or update contents of the bundle
         /// </summary>
         /// <returns></returns>
-        public override Bundle Insert(DataContext context, Bundle data, IPrincipal principal)
+        public override Bundle InsertInternal(DataContext context, Bundle data, IPrincipal principal)
         {
             foreach (var itm in data.Item)
             {
@@ -52,7 +52,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Obsolete each object in the bundle
         /// </summary>
-        public override Bundle Obsolete(DataContext context, Bundle data, IPrincipal principal)
+        public override Bundle ObsoleteInternal(DataContext context, Bundle data, IPrincipal principal)
         {
             foreach (var itm in data.Item)
             {
@@ -66,7 +66,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Query the specified object
         /// </summary>
-        public override IEnumerable<Bundle> Query(DataContext context, Expression<Func<Bundle, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
+        public override IEnumerable<Bundle> QueryInternal(DataContext context, Expression<Func<Bundle, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
         {
             totalResults = 0;
             return new List<Bundle>().AsQueryable();
@@ -88,7 +88,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <param name="data"></param>
         /// <param name="principal"></param>
         /// <returns></returns>
-        public override Bundle Update(DataContext context, Bundle data, IPrincipal principal)
+        public override Bundle UpdateInternal(DataContext context, Bundle data, IPrincipal principal)
         {
             foreach (var itm in data.Item)
             {

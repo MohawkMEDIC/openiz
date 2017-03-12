@@ -52,23 +52,23 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Insert the organization
         /// </summary>
-        public override Core.Model.Entities.Organization Insert(DataContext context, Core.Model.Entities.Organization data, IPrincipal principal)
+        public override Core.Model.Entities.Organization InsertInternal(DataContext context, Core.Model.Entities.Organization data, IPrincipal principal)
         {
             // ensure industry concept exists
             if(data.IndustryConcept != null) data.IndustryConcept = data.IndustryConcept?.EnsureExists(context, principal) as Concept;
             data.IndustryConceptKey = data.IndustryConcept?.Key ?? data.IndustryConceptKey;
 
-            return base.Insert(context, data, principal);
+            return base.InsertInternal(context, data, principal);
         }
 
         /// <summary>
         /// Update the organization
         /// </summary>
-        public override Core.Model.Entities.Organization Update(DataContext context, Core.Model.Entities.Organization data, IPrincipal principal)
+        public override Core.Model.Entities.Organization UpdateInternal(DataContext context, Core.Model.Entities.Organization data, IPrincipal principal)
         {
             if (data.IndustryConcept != null) data.IndustryConcept = data.IndustryConcept?.EnsureExists(context, principal) as Concept;
             data.IndustryConceptKey = data.IndustryConcept?.Key ?? data.IndustryConceptKey;
-            return base.Update(context, data, principal);
+            return base.UpdateInternal(context, data, principal);
         }
 
     }

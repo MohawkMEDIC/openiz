@@ -64,7 +64,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Insert concept 
         /// </summary>
-        public override Core.Model.DataTypes.Concept Insert(DataContext context, Core.Model.DataTypes.Concept data, IPrincipal principal)
+        public override Core.Model.DataTypes.Concept InsertInternal(DataContext context, Core.Model.DataTypes.Concept data, IPrincipal principal)
         {
             data.StatusConceptKey = data.StatusConceptKey ?? StatusKeys.Active;
             data.ClassKey = data.ClassKey ?? ConceptClassKeys.Other;
@@ -76,7 +76,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
 
             // Persist
-            var retVal = base.Insert(context, data, principal);
+            var retVal = base.InsertInternal(context, data, principal);
 
             // Concept sets xml
             if (data.ConceptSetsXml != null)
@@ -113,14 +113,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Override update to handle associated items
         /// </summary>
-        public override Core.Model.DataTypes.Concept Update(DataContext context, Core.Model.DataTypes.Concept data, IPrincipal principal)
+        public override Core.Model.DataTypes.Concept UpdateInternal(DataContext context, Core.Model.DataTypes.Concept data, IPrincipal principal)
         {
             if (data.Class != null) data.Class = data.Class?.EnsureExists(context, principal) as ConceptClass;
             if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept?.EnsureExists(context, principal) as Concept;
             data.ClassKey = data.Class?.Key ?? data.ClassKey;
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
 
-            var retVal = base.Update(context, data, principal);
+            var retVal = base.UpdateInternal(context, data, principal);
 
             var sourceKey = data.Key.Value.ToByteArray();
             if (data.ConceptNames != null)
@@ -164,10 +164,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Obsolete the object
         /// </summary>
-        public override Core.Model.DataTypes.Concept Obsolete(DataContext context, Core.Model.DataTypes.Concept data, IPrincipal principal)
+        public override Core.Model.DataTypes.Concept ObsoleteInternal(DataContext context, Core.Model.DataTypes.Concept data, IPrincipal principal)
         {
             data.StatusConceptKey = StatusKeys.Obsolete;
-            return base.Update(context, data, principal);
+            return base.UpdateInternal(context, data, principal);
         }
 
     }
@@ -200,7 +200,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public IEnumerable GetFromSource(DataContext context, Guid id, decimal? versionSequenceId, IPrincipal principal)
         {
             int tr = 0;
-            return this.Query(context, this.BuildSourceQuery<ConceptName>(id, versionSequenceId), 0, null, out tr, principal, false);
+            return this.QueryInternal(context, this.BuildSourceQuery<ConceptName>(id, versionSequenceId), 0, null, out tr, principal, false);
         }
     }
 }

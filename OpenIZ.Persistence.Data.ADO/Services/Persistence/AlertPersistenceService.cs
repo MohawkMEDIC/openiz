@@ -59,9 +59,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		/// <param name="data">The alert to insert.</param>
 		/// <param name="principal">The authentication context.</param>
 		/// <returns>Returns the inserted alert.</returns>
-		public override AlertMessage Insert(DataContext context, AlertMessage data, IPrincipal principal)
+		public override AlertMessage InsertInternal(DataContext context, AlertMessage data, IPrincipal principal)
 		{
-			var alert = base.Insert(context, data, principal);
+			var alert = base.InsertInternal(context, data, principal);
 
 			foreach (var securityUser in alert.RcptTo)
 			{

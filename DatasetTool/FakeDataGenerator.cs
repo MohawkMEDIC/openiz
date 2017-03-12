@@ -41,6 +41,8 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Security;
 using MARC.Everest.Threading;
 using OpenIZ.Core;
+using OpenIZ.Core.Services.Impl;
+using System.Threading;
 
 namespace OizDevTool
 {
@@ -65,6 +67,12 @@ namespace OizDevTool
             /// </summary>
             [Parameter("maxage")]
             public String MaxAge { get; set; }
+
+            /// <summary>
+            /// Barcode auth
+            /// </summary>
+            [Parameter("barcode")]
+            public String BarcodeAuth { get; set; }
         }
 
         /// <summary>
@@ -181,53 +189,47 @@ namespace OizDevTool
             int maxAge = Int32.Parse(parameters.MaxAge ?? "500");
             ApplicationContext.Current.AddServiceProvider(typeof(SimpleCarePlanService));
             ApplicationContext.Current.AddServiceProvider(typeof(SeederProtocolRepositoryService));
-
+            ApplicationContext.Current.AddServiceProvider(typeof(LocalPlaceRepositoryService));
+            ApplicationContext.Current.AddServiceProvider(typeof(LocalActRepositoryService));
             ApplicationServiceContext.Current = ApplicationContext.Current;
             //cp.Repository = new SeederProtocolRepositoryService();
             ApplicationContext.Current.Start();
 
-            WaitThreadPool wtp = new WaitThreadPool();
+            int tr = 0;
+            var places = ApplicationContext.Current.GetService<IPlaceRepositoryService>().Find(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation, 0, 20 ,out tr);
+            places = places.Union(ApplicationContext.Current.GetService<IPlaceRepositoryService>().Find(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey != EntityClassKeys.ServiceDeliveryLocation, 0, 20, out tr));
+            WaitThreadPool wtp = new WaitThreadPool(4);
+            Random r = new Random();
+
+            WaitCallback genFunc = (s) =>
+            {
+
+                var patient = GeneratePatient(maxAge, parameters.BarcodeAuth, places, r);
+                var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+                // Insert
+                patient = persistence.Insert(patient, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
+                Console.WriteLine("Generated Patient: {0}", patient);
+
+                // Schedule
+                var acts = ApplicationContext.Current.GetService<ICarePlanService>().CreateCarePlan(patient).Where(o => o.ActTime <= DateTime.Now);
+                foreach (var act in acts)
+                {
+                    act.MoodConceptKey = ActMoodKeys.Eventoccurrence;
+                    act.StatusConceptKey = StatusKeys.Completed;
+                    act.ActTime = act.ActTime.AddDays(r.Next(0, 5));
+
+                    if (act is QuantityObservation)
+                        (act as QuantityObservation).Value = (r.Next((int)(act.ActTime - patient.DateOfBirth.Value).TotalDays, (int)(act.ActTime - patient.DateOfBirth.Value).TotalDays + 10) / 10) + 4;
+                    // Persist the act
+                    ApplicationContext.Current.GetService<IActRepositoryService>().Insert(act);
+                }
+            };
+            genFunc(null);
 
             for (int i = 0; i < populationSize; i++)
             {
-                wtp.QueueUserWorkItem((s) =>
-                {
-                    var patient = GeneratePatient(maxAge);
-                    var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
-                    var actPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<SubstanceAdministration>>();
 
-                    // Insert
-                    patient = persistence.Insert(patient, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
-
-                    // Forecast 
-                    var plan = scp.CreateCarePlan(patient);
-
-                    foreach (var itm in plan.OfType<SubstanceAdministration>())
-                        actPersistence.Insert(itm, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
-
-                    foreach (var itm in plan.Where(o => o.StartTime < DateTime.Now).OfType<SubstanceAdministration>())
-                    {
-                        var flfls = new SubstanceAdministration()
-                        {
-                            ActTime = itm.ActTime,
-                            MoodConceptKey = ActMoodKeys.Eventoccurrence,
-                            RouteKey = itm.RouteKey,
-                            DoseUnitKey = itm.DoseUnitKey,
-                            Protocols = itm.Protocols,
-                            DoseQuantity = 1,
-                            IsNegated = false,
-                            SequenceId = itm.SequenceId,
-                            StatusConceptKey = StatusKeys.Active,
-                            Relationships = new List<ActRelationship>() { new ActRelationship(ActRelationshipTypeKeys.Fulfills, itm.Key) },
-                            Participations = new List<ActParticipation>()
-                        {
-                            new ActParticipation(ActParticipationKey.Consumable, itm.Participations.FirstOrDefault(o=>o.ParticipationRoleKey == ActParticipationKey.Product).PlayerEntity),
-                            new ActParticipation(ActParticipationKey.RecordTarget, patient.Key)
-                        }
-                        };
-                        actPersistence.Insert(flfls, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
-                    }
-                });
+                wtp.QueueUserWorkItem(genFunc);
 
             }
             wtp.WaitOne();
@@ -236,8 +238,10 @@ namespace OizDevTool
         /// <summary>
         /// Generate the patient with schedule
         /// </summary>
-        private static Patient GeneratePatient(int maxAge)
+        private static Patient GeneratePatient(int maxAge, string barcodeAuth, IEnumerable<Place> places, Random r)
         {
+
+            var placeService = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
 
             Person mother = new Person()
             {
@@ -248,18 +252,25 @@ namespace OizDevTool
 
             String gender = BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 1) % 2 == 0 ? "Male" : "Female";
 
+
+            var villageId = places.Where(o => o.ClassConceptKey != EntityClassKeys.ServiceDeliveryLocation).OrderBy(o => r.Next()).FirstOrDefault().Addresses.First();
+            var addr = new EntityAddress();
+            addr.AddressUseKey = AddressUseKeys.HomeAddress;
+            addr.Component = new List<EntityAddressComponent>(villageId.Component.Select(o => new EntityAddressComponent(o.ComponentTypeKey.Value, o.Value)));
             // Child
             Patient child = new Patient()
             {
                 Names = new List<EntityName>() { new EntityName(NameUseKeys.OfficialRecord, mother.Names[0].Component[0].Value, SeedData.SeedData.Current.PickRandomGivenName(gender).Name, SeedData.SeedData.Current.PickRandomGivenName(gender).Name) },
                 DateOfBirth = DateTime.Now.AddDays(-Math.Abs(BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 0) % maxAge)),
-                Addresses = new List<EntityAddress>() { new EntityAddress(AddressUseKeys.HomeAddress, null, "Arusha DC", "Arusha", "TZ", "TZ.NT.AS.AS") },
+                Addresses = new List<EntityAddress>() { addr },
                 GenderConcept = new Concept() { Mnemonic = gender },
-                Identifiers = new List<EntityIdentifier>() { new EntityIdentifier(new AssigningAuthority("TIIS_BARCODE", "TImR Barcode IDs", "2.3.4.5.6.7"), BitConverter.ToString(Guid.NewGuid().ToByteArray()).Replace(":", "")) }
+                Identifiers = new List<EntityIdentifier>() { new EntityIdentifier(barcodeAuth, BitConverter.ToString(Guid.NewGuid().ToByteArray()).Replace(":", "")) }
             };
-
             // Associate
-            child.Relationships = new List<EntityRelationship>() { new EntityRelationship(EntityRelationshipTypeKeys.Mother, mother) };
+            child.Relationships = new List<EntityRelationship>() {
+                new EntityRelationship(EntityRelationshipTypeKeys.Mother, mother),
+                new EntityRelationship(EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation, places.Where(o=>o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation).OrderBy(o=>r.Next()).FirstOrDefault().Key)
+            };
 
             return child;
 

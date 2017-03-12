@@ -200,7 +200,7 @@ namespace OpenIZ.Core.Applets.ViewModel
                 (!this.ElementDescription.All && propertyDescription == null))
             {
                 // Parent is not set to all and does not explicitly call this property out
-                return (this.ElementDescription == null && this.Parent.ElementDescription?.All == true);
+                return (this.ElementDescription == null && this.Parent?.ElementDescription?.All == true);
             }
             return true;
         }

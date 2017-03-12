@@ -53,9 +53,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Insert 
         /// </summary>
-        public override Core.Model.Entities.Place Insert(DataContext context, Core.Model.Entities.Place data, IPrincipal principal)
+        public override Core.Model.Entities.Place InsertInternal(DataContext context, Core.Model.Entities.Place data, IPrincipal principal)
         {
-            var retVal = base.Insert(context, data, principal);
+            var retVal = base.InsertInternal(context, data, principal);
 
             if (data.Services != null)
                 this.m_entityPersister.UpdateVersionedAssociatedItems<Core.Model.Entities.PlaceService,DbPlaceService>(
@@ -70,9 +70,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Update the place
         /// </summary>
-        public override Core.Model.Entities.Place Update(DataContext context, Core.Model.Entities.Place data, IPrincipal principal)
+        public override Core.Model.Entities.Place UpdateInternal(DataContext context, Core.Model.Entities.Place data, IPrincipal principal)
         {
-            var retVal = base.Update(context, data, principal);
+            var retVal = base.UpdateInternal(context, data, principal);
 
             if (data.Services != null)
                 this.m_entityPersister.UpdateVersionedAssociatedItems<Core.Model.Entities.PlaceService,DbPlaceService>(

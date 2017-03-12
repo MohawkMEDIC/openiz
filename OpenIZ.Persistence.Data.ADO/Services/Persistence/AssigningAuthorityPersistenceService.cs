@@ -54,9 +54,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Insert the specified data
         /// </summary>
-        public override Core.Model.DataTypes.AssigningAuthority Insert(DataContext context, Core.Model.DataTypes.AssigningAuthority data, IPrincipal principal)
+        public override Core.Model.DataTypes.AssigningAuthority InsertInternal(DataContext context, Core.Model.DataTypes.AssigningAuthority data, IPrincipal principal)
         {
-            var retVal = base.Insert(context, data, principal);
+            var retVal = base.InsertInternal(context, data, principal);
 
             // Scopes?
             if (data.AuthorityScopeXml != null)
@@ -74,9 +74,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Update the specified data
         /// </summary>
-        public override Core.Model.DataTypes.AssigningAuthority Update(DataContext context, Core.Model.DataTypes.AssigningAuthority data, IPrincipal principal)
+        public override Core.Model.DataTypes.AssigningAuthority UpdateInternal(DataContext context, Core.Model.DataTypes.AssigningAuthority data, IPrincipal principal)
         {
-            var retVal = base.Update(context, data, principal);
+            var retVal = base.UpdateInternal(context, data, principal);
 
             // Scopes?
             if (data.AuthorityScopeXml != null)

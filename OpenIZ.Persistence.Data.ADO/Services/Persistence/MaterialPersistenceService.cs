@@ -60,25 +60,25 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Insert the material
         /// </summary>
-        public override Core.Model.Entities.Material Insert(DataContext context, Core.Model.Entities.Material data, IPrincipal principal)
+        public override Core.Model.Entities.Material InsertInternal(DataContext context, Core.Model.Entities.Material data, IPrincipal principal)
         {
             if(data.FormConcept != null) data.FormConcept = data.FormConcept?.EnsureExists(context, principal) as Concept;
             if(data.QuantityConcept != null) data.QuantityConcept = data.QuantityConcept?.EnsureExists(context, principal) as Concept;
             data.FormConceptKey = data.FormConcept?.Key ?? data.FormConceptKey;
             data.QuantityConceptKey = data.QuantityConcept?.Key ?? data.QuantityConceptKey;
-            return base.Insert(context, data, principal);
+            return base.InsertInternal(context, data, principal);
         }
 
         /// <summary>
         /// Update the specified material
         /// </summary>
-        public override Core.Model.Entities.Material Update(DataContext context, Core.Model.Entities.Material data, IPrincipal principal)
+        public override Core.Model.Entities.Material UpdateInternal(DataContext context, Core.Model.Entities.Material data, IPrincipal principal)
         {
             if (data.FormConcept != null) data.FormConcept = data.FormConcept?.EnsureExists(context, principal) as Concept;
             if (data.QuantityConcept != null) data.QuantityConcept = data.QuantityConcept?.EnsureExists(context, principal) as Concept;
             data.FormConceptKey = data.FormConcept?.Key ?? data.FormConceptKey;
             data.QuantityConceptKey = data.QuantityConcept?.Key ?? data.QuantityConceptKey;
-            return base.Update(context, data, principal);
+            return base.UpdateInternal(context, data, principal);
         }
 
     }

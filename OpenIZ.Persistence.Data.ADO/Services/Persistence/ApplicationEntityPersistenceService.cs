@@ -57,21 +57,21 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Insert the application entity
         /// </summary>
-        public override Core.Model.Entities.ApplicationEntity Insert(DataContext context, Core.Model.Entities.ApplicationEntity data, IPrincipal principal)
+        public override Core.Model.Entities.ApplicationEntity InsertInternal(DataContext context, Core.Model.Entities.ApplicationEntity data, IPrincipal principal)
         {
             if(data.SecurityApplication != null) data.SecurityApplication = data.SecurityApplication?.EnsureExists(context, principal) as SecurityApplication;
             data.SecurityApplicationKey = data.SecurityApplication?.Key ?? data.SecurityApplicationKey;
-            return base.Insert(context, data, principal);
+            return base.InsertInternal(context, data, principal);
         }
         
         /// <summary>
         /// Update the application entity
         /// </summary>
-        public override Core.Model.Entities.ApplicationEntity Update(DataContext context, Core.Model.Entities.ApplicationEntity data, IPrincipal principal)
+        public override Core.Model.Entities.ApplicationEntity UpdateInternal(DataContext context, Core.Model.Entities.ApplicationEntity data, IPrincipal principal)
         {
             if(data.SecurityApplication != null) data.SecurityApplication = data.SecurityApplication?.EnsureExists(context, principal) as SecurityApplication;
             data.SecurityApplicationKey = data.SecurityApplication?.Key ?? data.SecurityApplicationKey;
-            return base.Update(context, data, principal);
+            return base.UpdateInternal(context, data, principal);
         }
     }
 }

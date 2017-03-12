@@ -93,9 +93,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <param name="context"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public override Core.Model.Entities.Person Insert(DataContext context, Core.Model.Entities.Person data, IPrincipal principal)
+        public override Core.Model.Entities.Person InsertInternal(DataContext context, Core.Model.Entities.Person data, IPrincipal principal)
         {
-            var retVal = base.Insert(context, data, principal);
+            var retVal = base.InsertInternal(context, data, principal);
             //byte[] sourceKey = retVal.Key.Value.ToByteArray();
 
             // Language communication
@@ -111,9 +111,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Update the person entity
         /// </summary>
-        public override Core.Model.Entities.Person Update(DataContext context, Core.Model.Entities.Person data, IPrincipal principal)
+        public override Core.Model.Entities.Person UpdateInternal(DataContext context, Core.Model.Entities.Person data, IPrincipal principal)
         {
-            var retVal = base.Update(context, data, principal);
+            var retVal = base.UpdateInternal(context, data, principal);
             var sourceKey = retVal.Key.Value.ToByteArray();
 
             // Language communication

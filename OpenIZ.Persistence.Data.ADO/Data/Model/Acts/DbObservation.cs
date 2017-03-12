@@ -67,7 +67,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// <summary>
         /// Gets or sets the value of the measure
         /// </summary>
-        [Column("qty")]
+        [Column("qty"), NotNull]
         public Decimal Value { get; set; }
 
         /// <summary>

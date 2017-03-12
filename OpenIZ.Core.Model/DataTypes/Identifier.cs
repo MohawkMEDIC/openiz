@@ -66,6 +66,14 @@ namespace OpenIZ.Core.Model.DataTypes
             this.Value = value;
         }
 
+        /// <summary>
+        /// Creates a new entity identifier with specified nsid
+        /// </summary>
+        public EntityIdentifier(String nsid, String value)
+        {
+            this.Authority = new AssigningAuthority() { DomainName = nsid };
+            this.Value = value;
+        }
     }
 
 

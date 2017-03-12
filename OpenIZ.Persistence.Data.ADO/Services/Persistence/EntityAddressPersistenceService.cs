@@ -46,20 +46,20 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public IEnumerable GetFromSource(DataContext context, Guid id, decimal? versionSequenceId, IPrincipal principal)
         {
             int tr = 0;
-            return this.Query(context, base.BuildSourceQuery<EntityAddress>(id, versionSequenceId), 0, null, out tr, principal, false);
+            return this.QueryInternal(context, base.BuildSourceQuery<EntityAddress>(id, versionSequenceId), 0, null, out tr, principal, false);
         }
 
         /// <summary>
         /// Insert the specified object
         /// </summary>
-        public override Core.Model.Entities.EntityAddress Insert(DataContext context, EntityAddress data, IPrincipal principal)
+        public override Core.Model.Entities.EntityAddress InsertInternal(DataContext context, EntityAddress data, IPrincipal principal)
         {
 
             // Ensure exists
             if (data.AddressUse != null) data.AddressUse = data.AddressUse?.EnsureExists(context, principal) as Concept;
             data.AddressUseKey = data.AddressUse?.Key ?? data.AddressUseKey;
 
-            var retVal = base.Insert(context, data, principal);
+            var retVal = base.InsertInternal(context, data, principal);
 
             // Data component
             if (data.Component != null)
@@ -75,14 +75,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Update the entity name
         /// </summary>
-        public override Core.Model.Entities.EntityAddress Update(DataContext context, Core.Model.Entities.EntityAddress data, IPrincipal principal)
+        public override Core.Model.Entities.EntityAddress UpdateInternal(DataContext context, Core.Model.Entities.EntityAddress data, IPrincipal principal)
         {
 
             // Ensure exists
             if (data.AddressUse != null) data.AddressUse = data.AddressUse?.EnsureExists(context, principal) as Concept;
             data.AddressUseKey = data.AddressUse?.Key ?? data.AddressUseKey;
 
-            var retVal = base.Update(context, data, principal);
+            var retVal = base.UpdateInternal(context, data, principal);
 
             var sourceKey = data.Key.Value.ToByteArray();
 
@@ -140,29 +140,28 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 {
                     Value = modelInstance.Value
                 }).Key;
-
             return retVal;
         }
 
         /// <summary>
         /// Entity address component
         /// </summary>
-        public override Core.Model.Entities.EntityAddressComponent Insert(DataContext context, Core.Model.Entities.EntityAddressComponent data, IPrincipal principal)
+        public override Core.Model.Entities.EntityAddressComponent InsertInternal(DataContext context, Core.Model.Entities.EntityAddressComponent data, IPrincipal principal)
         {
             if (data.ComponentType != null) data.ComponentType = data.ComponentType?.EnsureExists(context, principal) as Concept;
             data.ComponentTypeKey = data.ComponentType?.Key ?? data.ComponentTypeKey;
-            return base.Insert(context, data, principal);
+            return base.InsertInternal(context, data, principal);
         }
 
         /// <summary>
         /// Update 
         /// </summary>
-        public override Core.Model.Entities.EntityAddressComponent Update(DataContext context, Core.Model.Entities.EntityAddressComponent data, IPrincipal principal)
+        public override Core.Model.Entities.EntityAddressComponent UpdateInternal(DataContext context, Core.Model.Entities.EntityAddressComponent data, IPrincipal principal)
         {
             if (data.ComponentType != null) data.ComponentType = data.ComponentType?.EnsureExists(context, principal) as Concept;
 
             data.ComponentTypeKey = data.ComponentType?.Key ?? data.ComponentTypeKey;
-            return base.Update(context, data, principal);
+            return base.UpdateInternal(context, data, principal);
         }
 
         /// <summary>
@@ -171,7 +170,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public IEnumerable GetFromSource(DataContext context, Guid id, decimal? versionSequenceId, IPrincipal principal)
         {
             int tr = 0;
-            return this.Query(context, base.BuildSourceQuery<EntityAddressComponent>(id), 0, null, out tr, principal, false);
+            return this.QueryInternal(context, base.BuildSourceQuery<EntityAddressComponent>(id), 0, null, out tr, principal, false);
         }
 
     }

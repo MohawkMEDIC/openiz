@@ -46,7 +46,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		/// </summary>
 		/// <param name="context">Context.</param>
 		/// <param name="data">Data.</param>
-		public override TModel Insert(DataContext context, TModel data, IPrincipal principal)
+		public override TModel InsertInternal(DataContext context, TModel data, IPrincipal principal)
         {
             var domainObject = this.FromModelInstance(data, context, principal) as TDomain;
 
@@ -64,7 +64,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public override TModel Update(DataContext context, TModel data, IPrincipal principal)
+        public override TModel UpdateInternal(DataContext context, TModel data, IPrincipal principal)
         {
             // Sanity 
             if (data.Key == Guid.Empty)
@@ -81,7 +81,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public override TModel Obsolete(DataContext context, TModel data, IPrincipal principal)
+        public override TModel ObsoleteInternal(DataContext context, TModel data, IPrincipal principal)
         {
             if (data.Key == Guid.Empty)
                 throw new AdoFormalConstraintException(AdoFormalConstraintType.NonIdentityUpdate);
@@ -94,7 +94,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Performs the actual query
         /// </summary>
-        public override IEnumerable<TModel> Query(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
+        public override IEnumerable<TModel> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
         {
             return this.QueryInternal(context, query, offset, count, out totalResults, countResults).Select(o => this.CacheConvert(o, context, principal));
         }
@@ -221,12 +221,12 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             // Update those that need it
             var updateRecords = storage.Where(o => existing.Any(ecn => ecn.Key == o.Key && o.Key != Guid.Empty));
             foreach (var upd in updateRecords)
-                persistenceService.Update(context, upd, principal);
+                persistenceService.UpdateInternal(context, upd, principal);
 
             // Insert those that do not exist
             var insertRecords = storage.Where(o => !existing.Any(ecn => ecn.Key == o.Key));
             foreach (var ins in insertRecords)
-                persistenceService.Insert(context, ins, principal);
+                persistenceService.InsertInternal(context, ins, principal);
 
         }
 

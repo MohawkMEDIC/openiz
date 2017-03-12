@@ -56,22 +56,22 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Insert the specified device entity
         /// </summary>
-        public override Core.Model.Entities.DeviceEntity Insert(DataContext context, Core.Model.Entities.DeviceEntity data, IPrincipal principal)
+        public override Core.Model.Entities.DeviceEntity InsertInternal(DataContext context, Core.Model.Entities.DeviceEntity data, IPrincipal principal)
         {
             if(data.SecurityDevice != null) data.SecurityDevice = data.SecurityDevice?.EnsureExists(context, principal) as SecurityDevice;
             data.SecurityDeviceKey = data.SecurityDevice?.Key ?? data.SecurityDeviceKey;
 
-            return base.Insert(context, data, principal);
+            return base.InsertInternal(context, data, principal);
         }
 
         /// <summary>
         /// Updates the specified user
         /// </summary>
-        public override Core.Model.Entities.DeviceEntity Update(DataContext context, Core.Model.Entities.DeviceEntity data, IPrincipal principal)
+        public override Core.Model.Entities.DeviceEntity UpdateInternal(DataContext context, Core.Model.Entities.DeviceEntity data, IPrincipal principal)
         {
             if (data.SecurityDevice != null) data.SecurityDevice = data.SecurityDevice?.EnsureExists(context, principal) as SecurityDevice;
             data.SecurityDeviceKey = data.SecurityDevice?.Key ?? data.SecurityDeviceKey;
-            return base.Update(context, data, principal);
+            return base.UpdateInternal(context, data, principal);
         }
     }
 }

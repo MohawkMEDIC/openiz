@@ -11,6 +11,7 @@ using OpenIZ.Core.Services;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Constants;
+using System.IO;
 
 namespace OpenIZ.Messaging.GS1.Wcf
 {
@@ -23,7 +24,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
         /// <summary>
         /// Requests the issuance of a BMS1 inventory report request
         /// </summary>
-        public LogisticsInventoryReportMessageType IssueInventoryReportRequest()
+        public LogisticsInventoryReportMessageType IssueInventoryReportRequest(LogisticsInventoryReportRequestType parameters)
         {
             
             // Status
@@ -57,9 +58,14 @@ namespace OpenIZ.Messaging.GS1.Wcf
                 }
             };
 
-            // Next, we want to get all active manufactured materials
+            // Next, we want to get all active manufactured materials for the specified objects
             IStockManagementRepositoryService stockService = ApplicationContext.Current.GetService<IStockManagementRepositoryService>();
             IPlaceRepositoryService placeService = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
+            IActRepositoryService actService = ApplicationContext.Current.GetService<IActRepositoryService>();
+
+            // Date / time of report
+            DateTime? reportFrom = parameters.reportingPeriod?.beginDate ?? DateTime.MinValue,
+                reportTo = parameters.reportingPeriod?.endDate ?? DateTime.Now;
 
             // return value
             LogisticsInventoryReportType report = new LogisticsInventoryReportType()
@@ -75,14 +81,44 @@ namespace OpenIZ.Messaging.GS1.Wcf
             var locationStockStatuses = new List<LogisticsInventoryReportInventoryLocationType>();
 
             // Next, we want to know which facilities for which we're getting the inventory report
-            foreach (var place in placeService.Find(o=>o.Relationships.Any(r=>r.RelationshipTypeKey == EntityRelationshipTypeKeys.HeldEntity) && o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation))
+            List<Place> filterPlaces = null;
+            if (parameters.logisticsInventoryRequestLocation != null &&
+                parameters.logisticsInventoryRequestLocation.Length > 0)
+            {
+                foreach (var filter in parameters.logisticsInventoryRequestLocation)
+                {
+                    int tc = 0;
+                    var place = placeService.Find(o => o.Identifiers.Any(i => i.Value == filter.inventoryLocation.gln), 0, 1, out tc).FirstOrDefault();
+                    if (place == null)
+                        throw new FileNotFoundException($"Place {filter.inventoryLocation.gln} not found");
+                    if (filterPlaces == null)
+                        filterPlaces = new List<Place>() { place };
+                    else
+                        filterPlaces.Add(place);
+                }
+            }
+            else
+                filterPlaces = placeService.Find(o => o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation).ToList();
+
+            // Get the GLN AA data
+            var oidService = ApplicationContext.Current.GetService<IOidRegistrarService>();
+            var gln = oidService.GetOid("GLN");
+            var gtin = oidService.GetOid("GTIN");
+
+            if (gln == null || gln.Oid == null)
+                throw new InvalidOperationException("GLN configuration must carry OID and be named GLN in repository");
+            if (gtin == null || gtin.Oid == null)
+                throw new InvalidOperationException("GTIN configuration must carry OID and be named GTIN in repository");
+
+            // Create the inventory report
+            foreach (var place in filterPlaces)
             {
                 var locationStockStatus = new LogisticsInventoryReportInventoryLocationType();
                 locationStockStatuses.Add(locationStockStatus);
 
                 // TODO: Store the GLN configuration domain name
                 locationStockStatus.inventoryLocation = new TransactionalPartyType() {
-                    gln = place.Identifiers.First(o => o.Authority.DomainName == "GLN")?.Value,
+                    gln = place.Identifiers.First(o => o.Authority.Oid == gln.Oid)?.Value,
                     address = new AddressType()
                     {
                         state = place.Addresses.First().Component.FirstOrDefault(o => o.ComponentTypeKey == AddressComponentKeys.State)?.Value,
@@ -105,21 +141,31 @@ namespace OpenIZ.Messaging.GS1.Wcf
                 var tradeItemStatuses = new List<TradeItemInventoryStatusType>();
 
                 // What are the relationships of held entities
-                foreach(var rel in place.Relationships.Where(o=>o.RelationshipTypeKey == EntityRelationshipTypeKeys.HeldEntity))
+                foreach(var rel in place.Relationships.Where(o=>o.RelationshipTypeKey == EntityRelationshipTypeKeys.OwnedEntity))
                 {
-
                     var mmat = rel.TargetEntity as ManufacturedMaterial;
                     if (!(mmat is ManufacturedMaterial))
                         continue;
 
                     var mat = mmat.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.ManufacturedProduct).TargetEntity as Material;
 
+                    decimal balanceOH = rel.Quantity;
+
+                    // get the adjustments the adjustment acts are allocations and transfers 
+                    var adjustments = stockService.FindAdjustments(mmat.Key.Value, place.Key.Value, reportFrom, reportTo);
+
+                    // We want to roll back to the start time and re-calc balance oh at time?
+                    if (reportTo.Value.Date < DateTime.Now.Date)
+                    {
+                        var prevAdjustments = stockService.FindAdjustments(mmat.Key.Value, place.Key.Value, reportTo, DateTime.Now);
+                        balanceOH -= (decimal)prevAdjustments.Sum(o => o.Participations.FirstOrDefault(p => p.ParticipationRoleKey == ActParticipationKey.Consumable)?.Quantity);
+                    }
 
                     // First we need the GTIN for on-hand balance
                     tradeItemStatuses.Add(new TradeItemInventoryStatusType()
                     {
-                        gtin = mmat.Identifiers.FirstOrDefault(o => o.Authority.DomainName == "GTIN")?.Value,
-                        additionalTradeItemIdentification = mmat.Identifiers.Where(o => o.Authority.DomainName != "GTIN").Select(o => new AdditionalTradeItemIdentificationType()
+                        gtin = mmat.Identifiers.FirstOrDefault(o => o.Authority.Oid == gtin.Oid)?.Value,
+                        additionalTradeItemIdentification = mmat.Identifiers.Where(o => o.Authority.Oid != gtin.Oid).Select(o => new AdditionalTradeItemIdentificationType()
                         {
                             additionalTradeItemIdentificationTypeCode = o.Authority.DomainName,
                             Value = o.Value
@@ -133,12 +179,9 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                 additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
                                 Value = o.ReferenceTerm.Mnemonic
                             }).FirstOrDefault()?.Value,
-                            Value = rel.Quantity
+                            Value = balanceOH
                         }
                     });
-
-                    // Second get the adjustments the adjustment acts are allocations and transfers 
-                    var adjustments = stockService.FindAdjustments(mmat.Key.Value, place.Key.Value, new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day));
 
                     // Broken vials?
                     tradeItemStatuses.Add(new TradeItemInventoryStatusType()
@@ -158,7 +201,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                 additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
                                 Value = o.ReferenceTerm.Mnemonic
                             }).FirstOrDefault()?.Value,
-                            Value = adjustments.Where(a=>a.ReasonConceptKey.Value == ActReasonKeys.Broken).Sum(o=>o.Participations.First(p=>p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity)
+                            Value = Math.Abs(adjustments.Where(a=>a.ReasonConceptKey.Value == ActReasonKeys.Broken).Sum(o=>o.Participations.First(p=>p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
                         }
                     });
 
@@ -180,7 +223,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                 additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
                                 Value = o.ReferenceTerm.Mnemonic
                             }).FirstOrDefault()?.Value,
-                            Value = adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.ColdStorageFailure).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity)
+                            Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.ColdStorageFailure).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
                         }
                     });
 
@@ -202,7 +245,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                 additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
                                 Value = o.ReferenceTerm.Mnemonic
                             }).FirstOrDefault()?.Value,
-                            Value = adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.ColdStorageFailure).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity)
+                            Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.ColdStorageFailure).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
                         }
                     });
 
@@ -224,7 +267,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                 additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
                                 Value = o.ReferenceTerm.Mnemonic
                             }).FirstOrDefault()?.Value,
-                            Value = adjustments.Where(a => a.ReasonConceptKey.Value == NullReasonKeys.Other).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity)
+                            Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == NullReasonKeys.Other).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
                         }
                     });
 
