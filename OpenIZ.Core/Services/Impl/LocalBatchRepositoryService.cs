@@ -66,7 +66,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			// Entry point
 			data = breService?.BeforeUpdate(data) ?? data;
-			data = persistence.Insert(data, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			data = persistence.Update(data, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 			data = breService?.AfterUpdate(data) ?? data;
 			return data;
 		}
