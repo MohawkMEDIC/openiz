@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,33 +14,31 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2016-9-2
+ * User: khannan
+ * Date: 2017-3-12
  */
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
+using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Core.Services.Impl
+namespace OpenIZ.Core.Security
 {
 	/// <summary>
-	/// Represents an identity service which authenticates devices.
+	/// Represents a device principal.
 	/// </summary>
-	public class LocalDeviceIdentityProviderService : IDeviceIdentityProviderService
+	/// <seealso cref="System.Security.Claims.ClaimsPrincipal" />
+	public class DevicePrincipal : ClaimsPrincipal
 	{
 		/// <summary>
-		/// Authenticate the device based on certificate provided
+		/// Initializes a new instance of the <see cref="DevicePrincipal"/> class.
 		/// </summary>
-		/// <param name="deviceCertificate">The certificate of the device used to authenticate the device.</param>
-		/// <returns>Returns the principal of the device.</returns>
-		/// <exception cref="System.NotImplementedException"></exception>
-		public IPrincipal Authenticate(X509Certificate2 deviceCertificate)
+		/// <param name="identity">The identity from which to initialize the new claims principal.</param>
+		public DevicePrincipal(IIdentity identity) : base(identity)
 		{
-			throw new NotImplementedException();
 		}
 	}
 }

@@ -17,8 +17,11 @@
  * User: justi
  * Date: 2016-7-7
  */
+
+using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
+using MARC.HI.EHRS.SVC.Core.Event;
 
 namespace OpenIZ.Core.Services
 {
@@ -28,10 +31,28 @@ namespace OpenIZ.Core.Services
 	public interface IDeviceIdentityProviderService
 	{
 		/// <summary>
+		/// Fired after an authentication request has been made.
+		/// </summary>
+		event EventHandler<AuthenticatedEventArgs> Authenticated;
+
+		/// <summary>
+		/// Fired prior to an authentication request being made.
+		/// </summary>
+		event EventHandler<AuthenticatingEventArgs> Authenticating;
+
+		/// <summary>
+		/// Authenticates the specified device identifier.
+		/// </summary>
+		/// <param name="deviceId">The device identifier.</param>
+		/// <param name="deviceSecret">The device secret.</param>
+		/// <returns>Returns the authenticated device principal.</returns>
+		IPrincipal Authenticate(string deviceId, string deviceSecret);
+
+		/// <summary>
 		/// Authenticate the device based on certificate provided
 		/// </summary>
 		/// <param name="deviceCertificate">The certificate of the device used to authenticate the device.</param>
-		/// <returns>Returns the principal of the device.</returns>
+		/// <returns>Returns the authenticated device principal.</returns>
 		IPrincipal Authenticate(X509Certificate2 deviceCertificate);
 	}
 }
