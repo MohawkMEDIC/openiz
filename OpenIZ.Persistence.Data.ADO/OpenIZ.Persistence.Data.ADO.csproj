@@ -122,6 +122,7 @@
     <Compile Include="Security\AdoSecurityPolicy.cs" />
     <Compile Include="Security\AdoSecurityPolicyInstance.cs" />
     <Compile Include="Services\AdoApplicationIdentityProvider.cs" />
+    <Compile Include="Services\AdoDeviceIdentityProvider.cs" />
     <Compile Include="Services\AdoIdentityProvider.cs" />
     <Compile Include="Services\AdoPersistenceService.cs" />
     <Compile Include="Services\AdoPolicyInformationService.cs" />

@@ -63,15 +63,19 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 {
                     context.Open();
                     // Security device
-                    if (securable is Core.Model.Security.SecurityDevice)
+                    if (securable is Core.Model.Security.SecurityDevice || securable is DevicePrincipal)
                     {
-                        var query = new SqlStatement<DbSecurityDevicePolicy>().SelectFrom()
-                            .InnerJoin<DbSecurityPolicy, DbSecurityDevicePolicy>()
-                            .Where(o => o.SourceKey == (securable as IdentifiedData).Key);
+						var query = new SqlStatement<DbSecurityDevicePolicy>().SelectFrom().InnerJoin<DbSecurityPolicy, DbSecurityDevicePolicy>();
+
+						if (securable is DevicePrincipal)
+							query.InnerJoin<DbSecurityDevice, DbSecurityDevice>()
+									.Where(o => o.PublicId == (securable as DevicePrincipal).Identity.Name);
+						else
+							query.Where(o => o.Key == (securable as IdentifiedData).Key);
 
                         return context.Query<CompositeResult<DbSecurityPolicy, DbSecurityDevicePolicy>>(query)
                                                     .Select(o => new AdoSecurityPolicyInstance(o.Object2, o.Object1, securable));
-                    }
+					}
                     else if (securable is Core.Model.Security.SecurityRole)
                     {
                         var query = new SqlStatement<DbSecurityRolePolicy>().SelectFrom()
