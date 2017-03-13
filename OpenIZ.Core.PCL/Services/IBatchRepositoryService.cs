@@ -30,21 +30,29 @@ namespace OpenIZ.Core.Services
 		/// <summary>
 		/// Inserts all the data in the provided bundle in one transaction
 		/// </summary>
-		Bundle Insert(Bundle data);
+		/// <param name="bundle">The bundle.</param>
+		/// <returns>Returns the created bundle.</returns>
+		Bundle Insert(Bundle bundle);
 
 		/// <summary>
-		/// Obsoletes all data in the provided bundle in one transaction
+		/// Obsoletes all data in the provided bundle in one transaction.
 		/// </summary>
-		Bundle Obsolete(Bundle obsolete);
+		/// <param name="bundle">The bundle.</param>
+		/// <returns>Returns the obsoleted bundle.</returns>
+		Bundle Obsolete(Bundle bundle);
 
 		/// <summary>
-		/// Updates all the data in the provided bundle in one transaction
+		/// Updates all the data in the provided bundle in one transaction.
 		/// </summary>
-		Bundle Update(Bundle data);
+		/// <param name="bundle">The bundle.</param>
+		/// <returns>Returns the updated bundle.</returns>
+		Bundle Update(Bundle bundle);
 
 		/// <summary>
-		/// Validate & prepare bundle for insert
+		/// Validates the specified bundle.
 		/// </summary>
+		/// <param name="bundle">The bundle.</param>
+		/// <returns>Returns the bundle.</returns>
 		Bundle Validate(Bundle bundle);
 	}
 }

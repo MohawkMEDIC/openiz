@@ -18,62 +18,91 @@ namespace OpenIZ.Core.Services.Impl
 		/// <summary>
 		/// Insert the bundle
 		/// </summary>
-		public Bundle Insert(Bundle data)
+		/// <param name="bundle">The bundle.</param>
+		/// <returns>Returns the created bundle.</returns>
+		/// <exception cref="System.InvalidOperationException">Missing persistence service</exception>
+		public Bundle Insert(Bundle bundle)
 		{
-			data = this.Validate(data);
+			bundle = this.Validate(bundle);
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
 			if (persistence == null)
 				throw new InvalidOperationException("Missing persistence service");
 			var breService = ApplicationContext.Current.GetService<IBusinessRulesService<Bundle>>();
 
-			data = breService?.BeforeInsert(data) ?? data;
-			data = persistence.Insert(data, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			data = breService?.AfterInsert(data) ?? data;
+			bundle = breService?.BeforeInsert(bundle) ?? bundle;
+			bundle = persistence.Insert(bundle, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			bundle = breService?.AfterInsert(bundle) ?? bundle;
 
-			return data;
+			return bundle;
 		}
 
 		/// <summary>
-		/// Obsolete all the contents in the bundle
+		/// Obsolete all the contents in the bundle.
 		/// </summary>
-		public Bundle Obsolete(Bundle obsolete)
+		/// <param name="bundle">The bundle.</param>
+		/// <returns>Returns the obsoleted bundle.</returns>
+		/// <exception cref="System.InvalidOperationException">Missing persistence service</exception>
+		public Bundle Obsolete(Bundle bundle)
 		{
-			obsolete = this.Validate(obsolete);
+			bundle = this.Validate(bundle);
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
 			if (persistence == null)
 				throw new InvalidOperationException("Missing persistence service");
 			var breService = ApplicationContext.Current.GetService<IBusinessRulesService<Bundle>>();
 
-			obsolete = breService?.BeforeObsolete(obsolete) ?? obsolete;
-			obsolete = persistence.Obsolete(obsolete, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			obsolete = breService?.AfterObsolete(obsolete) ?? obsolete;
+			bundle = breService?.BeforeObsolete(bundle) ?? bundle;
+			bundle = persistence.Obsolete(bundle, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			bundle = breService?.AfterObsolete(bundle) ?? bundle;
 
-			return obsolete;
+			return bundle;
 		}
 
 		/// <summary>
-		/// Update the specified data in the bundle
+		/// Update the specified data in the bundle.
 		/// </summary>
-		/// <param name="data"></param>
-		/// <returns></returns>
-		public Bundle Update(Bundle data)
+		/// <param name="bundle">The bundle.</param>
+		/// <returns>Returns the updated bundle.</returns>
+		/// <exception cref="System.InvalidOperationException">Missing persistence service</exception>
+		public Bundle Update(Bundle bundle)
 		{
-			data = this.Validate(data);
+			bundle = this.Validate(bundle);
+
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
+
 			if (persistence == null)
+			{
 				throw new InvalidOperationException("Missing persistence service");
+			}
+
 			var breService = ApplicationContext.Current.GetService<IBusinessRulesService<Bundle>>();
 
-			// Entry point
-			data = breService?.BeforeUpdate(data) ?? data;
-			data = persistence.Update(data, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			data = breService?.AfterUpdate(data) ?? data;
-			return data;
+			try
+			{
+				// Entry point
+				bundle = breService?.BeforeUpdate(bundle) ?? bundle;
+
+				bundle = persistence.Update(bundle, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+				bundle = breService?.AfterUpdate(bundle) ?? bundle;
+			}
+			catch (DataPersistenceException)
+			{
+				bundle = breService?.BeforeInsert(bundle) ?? bundle;
+
+				bundle = persistence.Insert(bundle, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+				bundle = breService?.AfterInsert(bundle) ?? bundle;
+			}
+
+			return bundle;
 		}
 
 		/// <summary>
-		/// Validate the bundle and its contents
+		/// Validate the bundle and its contents.
 		/// </summary>
+		/// <param name="bundle">The bundle.</param>
+		/// <returns>Returns the bundle.</returns>
+		/// <exception cref="DetectedIssueException">If there are any detected issues when validating the bundle.</exception>
 		public Bundle Validate(Bundle bundle)
 		{
 			bundle = bundle.Clean() as Bundle;
