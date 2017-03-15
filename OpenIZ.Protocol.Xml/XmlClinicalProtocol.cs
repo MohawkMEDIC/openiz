@@ -250,7 +250,7 @@ namespace OpenIZ.Protocol.Xml
                     }
                 }
 
-            this.Definition.When.Compile<Patient>(s_callbacks);
+            this.Definition.When?.Compile<Patient>(s_callbacks);
             foreach (var wc in this.Definition.Rules)
                 wc.When.Compile<Patient>(s_callbacks);
 
