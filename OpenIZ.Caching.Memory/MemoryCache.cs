@@ -246,7 +246,7 @@ namespace OpenIZ.Caching.Memory
                         this.m_taskPool.QueueUserWorkItem((o) =>
                         {
                             IEnumerable<Guid> gc = o as IEnumerable<Guid>;
-                            foreach (var g in gc)
+                            foreach (var g in gc.ToArray())
                                 lock (this.m_lock)
                                     itm.Value.Remove(g);
                         }, garbageBin);
@@ -382,7 +382,7 @@ namespace OpenIZ.Caching.Memory
             {
                 lock (s_lock)
                 {
-                    var conf = this.m_configuration.Types.FirstOrDefault(c => c.Type == t);
+                    var conf = this.m_configuration.Types.ToArray().FirstOrDefault(c => c.Type == t);
                     if (conf == null) return;
                     foreach (var sd in conf.SeedQueries)
                     {
