@@ -46,9 +46,14 @@ namespace OpenIZ.Core.Services
 		/// </summary>
 		IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters);
 
-		/// <summary>
-		/// Creates a care plan for the patient with the specified protocolsonly
-		/// </summary>
-		IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters, params Guid[] protocols);
+        /// <summary>
+        /// Creates a care plan for the patient with the specified protocolsonly
+        /// </summary>
+        IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters, IDictionary<String, Object> parameters);
+        
+        /// <summary>
+        /// Creates a care plan for the patient with the specified protocolsonly
+        /// </summary>
+        IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters, IDictionary<String, Object> parameters, params Guid[] protocols);
 	}
 }

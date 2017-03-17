@@ -22,13 +22,13 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// <summary>
         /// Gets or sets the name
         /// </summary>
-        [Column("name")]
+        [Column("proto_name")]
         public String Name { get; set; }
 
         /// <summary>
         /// Gets or sets the handler identifier
         /// </summary>
-        [Column("hdlr_id"), ForeignKey(typeof(DbProtocolHandler), nameof(DbProtocolHandler.Key))]
+        [Column("hdlr_id"), ForeignKey(typeof(DbProtocolHandler), nameof(DbProtocolHandler.Key)), AlwaysJoin]
         public Guid HandlerKey { get; set; }
 
         /// <summary>

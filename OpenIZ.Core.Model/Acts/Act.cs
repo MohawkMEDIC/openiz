@@ -68,7 +68,7 @@ namespace OpenIZ.Core.Model.Acts
             this.Notes = new VersionedAssociationCollection<ActNote>(this);
             this.Participations = new VersionedAssociationCollection<ActParticipation>(this);
             this.Tags = new SimpleAssociationCollection<ActTag>(this);
-            this.Protocols = new VersionedAssociationCollection<ActProtocol>(this);
+            this.Protocols = new SimpleAssociationCollection<ActProtocol>();
             this.Policies = new SimpleAssociationCollection<SecurityPolicyInstance>();
             
         }
@@ -396,7 +396,10 @@ namespace OpenIZ.Core.Model.Acts
         /// Identifies protocols attached to the act
         /// </summary>
         [AutoLoad, XmlElement("protocol"), JsonProperty("protocol")]
-        public VersionedAssociationCollection<ActProtocol> Protocols { get; set; }
+        public SimpleAssociationCollection<ActProtocol> Protocols {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Participations

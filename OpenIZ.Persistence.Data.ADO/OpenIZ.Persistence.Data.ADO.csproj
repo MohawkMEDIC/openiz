@@ -154,6 +154,7 @@
     <Compile Include="Services\Persistence\PatientPersistenceService.cs" />
     <Compile Include="Services\Persistence\PersonPersistenceService.cs" />
     <Compile Include="Services\Persistence\PlacePersistenceService.cs" />
+    <Compile Include="Services\Persistence\ProtocolPersistenceService.cs" />
     <Compile Include="Services\Persistence\ProviderPersistenceService.cs" />
     <Compile Include="Services\Persistence\SecurityPersistenceServices.cs" />
     <Compile Include="Services\Persistence\SimpleVersionedEntityPersistenceService.cs" />

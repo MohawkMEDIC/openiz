@@ -29,6 +29,12 @@ namespace OpenIZ.Core.Data.Warehouse
         public String Name { get; set; }
 
         /// <summary>
+        /// Gets or sets the property names for the schema element
+        /// </summary>
+        [XmlElement("property"), JsonProperty("property")]
+        public List<DatamartSchemaProperty> Properties { get; set; }
+
+        /// <summary>
         /// Definition of the query
         /// </summary>
         [XmlText, JsonProperty("select")]

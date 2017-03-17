@@ -69,6 +69,15 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             var template = context.FirstOrDefault<DbTemplateDefinition>(o => o.Key == actInstance.TemplateKey);
             retVal.Template = m_mapper.MapDomainInstance<DbTemplateDefinition, TemplateDefinition>(template);
 
+            var protocolStmt = new SqlStatement<DbActProtocol>().SelectFrom()
+                .InnerJoin<DbActProtocol, DbProtocol>(o => o.ProtocolKey, o => o.Key)
+                .Where<DbActProtocol>(o => o.SourceKey == retVal.Key);
+            retVal.Protocols = context.Query<CompositeResult<DbActProtocol, DbProtocol>>(protocolStmt).Select(o => new ActProtocol()
+            {
+                SourceEntityKey = retVal.Key,
+                Key = Guid.NewGuid(),
+                ProtocolKey = o.Object2.Key
+            }).ToList();
             return retVal;
         }
 
@@ -226,18 +235,19 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     context,
                     principal);
 
-    //        if(data.Protocols != null && data.Protocols.Any())
-				//foreach (var p in data.Protocols)
-				//{
-				//	var proto = p.EnsureExists(context, principal);
-				//	context.Insert(new DbActProtocol()
-				//	{
-				//		SourceKey = retVal.Key.Value,
-				//		Key = proto.Key.Value
-				//	});
-				//}
+            if (data.Protocols != null && data.Protocols.Any())
+                foreach (var p in data.Protocols)
+                {
+                    var proto = p.Protocol?.EnsureExists(context, principal);
+                    context.Insert(new DbActProtocol()
+                    {
+                        SourceKey = retVal.Key.Value,
+                        ProtocolKey = proto.Key.Value,
+                        Sequence = p.Sequence
+                    });
+                }
 
-			return retVal;
+            return retVal;
         }
 
         /// <summary>

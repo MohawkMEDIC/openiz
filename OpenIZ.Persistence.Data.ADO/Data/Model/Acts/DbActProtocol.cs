@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using OpenIZ.OrmLite.Attributes;
 using System.Threading.Tasks;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
@@ -16,10 +15,15 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
     {
 
         /// <summary>
+        /// Gets or sets the key
+        /// </summary>
+        public override Guid Key { get; set; }
+
+        /// <summary>
         /// Gets or sets the protocol key
         /// </summary>
         [Column("proto_id"), ForeignKey(typeof(DbProtocol), nameof(DbProtocol.Key)), PrimaryKey]
-        public override Guid Key { get; set; }
+        public Guid ProtocolKey { get; set; }
 
         /// <summary>
         /// Source key
@@ -32,6 +36,12 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// </summary>
         [Column("state_dat")]
         public byte[] State { get; set; }
+
+        /// <summary>
+        /// Sequence
+        /// </summary>
+        [Column("seq")]
+        public int Sequence { get; set; }
 
         /// <summary>
         /// Gets or sets the complete flag

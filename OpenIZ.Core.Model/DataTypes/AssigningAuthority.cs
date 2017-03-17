@@ -66,21 +66,25 @@ namespace OpenIZ.Core.Model.DataTypes
         /// </summary>
         [XmlElement("name"), JsonProperty("name")]
         public String Name { get; set; }
+
         /// <summary>
         /// Gets or sets the domain name of the assigning authority
         /// </summary>
         [XmlElement("domainName"), JsonProperty("domainName")]
         public String DomainName { get; set; }
+
         /// <summary>
         /// Gets or sets the description of the assigning authority
         /// </summary>
         [XmlElement("description"), JsonProperty("description")]
         public String Description { get; set; }
+
         /// <summary>
         /// Gets or sets the oid of the assigning authority
         /// </summary>
         [XmlElement("oid"), JsonProperty("oid")]
         public String Oid { get; set; }
+
         /// <summary>
         /// The URL of the assigning authority
         /// </summary>
@@ -144,6 +148,20 @@ namespace OpenIZ.Core.Model.DataTypes
             {
                 this.AuthorityScopeXml = value?.Where(o => o.Key.HasValue).Select(o => o.Key.Value).ToList();
             }
+        }
+
+        /// <summary>
+        /// Represent the AA as a minimal info
+        /// </summary>
+        public AssigningAuthority ToMinimal()
+        {
+            return new AssigningAuthority()
+            {
+                Key = this.Key,
+                DomainName = this.DomainName,
+                Oid = this.Oid,
+                Name = this.Name
+            };
         }
 
         /// <summary>

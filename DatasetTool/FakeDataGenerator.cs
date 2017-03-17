@@ -264,7 +264,7 @@ namespace OizDevTool
                 DateOfBirth = DateTime.Now.AddDays(-Math.Abs(BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 0) % maxAge)),
                 Addresses = new List<EntityAddress>() { addr },
                 GenderConcept = new Concept() { Mnemonic = gender },
-                Identifiers = new List<EntityIdentifier>() { new EntityIdentifier(barcodeAuth, BitConverter.ToString(Guid.NewGuid().ToByteArray()).Replace(":", "")) }
+                Identifiers = new List<EntityIdentifier>() { new EntityIdentifier(barcodeAuth, BitConverter.ToString(Guid.NewGuid().ToByteArray()).Replace("-", "").Substring(0, 10)) }
             };
             // Associate
             child.Relationships = new List<EntityRelationship>() {

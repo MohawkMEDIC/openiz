@@ -28,9 +28,8 @@ namespace OpenIZ.Core.Model.Acts
     /// Represents information related to the clinical protocol to which an act is a member of
     /// </summary>
     [XmlType(nameof(ActProtocol), Namespace = "http://openiz.org/model"), JsonObject(nameof(ActProtocol))]
-    public class ActProtocol : VersionedAssociation<Act>
+    public class ActProtocol : Association<Act>
     {
-
         /// <summary>
         /// Gets or sets the protocol  to which this act belongs
         /// </summary>
@@ -44,10 +43,16 @@ namespace OpenIZ.Core.Model.Acts
         public Protocol Protocol { get; set; }
 
         /// <summary>
+        /// Represents the sequence of the act in the protocol
+        /// </summary>
+        [XmlElement("sequence"), JsonProperty("sequence")]
+        public int Sequence { get; set; }
+
+        /// <summary>
         /// Represents any state data related to the act / protocol link
         /// </summary>
         [XmlElement("state"), JsonProperty("state")]
-        public String StateData { get; set; }
+        public byte[] StateData { get; set; }
 
         public override bool SemanticEquals(object obj)
         {
