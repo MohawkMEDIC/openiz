@@ -35,10 +35,13 @@ namespace OpenIZ.Messaging.IMSI.Util
         private static Dictionary<Type, MethodInfo> m_relatedLoadAssociations = new Dictionary<Type, MethodInfo>();
 
 
-        /// <summary>
-        /// Load related object
-        /// </summary>
-        internal static object LoadRelated(Type propertyType, Guid key)
+		/// <summary>
+		/// Load related object
+		/// </summary>
+		/// <param name="propertyType">Type of the property.</param>
+		/// <param name="key">The key.</param>
+		/// <returns>System.Object.</returns>
+		internal static object LoadRelated(Type propertyType, Guid key)
         {
             MethodInfo methodInfo = null;
             if (!m_relatedLoadMethods.TryGetValue(propertyType, out methodInfo))
@@ -52,10 +55,13 @@ namespace OpenIZ.Messaging.IMSI.Util
             return methodInfo.Invoke(null, new object[] { key });
         }
 
-        /// <summary>
-        /// Load collection
-        /// </summary>
-        internal static IList LoadCollection(Type propertyType, IIdentifiedEntity entity)
+		/// <summary>
+		/// Load collection
+		/// </summary>
+		/// <param name="propertyType">Type of the property.</param>
+		/// <param name="entity">The entity.</param>
+		/// <returns>IList.</returns>
+		internal static IList LoadCollection(Type propertyType, IIdentifiedEntity entity)
         {
             MethodInfo methodInfo = null;
 
@@ -91,26 +97,36 @@ namespace OpenIZ.Messaging.IMSI.Util
 
         }
 
-        /// <summary>
-        /// Delay loads the specified collection association
-        /// </summary>
-        public static IEnumerable<TAssociation> LoadCollection<TAssociation>(Guid sourceKey, Decimal? sourceSequence) where TAssociation : IdentifiedData, IVersionedAssociation, new()
+		/// <summary>
+		/// Delay loads the specified collection association
+		/// </summary>
+		/// <typeparam name="TAssociation">The type of the t association.</typeparam>
+		/// <param name="sourceKey">The source key.</param>
+		/// <param name="sourceSequence">The source sequence.</param>
+		/// <returns>IEnumerable&lt;TAssociation&gt;.</returns>
+		public static IEnumerable<TAssociation> LoadCollection<TAssociation>(Guid sourceKey, Decimal? sourceSequence) where TAssociation : IdentifiedData, IVersionedAssociation, new()
         {
             return EntitySource.Current.Provider.GetRelations<TAssociation>(sourceKey, sourceSequence);
         }
 
-        /// <summary>
-        /// Delay loads the specified collection association
-        /// </summary>
-        public static IEnumerable<TAssociation> LoadCollection<TAssociation>(Guid sourceKey) where TAssociation : IdentifiedData, ISimpleAssociation, new()
+		/// <summary>
+		/// Delay loads the specified collection association
+		/// </summary>
+		/// <typeparam name="TAssociation">The type of the t association.</typeparam>
+		/// <param name="sourceKey">The source key.</param>
+		/// <returns>IEnumerable&lt;TAssociation&gt;.</returns>
+		public static IEnumerable<TAssociation> LoadCollection<TAssociation>(Guid sourceKey) where TAssociation : IdentifiedData, ISimpleAssociation, new()
         {
             return EntitySource.Current.Provider.GetRelations<TAssociation>(sourceKey);
         }
 
-        /// <summary>
-        /// Load the related information
-        /// </summary>
-        public static TRelated LoadRelated<TRelated>(Guid? objectKey) where TRelated : IdentifiedData, new()
+		/// <summary>
+		/// Load the related information
+		/// </summary>
+		/// <typeparam name="TRelated">The type of the t related.</typeparam>
+		/// <param name="objectKey">The object key.</param>
+		/// <returns>TRelated.</returns>
+		public static TRelated LoadRelated<TRelated>(Guid? objectKey) where TRelated : IdentifiedData, new()
         {
             if (objectKey.HasValue)
                 return EntitySource.Current.Provider.Get<TRelated>(objectKey);
@@ -119,10 +135,14 @@ namespace OpenIZ.Messaging.IMSI.Util
         }
 
 
-        /// <summary>
-        /// Expand properties
-        /// </summary>
-        public static void ExpandProperties(IdentifiedData returnValue, NameValueCollection qp, Stack<Guid> keyStack = null, Dictionary<Guid, HashSet<String>> emptyCollections = null)
+		/// <summary>
+		/// Expand properties
+		/// </summary>
+		/// <param name="returnValue">The return value.</param>
+		/// <param name="qp">The qp.</param>
+		/// <param name="keyStack">The key stack.</param>
+		/// <param name="emptyCollections">The empty collections.</param>
+		public static void ExpandProperties(IdentifiedData returnValue, NameValueCollection qp, Stack<Guid> keyStack = null, Dictionary<Guid, HashSet<String>> emptyCollections = null)
         {
             if (emptyCollections == null)
                 emptyCollections = new Dictionary<Guid, HashSet<string>>();
@@ -130,12 +150,17 @@ namespace OpenIZ.Messaging.IMSI.Util
             // Set the stack
             if (keyStack == null)
                 keyStack = new Stack<Guid>();
-            else if (returnValue.Key.HasValue &&  keyStack.Contains(returnValue.Key.Value))
+            else if (returnValue.Key.HasValue && keyStack.Contains(returnValue.Key.Value))
                 return;
 
-            keyStack.Push(returnValue.Key.Value);
+	        if (!returnValue.Key.HasValue || returnValue.Key.Equals(Guid.Empty))
+	        {
+		        return;
+	        }
 
-            try
+	        keyStack.Push(returnValue.Key.Value);
+
+	        try
             {
                 // Expand property?
                 if (qp.ContainsKey("_expand") && qp.ContainsKey("_all"))

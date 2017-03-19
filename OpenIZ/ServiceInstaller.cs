@@ -26,20 +26,37 @@ using System.Threading.Tasks;
 
 namespace OpenIZ
 {
-    [RunInstaller(true)]
+	/// <summary>
+	/// Reprsents a service installer.
+	/// </summary>
+	/// <seealso cref="System.Configuration.Install.Installer" />
+	[RunInstaller(true)]
     public class ServiceInstaller : System.Configuration.Install.Installer
     {
 
-        private System.ServiceProcess.ServiceProcessInstaller m_serviceProcessInstaller;
-        private System.ServiceProcess.ServiceInstaller m_serviceInstaller;
+		/// <summary>
+		/// The m service process installer.
+		/// </summary>
+		private System.ServiceProcess.ServiceProcessInstaller m_serviceProcessInstaller;
 
-        public ServiceInstaller()
+		/// <summary>
+		/// The m service installer.
+		/// </summary>
+		private System.ServiceProcess.ServiceInstaller m_serviceInstaller;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ServiceInstaller"/> class.
+		/// </summary>
+		public ServiceInstaller()
         {
             // This call is required by the Designer.
             InitializeComponent();
         }
 
-        private void InitializeComponent()
+		/// <summary>
+		/// Initializes the component.
+		/// </summary>
+		private void InitializeComponent()
         {
             this.m_serviceProcessInstaller = new System.ServiceProcess.ServiceProcessInstaller();
             this.m_serviceInstaller = new System.ServiceProcess.ServiceInstaller();

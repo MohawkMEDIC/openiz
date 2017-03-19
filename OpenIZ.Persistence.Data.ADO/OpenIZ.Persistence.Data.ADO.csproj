@@ -145,6 +145,7 @@
     <Compile Include="Services\Persistence\EntityDerivedPersistenceService.cs" />
     <Compile Include="Services\Persistence\EntityNamePersistenceService.cs" />
     <Compile Include="Services\Persistence\EntityPersistenceService.cs" />
+    <Compile Include="Services\Persistence\EntityRelationshipPersistenceService.cs" />
     <Compile Include="Services\Persistence\IdentifiedPersistenceService.cs" />
     <Compile Include="Services\Persistence\IdentifierTypePersistenceService.cs" />
     <Compile Include="Services\Persistence\ManufacturedMaterialPersistenceService.cs" />
