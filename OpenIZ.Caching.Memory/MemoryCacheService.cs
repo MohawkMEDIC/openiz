@@ -142,7 +142,6 @@ namespace OpenIZ.Caching.Memory
 						MemoryCache.Current.RemoveObject(typeof(Person), e.Data.SourceEntityKey);
 						MemoryCache.Current.RemoveObject(typeof(UserEntity), e.Data.SourceEntityKey);
 						MemoryCache.Current.RemoveObject(typeof(Entity), e.Data.SourceEntityKey);
-						MemoryCache.Current.RemoveObject(typeof(EntityRelationship), e.Data.Key);
                     }
                 };
                 ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>().Updated += clearSource;
