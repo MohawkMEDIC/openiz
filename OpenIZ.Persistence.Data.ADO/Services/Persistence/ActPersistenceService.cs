@@ -226,18 +226,18 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     context,
                     principal);
 
-    //        if(data.Protocols != null && data.Protocols.Any())
-				//foreach (var p in data.Protocols)
-				//{
-				//	var proto = p.EnsureExists(context, principal);
-				//	context.Insert(new DbActProtocol()
-				//	{
-				//		SourceKey = retVal.Key.Value,
-				//		Key = proto.Key.Value
-				//	});
-				//}
+            if (data.Protocols != null && data.Protocols.Any())
+                foreach (var p in data.Protocols)
+                {
+                    var proto = p.EnsureExists(context, principal);
+                    context.Insert(new DbActProtocol()
+                    {
+                        SourceKey = retVal.Key.Value,
+                        Key = proto.Key.Value
+                    });
+                }
 
-			return retVal;
+            return retVal;
         }
 
         /// <summary>
