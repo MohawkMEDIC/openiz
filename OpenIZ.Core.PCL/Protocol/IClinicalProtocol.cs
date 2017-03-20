@@ -56,7 +56,7 @@ namespace OpenIZ.Core.Protocol
         /// <summary>
         /// Calculate the clinical protocol for the given patient
         /// </summary>
-        List<Act> Calculate(Patient p);
+        List<Act> Calculate(Patient p, IDictionary<String, Object> parameters);
 
         /// <summary>
         /// Update the care plan based on new data

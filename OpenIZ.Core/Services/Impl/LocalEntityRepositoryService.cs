@@ -275,6 +275,8 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"Unable to locate {nameof(IDataPersistenceService<Entity>)}");
 			}
 
+			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<EntityRelationship>();
+
 			try
 			{
 				EntityRelationship old = null;
@@ -295,12 +297,22 @@ namespace OpenIZ.Core.Services.Impl
 					throw new KeyNotFoundException(data.Key?.ToString());
 				}
 
-				return persistenceService.Update(data, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+				data = businessRulesService?.BeforeUpdate(data) ?? data;
+
+				data = persistenceService.Update(data, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+				data = businessRulesService?.AfterUpdate(data) ?? data;
 			}
 			catch (DataPersistenceException)
 			{
-				return persistenceService.Insert(data, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+				data = businessRulesService?.BeforeInsert(data) ?? data;
+
+				data = persistenceService.Insert(data, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+				data = businessRulesService?.AfterInsert(data) ?? data;
 			}
+
+			return data;
 		}
 
 		/// <summary>

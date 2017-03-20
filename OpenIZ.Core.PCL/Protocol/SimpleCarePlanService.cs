@@ -40,6 +40,62 @@ namespace OpenIZ.Core.Protocol
     /// </summary>
     public class SimpleCarePlanService : ICarePlanService
     {
+        /// <summary>
+        /// Represents a parameter dictionary
+        /// </summary>
+        public class ParameterDictionary<TKey, TValue> : Dictionary<TKey, TValue> where TValue : class
+        {
+            /// <summary>
+            /// Add new item key
+            /// </summary>
+            public new void Add(TKey key, TValue value)
+            {
+                if (value == null)
+                {
+                    // adding null value is pointless...
+                    return;
+                }
+                base.Add(key, value);
+            }
+
+            /// <summary>
+            /// Remove key
+            /// </summary>
+            /// <param name="key"></param>
+            public new void Remove(TKey key)
+            {
+                if (!ContainsKey(key))
+                {
+                    // nothing to do
+                    return;
+                }
+                base.Remove(key);
+            }
+
+            /// <summary>
+            /// Indexer
+            /// </summary>
+            public new TValue this[TKey key]
+            {
+                get
+                {
+                    TValue value;
+                    return TryGetValue(key, out value) ? value : null;
+                }
+                set
+                {
+                    if (value == null)
+                    {
+                        // setting value null is same as removing it
+                        Remove(key);
+                    }
+                    else
+                    {
+                        base[key] = value;
+                    }
+                }
+            }
+        }
 
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(SimpleCarePlanService));
@@ -82,9 +138,8 @@ namespace OpenIZ.Core.Protocol
         /// </summary>
         public IEnumerable<Act> CreateCarePlan(Patient p)
         {
-            return this.CreateCarePlan(p, false);
+            return this.CreateCarePlan(p, false, null);
         }
-
 
         /// <summary>
         /// Create a care plan
@@ -93,16 +148,28 @@ namespace OpenIZ.Core.Protocol
         /// <returns></returns>
         public IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters)
         {
-            return this.CreateCarePlan(p, asEncounters, this.Protocols.Select(o => o.Id).ToArray());
+            return this.CreateCarePlan(p, asEncounters, null, this.Protocols.Select(o => o.Id).ToArray());
         }
 
         /// <summary>
+        /// Create a care plan
+        /// </summary>
+        public IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters, IDictionary<String, Object> parameters)
+        {
+            return this.CreateCarePlan(p, asEncounters, parameters, this.Protocols.Select(o => o.Id).ToArray());
+        }
+        /// <summary>
         /// Create a care plan with the specified protocols only
         /// </summary>
-        public IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters, params Guid[] protocols)
+        public IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters, IDictionary<String, Object> parameters, params Guid[] protocols)
         {
             try
             {
+                var parmDict = new ParameterDictionary<String, Object>();
+                if(parameters != null)
+                    foreach (var itm in parameters)
+                        parmDict.Add(itm.Key, itm.Value);
+
                 // Allow each protocol to initialize itself
                 var execProtocols = this.Protocols.Where(o => protocols.Contains(o.Id)).OrderBy(o => o.Name).Distinct().ToList();
                 // We want to flatten the patient's encounters 
@@ -127,7 +194,7 @@ namespace OpenIZ.Core.Protocol
                     );
                 })).ToList();
                 foreach (var o in execProtocols.Distinct()) o.Initialize(p);
-                List<Act> protocolActs = execProtocols.AsParallel().SelectMany(o => o.Calculate(p)).OrderBy(o => o.StopTime - o.StartTime).ToList();
+                List<Act> protocolActs = execProtocols.AsParallel().SelectMany(o => o.Calculate(p, parmDict)).OrderBy(o => o.StopTime - o.StartTime).ToList();
 
                 if (asEncounters)
                 {

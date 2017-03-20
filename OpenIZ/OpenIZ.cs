@@ -31,29 +31,39 @@ using System.Threading.Tasks;
 
 namespace OpenIZ
 {
-    /// <summary>
-    /// Open immunize service
-    /// </summary>
-    public partial class OpenIZ : ServiceBase
-    {
+	/// <summary>
+	/// Open immunize service.
+	/// </summary>
+	/// <seealso cref="System.ServiceProcess.ServiceBase" />
+	public partial class OpenIZ : ServiceBase
+	{
 
-        public OpenIZ()
-        {
-            // Service Name
-            this.ServiceName = "Client Registry";
-            InitializeComponent();
-        }
+		/// <summary>
+		/// Initializes a new instance of the <see cref="OpenIZ"/> class.
+		/// </summary>
+		public OpenIZ()
+		{
+			InitializeComponent();
+			this.ServiceName = "OpenIZ Host Process";
+		}
 
-        protected override void OnStart(string[] args)
-        {
-            ExitCode = ServiceUtil.Start(typeof(Program).GUID);
-            if (ExitCode != 0)
-                Stop();
-        }
+		/// <summary>
+		/// When implemented in a derived class, executes when a Start command is sent to the service by the Service Control Manager (SCM) or when the operating system starts (for a service that starts automatically). Specifies actions to take when the service starts.
+		/// </summary>
+		/// <param name="args">Data passed by the start command.</param>
+		protected override void OnStart(string[] args)
+		{
+			ExitCode = ServiceUtil.Start(typeof(Program).GUID);
+			if (ExitCode != 0)
+				Stop();
+		}
 
-        protected override void OnStop()
-        {
-            ServiceUtil.Stop();
-        }
-    }
+		/// <summary>
+		/// When implemented in a derived class, executes when a Stop command is sent to the service by the Service Control Manager (SCM). Specifies actions to take when a service stops running.
+		/// </summary>
+		protected override void OnStop()
+		{
+			ServiceUtil.Stop();
+		}
+	}
 }

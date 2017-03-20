@@ -75,10 +75,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			var userRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 			var roleProviderService = ApplicationContext.Current.GetService<IRoleProviderService>();
 
-			var userToCreate = new Core.Model.Security.SecurityUser()
+			var userToCreate = new SecurityUser
 			{
-				UserName = user.UserName,
 				Email = user.Email,
+				UserName = user.UserName,
 			};
 
 			if (user.User == null)
@@ -87,18 +87,23 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			}
 			else
 			{
+				userToCreate.InvalidLoginAttempts = user.User.InvalidLoginAttempts;
+				userToCreate.PhoneNumber = user.User.PhoneNumber;
 				userToCreate.UserClass = user.User.UserClass == Guid.Empty ? UserClassKeys.HumanUser : user.User.UserClass;
 			}
 
 			if (user.Lockout.HasValue && user.Lockout.Value)
 			{
-				userToCreate.Lockout = DateTime.MaxValue;
+				// to not overflow the date time value into 5 digit years
+				userToCreate.Lockout = DateTime.MaxValue.AddYears(-100);
 			}
 
 			var securityUser = userRepository.CreateUser(userToCreate, user.Password);
 
-			if (user.Roles != null)
+			if (user.Roles?.Any() == true)
+			{
 				roleProviderService.AddUsersToRoles(new String[] { user.UserName }, user.Roles.Select(o => o.Name).ToArray(), AuthenticationContext.Current.Principal);
+			}
 
 			return new SecurityUserInfo(securityUser);
 		}

@@ -61,7 +61,7 @@ namespace OpenIZ.Protocol.Xml.Test
                 GenderConcept = new Core.Model.DataTypes.Concept() { Mnemonic = "FEMALE" }
             };
             // Now apply the protocol
-            var acts = xmlCp.Calculate(newborn);
+            var acts = xmlCp.Calculate(newborn, null);
             var jsonSerializer = new JsonViewModelSerializer();
             String json = jsonSerializer.Serialize(newborn);
 
@@ -89,7 +89,7 @@ namespace OpenIZ.Protocol.Xml.Test
             };
 
             // Now apply the protocol
-            var acts = xmlCp.Calculate(newborn);
+            var acts = xmlCp.Calculate(newborn, null);
             var jsonSerializer = new JsonViewModelSerializer();
             String json = jsonSerializer.Serialize(newborn);
             Assert.AreEqual(1, acts.Count);
@@ -114,7 +114,7 @@ namespace OpenIZ.Protocol.Xml.Test
             };
 
             // Now apply the protocol
-            var acts = xmlCp.Calculate(newborn);
+            var acts = xmlCp.Calculate(newborn, null);
             var jsonSerializer = new JsonViewModelSerializer();
             String json = jsonSerializer.Serialize(newborn);
             Assert.AreEqual(60, acts.Count);
@@ -161,7 +161,7 @@ namespace OpenIZ.Protocol.Xml.Test
             };
 
             // Now apply the protocol
-            var acts = xmlCp.Calculate(newborn);
+            var acts = xmlCp.Calculate(newborn, null);
             var jsonSerializer = new JsonViewModelSerializer();
             String json = jsonSerializer.Serialize(newborn);
             Assert.AreEqual(59, acts.Count);
@@ -188,7 +188,7 @@ namespace OpenIZ.Protocol.Xml.Test
             };
 
             // Now apply the protocol
-            var acts = xmlCp.Calculate(newborn);
+            var acts = xmlCp.Calculate(newborn, null);
             var jsonSerializer = new JsonViewModelSerializer();
             String json = jsonSerializer.Serialize(newborn);
             Assert.AreEqual(2, acts.Count);
@@ -213,7 +213,7 @@ namespace OpenIZ.Protocol.Xml.Test
             };
 
             // Now apply the protocol
-            var acts = xmlCp.Calculate(newborn);
+            var acts = xmlCp.Calculate(newborn, null);
             var jsonSerializer = new JsonViewModelSerializer();
             String json = jsonSerializer.Serialize(newborn);
             Assert.AreEqual(3, acts.Count);
@@ -238,7 +238,7 @@ namespace OpenIZ.Protocol.Xml.Test
             };
 
             // Now apply the protocol
-            var acts = xmlCp.Calculate(newborn);
+            var acts = xmlCp.Calculate(newborn, null);
             var jsonSerializer = new JsonViewModelSerializer();
             String json = jsonSerializer.Serialize(newborn);
             Assert.AreEqual(3, acts.Count);
@@ -263,7 +263,7 @@ namespace OpenIZ.Protocol.Xml.Test
             };
 
             // Now apply the protocol
-            var acts = xmlCp.Calculate(newborn);
+            var acts = xmlCp.Calculate(newborn, null);
             var jsonSerializer = new JsonViewModelSerializer();
             String json = jsonSerializer.Serialize(newborn);
             Assert.AreEqual(2, acts.Count);

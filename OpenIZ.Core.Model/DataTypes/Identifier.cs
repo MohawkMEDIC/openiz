@@ -206,7 +206,7 @@ namespace OpenIZ.Core.Model.DataTypes
             {
                 if(this.m_authority == null)
                     this.m_authority = EntitySource.Current.Get<AssigningAuthority>(this.m_authorityId); // base.DelayLoad(this.m_authorityId, this.m_authority);
-                return this.m_authority;
+                return this.m_authority.ToMinimal();
             }
             set
             {

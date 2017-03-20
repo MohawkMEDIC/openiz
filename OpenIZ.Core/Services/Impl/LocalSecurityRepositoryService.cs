@@ -217,7 +217,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			this.CreateUserEntity(new UserEntity
 			{
-				SecurityUser = retVal
+				SecurityUserKey = retVal.Key
 			});
 
 			return retVal;

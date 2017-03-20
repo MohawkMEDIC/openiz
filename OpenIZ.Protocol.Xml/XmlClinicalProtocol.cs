@@ -37,6 +37,7 @@ using OpenIZ.Core.Applets.ViewModel.Null;
 
 namespace OpenIZ.Protocol.Xml
 {
+
     /// <summary>
     /// Clinicl protocol that is stored/loaded via XML
     /// </summary>
@@ -99,7 +100,9 @@ namespace OpenIZ.Protocol.Xml
         static XmlClinicalProtocol()
         {
             Func<Int32> expr = () => { return (int)s_variables["index"]; };
+            Func<IDictionary<String, Object>> parms = () => { return (IDictionary<String, Object>)s_variables["parameters"]; };
             s_callbacks.Add("index", expr);
+            s_callbacks.Add("parameters", parms);
         }
 
         /// <summary>
@@ -114,7 +117,7 @@ namespace OpenIZ.Protocol.Xml
         /// <summary>
         /// Calculate the protocol against a atient
         /// </summary>
-        public List<Act> Calculate(Patient triggerPatient)
+        public List<Act> Calculate(Patient triggerPatient, IDictionary<String, Object> parameters)
         {
 
             try
@@ -132,7 +135,8 @@ namespace OpenIZ.Protocol.Xml
 
                 this.m_tracer.TraceInfo("Calculate ({0}) for {1}...", this.Name, patient);
 
-                s_variables = new Dictionary<string, object>() { { "index", 0 } };
+                s_variables = new Dictionary<string, object>() { { "index", 0 }, { "parameters", parameters } };
+
 
                 // Evaluate eligibility
                 if (this.Definition.When?.Evaluate(patient, s_callbacks) == false)
@@ -173,19 +177,23 @@ namespace OpenIZ.Protocol.Xml
                         {
                             var acts = rule.Then.Evaluate(patient, s_callbacks);
                             retVal.AddRange(acts);
+                            
+                            // Assign protocol
+                            foreach (var itm in acts)
+                                itm.Protocols.Add(new ActProtocol()
+                                {
+                                    ProtocolKey = this.Id,
+                                    Protocol = this.GetProtcolData(),
+                                    Sequence = index
+                                });
+
                         }
                         else
                             this.m_tracer.TraceInfo("{0} does not meet criteria for rule {1}.{2}", patient, this.Name, rule.Name ?? rule.Id);
 
                     }
 
-                // Assign protocol
-                foreach (var itm in retVal)
-                    itm.Protocols.Add(new ActProtocol()
-                    {
-                        ProtocolKey = this.Id
-                    });
-
+                
                 // Now we want to add the stuff to the patient
                 lock (triggerPatient)
                     triggerPatient.Participations.AddRange(retVal.Where(o=>o != null).Select(o=>new ActParticipation(ActParticipationKey.RecordTarget, triggerPatient) { Act = o, ParticipationRole = new Core.Model.DataTypes.Concept() { Key = ActParticipationKey.RecordTarget, Mnemonic = "RecordTarget" }, Key = Guid.NewGuid() }));
@@ -216,7 +224,8 @@ namespace OpenIZ.Protocol.Xml
                     HandlerClass = this.GetType(),
                     Name = this.Name,
                     Definition = ms.ToArray(),
-                    Key = this.Id
+                    Key = this.Id,
+                    Oid = this.Definition.Oid
                 };
             }
         }
@@ -250,7 +259,7 @@ namespace OpenIZ.Protocol.Xml
                     }
                 }
 
-            this.Definition.When.Compile<Patient>(s_callbacks);
+            this.Definition.When?.Compile<Patient>(s_callbacks);
             foreach (var wc in this.Definition.Rules)
                 wc.When.Compile<Patient>(s_callbacks);
 

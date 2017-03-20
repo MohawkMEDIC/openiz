@@ -125,12 +125,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Persistence.Data.ADO
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.OrmLite", "OpenIZ.OrmLite\OpenIZ.OrmLite.csproj", "{407C87E6-A1F3-45E6-B883-A8176B350817}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C2F621FE-4CFF-47E8-A9BB-06E6E1E0B655}"
-	ProjectSection(SolutionItems) = preProject
-		Performance1.psess = Performance1.psess
-		Performance2.psess = Performance2.psess
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Warehouse.ADO", "OpenIZ.Warehouse.ADO\OpenIZ.Warehouse.ADO.csproj", "{BFC58F38-9023-4700-B35C-AA933A608E43}"
 EndProject
 Global

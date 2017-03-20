@@ -310,11 +310,11 @@
 
   </class>
 
-  <!-- Represents Act Model -->
+  <!-- Represents Act Model --><!--
   <class modelClass="OpenIZ.Core.Model.Acts.ActProtocol, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Acts.DbActProtocol, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
     <property modelName="SourceEntityKey" domainName="SourceKey"/>
-</class>
+</class>-->
   <class modelClass="OpenIZ.Core.Model.DataTypes.ActExtension, OpenIZ.Core.Model, Version=1.0.0.0"
  domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility.DbActExtension, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
     <property modelName="SourceEntityKey" domainName="SourceKey"/>
@@ -387,5 +387,18 @@
 
   <class modelClass="OpenIZ.Core.Model.DataTypes.TemplateDefinition, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility.DbTemplateDefinition, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.Protocol, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Acts.DbProtocol, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.ActProtocol, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Acts.DbActProtocol, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+
+    <property modelName="ProtocolKey" domainName="ProtocolKey"/>
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+    <property modelName="StateData" domainName="State"/>
+    
   </class>
 </modelMap>

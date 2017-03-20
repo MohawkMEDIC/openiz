@@ -1,6 +1,7 @@
 ﻿using OpenIZ.Core.Model.Collection;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using System.Security.Principal;
 using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Core;
 using System.Reflection;
+using MARC.HI.EHRS.SVC.Core.Services.Policy;
 using OpenIZ.Core.Model;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.OrmLite;
@@ -40,10 +42,15 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             {
                 var idp = typeof(IDataPersistenceService<>).MakeGenericType(new Type[] { itm.GetType() });
                 var svc = ApplicationContext.Current.GetService(idp);
-                String method = "Insert";
-                if (itm.TryGetExisting(context, principal) != null)
-                    method = "Update";
+				var method = "Insert";
+
+	            if (itm.TryGetExisting(context, principal) != null)
+	            {
+					method = "Update";
+				}
+
                 var mi = svc.GetType().GetRuntimeMethod(method, new Type[] { typeof(DataContext), itm.GetType(), typeof(IPrincipal) });
+
                 itm.CopyObjectData(mi.Invoke(svc, new object[] { context, itm, principal }));
             }
             return data;
@@ -57,8 +64,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             foreach (var itm in data.Item)
             {
                 var idp = typeof(IDataPersistenceService<>).MakeGenericType(new Type[] { itm.GetType() });
-                var mi = idp.GetRuntimeMethod("Obsolete", new Type[] { typeof(DataContext), itm.GetType(), typeof(IPrincipal) });
-                itm.CopyObjectData(mi.Invoke(ApplicationContext.Current.GetService(idp), new object[] { context, itm, principal }));
+				var svc = ApplicationContext.Current.GetService(idp);
+				var mi = svc.GetType().GetRuntimeMethod("Obsolete", new Type[] { typeof(DataContext), itm.GetType(), typeof(IPrincipal) });
+
+				itm.CopyObjectData(mi.Invoke(ApplicationContext.Current.GetService(idp), new object[] { context, itm, principal }));
             }
             return data;
         }
@@ -93,9 +102,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             foreach (var itm in data.Item)
             {
                 var idp = typeof(IDataPersistenceService<>).MakeGenericType(new Type[] { itm.GetType() });
-                var mi = idp.GetRuntimeMethod("Update", new Type[] { typeof(DataContext), itm.GetType(), typeof(IPrincipal) });
-                itm.CopyObjectData(mi.Invoke(ApplicationContext.Current.GetService(idp), new object[] { context, itm, principal }));
-            }
+	            var svc = ApplicationContext.Current.GetService(idp);
+				var mi = svc.GetType().GetRuntimeMethod("Update", new Type[] { typeof(DataContext), itm.GetType(), typeof(IPrincipal) });
+
+				itm.CopyObjectData(mi.Invoke(ApplicationContext.Current.GetService(idp), new object[] { context, itm, principal }));
+			}
             return data;
         }
 

@@ -62,7 +62,6 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			if (processData is Act)
 			{
 				var act = processData as Act;
-
 				return updateIfExists ? this.actRepositorySerivce.Save(act) : this.actRepositorySerivce.Insert(act);
 			}
 
@@ -87,7 +86,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			return this.actRepositorySerivce.Find<Act>(QueryExpressionParser.BuildLinqExpression<Act>(queryParameters), 0, count, out totalCount);
+			return this.actRepositorySerivce.Find<Act>(QueryExpressionParser.BuildLinqExpression<Act>(queryParameters), offset, count, out totalCount);
 		}
 
 		public IdentifiedData Update(IdentifiedData data)

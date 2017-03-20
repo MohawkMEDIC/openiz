@@ -32,7 +32,7 @@ namespace OpenIZ.Protocol.Xml.Model
     [XmlRoot(nameof(ProtocolDefinition), Namespace = "http://openiz.org/cdss")]
     public class ProtocolDefinition : DecisionSupportBaseElement
     {
-
+        
         /// <summary>
         /// When clause for the entire protocol
         /// </summary>
@@ -50,6 +50,12 @@ namespace OpenIZ.Protocol.Xml.Model
         /// </summary>
         [XmlElement("loaderModel", Namespace = "http://openiz.org/model/view")]
         public ViewModelDescription Initialize { get; set; }
+
+        /// <summary>
+        /// Represents the OID of the protocol
+        /// </summary>
+        [XmlElement("oid")]
+        public string Oid { get; set; }
 
         /// <summary>
         /// Save the protocol definition to the specified stream

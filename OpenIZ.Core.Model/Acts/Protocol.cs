@@ -18,6 +18,7 @@
  * Date: 2016-8-2
  */
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.Attributes;
 using System;
 using System.Xml.Serialization;
 
@@ -27,6 +28,7 @@ namespace OpenIZ.Core.Model.Acts
     /// Represents the model of a protocol
     /// </summary>
     [XmlType(nameof(Protocol), Namespace = "http://openiz.org/model"), JsonObject(nameof(Protocol))]
+    [KeyLookup(nameof(Name))]
     public class Protocol : BaseEntityData
     {
 
@@ -61,8 +63,14 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Contains instructions which the handler class can understand
         /// </summary>
-        [XmlElement("definition"), JsonProperty("definition")]
+        [XmlIgnore, JsonIgnore]
         public byte[] Definition { get; set; }
+
+        /// <summary>
+        /// Gets or sets the OID
+        /// </summary>
+        [XmlElement("oid"), JsonProperty("oid")]
+        public String Oid { get; set; }
 
         /// <summary>
         /// Semantic equality

@@ -166,7 +166,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             var idData = (o as CompositeResult)?.Values.OfType<IDbIdentified>().FirstOrDefault() ?? o as IDbIdentified;
             var objData = (o as CompositeResult)?.Values.OfType<IDbBaseData>().FirstOrDefault() ?? o as IDbBaseData ;
-            if (objData?.ObsoletionTime != null || idData == null)
+            if (objData?.ObsoletionTime != null || idData == null || idData.Key == Guid.Empty)
                 return this.ToModelInstance(o, context, principal);
             else
             {
