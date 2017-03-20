@@ -40,6 +40,7 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Applets.ViewModel.Description;
+using OpenIZ.Core.Diagnostics;
 
 namespace OpenIZ.Core.Applets
 {
@@ -54,6 +55,10 @@ namespace OpenIZ.Core.Applets
     /// </summary>
     public class AppletCollection : IList<AppletManifest>
     {
+		/// <summary>
+		/// The tracer.
+		/// </summary>
+		private readonly Tracer tracer = Tracer.GetTracer(typeof(AppletCollection));
 
         // A cache of rendered assets
         private static Dictionary<String, Byte[]> s_cache = new Dictionary<string, byte[]>();
@@ -569,11 +574,18 @@ namespace OpenIZ.Core.Applets
                             // Creation of the options
                             foreach (var itm in dataSource as IEnumerable)
                             {
-                                var optAtt = new XElement(xs_xhtml + "option");
-                                var keyValue = keyExpression.DynamicInvoke(itm);
-                                var valueValue = valueExpression.DynamicInvoke(itm)?.ToString();
-                                optAtt.Add(new XAttribute("value", keyValue), new XText(valueValue));
-                                db.Add(optAtt);
+	                            try
+	                            {
+									var optAtt = new XElement(xs_xhtml + "option");
+									var keyValue = keyExpression.DynamicInvoke(itm);
+									var valueValue = valueExpression.DynamicInvoke(itm)?.ToString();
+									optAtt.Add(new XAttribute("value", keyValue), new XText(valueValue));
+									db.Add(optAtt);
+								}
+	                            catch (Exception e)
+	                            {
+									tracer.TraceError($"Unable to load { itm } { e }");
+	                            }
                             }
                             break;
                         }
