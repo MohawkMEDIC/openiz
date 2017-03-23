@@ -116,7 +116,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the extension type key
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlIgnore, JsonIgnore]
+        [XmlElement("extensionType"), JsonProperty("extensionType")]
         public Guid? ExtensionTypeKey
         {
             get { return this.m_extensionTypeKey; }
@@ -134,7 +134,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets the extension type
         /// </summary>
         [SerializationReference(nameof(ExtensionTypeKey))]
-        [XmlElement("extensionType"), JsonProperty("extensionType")]
+        [XmlIgnore, JsonIgnore]
         [AutoLoad]
         public ExtensionType ExtensionType
         {

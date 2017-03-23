@@ -229,5 +229,20 @@ namespace OpenIZ.Core.Model.Entities
                 this.RelationshipTypeKey == other.RelationshipTypeKey;
         }
 
+        /// <summary>
+        /// Should serialize inversion indicator?
+        /// </summary>
+        public bool ShouldSerializeInversionIndicator()
+        {
+            return this.InversionIndicator;
+        }
+
+        /// <summary>
+        /// Should serialize quantity?
+        /// </summary>
+        public bool ShouldSerializeQuantity()
+        {
+            return this.Quantity != 0;
+        }
     }
 }

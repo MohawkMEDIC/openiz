@@ -136,5 +136,13 @@ namespace OpenIZ.Core.Model.Entities
                 this.Value == other.Value &&
                 this.ComponentTypeKey == other.ComponentTypeKey;
         }
+
+        /// <summary>
+        /// Should serialize component type key
+        /// </summary>
+        public bool ShouldSerializeComponentTypeKey()
+        {
+            return this.ComponentTypeKey.HasValue;
+        }
     }
 }

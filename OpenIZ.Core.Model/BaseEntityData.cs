@@ -70,7 +70,12 @@ namespace OpenIZ.Core.Model
         [XmlElement("creationTime"), JsonProperty("creationTime"), DataIgnore()]
         public String CreationTimeXml
         {
-            get { return this.CreationTime.ToString("o", CultureInfo.InvariantCulture); }
+            get {
+                if (this.CreationTime == default(DateTime))
+                    return null;
+                else
+                    return this.CreationTime.ToString("o", CultureInfo.InvariantCulture);
+            }
             set {
                 if (value != null)
                     this.CreationTime = DateTimeOffset.ParseExact(value, "o", CultureInfo.InvariantCulture);
@@ -148,7 +153,7 @@ namespace OpenIZ.Core.Model
         {
             return this.ObsoletedByKey.HasValue;
         }
-
+        
 
         /// <summary>
         /// Gets or sets the user that obsoleted this base data

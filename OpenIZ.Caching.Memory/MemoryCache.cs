@@ -161,19 +161,27 @@ namespace OpenIZ.Caching.Memory
             Dictionary<Guid, CacheEntry> cache = null;
             if (this.m_entryTable.TryGetValue(objData, out cache))
             {
-                Guid key = idData?.Key ?? Guid.Empty;
-                if (cache.ContainsKey(key))
-                    lock (this.m_lock)
-                    {
-                        cache[key].Update(data);
-                    }
-                else
-                    lock (this.m_lock)
-                        if (!cache.ContainsKey(key))
+                // We want to cascade up the type heirarchy this is a do/while with IF instead of while
+                // because the ELSE-IF clause
+                do
+                {
+                    Guid key = idData?.Key ?? Guid.Empty;
+                    if (cache.ContainsKey(key))
+                        lock (this.m_lock)
                         {
-                            cache.Add(key, new CacheEntry(DateTime.Now,  data));
-                            this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cache for {0} contains {1} entries...", objData, cache.Count);
+                            cache[key].Update(data);
                         }
+                    else
+                        lock (this.m_lock)
+                            if (!cache.ContainsKey(key))
+                            {
+                                cache.Add(key, new CacheEntry(DateTime.Now, data));
+                                this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cache for {0} contains {1} entries...", objData, cache.Count);
+                            }
+
+                    objData = objData.BaseType;
+                } while (this.m_entryTable.TryGetValue(objData, out cache));
+
             }
             else if (this.m_configuration.AutoSubscribeTypes)
                 this.RegisterCacheType(data.GetType());

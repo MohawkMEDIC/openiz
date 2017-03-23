@@ -96,6 +96,14 @@ namespace OpenIZ.Core.Model
         }
 
         /// <summary>
+        /// Should serialize previous version?
+        /// </summary>
+        public bool ShouldSerializePreviousVersionKey()
+        {
+            return this.m_previousVersionId.HasValue;
+        }
+
+        /// <summary>
         /// Gets or sets the previous version
         /// </summary>
         //[SerializationReference(nameof(PreviousVersionKey))]

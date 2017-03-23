@@ -104,6 +104,13 @@ namespace OpenIZ.Core.Model.DataTypes
             base.Refresh();
             this.m_phoneticAlgorithm = null;
         }
-
+        /// <summary>
+        /// Should serialize 
+        /// </summary>
+        public bool ShouldSerializePhoneticAlgorithmKey()
+        {
+            return this.PhoneticAlgorithmKey.HasValue &&
+                this.PhoneticAlgorithmKey != PhoneticAlgorithmKeys.None;
+        }
     }
 }

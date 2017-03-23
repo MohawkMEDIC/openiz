@@ -185,5 +185,13 @@ namespace OpenIZ.Core.Model.DataTypes
                 this.Url == other.Url &&
                 this.AssigningDeviceKey == other.AssigningDeviceKey;
         }
+
+        /// <summary>
+        /// Should serialize assigning device key
+        /// </summary>
+        public bool ShouldSerializeAssigningDeviceKey()
+        {
+            return this.AssigningDeviceKey.HasValue;
+        }
     }
 }

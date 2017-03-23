@@ -414,5 +414,23 @@ namespace OpenIZ.Core.Model.Entities
                 this.Template?.SemanticEquals(other.Template) == true &&
                 this.TypeConceptKey == other.TypeConceptKey;
         }
+
+
+        /// <summary>
+        /// Should serialize creation act
+        /// </summary>
+        public bool ShouldSerializeCreationActKey()
+        {
+            return this.CreationActKey.HasValue;
+        }
+
+        /// <summary>
+        /// Should serialize type concept
+        /// </summary>
+        public bool ShouldSerializeTypeConcept()
+        {
+            return this.TypeConceptKey.HasValue;
+        }
+
     }
 }

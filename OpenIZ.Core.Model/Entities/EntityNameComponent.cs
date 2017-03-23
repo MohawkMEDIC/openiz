@@ -134,5 +134,13 @@ namespace OpenIZ.Core.Model.Entities
             return this.Value;
         }
 
+        /// <summary>
+        /// Should serialize 
+        /// </summary>
+        public bool ShouldSerializePhoneticAlgorithmKey()
+        {
+            return this.PhoneticAlgorithmKey.HasValue &&
+                this.PhoneticAlgorithmKey != PhoneticAlgorithmKeys.None;
+        }
     }
 }

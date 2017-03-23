@@ -64,6 +64,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     [ServiceKnownType(typeof(Place))]
     [ServiceKnownType(typeof(ServiceOptions))]
     [ServiceKnownType(typeof(Material))]
+    [ServiceKnownType(typeof(ExtensionType))]
     [ServiceKnownType(typeof(ManufacturedMaterial))]
     [ServiceKnownType(typeof(DeviceEntity))]
 	[ServiceKnownType(typeof(UserEntity))]
