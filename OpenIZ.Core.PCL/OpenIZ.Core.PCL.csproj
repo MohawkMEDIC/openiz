@@ -40,6 +40,7 @@
     <Compile Include="Data\Warehouse\DatamartSchema.cs" />
     <Compile Include="Data\Warehouse\DatamartSchemaProperty.cs" />
     <Compile Include="Data\Warehouse\DatamartStoredQuery.cs" />
+    <Compile Include="Data\Warehouse\DatamartStoredQueryDefinition.cs" />
     <Compile Include="Data\Warehouse\IDatamartSchemaPropertyContainer.cs" />
     <Compile Include="Diagnostics\Tracer.cs" />
     <Compile Include="Diagnostics\TraceWriter.cs" />

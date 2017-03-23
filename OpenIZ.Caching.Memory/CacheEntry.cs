@@ -73,7 +73,9 @@ namespace OpenIZ.Caching.Memory
         /// </summary>
         internal void Update(object data)
         {
-            this.Data = data;
+            // First we want to copy object data in case there are any deep references
+            this.Data.CopyObjectData(data);
+            this.Data = data; // Then replace with the fresh copy
             this.Touch();
         }
     }

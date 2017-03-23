@@ -492,7 +492,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// <summary>
         /// Create and register a refresh token for the specified principal
         /// </summary>
-        public byte[] CreateRefreshToken(IPrincipal principal)
+        public byte[] CreateRefreshToken(IPrincipal principal, DateTimeOffset expiry)
         {
             if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
@@ -517,7 +517,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 secret[(i * 2) + 1] = userSid[i];
             }
             this.AddClaim(principal.Identity.Name, new Claim(AdoDataConstants.RefreshSecretClaimType, BitConverter.ToString(secret).Replace("-", "")));
-            this.AddClaim(principal.Identity.Name, new Claim(AdoDataConstants.RefreshExpiryClaimType, DateTimeOffset.Parse((principal as ClaimsPrincipal).FindFirst(ClaimTypes.Expiration).Value).AddMinutes(5).ToString("o")));
+            this.AddClaim(principal.Identity.Name, new Claim(AdoDataConstants.RefreshExpiryClaimType, expiry.ToString("o")));
             return secret;
         }
 

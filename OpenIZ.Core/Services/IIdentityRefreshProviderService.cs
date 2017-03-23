@@ -36,7 +36,7 @@ namespace OpenIZ.Core.Services
         /// <summary>
         /// Create a refresh token for the specified principal
         /// </summary>
-        byte[] CreateRefreshToken(IPrincipal principal);
+        byte[] CreateRefreshToken(IPrincipal principal, DateTimeOffset expiry);
 
         /// <summary>
         /// Authenticate using a refresh token

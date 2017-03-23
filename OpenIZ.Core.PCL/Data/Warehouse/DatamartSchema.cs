@@ -14,6 +14,16 @@ namespace OpenIZ.Core.Data.Warehouse
     [XmlRoot(nameof(DatamartSchema), Namespace = "http://openiz.org/warehousing")]
     public class DatamartSchema : IDatamartSchemaPropertyContainer
     {
+
+        /// <summary>
+        /// Datamart schema
+        /// </summary>
+        public DatamartSchema()
+        {
+            this.Queries = new List<DatamartStoredQuery>();
+            this.Properties = new List<DatamartSchemaProperty>();
+        }
+
         /// <summary>
         /// Gets or sets the unique identifier for the schema itself
         /// </summary>

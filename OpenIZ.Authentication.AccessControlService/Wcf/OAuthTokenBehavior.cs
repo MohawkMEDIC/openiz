@@ -236,6 +236,8 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             DateTime issued = DateTime.Parse((oizPrincipal as ClaimsPrincipal)?.FindFirst(ClaimTypes.AuthenticationInstant)?.Value ?? DateTime.Now.ToString("o")),
                 expires = DateTime.Parse((oizPrincipal as ClaimsPrincipal)?.FindFirst(ClaimTypes.Expiration)?.Value ?? DateTime.Now.Add(this.m_configuration.ValidityTime).ToString("o"));
 
+
+
             // System claims
             List<Claim> claims = new List<Claim>(
                     roleProvider.GetAllRoles(oizPrincipal.Identity.Name).Select(r => new Claim(ClaimsIdentity.DefaultRoleClaimType, r))
@@ -301,7 +303,7 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
 
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
             var encoder = handler.SignatureProviderFactory.CreateForSigning(credentials.SigningKey, credentials.SignatureAlgorithm);
-            var refreshGrant = idp.CreateRefreshToken(oizPrincipal);
+            var refreshGrant = idp.CreateRefreshToken(oizPrincipal, expires.AddMinutes(10));
             var refreshToken = String.Format("{0}.{1}", BitConverter.ToString(encoder.Sign(refreshGrant)).Replace("-", ""), BitConverter.ToString(refreshGrant).Replace("-", ""));
 
             WebOperationContext.Current.OutgoingResponse.ContentType = "application/json";

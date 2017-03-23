@@ -600,6 +600,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     throw new FileNotFoundException($"/{resourceType}/{id}/history/{versionId}");
                 else if ((existing as IVersionedEntity).VersionKey != versionId && !force)
                 {
+                    this.m_traceSource.TraceEvent(TraceEventType.Error, -3049, "Object {0} ETAG is {1} but If-Match specified {2}", existing.Key, existing.Tag, match);
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
                     WebOperationContext.Current.OutgoingResponse.StatusDescription = ApplicationContext.Current.GetLocaleString("DBPE002");
                     return;
@@ -611,9 +612,9 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     var applied = ApplicationContext.Current.GetService<IPatchService>().Patch(body, existing, force);
                     var data = handler.Update(applied);
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NoContent;
-                    WebOperationContext.Current.OutgoingResponse.ETag = applied.Tag;
+                    WebOperationContext.Current.OutgoingResponse.ETag = data.Tag;
                     WebOperationContext.Current.OutgoingResponse.LastModified = applied.ModifiedOn.DateTime;
-                    var versioned = (applied as IVersionedEntity)?.VersionKey;
+                    var versioned = (data as IVersionedEntity)?.VersionKey;
                     if (versioned != null)
                         WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpResponseHeader.ContentLocation, String.Format("{0}/{1}/{2}/history/{3}",
                                 WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri,

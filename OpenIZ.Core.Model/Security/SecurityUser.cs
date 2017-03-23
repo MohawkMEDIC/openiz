@@ -186,7 +186,7 @@ namespace OpenIZ.Core.Model.Security
 
             set
             {
-                throw new NotSupportedException();
+                
             }
         }
 

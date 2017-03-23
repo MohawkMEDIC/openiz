@@ -69,6 +69,7 @@
     <Compile Include="ResourceHandler\ActResourceHandler.cs" />
     <Compile Include="ResourceHandler\BundleResourceHandler.cs" />
     <Compile Include="ResourceHandler\ConceptClassResourceHandler.cs" />
+    <Compile Include="ResourceHandler\ExtensionTypeResourceHandler.cs" />
     <Compile Include="ResourceHandler\PersonResourceHandler.cs" />
     <Compile Include="ResourceHandler\ReferenceTermResourceHandler.cs" />
     <Compile Include="ResourceHandler\ConceptReferenceTermResourceHandler.cs" />

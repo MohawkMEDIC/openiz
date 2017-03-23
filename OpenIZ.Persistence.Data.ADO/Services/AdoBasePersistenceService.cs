@@ -513,16 +513,16 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// <param name="data">Data.</param>
         public TData Update(DataContext context, TData data, IPrincipal principal)
         {
-            // Make sure we're updating the right thing
-            if (data.Key.HasValue)
-            {
-                var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem(data.GetType(), data.Key.Value);
-                if (cacheItem != null)
-                {
-                    cacheItem.CopyObjectData(data);
-                    data = cacheItem as TData;
-                }
-            }
+            //// Make sure we're updating the right thing
+            //if (data.Key.HasValue)
+            //{
+            //    var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem(data.GetType(), data.Key.Value);
+            //    if (cacheItem != null)
+            //    {
+            //        cacheItem.CopyObjectData(data);
+            //        data = cacheItem as TData;
+            //    }
+            //}
 
             var retVal = this.UpdateInternal(context, data, principal);
             //if (retVal != data) System.Diagnostics.Debugger.Break();

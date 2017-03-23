@@ -52,6 +52,7 @@ namespace OpenIZ.Core.Model.Collection
     [XmlInclude(typeof(CodedObservation))]
     [XmlInclude(typeof(QuantityObservation))]
     [XmlInclude(typeof(PatientEncounter))]
+    [XmlInclude(typeof(ExtensionType))]
     [XmlInclude(typeof(SubstanceAdministration))]
     [XmlInclude(typeof(UserEntity))]
     [XmlInclude(typeof(ApplicationEntity))]

@@ -13,14 +13,23 @@ namespace OpenIZ.Core.Data.Warehouse
     /// </summary>
     [XmlType(nameof(DatamartStoredQuery), Namespace = "http://openiz.org/warehousing"), JsonObject(nameof(DatamartStoredQuery))]
     [XmlRoot(nameof(DatamartStoredQuery), Namespace = "http://openiz.org/warehousing")]
-    public class DatamartStoredQuery
+    public class DatamartStoredQuery : IDatamartSchemaPropertyContainer
     {
+
+        /// <summary>
+        /// Stored query
+        /// </summary>
+        public DatamartStoredQuery()
+        {
+            this.Definition = new List<DatamartStoredQueryDefinition>();
+            this.Properties = new List<DatamartSchemaProperty>();
+        }
 
         /// <summary>
         /// Gets or sets the provider identifier
         /// </summary>
-        [XmlAttribute("provider"), JsonProperty("provider")]
-        public String ProviderId { get; set; }
+        [XmlAttribute("id"), JsonProperty("id")]
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Definition of the query
@@ -37,8 +46,8 @@ namespace OpenIZ.Core.Data.Warehouse
         /// <summary>
         /// Definition of the query
         /// </summary>
-        [XmlText, JsonProperty("select")]
-        public String Definition { get; set; }
+        [XmlElement("sql"), JsonProperty("select")]
+        public List<DatamartStoredQueryDefinition> Definition { get; set; }
 
     }
 }
