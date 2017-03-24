@@ -24,7 +24,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
         /// <summary>
         /// Requests the issuance of a BMS1 inventory report request
         /// </summary>
-        public LogisticsInventoryReportMessageType IssueInventoryReportRequest(LogisticsInventoryReportRequestType parameters)
+        public LogisticsInventoryReportMessageType IssueInventoryReportRequest(LogisticsInventoryReportRequestMessageType parameters)
         {
             
             // Status
@@ -45,11 +45,11 @@ namespace OpenIZ.Messaging.GS1.Wcf
                     },
                     Sender = new Partner[] {
                         new Partner() {
-                            Identifier = new PartnerIdentification() {  Authority = ApplicationContext.Current.Configuration.Custodianship.Id.AssigningAuthority.Name, Value = ApplicationContext.Current.Configuration.Custodianship.Id.Id },
+                            Identifier = new PartnerIdentification() {  Authority = ApplicationContext.Current.Configuration.Custodianship.Id.AssigningAuthority?.Name, Value = ApplicationContext.Current.Configuration.Custodianship?.Id?.Id },
                             ContactInformation = new ContactInformation[] {
                                 new ContactInformation()
                                 {
-                                    Contact = ApplicationContext.Current.Configuration.Custodianship.Name,
+                                    Contact = ApplicationContext.Current.Configuration.Custodianship?.Name,
                                     ContactTypeIdentifier = "REGION"
                                 }
                             }
@@ -62,10 +62,12 @@ namespace OpenIZ.Messaging.GS1.Wcf
             IStockManagementRepositoryService stockService = ApplicationContext.Current.GetService<IStockManagementRepositoryService>();
             IPlaceRepositoryService placeService = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
             IActRepositoryService actService = ApplicationContext.Current.GetService<IActRepositoryService>();
+            IMaterialRepositoryService materialService = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
 
             // Date / time of report
-            DateTime? reportFrom = parameters.reportingPeriod?.beginDate ?? DateTime.MinValue,
-                reportTo = parameters.reportingPeriod?.endDate ?? DateTime.Now;
+
+            DateTime? reportFrom = parameters.logisticsInventoryReportRequest.First().reportingPeriod?.beginDate ?? DateTime.MinValue,
+                reportTo = parameters.logisticsInventoryReportRequest.First().reportingPeriod?.endDate ?? DateTime.Now;
 
             // return value
             LogisticsInventoryReportType report = new LogisticsInventoryReportType()
@@ -82,10 +84,10 @@ namespace OpenIZ.Messaging.GS1.Wcf
 
             // Next, we want to know which facilities for which we're getting the inventory report
             List<Place> filterPlaces = null;
-            if (parameters.logisticsInventoryRequestLocation != null &&
-                parameters.logisticsInventoryRequestLocation.Length > 0)
+            if (parameters.logisticsInventoryReportRequest.First().logisticsInventoryRequestLocation != null &&
+                parameters.logisticsInventoryReportRequest.First().logisticsInventoryRequestLocation.Length > 0)
             {
-                foreach (var filter in parameters.logisticsInventoryRequestLocation)
+                foreach (var filter in parameters.logisticsInventoryReportRequest.First().logisticsInventoryRequestLocation)
                 {
                     int tc = 0;
                     var place = placeService.Find(o => o.Identifiers.Any(i => i.Value == filter.inventoryLocation.gln), 0, 1, out tc).FirstOrDefault();
@@ -118,14 +120,14 @@ namespace OpenIZ.Messaging.GS1.Wcf
 
                 // TODO: Store the GLN configuration domain name
                 locationStockStatus.inventoryLocation = new TransactionalPartyType() {
-                    gln = place.Identifiers.First(o => o.Authority.Oid == gln.Oid)?.Value,
+                    gln = place.Identifiers.FirstOrDefault(o => o.Authority.Oid == gln.Oid)?.Value,
                     address = new AddressType()
                     {
-                        state = place.Addresses.First().Component.FirstOrDefault(o => o.ComponentTypeKey == AddressComponentKeys.State)?.Value,
-                        city = place.Addresses.First().Component.FirstOrDefault(o => o.ComponentTypeKey == AddressComponentKeys.City)?.Value,
-                        countryCode = new CountryCodeType() { Value = place.Addresses.First().Component.FirstOrDefault(o => o.ComponentTypeKey == AddressComponentKeys.Country)?.Value },
-                        countyCode = place.Addresses.First().Component.FirstOrDefault(o => o.ComponentTypeKey == AddressComponentKeys.County)?.Value,
-                        postalCode = place.Addresses.First().Component.FirstOrDefault(o => o.ComponentTypeKey == AddressComponentKeys.PostalCode)?.Value,
+                        state = place.Addresses.FirstOrDefault()?.Component.FirstOrDefault(o => o.ComponentTypeKey == AddressComponentKeys.State)?.Value,
+                        city = place.Addresses.FirstOrDefault()?.Component.FirstOrDefault(o => o.ComponentTypeKey == AddressComponentKeys.City)?.Value,
+                        countryCode = new CountryCodeType() { Value = place.Addresses.FirstOrDefault()?.Component.FirstOrDefault(o => o.ComponentTypeKey == AddressComponentKeys.Country)?.Value },
+                        countyCode = place.Addresses.FirstOrDefault()?.Component.FirstOrDefault(o => o.ComponentTypeKey == AddressComponentKeys.County)?.Value,
+                        postalCode = place.Addresses.FirstOrDefault()?.Component.FirstOrDefault(o => o.ComponentTypeKey == AddressComponentKeys.PostalCode)?.Value,
                     },
                     additionalPartyIdentification = place.Identifiers.Select(o => new AdditionalPartyIdentificationType()
                     {
@@ -143,11 +145,15 @@ namespace OpenIZ.Messaging.GS1.Wcf
                 // What are the relationships of held entities
                 foreach(var rel in place.Relationships.Where(o=>o.RelationshipTypeKey == EntityRelationshipTypeKeys.OwnedEntity))
                 {
+
+                    if (rel.TargetEntity == null)
+                        rel.TargetEntity = materialService.GetManufacturedMaterial(rel.TargetEntityKey.Value, Guid.Empty);
+
                     var mmat = rel.TargetEntity as ManufacturedMaterial;
                     if (!(mmat is ManufacturedMaterial))
                         continue;
 
-                    var mat = mmat.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.ManufacturedProduct).TargetEntity as Material;
+                    var mat = materialService.FindMaterial(o=>o.Relationships.Where(r=> r.RelationshipType.Mnemonic == "ManufacturedProduct").Any(r=> r.TargetEntity.Key == mmat.Key)).FirstOrDefault();
 
                     decimal balanceOH = rel.Quantity;
 
@@ -271,7 +277,10 @@ namespace OpenIZ.Messaging.GS1.Wcf
                         }
                     });
 
+
                 }
+
+                locationStockStatus.tradeItemInventoryStatus = tradeItemStatuses.ToArray();
             }
 
             report.logisticsInventoryReportInventoryLocation = locationStockStatuses.ToArray();

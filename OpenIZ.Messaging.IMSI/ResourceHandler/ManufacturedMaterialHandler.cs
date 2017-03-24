@@ -111,7 +111,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			return this.m_repository.Find(QueryExpressionParser.BuildLinqExpression<ManufacturedMaterial>(queryParameters, null, false));
+			return this.m_repository.FindManufacturedMaterial(QueryExpressionParser.BuildLinqExpression<ManufacturedMaterial>(queryParameters, null, false));
 		}
 
 		/// <summary>
@@ -119,7 +119,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			return this.m_repository.Find(QueryExpressionParser.BuildLinqExpression<ManufacturedMaterial>(queryParameters), offset, count, out totalCount);
+			return this.m_repository.FindManufacturedMaterial(QueryExpressionParser.BuildLinqExpression<ManufacturedMaterial>(queryParameters), offset, count, out totalCount);
 		}
 
 		/// <summary>

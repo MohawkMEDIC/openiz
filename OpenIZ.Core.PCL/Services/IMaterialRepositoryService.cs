@@ -33,22 +33,22 @@ namespace OpenIZ.Core.Services
 		/// <summary>
 		/// Finds the specified ManufacturedMaterial
 		/// </summary>
-		IEnumerable<ManufacturedMaterial> Find(Expression<Func<ManufacturedMaterial, bool>> expression);
+		IEnumerable<ManufacturedMaterial> FindManufacturedMaterial(Expression<Func<ManufacturedMaterial, bool>> expression);
 
 		/// <summary>
 		/// Finds the specified ManufacturedMaterial with the specified restrictions
 		/// </summary>
-		IEnumerable<ManufacturedMaterial> Find(Expression<Func<ManufacturedMaterial, bool>> expression, int offset, int? count, out int totalCount);
+		IEnumerable<ManufacturedMaterial> FindManufacturedMaterial(Expression<Func<ManufacturedMaterial, bool>> expression, int offset, int? count, out int totalCount);
 
 		/// <summary>
 		/// Finds the specified material
 		/// </summary>
-		IEnumerable<Material> Find(Expression<Func<Material, bool>> expression);
+		IEnumerable<Material> FindMaterial(Expression<Func<Material, bool>> expression);
 
 		/// <summary>
 		/// Finds the specified material with the specified restrictions
 		/// </summary>
-		IEnumerable<Material> Find(Expression<Func<Material, bool>> expression, int offset, int? count, out int totalCount);
+		IEnumerable<Material> FindMaterial(Expression<Func<Material, bool>> expression, int offset, int? count, out int totalCount);
 
 		/// <summary>
 		/// Gets the specified ManufacturedMaterial from the database

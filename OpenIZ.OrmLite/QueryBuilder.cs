@@ -258,8 +258,9 @@ namespace OpenIZ.OrmLite
                             // Generate method
                             var prefix = IncrementSubQueryAlias(tablePrefix);
                             var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { propertyType }, new Type[] { subQuery.GetType(), typeof(String), typeof(ColumnMapping[])});
+                            subQueryStatement.Append("(");
                             subQueryStatement.Append(genMethod.Invoke(this, new Object[] { subQuery, prefix, new ColumnMapping[] { subTableColumn } }) as SqlStatement);
-
+                            subQueryStatement.Append(")");
 
                             // TODO: Check if limiting the the query is better
                             if (guardConditions.Last().Key != guardClause.Key)

@@ -78,8 +78,8 @@ namespace OpenIZ.Core.Services.Impl
                 throw new InvalidOperationException();
 
             return persistenceService.Query(o => o.ClassConceptKey == ActClassKeys.AccountManagement && o.ActTime >= startPeriod.Value && o.ActTime <= endPeriod.Value &&
-                o.Participations.Where(guard=>guard.ParticipationRoleKey == ActParticipationKey.Location).Any(p=>p.PlayerEntityKey == placeKey) &&
-                o.Participations.Where(guard=>guard.ParticipationRoleKey == ActParticipationKey.Consumable).Any(p=>p.PlayerEntityKey == manufacturedMaterialKey), AuthenticationContext.Current.Principal);
+                o.Participations.Where(guard=>guard.ParticipationRole.Mnemonic == "Location").Any(p=>p.PlayerEntityKey == placeKey) &&
+                o.Participations.Where(guard=>guard.ParticipationRole.Mnemonic == "Consumable").Any(p=>p.PlayerEntityKey == manufacturedMaterialKey), AuthenticationContext.Current.Principal);
 
         }
     }

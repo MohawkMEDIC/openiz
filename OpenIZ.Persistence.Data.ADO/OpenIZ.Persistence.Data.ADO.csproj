@@ -124,6 +124,7 @@
     <Compile Include="Services\AdoApplicationIdentityProvider.cs" />
     <Compile Include="Services\AdoDeviceIdentityProvider.cs" />
     <Compile Include="Services\AdoIdentityProvider.cs" />
+    <Compile Include="Services\AdoOidRegistrarService.cs" />
     <Compile Include="Services\AdoPersistenceService.cs" />
     <Compile Include="Services\AdoPolicyInformationService.cs" />
     <Compile Include="Services\AdoRoleProvider.cs" />
