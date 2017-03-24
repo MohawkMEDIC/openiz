@@ -26,7 +26,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
         /// </summary>
         public LogisticsInventoryReportMessageType IssueInventoryReportRequest(LogisticsInventoryReportRequestMessageType parameters)
         {
-            
+
             // Status
             LogisticsInventoryReportMessageType retVal = new LogisticsInventoryReportMessageType()
             {
@@ -119,7 +119,8 @@ namespace OpenIZ.Messaging.GS1.Wcf
                 locationStockStatuses.Add(locationStockStatus);
 
                 // TODO: Store the GLN configuration domain name
-                locationStockStatus.inventoryLocation = new TransactionalPartyType() {
+                locationStockStatus.inventoryLocation = new TransactionalPartyType()
+                {
                     gln = place.Identifiers.FirstOrDefault(o => o.Authority.Oid == gln.Oid)?.Value,
                     address = new AddressType()
                     {
@@ -143,7 +144,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
                 var tradeItemStatuses = new List<TradeItemInventoryStatusType>();
 
                 // What are the relationships of held entities
-                foreach(var rel in place.Relationships.Where(o=>o.RelationshipTypeKey == EntityRelationshipTypeKeys.OwnedEntity))
+                foreach (var rel in place.Relationships.Where(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.OwnedEntity))
                 {
 
                     if (rel.TargetEntity == null)
@@ -153,7 +154,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
                     if (!(mmat is ManufacturedMaterial))
                         continue;
 
-                    var mat = materialService.FindMaterial(o=>o.Relationships.Where(r=> r.RelationshipType.Mnemonic == "ManufacturedProduct").Any(r=> r.TargetEntity.Key == mmat.Key)).FirstOrDefault();
+                    var mat = materialService.FindMaterial(o => o.Relationships.Where(r => r.RelationshipType.Mnemonic == "ManufacturedProduct").Any(r => r.TargetEntity.Key == mmat.Key)).FirstOrDefault();
 
                     decimal balanceOH = rel.Quantity;
 
@@ -178,14 +179,21 @@ namespace OpenIZ.Messaging.GS1.Wcf
                         }).ToArray(),
                         inventoryDateTime = DateTime.Now,
                         inventoryDispositionCode = new InventoryDispositionCodeType() { Value = "ON_HAND" },
-                        tradeItemQuantity = new QuantityType()
+                        transactionalItemData = new TransactionalItemDataType[]
                         {
-                            measurementUnitCode = (mmat.QuantityConcept ?? mat?.QuantityConcept)?.ReferenceTerms.Select(o => new AdditionalLogisticUnitIdentificationType()
+                            new TransactionalItemDataType()
                             {
-                                additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
-                                Value = o.ReferenceTerm.Mnemonic
-                            }).FirstOrDefault()?.Value,
-                            Value = balanceOH
+                                tradeItemQuantity = new QuantityType()
+                                {
+                                    measurementUnitCode = (mmat.QuantityConcept ?? mat?.QuantityConcept)?.ReferenceTerms.Select(o => new AdditionalLogisticUnitIdentificationType()
+                                    {
+                                        additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
+                                        Value = o.ReferenceTerm.Mnemonic
+                                    }).FirstOrDefault()?.Value,
+                                    Value = balanceOH
+                                },
+                                batchNumber = mmat.LotNumber
+                            }
                         }
                     });
 
@@ -207,7 +215,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                 additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
                                 Value = o.ReferenceTerm.Mnemonic
                             }).FirstOrDefault()?.Value,
-                            Value = Math.Abs(adjustments.Where(a=>a.ReasonConceptKey.Value == ActReasonKeys.Broken).Sum(o=>o.Participations.First(p=>p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
+                            Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.Broken).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
                         }
                     });
 
