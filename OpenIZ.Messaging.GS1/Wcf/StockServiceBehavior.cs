@@ -192,7 +192,8 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                     }).FirstOrDefault()?.Value,
                                     Value = balanceOH
                                 },
-                                batchNumber = mmat.LotNumber
+                                batchNumber = mmat.LotNumber,
+                                itemExpirationDate = mmat.ExpiryDate.Value
                             }
                         }
                     });
@@ -208,14 +209,22 @@ namespace OpenIZ.Messaging.GS1.Wcf
                         }).ToArray(),
                         inventoryDateTime = DateTime.Now,
                         inventoryDispositionCode = new InventoryDispositionCodeType() { Value = "DAMAGED" },
-                        tradeItemQuantity = new QuantityType()
+                        transactionalItemData = new TransactionalItemDataType[]
                         {
-                            measurementUnitCode = (mmat.QuantityConcept ?? mat?.QuantityConcept)?.ReferenceTerms.Select(o => new AdditionalLogisticUnitIdentificationType()
+                            new TransactionalItemDataType()
                             {
-                                additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
-                                Value = o.ReferenceTerm.Mnemonic
-                            }).FirstOrDefault()?.Value,
-                            Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.Broken).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
+                                tradeItemQuantity = new QuantityType()
+                                {
+                                    measurementUnitCode = (mmat.QuantityConcept ?? mat?.QuantityConcept)?.ReferenceTerms.Select(o => new AdditionalLogisticUnitIdentificationType()
+                                    {
+                                        additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
+                                        Value = o.ReferenceTerm.Mnemonic
+                                    }).FirstOrDefault()?.Value,
+                                    Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.Broken).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
+                                },
+                                batchNumber = mmat.LotNumber,
+                                itemExpirationDate = mmat.ExpiryDate.Value
+                            }
                         }
                     });
 
@@ -230,14 +239,22 @@ namespace OpenIZ.Messaging.GS1.Wcf
                         }).ToArray(),
                         inventoryDateTime = DateTime.Now,
                         inventoryDispositionCode = new InventoryDispositionCodeType() { Value = "COLDCHAIN_FAILED" },
-                        tradeItemQuantity = new QuantityType()
+                        transactionalItemData = new TransactionalItemDataType[]
                         {
-                            measurementUnitCode = (mmat.QuantityConcept ?? mat?.QuantityConcept)?.ReferenceTerms.Select(o => new AdditionalLogisticUnitIdentificationType()
+                            new TransactionalItemDataType()
                             {
-                                additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
-                                Value = o.ReferenceTerm.Mnemonic
-                            }).FirstOrDefault()?.Value,
-                            Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.ColdStorageFailure).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
+                                tradeItemQuantity = new QuantityType()
+                                {
+                                    measurementUnitCode = (mmat.QuantityConcept ?? mat?.QuantityConcept)?.ReferenceTerms.Select(o => new AdditionalLogisticUnitIdentificationType()
+                                    {
+                                        additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
+                                        Value = o.ReferenceTerm.Mnemonic
+                                    }).FirstOrDefault()?.Value,
+                                    Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.ColdStorageFailure).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
+                                },
+                                batchNumber = mmat.LotNumber,
+                                itemExpirationDate = mmat.ExpiryDate.Value
+                            }
                         }
                     });
 
@@ -252,14 +269,22 @@ namespace OpenIZ.Messaging.GS1.Wcf
                         }).ToArray(),
                         inventoryDateTime = DateTime.Now,
                         inventoryDispositionCode = new InventoryDispositionCodeType() { Value = "EXPIRED" },
-                        tradeItemQuantity = new QuantityType()
+                        transactionalItemData = new TransactionalItemDataType[]
                         {
-                            measurementUnitCode = (mmat.QuantityConcept ?? mat?.QuantityConcept)?.ReferenceTerms.Select(o => new AdditionalLogisticUnitIdentificationType()
+                            new TransactionalItemDataType()
                             {
-                                additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
-                                Value = o.ReferenceTerm.Mnemonic
-                            }).FirstOrDefault()?.Value,
-                            Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.ColdStorageFailure).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
+                                tradeItemQuantity = new QuantityType()
+                                {
+                                    measurementUnitCode = (mmat.QuantityConcept ?? mat?.QuantityConcept)?.ReferenceTerms.Select(o => new AdditionalLogisticUnitIdentificationType()
+                                    {
+                                        additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
+                                        Value = o.ReferenceTerm.Mnemonic
+                                    }).FirstOrDefault()?.Value,
+                                    Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.ColdStorageFailure).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
+                                },
+                                batchNumber = mmat.LotNumber,
+                                itemExpirationDate = mmat.ExpiryDate.Value
+                            }
                         }
                     });
 
@@ -274,21 +299,33 @@ namespace OpenIZ.Messaging.GS1.Wcf
                         }).ToArray(),
                         inventoryDateTime = DateTime.Now,
                         inventoryDispositionCode = new InventoryDispositionCodeType() { Value = "WASTED" },
-                        tradeItemQuantity = new QuantityType()
+                        transactionalItemData = new TransactionalItemDataType[]
                         {
-                            measurementUnitCode = (mmat.QuantityConcept ?? mat?.QuantityConcept)?.ReferenceTerms.Select(o => new AdditionalLogisticUnitIdentificationType()
+                            new TransactionalItemDataType()
                             {
-                                additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
-                                Value = o.ReferenceTerm.Mnemonic
-                            }).FirstOrDefault()?.Value,
-                            Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == NullReasonKeys.Other).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
+                                tradeItemQuantity = new QuantityType()
+                                {
+                                    measurementUnitCode = (mmat.QuantityConcept ?? mat?.QuantityConcept)?.ReferenceTerms.Select(o => new AdditionalLogisticUnitIdentificationType()
+                                    {
+                                        additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
+                                        Value = o.ReferenceTerm.Mnemonic
+                                    }).FirstOrDefault()?.Value,
+                                    Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == NullReasonKeys.Other).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
+                                },
+                                batchNumber = mmat.LotNumber,
+                                itemExpirationDate = mmat.ExpiryDate.Value
+                            }
                         }
                     });
-
-
+                    
                 }
 
+                // Reduce
+                tradeItemStatuses.RemoveAll(o => o.transactionalItemData.First().tradeItemQuantity.Value == 0 && o.inventoryDispositionCode.Value != "ON_HAND");
                 locationStockStatus.tradeItemInventoryStatus = tradeItemStatuses.ToArray();
+
+                
+                // TODO: Reduce and Group by GTIN
             }
 
             report.logisticsInventoryReportInventoryLocation = locationStockStatuses.ToArray();
