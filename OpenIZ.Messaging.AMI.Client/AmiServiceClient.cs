@@ -35,6 +35,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using OpenIZ.Core.Interop;
 using OpenIZ.Core.Model.AMI.Applet;
+using OpenIZ.Core.Applets.Model;
 
 namespace OpenIZ.Messaging.AMI.Client
 {
@@ -293,6 +294,20 @@ namespace OpenIZ.Messaging.AMI.Client
 		{
 			return this.Client.Get<AlertMessageInfo>($"alert/{id}");
 		}
+
+        /// <summary>
+        /// Stats the update via a HEAD command
+        /// </summary>
+        public AppletInfo StatUpdate(String packageId)
+        {
+
+            var headers = this.Client.Head($"pak/{packageId}");
+            String versionKey = String.Empty,
+                packId = String.Empty,
+                hash = String.Empty;
+            //            headers.TryGetValue("ETag");
+            return null;
+        }
 
 		/// <summary>
 		/// Gets a list of alerts.

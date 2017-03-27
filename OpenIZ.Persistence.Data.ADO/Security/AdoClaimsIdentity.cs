@@ -171,9 +171,8 @@ namespace OpenIZ.Persistence.Data.ADO.Security
 
                     // Attempt to get a user
                     var cvalue = BitConverter.ToString(refreshToken).Replace("-", "");
-                    var securityClaims = dataContext.Query<DbUserClaim>(o => o.ClaimType == AdoDataConstants.RefreshSecretClaimType && o.ClaimValue == cvalue || o.ClaimType == AdoDataConstants.RefreshExpiryClaimType);
-                    DbUserClaim secretClaim = securityClaims.FirstOrDefault(o => o.ClaimType == AdoDataConstants.RefreshSecretClaimType),
-                        expiryClaim = securityClaims.FirstOrDefault(o => o.ClaimType == AdoDataConstants.RefreshExpiryClaimType);
+                    DbUserClaim secretClaim = dataContext.FirstOrDefault<DbUserClaim>(o => o.ClaimType == AdoDataConstants.RefreshSecretClaimType && o.ClaimValue == cvalue),
+                        expiryClaim = dataContext.FirstOrDefault<DbUserClaim>(o => o.ClaimType == AdoDataConstants.RefreshExpiryClaimType && o.SourceKey == secretClaim.SourceKey);
 
                     if (secretClaim == null) throw new SecurityException("Invalid refresh token");
                     if (expiryClaim == null || DateTimeOffset.Parse(expiryClaim.ClaimValue) < DateTimeOffset.Now)
