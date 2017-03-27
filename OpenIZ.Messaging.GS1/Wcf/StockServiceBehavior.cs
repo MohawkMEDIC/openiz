@@ -193,7 +193,8 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                     Value = balanceOH
                                 },
                                 batchNumber = mmat.LotNumber,
-                                itemExpirationDate = mmat.ExpiryDate.Value
+                                itemExpirationDate = mmat.ExpiryDate.Value,
+                                itemExpirationDateSpecified = true
                             }
                         }
                     });
@@ -223,7 +224,8 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                     Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.Broken).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
                                 },
                                 batchNumber = mmat.LotNumber,
-                                itemExpirationDate = mmat.ExpiryDate.Value
+                                itemExpirationDate = mmat.ExpiryDate.Value,
+                                itemExpirationDateSpecified = true
                             }
                         }
                     });
@@ -253,7 +255,8 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                     Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.ColdStorageFailure).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
                                 },
                                 batchNumber = mmat.LotNumber,
-                                itemExpirationDate = mmat.ExpiryDate.Value
+                                itemExpirationDate = mmat.ExpiryDate.Value,
+                                itemExpirationDateSpecified = true
                             }
                         }
                     });
@@ -283,7 +286,8 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                     Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.ColdStorageFailure).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
                                 },
                                 batchNumber = mmat.LotNumber,
-                                itemExpirationDate = mmat.ExpiryDate.Value
+                                itemExpirationDate = mmat.ExpiryDate.Value,
+                                itemExpirationDateSpecified = true
                             }
                         }
                     });
@@ -313,7 +317,8 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                     Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == NullReasonKeys.Other).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
                                 },
                                 batchNumber = mmat.LotNumber,
-                                itemExpirationDate = mmat.ExpiryDate.Value
+                                itemExpirationDate = mmat.ExpiryDate.Value,
+                                itemExpirationDateSpecified = true
                             }
                         }
                     });
@@ -321,7 +326,6 @@ namespace OpenIZ.Messaging.GS1.Wcf
                 }
 
                 // Reduce
-                tradeItemStatuses.RemoveAll(o => o.transactionalItemData.First().tradeItemQuantity.Value == 0 && o.inventoryDispositionCode.Value != "ON_HAND");
                 locationStockStatus.tradeItemInventoryStatus = tradeItemStatuses.ToArray();
 
                 

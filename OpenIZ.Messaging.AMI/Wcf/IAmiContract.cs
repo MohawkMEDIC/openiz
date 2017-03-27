@@ -267,14 +267,26 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the applet.</returns>
 		[WebGet(UriTemplate = "/applet/{appletId}", BodyStyle = WebMessageBodyStyle.Bare)]
 		AppletManifestInfo GetApplet(string appletId);
+        
+        /// <summary>
+        /// Return just the headers of the applet id
+        /// </summary>
+        [WebGet(UriTemplate = "/pak/{appletId}")]
+        System.IO.Stream DownloadApplet(String appletId);
 
-		/// <summary>
-		/// Gets a list of applets for a specific query.
-		/// </summary>
-		/// <returns>Returns a list of applet which match the specific query.</returns>
-		[WebGet(UriTemplate = "/applet", BodyStyle = WebMessageBodyStyle.Bare)]
+        /// <summary>
+        /// Return just the headers of the applet id
+        /// </summary>
+        [WebInvoke(Method = "HEAD", UriTemplate = "/pak/{appletId}")]
+        void HeadApplet(String appletId);
+
+        /// <summary>
+        /// Gets a list of applets for a specific query.
+        /// </summary>
+        /// <returns>Returns a list of applet which match the specific query.</returns>
+        [WebGet(UriTemplate = "/applet", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<AppletManifestInfo> GetApplets();
-
+        
 		/// <summary>
 		/// Gets a specific application.
 		/// </summary>

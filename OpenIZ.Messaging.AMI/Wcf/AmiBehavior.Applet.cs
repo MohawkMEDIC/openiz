@@ -25,6 +25,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.ServiceModel.Web;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Messaging.AMI.Wcf
@@ -91,6 +92,60 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			return new AppletManifestInfo();
 		}
 
+        /// <summary>
+        /// Download applet in raw format
+        /// </summary>
+        public Stream DownloadApplet(String appletId)
+        {
+            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+            // TODO: Make this configurable
+            var appletDirectory = Path.Combine(baseDirectory, "applets");
+            var files = Directory.GetFiles(appletDirectory).Select(Path.GetFileName);
+            var file = files.FirstOrDefault(f => f.StartsWith(appletId));
+
+            if (file == null)
+                throw new InvalidOperationException("Applet not found");
+
+            var applet = new AppletManifestInfo();
+
+            // Stream
+            MemoryStream ms = new MemoryStream();
+            using (var stream = new FileStream(Path.Combine(appletDirectory, file), FileMode.Open))
+            {
+                stream.CopyTo(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                stream.Seek(0, SeekOrigin.Begin);
+                AppletPackage package = null;
+
+                if (file.EndsWith(".pak") || file.EndsWith(".pak.gz"))
+                {
+                    using (var gzipStream = new GZipStream(stream, CompressionMode.Decompress))
+                    {
+                        var serializer = new XmlSerializer(typeof(AppletPackage));
+                        package = (AppletPackage)serializer.Deserialize(gzipStream);
+                        WebOperationContext.Current.OutgoingResponse.ETag = package.Meta.Version;
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add("X-OpenIZ-PakID", package.Meta.Id);
+                        if(package.Meta.Hash != null)
+                            WebOperationContext.Current.OutgoingResponse.Headers.Add("X-OpenIZ-Hash", Convert.ToBase64String(package.Meta.Hash));
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add("Content-Type", "application/x-openiz-pak");
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add("Content-Disposition", $"attachment; filename=\"{package.Meta.Id}.pak.gz\"");
+                        WebOperationContext.Current.OutgoingResponse.Location = $"/ami/pak/{package.Meta.Id}";
+                    }
+                }
+            }
+
+            return ms;
+        }
+
+        /// <summary>
+        /// Gets just the headers for the applet
+        /// </summary>
+        public void HeadApplet(String appletId)
+        {
+            var stream = this.DownloadApplet(appletId);
+        }
+
 		/// <summary>
 		/// Gets a specific applet.
 		/// </summary>
@@ -126,6 +181,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 						package = (AppletPackage)serializer.Deserialize(gzipStream);
 					}
 				}
+
+                // Set the ETAG of the package to an AQN
+                WebOperationContext.Current.OutgoingResponse.ETag = package.Meta.Version;
 
 				using (var memoryStream = new MemoryStream(package.Manifest))
 				{
