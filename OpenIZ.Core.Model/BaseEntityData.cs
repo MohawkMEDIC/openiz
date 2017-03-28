@@ -71,11 +71,13 @@ namespace OpenIZ.Core.Model
         public String CreationTimeXml
         {
             get {
-                if (this.CreationTime == default(DateTime))
-                    return null;
-                else
-                    return this.CreationTime.ToString("o", CultureInfo.InvariantCulture);
-            }
+				if (this.CreationTime == default(DateTimeOffset))
+					return null;
+				else
+					return this.CreationTime.ToString("o", CultureInfo.InvariantCulture);
+
+				return this.CreationTime.ToString("o", CultureInfo.InvariantCulture);
+			}
             set {
                 if (value != null)
                     this.CreationTime = DateTimeOffset.ParseExact(value, "o", CultureInfo.InvariantCulture);
