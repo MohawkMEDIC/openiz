@@ -57,8 +57,13 @@ namespace OpenIZ.Core.Extensions
                 BitConverter.ToInt32(extensionData, 0),
                 BitConverter.ToInt32(extensionData, 4),
                 BitConverter.ToInt32(extensionData, 8),
-                BitConverter.ToInt32(extensionData, 12)
             };
+
+			// only attempt to convert the value with a start index of 12, if the value acutally has a length of 12 or greater
+	        if (extensionData.Length >= 12)
+	        {
+		        ints[ints.Length + 1] = BitConverter.ToInt32(extensionData, 12);
+	        }
 
             return new Decimal(ints);
         }
