@@ -135,6 +135,11 @@ namespace OpenIZ.Core.Http
         IDictionary<String, String> Head(String resourceName, params KeyValuePair<String, Object>[] query);
 
         /// <summary>
+        /// Perform a raw get
+        /// </summary>
+        byte[] Get(String url);
+
+        /// <summary>
         /// Gets the service client description
         /// </summary>
         /// <value>The description.</value>
@@ -149,5 +154,10 @@ namespace OpenIZ.Core.Http
 		/// Fired after the request has been finished
 		/// </summary>
 		event EventHandler<RestResponseEventArgs> Responded;
+
+        /// <summary>
+        /// Fired when progress has changed
+        /// </summary>
+        event EventHandler<RestStatusEventArgs> ProgressChanged;
 	}
 }

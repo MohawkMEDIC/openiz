@@ -305,8 +305,16 @@ namespace OpenIZ.Messaging.AMI.Client
             String versionKey = String.Empty,
                 packId = String.Empty,
                 hash = String.Empty;
-            //            headers.TryGetValue("ETag");
-            return null;
+            headers.TryGetValue("X-OpenIZ-PakID", out packId);
+            headers.TryGetValue("ETag", out versionKey);
+            headers.TryGetValue("X-OpenIZ-Hash", out hash);
+
+            return new AppletInfo()
+            {
+                Hash = Convert.FromBase64String(hash),
+                Id = packageId,
+                Version = versionKey
+            };
         }
 
 		/// <summary>

@@ -112,4 +112,24 @@ namespace OpenIZ.Core.Http
 		/// </summary>
 		public int StatusCode { get; set; }
 	}
+
+    /// <summary>
+    /// Status changed event args
+    /// </summary>
+    public class RestStatusEventArgs : RestResponseEventArgs
+    {
+        /// <summary>
+		/// REST response client event args
+		/// </summary>
+		public RestStatusEventArgs(String method, String url, NameValueCollection query, String contentType, Object responseBody, int statusCode, float progress) :
+			base(method, url, query, contentType, responseBody, statusCode)
+		{
+            this.Progress = progress;
+        }
+
+        /// <summary>
+        /// Gets or sets the progress
+        /// </summary>
+        public float Progress { get; set; }
+    }
 }

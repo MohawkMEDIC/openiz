@@ -22,9 +22,11 @@ using OpenIZ.Core.Http.Description;
 using OpenIZ.Core.Model.Query;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace OpenIZ.Core.Http
 {
@@ -48,6 +50,20 @@ namespace OpenIZ.Core.Http
         /// Fired on response
         /// </summary>
         public event EventHandler<RestResponseEventArgs> Responded;
+
+        /// <summary>
+        /// Progress has changed
+        /// </summary>
+        public event EventHandler<RestStatusEventArgs> ProgressChanged;
+
+        /// <summary>
+        /// Fire that progress has changed
+        /// </summary>
+        protected void FireProgressChanged(String method, String url, NameValueCollection query, String contentType, int status, float progress)
+        {
+            RestStatusEventArgs e = new RestStatusEventArgs(method, url, query, contentType, null, status, progress);
+            this.ProgressChanged?.Invoke(this, e);
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OpenIZ.Core.Http.RestClient"/> class.
@@ -141,6 +157,8 @@ namespace OpenIZ.Core.Http
 
         #region IRestClient implementation
 
+
+
         /// <summary>
         /// Gets the specified item
         /// </summary>
@@ -165,6 +183,76 @@ namespace OpenIZ.Core.Http
         public TResult Get<TResult>(string url, params KeyValuePair<string, object>[] query)
         {
             return this.Invoke<Object, TResult>("GET", url, null, null, query);
+        }
+
+        /// <summary>
+        /// Gets the specified URL in raw format
+        /// </summary>
+        public byte[] Get(String url)
+        {
+            NameValueCollection parameters = new NameValueCollection();
+
+            try
+            {
+
+
+                var requestEventArgs = new RestRequestEventArgs("GET", url, null, null, null);
+                this.Requesting?.Invoke(this, requestEventArgs);
+                if (requestEventArgs.Cancel)
+                {
+                    s_tracer.TraceVerbose("HTTP request cancelled");
+                    return null;
+                }
+
+                // Invoke
+                var httpWebReq = this.CreateHttpRequest(url, requestEventArgs.Query);
+                httpWebReq.Method = "GET";
+
+                // Get the responst
+                byte[] retVal = null;
+                Exception requestException = null;
+                var httpTask = httpWebReq.GetResponseAsync().ContinueWith(o =>
+                {
+                    if (o.IsFaulted)
+                        requestException = o.Exception.InnerExceptions.First();
+                    else
+                        try
+                        {
+                            byte[] buffer = new byte[2048];
+                            int br = 1;
+                            using (var ms = new MemoryStream())
+                            using (var httpStream = o.Result.GetResponseStream())
+                            {
+                                while (br > 0)
+                                {
+                                    br = httpStream.Read(buffer, 0, 2048);
+                                    ms.Write(buffer, 0, br);
+                                    // Raise event 
+                                    this.FireProgressChanged("GET", url, null, o.Result.ContentType, 200, ms.Length / (float)o.Result.ContentLength);
+                                }
+                                retVal = ms.ToArray();
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            s_tracer.TraceError("Error downloading {0}: {1}", url, e);
+                        }
+                }, TaskContinuationOptions.LongRunning);
+                httpTask.Wait();
+                if (requestException != null)
+                    throw requestException;
+
+
+                this.Responded?.Invoke(this, new RestResponseEventArgs("GET", url, null, null, null, 200));
+
+                return retVal;
+            }
+            catch (Exception e)
+            {
+                s_tracer.TraceError("Error invoking HTTP: {0}", e);
+                this.Responded?.Invoke(this, new RestResponseEventArgs("GET", url, null, null, null, 500));
+                throw;
+            }
         }
 
         /// <summary>
@@ -436,13 +524,11 @@ namespace OpenIZ.Core.Http
 
                 // Get the responst
                 Dictionary<String, String> retVal = new Dictionary<string, string>();
-                var httpTask = httpWebReq.GetResponseAsync();
-                httpTask.ContinueWith(o =>
+                var httpTask = httpWebReq.GetResponseAsync().ContinueWith(o =>
                 {
                     foreach (var itm in o.Result.Headers.AllKeys)
                         retVal.Add(itm, o.Result.Headers[itm]);
-                });
-                httpTask.Start();
+                }, TaskContinuationOptions.LongRunning);
                 httpTask.Wait();
 
                 this.Responded?.Invoke(this, new RestResponseEventArgs("HEAD", resourceName, parameters, null, null, 200));
