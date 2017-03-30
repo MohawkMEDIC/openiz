@@ -25,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using MARC.HI.EHRS.SVC.Core.Data;
+using OpenIZ.Core.Exceptions;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -195,12 +196,14 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ManufacturedMaterial>)} not found");
 			}
 
-			if (material.Key.HasValue && persistenceService.Get(new Identifier<Guid>(material.Key.Value), AuthenticationContext.Current.Principal, true) != null)
+			try
 			{
 				return persistenceService.Update(material, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 			}
-
-			return persistenceService.Insert(material, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			catch (DataPersistenceException)
+			{
+				return persistenceService.Insert(material, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
 		}
 
 		/// <summary>
@@ -215,12 +218,14 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Material>)} not found");
 			}
 
-			if (material.Key.HasValue && persistenceService.Get(new Identifier<Guid>(material.Key.Value), AuthenticationContext.Current.Principal, true) != null)
+			try
 			{
 				return persistenceService.Update(material, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 			}
-
-			return persistenceService.Insert(material, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			catch (DataPersistenceException)
+			{
+				return persistenceService.Insert(material, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
 		}
 	}
 }
