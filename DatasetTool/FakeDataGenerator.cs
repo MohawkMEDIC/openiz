@@ -139,7 +139,7 @@ namespace OizDevTool
             Console.WriteLine("Will create fake stock for {0} places", tr);
             var r = new Random();
 
-            while (ofs + 25 < tr)
+            while (ofs < tr)
             {
                 foreach (var p in results)
                 {
