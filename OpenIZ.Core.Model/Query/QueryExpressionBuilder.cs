@@ -105,6 +105,7 @@ namespace OpenIZ.Core.Model.Query
                         return this.VisitLambdaGeneric((LambdaExpression)node);
                     case ExpressionType.Constant:
                     case ExpressionType.Convert:
+                    case ExpressionType.TypeAs:
                         return node;
                     default:
                         return this.Visit(node);
@@ -337,6 +338,11 @@ namespace OpenIZ.Core.Model.Query
                     UnaryExpression ua = (UnaryExpression)access;
                     return this.ExtractPath(ua.Operand);
                 } 
+                else if(access.NodeType == ExpressionType.TypeAs)
+                {
+                    UnaryExpression ua = (UnaryExpression)access;
+                    return String.Format("{0}@{1}", this.ExtractPath(ua.Operand), ua.Type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName);
+                }
                 return null;
             }
         }
