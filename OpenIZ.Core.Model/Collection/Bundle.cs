@@ -222,7 +222,6 @@ namespace OpenIZ.Core.Model.Collection
             foreach (var itm in this.Item)
             {
                 this.Reconstitute(itm, context);
-                itm.SetDelayLoad(true);
             }
         }
 
@@ -236,7 +235,6 @@ namespace OpenIZ.Core.Model.Collection
                 return;
             context.Add(data);
             // Prevent delay loading from EntitySource (we're doing that right now)
-            data.SetDelayLoad(false);
 
             // Iterate over properties
             foreach (var pi in data.GetType().GetRuntimeProperties().Where(o => o.GetCustomAttribute<DataIgnoreAttribute>() == null))

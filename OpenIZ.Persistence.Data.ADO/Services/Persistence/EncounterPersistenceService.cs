@@ -43,6 +43,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             var retVal = m_actPersister.ToModelInstance<Core.Model.Acts.PatientEncounter>(actVersionInstance, actInstance, context, principal);
             if (retVal == null) return null;
+            else if (dbEnc == null)
+            {
+                this.m_tracer.TraceEvent(System.Diagnostics.TraceEventType.Warning, -0493043, "ENC is missing ENC data: {0}", actInstance.Key);
+                return null;
+            }
 
             if (dbEnc.DischargeDispositionKey != null)
                 retVal.DischargeDispositionKey = dbEnc.DischargeDispositionKey;

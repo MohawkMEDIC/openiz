@@ -156,9 +156,9 @@ namespace OpenIZ.Protocol.Xml
                         foreach (var itm in rule.Variables)
                         {
                             if (!s_variables.ContainsKey(itm.VariableName))
-                                s_variables.Add(itm.VariableName, itm.GetValue(null, patient, s_callbacks));
+                                s_variables.Add(itm.VariableName, itm.GetValue(null, patient, s_callbacks, new Dictionary<String, Object>()));
                             else
-                                s_variables[itm.VariableName] = itm.GetValue(null, patient, s_callbacks);
+                                s_variables[itm.VariableName] = itm.GetValue(null, patient, s_callbacks, new Dictionary<String, Object>());
                             if (!s_callbacks.ContainsKey(itm.VariableName))
                             {
                                 Func<Object> funcBody = () =>

@@ -77,6 +77,16 @@ namespace OpenIZ.Core.Applets
         public Boolean CachePages { get; set; }
 
         /// <summary>
+        /// Get authentication assets
+        /// </summary>
+        public IEnumerable<String> AuthenticationAssets {
+            get
+            {
+                return this.m_appletManifest.Where(o=>o.LoginAsset != null).Select(o => o.LoginAsset);
+            }
+        }
+
+        /// <summary>
         /// Asset content resolver called when asset content is null
         /// </summary>
         public AssetContentResolver Resolver { get; set; }

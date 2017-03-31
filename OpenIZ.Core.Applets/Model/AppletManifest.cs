@@ -93,8 +93,15 @@ namespace OpenIZ.Core.Applets.Model
         /// <summary>
         /// Instructs the host which asset can be used as a starting point
         /// </summary>
-        [XmlElement("startup")]
+        [XmlElement("startupAsset")]
         public String StartAsset { get; set; }
+
+        /// <summary>
+        /// Instructs the host which asset can be used as a starting point
+        /// </summary>
+        [XmlElement("loginAsset")]
+        public String LoginAsset { get; set; }
+
 
         /// <summary>
         /// Initial applet configuration

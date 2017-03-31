@@ -63,51 +63,6 @@ namespace OpenIZ.Core.Model
         }
 
         /// <summary>
-        /// Set delay load
-        /// </summary>
-        public virtual void SetDelayLoad(bool v, HashSet<Guid?> keyStack = null)
-        {
-
-            //if (keyStack == null)
-            //    keyStack = new HashSet<Guid?>();
-            //if (keyStack.Contains(this.Key))
-            //    return;
-            //keyStack.Add(this.Key);
-
-            //List<FieldInfo> fields = new List<FieldInfo>();
-
-            //Type typ = this.GetType();
-
-            //while (typ != typeof(Object))
-            //{
-            //    fields.AddRange(typ.GetRuntimeFields().Where(o => !o.IsStatic)); // ... Well now they know..
-            //    typ = typ.GetTypeInfo().BaseType;
-            //}
-
-            //this.m_delayLoad = v;
-            //foreach (FieldInfo fi in fields)
-            //{
-            //    object value = fi.GetValue(this);
-            //    if (value is ILockable)
-            //        value = (value as ILockable).GetLocked();
-
-            //    if (value is IdentifiedData &&
-            //        (value as IdentifiedData).IsDelayLoadEnabled != v)
-            //        (value as IdentifiedData).SetDelayLoad(v, keyStack); // Let it go
-            //    else if (value is IList &&
-            //        fi.FieldType.GenericTypeArguments.Length > 0 &&
-            //        typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(fi.FieldType.GenericTypeArguments[0].GetTypeInfo()))
-            //    {
-            //        foreach (IdentifiedData itm in value as IList)
-            //            if (itm.IsDelayLoadEnabled != v)
-            //                itm?.SetDelayLoad(v, keyStack);
-            //    }
-            //}
-
-            //keyStack.Remove(this.Key);
-        }
-
-        /// <summary>
         /// The internal primary key value of the entity
         /// </summary>
         [XmlElement("id"), JsonProperty("id")]
@@ -203,7 +158,6 @@ namespace OpenIZ.Core.Model
         public IdentifiedData GetLocked()
         {
             var retVal = this.MemberwiseClone() as IdentifiedData;
-            retVal.SetDelayLoad(false);
             return retVal;
         }
 

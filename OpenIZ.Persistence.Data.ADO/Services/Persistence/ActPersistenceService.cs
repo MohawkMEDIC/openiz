@@ -113,47 +113,52 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                                 context,
                                 principal);
                     break;
-                case Condition:
                 case Observation:
                     var dbObs = (dataInstance as CompositeResult)?.Values.OfType<DbObservation>().FirstOrDefault() ?? context.FirstOrDefault<DbObservation>(o => o.ParentKey == dbActVersion.VersionKey);
-                    switch (dbObs.ValueType)
+                    if (dbObs == null)
                     {
-                        case "ST":
-                            retVal = new TextObservationPersistenceService().ToModelInstance(
-                                (dataInstance as CompositeResult)?.Values.OfType<DbTextObservation>().FirstOrDefault() ?? context.FirstOrDefault<DbTextObservation>(o => o.ParentKey == dbObs.ParentKey),
-                                dbObs,
-                                dbActVersion,
-                                dbAct,
-                                context,
-                                principal);
-                            break;
-                        case "CD":
-                            retVal = new CodedObservationPersistenceService().ToModelInstance(
-                                (dataInstance as CompositeResult)?.Values.OfType<DbCodedObservation>().FirstOrDefault() ?? context.FirstOrDefault<DbCodedObservation>(o => o.ParentKey == dbObs.ParentKey),
-                                dbObs,
-                                dbActVersion,
-                                dbAct,
-                                context,
-                                principal);
-                            break;
-                        case "PQ":
-                            retVal = new QuantityObservationPersistenceService().ToModelInstance(
-                                (dataInstance as CompositeResult)?.Values.OfType<DbQuantityObservation>().FirstOrDefault() ?? context.FirstOrDefault<DbQuantityObservation>(o => o.ParentKey == dbObs.ParentKey),
-                                dbObs,
-                                dbActVersion,
-                                dbAct,
-                                context,
-                                principal);
-                            break;
-                        default:
-                            retVal = new ObservationPersistenceService().ToModelInstance(
-                                dbObs,
-                                dbActVersion,
-                                dbAct,
-                                context,
-                                principal);
-                            break;
+                        this.m_tracer.TraceEvent(System.Diagnostics.TraceEventType.Warning, -10293, "Observation {0} is missing observation data! Even though class code is {1}", dbAct.Key, dbAct.ClassConceptKey);
+                        retVal = this.ToModelInstance<Core.Model.Acts.Act>(dbActVersion, dbAct, context, principal);
                     }
+                    else
+                        switch (dbObs.ValueType)
+                        {
+                            case "ST":
+                                retVal = new TextObservationPersistenceService().ToModelInstance(
+                                    (dataInstance as CompositeResult)?.Values.OfType<DbTextObservation>().FirstOrDefault() ?? context.FirstOrDefault<DbTextObservation>(o => o.ParentKey == dbObs.ParentKey),
+                                    dbObs,
+                                    dbActVersion,
+                                    dbAct,
+                                    context,
+                                    principal);
+                                break;
+                            case "CD":
+                                retVal = new CodedObservationPersistenceService().ToModelInstance(
+                                    (dataInstance as CompositeResult)?.Values.OfType<DbCodedObservation>().FirstOrDefault() ?? context.FirstOrDefault<DbCodedObservation>(o => o.ParentKey == dbObs.ParentKey),
+                                    dbObs,
+                                    dbActVersion,
+                                    dbAct,
+                                    context,
+                                    principal);
+                                break;
+                            case "PQ":
+                                retVal = new QuantityObservationPersistenceService().ToModelInstance(
+                                    (dataInstance as CompositeResult)?.Values.OfType<DbQuantityObservation>().FirstOrDefault() ?? context.FirstOrDefault<DbQuantityObservation>(o => o.ParentKey == dbObs.ParentKey),
+                                    dbObs,
+                                    dbActVersion,
+                                    dbAct,
+                                    context,
+                                    principal);
+                                break;
+                            default:
+                                retVal = new ObservationPersistenceService().ToModelInstance(
+                                    dbObs,
+                                    dbActVersion,
+                                    dbAct,
+                                    context,
+                                    principal);
+                                break;
+                        }
                     break;
                 case Encounter:
                     retVal = new EncounterPersistenceService().ToModelInstance(
@@ -163,6 +168,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                                 context,
                                 principal);
                     break;
+                case Condition:
                 default:
                     retVal = this.ToModelInstance<Core.Model.Acts.Act>(dbActVersion, dbAct, context, principal);
                     break;
@@ -336,7 +342,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     return new ControlActPersistenceService().InsertInternal(context, data.Convert<ControlAct>(), principal);
                 case SubstanceAdministration:
                     return new SubstanceAdministrationPersistenceService().InsertInternal(context, data.Convert<SubstanceAdministration>(), principal);
-                case Condition:
                 case Observation:
                     switch (data.GetType().Name)
                     {
@@ -351,6 +356,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     }
                 case Encounter:
                     return new EncounterPersistenceService().InsertInternal(context, data.Convert<PatientEncounter>(), principal);
+                case Condition:
                 default:
                     return this.InsertCoreProperties(context, data, principal);
 
@@ -368,7 +374,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     return new ControlActPersistenceService().UpdateInternal(context, data.Convert<ControlAct>(), principal);
                 case SubstanceAdministration:
                     return new SubstanceAdministrationPersistenceService().UpdateInternal(context, data.Convert<SubstanceAdministration>(), principal);
-                case Condition:
                 case Observation:
                     switch (data.GetType().Name)
                     {
@@ -383,6 +388,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     }
                 case Encounter:
                     return new EncounterPersistenceService().UpdateInternal(context, data.Convert<PatientEncounter>(), principal);
+                case Condition:
                 default:
                     return this.UpdateCoreProperties(context, data, principal);
 

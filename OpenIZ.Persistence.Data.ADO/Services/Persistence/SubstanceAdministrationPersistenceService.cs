@@ -41,6 +41,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             var retVal = m_actPersister.ToModelInstance<Core.Model.Acts.SubstanceAdministration>(actVersionInstance, actInstance, context, principal);
             if (retVal == null) return null;
+            else if(sbadmInstance == null)
+            {
+                this.m_tracer.TraceEvent(System.Diagnostics.TraceEventType.Warning, -0493043, "SBADM is missing SBADM data: {0}", actInstance.Key);
+                return null;
+            }
 
             if (sbadmInstance.DoseUnitConceptKey != null)
                 retVal.DoseUnitKey = sbadmInstance.DoseUnitConceptKey;

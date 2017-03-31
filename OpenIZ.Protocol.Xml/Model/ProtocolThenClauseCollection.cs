@@ -61,6 +61,10 @@ namespace OpenIZ.Protocol.Xml.Model
         public IEnumerable<Act> Evaluate(Patient p, Dictionary<String, Delegate> variableFunc)
         {
             List<Act> retVal = new List<Act>();
+            Dictionary<String, Object> calculatedScopes = new Dictionary<string, object>()
+            {
+                { ".", p }
+            };
 
             foreach (var itm in this.Action)
             {
@@ -78,7 +82,7 @@ namespace OpenIZ.Protocol.Xml.Model
                 // Now do the actions to the properties as stated
                 foreach (var instr in itm.Do)
                 {
-                    instr.Evaluate(act, p, variableFunc);
+                    instr.Evaluate(act, p, variableFunc, calculatedScopes);
                 }
 
                 // Assign this patient as the record target
@@ -151,7 +155,7 @@ namespace OpenIZ.Protocol.Xml.Model
         /// Evaluate the expression
         /// </summary>
         /// <returns></returns>
-        public abstract object Evaluate(Act act, Patient recordTarget, Dictionary<String, Delegate> variableFunc);
+        public abstract object Evaluate(Act act, Patient recordTarget, Dictionary<String, Delegate> variableFunc, IDictionary<String, Object> scopes);
     }
 
     /// <summary>
@@ -199,7 +203,7 @@ namespace OpenIZ.Protocol.Xml.Model
         /// <summary>
         /// Get the specified value
         /// </summary>
-        public object GetValue(Act act, Patient recordTarget, Dictionary<String, Delegate> variableFunc)
+        public object GetValue(Act act, Patient recordTarget, Dictionary<String, Delegate> variableFunc, IDictionary<String, Object> scopes)
         {
             if (this.m_setter == null)
             {
@@ -217,6 +221,7 @@ namespace OpenIZ.Protocol.Xml.Model
                 // Scope
                 if (!String.IsNullOrEmpty(this.ScopeSelector))
                 {
+
                     var scopeProperty = recordTarget.GetType().GetRuntimeProperty(this.ScopeSelector);
                     var scopeValue = scopeProperty.GetValue(recordTarget);
 
@@ -252,11 +257,20 @@ namespace OpenIZ.Protocol.Xml.Model
             // Where clause?
             if (!String.IsNullOrEmpty(this.ScopeSelector))
             {
-                var scopeProperty = recordTarget.GetType().GetRuntimeProperty(this.ScopeSelector);
-                var scopeValue = scopeProperty.GetValue(recordTarget);
-                var scope = scopeValue;
-                if (!String.IsNullOrEmpty(this.WhereFilter))
-                    scope = this.m_scopeSelectMethod.Invoke(null, new Object[] { scopeValue, (this.m_linqExpression as LambdaExpression).Compile() });
+                // Is the scope selector key present?
+                String scopeKey = $"{this.ScopeSelector}.{this.WhereFilter}";
+                object scope = null;
+                if (!scopes.TryGetValue(scopeKey, out scope))
+                {
+                    var scopeProperty = recordTarget.GetType().GetRuntimeProperty(this.ScopeSelector);
+                    var scopeValue = scopeProperty.GetValue(recordTarget);
+                    scope = scopeValue;
+                    if (!String.IsNullOrEmpty(this.WhereFilter))
+                        scope = this.m_scopeSelectMethod.Invoke(null, new Object[] { scopeValue, (this.m_linqExpression as LambdaExpression).Compile() });
+                    lock (scopes)
+                        if(!scopes.ContainsKey(scopeKey))
+                            scopes.Add(scopeKey, scope);
+                }
                 setValue = this.m_setter.DynamicInvoke(scope);
             }
             else
@@ -268,7 +282,7 @@ namespace OpenIZ.Protocol.Xml.Model
         /// <summary>
         /// Evaluate the specified action on the object
         /// </summary>
-        public override object Evaluate(Act act, Patient recordTarget, Dictionary<String, Delegate> variableFunc)
+        public override object Evaluate(Act act, Patient recordTarget, Dictionary<String, Delegate> variableFunc, IDictionary<String, Object> scopes)
         {
 
             var propertyInfo = act.GetType().GetRuntimeProperty(this.PropertyName);
@@ -277,7 +291,7 @@ namespace OpenIZ.Protocol.Xml.Model
                 propertyInfo.SetValue(act, this.Element);
             else
             {
-                var setValue = this.GetValue(act, recordTarget, variableFunc);
+                var setValue = this.GetValue(act, recordTarget, variableFunc, scopes);
 
                 //exp.TypeRegistry.RegisterSymbol("data", expressionParm);
                 if (Core.Model.Map.MapUtil.TryConvert(setValue, propertyInfo.PropertyType, out setValue))
@@ -300,7 +314,7 @@ namespace OpenIZ.Protocol.Xml.Model
         /// <summary>
         /// Evaluate
         /// </summary>
-        public override object Evaluate(Act act, Patient recordTarget, Dictionary<String, Delegate> variableFunc)
+        public override object Evaluate(Act act, Patient recordTarget, Dictionary<String, Delegate> variableFunc, IDictionary<String, Object> scopes)
         {
             var value = act.GetType().GetRuntimeProperty(this.PropertyName) as IList;
             value?.Add(this.Element);

@@ -236,7 +236,6 @@ namespace OpenIZ.Messaging.IMSI.Util
                                 {
                                     // ensure the object is delay loaded 
                                     // in case the property we are looking for is null but it's associated reference key is populated
-                                    (sc as IdentifiedData)?.SetDelayLoad(true);
                                     var keyPi = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>().FirstOrDefault()?.ElementName == property);
 
                                     if (keyPi == null)
@@ -298,7 +297,6 @@ namespace OpenIZ.Messaging.IMSI.Util
         /// </summary>
         internal static void ExcludeProperties(IdentifiedData returnValue, NameValueCollection qp, Stack<Guid> keyStack = null)
         {
-            returnValue.SetDelayLoad(false);
             // Set the stack
             if (keyStack == null)
                 keyStack = new Stack<Guid>();

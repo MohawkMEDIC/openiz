@@ -215,7 +215,6 @@ namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
 
             // Insert
             var afterTest = base.DoTestInsert(refTermConcept, s_authorization);
-            afterTest.SetDelayLoad(true);
             Assert.AreEqual("TESTCODE5", afterTest.Mnemonic);
             Assert.AreEqual("Other", afterTest.Class.Mnemonic);
             Assert.IsFalse(afterTest.IsSystemConcept);

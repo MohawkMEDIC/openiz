@@ -154,7 +154,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     {
 
                         // Disable inserting duplicate classified objects
-                       data.SetDelayLoad(false);
                         var existing =data.TryGetExisting(connection, principal);
                         if (existing != null)
                         {
@@ -199,7 +198,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     }
                     finally
                     {
-                       data.SetDelayLoad(true);
                     }
             }
         }
@@ -237,7 +235,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                         this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "UPDATE {0}", data);
 
-                       data.SetDelayLoad(false);
                         data = this.Update(connection, data, principal);
 
                         if (mode == TransactionMode.Commit)
@@ -268,7 +265,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     }
                     finally
                     {
-                       data.SetDelayLoad(true);
                     }
 
             }
@@ -303,7 +299,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                         this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "OBSOLETE {0}", data);
 
-                       data.SetDelayLoad(false);
                         data = this.Obsolete(connection, data, principal);
 
                         if (mode == TransactionMode.Commit)
@@ -332,7 +327,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     }
                     finally
                     {
-                       data.SetDelayLoad(true);
                     }
 
             }
@@ -376,7 +370,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         var result = this.Get(connection, guidIdentifier.Id, principal);
                         var postData = new PostRetrievalEventArgs<TData>(result, principal);
                         this.Retrieved?.Invoke(this, postData);
-                        result?.SetDelayLoad(true);
 
                         foreach (var itm in connection.CacheOnCommit)
                             ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
@@ -466,7 +459,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     this.Queried?.Invoke(this, postData);
 
                     var retVal = postData.Results.AsParallel().ToList();
-                    retVal.ForEach((o) => o.SetDelayLoad(true)); // Enable delay load for items
                     foreach (var itm in connection.CacheOnCommit)
                         ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
 
