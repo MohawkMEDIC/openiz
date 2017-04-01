@@ -47,8 +47,7 @@ CREATE TABLE report_definition
 	correlation_id uuid NOT NULL,
 	creation_time timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	description varchar(1024) NULL,
-	name varchar(256) NOT NULL,
-	report_format_id uuid NOT NULL REFERENCES report_format ON UPDATE NO ACTION ON DELETE NO ACTION
+	name varchar(256) NOT NULL
 );
 
 ALTER TABLE public.report_definition OWNER TO oiz_reporting;
@@ -87,3 +86,17 @@ CREATE TABLE report_parameter
 );
 
 ALTER TABLE public.report_parameter OWNER TO oiz_reporting;
+
+-- @TABLE
+-- REPORT DEFINITION REPORT FORMAT ASSOCIATION TABLE
+-- 
+-- PURPOSE: A REPORT DEFINITION REPORT PARAMETER ASSOCATION REPRESENTS A REPORT DEFINTION SUPPORTING THE FOLLOWING REPORT FORMATS AND VICE VERSA
+--
+CREATE TABLE report_definition_report_format_association
+(
+	report_definition_id uuid REFERENCES report_definition ON UPDATE NO ACTION ON DELETE NO ACTION,
+	report_format_id uuid REFERENCES report_format ON UPDATE NO ACTION ON DELETE NO ACTION,
+	CONSTRAINT report_definition_report_format_association_key PRIMARY KEY (report_definition_id, report_format_id)
+);
+
+ALTER TABLE public.report_definition_report_format_association OWNER TO oiz_reporting;
