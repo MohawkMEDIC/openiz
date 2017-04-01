@@ -74,7 +74,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// </summary>
 		/// <param name="id">The id of the report parameter type to delete.</param>
 		/// <returns>Returns the deleted report parameter type.</returns>
-		public ParameterType DeleteParameterType(string id)
+		public ParameterType DeleteParameterType(Guid id)
 		{
 			return this.Client.Delete<ParameterType>($"type/{id}");
 		}
@@ -84,7 +84,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// </summary>
 		/// <param name="id">The id of the report definition to delete.</param>
 		/// <returns>Returns the deleted report definition.</returns>
-		public ReportDefinition DeleteReportDefinition(string id)
+		public ReportDefinition DeleteReportDefinition(Guid id)
 		{
 			return this.Client.Delete<ReportDefinition>($"report/{id}");
 		}
@@ -94,7 +94,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// </summary>
 		/// <param name="id">The id of the report format.</param>
 		/// <returns>Returns the report deleted report format.</returns>
-		public ReportFormat DeleteReportFormat(string id)
+		public ReportFormat DeleteReportFormat(Guid id)
 		{
 			return this.Client.Delete<ReportFormat>($"format/{id}");
 		}
@@ -157,7 +157,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// </summary>
 		/// <param name="id">The id of the report definition to retrieve.</param>
 		/// <returns>Returns a report definition.</returns>
-		public ReportDefinition GetReportDefinition(string id)
+		public ReportDefinition GetReportDefinition(Guid id)
 		{
 			return this.Client.Get<ReportDefinition>($"report/{id}");
 		}
@@ -176,7 +176,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// </summary>
 		/// <param name="id">The id of the report format to retrieve.</param>
 		/// <returns>Returns a report format.</returns>
-		public ReportFormat GetReportFormat(string id)
+		public ReportFormat GetReportFormat(Guid id)
 		{
 			return this.Client.Get<ReportFormat>($"format/{id}", null);
 		}
@@ -186,7 +186,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// </summary>
 		/// <param name="id">The id of the report parameter to retrieve.</param>
 		/// <returns>Returns a report parameter.</returns>
-		public ReportParameter GetReportParameter(string id)
+		public ReportParameter GetReportParameter(Guid id)
 		{
 			return this.Client.Get<ReportParameter>($"type/{id}");
 		}
@@ -196,7 +196,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve parameters.</param>
 		/// <returns>Returns a list of parameters.</returns>
-		public RisiCollection<ReportParameter> GetReportParameters(string id)
+		public RisiCollection<ReportParameter> GetReportParameters(Guid id)
 		{
 			return this.Client.Get<RisiCollection<ReportParameter>>($"report/{id}/parm");
 		}
@@ -207,7 +207,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// <param name="id">The id of the report.</param>
 		/// <param name="parameterId">The id of the parameter for which to retrieve detailed information.</param>
 		/// <returns>Returns an auto complete source definition of valid parameters values for a given parameter.</returns>
-		public AutoCompleteSourceDefinition GetReportParameterValues(string id, string parameterId)
+		public AutoCompleteSourceDefinition GetReportParameterValues(Guid id, Guid parameterId)
 		{
 			return this.Client.Get<AutoCompleteSourceDefinition>($"report/{id}/parm/{parameterId}/values");
 		}
@@ -217,7 +217,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve the source.</param>
 		/// <returns>Returns the report source.</returns>
-		public ReportDefinition GetReportSource(string id)
+		public ReportDefinition GetReportSource(Guid id)
 		{
 			return this.Client.Get<ReportDefinition>($"report/{id}/source");
 		}
@@ -229,7 +229,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// <param name="format">The output format of the report.</param>
 		/// <param name="parameters">The list of parameters of the report.</param>
 		/// <returns>Returns the report in raw format.</returns>
-		public byte[] RunReport(string id, string format, RisiCollection<ReportParameter> parameters)
+		public byte[] RunReport(Guid id, string format, RisiCollection<ReportParameter> parameters)
 		{
 			return this.Client.Post<RisiCollection<ReportParameter>, byte[]>($"report/{id}/{format}", this.Client.Accept, parameters);
 		}
@@ -240,7 +240,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// <param name="id">The id of the parameter type.</param>
 		/// <param name="parameterTypeDefinition"></param>
 		/// <returns>Returns the updated parameter type definition.</returns>
-		public ParameterType UpdateParameterTypeDefinition(string id, ParameterType parameterTypeDefinition)
+		public ParameterType UpdateParameterTypeDefinition(Guid id, ParameterType parameterTypeDefinition)
 		{
 			return this.Client.Put<ParameterType, ParameterType>($"type/{id}", this.Client.Accept, parameterTypeDefinition);
 		}
@@ -251,7 +251,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// <param name="id">The id of the report definition to update.</param>
 		/// <param name="reportDefinition">The updated report definition.</param>
 		/// <returns>Returns the updated report definition.</returns>
-		public ReportDefinition UpdateReportDefinition(string id, ReportDefinition reportDefinition)
+		public ReportDefinition UpdateReportDefinition(Guid id, ReportDefinition reportDefinition)
 		{
 			return this.Client.Put<ReportDefinition, ReportDefinition>($"report/{id}", this.Client.Accept, reportDefinition);
 		}
@@ -262,7 +262,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// <param name="id">The id of the report format to update.</param>
 		/// <param name="reportFormat">The updated report format.</param>
 		/// <returns>Returns the update report format.</returns>
-		public ReportFormat UpdateReportFormat(string id, ReportFormat reportFormat)
+		public ReportFormat UpdateReportFormat(Guid id, ReportFormat reportFormat)
 		{
 			return this.Client.Put<ReportFormat, ReportFormat>($"format/{id}", this.Client.Accept, reportFormat);
 		}

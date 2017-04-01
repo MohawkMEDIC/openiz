@@ -113,8 +113,9 @@ namespace OpenIZ.Reporting.Jasper
 		public event EventHandler<AuthenticationErrorEventArgs> OnAuthenticationError;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="JasperReportHandler"/> class.
+		/// Initializes a new instance of the <see cref="JasperReportHandler" /> class.
 		/// </summary>
+		/// <exception cref="System.InvalidOperationException">Non username and password authentication methods are not supported for Jasper Reports</exception>
 		public JasperReportHandler()
 		{
 			this.cookieContainer = new CookieContainer();
@@ -126,7 +127,12 @@ namespace OpenIZ.Reporting.Jasper
 
 			this.client = new HttpClient(handler);
 
-			var usernamePasswordCredential = (configuration.Credentials.Credential as UsernamePasswordCredential);
+			var usernamePasswordCredential = configuration.Credentials.Credential as UsernamePasswordCredential;
+
+			if (usernamePasswordCredential == null)
+			{
+				throw new InvalidOperationException("Non username and password authentication methods are not supported for Jasper Reports");
+			}
 
 			this.username = usernamePasswordCredential.Username;
 			this.password = usernamePasswordCredential.Password;
@@ -278,7 +284,36 @@ namespace OpenIZ.Reporting.Jasper
 		/// <returns>Returns a report definition.</returns>
 		public ReportDefinition GetReportDefinition(Guid id)
 		{
-			throw new NotImplementedException();
+			var reportDefinitionPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinition>>();
+
+			if (reportDefinitionPersistenceService == null)
+			{
+				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ReportDefinition>)}");
+			}
+
+			var reportDefinition = reportDefinitionPersistenceService.Get(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, true);
+
+			if (reportDefinition == null)
+			{
+				return null;
+			}
+
+			this.Authenticate(this.username, this.password);
+
+			var response = client.GetAsync($"{this.ReportUri}{JasperResourcesPath}{reportDefinition.CorrelationId}").Result;
+
+			tracer.TraceEvent(TraceEventType.Information, 0, $"Jasper report server response: {response.Content}");
+
+			Resources resources;
+
+			using (var stream = response.Content.ReadAsStreamAsync().Result)
+			{
+				var serializer = new XmlSerializer(typeof(Resources));
+
+				resources = (Resources)serializer.Deserialize(stream);
+			}
+
+			return reportDefinition;
 		}
 
 		/// <summary>
