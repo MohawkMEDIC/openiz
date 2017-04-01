@@ -20,16 +20,17 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using MARC.HI.EHRS.SVC.Core.Plugins;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OpenIZ.Messaging.CSD")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("OpenIZ CSD Messaging")]
+[assembly: AssemblyDescription("Care Services Discovery (CSD) allows access to OpenIZ CSD services")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("OpenIZ.Messaging.CSD")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyCompany("Mohawk College of Applied Arts and Technology")]
+[assembly: AssemblyProduct("Open Immunize (http://openiz.org)")]
+[assembly: AssemblyCopyright("Copyright (C) 2017, Mohawk College of Applied Arts and Technology")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,5 +52,12 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyVersion("0.6.14.*")]
+[assembly: AssemblyInformationalVersion("Chippewa")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+
+// Assembly plugin info
+[assembly: AssemblyPlugin()]
+
+// Depends: OpenIZ.Core v1.0.0.0
+[assembly: AssemblyPluginDependency("OpenIZ.Core", "1.0.0.0")]
