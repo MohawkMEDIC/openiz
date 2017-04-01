@@ -46,6 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\Credentials.cs" />
+    <Compile Include="Configuration\CredentialType.cs" />
     <Compile Include="Configuration\RisiConfiguration.cs" />
     <Compile Include="Configuration\RisiConfigurationSectionHandler.cs" />
     <Compile Include="RisiMessageHandler.cs" />
