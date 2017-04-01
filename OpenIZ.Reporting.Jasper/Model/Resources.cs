@@ -15,51 +15,37 @@
  * the License.
  * 
  * User: khannan
- * Date: 2017-1-15
+ * Date: 2017-3-31
  */
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
-namespace OpenIZ.Reporting.Core
+namespace OpenIZ.Reporting.Jasper.Model
 {
 	/// <summary>
-	/// Represents an authentication result.
+	/// Represents jasper resources.
 	/// </summary>
-	public class AuthenticationResult
+	[XmlRoot("resources")]
+	[XmlType("resources")]
+	public class Resources
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="AuthenticationResult"/> class.
+		/// Initializes a new instance of the <see cref="Resources"/> class.
 		/// </summary>
-		public AuthenticationResult()
+		public Resources()
 		{
-			
+			this.ResourceLookups = new List<ResourceLookup>();
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="AuthenticationResult"/> class
-		/// with a specific token.
+		/// Gets or sets the resource lookups.
 		/// </summary>
-		/// <param name="token">The token value.</param>
-		public AuthenticationResult(string token)
-		{
-			this.Token = token;
-		}
-
-		/// <summary>
-		/// Gets or sets the token of the authentication result.
-		/// </summary>
-		public string Token { get; }
-
-		/// <summary>
-		/// Returns a security token from the authentication result.
-		/// </summary>
-		/// <returns>A <see cref="System.String" /> that represents this instance.</returns>
-		public override string ToString()
-		{
-			return this.Token;
-		}
+		/// <value>The resource lookups.</value>
+		[XmlElement("resourceLookup")]
+		public List<ResourceLookup> ResourceLookups { get; set; }
 	}
 }

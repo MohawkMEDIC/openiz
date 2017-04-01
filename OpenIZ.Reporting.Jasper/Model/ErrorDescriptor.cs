@@ -15,51 +15,51 @@
  * the License.
  * 
  * User: khannan
- * Date: 2017-1-15
+ * Date: 2017-3-31
  */
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
-namespace OpenIZ.Reporting.Core
+namespace OpenIZ.Reporting.Jasper.Model
 {
 	/// <summary>
-	/// Represents an authentication result.
+	/// Class ErrorDescriptor.
 	/// </summary>
-	public class AuthenticationResult
+	[XmlType("errorDescriptor")]
+	[XmlRoot("errorDescriptor")]
+	public class ErrorDescriptor
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="AuthenticationResult"/> class.
+		/// Initializes a new instance of the <see cref="ErrorDescriptor"/> class.
 		/// </summary>
-		public AuthenticationResult()
+		public ErrorDescriptor()
 		{
 			
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="AuthenticationResult"/> class
-		/// with a specific token.
+		/// Gets or sets the error code.
 		/// </summary>
-		/// <param name="token">The token value.</param>
-		public AuthenticationResult(string token)
-		{
-			this.Token = token;
-		}
+		/// <value>The error code.</value>
+		[XmlElement("errorCode")]
+		public string ErrorCode { get; set; }
 
 		/// <summary>
-		/// Gets or sets the token of the authentication result.
+		/// Gets or sets the message.
 		/// </summary>
-		public string Token { get; }
+		/// <value>The message.</value>
+		[XmlElement("message")]
+		public string Message { get; set; }
 
 		/// <summary>
-		/// Returns a security token from the authentication result.
+		/// Gets or sets the parameters.
 		/// </summary>
-		/// <returns>A <see cref="System.String" /> that represents this instance.</returns>
-		public override string ToString()
-		{
-			return this.Token;
-		}
+		/// <value>The parameters.</value>
+		[XmlElement("parameters")]
+		public List<ErrorParameter> Parameters { get; set; }
 	}
 }

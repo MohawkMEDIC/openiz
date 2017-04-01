@@ -48,6 +48,12 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Context
 		public DbSet<ReportDefinition> ReportDefinitions { get; set; }
 
 		/// <summary>
+		/// Gets or sets the report definition report format associations.
+		/// </summary>
+		/// <value>The report definition report format associations.</value>
+		public DbSet<ReportDefinitionReportFormatAssociation> ReportDefinitionReportFormatAssociations { get; set; }
+
+		/// <summary>
 		/// Gets or sets the report formats.
 		/// </summary>
 		public DbSet<ReportFormat> ReportFormats { get; set; }

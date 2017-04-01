@@ -18,6 +18,7 @@
  * Date: 2016-12-4
  */
 
+using System;
 using OpenIZ.Core.Model.Security;
 using System.Collections.Generic;
 using System.Xml.Serialization;
@@ -36,6 +37,8 @@ namespace OpenIZ.Core.Model.RISI
 		/// </summary>
 		public ReportDefinition()
 		{
+			this.CreationTime = DateTimeOffset.Now;
+			this.Key = Guid.NewGuid();
 			this.Parameters = new List<ReportParameter>();
 			this.Policies = new List<SecurityPolicyInstance>();
 		}

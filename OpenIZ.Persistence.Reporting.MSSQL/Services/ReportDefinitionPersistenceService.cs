@@ -190,6 +190,11 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Services
 			{
 				var entity = this.FromModelInstance(storageData);
 
+				if (string.IsNullOrEmpty(entity.Author) || string.IsNullOrWhiteSpace(entity.Author))
+				{
+					entity.Author = "SYSTEM";
+				}
+
 				context.ReportDefinitions.Add(entity);
 				context.SaveChanges();
 

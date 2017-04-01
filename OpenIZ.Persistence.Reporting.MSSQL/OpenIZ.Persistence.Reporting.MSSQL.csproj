@@ -63,6 +63,7 @@
     <Compile Include="Migrations\MigrationGenerator.cs" />
     <Compile Include="Model\ParameterType.cs" />
     <Compile Include="Model\ReportDefinition.cs" />
+    <Compile Include="Model\ReportDefinitionReportFormatAssociation.cs" />
     <Compile Include="Model\ReportFormat.cs" />
     <Compile Include="Model\ReportParameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

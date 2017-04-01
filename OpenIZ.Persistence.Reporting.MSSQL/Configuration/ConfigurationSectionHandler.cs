@@ -28,6 +28,7 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Configuration
 	/// </summary>
 	public class ConfigurationSectionHandler : IConfigurationSectionHandler
 	{
+
 		/// <summary>
 		/// Creates a configuration section handler.
 		/// </summary>
@@ -35,6 +36,7 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Configuration
 		/// <param name="configContext">Configuration context object.</param>
 		/// <param name="section">Section XML node.</param>
 		/// <returns>The created section handler object.</returns>
+		/// <exception cref="System.Configuration.ConfigurationErrorsException">The 'connectionString' element must have a 'name' attribute</exception>
 		public object Create(object parent, object configContext, XmlNode section)
 		{
 			var providerElement = section.SelectSingleNode("./*[local-name() = 'connectionString']") as XmlElement;

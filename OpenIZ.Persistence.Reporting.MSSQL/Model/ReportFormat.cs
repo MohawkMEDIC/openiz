@@ -73,6 +73,6 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Model
 		/// <summary>
 		/// Gets or sets the report definitions associated with the report format.
 		/// </summary>
-		public virtual ICollection<ReportDefinition> ReportDefinitions { get; set; }
+		public virtual ICollection<ReportDefinitionReportFormatAssociation> ReportDefinitions { get; set; }
 	}
 }
