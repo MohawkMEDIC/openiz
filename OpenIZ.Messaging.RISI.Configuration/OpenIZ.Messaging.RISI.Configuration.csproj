@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{265614D8-DF9D-4AC8-BB31-8766A0B0CA20}</ProjectGuid>
+    <ProjectGuid>{A0B1051F-0E13-4369-B03A-A81A0E193CEE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenIZ.Messaging.RISI</RootNamespace>
-    <AssemblyName>OpenIZ.Messaging.RISI</AssemblyName>
+    <RootNamespace>OpenIZ.Messaging.RISI.Configuration</RootNamespace>
+    <AssemblyName>OpenIZ.Messaging.RISI.Configuration</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -34,10 +34,7 @@
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -46,45 +43,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\RisiConfigurationSectionHandler.cs" />
-    <Compile Include="RisiMessageHandler.cs" />
+    <Compile Include="CertificateCredential.cs" />
+    <Compile Include="CredentialBase.cs" />
+    <Compile Include="Credentials.cs" />
+    <Compile Include="CredentialType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Wcf\Behavior\RisiRestEndpointBehavior.cs" />
-    <Compile Include="Wcf\Behavior\RisiSerializerOperationBehavior.cs" />
-    <Compile Include="Wcf\IRisiContract.cs" />
-    <Compile Include="Wcf\RisiBehavior.cs" />
+    <Compile Include="RisiConfiguration.cs" />
+    <Compile Include="UsernamePasswordCredential.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
     </None>
-  </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <ProjectReference Include="..\OpenIZ.Core.Model.RISI\OpenIZ.Core.Model.RISI.csproj">
-      <Project>{f3d2fa84-c398-4390-9834-1272cc2d6f89}</Project>
-      <Name>OpenIZ.Core.Model.RISI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
-      <Project>{f1a82a4f-4a57-47d7-ae76-444c8a4ff54a}</Project>
-      <Name>OpenIZ.Core.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OpenIZ.Core.PCL\OpenIZ.Core.PCL.csproj">
-      <Project>{3a45f695-47a2-464c-ace6-bdabbfa39fbc}</Project>
-      <Name>OpenIZ.Core.PCL</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OpenIZ.Core\OpenIZ.Core.csproj">
-      <Project>{db9bc05e-45f1-4f96-a161-f36bdecaf566}</Project>
-      <Name>OpenIZ.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OpenIZ.Messaging.RISI.Configuration\OpenIZ.Messaging.RISI.Configuration.csproj">
-      <Project>{a0b1051f-0e13-4369-b03a-a81a0e193cee}</Project>
-      <Name>OpenIZ.Messaging.RISI.Configuration</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OpenIZ.Reporting.Core\OpenIZ.Reporting.Core.csproj">
-      <Project>{f2b51ac4-4710-4b45-8bf7-e480f375fc90}</Project>
-      <Name>OpenIZ.Reporting.Core</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -29,6 +29,14 @@ namespace OpenIZ.Messaging.RISI.Configuration
 	public class RisiConfiguration
 	{
 		/// <summary>
+		/// Initializes a new instance of the <see cref="RisiConfiguration"/> class.
+		/// </summary>
+		public RisiConfiguration()
+		{
+			
+		}
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="RisiConfiguration"/> class
 		/// with a specified report engine type.
 		/// </summary>
@@ -44,12 +52,19 @@ namespace OpenIZ.Messaging.RISI.Configuration
 		/// Gets or sets the address of the reporting engine.
 		/// </summary>
 		[XmlAttribute("address")]
-		public string Address { get; }
+		public string Address { get; set; }
+
+		/// <summary>
+		/// Gets or sets the credentials.
+		/// </summary>
+		/// <value>The credentials.</value>
+		[XmlElement("credentials")]
+		public Credentials Credentials { get; set; }
 
 		/// <summary>
 		/// Gets the engine handler of the configuration.
 		/// </summary>
 		[XmlAttribute("type")]
-		public Type Handler { get; }
+		public Type Handler { get; set; }
 	}
 }

@@ -14,39 +14,41 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * User: khannan
- * Date: 2017-1-5
+ * User: Nityan
+ * Date: 2017-4-1
  */
 
 using System;
 using OpenIZ.Reporting.Core.Auth;
-using OpenIZ.Reporting.Core.Event;
 
-namespace OpenIZ.Reporting.Core
+namespace OpenIZ.Reporting.Core.Event
 {
 	/// <summary>
-	/// Represents an authentication handler.
+	/// Represents authenticated event arguments.
 	/// </summary>
-	public interface IAuthenticationHandler : IDisposable
+	/// <seealso cref="System.EventArgs" />
+	public class AuthenticatedEventArgs : EventArgs
 	{
 		/// <summary>
-		/// Occurs when a service is authenticated.
+		/// Initializes a new instance of the <see cref="AuthenticatedEventArgs"/> class.
 		/// </summary>
-		event EventHandler<AuthenticatedEventArgs> Authenticated;
+		public AuthenticatedEventArgs()
+		{
+		}
 
 		/// <summary>
-		/// Occurs when a service is authenticating.
+		/// Initializes a new instance of the <see cref="AuthenticatedEventArgs"/> class.
 		/// </summary>
-		event EventHandler<AuthenticatingEventArgs> Authenticating;
+		/// <param name="authenticationResult">The authentication result.</param>
+		public AuthenticatedEventArgs(AuthenticationResult authenticationResult)
+		{
+			this.AuthenticationResult = authenticationResult;
+		}
 
 		/// <summary>
-		/// Occurs when a service fails authentication.
+		/// Gets the authentication result.
 		/// </summary>
-		event EventHandler<AuthenticationErrorEventArgs> OnAuthenticationError;
-
-		/// <summary>
-		/// Gets or sets the authentication result of the authentication handler.
-		/// </summary>
-		AuthenticationResult AuthenticationResult { get; set; }
+		/// <value>The authentication result.</value>
+		public AuthenticationResult AuthenticationResult { get; set; }
 	}
 }

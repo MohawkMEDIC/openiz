@@ -80,7 +80,7 @@ namespace OpenIZ.Reporting.Core
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
-		RisiCollection<ReportParameter> GetAllReportParamterTypes();
+		RisiCollection<ReportParameter> GetAllReportParameterTypes();
 
 		/// <summary>
 		/// Gets a parameter type by id.
@@ -100,7 +100,7 @@ namespace OpenIZ.Reporting.Core
 		/// Gets a list of report definitions based on a specific query.
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
-		RisiCollection<ReportDefinition> GetReportDefintions();
+		RisiCollection<ReportDefinition> GetReportDefinitions();
 
 		/// <summary>
 		/// Gets a report format by id.

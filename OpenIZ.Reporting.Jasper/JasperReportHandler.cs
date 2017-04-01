@@ -32,9 +32,13 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Authentication;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using OpenIZ.Core.Diagnostics;
+using OpenIZ.Messaging.RISI.Configuration;
+using OpenIZ.Reporting.Core.Auth;
+using OpenIZ.Reporting.Core.Event;
 using OpenIZ.Reporting.Jasper.Model;
 
 namespace OpenIZ.Reporting.Jasper
@@ -55,30 +59,15 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		private readonly CookieContainer cookieContainer;
 
-		///// <summary>
-		///// The internal reference to the <see cref="ParameterType"/> <see cref="IDataPersistenceService{TData}"/> instance.
-		///// </summary>
-		//private readonly IDataPersistenceService<ParameterType> parameterTypePersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ParameterType>>();
-
-		///// <summary>
-		///// The internal reference to the <see cref="ReportDefinition"/> <see cref="IDataPersistenceService{TData}"/> instance.
-		///// </summary>
-		//private readonly IDataPersistenceService<ReportDefinition> reportDefinitionPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinition>>();
-
-		///// <summary>
-		///// The internal reference to the <see cref="ReportFormat"/> <see cref="IDataPersistenceService{TData}"/> instance.
-		///// </summary>
-		//private readonly IDataPersistenceService<ReportFormat> reportFormatPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportFormat>>();
-
-		///// <summary>
-		///// The internal reference to the <see cref="ReportParameter"/> <see cref="IDataPersistenceService{TData}"/> instance.
-		///// </summary>
-		//private readonly IDataPersistenceService<ReportParameter> reportParameterPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportParameter>>();
+		/// <summary>
+		/// The configuration.
+		/// </summary>
+		private readonly RisiConfiguration configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.risi") as RisiConfiguration;
 
 		/// <summary>
 		/// The jasper authentication path.
 		/// </summary>
-		private static readonly string JasperAuthPath = "/rest/login";
+		private const string JasperAuthPath = "/rest/login";
 
 		/// <summary>
 		/// The jasper report path.
@@ -88,12 +77,40 @@ namespace OpenIZ.Reporting.Jasper
 		/// <summary>
 		/// The jasper resources path.
 		/// </summary>
-		private static readonly string JasperResourcesPath = "/rest_v2/resources";
+		private const string JasperResourcesPath = "/rest_v2/resources";
 
 		/// <summary>
-		/// The tracer instance.
+		/// The jasper cookie key.
 		/// </summary>
-		private static readonly Tracer tracer = Tracer.GetTracer(typeof(JasperReportHandler));
+		private const string JasperCookieKey = "JSESSIONID";
+
+		/// <summary>
+		/// The internal reference to the trace source.
+		/// </summary>
+		private readonly TraceSource tracer = new TraceSource("OpenIZ.Reporting.Jasper");
+
+		/// <summary>
+		/// The username.
+		/// </summary>
+		private readonly string username;
+
+		/// <summary>
+		/// The password.
+		/// </summary>
+		private readonly string password;
+
+		/// <summary>
+		/// Occurs when a service is authenticated.
+		/// </summary>
+		public event EventHandler<AuthenticatedEventArgs> Authenticated;
+		/// <summary>
+		/// Occurs when a service is authenticating.
+		/// </summary>
+		public event EventHandler<AuthenticatingEventArgs> Authenticating;
+		/// <summary>
+		/// Occurs when a service fails authentication.
+		/// </summary>
+		public event EventHandler<AuthenticationErrorEventArgs> OnAuthenticationError;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="JasperReportHandler"/> class.
@@ -108,6 +125,13 @@ namespace OpenIZ.Reporting.Jasper
 			};
 
 			this.client = new HttpClient(handler);
+
+			var usernamePasswordCredential = (configuration.Credentials.Credential as UsernamePasswordCredential);
+
+			this.username = usernamePasswordCredential.Username;
+			this.password = usernamePasswordCredential.Password;
+
+			this.Authenticated += OnAuthenticated;
 		}
 
 		/// <summary>
@@ -133,20 +157,29 @@ namespace OpenIZ.Reporting.Jasper
 			content.Headers.Remove("Content-Type");
 			content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
+			this.Authenticating?.Invoke(this, new AuthenticatingEventArgs());
+
 			var response = this.client.PostAsync($"{this.ReportUri}{JasperAuthPath}", content).Result;
 
 			if (response.IsSuccessStatusCode)
 			{
-				var values = response.Headers.GetValues("Set-Cookie").Where(c => c.StartsWith("JSESSIONID"));
+				var values = response.Headers.GetValues("Set-Cookie").Where(c => c.StartsWith(JasperCookieKey));
 
-				tracer.TraceEvent(EventLevel.Informational, "token: {0}", values);
+				foreach (var value in values)
+				{
+					this.tracer.TraceEvent(TraceEventType.Information, 0, value);
+				}
+
+				this.tracer.TraceEvent(TraceEventType.Information, 0, $"token: {values}");
+
+				this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(new AuthenticationResult("87737BAAE3BE62B95136B653C65D8052")));
 			}
 			else
 			{
-				throw new AuthenticationException($"Unable to authenticate against the Jasper Service, using username: {username}");
+				var message = $"Unable to authenticate against the Jasper Service, using username: {username}";
+				this.OnAuthenticationError?.Invoke(this, new AuthenticationErrorEventArgs(message));
+				throw new AuthenticationException(message);
 			}
-
-			this.AuthenticationResult = new AuthenticationResult("87737BAAE3BE62B95136B653C65D8052");
 
 			return this.AuthenticationResult;
 		}
@@ -223,7 +256,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
-		public RisiCollection<ReportParameter> GetAllReportParamterTypes()
+		public RisiCollection<ReportParameter> GetAllReportParameterTypes()
 		{
 			throw new NotImplementedException();
 		}
@@ -252,22 +285,29 @@ namespace OpenIZ.Reporting.Jasper
 		/// Gets a list of report definitions based on a specific query.
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
-		public RisiCollection<ReportDefinition> GetReportDefintions()
+		public RisiCollection<ReportDefinition> GetReportDefinitions()
 		{
-			var token = this.Authenticate("jasperadmin", "jasperadmin");
+			// ensure authenticated
+			this.Authenticate(this.username, this.password);
 
-			cookieContainer.Add(new Cookie("JSESSIONID", token.ToString()) { Domain = "JSESSIONID" });
 			var response = client.GetAsync($"{this.ReportUri}{JasperResourcesPath}").Result;
 
-			tracer.TraceEvent(EventLevel.Informational, "Jasper report server response: {0}", response.Content.ToString());
+			tracer.TraceEvent(TraceEventType.Information, 0, $"Jasper report server response: {response.Content}");
 
-			Resources resources = null;
+			Resources resources;
 
 			using (var stream = response.Content.ReadAsStreamAsync().Result)
 			{
-				XmlSerializer serializer = new XmlSerializer(typeof(Resources));
+				var serializer = new XmlSerializer(typeof(Resources));
 
 				resources = (Resources)serializer.Deserialize(stream);
+			}
+
+			var reportDefinitionPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinition>>();
+
+			if (reportDefinitionPersistenceService == null)
+			{
+				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ReportDefinition>)}");
 			}
 
 			var reports = new List<ReportDefinition>();
@@ -287,13 +327,19 @@ namespace OpenIZ.Reporting.Jasper
 
 						reports.Add(reportDefinition);
 
+						var results = reportDefinitionPersistenceService.Query(r => r.CorrelationId == reportDefinition.CorrelationId, AuthenticationContext.Current.Principal);
+
+						foreach (var result in results)
+						{
+							reportDefinitionPersistenceService.Update(reportDefinition, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+						}
+
 						//this.reportDefinitionPersistenceService.Insert(reportDefinition, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 						break;
 				}
 			}
 
 			//var reports = this.reportDefinitionPersistenceService.Query(r => r.Key != null, null);
-
 
 			return new RisiCollection<ReportDefinition>(reports);
 		}
@@ -350,11 +396,24 @@ namespace OpenIZ.Reporting.Jasper
 		}
 
 		/// <summary>
+		/// Handles the <see cref="E:Authenticated" /> event.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="authenticatedEventArgs">The <see cref="AuthenticatedEventArgs"/> instance containing the event data.</param>
+		private void OnAuthenticated(object sender, AuthenticatedEventArgs authenticatedEventArgs)
+		{
+			this.AuthenticationResult = authenticatedEventArgs.AuthenticationResult;
+			this.cookieContainer.Add(new Cookie(JasperCookieKey, this.AuthenticationResult.Token) { Domain = JasperCookieKey });
+		}
+
+		/// <summary>
 		/// Runs a report.
 		/// </summary>
 		/// <param name="reportId">The id of the report.</param>
 		/// <param name="reportFormat">The format of the report.</param>
 		/// <param name="parameters">The parameters of the report.</param>
+		/// <returns>System.Byte[].</returns>
+		/// <exception cref="System.NotImplementedException"></exception>
 		public byte[] RunReport(Guid reportId, Guid reportFormat, IEnumerable<ReportParameter> parameters)
 		{
 			throw new NotImplementedException();

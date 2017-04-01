@@ -14,24 +14,22 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * User: khannan
- * Date: 2017-1-6
+ * User: Nityan
+ * Date: 2017-4-1
  */
 
-using OpenIZ.Reporting.Core.Auth;
-
-namespace OpenIZ.Reporting.Core
+namespace OpenIZ.Messaging.RISI.Configuration
 {
 	/// <summary>
-	/// Represents a service which supports bearer authentication.
+	/// Represents a base credential.
 	/// </summary>
-	public interface ISupportBearerAuthentication : IAuthenticationHandler
+	public abstract class CredentialBase
 	{
 		/// <summary>
-		/// Authenticates against a remote system using a bearer token.
+		/// Initializes a new instance of the <see cref="CredentialBase"/> class.
 		/// </summary>
-		/// <param name="token">The bearer token used to authenticate against the remote system.</param>
-		/// <returns>Returns an authentication result.</returns>
-		AuthenticationResult Authenticate(string token);
+		protected CredentialBase()
+		{
+		}
 	}
 }

@@ -139,9 +139,9 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
-		public RisiCollection<ReportParameter> GetAllReportParamterTypes()
+		public RisiCollection<ReportParameter> GetAllReportParameterTypes()
 		{
-			return this.reportHandler.GetAllReportParamterTypes();
+			return this.reportHandler.GetAllReportParameterTypes();
 		}
 
 		/// <summary>
@@ -165,9 +165,9 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// Gets a list of report definitions based on a specific query.
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
-		public RisiCollection<ReportDefinition> GetReportDefintions()
+		public RisiCollection<ReportDefinition> GetReportDefinitions()
 		{
-			return this.reportHandler.GetReportDefintions();
+			return this.reportHandler.GetReportDefinitions();
 		}
 
 		/// <summary>

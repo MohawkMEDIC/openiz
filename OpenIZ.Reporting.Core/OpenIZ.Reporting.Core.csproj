@@ -45,7 +45,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthenticationResult.cs" />
+    <Compile Include="Event\AuthenticatedEventArgs.cs" />
+    <Compile Include="Event\AuthenticatingEventArgs.cs" />
+    <Compile Include="Event\AuthenticationErrorEventArgs.cs" />
+    <Compile Include="Auth\AuthenticationResult.cs" />
     <Compile Include="IAuthenticationHandler.cs" />
     <Compile Include="IReportHandler.cs" />
     <Compile Include="ISupportBasicAuthentication.cs" />

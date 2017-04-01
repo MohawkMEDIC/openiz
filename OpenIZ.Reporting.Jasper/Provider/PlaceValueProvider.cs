@@ -26,6 +26,7 @@ using OpenIZ.Core.Model.RISI.Interfaces;
 using OpenIZ.Core.Security;
 using System.Collections.Generic;
 using System.Linq;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Reporting.Jasper.Provider
 {
@@ -50,7 +51,7 @@ namespace OpenIZ.Reporting.Jasper.Provider
 
 			while (offset <= totalCount)
 			{
-				var places = placePersistenceService.Query(p => p.IsMobile == false, offset, 250, AuthenticationContext.Current.Principal, out totalCount);
+				var places = placePersistenceService.Query(p => p.IsMobile == false && p.ClassConceptKey == EntityClassKeys.Place && p.ObsoletionTime == null, offset, 250, AuthenticationContext.Current.Principal, out totalCount);
 
 				offset += 250;
 

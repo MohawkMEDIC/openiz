@@ -14,24 +14,25 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * User: khannan
- * Date: 2017-1-6
+ * User: Nityan
+ * Date: 2017-4-1
  */
 
-using OpenIZ.Reporting.Core.Auth;
+using System;
 
-namespace OpenIZ.Reporting.Core
+namespace OpenIZ.Reporting.Core.Event
 {
 	/// <summary>
-	/// Represents a service which supports bearer authentication.
+	/// Representing authenticating event arguments.
 	/// </summary>
-	public interface ISupportBearerAuthentication : IAuthenticationHandler
+	/// <seealso cref="System.EventArgs" />
+	public class AuthenticatingEventArgs : EventArgs
 	{
 		/// <summary>
-		/// Authenticates against a remote system using a bearer token.
+		/// Initializes a new instance of the <see cref="AuthenticatingEventArgs"/> class.
 		/// </summary>
-		/// <param name="token">The bearer token used to authenticate against the remote system.</param>
-		/// <returns>Returns an authentication result.</returns>
-		AuthenticationResult Authenticate(string token);
+		public AuthenticatingEventArgs()
+		{
+		}
 	}
 }

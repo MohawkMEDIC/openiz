@@ -15,38 +15,38 @@
  * the License.
  *
  * User: khannan
- * Date: 2017-1-5
+ * Date: 2017-4-1
  */
 
-using System;
-using OpenIZ.Reporting.Core.Auth;
-using OpenIZ.Reporting.Core.Event;
+using System.Xml.Serialization;
 
-namespace OpenIZ.Reporting.Core
+namespace OpenIZ.Messaging.RISI.Configuration
 {
 	/// <summary>
-	/// Represents an authentication handler.
+	/// Represents a set of credentials.
 	/// </summary>
-	public interface IAuthenticationHandler : IDisposable
+	[XmlType(nameof(Credentials), Namespace = "http://openiz.org/risi")]
+	public class Credentials
 	{
 		/// <summary>
-		/// Occurs when a service is authenticated.
+		/// Initializes a new instance of the <see cref="Credentials"/> class.
 		/// </summary>
-		event EventHandler<AuthenticatedEventArgs> Authenticated;
+		public Credentials()
+		{
+		}
 
 		/// <summary>
-		/// Occurs when a service is authenticating.
+		/// Gets or sets the credential.
 		/// </summary>
-		event EventHandler<AuthenticatingEventArgs> Authenticating;
+		/// <value>The credential.</value>
+		[XmlElement("credential")]
+		public CredentialBase Credential { get; set; }
 
 		/// <summary>
-		/// Occurs when a service fails authentication.
+		/// Gets or sets the type of the credential.
 		/// </summary>
-		event EventHandler<AuthenticationErrorEventArgs> OnAuthenticationError;
-
-		/// <summary>
-		/// Gets or sets the authentication result of the authentication handler.
-		/// </summary>
-		AuthenticationResult AuthenticationResult { get; set; }
+		/// <value>The type of the credential.</value>
+		[XmlAttribute("type")]
+		public CredentialType CredentialType { get; set; }
 	}
 }

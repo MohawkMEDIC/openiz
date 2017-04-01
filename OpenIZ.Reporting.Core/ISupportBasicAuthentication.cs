@@ -18,6 +18,8 @@
  * Date: 2017-1-5
  */
 
+using OpenIZ.Reporting.Core.Auth;
+
 namespace OpenIZ.Reporting.Core
 {
 	/// <summary>

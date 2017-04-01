@@ -21,7 +21,10 @@
 using OpenIZ.Reporting.Core;
 using System;
 using System.Configuration;
+using System.Runtime.InteropServices.ComTypes;
+using System.Security.Cryptography.X509Certificates;
 using System.Xml;
+using MARC.HI.EHRS.SVC.Core.Terminology;
 
 namespace OpenIZ.Messaging.RISI.Configuration
 {
@@ -39,6 +42,8 @@ namespace OpenIZ.Messaging.RISI.Configuration
 		/// <returns>Returns an instance of the configuration section.</returns>
 		public object Create(object parent, object configContext, XmlNode section)
 		{
+			var configuration = new RisiConfiguration();
+
 			var reportEngineElement = section.SelectSingleNode("./*[local-name() = 'reportEngine']") as XmlElement;
 
 			var type = reportEngineElement?.Attributes["type"]?.Value;
@@ -72,7 +77,47 @@ namespace OpenIZ.Messaging.RISI.Configuration
 				throw new ConfigurationErrorsException($"The type { handler.AssemblyQualifiedName } must implement type { typeof(IReportHandler).AssemblyQualifiedName }");
 			}
 
-			return new RisiConfiguration(address, handler);
+			configuration.Address = address;
+			configuration.Handler = handler;
+
+			var credentialsElement = section.SelectSingleNode("./*[local-name() = 'credentials']") as XmlElement;
+
+			if (credentialsElement == null)
+			{
+				throw new ConfigurationErrorsException("The 'credentials' element must exist");
+			}
+
+			var credentialType = credentialsElement.Attributes["type"]?.Value;
+
+			if (credentialType == null)
+			{
+				throw new ConfigurationErrorsException("This 'type' attribute on 'credential' cannot be null");
+			}
+
+			var credentialElement = credentialsElement.SelectSingleNode("./*[local-name() = 'credential']") as XmlElement;
+
+			if (credentialElement == null)
+			{
+				throw new ConfigurationErrorsException("The 'credential' element must exist");
+			}
+
+			configuration.Credentials = new Credentials();
+
+			switch (credentialType)
+			{
+				case "Certificate":
+					configuration.Credentials.CredentialType = CredentialType.Certificate;
+					configuration.Credentials.Credential = new CertificateCredential((StoreLocation)Enum.Parse(typeof(StoreLocation), credentialElement.Attributes["storeLocation"]?.Value), credentialElement.Attributes["thumbprint"]?.Value);
+					break;
+				case "UsernamePassword":
+					configuration.Credentials.CredentialType = CredentialType.UsernamePassword;
+					configuration.Credentials.Credential = new UsernamePasswordCredential(credentialElement.Attributes["username"]?.Value, credentialElement.Attributes["password"]?.Value);
+					break;
+				default:
+					throw new ConfigurationErrorsException($"This 'type' attribute on 'credential' must be one of the following values { Enum.GetValues(typeof(CredentialType)) }");
+			}
+
+			return configuration;
 		}
 	}
 }
