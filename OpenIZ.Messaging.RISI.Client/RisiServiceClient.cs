@@ -231,7 +231,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// <returns>Returns the report in raw format.</returns>
 		public byte[] RunReport(Guid id, string format, RisiCollection<ReportParameter> parameters)
 		{
-			return this.Client.Post<RisiCollection<ReportParameter>, byte[]>($"report/{id}/{format}", this.Client.Accept, parameters);
+			return this.Client.Post<ReportParameter[], byte[]>($"report/{id}/{format}", this.Client.Accept, parameters.Items.ToArray());
 		}
 
 		/// <summary>
