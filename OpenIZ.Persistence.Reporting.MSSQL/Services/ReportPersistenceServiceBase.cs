@@ -27,6 +27,8 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Services
 	/// <summary>
 	/// Represents a base class for report persistence.
 	/// </summary>
+	/// <typeparam name="TModel">The type of the model.</typeparam>
+	/// <typeparam name="TDomain">The type of the domain.</typeparam>
 	internal abstract class ReportPersistenceServiceBase<TModel, TDomain>
 	{
 		/// <summary>

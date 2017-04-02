@@ -31,8 +31,10 @@ using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.NetworkInformation;
 using System.Security.Authentication;
 using System.Security.Principal;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using OpenIZ.Core.Diagnostics;
@@ -155,35 +157,50 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		/// <param name="username">The username of the user.</param>
 		/// <param name="password">The password of the user.</param>
+		/// <returns>Returns an authentication result.</returns>
+		/// <exception cref="System.Security.Authentication.AuthenticationException">Unable to authenticate against the Jasper Reports Service.</exception>
 		public AuthenticationResult Authenticate(string username, string password)
 		{
 			var content = new StringContent($"j_username={username}&j_password={password}");
 
-			// HACK: have to remove the headers before adding them...
 			content.Headers.Remove("Content-Type");
 			content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
 			this.Authenticating?.Invoke(this, new AuthenticatingEventArgs());
 
+			tracer.TraceEvent(TraceEventType.Information, 0, "Authenticating against jasper server");
+
 			var response = this.client.PostAsync($"{this.ReportUri}{JasperAuthPath}", content).Result;
 
 			if (response.IsSuccessStatusCode)
 			{
-				var values = response.Headers.GetValues("Set-Cookie").Where(c => c.StartsWith(JasperCookieKey));
+				var values = response.Headers.GetValues("Set-Cookie");
 
-				foreach (var value in values)
+				string token = null;
+
+				foreach (var value in values.SelectMany(v => v.Split(';')))
 				{
-					this.tracer.TraceEvent(TraceEventType.Information, 0, value);
+					if (!value.StartsWith(JasperCookieKey + "="))
+					{
+						continue;
+					}
+
+					token = value.Split('=')[1];
+					this.tracer.TraceEvent(TraceEventType.Information, 0, "Successfully authenticated against jasper server");
+					this.tracer.TraceEvent(TraceEventType.Verbose, 0, token);
+					break;
 				}
 
-				this.tracer.TraceEvent(TraceEventType.Information, 0, $"token: {values}");
-
-				this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(new AuthenticationResult("87737BAAE3BE62B95136B653C65D8052")));
+				this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(new AuthenticationResult(token)));
 			}
 			else
 			{
 				var message = $"Unable to authenticate against the Jasper Service, using username: {username}";
+
 				this.OnAuthenticationError?.Invoke(this, new AuthenticationErrorEventArgs(message));
+
+				this.tracer.TraceEvent(TraceEventType.Error, 0, message);
+
 				throw new AuthenticationException(message);
 			}
 
@@ -197,7 +214,14 @@ namespace OpenIZ.Reporting.Jasper
 		/// <returns>Returns the created report parameter type.</returns>
 		public ParameterType CreateParameterType(ParameterType parameterType)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ParameterType>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ParameterType>)}");
+			}
+
+			return persistenceService.Insert(parameterType, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>
@@ -217,7 +241,14 @@ namespace OpenIZ.Reporting.Jasper
 		/// <returns>Returns the created report format.</returns>
 		public ReportFormat CreateReportFormat(ReportFormat reportFormat)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportFormat>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ReportFormat>)}");
+			}
+
+			return persistenceService.Insert(reportFormat, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>
@@ -272,9 +303,17 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		/// <param name="id">The id of the parameter type to retrieve.</param>
 		/// <returns>Returns a parameter type.</returns>
+		/// <exception cref="System.InvalidOperationException">If the persistence service is not found.</exception>
 		public ParameterType GetParameterType(Guid id)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ParameterType>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ParameterType>)}");
+			}
+
+			return persistenceService.Get(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, true);
 		}
 
 		/// <summary>
@@ -282,16 +321,17 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		/// <param name="id">The id of the report definition to retrieve.</param>
 		/// <returns>Returns a report definition.</returns>
+		/// <exception cref="System.InvalidOperationException">If the persistence service is not found.</exception>
 		public ReportDefinition GetReportDefinition(Guid id)
 		{
-			var reportDefinitionPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinition>>();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinition>>();
 
-			if (reportDefinitionPersistenceService == null)
+			if (persistenceService == null)
 			{
 				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ReportDefinition>)}");
 			}
 
-			var reportDefinition = reportDefinitionPersistenceService.Get(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, true);
+			var reportDefinition = persistenceService.Get(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, false);
 
 			if (reportDefinition == null)
 			{
@@ -302,15 +342,19 @@ namespace OpenIZ.Reporting.Jasper
 
 			var response = client.GetAsync($"{this.ReportUri}{JasperResourcesPath}{reportDefinition.CorrelationId}").Result;
 
-			tracer.TraceEvent(TraceEventType.Information, 0, $"Jasper report server response: {response.Content}");
 
-			Resources resources;
+			if (!response.IsSuccessStatusCode)
+			{
+				return reportDefinition;
+			}
 
 			using (var stream = response.Content.ReadAsStreamAsync().Result)
 			{
-				var serializer = new XmlSerializer(typeof(Resources));
+				var serializer = new XmlSerializer(typeof(Model.Core.ReportUnit));
 
-				resources = (Resources)serializer.Deserialize(stream);
+				var reportUnit = (Model.Core.ReportUnit)serializer.Deserialize(stream);
+
+				this.tracer.TraceEvent(TraceEventType.Information, 0, reportUnit.ToString());
 			}
 
 			return reportDefinition;
@@ -356,27 +400,36 @@ namespace OpenIZ.Reporting.Jasper
 
 						var reportDefinition = new ReportDefinition(resourceLookup.Label)
 						{
-							CorrelationId = resourceLookup.Label,
+							CorrelationId = resourceLookup.Uri,
 							Description = resourceLookup.Description
 						};
 
 						reports.Add(reportDefinition);
-
-						var results = reportDefinitionPersistenceService.Query(r => r.CorrelationId == reportDefinition.CorrelationId, AuthenticationContext.Current.Principal);
-
-						foreach (var result in results)
-						{
-							reportDefinitionPersistenceService.Update(reportDefinition, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-						}
-
-						//this.reportDefinitionPersistenceService.Insert(reportDefinition, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 						break;
 				}
 			}
 
-			//var reports = this.reportDefinitionPersistenceService.Query(r => r.Key != null, null);
+			foreach (var report in reports)
+			{
+				var existingReport = reportDefinitionPersistenceService.Query(r => r.CorrelationId == report.CorrelationId, AuthenticationContext.Current.Principal).FirstOrDefault();
 
-			return new RisiCollection<ReportDefinition>(reports);
+				if (existingReport == null)
+				{
+					reportDefinitionPersistenceService.Insert(report, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+				}
+				else
+				{
+					existingReport.Description = report.Description;
+					existingReport.Name = report.Name;
+
+					reportDefinitionPersistenceService.Update(existingReport, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+				}
+			}
+
+			// load the reports from the database.
+			var dbReports = reportDefinitionPersistenceService.Query(r => r.Key != null, AuthenticationContext.Current.Principal);
+
+			return new RisiCollection<ReportDefinition>(dbReports);
 		}
 
 		/// <summary>
@@ -386,7 +439,14 @@ namespace OpenIZ.Reporting.Jasper
 		/// <returns>Returns a report format.</returns>
 		public ReportFormat GetReportFormat(Guid id)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportFormat>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ReportFormat>)}");
+			}
+
+			return persistenceService.Get(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, true);
 		}
 
 		/// <summary>
@@ -396,7 +456,14 @@ namespace OpenIZ.Reporting.Jasper
 		/// <returns>Returns a report parameter.</returns>
 		public ReportParameter GetReportParameter(Guid id)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportParameter>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ReportParameter>)}");
+			}
+
+			return persistenceService.Get(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, true);
 		}
 
 		/// <summary>
@@ -406,7 +473,16 @@ namespace OpenIZ.Reporting.Jasper
 		/// <returns>Returns a list of parameters.</returns>
 		public RisiCollection<ReportParameter> GetReportParameters(Guid id)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinition>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ReportDefinition>)}");
+			}
+
+			var reportDefinition = persistenceService.Get(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, true);
+
+			return new RisiCollection<ReportParameter>(reportDefinition.Parameters);
 		}
 
 		/// <summary>
@@ -425,9 +501,44 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve the source.</param>
 		/// <returns>Returns the report source.</returns>
-		public ReportDefinition GetReportSource(Guid id)
+		/// <exception cref="System.InvalidOperationException">Unable to locate the persistence service or Unable to contact the Jasper Report Service.</exception>
+		public byte[] GetReportSource(Guid id)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinition>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ReportDefinition>)}");
+			}
+
+			var reportDefinition = persistenceService.Get(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, true);
+
+			if (reportDefinition == null)
+			{
+				return null;
+			}
+
+			this.Authenticate(this.username, this.password);
+
+			var response = client.GetAsync($"{this.ReportUri}{JasperResourcesPath}{reportDefinition.CorrelationId}").Result;
+
+			if (!response.IsSuccessStatusCode)
+			{
+				throw new InvalidOperationException($"Unable to contact the Jasper Report Service: { response.Content.ReadAsStringAsync().Result }");
+			}
+
+			using (var stream = response.Content.ReadAsStreamAsync().Result)
+			{
+				var serializer = new XmlSerializer(typeof(Model.Core.ReportUnit));
+
+				var reportUnit = (Model.Core.ReportUnit)serializer.Deserialize(stream);
+
+				this.tracer.TraceEvent(TraceEventType.Information, 0, reportUnit.ToString());
+
+				response = client.GetAsync($"{this.ReportUri}{JasperResourcesPath}{reportUnit.JrXmlFileReference.Uri}").Result;
+
+				return response.Content.ReadAsByteArrayAsync().Result;
+			}
 		}
 
 		/// <summary>
@@ -445,13 +556,70 @@ namespace OpenIZ.Reporting.Jasper
 		/// Runs a report.
 		/// </summary>
 		/// <param name="reportId">The id of the report.</param>
-		/// <param name="reportFormat">The format of the report.</param>
+		/// <param name="reportFormatId">The format of the report.</param>
 		/// <param name="parameters">The parameters of the report.</param>
-		/// <returns>System.Byte[].</returns>
-		/// <exception cref="System.NotImplementedException"></exception>
-		public byte[] RunReport(Guid reportId, Guid reportFormat, IEnumerable<ReportParameter> parameters)
+		/// <returns>Returns the raw report.</returns>
+		public byte[] RunReport(Guid reportId, Guid reportFormatId, IEnumerable<ReportParameter> parameters)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinition>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ReportDefinition>)}");
+			}
+
+			var reportFormatPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportFormat>>();
+
+			if (reportFormatPersistenceService == null)
+			{
+				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ReportDefinition>)}");
+			}
+
+			var reportFormat = reportFormatPersistenceService.Get(new Identifier<Guid>(reportFormatId), AuthenticationContext.Current.Principal, true);
+
+			if (reportFormat == null)
+			{
+				throw new InvalidOperationException($"Unable to locate report format using id: {reportFormatId}");
+			}
+
+			var reportDefinition = persistenceService.Get(new Identifier<Guid>(reportId), AuthenticationContext.Current.Principal, true);
+
+			if (reportDefinition == null)
+			{
+				throw new InvalidOperationException($"Unable to locate report using id: {reportId}");
+			}
+
+			var builder = new StringBuilder();
+
+			builder.Append(this.ReportUri);
+			builder.Append(JasperReportPath);
+			builder.Append(reportDefinition.CorrelationId);
+			builder.Append(".");
+			builder.Append(reportFormat.Format);
+			builder.Append("?");
+
+			var reportParameterPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportParameter>>();
+
+			if (reportParameterPersistenceService == null)
+			{
+				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ReportParameter>)}");
+			}
+
+			var reportParameters = parameters.Select(reportParameter => reportParameterPersistenceService.Get(new Identifier<Guid>(reportParameter.Key.Value), AuthenticationContext.Current.Principal, true)).ToList();
+
+			foreach (var reportParameter in reportParameters.Where(p => reportDefinition.Parameters.Select(r => r.Key).Contains(p.Key)).OrderBy(r => r.Order))
+			{
+				builder.Append($"&{reportParameter.CorrelationId}={reportParameter.Value}");
+			}
+
+			var response = client.GetAsync(builder.ToString()).Result;
+
+			if (!response.IsSuccessStatusCode)
+			{
+				return null;
+			}
+
+			return response.Content.ReadAsByteArrayAsync().Result;
 		}
 
 		/// <summary>
@@ -477,7 +645,6 @@ namespace OpenIZ.Reporting.Jasper
 		/// <summary>
 		/// Updates a report format.
 		/// </summary>
-		/// <param name="id">The id of the report format to update.</param>
 		/// <param name="reportFormat">The updated report format.</param>
 		/// <returns>Returns the update report format.</returns>
 		public ReportFormat UpdateReportFormat(ReportFormat reportFormat)

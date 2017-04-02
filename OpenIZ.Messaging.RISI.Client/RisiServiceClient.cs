@@ -217,9 +217,9 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve the source.</param>
 		/// <returns>Returns the report source.</returns>
-		public ReportDefinition GetReportSource(Guid id)
+		public byte[] GetReportSource(Guid id)
 		{
-			return this.Client.Get<ReportDefinition>($"report/{id}/source");
+			return this.Client.Get<byte[]>($"report/{id}/source");
 		}
 
 		/// <summary>

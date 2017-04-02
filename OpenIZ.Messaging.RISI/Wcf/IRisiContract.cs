@@ -148,7 +148,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="id">The id of the report for which to retrieve the source.</param>
 		/// <returns>Returns the report source.</returns>
 		[WebGet(UriTemplate = "/report/{id}/source", BodyStyle = WebMessageBodyStyle.Bare)]
-		ReportDefinition GetReportSource(string id);
+		byte[] GetReportSource(string id);
 
 		/// <summary>
 		/// Executes a report.

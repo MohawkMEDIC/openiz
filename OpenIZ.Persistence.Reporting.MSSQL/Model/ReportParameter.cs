@@ -53,6 +53,13 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Model
 		}
 
 		/// <summary>
+		/// Gets or sets the correlation identifier.
+		/// </summary>
+		/// <value>The correlation identifier.</value>
+		[Required]
+		public string CorrelationId { get; set; }
+
+		/// <summary>
 		/// Gets or sets the creation time of the parameter.
 		/// </summary>
 		[Required]

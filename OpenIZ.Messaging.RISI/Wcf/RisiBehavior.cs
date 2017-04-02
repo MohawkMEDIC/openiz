@@ -250,7 +250,8 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve the source.</param>
 		/// <returns>Returns the report source.</returns>
-		public ReportDefinition GetReportSource(string id)
+		/// <exception cref="System.ArgumentException">If the id is not in a valid format.</exception>
+		public byte[] GetReportSource(string id)
 		{
 			var key = Guid.Empty;
 
@@ -269,6 +270,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="format">The output format of the report.</param>
 		/// <param name="parameters">The list of parameters of the report.</param>
 		/// <returns>Returns the report in raw format.</returns>
+		/// <exception cref="System.ArgumentException">If the id or format is not in a valid format.</exception>
 		public byte[] RunReport(string id, string format, List<ReportParameter> parameters)
 		{
 			var reportId = Guid.Empty;

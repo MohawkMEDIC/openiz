@@ -136,15 +136,16 @@ namespace OpenIZ.Reporting.Core
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve the source.</param>
 		/// <returns>Returns the report source.</returns>
-		ReportDefinition GetReportSource(Guid id);
+		byte[] GetReportSource(Guid id);
 
 		/// <summary>
 		/// Runs a report.
 		/// </summary>
 		/// <param name="reportId">The id of the report.</param>
-		/// <param name="reportFormat">The format of the report.</param>
+		/// <param name="reportFormatId">The format of the report.</param>
 		/// <param name="parameters">The parameters of the report.</param>
-		byte[] RunReport(Guid reportId, Guid reportFormat, IEnumerable<ReportParameter> parameters);
+		/// <returns>Returns the raw report.</returns>
+		byte[] RunReport(Guid reportId, Guid reportFormatId, IEnumerable<ReportParameter> parameters);
 
 		/// <summary>
 		/// Updates a parameter type.

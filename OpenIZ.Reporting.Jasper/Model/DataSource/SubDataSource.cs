@@ -14,52 +14,52 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: khannan
- * Date: 2017-3-31
+ * User: Nityan
+ * Date: 2017-4-1
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using System.Xml;
 using System.Xml.Serialization;
 
-namespace OpenIZ.Reporting.Jasper.Model
+namespace OpenIZ.Reporting.Jasper.Model.DataSource
 {
 	/// <summary>
-	/// Class ErrorDescriptor.
+	/// Represents a sub data source.
 	/// </summary>
-	[XmlType("errorDescriptor")]
-	[XmlRoot("errorDescriptor")]
-	public class ErrorDescriptor
+	[XmlType("subDataSource")]
+	public class SubDataSource
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ErrorDescriptor"/> class.
+		/// Initializes a new instance of the <see cref="SubDataSource"/> class.
 		/// </summary>
-		public ErrorDescriptor()
+		public SubDataSource()
 		{
 			
 		}
 
 		/// <summary>
-		/// Gets or sets the error code.
+		/// Initializes a new instance of the <see cref="SubDataSource" /> class.
 		/// </summary>
-		/// <value>The error code.</value>
-		[XmlElement("errorCode")]
-		public string ErrorCode { get; set; }
+		/// <param name="id">The identifier.</param>
+		/// <param name="url">The URL.</param>
+		public SubDataSource(string id, string url)
+		{
+			this.Id = id;
+			this.Url = url;
+		}
 
 		/// <summary>
-		/// Gets or sets the message.
+		/// Gets or sets the identifier.
 		/// </summary>
-		/// <value>The message.</value>
-		[XmlElement("message")]
-		public string Message { get; set; }
+		/// <value>The identifier.</value>
+		[XmlElement("id")]
+		public string Id { get; set; }
 
 		/// <summary>
-		/// Gets or sets the parameters.
+		/// Gets or sets the name.
 		/// </summary>
-		/// <value>The parameters.</value>
-		[XmlElement("parameters")]
-		public List<ErrorParameter> Parameters { get; set; }
+		/// <value>The name.</value>
+		[XmlElement("url")]
+		public string Url { get; set; }
 	}
 }

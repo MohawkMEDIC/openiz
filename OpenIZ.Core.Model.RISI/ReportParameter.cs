@@ -18,6 +18,7 @@
  * Date: 2017-1-5
  */
 
+using System;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.RISI
@@ -36,6 +37,17 @@ namespace OpenIZ.Core.Model.RISI
 		}
 
 		/// <summary>
+		/// Initializes a new instance of the <see cref="ReportParameter"/> class.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <param name="value">The value.</param>
+		public ReportParameter(Guid id, byte[] value)
+		{
+			this.Key = id;
+			this.Value = value;
+		}
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="ReportParameter"/> class
 		/// with a specific name, order, and value.
 		/// </summary>
@@ -48,6 +60,13 @@ namespace OpenIZ.Core.Model.RISI
 			this.Order = order;
 			this.Value = value;
 		}
+
+		/// <summary>
+		/// Gets or sets the correlation identifier.
+		/// </summary>
+		/// <value>The correlation identifier.</value>
+		[XmlElement("correlationId")]
+		public string CorrelationId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the description of the report parameter.

@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: khannan
- * Date: 2017-3-31
+ * User: Nityan
+ * Date: 2017-4-1
  */
 using System;
 using System.Collections.Generic;
@@ -24,26 +24,28 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace OpenIZ.Reporting.Jasper.Model
+namespace OpenIZ.Reporting.Jasper.Model.Collection
 {
 	/// <summary>
-	/// Class ErrorParameter.
+	/// Represents a list of values.
 	/// </summary>
-	public class ErrorParameter
+	/// <seealso cref="OpenIZ.Reporting.Jasper.Model.ResourceBase" />
+	[XmlType("listOfValues")]
+	public class ListOfValues : ResourceBase
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ErrorParameter"/> class.
+		/// Initializes a new instance of the <see cref="ListOfValues"/> class.
 		/// </summary>
-		public ErrorParameter()
+		public ListOfValues()
 		{
 			
 		}
 
 		/// <summary>
-		/// Gets or sets the parameter.
+		/// Gets or sets the items.
 		/// </summary>
-		/// <value>The parameter.</value>
-		[XmlElement("parameter")]
-		public string Parameter { get; set; }
+		/// <value>The items.</value>
+		[XmlElement("items")]
+		public List<Item> Items { get; set; }
 	}
 }
