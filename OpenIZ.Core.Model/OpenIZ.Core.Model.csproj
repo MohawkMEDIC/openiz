@@ -67,6 +67,9 @@
     <Compile Include="Constants\ConceptClassKeys.cs" />
     <Compile Include="Constants\ConceptRelationshipTypeKeys.cs" />
     <Compile Include="Constants\ConceptSetKeys.cs" />
+    <Compile Include="Constants\ContainerCapKeys.cs" />
+    <Compile Include="Constants\ContainerSeparatorTypeKeys.cs" />
+    <Compile Include="Constants\ContainerTypeKeys.cs" />
     <Compile Include="Constants\DeterminerConceptKeys.cs" />
     <Compile Include="Constants\EntityClassConceptKeys.cs" />
     <Compile Include="Constants\EntityRelationshipTypeKeys.cs" />
@@ -96,6 +99,7 @@
     <Compile Include="DataTypes\ReferenceTermName.cs" />
     <Compile Include="DataTypes\Tag.cs" />
     <Compile Include="DataTypes\TemplateDefinition.cs" />
+    <Compile Include="Entities\Container.cs" />
     <Compile Include="Entities\UserEntity.cs" />
     <Compile Include="EntityLoader\EntitySource.cs" />
     <Compile Include="EntityLoader\IEntitySourceProvider.cs" />
