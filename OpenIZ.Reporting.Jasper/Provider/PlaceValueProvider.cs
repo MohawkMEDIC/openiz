@@ -42,6 +42,8 @@ namespace OpenIZ.Reporting.Jasper.Provider
 		/// <returns>Returns a list of values.</returns>
 		public IEnumerable<T> GetValues<T>() where T : IdentifiedData
 		{
+			return new List<Place>().Cast<T>();
+
 			var results = new List<Place>();
 
 			var placePersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
