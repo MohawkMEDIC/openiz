@@ -18,31 +18,22 @@
  * Date: 2017-4-2
  */
 
-using System.Xml.Schema;
-using System.Xml.Serialization;
-
-namespace OpenIZ.Messaging.CSD.Model.Naming
+namespace OpenIZ.Messaging.CSD.Wcf
 {
 	/// <summary>
-	/// Represents a person name.
+	/// Represents a care services discovery service.
 	/// </summary>
-	/// <seealso cref="Name" />
-	[XmlType("personName", Namespace = "urn:ihe:iti:csd:2013")]
-	public class PersonName : Name
+	/// <seealso cref="OpenIZ.Messaging.CSD.Wcf.ICareServicesDiscoveryContract" />
+	public class CareServicesDiscoveryService : ICareServicesDiscoveryContract
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="PersonName"/> class.
+		/// Initializes a new instance of the <see cref="CareServicesDiscoveryService"/> class.
 		/// </summary>
-		public PersonName()
+		public CareServicesDiscoveryService()
 		{
 			
 		}
 
-		/// <summary>
-		/// Gets or sets the language.
-		/// </summary>
-		/// <value>The language.</value>
-		[XmlAttribute("lang", Form = XmlSchemaForm.Qualified, Namespace = "http://www.w3.org/XML/1998/namespace")]
-		public string Language { get; set; }
+
 	}
 }

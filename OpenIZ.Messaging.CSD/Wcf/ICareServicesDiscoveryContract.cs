@@ -17,33 +17,18 @@
  * User: Nityan
  * Date: 2017-4-2
  */
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-using System.Xml.Serialization;
-using OpenIZ.Messaging.CSD.Model.Core;
-using OpenIZ.Messaging.CSD.Model.Entity;
-
-namespace OpenIZ.Messaging.CSD.Model.Contact
+namespace OpenIZ.Messaging.CSD.Wcf
 {
 	/// <summary>
-	/// Represents an organization contact.
+	/// Represents a care services discovery contract.
 	/// </summary>
-	[XmlType("organizationContact", AnonymousType = true, Namespace = "urn:ihe:iti:csd:2013")]
-	public class OrganizationContact
+	public interface ICareServicesDiscoveryContract
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="OrganizationContact"/> class.
-		/// </summary>
-		public OrganizationContact()
-		{
-
-		}
-
-		/// <summary>
-		/// Gets or sets the item.
-		/// </summary>
-		/// <value>The item.</value>
-		[XmlElement("person", typeof(Person))]
-		[XmlElement("provider", typeof(Provider))]
-		public object Item { get; set; }
 	}
 }
