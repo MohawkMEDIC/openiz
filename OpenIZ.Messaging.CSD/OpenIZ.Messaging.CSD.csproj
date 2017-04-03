@@ -48,11 +48,61 @@
     <Compile Include="Configuration\ConfigurationSectionHandler.cs" />
     <Compile Include="Configuration\CsdConfiguration.cs" />
     <Compile Include="CsdMessageHandler.cs" />
+    <Compile Include="Message\CareServicesFunction.cs" />
+    <Compile Include="Message\CareServicesRequest.cs" />
+    <Compile Include="Message\CareServicesRequestExpression.cs" />
+    <Compile Include="Message\CareServicesRequestFunction.cs" />
+    <Compile Include="Message\CareServicesResponse.cs" />
+    <Compile Include="Message\CareServicesResponseError.cs" />
+    <Compile Include="Model\Location\Address.cs" />
+    <Compile Include="Model\Location\AddressLine.cs" />
+    <Compile Include="Model\CodedType.cs" />
+    <Compile Include="Model\Contact\ContactPoint.cs" />
+    <Compile Include="Model\Credential.cs" />
+    <Compile Include="Model\Core\CSD.cs" />
+    <Compile Include="Model\Identifier\Extension.cs" />
+    <Compile Include="Model\Core\Facility.cs" />
+    <Compile Include="Model\Contact\FacilityContact.cs" />
+    <Compile Include="Model\Association\FacilityOrganization.cs" />
+    <Compile Include="Model\Association\FacilityOrganizationService.cs" />
+    <Compile Include="Model\Naming\FacilityOtherName.cs" />
+    <Compile Include="Model\Location\GeoCode.cs" />
+    <Compile Include="Model\Naming\Name.cs" />
+    <Compile Include="Model\Naming\CommonName.cs" />
+    <Compile Include="Model\Contact\OperatingHours.cs" />
+    <Compile Include="Model\Core\Organization.cs" />
+    <Compile Include="Model\Contact\OrganizationContact.cs" />
+    <Compile Include="Model\Naming\OrganizationOtherName.cs" />
+    <Compile Include="Model\Identifier\OtherId.cs" />
+    <Compile Include="Model\Entity\Person.cs" />
+    <Compile Include="Model\Naming\PersonName.cs" />
+    <Compile Include="Model\Core\Provider.cs" />
+    <Compile Include="Model\Association\ProviderFacility.cs" />
+    <Compile Include="Model\Association\ProviderFacilityService.cs" />
+    <Compile Include="Model\Association\ProviderOrganization.cs" />
+    <Compile Include="Model\Core\Record.cs" />
+    <Compile Include="Model\Core\Service.cs" />
+    <Compile Include="Model\Core\UniqueId.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
+    </None>
+    <None Include="HL7V3\NE2008\coreschemas\datatypes-base.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="HL7V3\NE2008\coreschemas\datatypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="HL7V3\NE2008\coreschemas\infrastructureRoot.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="HL7V3\NE2008\coreschemas\NarrativeBlock.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="HL7V3\NE2008\coreschemas\voc.xsd">
+      <SubType>Designer</SubType>
     </None>
     <None Include="Resources\CSD.xsd">
       <SubType>Designer</SubType>
