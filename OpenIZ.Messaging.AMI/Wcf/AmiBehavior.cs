@@ -197,8 +197,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
 			var securityUser = securityRepository.GetUser(resetInfo.UserName);
+
+			// don't throw an error if the user is not found, just act as if we sent it.
+			// this is to make sure that people cannot guess users
 			if (securityUser == null)
-				throw new KeyNotFoundException();
+			{
+				WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NoContent;
+				return;
+			}
 
 			// Identity provider
 			var identityProvider = ApplicationContext.Current.GetService<IIdentityProviderService>();

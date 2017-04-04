@@ -43,7 +43,7 @@ namespace OpenIZ.Core.Security.Tfa.Email.Configuration
 			if (smtp == null)
 				throw new ConfigurationErrorsException("Missing SMTP configuration", section);
 			else
-				configuration.Smtp = new SmtpConfiguration(new Uri(smtp.Attributes["server"]?.Value ?? "smtp://localhost:25"), smtp.Attributes["username"]?.Value, smtp.Attributes["password"]?.Value, Boolean.Parse(smtp.Attributes["ssl"]?.Value ?? "false"));
+				configuration.Smtp = new SmtpConfiguration(new Uri(smtp.Attributes["server"]?.Value ?? "smtp://localhost:25"), smtp.Attributes["username"]?.Value ?? string.Empty, smtp.Attributes["password"]?.Value ?? string.Empty, Boolean.Parse(smtp.Attributes["ssl"]?.Value ?? "false"));
 
 			// templates
 			configuration.Templates = templates.OfType<XmlElement>().Select(o => new TemplateConfiguration(o.Attributes["lang"]?.Value, o.Attributes["file"]?.Value)).ToList();
