@@ -32,21 +32,15 @@ namespace OpenIZ.Core.Services.Impl
 	/// <summary>
 	/// Local material persistence service
 	/// </summary>
-	public class LocalMaterialRepositoryService : IMaterialRepositoryService
-	{
+	public class LocalMaterialRepositoryService : LocalEntityRepositoryServiceBase, IMaterialRepositoryService
+    {
 		/// <summary>
 		/// Find manufactured material
 		/// </summary>
 		public IEnumerable<ManufacturedMaterial> FindManufacturedMaterial(Expression<Func<ManufacturedMaterial, bool>> expression)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ManufacturedMaterial>)} not found");
-			}
-
-			return persistenceService.Query(expression, AuthenticationContext.Current.Principal);
+            int t = 0;
+            return this.FindManufacturedMaterial(expression, 0, null, out t);
 		}
 
 		/// <summary>
@@ -54,14 +48,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public IEnumerable<ManufacturedMaterial> FindManufacturedMaterial(Expression<Func<ManufacturedMaterial, bool>> expression, int offset, int? count, out int totalCount)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ManufacturedMaterial>)} not found");
-			}
-
-			return persistenceService.Query(expression, offset, count, AuthenticationContext.Current.Principal, out totalCount);
+			return base.Find(expression, offset, count, out totalCount, Guid.Empty);
 		}
 
 		/// <summary>
@@ -69,14 +56,8 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public IEnumerable<Material> FindMaterial(Expression<Func<Material, bool>> expression)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Material>)} not found");
-			}
-
-			return persistenceService.Query(expression, AuthenticationContext.Current.Principal);
+            int t = 0;
+            return this.FindMaterial(expression, 0, null, out t);
 		}
 
 		/// <summary>
@@ -84,14 +65,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public IEnumerable<Material> FindMaterial(Expression<Func<Material, bool>> expression, int offset, int? count, out int totalCount)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Material>)} not found");
-			}
-
-			return persistenceService.Query(expression, offset, count, AuthenticationContext.Current.Principal, out totalCount);
+            return base.Find(expression, offset, count, out totalCount, Guid.Empty);
 		}
 
 		/// <summary>
@@ -99,14 +73,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public ManufacturedMaterial GetManufacturedMaterial(Guid id, Guid versionId)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ManufacturedMaterial>)} not found");
-			}
-
-			return persistenceService.Get<Guid>(new Identifier<Guid>(id, versionId), AuthenticationContext.Current.Principal, false);
+            return base.Get<ManufacturedMaterial>(id, versionId);
 		}
 
 		/// <summary>
@@ -114,14 +81,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public Material GetMaterial(Guid id, Guid versionId)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Material>)} not found");
-			}
-
-			return persistenceService.Get<Guid>(new Identifier<Guid>(id, versionId), AuthenticationContext.Current.Principal, false);
+            return base.Get<Material>(id, versionId);
 		}
 
 		/// <summary>
@@ -129,14 +89,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public ManufacturedMaterial Insert(ManufacturedMaterial material)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ManufacturedMaterial>)} not found");
-			}
-
-			return persistenceService.Insert(material, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            return base.Insert(material);
 		}
 
 		/// <summary>
@@ -144,14 +97,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public Material Insert(Material material)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Material>)} not found");
-			}
-
-			return persistenceService.Insert(material, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            return base.Insert(material);
 		}
 
 		/// <summary>
@@ -159,14 +105,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public ManufacturedMaterial ObsoleteManufacturedMaterial(Guid key)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ManufacturedMaterial>)} not found");
-			}
-
-			return persistenceService.Obsolete(new ManufacturedMaterial() { Key = key }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            return base.Obsolete<ManufacturedMaterial>(key);
 		}
 
 		/// <summary>
@@ -174,14 +113,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public Material ObsoleteMaterial(Guid key)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Material>)} not found");
-			}
-
-			return persistenceService.Obsolete(new Material() { Key = key }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            return base.Obsolete<Material>(key);
 		}
 
 		/// <summary>
@@ -189,21 +121,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public ManufacturedMaterial Save(ManufacturedMaterial material)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ManufacturedMaterial>)} not found");
-			}
-
-			try
-			{
-				return persistenceService.Update(material, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
-			catch (DataPersistenceException)
-			{
-				return persistenceService.Insert(material, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
+            return base.Save(material);
 		}
 
 		/// <summary>
@@ -211,21 +129,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public Material Save(Material material)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Material>)} not found");
-			}
-
-			try
-			{
-				return persistenceService.Update(material, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
-			catch (DataPersistenceException)
-			{
-				return persistenceService.Insert(material, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
+            return base.Save(material);
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using OpenIZ.Core.Model.Map;
+using OpenIZ.OrmLite.Providers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,10 @@ namespace OpenIZ.OrmLite
     /// </summary>
     public class SqlStatement
     {
+
+        // Provider
+        protected IDbProvider m_provider = null;
+
         /// <summary>
         /// The SQL statement
         /// </summary>
@@ -52,14 +57,15 @@ namespace OpenIZ.OrmLite
         /// <summary>
         /// Creates a new empty SQL statement
         /// </summary>
-        public SqlStatement()
+        public SqlStatement(IDbProvider provider)
         {
+            this.m_provider = provider;
         }
 
         /// <summary>
         /// Create a new sql statement from the specified sql
         /// </summary>
-        public SqlStatement(string sql, params object[] parms)
+        public SqlStatement(IDbProvider provider, string sql, params object[] parms) : this(provider)
         {
             this.m_sql = sql;
             this.m_arguments = new List<object>(parms);
@@ -84,7 +90,7 @@ namespace OpenIZ.OrmLite
         /// </summary>
         public SqlStatement Append(string sql, params object[] parms)
         {
-            return this.Append(new SqlStatement(sql, parms));
+            return this.Append(new SqlStatement(this.m_provider, sql, parms));
         }
 
         /// <summary>
@@ -108,7 +114,7 @@ namespace OpenIZ.OrmLite
                 focus = focus.m_rhs;
             } while (focus != null);
 
-            return new SqlStatement(sb.ToString(), parameters.ToArray());
+            return new SqlStatement(this.m_provider, sb.ToString(), parameters.ToArray());
         }
 
         /// <summary>
@@ -120,7 +126,7 @@ namespace OpenIZ.OrmLite
         {
             if (String.IsNullOrEmpty(clause.SQL) && clause.m_rhs == null)
                 return this;
-            return this.Append(new SqlStatement("WHERE ").Append(clause));
+            return this.Append(new SqlStatement(this.m_provider, "WHERE ").Append(clause));
         }
 
         /// <summary>
@@ -128,7 +134,7 @@ namespace OpenIZ.OrmLite
         /// </summary>
         public SqlStatement Where(String whereClause, params object[] args)
         {
-            return this.Where(new SqlStatement(whereClause, args));
+            return this.Where(new SqlStatement(this.m_provider, whereClause, args));
         }
 
         /// <summary>
@@ -147,7 +153,7 @@ namespace OpenIZ.OrmLite
         /// </summary>
         public SqlStatement And(String clause, params object[] args)
         {
-            return this.And(new SqlStatement(clause, args));
+            return this.And(new SqlStatement(this.m_provider, clause, args));
         }
 
         /// <summary>
@@ -158,7 +164,7 @@ namespace OpenIZ.OrmLite
             if (String.IsNullOrEmpty(this.m_sql) && this.m_rhs == null)
                 return this.Append(clause);
             else
-                return this.Append(new SqlStatement(" OR ")).Append(clause.Build());
+                return this.Append(new SqlStatement(this.m_provider, " OR ")).Append(clause.Build());
         }
 
         /// <summary>
@@ -166,7 +172,7 @@ namespace OpenIZ.OrmLite
         /// </summary>
         public SqlStatement Or(String clause, params object[] args)
         {
-            return this.And(new SqlStatement(clause, args));
+            return this.And(new SqlStatement(this.m_provider, clause, args));
         }
 
         /// <summary>
@@ -221,7 +227,7 @@ namespace OpenIZ.OrmLite
         public SqlStatement SelectFrom(Type dataType)
         {
             var tableMap = TableMapping.Get(dataType);
-            return this.Append(new SqlStatement($"SELECT * FROM {tableMap.TableName} AS {tableMap.TableName} "));
+            return this.Append(new SqlStatement(this.m_provider, $"SELECT * FROM {tableMap.TableName} AS {tableMap.TableName} "));
         }
 
         /// <summary>
@@ -230,9 +236,14 @@ namespace OpenIZ.OrmLite
         public SqlStatement Where<TExpression>(Expression<Func<TExpression, bool>> expression)
         {
             var tableMap = TableMapping.Get(typeof(TExpression));
-            var queryBuilder = new SqlQueryExpressionBuilder(tableMap.TableName);
+            var queryBuilder = new SqlQueryExpressionBuilder(tableMap.TableName, this.m_provider);
             queryBuilder.Visit(expression.Body);
-            return this.Append(new SqlStatement("WHERE ").Append(queryBuilder.SqlStatement));
+            return this.Append(new SqlStatement(this.m_provider, "WHERE ").Append(queryBuilder.SqlStatement));
+        }
+
+        internal void Append(object like)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -241,7 +252,7 @@ namespace OpenIZ.OrmLite
         public SqlStatement And<TExpression>(Expression<Func<TExpression, bool>> expression)
         {
             var tableMap = TableMapping.Get(typeof(TExpression));
-            var queryBuilder = new SqlQueryExpressionBuilder(tableMap.TableName);
+            var queryBuilder = new SqlQueryExpressionBuilder(tableMap.TableName, this.m_provider);
             queryBuilder.Visit(expression.Body);
             return this.And(queryBuilder.SqlStatement);
         }
@@ -306,14 +317,14 @@ namespace OpenIZ.OrmLite
         /// <summary>
         /// Creates a new empty SQL statement
         /// </summary>
-        public SqlStatement()
+        public SqlStatement(IDbProvider provider) : base(provider)
         {
         }
 
         /// <summary>
         /// Create a new sql statement from the specified sql
         /// </summary>
-        public SqlStatement(string sql, params object[] parms) : base(sql, parms)
+        public SqlStatement(IDbProvider provider, string sql, params object[] parms) : base(provider, sql, parms)
         {
         }
 
@@ -341,7 +352,7 @@ namespace OpenIZ.OrmLite
             var joinStatement = this.Append($"INNER JOIN {rightMap.TableName} ON ");
             var rhsPk = rightMap.GetColumn(this.GetMember(rightColumn.Body));
             var lhsPk = leftMap.GetColumn(this.GetMember(leftColumn.Body));
-            var retVal = new SqlStatement<T>();
+            var retVal = new SqlStatement<T>(this.m_provider);
             retVal.Append(joinStatement).Append($"({lhsPk.Table.TableName}.{lhsPk.Name} = {rhsPk.Table.TableName}.{rhsPk.Name}) ");
             return retVal;
         }
@@ -352,9 +363,9 @@ namespace OpenIZ.OrmLite
         public SqlStatement Where(Expression<Func<T, bool>> expression)
         {
             var tableMap = TableMapping.Get(typeof(T));
-            var queryBuilder = new SqlQueryExpressionBuilder(this.m_alias ?? tableMap.TableName);
+            var queryBuilder = new SqlQueryExpressionBuilder(this.m_alias ?? tableMap.TableName, this.m_provider);
             queryBuilder.Visit(expression.Body);
-            return this.Append(new SqlStatement("WHERE ").Append(queryBuilder.SqlStatement));
+            return this.Append(new SqlStatement(this.m_provider, "WHERE ").Append(queryBuilder.SqlStatement));
         }
 
         /// <summary>
@@ -362,7 +373,7 @@ namespace OpenIZ.OrmLite
         /// </summary>
         public SqlStatement<TReturn> InnerJoin<TJoinTable, TReturn>()
         {
-            var retVal = new SqlStatement<TReturn>();
+            var retVal = new SqlStatement<TReturn>(this.m_provider);
             retVal.Append(this).InnerJoin(typeof(T), typeof(TJoinTable));
             return retVal;
         }
@@ -373,7 +384,7 @@ namespace OpenIZ.OrmLite
         public SqlStatement<T> DeleteFrom()
         {
             var tableMap = TableMapping.Get(typeof(T));
-            return this.Append(new SqlStatement<T>($"DELETE FROM {tableMap.TableName} "));
+            return this.Append(new SqlStatement<T>(this.m_provider, $"DELETE FROM {tableMap.TableName} "));
         }
 
         /// <summary>
@@ -382,7 +393,7 @@ namespace OpenIZ.OrmLite
         public SqlStatement<T> SelectFrom(String tableAlias = null)
         {
             var tableMap = TableMapping.Get(typeof(T));
-            return this.Append(new SqlStatement<T>($"SELECT * FROM {tableMap.TableName} AS {tableAlias ?? tableMap.TableName} ")
+            return this.Append(new SqlStatement<T>(this.m_provider, $"SELECT * FROM {tableMap.TableName} AS {tableAlias ?? tableMap.TableName} ")
             {
                 m_alias = tableAlias ?? tableMap.TableName
             });
@@ -394,7 +405,7 @@ namespace OpenIZ.OrmLite
         public SqlStatement<T> UpdateSet()
         {
             var tableMap = TableMapping.Get(typeof(T));
-            return this.Append(new SqlStatement<T>($"UPDATE {tableMap.TableName} SET "));
+            return this.Append(new SqlStatement<T>(this.m_provider, $"UPDATE {tableMap.TableName} SET "));
         }
     }
 }

@@ -51,7 +51,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
     /// <summary>
     /// Represents a data persistence service which stores data in the local SQLite data store
     /// </summary>
-    public abstract class AdoBasePersistenceService<TData> : IDataPersistenceService<TData>, IAdoPersistenceService where TData : IdentifiedData
+    public abstract class AdoBasePersistenceService<TData> : IDataPersistenceService<TData>, IStoredQueryDataPersistenceService<TData>, IAdoPersistenceService where TData : IdentifiedData
     {
 
         // Lock for editing 
@@ -117,7 +117,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        public abstract IEnumerable<TData> QueryInternal(DataContext context, Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true);
+        public abstract IEnumerable<TData> QueryInternal(DataContext context, Expression<Func<TData, bool>> query, Guid queryId, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true);
 
         /// <summary>
         /// Get the specified key.
@@ -126,7 +126,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         internal virtual TData Get(DataContext context, Guid key, IPrincipal principal)
         {
             int tr = 0;
-            return this.QueryInternal(context, o => o.Key == key, 0, 1, out tr, principal)?.FirstOrDefault();
+            return this.QueryInternal(context, o => o.Key == key, Guid.Empty, 0, 1, out tr, principal, false)?.FirstOrDefault();
         }
 
         /// <summary>
@@ -412,7 +412,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         public virtual IEnumerable<TData> Query(Expression<Func<TData, bool>> query, IPrincipal authContext)
         {
             var tr = 0;
-            return this.QueryInternal(query, 0, null, authContext, out tr, true);
+            return this.QueryInternal(query, Guid.Empty, 0, null, authContext, out tr, true);
 
         }
 
@@ -421,13 +421,13 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// </summary>
         public virtual IEnumerable<TData> Query(Expression<Func<TData, bool>> query, int offset, int? count, IPrincipal authContext, out int totalCount)
         {
-            return this.QueryInternal(query, offset, count, authContext, out totalCount, false);
+            return this.QueryInternal(query, Guid.Empty, offset, count, authContext, out totalCount, false);
         }
 
         /// <summary>
         /// Instructs the service 
         /// </summary>
-        protected virtual IEnumerable<TData> QueryInternal(Expression<Func<TData, bool>> query, int offset, int? count, IPrincipal authContext, out int totalCount, bool fastQuery)
+        protected virtual IEnumerable<TData> QueryInternal(Expression<Func<TData, bool>> query, Guid queryId, int offset, int? count, IPrincipal authContext, out int totalCount, bool fastQuery)
         {
             if (query == null)
                 throw new ArgumentNullException(nameof(query));
@@ -454,11 +454,15 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "QUERY {0}", query);
 
-                    var results = this.Query(connection, query, offset, count ?? 1000, out totalCount, true, authContext);
+                    var results = this.Query(connection, query, queryId, offset, count ?? 1000, out totalCount, true, authContext);
                     var postData = new PostQueryEventArgs<TData>(query, results.AsQueryable(), authContext);
                     this.Queried?.Invoke(this, postData);
 
                     var retVal = postData.Results.AsParallel().ToList();
+
+                    // Add to cache
+                    foreach (var i in retVal.Where(i => i != null))
+                        connection.AddCacheCommit(i);
                     foreach (var itm in connection.CacheOnCommit)
                         ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
 
@@ -539,15 +543,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        public IEnumerable<TData> Query(DataContext context, Expression<Func<TData, bool>> query, int offset, int count, out int totalResults, bool countResults, IPrincipal principal)
+        public IEnumerable<TData> Query(DataContext context, Expression<Func<TData, bool>> query, Guid queryId, int offset, int count, out int totalResults, bool countResults, IPrincipal principal)
         {
-            var retVal = this.QueryInternal(context, query, offset, count, out totalResults, principal, countResults);
-            foreach (var i in retVal.Where(i => i != null))
-            {
-                context.AddCacheCommit(i);
-            }
+            var retVal = this.QueryInternal(context, query, queryId, offset, count, out totalResults, principal, countResults);
             return retVal;
-
         }
        
 
@@ -649,6 +648,15 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         protected void FireRetrieved(PostRetrievalEventArgs<TData> e)
         {
             this.Retrieved?.Invoke(this, e);
+        }
+
+        /// <summary>
+        /// Query from the IMS with specified query id
+        /// </summary>
+        public IEnumerable<TData> Query(Expression<Func<TData, bool>> query, Guid queryId, int offset, int? count, IPrincipal authContext, out int totalCount)
+        {
+            return this.QueryInternal(query, queryId, offset, count, authContext, out totalCount, false);
+
         }
 
         #endregion

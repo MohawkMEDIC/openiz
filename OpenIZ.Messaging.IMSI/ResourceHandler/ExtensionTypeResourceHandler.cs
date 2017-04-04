@@ -10,6 +10,7 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Security;
 using OpenIZ.Core.Security.Attribute;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {
@@ -72,8 +73,8 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
         {
-            var repository = ApplicationContext.Current.GetService<IDataPersistenceService<ExtensionType>>();
-            return repository?.Query(QueryExpressionParser.BuildLinqExpression<ExtensionType>(queryParameters), AuthenticationContext.Current.Principal);
+            int tr = 0;
+            return this.Query(queryParameters, 0, 100, out tr);
         }
 
         /// <summary>
@@ -83,8 +84,12 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
         {
             var repository = ApplicationContext.Current.GetService<IDataPersistenceService<ExtensionType>>();
-            totalCount = 0;
-            return repository?.Query(QueryExpressionParser.BuildLinqExpression<ExtensionType>(queryParameters), offset, count, AuthenticationContext.Current.Principal, out totalCount);
+            var filter = QueryExpressionParser.BuildLinqExpression<ExtensionType>(queryParameters);
+            List<String> queryId = null;
+            if (repository is IStoredQueryDataPersistenceService<ExtensionType> && queryParameters.TryGetValue("_queryId", out queryId))
+                return (repository as IStoredQueryDataPersistenceService<ExtensionType>).Query(filter, Guid.Parse(queryId[0]), offset, count, AuthenticationContext.Current.Principal, out totalCount);
+            else
+                return repository.Query(filter, offset, count, AuthenticationContext.Current.Principal, out totalCount);
         }
 
         /// <summary>

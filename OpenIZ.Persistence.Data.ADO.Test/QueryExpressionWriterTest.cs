@@ -11,6 +11,7 @@ using OpenIZ.Core.Model.Entities;
 using OpenIZ.OrmLite;
 using OpenIZ.Core.Model.Map;
 using OpenIZ.Persistence.Data.ADO.Services;
+using OpenIZ.OrmLite.Providers;
 
 namespace OpenIZ.Persistence.Data.ADO.Test
 {
@@ -18,7 +19,7 @@ namespace OpenIZ.Persistence.Data.ADO.Test
     public class QueryExpressionWriterTest
     {
 
-        private QueryBuilder m_builder = new QueryBuilder(new ModelMapper(typeof(AdoPersistenceService).Assembly.GetManifestResourceStream(AdoDataConstants.MapResourceName)));
+        private QueryBuilder m_builder = new QueryBuilder(new ModelMapper(typeof(AdoPersistenceService).Assembly.GetManifestResourceStream(AdoDataConstants.MapResourceName)), new PostgreSQLProvider());
 
         /// <summary>
         /// Test that the function constructs an empty select statement
@@ -26,7 +27,7 @@ namespace OpenIZ.Persistence.Data.ADO.Test
         [TestMethod]
         public void TestConstructsEmptySelectStatement()
         {
-            SqlStatement sql = new SqlStatement<DbAct>().SelectFrom("foo").Build();
+            SqlStatement sql = new SqlStatement<DbAct>(new PostgreSQLProvider()).SelectFrom("foo").Build();
             Assert.IsTrue(sql.SQL.Contains("AS foo"));
             Assert.IsTrue(sql.SQL.Contains("SELECT * FROM act_tbl"));
             Assert.AreEqual(0, sql.Arguments.Count());
@@ -38,7 +39,7 @@ namespace OpenIZ.Persistence.Data.ADO.Test
         [TestMethod]
         public void TestConstructsParameters()
         {
-            SqlStatement sql = new SqlStatement<DbAct>().SelectFrom("foo").Where("act_id = ?", Guid.NewGuid()).Build();
+            SqlStatement sql = new SqlStatement<DbAct>(new PostgreSQLProvider()).SelectFrom("foo").Where("act_id = ?", Guid.NewGuid()).Build();
             Assert.IsTrue(sql.SQL.Contains("AS foo"));
             Assert.IsTrue(sql.SQL.Contains("SELECT * FROM act_tbl"));
             Assert.AreEqual(1, sql.Arguments.Count());
@@ -51,7 +52,7 @@ namespace OpenIZ.Persistence.Data.ADO.Test
         [TestMethod]
         public void TestConstructLocalParameters()
         {
-            SqlStatement sql = new SqlStatement<DbActVersion>().SelectFrom("foo").Where("act_id = ?", Guid.NewGuid()).And("act_utc < ?", DateTime.Now).Build();
+            SqlStatement sql = new SqlStatement<DbActVersion>(new PostgreSQLProvider()).SelectFrom("foo").Where("act_id = ?", Guid.NewGuid()).And("act_utc < ?", DateTime.Now).Build();
             Assert.IsTrue(sql.SQL.Contains("AS foo"));
             Assert.IsTrue(sql.SQL.Contains("AND"));
             Assert.IsTrue(sql.SQL.Contains("act_id"));
@@ -71,7 +72,7 @@ namespace OpenIZ.Persistence.Data.ADO.Test
             Guid mg = Guid.NewGuid();
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            SqlStatement sql = new SqlStatement<DbActVersion>().SelectFrom("foo").Where(o => o.IsNegated == true).Build();
+            SqlStatement sql = new SqlStatement<DbActVersion>(new PostgreSQLProvider()).SelectFrom("foo").Where(o => o.IsNegated == true).Build();
             sw.Stop();
             Assert.IsTrue(sql.SQL.Contains("AS foo"));
             Assert.IsTrue(sql.SQL.Contains("neg_ind =  ?"));
@@ -88,7 +89,7 @@ namespace OpenIZ.Persistence.Data.ADO.Test
             Guid mg = Guid.NewGuid();
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            SqlStatement sql = new SqlStatement<DbActVersion>().SelectFrom("foo").Where(o => o.Key == mg || o.Key == Guid.NewGuid() && o.CreationTime <= DateTime.Now).Build();
+            SqlStatement sql = new SqlStatement<DbActVersion>(new PostgreSQLProvider()).SelectFrom("foo").Where(o => o.Key == mg || o.Key == Guid.NewGuid() && o.CreationTime <= DateTime.Now).Build();
             sw.Stop();
 
             Assert.IsTrue(sql.SQL.Contains("AS foo"));

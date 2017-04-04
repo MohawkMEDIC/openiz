@@ -28,16 +28,16 @@ namespace OpenIZ.Core.Applets.ViewModel.Null
         private Object m_syncLock = new object();
 
         // Related load methods
-        private Dictionary<Type, MethodInfo> m_relatedLoadMethods = new Dictionary<Type, MethodInfo>();
+        private static Dictionary<Type, MethodInfo> m_relatedLoadMethods = new Dictionary<Type, MethodInfo>();
         // Classifiers
-        private Dictionary<Type, IViewModelClassifier> m_classifiers = new Dictionary<Type, IViewModelClassifier>();
+        private static Dictionary<Type, IViewModelClassifier> m_classifiers = new Dictionary<Type, IViewModelClassifier>();
 
         // Reloated load association
-        private Dictionary<Type, MethodInfo> m_relatedLoadAssociations = new Dictionary<Type, MethodInfo>();
+        private static Dictionary<Type, MethodInfo> m_relatedLoadAssociations = new Dictionary<Type, MethodInfo>();
         private Dictionary<Guid, IEnumerable> m_loadedAssociations = new Dictionary<Guid, IEnumerable>();
 
         // Formatters
-        private Dictionary<Type, INullTypeFormatter> m_formatters = new Dictionary<Type, INullTypeFormatter>();
+        private  Dictionary<Type, INullTypeFormatter> m_formatters = new Dictionary<Type, INullTypeFormatter>();
 
 
         /// <summary>
@@ -69,12 +69,12 @@ namespace OpenIZ.Core.Applets.ViewModel.Null
         internal object LoadRelated(Type propertyType, Guid key)
         {
             MethodInfo methodInfo = null;
-            if (!this.m_relatedLoadMethods.TryGetValue(propertyType, out methodInfo))
+            if (!m_relatedLoadMethods.TryGetValue(propertyType, out methodInfo))
             {
                 methodInfo = this.GetType().GetRuntimeMethod(nameof(LoadRelated), new Type[] { typeof(Guid) }).MakeGenericMethod(propertyType);
-                lock (this.m_syncLock)
-                    if (!this.m_relatedLoadMethods.ContainsKey(propertyType))
-                        this.m_relatedLoadMethods.Add(propertyType, methodInfo);
+                lock (m_relatedLoadMethods)
+                    if (!m_relatedLoadMethods.ContainsKey(propertyType))
+                        m_relatedLoadMethods.Add(propertyType, methodInfo);
 
             }
             return methodInfo.Invoke(this, new object[] { key });
@@ -88,12 +88,12 @@ namespace OpenIZ.Core.Applets.ViewModel.Null
             MethodInfo methodInfo = null;
 
             // Load
-            if (!this.m_relatedLoadAssociations.TryGetValue(propertyType, out methodInfo))
+            if (!m_relatedLoadAssociations.TryGetValue(propertyType, out methodInfo))
             {
                 methodInfo = this.GetType().GetRuntimeMethod(nameof(LoadCollection), new Type[] { typeof(Guid) }).MakeGenericMethod(propertyType.StripGeneric());
-                lock (this.m_syncLock)
-                    if (!this.m_relatedLoadAssociations.ContainsKey(propertyType))
-                        this.m_relatedLoadAssociations.Add(propertyType, methodInfo);
+                lock (m_relatedLoadAssociations)
+                    if (!m_relatedLoadAssociations.ContainsKey(propertyType))
+                        m_relatedLoadAssociations.Add(propertyType, methodInfo);
 
             }
             var listValue = methodInfo.Invoke(this, new object[] { key }) as IList;
@@ -147,9 +147,9 @@ namespace OpenIZ.Core.Applets.ViewModel.Null
         {
             var typeFormatters = asm.ExportedTypes.Where(o => typeof(INullTypeFormatter).GetTypeInfo().IsAssignableFrom(o.GetTypeInfo()) && o.GetTypeInfo().IsClass)
               .Select(o => Activator.CreateInstance(o) as INullTypeFormatter)
-              .Where(o => !this.m_formatters.ContainsKey(o.HandlesType));
+              .Where(o => !m_formatters.ContainsKey(o.HandlesType));
             foreach (var fmtr in typeFormatters)
-                this.m_formatters.Add(fmtr.HandlesType, fmtr);
+                m_formatters.Add(fmtr.HandlesType, fmtr);
         }
 
         /// <summary>
@@ -175,14 +175,14 @@ namespace OpenIZ.Core.Applets.ViewModel.Null
         public IViewModelClassifier GetClassifier(Type type)
         {
             IViewModelClassifier retVal = null;
-            if (!this.m_classifiers.TryGetValue(type, out retVal))
+            if (!m_classifiers.TryGetValue(type, out retVal))
             {
                 var classifierAtt = type.StripGeneric().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
                 if (classifierAtt != null)
                     retVal = new Json.JsonReflectionClassifier(type);
                 lock (this.m_syncLock)
-                    if (!this.m_classifiers.ContainsKey(type))
-                        this.m_classifiers.Add(type, retVal);
+                    if (!m_classifiers.ContainsKey(type))
+                        m_classifiers.Add(type, retVal);
             }
             return retVal;
         }

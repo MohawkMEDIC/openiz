@@ -67,7 +67,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		{
 			var retVal = base.ToModelInstance(dataInstance, context, principal);
 			if (retVal == null) return null;
-			var policyQuery = new SqlStatement<DbSecurityApplicationPolicy>().SelectFrom()
+			var policyQuery = context.CreateSqlStatement<DbSecurityApplicationPolicy>().SelectFrom()
 				.InnerJoin<DbSecurityPolicy>(o => o.PolicyKey, o => o.Key)
 				.Where<DbSecurityApplicationPolicy>(o => o.SourceKey == retVal.Key);
 
@@ -152,7 +152,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		{
 			var retVal = base.ToModelInstance(dataInstance, context, principal);
 			if (retVal == null) return null;
-			var policyQuery = new SqlStatement<DbSecurityDevicePolicy>().SelectFrom()
+			var policyQuery = context.CreateSqlStatement<DbSecurityDevicePolicy>().SelectFrom()
 				.InnerJoin<DbSecurityPolicy>(o => o.PolicyKey, o => o.Key)
 				.Where<DbSecurityDevicePolicy>(o => o.SourceKey == retVal.Key);
 
@@ -250,13 +250,13 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 			var retVal = base.ToModelInstance(dataInstance, context, principal);
 			if (retVal == null) return null;
 
-			var policyQuery = new SqlStatement<DbSecurityRolePolicy>().SelectFrom()
+			var policyQuery = context.CreateSqlStatement<DbSecurityRolePolicy>().SelectFrom()
 				.InnerJoin<DbSecurityPolicy>(o => o.PolicyKey, o => o.Key)
 				.Where<DbSecurityRolePolicy>(o => o.SourceKey == retVal.Key);
 
 			retVal.Policies = context.Query<CompositeResult<DbSecurityRolePolicy, DbSecurityPolicy>>(policyQuery).Select(o => new SecurityPolicyInstance(m_mapper.MapDomainInstance<DbSecurityPolicy, SecurityPolicy>(o.Object2), (PolicyGrantType)o.Object1.GrantType)).ToList();
 
-			var rolesQuery = new SqlStatement<DbSecurityUserRole>().SelectFrom()
+			var rolesQuery = context.CreateSqlStatement<DbSecurityUserRole>().SelectFrom()
 				.InnerJoin<DbSecurityUser>(o => o.UserKey, o => o.Key)
 				.Where<DbSecurityUserRole>(o => o.RoleKey == retVal.Key);
 
@@ -331,15 +331,18 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 			return retVal;
 		}
 
-		public override IEnumerable<SecurityUser> QueryInternal(DataContext context, Expression<Func<SecurityUser, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
+        /// <summary>
+        /// Query internal
+        /// </summary>
+		public override IEnumerable<SecurityUser> QueryInternal(DataContext context, Expression<Func<SecurityUser, bool>> query, Guid queryId, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
 		{
-			var results = base.QueryInternal(context, query, offset, count, out totalResults, principal, countResults);
+			var results = base.QueryInternal(context, query, queryId, offset, count, out totalResults, principal, countResults);
 
 			var users = new List<SecurityUser>();
 
 			foreach (var user in results)
 			{
-				var rolesQuery = new SqlStatement<DbSecurityUserRole>().SelectFrom()
+				var rolesQuery = context.CreateSqlStatement<DbSecurityUserRole>().SelectFrom()
 					.InnerJoin<DbSecurityRole>(o => o.RoleKey, o => o.Key)
 					.Where<DbSecurityUserRole>(o => o.UserKey == user.Key);
 
@@ -357,7 +360,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 			var retVal = base.ToModelInstance(dataInstance, context, principal);
 			if (retVal == null) return null;
 
-			var rolesQuery = new SqlStatement<DbSecurityUserRole>().SelectFrom()
+			var rolesQuery = context.CreateSqlStatement<DbSecurityUserRole>().SelectFrom()
 				.InnerJoin<DbSecurityRole>(o => o.RoleKey, o => o.Key)
 				.Where<DbSecurityUserRole>(o => o.UserKey == dbUser.Key);
 
@@ -402,7 +405,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		{
 			var user = base.Get(context, key, principal);
 			if (user == null) return null;
-			var rolesQuery = new SqlStatement<DbSecurityUserRole>().SelectFrom()
+			var rolesQuery = context.CreateSqlStatement<DbSecurityUserRole>().SelectFrom()
 				.InnerJoin<DbSecurityRole>(o => o.RoleKey, o => o.Key)
 				.Where<DbSecurityUserRole>(o => o.UserKey == key);
 

@@ -192,7 +192,7 @@ namespace OpenIZ.Messaging.IMSI.Client
 		/// <param name="count">The count of the query results.</param>
 		/// <param name="all">Whether the query should return all nested properties.</param>
 		/// <returns>Returns a Bundle containing the data.</returns>
-		public Bundle Query<TModel>(Expression<Func<TModel, bool>> query, int offset, int? count, bool all) where TModel : IdentifiedData
+		public Bundle Query<TModel>(Expression<Func<TModel, bool>> query, int offset, int? count, bool all, Guid? queryId = null) where TModel : IdentifiedData
 		{
 			// Map the query to HTTP parameters
 			var queryParms = QueryExpressionBuilder.BuildQuery(query, true).ToList();
@@ -208,6 +208,9 @@ namespace OpenIZ.Messaging.IMSI.Client
 			{
 				queryParms.Add(new KeyValuePair<string, object>("_all", true));
 			}
+
+            if (queryId.HasValue)
+                queryParms.Add(new KeyValuePair<string, object>("_queryId", queryId.ToString()));
 
 			// Resource name
 			string resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
@@ -228,7 +231,7 @@ namespace OpenIZ.Messaging.IMSI.Client
 		/// <param name="count">The count of the query results.</param>
 		/// <param name="expandProperties">An property traversal for which to expand upon.</param>
 		/// <returns>Returns a Bundle containing the data.</returns>
-		public Bundle Query<TModel>(Expression<Func<TModel, bool>> query, int offset, int? count, string expandProperties = null) where TModel : IdentifiedData
+		public Bundle Query<TModel>(Expression<Func<TModel, bool>> query, int offset, int? count, string expandProperties = null, Guid? queryId = null) where TModel : IdentifiedData
         {
             // Map the query to HTTP parameters
             var queryParms = QueryExpressionBuilder.BuildQuery(query, true).ToList();
@@ -244,6 +247,9 @@ namespace OpenIZ.Messaging.IMSI.Client
             {
                 queryParms.Add(new KeyValuePair<string, object>("_expand", expandProperties));
             }
+
+            if (queryId.HasValue)
+                queryParms.Add(new KeyValuePair<string, object>("_queryId", queryId.ToString()));
 
             // Resource name
             string resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;

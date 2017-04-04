@@ -35,6 +35,11 @@ namespace OpenIZ.OrmLite.Providers
         String ConnectionString { get; set; }
 
         /// <summary>
+        /// Create SQL keyword
+        /// </summary>
+        String CreateSqlKeyword(SqlKeyword keywordType);
+
+        /// <summary>
         /// Retrieves a readonly connection
         /// </summary>
         DataContext GetReadonlyConnection();
@@ -43,7 +48,12 @@ namespace OpenIZ.OrmLite.Providers
         /// Retrieves a read/writer connection
         /// </summary>
         DataContext GetWriteConnection();
-        
+
+        /// <summary>
+        /// Get connection to a specified connection string
+        /// </summary>
+        DataContext CloneConnection(DataContext source);
+
         /// <summary>
         /// Creates a command on the specified transaction
         /// </summary>
@@ -73,6 +83,7 @@ namespace OpenIZ.OrmLite.Providers
         /// Appends a RETURNING statement
         /// </summary>
         SqlStatement Returning(SqlStatement sqlStatement, params ColumnMapping[] returnColumns);
+        
 
         /// <summary>
         /// Get a lock for the database

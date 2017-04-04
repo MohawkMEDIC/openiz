@@ -46,7 +46,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public IEnumerable GetFromSource(DataContext context, Guid id, decimal? versionSequenceId, IPrincipal principal)
         {
             int tr = 0;
-            return this.QueryInternal(context, base.BuildSourceQuery<EntityAddress>(id, versionSequenceId), 0, null, out tr, principal, false);
+            return this.QueryInternal(context, base.BuildSourceQuery<EntityAddress>(id, versionSequenceId), Guid.Empty, 0, null, out tr, principal, false);
         }
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public IEnumerable GetFromSource(DataContext context, Guid id, decimal? versionSequenceId, IPrincipal principal)
         {
             int tr = 0;
-            return this.QueryInternal(context, base.BuildSourceQuery<EntityAddressComponent>(id), 0, null, out tr, principal, false);
+            return this.QueryInternal(context, base.BuildSourceQuery<EntityAddressComponent>(id), Guid.Empty, 0, null, out tr, principal, false);
         }
 
     }

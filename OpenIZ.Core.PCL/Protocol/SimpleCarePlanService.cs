@@ -31,6 +31,7 @@ using OpenIZ.Core.Model.Constants;
 using System.Globalization;
 using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Model.EntityLoader;
+using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.Core.Protocol
 {
@@ -45,6 +46,7 @@ namespace OpenIZ.Core.Protocol
         /// </summary>
         public class ParameterDictionary<TKey, TValue> : Dictionary<TKey, TValue> where TValue : class
         {
+
             /// <summary>
             /// Add new item key
             /// </summary>
@@ -101,6 +103,8 @@ namespace OpenIZ.Core.Protocol
         private Tracer m_tracer = Tracer.GetTracer(typeof(SimpleCarePlanService));
         // Protocols 
         private List<IClinicalProtocol> m_protocols = new List<IClinicalProtocol>();
+        // Care plan loading promise dictionary (prevents double-loading of patients)
+        private Dictionary<Guid, Patient> m_patientPromise = new Dictionary<Guid, Patient>();
 
         /// <summary>
         /// Constructs the aggregate care planner
@@ -163,6 +167,10 @@ namespace OpenIZ.Core.Protocol
         /// </summary>
         public IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters, IDictionary<String, Object> parameters, params Guid[] protocols)
         {
+            if (p == null) return new List<Act>();
+
+            bool isMyProcessing = false;
+
             try
             {
                 var parmDict = new ParameterDictionary<String, Object>();
@@ -172,29 +180,65 @@ namespace OpenIZ.Core.Protocol
 
                 // Allow each protocol to initialize itself
                 var execProtocols = this.Protocols.Where(o => protocols.Contains(o.Id)).OrderBy(o => o.Name).Distinct().ToList();
-                // We want to flatten the patient's encounters 
-                p = p.Clone() as Patient;
-                p.Participations = new List<ActParticipation>(p.Participations);
-                // The record target here is also a record target for any /relationships
-                p.Participations = p.Participations.Union(p.Participations.SelectMany(pt =>
+
+                Patient currentProcessing = null;
+                if (p.Key.HasValue && !this.m_patientPromise.TryGetValue(p.Key.Value, out currentProcessing))
                 {
-                    if (pt.Act == null)
-                        pt.Act = EntitySource.Current.Get<Act>(pt.ActKey);
-                    return pt.Act?.Relationships?.Select(r =>
-                    {
-                        var retVal = new ActParticipation(ActParticipationKey.RecordTarget, p)
+                    lock (this.m_patientPromise)
+                        if (!this.m_patientPromise.TryGetValue(p.Key.Value, out currentProcessing))
                         {
-                            ActKey = r.TargetActKey,
-                            ParticipationRole = new Model.DataTypes.Concept() { Mnemonic = "RecordTarget", Key = ActParticipationKey.RecordTarget }
-                        };
-                        if (r.TargetAct != null)
-                            retVal.Act = r.TargetAct;
-                        return retVal;
-                    }
-                    );
-                })).ToList();
-                foreach (var o in execProtocols.Distinct()) o.Initialize(p);
-                List<Act> protocolActs = execProtocols.AsParallel().SelectMany(o => o.Calculate(p, parmDict)).OrderBy(o => o.StopTime - o.StartTime).ToList();
+                            currentProcessing = p.Clone() as Patient;
+
+                            isMyProcessing = true;
+                            // Are the participations of the patient null?
+                            if (p.Participations.Count == 0)
+                            {
+                                var actRepo = ApplicationServiceContext.Current.GetService(typeof(IActRepositoryService)) as IActRepositoryService;
+                                int tr = 0;
+                                p.Participations = actRepo?.Find<Act>(o => o.Participations.Where(g => g.ParticipationRole.Mnemonic == "RecordTarget").Any(g => g.PlayerEntityKey == currentProcessing.Key), 0, null, out tr).Select(a =>
+                                    new ActParticipation()
+                                    {
+                                        Act = a,
+                                        ParticipationRole = new Concept() { Mnemonic = "RecordTarget" },
+                                        PlayerEntity = currentProcessing
+                                    }).ToList();
+                                (ApplicationServiceContext.Current.GetService(typeof(IDataCachingService)) as IDataCachingService)?.Add(p);
+                            }
+                            currentProcessing.Participations = new List<ActParticipation>(p.Participations);
+
+                            // The record target here is also a record target for any /relationships
+                            currentProcessing.Participations = currentProcessing.Participations.Union(currentProcessing.Participations.SelectMany(pt =>
+                            {
+                                if (pt.Act == null)
+                                    pt.Act = EntitySource.Current.Get<Act>(pt.ActKey);
+                                return pt.Act?.Relationships?.Select(r =>
+                                {
+                                    var retVal = new ActParticipation(ActParticipationKey.RecordTarget, currentProcessing)
+                                    {
+                                        ActKey = r.TargetActKey,
+                                        ParticipationRole = new Model.DataTypes.Concept() { Mnemonic = "RecordTarget", Key = ActParticipationKey.RecordTarget }
+                                    };
+                                    if (r.TargetAct != null)
+                                        retVal.Act = r.TargetAct;
+                                    return retVal;
+                                }
+                                );
+                            })).ToList();
+
+                            // Add to the promised patient
+                            this.m_patientPromise.Add(p.Key.Value, currentProcessing);
+
+                        }
+                }
+                else if (!p.Key.HasValue) // Not persisted
+                    currentProcessing = p.Clone() as Patient;
+
+                // Initialize for protocol execution
+                parmDict.Add("runProtocols", execProtocols.Distinct());
+                foreach (var o in this.Protocols.Distinct()) o.Initialize(currentProcessing, parmDict);
+                parmDict.Remove("runProtocols");
+
+                List<Act> protocolActs = execProtocols.AsParallel().SelectMany(o => o.Calculate(currentProcessing, parmDict)).OrderBy(o => o.StopTime - o.StartTime).ToList();
 
                 if (asEncounters)
                 {
@@ -207,7 +251,7 @@ namespace OpenIZ.Core.Protocol
                         // Create candidate
                         if (candidate == null)
                         {
-                            candidate = this.CreateEncounter(act, p);
+                            candidate = this.CreateEncounter(act, currentProcessing);
                             encounters.Add(candidate);
                             protocolActs.Add(candidate);
                         }
@@ -235,7 +279,7 @@ namespace OpenIZ.Core.Protocol
 
                         // Remove so we don't have duplicates
                         protocolActs.Remove(act);
-                        p.Participations.RemoveAll(o => o.Act == act);
+                        currentProcessing.Participations.RemoveAll(o => o.Act == act);
 
                     }
 
@@ -245,7 +289,7 @@ namespace OpenIZ.Core.Protocol
                         var candidate = encounters.OrderBy(o => o.StartTime).FirstOrDefault(e => e.StartTime >= act.StartTime);
                         if (candidate == null)
                         {
-                            candidate = this.CreateEncounter(act, p);
+                            candidate = this.CreateEncounter(act, currentProcessing);
                             encounters.Add(candidate);
                             protocolActs.Add(candidate);
                         }
@@ -254,7 +298,7 @@ namespace OpenIZ.Core.Protocol
 
                         // Remove so we don't have duplicates
                         protocolActs.Remove(act);
-                        p.Participations.RemoveAll(o => o.Act == act);
+                        currentProcessing.Participations.RemoveAll(o => o.Act == act);
                     }
 
                 }
@@ -270,6 +314,12 @@ namespace OpenIZ.Core.Protocol
             {
                 this.m_tracer.TraceError("Error creating care plan: {0}", e);
                 return new List<Act>();
+            }
+            finally
+            {
+                if (isMyProcessing)
+                    lock (m_patientPromise)
+                        m_patientPromise.Remove(p.Key.Value);
             }
         }
 

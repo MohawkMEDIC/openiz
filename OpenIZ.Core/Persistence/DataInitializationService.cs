@@ -83,6 +83,63 @@ namespace OpenIZ.Core.Persistence
         private EventHandler m_persistenceHandler;
 
         /// <summary>
+        /// Install dataset
+        /// </summary>
+        public void InstallDataset(DatasetInstall ds)
+        {
+            try
+            {
+                this.m_traceSource.TraceInformation("Applying {0} ({1} objects)...", ds.Id, ds.Action.Count);
+
+                foreach (var itm in ds.Action)
+                {
+
+                    // IDP Type
+                    Type idpType = typeof(IDataPersistenceService<>);
+                    idpType = idpType.MakeGenericType(new Type[] { itm.Element.GetType() });
+                    var idpInstance = ApplicationContext.Current.GetService(idpType) as IDataPersistenceService;
+
+                    // Don't insert duplicates
+                    var getMethod = idpType.GetMethod("Get");
+
+                    this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "{0} {1}", itm.ActionName, itm.Element);
+
+                    Object target = null, existing = null;
+                    if (itm.Element.Key.HasValue)
+                        existing = idpInstance.Get(itm.Element.Key.Value);
+                    if (existing != null)
+                    {
+                        target = (existing as IdentifiedData).Clone();
+                        target.CopyObjectData(itm.Element);
+                    }
+                    else
+                        target = itm.Element;
+
+                    // Association
+                    if (itm.Association != null)
+                        foreach (var ascn in itm.Association)
+                        {
+                            var pi = target.GetType().GetRuntimeProperty(ascn.PropertyName);
+                            var mi = pi.PropertyType.GetRuntimeMethod("Add", new Type[] { ascn.Element.GetType() });
+                            mi.Invoke(pi.GetValue(target), new object[] { ascn.Element });
+                        }
+
+                    if (existing == null && (itm is DataInsert || (itm is DataUpdate && (itm as DataUpdate).InsertIfNotExists)))
+                        idpInstance.Insert(target);
+                    else if (!(itm is DataInsert))
+                        typeof(IDataPersistenceService).GetMethod(itm.ActionName, new Type[] { typeof(Object) }).Invoke(idpInstance, new object[] { target });
+
+                }
+                this.m_traceSource.TraceInformation("Applied {0} changes", ds.Action.Count);
+
+            }
+            catch(Exception e)
+            {
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, "Error applying dataset {0}: {1}", ds.Id, e);
+            }
+        }
+
+        /// <summary>
         /// Ctor
         /// </summary>
         public DataInitializationService()
@@ -111,53 +168,10 @@ namespace OpenIZ.Core.Persistence
                             if (File.Exists(logFile))
                                 continue; // skip
 
-                            var patchService = ApplicationContext.Current.GetService<IPatchService>();
                             using (var fs = File.OpenRead(f))
                             {
                                 var ds = xsz.Deserialize(fs) as DatasetInstall;
-                                this.m_traceSource.TraceInformation("Applying {0} ({1} objects)...", ds.Id, ds.Action.Count);
-
-                                foreach (var itm in ds.Action)
-                                {
-                                   
-                                    // IDP Type
-                                    Type idpType = typeof(IDataPersistenceService<>);
-                                    idpType = idpType.MakeGenericType(new Type[] { itm.Element.GetType() });
-                                    var idpInstance = ApplicationContext.Current.GetService(idpType) as IDataPersistenceService;
-
-                                    // Don't insert duplicates
-                                    var getMethod = idpType.GetMethod("Get");
-
-                                    this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "{0} {1}", itm.ActionName, itm.Element);
-
-                                    Object target = null, existing = null;
-                                    if (itm.Element.Key.HasValue)
-                                        existing = idpInstance.Get(itm.Element.Key.Value);
-                                    if (existing != null)
-                                    {
-                                        target = (existing as IdentifiedData).Clone();
-                                        target.CopyObjectData(itm.Element);
-                                    }
-                                    else
-                                        target = itm.Element;
-
-                                    // Association
-                                    if (itm.Association != null)
-                                        foreach (var ascn in itm.Association)
-                                        {
-                                            var pi = target.GetType().GetRuntimeProperty(ascn.PropertyName);
-                                            var mi = pi.PropertyType.GetRuntimeMethod("Add", new Type[] { ascn.Element.GetType() });
-                                            mi.Invoke(pi.GetValue(target), new object[] { ascn.Element });
-                                        }
-
-                                    if (existing == null && (itm is DataInsert || (itm is DataUpdate && (itm as DataUpdate).InsertIfNotExists)))
-                                        idpInstance.Insert(target);
-                                    else if (!(itm is DataInsert))
-                                        typeof(IDataPersistenceService).GetMethod(itm.ActionName, new Type[] { typeof(Object) }).Invoke(idpInstance, new object[] { target });
-
-                                }
-                                this.m_traceSource.TraceInformation("Applied {0} changes", ds.Action.Count);
-
+                                this.InstallDataset(ds);
                             }
 
 

@@ -114,17 +114,25 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <summary>
 		/// Perform query
 		/// </summary>
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			return this.repositoryService.FindConceptSets(QueryExpressionParser.BuildLinqExpression<ConceptSet>(queryParameters));
+            int tr = 0;
+            return this.Query(queryParameters, 0, 100, out tr);
 		}
 
-		/// <summary>
-		/// Query with specified parameter data
-		/// </summary>
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
+        /// <summary>
+        /// Query with specified parameter data
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			return this.repositoryService.FindConceptSets(QueryExpressionParser.BuildLinqExpression<ConceptSet>(queryParameters), offset, count, out totalCount);
+            var filter = QueryExpressionParser.BuildLinqExpression<ConceptSet>(queryParameters);
+            List<String> queryId = null;
+            if (this.repositoryService is IPersistableQueryRepositoryService && queryParameters.TryGetValue("_queryId", out queryId))
+                return (this.repositoryService as IPersistableQueryRepositoryService).Find(filter, offset, count, out totalCount, Guid.Parse(queryId[0]));
+            else
+                return this.repositoryService.FindConceptSets(filter, offset, count, out totalCount);
 		}
 
 		/// <summary>

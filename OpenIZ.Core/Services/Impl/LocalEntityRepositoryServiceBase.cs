@@ -1,0 +1,188 @@
+﻿using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Security;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using OpenIZ.Core.Model.Entities;
+using MARC.HI.EHRS.SVC.Core.Data;
+using System.Linq;
+using OpenIZ.Core.Exceptions;
+using OpenIZ.Core.Model.Roles;
+
+namespace OpenIZ.Core.Services.Impl
+{
+    /// <summary>
+    /// Represents a base class for entity repository services
+    /// </summary>
+    public abstract class LocalEntityRepositoryServiceBase : IPersistableQueryRepositoryService
+    {
+
+        /// <summary>
+        /// Find with stored query parameters
+        /// </summary>
+        public IEnumerable<TEntity> Find<TEntity>(Expression<Func<TEntity, bool>> query, int offset, int? count, out int totalResults, Guid queryId) where TEntity : IdentifiedData
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TEntity>>();
+
+            if (persistenceService == null)
+            {
+                throw new InvalidOperationException($"Unable to locate {typeof(IDataPersistenceService<TEntity>).FullName}");
+            }
+
+            var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TEntity>();
+
+            IEnumerable<TEntity> results = null;
+            if (queryId != Guid.Empty && persistenceService is IStoredQueryDataPersistenceService<TEntity>)
+                results = (persistenceService as IStoredQueryDataPersistenceService<TEntity>).Query(query, queryId, offset, count, AuthenticationContext.Current.Principal, out totalResults);
+            else
+                results = persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
+
+            return businessRulesService != null ? businessRulesService.AfterQuery(results) : results;
+        }
+
+        /// <summary>
+        /// Performs insert of object
+        /// </summary>
+        protected TEntity Insert<TEntity>(TEntity entity) where TEntity : IdentifiedData
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TEntity>>();
+
+            if (persistenceService == null)
+            {
+                throw new InvalidOperationException($"Unable to locate {nameof(IDataPersistenceService<TEntity>)}");
+            }
+
+            this.Validate(entity);
+
+            var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TEntity>();
+
+            entity = businessRulesService?.BeforeInsert(entity) ?? entity;
+
+            entity = persistenceService.Insert(entity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+            return businessRulesService?.AfterInsert(entity) ?? entity;
+        }
+
+        /// <summary>
+        /// Obsolete the specified data
+        /// </summary>
+        protected TEntity Obsolete<TEntity>(Guid key) where TEntity : IdentifiedData
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TEntity>>();
+
+            if (persistenceService == null)
+            {
+                throw new InvalidOperationException($"Unable to locate {nameof(IDataPersistenceService<TEntity>)}");
+            }
+
+            var entity = persistenceService.Get(new Identifier<Guid>(key), AuthenticationContext.Current.Principal, true);
+
+            if (entity == null)
+            {
+                throw new InvalidOperationException("Entity Relationship not found");
+            }
+
+            var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TEntity>();
+
+            entity = businessRulesService?.BeforeObsolete(entity) ?? entity;
+
+            entity = persistenceService.Obsolete(entity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+            return businessRulesService?.AfterObsolete(entity) ?? entity;
+        }
+
+        /// <summary>
+        /// Get specified data from persistence
+        /// </summary>
+        protected TEntity Get<TEntity>(Guid key, Guid versionKey) where TEntity : IdentifiedData
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TEntity>>();
+
+            if (persistenceService == null)
+            {
+                throw new InvalidOperationException($"Unable to locate {nameof(IDataPersistenceService<TEntity>)}");
+            }
+
+            var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TEntity>();
+
+            var result = persistenceService.Get(new Identifier<Guid>(key, versionKey), AuthenticationContext.Current.Principal, true);
+
+            return businessRulesService?.AfterRetrieve(result) ?? result;
+
+        }
+
+        /// <summary>
+        /// Save the specified entity (insert or update)
+        /// </summary>
+        protected TEntity Save<TEntity>(TEntity data) where TEntity : IdentifiedData
+        {
+
+
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TEntity>>();
+
+            if (persistenceService == null)
+            {
+                throw new InvalidOperationException($"Unable to locate {nameof(IDataPersistenceService<TEntity>)}");
+            }
+
+            this.Validate(data);
+
+            var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TEntity>();
+
+            try
+            {
+                TEntity old = null;
+
+                if (data.Key.HasValue)
+                {
+                    old = persistenceService.Get(new Identifier<Guid>(data.Key.Value), AuthenticationContext.Current.Principal, true);
+                }
+
+                // HACK: Lookup by ER src<>trg
+                if (old == null && typeof(TEntity) == typeof(EntityRelationship))
+                {
+                    var tr = 0;
+                    var erd = data as EntityRelationship;
+                    old = (TEntity)(persistenceService as IDataPersistenceService<EntityRelationship>).Query(o => o.SourceEntityKey == erd.SourceEntityKey && o.TargetEntityKey == erd.TargetEntityKey, 0, 1, AuthenticationContext.Current.Principal, out tr).OfType<Object>().FirstOrDefault();
+                }
+
+                if (old == null)
+                {
+                    throw new KeyNotFoundException(data.Key?.ToString());
+                }
+
+                data = businessRulesService?.BeforeUpdate(data) ?? data;
+                data = persistenceService.Update(data, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+                data = businessRulesService?.AfterUpdate(data) ?? data;
+            }
+            catch (DataPersistenceException)
+            {
+                data = businessRulesService?.BeforeInsert(data) ?? data;
+                data = persistenceService.Insert(data, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+                data = businessRulesService?.AfterInsert(data) ?? data;
+            }
+
+            return data;
+        }
+
+        /// <summary>
+        /// Validate a patient before saving
+        /// </summary>
+        internal TEntity Validate<TEntity>(TEntity p) where TEntity : IdentifiedData
+        {
+            p = (TEntity)p.Clean(); // clean up messy data
+
+            var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TEntity>();
+
+            var details = businessRulesService?.Validate(p) ?? new List<DetectedIssue>();
+
+            if (details.Any(d => d.Priority == DetectedIssuePriorityType.Error))
+            {
+                throw new DetectedIssueException(details);
+            }
+            return p;
+        }
+    }
+}

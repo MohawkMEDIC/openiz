@@ -105,26 +105,34 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			return this.repository.ObsoleteMaterial(key);
 		}
 
-		/// <summary>
-		/// Queries for the specified data
-		/// </summary>
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
-		{
-			return this.repository.FindMaterial(QueryExpressionParser.BuildLinqExpression<Material>(queryParameters));
-		}
+        /// <summary>
+        /// Query for the specified material
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
+        {
+            int tr = 0;
+            return this.Query(queryParameters, 0, 100, out tr);
+        }
 
-		/// <summary>
-		/// Query for specified data with limits
-		/// </summary>
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
-		{
-			return this.repository.FindMaterial(QueryExpressionParser.BuildLinqExpression<Material>(queryParameters), offset, count, out totalCount);
-		}
+        /// <summary>
+        /// Query for the specified material with restrictions
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
+        {
+            var filter = QueryExpressionParser.BuildLinqExpression<Material>(queryParameters);
+            List<String> queryId = null;
+            if (this.repository is IPersistableQueryRepositoryService && queryParameters.TryGetValue("_queryId", out queryId))
+                return (this.repository as IPersistableQueryRepositoryService).Find(filter, offset, count, out totalCount, Guid.Parse(queryId[0]));
+            else
+                return this.repository.FindMaterial(filter, offset, count, out totalCount);
+        }
 
-		/// <summary>
-		/// Updates the specified object
-		/// </summary>
-		public IdentifiedData Update(IdentifiedData data)
+        /// <summary>
+        /// Updates the specified object
+        /// </summary>
+        public IdentifiedData Update(IdentifiedData data)
 		{
 			if (data == null)
 			{

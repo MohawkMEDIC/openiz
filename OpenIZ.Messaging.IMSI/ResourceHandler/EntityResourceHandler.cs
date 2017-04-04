@@ -28,6 +28,9 @@ using OpenIZ.Core.Model.Entities;
 using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Security.Attribute;
+using System.Security.Permissions;
+using OpenIZ.Core.Security;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {
@@ -71,13 +74,14 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			}
 		}
 
-		/// <summary>
-		/// Creates an entity.
-		/// </summary>
-		/// <param name="data">The entity to be created.</param>
-		/// <param name="updateIfExists">Whether to update the entity if it exits.</param>
-		/// <returns>Returns the created entity.s</returns>
-		public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
+        /// <summary>
+        /// Creates an entity.
+        /// </summary>
+        /// <param name="data">The entity to be created.</param>
+        /// <param name="updateIfExists">Whether to update the entity if it exits.</param>
+        /// <returns>Returns the created entity.s</returns>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
+        public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
 		{
 			if (data == null)
 			{
@@ -113,57 +117,68 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			}
 		}
 
-		/// <summary>
-		/// Gets an entity by id and version id.
-		/// </summary>
-		/// <param name="id">The id of the entity.</param>
-		/// <param name="versionId">The version id of the entity.</param>
-		/// <returns>Returns the entity.</returns>
-		public IdentifiedData Get(Guid id, Guid versionId)
+        /// <summary>
+        /// Gets an entity by id and version id.
+        /// </summary>
+        /// <param name="id">The id of the entity.</param>
+        /// <param name="versionId">The version id of the entity.</param>
+        /// <returns>Returns the entity.</returns>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
+        public IdentifiedData Get(Guid id, Guid versionId)
 		{
 			return this.repositoryService.Get(id, versionId);
 		}
 
-		/// <summary>
-		/// Obsoletes an entity.
-		/// </summary>
-		/// <param name="key">The key of the entity to be obsoleted.</param>
-		/// <returns>Returns the obsoleted entity.</returns>
-		public IdentifiedData Obsolete(Guid key)
+        /// <summary>
+        /// Obsoletes an entity.
+        /// </summary>
+        /// <param name="key">The key of the entity to be obsoleted.</param>
+        /// <returns>Returns the obsoleted entity.</returns>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.DeleteClinicalData)]
+        public IdentifiedData Obsolete(Guid key)
 		{
 			return this.repositoryService.Obsolete(key);
 		}
 
-		/// <summary>
-		/// Queries for an entity.
-		/// </summary>
-		/// <param name="queryParameters">The query parameters to use to search for the entity.</param>
-		/// <returns>Returns a list of entities.</returns>
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
+        /// <summary>
+        /// Queries for an entity.
+        /// </summary>
+        /// <param name="queryParameters">The query parameters to use to search for the entity.</param>
+        /// <returns>Returns a list of entities.</returns>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryClinicalData)]
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
 			int totalCount = 0;
-			return this.Query(queryParameters, 0, 0, out totalCount);
+			return this.Query(queryParameters, 0, 100, out totalCount);
 		}
 
-		/// <summary>
-		/// Queries for an entity.
-		/// </summary>
-		/// <param name="queryParameters">The query parameters to use to search for the entity.</param>
-		/// <param name="offset">The offset of the query.</param>
-		/// <param name="count">The count of the query.</param>
-		/// <param name="totalCount">The total count of the query.</param>
-		/// <returns>Returns a list of entities.</returns>
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
+        /// <summary>
+        /// Queries for an entity.
+        /// </summary>
+        /// <param name="queryParameters">The query parameters to use to search for the entity.</param>
+        /// <param name="offset">The offset of the query.</param>
+        /// <param name="count">The count of the query.</param>
+        /// <param name="totalCount">The total count of the query.</param>
+        /// <returns>Returns a list of entities.</returns>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryClinicalData)]
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			return this.repositoryService.Find(QueryExpressionParser.BuildLinqExpression<Entity>(queryParameters), offset, count, out totalCount);
-		}
+            var filter = QueryExpressionParser.BuildLinqExpression<Entity>(queryParameters);
+            List<String> queryId = null;
+            if (this.repositoryService is IPersistableQueryRepositoryService && queryParameters.TryGetValue("_queryId", out queryId))
+                return (this.repositoryService as IPersistableQueryRepositoryService).Find(filter, offset, count, out totalCount, Guid.Parse(queryId[0]));
+            else
+                return this.repositoryService.Find(filter, offset, count, out totalCount);
 
-		/// <summary>
-		/// Updates an entity.
-		/// </summary>
-		/// <param name="data">The entity to be updated.</param>
-		/// <returns>Returns the updated entity.</returns>
-		public IdentifiedData Update(IdentifiedData data)
+        }
+
+        /// <summary>
+        /// Updates an entity.
+        /// </summary>
+        /// <param name="data">The entity to be updated.</param>
+        /// <returns>Returns the updated entity.</returns>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
+        public IdentifiedData Update(IdentifiedData data)
 		{
 			Bundle bundleData = data as Bundle;
 			bundleData?.Reconstitute();

@@ -128,7 +128,8 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <returns>Returns a list of organizations.</returns>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			return this.repository.FindConceptClasses(QueryExpressionParser.BuildLinqExpression<ConceptClass>(queryParameters));
+            int tr = 0;
+			return this.Query(queryParameters, 0, 100, out tr);
 		}
 
 		/// <summary>
@@ -141,7 +142,12 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <returns>Returns a list of organizations.</returns>
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			return this.repository.FindConceptClasses(QueryExpressionParser.BuildLinqExpression<ConceptClass>(queryParameters), offset, count, out totalCount);
+            var filter = QueryExpressionParser.BuildLinqExpression<ConceptClass>(queryParameters);
+            List<String> queryId = null;
+            if (this.repository is IPersistableQueryRepositoryService && queryParameters.TryGetValue("_queryId", out queryId))
+                return (this.repository as IPersistableQueryRepositoryService).Find(filter, offset, count, out totalCount, Guid.Parse(queryId[0]));
+            else
+                return this.repository.FindConceptClasses(filter, offset, count, out totalCount);
 		}
 
 		/// <summary>

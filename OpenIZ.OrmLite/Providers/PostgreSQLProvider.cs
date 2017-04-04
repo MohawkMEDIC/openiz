@@ -72,7 +72,7 @@ namespace OpenIZ.OrmLite.Providers
         {
             var conn = this.GetProviderFactory().CreateConnection();
             conn.ConnectionString = this.ReadonlyConnectionString;
-            return new DataContext(this, conn);
+            return new DataContext(this, conn, true);
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace OpenIZ.OrmLite.Providers
         {
             var conn = this.GetProviderFactory().CreateConnection();
             conn.ConnectionString = this.ConnectionString;
-            return new DataContext(this, conn);
+            return new DataContext(this, conn, false);
         }
 
         /// <summary>
@@ -112,9 +112,9 @@ namespace OpenIZ.OrmLite.Providers
                 throw new ArgumentOutOfRangeException(nameof(sql), $"Parameter mismatch query expected {pno} but {parms.Length} supplied");
 
             var cmd = context.Connection.CreateCommand();
+            cmd.Transaction = context.Transaction;
             cmd.CommandType = type;
             cmd.CommandText = sql;
-            cmd.Transaction = context.Transaction;
 
             if (this.TraceSql)
                 this.m_tracer.TraceVerbose("[{0}] {1}", type, sql);
@@ -179,7 +179,7 @@ namespace OpenIZ.OrmLite.Providers
         /// </summary>
         public SqlStatement Count(SqlStatement sqlStatement)
         {
-            return new SqlStatement("SELECT COUNT(*) FROM (").Append(sqlStatement.Build()).Append(") Q0");
+            return new SqlStatement(this, "SELECT COUNT(*) FROM (").Append(sqlStatement.Build()).Append(") Q0");
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace OpenIZ.OrmLite.Providers
         /// </summary>
         public SqlStatement Exists(SqlStatement sqlStatement)
         {
-            return new SqlStatement("SELECT CASE WHEN EXISTS (").Append(sqlStatement.Build()).Append(") THEN true ELSE false END");
+            return new SqlStatement(this, "SELECT CASE WHEN EXISTS (").Append(sqlStatement.Build()).Append(") THEN true ELSE false END");
         }
 
         /// <summary>
@@ -216,6 +216,34 @@ namespace OpenIZ.OrmLite.Providers
             object retVal = null;
             MapUtil.TryConvert(value, toType, out retVal);
             return retVal;
+        }
+
+        /// <summary>
+        /// Create a new connection from an existing data source
+        /// </summary>
+        public DataContext CloneConnection(DataContext source)
+        {
+            return source.IsReadonly ? this.GetReadonlyConnection() : this.GetWriteConnection();
+        }
+
+        /// <summary>
+        /// Create SQL keyword
+        /// </summary>
+        public string CreateSqlKeyword(SqlKeyword keywordType)
+        {
+            switch(keywordType)
+            {
+                case SqlKeyword.ILike:
+                    return " ILIKE ";
+                case SqlKeyword.Like:
+                    return " LIKE ";
+                case SqlKeyword.Lower:
+                    return " LOWER ";
+                case SqlKeyword.Upper:
+                    return " UPPER ";
+                default:
+                    throw new NotImplementedException();
+            }
         }
     }
 }

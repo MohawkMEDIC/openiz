@@ -35,28 +35,13 @@ namespace OpenIZ.Core.Services.Impl
 	/// <summary>
 	/// Local patient repository service
 	/// </summary>
-	public class LocalPatientRepositoryService : IPatientRepositoryService
+	public class LocalPatientRepositoryService : LocalEntityRepositoryServiceBase, IPatientRepositoryService
 	{
-		/// <summary>
-		/// The business rules service instance.
-		/// </summary>
-		private IBusinessRulesService<Patient> businessRulesService;
-
+		
 		/// <summary>
 		/// The tracer instance.
 		/// </summary>
 		private readonly Tracer tracer = Tracer.GetTracer(typeof(LocalPatientRepositoryService));
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LocalPatientRepositoryService"/> class.
-		/// </summary>
-		public LocalPatientRepositoryService()
-		{
-			ApplicationContext.Current.Started += (o, e) =>
-			{
-				this.businessRulesService = ApplicationContext.Current.GetService<IBusinessRulesService<Patient>>();
-			};
-		}
 
 		/// <summary>
 		/// Locates the specified patient.
@@ -80,16 +65,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <exception cref="System.InvalidOperationException">If the persistence service is not found.</exception>
 		public IEnumerable<Patient> Find(Expression<Func<Patient, bool>> predicate, int offset, int? count, out int totalCount)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Patient>)} not found");
-			}
-
-			var results = persistenceService.Query(predicate, offset, count, AuthenticationContext.Current.Principal, out totalCount);
-
-			return this.businessRulesService?.AfterQuery(results) ?? results;
+            return base.Find(predicate, offset, count, out totalCount, Guid.Empty);
 		}
 
 		/// <summary>
@@ -101,16 +77,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <exception cref="System.InvalidOperationException">If the persistence service is not found.</exception>
 		public Patient Get(Guid id, Guid versionId)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Patient>)} not found");
-			}
-
-			var result = persistenceService.Get<Guid>(new Identifier<Guid>(id, versionId), AuthenticationContext.Current.Principal, false);
-
-			return this.businessRulesService?.AfterRetrieve(result) ?? result;
+            return base.Get<Patient>(id, versionId);
 		}
 
 		/// <summary>
@@ -121,19 +88,9 @@ namespace OpenIZ.Core.Services.Impl
 		/// <exception cref="System.InvalidOperationException">If the persistence service is not found.</exception>
 		public Patient Insert(Patient patient)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+            patient = base.Insert(patient);
 
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Patient>)} not found");
-			}
-
-			patient = this.businessRulesService?.BeforeInsert(patient) ?? patient;
-
-			patient = persistenceService.Insert(patient, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-
-			patient = this.businessRulesService?.AfterInsert(patient) ?? patient;
-
+            // TODO: Move this to a BRE maybe?
 			var clientRegistryNotificationService = ApplicationContext.Current.GetService<IClientRegistryNotificationService>();
 
 			if (clientRegistryNotificationService != null)
@@ -178,25 +135,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <exception cref="System.InvalidOperationException">If the persistence service is not found or if the patient is not found.</exception>
 		public Patient Obsolete(Guid key)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Patient>)} not found");
-			}
-
-			var patient = this.Find(p => p.Key == key).FirstOrDefault();
-
-			if (patient == null)
-			{
-				throw new InvalidOperationException("Patient not found");
-			}
-
-			patient = this.businessRulesService?.BeforeObsolete(patient) ?? patient;
-
-			patient = persistenceService.Obsolete(patient, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-
-			return this.businessRulesService?.AfterObsolete(patient) ?? patient;
+            return base.Obsolete<Patient>(key);
 		}
 
 		/// <summary>
@@ -207,46 +146,17 @@ namespace OpenIZ.Core.Services.Impl
 		/// <exception cref="System.InvalidOperationException">If the persistence service is not found.</exception>
 		public Patient Save(Patient patient)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
 
-			if (persistenceService == null)
+            patient = base.Save(patient);
+
+            var clientRegistryNotificationService = ApplicationContext.Current.GetService<IClientRegistryNotificationService>();
+
+            if (clientRegistryNotificationService != null)
 			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Patient>)} not found");
+				this.tracer.TraceInfo("Notifying client registry of update");
+				clientRegistryNotificationService?.NotifyUpdate(new NotificationEventArgs<Patient>(patient));
 			}
-
-			try
-			{
-				patient = this.businessRulesService?.BeforeUpdate(patient) ?? patient;
-
-				patient = persistenceService.Update(patient, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-
-				patient = this.businessRulesService?.AfterUpdate(patient) ?? patient;
-
-				var clientRegistryNotificationService = ApplicationContext.Current.GetService<IClientRegistryNotificationService>();
-
-				if (clientRegistryNotificationService != null)
-				{
-					this.tracer.TraceInfo("Notifying client registry of update");
-					clientRegistryNotificationService?.NotifyUpdate(new NotificationEventArgs<Patient>(patient));
-				}
-			}
-			catch (DataPersistenceException)
-			{
-				patient = this.businessRulesService?.BeforeInsert(patient) ?? patient;
-
-				patient = persistenceService.Insert(patient, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-
-				patient = this.businessRulesService?.AfterInsert(patient) ?? patient;
-
-				var clientRegistryNotificationService = ApplicationContext.Current.GetService<IClientRegistryNotificationService>();
-
-				if (clientRegistryNotificationService != null)
-				{
-					this.tracer.TraceInfo("Notifying client registry of new registration");
-					clientRegistryNotificationService.NotifyRegister(new NotificationEventArgs<Patient>(patient));
-				}
-			}
-
+			
 			return patient;
 		}
 
@@ -270,16 +180,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public Patient Validate(Patient p)
 		{
-			p = p.Clean() as Patient; // clean up messy data
-
-			var details = this.businessRulesService?.Validate(p) ?? new List<DetectedIssue>();
-
-			if (details.Any(d => d.Priority == DetectedIssuePriorityType.Error))
-			{
-				throw new DetectedIssueException(details);
-			}
-
-			return p;
+            return base.Validate(p);
 		}
 	}
 }

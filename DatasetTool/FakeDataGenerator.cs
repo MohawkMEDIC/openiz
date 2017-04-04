@@ -93,7 +93,7 @@ namespace OizDevTool
                     {
                         ProtocolDefinition pdf = ProtocolDefinition.Load(fs);
                         XmlClinicalProtocol xcp = new XmlClinicalProtocol(pdf);
-                        this.m_protocols.Add(xcp.GetProtcolData());
+                        this.m_protocols.Add(xcp.GetProtocolData());
                     }
                 }
             }

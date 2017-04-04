@@ -121,10 +121,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// Query the specified object ordering by creation time
         /// </summary>
         /// <returns></returns>
-        public override IEnumerable<TModel> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
+        public override IEnumerable<TModel> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, Guid queryId, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
         {
-            var qresult = this.QueryInternal(context, query, offset, count, out totalResults, countResults);
-            return qresult.Select(o => this.CacheConvert(o, context, principal));
+            var qresult = this.QueryInternal(context, query, queryId, offset, count, out totalResults, countResults);
+            return qresult.AsParallel().Select(o => o is Guid ? this.Get(context, (Guid)o, principal) : this.CacheConvert(o, context, principal));
         }
 
         /// <summary>

@@ -32,8 +32,8 @@ namespace OpenIZ.Core.Services.Impl
 	/// <summary>
 	/// Provides operations for managing organizations.
 	/// </summary>
-	public class LocalOrganizationRepositoryService : IOrganizationRepositoryService
-	{
+	public class LocalOrganizationRepositoryService : LocalEntityRepositoryServiceBase, IOrganizationRepositoryService
+    {
 		/// <summary>
 		/// Searches for a organization using a given query.
 		/// </summary>
@@ -41,14 +41,8 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns a list of organizations who match the specified query.</returns>
 		public IEnumerable<Organization> Find(Expression<Func<Organization, bool>> query)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Organization>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException("No persistence service found");
-			}
-
-			return persistenceService.Query(query, AuthenticationContext.Current.Principal);
+            int t = 0;
+            return this.Find(query, 0, null, out t);
 		}
 
 		/// <summary>
@@ -61,14 +55,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns a list of organizations who match the specified query.</returns>
 		public IEnumerable<Organization> Find(Expression<Func<Organization, bool>> query, int offset, int? count, out int totalCount)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Organization>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException("No persistence service found");
-			}
-
-			return persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalCount);
+            return base.Find(query, offset, count, out totalCount, Guid.Empty);
 		}
 
 		/// <summary>
@@ -79,14 +66,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the specified organization.</returns>
 		public Organization Get(Guid id, Guid versionId)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Organization>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException("No persistence service found");
-			}
-
-			return persistenceService.Get<Guid>(new Identifier<Guid>(id, versionId), AuthenticationContext.Current.Principal, false);
+            return base.Get<Organization>(id, versionId);
 		}
 
 		/// <summary>
@@ -96,14 +76,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the inserted organization.</returns>
 		public Organization Insert(Organization organization)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Organization>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException("No persistence service found");
-			}
-
-			return persistenceService.Insert(organization, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            return base.Insert(organization);
 		}
 
 		/// <summary>
@@ -113,14 +86,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the obsoleted organization.</returns>
 		public Organization Obsolete(Guid id)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Organization>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException("No persistence service found");
-			}
-
-			return persistenceService.Obsolete(new Organization() { Key = id }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            return base.Obsolete<Organization>(id);
 		}
 
 		/// <summary>
@@ -130,21 +96,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the saved organization.</returns>
 		public Organization Save(Organization organization)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Organization>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException("No persistence service found");
-			}
-
-			try
-			{
-				return persistenceService.Update(organization, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
-			catch (DataPersistenceException)
-			{
-				return persistenceService.Insert(organization, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
+            return base.Save(organization);
 		}
 	}
 }

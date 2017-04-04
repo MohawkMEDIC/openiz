@@ -212,7 +212,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="reason">The reason the certificate is to be deleted.</param>
 		/// <returns>Returns the deletion result.</returns>
 		[WebInvoke(UriTemplate = "/certificate/{id}/revokeReason/{reason}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-		SubmissionResult DeleteCertificate(string id, RevokeReason reason);
+		SubmissionResult DeleteCertificate(string id, String reason);
 
 		/// <summary>
 		/// Deletes a device.
