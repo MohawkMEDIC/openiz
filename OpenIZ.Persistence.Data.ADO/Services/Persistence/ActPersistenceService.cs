@@ -71,7 +71,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             var template = context.FirstOrDefault<DbTemplateDefinition>(o => o.Key == actInstance.TemplateKey);
             retVal.Template = m_mapper.MapDomainInstance<DbTemplateDefinition, TemplateDefinition>(template);
 
-            var protocolStmt = new SqlStatement<DbActProtocol>().SelectFrom()
+            var protocolStmt = context.CreateSqlStatement<DbActProtocol>().SelectFrom()
                 .InnerJoin<DbActProtocol, DbProtocol>(o => o.ProtocolKey, o => o.Key)
                 .Where<DbActProtocol>(o => o.SourceKey == retVal.Key);
             retVal.Protocols = context.Query<CompositeResult<DbActProtocol, DbProtocol>>(protocolStmt).Select(o => new ActProtocol()

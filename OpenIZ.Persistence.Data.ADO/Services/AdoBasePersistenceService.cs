@@ -459,6 +459,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     this.Queried?.Invoke(this, postData);
 
                     var retVal = postData.Results.AsParallel().ToList();
+
+                    // Add to cache
+                    foreach (var i in retVal.Where(i => i != null))
+                        connection.AddCacheCommit(i);
                     foreach (var itm in connection.CacheOnCommit)
                         ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
 
@@ -542,12 +546,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         public IEnumerable<TData> Query(DataContext context, Expression<Func<TData, bool>> query, Guid queryId, int offset, int count, out int totalResults, bool countResults, IPrincipal principal)
         {
             var retVal = this.QueryInternal(context, query, queryId, offset, count, out totalResults, principal, countResults);
-            foreach (var i in retVal.Where(i => i != null))
-            {
-                context.AddCacheCommit(i);
-            }
             return retVal;
-
         }
        
 

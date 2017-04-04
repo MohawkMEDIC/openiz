@@ -178,7 +178,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     if (securityRole == null)
                         throw new KeyNotFoundException(String.Format("Role {0} not found", role));
 
-                    var query = new SqlStatement<DbSecurityUserRole>().SelectFrom()
+                    var query = dataContext.CreateSqlStatement<DbSecurityUserRole>().SelectFrom()
                         .InnerJoin<DbSecurityUser, DbSecurityUserRole>()
                         .Where(o => o.RoleKey == securityRole.Key);
 
@@ -226,7 +226,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     if (securityUser == null)
                         throw new KeyNotFoundException(String.Format("User {0} not found", userName));
 
-                    var query = new SqlStatement<DbSecurityUserRole>().SelectFrom()
+                    var query = dataContext.CreateSqlStatement<DbSecurityUserRole>().SelectFrom()
                         .InnerJoin<DbSecurityRole, DbSecurityUserRole>()
                         .Where(o => o.UserKey == securityUser.Key);
 

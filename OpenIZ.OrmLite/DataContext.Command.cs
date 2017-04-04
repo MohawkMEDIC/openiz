@@ -125,6 +125,11 @@ namespace OpenIZ.OrmLite
         };
 
         /// <summary>
+        /// True if the connection is readonly
+        /// </summary>
+        public bool IsReadonly { get; private set; }
+
+        /// <summary>
         /// Execute a stored procedure transposing the result set back to <typeparamref name="TModel"/>
         /// </summary>
         public IEnumerable<TModel> Query<TModel>(String spName, params object[] arguments)
@@ -143,7 +148,7 @@ namespace OpenIZ.OrmLite
                             return this.ReaderToCollection<TModel>(rdr).ToList();
                 }
                 else
-                    using(DataContext subContext = this.m_provider.CloneConnection(this))
+                    using(DataContext subContext = this.OpenClonedConnection())
                     using (var dbc = this.m_provider.CreateStoredProcedureCommand(subContext, spName, arguments))
                     using (var rdr = dbc.ExecuteReader())
                         return this.ReaderToCollection<TModel>(rdr).ToList();
@@ -237,7 +242,7 @@ namespace OpenIZ.OrmLite
                             return this.ReaderToResult(returnType, rdr);
                 }
                 else
-                    using (var subContext = this.m_provider.CloneConnection(this))
+                    using (var subContext = this.OpenClonedConnection())
                     using (var dbc = this.m_provider.CreateCommand(subContext, stmt))
                     using (var rdr = dbc.ExecuteReader())
                         return this.ReaderToResult(returnType, rdr);
@@ -271,7 +276,7 @@ namespace OpenIZ.OrmLite
                 }
                 else
                 {
-                    using (var subContext = this.m_provider.CloneConnection(this))
+                    using (var subContext = this.OpenClonedConnection())
                     using (var dbc = this.m_provider.CreateStoredProcedureCommand(subContext, spName, arguments))
                     using (var rdr = dbc.ExecuteReader())
                         return this.ReaderToResult<TModel>(rdr);
@@ -297,7 +302,7 @@ namespace OpenIZ.OrmLite
             try
             {
 #endif
-                var stmt = new SqlStatement<TModel>().SelectFrom().Where(querySpec).Limit(1);
+                var stmt = this.CreateSqlStatement<TModel>().SelectFrom().Where(querySpec).Limit(1);
                 if (this.Transaction != null)
                 {
                     lock (this.m_lockObject)
@@ -307,7 +312,7 @@ namespace OpenIZ.OrmLite
                 }
                 else
                 {
-                    using (var subContext = this.m_provider.CloneConnection(this))
+                    using (var subContext = this.OpenClonedConnection())
                     using (var dbc = this.m_provider.CreateCommand(subContext, stmt))
                     using (var rdr = dbc.ExecuteReader())
                         return this.ReaderToResult<TModel>(rdr);
@@ -342,7 +347,7 @@ namespace OpenIZ.OrmLite
                 }
                 else
                 {
-                    using (var subContext = this.m_provider.CloneConnection(this))
+                    using (var subContext = this.OpenClonedConnection())
                     using (var dbc = this.m_provider.CreateCommand(subContext, stmt.Limit(1)))
                     using (var rdr = dbc.ExecuteReader())
                         return this.ReaderToResult<TModel>(rdr);
@@ -370,7 +375,7 @@ namespace OpenIZ.OrmLite
             try
             {
 #endif
-                var stmt = new SqlStatement<TModel>().SelectFrom().Where(querySpec).Limit(2);
+                var stmt = this.CreateSqlStatement<TModel>().SelectFrom().Where(querySpec).Limit(2);
 
                 if (this.Transaction != null)
                 {
@@ -385,7 +390,7 @@ namespace OpenIZ.OrmLite
                 }
                 else
                 {
-                    using (var subContext = this.m_provider.CloneConnection(this))
+                    using (var subContext = this.OpenClonedConnection())
                     using (var dbc = this.m_provider.CreateCommand(subContext, stmt))
                     using (var rdr = dbc.ExecuteReader())
                     {
@@ -416,7 +421,7 @@ namespace OpenIZ.OrmLite
             try
             {
 #endif
-                var stmt = this.m_provider.Exists(new SqlStatement<TModel>().SelectFrom().Where(querySpec));
+                var stmt = this.m_provider.Exists(this.CreateSqlStatement<TModel>().SelectFrom().Where(querySpec));
                 if (this.Transaction != null)
                 {
                     lock (this.m_lockObject)
@@ -425,7 +430,7 @@ namespace OpenIZ.OrmLite
                 }
                 else
                 {
-                    using(var subContext = this.m_provider.CloneConnection(this))
+                    using(var subContext = this.OpenClonedConnection())
                         using (var dbc = this.m_provider.CreateCommand(subContext, stmt))
                             return (bool)dbc.ExecuteScalar();
                 }
@@ -459,7 +464,7 @@ namespace OpenIZ.OrmLite
                 }
                 else
                 {
-                    using (var subContext = this.m_provider.CloneConnection(this))
+                    using (var subContext = this.OpenClonedConnection())
                     using (var dbc = this.m_provider.CreateCommand(subContext, stmt))
                         return (bool)dbc.ExecuteScalar();
                 }
@@ -484,7 +489,7 @@ namespace OpenIZ.OrmLite
             try
             {
 #endif
-                var stmt = this.m_provider.Count(new SqlStatement<TModel>().SelectFrom().Where(querySpec));
+                var stmt = this.m_provider.Count(this.CreateSqlStatement<TModel>().SelectFrom().Where(querySpec));
                 if (this.Transaction != null)
                 {
                     lock (this.m_lockObject)
@@ -493,7 +498,7 @@ namespace OpenIZ.OrmLite
                 }
                 else
                 {
-                    using (var subContext = this.m_provider.CloneConnection(this))
+                    using (var subContext = this.OpenClonedConnection())
                     using (var dbc = this.m_provider.CreateCommand(subContext, stmt))
                         return (int)dbc.ExecuteScalar();
                 }
@@ -527,7 +532,7 @@ namespace OpenIZ.OrmLite
                 }
                 else
                 {
-                    using (var subContext = this.m_provider.CloneConnection(this))
+                    using (var subContext = this.OpenClonedConnection())
                     using (var dbc = this.m_provider.CreateCommand(subContext, stmt))
                         return Convert.ToInt32(dbc.ExecuteScalar());
                 }
@@ -570,7 +575,7 @@ namespace OpenIZ.OrmLite
             try
             {
 #endif
-                var query = new SqlStatement<TModel>().SelectFrom().Where(querySpec);
+                var query = this.CreateSqlStatement<TModel>().SelectFrom().Where(querySpec);
                 if (this.Transaction != null)
                 {
                     lock (this.m_lockObject)
@@ -580,7 +585,7 @@ namespace OpenIZ.OrmLite
                 }
                 else
                 {
-                    using (var subContext = this.m_provider.CloneConnection(this))
+                    using (var subContext = this.OpenClonedConnection())
                     using (var dbc = this.m_provider.CreateCommand(subContext, query))
                     using (var rdr = dbc.ExecuteReader())
                         return this.ReaderToCollection<TModel>(rdr).ToList();
@@ -628,8 +633,8 @@ namespace OpenIZ.OrmLite
                 }
                 else
                 {
-                    using (var subContext = this.m_provider.CloneConnection(this))
-                    using (var dbc = this.m_provider.CreateCommand(this, query))
+                    using (var subContext = this.OpenClonedConnection())
+                    using (var dbc = this.m_provider.CreateCommand(subContext, query))
                     using (var rdr = dbc.ExecuteReader())
                         return this.ReaderToCollection<TModel>(rdr).ToList();
                 }
@@ -657,8 +662,8 @@ namespace OpenIZ.OrmLite
                 // First we want to map object to columns
                 var tableMap = TableMapping.Get(typeof(TModel));
 
-                SqlStatement columnNames = new SqlStatement(),
-                    values = new SqlStatement();
+                SqlStatement columnNames = this.CreateSqlStatement(),
+                    values = this.CreateSqlStatement();
                 foreach (var col in tableMap.Columns)
                 {
                     var val = col.SourceProperty.GetValue(value);
@@ -688,7 +693,7 @@ namespace OpenIZ.OrmLite
 
                 // Return arrays
                 var stmt = this.m_provider.Returning(
-                    new SqlStatement($"INSERT INTO {tableMap.TableName} (").Append(columnNames).Append(") VALUES (").Append(values).Append(")"),
+                    this.CreateSqlStatement($"INSERT INTO {tableMap.TableName} (").Append(columnNames).Append(") VALUES (").Append(values).Append(")"),
                     returnKeys.ToArray()
                 );
 
@@ -735,7 +740,7 @@ namespace OpenIZ.OrmLite
             try
             {
 #endif
-                var query = new SqlStatement<TModel>().DeleteFrom().Where(where);
+                var query = this.CreateSqlStatement<TModel>().DeleteFrom().Where(where);
                 lock(this.m_lockObject)
                 using (var dbc = this.m_provider.CreateCommand(this, query))
                     dbc.ExecuteNonQuery();
@@ -761,7 +766,7 @@ namespace OpenIZ.OrmLite
             {
 #endif
                 var tableMap = TableMapping.Get(typeof(TModel));
-                SqlStatement whereClause = new SqlStatement();
+                SqlStatement whereClause = this.CreateSqlStatement();
                 foreach (var itm in tableMap.Columns)
                 {
                     var itmValue = itm.SourceProperty.GetValue(obj);
@@ -769,7 +774,7 @@ namespace OpenIZ.OrmLite
                         whereClause.And($"{itm.Name} = ?", itmValue);
                 }
 
-                var query = new SqlStatement<TModel>().DeleteFrom().Where(whereClause);
+                var query = this.CreateSqlStatement<TModel>().DeleteFrom().Where(whereClause);
                 lock(this.m_lockObject)
                 using (var dbc = this.m_provider.CreateCommand(this, query))
                     dbc.ExecuteNonQuery();
@@ -797,8 +802,8 @@ namespace OpenIZ.OrmLite
 #endif
                 // Build the command
                 var tableMap = TableMapping.Get(typeof(TModel));
-                SqlStatement<TModel> query = new SqlStatement<TModel>().UpdateSet();
-                SqlStatement whereClause = new SqlStatement();
+                SqlStatement<TModel> query = this.CreateSqlStatement<TModel>().UpdateSet();
+                SqlStatement whereClause = this.CreateSqlStatement();
                 foreach (var itm in tableMap.Columns)
                 {
                     var itmValue = itm.SourceProperty.GetValue(value);

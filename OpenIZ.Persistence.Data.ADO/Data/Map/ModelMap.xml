@@ -232,6 +232,7 @@
 
   <class modelClass="OpenIZ.Core.Model.DataTypes.ExtensionType, OpenIZ.Core.Model, Version=1.0.0.0"
    domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility.DbExtensionType, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="ModifiedOn" domainName="CreationTime"/>
   </class>
 
   <!-- Person Maps -->

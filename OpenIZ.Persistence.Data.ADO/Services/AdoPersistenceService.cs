@@ -107,7 +107,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             try
             {
                 s_mapper = new ModelMapper(typeof(AdoPersistenceService).GetTypeInfo().Assembly.GetManifestResourceStream(AdoDataConstants.MapResourceName));
-                s_queryBuilder = new QueryBuilder(s_mapper);
+                s_queryBuilder = new QueryBuilder(s_mapper, s_configuration.Provider);
             }
             catch (ModelMapValidationException ex)
             {

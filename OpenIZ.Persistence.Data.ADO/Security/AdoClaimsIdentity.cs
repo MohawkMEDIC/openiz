@@ -116,7 +116,7 @@ namespace OpenIZ.Persistence.Data.ADO.Security
                         throw new AuthenticationException(fnResult.Object2.ErrorCode);
                     var user = fnResult.Object1;
 
-                    var roles = dataContext.Query<DbSecurityRole>(new SqlStatement<DbSecurityRole>().SelectFrom()
+                    var roles = dataContext.Query<DbSecurityRole>(dataContext.CreateSqlStatement< DbSecurityRole>().SelectFrom()
                         .InnerJoin<DbSecurityUserRole>(o => o.Key, o => o.RoleKey)
                         .Where<DbSecurityUserRole>(o => o.UserKey == user.Key));
 
@@ -180,7 +180,7 @@ namespace OpenIZ.Persistence.Data.ADO.Security
 
                     // Grab the user and re-authenticate them
                     var user = dataContext.SingleOrDefault<DbSecurityUser>(u => u.Key == secretClaim.SourceKey);
-                    var roles = dataContext.Query<DbSecurityRole>(new SqlStatement<DbSecurityRole>().SelectFrom()
+                    var roles = dataContext.Query<DbSecurityRole>(dataContext.CreateSqlStatement<DbSecurityRole>().SelectFrom()
                         .InnerJoin<DbSecurityUserRole>(o => o.Key, o => o.RoleKey)
                         .Where<DbSecurityUserRole>(o => o.UserKey == user.Key));
 
@@ -250,7 +250,7 @@ namespace OpenIZ.Persistence.Data.ADO.Security
         internal static AdoClaimsIdentity Create(DbSecurityUser user, bool isAuthenticated = false, String authenticationMethod = null)
         {
 
-            var roles = user.Context.Query<DbSecurityRole>(new SqlStatement<DbSecurityRole>().SelectFrom()
+            var roles = user.Context.Query<DbSecurityRole>(user.Context.CreateSqlStatement<DbSecurityRole>().SelectFrom()
                         .InnerJoin<DbSecurityUserRole>(o => o.Key, o => o.RoleKey)
                         .Where<DbSecurityUserRole>(o => o.UserKey == user.Key));
             return new AdoClaimsIdentity(user, roles, isAuthenticated) { m_authenticationType = authenticationMethod };
@@ -272,7 +272,7 @@ namespace OpenIZ.Persistence.Data.ADO.Security
                     if (user == null)
                         return null;
 
-                    var roles = dataContext.Query<DbSecurityRole>(new SqlStatement<DbSecurityRole>().SelectFrom()
+                    var roles = dataContext.Query<DbSecurityRole>(dataContext.CreateSqlStatement<DbSecurityRole>().SelectFrom()
                         .InnerJoin<DbSecurityUserRole>(o => o.Key, o => o.RoleKey)
                         .Where<DbSecurityUserRole>(o => o.UserKey == user.Key));
 

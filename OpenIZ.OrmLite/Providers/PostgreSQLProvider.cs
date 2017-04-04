@@ -72,7 +72,7 @@ namespace OpenIZ.OrmLite.Providers
         {
             var conn = this.GetProviderFactory().CreateConnection();
             conn.ConnectionString = this.ReadonlyConnectionString;
-            return new DataContext(this, conn);
+            return new DataContext(this, conn, true);
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace OpenIZ.OrmLite.Providers
         {
             var conn = this.GetProviderFactory().CreateConnection();
             conn.ConnectionString = this.ConnectionString;
-            return new DataContext(this, conn);
+            return new DataContext(this, conn, false);
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace OpenIZ.OrmLite.Providers
         /// </summary>
         public SqlStatement Count(SqlStatement sqlStatement)
         {
-            return new SqlStatement("SELECT COUNT(*) FROM (").Append(sqlStatement.Build()).Append(") Q0");
+            return new SqlStatement(this, "SELECT COUNT(*) FROM (").Append(sqlStatement.Build()).Append(") Q0");
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace OpenIZ.OrmLite.Providers
         /// </summary>
         public SqlStatement Exists(SqlStatement sqlStatement)
         {
-            return new SqlStatement("SELECT CASE WHEN EXISTS (").Append(sqlStatement.Build()).Append(") THEN true ELSE false END");
+            return new SqlStatement(this, "SELECT CASE WHEN EXISTS (").Append(sqlStatement.Build()).Append(") THEN true ELSE false END");
         }
 
         /// <summary>
@@ -223,9 +223,27 @@ namespace OpenIZ.OrmLite.Providers
         /// </summary>
         public DataContext CloneConnection(DataContext source)
         {
-            var conn = this.GetProviderFactory().CreateConnection();
-            conn.ConnectionString = source.Connection.ConnectionString;
-            return new DataContext(this, conn);
+            return source.IsReadonly ? this.GetReadonlyConnection() : this.GetWriteConnection();
+        }
+
+        /// <summary>
+        /// Create SQL keyword
+        /// </summary>
+        public string CreateSqlKeyword(SqlKeyword keywordType)
+        {
+            switch(keywordType)
+            {
+                case SqlKeyword.ILike:
+                    return " ILIKE ";
+                case SqlKeyword.Like:
+                    return " LIKE ";
+                case SqlKeyword.Lower:
+                    return " LOWER ";
+                case SqlKeyword.Upper:
+                    return " UPPER ";
+                default:
+                    throw new NotImplementedException();
+            }
         }
     }
 }

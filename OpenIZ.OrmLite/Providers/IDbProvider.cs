@@ -35,6 +35,11 @@ namespace OpenIZ.OrmLite.Providers
         String ConnectionString { get; set; }
 
         /// <summary>
+        /// Create SQL keyword
+        /// </summary>
+        String CreateSqlKeyword(SqlKeyword keywordType);
+
+        /// <summary>
         /// Retrieves a readonly connection
         /// </summary>
         DataContext GetReadonlyConnection();

@@ -9,6 +9,7 @@ using OpenIZ.OrmLite.Providers;
 using OpenIZ.Core.Diagnostics;
 using System.Threading;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Map;
 
 namespace OpenIZ.OrmLite
 {
@@ -37,6 +38,7 @@ namespace OpenIZ.OrmLite
 
         // Trace source
         private Tracer m_tracer = Tracer.GetTracer(typeof(DataContext));
+       
 
         /// <summary>
         /// Connection
@@ -64,6 +66,14 @@ namespace OpenIZ.OrmLite
         /// </summary>
         public IDbTransaction Transaction { get { return this.m_transaction; } }
 
+        /// <summary>
+        /// Query builder
+        /// </summary>
+        public QueryBuilder GetQueryBuilder(ModelMapper map)
+        {
+            return new QueryBuilder(map, this.m_provider);
+        }
+
 
         /// <summary>
         /// Creates a new data context
@@ -73,7 +83,17 @@ namespace OpenIZ.OrmLite
             this.m_provider = provider;
             this.m_connection = connection;
         }
-        
+
+        /// <summary>
+        /// Creates a new data context
+        /// </summary>
+        public DataContext(IDbProvider provider, IDbConnection connection, bool isReadonly)
+        {
+            this.m_provider = provider;
+            this.m_connection = connection;
+            this.IsReadonly = isReadonly;
+        }
+
         /// <summary>
         /// Creates a new data context
         /// </summary>
@@ -107,6 +127,16 @@ namespace OpenIZ.OrmLite
         }
 
         /// <summary>
+        /// Open a cloned connection
+        /// </summary>
+        private DataContext OpenClonedConnection()
+        {
+            var retVal = this.m_provider.CloneConnection(this);
+            retVal.Open();
+            return retVal;
+        }
+
+        /// <summary>
         /// Dispose this object
         /// </summary>
         public void Dispose()
@@ -122,6 +152,30 @@ namespace OpenIZ.OrmLite
         {
             if (data.Key.HasValue && !this.m_cacheCommit.ContainsKey(data.Key.Value) && data.Key.HasValue)
                 this.m_cacheCommit.Add(data.Key.Value, data);
+        }
+
+        /// <summary>
+        /// Create sql statement
+        /// </summary>
+        public SqlStatement CreateSqlStatement()
+        {
+            return new SqlStatement(this.m_provider);
+        }
+
+        /// <summary>
+        /// Create sql statement
+        /// </summary>
+        public SqlStatement CreateSqlStatement(String sql, params object[] args)
+        {
+            return new SqlStatement(this.m_provider, sql, args);
+        }
+
+        /// <summary>
+        /// Create SQL statement
+        /// </summary>
+        public SqlStatement<T> CreateSqlStatement<T>()
+        {
+            return new SqlStatement<T>(this.m_provider);
         }
     }
 }
