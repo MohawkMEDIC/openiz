@@ -122,6 +122,12 @@
     
   </class>
 
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptRelationship, OpenIZ.Core.Model, Version=0.6.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Concepts.DbConceptRelationship, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0">
+
+  </class>
+
   <class modelClass="OpenIZ.Core.Model.DataTypes.ReferenceTerm, OpenIZ.Core.Model, Version=0.6.0.0"
         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Concepts.DbReferenceTerm, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0">
   </class>

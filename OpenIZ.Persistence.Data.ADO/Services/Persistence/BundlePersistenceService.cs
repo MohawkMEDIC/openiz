@@ -75,7 +75,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Query the specified object
         /// </summary>
-        public override IEnumerable<Bundle> QueryInternal(DataContext context, Expression<Func<Bundle, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
+        public override IEnumerable<Bundle> QueryInternal(DataContext context, Expression<Func<Bundle, bool>> query, Guid queryId, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
         {
             totalResults = 0;
             return new List<Bundle>().AsQueryable();

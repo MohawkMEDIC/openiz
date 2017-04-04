@@ -43,6 +43,11 @@ namespace OpenIZ.Core.Model.Query
     public class QueryExpressionParser
     {
 
+        // Member cache
+        private static Dictionary<Type, Dictionary<String, PropertyInfo>> m_memberCache = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
+        // Cast cache
+        private static Dictionary<String, Type> m_castCache = new Dictionary<string, Type>();
+
         /// <summary>
         /// Buidl linq expression
         /// </summary>
@@ -127,10 +132,29 @@ namespace OpenIZ.Core.Model.Query
                         pMember = pMember.Substring(0, pMember.IndexOf("@"));
                     }
 
-                    // Get member info
-                    var memberInfo = accessExpression.Type.GetRuntimeProperties().FirstOrDefault(p => p.GetCustomAttributes<XmlElementAttribute>()?.Any(a => a.ElementName == pMember) == true);
-                    if (memberInfo == null)
-                        throw new ArgumentOutOfRangeException(currentValue.Key);
+                    // Get member cache for data
+                    Dictionary<String, PropertyInfo> memberCache = null;
+                    if(!m_memberCache.TryGetValue(accessExpression.Type, out memberCache))
+                    {
+                        memberCache = new Dictionary<string, PropertyInfo>();
+                        lock (m_memberCache)
+                            if (!m_memberCache.ContainsKey(accessExpression.Type))
+                                m_memberCache.Add(accessExpression.Type, memberCache);
+                    }
+
+                    // Add member info
+                    PropertyInfo memberInfo = null;
+                    if (!memberCache.TryGetValue(pMember, out memberInfo))
+                    {
+                        memberInfo = accessExpression.Type.GetRuntimeProperties().FirstOrDefault(p => p.GetCustomAttributes<XmlElementAttribute>()?.Any(a => a.ElementName == pMember) == true);
+                        if (memberInfo == null)
+                            throw new ArgumentOutOfRangeException(currentValue.Key);
+
+                        // Member cache
+                        lock (memberCache)
+                            if (!memberCache.ContainsKey(pMember))
+                                memberCache.Add(pMember, memberInfo);
+                    }
 
                     // Handle XML props
                     if (memberInfo.Name.EndsWith("Xml"))
@@ -147,9 +171,18 @@ namespace OpenIZ.Core.Model.Query
 
                     if (!String.IsNullOrEmpty(cast))
                     {
-                        Type castType = typeof(QueryExpressionParser).GetTypeInfo().Assembly.ExportedTypes.FirstOrDefault(o => o.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName == cast);
-                        if (castType == null)
-                            throw new ArgumentOutOfRangeException(nameof(castType), cast);
+
+                        Type castType = null;
+                        if (!m_castCache.TryGetValue(cast, out castType))
+                        {
+                            castType = typeof(QueryExpressionParser).GetTypeInfo().Assembly.ExportedTypes.FirstOrDefault(o => o.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName == cast);
+                            if (castType == null)
+                                throw new ArgumentOutOfRangeException(nameof(castType), cast);
+
+                            lock (m_castCache)
+                                if (!m_castCache.ContainsKey(cast))
+                                    m_castCache.Add(cast, castType);
+                        }
                         accessExpression = Expression.TypeAs(accessExpression, castType);
                     }
                     if(coalesce)

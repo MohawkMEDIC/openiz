@@ -17,35 +17,8 @@ namespace OpenIZ.OrmLite
     /// </summary>
     public partial class DataContext : IDisposable
     {
-
-        /// <summary>
-        /// Context lock
-        /// </summary>
-        public class ContextLock : IDisposable
-        {
-            // Lock object
-            private object m_lockObject = null;
-
-            /// <summary>
-            /// Locks the lock object
-            /// </summary>
-            /// <param name="lockObject"></param>
-            public ContextLock(Object lockObject)
-            {
-                this.m_lockObject = lockObject;
-                bool lockTaken = false;
-                Monitor.Enter(this.m_lockObject, ref lockTaken);
-            }
-
-            /// <summary>
-            /// Dispose of the lock
-            /// </summary>
-            public void Dispose()
-            {
-                if (Monitor.IsEntered(this.m_lockObject))
-                    Monitor.Exit(this.m_lockObject);
-            }
-        }
+        // Lock object
+        private object m_lockObject = new object();
 
         // the connection
         private IDbConnection m_connection;
@@ -91,13 +64,6 @@ namespace OpenIZ.OrmLite
         /// </summary>
         public IDbTransaction Transaction { get { return this.m_transaction; } }
 
-        /// <summary>
-        /// Gets a lock for the specific connection
-        /// </summary>
-        public ContextLock Lock()
-        {
-            return new ContextLock(this.m_provider.Lock(this.m_connection));
-        }
 
         /// <summary>
         /// Creates a new data context
@@ -107,7 +73,7 @@ namespace OpenIZ.OrmLite
             this.m_provider = provider;
             this.m_connection = connection;
         }
-
+        
         /// <summary>
         /// Creates a new data context
         /// </summary>

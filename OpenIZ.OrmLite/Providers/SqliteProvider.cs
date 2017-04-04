@@ -235,5 +235,16 @@ namespace OpenIZ.OrmLite.Providers
             return retVal;
         }
 
+        /// <summary>
+        /// Clone this connection
+        /// </summary>
+        public DataContext CloneConnection(DataContext source)
+        {
+            if (this.m_provider == null)
+                this.m_provider = Activator.CreateInstance(Type.GetType("System.Data.SQLite.SQLiteProviderFactory, System.Data.SQLite, Culture=nuetral")) as DbProviderFactory;
+            var conn = this.m_provider.CreateConnection();
+            conn.ConnectionString = source.Connection.ConnectionString;
+            return new DataContext(this, conn);
+        }
     }
 }

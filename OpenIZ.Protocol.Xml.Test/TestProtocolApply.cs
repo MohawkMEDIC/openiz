@@ -402,7 +402,7 @@ namespace OpenIZ.Protocol.Xml.Test
                 if(i.EndsWith(".xml"))
                 {
                     ProtocolDefinition definition = ProtocolDefinition.Load(typeof(TestProtocolApply).Assembly.GetManifestResourceStream(i));
-                    retVal.Add(new XmlClinicalProtocol(definition).GetProtcolData());
+                    retVal.Add(new XmlClinicalProtocol(definition).GetProtocolData());
                 }
             totalResults = retVal.Count;
             return retVal;

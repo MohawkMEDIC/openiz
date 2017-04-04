@@ -40,6 +40,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		public AssigningAuthorityResourceHandler()
 		{
 			ApplicationContext.Current.Started += (o, e) => this.m_repository = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
+                
 		}
 
 		/// <summary>

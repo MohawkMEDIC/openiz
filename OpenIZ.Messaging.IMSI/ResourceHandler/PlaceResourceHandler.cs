@@ -99,7 +99,8 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <summary>
 		/// Gets the specified data
 		/// </summary>
-		public IdentifiedData Get(Guid id, Guid versionId)
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public IdentifiedData Get(Guid id, Guid versionId)
 		{
 			return this.m_repository.Get(id, versionId);
 		}
@@ -116,18 +117,26 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <summary>
 		/// Queries for the specified data
 		/// </summary>
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			return this.m_repository.Find(QueryExpressionParser.BuildLinqExpression<Place>(queryParameters));
-		}
+            int tr = 0;
+            return this.Query(queryParameters, 0, 100, out tr);
+        }
 
 		/// <summary>
 		/// Query for specified data with limits
 		/// </summary>
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			return this.m_repository.Find(QueryExpressionParser.BuildLinqExpression<Place>(queryParameters), offset, count, out totalCount);
-		}
+            var filter = QueryExpressionParser.BuildLinqExpression<Place>(queryParameters);
+            List<String> queryId = null;
+            if (this.m_repository is IPersistableQueryRepositoryService && queryParameters.TryGetValue("_queryId", out queryId))
+                return (this.m_repository as IPersistableQueryRepositoryService).Find(filter, offset, count, out totalCount, Guid.Parse(queryId[0]));
+            else
+                return this.m_repository.Find(filter, offset, count, out totalCount);
+        }
 
 		/// <summary>
 		/// Updates the specified object

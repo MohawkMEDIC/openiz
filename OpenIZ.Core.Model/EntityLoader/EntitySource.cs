@@ -77,6 +77,7 @@ namespace OpenIZ.Core.Model.EntityLoader
             {
                 return new List<TObject>();
             }
+
         }
 
         // Load object

@@ -41,7 +41,7 @@ namespace OpenIZ.Core.Protocol
         /// <summary>
         /// Get the protocol data
         /// </summary>
-        Core.Model.Acts.Protocol GetProtcolData();
+        Core.Model.Acts.Protocol GetProtocolData();
 
         /// <summary>
         /// Gets the identifier for the protocol
@@ -67,6 +67,6 @@ namespace OpenIZ.Core.Protocol
         /// Called prior to performing calculation of the care protocol allowing the object to prepare the object for whatever 
         /// pre-requisite data is needed for the protocol
         /// </summary>
-        void Initialize(Patient p);
+        void Initialize(Patient p, IDictionary<String, Object> parameters);
     }
 }

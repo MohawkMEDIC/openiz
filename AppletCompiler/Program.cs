@@ -222,6 +222,7 @@ namespace AppletCompiler
                             htmlAsset.Bundle = new List<string>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "bundle").Select(o=> ResolveName(o.Value)));
                             htmlAsset.Script = new List<string>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "script").Select(o=> ResolveName(o.Value)));
                             htmlAsset.Style = new List<string>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "style").Select(o => ResolveName(o.Value)));
+                            htmlAsset.Static = xe.Attribute(xs_openiz + "static")?.Value == "true";
                             htmlAsset.ViewState = xe.Elements().OfType<XElement>().Where(o => o.Name == xs_openiz + "state").Select(o=>new AppletViewState()
                             {
                                 Name = o.Attribute("name")?.Value,

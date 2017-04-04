@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -46,7 +47,8 @@ namespace OpenIZ.Core.Services.Impl
         IRepositoryService<QuantityObservation>,
         IRepositoryService<PatientEncounter>,
         IRepositoryService<CodedObservation>,
-        IRepositoryService<TextObservation>
+        IRepositoryService<TextObservation>,
+        IPersistableQueryRepositoryService
 	{
 		/// <summary>
 		/// Finds acts based on a specific query.
@@ -60,18 +62,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <exception cref="System.InvalidOperationException">Unable to locate persistence service.</exception>
 		public IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> query, int offset, int? count, out int totalResults) where TAct : Act
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"Unable to locate persistence service {nameof(IDataPersistenceService<TAct>)}");
-			}
-
-			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TAct>();
-
-			var results = persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
-
-			return businessRulesService?.AfterQuery(results) ?? results;
+            return this.Find<TAct>(query, offset, count, out totalResults, Guid.Empty);
 		}
 
 		/// <summary>
@@ -306,5 +297,28 @@ namespace OpenIZ.Core.Services.Impl
 
 			return data;
 		}
+
+        /// <summary>
+        /// Find the specified object
+        /// </summary>
+        public IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> query, int offset, int? count, out int totalResults, Guid queryId) where TAct : IdentifiedData
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
+
+            if (persistenceService == null)
+            {
+                throw new InvalidOperationException($"Unable to locate persistence service {nameof(IDataPersistenceService<TAct>)}");
+            }
+
+            var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TAct>();
+
+            IEnumerable<TAct> results = null;
+            if (queryId != Guid.Empty && persistenceService is IStoredQueryDataPersistenceService<TAct>)
+                results = (persistenceService as IStoredQueryDataPersistenceService<TAct>).Query(query, queryId, offset, count, AuthenticationContext.Current.Principal, out totalResults);
+            else
+                results = persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
+
+            return businessRulesService?.AfterQuery(results) ?? results;
+        }
     }
 }

@@ -331,9 +331,12 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 			return retVal;
 		}
 
-		public override IEnumerable<SecurityUser> QueryInternal(DataContext context, Expression<Func<SecurityUser, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
+        /// <summary>
+        /// Query internal
+        /// </summary>
+		public override IEnumerable<SecurityUser> QueryInternal(DataContext context, Expression<Func<SecurityUser, bool>> query, Guid queryId, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
 		{
-			var results = base.QueryInternal(context, query, offset, count, out totalResults, principal, countResults);
+			var results = base.QueryInternal(context, query, queryId, offset, count, out totalResults, principal, countResults);
 
 			var users = new List<SecurityUser>();
 

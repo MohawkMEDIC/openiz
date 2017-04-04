@@ -16,6 +16,7 @@ using System.Linq.Expressions;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using MARC.HI.EHRS.SVC.Core.Data;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -26,6 +27,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         where TModel : IdentifiedData, new()
         where TDomain: class, new()
     {
+
+        // Query persistence
+        protected MARC.HI.EHRS.SVC.Core.Services.IQueryPersistenceService m_queryPersistence = ApplicationContext.Current.GetService<MARC.HI.EHRS.SVC.Core.Services.IQueryPersistenceService>();
+
         /// <summary>
         /// Maps the data to a model instance
         /// </summary>
@@ -94,16 +99,25 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Performs the actual query
         /// </summary>
-        public override IEnumerable<TModel> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
+        public override IEnumerable<TModel> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, Guid queryId, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
         {
-            return this.QueryInternal(context, query, offset, count, out totalResults, countResults).Select(o => this.CacheConvert(o, context, principal));
+            return this.QueryInternal(context, query, queryId, offset, count, out totalResults, countResults).AsParallel().Select(o => this.CacheConvert(o, context, principal));
         }
         
         /// <summary>
         /// Perform the query 
         /// </summary>
-        protected virtual IEnumerable<TQueryReturn> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, bool incudeCount = true)
+        protected virtual IEnumerable<Object> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, Guid queryId, int offset, int? count, out int totalResults, bool incudeCount = true)
         {
+
+            // Query has been registered?
+            if (this.m_queryPersistence?.IsRegistered(queryId.ToString()) == true)
+            {
+                totalResults = (int)this.m_queryPersistence.QueryResultTotalQuantity(queryId.ToString());
+                return this.m_queryPersistence.GetQueryResults<Guid>(queryId.ToString(), offset, count.Value).Select(p => p.Id).OfType<Object>();
+            }
+
+            // Domain query
             SqlStatement domainQuery = null;
             try
             {
@@ -128,16 +142,21 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 domainQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query);
             }
 
-            if (incudeCount)
+            if (queryId != Guid.Empty)
+                this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), context.Query<TQueryReturn>(domainQuery.Build()).Select(o => new Identifier<Guid>((o as IDbIdentified)?.Key ?? (o as CompositeResult).Values.OfType<IDbIdentified>().First().Key)).ToArray(), query);
+
+            if (incudeCount && queryId == Guid.Empty)
                 totalResults = context.Count(domainQuery);
+            else if(incudeCount)
+                totalResults = (int)this.m_queryPersistence.QueryResultTotalQuantity(queryId.ToString());
             else
                 totalResults = 0;
-
+            
             if (offset > 0)
                 domainQuery.Offset(offset);
             if (count.HasValue)
                 domainQuery.Limit(count.Value);
-            return context.Query<TQueryReturn>(domainQuery);
+            return context.Query<TQueryReturn>(domainQuery).OfType<Object>();
         }
 
 

@@ -28,6 +28,9 @@ using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Security;
+using OpenIZ.Core.Security.Attribute;
+using System.Security.Permissions;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {
@@ -65,7 +68,8 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <param name="data">The resource data to be created.</param>
 		/// <param name="updateIfExists">Updates the resource if the resource exists.</param>
 		/// <returns>Returns the created resource.</returns>
-		public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
+        public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
 		{
 			var bundleData = data as Bundle;
 
@@ -112,7 +116,8 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		/// <param name="key">The key of the resource to obsolete.</param>
 		/// <returns>Returns the obsoleted resource.</returns>
-		public IdentifiedData Obsolete(Guid key)
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
+        public IdentifiedData Obsolete(Guid key)
 		{
 			return this.repository.GetReferenceTerm(key);
 		}
@@ -122,10 +127,12 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		/// <param name="queryParameters">The query parameters of the resource.</param>
 		/// <returns>Returns a collection of resources.</returns>
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			return this.repository.FindReferenceTerms(QueryExpressionParser.BuildLinqExpression<ReferenceTerm>(queryParameters));
-		}
+            int tr = 0;
+            return this.Query(queryParameters, 0, 100, out tr);
+        }
 
 		/// <summary>
 		/// Queries for a resource.
@@ -135,17 +142,24 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// <param name="count">The count of the query.</param>
 		/// <param name="totalCount">The total count of the results.</param>
 		/// <returns>Returns a collection of resources.</returns>
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			return this.repository.FindReferenceTerms(QueryExpressionParser.BuildLinqExpression<ReferenceTerm>(queryParameters), offset, count, out totalCount);
-		}
+            var filter = QueryExpressionParser.BuildLinqExpression<ReferenceTerm>(queryParameters);
+            List<String> queryId = null;
+            if (this.repository is IPersistableQueryRepositoryService && queryParameters.TryGetValue("_queryId", out queryId))
+                return (this.repository as IPersistableQueryRepositoryService).Find(filter, offset, count, out totalCount, Guid.Parse(queryId[0]));
+            else
+                return this.repository.FindReferenceTerms(filter, offset, count, out totalCount);
+        }
 
 		/// <summary>
 		/// Updates a resource.
 		/// </summary>
 		/// <param name="data">The resource data to be updated.</param>
 		/// <returns>Returns the updated resource.</returns>
-		public IdentifiedData Update(IdentifiedData data)
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
+        public IdentifiedData Update(IdentifiedData data)
 		{
 			var bundleData = data as Bundle;
 

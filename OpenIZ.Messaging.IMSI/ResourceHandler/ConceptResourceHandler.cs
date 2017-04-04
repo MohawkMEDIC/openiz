@@ -72,10 +72,11 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			throw new ArgumentException("Invalid persistence type");
 		}
 
-		/// <summary>
-		/// Get the specified instance
-		/// </summary>
-		public IdentifiedData Get(Guid id, Guid versionId)
+        /// <summary>
+        /// Get the specified instance
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public IdentifiedData Get(Guid id, Guid versionId)
 		{
 			var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
 			return conceptService.GetConcept(id, versionId);
@@ -91,22 +92,31 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			return conceptService.ObsoleteConcept(key);
 		}
 
-		/// <summary>
-		/// Query the specified data
-		/// </summary>
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
+        /// <summary>
+        /// Query the specified data
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
-			return conceptService.FindConcepts(QueryExpressionParser.BuildLinqExpression<Concept>(queryParameters));
+            int tr = 0;
+			return this.Query(queryParameters, 0, 100, out tr);
 		}
 
-		/// <summary>
-		/// Query with offsets
-		/// </summary>
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out Int32 totalCount)
+        /// <summary>
+        /// Query with offsets
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out Int32 totalCount)
 		{
-			var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
-			return conceptService.FindConcepts(QueryExpressionParser.BuildLinqExpression<Concept>(queryParameters), offset, count, out totalCount);
+            var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+
+            var filter = QueryExpressionParser.BuildLinqExpression<Concept>(queryParameters);
+            List<String> queryId = null;
+            if (conceptService is IPersistableQueryRepositoryService && queryParameters.TryGetValue("_queryId", out queryId))
+                return (conceptService as IPersistableQueryRepositoryService).Find(filter, offset, count, out totalCount, Guid.Parse(queryId[0]));
+            else
+                return conceptService.FindConcepts(filter, offset, count, out totalCount);
+            
 		}
 
 		/// <summary>

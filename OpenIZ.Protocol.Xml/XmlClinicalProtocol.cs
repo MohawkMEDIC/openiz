@@ -34,6 +34,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Diagnostics;
 using OpenIZ.Core.Applets.ViewModel.Null;
+using OpenIZ.Core.Applets.ViewModel.Description;
 
 namespace OpenIZ.Protocol.Xml
 {
@@ -44,11 +45,11 @@ namespace OpenIZ.Protocol.Xml
     public class XmlClinicalProtocol : IClinicalProtocol
     {
 
+        // Protocol definition
+        private Core.Model.Acts.Protocol m_protocolDefinition = null;
+
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(XmlClinicalProtocol));
-
-        // Null view model serializer
-        private NullViewModelSerializer m_viewModel = new NullViewModelSerializer();
 
         /// <summary>
         /// Default ctor
@@ -130,8 +131,10 @@ namespace OpenIZ.Protocol.Xml
                 // Get a clone to make decisions on
                 Patient patient = null;
                 lock (triggerPatient)
+                {
                     patient = triggerPatient.Clone() as Patient;
-                patient.Participations = new List<ActParticipation>(triggerPatient.Participations);
+                    patient.Participations = new List<ActParticipation>(triggerPatient.Participations);
+                }
 
                 this.m_tracer.TraceInfo("Calculate ({0}) for {1}...", this.Name, patient);
 
@@ -177,13 +180,13 @@ namespace OpenIZ.Protocol.Xml
                         {
                             var acts = rule.Then.Evaluate(patient, s_callbacks);
                             retVal.AddRange(acts);
-                            
+
                             // Assign protocol
                             foreach (var itm in acts)
                                 itm.Protocols.Add(new ActProtocol()
                                 {
                                     ProtocolKey = this.Id,
-                                    Protocol = this.GetProtcolData(),
+                                    Protocol = this.GetProtocolData(),
                                     Sequence = index
                                 });
 
@@ -193,10 +196,10 @@ namespace OpenIZ.Protocol.Xml
 
                     }
 
-                
+
                 // Now we want to add the stuff to the patient
                 lock (triggerPatient)
-                    triggerPatient.Participations.AddRange(retVal.Where(o=>o != null).Select(o=>new ActParticipation(ActParticipationKey.RecordTarget, triggerPatient) { Act = o, ParticipationRole = new Core.Model.DataTypes.Concept() { Key = ActParticipationKey.RecordTarget, Mnemonic = "RecordTarget" }, Key = Guid.NewGuid() }));
+                    triggerPatient.Participations.AddRange(retVal.Where(o => o != null).Select(o => new ActParticipation(ActParticipationKey.RecordTarget, triggerPatient) { Act = o, ParticipationRole = new Core.Model.DataTypes.Concept() { Key = ActParticipationKey.RecordTarget, Mnemonic = "RecordTarget" }, Key = Guid.NewGuid() }));
 #if DEBUG
                 sw.Stop();
                 this.m_tracer.TraceVerbose("Protocol {0} took {1} ms", this.Name, sw.ElapsedMilliseconds);
@@ -204,7 +207,7 @@ namespace OpenIZ.Protocol.Xml
 
                 return retVal;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.m_tracer.TraceError("Error applying protocol {0}: {1}", this.Name, e);
                 return new List<Act>();
@@ -214,20 +217,22 @@ namespace OpenIZ.Protocol.Xml
         /// <summary>
         /// Get protocol data
         /// </summary>
-        public Core.Model.Acts.Protocol GetProtcolData()
+        public Core.Model.Acts.Protocol GetProtocolData()
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                this.Definition.Save(ms);
-                return new Core.Model.Acts.Protocol()
+            if (this.m_protocolDefinition == null)
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    HandlerClass = this.GetType(),
-                    Name = this.Name,
-                    Definition = ms.ToArray(),
-                    Key = this.Id,
-                    Oid = this.Definition.Oid
-                };
-            }
+                    this.Definition.Save(ms);
+                    this.m_protocolDefinition = new Core.Model.Acts.Protocol()
+                    {
+                        HandlerClass = this.GetType(),
+                        Name = this.Name,
+                        Definition = ms.ToArray(),
+                        Key = this.Id,
+                        Oid = this.Definition.Oid
+                    };
+                }
+            return this.m_protocolDefinition;
         }
 
         /// <summary>
@@ -276,15 +281,29 @@ namespace OpenIZ.Protocol.Xml
         /// <summary>
         /// Initialize the patient
         /// </summary>
-        public void Initialize(Patient p)
+        public void Initialize(Patient p, IDictionary<String, Object> parameters)
         {
-            if (this.m_viewModel.ViewModel == null)
-            {
-                this.m_viewModel.ViewModel = this.Definition.Initialize;
-                this.m_viewModel.ViewModel?.Initialize();
+            if (parameters.ContainsKey("xml.initialized")) return;
+
+            // Merge the view models
+            NullViewModelSerializer serializer = new NullViewModelSerializer();
+
+            if(parameters["runProtocols"] == null) { 
+                serializer.ViewModel = this.Definition.Initialize;
+                serializer.ViewModel?.Initialize();
             }
+            else
+            {
+                serializer.ViewModel = ViewModelDescription.Merge((parameters["runProtocols"] as IEnumerable<IClinicalProtocol>).OfType<XmlClinicalProtocol>().Select(o => o.Definition.Initialize));
+                serializer.ViewModel?.Initialize();
+            }
+
             // serialize - This will load data
-            this.m_viewModel.Serialize(p);
+            serializer.Serialize(p);
+
+            parameters.Add("xml.initialized", true);
+
+            
         }
     }
 }

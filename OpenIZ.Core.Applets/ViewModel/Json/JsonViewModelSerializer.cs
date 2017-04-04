@@ -355,7 +355,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
             {
                 w.WritePropertyName(propertyName);
                 // Are we to never serialize this?
-                if (context?.ShouldSerialize(propertyName) == false)
+                if (context?.ShouldSerialize(propertyName) == false && !noSubContext)
                 {
                     w.WriteNull();
                     return;

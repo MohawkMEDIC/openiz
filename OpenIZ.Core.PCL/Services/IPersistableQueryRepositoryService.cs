@@ -8,7 +8,7 @@ namespace OpenIZ.Core.Services
 	/// <summary>
 	/// Persistable query provider is an extensable interface which can perform a query with state
 	/// </summary>
-	public interface IPersistableQueryProvider
+	public interface IPersistableQueryRepositoryService
 	{
 		/// <summary>
 		/// Performs a query which
@@ -19,6 +19,6 @@ namespace OpenIZ.Core.Services
 		/// <param name="count">The number of results</param>
 		/// <param name="totalResults">The total results in the query</param>
 		/// <param name="queryId">The unique identifier for the query</param>
-		IEnumerable<TEntity> Query<TEntity>(Expression<Func<TEntity, bool>> query, int offset, int? count, out int totalResults, Guid queryId) where TEntity : IdentifiedData;
+		IEnumerable<TEntity> Find<TEntity>(Expression<Func<TEntity, bool>> query, int offset, int? count, out int totalResults, Guid queryId) where TEntity : IdentifiedData;
 	}
 }

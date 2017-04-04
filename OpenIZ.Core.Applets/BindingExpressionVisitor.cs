@@ -71,6 +71,7 @@ namespace OpenIZ.Core.Applets
                             case "Any": // Any gets stripped
                                 {
                                     Expression bind = this.Visit(call.Arguments[0]);
+                                    bind = Expression.MakeBinary(ExpressionType.Coalesce, bind, Expression.New(bind.Type));
                                     var lambda = call.Arguments[1] as LambdaExpression;
 
                                     Expression leftExpression = null;

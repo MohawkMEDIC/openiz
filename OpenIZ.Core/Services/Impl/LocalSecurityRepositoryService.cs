@@ -40,7 +40,7 @@ namespace OpenIZ.Core.Services.Impl
 	/// <summary>
 	/// Represents a security repository service that uses the direct local services
 	/// </summary>
-	public class LocalSecurityRepositoryService : ISecurityRepositoryService
+	public class LocalSecurityRepositoryService : LocalEntityRepositoryServiceBase, ISecurityRepositoryService
 	{
 		private TraceSource m_traceSource = new TraceSource(OpenIzConstants.ServiceTraceSourceName);
 
@@ -79,23 +79,16 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<SecurityApplication>)} not found");
 			}
 
-			application.ApplicationSecret = this.Encode(application.ApplicationSecret);
+			application.ApplicationSecret = ApplicationContext.Current.GetService<IPasswordHashingService>().EncodePassword(application.ApplicationSecret);
 
 			var createdApplication = persistenceService.Insert(application, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
-			var applicationEntityPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ApplicationEntity>>();
-
-			if (applicationEntityPersistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ApplicationEntity>)} not found");
-			}
-
-			applicationEntityPersistenceService.Insert(new ApplicationEntity
-			{
-				SecurityApplication = createdApplication,
-				SoftwareName = application.Name,
-				StatusConceptKey = StatusKeys.Active
-			}, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			base.Insert(new ApplicationEntity
+            {
+                SecurityApplication = createdApplication,
+                SoftwareName = application.Name,
+                StatusConceptKey = StatusKeys.Active
+            });
 
 			return createdApplication;
 		}
@@ -117,23 +110,16 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<SecurityDevice>)} not found");
 			}
 
-			device.DeviceSecret = this.Encode(device.DeviceSecret);
+			device.DeviceSecret = ApplicationContext.Current.GetService<IPasswordHashingService>().EncodePassword(device.DeviceSecret);
 
 			var createdDevice = persistenceService.Insert(device, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
-			var deviceEntityPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<DeviceEntity>>();
-
-			if (deviceEntityPersistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<DeviceEntity>)} not found");
-			}
-
-			deviceEntityPersistenceService.Insert(new DeviceEntity
-			{
-				ManufacturerModelName = device.Name,
-				SecurityDevice = createdDevice,
-				StatusConceptKey = StatusKeys.Active
-			}, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            base.Insert(new DeviceEntity
+            {
+                ManufacturerModelName = device.Name,
+                SecurityDevice = createdDevice,
+                StatusConceptKey = StatusKeys.Active
+            });
 
 			return createdDevice;
 		}
@@ -228,10 +214,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public UserEntity CreateUserEntity(UserEntity userEntity)
 		{
-			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
-			if (persistence == null)
-				throw new InvalidOperationException("Persistence service missing");
-			return persistence.Insert(userEntity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            return base.Insert(userEntity);
 		}
 
 		/// <summary>
@@ -373,10 +356,8 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns></returns>
 		public IEnumerable<UserEntity> FindUserEntity(Expression<Func<UserEntity, bool>> expression)
 		{
-			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
-			if (persistence == null)
-				throw new InvalidOperationException("Persistence service missing");
-			return persistence.Query(expression, AuthenticationContext.Current.Principal);
+            int t = 0;
+            return this.FindUserEntity(expression, 0, null, out t);
 		}
 
 		/// <summary>
@@ -384,10 +365,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public IEnumerable<UserEntity> FindUserEntity(Expression<Func<UserEntity, bool>> expression, int offset, int? count, out int totalCount)
 		{
-			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
-			if (persistence == null)
-				throw new InvalidOperationException("Persistence service missing");
-			return persistence.Query(expression, offset, count, AuthenticationContext.Current.Principal, out totalCount);
+			return base.Find(expression, offset, count, out totalCount, Guid.Empty);
 		}
 
 		/// <summary>
@@ -548,33 +526,16 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public UserEntity GetUserEntity(IIdentity identity)
 		{
-			var pers = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
-			if (pers == null)
-				throw new InvalidOperationException("Missing persistence service");
-			int t = 0;
-			return pers.Query(o => o.SecurityUser.UserName == identity.Name, 0, 1, AuthenticationContext.Current.Principal, out t).FirstOrDefault();
+            int t = 0;
+            return base.Find<UserEntity>(o=>o.SecurityUser.UserName == identity.Name, 0, 1, out t, Guid.Empty).FirstOrDefault();
 		}
-
-		/// <summary>
-		/// Encodes a string using SHA-256.
-		/// </summary>
-		/// <param name="value">The string to be encoded.</param>
-		/// <returns>Returns the encoded string.</returns>
-		private string Encode(string value)
-		{
-			var hasher = SHA256.Create();
-			return BitConverter.ToString(hasher.ComputeHash(Encoding.UTF8.GetBytes(value))).Replace("-", "").ToLower();
-		}
-
+        
 		/// <summary>
 		/// Gets the specified user entity
 		/// </summary>
 		public UserEntity GetUserEntity(Guid id, Guid versionId)
 		{
-			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
-			if (persistence == null)
-				throw new InvalidOperationException("Persistence service missing");
-			return persistence.Get<Guid>(new Identifier<Guid>(id, versionId), AuthenticationContext.Current.Principal, false);
+			return base.Get<UserEntity>(id, versionId);
 		}
 
 		/// <summary>
@@ -609,6 +570,9 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<SecurityApplication>)} not found");
 			}
 
+            int t = 0;
+            var appEntity = base.Find<ApplicationEntity>(o => o.SecurityApplicationKey == applicationId, 0, 1, out t, Guid.Empty).FirstOrDefault();
+            base.Obsolete<ApplicationEntity>(appEntity.Key.Value);
 			return persistenceService.Obsolete(this.GetApplication(applicationId), AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
@@ -627,7 +591,11 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityDevice>)));
 			}
 
-			return persistenceService.Obsolete(this.GetDevice(deviceId), AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            int t = 0;
+            var devEntity = base.Find<DeviceEntity>(o => o.SecurityDeviceKey == deviceId, 0, 1, out t, Guid.Empty).FirstOrDefault();
+            base.Obsolete<DeviceEntity>(devEntity.Key.Value);
+
+            return persistenceService.Obsolete(this.GetDevice(deviceId), AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
 		/// <summary>
@@ -692,10 +660,8 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public UserEntity ObsoleteUserEntity(Guid id)
 		{
-			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
-			if (persistence == null)
-				throw new InvalidOperationException("Persistence service not found");
-			return persistence.Obsolete(new UserEntity() { Key = id }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			
+			return base.Obsolete<UserEntity>(id);
 		}
 
 		/// <summary>
@@ -796,17 +762,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public UserEntity SaveUserEntity(UserEntity userEntity)
 		{
-			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
-			if (persistence == null)
-				throw new InvalidOperationException("Persistence service not found");
-			try
-			{
-				return persistence.Update(userEntity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
-			catch
-			{
-				return persistence.Insert(userEntity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
+            return base.Save(userEntity);
 		}
 
 		/// <summary>

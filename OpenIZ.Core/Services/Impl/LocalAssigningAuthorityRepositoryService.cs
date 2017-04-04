@@ -25,13 +25,14 @@ using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Core.Services.Impl
 {
 	/// <summary>
 	/// Represents a repository service for managing assigning authorities.
 	/// </summary>
-	public class LocalAssigningAuthorityRepositoryService : IAssigningAuthorityRepositoryService
+	public class LocalAssigningAuthorityRepositoryService : IAssigningAuthorityRepositoryService, IPersistableQueryRepositoryService
 	{
 		/// <summary>
 		/// Finds a list of assigning authorities.
@@ -54,22 +55,33 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns a list of assigning authorities.</returns>
 		public IEnumerable<AssigningAuthority> Find(Expression<Func<AssigningAuthority, bool>> query, int offSet, int? count, out int totalCount)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<AssigningAuthority>)} not found");
-			}
-
-			return persistenceService.Query(query, offSet, count, AuthenticationContext.Current.Principal, out totalCount);
+            return this.Find<AssigningAuthority>(query, offSet, count, out totalCount, Guid.Empty);
 		}
 
-		/// <summary>
-		/// Gets an assigning authority.
-		/// </summary>
-		/// <param name="key">The key of the assigning authority to be retrieved.</param>
-		/// <returns>Returns an assigning authority.</returns>
-		public AssigningAuthority Get(Guid key)
+        /// <summary>
+        /// Find specified assigning authority
+        /// </summary>
+        public IEnumerable<TEntity> Find<TEntity>(Expression<Func<TEntity, bool>> query, int offset, int? count, out int totalResults, Guid queryId) where TEntity : IdentifiedData
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TEntity>>();
+
+            if (persistenceService == null)
+            {
+                throw new InvalidOperationException($"{nameof(IDataPersistenceService<AssigningAuthority>)} not found");
+            }
+
+            if(persistenceService is IStoredQueryDataPersistenceService<TEntity>)
+                return (persistenceService as IStoredQueryDataPersistenceService<TEntity>).Query(query, queryId, offset, count, AuthenticationContext.Current.Principal, out totalResults);
+            else
+                return persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
+        }
+
+        /// <summary>
+        /// Gets an assigning authority.
+        /// </summary>
+        /// <param name="key">The key of the assigning authority to be retrieved.</param>
+        /// <returns>Returns an assigning authority.</returns>
+        public AssigningAuthority Get(Guid key)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>();
 
@@ -114,13 +126,13 @@ namespace OpenIZ.Core.Services.Impl
 
 			return persistenceService.Obsolete(this.Get(key), AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
-
-		/// <summary>
-		/// Saves or inserts an assigning authority.
-		/// </summary>
-		/// <param name="assigningAuthority">The assigning authority to be saved.</param>
-		/// <returns>Returns the saved assigning authority.</returns>
-		public AssigningAuthority Save(AssigningAuthority assigningAuthority)
+    
+        /// <summary>
+        /// Saves or inserts an assigning authority.
+        /// </summary>
+        /// <param name="assigningAuthority">The assigning authority to be saved.</param>
+        /// <returns>Returns the saved assigning authority.</returns>
+        public AssigningAuthority Save(AssigningAuthority assigningAuthority)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>();
 

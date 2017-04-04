@@ -21,6 +21,7 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Exceptions;
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Security;
@@ -32,8 +33,8 @@ using System.Security.Principal;
 
 namespace OpenIZ.Core.Services.Impl
 {
-	internal class LocalProviderRepositoryService : IProviderRepositoryService
-	{
+	internal class LocalProviderRepositoryService : LocalEntityRepositoryServiceBase, IProviderRepositoryService
+    {
 		/// <summary>
 		/// Searches for a provider using a given predicate.
 		/// </summary>
@@ -41,14 +42,8 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns a list of providers who match the specified predicate.</returns>
 		public IEnumerable<Provider> Find(Expression<Func<Provider, bool>> predicate)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Provider>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException("No persistence service found");
-			}
-
-			return persistenceService.Query(predicate, AuthenticationContext.Current.Principal);
+            int t = 0;
+            return this.Find(predicate, 0, null, out t);
 		}
 
 		/// <summary>
@@ -61,14 +56,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns a list of providers who match the specified predicate.</returns>
 		public IEnumerable<Provider> Find(Expression<Func<Provider, bool>> predicate, int offset, int? count, out int totalCount)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Provider>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException("No persistence service found");
-			}
-
-			return persistenceService.Query(predicate, offset, count, AuthenticationContext.Current.Principal, out totalCount);
+            return base.Find(predicate, offset, count, out totalCount, Guid.Empty);
 		}
 
 		/// <summary>
@@ -76,16 +64,8 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public Provider Get(IIdentity identity)
 		{
-			var userService = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
-			var providerService = ApplicationContext.Current.GetService<IDataPersistenceService<Provider>>();
-
-			if (providerService == null)
-				throw new InvalidOperationException("No persistence service found");
-
-			// TODO: Make this one hit to the persistence layer
-			int t = 0;
-			var userEntity = userService.Query(o => o.SecurityUser.UserName == identity.Name, 0, 1, AuthenticationContext.Current.Principal, out t).FirstOrDefault();
-			return providerService.Query(o => o.Relationships.Any(r => r.SourceEntityKey == userEntity.Key || r.TargetEntityKey == userEntity.Key), 0, 1, AuthenticationContext.Current.Principal, out t).FirstOrDefault();
+            int t = 0;
+			return base.Find<Provider>(o=>o.Relationships.Any(g=>(g.TargetEntity as UserEntity).SecurityUser.UserName == identity.Name), 0, 1, out t, Guid.Empty).FirstOrDefault();
 		}
 
 		/// <summary>
@@ -96,14 +76,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the specified provider.</returns>
 		public Provider Get(Guid id, Guid versionId)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Provider>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException("No persistence service found");
-			}
-
-			return persistenceService.Get<Guid>(new Identifier<Guid>(id, versionId), AuthenticationContext.Current.Principal, false);
+            return base.Get<Provider>(id, versionId);
 		}
 
 		/// <summary>
@@ -113,14 +86,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the inserted provider.</returns>
 		public Provider Insert(Provider provider)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Provider>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException("No persistence service found");
-			}
-
-			return persistenceService.Insert(provider, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            return base.Insert(provider);
 		}
 
 		/// <summary>
@@ -130,14 +96,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the obsoleted provider.</returns>
 		public Provider Obsolete(Guid id)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Provider>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException("No persistence service found");
-			}
-
-			return persistenceService.Obsolete(new Provider() { Key = id }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			return base.Obsolete<Provider>(id);
 		}
 
 		/// <summary>
@@ -147,21 +106,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the saved provider.</returns>
 		public Provider Save(Provider provider)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Provider>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException("No persistence service found");
-			}
-
-			try
-			{
-				return persistenceService.Update(provider, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
-			catch (DataPersistenceException)
-			{
-				return persistenceService.Insert(provider, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
+			return base.Save(provider);
 		}
 	}
 }

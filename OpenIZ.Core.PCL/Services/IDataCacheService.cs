@@ -23,12 +23,45 @@ using System;
 
 namespace OpenIZ.Core.Services
 {
+
+    /// <summary>
+    /// Data cache event args
+    /// </summary>
+    public class DataCacheEventArgs : EventArgs
+    {
+        /// <summary>
+        /// The object added or removed from the cache
+        /// </summary>
+        public Object Object { get; private set; }
+
+        /// <summary>
+        /// Data cache event args ctor
+        /// </summary>
+        public DataCacheEventArgs(Object obj)
+        {
+            this.Object = obj;
+        }
+    }
+
 	/// <summary>
 	/// Represents a data caching service which allows services to retrieve
 	/// cached objects
 	/// </summary>
 	public interface IDataCachingService
 	{
+        /// <summary>
+        /// Item was added to cache
+        /// </summary>
+        event EventHandler<DataCacheEventArgs> Added;
+        /// <summary>
+        /// Item was updated from cache
+        /// </summary>
+        event EventHandler<DataCacheEventArgs> Updated;
+        /// <summary>
+        /// Item was removed from cache
+        /// </summary>
+        event EventHandler<DataCacheEventArgs> Removed;
+
 		/// <summary>
 		/// Get the specified cache item
 		/// </summary>

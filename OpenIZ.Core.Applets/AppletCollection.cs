@@ -440,214 +440,221 @@ namespace OpenIZ.Core.Applets
                 };
                 XElement htmlContent = null;
 
-                // Type of tag to render basic content
-                switch (htmlAsset.Html.Name.LocalName)
+                if (htmlAsset.Static)
+                    htmlContent = htmlAsset.Html as XElement;
+                else
                 {
-                    case "html": // The content is a complete HTML page
-                        {
-                            htmlContent = htmlAsset.Html as XElement;
-                            var headerInjection = this.GetInjectionHeaders(asset, htmlContent.DescendantNodes().OfType<XElement>().Any(o => o.Name == xs_xhtml + "ui-view"));
-
-                            // STRIP - OPENIZJS references
-                            var xel = htmlContent.Descendants().OfType<XElement>().Where(o => o.Name == xs_xhtml + "script" && o.Attribute("src")?.Value.Contains("openiz") == true).ToArray();
-                            var head = htmlContent.DescendantNodes().OfType<XElement>().FirstOrDefault(o => o.Name == xs_xhtml + "head");
-                            if (head == null)
+                    // Type of tag to render basic content
+                    switch (htmlAsset.Html.Name.LocalName)
+                    {
+                        case "html": // The content is a complete HTML page
                             {
-                                head = new XElement(xs_xhtml + "head");
-                                htmlContent.Add(head);
-                            }
-
-                            head.Add(headerInjection.Where(o => !head.Elements(o.Name).Any(e => (e.Attributes("src") != null && (e.Attributes("src") == o.Attributes("src"))) || (e.Attributes("href") != null && (e.Attributes("href") == o.Attributes("href"))))));
-
-                            //                            head.Add(headerInjection);
-                            break;
-                        }
-                    case "body": // The content is an HTML Body element, we must inject the HTML header
-                        {
-                            htmlContent = htmlAsset.Html as XElement;
-
-                            // Inject special headers
-                            var headerInjection = this.GetInjectionHeaders(asset, htmlContent.DescendantNodes().OfType<XElement>().Any(o => o.Name == xs_xhtml + "ui-view"));
-
-                            // Render the bundles
-                            var bodyElement = htmlAsset.Html as XElement;
-
-                            htmlContent = new XElement(xs_xhtml + "html", new XAttribute("ng-app", asset.Name), new XElement(xs_xhtml + "head", headerInjection), bodyElement);
-                        }
-                        break;
-                    default:
-                        {
-                            if (String.IsNullOrEmpty(htmlAsset.Layout))
                                 htmlContent = htmlAsset.Html as XElement;
-                            else
-                            {
+                                var headerInjection = this.GetInjectionHeaders(asset, htmlContent.DescendantNodes().OfType<XElement>().Any(o => o.Name == xs_xhtml + "ui-view"));
 
-
-                                // Get the layout
-                                var layoutAsset = this.ResolveAsset(htmlAsset.Layout, asset);
-                                if (layoutAsset == null)
-                                    throw new FileNotFoundException(String.Format("Layout asset {0} not found", htmlAsset.Layout));
-
-                                using (MemoryStream ms = new MemoryStream(this.RenderAssetContent(layoutAsset, preProcessLocalization)))
-                                    htmlContent = XDocument.Load(ms).FirstNode as XElement;
-
-
-                                // Find the <!--#include virtual="content" --> tag
-                                var contentNode = htmlContent.DescendantNodes().OfType<XComment>().SingleOrDefault(o => o.Value.Trim() == "#include virtual=\"content\"");
-                                if (contentNode != null)
+                                // STRIP - OPENIZJS references
+                                var xel = htmlContent.Descendants().OfType<XElement>().Where(o => o.Name == xs_xhtml + "script" && o.Attribute("src")?.Value.Contains("openiz") == true).ToArray();
+                                var head = htmlContent.DescendantNodes().OfType<XElement>().FirstOrDefault(o => o.Name == xs_xhtml + "head");
+                                if (head == null)
                                 {
-                                    contentNode.AddAfterSelf(htmlAsset.Html as XElement);
-                                    contentNode.Remove();
+                                    head = new XElement(xs_xhtml + "head");
+                                    htmlContent.Add(head);
                                 }
 
-                                // Injection headers
+                                head.Add(headerInjection.Where(o => !head.Elements(o.Name).Any(e => (e.Attributes("src") != null && (e.Attributes("src") == o.Attributes("src"))) || (e.Attributes("href") != null && (e.Attributes("href") == o.Attributes("href"))))));
+
+                                //                            head.Add(headerInjection);
+                                break;
+                            }
+                        case "body": // The content is an HTML Body element, we must inject the HTML header
+                            {
+                                htmlContent = htmlAsset.Html as XElement;
+
+                                // Inject special headers
                                 var headerInjection = this.GetInjectionHeaders(asset, htmlContent.DescendantNodes().OfType<XElement>().Any(o => o.Name == xs_xhtml + "ui-view"));
-                                var headElement = (htmlContent.Element(xs_xhtml + "head") as XElement);
-                                headElement?.Add(headerInjection.Where(o => !headElement.Elements(o.Name).Any(e => (e.Attributes("src") != null && (e.Attributes("src") == o.Attributes("src"))) || (e.Attributes("href") != null && (e.Attributes("href") == o.Attributes("href"))))));
 
+                                // Render the bundles
+                                var bodyElement = htmlAsset.Html as XElement;
 
-                            }
-                        }
-                        break;
-                } // switch
-
-                // Process data bindings
-                var dataBindings = htmlContent.DescendantNodes().OfType<XElement>().Where(o => o.Name.LocalName == "select" && o.Attributes().Any(a => a.Name.Namespace == xs_binding));
-                foreach (var db in dataBindings)
-                {
-
-                    // Get the databinding data
-                    XAttribute source = db.Attributes(xs_binding + "source").FirstOrDefault(),
-                        filter = db.Attributes(xs_binding + "filter").FirstOrDefault(),
-                        key = db.Attributes(xs_binding + "key").FirstOrDefault(),
-                        value = db.Attributes(xs_binding + "value").FirstOrDefault(),
-                        orderByDescending = db.Attributes(xs_binding + "orderByDescending").FirstOrDefault(),
-                        orderBy = db.Attributes(xs_binding + "orderByDescending").FirstOrDefault();
-
-                    var locale = preProcessLocalization;
-                    int i = 0;
-                    var valueSelector = value?.Value;
-                    while (i++ < 2)
-                    {
-                        try
-                        {
-                            // Fall back to english?
-                            if (value != null)
-                                valueSelector = value.Value.Replace("{{ locale }}", locale);
-
-                            if (source == null || filter == null)
-                                continue;
-
-                            // First we want to build the filter
-                            Type imsiType = typeof(Patient).GetTypeInfo().Assembly.ExportedTypes.FirstOrDefault(o => o.GetTypeInfo().GetCustomAttribute<XmlRootAttribute>()?.ElementName == source.Value);
-                            if (imsiType == null)
-                                continue;
-
-                            var expressionBuilderMethod = typeof(QueryExpressionParser).GetGenericMethod(nameof(QueryExpressionParser.BuildLinqExpression), new Type[] { imsiType }, new Type[] { typeof(NameValueCollection) });
-                            var filterList = NameValueCollection.ParseQueryString(filter.Value);
-                            var expr = expressionBuilderMethod.Invoke(null, new object[] { filterList });
-                            var filterMethod = typeof(IEntitySourceProvider).GetGenericMethod("Query", new Type[] { imsiType }, new Type[] { expr.GetType() });
-                            var dataSource = (filterMethod.Invoke(EntitySource.Current.Provider, new object[] { expr }));
-
-                            // Sort expression
-                            if (orderBy != null || orderByDescending != null)
-                            {
-                                var orderProperty = imsiType.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName == (orderBy ?? orderByDescending).Value);
-                                ParameterExpression orderExpr = Expression.Parameter(dataSource.GetType());
-                                var orderBody = orderExpr.Sort(orderBy?.Value ?? orderByDescending?.Value, orderBy == null ? SortOrderType.OrderByDescending : SortOrderType.OrderBy);
-                                dataSource = Expression.Lambda(orderBody, orderExpr).Compile().DynamicInvoke(dataSource);
-                            }
-
-                            // Render expression
-                            Delegate keyExpression = null, valueExpression = null;
-                            ParameterExpression parameter = Expression.Parameter(imsiType);
-                            if (key == null)
-                                keyExpression = Expression.Lambda(Expression.MakeMemberAccess(parameter, imsiType.GetRuntimeProperty(nameof(IIdentifiedEntity.Key))), parameter).Compile();
-                            else
-                            {
-                                var rawExpr = new BindingExpressionVisitor().RewriteLambda(expressionBuilderMethod.Invoke(null, new object[] { NameValueCollection.ParseQueryString(key.Value + "=RemoveMe") }) as LambdaExpression);
-                                keyExpression = Expression.Lambda(new BindingExpressionVisitor().Visit(rawExpr.Body), rawExpr.Parameters).Compile();
-                            }
-                            if (value == null)
-                                valueExpression = Expression.Lambda(Expression.Call(parameter, imsiType.GetRuntimeMethod("ToString", new Type[] { })), parameter).Compile();
-                            else
-                            {
-                                var rawExpr = new BindingExpressionVisitor().RewriteLambda(expressionBuilderMethod.Invoke(null, new object[] { NameValueCollection.ParseQueryString(valueSelector + "=RemoveMe") }) as LambdaExpression);
-                                valueExpression = Expression.Lambda(rawExpr.Body, rawExpr.Parameters).Compile();
-                            }
-
-                            // Creation of the options
-                            foreach (var itm in dataSource as IEnumerable)
-                            {
-                                var optAtt = new XElement(xs_xhtml + "option");
-                                var keyValue = keyExpression.DynamicInvoke(itm);
-                                var valueValue = valueExpression.DynamicInvoke(itm)?.ToString();
-                                optAtt.Add(new XAttribute("value", keyValue), new XText(valueValue));
-                                db.Add(optAtt);
+                                htmlContent = new XElement(xs_xhtml + "html", new XAttribute("ng-app", asset.Name), new XElement(xs_xhtml + "head", headerInjection), bodyElement);
                             }
                             break;
-                        }
-                        catch
-                        {
-                            if (locale == "en") throw; // We can't fallback
-                            locale = "en"; // fallback to english
-                        }
-                    }
-                }
+                        default:
+                            {
+                                if (String.IsNullOrEmpty(htmlAsset.Layout))
+                                    htmlContent = htmlAsset.Html as XElement;
+                                else
+                                {
 
-                // Now process SSI directives - <!--#include virtual="XXXXXXX" -->
-                var includes = htmlContent.DescendantNodes().OfType<XComment>().Where(o => o?.Value?.Trim().StartsWith("#include virtual=\"") == true).ToList();
-                foreach (var inc in includes)
-                {
-                    String assetName = inc.Value.Trim().Substring(18); // HACK: Should be a REGEX
-                    if (assetName.EndsWith("\""))
-                        assetName = assetName.Substring(0, assetName.Length - 1);
-                    if (assetName == "content")
-                        continue;
-                    var includeAsset = this.ResolveAsset(assetName, asset);
-                    if (includeAsset == null)
+
+                                    // Get the layout
+                                    var layoutAsset = this.ResolveAsset(htmlAsset.Layout, asset);
+                                    if (layoutAsset == null)
+                                        throw new FileNotFoundException(String.Format("Layout asset {0} not found", htmlAsset.Layout));
+
+                                    using (MemoryStream ms = new MemoryStream(this.RenderAssetContent(layoutAsset, preProcessLocalization)))
+                                        htmlContent = XDocument.Load(ms).FirstNode as XElement;
+
+
+                                    // Find the <!--#include virtual="content" --> tag
+                                    var contentNode = htmlContent.DescendantNodes().OfType<XComment>().SingleOrDefault(o => o.Value.Trim() == "#include virtual=\"content\"");
+                                    if (contentNode != null)
+                                    {
+                                        contentNode.AddAfterSelf(htmlAsset.Html as XElement);
+                                        contentNode.Remove();
+                                    }
+
+                                    // Injection headers
+                                    var headerInjection = this.GetInjectionHeaders(asset, htmlContent.DescendantNodes().OfType<XElement>().Any(o => o.Name == xs_xhtml + "ui-view"));
+                                    var headElement = (htmlContent.Element(xs_xhtml + "head") as XElement);
+                                    headElement?.Add(headerInjection.Where(o => !headElement.Elements(o.Name).Any(e => (e.Attributes("src") != null && (e.Attributes("src") == o.Attributes("src"))) || (e.Attributes("href") != null && (e.Attributes("href") == o.Attributes("href"))))));
+
+
+                                }
+                            }
+                            break;
+                    } // switch
+
+                    // Process data bindings
+                    var dataBindings = htmlContent.DescendantNodes().OfType<XElement>().Where(o => o.Name.LocalName == "select" && o.Attributes().Any(a => a.Name.Namespace == xs_binding));
+                    foreach (var db in dataBindings)
                     {
-                        inc.AddAfterSelf(new XElement(xs_xhtml + "strong", new XText(String.Format("{0} NOT FOUND", assetName))));
-                        inc.Remove();
-                    }
-                    else
-                        using (MemoryStream ms = new MemoryStream(this.RenderAssetContent(includeAsset, preProcessLocalization)))
+
+                        // Get the databinding data
+                        XAttribute source = db.Attributes(xs_binding + "source").FirstOrDefault(),
+                            filter = db.Attributes(xs_binding + "filter").FirstOrDefault(),
+                            key = db.Attributes(xs_binding + "key").FirstOrDefault(),
+                            value = db.Attributes(xs_binding + "value").FirstOrDefault(),
+                            orderByDescending = db.Attributes(xs_binding + "orderByDescending").FirstOrDefault(),
+                            orderBy = db.Attributes(xs_binding + "orderByDescending").FirstOrDefault();
+
+                        var locale = preProcessLocalization;
+                        int i = 0;
+                        var valueSelector = value?.Value;
+                        while (i++ < 2)
                         {
                             try
                             {
-                                var xel = XDocument.Load(ms).Elements().First() as XElement;
-                                if (xel.Name == xs_xhtml + "html")
-                                    inc.AddAfterSelf(xel.Element(xs_xhtml + "body").Elements());
+                                // Fall back to english?
+                                if (value != null)
+                                    valueSelector = value.Value.Replace("{{ locale }}", locale);
+
+                                if (source == null || filter == null)
+                                    continue;
+
+                                // First we want to build the filter
+                                Type imsiType = typeof(Patient).GetTypeInfo().Assembly.ExportedTypes.FirstOrDefault(o => o.GetTypeInfo().GetCustomAttribute<XmlRootAttribute>()?.ElementName == source.Value);
+                                if (imsiType == null)
+                                    continue;
+
+                                var expressionBuilderMethod = typeof(QueryExpressionParser).GetGenericMethod(nameof(QueryExpressionParser.BuildLinqExpression), new Type[] { imsiType }, new Type[] { typeof(NameValueCollection) });
+                                var filterList = NameValueCollection.ParseQueryString(filter.Value);
+                                var expr = expressionBuilderMethod.Invoke(null, new object[] { filterList });
+                                var filterMethod = typeof(IEntitySourceProvider).GetGenericMethod("Query", new Type[] { imsiType }, new Type[] { expr.GetType() });
+                                var dataSource = (filterMethod.Invoke(EntitySource.Current.Provider, new object[] { expr }));
+
+                                // Sort expression
+                                if (orderBy != null || orderByDescending != null)
+                                {
+                                    var orderProperty = imsiType.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName == (orderBy ?? orderByDescending).Value);
+                                    ParameterExpression orderExpr = Expression.Parameter(dataSource.GetType());
+                                    var orderBody = orderExpr.Sort(orderBy?.Value ?? orderByDescending?.Value, orderBy == null ? SortOrderType.OrderByDescending : SortOrderType.OrderBy);
+                                    dataSource = Expression.Lambda(orderBody, orderExpr).Compile().DynamicInvoke(dataSource);
+                                }
+
+                                // Render expression
+                                Delegate keyExpression = null, valueExpression = null;
+                                ParameterExpression parameter = Expression.Parameter(imsiType);
+                                if (key == null)
+                                    keyExpression = Expression.Lambda(Expression.MakeMemberAccess(parameter, imsiType.GetRuntimeProperty(nameof(IIdentifiedEntity.Key))), parameter).Compile();
                                 else
                                 {
-                                    //var headerInjection = this.GetInjectionHeaders(includeAsset);
-
-                                    //var headElement = htmlContent.Element(xs_xhtml + "head");
-                                    //headElement?.Add(headerInjection.Where(o => !headElement.Elements(o.Name).Any(e => (e.Attributes("src") != null && (e.Attributes("src") == o.Attributes("src"))) || (e.Attributes("href") != null && (e.Attributes("href") == o.Attributes("href"))))));
-
-                                    inc.AddAfterSelf(xel);
+                                    var rawExpr = new BindingExpressionVisitor().RewriteLambda(expressionBuilderMethod.Invoke(null, new object[] { NameValueCollection.ParseQueryString(key.Value + "=RemoveMe") }) as LambdaExpression);
+                                    keyExpression = Expression.Lambda(new BindingExpressionVisitor().Visit(rawExpr.Body), rawExpr.Parameters).Compile();
                                 }
-                                inc.Remove();
+                                if (value == null)
+                                    valueExpression = Expression.Lambda(Expression.Call(parameter, imsiType.GetRuntimeMethod("ToString", new Type[] { })), parameter).Compile();
+                                else
+                                {
+                                    var rawExpr = new BindingExpressionVisitor().RewriteLambda(expressionBuilderMethod.Invoke(null, new object[] { NameValueCollection.ParseQueryString(valueSelector + "=RemoveMe") }) as LambdaExpression);
+                                    valueExpression = Expression.Lambda(rawExpr.Body, rawExpr.Parameters).Compile();
+                                }
+
+                                // Creation of the options
+                                foreach (var itm in dataSource as IEnumerable)
+                                {
+                                    var optAtt = new XElement(xs_xhtml + "option");
+                                    var keyValue = keyExpression.DynamicInvoke(itm);
+                                    var valueValue = valueExpression.DynamicInvoke(itm)?.ToString();
+                                    if (String.IsNullOrEmpty(valueValue)) continue;
+                                    optAtt.Add(new XAttribute("value", keyValue), new XText(valueValue));
+                                    db.Add(optAtt);
+                                }
+                                break;
                             }
-                            catch (Exception e)
+                            catch
                             {
-                                throw new XmlException($"Error in Asset: {includeAsset}", e);
+                                if (locale == "en") throw; // We can't fallback
+                                locale = "en"; // fallback to english
                             }
                         }
-                }
+                    }
 
-                // Re-write
-                foreach (var itm in htmlContent.DescendantNodes().OfType<XElement>().SelectMany(o => o.Attributes()).Where(o => o.Value.StartsWith("~")))
-                {
-                    itm.Value = String.Format("/{0}/{1}", asset.Manifest.Info.Id, itm.Value.Substring(2));
-                    //itm.Value = itm.Value.Replace(APPLET_SCHEME, this.AppletBase).Replace(ASSET_SCHEME, this.AssetBase).Replace(DRAWABLE_SCHEME, this.DrawableBase);
-                }
 
-                // Render Title
-                var headTitle = htmlContent.DescendantNodes().OfType<XElement>().FirstOrDefault(o => o.Name == xs_xhtml + "head");
-                var title = htmlAsset.GetTitle(preProcessLocalization);
-                if (headTitle != null && !String.IsNullOrEmpty(title))
-                    headTitle.Add(new XElement(xs_xhtml + "title", new XText(title)));
+                    // Now process SSI directives - <!--#include virtual="XXXXXXX" -->
+                    var includes = htmlContent.DescendantNodes().OfType<XComment>().Where(o => o?.Value?.Trim().StartsWith("#include virtual=\"") == true).ToList();
+                    foreach (var inc in includes)
+                    {
+                        String assetName = inc.Value.Trim().Substring(18); // HACK: Should be a REGEX
+                        if (assetName.EndsWith("\""))
+                            assetName = assetName.Substring(0, assetName.Length - 1);
+                        if (assetName == "content")
+                            continue;
+                        var includeAsset = this.ResolveAsset(assetName, asset);
+                        if (includeAsset == null)
+                        {
+                            inc.AddAfterSelf(new XElement(xs_xhtml + "strong", new XText(String.Format("{0} NOT FOUND", assetName))));
+                            inc.Remove();
+                        }
+                        else
+                            using (MemoryStream ms = new MemoryStream(this.RenderAssetContent(includeAsset, preProcessLocalization)))
+                            {
+                                try
+                                {
+                                    var xel = XDocument.Load(ms).Elements().First() as XElement;
+                                    if (xel.Name == xs_xhtml + "html")
+                                        inc.AddAfterSelf(xel.Element(xs_xhtml + "body").Elements());
+                                    else
+                                    {
+                                        //var headerInjection = this.GetInjectionHeaders(includeAsset);
+
+                                        //var headElement = htmlContent.Element(xs_xhtml + "head");
+                                        //headElement?.Add(headerInjection.Where(o => !headElement.Elements(o.Name).Any(e => (e.Attributes("src") != null && (e.Attributes("src") == o.Attributes("src"))) || (e.Attributes("href") != null && (e.Attributes("href") == o.Attributes("href"))))));
+
+                                        inc.AddAfterSelf(xel);
+                                    }
+                                    inc.Remove();
+                                }
+                                catch (Exception e)
+                                {
+                                    throw new XmlException($"Error in Asset: {includeAsset}", e);
+                                }
+                            }
+                    }
+
+                    // Re-write
+                    foreach (var itm in htmlContent.DescendantNodes().OfType<XElement>().SelectMany(o => o.Attributes()).Where(o => o.Value.StartsWith("~")))
+                    {
+                        itm.Value = String.Format("/{0}/{1}", asset.Manifest.Info.Id, itm.Value.Substring(2));
+                        //itm.Value = itm.Value.Replace(APPLET_SCHEME, this.AppletBase).Replace(ASSET_SCHEME, this.AssetBase).Replace(DRAWABLE_SCHEME, this.DrawableBase);
+                    }
+
+                    // Render Title
+                    var headTitle = htmlContent.DescendantNodes().OfType<XElement>().FirstOrDefault(o => o.Name == xs_xhtml + "head");
+                    var title = htmlAsset.GetTitle(preProcessLocalization);
+                    if (headTitle != null && !String.IsNullOrEmpty(title))
+                        headTitle.Add(new XElement(xs_xhtml + "title", new XText(title)));
+                }
 
                 // Render out the content
                 using (StringWriter sw = new StringWriter())

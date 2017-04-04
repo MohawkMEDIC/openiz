@@ -33,6 +33,8 @@ using OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility;
 using OpenIZ.Persistence.Data.ADO.Data.Model.DataType;
 using OpenIZ.Core.Model;
 using OpenIZ.OrmLite;
+using OpenIZ.Core.Services;
+using MARC.HI.EHRS.SVC.Core;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -176,6 +178,58 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             retVal.LoadAssociations(context, principal);
             return retVal;
+        }
+
+        /// <summary>
+        /// Override cache conversion
+        /// </summary>
+        protected override Act CacheConvert(object dataInstance, DataContext context, IPrincipal principal)
+        {
+            if (dataInstance == null) return null;
+            DbActVersion dbActVersion = (dataInstance as CompositeResult)?.Values.OfType<DbActVersion>().FirstOrDefault() ?? dataInstance as DbActVersion ?? context.FirstOrDefault<DbActVersion>(o => o.VersionKey == (dataInstance as DbActSubTable).ParentKey);
+            DbAct dbAct = (dataInstance as CompositeResult)?.Values.OfType<DbAct>().FirstOrDefault() ?? context.FirstOrDefault<DbAct>(o => o.Key == dbActVersion.Key);
+            Act retVal = null;
+            IDataCachingService cache = ApplicationContext.Current.GetService<IDataCachingService>();
+
+            if(!dbActVersion.ObsoletionTime.HasValue)
+                switch (dbAct.ClassConceptKey.ToString().ToUpper())
+                {
+                    case ControlAct:
+                        retVal = cache?.GetCacheItem<ControlAct>(dbAct.Key);
+                        break;
+                    case SubstanceAdministration:
+                        retVal = cache?.GetCacheItem<SubstanceAdministration>(dbAct.Key);
+                        break;
+                    case Observation:
+                        var dbObs = (dataInstance as CompositeResult)?.Values.OfType<DbObservation>().FirstOrDefault() ?? context.FirstOrDefault<DbObservation>(o => o.ParentKey == dbActVersion.VersionKey);
+                        if (dbObs != null)
+                            switch (dbObs.ValueType)
+                            {
+                                case "ST":
+                                    retVal = cache?.GetCacheItem<TextObservation>(dbAct.Key);
+                                    break;
+                                case "CD":
+                                    retVal = cache?.GetCacheItem<CodedObservation>(dbAct.Key);
+                                    break;
+                                case "PQ":
+                                    retVal = cache?.GetCacheItem<QuantityObservation>(dbAct.Key);
+                                    break;
+                            }
+                        break;
+                    case Encounter:
+                        retVal = cache?.GetCacheItem<PatientEncounter>(dbAct.Key);
+                        break;
+                    case Condition:
+                    default:
+                        retVal = cache?.GetCacheItem<Act>(dbAct.Key);
+                        break;
+                }
+
+            // Return cache value
+            if (retVal != null)
+                return retVal;
+            else
+                return base.CacheConvert(dataInstance, context, principal);
         }
 
         /// <summary>

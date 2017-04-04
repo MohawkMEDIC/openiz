@@ -23,6 +23,7 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Caching.Memory.Configuration;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Map;
@@ -81,8 +82,11 @@ namespace OpenIZ.Caching.Memory
         /// Service has stopped
         /// </summary>
         public event EventHandler Stopping;
+        public event EventHandler<DataCacheEventArgs> Added;
+        public event EventHandler<DataCacheEventArgs> Updated;
+        public event EventHandler<DataCacheEventArgs> Removed;
 
-       
+
 
         /// <summary>
         /// Start the service
@@ -93,6 +97,11 @@ namespace OpenIZ.Caching.Memory
             this.m_tracer.TraceInformation("Starting Memory Caching Service...");
 
             this.Starting?.Invoke(this, EventArgs.Empty);
+
+            // subscribe to events
+            this.Added += (o, e) => this.EnsureCacheConsistency(e);
+            this.Updated += (o, e) => this.EnsureCacheConsistency(e);
+            this.Removed += (o, e) => this.EnsureCacheConsistency(e);
 
             MemoryCache.Current.Clear();
 
@@ -111,43 +120,7 @@ namespace OpenIZ.Caching.Memory
             // Subscribe to message mapping
             ModelMapper.MappingToModel += this.m_mappingHandler;
             ModelMapper.MappedToModel += this.m_mappedHandler;
-
-            // Relationship / Associated Entities are to be refreshed whenever persisted
-            if (ApplicationContext.Current.GetService<IDataPersistenceService<ActParticipation>>() != null)
-            {
-                ApplicationContext.Current.GetService<IDataPersistenceService<ActParticipation>>().Updated += (o, e) => MemoryCache.Current.RemoveObject(typeof(Act), e.Data.SourceEntityKey);
-                ApplicationContext.Current.GetService<IDataPersistenceService<ActParticipation>>().Inserted += (o, e) => MemoryCache.Current.RemoveObject(typeof(Act), e.Data.SourceEntityKey);
-                ApplicationContext.Current.GetService<IDataPersistenceService<ActParticipation>>().Obsoleted += (o, e) => MemoryCache.Current.RemoveObject(typeof(Act), e.Data.SourceEntityKey);
-            }
-            if (ApplicationContext.Current.GetService<IDataPersistenceService<ActRelationship>>() != null)
-            {
-                ApplicationContext.Current.GetService<IDataPersistenceService<ActRelationship>>().Updated += (o, e) => MemoryCache.Current.RemoveObject(typeof(Act), e.Data.SourceEntityKey);
-                ApplicationContext.Current.GetService<IDataPersistenceService<ActRelationship>>().Inserted += (o, e) => MemoryCache.Current.RemoveObject(typeof(Act), e.Data.SourceEntityKey);
-                ApplicationContext.Current.GetService<IDataPersistenceService<ActRelationship>>().Obsoleted += (o, e) => MemoryCache.Current.RemoveObject(typeof(Act), e.Data.SourceEntityKey);
-            }
-            if (ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>() != null)
-            {
-                EventHandler<PostPersistenceEventArgs<EntityRelationship>> clearSource = (o, e) =>
-                {
-                    if (e.Data?.SourceEntity != null)
-                        MemoryCache.Current.RemoveObject(e.Data.SourceEntity.GetType(), e.Data.SourceEntityKey);
-                    else
-                    {
-                        MemoryCache.Current.RemoveObject(typeof(Patient), e.Data.SourceEntityKey);
-                        MemoryCache.Current.RemoveObject(typeof(ManufacturedMaterial), e.Data.SourceEntityKey);
-                        MemoryCache.Current.RemoveObject(typeof(Place), e.Data.SourceEntityKey);
-                        MemoryCache.Current.RemoveObject(typeof(Organization), e.Data.SourceEntityKey);
-                        MemoryCache.Current.RemoveObject(typeof(Provider), e.Data.SourceEntityKey);
-                        MemoryCache.Current.RemoveObject(typeof(Material), e.Data.SourceEntityKey);
-						MemoryCache.Current.RemoveObject(typeof(Person), e.Data.SourceEntityKey);
-						MemoryCache.Current.RemoveObject(typeof(UserEntity), e.Data.SourceEntityKey);
-						MemoryCache.Current.RemoveObject(typeof(Entity), e.Data.SourceEntityKey);
-                    }
-                };
-                ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>().Updated += clearSource;
-                ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>().Inserted += clearSource;
-                ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>().Obsoleted += clearSource;
-            }
+            
 
             // Now we start timers
             var timerService = ApplicationContext.Current.GetService<ITimerService>();
@@ -172,6 +145,41 @@ namespace OpenIZ.Caching.Memory
         }
 
         /// <summary>
+        /// Ensure cache consistency
+        /// </summary>
+        private void EnsureCacheConsistency(DataCacheEventArgs e)
+        {
+
+            // Relationships should always be clean of source/target so the source/target will load the new relationship
+            if (e.Object is ActParticipation)
+            {
+                var ptcpt = (e.Object as ActParticipation);
+                MemoryCache.Current.RemoveObject(ptcpt.SourceEntity?.GetType() ?? typeof(Act), ptcpt.SourceEntityKey);
+                MemoryCache.Current.RemoveObject(ptcpt.PlayerEntity?.GetType() ?? typeof(Entity), ptcpt.PlayerEntityKey);
+            }
+            else if (e.Object is ActRelationship)
+            {
+                var rel = (e.Object as ActRelationship);
+                MemoryCache.Current.RemoveObject(rel.SourceEntity?.GetType() ?? typeof(Act), rel.SourceEntityKey);
+                MemoryCache.Current.RemoveObject(rel.TargetAct?.GetType() ?? typeof(Act), rel.TargetActKey);
+            }
+            else if (e.Object is EntityRelationship)
+            {
+                var rel = (e.Object as EntityRelationship);
+                MemoryCache.Current.RemoveObject(rel.SourceEntity?.GetType() ?? typeof(Entity), rel.SourceEntityKey);
+                MemoryCache.Current.RemoveObject(rel.TargetEntity?.GetType() ?? typeof(Entity), rel.TargetEntityKey);
+            }
+            else if (e.Object is Act) // We need to remove RCT 
+            {
+                var act = e.Object as Act;
+                var rct = act.Participations.FirstOrDefault(x => x.ParticipationRoleKey == ActParticipationKey.RecordTarget || x.ParticipationRole?.Mnemonic == "RecordTarget");
+                if (rct != null)
+                    MemoryCache.Current.RemoveObject(typeof(Patient), rct.PlayerEntityKey);
+            }
+
+        }
+
+        /// <summary>
         /// Either gets or updates the existing cache item
         /// </summary>
         /// <param name="e"></param>
@@ -179,14 +187,14 @@ namespace OpenIZ.Caching.Memory
         {
             var cacheItem = MemoryCache.Current.TryGetEntry(e.ObjectType, e.Key);
             if (cacheItem == null)
-                MemoryCache.Current.AddUpdateEntry(e.ModelObject);
+                this.Add(e.ModelObject);
             else
             {
                 // Obsolete?
                 var cVer = cacheItem as IVersionedEntity;
                 var dVer = e.ModelObject as IVersionedEntity;
                 if (cVer?.VersionSequence < dVer?.VersionSequence) // Cache is older than this item
-                    MemoryCache.Current.AddUpdateEntry(dVer);
+                    this.Add(dVer as IdentifiedData);
                 e.ModelObject = cacheItem as IdentifiedData;
                 e.Cancel = true;
             }
@@ -232,7 +240,12 @@ namespace OpenIZ.Caching.Memory
         /// </summary>
         public void Add(IdentifiedData data)
         {
+            var exist = MemoryCache.Current.TryGetEntry(data.GetType(), data.Key);
             MemoryCache.Current.AddUpdateEntry(data);
+            if (exist != null)
+                this.Updated?.Invoke(this, new DataCacheEventArgs(data));
+            else
+                this.Added?.Invoke(this, new DataCacheEventArgs(data));
         }
 
         /// <summary>
@@ -240,7 +253,12 @@ namespace OpenIZ.Caching.Memory
         /// </summary>
         public void Remove(Type tdata, Guid key)
         {
-            MemoryCache.Current.RemoveObject(tdata, key);
+            var exist = MemoryCache.Current.TryGetEntry(tdata, key);
+            if (exist != null)
+            {
+                MemoryCache.Current.RemoveObject(tdata, key);
+                this.Removed?.Invoke(this, new DataCacheEventArgs(exist));
+            }
         }
     }
 }

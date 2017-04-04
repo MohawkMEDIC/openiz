@@ -118,9 +118,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Performs the actual query
         /// </summary>
-        public override IEnumerable<TModel> QueryInternal (DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = false)
+        public override IEnumerable<TModel> QueryInternal (DataContext context, Expression<Func<TModel, bool>> query, Guid queryId, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = false)
 		{
-            return this.QueryInternal(context, query, offset, count, out totalResults, countResults).Select(o=>this.CacheConvert(o, context, principal));
+            return this.QueryInternal(context, query, queryId, offset, count, out totalResults, countResults).AsParallel().Select(o=>this.CacheConvert(o, context, principal));
 		}
 
         /// <summary>

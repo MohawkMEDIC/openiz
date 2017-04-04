@@ -164,8 +164,15 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Query internal
         /// </summary>
-        protected override IEnumerable<CompositeResult<TDomain, TDomainKey>> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, bool countResults = true)
+        protected override IEnumerable<Object> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, Guid queryId, int offset, int? count, out int totalResults, bool countResults = true)
         {
+            // Query has been registered?
+            if (this.m_queryPersistence?.IsRegistered(queryId.ToString()) == true)
+            {
+                totalResults = (int)this.m_queryPersistence.QueryResultTotalQuantity(queryId.ToString());
+                return this.m_queryPersistence.GetQueryResults<Guid>(queryId.ToString(), offset, count.Value).Select(p => p.Id).OfType<Object>();
+            }
+
             SqlStatement domainQuery = null;
             try
             {
@@ -181,8 +188,13 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             }
             domainQuery.OrderBy<TDomain>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
 
-            if (countResults)
+            if (queryId != Guid.Empty)
+                this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), context.Query<CompositeResult<TDomain, TDomainKey>>(domainQuery.Build()).Select(o => new Identifier<Guid>(o.Object1?.Key ?? o.Object2.Key)).ToArray(), query);
+
+            if (countResults && queryId == Guid.Empty)
                 totalResults = context.Count(domainQuery);
+            else if (countResults)
+                totalResults = (int)this.m_queryPersistence.QueryResultTotalQuantity(queryId.ToString());
             else
                 totalResults = 0;
 
@@ -190,7 +202,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 domainQuery.Offset(offset);
             if (count.HasValue)
                 domainQuery.Limit(count.Value);
-            return context.Query<CompositeResult<TDomain, TDomainKey>>(domainQuery);
+            return context.Query<CompositeResult<TDomain, TDomainKey>>(domainQuery).OfType<Object>();
 
         }
 
@@ -253,7 +265,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     if (uuid.VersionId == Guid.Empty)
                         retVal = this.Get(connection, uuid.Id, principal);
                     else
-                        retVal = this.CacheConvert(this.QueryInternal(connection, o => o.Key == uuid.Id && o.VersionKey == uuid.VersionId, 0, 1, out tr).FirstOrDefault(), connection, principal);
+                        retVal = this.CacheConvert(this.QueryInternal(connection, o => o.Key == uuid.Id && o.VersionKey == uuid.VersionId, Guid.Empty, 0, 1, out tr).FirstOrDefault(), connection, principal);
 
                     var postData = new PostRetrievalEventArgs<TModel>(retVal, principal);
                     this.FireRetrieved(postData);

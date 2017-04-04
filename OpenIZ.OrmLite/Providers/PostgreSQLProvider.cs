@@ -112,9 +112,9 @@ namespace OpenIZ.OrmLite.Providers
                 throw new ArgumentOutOfRangeException(nameof(sql), $"Parameter mismatch query expected {pno} but {parms.Length} supplied");
 
             var cmd = context.Connection.CreateCommand();
+            cmd.Transaction = context.Transaction;
             cmd.CommandType = type;
             cmd.CommandText = sql;
-            cmd.Transaction = context.Transaction;
 
             if (this.TraceSql)
                 this.m_tracer.TraceVerbose("[{0}] {1}", type, sql);
@@ -216,6 +216,16 @@ namespace OpenIZ.OrmLite.Providers
             object retVal = null;
             MapUtil.TryConvert(value, toType, out retVal);
             return retVal;
+        }
+
+        /// <summary>
+        /// Create a new connection from an existing data source
+        /// </summary>
+        public DataContext CloneConnection(DataContext source)
+        {
+            var conn = this.GetProviderFactory().CreateConnection();
+            conn.ConnectionString = source.Connection.ConnectionString;
+            return new DataContext(this, conn);
         }
     }
 }

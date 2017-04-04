@@ -21,6 +21,7 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Exceptions;
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Security;
 using System;
@@ -32,7 +33,7 @@ namespace OpenIZ.Core.Services.Impl
 	/// <summary>
 	/// Provides operations for managing identifier types.
 	/// </summary>
-	public class LocalIdentifierTypeRepositoryService : IIdentifierTypeRepositoryService
+	public class LocalIdentifierTypeRepositoryService : IIdentifierTypeRepositoryService, IPersistableQueryRepositoryService
 	{
 		/// <summary>
 		/// Searches for an identifier type using a given predicate.
@@ -41,14 +42,8 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns a list of identifier types who match the specified query.</returns>
 		public IEnumerable<IdentifierType> Find(Expression<Func<IdentifierType, bool>> query)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<IdentifierType>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException("No persistence service found");
-			}
-
-			return persistenceService.Query(query, AuthenticationContext.Current.Principal);
+            int t = 0;
+            return this.Find(query, 0, null, out t);
 		}
 
 		/// <summary>
@@ -61,14 +56,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns a list of identifier types who match the specified query.</returns>
 		public IEnumerable<IdentifierType> Find(Expression<Func<IdentifierType, bool>> query, int offset, int? count, out int totalCount)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<IdentifierType>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException("No persistence service found");
-			}
-
-			return persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalCount);
+            return this.Find<IdentifierType>(query, offset, count, out totalCount, Guid.Empty);
 		}
 
 		/// <summary>
@@ -146,5 +134,20 @@ namespace OpenIZ.Core.Services.Impl
 				return persistenceService.Insert(identifierType, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 			}
 		}
-	}
+
+        /// <summary>
+        /// Find using query continuation
+        /// </summary>
+        public IEnumerable<TEntity> Find<TEntity>(Expression<Func<TEntity, bool>> query, int offset, int? count, out int totalResults, Guid queryId) where TEntity : IdentifiedData
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<TEntity>>();
+            if (persistence == null)
+                throw new InvalidOperationException($"Cannot find entity persister for {typeof(TEntity).FullName}");
+
+            if (queryId != Guid.Empty && persistence is IStoredQueryDataPersistenceService<TEntity>)
+                return (persistence as IStoredQueryDataPersistenceService<TEntity>).Query(query, queryId, offset, count, AuthenticationContext.Current.Principal, out totalResults);
+            else
+                return persistence.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
+        }
+    }
 }
