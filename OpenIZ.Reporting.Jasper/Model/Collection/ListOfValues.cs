@@ -14,52 +14,38 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: khannan
- * Date: 2017-1-15
+ * User: Nityan
+ * Date: 2017-4-1
  */
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
-namespace OpenIZ.Reporting.Core
+namespace OpenIZ.Reporting.Jasper.Model.Collection
 {
 	/// <summary>
-	/// Represents an authentication result.
+	/// Represents a list of values.
 	/// </summary>
-	public class AuthenticationResult
+	/// <seealso cref="OpenIZ.Reporting.Jasper.Model.ResourceBase" />
+	[XmlType("listOfValues")]
+	public class ListOfValues : ResourceBase
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="AuthenticationResult"/> class.
+		/// Initializes a new instance of the <see cref="ListOfValues"/> class.
 		/// </summary>
-		public AuthenticationResult()
+		public ListOfValues()
 		{
 			
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="AuthenticationResult"/> class
-		/// with a specific token.
+		/// Gets or sets the items.
 		/// </summary>
-		/// <param name="token">The token value.</param>
-		public AuthenticationResult(string token)
-		{
-			this.Token = token;
-		}
-
-		/// <summary>
-		/// Gets or sets the token of the authentication result.
-		/// </summary>
-		public string Token { get; }
-
-		/// <summary>
-		/// Returns a security token from the authentication result.
-		/// </summary>
-		/// <returns>A <see cref="System.String" /> that represents this instance.</returns>
-		public override string ToString()
-		{
-			return this.Token;
-		}
+		/// <value>The items.</value>
+		[XmlElement("items")]
+		public List<Item> Items { get; set; }
 	}
 }

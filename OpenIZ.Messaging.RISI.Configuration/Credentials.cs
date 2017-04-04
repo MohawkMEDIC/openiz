@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -14,42 +14,39 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * User: justi
- * Date: 2016-8-28
+ * User: khannan
+ * Date: 2017-4-1
  */
 
-using System;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Messaging.RISI.Configuration
 {
 	/// <summary>
-	/// Represents a configuration for a RISI configuration.
+	/// Represents a set of credentials.
 	/// </summary>
-	public class RisiConfiguration
+	[XmlType(nameof(Credentials), Namespace = "http://openiz.org/risi")]
+	public class Credentials
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="RisiConfiguration"/> class
-		/// with a specified report engine type.
+		/// Initializes a new instance of the <see cref="Credentials"/> class.
 		/// </summary>
-		/// <param name="address">The address of the reporting engine.</param>
-		/// <param name="handler">The type of report engine.</param>
-		public RisiConfiguration(string address, Type handler)
+		public Credentials()
 		{
-			this.Address = address;
-			this.Handler = handler;
 		}
 
 		/// <summary>
-		/// Gets or sets the address of the reporting engine.
+		/// Gets or sets the credential.
 		/// </summary>
-		[XmlAttribute("address")]
-		public string Address { get; }
+		/// <value>The credential.</value>
+		[XmlElement("credential")]
+		public CredentialBase Credential { get; set; }
 
 		/// <summary>
-		/// Gets the engine handler of the configuration.
+		/// Gets or sets the type of the credential.
 		/// </summary>
+		/// <value>The type of the credential.</value>
 		[XmlAttribute("type")]
-		public Type Handler { get; }
+		public CredentialType CredentialType { get; set; }
 	}
 }

@@ -14,35 +14,30 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: khannan
- * Date: 2017-4-1
+ * User: Nityan
+ * Date: 2017-4-2
  */
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 
-namespace OpenIZ.Messaging.RISI.Configuration
+namespace OpenIZ.Core.Model.Constants
 {
-	[XmlType(nameof(Credentials), Namespace = "http://openiz.org/risi")]
-	public class Credentials
+	/// <summary>
+	/// Represents a collection of container type keys.
+	/// </summary>
+	public static class ContainerTypeKeys
 	{
-		public Credentials()
-		{
-			
-		}
+		/// <summary>
+		/// Represents a container type of box.
+		/// </summary>
+		public static readonly Guid Boxes = Guid.Parse("6CFDA504-ED76-4BC9-B77B-40D4ED09E93D");
 
 		/// <summary>
-		/// Gets or sets the type of the credential.
+		/// Represents a container type of vial.
 		/// </summary>
-		/// <value>The type of the credential.</value>
-		[XmlAttribute("type")]
-		public CredentialType CredentialType { get; set; }
-
-		public string Username { get; set; }
-
-		public string Password { get; set; }
+		public static readonly Guid Vials = Guid.Parse("907DDBFB-91B3-439E-8DF2-67925DCF4625");
 	}
 }

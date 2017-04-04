@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -92,7 +92,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
 		[WebGet(UriTemplate = "/type", BodyStyle = WebMessageBodyStyle.Bare)]
-		RisiCollection<ReportParameter> GetAllReportParamterTypes();
+		RisiCollection<ReportParameter> GetAllReportParameterTypes();
 
 		/// <summary>
 		/// Gets a report definition by id.
@@ -107,7 +107,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
 		[WebGet(UriTemplate = "/report", BodyStyle = WebMessageBodyStyle.Bare)]
-		RisiCollection<ReportDefinition> GetReportDefintions();
+		RisiCollection<ReportDefinition> GetReportDefinitions();
 
 		/// <summary>
 		/// Gets a report format by id.
@@ -148,7 +148,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="id">The id of the report for which to retrieve the source.</param>
 		/// <returns>Returns the report source.</returns>
 		[WebGet(UriTemplate = "/report/{id}/source", BodyStyle = WebMessageBodyStyle.Bare)]
-		ReportDefinition GetReportSource(string id);
+		byte[] GetReportSource(string id);
 
 		/// <summary>
 		/// Executes a report.

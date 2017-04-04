@@ -19,6 +19,8 @@
  */
 
 using System;
+using OpenIZ.Reporting.Core.Auth;
+using OpenIZ.Reporting.Core.Event;
 
 namespace OpenIZ.Reporting.Core
 {
@@ -27,6 +29,21 @@ namespace OpenIZ.Reporting.Core
 	/// </summary>
 	public interface IAuthenticationHandler : IDisposable
 	{
+		/// <summary>
+		/// Occurs when a service is authenticated.
+		/// </summary>
+		event EventHandler<AuthenticatedEventArgs> Authenticated;
+
+		/// <summary>
+		/// Occurs when a service is authenticating.
+		/// </summary>
+		event EventHandler<AuthenticatingEventArgs> Authenticating;
+
+		/// <summary>
+		/// Occurs when a service fails authentication.
+		/// </summary>
+		event EventHandler<AuthenticationErrorEventArgs> OnAuthenticationError;
+
 		/// <summary>
 		/// Gets or sets the authentication result of the authentication handler.
 		/// </summary>

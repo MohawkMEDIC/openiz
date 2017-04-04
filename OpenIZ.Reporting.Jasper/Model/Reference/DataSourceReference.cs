@@ -14,36 +14,34 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: khannan
- * Date: 2017-3-31
+ * User: Nityan
+ * Date: 2017-4-1
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using System.Xml.Serialization;
 
-namespace OpenIZ.Reporting.Jasper.Model
+namespace OpenIZ.Reporting.Jasper.Model.Reference
 {
 	/// <summary>
-	/// Class ErrorParameter.
+	/// Represents a data source reference.
 	/// </summary>
-	public class ErrorParameter
+	[XmlType("dataSourceReference")]
+	public class DataSourceReference : ReferenceBase
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ErrorParameter"/> class.
+		/// Initializes a new instance of the <see cref="DataSourceReference"/> class.
 		/// </summary>
-		public ErrorParameter()
+		public DataSourceReference()
 		{
 			
 		}
 
 		/// <summary>
-		/// Gets or sets the parameter.
+		/// Initializes a new instance of the <see cref="DataSourceReference"/> class.
 		/// </summary>
-		/// <value>The parameter.</value>
-		[XmlElement("parameter")]
-		public string Parameter { get; set; }
+		/// <param name="uri">The URI.</param>
+		public DataSourceReference(string uri) : base(uri)
+		{
+		}
 	}
 }

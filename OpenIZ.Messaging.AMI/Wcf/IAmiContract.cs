@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -32,6 +32,7 @@ using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Security;
 using System;
+using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Xml.Schema;
@@ -210,7 +211,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="id">The id of the certificate to be deleted.</param>
 		/// <param name="reason">The reason the certificate is to be deleted.</param>
 		/// <returns>Returns the deletion result.</returns>
-		[WebInvoke(UriTemplate = "/certificate/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		[WebInvoke(UriTemplate = "/certificate/{id}/revokeReason/{reason}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
 		SubmissionResult DeleteCertificate(string id, RevokeReason reason);
 
 		/// <summary>
@@ -267,18 +268,20 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the applet.</returns>
 		[WebGet(UriTemplate = "/applet/{appletId}", BodyStyle = WebMessageBodyStyle.Bare)]
 		AppletManifestInfo GetApplet(string appletId);
-        
-        /// <summary>
-        /// Return just the headers of the applet id
-        /// </summary>
-        [WebGet(UriTemplate = "/pak/{appletId}")]
-        System.IO.Stream DownloadApplet(String appletId);
+
+		/// <summary>
+		/// Downloads the applet.
+		/// </summary>
+		/// <param name="appletId">The applet identifier.</param>
+		/// <returns>Stream.</returns>
+		[WebGet(UriTemplate = "/pak/{appletId}")]
+        Stream DownloadApplet(string appletId);
 
         /// <summary>
         /// Return just the headers of the applet id
         /// </summary>
         [WebInvoke(Method = "HEAD", UriTemplate = "/pak/{appletId}")]
-        void HeadApplet(String appletId);
+        void HeadApplet(string appletId);
 
         /// <summary>
         /// Gets a list of applets for a specific query.

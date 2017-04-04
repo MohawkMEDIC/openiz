@@ -155,17 +155,22 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Services
 
 				result = this.ToModelInstance(reportDefinition);
 
-				result.Parameters = reportDefinition.Parameters.ToList().Select(p => new ReportParameter
+				if (result != null)
 				{
-					Key = p.Id,
-					CreationTime = p.CreationTime,
-					Name = p.Name,
-					IsNullable = p.IsNullable,
-					Order = p.Order,
-					ParameterType = this.parameterTypePersistenceService.Get<Guid>(new Identifier<Guid>(p.ParameterTypeId), AuthenticationContext.Current.Principal, true),
-					Value = p.Value
-				}).ToList();
-
+					if (!loadFast)
+					{
+						result.Parameters = reportDefinition.Parameters.ToList().Select(p => new ReportParameter
+						{
+							Key = p.Id,
+							CreationTime = p.CreationTime,
+							Name = p.Name,
+							IsNullable = p.IsNullable,
+							Order = p.Order,
+							ParameterType = this.parameterTypePersistenceService.Get<Guid>(new Identifier<Guid>(p.ParameterTypeId), AuthenticationContext.Current.Principal, true),
+							Value = p.Value
+						}).ToList();
+					}
+				}
 			}
 
 			this.Retrieved?.Invoke(this, new PostRetrievalEventArgs<ReportDefinition>(result, principal));
@@ -315,6 +320,11 @@ namespace OpenIZ.Persistence.Reporting.MSSQL.Services
 			using (var context = new ApplicationDbContext())
 			{
 				var domainInstance = this.FromModelInstance(storageData);
+
+				if (string.IsNullOrEmpty(domainInstance.Author) || string.IsNullOrWhiteSpace(domainInstance.Author))
+				{
+					domainInstance.Author = "SYSTEM";
+				}
 
 				context.Entry(domainInstance).State = EntityState.Modified;
 

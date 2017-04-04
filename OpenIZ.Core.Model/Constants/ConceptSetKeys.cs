@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -70,6 +70,16 @@ namespace OpenIZ.Core.Model.Constants
 		/// Concept status
 		/// </summary>
 		public static readonly Guid ConceptStatus = Guid.Parse("AAE906AA-27B3-4CDB-AFF1-F08B0FD31E59");
+
+		/// <summary>
+		/// Represents the container cap concept set.
+		/// </summary>
+		public static readonly Guid ContainerCap = Guid.Parse("5737CA40-57DC-4590-AB3B-54C9AFCCD55A");
+
+		/// <summary>
+		/// Represents the container separator concept set.
+		/// </summary>
+		public static readonly Guid ContainerSeparatorTypeKeys = Guid.Parse("B9AC7826-5D19-421E-A848-61C3C8F563A2");
 
 		/// <summary>
 		/// Entity classifications

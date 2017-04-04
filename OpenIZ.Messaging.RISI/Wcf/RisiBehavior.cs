@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -139,9 +139,9 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
-		public RisiCollection<ReportParameter> GetAllReportParamterTypes()
+		public RisiCollection<ReportParameter> GetAllReportParameterTypes()
 		{
-			return this.reportHandler.GetAllReportParamterTypes();
+			return this.reportHandler.GetAllReportParameterTypes();
 		}
 
 		/// <summary>
@@ -165,9 +165,9 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// Gets a list of report definitions based on a specific query.
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
-		public RisiCollection<ReportDefinition> GetReportDefintions()
+		public RisiCollection<ReportDefinition> GetReportDefinitions()
 		{
-			return this.reportHandler.GetReportDefintions();
+			return this.reportHandler.GetReportDefinitions();
 		}
 
 		/// <summary>
@@ -250,7 +250,8 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve the source.</param>
 		/// <returns>Returns the report source.</returns>
-		public ReportDefinition GetReportSource(string id)
+		/// <exception cref="System.ArgumentException">If the id is not in a valid format.</exception>
+		public byte[] GetReportSource(string id)
 		{
 			var key = Guid.Empty;
 
@@ -269,6 +270,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="format">The output format of the report.</param>
 		/// <param name="parameters">The list of parameters of the report.</param>
 		/// <returns>Returns the report in raw format.</returns>
+		/// <exception cref="System.ArgumentException">If the id or format is not in a valid format.</exception>
 		public byte[] RunReport(string id, string format, List<ReportParameter> parameters)
 		{
 			var reportId = Guid.Empty;

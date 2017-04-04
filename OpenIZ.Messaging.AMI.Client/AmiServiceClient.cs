@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
+ * User: khannan
  * Date: 2016-8-2
  */
 using OpenIZ.Core.Alert.Alerting;
@@ -26,11 +26,11 @@ using OpenIZ.Core.Model.AMI.DataTypes;
 using OpenIZ.Core.Model.AMI.Diagnostics;
 using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Core.Model.DataTypes;
-using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.Security;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using OpenIZ.Core.Interop;
@@ -61,19 +61,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the submission result.</returns>
 		public SubmissionResult AcceptCertificateSigningRequest(string id)
 		{
-			return this.Client.Put<object, SubmissionResult>(string.Format("csr/accept/{0}", id), this.Client.Accept, null);
-		}
-
-		/// <summary>
-		/// Changes the password of a user.
-		/// </summary>
-		/// <param name="id">The id of the user whose password is to be changed.</param>
-		/// <param name="password">The new password of the user.</param>
-		/// <returns>Returns the updated user.</returns>
-		[Obsolete("Should update the user with new password instead")]
-		public SecurityUser ChangePassword(Guid id, string password)
-		{
-			return this.Client.Put<string, SecurityUser>(string.Format("changepassword/{0}", id.ToString()), this.Client.Accept, password);
+			return this.Client.Put<object, SubmissionResult>($"csr/accept/{id}", this.Client.Accept, null);
 		}
 
 		/// <summary>
@@ -187,6 +175,17 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
+		/// Deletes a specified certificate.
+		/// </summary>
+		/// <param name="certificateId">The id of the certificate to be deleted.</param>
+		/// <param name="reason">The reason the certificate is to be deleted.</param>
+		/// <returns>Returns the deletion result.</returns>
+		public SubmissionResult DeleteCertificate(string certificateId, RevokeReason reason)
+		{
+			return this.Client.Delete<SubmissionResult>($"certificate/{certificateId}/revokeReason/{reason}");
+		}
+
+		/// <summary>
 		/// Deletes a device.
 		/// </summary>
 		/// <param name="id">The id of the device to be deleted.</param>
@@ -269,6 +268,16 @@ namespace OpenIZ.Messaging.AMI.Client
 
 		#endregion IDisposable Support
 
+		/// <summary>
+		/// Downloads the applet.
+		/// </summary>
+		/// <param name="appletId">The applet identifier.</param>
+		/// <returns>Stream.</returns>
+		public Stream DownloadApplet(string appletId)
+		{
+			return this.Client.Get<Stream>($"pak/{appletId}");
+		}
+		
 		/// <summary>
 		/// Retrieves the specified role from the AMI
 		/// </summary>
@@ -388,11 +397,10 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <summary>
 		/// Gets a list of certificates.
 		/// </summary>
-		/// <param name="query">The query expression to use to find the certificates.</param>
 		/// <returns>Returns a collection of certificates which match the specified query.</returns>
-		public AmiCollection<X509Certificate2Info> GetCertificates(Expression<Func<X509Certificate2Info, bool>> query)
+		public AmiCollection<X509Certificate2Info> GetCertificates()
 		{
-			return this.Client.Get<AmiCollection<X509Certificate2Info>>("certificate", QueryExpressionBuilder.BuildQuery(query).ToArray());
+			return this.Client.Get<AmiCollection<X509Certificate2Info>>("certificate", new KeyValuePair<string, object>("_", DateTimeOffset.UtcNow.ToString("yyyyMMddHHmmss")));
 		}
 
 		/// <summary>
@@ -459,7 +467,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// Gets a specific role.
 		/// </summary>
 		/// <param name="id">The id of the role to be retrieved.</param>
-		/// <returns>Returns the specified user.</returns>
+		/// <returns>Returns the specified role.</returns>
 		public SecurityRoleInfo GetRole(string id)
 		{
 			return this.Client.Get<SecurityRoleInfo>($"role/{id}");
@@ -568,28 +576,6 @@ namespace OpenIZ.Messaging.AMI.Client
         {
             return this.Client.Put<AssigningAuthorityInfo, AssigningAuthorityInfo>($"assigningAuthority/{assigningAuthorityId}", this.Client.Accept, assigningAuthorityInfo);
         }
-
-        /// <summary>
-        /// Updates a concept.
-        /// </summary>
-        /// <param name="conceptId">The id of the concept to be updated.</param>
-        /// <param name="concept">The concept containing the updated information.</param>
-        /// <returns>Returns the updated concept.</returns>
-        public Concept UpdateConcept(string conceptId, Concept concept)
-		{
-			return this.Client.Put<Concept, Concept>($"concept/{conceptId}", this.Client.Accept, concept);
-		}
-
-		/// <summary>
-		/// Updates a policy.
-		/// </summary>
-		/// <param name="policyId">The id of the policy to be updated.</param>
-		/// <param name="policyInfo">The policy containing the updated information.</param>
-		/// <returns>Returns the updated policy.</returns>
-		public SecurityPolicyInfo UpdatePolicy(string policyId, SecurityPolicyInfo policyInfo)
-		{
-			return this.Client.Put<SecurityPolicyInfo, SecurityPolicyInfo>($"policy/{policyId}", this.Client.Accept, policyInfo);
-		}
 
 		/// <summary>
 		/// Updates a role.

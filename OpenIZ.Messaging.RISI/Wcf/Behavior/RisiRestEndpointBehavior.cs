@@ -30,10 +30,20 @@ namespace OpenIZ.Messaging.RISI.Wcf.Behavior
 	/// </summary>
 	public class RisiRestEndpointBehavior : IEndpointBehavior
 	{
+		/// <summary>
+		/// Implement to pass data at runtime to bindings to support custom behavior.
+		/// </summary>
+		/// <param name="endpoint">The endpoint to modify.</param>
+		/// <param name="bindingParameters">The objects that binding elements require to support the behavior.</param>
 		public void AddBindingParameters(ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
 		{
 		}
 
+		/// <summary>
+		/// Implements a modification or extension of the client across an endpoint.
+		/// </summary>
+		/// <param name="endpoint">The endpoint that is to be customized.</param>
+		/// <param name="clientRuntime">The client runtime to be customized.</param>
 		public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
 		{
 		}
@@ -56,6 +66,7 @@ namespace OpenIZ.Messaging.RISI.Wcf.Behavior
 		/// Validates a service endpoint.
 		/// </summary>
 		/// <param name="endpoint">The service endpoint to validate.</param>
+		/// <exception cref="System.InvalidOperationException">RISI Must be bound to type webHttpBinding</exception>
 		public void Validate(ServiceEndpoint endpoint)
 		{
 			var bindingElements = endpoint.Binding.CreateBindingElements();

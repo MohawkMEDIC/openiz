@@ -46,8 +46,34 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="JasperReportHandler.cs" />
-    <Compile Include="Model\ErrorDescriptor.cs" />
-    <Compile Include="Model\ErrorParameter.cs" />
+    <Compile Include="Model\Collection\Item.cs" />
+    <Compile Include="Model\Collection\ListOfValues.cs" />
+    <Compile Include="Model\Collection\Query.cs" />
+    <Compile Include="Model\Connection\XmlAConnection.cs" />
+    <Compile Include="Model\Core\File.cs" />
+    <Compile Include="Model\Core\InputControl.cs" />
+    <Compile Include="Model\Core\ReportOptions.cs" />
+    <Compile Include="Model\Core\ReportParameter.cs" />
+    <Compile Include="Model\Reference\DataSourceReference.cs" />
+    <Compile Include="Model\DataSource\AwsDataSource.cs" />
+    <Compile Include="Model\DataSource\BeanDataSource.cs" />
+    <Compile Include="Model\Core\DataType.cs" />
+    <Compile Include="Model\DataSource\JdbcDataSource.cs" />
+    <Compile Include="Model\DataSource\SubDataSource.cs" />
+    <Compile Include="Model\DataSource\VirtualDataSource.cs" />
+    <Compile Include="Model\Error\ErrorDescriptor.cs" />
+    <Compile Include="Model\Error\ErrorParameter.cs" />
+    <Compile Include="Model\Reference\DataTypeReference.cs" />
+    <Compile Include="Model\Reference\FileReference.cs" />
+    <Compile Include="Model\Core\Folder.cs" />
+    <Compile Include="Model\DataSource\JndiDataSource.cs" />
+    <Compile Include="Model\Reference\InputControlReference.cs" />
+    <Compile Include="Model\Reference\JrXmlFileReference.cs" />
+    <Compile Include="Model\Reference\QueryReference.cs" />
+    <Compile Include="Model\Reference\ReferenceBase.cs" />
+    <Compile Include="Model\Core\ReportUnit.cs" />
+    <Compile Include="Model\ResourceBase.cs" />
+    <Compile Include="Model\Reference\ResourceFileReference.cs" />
     <Compile Include="Model\ResourceLookup.cs" />
     <Compile Include="Model\Resources.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -75,6 +101,10 @@
     <ProjectReference Include="..\OpenIZ.Core\OpenIZ.Core.csproj">
       <Project>{db9bc05e-45f1-4f96-a161-f36bdecaf566}</Project>
       <Name>OpenIZ.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Messaging.RISI.Configuration\OpenIZ.Messaging.RISI.Configuration.csproj">
+      <Project>{A0B1051F-0E13-4369-B03A-A81A0E193CEE}</Project>
+      <Name>OpenIZ.Messaging.RISI.Configuration</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Reporting.Core\OpenIZ.Reporting.Core.csproj">
       <Project>{f2b51ac4-4710-4b45-8bf7-e480f375fc90}</Project>

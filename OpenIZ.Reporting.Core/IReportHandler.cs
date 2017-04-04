@@ -80,7 +80,7 @@ namespace OpenIZ.Reporting.Core
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
-		RisiCollection<ReportParameter> GetAllReportParamterTypes();
+		RisiCollection<ReportParameter> GetAllReportParameterTypes();
 
 		/// <summary>
 		/// Gets a parameter type by id.
@@ -100,7 +100,7 @@ namespace OpenIZ.Reporting.Core
 		/// Gets a list of report definitions based on a specific query.
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
-		RisiCollection<ReportDefinition> GetReportDefintions();
+		RisiCollection<ReportDefinition> GetReportDefinitions();
 
 		/// <summary>
 		/// Gets a report format by id.
@@ -136,15 +136,16 @@ namespace OpenIZ.Reporting.Core
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve the source.</param>
 		/// <returns>Returns the report source.</returns>
-		ReportDefinition GetReportSource(Guid id);
+		byte[] GetReportSource(Guid id);
 
 		/// <summary>
 		/// Runs a report.
 		/// </summary>
 		/// <param name="reportId">The id of the report.</param>
-		/// <param name="reportFormat">The format of the report.</param>
+		/// <param name="reportFormatId">The format of the report.</param>
 		/// <param name="parameters">The parameters of the report.</param>
-		byte[] RunReport(Guid reportId, Guid reportFormat, IEnumerable<ReportParameter> parameters);
+		/// <returns>Returns the raw report.</returns>
+		byte[] RunReport(Guid reportId, Guid reportFormatId, IEnumerable<ReportParameter> parameters);
 
 		/// <summary>
 		/// Updates a parameter type.

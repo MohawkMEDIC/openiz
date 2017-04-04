@@ -35,6 +35,7 @@
   <class modelClass="OpenIZ.Core.Model.RISI.ReportParameter, OpenIZ.Core.Model.RISI, Version=0.6.0.0"
 		domainClass="OpenIZ.Persistence.Reporting.MSSQL.Model.ReportParameter, OpenIZ.Persistence.Reporting.MSSQL, Version=0.6.0.0">
     <property modelName="Key" domainName="Id" />
+    <property modelName="CorrelationId" domainName="CorrelationId" />
     <property modelName="Description" domainName="Description" />
     <property modelName="Name" domainName="Name" />
     <property modelName="Order" domainName="Order" />
@@ -50,5 +51,12 @@
     <property modelName="Key" domainName="Id" />
     <property modelName="CreationTime" domainName="CreationTime"/>
     <property modelName="ValuesProvider" domainName="ValuesProvider" />
+  </class>
+  
+  <!-- Report Formats -->
+  <class modelClass="OpenIZ.Core.Model.RISI.ReportFormat, OpenIZ.Core.Model.RISI, Version=0.6.0.0"
+  domainClass="OpenIZ.Persistence.Reporting.MSSQL.Model.ReportFormat, OpenIZ.Persistence.Reporting.MSSQL, Version=0.6.0.0">
+    <property modelName="Key" domainName="Id" />
+    <property modelName="Format" domainName="Name" />
   </class>
 </modelMap>

@@ -129,6 +129,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Warehouse.ADO", "Ope
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Messaging.CSD", "OpenIZ.Messaging.CSD\OpenIZ.Messaging.CSD.csproj", "{46111047-55CA-401B-99D0-DD42F8657C1B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Messaging.RISI.Configuration", "OpenIZ.Messaging.RISI.Configuration\OpenIZ.Messaging.RISI.Configuration.csproj", "{A0B1051F-0E13-4369-B03A-A81A0E193CEE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -319,6 +321,10 @@ Global
 		{46111047-55CA-401B-99D0-DD42F8657C1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46111047-55CA-401B-99D0-DD42F8657C1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46111047-55CA-401B-99D0-DD42F8657C1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0B1051F-0E13-4369-B03A-A81A0E193CEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0B1051F-0E13-4369-B03A-A81A0E193CEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0B1051F-0E13-4369-B03A-A81A0E193CEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0B1051F-0E13-4369-B03A-A81A0E193CEE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -380,5 +386,6 @@ Global
 		{407C87E6-A1F3-45E6-B883-A8176B350817} = {219B42C9-D256-44A4-AB99-C0B31E0DDACA}
 		{BFC58F38-9023-4700-B35C-AA933A608E43} = {219B42C9-D256-44A4-AB99-C0B31E0DDACA}
 		{46111047-55CA-401B-99D0-DD42F8657C1B} = {034029A9-C588-4CD7-9FF3-69CD4F82DB8E}
+		{A0B1051F-0E13-4369-B03A-A81A0E193CEE} = {05B134E7-8762-4F4D-8441-91E10F6FAB72}
 	EndGlobalSection
 EndGlobal

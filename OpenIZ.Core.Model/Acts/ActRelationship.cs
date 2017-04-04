@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -49,26 +49,30 @@ namespace OpenIZ.Core.Model.Acts
 
         private Concept m_relationshipType;
 
-        /// <summary>
-        /// Default constructor for entity relationship
-        /// </summary>
-        public ActRelationship()
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ActRelationship"/> class.
+		/// </summary>
+		public ActRelationship()
         {
         }
 
-        /// <summary>
-        /// Entity relationship between <paramref name="source"/> and <paramref name="target"/>
-        /// </summary>
-        public ActRelationship(Guid? relationshipType, Act target)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ActRelationship"/> class.
+		/// </summary>
+		/// <param name="relationshipType">Type of the relationship.</param>
+		/// <param name="target">The target.</param>
+		public ActRelationship(Guid? relationshipType, Act target)
         {
             this.RelationshipTypeKey = relationshipType;
             this.TargetAct = target;
         }
 
-        /// <summary>
-        /// Entity relationship between <paramref name="source"/> and <paramref name="target"/>
-        /// </summary>
-        public ActRelationship(Guid? relationshipType, Guid? targetKey)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ActRelationship"/> class.
+		/// </summary>
+		/// <param name="relationshipType">Type of the relationship.</param>
+		/// <param name="targetKey">The target key.</param>
+		public ActRelationship(Guid? relationshipType, Guid? targetKey)
         {
             this.RelationshipTypeKey = relationshipType;
             this.TargetActKey = targetKey;
