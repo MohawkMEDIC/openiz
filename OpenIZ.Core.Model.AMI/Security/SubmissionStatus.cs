@@ -23,29 +23,50 @@ using System.Xml.Serialization;
 namespace OpenIZ.Core.Model.AMI.Security
 {
 	/// <summary>
-	/// Resubmission outcome
+	/// Represents a submission status.
 	/// </summary>
 	[XmlType(nameof(SubmissionStatus), Namespace = "http://openiz.org/ami")]
 	public enum SubmissionStatus
 	{
+		/// <summary>
+		/// The submission status is not yet complete.
+		/// </summary>
 		[XmlEnum("NOT COMPLETE")]
 		NotComplete = 0x0,
 
+		/// <summary>
+		/// The submission status failed.
+		/// </summary>
 		[XmlEnum("ERROR")]
 		Failed = 0x1,
 
+		/// <summary>
+		/// The submission status is denied.
+		/// </summary>
 		[XmlEnum("DENIED")]
 		Denied = 0x2,
 
+		/// <summary>
+		/// The submission status is issued.
+		/// </summary>
 		[XmlEnum("ISSUED")]
 		Issued = 0x3,
 
+		/// <summary>
+		/// The submission status is issued separately.
+		/// </summary>
 		[XmlEnum("ISSUED SEPERATELY")]
-		IssuedSeperately = 0x4,
+		IssuedSeparately = 0x4,
 
+		/// <summary>
+		/// The submission status is submitted.
+		/// </summary>
 		[XmlEnum("SUBMITTED")]
 		Submission = 0x5,
 
+		/// <summary>
+		/// The submission status is revoked.
+		/// </summary>
 		[XmlEnum("REVOKED")]
 		Revoked = 0x6
 	}
