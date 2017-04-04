@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -92,10 +92,12 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			return new AppletManifestInfo();
 		}
 
-        /// <summary>
-        /// Download applet in raw format
-        /// </summary>
-        public Stream DownloadApplet(String appletId)
+		/// <summary>
+		/// Downloads the applet.
+		/// </summary>
+		/// <param name="appletId">The applet identifier.</param>
+		/// <returns>Stream.</returns>
+		public Stream DownloadApplet(string appletId)
         {
             var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 

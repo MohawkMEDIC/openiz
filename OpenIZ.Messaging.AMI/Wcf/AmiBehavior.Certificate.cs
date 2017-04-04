@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -77,9 +77,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <summary>
 		/// Deletes a specified certificate.
 		/// </summary>
-		/// <param name="id">The id of the certificate to be deleted.</param>
+		/// <param name="rawId">The raw identifier.</param>
 		/// <param name="reason">The reason the certificate is to be deleted.</param>
 		/// <returns>Returns the deletion result.</returns>
+		/// <exception cref="System.InvalidOperationException">Cannot revoke an un-issued certificate</exception>
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
 		public SubmissionResult DeleteCertificate(string rawId, OpenIZ.Core.Model.AMI.Security.RevokeReason reason)
 		{
@@ -104,14 +105,17 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <summary>
 		/// Gets a specific certificate.
 		/// </summary>
-		/// <param name="id">The id of the certificate to retrieve.</param>
+		/// <param name="rawId">The raw identifier.</param>
 		/// <returns>Returns the certificate.</returns>
 		public byte[] GetCertificate(string rawId)
 		{
-			int id = Int32.Parse(rawId);
+			var id = int.Parse(rawId);
+
 			WebOperationContext.Current.OutgoingResponse.ContentType = "application/x-pkcs12";
-			WebOperationContext.Current.OutgoingResponse.Headers.Add("Content-Disposition", String.Format("attachment; filename=\"crt-{0}.p12\"", id));
+			WebOperationContext.Current.OutgoingResponse.Headers.Add("Content-Disposition", $"attachment; filename=\"crt-{id}.p12\"");
+
 			var result = this.certTool.GetRequestStatus(id);
+
 			return Encoding.UTF8.GetBytes(result.AuthorityResponse);
 		}
 
@@ -121,10 +125,15 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns a list of certificates.</returns>
 		public AmiCollection<X509Certificate2Info> GetCertificates()
 		{
-			AmiCollection<X509Certificate2Info> collection = new AmiCollection<X509Certificate2Info>();
+			var collection = new AmiCollection<X509Certificate2Info>();
+
 			var certs = this.certTool.GetCertificates();
+
 			foreach (var cert in certs)
+			{
 				collection.CollectionItem.Add(new X509Certificate2Info(cert.Attribute));
+			}
+
 			return collection;
 		}
 
