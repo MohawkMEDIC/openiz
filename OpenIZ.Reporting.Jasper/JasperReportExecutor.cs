@@ -32,24 +32,27 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.NetworkInformation;
+using System.Security.AccessControl;
 using System.Security.Authentication;
+using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using OpenIZ.Core.Diagnostics;
-using OpenIZ.Messaging.RISI.Configuration;
+using OpenIZ.Reporting.Core.Attributes;
 using OpenIZ.Reporting.Core.Auth;
+using OpenIZ.Reporting.Core.Configuration;
 using OpenIZ.Reporting.Core.Event;
 using OpenIZ.Reporting.Jasper.Model;
 
 namespace OpenIZ.Reporting.Jasper
 {
 	/// <summary>
-	/// Represents a Jasper server report handler.
+	/// Represents a Jasper server report executor.
 	/// </summary>
 	[Service(ServiceInstantiationType.Instance)]
-	public class JasperReportHandler : IReportHandler, ISupportBasicAuthentication
+	public class JasperReportExecutor : IReportExecutor, ISupportBasicAuthentication
 	{
 		/// <summary>
 		/// The internal reference to the <see cref="HttpClient"/> instance.
@@ -64,7 +67,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// <summary>
 		/// The configuration.
 		/// </summary>
-		private readonly RisiConfiguration configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.risi") as RisiConfiguration;
+		private static readonly ReportingConfiguration configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.reporting.core") as ReportingConfiguration;
 
 		/// <summary>
 		/// The jasper authentication path.
@@ -115,10 +118,10 @@ namespace OpenIZ.Reporting.Jasper
 		public event EventHandler<AuthenticationErrorEventArgs> OnAuthenticationError;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="JasperReportHandler" /> class.
+		/// Initializes a new instance of the <see cref="JasperReportExecutor" /> class.
 		/// </summary>
 		/// <exception cref="System.InvalidOperationException">Non username and password authentication methods are not supported for Jasper Reports</exception>
-		public JasperReportHandler()
+		public JasperReportExecutor()
 		{
 			this.cookieContainer = new CookieContainer();
 
@@ -129,17 +132,18 @@ namespace OpenIZ.Reporting.Jasper
 
 			this.client = new HttpClient(handler);
 
-			var usernamePasswordCredential = configuration.Credentials.Credential as UsernamePasswordCredential;
+			var usernamePasswordCredential = this.Configuration.Credentials.Credential as UsernamePasswordCredential;
 
 			if (usernamePasswordCredential == null)
 			{
-				throw new InvalidOperationException("Non username and password authentication methods are not supported for Jasper Reports");
+				throw new InvalidOperationException("Only the username and password authentication mechanism is currently supported for Jasper Reports");
 			}
 
 			this.username = usernamePasswordCredential.Username;
 			this.password = usernamePasswordCredential.Password;
 
 			this.Authenticated += OnAuthenticated;
+			this.ReportUri = new Uri(this.Configuration.Address);
 		}
 
 		/// <summary>
@@ -148,9 +152,15 @@ namespace OpenIZ.Reporting.Jasper
 		public AuthenticationResult AuthenticationResult { get; set; }
 
 		/// <summary>
+		/// Gets the configuration.
+		/// </summary>
+		/// <value>The configuration.</value>
+		public ReportingConfiguration Configuration => configuration;
+
+		/// <summary>
 		/// Gets or sets the report URI.
 		/// </summary>
-		public Uri ReportUri { get; set; }
+		public Uri ReportUri { get; }
 
 		/// <summary>
 		/// Authenticates against a remote system using a username and password.
@@ -322,6 +332,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// <param name="id">The id of the report definition to retrieve.</param>
 		/// <returns>Returns a report definition.</returns>
 		/// <exception cref="System.InvalidOperationException">If the persistence service is not found.</exception>
+		[ReportExecutorAuthorize(SecurityAction.Demand)]
 		public ReportDefinition GetReportDefinition(Guid id)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinition>>();
@@ -337,8 +348,6 @@ namespace OpenIZ.Reporting.Jasper
 			{
 				return null;
 			}
-
-			this.Authenticate(this.username, this.password);
 
 			var response = client.GetAsync($"{this.ReportUri}{JasperResourcesPath}{reportDefinition.CorrelationId}").Result;
 
@@ -364,11 +373,9 @@ namespace OpenIZ.Reporting.Jasper
 		/// Gets a list of report definitions based on a specific query.
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
+		[ReportExecutorAuthorize(SecurityAction.Demand)]
 		public RisiCollection<ReportDefinition> GetReportDefinitions()
 		{
-			// ensure authenticated
-			this.Authenticate(this.username, this.password);
-
 			var response = client.GetAsync($"{this.ReportUri}{JasperResourcesPath}").Result;
 
 			tracer.TraceEvent(TraceEventType.Information, 0, $"Jasper report server response: {response.Content}");

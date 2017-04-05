@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenIZ.OrmLite.Providers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -30,6 +31,7 @@ namespace OpenIZ.OrmLite
     {
         private string m_tableAlias = null;
         private SqlStatement m_sqlStatement = null;
+        private IDbProvider m_provider;
 
         /// <summary>
         /// Gets the constructed SQL statement
@@ -39,10 +41,11 @@ namespace OpenIZ.OrmLite
         /// <summary>
         /// Creates a new postgresql query expression builder
         /// </summary>
-        public SqlQueryExpressionBuilder(String alias)
+        public SqlQueryExpressionBuilder(String alias, IDbProvider provider)
         {
             this.m_tableAlias = alias;
-            this.m_sqlStatement = new SqlStatement();
+            this.m_sqlStatement = new SqlStatement(this.m_provider);
+            this.m_provider = provider;
         }
 
         /// <summary>
@@ -219,19 +222,34 @@ namespace OpenIZ.OrmLite
             // Method names
             switch (node.Method.Name)
             {
+                case "StartsWith":
+                    this.Visit(node.Object);
+                    this.m_sqlStatement.Append(this.m_provider.CreateSqlKeyword(SqlKeyword.ILike));
+                    this.Visit(node.Arguments[0]);
+                    this.m_sqlStatement.Append(" || '%' ");
+                    break;
+                case "EndsWith":
+                    this.Visit(node.Object);
+                    this.m_sqlStatement.Append(this.m_provider.CreateSqlKeyword(SqlKeyword.ILike));
+                    this.m_sqlStatement.Append(" '%' || ");
+                    this.Visit(node.Arguments[0]);
+                    break;
                 case "Contains":
                     this.Visit(node.Object);
-                    this.m_sqlStatement.Append(" ILIKE '%' || ");
+                    this.m_sqlStatement.Append(this.m_provider.CreateSqlKeyword(SqlKeyword.ILike));
+                    this.m_sqlStatement.Append(" '%' || ");
                     this.Visit(node.Arguments[0]);
                     this.m_sqlStatement.Append(" || '%' ");
                     break;
                 case "ToLower":
-                    this.m_sqlStatement.Append("LOWER(");
+                    this.m_sqlStatement.Append(this.m_provider.CreateSqlKeyword(SqlKeyword.Lower));
+                    this.m_sqlStatement.Append("(");
                     this.Visit(node.Object);
                     this.m_sqlStatement.Append(") ");
                     break;
                 case "ToUpper":
-                    this.m_sqlStatement.Append("UPPER(");
+                    this.m_sqlStatement.Append(this.m_provider.CreateSqlKeyword(SqlKeyword.Upper));
+                    this.m_sqlStatement.Append("(");
                     this.Visit(node.Object);
                     this.m_sqlStatement.Append(") ");
                     break;

@@ -119,6 +119,10 @@ namespace OpenIZ.Core.Applets.Model
             }
         }
 
-
+        /// <summary>
+        /// Identifies whether the asset is static
+        /// </summary>
+        [XmlAttribute("static")]
+        public bool Static { get; set; }
     }
 }

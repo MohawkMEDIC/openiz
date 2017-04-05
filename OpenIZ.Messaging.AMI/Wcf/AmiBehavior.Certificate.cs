@@ -82,8 +82,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the deletion result.</returns>
 		/// <exception cref="System.InvalidOperationException">Cannot revoke an un-issued certificate</exception>
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
-		public SubmissionResult DeleteCertificate(string rawId, string reason)
+		public SubmissionResult DeleteCertificate(string rawId, String strReason)
 		{
+            // Revoke reason
+            var reason = (OpenIZ.Core.Model.AMI.Security.RevokeReason)Enum.Parse(typeof(OpenIZ.Core.Model.AMI.Security.RevokeReason), strReason);
 			int id = Int32.Parse(rawId);
 			var result = this.certTool.GetRequestStatus(id);
 
@@ -95,7 +97,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			foreach (var cert in importer.Certificates)
 				if (cert.Subject != cert.Issuer)
-					this.certTool.RevokeCertificate(cert.SerialNumber, (MARC.Util.CertificateTools.RevokeReason)Convert.ToInt32(reason));
+					this.certTool.RevokeCertificate(cert.SerialNumber, (MARC.Util.CertificateTools.RevokeReason)reason);
 
 			result.Outcome = SubmitOutcome.Revoked;
 			result.AuthorityResponse = null;

@@ -53,7 +53,7 @@ namespace OpenIZ.Reporting.Jasper.Provider
 
 			while (offset <= totalCount)
 			{
-				var places = placePersistenceService.Query(p => p.IsMobile == false && p.ClassConceptKey == EntityClassKeys.Place && p.ObsoletionTime == null, offset, 250, AuthenticationContext.Current.Principal, out totalCount);
+				var places = placePersistenceService.Query(p => p.ObsoletionTime == null && p.ClassConceptKey == EntityClassKeys.Place && p.ObsoletionTime == null, offset, 250, AuthenticationContext.Current.Principal, out totalCount);
 
 				offset += 250;
 

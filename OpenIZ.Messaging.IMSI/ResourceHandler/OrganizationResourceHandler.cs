@@ -22,6 +22,8 @@ using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Query;
+using OpenIZ.Core.Security;
+using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
@@ -62,13 +64,14 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			}
 		}
 
-		/// <summary>
-		/// Creates an organization.
-		/// </summary>
-		/// <param name="data">The organization to be created.</param>
-		/// <param name="updateIfExists">Update the organization if it exists.</param>
-		/// <returns>Returns the newly create organization.</returns>
-		public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
+        /// <summary>
+        /// Creates an organization.
+        /// </summary>
+        /// <param name="data">The organization to be created.</param>
+        /// <param name="updateIfExists">Update the organization if it exists.</param>
+        /// <returns>Returns the newly create organization.</returns>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
+        public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
 		{
 			Bundle bundleData = data as Bundle;
 			bundleData?.Reconstitute();
@@ -97,56 +100,60 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			}
 		}
 
-		/// <summary>
-		/// Gets an organization by id and version id.
-		/// </summary>
-		/// <param name="id">The id of the organization.</param>
-		/// <param name="versionId">The version id of the organization.</param>
-		/// <returns>Returns the organization.</returns>
-		public IdentifiedData Get(Guid id, Guid versionId)
+        /// <summary>
+        /// Gets an organization by id and version id.
+        /// </summary>
+        /// <param name="id">The id of the organization.</param>
+        /// <param name="versionId">The version id of the organization.</param>
+        /// <returns>Returns the organization.</returns>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public IdentifiedData Get(Guid id, Guid versionId)
 		{
 			return this.repository.Get(id, versionId);
 		}
 
-		/// <summary>
-		/// Obsoletes an organization.
-		/// </summary>
-		/// <param name="key">The key of the organization to obsolete.</param>
-		/// <returns>Returns the obsoleted organization.</returns>
-		public IdentifiedData Obsolete(Guid key)
+        /// <summary>
+        /// Obsoletes an organization.
+        /// </summary>
+        /// <param name="key">The key of the organization to obsolete.</param>
+        /// <returns>Returns the obsoleted organization.</returns>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
+        public IdentifiedData Obsolete(Guid key)
 		{
 			return this.repository.Obsolete(key);
 		}
 
-		/// <summary>
-		/// Queries for an organization.
-		/// </summary>
-		/// <param name="queryParameters">The query parameters for which to use to query for the organization.</param>
-		/// <returns>Returns a list of organizations.</returns>
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
-		{
-			return this.repository.Find(QueryExpressionParser.BuildLinqExpression<Organization>(queryParameters));
-		}
+        /// <summary>
+        /// Query for the specified org
+        /// </summary>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
+        {
+            int tr = 0;
+            return this.Query(queryParameters, 0, 100, out tr);
+        }
 
-		/// <summary>
-		/// Queries for an organization.
-		/// </summary>
-		/// <param name="queryParameters">The query parameters for which to use to query for the organization.</param>
-		/// <param name="offset">The query offset.</param>
-		/// <param name="count">The count of the query.</param>
-		/// <param name="totalCount">The total count of the query.</param>
-		/// <returns>Returns a list of organizations.</returns>
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
-		{
-			return this.repository.Find(QueryExpressionParser.BuildLinqExpression<Organization>(queryParameters), offset, count, out totalCount);
-		}
+        /// <summary>
+        /// Query for the specified org with restrictions
+        /// </summary>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
+        {
+            var filter = QueryExpressionParser.BuildLinqExpression<Organization>(queryParameters);
+            List<String> queryId = null;
+            if (this.repository is IPersistableQueryRepositoryService && queryParameters.TryGetValue("_queryId", out queryId))
+                return (this.repository as IPersistableQueryRepositoryService).Find(filter, offset, count, out totalCount, Guid.Parse(queryId[0]));
+            else
+                return this.repository.Find(filter, offset, count, out totalCount);
+        }
 
-		/// <summary>
-		/// Updates an organization.
-		/// </summary>
-		/// <param name="data">The organization to be updated.</param>
-		/// <returns>Returns the updated organization.</returns>
-		public IdentifiedData Update(IdentifiedData data)
+        /// <summary>
+        /// Updates an organization.
+        /// </summary>
+        /// <param name="data">The organization to be updated.</param>
+        /// <returns>Returns the updated organization.</returns>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
+        public IdentifiedData Update(IdentifiedData data)
 		{
 			Bundle bundleData = data as Bundle;
 			bundleData?.Reconstitute();

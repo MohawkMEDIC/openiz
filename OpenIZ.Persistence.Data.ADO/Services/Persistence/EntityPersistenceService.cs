@@ -37,6 +37,8 @@ using OpenIZ.Persistence.Data.ADO.Data.Model.DataType;
 using OpenIZ.OrmLite;
 using System.Diagnostics;
 using OpenIZ.Core.Model.Roles;
+using OpenIZ.Core.Services;
+using MARC.HI.EHRS.SVC.Core;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -218,6 +220,83 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 #endif 
             retVal.LoadAssociations(context, principal);
             return retVal;
+        }
+
+        /// <summary>
+        /// Conversion based on type
+        /// </summary>
+        protected override Entity CacheConvert(object dataInstance, DataContext context, IPrincipal principal)
+        {
+            return this.DoCacheConvert(dataInstance, context, principal);
+        }
+
+        /// <summary>
+        /// Perform the cache convert
+        /// </summary>
+        internal Entity DoCacheConvert(object dataInstance, DataContext context, IPrincipal principal) { 
+            if (dataInstance == null)
+                return null;
+            // Alright first, which type am I mapping to?
+            var dbEntityVersion = (dataInstance as CompositeResult)?.Values.OfType<DbEntityVersion>().FirstOrDefault() ?? dataInstance as DbEntityVersion ?? context.FirstOrDefault<DbEntityVersion>(o => o.VersionKey == (dataInstance as DbEntitySubTable).ParentKey);
+            var dbEntity = (dataInstance as CompositeResult)?.Values.OfType<DbEntity>().FirstOrDefault() ?? context.FirstOrDefault<DbEntity>(o => o.Key == dbEntityVersion.Key);
+            Entity retVal = null;
+            IDataCachingService cache = ApplicationContext.Current.GetService<IDataCachingService>();
+
+            if (!dbEntityVersion.ObsoletionTime.HasValue)
+                switch (dbEntity.ClassConceptKey.ToString().ToUpper())
+                {
+                    case Device:
+                        retVal = cache?.GetCacheItem<DeviceEntity>(dbEntity.Key);
+                        break;
+                    case NonLivingSubject:
+                        retVal = cache?.GetCacheItem<ApplicationEntity>(dbEntity.Key);
+                        break;
+                    case Person:
+                        var ue = (dataInstance as CompositeResult)?.Values.OfType<DbUserEntity>().FirstOrDefault() ?? context.FirstOrDefault<DbUserEntity>(o => o.ParentKey == dbEntityVersion.VersionKey);
+                        if (ue != null)
+                            retVal = cache?.GetCacheItem<UserEntity>(dbEntity.Key);
+
+                        else
+                            retVal = cache?.GetCacheItem<Person>(dbEntity.Key);
+                        break;
+                    case Patient:
+                        retVal = cache?.GetCacheItem<Patient>(dbEntity.Key);
+                        break;
+                    case Provider:
+                        retVal = cache?.GetCacheItem<Provider>(dbEntity.Key);
+
+                        break;
+                    case Place:
+                    case CityOrTown:
+                    case Country:
+                    case CountyOrParish:
+                    case State:
+                    case ServiceDeliveryLocation:
+                        retVal = cache?.GetCacheItem<Place>(dbEntity.Key);
+
+                        break;
+                    case Organization:
+                        retVal = cache?.GetCacheItem<Organization>(dbEntity.Key);
+
+                        break;
+                    case Material:
+                        retVal = cache?.GetCacheItem<Material>(dbEntity.Key);
+
+                        break;
+                    case ManufacturedMaterial:
+                        retVal = cache?.GetCacheItem<ManufacturedMaterial>(dbEntity.Key);
+
+                        break;
+                    default:
+                        retVal = cache?.GetCacheItem<Entity>(dbEntity.Key);
+                        break;
+                }
+
+            // Return cache value
+            if (retVal != null)
+                return retVal;
+            else
+                return base.CacheConvert(dataInstance, context, principal);
         }
 
         /// <summary>

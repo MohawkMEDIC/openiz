@@ -117,7 +117,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             data.CreatedByKey = data.CreatedBy?.Key ?? data.CreatedByKey;
 
             // This is technically an insert and not an update
-            SqlStatement currentVersionQuery = new SqlStatement<TDomain>().SelectFrom()
+            SqlStatement currentVersionQuery = context.CreateSqlStatement<TDomain>().SelectFrom()
                 .Where(o => o.Key == data.Key && !o.ObsoletionTime.HasValue)
                 .OrderBy<TDomain>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
 
@@ -164,12 +164,20 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Query internal
         /// </summary>
-        protected override IEnumerable<CompositeResult<TDomain, TDomainKey>> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, bool countResults = true)
+        protected override IEnumerable<Object> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, Guid queryId, int offset, int? count, out int totalResults, bool countResults = true)
         {
+            // Query has been registered?
+            if (this.m_queryPersistence?.IsRegistered(queryId.ToString()) == true)
+            {
+                totalResults = (int)this.m_queryPersistence.QueryResultTotalQuantity(queryId.ToString());
+                var keyResults = this.m_queryPersistence.GetQueryResults<Guid>(queryId.ToString(), offset, count.Value);
+                return keyResults.Select(p => p.Id).OfType<Object>();
+            }
+
             SqlStatement domainQuery = null;
             try
             {
-                domainQuery = new SqlStatement<TDomain>().SelectFrom()
+                domainQuery = context.CreateSqlStatement<TDomain>().SelectFrom()
                     .InnerJoin<TDomain, TDomainKey>(o => o.Key, o => o.Key)
                     .Where<TDomain>(m_mapper.MapModelExpression<TModel, TDomain>(query)).Build();
 
@@ -181,7 +189,26 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             }
             domainQuery.OrderBy<TDomain>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
 
-            if (countResults)
+            // Query id just get the UUIDs in the db
+            if (queryId != Guid.Empty)
+            {
+                ColumnMapping pkColumn = TableMapping.Get(typeof(TDomainKey)).Columns.SingleOrDefault(o => o.IsPrimaryKey);
+
+                var keyQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query, pkColumn).Build();
+                var resultKeys = context.Query<Guid>(keyQuery.Build());
+                this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), resultKeys.Select(o => new Identifier<Guid>(o)).ToArray(), query);
+
+                if (countResults)
+                    totalResults = (int)resultKeys.Count();
+                else
+                    totalResults = 0;
+
+                var retVal = resultKeys.Skip(offset);
+                if (count.HasValue)
+                    retVal = retVal.Take(count.Value);
+                return retVal.OfType<Object>();
+            }
+            else if (countResults)
                 totalResults = context.Count(domainQuery);
             else
                 totalResults = 0;
@@ -190,7 +217,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 domainQuery.Offset(offset);
             if (count.HasValue)
                 domainQuery.Limit(count.Value);
-            return context.Query<CompositeResult<TDomain, TDomainKey>>(domainQuery);
+            return context.Query<CompositeResult<TDomain, TDomainKey>>(domainQuery).OfType<Object>();
 
         }
 
@@ -205,7 +232,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 return retVal;
             else
             {
-                var domainQuery = new SqlStatement<TDomain>().SelectFrom()
+                var domainQuery = context.CreateSqlStatement<TDomain>().SelectFrom()
                     .InnerJoin<TDomain, TDomainKey>(o => o.Key, o => o.Key)
                     .Where<TDomain>(o => o.Key == key && o.ObsoletionTime == null)
                     .OrderBy<TDomain>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
@@ -253,7 +280,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     if (uuid.VersionId == Guid.Empty)
                         retVal = this.Get(connection, uuid.Id, principal);
                     else
-                        retVal = this.CacheConvert(this.QueryInternal(connection, o => o.Key == uuid.Id && o.VersionKey == uuid.VersionId, 0, 1, out tr).FirstOrDefault(), connection, principal);
+                        retVal = this.CacheConvert(this.QueryInternal(connection, o => o.Key == uuid.Id && o.VersionKey == uuid.VersionId, Guid.Empty, 0, 1, out tr).FirstOrDefault(), connection, principal);
 
                     var postData = new PostRetrievalEventArgs<TModel>(retVal, principal);
                     this.FireRetrieved(postData);
@@ -312,17 +339,17 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     // Since this is a versioned association an a versioned association only exists between Concept, Act, or Entity
                     if (itm is VersionedAssociation<Concept>)
                     {
-                        versionQuery = new SqlStatement<DbConceptVersion>().SelectFrom().Where(o => o.VersionKey == itm.SourceEntityKey && !o.ObsoletionTime.HasValue).OrderBy<DbConceptVersion>(o => o.VersionSequenceId);
+                        versionQuery = context.CreateSqlStatement<DbConceptVersion>().SelectFrom().Where(o => o.VersionKey == itm.SourceEntityKey && !o.ObsoletionTime.HasValue).OrderBy<DbConceptVersion>(o => o.VersionSequenceId);
                         currentVersion = context.FirstOrDefault<DbConceptVersion>(versionQuery);
                     }
                     else if (itm is VersionedAssociation<Act>)
                     {
-                        versionQuery = new SqlStatement<DbActVersion>().SelectFrom().Where(o => o.Key == itm.SourceEntityKey && !o.ObsoletionTime.HasValue).OrderBy<DbActVersion>(o => o.VersionSequenceId);
+                        versionQuery = context.CreateSqlStatement<DbActVersion>().SelectFrom().Where(o => o.Key == itm.SourceEntityKey && !o.ObsoletionTime.HasValue).OrderBy<DbActVersion>(o => o.VersionSequenceId);
                         currentVersion = context.FirstOrDefault<DbActVersion>(versionQuery);
                     }
                     else if (itm is VersionedAssociation<Entity>)
                     {
-                        versionQuery = new SqlStatement<DbEntityVersion>().SelectFrom().Where(o => o.Key == itm.SourceEntityKey && !o.ObsoletionTime.HasValue).OrderBy<DbEntityVersion>(o => o.VersionSequenceId);
+                        versionQuery = context.CreateSqlStatement<DbEntityVersion>().SelectFrom().Where(o => o.Key == itm.SourceEntityKey && !o.ObsoletionTime.HasValue).OrderBy<DbEntityVersion>(o => o.VersionSequenceId);
                         currentVersion = context.FirstOrDefault<DbEntityVersion>(versionQuery);
                     }
 

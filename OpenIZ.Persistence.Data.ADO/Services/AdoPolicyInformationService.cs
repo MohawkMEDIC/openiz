@@ -65,7 +65,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     // Security device
                     if (securable is Core.Model.Security.SecurityDevice || securable is DevicePrincipal)
                     {
-						var query = new SqlStatement<DbSecurityDevicePolicy>().SelectFrom().InnerJoin<DbSecurityPolicy, DbSecurityDevicePolicy>();
+						var query = context.CreateSqlStatement<DbSecurityDevicePolicy>().SelectFrom().InnerJoin<DbSecurityPolicy, DbSecurityDevicePolicy>();
 
 						if (securable is DevicePrincipal)
 							query.InnerJoin<DbSecurityDevice, DbSecurityDevice>()
@@ -78,7 +78,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 					}
                     else if (securable is Core.Model.Security.SecurityRole)
                     {
-                        var query = new SqlStatement<DbSecurityRolePolicy>().SelectFrom()
+                        var query = context.CreateSqlStatement<DbSecurityRolePolicy>().SelectFrom()
                             .InnerJoin<DbSecurityPolicy, DbSecurityRolePolicy>()
                             .Where(o => o.SourceKey == (securable as IdentifiedData).Key);
 
@@ -87,7 +87,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     }
                     else if (securable is Core.Model.Security.SecurityApplication || securable is ApplicationPrincipal)
                     {
-                        var query = new SqlStatement<DbSecurityApplicationPolicy>().SelectFrom()
+                        var query = context.CreateSqlStatement<DbSecurityApplicationPolicy>().SelectFrom()
                             .InnerJoin<DbSecurityPolicy, DbSecurityApplicationPolicy>();
 
                         if (securable is ApplicationPrincipal)
@@ -109,7 +109,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         List<IPolicyInstance> retVal = new List<IPolicyInstance>();
 
                         // Role policies
-                        SqlStatement query = new SqlStatement<DbSecurityRolePolicy>().SelectFrom()
+                        SqlStatement query = context.CreateSqlStatement<DbSecurityRolePolicy>().SelectFrom()
                             .InnerJoin<DbSecurityPolicy>(o => o.PolicyKey, o => o.Key)
                             .InnerJoin<DbSecurityUserRole>(o => o.SourceKey, o => o.RoleKey)
                             .Where<DbSecurityUserRole>(o => o.UserKey == user.Key);
@@ -128,7 +128,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                             {
                                 var claim = Guid.Parse(appClaim.Value);
 
-                                query = new SqlStatement<DbSecurityApplicationPolicy>().SelectFrom()
+                                query = context.CreateSqlStatement<DbSecurityApplicationPolicy>().SelectFrom()
                                    .InnerJoin<DbSecurityPolicy, DbSecurityApplicationPolicy>()
                                    .Where(o => o.SourceKey == claim);
 
@@ -139,7 +139,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                             {
                                 var claim = Guid.Parse(devClaim.Value);
 
-                                query = new SqlStatement<DbSecurityDevicePolicy>().SelectFrom()
+                                query = context.CreateSqlStatement<DbSecurityDevicePolicy>().SelectFrom()
                                    .InnerJoin<DbSecurityPolicy, DbSecurityDevicePolicy>()
                                    .Where(o => o.SourceKey == claim);
 
@@ -154,7 +154,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     else if (securable is Core.Model.Acts.Act)
                     {
                         var pAct = securable as Core.Model.Acts.Act;
-                        var query = new SqlStatement<DbActSecurityPolicy>().SelectFrom()
+                        var query = context.CreateSqlStatement<DbActSecurityPolicy>().SelectFrom()
                                   .InnerJoin<DbSecurityPolicy, DbActSecurityPolicy>()
                                   .Where(o => o.SourceKey == pAct.Key);
 

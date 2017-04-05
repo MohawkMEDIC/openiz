@@ -70,6 +70,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         }
 
         /// <summary>
+        /// Conversion based on type
+        /// </summary>
+        protected override TModel CacheConvert(object o, DataContext context, IPrincipal principal)
+        {
+            return (TModel)this.m_entityPersister.DoCacheConvert(o, context, principal);
+        }
+
+        /// <summary>
         /// Insert the specified TModel into the database
         /// </summary>
         public override TModel InsertInternal(DataContext context, TModel data, IPrincipal principal)

@@ -37,8 +37,8 @@ namespace OpenIZ.Core.Services.Impl
 	/// <summary>
 	/// Represents a repository service for managing persons.
 	/// </summary>
-	public class LocalPersonRepositoryService : IPersonRepositoryService
-	{
+	public class LocalPersonRepositoryService : LocalEntityRepositoryServiceBase, IPersonRepositoryService
+    {
 		/// <summary>
 		/// Searches for a person using a given predicate.
 		/// </summary>
@@ -60,14 +60,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns a list of persons who match the specified predicate.</returns>
 		public IEnumerable<Person> Find(Expression<Func<Person, bool>> predicate, int offset, int? count, out int totalCount)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Person>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Person>)} not found");
-			}
-
-			return persistenceService.Query(predicate, offset, count, AuthenticationContext.Current.Principal, out totalCount);
+            return base.Find(predicate, offset, count, out totalCount, Guid.Empty);
 		}
 
 		/// <summary>
@@ -78,14 +71,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the specified person.</returns>
 		public Person Get(Guid id, Guid versionId)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Person>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Person>)} not found");
-			}
-
-			return persistenceService.Get<Guid>(new Identifier<Guid>(id, versionId), AuthenticationContext.Current.Principal, true);
+            return base.Get<Person>(id, versionId);
 		}
 
 		/// <summary>
@@ -93,7 +79,8 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public Person Get(IIdentity identity)
 		{
-			throw new NotImplementedException();
+            int t = 0;
+            return base.Find<UserEntity>(o => o.SecurityUser.UserName == identity.Name, 0, 1, out t, Guid.Empty).FirstOrDefault();
 		}
 
 		/// <summary>
@@ -103,14 +90,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the inserted person.</returns>
 		public Person Insert(Person person)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Person>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Person>)} not found");
-			}
-
-			return persistenceService.Insert(person, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            return base.Insert(person);
 		}
 
 		/// <summary>
@@ -120,14 +100,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the obsoleted person.</returns>
 		public Person Obsolete(Guid id)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Person>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Person>)} not found");
-			}
-
-			return persistenceService.Obsolete(this.Get(id, Guid.Empty), AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            return base.Obsolete<Person>(id);
 		}
 
 		/// <summary>
@@ -137,21 +110,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns the saved person.</returns>
 		public Person Save(Person person)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Person>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<Person>)} not found");
-			}
-
-			try
-			{
-				return persistenceService.Update(person, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
-			catch (DataPersistenceException)
-			{
-				return persistenceService.Insert(person, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
+            return base.Save(person);
 		}
 	}
 }

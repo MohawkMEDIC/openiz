@@ -29,7 +29,7 @@ namespace OpenIZ.Core.Services
 	/// Represents an act repository service.
 	/// </summary>
 	/// TODO: Should the entire interface be genericised?
-	public interface IActRepositoryService
+	public interface IActRepositoryService 
 	{
 		/// <summary>
 		/// Finds acts based on a specific query.

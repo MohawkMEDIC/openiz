@@ -122,7 +122,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                 // Column 
                 var column = tableMap.GetColumn(AdoPersistenceService.GetMapper().MapModelProperty(me.GetType(), dataType, classProperty));
                 // Now we want to query 
-                SqlStatement stmt = new SqlStatement().SelectFrom(dataType)
+                SqlStatement stmt = context.CreateSqlStatement().SelectFrom(dataType)
                     .Where($"{column.Name} = ?", classifierValue);
 
                 var dataObject = context.FirstOrDefault(dataType, stmt);
@@ -253,7 +253,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
         public static TData CurrentVersion<TData>(this TData me, DataContext context)
             where TData : DbVersionedData, new()
         {
-            var stmt = new SqlStatement<TData>().SelectFrom().Where(o => !o.ObsoletionTime.HasValue).OrderBy<TData>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
+            var stmt = context.CreateSqlStatement<TData>().SelectFrom().Where(o => !o.ObsoletionTime.HasValue).OrderBy<TData>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
             return (TData)context.FirstOrDefault<TData>(stmt);
         }
 

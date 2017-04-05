@@ -20,6 +20,7 @@
 using OpenIZ.Core.Applets.ViewModel.Description;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.Core.Model.Query;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -75,5 +76,6 @@ namespace OpenIZ.Core.Applets.ViewModel
         /// Loads the specified related object
         /// </summary>
         TRelated LoadRelated<TRelated>(Guid? objectKey) where TRelated : IdentifiedData, new();
+        
     }
 }

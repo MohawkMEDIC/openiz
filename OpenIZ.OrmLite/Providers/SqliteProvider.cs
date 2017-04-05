@@ -59,7 +59,7 @@ namespace OpenIZ.OrmLite.Providers
         /// </summary>
         public SqlStatement Count(SqlStatement sqlStatement)
         {
-            return new SqlStatement("SELECT COUNT(*) FROM (").Append(sqlStatement.Build()).Append(") Q0");
+            return new SqlStatement(this, "SELECT COUNT(*) FROM (").Append(sqlStatement.Build()).Append(") Q0");
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace OpenIZ.OrmLite.Providers
         /// </summary>
         public SqlStatement Exists(SqlStatement sqlStatement)
         {
-            return new SqlStatement("SELECT CASE WHEN EXISTS (").Append(sqlStatement.Build()).Append(") THEN true ELSE false END");
+            return new SqlStatement(this, "SELECT CASE WHEN EXISTS (").Append(sqlStatement.Build()).Append(") THEN true ELSE false END");
         }
 
         /// <summary>
@@ -235,5 +235,35 @@ namespace OpenIZ.OrmLite.Providers
             return retVal;
         }
 
+        /// <summary>
+        /// Clone this connection
+        /// </summary>
+        public DataContext CloneConnection(DataContext source)
+        {
+            if (this.m_provider == null)
+                this.m_provider = Activator.CreateInstance(Type.GetType("System.Data.SQLite.SQLiteProviderFactory, System.Data.SQLite, Culture=nuetral")) as DbProviderFactory;
+            var conn = this.m_provider.CreateConnection();
+            conn.ConnectionString = source.Connection.ConnectionString;
+            return new DataContext(this, conn);
+        }
+
+        /// <summary>
+        /// Create SQL keyword
+        /// </summary>
+        public string CreateSqlKeyword(SqlKeyword keywordType)
+        {
+            switch (keywordType)
+            {
+                case SqlKeyword.ILike:
+                case SqlKeyword.Like:
+                    return " LIKE ";
+                case SqlKeyword.Lower:
+                    return " LOWER ";
+                case SqlKeyword.Upper:
+                    return " UPPER ";
+                default:
+                    throw new NotImplementedException();
+            }
+        }
     }
 }

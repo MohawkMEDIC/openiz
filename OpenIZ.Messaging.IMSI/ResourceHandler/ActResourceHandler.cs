@@ -25,6 +25,7 @@ using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {
@@ -34,7 +35,8 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 
 		public ActResourceHandler()
 		{
-			ApplicationContext.Current.Started += (o, e) => this.actRepositorySerivce = ApplicationContext.Current.GetService<IActRepositoryService>();
+            ApplicationContext.Current.Started += (o, e) =>
+                this.actRepositorySerivce = ApplicationContext.Current.GetService<IActRepositoryService>(); 
 		}
 
 		public string ResourceName => "Act";
@@ -81,12 +83,17 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
 			int totalCount = 0;
-			return this.Query(queryParameters, 0, 0, out totalCount);
+			return this.Query(queryParameters, 0, 100, out totalCount);
 		}
 
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			return this.actRepositorySerivce.Find<Act>(QueryExpressionParser.BuildLinqExpression<Act>(queryParameters), offset, count, out totalCount);
+            Expression<Func<Act, bool>> filter = QueryExpressionParser.BuildLinqExpression<Act>(queryParameters);
+            List<String> queryId = null;
+            if (this.actRepositorySerivce is IPersistableQueryRepositoryService && queryParameters.TryGetValue("_queryId", out queryId))
+                return (this.actRepositorySerivce as IPersistableQueryRepositoryService).Find<Act>(filter, offset, count, out totalCount, Guid.Parse(queryId[0]));
+            else
+                return this.actRepositorySerivce.Find<Act>(filter, offset, count, out totalCount);
 		}
 
 		public IdentifiedData Update(IdentifiedData data)

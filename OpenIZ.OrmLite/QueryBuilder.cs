@@ -13,6 +13,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using OpenIZ.Core.Model.Attributes;
 using System.Xml.Serialization;
+using OpenIZ.OrmLite.Providers;
 
 namespace OpenIZ.OrmLite
 {
@@ -63,6 +64,8 @@ namespace OpenIZ.OrmLite
 
         // Mapper
         private ModelMapper m_mapper;
+        private IDbProvider m_provider;
+
         private const int PropertyRegexGroup = 1;
         private const int GuardRegexGroup = 3;
         private const int CastRegexGroup = 5;
@@ -72,18 +75,19 @@ namespace OpenIZ.OrmLite
         /// Represents model mapper
         /// </summary>
         /// <param name="mapper"></param>
-        public QueryBuilder(ModelMapper mapper)
+        public QueryBuilder(ModelMapper mapper, IDbProvider provider)
         {
             this.m_mapper = mapper;
+            this.m_provider = provider;
         }
-
+        
         /// <summary>
         /// Create a query 
         /// </summary>
-        public SqlStatement CreateQuery<TModel>(Expression<Func<TModel, bool>> predicate)
+        public SqlStatement CreateQuery<TModel>(Expression<Func<TModel, bool>> predicate, params ColumnMapping[] selector)
         {
             var nvc = QueryExpressionBuilder.BuildQuery(predicate, true);
-            return CreateQuery<TModel>(nvc);
+            return CreateQuery<TModel>(nvc, selector);
         }
 
         /// <summary>
@@ -109,7 +113,7 @@ namespace OpenIZ.OrmLite
             KeyValuePair<SqlStatement, List<TableMapping>> cacheHit;
             if (!s_joinCache.TryGetValue($"{tablePrefix}.{typeof(TModel).Name}", out cacheHit))
             {
-                selectStatement = new SqlStatement($" FROM {tableMap.TableName} AS {tablePrefix}{tableMap.TableName} ");
+                selectStatement = new SqlStatement(this.m_provider, $" FROM {tableMap.TableName} AS {tablePrefix}{tableMap.TableName} ");
 
                 Stack<TableMapping> fkStack = new Stack<TableMapping>();
                 fkStack.Push(tableMap);
@@ -143,7 +147,7 @@ namespace OpenIZ.OrmLite
             var columnSelector = selector;
             if (selector == null || selector.Length == 0)
             {
-                selectStatement = new SqlStatement($"SELECT * ").Append(selectStatement);
+                selectStatement = new SqlStatement(this.m_provider, $"SELECT * ").Append(selectStatement);
                 // columnSelector = scopedTables.SelectMany(o => o.Columns).ToArray();
             }
             else
@@ -157,7 +161,7 @@ namespace OpenIZ.OrmLite
                     else
                         return $"{tablePrefix}{o.Table.TableName}.{o.Name}";
                 }));
-                selectStatement = new SqlStatement($"SELECT {columnList} ").Append(selectStatement);
+                selectStatement = new SqlStatement(this.m_provider, $"SELECT {columnList} ").Append(selectStatement);
             }
 
             // We want to process each query and build WHERE clauses - these where clauses are based off of the JSON / XML names
@@ -166,7 +170,7 @@ namespace OpenIZ.OrmLite
             List<KeyValuePair<String, Object>> workingParameters = new List<KeyValuePair<string, object>>(query);
 
             // Where clause
-            SqlStatement whereClause = new SqlStatement();
+            SqlStatement whereClause = new SqlStatement(this.m_provider);
             List<SqlStatement> cteStatements = new List<SqlStatement>();
 
             // Construct
@@ -215,7 +219,7 @@ namespace OpenIZ.OrmLite
                         var linkColumn = linkColumns.Count() > 1 ? linkColumns.FirstOrDefault(o => subProperty.StartsWith("source") ? o.SourceProperty.Name != "SourceKey" : o.SourceProperty.Name == "SourceKey") : linkColumns.FirstOrDefault();
 
                         // Link column is null, is there an assoc attrib?
-                        SqlStatement subQueryStatement = new SqlStatement();
+                        SqlStatement subQueryStatement = new SqlStatement(this.m_provider);
 
                         var subTableColumn = linkColumn;
                         if (linkColumn == null)
@@ -299,7 +303,7 @@ namespace OpenIZ.OrmLite
                         // Create the sub-query
                         var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { subProp.PropertyType }, new Type[] { subQuery.GetType(), typeof(ColumnMapping[]) });
                         SqlStatement subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
-                        cteStatements.Add(new SqlStatement($"{tablePrefix}cte{cteStatements.Count} AS (").Append(subQueryStatement).Append(")"));
+                        cteStatements.Add(new SqlStatement(this.m_provider, $"{tablePrefix}cte{cteStatements.Count} AS (").Append(subQueryStatement).Append(")"));
                         //subQueryStatement.And($"{tablePrefix}{tableMapping.TableName}.{linkColumn.Name} = {sqName}{fkTableDef.TableName}.{fkColumnDef.Name} ");
 
                         selectStatement.Append($"INNER JOIN {tablePrefix}cte{cteStatements.Count - 1} ON ({tablePrefix}{tableMapping.TableName}.{linkColumn.Name} = {tablePrefix}cte{cteStatements.Count - 1}.{fkColumnDef.Name})");
@@ -313,7 +317,7 @@ namespace OpenIZ.OrmLite
             }
 
             // Return statement
-            SqlStatement retVal = new SqlStatement();
+            SqlStatement retVal = new SqlStatement(this.m_provider);
             if (cteStatements.Count > 0)
             {
                 retVal.Append("WITH ");
@@ -351,7 +355,7 @@ namespace OpenIZ.OrmLite
         public SqlStatement CreateWhereCondition<TModel>(String propertyPath, Object value, String tablePrefix, List<TableMapping> scopedTables)
         {
 
-            SqlStatement retVal = new SqlStatement();
+            SqlStatement retVal = new SqlStatement(this.m_provider);
 
             // Map the type
             var tableMapping = scopedTables.First();

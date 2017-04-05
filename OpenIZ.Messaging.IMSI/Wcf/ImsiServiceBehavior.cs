@@ -306,20 +306,21 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     Guid sinceGuid = since != null ? Guid.Parse(since) : Guid.Empty;
 
                     // Query 
-                    var retVal = handler.Get(Guid.Parse(id), Guid.Empty);
-                    var histItm = retVal;
-                    while (histItm != null)
+                    var retVal = handler.Get(Guid.Parse(id), Guid.Empty) as IVersionedEntity;
+                    List<IVersionedEntity> histItm = new List<IVersionedEntity>() { retVal };
+                    while (retVal.PreviousVersionKey.HasValue)
                     {
-                        histItm = (histItm as IVersionedEntity)?.PreviousVersion as IdentifiedData;
-
+                        retVal = handler.Get(Guid.Parse(id), retVal.PreviousVersionKey.Value) as IVersionedEntity;
+                        if(retVal != null)
+                            histItm.Add(retVal);
                         // Should we stop fetching?
-                        if ((histItm as IVersionedEntity)?.VersionKey == sinceGuid)
+                        if (retVal?.VersionKey == sinceGuid)
                             break;
 
                     }
 
                     // Lock the item
-                    return Bundle.CreateBundle(histItm);
+                    return BundleUtil.CreateBundle(histItm.OfType<IdentifiedData>(), histItm.Count, 0, false);
                 }
                 else
                     throw new FileNotFoundException(resourceType);
@@ -351,6 +352,10 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     // Modified on?
                     if (WebOperationContext.Current.IncomingRequest.IfModifiedSince.HasValue)
                         query.Add("modifiedOn", ">" + WebOperationContext.Current.IncomingRequest.IfModifiedSince.Value.ToString("o"));
+
+                    // No obsoletion time?
+                    if (typeof(BaseEntityData).IsAssignableFrom(handler.Type) && !query.ContainsKey("obsoletionTime"))
+                        query.Add("obsoletionTime", "null");
 
                     int totalResults = 0;
 

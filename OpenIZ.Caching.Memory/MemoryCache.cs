@@ -23,7 +23,9 @@ using MARC.HI.EHRS.SVC.Core.Event;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Caching.Memory.Configuration;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Services;
@@ -46,7 +48,7 @@ namespace OpenIZ.Caching.Memory
 
         // Entry table for the cache
         private Dictionary<Type, Dictionary<Guid, CacheEntry>> m_entryTable = new Dictionary<Type, Dictionary<Guid, CacheEntry>>();
-        
+
         // True if the object is disposed
         private bool m_disposed = false;
 
@@ -92,8 +94,8 @@ namespace OpenIZ.Caching.Memory
                         var xt = (x as TypeCacheConfigurationInfo);
                         this.m_tracer.TraceEvent(TraceEventType.Information, 0, "Initialize cache for {0}", xt.Type);
                         var idpInstance = ApplicationContext.Current.GetService(typeof(IDataPersistenceService<>).MakeGenericType(xt.Type)) as IDataPersistenceService;
-                        if(idpInstance != null)
-                            foreach(var itm in xt.SeedQueries)
+                        if (idpInstance != null)
+                            foreach (var itm in xt.SeedQueries)
                             {
                                 this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, itm);
                                 var query = typeof(QueryExpressionParser).GetGenericMethod("BuildLinqExpression", new Type[] { xt.Type }, new Type[] { typeof(NameValueCollection) }).Invoke(null, new object[] { NameValueCollection.ParseQueryString(itm) }) as Expression;
@@ -183,8 +185,9 @@ namespace OpenIZ.Caching.Memory
                 } while (this.m_entryTable.TryGetValue(objData, out cache));
 
             }
-            else if (this.m_configuration.AutoSubscribeTypes)
-                this.RegisterCacheType(data.GetType());
+            else if (this.m_configuration.AutoSubscribeTypes) {
+                    this.RegisterCacheType(data.GetType());
+            }
 
         }
 
@@ -200,7 +203,7 @@ namespace OpenIZ.Caching.Memory
                 throw new ArgumentNullException(nameof(objectType));
 
             Dictionary<Guid, CacheEntry> cache = null;
-            if(this.m_entryTable.TryGetValue(objectType, out cache))
+            if (this.m_entryTable.TryGetValue(objectType, out cache))
             {
                 CacheEntry candidate = default(CacheEntry);
                 if (cache.TryGetValue(key.Value, out candidate))
@@ -218,7 +221,7 @@ namespace OpenIZ.Caching.Memory
         /// Sets the minimum age
         /// </summary>
         /// <param name="age"></param>
-        public  void SetMinAge(TimeSpan age)
+        public void SetMinAge(TimeSpan age)
         {
             this.ThrowIfDisposed();
 
@@ -277,14 +280,18 @@ namespace OpenIZ.Caching.Memory
             Dictionary<Guid, CacheEntry> cache = null;
             if (this.m_entryTable.TryGetValue(objectType, out cache))
             {
-                CacheEntry candidate = default(CacheEntry);
-                if (cache.TryGetValue(key.Value, out candidate))
+                do
                 {
-                    lock (this.m_lock)
+                    CacheEntry candidate = default(CacheEntry);
+                    if (cache.TryGetValue(key.Value, out candidate))
                     {
-                        cache.Remove(key.Value);
+                        lock (this.m_lock)
+                        {
+                            cache.Remove(key.Value);
+                        }
                     }
-                }
+                    objectType = objectType.BaseType;
+                } while (this.m_entryTable.TryGetValue(objectType, out cache));
             }
             return;
         }
@@ -353,7 +360,7 @@ namespace OpenIZ.Caching.Memory
                 if (!this.m_entryTable.TryGetValue(t, out cache))
                 {
                     cache = new Dictionary<Guid, CacheEntry>(10);
-                    if(!this.m_configuration.Types.Exists(o=>o.Type == t))
+                    if (!this.m_configuration.Types.Exists(o => o.Type == t))
                         this.m_configuration.Types.Add(new TypeCacheConfigurationInfo() { Type = t, MaxCacheSize = maxSize, MaxCacheAge = maxAge });
                     this.m_entryTable.Add(t, cache);
                 }

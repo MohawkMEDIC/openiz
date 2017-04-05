@@ -19,7 +19,7 @@ namespace OpenIZ.Core.Services.Impl
     {
 
         // Constructs a thread pool
-        private WaitThreadPool m_threadPool;
+        private WaitThreadPool m_threadPool = new WaitThreadPool();
         
         /// <summary>
         /// True if the service is running
@@ -91,6 +91,8 @@ namespace OpenIZ.Core.Services.Impl
             this.Starting?.Invoke(this, EventArgs.Empty);
 
             int concurrency = (ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.core") as OpenIzConfiguration)?.ThreadPoolSize ?? Environment.ProcessorCount;
+            if (this.m_threadPool != null)
+                this.m_threadPool.Dispose();
             this.m_threadPool = new WaitThreadPool(concurrency);
 
             this.Started?.Invoke(this, EventArgs.Empty);

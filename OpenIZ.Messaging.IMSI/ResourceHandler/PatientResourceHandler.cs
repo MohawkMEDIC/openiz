@@ -117,8 +117,9 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryClinicalData)]
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			return this.m_repository.Find(QueryExpressionParser.BuildLinqExpression<Patient>(queryParameters));
-		}
+            int tr = 0;
+            return this.Query(queryParameters, 0, 100, out tr);
+        }
 
 		/// <summary>
 		/// Query specified patient
@@ -126,8 +127,13 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryClinicalData)]
 		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			return this.m_repository.Find(QueryExpressionParser.BuildLinqExpression<Patient>(queryParameters), offset, count, out totalCount);
-		}
+            var filter = QueryExpressionParser.BuildLinqExpression<Patient>(queryParameters);
+            List<String> queryId = null;
+            if (this.m_repository is IPersistableQueryRepositoryService && queryParameters.TryGetValue("_queryId", out queryId))
+                return (this.m_repository as IPersistableQueryRepositoryService).Find(filter, offset, count, out totalCount, Guid.Parse(queryId[0]));
+            else
+                return this.m_repository.Find(filter, offset, count, out totalCount);
+        }
 
 		/// <summary>
 		/// Update the specified patient data

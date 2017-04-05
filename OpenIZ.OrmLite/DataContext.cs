@@ -9,6 +9,7 @@ using OpenIZ.OrmLite.Providers;
 using OpenIZ.Core.Diagnostics;
 using System.Threading;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Map;
 
 namespace OpenIZ.OrmLite
 {
@@ -17,35 +18,8 @@ namespace OpenIZ.OrmLite
     /// </summary>
     public partial class DataContext : IDisposable
     {
-
-        /// <summary>
-        /// Context lock
-        /// </summary>
-        public class ContextLock : IDisposable
-        {
-            // Lock object
-            private object m_lockObject = null;
-
-            /// <summary>
-            /// Locks the lock object
-            /// </summary>
-            /// <param name="lockObject"></param>
-            public ContextLock(Object lockObject)
-            {
-                this.m_lockObject = lockObject;
-                bool lockTaken = false;
-                Monitor.Enter(this.m_lockObject, ref lockTaken);
-            }
-
-            /// <summary>
-            /// Dispose of the lock
-            /// </summary>
-            public void Dispose()
-            {
-                if (Monitor.IsEntered(this.m_lockObject))
-                    Monitor.Exit(this.m_lockObject);
-            }
-        }
+        // Lock object
+        private object m_lockObject = new object();
 
         // the connection
         private IDbConnection m_connection;
@@ -64,6 +38,7 @@ namespace OpenIZ.OrmLite
 
         // Trace source
         private Tracer m_tracer = Tracer.GetTracer(typeof(DataContext));
+       
 
         /// <summary>
         /// Connection
@@ -92,12 +67,13 @@ namespace OpenIZ.OrmLite
         public IDbTransaction Transaction { get { return this.m_transaction; } }
 
         /// <summary>
-        /// Gets a lock for the specific connection
+        /// Query builder
         /// </summary>
-        public ContextLock Lock()
+        public QueryBuilder GetQueryBuilder(ModelMapper map)
         {
-            return new ContextLock(this.m_provider.Lock(this.m_connection));
+            return new QueryBuilder(map, this.m_provider);
         }
+
 
         /// <summary>
         /// Creates a new data context
@@ -106,6 +82,16 @@ namespace OpenIZ.OrmLite
         {
             this.m_provider = provider;
             this.m_connection = connection;
+        }
+
+        /// <summary>
+        /// Creates a new data context
+        /// </summary>
+        public DataContext(IDbProvider provider, IDbConnection connection, bool isReadonly)
+        {
+            this.m_provider = provider;
+            this.m_connection = connection;
+            this.IsReadonly = isReadonly;
         }
 
         /// <summary>
@@ -141,6 +127,16 @@ namespace OpenIZ.OrmLite
         }
 
         /// <summary>
+        /// Open a cloned connection
+        /// </summary>
+        private DataContext OpenClonedConnection()
+        {
+            var retVal = this.m_provider.CloneConnection(this);
+            retVal.Open();
+            return retVal;
+        }
+
+        /// <summary>
         /// Dispose this object
         /// </summary>
         public void Dispose()
@@ -156,6 +152,30 @@ namespace OpenIZ.OrmLite
         {
             if (data.Key.HasValue && !this.m_cacheCommit.ContainsKey(data.Key.Value) && data.Key.HasValue)
                 this.m_cacheCommit.Add(data.Key.Value, data);
+        }
+
+        /// <summary>
+        /// Create sql statement
+        /// </summary>
+        public SqlStatement CreateSqlStatement()
+        {
+            return new SqlStatement(this.m_provider);
+        }
+
+        /// <summary>
+        /// Create sql statement
+        /// </summary>
+        public SqlStatement CreateSqlStatement(String sql, params object[] args)
+        {
+            return new SqlStatement(this.m_provider, sql, args);
+        }
+
+        /// <summary>
+        /// Create SQL statement
+        /// </summary>
+        public SqlStatement<T> CreateSqlStatement<T>()
+        {
+            return new SqlStatement<T>(this.m_provider);
         }
     }
 }

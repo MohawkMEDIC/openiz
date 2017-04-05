@@ -16,6 +16,7 @@ using System.Linq.Expressions;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using MARC.HI.EHRS.SVC.Core.Data;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -24,8 +25,12 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
     /// </summary>
     public abstract class CorePersistenceService<TModel, TDomain, TQueryReturn> : AdoBasePersistenceService<TModel>
         where TModel : IdentifiedData, new()
-        where TDomain: class, new()
+        where TDomain : class, new()
     {
+
+        // Query persistence
+        protected MARC.HI.EHRS.SVC.Core.Services.IQueryPersistenceService m_queryPersistence = ApplicationContext.Current.GetService<MARC.HI.EHRS.SVC.Core.Services.IQueryPersistenceService>();
+
         /// <summary>
         /// Maps the data to a model instance
         /// </summary>
@@ -52,7 +57,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             domainObject = context.Insert<TDomain>(domainObject);
 
-            if(domainObject is IDbIdentified)
+            if (domainObject is IDbIdentified)
                 data.Key = (domainObject as IDbIdentified)?.Key;
             //data.CopyObjectData(this.ToModelInstance(domainObject, context, principal));
             //data.Key = domainObject.Key
@@ -94,20 +99,30 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Performs the actual query
         /// </summary>
-        public override IEnumerable<TModel> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
+        public override IEnumerable<TModel> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, Guid queryId, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
         {
-            return this.QueryInternal(context, query, offset, count, out totalResults, countResults).Select(o => this.CacheConvert(o, context, principal));
+            return this.QueryInternal(context, query, queryId, offset, count, out totalResults, countResults).AsParallel().Select(o => o is Guid ? this.Get(context, (Guid)o, principal) : this.CacheConvert(o, context, principal));
         }
-        
+
         /// <summary>
         /// Perform the query 
         /// </summary>
-        protected virtual IEnumerable<TQueryReturn> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, bool incudeCount = true)
+        protected virtual IEnumerable<Object> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, Guid queryId, int offset, int? count, out int totalResults, bool incudeCount = true)
         {
+
+            // Query has been registered?
+            if (this.m_queryPersistence?.IsRegistered(queryId.ToString()) == true)
+            {
+                totalResults = (int)this.m_queryPersistence.QueryResultTotalQuantity(queryId.ToString());
+                var resultKeys = this.m_queryPersistence.GetQueryResults<Guid>(queryId.ToString(), offset, count.Value);
+                return resultKeys.Select(p => p.Id).OfType<Object>();
+            }
+
+            // Domain query
             SqlStatement domainQuery = null;
             try
             {
-                domainQuery = new SqlStatement<TDomain>().SelectFrom();
+                domainQuery = context.CreateSqlStatement<TDomain>().SelectFrom();
                 var expression = m_mapper.MapModelExpression<TModel, TDomain>(query);
                 Type lastJoined = typeof(TDomain);
                 if (typeof(CompositeResult).IsAssignableFrom(typeof(TQueryReturn)))
@@ -128,7 +143,38 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 domainQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query);
             }
 
-            if (incudeCount)
+            // Query id just get the UUIDs in the db
+            if (queryId != Guid.Empty)
+            {
+                ColumnMapping pkColumn = null;
+                if (typeof(CompositeResult).IsAssignableFrom(typeof(TQueryReturn)))
+                {
+                    foreach (var p in typeof(TQueryReturn).GenericTypeArguments.Select(o => AdoPersistenceService.GetMapper().MapModelType(o)))
+                        if (!typeof(DbSubTable).IsAssignableFrom(p) && !typeof(IDbVersionedData).IsAssignableFrom(p))
+                        {
+                            pkColumn = TableMapping.Get(p).Columns.SingleOrDefault(o => o.IsPrimaryKey);
+                            break;
+                        }
+                }
+                else
+                    pkColumn = TableMapping.Get(typeof(TQueryReturn)).Columns.SingleOrDefault(o => o.IsPrimaryKey);
+
+                var keyQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query, pkColumn).Build();
+                var resultKeys = context.Query<Guid>(keyQuery.Build());
+                //ApplicationContext.Current.GetService<IThreadPoolService>().QueueNonPooledWorkItem(a => this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), resultKeys.Select(o => new Identifier<Guid>(o)).ToArray(), query), null);
+                this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), resultKeys.Select(o => new Identifier<Guid>(o)).ToArray(), query);
+
+                if (incudeCount)
+                    totalResults = (int)resultKeys.Count();
+                else
+                    totalResults = 0;
+
+                var retVal = resultKeys.Skip(offset);
+                if (count.HasValue)
+                    retVal = retVal.Take(count.Value);
+                return retVal.OfType<Object>();
+            }
+            else if (incudeCount)
                 totalResults = context.Count(domainQuery);
             else
                 totalResults = 0;
@@ -137,7 +183,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 domainQuery.Offset(offset);
             if (count.HasValue)
                 domainQuery.Limit(count.Value);
-            return context.Query<TQueryReturn>(domainQuery);
+
+            var results = context.Query<TQueryReturn>(domainQuery).OfType<Object>();
+
+            return results;
         }
 
 
@@ -162,10 +211,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         protected virtual TModel CacheConvert(Object o, DataContext context, IPrincipal principal)
         {
-	        var cacheService = ApplicationContext.Current.GetService<IDataCachingService>();
+            var cacheService = ApplicationContext.Current.GetService<IDataCachingService>();
 
             var idData = (o as CompositeResult)?.Values.OfType<IDbIdentified>().FirstOrDefault() ?? o as IDbIdentified;
-            var objData = (o as CompositeResult)?.Values.OfType<IDbBaseData>().FirstOrDefault() ?? o as IDbBaseData ;
+            var objData = (o as CompositeResult)?.Values.OfType<IDbBaseData>().FirstOrDefault() ?? o as IDbBaseData;
             if (objData?.ObsoletionTime != null || idData == null || idData.Key == Guid.Empty)
                 return this.ToModelInstance(o, context, principal);
             else
@@ -176,7 +225,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 else
                 {
                     cacheItem = this.ToModelInstance(o, context, principal);
-                    if(context.Transaction == null)
+                    if (context.Transaction == null)
                         cacheService?.Add(cacheItem);
                 }
                 return cacheItem;
@@ -232,6 +281,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
         }
 
-      
+
     }
 }

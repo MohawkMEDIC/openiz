@@ -59,6 +59,7 @@
     <Compile Include="Providers\PostgreSQLProvider.cs" />
     <Compile Include="Providers\SqlEngineFeatures.cs" />
     <Compile Include="Providers\SqliteProvider.cs" />
+    <Compile Include="Providers\SqlKeyword.cs" />
     <Compile Include="QueryBuilder.cs" />
     <Compile Include="SqlQueryExpressionBuilder.cs" />
     <Compile Include="SqlStatement.cs" />

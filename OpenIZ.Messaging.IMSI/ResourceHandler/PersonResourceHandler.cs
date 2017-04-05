@@ -26,6 +26,9 @@ using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Security.Attribute;
+using OpenIZ.Core.Security;
+using System.Security.Permissions;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {
@@ -51,7 +54,8 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 
 		public Type Type => typeof(Person);
 
-		public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
+        public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
 		{
 			var bundleData = data as Bundle;
 
@@ -72,27 +76,38 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			throw new ArgumentException("Invalid persistence type");
 		}
 
-		public IdentifiedData Get(Guid id, Guid versionId)
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryClinicalData)]
+        public IdentifiedData Get(Guid id, Guid versionId)
 		{
 			return this.repository.Get(id, versionId);
 		}
 
-		public IdentifiedData Obsolete(Guid key)
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.DeleteClinicalData)]
+        public IdentifiedData Obsolete(Guid key)
 		{
 			return this.repository.Obsolete(key);
 		}
 
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryClinicalData)]
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			return this.repository.Find(QueryExpressionParser.BuildLinqExpression<Person>(queryParameters));
-		}
+            int tr = 0;
+            return this.Query(queryParameters, 0, 100, out tr);
+        }
 
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryClinicalData)]
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			return this.repository.Find(QueryExpressionParser.BuildLinqExpression<Person>(queryParameters), offset, count, out totalCount);
-		}
+            var filter = QueryExpressionParser.BuildLinqExpression<Person>(queryParameters);
+            List<String> queryId = null;
+            if (this.repository is IPersistableQueryRepositoryService && queryParameters.TryGetValue("_queryId", out queryId))
+                return (this.repository as IPersistableQueryRepositoryService).Find(filter, offset, count, out totalCount, Guid.Parse(queryId[0]));
+            else
+                return this.repository.Find(filter, offset, count, out totalCount);
+        }
 
-		public IdentifiedData Update(IdentifiedData data)
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
+        public IdentifiedData Update(IdentifiedData data)
 		{
 			var bundleData = data as Bundle;
 

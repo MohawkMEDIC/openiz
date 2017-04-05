@@ -58,5 +58,6 @@ namespace OpenIZ.Core.Model.EntityLoader
         /// </summary>
         IEnumerable<TObject> GetRelations<TObject>(Guid? sourceKey) where TObject : IdentifiedData, ISimpleAssociation, new();
         
+
     }
 }

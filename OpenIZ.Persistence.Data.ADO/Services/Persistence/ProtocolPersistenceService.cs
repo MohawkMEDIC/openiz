@@ -65,6 +65,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             // DbProtocol
             return new DbProtocol()
             {
+                Key = modelInstance.Key ?? Guid.NewGuid(),
                 CreatedByKey = modelInstance.CreatedByKey ?? princpal.GetUser(context).Key,
                 CreationTime = modelInstance.CreationTime,
                 Name = modelInstance.Name,

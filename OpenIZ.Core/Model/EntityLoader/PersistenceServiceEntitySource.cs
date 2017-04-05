@@ -87,5 +87,6 @@ namespace OpenIZ.Core.Model.EntityLoader
                 return persistenceService.Query(query, null);
             return new List<TObject>();
         }
+        
     }
 }

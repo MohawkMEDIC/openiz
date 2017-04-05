@@ -29,7 +29,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -96,7 +96,7 @@
     <Compile Include="Services\IClientRegistryNotificationService.cs" />
     <Compile Include="Services\IOrganizationRepositoryService.cs" />
     <Compile Include="Services\IPatientRepositoryService.cs" />
-    <Compile Include="Services\IPersistableQueryProvider.cs" />
+    <Compile Include="Services\IPersistableQueryRepositoryService.cs" />
     <Compile Include="Services\IPhoneticAlgorithmHandler.cs" />
     <Compile Include="Services\IPlaceRepositoryService.cs" />
     <Compile Include="Services\IProviderRepositoryService.cs" />

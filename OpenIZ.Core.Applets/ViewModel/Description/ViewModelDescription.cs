@@ -167,5 +167,61 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
             }
             return retVal;
         }
+
+        /// <summary>
+        /// Merge several view model descriptions into one
+        /// </summary>
+        public static ViewModelDescription Merge(IEnumerable<ViewModelDescription> viewModels)
+        {
+            ViewModelDescription retVal = null;
+            foreach (var itm in viewModels)
+                if (retVal == null)
+                    retVal = itm;
+                else
+                    MergeInternal(itm, retVal);
+
+            return retVal;
+        }
+
+
+        /// <summary>
+        /// Merge internal
+        /// </summary>
+        private static void MergeInternal(ViewModelDescription victim, ViewModelDescription merged)
+        {
+            foreach (var td in victim.Model)
+            {
+                var mergeModel = merged.Model.FirstOrDefault(o => o.TypeName == td.TypeName);
+                if (mergeModel == null)
+                    merged.Model.Add(td);
+                else
+                    MergeInternal(td, mergeModel);
+            }
+        }
+
+        /// <summary>
+        /// Merge internal
+        /// </summary>
+        private static void MergeInternal(PropertyContainerDescription victim, PropertyContainerDescription merged)
+        {
+            if (victim.All && !merged.All)
+                merged.All = victim.All;
+            if (victim.Ref != merged.Ref && merged.Ref == null)
+                merged.Ref = victim.Ref;
+            if ((victim is PropertyModelDescription) &&
+                (victim as PropertyModelDescription).Action != SerializationBehaviorType.Default &&
+                (victim as PropertyModelDescription).Action < (merged as PropertyModelDescription)?.Action)
+                (merged as PropertyModelDescription).Action = (victim as PropertyModelDescription).Action;
+
+            foreach (var td in victim.Properties)
+            {
+                var mergeModel = merged.Properties.FirstOrDefault(o => o.Name == td.Name);
+                if (mergeModel == null)
+                    merged.Properties.Add(td);
+                else
+                    MergeInternal(td, mergeModel);
+            }
+
+        }
     }
 }

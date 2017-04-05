@@ -32,7 +32,7 @@ namespace OpenIZ.Core.Services.Impl
 	/// <summary>
 	/// Place repository that uses local persistence
 	/// </summary>
-	public class LocalPlaceRepositoryService : IPlaceRepositoryService, IRepositoryService<Place>
+	public class LocalPlaceRepositoryService : LocalEntityRepositoryServiceBase, IPlaceRepositoryService, IRepositoryService<Place>
 	{
 		/// <summary>
 		/// Gets the specified data
@@ -47,14 +47,8 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public IEnumerable<Place> Find(Expression<Func<Place, bool>> predicate)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException("No persistence service found");
-			}
-
-			return persistenceService.Query(predicate, AuthenticationContext.Current.Principal);
+            int t = 0;
+            return this.Find(predicate, 0, null, out t);
 		}
 
 		/// <summary>
@@ -65,10 +59,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// <returns>Returns a list of places.</returns>
 		public IEnumerable<Place> Find(Expression<Func<Place, bool>> predicate, int offset, int? count, out int totalCount)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
-			if (persistenceService == null)
-				throw new InvalidOperationException("No persistence service found");
-			return persistenceService.Query(predicate, offset, count, AuthenticationContext.Current.Principal, out totalCount);
+            return base.Find(predicate, offset, count, out totalCount, Guid.Empty);
 		}
 
 		/// <summary>
@@ -76,14 +67,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public Place Get(Guid id, Guid versionId)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException("No persistence service found");
-			}
-
-			return persistenceService.Get<Guid>(new Identifier<Guid>(id, versionId), AuthenticationContext.Current.Principal, false);
+            return base.Get<Place>(id, versionId);
 		}
 
 		/// <summary>
@@ -91,10 +75,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public Place Insert(Place plc)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
-			if (persistenceService == null)
-				throw new InvalidOperationException("No persistence service found");
-			return persistenceService.Insert(plc, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			return base.Insert(plc);
 		}
 
 		/// <summary>
@@ -102,10 +83,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public Place Obsolete(Guid id)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
-			if (persistenceService == null)
-				throw new InvalidOperationException("No persistence service found");
-			return persistenceService.Obsolete(new Place() { Key = id }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+            return base.Obsolete<Place>(id);
 		}
 
 		/// <summary>
@@ -113,21 +91,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		public Place Save(Place plc)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
-
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException("No persistence service found");
-			}
-
-			try
-			{
-				return persistenceService.Update(plc, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
-			catch (DataPersistenceException)
-			{
-				return persistenceService.Insert(plc, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
+            return base.Save(plc);
 		}
 	}
 }
