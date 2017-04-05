@@ -38,18 +38,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using OpenIZ.Core.Diagnostics;
-using OpenIZ.Messaging.RISI.Configuration;
 using OpenIZ.Reporting.Core.Auth;
+using OpenIZ.Reporting.Core.Configuration;
 using OpenIZ.Reporting.Core.Event;
 using OpenIZ.Reporting.Jasper.Model;
 
 namespace OpenIZ.Reporting.Jasper
 {
 	/// <summary>
-	/// Represents a Jasper server report handler.
+	/// Represents a Jasper server report executor.
 	/// </summary>
 	[Service(ServiceInstantiationType.Instance)]
-	public class JasperReportHandler : IReportHandler, ISupportBasicAuthentication
+	public class JasperReportExecutor : IReportExecutor, ISupportBasicAuthentication
 	{
 		/// <summary>
 		/// The internal reference to the <see cref="HttpClient"/> instance.
@@ -60,11 +60,6 @@ namespace OpenIZ.Reporting.Jasper
 		/// The cookie container.
 		/// </summary>
 		private readonly CookieContainer cookieContainer;
-
-		/// <summary>
-		/// The configuration.
-		/// </summary>
-		private readonly RisiConfiguration configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.risi") as RisiConfiguration;
 
 		/// <summary>
 		/// The jasper authentication path.
@@ -115,10 +110,10 @@ namespace OpenIZ.Reporting.Jasper
 		public event EventHandler<AuthenticationErrorEventArgs> OnAuthenticationError;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="JasperReportHandler" /> class.
+		/// Initializes a new instance of the <see cref="JasperReportExecutor" /> class.
 		/// </summary>
 		/// <exception cref="System.InvalidOperationException">Non username and password authentication methods are not supported for Jasper Reports</exception>
-		public JasperReportHandler()
+		public JasperReportExecutor()
 		{
 			this.cookieContainer = new CookieContainer();
 
@@ -129,7 +124,7 @@ namespace OpenIZ.Reporting.Jasper
 
 			this.client = new HttpClient(handler);
 
-			var usernamePasswordCredential = configuration.Credentials.Credential as UsernamePasswordCredential;
+			var usernamePasswordCredential = this.Configuration.Credentials.Credential as UsernamePasswordCredential;
 
 			if (usernamePasswordCredential == null)
 			{
@@ -140,6 +135,7 @@ namespace OpenIZ.Reporting.Jasper
 			this.password = usernamePasswordCredential.Password;
 
 			this.Authenticated += OnAuthenticated;
+			this.ReportUri = new Uri(this.Configuration.Address);
 		}
 
 		/// <summary>
@@ -148,9 +144,15 @@ namespace OpenIZ.Reporting.Jasper
 		public AuthenticationResult AuthenticationResult { get; set; }
 
 		/// <summary>
+		/// Gets the configuration.
+		/// </summary>
+		/// <value>The configuration.</value>
+		public ReportingConfiguration Configuration => ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.reporting.core") as ReportingConfiguration;
+
+		/// <summary>
 		/// Gets or sets the report URI.
 		/// </summary>
-		public Uri ReportUri { get; set; }
+		public Uri ReportUri { get; }
 
 		/// <summary>
 		/// Authenticates against a remote system using a username and password.
