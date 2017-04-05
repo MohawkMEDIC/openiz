@@ -46,6 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\ReportExecutorAuthorizeAttribute.cs" />
+    <Compile Include="Attributes\ReportExecutorPermission.cs" />
     <Compile Include="Configuration\CertificateCredential.cs" />
     <Compile Include="Configuration\CredentialBase.cs" />
     <Compile Include="Configuration\Credentials.cs" />
@@ -57,6 +59,8 @@
     <Compile Include="Event\AuthenticatingEventArgs.cs" />
     <Compile Include="Event\AuthenticationErrorEventArgs.cs" />
     <Compile Include="Auth\AuthenticationResult.cs" />
+    <Compile Include="Exceptions\CertificateNotFoundException.cs" />
+    <Compile Include="Exceptions\ReportExecutionAuthorizationViolationException.cs" />
     <Compile Include="IAuthenticationHandler.cs" />
     <Compile Include="IReportExecutor.cs" />
     <Compile Include="ISupportBasicAuthentication.cs" />
