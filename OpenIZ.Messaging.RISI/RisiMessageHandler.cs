@@ -21,7 +21,6 @@
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Wcf.Behavior;
-using OpenIZ.Messaging.RISI.Configuration;
 using OpenIZ.Messaging.RISI.Wcf;
 using OpenIZ.Messaging.RISI.Wcf.Behavior;
 using System;
@@ -35,11 +34,6 @@ namespace OpenIZ.Messaging.RISI
 	/// </summary>
 	public class RisiMessageHandler : IDaemonService
 	{
-		/// <summary>
-		/// The internal reference to the configuration.
-		/// </summary>
-		private readonly RisiConfiguration configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.risi") as RisiConfiguration;
-
 		/// <summary>
 		/// The internal reference to the trace source.
 		/// </summary>
@@ -97,19 +91,18 @@ namespace OpenIZ.Messaging.RISI
 				// Start the webhost
 				this.webHost.Open();
 
-				this.traceSource.TraceEvent(TraceEventType.Information, 0, $"RISI configuration loaded, using { this.configuration.Handler.AssemblyQualifiedName } report engine at address { this.configuration.Address }");
-
-				this.traceSource.TraceEvent(TraceEventType.Information, 0, $"Loading service provider { this.configuration.Handler.AssemblyQualifiedName }");
-				ApplicationContext.Current.AddServiceProvider(this.configuration.Handler);
+				this.traceSource.TraceEvent(TraceEventType.Information, 0, "RISI message handler started successfully");
 
 				this.Started?.Invoke(this, EventArgs.Empty);
-				return true;
 			}
 			catch (Exception e)
 			{
+				this.traceSource.TraceEvent(TraceEventType.Information, 0, "Unable to start RISI message handler");
 				this.traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
-				return false;
+				throw;
 			}
+
+			return true;
 		}
 
 		/// <summary>

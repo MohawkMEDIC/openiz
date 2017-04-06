@@ -36,6 +36,7 @@
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -45,12 +46,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\ReportExecutorAuthorizeAttribute.cs" />
+    <Compile Include="Attributes\ReportExecutorPermission.cs" />
+    <Compile Include="Configuration\CertificateCredential.cs" />
+    <Compile Include="Configuration\CredentialBase.cs" />
+    <Compile Include="Configuration\Credentials.cs" />
+    <Compile Include="Configuration\CredentialType.cs" />
+    <Compile Include="Configuration\ReportingConfiguration.cs" />
+    <Compile Include="Configuration\ReportingConfigurationSectionHandler.cs" />
+    <Compile Include="Configuration\UsernamePasswordCredential.cs" />
     <Compile Include="Event\AuthenticatedEventArgs.cs" />
     <Compile Include="Event\AuthenticatingEventArgs.cs" />
     <Compile Include="Event\AuthenticationErrorEventArgs.cs" />
     <Compile Include="Auth\AuthenticationResult.cs" />
+    <Compile Include="Exceptions\CertificateNotFoundException.cs" />
+    <Compile Include="Exceptions\ReportExecutionAuthorizationViolationException.cs" />
     <Compile Include="IAuthenticationHandler.cs" />
-    <Compile Include="IReportHandler.cs" />
+    <Compile Include="IReportExecutor.cs" />
     <Compile Include="ISupportBasicAuthentication.cs" />
     <Compile Include="ISupportBearerAuthentication.cs" />
     <Compile Include="ISupportCertificateAuthentication.cs" />
@@ -75,6 +87,7 @@
       <Name>OpenIZ.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

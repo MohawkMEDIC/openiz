@@ -21,7 +21,6 @@
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.RISI;
-using OpenIZ.Messaging.RISI.Configuration;
 using OpenIZ.Reporting.Core;
 using System;
 using System.Collections.Generic;
@@ -37,21 +36,15 @@ namespace OpenIZ.Messaging.RISI.Wcf
 	public class RisiBehavior : IRisiContract
 	{
 		/// <summary>
-		/// The internal reference to the RISI configuration.
+		/// The internal reference to the <see cref="IReportExecutor"/> instance.
 		/// </summary>
-		private static readonly RisiConfiguration configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.risi") as RisiConfiguration;
-
-		/// <summary>
-		/// The internal reference to the <see cref="IReportHandler"/> instance.
-		/// </summary>
-		private readonly IReportHandler reportHandler = ApplicationContext.Current.GetService<IReportHandler>();
+		private readonly IReportExecutor reportExecutor = ApplicationContext.Current.GetService<IReportExecutor>();
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RisiBehavior"/> class.
 		/// </summary>
 		public RisiBehavior()
 		{
-			this.reportHandler.ReportUri = new Uri(configuration.Address);
 		}
 
 		/// <summary>
@@ -61,7 +54,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns the created parameter type.</returns>
 		public ParameterType CreateParameterType(ParameterType parameterType)
 		{
-			return this.reportHandler.CreateParameterType(parameterType);
+			return this.reportExecutor.CreateParameterType(parameterType);
 		}
 
 		/// <summary>
@@ -71,7 +64,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns the created report definition.</returns>
 		public ReportDefinition CreateReportDefinition(ReportDefinition reportDefinition)
 		{
-			return this.reportHandler.CreateReportDefinition(reportDefinition);
+			return this.reportExecutor.CreateReportDefinition(reportDefinition);
 		}
 
 		/// <summary>
@@ -81,7 +74,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns the created report format.</returns>
 		public ReportFormat CreateReportFormat(ReportFormat reportFormat)
 		{
-			return this.reportHandler.CreateReportFormat(reportFormat);
+			return this.reportExecutor.CreateReportFormat(reportFormat);
 		}
 
 		/// <summary>
@@ -98,7 +91,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
 			}
 
-			return this.reportHandler.DeleteParameterType(key);
+			return this.reportExecutor.DeleteParameterType(key);
 		}
 
 		/// <summary>
@@ -115,7 +108,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
 			}
 
-			return this.reportHandler.DeleteReportDefinition(key);
+			return this.reportExecutor.DeleteReportDefinition(key);
 		}
 
 		/// <summary>
@@ -132,7 +125,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
 			}
 
-			return this.reportHandler.DeleteReportFormat(key);
+			return this.reportExecutor.DeleteReportFormat(key);
 		}
 
 		/// <summary>
@@ -141,7 +134,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns a list of report parameter types.</returns>
 		public RisiCollection<ReportParameter> GetAllReportParameterTypes()
 		{
-			return this.reportHandler.GetAllReportParameterTypes();
+			return this.reportExecutor.GetAllReportParameterTypes();
 		}
 
 		/// <summary>
@@ -158,7 +151,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
 			}
 
-			return this.reportHandler.GetReportDefinition(key);
+			return this.reportExecutor.GetReportDefinition(key);
 		}
 
 		/// <summary>
@@ -167,7 +160,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns a list of report definitions.</returns>
 		public RisiCollection<ReportDefinition> GetReportDefinitions()
 		{
-			return this.reportHandler.GetReportDefinitions();
+			return this.reportExecutor.GetReportDefinitions();
 		}
 
 		/// <summary>
@@ -184,7 +177,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
 			}
 
-			return this.reportHandler.GetReportFormat(key);
+			return this.reportExecutor.GetReportFormat(key);
 		}
 
 		/// <summary>
@@ -201,7 +194,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
 			}
 
-			return this.reportHandler.GetReportParameter(key);
+			return this.reportExecutor.GetReportParameter(key);
 		}
 
 		/// <summary>
@@ -218,7 +211,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
 			}
 
-			return this.reportHandler.GetReportParameters(key);
+			return this.reportExecutor.GetReportParameters(key);
 		}
 
 		/// <summary>
@@ -242,7 +235,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"The parameter { parameterId } must be a valid { nameof(Guid) }");
 			}
 
-			return this.reportHandler.GetReportParameterValues(reportKey, parameterKey);
+			return this.reportExecutor.GetReportParameterValues(reportKey, parameterKey);
 		}
 
 		/// <summary>
@@ -260,7 +253,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
 			}
 
-			return this.reportHandler.GetReportSource(key);
+			return this.reportExecutor.GetReportSource(key);
 		}
 
 		/// <summary>
@@ -286,7 +279,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"The parameter { format } must be a valid { nameof(Guid) }");
 			}
 
-			return this.reportHandler.RunReport(reportId, formatId, parameters);
+			return this.reportExecutor.RunReport(reportId, formatId, parameters);
 		}
 
 		/// <summary>
@@ -309,7 +302,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"Unable to update parameter type using id: {id}, and id: {parameterType.Key}");
 			}
 
-			return this.reportHandler.UpdateParameterType(parameterType);
+			return this.reportExecutor.UpdateParameterType(parameterType);
 		}
 
 		/// <summary>
@@ -332,7 +325,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"Unable to update report definition using id: {id}, and id: {reportDefinition.Key}");
 			}
 
-			return this.reportHandler.UpdateReportDefinition(reportDefinition);
+			return this.reportExecutor.UpdateReportDefinition(reportDefinition);
 		}
 
 		/// <summary>
@@ -355,7 +348,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"Unable to update report format using id: {id}, and id: {reportFormat.Key}");
 			}
 
-			return this.reportHandler.UpdateReportFormat(reportFormat);
+			return this.reportExecutor.UpdateReportFormat(reportFormat);
 		}
 	}
 }

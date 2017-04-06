@@ -21,18 +21,25 @@
 using OpenIZ.Core.Model.RISI;
 using System;
 using System.Collections.Generic;
+using OpenIZ.Reporting.Core.Configuration;
 
 namespace OpenIZ.Reporting.Core
 {
 	/// <summary>
 	/// Represents a report handler for a reporting engine.
 	/// </summary>
-	public interface IReportHandler : IDisposable
+	public interface IReportExecutor : IDisposable
 	{
 		/// <summary>
 		/// Gets or sets the report URI.
 		/// </summary>
-		Uri ReportUri { get; set; }
+		Uri ReportUri { get; }
+
+		/// <summary>
+		/// Gets the configuration.
+		/// </summary>
+		/// <value>The configuration.</value>
+		ReportingConfiguration Configuration { get; }
 
 		/// <summary>
 		/// Creates a new report parameter type.

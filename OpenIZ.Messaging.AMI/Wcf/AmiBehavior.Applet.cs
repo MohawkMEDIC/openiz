@@ -256,7 +256,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			var appletDirectory = Path.Combine(baseDirectory, "applets");
 
-			var file = Directory.GetFiles(appletDirectory).FirstOrDefault(f => f.StartsWith(appletId));
+			var file = Directory.GetFiles(appletDirectory).FirstOrDefault(f => f.Contains(appletId));
 
 			if (file == null)
 			{

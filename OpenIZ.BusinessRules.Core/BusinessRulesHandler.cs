@@ -90,7 +90,7 @@ namespace OpenIZ.BusinessRules.Core
 
 				var applets = new AppletCollection();
 
-				foreach (var file in Directory.GetFiles(this.configuration.DirectoryConfiguration.Path, "*.*", SearchOption.AllDirectories).Where(f => this.configuration.DirectoryConfiguration.SupportedExtensions.Contains(Path.GetExtension(f))))
+				foreach (var file in Directory.GetFiles(this.configuration.DirectoryConfiguration.Path, "*.*", SearchOption.TopDirectoryOnly).Where(f => this.configuration.DirectoryConfiguration.SupportedExtensions.Contains(Path.GetExtension(f))))
 				{
 					this.tracer.TraceEvent(TraceEventType.Information, 0, "Adding file {0}", file);
 

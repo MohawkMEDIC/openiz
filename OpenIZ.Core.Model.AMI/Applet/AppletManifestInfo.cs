@@ -44,7 +44,6 @@ namespace OpenIZ.Core.Model.AMI.Applet
 		/// <param name="manifest">The applet manifest instance.</param>
 		public AppletManifestInfo(AppletManifest manifest)
 		{
-
 			this.AppletManifest = new AppletManifest()
             {
                 Info = manifest.Info
