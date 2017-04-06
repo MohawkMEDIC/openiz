@@ -148,11 +148,6 @@ namespace OpenIZ.Core.Services.Impl
                     old = (TEntity)(persistenceService as IDataPersistenceService<EntityRelationship>).Query(o => o.SourceEntityKey == erd.SourceEntityKey && o.TargetEntityKey == erd.TargetEntityKey, 0, 1, AuthenticationContext.Current.Principal, out tr).OfType<Object>().FirstOrDefault();
                 }
 
-                if (old == null)
-                {
-                    throw new KeyNotFoundException(data.Key?.ToString());
-                }
-
                 data = businessRulesService?.BeforeUpdate(data) ?? data;
                 data = persistenceService.Update(data, AuthenticationContext.Current.Principal, TransactionMode.Commit);
                 data = businessRulesService?.AfterUpdate(data) ?? data;
