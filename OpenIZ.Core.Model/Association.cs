@@ -98,7 +98,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Should serialize obsolete
         /// </summary>
-        public bool ShouldSerializeSourceEntityKey()
+        public virtual bool ShouldSerializeSourceEntityKey()
         {
             return this.m_sourceEntityKey.HasValue;
         }

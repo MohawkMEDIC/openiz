@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-8-14
  */
+using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.DataTypes;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
 using OpenIZ.Core.Model;
@@ -25,6 +26,7 @@ using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,7 +56,7 @@ namespace OpenIZ.Messaging.FHIR.Util
         /// <summary>
         /// Convert reference term
         /// </summary>
-        public static FhirCoding Convert(ReferenceTerm rt)
+        public static FhirCoding ToCoding(ReferenceTerm rt)
         {
             if (rt == null)
                 return null;
@@ -64,11 +66,11 @@ namespace OpenIZ.Messaging.FHIR.Util
         /// <summary>
         /// Convert the telecommunications address
         /// </summary>
-        public static FhirTelecom Convert(EntityTelecomAddress tel)
+        public static FhirTelecom ToFhirTelecom(EntityTelecomAddress tel)
         {
             return new FhirTelecom()
             {
-                Use = DatatypeConverter.Convert(tel.AddressUse)?.GetPrimaryCode()?.Code,
+                Use = DatatypeConverter.ToFhirCodeableConcept(tel.AddressUse)?.GetPrimaryCode()?.Code,
                 Value = tel.IETFValue
             };
         }
@@ -76,14 +78,14 @@ namespace OpenIZ.Messaging.FHIR.Util
         /// <summary>
         /// Convert the entity address to a FHIR address
         /// </summary>
-        public static FhirAddress Convert(EntityAddress addr)
+        public static FhirAddress ToFhirAddress(EntityAddress addr)
         {
             if (addr == null) return null;
 
             // Return value
             var retVal = new FhirAddress()
             {
-                Use = DatatypeConverter.Convert(addr.AddressUse)?.GetPrimaryCode()?.Code,
+                Use = DatatypeConverter.ToFhirCodeableConcept(addr.AddressUse)?.GetPrimaryCode()?.Code,
                 Line = new List<FhirString>()
             };
 
@@ -118,14 +120,14 @@ namespace OpenIZ.Messaging.FHIR.Util
         /// <summary>
         /// Convert the entity name to a FHIR name
         /// </summary>
-        public static FhirHumanName Convert(EntityName en)
+        public static FhirHumanName ToFhirHumanName(EntityName en)
         {
             if (en == null) return null;
 
             // Return value
             var retVal = new FhirHumanName()
             {
-                Use = DatatypeConverter.Convert(en.NameUse)?.GetPrimaryCode()?.Code
+                Use = DatatypeConverter.ToFhirCodeableConcept(en.NameUse)?.GetPrimaryCode()?.Code
             };
 
             // Process components
@@ -155,7 +157,7 @@ namespace OpenIZ.Messaging.FHIR.Util
         /// <summary>
         /// Convert the model
         /// </summary>
-        public static FhirIdentifier Convert<TBoundModel>(IdentifierBase<TBoundModel> identifier) where TBoundModel : VersionedEntityData<TBoundModel>, new()
+        public static FhirIdentifier ToFhirIdentifier<TBoundModel>(IdentifierBase<TBoundModel> identifier) where TBoundModel : VersionedEntityData<TBoundModel>, new()
         {
             if (identifier == null)
                 return null;
@@ -169,22 +171,75 @@ namespace OpenIZ.Messaging.FHIR.Util
         }
 
         /// <summary>
+        /// Gets the concept via the codable concept
+        /// </summary>
+        public static Concept ToConcept(FhirCodeableConcept codeableConcept)
+        {
+            if (codeableConcept == null) return null;
+            return codeableConcept.Coding.Select(o => DatatypeConverter.ToConcept(o)).FirstOrDefault(o => o != null);
+        }
+
+        /// <summary>
+        /// Convert from FHIR coding to concept
+        /// </summary>
+        public static Concept ToConcept(FhirCoding coding, FhirUri defaultSystem = null)
+        {
+            if (coding == null) return null;
+
+            var conceptRepoService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+
+            var system = coding.System ?? defaultSystem;
+            if (system == null) throw new InvalidOperationException("Coding must have system attached");
+
+            // Lookup
+            return conceptRepoService.FindConceptsByReferenceTerm(coding.Code, coding.System.Value).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Convert to assigning authority
+        /// </summary>
+        public static AssigningAuthority ToAssigningAuthority(FhirUri fhirSystem)
+        {
+            if (fhirSystem == null) return null;
+
+            var metaService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
+            return metaService.GetAssigningAuthority(fhirSystem.Value);
+        }
+
+        /// <summary>
+        /// Convert a FhirIdentifier to an identifier
+        /// </summary>
+        /// <param name="fhirSystem"></param>
+        public static EntityIdentifier ToEntityIdentifier(FhirIdentifier fhirId) 
+        {
+            if (fhirId == null) return null;
+
+            EntityIdentifier retVal = null;
+            if (fhirId.System != null)
+                retVal = new EntityIdentifier(DatatypeConverter.ToAssigningAuthority(fhirId.System), fhirId.Value.Value);
+            else
+            {
+                var metaService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
+                var assigningAuthority = metaService.FindAssigningAuthority(o => o.DomainName == fhirId.Label).FirstOrDefault();
+                retVal = new EntityIdentifier(assigningAuthority.Key.Value, fhirId.Value);
+            }
+            // TODO: Fill in use
+            return retVal;
+        }
+
+        /// <summary>
         /// Convert the specified concept
         /// </summary>
-        public static FhirCodeableConcept Convert(Concept concept)
+        public static FhirCodeableConcept ToFhirCodeableConcept(Concept concept)
         {
             if (concept == null)
                 return null;
             return new FhirCodeableConcept()
             {
-                Coding = concept.ReferenceTerms.Select(o => DatatypeConverter.Convert(o.ReferenceTerm)).ToList(),
+                Coding = concept.ReferenceTerms.Select(o => DatatypeConverter.ToCoding(o.ReferenceTerm)).ToList(),
                 Text = concept.ConceptNames.FirstOrDefault()?.Name
             };
         }
-
-        internal static FhirCodeableConcept Convert(object site)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

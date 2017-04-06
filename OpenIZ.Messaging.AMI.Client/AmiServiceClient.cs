@@ -509,7 +509,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Return the service options for the AMI.</returns>
 		public ServiceOptions Options()
 		{
-			return this.Client.Options<ServiceOptions>("");
+			return this.Client.Options<ServiceOptions>("/");
 		}
 
 		/// <summary>

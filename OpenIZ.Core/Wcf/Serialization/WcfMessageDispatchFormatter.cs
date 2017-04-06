@@ -109,7 +109,7 @@ namespace OpenIZ.Core.Wcf.Serialization
                     var parm = this.m_operationDescription.Messages[0].Body.Parts[pNumber];
 
                     // Simple parameter
-                    if (templateMatch.BoundVariables[parm.Name] != null)
+                    if (templateMatch.BoundVariables.AllKeys.Any(o=>o.ToLower() == parm.Name.ToLower()))
                     {
                         var rawData = templateMatch.BoundVariables[parm.Name];
                         parameters[pNumber] = Convert.ChangeType(rawData, parm.Type);
@@ -146,10 +146,7 @@ namespace OpenIZ.Core.Wcf.Serialization
                                 break;
                             case WebContentFormat.Xml:
                                 {
-                                    //rawReader.ReadStartElement("Binary");
-
-                                    byte[] rawBody = rawReader.ReadContentAsBase64();
-
+                                   
                                     using (rawReader)
                                     {
                                         Type eType = s_knownTypes.FirstOrDefault(o => o.GetCustomAttribute<XmlRootAttribute>()?.ElementName == rawReader.LocalName && o.GetCustomAttribute<XmlRootAttribute>()?.Namespace == rawReader.NamespaceURI);

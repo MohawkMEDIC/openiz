@@ -77,15 +77,15 @@ namespace OpenIZ.Messaging.FHIR.Handlers
         {
             var retVal = DatatypeConverter.CreateResource<MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Patient>(model);
             retVal.Active = model.StatusConceptKey == StatusKeys.Active;
-            retVal.Address = model.Addresses.Select(o => DatatypeConverter.Convert(o)).ToList();
+            retVal.Address = model.Addresses.Select(o => DatatypeConverter.ToFhirAddress(o)).ToList();
             retVal.BirthDate = model.DateOfBirth;
             retVal.Deceased = model.DeceasedDate == DateTime.MinValue ? (object)new FhirBoolean(true) : model.DeceasedDate != null ? new FhirDate(model.DeceasedDate.Value) : null;
-            retVal.Gender = DatatypeConverter.Convert(model.GenderConcept)?.GetPrimaryCode()?.Code;
-            retVal.Identifier = model.Identifiers?.Select(o => DatatypeConverter.Convert(o)).ToList();
+            retVal.Gender = DatatypeConverter.ToFhirCodeableConcept(model.GenderConcept)?.GetPrimaryCode()?.Code;
+            retVal.Identifier = model.Identifiers?.Select(o => DatatypeConverter.ToFhirIdentifier(o)).ToList();
             retVal.MultipleBirth = model.MultipleBirthOrder == 0 ? (FhirElement)new FhirBoolean(true) : model.MultipleBirthOrder.HasValue ? new FhirInt(model.MultipleBirthOrder.Value) : null;
-            retVal.Name = model.Names.Select(o => DatatypeConverter.Convert(o)).ToList();
+            retVal.Name = model.Names.Select(o => DatatypeConverter.ToFhirHumanName(o)).ToList();
             retVal.Timestamp = model.ModifiedOn.DateTime;
-            retVal.Telecom = model.Telecoms.Select(o => DatatypeConverter.Convert(o)).ToList();
+            retVal.Telecom = model.Telecoms.Select(o => DatatypeConverter.ToFhirTelecom(o)).ToList();
 
             // TODO: Relationships
             foreach (var rel in model.Relationships.Where(o=>!o.InversionIndicator))
@@ -95,14 +95,14 @@ namespace OpenIZ.Messaging.FHIR.Handlers
                 {
                     // Create the relative object
                     var relative = DatatypeConverter.CreateResource<RelatedPerson>(rel.TargetEntity);
-                    relative.Relationship = DatatypeConverter.Convert(rel.RelationshipType);
-                    relative.Address = DatatypeConverter.Convert(rel.TargetEntity.Addresses.FirstOrDefault());
-                    relative.Gender = DatatypeConverter.Convert((rel.TargetEntity as Core.Model.Roles.Patient)?.GenderConcept);
-                    relative.Identifier = rel.TargetEntity.Identifiers.Select(o => DatatypeConverter.Convert(o)).ToList();
-                    relative.Name = DatatypeConverter.Convert(rel.TargetEntity.Names.FirstOrDefault());
+                    relative.Relationship = DatatypeConverter.ToFhirCodeableConcept(rel.RelationshipType);
+                    relative.Address = DatatypeConverter.ToFhirAddress(rel.TargetEntity.Addresses.FirstOrDefault());
+                    relative.Gender = DatatypeConverter.ToFhirCodeableConcept((rel.TargetEntity as Core.Model.Roles.Patient)?.GenderConcept);
+                    relative.Identifier = rel.TargetEntity.Identifiers.Select(o => DatatypeConverter.ToFhirIdentifier(o)).ToList();
+                    relative.Name = DatatypeConverter.ToFhirHumanName(rel.TargetEntity.Names.FirstOrDefault());
                     if (rel.TargetEntity is Core.Model.Roles.Patient)
                         relative.Patient = DatatypeConverter.CreateReference<MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Patient>(rel.TargetEntity);
-                    relative.Telecom = rel.TargetEntity.Telecoms.Select(o => DatatypeConverter.Convert(o)).ToList();
+                    relative.Telecom = rel.TargetEntity.Telecoms.Select(o => DatatypeConverter.ToFhirTelecom(o)).ToList();
                     retVal.Contained.Add(new ContainedResource()
                     {
                         Item = relative

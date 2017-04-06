@@ -386,6 +386,7 @@ namespace OpenIZ.Core.Applets
                 {
                     if (pathLeft.EndsWith("/") || String.IsNullOrEmpty(pathLeft))
                         pathLeft += "index.html";
+                    pathLeft = pathLeft.ToLower(); // case insensitive
                     return resolvedManifest.Assets.FirstOrDefault(o => o.Name == pathLeft);
                 }
 

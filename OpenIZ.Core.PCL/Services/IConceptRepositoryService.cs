@@ -113,7 +113,7 @@ namespace OpenIZ.Core.Services
 		/// <param name="code">The code of the reference term.</param>
 		/// <param name="codeSystemOid">The code system OID of the reference term.</param>
 		/// <returns>Returns a list of concepts.</returns>
-		IEnumerable<Concept> FindConceptsByReferenceTerm(string code, string codeSystemOid);
+		IEnumerable<Concept> FindConceptsByReferenceTerm(string code, Uri codeSystem);
 
 		/// <summary>
 		/// Searches for a concept set using a given query.

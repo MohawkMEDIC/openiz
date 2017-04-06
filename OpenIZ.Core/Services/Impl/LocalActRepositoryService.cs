@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Security.Attribute;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -50,54 +51,58 @@ namespace OpenIZ.Core.Services.Impl
         IRepositoryService<TextObservation>,
         IPersistableQueryRepositoryService
 	{
-		/// <summary>
-		/// Finds acts based on a specific query.
-		/// </summary>
-		/// <typeparam name="TAct">The type of the t act.</typeparam>
-		/// <param name="query">The query.</param>
-		/// <param name="offset">The offset.</param>
-		/// <param name="count">The count.</param>
-		/// <param name="totalResults">The total results.</param>
-		/// <returns>Returns a list of acts which match the specific query.</returns>
-		/// <exception cref="System.InvalidOperationException">Unable to locate persistence service.</exception>
-		public IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> query, int offset, int? count, out int totalResults) where TAct : Act
+        /// <summary>
+        /// Finds acts based on a specific query.
+        /// </summary>
+        /// <typeparam name="TAct">The type of the t act.</typeparam>
+        /// <param name="query">The query.</param>
+        /// <param name="offset">The offset.</param>
+        /// <param name="count">The count.</param>
+        /// <param name="totalResults">The total results.</param>
+        /// <returns>Returns a list of acts which match the specific query.</returns>
+        /// <exception cref="System.InvalidOperationException">Unable to locate persistence service.</exception>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
+        public IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> query, int offset, int? count, out int totalResults) where TAct : Act
 		{
             return this.Find<TAct>(query, offset, count, out totalResults, Guid.Empty);
 		}
 
-		/// <summary>
-		/// Finds the specified data
-		/// </summary>
-		/// <param name="query">The query.</param>
-		/// <returns>Returns a list of identified data.</returns>
-		public IEnumerable<Act> Find(Expression<Func<Act, bool>> query)
+        /// <summary>
+        /// Finds the specified data
+        /// </summary>
+        /// <param name="query">The query.</param>
+        /// <returns>Returns a list of identified data.</returns>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
+        public IEnumerable<Act> Find(Expression<Func<Act, bool>> query)
 		{
             int tr;
             return this.Find<Act>(query, 0, null, out tr);
 		}
 
-		/// <summary>
-		/// Find specified act
-		/// </summary>
-		/// <param name="query">The query.</param>
-		/// <param name="offset">The offset.</param>
-		/// <param name="count">The count.</param>
-		/// <param name="totalResults">The total results.</param>
-		/// <returns>Returns a list of identified data.</returns>
-		public IEnumerable<Act> Find(Expression<Func<Act, bool>> query, int offset, int? count, out int totalResults)
+        /// <summary>
+        /// Find specified act
+        /// </summary>
+        /// <param name="query">The query.</param>
+        /// <param name="offset">The offset.</param>
+        /// <param name="count">The count.</param>
+        /// <param name="totalResults">The total results.</param>
+        /// <returns>Returns a list of identified data.</returns>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
+        public IEnumerable<Act> Find(Expression<Func<Act, bool>> query, int offset, int? count, out int totalResults)
 		{
 			return this.Find<Act>(query, offset, count, out totalResults);
 		}
 
-		/// <summary>
-		/// Get the specified act.
-		/// </summary>
-		/// <typeparam name="TAct">The type of the act.</typeparam>
-		/// <param name="key">The key.</param>
-		/// <param name="versionId">The version identifier.</param>
-		/// <returns>Returns the act.</returns>
-		/// <exception cref="System.InvalidOperationException">If the persistence service is not found</exception>
-		public TAct Get<TAct>(Guid key, Guid versionId) where TAct : Act
+        /// <summary>
+        /// Get the specified act.
+        /// </summary>
+        /// <typeparam name="TAct">The type of the act.</typeparam>
+        /// <param name="key">The key.</param>
+        /// <param name="versionId">The version identifier.</param>
+        /// <returns>Returns the act.</returns>
+        /// <exception cref="System.InvalidOperationException">If the persistence service is not found</exception>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
+        public TAct Get<TAct>(Guid key, Guid versionId) where TAct : Act
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
 
@@ -113,24 +118,26 @@ namespace OpenIZ.Core.Services.Impl
 			return businessRulesService != null ? businessRulesService.AfterRetrieve(result) : result;
 		}
 
-		/// <summary>
-		/// Gets the specified model.
-		/// </summary>
-		/// <param name="key">The key.</param>
-		/// <returns>Returns the model.</returns>
-		public Act Get(Guid key)
+        /// <summary>
+        /// Gets the specified model.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns>Returns the model.</returns>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
+        public Act Get(Guid key)
 		{
 			return this.Get<Act>(key, Guid.Empty);
 		}
 
-		/// <summary>
-		/// Insert the specified act.
-		/// </summary>
-		/// <typeparam name="TAct">The type of the act.</typeparam>
-		/// <param name="act">The act.</param>
-		/// <returns>Returns the act.</returns>
-		/// <exception cref="System.InvalidOperationException">TAct</exception>
-		public TAct Insert<TAct>(TAct act) where TAct : Act
+        /// <summary>
+        /// Insert the specified act.
+        /// </summary>
+        /// <typeparam name="TAct">The type of the act.</typeparam>
+        /// <param name="act">The act.</param>
+        /// <returns>Returns the act.</returns>
+        /// <exception cref="System.InvalidOperationException">TAct</exception>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
+        public TAct Insert<TAct>(TAct act) where TAct : Act
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
 
@@ -148,25 +155,27 @@ namespace OpenIZ.Core.Services.Impl
 			return businessRulesService != null ? businessRulesService.AfterInsert(act) : act;
 		}
 
-		/// <summary>
-		/// Inserts the specified data.
-		/// </summary>
-		/// <param name="data">The data.</param>
-		/// <returns>TModel.</returns>
-		/// <exception cref="System.NotImplementedException"></exception>
-		public Act Insert(Act data)
+        /// <summary>
+        /// Inserts the specified data.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        /// <returns>TModel.</returns>
+        /// <exception cref="System.NotImplementedException"></exception>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
+        public Act Insert(Act data)
 		{
 			throw new NotImplementedException();
 		}
 
-		/// <summary>
-		/// Obsoletes a specific act.
-		/// </summary>
-		/// <typeparam name="TAct">The type of the act.</typeparam>
-		/// <param name="key">The key.</param>
-		/// <returns>Returns the act.</returns>
-		/// <exception cref="System.InvalidOperationException">The persistence service is not found.</exception>
-		public TAct Obsolete<TAct>(Guid key) where TAct : Act
+        /// <summary>
+        /// Obsoletes a specific act.
+        /// </summary>
+        /// <typeparam name="TAct">The type of the act.</typeparam>
+        /// <param name="key">The key.</param>
+        /// <returns>Returns the act.</returns>
+        /// <exception cref="System.InvalidOperationException">The persistence service is not found.</exception>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.DeleteClinicalData)]
+        public TAct Obsolete<TAct>(Guid key) where TAct : Act
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
 
@@ -191,25 +200,27 @@ namespace OpenIZ.Core.Services.Impl
 			return businessRulesService != null ? businessRulesService.AfterObsolete(act) : act;
 		}
 
-		/// <summary>
-		/// Obsoletes the specified data.
-		/// </summary>
-		/// <param name="key">The key.</param>
-		/// <returns>Returns the model.</returns>
-		/// <exception cref="System.NotImplementedException"></exception>
-		public Act Obsolete(Guid key)
+        /// <summary>
+        /// Obsoletes the specified data.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns>Returns the model.</returns>
+        /// <exception cref="System.NotImplementedException"></exception>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.DeleteClinicalData)]
+        public Act Obsolete(Guid key)
 		{
 			throw new NotImplementedException();
 		}
 
-		/// <summary>
-		/// Inserts or updates the specific act.
-		/// </summary>
-		/// <typeparam name="TAct">The type of the act.</typeparam>
-		/// <param name="act">The act.</param>
-		/// <returns>Returns the act.</returns>
-		/// <exception cref="System.InvalidOperationException">TAct</exception>
-		public TAct Save<TAct>(TAct act) where TAct : Act
+        /// <summary>
+        /// Inserts or updates the specific act.
+        /// </summary>
+        /// <typeparam name="TAct">The type of the act.</typeparam>
+        /// <param name="act">The act.</param>
+        /// <returns>Returns the act.</returns>
+        /// <exception cref="System.InvalidOperationException">TAct</exception>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
+        public TAct Save<TAct>(TAct act) where TAct : Act
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
 
@@ -243,13 +254,14 @@ namespace OpenIZ.Core.Services.Impl
 			return act;
 		}
 
-		/// <summary>
-		/// Saves the specified data.
-		/// </summary>
-		/// <param name="data">The data.</param>
-		/// <returns>Returns the model.</returns>
-		/// <exception cref="System.NotImplementedException"></exception>
-		public Act Save(Act data)
+        /// <summary>
+        /// Saves the specified data.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        /// <returns>Returns the model.</returns>
+        /// <exception cref="System.NotImplementedException"></exception>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
+        public Act Save(Act data)
 		{
 			throw new NotImplementedException();
 		}
@@ -301,6 +313,7 @@ namespace OpenIZ.Core.Services.Impl
         /// <summary>
         /// Find the specified object
         /// </summary>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
         public IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> query, int offset, int? count, out int totalResults, Guid queryId) where TAct : IdentifiedData
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();

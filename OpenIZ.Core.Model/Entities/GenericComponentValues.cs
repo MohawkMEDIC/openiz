@@ -145,5 +145,13 @@ namespace OpenIZ.Core.Model.Entities
 		{
 			return this.ComponentTypeKey.HasValue;
 		}
+        /// <summary>
+        /// Never need to serialize the entity source key
+        /// </summary>
+        /// <returns></returns>
+        public override bool ShouldSerializeSourceEntityKey()
+        {
+            return false;
+        }
 	}
 }

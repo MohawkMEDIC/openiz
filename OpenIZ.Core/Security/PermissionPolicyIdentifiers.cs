@@ -84,6 +84,11 @@ namespace OpenIZ.Core.Security
         public const string AlterIdentity = "1.3.6.1.4.1.33349.3.1.5.9.2.0.8";
 
         /// <summary>
+        /// Allows an identity to alter a policy
+        /// </summary>
+        public const string AlterPolicy = "1.3.6.1.4.1.33349.3.1.5.9.2.0.9";
+
+        /// <summary>
         /// Policy identifier for allowance of login
         /// </summary>
         public const string Login = "1.3.6.1.4.1.33349.3.1.5.9.2.1";
@@ -133,10 +138,6 @@ namespace OpenIZ.Core.Security
         /// </summary>
         public const string ReadMetadata = "1.3.6.1.4.1.33349.3.1.5.9.2.4.0";
 
-		/// <summary>
-		/// Represents an OID to alter a policy.
-		/// </summary>
-		public const string AlterPolicy = "1.3.6.1.4.1.33349.3.1.5.9.2.0.7";
 
 		#endregion
 

@@ -341,7 +341,7 @@ namespace OpenIZ.Messaging.IMSI.Client
         /// </summary>
         public ServiceOptions Options()
         {
-            return this.Client.Options<ServiceOptions>("");
+            return this.Client.Options<ServiceOptions>("/");
         }
 
         #region IDisposable Support

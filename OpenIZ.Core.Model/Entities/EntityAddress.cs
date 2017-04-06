@@ -144,5 +144,14 @@ namespace OpenIZ.Core.Model.Entities
 				this.AddressUseKey == other.AddressUseKey &&
 				this.Component?.SemanticEquals(other.Component) == true;
 		}
-	}
+
+        /// <summary>
+        /// Never need to serialize the entity source key
+        /// </summary>
+        /// <returns></returns>
+        public override bool ShouldSerializeSourceEntityKey()
+        {
+            return false;
+        }
+    }
 }

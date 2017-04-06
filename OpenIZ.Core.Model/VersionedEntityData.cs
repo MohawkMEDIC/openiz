@@ -62,6 +62,10 @@ namespace OpenIZ.Core.Model
             {
                 return this.PreviousVersion;
             }
+            set
+            {
+                this.PreviousVersion = (THistoryModelType)value;
+            }
         }
 
         /// <summary>

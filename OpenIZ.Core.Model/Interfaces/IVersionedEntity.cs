@@ -44,11 +44,11 @@ namespace OpenIZ.Core.Model.Interfaces
         /// <summary>
         /// Gets the previous version's key
         /// </summary>
-        Guid? PreviousVersionKey { get; }
+        Guid? PreviousVersionKey { get; set; }
 
         /// <summary>
         /// Gets the previous version
         /// </summary>
-        IVersionedEntity PreviousVersion { get; }
+        IVersionedEntity PreviousVersion { get; set; }
     }
 }

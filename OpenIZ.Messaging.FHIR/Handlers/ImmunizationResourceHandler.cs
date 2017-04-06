@@ -88,8 +88,8 @@ namespace OpenIZ.Messaging.FHIR.Handlers
                 Value = new FhirDecimal(model.DoseQuantity)
             };
             retVal.Date = (FhirDate)model.ActTime.DateTime;
-            retVal.Route = DatatypeConverter.Convert(model.Route);
-            retVal.Site = DatatypeConverter.Convert(model.Site);
+            retVal.Route = DatatypeConverter.ToFhirCodeableConcept(model.Route);
+            retVal.Site = DatatypeConverter.ToFhirCodeableConcept(model.Site);
             retVal.Status = "completed";
             //retVal.SelfReported = model.Tags.Any(o => o.TagKey == "selfReported" && Convert.ToBoolean(o.Value));
             retVal.WasNotGiven = model.IsNegated;
@@ -98,7 +98,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             var matl = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Consumable)?.PlayerEntity as Material;
             if(matl != null)
             {
-                retVal.VaccineCode = DatatypeConverter.Convert(matl.TypeConcept);
+                retVal.VaccineCode = DatatypeConverter.ToFhirCodeableConcept(matl.TypeConcept);
                 retVal.ExpirationDate = (FhirDate)matl.ExpiryDate;
                 retVal.LotNumber = (matl as ManufacturedMaterial)?.LotNumber;
             }

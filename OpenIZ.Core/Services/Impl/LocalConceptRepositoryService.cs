@@ -215,9 +215,16 @@ namespace OpenIZ.Core.Services.Impl
 		/// <param name="codeSystemOid">The code system OID of the reference term.</param>
 		/// <returns>Returns a list of concepts.</returns>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
-        public IEnumerable<Concept> FindConceptsByReferenceTerm(string code, string codeSystemOid)
+        public IEnumerable<Concept> FindConceptsByReferenceTerm(string code, Uri codeSystem)
 		{
-			return this.FindConcepts(o => o.ReferenceTerms.Any(r => r.ReferenceTerm.CodeSystem.Oid == codeSystemOid && r.ReferenceTerm.Mnemonic == code));
+            if (codeSystem.Scheme == "urn" && codeSystem.LocalPath.StartsWith("oid"))
+            {
+                string csOid = codeSystem.LocalPath.Substring(4);
+                return this.FindConcepts(o => o.ReferenceTerms.Any(r => r.ReferenceTerm.CodeSystem.Oid == csOid && r.ReferenceTerm.Mnemonic == code));
+            }
+            else 
+                return this.FindConcepts(o => o.ReferenceTerms.Any(r => r.ReferenceTerm.CodeSystem.Url == codeSystem.OriginalString && r.ReferenceTerm.Mnemonic == code));
+
 		}
 
 		/// <summary>

@@ -191,7 +191,7 @@ namespace OpenIZ.Core.Protocol
 
                             isMyProcessing = true;
                             // Are the participations of the patient null?
-                            if (p.Participations.Count == 0)
+                            if (p.Participations.Count == 0 && p.VersionKey.HasValue)
                             {
                                 var actRepo = ApplicationServiceContext.Current.GetService(typeof(IActRepositoryService)) as IActRepositoryService;
                                 int tr = 0;
@@ -202,6 +202,8 @@ namespace OpenIZ.Core.Protocol
                                         ParticipationRole = new Concept() { Mnemonic = "RecordTarget" },
                                         PlayerEntity = currentProcessing
                                     }).ToList();
+
+
                                 (ApplicationServiceContext.Current.GetService(typeof(IDataCachingService)) as IDataCachingService)?.Add(p);
                             }
                             currentProcessing.Participations = new List<ActParticipation>(p.Participations);

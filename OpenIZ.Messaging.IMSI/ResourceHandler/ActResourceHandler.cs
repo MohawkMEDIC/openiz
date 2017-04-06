@@ -22,6 +22,8 @@ using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Query;
+using OpenIZ.Core.Security;
+using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
@@ -43,7 +45,8 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 
 		public Type Type => typeof(Act);
 
-		public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
+        public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
 		{
 			if (data == null)
 			{
@@ -70,23 +73,27 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			throw new ArgumentException(nameof(data), "Invalid data type");
 		}
 
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
 		public IdentifiedData Get(Guid id, Guid versionId)
 		{
 			return this.actRepositorySerivce.Get<Act>(id, versionId);
 		}
 
-		public IdentifiedData Obsolete(Guid key)
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.DeleteClinicalData)]
+        public IdentifiedData Obsolete(Guid key)
 		{
 			return this.actRepositorySerivce.Obsolete<Act>(key);
 		}
 
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
 			int totalCount = 0;
 			return this.Query(queryParameters, 0, 100, out totalCount);
 		}
 
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
             Expression<Func<Act, bool>> filter = QueryExpressionParser.BuildLinqExpression<Act>(queryParameters);
             List<String> queryId = null;
@@ -96,7 +103,8 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
                 return this.actRepositorySerivce.Find<Act>(filter, offset, count, out totalCount);
 		}
 
-		public IdentifiedData Update(IdentifiedData data)
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
+        public IdentifiedData Update(IdentifiedData data)
 		{
 			if (data == null)
 			{
