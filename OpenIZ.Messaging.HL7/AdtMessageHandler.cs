@@ -19,8 +19,6 @@
  */
 
 using MARC.Everest.Connectors;
-using MARC.HI.EHRS.SVC.Auditing.Data;
-using MARC.HI.EHRS.SVC.Auditing.Services;
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Messaging.HAPI;
 using MARC.HI.EHRS.SVC.Messaging.HAPI.TransportProtocol;
@@ -160,8 +158,6 @@ namespace OpenIZ.Messaging.HL7
 				return null;
 			}
 
-			AuditData audit = null;
-
 			try
 			{
 				var patient = MessageUtil.CreatePatient(request.MSH, request.EVN, request.PID, request.PD1, details);
@@ -199,11 +195,6 @@ namespace OpenIZ.Messaging.HL7
 
 				response = MessageUtil.CreateNack(request, details, typeof(ACK));
 			}
-			finally
-			{
-				IAuditorService auditService = ApplicationContext.Current.GetService<IAuditorService>();
-				auditService?.SendAudit(audit);
-			}
 
 			return response;
 		}
@@ -223,14 +214,9 @@ namespace OpenIZ.Messaging.HL7
 
 			// Control
 			if (request == null)
+			{
 				return null;
-
-			// Construct appropriate audit
-			AuditData audit = null;
-
-			// Data controller
-			//AuditUtil auditUtil = new AuditUtil() { Context = this.Context };
-			//DataUtil dataUtil = new DataUtil() { Context = this.Context };
+			}
 
 			try
 			{
@@ -299,12 +285,6 @@ namespace OpenIZ.Messaging.HL7
 				errTerser.Set("/QAK-1", request.QPD.QueryTag.Value);
 				//audit = auditUtil.CreateAuditData("ITI-9", ActionType.Execute, OutcomeIndicator.EpicFail, evt, new List<VersionedDomainIdentifier>());
 			}
-			finally
-			{
-				IAuditorService auditSvc = ApplicationContext.Current.GetService<IAuditorService>();
-				if (auditSvc != null)
-					auditSvc.SendAudit(audit);
-			}
 
 			return response;
 		}
@@ -327,14 +307,10 @@ namespace OpenIZ.Messaging.HL7
 
 			// Control
 			if (request == null)
+			{
 				return null;
+			}
 
-			// Data controller
-			//DataUtil dataUtil = new DataUtil() { Context = this.Context };
-			//AuditUtil auditUtil = new AuditUtil() { Context = this.Context };
-
-			// Construct appropriate audit
-			List<AuditData> audit = new List<AuditData>();
 			try
 			{
 				// Create Data
@@ -369,13 +345,7 @@ namespace OpenIZ.Messaging.HL7
 				response = MessageUtil.CreateNack(request, details, typeof(NHapi.Model.V25.Message.ACK));
 				//audit.Add(auditUtil.CreateAuditData("ITI-8", ActionType.Delete, OutcomeIndicator.EpicFail, evt, new List<VersionedDomainIdentifier>()));
 			}
-			finally
-			{
-				IAuditorService auditSvc = ApplicationContext.Current.GetService<IAuditorService>();
-				if (auditSvc != null)
-					foreach (var aud in audit)
-						auditSvc.SendAudit(aud);
-			}
+
 			return response;
 		}
 
@@ -411,14 +381,10 @@ namespace OpenIZ.Messaging.HL7
 
 			// Control
 			if (request == null)
+			{
 				return null;
+			}
 
-			// Data controller
-			//DataUtil dataUtil = new DataUtil() { Context = this.Context };
-			//AuditUtil auditUtil = new AuditUtil() { Context = this.Context };
-
-			// Construct appropriate audit
-			AuditData audit = null;
 			try
 			{
 				// Create Query Data
@@ -445,12 +411,6 @@ namespace OpenIZ.Messaging.HL7
 					details.Add(new ResultDetail(ResultDetailType.Error, e.Message, e));
 				response = MessageUtil.CreateNack(request, details, typeof(NHapi.Model.V25.Message.ACK));
 				//audit = auditUtil.CreateAuditData("ITI-8", ActionType.Create, OutcomeIndicator.EpicFail, evt, new List<VersionedDomainIdentifier>());
-			}
-			finally
-			{
-				IAuditorService auditSvc = ApplicationContext.Current.GetService<IAuditorService>();
-
-				auditSvc?.SendAudit(audit);
 			}
 
 			return response;
