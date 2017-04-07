@@ -105,10 +105,12 @@ namespace OpenIZ.Messaging.FHIR.Handlers
         /// </summary>
         protected abstract TFhirResource MapToFhir(TModel model);
 
-        /// <summary>
-        /// Map to model
-        /// </summary>
-        protected abstract TModel MapToModel(TFhirResource resource);
+	    /// <summary>
+	    /// Maps to model.
+	    /// </summary>
+	    /// <param name="resource">The resource.</param>
+	    /// <returns>Returns the mapped model.</returns>
+	    protected abstract TModel MapToModel(TFhirResource resource);
 
         /// <summary>
         /// Perform the actual persistence of the insert

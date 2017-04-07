@@ -28,6 +28,7 @@ using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Reporting.Jasper.Provider
 {
@@ -37,23 +38,29 @@ namespace OpenIZ.Reporting.Jasper.Provider
 	public class MaterialValueProvider : IParameterValuesProvider
 	{
 		/// <summary>
+		/// Gets or sets the query identifier.
+		/// </summary>
+		/// <value>The query identifier.</value>
+		public Guid QueryId => Guid.Parse("8E34B464-E5A4-4AD9-8F07-1EB83403D3AA");
+
+		/// <summary>
 		/// Gets a list of values.
 		/// </summary>
 		/// <typeparam name="T">The type of parameter for which to retrieve values.</typeparam>
 		/// <returns>Returns a list of values.</returns>
 		public IEnumerable<T> GetValues<T>() where T : IdentifiedData
 		{
-			return new List<Material>().Cast<T>();
 			var results = new List<Material>();
 
-			var materialPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>();
+			var materialPersistenceService = ApplicationContext.Current.GetService<IStoredQueryDataPersistenceService<Material>>();
 
 			if (materialPersistenceService == null)
 			{
-				throw new InvalidOperationException($"Unable to locate { nameof(IDataPersistenceService<Material>) }");
+				throw new InvalidOperationException($"Unable to locate { nameof(IStoredQueryDataPersistenceService<Material>) }");
 			}
 
-			var materials = materialPersistenceService.Query(m => m.ObsoletionTime == null && m.ClassConceptKey == EntityClassKeys.Material, AuthenticationContext.Current.Principal);
+			int totalCount;
+			var materials = materialPersistenceService.Query(m => m.ObsoletionTime == null && m.ClassConceptKey == EntityClassKeys.Material, this.QueryId, 0, null, AuthenticationContext.Current.Principal, out totalCount);
 
 			results.AddRange(materials);
 

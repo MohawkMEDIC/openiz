@@ -116,15 +116,38 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             return retVal;
         }
 
-        protected override Core.Model.Roles.Patient MapToModel(MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Patient resource)
-        {
-            throw new NotImplementedException();
-        }
+	    /// <summary>
+	    /// Maps to model.
+	    /// </summary>
+	    /// <param name="resource">The resource.</param>
+	    /// <returns>Returns the mapped model.</returns>
+	    protected override Core.Model.Roles.Patient MapToModel(MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Patient resource)
+	    {
+		    var patient = new Core.Model.Roles.Patient
+		    {
+			    Addresses = resource.Address.Select(DatatypeConverter.ToEntityAddress).ToList(),
+			    CreationTime = DateTimeOffset.Now,
+			    DateOfBirth = resource.BirthDate?.DateValue,
+			    //GenderConceptKey = DatatypeConverter.ToConcept(resource.Gender.)
+			    Identifiers = resource.Identifier.Select(DatatypeConverter.ToEntityIdentifier).ToList(),
+			    Names = resource.Name.Select(DatatypeConverter.ToEntityName).ToList(),
+				Telecoms = resource.Telecom.Select(DatatypeConverter.ToEntityTelecomAddress).ToList()
+		    };
 
-        /// <summary>
-        /// Query for patients
-        /// </summary>
-        protected override IEnumerable<Core.Model.Roles.Patient> Query(Expression<Func<Core.Model.Roles.Patient, bool>> query, List<IResultDetail> issues, int offset, int count, out int totalResults)
+			// TODO: Extensions
+
+		    if (resource.Deceased is DateTime)
+		    {
+			    patient.DeceasedDate = (DateTime)resource.Deceased;
+		    }
+
+		    return patient;
+	    }
+
+		/// <summary>
+		/// Query for patients
+		/// </summary>
+		protected override IEnumerable<Core.Model.Roles.Patient> Query(Expression<Func<Core.Model.Roles.Patient, bool>> query, List<IResultDetail> issues, int offset, int count, out int totalResults)
         {
             Expression<Func<Core.Model.Roles.Patient, bool>> filter = o => o.ClassConceptKey == EntityClassKeys.Patient && o.ObsoletionTime == null ;
             var parm = Expression.Parameter(typeof(Core.Model.Roles.Patient));

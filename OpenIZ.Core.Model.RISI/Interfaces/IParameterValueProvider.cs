@@ -18,6 +18,7 @@
  * Date: 2017-1-5
  */
 
+using System;
 using System.Collections.Generic;
 
 namespace OpenIZ.Core.Model.RISI.Interfaces
@@ -27,6 +28,12 @@ namespace OpenIZ.Core.Model.RISI.Interfaces
 	/// </summary>
 	public interface IParameterValuesProvider
 	{
+		/// <summary>
+		/// Gets or sets the query identifier.
+		/// </summary>
+		/// <value>The query identifier.</value>
+		Guid QueryId { get; }
+
 		/// <summary>
 		/// Gets a list of values.
 		/// </summary>

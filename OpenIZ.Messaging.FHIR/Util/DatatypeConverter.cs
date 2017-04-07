@@ -206,11 +206,49 @@ namespace OpenIZ.Messaging.FHIR.Util
             return metaService.GetAssigningAuthority(fhirSystem.Value);
         }
 
-        /// <summary>
-        /// Convert a FhirIdentifier to an identifier
-        /// </summary>
-        /// <param name="fhirSystem"></param>
-        public static EntityIdentifier ToEntityIdentifier(FhirIdentifier fhirId) 
+		/// <summary>
+		/// Converts an <see cref="FhirAddress"/> instance to an <see cref="EntityAddress"/> instance.
+		/// </summary>
+		/// <param name="fhirAddress">The FHIR address.</param>
+		/// <returns>Returns an entity address instance.</returns>
+		public static EntityAddress ToEntityAddress(FhirAddress fhirAddress)
+	    {
+		    var address = new EntityAddress();
+
+		    if (fhirAddress.City?.Value != null)
+		    {
+			    address.Component.Add(new EntityAddressComponent(AddressComponentKeys.City, fhirAddress.City.Value));
+		    }
+
+		    if (fhirAddress.Country?.Value != null)
+		    {
+			    address.Component.Add(new EntityAddressComponent(AddressComponentKeys.Country, fhirAddress.Country.Value));
+		    }
+
+		    if (fhirAddress.Line?.Any() == true)
+		    {
+			    address.Component.AddRange(fhirAddress.Line.Select(a => new EntityAddressComponent(AddressComponentKeys.AddressLine, a.Value)));
+		    }
+
+		    if (fhirAddress.State?.Value != null)
+		    {
+			    address.Component.Add(new EntityAddressComponent(AddressComponentKeys.State, fhirAddress.State.Value));
+		    }
+
+		    if (fhirAddress.Zip?.Value != null)
+		    {
+			    address.Component.Add(new EntityAddressComponent(AddressComponentKeys.PostalCode, fhirAddress.Zip.Value));
+		    }
+
+		    return address;
+	    }
+
+		/// <summary>
+		/// Convert a FhirIdentifier to an identifier
+		/// </summary>
+		/// <param name="fhirId">The fhir identifier.</param>
+		/// <returns>Returns an entity identifier instance.</returns>
+		public static EntityIdentifier ToEntityIdentifier(FhirIdentifier fhirId) 
         {
             if (fhirId == null) return null;
 
@@ -226,6 +264,42 @@ namespace OpenIZ.Messaging.FHIR.Util
             // TODO: Fill in use
             return retVal;
         }
+
+		/// <summary>
+		/// Converts a <see cref="FhirHumanName"/> instance to an <see cref="EntityName"/> instance.
+		/// </summary>
+		/// <param name="fhirHumanName">The name of the human.</param>
+		/// <returns>Returns an entity name instance.</returns>
+		public static EntityName ToEntityName(FhirHumanName fhirHumanName)
+	    {
+			var name = new EntityName();
+
+			// TODO: add use
+
+		    name.Component.AddRange(fhirHumanName.Family.Select(f => new EntityNameComponent(NameComponentKeys.Family, f.Value)));
+		    name.Component.AddRange(fhirHumanName.Given.Select(g => new EntityNameComponent(NameComponentKeys.Given, g.Value)));
+		    name.Component.AddRange(fhirHumanName.Prefix.Select(p => new EntityNameComponent(NameComponentKeys.Prefix, p.Value)));
+		    name.Component.AddRange(fhirHumanName.Suffix.Select(s => new EntityNameComponent(NameComponentKeys.Suffix, s.Value)));
+
+		    return name;
+		}
+
+		/// <summary>
+		/// Converts a <see cref="FhirTelecom"/> instance to an <see cref="EntityTelecomAddress"/> instance.
+		/// </summary>
+		/// <param name="fhirTelecom">The telecom.</param>
+		/// <returns>Returns an entity telecom address.</returns>
+		public static EntityTelecomAddress ToEntityTelecomAddress(FhirTelecom fhirTelecom)
+	    {
+		    var telecom = new EntityTelecomAddress
+		    {
+			    Value = fhirTelecom.Value.Value
+		    };
+
+		    // TODO: add use
+
+		    return telecom;
+	    }
 
         /// <summary>
         /// Convert the specified concept
