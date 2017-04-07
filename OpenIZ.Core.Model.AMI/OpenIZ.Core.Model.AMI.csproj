@@ -74,6 +74,7 @@
     <Compile Include="Diagnostics\DiagnosticSyncInfo.cs" />
     <Compile Include="Diagnostics\DiagnosticVersionInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\AuditInfo.cs" />
     <Compile Include="Security\RevokeReason.cs" />
     <Compile Include="Security\SubmissionInfo.cs" />
     <Compile Include="Security\SubmissionRequest.cs" />
@@ -87,6 +88,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="MARC.HI.EHRS.SVC.Auditing.Core">
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Auditing.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>

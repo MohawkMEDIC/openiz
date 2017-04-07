@@ -74,6 +74,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IActRepositoryService.cs" />
     <Compile Include="Services\IAssigningAuthorityRepositoryService.cs" />
+    <Compile Include="Services\IAuditRepositoryService.cs" />
     <Compile Include="Services\IBatchRepositoryService.cs" />
     <Compile Include="Services\IBusinessRulesService.cs" />
     <Compile Include="Services\ICarePlanService.cs" />
@@ -107,6 +108,9 @@
     <Compile Include="Services\IThreadPoolService.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="MARC.HI.EHRS.SVC.Auditing.Core">
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Auditing.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>

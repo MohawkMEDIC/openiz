@@ -146,7 +146,7 @@ namespace OpenIZ.Core.Wcf.Serialization
                                 break;
                             case WebContentFormat.Xml:
                                 {
-                                   
+                                    rawReader.MoveToStartElement();
                                     using (rawReader)
                                     {
                                         Type eType = s_knownTypes.FirstOrDefault(o => o.GetCustomAttribute<XmlRootAttribute>()?.ElementName == rawReader.LocalName && o.GetCustomAttribute<XmlRootAttribute>()?.Namespace == rawReader.NamespaceURI);
