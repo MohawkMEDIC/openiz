@@ -187,6 +187,8 @@ namespace OizDevTool
             var parameters = new ParameterParser<ConsoleParameters>().Parse(args);
             int populationSize = Int32.Parse(parameters.PopulationSize ?? "10");
             int maxAge = Int32.Parse(parameters.MaxAge ?? "500");
+
+
             ApplicationContext.Current.AddServiceProvider(typeof(SimpleCarePlanService));
             ApplicationContext.Current.AddServiceProvider(typeof(SeederProtocolRepositoryService));
             ApplicationContext.Current.AddServiceProvider(typeof(LocalPlaceRepositoryService));
@@ -203,12 +205,13 @@ namespace OizDevTool
 
             WaitCallback genFunc = (s) =>
             {
+                AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
 
                 var patient = GeneratePatient(maxAge, parameters.BarcodeAuth, places, r);
                 var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
                 // Insert
                 patient = persistence.Insert(patient, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
-                Console.WriteLine("Generated Patient: {0}", patient);
+                Console.WriteLine("Generated Patient: {0} ({1} mo)", patient, DateTime.Now.Subtract(patient.DateOfBirth.Value).TotalDays / 30);
 
                 // Schedule
                 var acts = ApplicationContext.Current.GetService<ICarePlanService>().CreateCarePlan(patient).Where(o => o.ActTime <= DateTime.Now);
