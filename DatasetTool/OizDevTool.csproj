@@ -67,6 +67,8 @@
   <ItemGroup>
     <Compile Include="CdcImport.cs" />
     <Compile Include="ConsoleParameters.cs" />
+    <Compile Include="Csd.cs" />
+    <Compile Include="CsdImport.cs" />
     <Compile Include="EverestImport.cs" />
     <Compile Include="FakeDataGenerator.cs" />
     <Compile Include="GiisImport.cs" />
@@ -81,6 +83,9 @@
       <Link>OpenIZ.licenseheader</Link>
     </None>
     <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Resources\CSD.xsd">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>

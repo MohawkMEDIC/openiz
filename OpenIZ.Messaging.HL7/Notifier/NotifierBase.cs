@@ -51,6 +51,11 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		private static IAssigningAuthorityRepositoryService assigningAuthorityRepositoryService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
 
 		/// <summary>
+		/// The concept repository service.
+		/// </summary>
+		private static IConceptRepositoryService conceptRepositoryService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="NotifierBase"/> class.
 		/// </summary>
 		protected NotifierBase()
@@ -66,7 +71,7 @@ namespace OpenIZ.Messaging.HL7.Notifier
 
 			if (addressUse != null)
 			{
-				address.AddressType.Value = MessageUtil.ReverseLookup<string, Guid>(MessageUtil.AddressUseMap, addressUse.ToGuid());
+				address.AddressType.Value = MessageUtil.GetCode(addressUse.Value, CodeSystemKeys.PostalAddressUse);
 			}
 
 			address.CensusTract.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.CensusTract).Select(c => c.Value));
@@ -237,24 +242,18 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		/// </summary>
 		/// <param name="entityName">The entity name to use to update the XPN segment.</param>
 		/// <param name="name">The XPN segment to update.</param>
-		internal static void UpdateXPN(EntityName entityName, XPN name)
+		internal static XPN UpdateXPN(EntityName entityName, XPN name)
 		{
 			tracer.TraceEvent(TraceEventType.Information, 0, "Adding names");
 
-			if (entityName.NameUse?.Key != null)
-			{
-				name.NameTypeCode.Value = MessageUtil.ReverseLookup(MessageUtil.NameUseMap, entityName.NameUse.Key.ToGuid());
-			}
-			else if (entityName.NameUseKey.HasValue)
-			{
-				name.NameTypeCode.Value = MessageUtil.ReverseLookup(MessageUtil.NameUseMap, entityName.NameUseKey.ToGuid());
-			}
-
+			name.NameTypeCode.Value = MessageUtil.GetCode(entityName.NameUseKey.Value, CodeSystemKeys.EntityNameUse);
 			name.DegreeEgMD.Value = string.Join(" ", entityName.Component.Where(c => c.ComponentTypeKey == NameComponentKeys.Suffix).Select(c => c.Value));
 			name.FamilyName.Surname.Value = string.Join(" ", entityName.Component.Where(c => c.ComponentTypeKey == NameComponentKeys.Family).Select(c => c.Value));
 			name.GivenName.Value = string.Join(" ", entityName.Component.Where(c => c.ComponentTypeKey == NameComponentKeys.Given).Select(c => c.Value));
 			name.PrefixEgDR.Value = string.Join(" ", entityName.Component.Where(c => c.ComponentTypeKey == NameComponentKeys.Prefix).Select(c => c.Value));
 			name.SecondAndFurtherGivenNamesOrInitialsThereof.Value = string.Join(" ", entityName.Component.Where(c => c.ComponentTypeKey == NameComponentKeys.Delimiter).Select(c => c.Value));
+
+			return name;
 		}
 	}
 }

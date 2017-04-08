@@ -129,12 +129,19 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             return retVal;
         }
 
-        /// <summary>
-        /// Map an immunization FHIR resource to a substance administration
-        /// </summary>
-        protected override SubstanceAdministration MapToModel(Immunization resource)
+		/// <summary>
+		/// Map an immunization FHIR resource to a substance administration
+		/// </summary>
+		/// <param name="resource">The resource.</param>
+		/// <returns>Returns the mapped model.</returns>
+		protected override SubstanceAdministration MapToModel(Immunization resource)
         {
-            throw new NotImplementedException();
+	        var substanceAdministration = new SubstanceAdministration
+	        {
+		        ActTime = resource.Date.DateValue.Value
+	        };
+
+	        return substanceAdministration;
         }
 
         /// <summary>

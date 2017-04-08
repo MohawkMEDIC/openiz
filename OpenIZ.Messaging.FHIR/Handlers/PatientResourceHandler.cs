@@ -128,7 +128,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			    Addresses = resource.Address.Select(DatatypeConverter.ToEntityAddress).ToList(),
 			    CreationTime = DateTimeOffset.Now,
 			    DateOfBirth = resource.BirthDate?.DateValue,
-			    //GenderConceptKey = DatatypeConverter.ToConcept(resource.Gender.)
+			    GenderConceptKey = DatatypeConverter.ToConcept(new FhirCoding(new Uri("oid:2.16.840.1.113883.5.1"), resource.Gender?.Value))?.Key,
 			    Identifiers = resource.Identifier.Select(DatatypeConverter.ToEntityIdentifier).ToList(),
 			    Names = resource.Name.Select(DatatypeConverter.ToEntityName).ToList(),
 				Telecoms = resource.Telecom.Select(DatatypeConverter.ToEntityTelecomAddress).ToList()

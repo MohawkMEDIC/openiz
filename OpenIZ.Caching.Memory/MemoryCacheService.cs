@@ -240,6 +240,12 @@ namespace OpenIZ.Caching.Memory
         /// </summary>
         public void Add(IdentifiedData data)
         {
+			// if the data is null, continue
+	        if (data == null)
+	        {
+		        return;
+	        }
+
             var exist = MemoryCache.Current.TryGetEntry(data.GetType(), data.Key);
             MemoryCache.Current.AddUpdateEntry(data);
             if (exist != null)

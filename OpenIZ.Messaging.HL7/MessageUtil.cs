@@ -36,10 +36,12 @@ using OpenIZ.Core.ResultsDetails;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -55,68 +57,6 @@ namespace OpenIZ.Messaging.HL7
 		/// The public reference to the <see cref="TraceSource"/> instance.
 		/// </summary>
 		private static TraceSource tracer = new TraceSource("OpenIZ.Messaging.HL7");
-
-		/// <summary>
-		/// The public reference to the HL7v2 Address use conversion map.
-		/// </summary>
-		public static readonly Dictionary<string, Guid> AddressUseMap = new Dictionary<string, Guid>
-		{
-			{ "B", AddressUseKeys.WorkPlace },
-			{ "BA", AddressUseKeys.BadAddress },
-			{ "BDL", AddressUseKeys.TemporaryAddress },
-			{ "BR", AddressUseKeys.HomeAddress },
-			{ "C", AddressUseKeys.TemporaryAddress },
-			{ "F", AddressUseKeys.TemporaryAddress },
-			{ "H", AddressUseKeys.HomeAddress },
-			{ "L", AddressUseKeys.PrimaryHome },
-			{ "M", AddressUseKeys.PostalAddress },
-			{ "N", AddressUseKeys.TemporaryAddress },
-			{ "O", AddressUseKeys.WorkPlace },
-			{ "P", AddressUseKeys.PrimaryHome },
-			{ "RH", AddressUseKeys.PrimaryHome }
-		};
-
-		/// <summary>
-		/// The public reference to the HL7v2 gender conversion map.
-		/// </summary>
-		public static readonly Dictionary<string, Guid> GenderMap = new Dictionary<string, Guid>
-		{
-			{ "F", Guid.Parse("094941e9-a3db-48b5-862c-bc289bd7f86c") },
-			{ "M", Guid.Parse("f4e3a6bb-612e-46b2-9f77-ff844d971198") },
-			{ "U", Guid.Parse("ae94a782-1485-4241-9bca-5b09db2156bf") }
-		};
-
-		/// <summary>
-		/// The public reference to the HL7v2 name use conversion map.
-		/// </summary>
-		public static readonly Dictionary<string, Guid> NameUseMap = new Dictionary<string, Guid>
-		{
-			{ "A", NameUseKeys.Pseudonym },
-			{ "B", NameUseKeys.OfficialRecord },
-			{ "C", NameUseKeys.OfficialRecord },
-			{ "D", NameUseKeys.Ideographic },
-			{ "I", NameUseKeys.Legal },
-			{ "L", NameUseKeys.Legal },
-			{ "M", NameUseKeys.MaidenName },
-			{ "N", NameUseKeys.Pseudonym },
-			{ "P", NameUseKeys.Search },
-			{ "S", NameUseKeys.Anonymous },
-			{ "T", NameUseKeys.Indigenous },
-			{ "U", NameUseKeys.Anonymous }
-		};
-
-		/// <summary>
-		/// The public reference to the HL7v2 to Telecommunications use conversion map.
-		/// </summary>
-		public static readonly Dictionary<string, Guid> TelecommunicationsMap = new Dictionary<string, Guid>()
-		{
-			{ "ASN", TelecomAddressUseKeys.AnsweringService },
-			{ "BPN", TelecomAddressUseKeys.Pager },
-			{ "EMR", TelecomAddressUseKeys.EmergencyContact },
-			{ "PRN", TelecomAddressUseKeys.Public },
-			{ "CEL", TelecomAddressUseKeys.MobileContact },
-			{ "WPN", TelecomAddressUseKeys.WorkPlace }
-		};
 
 		/// <summary>
 		/// The internal reference to the <see cref="IConceptRepositoryService"/> instance.
@@ -145,7 +85,7 @@ namespace OpenIZ.Messaging.HL7
 		/// <returns>Returns a list of entity addresses.</returns>
 		public static IEnumerable<EntityAddress> ConvertAddresses(XAD[] addresses)
 		{
-			List<EntityAddress> entityAddresses = new List<EntityAddress>();
+			var entityAddresses = new List<EntityAddress>();
 
 			if (addresses.Length == 0)
 			{
@@ -154,13 +94,21 @@ namespace OpenIZ.Messaging.HL7
 
 			for (int i = 0; i < addresses.Length; i++)
 			{
-				EntityAddress entityAddress = new EntityAddress();
+				var entityAddress = new EntityAddress();
 
-				Guid addressUse = AddressUseKeys.TemporaryAddress;
+				var addressUse = AddressUseKeys.TemporaryAddress;
 
 				if (!string.IsNullOrEmpty(addresses[i].AddressType.Value) && !string.IsNullOrWhiteSpace(addresses[i].AddressType.Value))
 				{
-					AddressUseMap.TryGetValue(addresses[i].AddressType.Value, out addressUse);
+					var concept = GetConcept(addresses[i].AddressType.Value, "2.16.840.1.113883.5.1");
+
+					// TODO: cleanup
+					if (concept == null)
+					{
+						throw new ArgumentException("Code not known");
+					}
+
+					addressUse = concept.Key.Value;
 				}
 
 				entityAddress.AddressUse = new Concept
@@ -341,7 +289,15 @@ namespace OpenIZ.Messaging.HL7
 
 				if (!string.IsNullOrEmpty(names[i].NameTypeCode.Value) && !string.IsNullOrWhiteSpace(names[i].NameTypeCode.Value))
 				{
-					MessageUtil.NameUseMap.TryGetValue(names[i].NameTypeCode.Value, out nameUse);
+					var concept = GetConcept(names[i].NameTypeCode.Value, "2.16.840.1.113883.5.1120");
+
+					// TODO: cleanup
+					if (concept == null)
+					{
+						throw new ArgumentException("Code not known");
+					}
+
+					nameUse = concept.Key.Value;
 				}
 
 				entityName.NameUse = new Concept
@@ -480,9 +436,17 @@ namespace OpenIZ.Messaging.HL7
 			// Use code conversion
 			Guid use = Guid.Empty;
 
-			if (!string.IsNullOrEmpty(xtn.TelecommunicationUseCode.Value) && !TelecommunicationsMap.TryGetValue(xtn.TelecommunicationUseCode.Value, out use))
+			if (!string.IsNullOrEmpty(xtn.TelecommunicationUseCode.Value))
 			{
-				throw new InvalidOperationException(string.Format("{0} is not a known use code", xtn.TelecommunicationUseCode.Value));
+				var concept = GetConcept(xtn.TelecommunicationUseCode.Value, "2.16.840.1.113883.5.1011");
+
+				// TODO: cleanup
+				if (concept == null)
+				{
+					throw new ArgumentException("Code not known");
+				}
+
+				use = concept.Key.Value;
 			}
 
 			retVal.AddressUseKey = use;
@@ -523,9 +487,9 @@ namespace OpenIZ.Messaging.HL7
 				{
 					ISegment errSeg;
 					if (ack.Version == "2.5")
-						errSeg = terser.getSegment(String.Format("/ERR({0})", ec++));
+						errSeg = terser.getSegment($"/ERR({ec++})");
 					else
-						errSeg = terser.getSegment(String.Format("/ERR", ec++));
+						errSeg = terser.getSegment(string.Format("/ERR", ec++));
 
 					if (errSeg is NHapi.Model.V231.Segment.ERR)
 					{
@@ -567,9 +531,7 @@ namespace OpenIZ.Messaging.HL7
 		/// <returns></returns>
 		public static IMessage CreateNack(IMessage request, string responseCode, string errCode, string errDescription)
 		{
-			MessageUtil.tracer.TraceEvent(TraceEventType.Warning, 0, string.Format("NACK Condition : {0}", errDescription));
-
-			var config = ApplicationContext.Current.Configuration;
+			MessageUtil.tracer.TraceEvent(TraceEventType.Warning, 0, $"NACK Condition : {errDescription}");
 
 			if (request.Version == "2.3.1")
 			{
@@ -632,10 +594,15 @@ namespace OpenIZ.Messaging.HL7
 			{
 				if (!string.IsNullOrEmpty(pid.AdministrativeSex.Value) && !string.IsNullOrWhiteSpace(pid.AdministrativeSex.Value))
 				{
-					patient.GenderConcept = new Concept
+					var concept = GetConcept(pid.AdministrativeSex.Value, "2.16.840.1.113883.5.1");
+
+					// TODO: cleanup
+					if (concept == null)
 					{
-						Key = GenderMap[pid.AdministrativeSex.Value]
-					};
+						throw new ArgumentException("Code not known");
+					}
+
+					patient.GenderConceptKey = concept.Key.Value;
 				}
 				else
 				{
@@ -646,7 +613,7 @@ namespace OpenIZ.Messaging.HL7
 			{
 				details.Add(new NotSupportedChoiceResultDetail(ResultDetailType.Error, null, null));
 #if DEBUG
-				MessageUtil.tracer.TraceEvent(TraceEventType.Error, 0, string.Format("Gender value {0} not found in map", pid.AdministrativeSex.Value));
+				MessageUtil.tracer.TraceEvent(TraceEventType.Error, 0, $"Gender value {pid.AdministrativeSex.Value} not found in map");
 #endif
 				MessageUtil.tracer.TraceEvent(TraceEventType.Error, 0, "Gender value not found in map");
 			}
@@ -676,7 +643,7 @@ namespace OpenIZ.Messaging.HL7
 				patient.Telecoms.Add(MessageUtil.ConvertXTN(item));
 			}
 
-			Person person = new Person();
+			var person = new Person();
 
 			person.Identifiers.AddRange(MessageUtil.ConvertIdentifiers(pid.GetMotherSIdentifier()));
 			person.Names.AddRange(MessageUtil.ConvertNames(pid.GetMotherSMaidenName()));
@@ -689,6 +656,51 @@ namespace OpenIZ.Messaging.HL7
 		public static IMessage CreateRSPK23(IEnumerable<Patient> result, List<IResultDetail> dtls)
 		{
 			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets the code.
+		/// </summary>
+		/// <param name="conceptKey">The concept key.</param>
+		/// <param name="codeSystemKey">The code system key.</param>
+		/// <returns>System.String.</returns>
+		/// <exception cref="System.InvalidOperationException"></exception>
+		public static string GetCode(Guid conceptKey, Guid codeSystemKey)
+		{
+			var concept = conceptRepositoryService.GetConcept(conceptKey, Guid.Empty) as Concept;
+
+			if (concept == null)
+			{
+				throw new InvalidOperationException($"Concept not found using key: {conceptKey}");
+			}
+
+			return concept.ReferenceTerms.FirstOrDefault(c => c.ReferenceTerm.CodeSystemKey == codeSystemKey)?.ReferenceTerm.Mnemonic;
+		}
+
+		/// <summary>
+		/// Gets the concept.
+		/// </summary>
+		/// <param name="code">The code.</param>
+		/// <param name="codeSystem">The code system.</param>
+		/// <returns>Concept.</returns>
+		/// <exception cref="System.ArgumentNullException">
+		/// code - Value cannot be null
+		/// or
+		/// codeSystem - Value cannot be null
+		/// </exception>
+		public static Concept GetConcept(string code, string codeSystem)
+		{
+			if (code == null)
+			{
+				throw new ArgumentNullException(nameof(code), "Value cannot be null");
+			}
+
+			if (codeSystem == null)
+			{
+				throw new ArgumentNullException(nameof(codeSystem), "Value cannot be null");
+			}
+
+			return conceptRepositoryService.FindConceptsByReferenceTerm(code, new Uri(codeSystem)).FirstOrDefault();
 		}
 
 		/// <summary>
@@ -728,19 +740,6 @@ namespace OpenIZ.Messaging.HL7
 			else
 				errCode = "207";
 			return errCode;
-		}
-
-		/// <summary>
-		/// Reverses a lookup of a dictionary value.
-		/// </summary>
-		/// <typeparam name="K">The type of key of the dictionary.</typeparam>
-		/// <typeparam name="V">The type of value of the dictionary.</typeparam>
-		/// <param name="dictionary">The dictionary to use to perform the reverse lookup.</param>
-		/// <param name="value">The value to find in the dictionary.</param>
-		/// <returns>Returns the key associated with the given value.</returns>
-		public static K ReverseLookup<K, V>(Dictionary<K, V> dictionary, V value)
-		{
-			return dictionary.FirstOrDefault(d => d.Value.Equals(value)).Key;
 		}
 
 		/// <summary>
@@ -969,13 +968,15 @@ namespace OpenIZ.Messaging.HL7
 			// Tel use
 			if (tel.AddressUseKey != null)
 			{
-				foreach (var tcu in TelecommunicationsMap)
+				var concept = GetConcept(instance.TelecommunicationUseCode.Value, "2.16.840.1.113883.5.1011");
+
+				// TODO: cleanup
+				if (concept == null)
 				{
-					if (tcu.Value == tel.AddressUseKey)
-					{
-						instance.TelecommunicationUseCode.Value = tcu.Key;
-					}
+					throw new ArgumentException("Code not known");
 				}
+
+				instance.TelecommunicationUseCode.Value = concept.Mnemonic;
 			}
 		}
 

@@ -212,9 +212,9 @@ namespace OpenIZ.Core.Services.Impl
 		/// Finds a concept by reference term.
 		/// </summary>
 		/// <param name="code">The code of the reference term.</param>
-		/// <param name="codeSystemOid">The code system OID of the reference term.</param>
+		/// <param name="codeSystem">The code system OID of the reference term.</param>
 		/// <returns>Returns a list of concepts.</returns>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
         public IEnumerable<Concept> FindConceptsByReferenceTerm(string code, Uri codeSystem)
 		{
             if (codeSystem.Scheme == "urn" && codeSystem.LocalPath.StartsWith("oid"))

@@ -70,5 +70,20 @@ namespace OpenIZ.Core.Model.Constants
 		/// UCUM
 		/// </summary>
 		public static readonly Guid UCUM = Guid.Parse("4853A702-FFF3-4EFB-8DD7-54AACCA53664");
+
+		/// <summary>
+		/// The postal address use code system key.
+		/// </summary>
+		public static readonly Guid PostalAddressUse = Guid.Parse("0c4d091e-8701-4953-b16d-b8ca8e85de46");
+
+		/// <summary>
+		/// The entity name use code system key.
+		/// </summary>
+		public static readonly Guid EntityNameUse = Guid.Parse("77816823-9392-4ca7-83dd-6e7d4b4164e7");
+
+		/// <summary>
+		/// The administrative gender code system key.
+		/// </summary>
+		public static readonly Guid AdministrativeGender = Guid.Parse("7a3a7139-b93e-4a99-bd54-749e30fe712a");
 	}
 }
