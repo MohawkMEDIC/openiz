@@ -52,6 +52,15 @@ namespace OpenIZ.Core.Model.Entities
 		}
 
 		/// <summary>
+		/// Initializes a new instance of the <see cref="Organization"/> class.
+		/// </summary>
+		/// <param name="key">The key.</param>
+		public Organization(Guid key)
+		{
+			this.Key = key;
+		}
+
+		/// <summary>
 		/// Gets or sets the industry concept key
 		/// </summary>
 

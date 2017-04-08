@@ -36,6 +36,7 @@ using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Xml.Schema;
+using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -140,6 +141,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the created assigning authority.</returns>
 		[WebInvoke(UriTemplate = "/assigningAuthority", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo);
+
+		/// <summary>
+		/// Creates the code system.
+		/// </summary>
+		/// <param name="codeSystem">The code system.</param>
+		/// <returns>Returns the created code system.</returns>
+		[WebInvoke(UriTemplate = "/codeSystem", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		CodeSystem CreateCodeSystem(CodeSystem codeSystem);
 
 		/// <summary>
 		/// Creates a device in the IMS.
@@ -334,6 +343,21 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns a list of certificates.</returns>
 		[WebGet(UriTemplate = "/certificate", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<X509Certificate2Info> GetCertificates();
+
+		/// <summary>
+		/// Gets the code system.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <returns>Returns a code system.</returns>
+		[WebGet(UriTemplate = "/codeSystem", BodyStyle = WebMessageBodyStyle.Bare)]
+		CodeSystem GetCodeSystem(string id);
+
+		/// <summary>
+		/// Gets the code systems.
+		/// </summary>
+		/// <returns>Returns a list of code systems.</returns>
+		[WebGet(UriTemplate = "/device", BodyStyle = WebMessageBodyStyle.Bare)]
+		AmiCollection<CodeSystem> GetCodeSystems();
 
 		/// <summary>
 		/// Gets the certificate revocation list.

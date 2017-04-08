@@ -57,6 +57,7 @@
     <Compile Include="Configuration\AmiConfigurationSectionHandler.cs" />
     <Compile Include="Configuration\CertificationAuthorityConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Wcf\AmiBehavior.CodeSystem.cs" />
     <Compile Include="Wcf\AmiBehavior.AssigningAuthority.cs" />
     <Compile Include="Wcf\AmiBehavior.Certificate.cs" />
     <Compile Include="Wcf\AmiBehavior.Applet.cs" />
