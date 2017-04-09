@@ -361,7 +361,6 @@ namespace OizDevTool
 		{
 			var organizations = new List<Organization>();
 
-			// map CSD organization to IMSI organization
 			foreach (var csdOrganization in csdOrganizations)
 			{
 				var organization = new Organization
@@ -371,11 +370,11 @@ namespace OizDevTool
 					Extensions = csdOrganization.extension?.Select(e => MapEntityExtension(e.urn, e.type)).ToList(),
 					IndustryConceptKey = csdOrganization.codedType?.Select(c => MapCodedType(c.code, c.codingScheme)).FirstOrDefault()?.Key,
 					Key = MapKey(csdOrganization.entityID),
+					StatusConceptKey = MapStatusCode(csdOrganization.record?.status, "http://openiz.org/csd/CSD-OrganizationStatusCodes"),
 					Tags = new List<EntityTag>
 					{
 						new EntityTag("http://openiz.org/tags/contrib/importedData", "true")
-					},
-					//StatusConceptKey = MapStatusCode(csdOrganization.record?.status)
+					}
 				};
 
 				if (csdOrganization.codedType?.Any() == true)
@@ -433,7 +432,7 @@ namespace OizDevTool
 					CreationTime = facility.record?.created ?? DateTimeOffset.Now,
 					Extensions = facility.extension?.Select(e => MapEntityExtension(e.urn, e.type)).ToList(),
 					Key = MapKey(facility.entityID),
-					StatusConceptKey = MapStatusCode(facility.record?.status),
+					StatusConceptKey = MapStatusCode(facility.record?.status, "http://openiz.org/csd/CSD-FacilityStatusCode"),
 					Tags = new List<EntityTag>
 					{
 						new EntityTag("http://openiz.org/tags/contrib/importedData", "true")
@@ -480,7 +479,7 @@ namespace OizDevTool
 					Key = MapKey(csdProvider.entityID),
 					Identifiers = csdProvider.otherID.Select(MapEntityIdentifier).ToList(),
 					Names = csdProvider.demographic?.name.Select(MapEntityNamePerson).ToList(),
-					StatusConceptKey = MapStatusCode(csdProvider.record?.status),
+					StatusConceptKey = MapStatusCode(csdProvider.record?.status, "http://openiz.org/csd/CSD-ProviderStatusCodes"),
 					Tags = new List<EntityTag>
 					{
 						new EntityTag("http://openiz.org/tags/contrib/importedData", "true")
@@ -509,9 +508,13 @@ namespace OizDevTool
 			{
 				var service = new PlaceService
 				{
+					Key = MapKey(csdService.entityID),
+					ServiceConceptKey = MapCodedType(csdService.codedType[0].code, csdService.codedType[0].codingScheme)?.Key,
 				};
 
-				services.Add(service);
+				//service.SourceEntityKey = csdService.
+
+				//services.Add(service);
 			}
 
 			return services;
@@ -521,34 +524,30 @@ namespace OizDevTool
 		/// Maps the status code.
 		/// </summary>
 		/// <param name="code">The code.</param>
+		/// <param name="codeSystem">The code system.</param>
 		/// <returns>Returns a status key.</returns>
+		/// <exception cref="System.InvalidOperationException">IConceptRepositoryService</exception>
 		/// <exception cref="System.ArgumentException">If the code is unknown.</exception>
-		private static Guid MapStatusCode(string code)
+		private static Guid? MapStatusCode(string code, string codeSystem)
 		{
 			if (code == null)
 			{
-				Console.WriteLine("Warning: unable to map status code of null, defaulting to Active");
-				return StatusKeys.Active;
+				throw new ArgumentNullException(nameof(code), "Value cannot be null");
 			}
 
-			switch (code)
+			if (codeSystem == null)
 			{
-				case "106-001":
-					return StatusKeys.Active;
-
-				case "106-002":
-					return StatusKeys.Obsolete;
-
-				default:
-					var conceptService = ApplicationContext.Current.GetConceptService();
-
-					if (conceptService == null)
-					{
-						throw new InvalidOperationException($"Unable to locate service: {nameof(IConceptRepositoryService)}");
-					}
-
-					throw new ArgumentException();
+				throw new ArgumentNullException(nameof(codeSystem), "Value cannot be null");
 			}
+
+			var conceptService = ApplicationContext.Current.GetConceptService();
+
+			if (conceptService == null)
+			{
+				throw new InvalidOperationException($"Unable to locate service: {nameof(IConceptRepositoryService)}");
+			}
+
+			return conceptService.FindConceptsByReferenceTerm(code, new Uri(codeSystem)).FirstOrDefault()?.Key;
 		}
 	}
 

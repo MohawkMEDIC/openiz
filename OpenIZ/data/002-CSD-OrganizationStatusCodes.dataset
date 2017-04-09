@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="CSD Organization Status Codes" xmlns="http://openiz.org/data">
+  <insert>
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>096025ff-8f2d-45f2-82d3-9299d4a2c78d</id>
+      <creationTime>2017-04-09T02:05:37.1313209-04:00</creationTime>
+      <name>CSD Organization Status Codes</name>
+      <oid>2.25.309768652999692686176651983274504471835.999.405</oid>
+	  <url>http://openiz.org/csd/CSD-OrganizationStatusCodes</url>
+      <version>20131201</version>
+    </CodeSystem>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>6f604fd1-9f3c-4a1a-b028-8b81605448d3</id>
+      <creationTime>2017-04-09T02:05:37.1323214-04:00</creationTime>
+      <mnemonic>Active</mnemonic>
+      <codeSystem>096025ff-8f2d-45f2-82d3-9299d4a2c78d</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Active</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>dbc05208-146b-4a5e-8fa8-15765f260872</id>
+      <creationTime>2017-04-09T02:05:37.1433244-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Active</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>6f604fd1-9f3c-4a1a-b028-8b81605448d3</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Active</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>46cdb958-d4cd-41ad-967c-5ead7667d731</id>
+      <creationTime>2017-04-09T02:05:37.1438246-04:00</creationTime>
+      <mnemonic>Inactive</mnemonic>
+      <codeSystem>096025ff-8f2d-45f2-82d3-9299d4a2c78d</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Inactive</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>86c0044f-0a0c-47a3-9707-fc5c15f619fc</id>
+      <creationTime>2017-04-09T02:05:37.1438246-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Inactive</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>46cdb958-d4cd-41ad-967c-5ead7667d731</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Inactive</value>
+      </name>
+    </Concept>
+  </insert>
+</dataset>
