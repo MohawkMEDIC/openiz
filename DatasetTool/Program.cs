@@ -51,6 +51,7 @@ namespace OizDevTool
                     operation.Invoke(null, new Object[] { args });
             }
 
+			Console.WriteLine("Program complete, press any key to exit...");
             Console.ReadKey();
         }
     }

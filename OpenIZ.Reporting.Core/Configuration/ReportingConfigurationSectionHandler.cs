@@ -50,7 +50,7 @@ namespace OpenIZ.Reporting.Core.Configuration
 		/// or
 		/// The 'credentials' element must exist
 		/// or
-		/// This 'type' attribute on 'credential' cannot be null
+		/// The 'type' attribute on 'credential' cannot be null
 		/// or
 		/// The 'credential' element must exist
 		/// or

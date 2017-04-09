@@ -63,10 +63,12 @@ namespace OpenIZ.Core.Model.Acts
             this.PlayerEntity = player;
         }
 
-        /// <summary>
-        /// Entity relationship between <paramref name="source"/> and <paramref name="playerKey"/>
-        /// </summary>
-        public ActParticipation(Guid? roleType, Guid? playerKey)
+		/// <summary>
+		/// Entity relationship between <paramref name="roleType" /> and <paramref name="playerKey" />
+		/// </summary>
+		/// <param name="roleType">Type of the role.</param>
+		/// <param name="playerKey">The player key.</param>
+		public ActParticipation(Guid? roleType, Guid? playerKey)
         {
             this.ParticipationRoleKey = roleType;
             this.PlayerEntityKey = playerKey;

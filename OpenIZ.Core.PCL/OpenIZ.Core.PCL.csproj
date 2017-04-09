@@ -72,6 +72,7 @@
     <Compile Include="Interop\ServiceResourceOptions.cs" />
     <Compile Include="Patch\SimplePatchService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IActExtensionRepositoryService.cs" />
     <Compile Include="Services\IActRepositoryService.cs" />
     <Compile Include="Services\IAssigningAuthorityRepositoryService.cs" />
     <Compile Include="Services\IAuditRepositoryService.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Services\IDataCacheService.cs" />
     <Compile Include="Services\IAdHocDatawarehouseService.cs" />
     <Compile Include="Services\IDataPersistenceService.cs" />
+    <Compile Include="Services\IEntityExtensionRepositoryService.cs" />
     <Compile Include="Services\IPatchService.cs" />
     <Compile Include="Services\IPersonRepositoryService.cs" />
     <Compile Include="Services\IRepositoryService.cs" />
