@@ -77,6 +77,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SeedData\SeedData.cs" />
     <Compile Include="JsProxy.cs" />
+    <Compile Include="SvsImport.cs" />
+    <Compile Include="Svs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\OpenIZ.licenseheader">
@@ -86,6 +88,24 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Resources\CSD.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Resources\HL7V3\NE2008\coreschemas\datatypes-base.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Resources\HL7V3\NE2008\coreschemas\datatypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Resources\HL7V3\NE2008\coreschemas\infrastructureRoot.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Resources\HL7V3\NE2008\coreschemas\NarrativeBlock.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Resources\HL7V3\NE2008\coreschemas\voc.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Resources\SVS.xsd">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>

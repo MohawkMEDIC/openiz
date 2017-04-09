@@ -125,7 +125,7 @@ namespace OpenIZ.Persistence.Data.ADO.Security
                     // Is user allowed to login?
                     if (user.UserClass == UserClassKeys.HumanUser)
                         new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.Login, new GenericPrincipal(userIdentity, null)).Demand();
-                    else if (user.UserClass == UserClassKeys.ApplictionUser)
+                    else if (user.UserClass == UserClassKeys.ApplicationUser)
                         new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.LoginAsService, new GenericPrincipal(userIdentity, null)).Demand();
 
                     return userIdentity;
@@ -191,7 +191,7 @@ namespace OpenIZ.Persistence.Data.ADO.Security
                     // Is user allowed to login?
                     if (user.UserClass == UserClassKeys.HumanUser)
                         new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.Login, new GenericPrincipal(userIdentity, null)).Demand();
-                    else if (user.UserClass == UserClassKeys.ApplictionUser)
+                    else if (user.UserClass == UserClassKeys.ApplicationUser)
                         new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.LoginAsService, new GenericPrincipal(userIdentity, null)).Demand();
 
                     return userIdentity;

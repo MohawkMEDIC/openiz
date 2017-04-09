@@ -29,7 +29,7 @@ namespace OpenIZ.Core.Model.Constants
 		/// <summary>
 		/// Represents a user which is an application
 		/// </summary>
-		public static readonly Guid ApplictionUser = Guid.Parse("E9CD4DAD-2759-4022-AB07-92FCFB236A98");
+		public static readonly Guid ApplicationUser = Guid.Parse("E9CD4DAD-2759-4022-AB07-92FCFB236A98");
 
 		/// <summary>
 		/// Represents a user which is a human

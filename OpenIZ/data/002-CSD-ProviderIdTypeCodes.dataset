@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="CSD Provider ID Type Codes" xmlns="http://openiz.org/data">
+  <insert>
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>94b7f285-7267-4094-b54e-f1b9354c3fd1</id>
+      <creationTime>2017-04-09T01:33:16.1785631-04:00</creationTime>
+      <name>CSD Provider ID Type Codes</name>
+      <oid>2.25.309768652999692686176651983274504471835.999.401</oid>
+      <url>http://openiz.org/csd/CSD-ProviderIdTypeCodes</url>
+      <version>20140122</version>
+    </CodeSystem>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>27c0e848-8ae1-4b0b-beec-2f6d5af85a48</id>
+      <creationTime>2017-04-09T01:33:16.1790632-04:00</creationTime>
+      <mnemonic>NID</mnemonic>
+      <codeSystem>94b7f285-7267-4094-b54e-f1b9354c3fd1</codeSystem>
+      <name>
+        <language>en</language>
+        <value>National ID</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>953de0a7-6896-4f83-ba67-791d2eaefc7a</id>
+      <creationTime>2017-04-09T01:33:16.1830651-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>NID</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>27c0e848-8ae1-4b0b-beec-2f6d5af85a48</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>National ID</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>0a2857fd-e7c7-42a9-859b-672f32e77a34</id>
+      <creationTime>2017-04-09T01:33:16.1835649-04:00</creationTime>
+      <mnemonic>DL</mnemonic>
+      <codeSystem>94b7f285-7267-4094-b54e-f1b9354c3fd1</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Driver's License</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>76ab21ef-812e-493d-9123-d13556da28b9</id>
+      <creationTime>2017-04-09T01:33:16.1835649-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>DL</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>0a2857fd-e7c7-42a9-859b-672f32e77a34</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Driver's License</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>53ce5ce0-c4ed-451a-8290-fc5a1e2562d7</id>
+      <creationTime>2017-04-09T01:33:16.1835649-04:00</creationTime>
+      <mnemonic>PASS</mnemonic>
+      <codeSystem>94b7f285-7267-4094-b54e-f1b9354c3fd1</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Passport</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>40604737-a787-4c7b-b659-6a52c2e267ff</id>
+      <creationTime>2017-04-09T01:33:16.1835649-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>PASS</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>53ce5ce0-c4ed-451a-8290-fc5a1e2562d7</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Passport</value>
+      </name>
+    </Concept>
+  </insert>
+</dataset>

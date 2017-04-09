@@ -43,6 +43,34 @@ namespace OpenIZ.Core.Model.DataTypes
         
         private PhoneticAlgorithm m_phoneticAlgorithm;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ConceptName"/> class.
+		/// </summary>
+		public ConceptName()
+	    {
+		    
+	    }
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ConceptName"/> class.
+		/// </summary>
+		/// <param name="name">The name.</param>
+		public ConceptName(string name)
+		{
+			this.Name = name;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ConceptName"/> class.
+		/// </summary>
+		/// <param name="language">The language.</param>
+		/// <param name="name">The name.</param>
+		public ConceptName(string language, string name) : this(name)
+	    {
+		    this.Language = language;
+	    }
+
+
         /// <summary>
         /// Gets or sets the language code of the object
         /// </summary>
