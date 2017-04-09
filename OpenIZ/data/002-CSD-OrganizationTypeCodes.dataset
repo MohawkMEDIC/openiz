@@ -6,7 +6,7 @@
 
       <name>CSD Organization Type Codes</name>
       <oid>1.3.6.1.4.1.21367.200.101</oid>
-      <authority>CsdAddressTypeCodes</authority>
+      <authority>CsdOrganizationTypeCodes</authority>
       <version>20131201</version>
       <url>http://openiz.org/csd/CSD-OrganizationTypeCodes</url>
       <description>CSD Organization Type Codes</description>

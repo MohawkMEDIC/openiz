@@ -166,6 +166,9 @@
     <None Include="Data\001-Materials.dataset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Data\002-CSD-ServiceTypeCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Data\002-CSD-OrganizationTypeCodes.dataset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
