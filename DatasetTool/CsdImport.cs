@@ -1,30 +1,23 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: khannan
  * Date: 2017-4-7
  */
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+
 using MARC.HI.EHRS.SVC.Core;
 using MohawkCollege.Util.Console.Parameters;
 using OpenIZ.Core;
@@ -33,9 +26,15 @@ using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Persistence;
+using OpenIZ.Core.Security;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Services.Impl;
-using OpenIZ.Core.Security;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Xml.Serialization;
 
 namespace OizDevTool
 {
@@ -49,13 +48,11 @@ namespace OizDevTool
 		/// </summary>
 		private static Dictionary<string, Guid> entityKeyMap = new Dictionary<string, Guid>();
 
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CsdImport"/> class.
 		/// </summary>
 		public CsdImport()
 		{
-
 		}
 
 		/// <summary>
@@ -538,8 +535,10 @@ namespace OizDevTool
 			{
 				case "106-001":
 					return StatusKeys.Active;
+
 				case "106-002":
 					return StatusKeys.Obsolete;
+
 				default:
 					var conceptService = ApplicationContext.Current.GetConceptService();
 
@@ -565,4 +564,3 @@ namespace OizDevTool
 		public string File { get; set; }
 	}
 }
-
