@@ -10,14 +10,19 @@ using MARC.HI.EHRS.SVC.Core.Data;
 using System.Linq;
 using OpenIZ.Core.Exceptions;
 using OpenIZ.Core.Model.Roles;
+using OpenIZ.Core.Interfaces;
 
 namespace OpenIZ.Core.Services.Impl
 {
     /// <summary>
     /// Represents a base class for entity repository services
     /// </summary>
-    public abstract class LocalEntityRepositoryServiceBase : IPersistableQueryRepositoryService
+    public abstract class LocalEntityRepositoryServiceBase : IPersistableQueryRepositoryService, IAuditEventSource
     {
+        public event EventHandler<AuditDataEventArgs> DataCreated;
+        public event EventHandler<AuditDataEventArgs> DataUpdated;
+        public event EventHandler<AuditDataEventArgs> DataObsoleted;
+        public event EventHandler<AuditDataDisclosureEventArgs> DataDisclosed;
 
         /// <summary>
         /// Find with stored query parameters

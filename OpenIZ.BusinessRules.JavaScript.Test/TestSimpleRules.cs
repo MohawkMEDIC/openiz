@@ -22,6 +22,7 @@ using Jint.Native;
 using Jint.Runtime.Interop;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenIZ.Core;
+using OpenIZ.Core.Interfaces;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Entities;

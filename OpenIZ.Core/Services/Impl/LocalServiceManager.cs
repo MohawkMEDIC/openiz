@@ -18,6 +18,7 @@
  * Date: 2016-11-8
  */
 using MARC.HI.EHRS.SVC.Core;
+using OpenIZ.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +39,14 @@ namespace OpenIZ.Core.Services.Impl
 		public void AddServiceProvider(Type serviceType)
         {
             ApplicationContext.Current.AddServiceProvider(serviceType);
+        }
+
+        /// <summary>
+        /// Get all services
+        /// </summary>
+        public IEnumerable<object> GetServices()
+        {
+            return ApplicationContext.Current.GetServices();
         }
     }
 }

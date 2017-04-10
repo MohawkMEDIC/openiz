@@ -34,7 +34,7 @@ using OpenIZ.Persistence.Data.ADO.Data.Model.DataType;
 using OpenIZ.Core.Model.DataTypes;
 using System.Collections;
 using OpenIZ.OrmLite;
-
+using OpenIZ.Core.Interfaces;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {

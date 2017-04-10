@@ -30,6 +30,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Security.Attribute;
+using OpenIZ.Core.Interfaces;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -51,6 +52,13 @@ namespace OpenIZ.Core.Services.Impl
         IRepositoryService<TextObservation>,
         IPersistableQueryRepositoryService
 	{
+
+        // Events for audit
+        public event EventHandler<AuditDataEventArgs> DataCreated;
+        public event EventHandler<AuditDataEventArgs> DataUpdated;
+        public event EventHandler<AuditDataEventArgs> DataObsoleted;
+        public event EventHandler<AuditDataDisclosureEventArgs> DataDisclosed;
+
         /// <summary>
         /// Finds acts based on a specific query.
         /// </summary>
@@ -115,7 +123,9 @@ namespace OpenIZ.Core.Services.Impl
 
 			var result = persistenceService.Get<Guid>(new Identifier<Guid>(key, versionId), AuthenticationContext.Current.Principal, true);
 
-			return businessRulesService != null ? businessRulesService.AfterRetrieve(result) : result;
+            this.DataDisclosed?.Invoke(this, new AuditDataDisclosureEventArgs(key.ToString(), new object[] { result }));
+
+            return businessRulesService != null ? businessRulesService.AfterRetrieve(result) : result;
 		}
 
         /// <summary>
@@ -152,7 +162,9 @@ namespace OpenIZ.Core.Services.Impl
 
 			act = persistenceService.Insert(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
-			return businessRulesService != null ? businessRulesService.AfterInsert(act) : act;
+            this.DataCreated?.Invoke(this, new AuditDataEventArgs(act));
+
+            return businessRulesService != null ? businessRulesService.AfterInsert(act) : act;
 		}
 
         /// <summary>
@@ -197,7 +209,9 @@ namespace OpenIZ.Core.Services.Impl
 
 			act = persistenceService.Obsolete(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
-			return businessRulesService != null ? businessRulesService.AfterObsolete(act) : act;
+            this.DataObsoleted?.Invoke(this, new AuditDataEventArgs(act));
+
+            return businessRulesService != null ? businessRulesService.AfterObsolete(act) : act;
 		}
 
         /// <summary>
@@ -241,6 +255,8 @@ namespace OpenIZ.Core.Services.Impl
 				act = persistenceService.Update(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
 				act = businessRulesService != null ? businessRulesService.AfterUpdate(act) : act;
+
+                this.DataUpdated?.Invoke(this, new AuditDataEventArgs(act));
 			}
 			catch (DataPersistenceException)
 			{
@@ -249,6 +265,8 @@ namespace OpenIZ.Core.Services.Impl
 				act = persistenceService.Insert(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
 				act = businessRulesService != null ? businessRulesService.AfterInsert(act) : act;
+
+                this.DataCreated?.Invoke(this, new AuditDataEventArgs(act));
 			}
 
 			return act;
@@ -331,6 +349,8 @@ namespace OpenIZ.Core.Services.Impl
             else
                 results = persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
 
+            // Disclosure event
+            this.DataDisclosed?.Invoke(this, new AuditDataDisclosureEventArgs(query.ToString(), results));
             return businessRulesService?.AfterQuery(results) ?? results;
         }
     }

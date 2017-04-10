@@ -29,6 +29,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Linq;
+using OpenIZ.Core.Interfaces;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {

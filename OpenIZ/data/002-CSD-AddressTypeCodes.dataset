@@ -45,24 +45,28 @@
       </name>
     </ReferenceTerm>
   </insert>
-  <insert>
+  <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
-      <id>a47dc432-723d-4d21-ad17-58d1d15efb4f</id>
+      <id>7246e98d-20c6-4ae6-85ad-4aa09649feb7</id>
       <isReadonly>false</isReadonly>
-      <mnemonic>Mailing</mnemonic>
+      <mnemonic>PostalAddress</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
         <term>403c90d8-f582-40f8-9e3e-f2f6100e6952</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
+      <referenceTerm>
+        <term>ced1b8ea-72f9-4fbc-a372-b3535d00f449</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>      
       <name>
         <language>en</language>
-        <value>Mailing</value>
+        <value>Postal Address</value>
       </name>
-      <conceptSet>5cca5869-8a7b-47a3-83db-041d5af5c9da</conceptSet>
+      <conceptSet>c68a7690-d78d-4afc-8a36-1ebdfb86f15f</conceptSet>
     </Concept>
-  </insert>
+  </update>
   <insert>
     <Concept xmlns="http://openiz.org/model">
       <id>f11b44d0-7961-459e-afeb-cc54a66c8e96</id>
@@ -78,25 +82,29 @@
         <language>en</language>
         <value>Billing</value>
       </name>
-      <conceptSet>5cca5869-8a7b-47a3-83db-041d5af5c9da</conceptSet>
+      <conceptSet>c68a7690-d78d-4afc-8a36-1ebdfb86f15f</conceptSet>
     </Concept>
   </insert>
   <insert>
     <Concept xmlns="http://openiz.org/model">
-      <id>22ae4433-fb25-4e0a-a1f3-76fb6acbd273</id>
+      <id>5724a9b6-24b6-43b7-8075-7a0d61fcb814</id>
       <isReadonly>false</isReadonly>
-      <mnemonic>Practice</mnemonic>
+      <mnemonic>PhysicalVisit</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
       <referenceTerm>
         <term>d7caf151-2061-488e-bec7-39c683884d0a</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
+      <referenceTerm>
+        <term>4c3cbe50-f4e0-49f5-af08-4420998cf6ea</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
       <name>
         <language>en</language>
-        <value>Practice</value>
+        <value>Physical Visit</value>
       </name>
-      <conceptSet>5cca5869-8a7b-47a3-83db-041d5af5c9da</conceptSet>
+      <conceptSet>c68a7690-d78d-4afc-8a36-1ebdfb86f15f</conceptSet>
     </Concept>
   </insert>
 </dataset>

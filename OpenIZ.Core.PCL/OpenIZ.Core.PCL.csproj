@@ -67,6 +67,7 @@
     <Compile Include="Http\RestClientException.cs" />
     <Compile Include="Http\RestClientEventArgs.cs" />
     <Compile Include="Http\XmlBodySerializer.cs" />
+    <Compile Include="Interfaces\ISecurityAuditEventSource.cs" />
     <Compile Include="Interop\ServiceClientBase.cs" />
     <Compile Include="Interop\ServiceOptions.cs" />
     <Compile Include="Interop\ServiceResourceOptions.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="Services\IActExtensionRepositoryService.cs" />
     <Compile Include="Services\IActRepositoryService.cs" />
     <Compile Include="Services\IAssigningAuthorityRepositoryService.cs" />
+    <Compile Include="Interfaces\IAuditEventSource.cs" />
     <Compile Include="Services\IAuditRepositoryService.cs" />
     <Compile Include="Services\IBatchRepositoryService.cs" />
     <Compile Include="Services\IBusinessRulesService.cs" />
@@ -100,12 +102,12 @@
     <Compile Include="Services\IOrganizationRepositoryService.cs" />
     <Compile Include="Services\IPatientRepositoryService.cs" />
     <Compile Include="Services\IPersistableQueryRepositoryService.cs" />
-    <Compile Include="Services\IPhoneticAlgorithmHandler.cs" />
+    <Compile Include="Interfaces\IPhoneticAlgorithmHandler.cs" />
     <Compile Include="Services\IPlaceRepositoryService.cs" />
     <Compile Include="Services\IProviderRepositoryService.cs" />
     <Compile Include="Services\IQueryPersistenceService.cs" />
     <Compile Include="Services\ISecurityRepositoryService.cs" />
-    <Compile Include="Services\IServiceManager.cs" />
+    <Compile Include="Interfaces\IServiceManager.cs" />
     <Compile Include="Services\IStockManagementRepositoryService.cs" />
     <Compile Include="Services\IThreadPoolService.cs" />
   </ItemGroup>

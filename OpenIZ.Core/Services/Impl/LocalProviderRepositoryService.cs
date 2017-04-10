@@ -33,7 +33,7 @@ using System.Security.Principal;
 
 namespace OpenIZ.Core.Services.Impl
 {
-	internal class LocalProviderRepositoryService : LocalEntityRepositoryServiceBase, IProviderRepositoryService
+	public class LocalProviderRepositoryService : LocalEntityRepositoryServiceBase, IProviderRepositoryService
     {
 		/// <summary>
 		/// Searches for a provider using a given predicate.

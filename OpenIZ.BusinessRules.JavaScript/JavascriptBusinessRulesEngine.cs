@@ -36,6 +36,7 @@ using System.Threading.Tasks;
 using Jint;
 using OpenIZ.Core.Model;
 using System.Text.RegularExpressions;
+using OpenIZ.Core.Interfaces;
 
 namespace OpenIZ.BusinessRules.JavaScript
 {

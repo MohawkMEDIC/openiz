@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-11-8
  */
+using OpenIZ.Core.Interfaces;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
@@ -59,6 +60,11 @@ namespace OpenIZ.BusinessRules.JavaScript.Test
         public object GetService(Type serviceType)
         {
             return this.m_services.FirstOrDefault(o => serviceType.IsAssignableFrom(o.GetType()));
+        }
+
+        public IEnumerable<object> GetServices()
+        {
+            return this.m_services;
         }
     }
 }

@@ -18,6 +18,7 @@
  * Date: 2016-8-2
  */
 
+using OpenIZ.Core.Interfaces;
 using OpenIZ.Core.Model.Constants;
 using System;
 

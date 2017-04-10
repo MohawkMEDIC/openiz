@@ -30,6 +30,7 @@ using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Services;
 using System.Linq.Expressions;
 using System.Data.Linq;
+using OpenIZ.Core.Interfaces;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 {
